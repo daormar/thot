@@ -1,0 +1,433 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.57)
+AC_INIT(thot, 1.0.0, danulino@users.sourceforge.net)
+AM_INIT_AUTOMAKE(thot,1.0.0)
+AC_CONFIG_HEADER(config.h)
+AX_PREFIX_CONFIG_H([./src/thot_config.h])
+
+dnl Initialize Libtool
+LT_INIT([dlopen])
+LTDL_INIT
+
+# Save previous compilation flags
+CFLAGS_AUX=${CFLAGS}
+CXXFLAGS_AUX=${CXXFLAGS}
+
+# Checks for programs.
+AC_PATH_PROGS(BASH, bash)
+AC_PATH_PROGS(PERL, perl)
+AC_PATH_PROGS(SPLIT, split)
+AC_PATH_PROGS(SED, sed)
+AC_PATH_PROGS(GREP, grep)
+AC_PATH_PROGS(BASENAME, basename)
+AC_PATH_PROGS(SSH, ssh)
+AC_PATH_PROGS(QSUB, qsub)
+AC_PATH_PROGS(QSTAT, qstat)
+AC_PATH_PROGS(QRLS, qrls)
+
+# Search awk
+
+## GAWK
+AC_PATH_PROG(GAWK, gawk, no)
+if test "$GAWK" = no; then
+
+   ## NAWK
+   AC_PATH_PROG(NAWK, nawk, no)
+   if test "$NAWK" = no; then
+        
+        ## MAWK
+	AC_PATH_PROG(MAWK, mawk, no)
+        if test "$MAWK" = no; then
+	      AWK=awk
+        else
+              # mawk found
+              AWK=$MAWK
+        fi
+   else
+        # nawk found
+        AWK=$NAWK
+   fi
+else
+        # gawk found
+        AWK=$GAWK
+fi
+
+AC_SUBST(AWK)
+
+AC_SUBST(USE_SOURCE_OPT)
+
+# check awk delete array
+AC_MSG_CHECKING(whether awk supports delete array )
+USE_FAST_DELETE="no"
+echo "" | $AWK '{ a[[1]]=1; delete a; if (a[[1]]!=0) exit (1) }' && USE_FAST_DELETE="yes"
+if test ${USE_FAST_DELETE} = "yes"; then
+   AC_MSG_RESULT(yes)   
+else
+   AC_MSG_RESULT(no) 
+fi
+
+AC_SUBST(USE_FAST_DELETE)
+
+# Search sort and check parameters
+AC_PATH_PROGS(SORT,sort)
+
+echo -n "checking whether sort accepts -S <buffsize>... "
+echo "" | ${SORT} -S 131072 >/dev/null 2>&1
+if test $? -eq 0; then
+   sortpars="-S 131072"
+   echo "yes"
+else
+   sortpars=""
+   echo "no"
+fi 
+AC_SUBST(sortpars)
+
+echo -n "checking whether sort accepts -T <dir>... "
+echo "" | ${SORT} -T /tmp >/dev/null 2>&1
+if test $? -eq 0; then
+   sortT="yes"
+   echo "yes"
+else
+   sortT="no"
+   echo "no"
+fi 
+AC_SUBST(sortT)
+
+echo -n "checking whether sort accepts -m... "
+echo "" | ${SORT} -m >/dev/null 2>&1
+if test $? -eq 0; then
+   sortm="yes"
+   echo "yes"
+else
+   sortm="no"
+   echo "no"
+fi 
+AC_SUBST(sortm)
+
+
+# Check for compilers
+AC_PROG_CXX
+AC_PROG_CC
+AM_PROG_CC_C_O
+
+CFLAGS="${CFLAGS_AUX}"
+CXXFLAGS="${CXXFLAGS_AUX}"
+
+# Checks for basic flags
+AC_LANG(C++)
+for f in -Wno-deprecated
+do                        
+    AC_MSG_CHECKING(whether ${CXX} supports ${f})
+    saved_cxxflags="${CXXFLAGS}"
+    CXXFLAGS="${CXXFLAGS} ${f}"
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
+                      AC_MSG_RESULT(yes),
+                      AC_MSG_RESULT(no)
+                      CXXFLAGS="${saved_cxxflags}")],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+done
+
+dnl Check if we have enable debug support.
+AC_MSG_CHECKING(whether to enable debugging)
+AC_ARG_ENABLE(debug,[  --enable-debug   turn on debugging], enable_debug=yes,
+              enable_debug=no)
+
+dnl Yes, debug is enabled
+if test "$enable_debug" = "yes"; then
+
+AC_MSG_RESULT(yes)
+
+AC_DEFINE(DEBUG,,[Define if the debugging mode is enabled])
+
+# Checks for flags
+AC_LANG(C)
+for f in -g -Wall  
+do                        
+    AC_MSG_CHECKING(whether ${CC} supports ${f})
+    saved_cflags="${CFLAGS}"
+    CFLAGS="${CFLAGS} ${f}"
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
+                      AC_MSG_RESULT(yes),
+                      AC_MSG_RESULT(no)
+                      CFLAGS="${saved_cflags}")],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+done
+
+AC_LANG(C++)
+for f in -g -Wall
+do                        
+    AC_MSG_CHECKING(whether ${CXX} supports ${f})
+    saved_cxxflags="${CXXFLAGS}"
+    CXXFLAGS="${CXXFLAGS} ${f}"
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
+                      AC_MSG_RESULT(yes),
+                      AC_MSG_RESULT(no)
+                      CXXFLAGS="${saved_cxxflags}")],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+done
+
+else
+
+AC_MSG_RESULT(no)
+
+# Checks for flags
+AC_LANG(C)
+for f in -Wall -O2 
+do                        
+    AC_MSG_CHECKING(whether ${CC} supports ${f})
+    saved_cflags="${CFLAGS}"
+    CFLAGS="${CFLAGS} ${f}"
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
+                      AC_MSG_RESULT(yes),
+                      AC_MSG_RESULT(no)
+                      CFLAGS="${saved_cflags}")],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+done
+
+AC_LANG(C++)
+for f in -Wall -O2
+do                        
+    AC_MSG_CHECKING(whether ${CXX} supports ${f})
+    saved_cxxflags="${CXXFLAGS}"
+    CXXFLAGS="${CXXFLAGS} ${f}"
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
+                      AC_MSG_RESULT(yes),
+                      AC_MSG_RESULT(no)
+                      CXXFLAGS="${saved_cxxflags}")],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+done
+
+fi
+
+for top_builddir in . .. ../.. $ac_auxdir $ac_auxdir/..; do
+  test -f $top_builddir/configure && break
+done
+
+# Checks for libraries.
+# AC_PROG_RANLIB
+
+# Adds an extra argument to configure (profiling)
+AC_MSG_CHECKING(whether to enable profiling)
+AC_ARG_ENABLE(developer,[  --enable-developer   enable developer features],enable_developer=yes,
+              enable_developer=no)
+dnl Yes, profiling is enabled
+if test "$enable_developer" = "yes"; then
+AC_MSG_RESULT(yes)
+
+if test "$enable_debug" = "yes"; then
+ flags="-pg"
+else
+ flags="-g -pg"
+fi
+
+AC_LANG(C)
+for f in ${flags}
+do                        
+    AC_MSG_CHECKING(whether ${CC} supports ${f})
+    saved_cflags="${CFLAGS}"
+    CFLAGS="${CFLAGS} ${f}"
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
+                      AC_MSG_RESULT(yes),
+                      AC_MSG_RESULT(no)
+                      CFLAGS="${saved_cflags}")],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+done
+
+AC_LANG(C++)
+for f in ${flags}
+do                        
+    AC_MSG_CHECKING(whether ${CXX} supports ${f})
+    saved_cxxflags="${CXXFLAGS}"
+    CXXFLAGS="${CXXFLAGS} ${f}"
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
+                      AC_MSG_RESULT(yes),
+                      AC_MSG_RESULT(no)
+                      CXXFLAGS="${saved_cxxflags}")],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+done
+
+else
+AC_MSG_RESULT(no)
+
+fi
+
+# Checks if the compiler supports ISO C++ standard library
+AC_CXX_HAVE_STD
+if test "$ac_cv_cxx_have_std" = no; then
+  AC_MSG_ERROR(C++ standard library not present!)
+fi
+
+# Checks if the compiler supports the Standard Template Library
+AC_CXX_HAVE_STL
+if test "$ac_cv_cxx_have_stl" = no; then
+  AC_MSG_ERROR(C++ standard template library not present!)
+fi
+
+# Checks for lm library
+AC_CHECK_LIB([m], [log])
+
+# Checks for gmp library
+LGMP=""
+libaux=${LIBS}
+AC_CHECK_LIB([gmp], [__gmpz_init])
+if test $ac_cv_lib_gmp___gmpz_init = yes; then
+   LGMP="-lgmp"
+   AC_DEFINE(HAVE_GMP,,[Define if the gmp library is present])
+fi
+AC_SUBST(LGMP)
+LIBS=${libaux}
+
+# Checks for zlib library
+ZLIB=""
+libaux=${LIBS}
+AC_CHECK_LIB([z], [inflate])
+if test $ac_cv_lib_z_inflate = yes; then
+   ZLIB="-lz"
+   AC_DEFINE(HAVE_ZLIB,,[Define if the zlib library is present])
+fi
+AC_SUBST(ZLIB)
+LIBS=${libaux}
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([float.h limits.h])
+AC_HEADER_TIME
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+AC_CHECK_TYPE(ssize_t, int)
+AC_TYPE_OFF_T
+
+# Checks for large file support
+AC_SYS_LARGEFILE
+AC_FUNC_FSEEKO
+
+# Checks for library functions.
+AC_FUNC_REALLOC
+AC_CHECK_FUNCS([gettimeofday pow getdelim])
+
+ # Some systems do not supply getline()
+AC_MSG_CHECKING([if getline() is supported])
+AC_COMPILE_IFELSE(
+  [AC_LANG_PROGRAM(
+    [[
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#include <stdio.h>
+    ]],[[
+    char* buf = 0;
+    size_t len = 0;
+    FILE* f=NULL;
+    getline(&buf,&len,f);
+    ]]
+  )],
+  [AC_DEFINE(HAVE_GETLINE,[],[Define if getline() is supported])
+   AC_MSG_RESULT(yes)],
+  [AC_MSG_RESULT(no)])
+
+# Checks for doxygen
+AC_PATH_PROG(DOXYGEN,doxygen)
+
+# Adds an extra argument to configure (enable use of casmacat library)
+AC_MSG_CHECKING(whether to enable combination with casmacat library)
+AC_ARG_ENABLE(casmacat-lib,[  --enable-casmacat-lib   installs thot with the necessary code to combine it with the casmacat library],enable_casmacat_lib=yes,enable_casmacat_lib=no)
+dnl Yes, casmacat library enabled
+if test "$enable_casmacat_lib" = "yes"; then
+ AC_MSG_RESULT(yes)
+else
+ AC_MSG_RESULT(no)
+fi
+AM_CONDITIONAL([CASMACAT_LIB_ENABLED], [test x${enable_casmacat_lib} = xyes])
+
+# Disable pre/post-processing code
+AC_DEFINE(DISABLE_PREPROC_CODE,,[Define if the pre/post-processing code is disabled])
+
+# Process options given in shell variables
+
+# swm type used
+if test "$THOT_SWM_TYPE" = ""; then
+   THOT_SWM_TYPE="INCR_HMM_P0_SWM"
+fi
+AC_DEFINE_UNQUOTED(SWM_TYPE,${THOT_SWM_TYPE},[Define which sentence length model is to be used])
+
+# slm type used
+if test "$THOT_SLM_TYPE" = ""; then
+   THOT_SLM_TYPE="WISLM_NORM"
+fi
+AC_DEFINE_UNQUOTED(SLM_TYPE,${THOT_SLM_TYPE},[Define which sentence length model is to be used])
+
+# sh type used
+if test "$THOT_SH_TYPE" = ""; then
+   THOT_SH_TYPE="LSENT_HANDLER"
+fi
+AC_DEFINE_UNQUOTED(SH_TYPE,${THOT_SH_TYPE},[Define which sentence handler is to be used])
+
+# Set different models and decoder types based on previously defined
+# shell variables
+export THOT_LM_TYPE="THOT_INCR_INTERP_LM"
+export THOT_PBM_TYPE="ML_PBM"
+export THOT_SMT_MODEL_TYPE="PBLSWMLI"
+export THOT_SW_MODEL_TYPE="THOT_SINCR_IBM2_SWM"
+export THOT_AT_TYPE="WG_UNCTRANS"
+export THOT_WGP_TYPE="STD_WGP"
+export THOT_ECM_TYPE="PFSM_FOR_WG_ECM"
+export THOT_SW_MODEL_TYPE="THOT_INCR_HMM_P0_SWM"
+
+# Language model type used
+if test "$THOT_LM_TYPE" = ""; then
+   THOT_LM_TYPE="THOT_BACKOFF_LM"
+fi
+AC_DEFINE_UNQUOTED(LM_TYPE,${THOT_LM_TYPE},[Define which language model is to be used])
+
+# Phrase-based model type used
+if test "$THOT_PBM_TYPE" = ""; then
+   THOT_PBM_TYPE="ML_PBM"
+fi
+AC_DEFINE_UNQUOTED(PBM_TYPE,${THOT_PBM_TYPE},[Define which phrase-based model is to be used])
+
+# Smt model type used
+if test "$THOT_SMT_MODEL_TYPE" = ""; then
+   THOT_SMT_MODEL_TYPE="PB"
+fi
+AC_DEFINE_UNQUOTED(SMT_MODEL_TYPE,${THOT_SMT_MODEL_TYPE},[Define which SMT model is to be used])
+
+# Sw model type used
+if test "$THOT_SW_MODEL_TYPE" = ""; then
+   THOT_SW_MODEL_TYPE="THOT_MIX_IBM1_SWM"
+fi
+AC_DEFINE_UNQUOTED(SW_MODEL_TYPE,${THOT_SW_MODEL_TYPE},[Define which single word model is to be used])
+
+# Multi stack type used
+if test "$THOT_MSTACK_TYPE" = ""; then
+   THOT_MSTACK_TYPE="MSTACK"
+fi
+AC_DEFINE_UNQUOTED(MSTACK_TYPE,${THOT_MSTACK_TYPE},[Define which multi stack type is to be used])
+
+# Error correcting model type used
+if test "$THOT_ECM_TYPE" = ""; then
+   THOT_ECM_TYPE="PFSM_ECM"
+fi
+AC_DEFINE_UNQUOTED(ECM_TYPE,${THOT_ECM_TYPE},[Define which general-purpose error correcting model is to be used])
+
+# Error correcting model for uncoupled cat type used
+if test "$THOT_ECM_NB_UCAT_TYPE" = ""; then
+   THOT_ECM_NB_UCAT_TYPE="NONPB_ECM_NB_UCAT"
+fi
+AC_DEFINE_UNQUOTED(ECM_NB_UCAT_TYPE,${THOT_ECM_NB_UCAT_TYPE},[Define which error correcting model for uncoupled cat is to be used])
+
+# Word-graph processor type used
+if test "$THOT_WGP_TYPE" = ""; then
+   THOT_WGP_TYPE="STD_WGP"
+fi
+AC_DEFINE_UNQUOTED(WGP_TYPE,${THOT_WGP_TYPE},[Define which word-graph processor is to be used])
+
+# Assisted translation type used
+if test "$THOT_AT_TYPE" = ""; then
+   THOT_AT_TYPE="NB_UNCTRANS"
+fi
+AC_DEFINE_UNQUOTED(AT_TYPE,${THOT_AT_TYPE},[Define which assisted translator type is to be used])
+
+# Change path of distribution include directory
+includedir=${prefix}/include/thot
+
+#AC_CONFIG_FILES([Makefile])
+AC_OUTPUT(Makefile doc/Makefile m4/Makefile src/Makefile src/nlp_common/Makefile src/incr_models/Makefile src/sw_models/Makefile src/phrase_models/Makefile src/smt_preproc/Makefile src/error_correction/Makefile src/stack_dec/Makefile utils/Makefile utils/nlp_common/Makefile utils/incr_models/Makefile utils/sw_models/Makefile utils/phrase_models/Makefile utils/smt_preproc/Makefile utils/error_correction/Makefile utils/stack_dec/Makefile)
