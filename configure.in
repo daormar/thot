@@ -2,8 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT(thot, 1.0.0, danulino@users.sourceforge.net)
-AM_INIT_AUTOMAKE(thot,1.0.0)
+AC_INIT(thot, 3.0.0Beta, danulino@users.sourceforge.net)
+AM_INIT_AUTOMAKE(thot,3.0.0Beta)
 AC_CONFIG_HEADER(config.h)
 AX_PREFIX_CONFIG_H([./src/thot_config.h])
 
