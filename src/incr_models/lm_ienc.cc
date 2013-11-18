@@ -1,0 +1,50 @@
+/*
+thot package for statistical machine translation
+Copyright (C) 2013 Daniel Ortiz-Mart\'inez
+ 
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 3
+of the License, or (at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+ 
+You should have received a copy of the GNU Lesser General Public License
+along with this program; If not, see <http://www.gnu.org/licenses/>.
+*/
+ 
+/********************************************************************/
+/*                                                                  */
+/* Module: lm_ienc                                                  */
+/*                                                                  */
+/* Definitions file: lm_ienc.cc                                     */
+/*                                                                  */
+/********************************************************************/
+
+
+//--------------- Include files --------------------------------------
+
+#include "lm_ienc.h"
+
+//--------------- lm_ienc class functions
+//
+
+lm_ienc::lm_ienc():vecx_x_incr_enc<std::string,WordIndex>()
+{
+      // Introduce standard symbols
+  addHTrgCode(UNK_SYMBOL_STR,UNK_SYMBOL);
+  addHTrgCode(BOS_STR,S_BEGIN);
+  addHTrgCode(EOS_STR,S_END);
+  addHTrgCode(SP_SYM1_LM_STR,SP_SYM1_LM);
+
+      // Initialize x_object
+  WordIndex maxIdx=UNK_SYMBOL;
+  if(maxIdx<S_BEGIN) maxIdx=S_BEGIN;
+  if(maxIdx<S_END) maxIdx=S_END;
+  if(maxIdx<SP_SYM1_LM) maxIdx=SP_SYM1_LM;
+
+  x_object=maxIdx;
+}

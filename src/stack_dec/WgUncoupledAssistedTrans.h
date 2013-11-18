@@ -1,0 +1,438 @@
+/*
+thot package for statistical machine translation
+Copyright (C) 2013 Daniel Ortiz-Mart\'inez
+ 
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 3
+of the License, or (at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+ 
+You should have received a copy of the GNU Lesser General Public License
+along with this program; If not, see <http://www.gnu.org/licenses/>.
+*/
+ 
+/********************************************************************/
+/*                                                                  */
+/* Module: WgUncoupledAssistedTrans                                 */
+/*                                                                  */
+/* Prototypes file: WgUncoupledAssistedTrans.h                      */
+/*                                                                  */
+/* Description: Declares the WgUncoupledAssistedTrans template      */
+/*              class, this class implements uncoupled assisted     */
+/*              translators based on word-graphs.                   */
+/*                                                                  */
+/********************************************************************/
+
+/**
+ * @file WgUncoupledAssistedTrans.h
+ *
+ * @brief Declares the WgUncoupledAssistedTrans template class, this
+ * class implements uncoupled assisted translators based on word-graphs.
+ */
+
+#ifndef _WgUncoupledAssistedTrans_h
+#define _WgUncoupledAssistedTrans_h
+
+//--------------- Include files --------------------------------------
+
+#if HAVE_CONFIG_H
+#  include <thot_config.h>
+#endif /* HAVE_CONFIG_H */
+
+#include <StrProcUtils.h>
+#include "_assistedTrans.h"
+#include "BaseErrorCorrectingModel.h"
+#include "_stackDecoderRec.h"
+#include "NbestCorrections.h"
+#include "BaseWgProcessorForAnlp.h"
+#include <WgHandler.h>
+
+//--------------- Constants ------------------------------------------
+
+
+//--------------- Classes --------------------------------------------
+
+
+//--------------- WgUncoupledAssistedTrans template class: interface for
+//--------------- uncoupled assisted translators
+
+/**
+ * @brief The WgUncoupledAssistedTrans template class implements
+ * uncoupled assisted translators based on word-graphs.
+ */
+
+template<class SMT_MODEL,class ECM_FOR_WG>
+class WgUncoupledAssistedTrans: public _assistedTrans<SMT_MODEL>
+{
+ public:
+
+  typedef typename SMT_MODEL::Hypothesis Hypothesis;
+
+  WgUncoupledAssistedTrans(void);
+      // Constructor
+  
+      // Link statistical translation model with the decoder
+  void link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr);
+
+      // Link word-graph processor
+  void link_wgp(BaseWgProcessorForAnlp<ECM_FOR_WG>* _wgp_ptr);
+
+      // Link word-graph handler
+  void link_wgh(WgHandler* _wgh_ptr);
+
+      // Basic services
+  std::string translateWithPrefix(std::string s,
+                                  std::string pref,
+                                  RejectedWordsSet& rejectedWords=RejectedWordsSet(),
+                                  unsigned int verbose=0);
+      // Translates std::string s using pref as prefix, uncoupled version
+  std::string addStrToPrefix(std::string s,
+                             RejectedWordsSet& rejectedWords=RejectedWordsSet(),
+                             unsigned int verbose=0);
+      // Adds the string 's' to the user prefix
+  void resetPrefix(void);
+      // Resets the prefix
+
+  void set_wgp(float _wgp);
+      // Sets the word-graph pruning parameter used in uncoupled
+      // assisted translation
+
+      // Model weights functions
+  void setWeights(Vector<float> wVec);
+  unsigned int getNumWeights(void);
+  void printWeights(ostream &outS);
+
+      // clear() function
+  void clear(void);
+      // Remove all data structures used by the assisted translator
+
+      // Destructor
+  virtual ~WgUncoupledAssistedTrans();
+
+ protected:
+
+      // CAT-related data members
+  _stackDecoderRec<SMT_MODEL>* sdr_ptr;         // Pointer to a stack decoder
+
+  BaseWgProcessorForAnlp<ECM_FOR_WG>* wgp_ptr;  // Pointer to a word-graph
+                                                // processor
+
+  WordGraph* wg_ptr;  // Pointer to word-graph
+  
+  WgHandler* wgh_ptr; // Pointer to a word-graph handler
+  
+  float psutw;                   // Weight for the p(s|u,t) model used
+                                 // in CAT
+  
+  float putw;                    // Weight for the p(u|t) model used in
+                                 // CAT
+
+      // CAT-related data members
+  std::string source;
+  std::string catPrefix;
+
+  float wgp; // Word-graph pruning threshold
+
+  unsigned int number_of_results;
+
+      // Auxiliary functions
+  WordGraph* obtainWgUsingTranslator(std::string s,
+                                     bool& completeHypReachable,
+                                     unsigned int verbose=0);
+  WordGraph* obtainWgUsingWgHandler(std::string s,
+                                    bool& completeHypReachable,
+                                    unsigned int verbose=0);
+
+};
+
+//--------------- WgUncoupledAssistedTrans template class method definitions
+
+//---------------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::WgUncoupledAssistedTrans(void):_assistedTrans<SMT_MODEL>()
+{
+  psutw=1;
+  putw=1;
+  wgp=UNLIMITED_DENSITY;
+  number_of_results=1;
+  sdr_ptr=NULL;
+  wgp_ptr=NULL;
+  wgh_ptr=NULL;
+
+      // Create pointer to wordgraph
+  wg_ptr=new WordGraph;
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr)
+{
+  sdr_ptr=dynamic_cast<_stackDecoderRec<SMT_MODEL>*>(_sd_ptr);
+  if(!sdr_ptr)
+  {
+    cerr<<"Error: WgUncoupledAssistedTrans class requires a stack decoder with recombination"<<endl;
+  }
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::link_wgp(BaseWgProcessorForAnlp<ECM_FOR_WG>* _wgp_ptr)
+{
+  wgp_ptr=_wgp_ptr;
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::link_wgh(WgHandler* _wgh_ptr)
+{
+  wgh_ptr=_wgh_ptr;
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+std::string WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::translateWithPrefix(std::string s,
+                                                                                std::string pref,
+                                                                                RejectedWordsSet& rejectedWords,
+                                                                                unsigned int verbose)
+{
+      // Set catPrefix data member
+  catPrefix=pref;
+
+      // Try to obtain word-graph using word-graph handler
+  bool completeHypReachable;
+  WordGraph* wg_ptr_aux=obtainWgUsingWgHandler(s,completeHypReachable);
+  
+      // Otherwise, obtain word-graph using translator
+  if(wg_ptr_aux==NULL)
+    wg_ptr_aux=obtainWgUsingTranslator(s,completeHypReachable);
+  
+      // Prune word-graph
+  unsigned int numPrunedArcs=wg_ptr_aux->prune(wgp);
+  if(verbose)
+    cerr<<numPrunedArcs<<" arcs were pruned"<<endl;
+
+      // Remove non-useful states from word-graph
+  wg_ptr_aux->obtainWgComposedOfUsefulStates();
+  
+      // Initialize word-graph processor with word-graph
+  wgp_ptr->link_wg(wg_ptr_aux);
+  if(verbose)
+  {
+    cerr<<"Linking word-graph with word-graph processor,";
+    cerr<<" #Nodes: "<<wg_ptr_aux->numStates();
+    cerr<<" , #Arcs: "<<wg_ptr_aux->numArcs()<<endl;
+  }
+      // Set word-graph processor weights
+  wgp_ptr->set_wgw(psutw);
+  wgp_ptr->set_ecmw(putw);
+
+  if(completeHypReachable)
+  {
+    std::string result="";
+
+    NbestCorrections nbestCorrections;
+      
+        // Obtain n-best corrected translations
+    nbestCorrections=wgp_ptr->correct(catPrefix,
+                                      number_of_results,
+                                      rejectedWords,
+                                      verbose);
+        // Return the best corrected translation
+    Vector<std::string> strVec;
+    if(!nbestCorrections.empty())
+      strVec=nbestCorrections.begin()->second;
+      
+    for(unsigned int i=0;i<strVec.size();++i)
+    {
+      if(i==0) result=strVec[0];
+      else result+=" "+strVec[i];
+    }
+    return result;
+  }
+  else
+  {
+        // No translations were obtained
+    if(verbose) cerr<<"Unable to translate sentence!"<<endl;
+    std::string nullStr="";
+    return nullStr;
+  }
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+WordGraph*
+WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::obtainWgUsingWgHandler(std::string s,
+                                                                       bool& completeHypReachable,
+                                                                       unsigned int verbose/*=0*/)
+{
+  completeHypReachable=false;
+  bool found;
+  Vector<std::string> sentStrVec=StrProcUtils::stringToStringVector(s);
+  std::string wgPathStr=wgh_ptr->pathAssociatedToSentence(sentStrVec,found);
+  if(found)
+  {
+        // Load word graph
+    wg_ptr->clear();
+    wg_ptr->load(wgPathStr.c_str());
+
+        // Obtain original word graph component weights
+    Vector<pair<std::string,float> > originalWgCompWeights;
+    wg_ptr->getCompWeights(originalWgCompWeights);
+
+        // Print component weight info to the error output
+    if(verbose)
+    {
+      cerr<<"Original word graph component vector:";
+      for(unsigned int i=0;i<originalWgCompWeights.size();++i)
+        cerr<<" "<<originalWgCompWeights[i].first<<": "<<originalWgCompWeights[i].second<<";";
+      cerr<<endl;
+    }
+
+        // Set current component weights (this operation causes a
+        // complete re-scoring of the word graph arcs if there exist
+        // score component information for them)
+    Vector<pair<std::string,float> > currCompWeights;
+    SMT_MODEL* smtm_ptr=sdr_ptr->get_smt_model_ptr();
+    smtm_ptr->getWeights(currCompWeights);
+    wg_ptr->setCompWeights(currCompWeights);
+
+        // Print component weight info to the error output
+    if(verbose)
+    {
+      cerr<<"New word graph component vector:";
+      for(unsigned int i=0;i<currCompWeights.size();++i)
+        cerr<<" "<<currCompWeights[i].first<<": "<<currCompWeights[i].second<<";";
+      cerr<<endl;
+    }
+
+        // Obtain best path
+    std::set<WordGraphArcId> emptyExcludedArcsSet;
+    Vector<WordGraphArc> arcVec;
+    Score score=wg_ptr->bestPathFromFinalStateToIdx(INITIAL_STATE,emptyExcludedArcsSet,arcVec);
+
+    if(score!=SMALL_SCORE)
+      completeHypReachable=true;
+    return wg_ptr;
+  }
+  else
+    return NULL;
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+WordGraph*
+WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::obtainWgUsingTranslator(std::string s,
+                                                                        bool& completeHypReachable,
+                                                                        unsigned int /*verbose=0*/)
+{
+      // Get pointer to the statistical machine translation model
+  SMT_MODEL* smtm_ptr=sdr_ptr->get_smt_model_ptr();
+  
+      // Disable best score pruning
+  sdr_ptr->useBestScorePruning(false);
+
+      // Enable word-graph
+  if(wgp!=DISABLE_WORDGRAPH)
+    sdr_ptr->enableWordGraph();
+
+      // Obtain best translation
+  Hypothesis hyp=sdr_ptr->translate(s);
+
+      // Set flag
+  completeHypReachable=smtm_ptr->isComplete(hyp);
+  
+  return sdr_ptr->getWordGraphPtr();
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+std::string WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::addStrToPrefix(std::string s,
+                                                                           RejectedWordsSet& rejectedWords,
+                                                                           unsigned int verbose)
+{
+  NbestCorrections nbestCorrections;
+  
+      // Set word-graph processor weights
+  wgp_ptr->set_wgw(psutw);
+  wgp_ptr->set_ecmw(putw);
+
+  catPrefix=catPrefix+s;
+
+  std::string result="";
+    
+      // Obtain n-best corrected translations
+  nbestCorrections=wgp_ptr->correct(catPrefix,
+                                    number_of_results,
+                                    rejectedWords,
+                                    verbose);
+      // Return the best corrected translation
+  Vector<std::string> strVec;
+  if(!nbestCorrections.empty())
+    strVec=nbestCorrections.begin()->second;
+  for(unsigned int i=0;i<strVec.size();++i)
+  {
+    if(i==0) result=strVec[0];
+    else result+=" "+strVec[i];
+  }
+  return result;
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::resetPrefix(void)
+{
+  catPrefix.clear();
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::setWeights(Vector<float> wVec)
+{
+  if(wVec.size()>=1) psutw=wVec[0];
+  if(wVec.size()>=2) putw=wVec[1];
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+unsigned int WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::getNumWeights(void)
+{
+  return 2;
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::printWeights(ostream &outS)
+{
+  outS<<"psutw: "<<psutw<<" , ";
+  outS<<"putw: "<<putw;
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::clear(void)
+{
+  resetPrefix();
+}
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::~WgUncoupledAssistedTrans(void)
+{
+  delete wg_ptr;
+}
+
+//--------------- WgUncoupledAssistedTrans template class function definitions
+
+//---------------------------------
+template<class SMT_MODEL,class ECM_FOR_WG>
+void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::set_wgp(float _wgp)
+{
+  wgp=_wgp;
+}
+
+#endif
