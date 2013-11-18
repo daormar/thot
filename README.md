@@ -76,10 +76,8 @@ with a citation (click <a href="thot.pdf">here</a> to download the paper):
 
 <P><LI>
   Daniel Ortiz-Mart\'inez, Ismael Garc\'ia-Varea, Francisco Casacuberta. 
-<!--
   <A HREF="">"Thot: a toolkit to train phrase-based models for statistical
 machine translation"</A>.
---!>
   "Thot: a toolkit to train phrase-based models for statistical
   machine translation"
   <I>Proc. of the Tenth Machine Translation Summit</I>,
