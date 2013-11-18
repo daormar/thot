@@ -1,0 +1,22 @@
+# HOME_OF_PACKAGE PROGRAM_NAME
+/home/dortiz/smt/software/alig_models/sw_models thot_calc_swm_lgprob
+/home/dortiz/smt/software/alig_models/sw_models thot_gen_sw_model
+/home/dortiz/smt/software/alig_models/sw_models thot_sort_bin_ilextable
+/home/dortiz/smt/software/alig_models/sw_models thot_sort_bin_ihmmatable
+/home/dortiz/smt/software/alig_models/sw_models thot_sort_bin_iibm2atable
+/home/dortiz/smt/software/alig_models/sw_models thot_merge_bin_ilextable
+/home/dortiz/smt/software/alig_models/sw_models thot_merge_bin_ihmmatable
+/home/dortiz/smt/software/alig_models/sw_models thot_merge_bin_iibm2atable
+/home/dortiz/smt/software/alig_models/sw_models thot_gen_bin_lex_filter_info
+/home/dortiz/smt/software/alig_models/sw_models thot_filter_bin_ilextable
+/home/dortiz/smt/software/alig_models/sw_models thot_prune_bin_ilextable
+/home/dortiz/smt/software/alig_models/sw_models test_casmacat_alig
+/home/dortiz/smt/software/alig_models/sw_models test_casmacat_confid
+/home/dortiz/smt/software/alig_models/phrase_models thot_alig_op
+/home/dortiz/smt/software/alig_models/phrase_models thot_gen_phr_model
+/home/dortiz/smt/software/error_correction thot_wg_proc
+/home/dortiz/smt/software/stack_dec thot_dec_ms
+/home/dortiz/smt/software/stack_dec thot_aligner
+/home/dortiz/smt/software/stack_dec thot_dec_client
+/home/dortiz/smt/software/stack_dec thot_dec_server
+/home/dortiz/smt/software/stack_dec test_casmacat_engines

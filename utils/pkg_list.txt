@@ -1,0 +1,8 @@
+# HOME_OF_PACKAGE PKG_NAME
+/home/dortiz/smt/software/nlp_common nlp_common
+/home/dortiz/smt/software/incr_models incr_models
+/home/dortiz/smt/software/alig_models/sw_models sw_models
+/home/dortiz/smt/software/alig_models/phrase_models phrase_models
+/home/dortiz/smt/software/smt_preproc smt_preproc
+/home/dortiz/smt/software/error_correction error_correction
+/home/dortiz/smt/software/stack_dec stack_dec
