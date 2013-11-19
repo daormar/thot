@@ -23,7 +23,7 @@ The toolkit includes the following functionality:
 - Client-server implementation of the translation functionality
 - Single word alignment model estimation using the incremental EM algorithm
 - Scalable implementation of the different estimation algorithms using Map-Reduce
-- Integration with the [CasMaCat Workbench] [4] developed in the CasMaCat project
+- Integration with the [CasMaCat Workbench] [4] developed in the [CasMaCat project] [5]
 - ...
 
 
@@ -34,7 +34,7 @@ As future work we plan to port the code to other platforms. See the
 "Support" section of this file if you experience problems during
 compilation.
 
-It is released under the [GNU Lesser General Public License (LGPL)] [5].
+It is released under the [GNU Lesser General Public License (LGPL)] [6].
 
 
 Installation
@@ -45,7 +45,7 @@ To install Thot, follow the next sequence of steps:
 
         $ git clone https://github.com/daormar/thot.git
 
-    Or [download it in a zip file] [6]
+    Or [download it in a zip file] [7]
 
  2. "`cd`" to the directory containing the package's source code and type
     "`./reconf`"
@@ -112,9 +112,9 @@ Project documentation is being developed. Such documentation include:
 
 If you need additional help, you can:
 
-- Use the [github issue tracker] [7]
-- [Send me an e-mail] [8]
-- Join the [CasMaCat support group] [9]
+- use the [github issue tracker] [8]
+- [send me an e-mail] [9]
+- join the [CasMaCat support group] [10]
 
 Additional information about the theoretical foundations of Thot can be
 found in [Ortiz-Martínez, 2011]. One interesting feature of Thot,
@@ -153,18 +153,18 @@ Literature
 Daniel Ortiz-Martínez,
 *Advances in Fully-Automatic and Interactive Phrase-Based Statistical Machine Translation*. 
 PhD Thesis. Universidad Politécnica de Valencia. 2011. 
-Advisors: Ismael García Varea and Francisco Casacuberta. [Download] [10].
+Advisors: Ismael García Varea and Francisco Casacuberta. [Download] [11].
 
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
 *Online Learning for Interactive Statistical Machine Translation*. 
-Proceedings of the North American Chapter of the Association for Computational Linguistics 
-- Human Language Technologies (NAACL HLT), 2010. pp. 546-554. [Download] [11].
+Proceedings of the North American Chapter of the Association for Computational Linguistics - 
+Human Language Technologies (NAACL HLT), 2010. pp. 546-554. [Download] [12].
 
 
 Acknowledgements
 ----------------
 Thot is currently supported by the European Union under the [CasMaCat
-research project] [12]. Thot has also received support from the Spanish
+research project] [5]. Thot has also received support from the Spanish
 Government in a number of research projects, such as the [MIPRCV
 project] [13] that belongs to the prestigious [CONSOLIDER programme] [14].
 
@@ -176,13 +176,13 @@ Last updated: 19 November 2013,
 [2]: https://prhlt.iti.upv.es/
 [3]: http://www.upv.es/
 [4]: http://www.casmacat.eu/index.php?n=Workbench.Workbench
-[5]: http://www.gnu.org/copyleft/lgpl.html
-[6]: https://github.com/daormar/thot/archive/master.zip
-[7]: https://github.com/daormar/thot/issues
-[8]: mailto:daormar2@gmail.com
-[9]: http://groups.google.com/group/casmacat-support/boxsubscribe
-[10]: https://prhlt.iti.upv.es/aigaion2/attachments/dortiz_thesis_2011.pdf-d12d165f9a2b01b0697000ed7c08c4bc.pdf
-[11]: http://aclweb.org/anthology-new/N/N10/N10-1079.pdf
-[12]: http://www.casmacat.eu/
+[5]: http://www.casmacat.eu/
+[6]: http://www.gnu.org/copyleft/lgpl.html
+[7]: https://github.com/daormar/thot/archive/master.zip
+[8]: https://github.com/daormar/thot/issues
+[9]: mailto:daormar2@gmail.com
+[10]: http://groups.google.com/group/casmacat-support/boxsubscribe
+[11]: https://prhlt.iti.upv.es/aigaion2/attachments/dortiz_thesis_2011.pdf-d12d165f9a2b01b0697000ed7c08c4bc.pdf
+[12]: http://aclweb.org/anthology-new/N/N10/N10-1079.pdf
 [13]: http://miprcv.iti.upv.es/
 [14]: http://www.ingenio2010.es/
