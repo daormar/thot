@@ -101,8 +101,8 @@ Current Status
 --------------
 The Thot toolkit is under development. Original public versions of Thot
 date back to 2005 and did only include estimation of phrase-based
-models. By contrast, current version incorporates several new features
-that had not been previously incorporated.
+models. By contrast, current version offers several new features that
+had not been previously incorporated.
 
 Current work is mainly focused on adding the minimal documentation that
 is required to access the whole functionality implemented by the
