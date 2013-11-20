@@ -365,22 +365,21 @@ Thot 3.0.0
 
         - Phrase-based statistical machine translation decoder
 
-	- Computer-aided translation (post-edition and interactive machine
-	translation)
+	- Computer-aided translation (post-edition and interactive
+	  machine translation)
 
 	- Incremental estimation of all of the models involved in the
-	translation process
+          translation process
 
 	- Client-server implementation of the translation functionality
 
-	- Single word alignment model estimation using the incremental EM
-	algorithm
+	- Single word alignment model estimation using the incremental
+          EM algorithm
 
 	- Scalable implementation of the different estimation algorithms
-	using Map-Reduce
+	  using Map-Reduce
 
-	- Integration with the [CasMaCat Workbench] [4] developed in the
-	[CasMaCat project] [5]
+	- Integration with the CasMaCat Workbench (http://www.casmacat.eu)
 
 	- ...
 
