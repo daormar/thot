@@ -41,9 +41,10 @@ Installation
 ------------
 
 To install Thot, first you need to install the autotools (autoconf,
-autoconf-archive, and automake packages in Ubuntu). Once the autotools
-are available, you can proceed with the installation of Thot by
-following the next sequence of steps:
+autoconf-archive, and automake packages in Ubuntu). 
+
+Once the autotools are available, you can proceed with the installation
+of Thot by following the next sequence of steps:
 
  1. Obtain the package using git:
 
