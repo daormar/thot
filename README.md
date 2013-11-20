@@ -110,7 +110,7 @@ Support
 Project documentation is being developed. Such documentation include:
 
 - This README file
-- The Thot manual (`thot_manual.pdf` under the "`doc`" directory)
+- The Thot manual ("`thot_manual.pdf`" under the "`doc`" directory)
 
 If you need additional help, you can:
 
