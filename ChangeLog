@@ -1,1 +1,389 @@
+--------------------------------------------------------------------
+Thot 0.90  26th May 2004
 
+  => First working code. Models estimated from alignment vectors
+
+--------------------------------------------------------------------
+Thot 0.91  1st Jun 2004
+
+  => Estimation from alignment matrices
+
+--------------------------------------------------------------------
+Thot 0.92  6th Jul 2004
+
+     - Added a tool to perform operations between alignment matrices
+     - First version of the pML estimation
+     - Basic C++ phrase-model library implemented
+
+--------------------------------------------------------------------
+Thot 0.93  22th Jan 2005
+
+  => Several changes from the previous version:
+     - Ported to gcc 3.3.2
+     - Faster pML estimation
+     - Added bilingual segmentation functionality
+     - Sum between alignment matrices
+     - Estimation of phrase length models
+     - Bug fixes
+
+--------------------------------------------------------------------
+Thot 0.94  5th May 2005
+
+  => Modifications in the pML estimation (normalize by segmentation
+     size)
+     - bug fixes
+
+--------------------------------------------------------------------
+Thot 0.95  27th Jul 2005
+
+     - Code reorganization (modularity increased)
+     - Some documentation added
+     - Changes in command-line options
+     - Output in pharaoh-v123 input format
+
+--------------------------------------------------------------------
+Thot 0.96  2nd Sep 2005
+
+     - Use of GNU tools: automake and autoconf
+     - Ported to Windows using cygwin
+     - Ported to gcc 4.0.0
+     - bug fixes
+--------------------------------------------------------------------
+Thot 0.97a 28th Sep 2005
+
+     - PhraseCounts now implemented as a trie
+     - PhraseTModel implemented as a composition of
+       PhraseCounts and PhraseDic classes
+     - bug fixes
+--------------------------------------------------------------------
+Thot 0.97b 19th Oct 2005
+
+     - Deep reorganization of the PhraseTModel class
+     - Changes in PhraseDict class statistics
+     - Added the scripts getModelStats.sh and convGizaAligFile.pl
+
+-------------------------------------------------------------------
+Thot 0.97c 28th Nov 2005
+
+     - PhraseDict reimplemented as a trie
+
+     - The -pc option now prints the count of (f,e) and the counts
+       of e
+
+     - The -ms option allows to impose the maximum phrase-length
+       constraint over the source phrase
+
+--------------------------------------------------------------------
+Thot 0.98 17th Jan 2006
+
+     - PhraseExtractionCell is reimplemented using a trie structure.
+       This change reduces significantly the memory required by the
+       pseudo_ml estimation process
+
+     - "-mc" option (used during pml estimation) now is given in
+       millions of segmentations
+
+     - The maximum sentence length is now equal to 101 words
+
+--------------------------------------------------------------------
+Thot 0.99 29th Jan 2006
+
+     - Both, pml-estimation and the extraction of the best phrase
+       alignments now do not require extra memory to work. Because
+       of this, it is not necessary to prune the segmentations
+
+     - "-mc" option is no longer used unless the "configure" script
+       is executed with the "--disable-iterators" option
+
+--------------------------------------------------------------------
+Thot 1.0.0 Beta 25th May 2006
+
+     - thot is able to train models of an arbitrary size accessing
+       hard disk
+
+     - Both "alig_op" and "thot" programs are able to handle large
+       files (>2 GB)
+
+     - PhraseDict and PhraseCounts are implemented using the
+       TrieOfWords data structure
+
+     - PhraseTable inherits from the abstract base class
+       BasePhraseTable
+
+     - thot program is now a shell-script which internally calls the
+       binary "thot_ker"
+
+     - The name of the "alignManip" tool is changed to "alig_op"
+
+     - The verbosity of "alig_op" has been increased
+
+     - The name of the file extensions is changed:
+       .alig  -> .A3.final
+       .model -> .ttable
+       .segmLengthTable -> .seglentable
+
+     - A new class is created in order to load, print and access
+       segmentation-length tables (SegLenTable)
+
+     - Some functionality implemented by the PhraseModel_From_WBA
+       class is moved to the PhraseModel class
+
+     - awkInputString class is removed from awkInputStream.h and
+       awkInputStream.cc files
+
+     - Ported to FreeBsd
+
+--------------------------------------------------------------------
+Thot 1.1.0 Beta 04th Jul 2006
+
+     - Fixed a bug in the Bitset class
+
+     - Simple tests can be executed by typing "make check"
+
+     - Portability increased, the package was compiled
+       (but not deeply tested) in the following platforms:
+      * [x86] Linux 2.6 (Debian 3.1)
+      * [x86] NetBSD (2.0.2)
+      * [AMD64] Linux 2.6 (Fedora Core 3 on AMD64 Opteron)
+      * [Alpha] Linux 2.2 (Debian 3.0)
+      * [Power5 - OpenPower 720] SuSE Enterprise Server 9
+      * [Sparc - R220] Sun Solaris (9)
+      * [x86] OpenBSD 3.8
+      * [PPC - G5] MacOS X 10.2 SERVER Edition
+      * [x86] Solaris 9
+
+--------------------------------------------------------------------
+Thot 2.0.0 Beta 14th Feb 2007
+
+      - Implemented a parallel version of Thot
+
+      - Incorporated a new output format for the translation tables
+
+      - Added a utility to prune the translation tables
+
+      - Improvements in the implementation of the data structures
+        that store the bilingual phrases
+
+      - Incorporated a shell script to filter translation tables
+        given test corpora to be translated
+
+      - Fixed a bug when reading the alignments in GIZA++ format
+
+      - The directory for temporaries used by thot can be given
+        as a parameter
+
+      - The function "extendModel" is added to the
+        PhraseModel_From_WBA class. "extendModel" allows to
+        incrementally add new phrase pairs to the models given an
+        alignment file in .A3.final format
+
+      - The output of the conv_giza_alig_file script is improved.
+        In addition, the direction of the alignments can
+        be inverted
+
+      - Solved a bug in the shell script invert_ttable
+
+      - Added the shell script gen_seglentable_poisson which
+        allows to generate segmentation-length tables by means
+        of Poisson distributions
+
+      - Incorporated an interface for the PhraseModel class by
+        means of the BasePhraseModel abstract class
+
+--------------------------------------------------------------------
+Thot 2.0.1 Beta 8th Jun 2007
+
+      - Solved a portability issue with awk which could cause
+        execution errors using thot and pbs_thot
+
+--------------------------------------------------------------------
+Thot 2.0.2 Beta 17th Jun 2007
+
+     - Added a short tutorial for the Thot toolkit (including some
+       brief notes about how to combine Thot with Pharaoh and
+       Moses)
+
+     - Thot incorporates a new parameter: -c, which allows to
+       prune the translation table given a cutoff value for
+       the count of the source phrases
+
+     - Solved a bug in alig_op when using the -e option
+
+     - "-no-invert" parameter of alig_op has changed. The new name
+       is "-no-transpose"
+
+     - Changed the name of the "flip_ef" utility, now its name is
+       "flip_phr"
+
+     - Changes in the return values of some functions, using
+       constants defined in the file ErrorDefs.h
+
+--------------------------------------------------------------------
+Thot 2.1.0
+
+     - MAJOR CHANGE: NbestTableNode no longer works with probabilities
+       but with log-probabilities. This affects to the functions
+       getNbestTransFor_s_() and getNbestTransFor_t_()
+
+     - New option for thot and pbs_thot: -lex. The -lex option
+       incorporates two new score components in the phrase table
+
+     - The library of phrase models provides faster access to the model
+       probabilities
+
+     - Better implementation of the OrderedVector class
+
+     - The tool "filter_ttable" has been incorporated to the
+       distribution. "filter_ttable" is a new tool to filter phrase
+       models in order to apply them in machine translation tasks
+
+     - The tool "score_phr_ibm" has been incorporated to the
+       distribution. "score_phr_ibm" adds lexical scores for the
+       phrase pairs of a given phrase table. The lexical scores are
+       calculated as the score for the viterbi alignment of IBM 1 model.
+
+     - "make check" is replaced by "make installcheck" since the tool
+       checks are to be executed after installing the package
+
+     - Source and target sentences or phrases are no longer noted using
+       the letters 'e' and 'f' respectively, which are replaced by 's'
+       and 't'. The modifications affects the name of variables and
+       functions
+
+       Functions that have changed their names:
+
+       a) The scoring functions defined in BasePhraseModel: pf_e_, pe_f_,
+       have changed its names: ps_t_, pt_s_ ...
+
+       b) Functions to obtain lists of translations
+
+       The old functions cited above are maintained for backward
+       compatibility
+
+       Functions that have altered the order in which the source and
+       target sentences are given:
+
+       a) The functions defined in the "print_func" module
+
+       b) Some function members declared in the "PhraseModel_From_WBA" and
+       the "PhraseExtractionTable" classes. Three functions which were
+       modified are declared as public functions:
+
+       PhraseModel_From_WBA::obtainBestAlignment
+       PhraseExtractionTable::extractConsistentPhrases
+       PhraseExtractionTable::obtainPossibleSegmentations
+
+     - Some data types and functions names have been changed in order to
+       simplify and clarify the code:
+
+       InvNbestTransTable -> PhraseNbestTransTable
+       TransTableNodeData and InvTransTableNodeData -> PhraseTableNodeData
+       BasePhraseModel::getNbestInvTransFor_t_() -> BasePhraseModel::getNbestTransFor_t_()
+       PhraseDict::getInvTranslationsFor_t_() -> PhraseDict::getTranslationsFor_t_()
+
+     - Solved a bug in ps_t_ function defined in "PhraseModel.cc"
+
+     - Solved a bug in the alig_op tool. The bug could appear when
+       using the -f option, specifically when the prefix for the output
+       file contained directory components
+
+     - The robustness of the alig_op tool has been increased due to a
+       better management of the temporary files that are used internally
+
+--------------------------------------------------------------------
+Thot 2.1.1
+
+     - Solved a portability issue with i/o functions
+
+     - Bug fixed in the pbs_thot tool (reported by Soren Harder)
+
+     - Faster compilation
+
+     - Thot package now splits the library libphrase_model.a into two
+       files:
+         * libphrase_model.a
+         * libnlp_common.a
+
+       libphrase_model.a depends on libnlp_common.a, so both libraries
+       are needed to access the functionality provided by the package.
+
+--------------------------------------------------------------------
+Thot 2.2.0
+
+    - Solved a memory management bug in the PhraseExtractionTable class
+
+    - Solved portability issues with 64 bit processors
+
+    - Solved possible portability problems with the locales
+
+    - Added the utility "train_giza", which allows to easily train
+      IBM models using the GIZA and the mkcls tools
+
+    - Added a simple class diagram created with the program "dia" (see
+      doc/class_diag.dia)
+
+    - The hierarchy of phrase-based model classes has been modified.
+      Two new classes have been added: BaseCountPhraseModel and
+      BaseIncrPhraseModel.
+
+      The following classes have changed their names:
+
+    * PhraseModel -> _incrPhraseModel
+    * PhraseModel_From_WBA -> WbaIncrPhraseModel
+    * PhraseModelWBAParameters -> WbaIncrPhraseModelParams
+
+    - Some function names in BasePhraseModel.h and BaseIncrPhraseModel.h
+      have changed:
+
+    * pt_s_(const Vector<string> ...) -> strPt_s_(.)
+    * logpt_s_(const Vector<string> ...) -> strLogpt_s_(.)
+    * ps_t_(const Vector<string> ...) -> strPs_t_(.)
+    * logps_t_(const Vector<string> ...) -> strLogps_t_(.)
+    * getTransFor_s_(const Vector<string> ...) -> strGetTransFor_s_(.)
+    * getTransFor_t_(const Vector<string> ...) -> strGetTransFor_t_(.)
+    * getNbestTransFor_s_(const Vector<string> ...) -> strGetNbestTransFor_s_(.)
+    * getNbestTransFor_t_(const Vector<string> ...) -> strGetNbestTransFor_t_(.)
+    * addTableEntry(const Vector<string> ...) -> strAddTableEntry(.)
+    * incrCountsOfEntry(const Vector<string> ...) -> strIncrCountsOfEntry(.)
+
+--------------------------------------------------------------------
+Thot 2.2.1
+
+     - Solved some minor bugs
+
+     - Some portions of the code have been refactored
+
+     - Added the train_phr_model tool
+
+--------------------------------------------------------------------
+Thot 3.0.0
+
+	=> The project has been restarted. Backward compatibility with
+	previous versions of Thot is not ensured.
+
+	=> Lots of new features have been added:
+
+        - Phrase-based statistical machine translation decoder
+
+	- Computer-aided translation (post-edition and interactive machine
+	translation)
+
+	- Incremental estimation of all of the models involved in the
+	translation process
+
+	- Client-server implementation of the translation functionality
+
+	- Single word alignment model estimation using the incremental EM
+	algorithm
+
+	- Scalable implementation of the different estimation algorithms
+	using Map-Reduce
+
+	- Integration with the [CasMaCat Workbench] [4] developed in the
+	[CasMaCat project] [5]
+
+	- ...
+
+--------------------------------------------------------------------
+
+$Date: 2013/11/20 11:14:40 $
