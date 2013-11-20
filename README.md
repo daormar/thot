@@ -8,7 +8,7 @@ models involved in the translation process. In addition to this, Thot is
 also able to incrementally update its models in real time after
 presenting an individual sentence pair.
 
-Thot is being developed by [Daniel Ortiz-Martínez] [1]. Daniel is a
+Thot is being developed by [Daniel Ortiz-MartÃ­nez] [1]. Daniel is a
 member of the [PRHLT research group] [2] at the [Polytechnic University
 of Valencia] [3].
 
@@ -124,9 +124,9 @@ If you need additional help, you can:
 - join the [CasMaCat support group] [10]
 
 Additional information about the theoretical foundations of Thot can be
-found in [Ortiz-Martínez, 2011]. One interesting feature of Thot,
+found in [Ortiz-MartÃ­nez, 2011]. One interesting feature of Thot,
 incremental (or online) estimation of statistical models, is also
-described in [Ortiz-Martínez et al., 2010].
+described in [Ortiz-MartÃ­nez et al., 2010].
 
 
 Citation
@@ -135,7 +135,7 @@ You are welcome to use the code under the terms of the license for
 research or commercial purposes, however please acknowledge its use with
 a citation:
 
-Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
+Daniel Ortiz-MartÃ­nez, Ismael GarcÃ­a-Varea, Francisco Casacuberta. 
 *"Thot: a toolkit to train phrase-based models for statistical machine translation"*.
 Proc. of the Tenth Machine Translation Summit,
 Phuket, Thailand, September 2005.
@@ -157,12 +157,12 @@ Here is a BiBTeX entry:
 
 Literature
 ----------
-Daniel Ortiz-Martínez,
+Daniel Ortiz-MartÃ­nez,
 *Advances in Fully-Automatic and Interactive Phrase-Based Statistical Machine Translation*. 
-PhD Thesis. Universidad Politécnica de Valencia. 2011. 
-Advisors: Ismael García Varea and Francisco Casacuberta. [Download] [11].
+PhD Thesis. Universidad PolitÃ©cnica de Valencia. 2011. 
+Advisors: Ismael GarcÃ­a Varea and Francisco Casacuberta. [Download] [11].
 
-Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
+Daniel Ortiz-MartÃ­nez, Ismael GarcÃ­a-Varea, Francisco Casacuberta. 
 *Online Learning for Interactive Statistical Machine Translation*. 
 Proceedings of the North American Chapter of the Association for Computational Linguistics - 
 Human Language Technologies (NAACL HLT), 2010. pp. 546-554. [Download] [12].
