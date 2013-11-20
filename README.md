@@ -17,7 +17,7 @@ Functionality
 -------------
 The toolkit includes the following functionality:
 
-- Statistical machine translation decoder
+- Phrase-based statistical machine translation decoder
 - Computer-aided translation (post-edition and interactive machine translation)
 - Incremental estimation of all of the models involved in the translation process
 - Client-server implementation of the translation functionality
@@ -87,7 +87,9 @@ See "INSTALL" file for more information.
 
 Installation Including the CasMacat Workbench
 ---------------------------------------------
-TODO
+Thot can be combined with the CasMacat Workbench that is being developed
+in the CasMaCat project. [See this webpage] [4] to get the specific
+installation instructions.
 
 
 Current Status
@@ -169,7 +171,7 @@ Government in a number of research projects, such as the [MIPRCV
 project] [13] that belongs to the prestigious [CONSOLIDER programme] [14].
 
 
-Last updated: 19 November 2013,
+Last updated: 20 November 2013,
 [daormar2@gmail.com] [8]
 
 [1]: https://prhlt.iti.upv.es/page/member?user=dortiz
