@@ -172,7 +172,7 @@ Acknowledgements
 Thot is currently supported by the European Union under the [CasMaCat
 research project] [5]. Thot has also received support from the Spanish
 Government in a number of research projects, such as the [MIPRCV
-project] [13] that belongs to the prestigious [CONSOLIDER programme] [14].
+project] [13] that belongs to the [CONSOLIDER programme] [14].
 
 
 Last updated: 20 November 2013,
