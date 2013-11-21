@@ -69,6 +69,7 @@ SUFFIXES= .sh
 	echo "SORT="$(SORT) >> $@
 	echo "sortpars=\""$(sortpars)"\"" >> $@
 	echo "sortT=\""$(sortT)"\"" >> $@
+	echo "sortm=\""$(sortm)"\"" >> $@
 	echo "SPLIT="$(SPLIT) >> $@
 	echo "SED="$(SED) >> $@
 	echo "GREP="$(GREP) >> $@
