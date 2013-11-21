@@ -39,7 +39,6 @@ It is released under the [GNU Lesser General Public License (LGPL)] [6].
 
 Installation
 ------------
-
 To install Thot, first you need to install the autotools (autoconf,
 autoconf-archive, and automake packages in Ubuntu). 
 
