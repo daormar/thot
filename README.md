@@ -54,19 +54,19 @@ of Thot by following the next sequence of steps:
  2. "`cd`" to the directory containing the package's source code and type
     "`./reconf`"
 
- 4. Type "`./configure`" to configure the package
+ 3. Type "`./configure`" to configure the package
 
- 3. Type "`make`" to compile the package
+ 4. Type "`make`" to compile the package
 
- 4. Type "`make install`" to install the programs and any data files and
+ 5. Type "`make install`" to install the programs and any data files and
     documentation
 
- 5. You can remove the program binaries and object files from the source
+ 6. You can remove the program binaries and object files from the source
     code directory by typing "`make clean`"
 
 By default the files are installed under the /usr/local/ directory (or
 similar, depending of the OS you use); however, since Step 5 requires
-root privileges, another directory can be specified during Step 1 by
+root privileges, another directory can be specified during Step 3 by
 typing:
 
      $ configure --prefix=<absolute-installation-path>
