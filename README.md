@@ -1,4 +1,4 @@
-Thot: a toolkit for statistical machine translation
+Thot: a Toolkit for Statistical Machine Translation
 ===================================================
 *Thot* is an open source toolkit for statistical machine
 translation. Originally, Thot incorporated tools to train phrase-based
