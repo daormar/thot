@@ -65,9 +65,9 @@ of Thot by following the next sequence of steps:
     code directory by typing "`make clean`"
 
 By default the files are installed under the /usr/local/ directory (or
-similar, depending of the OS you use); however, since the installation
-step requires root privileges, another directory can be specified in the
-first step of the installation by typing:
+similar, depending of the OS you use); however, since Step 5 requires
+root privileges, another directory can be specified during Step 1 by
+typing:
 
      $ configure --prefix=<absolute-installation-path>
 
@@ -114,7 +114,7 @@ Support
 Project documentation is being developed. Such documentation include:
 
 - This README file
-- The Thot manual ("`thot_manual.pdf`" under the "`doc`" directory)
+- The Thot manual ("thot_manual.pdf" under the "doc" directory)
 
 If you need additional help, you can:
 
@@ -175,7 +175,7 @@ Government in a number of research projects, such as the [MIPRCV
 project] [13] that belongs to the [CONSOLIDER programme] [14].
 
 
-Last updated: 20 November 2013,
+Last updated: 26 November 2013,
 [daormar2@gmail.com] [8]
 
 [1]: https://prhlt.iti.upv.es/page/member?user=dortiz
