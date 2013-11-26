@@ -18,12 +18,13 @@ version()
 
 usage()
 {
-    echo "Usage: thot_pbs_gen_phr_model {-pr <int>} [-sdir <string>]"
+    echo "Usage: thot_pbs_gen_phr_model {-pr <int>}"
     echo "                {-g <string> [-pml] [-mon]"
     echo "                [-m <int> [-nospur] [-ms]]"
     echo "                [-c <float]"
     echo "                {-o <string>} [-qs <string>] [-v | -v1 | -va]"
-    echo "                [-T <string>] [-debug] [--help] [--version]"
+    echo "                [-sdir <string>] [-T <string>]"
+    echo "                [-debug] [--help] [--version]"
     echo ""
     echo "-pr <int>                       Number of processors."
     echo ""
@@ -39,7 +40,7 @@ usage()
     echo ""
     echo "-mon                            Obtain monotone model (non-monotone by default)."
     echo ""
-    echo "-m <string>                     Set maximum target phrase length (target is the"
+    echo "-m <int>                        Set maximum target phrase length (target is the"
     echo "                                target language of the GIZA alignment file)."
     echo ""
     echo "-nospur                         Do not take into account the spurious words when"
