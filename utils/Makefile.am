@@ -26,6 +26,7 @@ phrase_models_bin_scripts= phrase_models/thot_weigh_ttable		\
 phrase_models/thot_sum_st_counts phrase_models/thot_sort_ttable2	\
 phrase_models/thot_score_phr_ibm phrase_models/thot_remove_st_lengths2	\
 phrase_models/thot_put_st_lengths2 phrase_models/thot_pbs_gen_phr_model	\
+phrase_models/thot_pbs_gen_batch_phr_model				\
 phrase_models/thot_pbs_alig_op phrase_models/thot_merge_seglen_counts	\
 phrase_models/thot_merge_counts phrase_models/thot_invert_ttable	\
 phrase_models/thot_get_nbest_for_trg					\
