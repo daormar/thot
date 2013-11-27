@@ -51,18 +51,18 @@ of Thot by following the next sequence of steps:
 
     Or [download it in a zip file] [7]
 
- 2. "`cd`" to the directory containing the package's source code and type
-    "`./reconf`"
+ 2. `cd` to the directory containing the package's source code and type
+    `./reconf`
 
- 3. Type "`./configure`" to configure the package
+ 3. Type `./configure` to configure the package
 
- 4. Type "`make`" to compile the package
+ 4. Type `make` to compile the package
 
- 5. Type "`make install`" to install the programs and any data files and
+ 5. Type `make install` to install the programs and any data files and
     documentation
 
  6. You can remove the program binaries and object files from the source
-    code directory by typing "`make clean`"
+    code directory by typing `make clean`
 
 By default the files are installed under the /usr/local/ directory (or
 similar, depending of the OS you use); however, since Step 5 requires
