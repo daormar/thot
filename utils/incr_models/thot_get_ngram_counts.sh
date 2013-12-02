@@ -3,12 +3,30 @@
 
 # Extract n-gram counts from a monolingual corpus.
 
+replace_first_word_occurrence_by_unk()
+{
+    ${AWK} '{
+             for(i=1;i<=NF;++i)
+             {
+              if($i in vocab)
+              {
+               printf"%s",$i
+              }
+              else
+              {
+               vocab[$i]=1
+               printf"<unk>"
+              }
+              if(i!=NF) printf" "
+             }
+             printf"\n" 
+            }' 
+}
+
 get_counts()
 {
-    local file=$1
-    local order=$2
-    local add_unk=$3
-    ${AWK} -v n=$order -v add_unk=${add_unk}\
+    local order=$1
+    ${AWK} -v n=$order\
                  'BEGIN{
                         num_words=0
                         num_sents=0
@@ -62,13 +80,6 @@ get_counts()
                         freq["<s>"]=num_sents;
                         freq["</s>"]=num_sents;
 
-                        # Add <unk> symbol
-                        if(add_unk)
-                        {
-                         freq["<unk>"]=1
-                         ++numCorpusWords;
-                        }
-
                         for(i in freq)
                         {
                           numw=split(i,words," ")
@@ -90,7 +101,7 @@ get_counts()
                            printf"%d %d\n",freq[cad],freq[i]
                           }
                         }
-                       }' $file
+                       }'
 }
 
 print_desc()
@@ -102,9 +113,9 @@ print_desc()
 
 version()
 {
-    echo "get_ngram_counts is part of the thot package"
-    echo "thot version "${version}
-    echo "thot is GNU software written by Daniel Ortiz"
+    echo "get_ngram_counts is part of the incr_models package"
+    echo "incr_models version "${version}
+    echo "incr_models is GNU software written by Daniel Ortiz"
 }
 
 usage()
@@ -178,4 +189,8 @@ fi
 
 # parameters are ok
 
-get_counts $corpus ${n_val} ${unk_given}
+if [ $unk_given -eq 0 ]; then
+    cat $corpus | get_counts ${n_val}
+else
+    cat $corpus | replace_first_word_occurrence_by_unk | get_counts ${n_val}
+fi

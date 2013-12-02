@@ -6,6 +6,26 @@
 # arbitrary size.  The -unk option reserves a certain probability mass
 # for the unknown word.
 
+replace_first_word_occurrence_by_unk()
+{
+    ${AWK} '{
+             for(i=1;i<=NF;++i)
+             {
+              if($i in vocab)
+              {
+               printf"%s",$i
+              }
+              else
+              {
+               vocab[$i]=1
+               printf"<unk>"
+              }
+              if(i!=NF) printf" "
+             }
+             printf"\n" 
+            }' 
+}
+
 sort_counts()
 {
     # Set sort command options
@@ -30,9 +50,9 @@ print_desc()
 
 version()
 {
-    echo "get_ngram_counts_mr is part of the thot package"
-    echo "thot version "${version}
-    echo "thot is GNU software written by Daniel Ortiz"
+    echo "get_ngram_counts_mr is part of the incr_models package"
+    echo "incr_models version "${version}
+    echo "incr_models is GNU software written by Daniel Ortiz"
 }
 
 usage()
@@ -138,9 +158,20 @@ fi
 
 # Set TMP directory
 set_tmp_dir || exit 1
-    
+
+# Process -unk option
+if [ ${unk_given} -eq 1 ]; then
+    TMPF_PCORPUS=`mktemp $tdir/pcorpus.XXXXXX`
+    trap "rm ${TMPF_PCORPUS} ${TMPF_HIST_INFO} 2>/dev/null" EXIT
+
+    cat $corpus | replace_first_word_occurrence_by_unk > ${TMPF_PCORPUS}
+    proc_corpus=${TMPF_PCORPUS}
+else
+    proc_corpus=$corpus
+fi
+
 # Split corpus into chunks of fixed size
-${SPLIT} -l ${chunk_size} $corpus $TMP/
+${SPLIT} -l ${chunk_size} $proc_corpus $TMP/
 
 # Process chunks
 c=1
@@ -151,14 +182,7 @@ for i in `ls $TMP`; do
     c=`expr $c + 1`
     
     rm $TMP/$i
-
 done
-
-# Add unk symbol if requested
-if [ ${unk_given} -eq 1 ]; then
-    UNK_SYMBOL_STR="<unk>"
-    echo ${UNK_SYMBOL_STR}" 1 1 <unk_chunk>" >> $TMP/counts
-fi
 
 # Merge counts
 cat $TMP/counts | sort_counts | ${bindir}/thot_merge_ngram_counts 

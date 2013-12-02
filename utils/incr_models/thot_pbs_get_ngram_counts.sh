@@ -12,9 +12,9 @@ print_desc()
 
 version()
 {
-    echo "pbs_get_ngram_counts is part of the thot package"
-    echo "thot version "${version}
-    echo "thot is GNU software written by Daniel Ortiz"
+    echo "pbs_get_ngram_counts is part of the incr_models package"
+    echo "incr_models version "${version}
+    echo "incr_models is GNU software written by Daniel Ortiz"
 }
 
 usage()
@@ -93,6 +93,39 @@ set_shared_dir()
     return 0
 }
 
+replace_first_word_occurrence_by_unk()
+{
+    ${AWK} '{
+             for(i=1;i<=NF;++i)
+             {
+              if($i in vocab)
+              {
+               printf"%s",$i
+              }
+              else
+              {
+               vocab[$i]=1
+               printf"<unk>"
+              }
+              if(i!=NF) printf" "
+             }
+             printf"\n" 
+            }' 
+}
+
+process_unk_opt()
+{
+    if [ ${unk_given} -eq 1 ]; then
+        TMPF_PCORPUS=`mktemp $tdir/pcorpus.XXXXXX`
+        trap "rm ${TMPF_PCORPUS} ${TMPF_HIST_INFO} 2>/dev/null" EXIT
+        
+        cat $corpus | replace_first_word_occurrence_by_unk > ${TMPF_PCORPUS} || return 1
+        proc_corpus=${TMPF_PCORPUS}
+    else
+        proc_corpus=$corpus
+    fi
+}
+
 split_input()
 {
     echo "*** Splitting input: ${corpus}..." >> $SDIR/log
@@ -107,7 +140,7 @@ split_input()
     local chunk_size=`expr ${chunk_size} + 1`
 
     # Split input 
-    ${SPLIT} -l ${chunk_size} ${corpus} ${chunks_dir}/chunk\_ || return 1
+    ${SPLIT} -l ${chunk_size} ${proc_corpus} ${chunks_dir}/chunk\_ || return 1
 }
 
 remove_temp()
@@ -249,15 +282,8 @@ proc_chunk()
     # Write date to log file
     echo "** Processing chunk ${chunk} (started at "`date`")..." >> $SDIR/log
 
-    # Determine if -unk should be used
-    if [ ${unk_given} -eq 1 -a ${chunk_id} -eq 1 ]; then
-        unk_opt="-unk"
-    else
-        unk_opt=""
-    fi
-
     # Extract counts from chunk and sort them
-    $bindir/thot_get_ngram_counts_mr -c ${chunks_dir}/${chunk} -n ${n_val} -tdir $TMP ${unk_opt} | \
+    $bindir/thot_get_ngram_counts_mr -c ${chunks_dir}/${chunk} -n ${n_val} -tdir $TMP | \
         add_length_col | sort_counts | add_chunk_id > ${counts_per_chunk_dir}/${chunk}_sorted_counts ; pipe_fail || return 1
     
     # Write date to log file
@@ -401,6 +427,11 @@ if [ ${pr_given} -eq 0 ]; then
     exit 1
 fi
 
+if [ ${o_given} -eq 0 ]; then
+    echo "Error: prefix of output files not provided"
+    exit 1
+fi
+
 # parameters are ok
 
 # Set TMP directory
@@ -416,6 +447,9 @@ set_shared_dir || exit 1
 # Create log file
 echo "**** Parallel process started at: "`date` > $SDIR/log
 
+# Process -unk option
+process_unk_opt || exit 1
+
 # Split shuffled input into chunks and process them separately...
 # job_deps=""
 split_input || exit 1
@@ -423,7 +457,7 @@ split_input || exit 1
 # Declare job id list variable
 declare job_id_list=""
 
-# Generate best alignment
+# Extract counts from chunk
 chunk_id=0
 for i in `ls ${chunks_dir}/chunk\_*`; do
     # Initialize variables
