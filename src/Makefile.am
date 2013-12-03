@@ -83,8 +83,6 @@ incr_models_defs= incr_models/lm_ienc.cc incr_models/IncrNgramLM.cc	\
 incr_models/IncrInterpONgramLM.cc
 
 sw_models_h= sw_models/WeightedIncrNormSlm.h				\
-sw_models/ThotIbmMaxConfid.h sw_models/ThotIbmMaxConfidFactory.h	\
-sw_models/ThotHmmAligner.h sw_models/ThotHmmAlignerFactory.h		\
 sw_models/SwModelsSwModelTypes.h sw_models/SwModelsSlmTypes.h		\
 sw_models/SwModelsShTypes.h sw_models/SwDefs.h sw_models/_swAligModel.h	\
 sw_models/SmoothedIncrIbm1AligModel.h sw_models/SentPairCont.h		\
@@ -100,8 +98,6 @@ sw_models/BaseSentenceHandler.h sw_models/aSourceHmm.h			\
 sw_models/aSource.h sw_models/ashPidxPairHashF.h			\
 sw_models/anjm1ip_anjiMatrix.h sw_models/anjiMatrix.h
 sw_models_defs= sw_models/WeightedIncrNormSlm.cc			\
-sw_models/ThotIbmMaxConfidFactory.cc sw_models/ThotIbmMaxConfid.cc	\
-sw_models/ThotHmmAlignerFactory.cc sw_models/ThotHmmAligner.cc		\
 sw_models/SmoothedIncrIbm1AligModel.cc sw_models/_sentLengthModel.cc	\
 sw_models/SentenceHandler.cc sw_models/LightSentenceHandler.cc		\
 sw_models/IncrLexTable.cc sw_models/IncrIbm1AligModel.cc		\
