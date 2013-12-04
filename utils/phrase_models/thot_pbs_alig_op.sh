@@ -102,7 +102,7 @@ create_script()
     set | exclude_readonly_vars | exclude_bashisms > ${name}
 
     # Write functions if necessary
-    $GREP "()" ${name} > /dev/null || write_functions >> ${name}
+    $GREP "()" ${name} -A1 | $GREP "{" > /dev/null || write_functions >> ${name}
 
     # Write PBS directives
     echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
