@@ -300,7 +300,7 @@ else
     chunk_size=90000
 
         # Set TMP directory
-    TMP="${tmpdir}/thot_${PPID}_$$"
+    TMP="${tmpdir}/thot_gen_phr_model_mr_tmp_${PPID}_$$"
     if [ "$debug" != "-debug" ]; then
         trap "rm -rf $TMP 2>/dev/null" EXIT
     fi

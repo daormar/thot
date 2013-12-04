@@ -19,10 +19,10 @@ version()
 
 usage()
 {
-    echo "pbs_get_ngram_counts -pr <int>"
-    echo "                     -c <string> -o <string> -n <int> [-unk]"
-    echo "                     [-qs <string>] [-tdir <string>] [-sdir <string>]"
-    echo "                     [-debug] [--help] [--version]"
+    echo "thot_pbs_get_ngram_counts -pr <int>"
+    echo "                          -c <string> -o <string> -n <int> [-unk]"
+    echo "                          [-qs <string>] [-tdir <string>] [-sdir <string>]"
+    echo "                          [-debug] [--help] [--version]"
     echo ""
     echo "-pr <int>          : Number of processors."
     echo "-c <string>        : Corpus file (give absolute path when"
@@ -81,10 +81,10 @@ set_shared_dir()
 {
     if [ -z "$sdir" ]; then
         # if not given, SDIR will be created in the $TMP directory
-        SDIR="${TMP}/pbs_get_ngram_counts_sdir_${PPID}_$$"
+        SDIR="${TMP}/thot_pbs_get_ngram_counts_sdir_${PPID}_$$"
         mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
     else
-        SDIR="${sdir}/pbs_get_ngram_counts_sdir_${PPID}_$$"
+        SDIR="${sdir}/thot_pbs_get_ngram_counts_sdir_${PPID}_$$"
         mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
     fi
 
@@ -173,10 +173,16 @@ exclude_readonly_vars()
                         }'
 }
 
-
 exclude_bashisms()
 {
-    $AWK '{if (index($1,"=(")==0) printf"%s\n",$0}'
+    $AWK '{if(index($1,"=(")==0) printf"%s\n",$0}'
+}
+
+write_functions()
+{
+    for f in `${AWK} '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
+        $SED -n /^$f/,/^}/p $0
+    done
 }
 
 create_script()
@@ -185,11 +191,11 @@ create_script()
     local name=$1
     local command=$2
 
-    # Write environment information
+    # Write environment variables
     set | exclude_readonly_vars | exclude_bashisms > ${name}
 
-    # Write command to be executed
-    echo "${command}" >> ${name}
+    # Write functions if necessary
+    $GREP "()" ${name} > /dev/null || write_functions >> ${name}
 
     # Write PBS directives
     echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}

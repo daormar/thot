@@ -73,14 +73,40 @@ exclude_bashisms()
     $AWK '{if(index($1,"=(")==0) printf"%s\n",$0}'
 }
 
+write_functions()
+{
+    for f in `${AWK} '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
+        $SED -n /^$f/,/^}/p $0
+        # $AWK -v f=$f '{
+        #                if($1==f)
+        #                {
+        #                 printf"%s\n",$0
+        #                 found=1
+        #                }
+        #                else
+        #                {
+        #                 if(found) printf"%s\n",$0
+        #                 if($1=="}") found=0
+        #                }
+        #               }' $0
+    done
+}
+
 create_script()
 {
     # Init variables
     local name=$1
     local command=$2
 
-    # Write environment information
+    # Write environment variables
     set | exclude_readonly_vars | exclude_bashisms > ${name}
+
+    # Write functions if necessary
+    $GREP "()" ${name} > /dev/null || write_functions >> ${name}
+
+    # Write PBS directives
+    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
+    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> ${name}
 
     # Write command to be executed
     echo "${command}" >> ${name}
@@ -278,7 +304,7 @@ fi
 # parameters are ok
 
 # create TMP directory
-TMP="${tmpdir}/thot_pbs_tmp_alig_op_$$"
+TMP="${tmpdir}/thot_pbs_alig_op_tmp_$$"
 mkdir $TMP || { echo "Error: temporary directory cannot be created" ; exit 1; }
 
 # create shared directory
@@ -291,7 +317,7 @@ if [ -z "$sdir" ]; then
         trap "rm -rf $TMP 2>/dev/null" EXIT
     fi
 else
-    SDIR="${sdir}/thot_pbs_sdir_alig_op_$$"
+    SDIR="${sdir}/thot_pbs_alig_op_sdir_$$"
     mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
     
     # remove temp directories on exit
