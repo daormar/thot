@@ -247,32 +247,34 @@ int TakeParameters(int argc,char *argv[])
  /* Take the .A3.final file name */
  err=readString(argc,argv, "-g", aligFileName);
  if(err==-1)
-   {
-    aligFileName[0]=0;
-   }
+ {
+   aligFileName[0]=0;
+ }
 
- if(aligFileName[0]==0);  
- {/* Takes the phrase model files prefix */
+ if(aligFileName[0]==0)
+ {
+       /* Take the phrase model files prefix */
   err=readString(argc,argv, "-l", phraseModelFilesPrefix);
   if(err==-1)
-    {
-     phraseModelFilesPrefix[0]=0;
-    }
+  {
+    phraseModelFilesPrefix[0]=0;
+  }
  }
  
  // Verify if -g or -l option was introduced
  if(aligFileName[0]==0 && phraseModelFilesPrefix[0]==0)
- {printUsage();
-  return ERROR;
+ {
+   printUsage();
+   return ERROR;
  }
  
  /* Take the output files prefix */
  err=readString(argc,argv, "-o", outputFilesPrefix);
  if(err==-1)
-   {
-    printUsage();
-	return ERROR;
-   }
+ {
+   printUsage();
+   return ERROR;
+ }
   
  /* Take the file for obtaining the best alignments */
  err=readString(argc,argv, "-best-al", bestAligFileName);
