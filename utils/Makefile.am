@@ -74,6 +74,7 @@ SUFFIXES= .sh
 	echo "SPLIT="$(SPLIT) >> $@
 	echo "SED="$(SED) >> $@
 	echo "GREP="$(GREP) >> $@
+	echo "SED="$(SED) >> $@
 	echo "BASENAME="$(BASENAME) >> $@
 	echo "SSH="$(SSH) >> $@
 	echo "QSUB="$(QSUB) >> $@
