@@ -50,16 +50,16 @@ print_desc()
 
 version()
 {
-    echo "get_ngram_counts_mr is part of the incr_models package"
-    echo "incr_models version "${version}
-    echo "incr_models is GNU software written by Daniel Ortiz"
+    echo "get_ngram_counts_mr is part of the thot package"
+    echo "thot version "${version}
+    echo "thot is GNU software written by Daniel Ortiz"
 }
 
 usage()
 {
-    echo "get_ngram_counts_mr -c <string> -n <int> [-unk]"
-    echo "                    [-tdir <string>]"
-    echo "                    [-debug] [--help] [--version]"
+    echo "thot_get_ngram_counts_mr -c <string> -n <int> [-unk]"
+    echo "                          [-tdir <string>]"
+    echo "                          [-debug] [--help] [--version]"
     echo ""
     echo "-c <string>        : Corpus file."
     echo "-n <int>           : Order of the n-grams."

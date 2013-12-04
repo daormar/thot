@@ -53,17 +53,6 @@ usage()
     echo ""
 }
 
-pipe_fail()
-{
- # test if there is at least one command to exit with a non-zero status
-    for pipe_status_elem in ${PIPESTATUS[*]}; do 
-        if test ${pipe_status_elem} -ne 0; then 
-            return 1; 
-        fi 
-    done
-    return 0
-}
-
 exclude_readonly_vars()
 {
     ${AWK} -F "=" 'BEGIN{
@@ -79,6 +68,11 @@ exclude_readonly_vars()
                         }'
 }
 
+exclude_bashisms()
+{
+    $AWK '{if(index($1,"=(")==0) printf"%s\n",$0}'
+}
+
 create_script()
 {
     # Init variables
@@ -86,14 +80,7 @@ create_script()
     local command=$2
 
     # Write environment information
-    declare | exclude_readonly_vars > ${name}
-
-    # If sh is being used as command interpreter, functions have to be
-    # added explicitly using the -f option of the "declare" command
-    command_interp=$(basename "${BASH}")
-    if [ ${command_interp} = "sh" ]; then
-        declare -f >> ${name}
-    fi
+    set | exclude_readonly_vars | exclude_bashisms > ${name}
 
     # Write command to be executed
     echo "${command}" >> ${name}
@@ -291,7 +278,7 @@ fi
 # parameters are ok
 
 # create TMP directory
-TMP="${tmpdir}/pbs_tmp_alig_op_$$"
+TMP="${tmpdir}/thot_pbs_tmp_alig_op_$$"
 mkdir $TMP || { echo "Error: temporary directory cannot be created" ; exit 1; }
 
 # create shared directory
@@ -304,7 +291,7 @@ if [ -z "$sdir" ]; then
         trap "rm -rf $TMP 2>/dev/null" EXIT
     fi
 else
-    SDIR="${sdir}/pbs_sdir_alig_op_$$"
+    SDIR="${sdir}/thot_pbs_sdir_alig_op_$$"
     mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
     
     # remove temp directories on exit
@@ -355,8 +342,6 @@ launch $SDIR/merge_alig_op
 ### Check that all queued jobs are finished
 sync $SDIR/merge_alig_op
 
-# # merge log files
-# cat $SDIR/*.log >> ${output}.log
-
+# finish log file
 echo "">> ${output}.log
 echo "*** Parallel process finished at: " `date` >> ${output}.log

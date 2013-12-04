@@ -258,7 +258,9 @@ ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_invswm -s $tcorpus
 
     # Operate word alignments generated with the sw_models package
     $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal -sym1 ${outp}_invswm.bestal -o ${outp}_alig_op \
-        ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} 2> ${outp}_thot_pbs_alig_op.log || exit 1
+        ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} 2> /dev/null || exit 1
+    # Rename log file
+    mv ${outp}_alig_op.log ${outp}_thot_pbs_alig_op.log
 
     # Generate phrase model
     $bindir/thot_pbs_gen_phr_model -pr ${pr_val} -g ${outp}_alig_op.A3.final -m ${m_val} \

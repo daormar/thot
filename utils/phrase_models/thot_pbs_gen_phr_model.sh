@@ -77,13 +77,20 @@ usage()
 
 pipe_fail()
 {
- # test if there is at least one command to exit with a non-zero status
-    for pipe_status_elem in ${PIPESTATUS[*]}; do 
-        if test ${pipe_status_elem} -ne 0; then 
-            return 1; 
-        fi 
-    done
-    return 0
+    # If sh is being used as command interpreter, PIPESTATUS variable is
+    # not available
+    command_interp=$(basename "${BASH}")
+    if [ ${command_interp} = "sh" ]; then
+        return 0
+    else
+        # test if there is at least one command to exit with a non-zero status
+        for pipe_status_elem in ${PIPESTATUS[*]}; do 
+            if test ${pipe_status_elem} -ne 0; then 
+                return 1; 
+            fi 
+        done
+        return 0
+    fi
 }
 
 exclude_readonly_vars()
@@ -101,6 +108,11 @@ exclude_readonly_vars()
                         }'
 }
 
+exclude_bashisms()
+{
+    $AWK '{if(index($1,"=(")==0) printf"%s\n",$0}'
+}
+
 create_script()
 {
     # Init variables
@@ -108,14 +120,7 @@ create_script()
     local command=$2
 
     # Write environment information
-    declare | exclude_readonly_vars > ${name}
-
-    # If sh is being used as command interpreter, functions have to be
-    # added explicitly using the -f option of the "declare" command
-    command_interp=$(basename "${BASH}")
-    if [ ${command_interp} = "sh" ]; then
-        declare -f >> ${name}
-    fi
+    set | exclude_readonly_vars | exclude_bashisms > ${name}
 
     # Write command to be executed
     echo "${command}" >> ${name}

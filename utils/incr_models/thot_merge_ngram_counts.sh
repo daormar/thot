@@ -6,7 +6,7 @@
 # que ya no tiene duplicados.
 
 if [ $# -ne 0 ]; then
-echo "Usage: merge_ngram_counts"
+echo "Usage: thot_merge_ngram_counts"
 else
 
 ${AWK} '\

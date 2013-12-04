@@ -5,16 +5,16 @@
 
 print_desc()
 {
-    echo "pbs_get_ngram_counts written by Daniel Ortiz"
-    echo "pbs_get_ngram_counts extracts n-grams counts from a monolingual corpus"
+    echo "thot_pbs_get_ngram_counts written by Daniel Ortiz"
+    echo "thot_pbs_get_ngram_counts extracts n-grams counts from a monolingual corpus"
     echo "type \"pbs_get_ngram_counts --help\" to get usage information"
 }
 
 version()
 {
-    echo "pbs_get_ngram_counts is part of the incr_models package"
-    echo "incr_models version "${version}
-    echo "incr_models is GNU software written by Daniel Ortiz"
+    echo "pbs_get_ngram_counts is part of the thot package"
+    echo "thot version "${version}
+    echo "thot is GNU software written by Daniel Ortiz"
 }
 
 usage()
@@ -51,13 +51,20 @@ usage()
 
 pipe_fail()
 {
-    # test if there is at least one command to exit with a non-zero status
-    for pipe_status_elem in ${PIPESTATUS[*]}; do 
-        if test ${pipe_status_elem} -ne 0; then 
-            return 1; 
-        fi 
-    done
-    return 0
+    # If sh is being used as command interpreter, PIPESTATUS variable is
+    # not available
+    command_interp=$(basename "${BASH}")
+    if [ ${command_interp} = "sh" ]; then
+        return 0
+    else
+        # test if there is at least one command to exit with a non-zero status
+        for pipe_status_elem in ${PIPESTATUS[*]}; do 
+            if test ${pipe_status_elem} -ne 0; then 
+                return 1; 
+            fi 
+        done
+        return 0
+    fi
 }
 
 set_tmp_dir()
@@ -166,6 +173,12 @@ exclude_readonly_vars()
                         }'
 }
 
+
+exclude_bashisms()
+{
+    $AWK '{if (index($1,"=(")==0) printf"%s\n",$0}'
+}
+
 create_script()
 {
     # Init variables
@@ -173,14 +186,10 @@ create_script()
     local command=$2
 
     # Write environment information
-    declare | exclude_readonly_vars > ${name}
+    set | exclude_readonly_vars | exclude_bashisms > ${name}
 
-    # If sh is being used as command interpreter, functions have to be
-    # added explicitly using the -f option of the "declare" command
-    command_interp=$(basename "${BASH}")
-    if [ ${command_interp} = "sh" ]; then
-        declare -f >> ${name}
-    fi
+    # Write command to be executed
+    echo "${command}" >> ${name}
 
     # Write PBS directives
     echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
@@ -223,7 +232,7 @@ launch()
         # jobs
         local jid=$(${QSUB} -h ${depend_opt} ${qs_opts} ${scripts_dir}/${program}${suffix}.sh)
 
-            # Set value of output variable
+        # Set value of output variable
         eval "${outvar}='${jid}'"
 
         # Uncomment line to show debug information
