@@ -205,6 +205,8 @@ create_script()
     # Write PBS directives
     echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
     echo "#PBS -e ${name}.e\${PBS_JOBID}" >> ${name}
+    echo "#$ -o ${name}.o\${PBS_JOBID}" >> ${name}
+    echo "#$ -e ${name}.e\${PBS_JOBID}" >> ${name}
 
     # Write command to be executed
     echo "${command}" >> ${name}
@@ -220,7 +222,7 @@ launch()
     local suffix=$3
     local outvar=$4
 
-    if [ -z "${QSUB}" ]; then
+    if [ "${QSUB_WORKS}" = "yes" ]; then
         $program &
         eval "${outvar}=$!"
     else
@@ -315,7 +317,7 @@ sync()
     local job_ids=$1
     local pref=$2
 
-    if [ -z "${QSUB}" ]; then
+    if [ "${QSUB_WORKS}" = "yes" ]; then
         wait
         return 0
     else
@@ -589,6 +591,6 @@ fi
 job_id_list="${pc_job_ids} ${gcf_job_id} ${rt_job_id}"
 
 # Release job holds
-if [ ! -z "${QSUB}" -a ${sync_sleep} -eq 0 ]; then
+if [ ! "${QSUB_WORKS}" = "yes" -a ${sync_sleep} -eq 0 ]; then
     release_job_holds "${job_id_list}"
 fi
