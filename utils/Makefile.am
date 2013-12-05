@@ -75,9 +75,14 @@ SUFFIXES= .sh
 	echo "SED="$(SED) >> $@
 	echo "GREP="$(GREP) >> $@
 	echo "SED="$(SED) >> $@
+	echo "UNIQ="$(UNIQ) >> $@
 	echo "BASENAME="$(BASENAME) >> $@
 	echo "SSH="$(SSH) >> $@
+	echo "HEAD="$(HEAD) >> $@
+	echo "TAIL="$(TAIL) >> $@
 	echo "QSUB="$(QSUB) >> $@
+	echo "QSUB_WORKS=\""$(QSUB_WORKS)"\"" >> $@
+	echo "QSUB_TERSE_OPT=\""$(QSUB_TERSE_OPT)"\"" >> $@
 	echo "QSTAT="$(QSTAT) >> $@
 	echo "QRLS="$(QRLS) >> $@
 	cat $< >> $@

@@ -21,9 +21,45 @@ AC_PATH_PROGS(PERL, perl)
 AC_PATH_PROGS(SPLIT, split)
 AC_PATH_PROGS(SED, sed)
 AC_PATH_PROGS(GREP, grep)
+AC_PATH_PROGS(UNIQ, uniq)
+AC_PATH_PROGS(HEAD, head)
+AC_PATH_PROGS(TAIL, tail)
 AC_PATH_PROGS(BASENAME, basename)
 AC_PATH_PROGS(SSH, ssh)
 AC_PATH_PROGS(QSUB, qsub)
+
+# check that qsub works
+if test ! -z "$QSUB"; then
+ echo -n "checking whether qsub works... "
+ echo "" | ${QSUB} >/dev/null 2>&1 
+ if test $? -eq 0; then
+  QSUB_WORKS="yes"
+  echo "yes"
+ else
+  QSUB_WORKS="no"
+  echo "no"
+ fi
+else
+ QSUB_WORKS="no"
+fi
+AC_SUBST(QSUB_WORKS)
+
+# check qsub parameter (-terse)
+if test "${QSUB_WORKS}" = "yes"; then
+ echo -n "checking whether qsub accepts -terse... "
+ echo "" | ${QSUB} -terse >/dev/null 2>&1
+ if test $? -eq 0; then
+  QSUB_TERSE_OPT="-terse"
+  echo "yes"
+ else
+  QSUB_TERSE_OPT=""
+  echo "no"
+ fi 
+else
+ QSUB_TERSE_OPT=""
+fi
+AC_SUBST(QSUB_TERSE_OPT)
+
 AC_PATH_PROGS(QSTAT, qstat)
 AC_PATH_PROGS(QRLS, qrls)
 
