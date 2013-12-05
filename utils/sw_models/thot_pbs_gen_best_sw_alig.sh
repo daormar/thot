@@ -50,9 +50,9 @@ usage()
     echo "                     NOTES:"
     echo "                      a) give absolute paths when using pbs clusters."
     echo "                      b) ensure there is enough disk space in the partition."
-    echo "--sync-sleep       : Use sleep command loops to synchronize process (only for"
-    echo "                     pbs clusters). This is useful when the number of jobs that"
-    echo "                     can be executed with qsub is restricted."
+    echo "--sync-dep         : Use qsub-defined job dependencies to synchronize processes"
+    echo "                     (only for pbs clusters). Currently, the implementation"
+    echo "                     still has portability issues."
     echo "-debug             : After ending, do not delete temporary files"
     echo "                     (for debugging purposes)."
     echo "--help             : Display this help and exit."
@@ -360,7 +360,7 @@ s_given=0
 t_given=0
 o_given=0
 tdir="/tmp"
-sync_sleep=0
+sync_sleep=1
 debug=0
 
 if [ $# -eq 0 ]; then
@@ -440,7 +440,7 @@ while [ $# -ne 0 ]; do
             ;;
         "-debug") debug=1
             ;;
-        "--sync-sleep") sync_sleep=1
+        "--sync-dep") sync_sleep=0
             ;;
     esac
     shift

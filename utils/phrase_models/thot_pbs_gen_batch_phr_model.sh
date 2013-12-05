@@ -234,25 +234,25 @@ else
 
     # Generate direct single word model
 ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $scorpus -t $tcorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
-        ${cpr_opt} ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir --sync-sleep ${debug_opt} 2> /dev/null || exit 1
+        ${cpr_opt} ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} 2> /dev/null || exit 1
     # Rename log file
     mv ${outp}_swm.log ${outp}_swm_thot_pbs_gen_batch_sw_model.log
 
     # Generate best alignments for direct model
 ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_swm -s $scorpus -t $tcorpus \
-        ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir --sync-sleep ${debug_opt} 2> /dev/null
+        ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} 2> /dev/null
     # Rename log file
     mv ${outp}_swm.log ${outp}_swm_thot_pbs_gen_best_sw_alig.log
 
     # Generate inverse single word model
 ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $tcorpus -t $scorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
-        ${cpr_opt} ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir --sync-sleep ${debug_opt} 2> /dev/null || exit 1
+        ${cpr_opt} ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} 2> /dev/null || exit 1
     # Rename log file
     mv ${outp}_invswm.log ${outp}_invswm_thot_pbs_gen_batch_sw_model.log
 
     # Generate best alignments for inverse model
 ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_invswm -s $tcorpus -t $scorpus \
-        ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir --sync-sleep ${debug_opt} 2> /dev/null
+        ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} 2> /dev/null
     # Rename log file
     mv ${outp}_invswm.log ${outp}_invswm_thot_pbs_gen_best_sw_alig.log
 
