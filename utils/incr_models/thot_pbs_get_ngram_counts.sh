@@ -222,7 +222,7 @@ launch()
     local suffix=$3
     local outvar=$4
 
-    if [ "${QSUB_WORKS}" = "yes" ]; then
+    if [ "${QSUB_WORKS}" = "no" ]; then
         $program &
         eval "${outvar}=$!"
     else
@@ -317,7 +317,7 @@ sync()
     local job_ids=$1
     local pref=$2
 
-    if [ "${QSUB_WORKS}" = "yes" ]; then
+    if [ "${QSUB_WORKS}" = "no" ]; then
         wait
         return 0
     else
@@ -591,6 +591,6 @@ fi
 job_id_list="${pc_job_ids} ${gcf_job_id} ${rt_job_id}"
 
 # Release job holds
-if [ ! "${QSUB_WORKS}" = "yes" -a ${sync_sleep} -eq 0 ]; then
+if [ ! "${QSUB_WORKS}" = "no" -a ${sync_sleep} -eq 0 ]; then
     release_job_holds "${job_id_list}"
 fi
