@@ -133,8 +133,10 @@ create_script()
     $GREP "()" ${name} -A1 | $GREP "{" > /dev/null || write_functions >> ${name}
 
     # Write PBS directives
-    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
-    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> ${name}
+    stream_fname=`${BASENAME} ${name}`
+    echo "#PBS -o ${stream_fname}.o\${PBS_JOBID}" >> ${name}
+    echo "#PBS -e ${stream_fname}.e\${PBS_JOBID}" >> ${name}
+    echo "#$ -cwd"
 
     # Write command to be executed
     echo "${command}" >> ${name}
@@ -183,10 +185,10 @@ launch()
 {
     local file=$1
     ### qsub invocation
-    if [ -z "$QSUB" ]; then
+    if [ "${QSUB_WORKS}" = "no" ]; then
         $file &
     else
-        local jid=$($QSUB ${qs_opts} $file)
+        local jid=$($QSUB ${QSUB_TERSE_OPT} ${qs_opts} $file | ${TAIL} -1)
     fi
     ###################
 }

@@ -607,6 +607,7 @@ create_script()
     # Write PBS directives
     echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
     echo "#PBS -e ${name}.e\${PBS_JOBID}" >> ${name}
+    echo "#$ -cwd"
 
     # Write command to be executed
     echo "${command}" >> ${name}
@@ -622,7 +623,7 @@ launch()
     local suffix=$3
     local outvar=$4
 
-    if [ -z "$QSUB" ]; then
+    if [ "${QSUB_WORKS}" = "no" ]; then
         $program &
         eval "${outvar}=$!"
     else
@@ -632,7 +633,7 @@ launch()
             # Create script
             create_script ${scripts_dir}/${program}${suffix}.sh $program
             # Execute qsub command
-            local jid=$(${QSUB} ${qs_opts} ${scripts_dir}/${program}${suffix}.sh)
+            local jid=$(${QSUB} ${QSUB_TERSE_OPT} ${qs_opts} ${scripts_dir}/${program}${suffix}.sh | ${TAIL} -1)
 
             # Set value of output variable
             eval "${outvar}='${jid}'"
@@ -654,7 +655,7 @@ launch()
             # jobs. All jobs are released at the end of the script. This
             # ensures that job dependencies are defined over existing
             # jobs
-            local jid=$(${QSUB} -h ${depend_opt} ${qs_opts} ${scripts_dir}/${program}${suffix}.sh)
+            local jid=$(${QSUB} -h ${depend_opt} ${QSUB_TERSE_OPT} ${qs_opts} ${scripts_dir}/${program}${suffix}.sh | ${TAIL} -1)
 
             # Set value of output variable
             eval "${outvar}='${jid}'"
@@ -717,7 +718,7 @@ sync()
     local job_ids=$1
     local pref=$2
 
-    if [ -z "$QSUB" ]; then
+    if [ "${QSUB_WORKS}" = "no" ]; then
         wait
         return 0
     else
@@ -1144,6 +1145,6 @@ else
 fi
 
 # Release job holds
-if [ ! -z "${QSUB}" -a ${sync_sleep} -eq 0 ]; then
+if [ ! "${QSUB_WORKS}" = "no" -a ${sync_sleep} -eq 0 ]; then
     release_job_holds "${job_id_list}"
 fi
