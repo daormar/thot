@@ -89,7 +89,7 @@ environment called Cygwin must be downloaded and installed previously.
 See "INSTALL" file for more information.
 
 
-Installation Including the CasMacat Workbench
+Installation Including the CasMaCat Workbench
 ---------------------------------------------
 Thot can be combined with the CasMacat Workbench that is being developed
 in the CasMaCat project. [See this webpage] [4] to get the specific
