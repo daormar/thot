@@ -203,10 +203,11 @@ create_script()
     $GREP "()" ${name} -A1 | $GREP "{" > /dev/null || write_functions >> ${name}
 
     # Write PBS directives
-    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
-    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> ${name}
-    echo "#$ -o ${name}.o\${PBS_JOBID}" >> ${name}
-    echo "#$ -e ${name}.e\${PBS_JOBID}" >> ${name}
+    stream_fname=`${BASENAME} ${name}`
+    echo "#PBS -o ${stream_fname}.o\${PBS_JOBID}" >> ${name}
+    echo "#PBS -e ${stream_fname}.e\${PBS_JOBID}" >> ${name}
+    echo "#$ -o ${stream_fname}.o\${JOB_ID}" >> ${name}
+    echo "#$ -e ${stream_fname}.e\${JOB_ID}" >> ${name}
 
     # Write command to be executed
     echo "${command}" >> ${name}
