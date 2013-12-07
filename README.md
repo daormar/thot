@@ -20,6 +20,7 @@ The toolkit includes the following functionality:
 - Phrase-based statistical machine translation decoder
 - Computer-aided translation (post-edition and interactive machine translation)
 - Incremental estimation of all of the models involved in the translation process
+- Robust generation of alignments at phrase-level
 - Client-server implementation of the translation functionality
 - Single word alignment model estimation using the incremental EM algorithm
 - Scalable implementation of the different estimation algorithms using Map-Reduce
