@@ -33,7 +33,7 @@ using namespace std;
 //--------------- Constants ------------------------------------------
 
 #define TD_USER_S_DEFAULT         10
-#define TD_USER_BF_DEFAULT     false
+#define TD_USER_BE_DEFAULT     false
 #define TD_USER_G_DEFAULT          0
 #define TD_USER_NP_DEFAULT        10
 #define TD_USER_WGP_DEFAULT        UNLIMITED_DENSITY
@@ -46,7 +46,7 @@ class ThotDecoderUserPars
  public:
 
   unsigned int S;
-  bool bf;
+  bool be;
   unsigned int G;
   unsigned int np;
   float wgp;
@@ -63,7 +63,7 @@ class ThotDecoderUserPars
   void default_values(void)
   {
     S=TD_USER_S_DEFAULT;
-    bf=TD_USER_BF_DEFAULT;
+    be=TD_USER_BE_DEFAULT;
     G=TD_USER_G_DEFAULT;
     np=TD_USER_NP_DEFAULT;
     wgp=TD_USER_WGP_DEFAULT;

@@ -50,9 +50,9 @@ using namespace std;
 #define PALIG_W_DEFAULT 10
 
 #ifdef MULTI_STACK_USE_GRAN
- #define PALIG_S_DEFAULT 1024
+ #define PALIG_S_DEFAULT 128
 #else
- #define PALIG_S_DEFAULT 64
+ #define PALIG_S_DEFAULT 10
 #endif
 
 #define PALIG_A_DEFAULT 10
@@ -60,6 +60,7 @@ using namespace std;
 #define PALIG_I_DEFAULT 1
 #define PALIG_G_DEFAULT 0
 #define PALIG_H_DEFAULT NO_HEURISTIC
+#define PALIG_NOMON_DEFAULT 0
 
 //--------------- Function Declarations ------------------------------
 
@@ -85,10 +86,9 @@ CURR_MODEL_TYPE *pbtModelPtr;
 CURR_MSTACK_TYPE<CURR_MODEL_TYPE>* translatorPtr;
 bool p_option;
 bool c_option;
-bool monotoneSearch;
-bool bf;
+bool be;
 float W;
-int A,E,U,S,I,G,heuristic,verbosity,bestTrans;
+int A,E,nomon,S,I,G,heuristic,verbosity,bestTrans;
 std::string sourceSentencesFile;
 std::string refSentencesFile;
 std::string languageModelFileName;
@@ -155,15 +155,20 @@ int init_translator(void)
   pbtModelPtr->printWeights(cerr);
   cerr<<endl;
 
-      // Set monotone search flag
-  if(monotoneSearch) pbtModelPtr->setMonotoneSearch();
-  else pbtModelPtr->resetMonotoneSearch();
-
       // Set model parameters
   pbtModelPtr->set_W_par(W);
   pbtModelPtr->set_A_par(A);
   pbtModelPtr->set_E_par(E);
-  pbtModelPtr->set_U_par(U);
+        // Set non-monotonicity level
+  if(nomon==0)
+  {
+    pbtModelPtr->setMonotoneSearch();
+  }
+  else
+  {
+    pbtModelPtr->resetMonotoneSearch();
+    pbtModelPtr->set_U_par(nomon);
+  }
   pbtModelPtr->setVerbosity(verbosity);
 
       // Create a translator instance
@@ -184,7 +189,7 @@ int init_translator(void)
     translatorPtr->useBestScorePruning(true);
 
       // Set breadthFirst flag
-  translatorPtr->set_breadthFirst(bf);
+  translatorPtr->set_breadthFirst(!be);
 
 #ifndef THOT_DISABLE_REC
       // Enable word graph according to wgPruningThreshold
@@ -504,11 +509,11 @@ int TakeParameters(int argc,char *argv[])
    E=PALIG_E_DEFAULT;
  }
 
-     // Takes U parameter 
- err=readInt(argc,argv, "-U", &U);
+     // Takes nomon parameter 
+ err=readInt(argc,argv, "-nomon", &nomon);
  if(err==-1)
  {
-   U=MAX_SENTENCE_LENGTH_ALLOWED;
+   nomon=PALIG_NOMON_DEFAULT;
  }
 
      // Takes N parameter 
@@ -572,21 +577,16 @@ int TakeParameters(int argc,char *argv[])
  }
  else refSentencesFile=s;
 
-        // Take -bf option
- err=readOption(argc,argv,"-bf");
- bf=1;
+        // Take -be option
+  err=readOption(argc,argv,"-be");
  if(err==-1)
  {
-   bf=0;
+   be=0;
  }      
-
-     // Take -mon parameter
- err=readOption(argc,argv,"-mon");
- monotoneSearch=true;
- if(err==-1)
+ else
  {
-   monotoneSearch=false;
- }    
+   be=1;
+ }
 
      // Take -we parameter
  err=readFloatSeq(argc,argv, "-we", weightVec);
@@ -654,14 +654,13 @@ int TakeParameters(int argc,char *argv[])
  cerr<<"S: "<<S<<endl;   
  cerr<<"A: "<<A<<endl;
  cerr<<"E: "<<E<<endl;
- cerr<<"U: "<<U<<endl;   
  cerr<<"I: "<<I<<endl;
 #ifdef MULTI_STACK_USE_GRAN
  cerr<<"G: "<<G<<endl;
 #endif
  cerr<<"h: "<<heuristic<<endl;
- cerr<<"bf: "<<bf<<endl;
- cerr<<"monotone search: "<<monotoneSearch<<endl;
+ cerr<<"be: "<<be<<endl;
+ cerr<<"nomon: "<<nomon<<endl;
  cerr<<"weight vector:";
  for(unsigned int i=0;i<weightVec.size();++i)
    cerr<<" "<<weightVec[i];
@@ -695,10 +694,16 @@ Vector<string> stringToStringVector(string s)
  unsigned int i;	
 
  for(i=0;i<s.size();++i)
-    {
-	 if(s[i]!=' ') aux+=s[i];
-         else if(aux!="") {vs.push_back(aux); aux="";}		 
-	}
+ {
+   if(s[i]!=' ') aux+=s[i];
+   else
+   {
+     if(aux!="")
+     {
+       vs.push_back(aux); aux="";
+     }
+   }
+ }
  
  if(aux!="") vs.push_back(aux); 	
  return vs;	
@@ -753,19 +758,19 @@ void printConfig(void)
 //--------------- printUsage() function
 void printUsage(void)
 {
-  cerr << "thot_aligner   -tm <transModelPref> -lm <langModelFile> -t <testSentFile>"<<endl;
+  cerr << "thot_aligner   -tm <string> -lm <string> -t <string>"<<endl;
   cerr << "               -r <refSentFile> [-p|-c] [-b <int>] [-W <float>]"<<endl;
   cerr << "               [-S <int>] [-A <int>] [-E <int>] [-U <int>] [-I <int>]"<<endl;
-  cerr << "               [-G <int>] [-h <int>] [-bf] [-mon]"<<endl;
+  cerr << "               [-G <int>] [-h <int>] [-be] [-mon]"<<endl;
   cerr << "               [-we <float> ... <float>]"<<endl;
 #ifndef THOT_DISABLE_REC
-  cerr << "               [-wg <wordGraphFile> [-wgp <float>] ]"<<endl;
+  cerr << "               [-wg <string> [-wgp <float>] ]"<<endl;
 #endif
   cerr << "               [-v|-v1|-v2] [--help] [--version] [--config]"<<endl<<endl;
-  cerr << " -tm <transModelPref> : Prefix of the translation model files."<<endl;
-  cerr << " -lm <langModelFile>  : Language model file name."<<endl;
-  cerr << " -t <testSentFile>    : File with the test sentences."<<endl;
-  cerr << " -r <refSentFile>     : File with the reference sentences."<<endl;
+  cerr << " -tm <string>         : Prefix of the translation model files."<<endl;
+  cerr << " -lm <string>         : Language model file name."<<endl;
+  cerr << " -t <string>          : File with the test sentences."<<endl;
+  cerr << " -r <string>          : File with the reference sentences."<<endl;
   cerr << " -p                   : Treat the reference sentences as prefixes."<<endl;
   cerr << " -c                   : Verify model coverage for the reference sentence."<<endl;
 #ifdef THOT_DISABLE_REC
@@ -781,8 +786,7 @@ void printUsage(void)
   cerr << " -S <int>             : S parameter ("<<PALIG_S_DEFAULT<<" by default)."<<endl;    
   cerr << " -A <int>             : A parameter ("<<PALIG_A_DEFAULT<<" by default)."<<endl;
   cerr << " -E <int>             : E parameter ("<<PALIG_E_DEFAULT<<" by default)."<<endl;
-  cerr << " -U <int>             : Maximum number of jumped words (unrestricted by"<<endl;
-  cerr << "                        default)."<<endl;
+  cerr << " -U <int>             : Maximum number of skipped words."<<endl;
   cerr << " -I <int>             : Number of hypotheses expanded at each iteration"<<endl;
   cerr << "                        ("<<PALIG_I_DEFAULT<<" by default)."<<endl;
 #ifdef MULTI_STACK_USE_GRAN
@@ -792,12 +796,16 @@ void printUsage(void)
 #endif
   cerr << " -h <int>             : Heuristic function used: "<<NO_HEURISTIC<<"->None, "<<LOCAL_T_HEURISTIC<<"->LOCAL_T, "<<endl;
   cerr << "                        "<<LOCAL_TD_HEURISTIC<<"->LOCAL_TD ("<<PALIG_H_DEFAULT<<" by default)."<<endl;
-  cerr << " -bf                  : Execute a breadth-first algorithm."<<endl;
-  cerr << " -mon                 : Perform a monotone search."<<endl;
+  cerr << " -be                  : Execute a best-first algorithm (breadth-first search is"<<endl;
+  cerr << "                        is executed by default)."<<endl;
+  cerr << " -nomon <int>         : Perform a non-monotonic search, allowing the decoder to"<<endl;
+  cerr << "                        skip up to <int> words from the last aligned source"<<endl;
+  cerr << "                        words. If <int> is equal to zero, then a monotonic"<<endl;
+  cerr << "                        search is performed ("<<PALIG_NOMON_DEFAULT<<" is the default value)."<<endl;
   cerr << " -we <float>...<float>: Set model weights, the number of weights and their"<<endl;
   cerr << "                        meaning depends on the model type (use --config option)."<<endl;
 #ifndef THOT_DISABLE_REC
-  cerr << " -wg <wordGraphFile>  : Print word graph after each translation, the prefix" <<endl;
+  cerr << " -wg <string>         : Print word graph after each translation, the prefix" <<endl;
   cerr << "                        of the files is given as parameter."<<endl;
   cerr << " -wgp <float>         : Prune word-graph using the given threshold.\n";
   cerr << "                        Threshold=0 -> no pruning is performed.\n";

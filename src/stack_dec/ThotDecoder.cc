@@ -222,11 +222,10 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       // Set default values for parameters
   std::string tm_str="/home/dortiz/traduccion/corpus/Xerox/en_es/v14may2003/simplified2/TM/my_ef";
   std::string lm_str="/home/dortiz/traduccion/corpus/Xerox/en_es/v14may2003/simplified2/LM/e_i3_c.lm";
-  bool mon=TDEC_MON_DEFAULT;
+  unsigned int nomon=TDEC_NOMON_DEFAULT;
   float W=TDEC_W_DEFAULT;
   unsigned int A=TDEC_A_DEFAULT;
   unsigned int E=TDEC_E_DEFAULT;
-  unsigned int U=TDEC_U_DEFAULT;
   unsigned int h=TDEC_HEUR_DEFAULT;
   std::string cm_str="";
   OnlineTrainingPars onlineTrainingPars;
@@ -272,14 +271,6 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
         ++matched;
         ++i;
       }
-    }
-
-        // -mon parameter
-    if(argv_stl[i]=="-mon" && !matched)
-    {
-      cerr<<"-mon parameter was given (not given by default)"<<endl;
-      mon=true;
-      ++matched;
     }
 
         // -W parameter
@@ -349,28 +340,28 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
         ++i;
       }
     }
-        // -U parameter
-    if(argv_stl[i]=="-U" && !matched)
+        // -nomon parameter
+    if(argv_stl[i]=="-nomon" && !matched)
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -U parameter."<<endl;
+        cerr<<"Error: no value for -nomon parameter."<<endl;
         return ERROR;
       }
       else
       {
-        cerr<<"-U parameter changed from \""<<U<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
-        U=atoi(argv_stl[i+1].c_str());
+        cerr<<"-nomon parameter changed from \""<<nomon<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        nomon=atoi(argv_stl[i+1].c_str());
         ++matched;
         ++i;
       }
     }
 
-        // -bf parameter
-    if(argv_stl[i]=="-bf" && !matched)
+        // -be parameter
+    if(argv_stl[i]=="-be" && !matched)
     {
-      cerr<<"-bf parameter given (not given by default)"<<endl;
-      tdup.bf=true;
+      cerr<<"-be parameter given (not given by default)"<<endl;
+      tdup.be=true;
       ++matched;
     }
 
@@ -621,8 +612,8 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
   ret=load_lm(lm_str.c_str(),verbose);
   if(ret==ERROR) return ERROR;
 
-      // Set monotonicity
-  setMonotonicity(mon,verbose);
+      // Set non-monotonicity level
+  setNonMonotonicity(nomon,verbose);
 
       // Set W parameter
   set_W(W,verbose);
@@ -632,9 +623,6 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
 
       // Set E parameter
   set_E(E,verbose);
-
-      // Set U parameter
-  set_U(U,verbose);
 
       // Set h parameter
   set_h(h,verbose);
@@ -664,8 +652,8 @@ int ThotDecoder::initUserPars(int user_id,
       // Set S parameter
   set_S(user_id,tdup.S,verbose);
 
-      // Set bf flag
-  set_bf(user_id,tdup.bf,verbose);
+      // Set be flag
+  set_be(user_id,tdup.be,verbose);
 
       // Set G parameter
   int ret=set_G(user_id,tdup.G,verbose);
@@ -1281,18 +1269,27 @@ bool ThotDecoder::sentPairVerCov(int user_id,
 }
 
 //--------------------------
-void ThotDecoder::setMonotonicity(int mon,
-                                  int verbose/*=0*/)
+void ThotDecoder::setNonMonotonicity(int nomon,
+                                     int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
   if(verbose)
   {
-    cerr<<"Monotonicity is now set to "<<mon<<endl;
+    cerr<<"Non-monotonicity is now set to "<<nomon<<endl;
   }
-  if(mon) tdCommonVars.smtModelPtr->setMonotoneSearch();
-  else tdCommonVars.smtModelPtr->resetMonotoneSearch();
+
+      // Set appropriate model parameters
+  if(nomon==0)
+  {
+    tdCommonVars.smtModelPtr->setMonotoneSearch();
+  }
+  else
+  {
+    tdCommonVars.smtModelPtr->resetMonotoneSearch();
+    tdCommonVars.smtModelPtr->set_U_par(nomon);
+  }
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1300,7 +1297,7 @@ void ThotDecoder::setMonotonicity(int mon,
 
 //--------------------------
 void ThotDecoder::set_W(float _W,
-                             int verbose/*=0*/)
+                        int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
@@ -1373,25 +1370,8 @@ void ThotDecoder::set_E(unsigned int _E,
 }
 
 //--------------------------
-void ThotDecoder::set_U(unsigned int _U,
-                        int verbose/*=0*/)
-{
-  pthread_mutex_lock(&atomic_op_mut);
-  /////////// begin of mutex 
-
-  if(verbose)
-  {
-    cerr<<"U parameter is set to "<<_U<<endl;
-  }
-  tdCommonVars.smtModelPtr->set_U_par(_U);
-
-  /////////// end of mutex 
-  pthread_mutex_unlock(&atomic_op_mut);
-}
-
-//--------------------------
-void ThotDecoder::set_bf(int user_id,
-                         int _bf,
+void ThotDecoder::set_be(int user_id,
+                         int _be,
                          int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1403,9 +1383,9 @@ void ThotDecoder::set_bf(int user_id,
 
   if(verbose)
   {
-    cerr<<"bf parameter is set to "<<_bf<<endl;
+    cerr<<"be parameter is set to "<<_be<<endl;
   }
-  tdPerUserVarsVec[idx].translatorPtr->set_breadthFirst(_bf);
+  tdPerUserVarsVec[idx].translatorPtr->set_breadthFirst(!_be);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);

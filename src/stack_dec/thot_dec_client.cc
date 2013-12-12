@@ -343,13 +343,13 @@ void printUsage(void)
   cerr<<"                          [--help] [--version]\n\n";
   cerr<<"-i <string>               Set IP address of the server.\n\n";
   cerr<<"-p <int>                  Server port.\n\n";
-  cerr<<"-uid <int>                Set user id ("<<DEFAULT_USER_ID<<" by default)\n\n";
+  cerr<<"-uid <int>                Set user id ("<<DEFAULT_USER_ID<<" by default).\n\n";
   cerr<<"-tr <srcsent> <refsent>   Train server models given a sentence pair.\n\n";
   // cerr<<"-tre <srcsent> <refsent>  Train error correcting model given a string pair.\n\n";
   cerr<<"-t <string>               Translate sentence.\n\n";
   cerr<<"-c <srcsent> <refsent>    Verify model coverage for reference sentence.\n\n";
-  cerr<<"-sc <string>              Start CAT system for the sentence \"sent\" using null\n";
-  cerr<<"                          string as prefix.\n\n";
+  cerr<<"-sc <string>              Start CAT system for the given sentence, using the\n";
+  cerr<<"                          null string as prefix.\n\n";
   cerr<<"-ap <string>              Add string to prefix.\n\n";
   cerr<<"-rp <string>              Reset prefix.\n\n";
   cerr<<"-clear                    Clear loaded models.\n\n";

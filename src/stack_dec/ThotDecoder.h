@@ -54,12 +54,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Constants ------------------------------------------
 
 // Default parameter values
-#define TDEC_MON_DEFAULT    false
 #define TDEC_W_DEFAULT          0.4
 #define TDEC_A_DEFAULT         10
 #define TDEC_E_DEFAULT          2
-#define TDEC_U_DEFAULT         10
 #define TDEC_HEUR_DEFAULT       LOCAL_TD_HEURISTIC
+#define TDEC_NOMON_DEFAULT      0
 
 #define NBEST_LIST_SIZE_FOR_LLWEIGHT_UPDATE 1000
 #define MINIMUM_WORD_LENGTH_TO_EXPAND 1    // Define the minimum
@@ -198,8 +197,8 @@ class ThotDecoder
   void decrease_non_atomic_ops_running(void);
 
       // Functions to set decoder parameters
-  void setMonotonicity(int mon,
-                       int verbose=0);
+  void setNonMonotonicity(int nomon,
+                          int verbose=0);
   void set_W(float _W,
              int verbose=0);
   void set_S(int user_id,
@@ -209,10 +208,8 @@ class ThotDecoder
              int verbose=0);
   void set_E(unsigned int _E,
              int verbose=0);
-  void set_U(unsigned int _U,
-             int verbose=0);
-  void set_bf(int user_id,
-              int _bf,
+  void set_be(int user_id,
+              int _be,
               int verbose=0);
   bool set_G(int user_id,
              unsigned int _G,
