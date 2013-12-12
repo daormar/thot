@@ -5,4 +5,5 @@
 /home/dortiz/smt/software/alig_models/phrase_models phrase_models
 /home/dortiz/smt/software/smt_preproc smt_preproc
 /home/dortiz/smt/software/error_correction error_correction
+/home/dortiz/smt/software/downhill_simplex downhill_simplex
 /home/dortiz/smt/software/stack_dec stack_dec

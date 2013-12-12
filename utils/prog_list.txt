@@ -1,4 +1,5 @@
 # HOME_OF_PACKAGE PROGRAM_NAME
+/home/dortiz/smt/software/incr_models thot_ilm_perp
 /home/dortiz/smt/software/alig_models/sw_models thot_calc_swm_lgprob
 /home/dortiz/smt/software/alig_models/sw_models thot_gen_sw_model
 /home/dortiz/smt/software/alig_models/sw_models thot_sort_bin_ilextable
@@ -15,7 +16,9 @@
 /home/dortiz/smt/software/alig_models/phrase_models thot_alig_op
 /home/dortiz/smt/software/alig_models/phrase_models thot_gen_phr_model
 /home/dortiz/smt/software/error_correction thot_wg_proc
+/home/dortiz/smt/software/downhill_simplex thot_dhs_step_by_step_min
 /home/dortiz/smt/software/stack_dec thot_dec_ms
+/home/dortiz/smt/software/stack_dec thot_calc_bleu
 /home/dortiz/smt/software/stack_dec thot_aligner
 /home/dortiz/smt/software/stack_dec thot_dec_client
 /home/dortiz/smt/software/stack_dec thot_dec_server
