@@ -20,7 +20,10 @@ version()
 usage()
 {
     echo "thot_dhs_min       [-tdir <string>] -va <float> ... <float>"
-    echo "                   [-iv <float> ... <float>] [-l <float>]"
+    echo "                   [-iv <float> ... <float>]"
+    if [ "${USE_NR_ROUTINES}" = "yes" ]; then
+    echo "                   [-l <float>] [-b <float>]"
+    fi
     echo "                   -u <string> -o <string> [-ftol <float>]"
     echo "                   [-r <string>] [-debug] [-v] [--help] [--version]"
     echo " -tdir <string>       : Absolute path of a directory for storing temporary"

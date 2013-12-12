@@ -372,7 +372,7 @@ void printDesc(void)
 void printUsage(void)
 {
   cerr << "thot_dhs_step_by_step_min  -va <float> ... <float>"<<endl;
-  cerr << "                           [-iv <float> ... <float>] [-l <float>]"<<endl;
+  cerr << "                           [-iv <float> ... <float>]"<<endl;
   cerr << "                           -i <string> [-ftol <float>]"<<endl;
   cerr << "                           [-v] [--help] [--version]"<<endl<<endl;
   cerr << " -va <float>...<float>: Set fixed and non-fixed variable values."<<endl;
