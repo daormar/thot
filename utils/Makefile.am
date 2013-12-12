@@ -4,7 +4,7 @@ error_correction downhill_simplex stack_dec
 bin_SCRIPTS = $(nlp_common_bin_scripts) $(incr_models_bin_scripts)	\
 $(sw_models_bin_scripts) $(phrase_models_bin_scripts)			\
 $(smt_preproc_bin_scripts) $(error_correction_bin_scripts)		\
-$(stack_dec_bin_scripts)
+$(downhill_simplex_bin_scripts) $(stack_dec_bin_scripts)
 
 nlp_common_bin_scripts= nlp_common/thot_shuffle	\
 nlp_common/thot_obtain_info_from_verbose_ppl
