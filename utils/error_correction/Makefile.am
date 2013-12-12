@@ -1,1 +1,2 @@
-EXTRA_DIST= thot_export_wordgraph.sh
+EXTRA_DIST= thot_rescore_nbest.sh thot_obtain_best_trans_from_nbl.sh	\
+thot_merge_nbest_list.sh thot_export_wordgraph.sh

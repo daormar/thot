@@ -8,10 +8,11 @@ thot_dec_server_pars.h thot_dec_server.cc ThotDecoderUserPars.h		\
 ThotDecoderState.h ThotDecoderPerUserVars.h ThotDecoder.h		\
 ThotDecoderCommonVars.h ThotDecoderClient.h ThotDecoderClient.cc	\
 ThotDecoder.cc thot_dec_ms.cc thot_dec_client_pars.h thot_dec_client.cc	\
-thot_aligner.cc test_casmacat_engines.cc SwModelPars.h SwModelInfo.h	\
-StackDecWgProcessorForAnlpTypes.h StackDecSwModelTypes.h		\
-StackDecPbModelTypes.h _stack_decoder_statistics.h _stackDecoderRec.h	\
-_stackDecoder.h StackDecLmTypes.h StackDecEcModelTypes.h		\
+thot_calc_bleu.cc thot_aligner.cc test_casmacat_engines.cc		\
+SwModelPars.h SwModelInfo.h StackDecWgProcessorForAnlpTypes.h		\
+StackDecSwModelTypes.h StackDecPbModelTypes.h				\
+_stack_decoder_statistics.h _stackDecoderRec.h _stackDecoder.h		\
+StackDecLmTypes.h StackDecEcModelTypes.h				\
 StackDecEcModelForNbUcatTypes.h SourceSegmentation.h SmtStack.h		\
 _smtStack.h SmtMultiStackRec.h _smtMultiStack.h SmtModelTypes.h		\
 _smtModel.h SmtDefs.h ScoreCompDefs.h _phrSwTransModel.h PhrScoreInfo.h	\
@@ -28,8 +29,9 @@ _phraseHypothesis.h PhraseCacheTable.h _phraseBasedTransModel.h		\
 OnlineTrainingPars.h NgramCacheTable.h _nbUncoupledAssistedTrans.h	\
 MultiStackTypes.h multi_stack_decoder_rec.h LangModelPars.h		\
 LangModelInfo.h HypStateDict.h HypStateDictData.h HypSortCriterion.h	\
-client_server_defs.h CatDefs.h BaseStackDecoder.h BaseSmtStack.h	\
-BaseSmtMultiStack.h BaseSmtModel.h BasePhraseHypothesisRec.h		\
-BasePhraseHypothesis.h BasePbTransModelStats.h BasePbTransModel.h	\
-BaseHypState.h BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h	\
+client_server_defs.h CatDefs.h bleu.h bleu.cc BaseStackDecoder.h	\
+BaseSmtStack.h BaseSmtMultiStack.h BaseSmtModel.h			\
+BasePhraseHypothesisRec.h BasePhraseHypothesis.h			\
+BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
+BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h			\
 BaseAssistedTrans.h AssistedTransTypes.h _assistedTrans.h

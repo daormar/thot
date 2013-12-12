@@ -1,16 +1,17 @@
 SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
-error_correction stack_dec
+error_correction downhill_simplex stack_dec
 
 bin_SCRIPTS = $(nlp_common_bin_scripts) $(incr_models_bin_scripts)	\
 $(sw_models_bin_scripts) $(phrase_models_bin_scripts)			\
 $(smt_preproc_bin_scripts) $(error_correction_bin_scripts)		\
 $(stack_dec_bin_scripts)
 
-nlp_common_bin_scripts= nlp_common/thot_shuffle
+nlp_common_bin_scripts= nlp_common/thot_shuffle	\
+nlp_common/thot_obtain_info_from_verbose_ppl
 
 incr_models_bin_scripts= incr_models/thot_pbs_get_ngram_counts		\
 incr_models/thot_merge_ngram_counts incr_models/thot_get_ngram_counts	\
-incr_models/thot_get_ngram_counts_mr
+incr_models/thot_get_ngram_counts_mr incr_models/thot_dhs_trgfunc_iolm
 
 sw_models_bin_scripts= sw_models/thot_prune_text_ilextable		\
 sw_models/thot_pbs_gen_best_sw_alig					\
@@ -38,27 +39,24 @@ phrase_models/thot2pidttable
 
 smt_preproc_bin_scripts= 
 
-error_correction_bin_scripts= error_correction/thot_export_wordgraph
+error_correction_bin_scripts= error_correction/thot_rescore_nbest	\
+error_correction/thot_obtain_best_trans_from_nbl			\
+error_correction/thot_merge_nbest_list					\
+error_correction/thot_export_wordgraph
 
-stack_dec_bin_scripts= stack_dec/thot_pbs_dec_ms
+downhill_simplex_bin_scripts= downhill_simplex/thot_dhs_min
+
+stack_dec_bin_scripts= stack_dec/thot_pbs_dec_ms		\
+stack_dec/thot_dhs_smt_trgfunc stack_dec/thot_dhs_cat_trgfunc	\
+stack_dec/thot_conf_interv_cat stack_dec/thot_cat_using_client	\
+stack_dec/thot_calc_wer
 
 CLEANFILES = $(bin_SCRIPTS)
 
 EXTRA_DIST = 
 
-# Build using pattern rules (GNU make)
-# % : %.sh
-# 	rm -f $@
-# 	echo "#! " $(BASH) > $@
-# 	echo "pkgname=\""$(PACKAGE_NAME)"\"" >> $@
-# 	echo "version=\""$(PACKAGE_VERSION)"\"" >> $@
-# 	echo "bindir="$(prefix)/bin/ >> $@
-# 	echo "AWK="$(AWK) >> $@
-# 	cat $< >> $@
-# 	chmod ugo+x $@
-
 # Build using suffix rules (portable)
-SUFFIXES= .sh
+SUFFIXES= .sh .pl
 
 .sh :
 	rm -f $@
@@ -85,5 +83,12 @@ SUFFIXES= .sh
 	echo "QSUB_TERSE_OPT=\""$(QSUB_TERSE_OPT)"\"" >> $@
 	echo "QSTAT="$(QSTAT) >> $@
 	echo "QRLS="$(QRLS) >> $@
+	cat $< >> $@
+	chmod ugo+x $@
+
+.pl :
+	$(PERL) -c $<
+	rm -f $@
+	echo "#! " $(PERL)  > $@
 	cat $< >> $@
 	chmod ugo+x $@

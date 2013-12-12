@@ -6,25 +6,27 @@ ZLIB=@ZLIB@
 AUTOMAKE_OPTIONS = subdir-objects
 
 SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
-error_correction stack_dec
+error_correction downhill_simplex stack_dec
 
 if CASMACAT_LIB_ENABLED
-bin_PROGRAMS = thot_calc_swm_lgprob thot_gen_sw_model			\
+bin_PROGRAMS = thot_ilm_perp thot_calc_swm_lgprob thot_gen_sw_model	\
 thot_sort_bin_ilextable thot_sort_bin_ihmmatable			\
 thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
 thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
 thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
 thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
-thot_dec_ms thot_aligner thot_dec_client thot_dec_server
+thot_dhs_step_by_step_min thot_dec_ms thot_aligner thot_dec_client	\
+thot_dec_server thot_calc_bleu
 
 else
-bin_PROGRAMS = thot_calc_swm_lgprob thot_gen_sw_model			\
+bin_PROGRAMS = thot_ilm_perp thot_calc_swm_lgprob thot_gen_sw_model	\
 thot_sort_bin_ilextable thot_sort_bin_ihmmatable			\
 thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
 thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
 thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
 thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
-thot_dec_ms thot_aligner thot_dec_client thot_dec_server
+thot_dhs_step_by_step_min thot_dec_ms thot_aligner thot_dec_client	\
+thot_dec_server thot_calc_bleu
 endif
 
 if CASMACAT_LIB_ENABLED
@@ -37,7 +39,10 @@ endif
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			\
 -I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models	\
 -I$(srcdir)/smt_preproc -I$(srcdir)/error_correction			\
--I$(srcdir)/stack_dec -I$(CASMACAT_SERVER_LIB_HOME)/src/include
+-I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec			\
+-I$(CASMACAT_SERVER_LIB_HOME)/src/include
+
+AM_CFLAGS= $(AM_CXXFLAGS)
 
 LDADD = $(LGMP) $(ZLIB)
 
@@ -190,8 +195,15 @@ error_correction/EditDistForStr.cc					\
 error_correction/_editDistBasedEcm.cc					\
 error_correction/BaseErrorCorrectingModel.cc
 
+downhill_simplex_h= downhill_simplex/step_by_step_dhs.h
+downhill_simplex_defs= downhill_simplex/step_by_step_dhs.c
+
 stack_dec_h= stack_dec/WordPredictor.h stack_dec/WordPenaltyModel.h	\
-stack_dec/WgUncoupledAssistedTrans.h stack_dec/TreatCovProblemsPars.h	\
+stack_dec/WgUncoupledAssistedTrans.h stack_dec/UserNameToUserIdMap.h	\
+stack_dec/TreatCovProblemsPars.h stack_dec/ThotMtFactoryInitPars.h	\
+stack_dec/ThotMtFactory.h stack_dec/ThotMtEngine.h			\
+stack_dec/ThotImtSession.h stack_dec/ThotImtFactoryInitPars.h		\
+stack_dec/ThotImtFactory.h stack_dec/ThotImtEngine.h			\
 stack_dec/ThotDecoderUserPars.h stack_dec/ThotDecoderState.h		\
 stack_dec/ThotDecoderPerUserVars.h stack_dec/ThotDecoder.h		\
 stack_dec/ThotDecoderCommonVars.h stack_dec/ThotDecoderClient.h		\
@@ -222,7 +234,7 @@ stack_dec/_nbUncoupledAssistedTrans.h stack_dec/MultiStackTypes.h	\
 stack_dec/multi_stack_decoder_rec.h stack_dec/LangModelPars.h		\
 stack_dec/LangModelInfo.h stack_dec/HypStateDict.h			\
 stack_dec/HypStateDictData.h stack_dec/HypSortCriterion.h		\
-stack_dec/client_server_defs.h stack_dec/CatDefs.h			\
+stack_dec/client_server_defs.h stack_dec/CatDefs.h stack_dec/bleu.h	\
 stack_dec/BaseStackDecoder.h stack_dec/BaseSmtStack.h			\
 stack_dec/BaseSmtMultiStack.h stack_dec/BaseSmtModel.h			\
 stack_dec/BasePhraseHypothesisRec.h stack_dec/BasePhraseHypothesis.h	\
@@ -231,13 +243,16 @@ stack_dec/BaseHypState.h stack_dec/BaseHypothesisRec.h			\
 stack_dec/BaseHypothesis.h stack_dec/BaseAssistedTrans.h		\
 stack_dec/AssistedTransTypes.h stack_dec/_assistedTrans.h
 stack_dec_defs= stack_dec/WordPredictor.cc				\
-stack_dec/WordPenaltyModel.cc stack_dec/ThotDecoderClient.cc		\
+stack_dec/WordPenaltyModel.cc stack_dec/UserNameToUserIdMap.cc		\
+stack_dec/ThotMtFactory.cc stack_dec/ThotMtEngine.cc			\
+stack_dec/ThotImtSession.cc stack_dec/ThotImtFactory.cc			\
+stack_dec/ThotImtEngine.cc stack_dec/ThotDecoderClient.cc		\
 stack_dec/ThotDecoder.cc stack_dec/PhrScoreInfo.cc			\
 stack_dec/PhrNbestTransTableRefKey.cc					\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\
-stack_dec/BaseHypState.cc
+stack_dec/bleu.cc stack_dec/BaseHypState.cc
 
 if CASMACAT_LIB_ENABLED
 casmacat_engines_h= stack_dec/UserNameToUserIdMap.h		\
@@ -258,9 +273,13 @@ thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(sw_models_h) $(sw_models_defs)	\
 $(phrase_models_h) $(phrase_models_defs) $(smt_preproc_h)		\
 $(smt_preproc_defs) $(error_correction_h) $(error_correction_defs)	\
-$(stack_dec_h) $(stack_dec_defs)
+$(downhill_simplex_h) $(downhill_simplex_defs) $(stack_dec_h)		\
+$(stack_dec_defs)
 
 # programs
+thot_ilm_perp_SOURCES = incr_models/thot_ilm_perp.cc
+thot_ilm_perp_LDFLAGS = libthot.la
+
 thot_calc_swm_lgprob_SOURCES = sw_models/thot_calc_swm_lgprob.cc
 thot_calc_swm_lgprob_LDFLAGS = libthot.la
 
@@ -305,6 +324,9 @@ thot_wg_proc_SOURCES = error_correction/thot_wg_proc_pars.h	\
 error_correction/thot_wg_proc.cc
 thot_wg_proc_LDFLAGS = libthot.la
 
+thot_dhs_step_by_step_min_SOURCES = downhill_simplex/thot_dhs_step_by_step_min.cc
+thot_dhs_step_by_step_min_LDFLAGS = libthot.la
+
 thot_dec_ms_SOURCES = stack_dec/thot_dec_ms.cc
 thot_dec_ms_LDFLAGS = libthot.la
 
@@ -319,6 +341,9 @@ thot_dec_server_SOURCES = stack_dec/thot_dec_server_pars.h	\
 stack_dec/thot_dec_server.cc
 thot_dec_server_LDFLAGS = libthot.la
 
+thot_calc_bleu_SOURCES = stack_dec/thot_calc_bleu.cc
+thot_calc_bleu_LDFLAGS = libthot.la
+
 if CASMACAT_LIB_ENABLED
 # test_casmacat_engines_SOURCES = stack_dec/test_casmacat_engines.cc
 # test_casmacat_engines_LDFLAGS = libthot_casmacat.la libthot.la
@@ -327,8 +352,8 @@ endif
 # include headers
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
 $(sw_models_h) $(phrase_models_h) $(smt_preproc_h)			\
-$(error_correction_h) $(stack_dec_h) $(casmacat_engines_h)		\
-$(casmacat_aligner_h) $(casmacat_confid_h)
+$(error_correction_h) $(downhill_simplex_h) $(stack_dec_h)		\
+$(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
 
 # libraries
 libthot_la_SOURCES= $(thot_sources) 
