@@ -43,7 +43,7 @@ usage()
     echo "                        a set of variables."
     echo " -o <string>          : Set output files prefix name."
     echo " -ftol <float>        : Fractional convergence tolerance"
-    echo "                        (0.01 by default)."
+    echo "                        (${ftol} by default)."
     echo " -r <string>          : Resume weight adjustment using file <string> containing"
     echo "                        a previously generated adj.img file."
     echo " -v                   : Verbose mode."
@@ -76,7 +76,13 @@ lambda_opt=""
 bias_opt=""
 u_given=0
 o_given=0
-ftol=0.01
+
+if [ "${USE_NR_ROUTINES}" = "yes" ]; then
+    ftol=0.01
+else
+    ftol=0.0001
+fi
+
 r_given=0
 verbose_opt=""
 debug=""
