@@ -55,7 +55,7 @@ usage()
 ########
 pipe_fail()
 {
- # test if there is at least one command to exit with a non-zero status
+    # test if there is at least one command to exit with a non-zero status
     for pipe_status_elem in ${PIPESTATUS[*]}; do 
         if test ${pipe_status_elem} -ne 0; then 
             echo "Error while executing script, see server output" >&2

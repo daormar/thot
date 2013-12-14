@@ -77,20 +77,13 @@ usage()
 
 pipe_fail()
 {
-    # If sh is being used as command interpreter, PIPESTATUS variable is
-    # not available
-    command_interp=$(basename "${BASH}")
-    if [ ${command_interp} = "sh" ]; then
-        return 0
-    else
-        # test if there is at least one command to exit with a non-zero status
-        for pipe_status_elem in ${PIPESTATUS[*]}; do 
-            if test ${pipe_status_elem} -ne 0; then 
-                return 1; 
-            fi 
-        done
-        return 0
-    fi
+    # test if there is at least one command to exit with a non-zero status
+    for pipe_status_elem in ${PIPESTATUS[*]}; do 
+        if test ${pipe_status_elem} -ne 0; then 
+            return 1; 
+        fi 
+    done
+    return 0
 }
 
 exclude_readonly_vars()
@@ -136,7 +129,7 @@ create_script()
     stream_fname=`${BASENAME} ${name}`
     echo "#PBS -o ${stream_fname}.o\${PBS_JOBID}" >> ${name}
     echo "#PBS -e ${stream_fname}.e\${PBS_JOBID}" >> ${name}
-    echo "#$ -cwd"
+    echo "#$ -cwd" >> ${name}
 
     # Write command to be executed
     echo "${command}" >> ${name}
