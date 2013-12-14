@@ -6,12 +6,28 @@
 # \textbf{Categ}: modelling
 
 ########
-if [ $# -lt 8 ]; then
+treat_unk_opt()
+{
+    scorpus_tmp=`${MKTEMP} ${sdir}/src.XXXXXX`
+    cp ${scorpus} ${scorpus_tmp}
+    echo "UNKNOWN_WORD" >> ${scorpus_tmp}
+    scorpus=${scorpus_tmp}
+
+    tcorpus_tmp=`${MKTEMP} ${sdir}/trg.XXXXXX`
+    cp ${tcorpus} ${tcorpus_tmp}
+    echo "UNKNOWN_WORD" >> ${tcorpus_tmp}
+    tcorpus=${tcorpus_tmp}
+
+    trap "rm -rf ${scorpus_tmp} ${tcorpus_tmp} 2>/dev/null" EXIT
+}
+
+########
+if [ $# -lt 1 ]; then
     echo "Usage: thot_pbs_gen_batch_phr_model -pr <int>"
     echo "                                    -s <string> -t <string> -o <string>"
     echo "                                    [-n <int>] [-np <float>] [-lf <float>]"
     echo "                                    [-af <float>] [-cpr <float>] [-m <int>]"
-    echo "                                    [-nsh] [-qs <string>] -T <string>"
+    echo "                                    [-unk] [-nsh] [-qs <string>] -T <string>"
     echo "                                    -sdir <string> [-debug]"
     echo ""
     echo "-pr <int>               Number of processors"
@@ -33,7 +49,9 @@ if [ $# -lt 8 ]; then
     echo "                        word alignment models (0.000001 by default)"
     echo "-m <int>                Maximum target phrase length during phrase model"
     echo "                        estimation (7 by default)"
-    echo "-nsh                    Do not shuffle load during training (shuffle is"
+    echo "-unk                    Introduce special unknown word symbol during"
+    echo "                        estimation."
+    echo "-nsh                    Do not shuffle load during training (shuffling is"
     echo "                        important to achieve load balancing)"
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
@@ -48,7 +66,6 @@ if [ $# -lt 8 ]; then
     echo "                         b) ensure there is enough disk space in the partition"
     echo "-debug                  After ending, do not delete temporary files"
     echo "                        (for debugging purposes)"
-
 else
     # Read parameters
     pr_given=0
@@ -64,6 +81,7 @@ else
     niters=5
     m_val=7
     qs_given=0
+    unk_given=0
     nsh_given=0
     shuff_opt="-shu"
     tdir_given=0
@@ -153,6 +171,8 @@ else
                     qs_given=0
                 fi
                 ;;
+            "-unk") unk_given=1
+                ;;
             "-nsh") nsh_given=1
                 shuff_opt=""
                 ;;
@@ -226,6 +246,11 @@ else
             echo "Error! directory ${sdir} does not exist" >&2
             exit 1            
         fi
+    fi
+
+    # Verify if unknown words are to be added to training corpus
+    if [ ${unk_given} -eq 1 ]; then
+        treat_unk_opt
     fi
 
     # Train models
