@@ -51,9 +51,9 @@ SingleWordVocab::SingleWordVocab(void)
       // Add the null word to both the source and the target vocabulary
   add_null_word();
   
-      // Add the giza unknown word to both the source and the target
+      // Add the unknown word to both the source and the target
       // vocabulary
-  add_giza_unk_word();
+  add_unk_word();
 
       // Add the unused word to both the source and the target
       // vocabulary
@@ -462,9 +462,9 @@ void SingleWordVocab::clear(void)
      // Add the null word to both the source and the target vocabulary
  add_null_word();
 
-     // Add the giza unknown word to both the source and the target
+     // Add the unknown word to both the source and the target
      // vocabulary
- add_giza_unk_word();
+ add_unk_word();
 
      // Add the unused word to both the source and the target
      // vocabulary
@@ -490,21 +490,21 @@ void SingleWordVocab::add_null_word(void)
 }
 
 //-------------------------
-void SingleWordVocab::add_giza_unk_word(void)
+void SingleWordVocab::add_unk_word(void)
 {
   pair<WordIndex,Count> vocEntry;
 
       // Add the null word to the source vocabulary
-  vocEntry.first=GIZA_UNK_WORD;
+  vocEntry.first=UNK_WORD;
   vocEntry.second=0;
-  stringToSrcWordIndexMap[GIZA_UNK_WORD_STR]=vocEntry;
-  srcWordIndexMapToString[vocEntry.first]=GIZA_UNK_WORD_STR;
+  stringToSrcWordIndexMap[UNK_WORD_STR]=vocEntry;
+  srcWordIndexMapToString[vocEntry.first]=UNK_WORD_STR;
 
       // Add the null word to the target vocabulary
-  vocEntry.first=GIZA_UNK_WORD;
+  vocEntry.first=UNK_WORD;
   vocEntry.second=0;
-  stringToTrgWordIndexMap[GIZA_UNK_WORD_STR]=vocEntry;
-  trgWordIndexMapToString[vocEntry.first]=GIZA_UNK_WORD_STR;
+  stringToTrgWordIndexMap[UNK_WORD_STR]=vocEntry;
+  trgWordIndexMapToString[vocEntry.first]=UNK_WORD_STR;
 }
 
 //-------------------------

@@ -124,7 +124,7 @@ class SingleWordVocab
    ClassDic trgClassDic;
 
    void add_null_word(void);
-   void add_giza_unk_word(void);
+   void add_unk_word(void);
    void add_unused_word(void);
    void clearDataMembers(void);
 

@@ -72,10 +72,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #define NULL_WORD         0
 #define NULL_WORD_STR     "NULL"
-#define UNK_WORD          MAX_VOCAB_SIZE
+#define UNK_WORD          1
 #define UNK_WORD_STR      "UNKNOWN_WORD"
-#define GIZA_UNK_WORD     1
-#define GIZA_UNK_WORD_STR "GIZA_UNKNOWN_WORD"
 #define UNUSED_WORD       2
 #define UNUSED_WORD_STR   "<UNUSED_WORD>"
 

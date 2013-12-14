@@ -172,8 +172,8 @@ estimate_init_model()
         ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl -o ${init_model_dir}/model > ${init_model_dir}/log 2>&1 ; pipe_fail || return 1
      
     # Add complete vocabularies
-    ${bindir}/thot_get_swm_vocab ${srcf} "NULL GIZA_UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.svcb
-    ${bindir}/thot_get_swm_vocab ${trgf} "NULL GIZA_UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.tvcb
+    ${bindir}/thot_get_swm_vocab ${srcf} "NULL UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.svcb
+    ${bindir}/thot_get_swm_vocab ${trgf} "NULL UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.tvcb
 
     # Function executed correctly
     return 0

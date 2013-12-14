@@ -22,6 +22,5 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Constants ------------------------------------------
 
 const unsigned int MAX_SENTENCE_LENGTH_ALLOWED=160;
-#define MAX_NUM_ADAPT_ITERS 100
 
 #endif
