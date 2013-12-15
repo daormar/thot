@@ -23,19 +23,16 @@ sw_models/thot-gen-wigauss-sent-len-model				\
 sw_models/thot_gen_batch_sw_model_mr sw_models/thot_format_corpus_csl	\
 sw_models/thot_filter_text_ilextable
 
-phrase_models_bin_scripts= phrase_models/thot_weigh_ttable		\
-phrase_models/thot_sum_st_counts phrase_models/thot_sort_ttable2	\
-phrase_models/thot_score_phr_ibm phrase_models/thot_remove_st_lengths2	\
+phrase_models_bin_scripts= phrase_models/thot_sort_ttable2		\
+phrase_models/thot_remove_st_lengths2					\
 phrase_models/thot_put_st_lengths2 phrase_models/thot_pbs_gen_phr_model	\
 phrase_models/thot_pbs_gen_batch_phr_model				\
 phrase_models/thot_pbs_alig_op phrase_models/thot_merge_seglen_counts	\
-phrase_models/thot_merge_counts phrase_models/thot_invert_ttable	\
-phrase_models/thot_get_nbest_for_trg					\
+phrase_models/thot_merge_counts phrase_models/thot_get_nbest_for_trg	\
 phrase_models/thot_gen_phr_model_mr phrase_models/thot_flip_phr		\
 phrase_models/thot_filter_ttable					\
 phrase_models/thot_filter_ttable_given_corpus				\
-phrase_models/thot_cut_ttable phrase_models/thot_counts_to_prob		\
-phrase_models/thot2pidttable
+phrase_models/thot_cut_ttable
 
 smt_preproc_bin_scripts= 
 
