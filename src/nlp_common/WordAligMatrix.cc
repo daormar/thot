@@ -215,7 +215,6 @@ bool WordAligMatrix::operator== (const WordAligMatrix &waMatrix)
     {
       if(waMatrix.matrix[i][j]!=matrix[i][j])
         return 0;
-          //cout<<i<<" "<<j<<endl;	  
     }
  
   return 1;
@@ -347,7 +346,7 @@ WordAligMatrix& WordAligMatrix::symmetr1 (const WordAligMatrix &waMatrix)
 }
 
 //-------------------------
-WordAligMatrix& WordAligMatrix::symmetr2(const WordAligMatrix &waMatrix) //Combine two WordAligMatrix in the Och way (2002, Master thesis)
+WordAligMatrix& WordAligMatrix::symmetr2(const WordAligMatrix &waMatrix)
 {
   unsigned int i,j;
   WordAligMatrix	aux,prev;
@@ -376,6 +375,14 @@ WordAligMatrix& WordAligMatrix::symmetr2(const WordAligMatrix &waMatrix) //Combi
         }
     }
   }	
+  return *this;		
+}
+
+//-------------------------
+WordAligMatrix& WordAligMatrix::growDiag(const WordAligMatrix &waMatrix)
+{
+      // TO-DO
+  cerr<<"Warning, growDiag operation not yet implemented!"<<endl;
   return *this;		
 }
 

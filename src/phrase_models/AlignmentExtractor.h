@@ -118,6 +118,10 @@ class AlignmentExtractor
                   const char *outFileName,
                   bool transpose=0,
                   bool verbose=0);
+	bool growDiag(const char *GizaAligFileName,
+                  const char *outFileName,
+                  bool transpose=0,
+                  bool verbose=0);
 	
     void printAlignmentInGIZAFormat(ostream &outS);
         // prints the current alignment in GIZA format

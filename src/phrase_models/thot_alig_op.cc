@@ -73,7 +73,7 @@ char GizaAligFileName[256];
 char outputFilesPrefix[256];
 char GIZA_OpFileName[256];
 int verbose,transposeFlag,gtFlag,exhaustive;
-bool compactOutput,andOp,orOp,sumOp,symmetr1Op,symmetr2Op;
+bool compactOutput,andOp,orOp,sumOp,symmetr1Op,symmetr2Op,growDiagOp;
 
 //--------------- Function Definitions -------------------------------
 
@@ -100,10 +100,11 @@ int main(int argc,char *argv[])
        else
        {
          if(andOp) alignmentContainer.intersect(GIZA_OpFileName,transposeFlag);
-         else if(orOp) alignmentContainer.join(GIZA_OpFileName,transposeFlag);
-          else if(sumOp) alignmentContainer.sum(GIZA_OpFileName,transposeFlag);
-           else if(symmetr1Op) alignmentContainer.symmetr1(GIZA_OpFileName,transposeFlag);
-            else if(symmetr2Op) alignmentContainer.symmetr2(GIZA_OpFileName,transposeFlag);	   
+         if(orOp) alignmentContainer.join(GIZA_OpFileName,transposeFlag);
+         if(sumOp) alignmentContainer.sum(GIZA_OpFileName,transposeFlag);
+         if(symmetr1Op) alignmentContainer.symmetr1(GIZA_OpFileName,transposeFlag);
+         if(symmetr2Op) alignmentContainer.symmetr2(GIZA_OpFileName,transposeFlag);	   
+         if(growDiagOp) alignmentContainer.growDiag(GIZA_OpFileName,transposeFlag);	   
        }
 
 #      ifdef _GLIBCXX_USE_LFS
@@ -145,10 +146,11 @@ int main(int argc,char *argv[])
        else
        {
          if(andOp) return alExt.intersect(GIZA_OpFileName,outputFileName,transposeFlag,verbose);
-         else if(orOp) return alExt.join(GIZA_OpFileName,outputFileName,transposeFlag,verbose);
-              else if(sumOp) return alExt.sum(GIZA_OpFileName,outputFileName,transposeFlag,verbose);
-                    else if(symmetr1Op) return alExt.symmetr1(GIZA_OpFileName,outputFileName,transposeFlag,verbose);
-                         else if(symmetr2Op) return alExt.symmetr2(GIZA_OpFileName,outputFileName,transposeFlag,verbose);	   
+         if(orOp) return alExt.join(GIZA_OpFileName,outputFileName,transposeFlag,verbose);
+         if(sumOp) return alExt.sum(GIZA_OpFileName,outputFileName,transposeFlag,verbose);
+         if(symmetr1Op) return alExt.symmetr1(GIZA_OpFileName,outputFileName,transposeFlag,verbose);
+         if(symmetr2Op) return alExt.symmetr2(GIZA_OpFileName,outputFileName,transposeFlag,verbose);	   
+         if(growDiagOp) return alExt.growDiag(GIZA_OpFileName,outputFileName,transposeFlag,verbose);	   
        }
        return OK;
      } 
@@ -180,7 +182,7 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
      if(awk.NF==3)
      {
        bool invalid_op=true;
-       int ret;
+       int ret=OK;
        transpose=atoi(awk.dollar(3).c_str());
        if(strcmp("-and",awk.dollar(1).c_str())==0)
        {
@@ -212,6 +214,17 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
          invalid_op=false;
          if(verbose) cerr<<"-sym2 "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
 		 ret=alignmentContainer.symmetr2((char*)awk.dollar(2).c_str(),transpose);	
+       }
+       if(strcmp("-grd",awk.dollar(1).c_str())==0)
+       {
+         invalid_op=false;
+         if(verbose) cerr<<"-grd "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+		 ret=alignmentContainer.growDiag((char*)awk.dollar(2).c_str(),transpose);	
+       }
+       if(ret==ERROR)
+       {
+         cerr<<"Error while executing alignment operation"<<endl;
+         return ERROR;
        }
        if(invalid_op) cerr<<"Warning! invalid operation at line "<<lineno<<endl;
      }
@@ -286,6 +299,12 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
          invalid_op=false;
          if(verbose) cerr<<"-sym2 "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
 		 ret=alignmentExtractor.symmetr2((char*)awk.dollar(2).c_str(),outputFileName,transpose);
+       }
+       if(strcmp("-grd",awk.dollar(1).c_str())==0)
+       {
+         invalid_op=false;
+         if(verbose) cerr<<"-grd "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+		 ret=alignmentExtractor.growDiag((char*)awk.dollar(2).c_str(),outputFileName,transpose);
        }
        if(ret==ERROR)
        {
@@ -457,7 +476,15 @@ int TakeParameters(int argc,char *argv[])
  {
    symmetr2Op=false; 
  }
-   
+
+  /* Verify -grd option */
+ err=readString(argc,argv, "-grd", GIZA_OpFileName);
+ growDiagOp=true;  
+ if(err==-1)
+ {
+   growDiagOp=false; 
+ }
+
  /* Verify noCompact option */
  compactOutput=false;
    
@@ -497,21 +524,21 @@ void printDesc(void)
 void printUsage(void)
 {
  cerr<<"Usage: thot_alig_op {-g <string> | -gt <string>} \n";
- cerr<<"               {{-and|-or|-sum|-sym1|-sym2} <string>|\n";
+ cerr<<"               {{-and|-or|-sum|-sym1|-sym2|-grd} <string>|\n";
  cerr<<"               -f <string>}\n";	
  cerr<<"               -o <string> [-no-transpose] [-e [-compact]] [-v]\n";
  cerr<<"               [--help] [--version]\n\n";
  cerr<<"-g <string> | -gt <string>\n";
  cerr<<"                             Name of the GIZA-alignment file name.\n";
  cerr<<"                             If -gt, the alignment matrices are transposed.\n\n";
- cerr<<"-and | -or | -sum | -sym1 | -sym2 <string>\n";
- cerr<<"                             performs and | or | sum | sym1 or sym2 operations\n";
- cerr<<"                             respectively with the given GIZA file.\n";
+ cerr<<"-and | -or | -sum | -sym1 | -sym2 | -grd <string>\n";
+ cerr<<"                             performs and, or, sum, sym1, sym2 or grd\n";
+ cerr<<"                             operations with the given GIZA file.\n";
  cerr<<"                             Note: sym1 and sym2 are two different versions\n";
  cerr<<"                             of the alignment symmetrization.\n\n";
  cerr<<"-f <string>                  Gives a file with a sequence of alignment\n";
  cerr<<"                             operations over the initial Giza file name.\n";	
- cerr<<"                             Operations: '-and' '-or' '-sum' '-sym1' '-sym2'\n";
+ cerr<<"                             Operations: '-and|-or|-sum|-sym1|-sym2|-grd'\n";
  cerr<<"                             The file consists of a set of entries and must\n";
  cerr<<"                             have only one entry per line.\n";
  cerr<<"                             Format of each entry: \n";

@@ -490,6 +490,7 @@ bool AlignmentExtractor::symmetr1(const char *GizaAligFileName,
 
  return OK;
 }
+
 //-------------------------
 bool AlignmentExtractor::symmetr2(const char *GizaAligFileName,
                                   const char *outFileName,
@@ -546,6 +547,64 @@ bool AlignmentExtractor::symmetr2(const char *GizaAligFileName,
 
  return OK;
 }
+
+//-------------------------
+bool AlignmentExtractor::growDiag(const char *GizaAligFileName,
+                                  const char *outFileName,
+                                  bool transpose,
+                                  bool verbose)
+{
+ AlignmentExtractor alExt;
+ unsigned int numSent=0;
+
+#ifdef _GLIBCXX_USE_LFS
+ ofstream outF;
+ outF.open(outFileName,ios::out);
+ if(!outF)
+ {
+   cerr<<"Error while opening output file."<<endl;
+   return 1;
+ }
+#else
+ FILE *outF;
+ outF=fopen(outFileName,"w");
+ if(outF==NULL)
+ {
+   cerr<<"Error while opening output file."<<endl;
+   return 1;
+ }
+#endif
+ 
+ if(alExt.open(GizaAligFileName)==ERROR)
+ {
+   return ERROR;
+ }
+ else
+ {
+   while(alExt.getNextAlignment() && getNextAlignment())
+   {
+     ++numSent;
+     if(verbose) cerr<<"Operating sentence pair # "<<numSent<<endl;
+
+     if(transpose) alExt.transposeAlig();
+     if(t==alExt.t && ns==alExt.ns)
+     {
+       wordAligMatrix.growDiag(alExt.wordAligMatrix);	
+     }
+     else
+     {
+       cerr<<"Warning: sentences to operate are not equal!!!"<<" (Sent. pair:"<<numSent<<")"<<endl;
+     }
+
+     printAlignmentInGIZAFormat(outF);
+   }
+   alExt.close();
+ }
+ rewind();
+
+ return OK;
+}
+
 //-------------------------
 void AlignmentExtractor::printAlignmentInGIZAFormat(ostream &outS)
 {
@@ -577,6 +636,7 @@ void AlignmentExtractor::printAlignmentInGIZAFormat(ostream &outS)
   }
   outS<<endl; 
 }
+
 //-------------------------
 void AlignmentExtractor::printAlignmentInGIZAFormat(FILE *file)
 {
