@@ -40,8 +40,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_incrPhraseModel.h"
-#include "PhraseExtractionTable.h"
+#ifdef USE_OCH_PHRASE_EXTRACT
 #include "PhraseExtractor.h"
+#else
+#include "PhraseExtractionTable.h"
+#endif
 
 using namespace std;
 
