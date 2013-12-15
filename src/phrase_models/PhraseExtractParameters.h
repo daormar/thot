@@ -31,8 +31,7 @@ using namespace std;
 
 //--------------- Constants ------------------------------------------
 
-#define DEFAULT_MAX_NUM_OF_COMBS_IN_TABLE 20000000
-#define DEFAULT_MAX_TRG_PHRASE_LENGTH     10
+#define DEFAULT_MAX_TRG_PHRASE_LENGTH     7
 
 //--------------- PhraseExtractParameters struct
 struct PhraseExtractParameters
@@ -49,7 +48,6 @@ struct PhraseExtractParameters
       maxTrgPhraseLength=DEFAULT_MAX_TRG_PHRASE_LENGTH;
       constraintSrcLen=false;
       countSpurious=true;
-      maxNumbOfCombsInTable=DEFAULT_MAX_NUM_OF_COMBS_IN_TABLE;
     }
 };
 

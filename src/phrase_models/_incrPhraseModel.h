@@ -63,10 +63,7 @@ using namespace std;
 
 //--------------- Constants ------------------------------------------
 
-#define PHARAOH_V1_OUTPUT       0
-#define MOSES_OUTPUT            1
 #define THOT_COUNT_OUTPUT       2 
-#define MOSES_ID_OUTPUT         3
 
 //--------------- typedefs -------------------------------------------
 
@@ -173,11 +170,6 @@ class _incrPhraseModel: public BaseIncrPhraseModel
         // Functions to print the translation table in different
         // formats
     virtual bool printTTable(const char *outputFileName);
-	bool printTTablePharaoh_v1(const char *outputFileName);
-    bool printTTableMoses(const char *outputFileName);
-    bool printTTableMoses_id(const char *outputFileName);
-	bool printInverseTTable(const char *outputFileName,
-                            int outputFormat=PHARAOH_V1_OUTPUT);
 	bool printSegmLengthTable(const char *outputFileName);
 
         // Source vocabulary functions
@@ -263,34 +255,17 @@ class _incrPhraseModel: public BaseIncrPhraseModel
         // Functions to print models if C++ "LARGE FILE SYSTEM (LFS)" IS
         // ENABLED
     void printTTable(ostream &outS);
-    void printTTablePharaoh_v1(ostream &outS);
-    void printTTableMoses(ostream &outS);
-    void printTTableMoses_id(ostream &outS);
-    void printInverseTTable(ostream &outS,
-                            int outputFormat=PHARAOH_V1_OUTPUT);
 # endif
         // Functions to print models using standard C library
     void printTTable(FILE* file);
-    void printTTablePharaoh_v1(FILE* file);
-    void printTTableMoses(FILE* file);
-    void printTTableMoses_id(FILE* file);
-    void printInverseTTable(FILE* file,
-                            int outputFormat=PHARAOH_V1_OUTPUT);
 
     void printNbestTransTableNode(NbestTableNode<PhraseTransTableNodeData> tTableNode,
                                   ostream &outS);
     void printSegmLengthTable(ostream &outS);								
 
-    void printSentAligInAachenFormat(const Vector<unsigned int> &alig);
-    void printSentAligInAachenFormat(const WordAligMatrix &alig);
-    void printPhraseAligInAachenFormat(unsigned int srcPhraseBeg,
-                                       unsigned int srcPhraseEnd,
-                                       unsigned int I,
-	                                   Bitset<MAX_SENTENCE_LENGTH> coverage);
-
         // Functions to load ttable
     virtual bool loadPlainTextTTable(const char *phraseTTableFileName);
-        // Reads a plain text WBA Phrase Model file, returns non-zero if
+        // Reads a plain text phrase model file, returns non-zero if
         // error
 };
 

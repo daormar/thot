@@ -41,12 +41,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "_incrPhraseModel.h"
 #include "PhraseExtractionTable.h"
+#include "PhraseExtractor.h"
 
 using namespace std;
 
 //--------------- Constants ------------------------------------------
 
-#define VERBOSE_AACHEN  -1
 	 
 //--------------- function declarations ------------------------------
 
@@ -115,25 +115,6 @@ class _wbaIncrPhraseModel: public _incrPhraseModel
         // Extracts the set of consistent phrases given a sentence pair
         // and its corresponding alignment matrix.
     
-	bool obtainBestAlignments(const char *bestAligFileName,
-                              const char *outFileName,
-                              PhraseExtractParameters phePars,
-                              int verbose=0);
-        // Once generated or loaded a phrase model, obtains the best
-        // alignments for the sentence pairs given in bestAligFileName.
-    unsigned int obtainBestAlignment(PhraseExtractParameters phePars,
-                                     const Vector<string>& ns,
-                                     const Vector<string>& t,
-                                     const WordAligMatrix& waMatrix,
-                                     WordAligMatrix &bestWaMatrix,
-                                     Prob &bestProb,
-                                     int verbose=0);
-        // Once generated or loaded a phrase model, and given the
-        // sentences s and t and their word alignment, obtains the best
-        // phrase alignment and stores it in the bestWaMatrix
-        // variable. The probability associated to this is also stored
-        // in the bestProb variable. The function returns the total
-        // number of alignments checked.
 	void clear(void);
 
         // Utilities
@@ -144,8 +125,12 @@ class _wbaIncrPhraseModel: public _incrPhraseModel
 	
  protected:
 
-	PhraseExtractionTable phraseExtractionTable;	
-
+#ifdef USE_OCH_PHRASE_EXTRACT
+	PhraseExtractor phraseExtract;
+#else
+	PhraseExtractionTable phraseExtract;
+#endif
+    
     LgProb logLikelihood;
     LgProb logLikelihoodMaxApprox;
 	unsigned int numSent;
@@ -153,52 +138,9 @@ class _wbaIncrPhraseModel: public _incrPhraseModel
 	bool existRowOfNulls(unsigned int j1,
                          unsigned int j2,
                          Vector<unsigned int> &alig);
-    unsigned int storePairsFromSegms(PhraseExtractParameters phePars,
-                                     const Vector<string> &ns,
-                                     const Vector<string> &t,
-                                     const WordAligMatrix &waMatrix,
-                                     float numReps,
-                                     int verbose=0);
-    unsigned int storePairsFromSegmsIter(PhraseExtractParameters phePars,
-                                         const Vector<string> &ns,
-                                         const Vector<string> &t,
-                                         const WordAligMatrix &waMatrix,
-                                         float numReps,
-                                         int verbose=0);
 	void storePhrasePairs(const Vector<PhrasePair>& vecPhPair,
                           float numReps,
                           int verbose=0);
-	void storePhrasePairs(Bisegm& segmentations,
-                          const WordAligMatrix& alig,
-                          float numReps,
-                          int verbose=0);
-    void storePhrasePairs(const Vector<CellID> vcid,
-                          const WordAligMatrix& alig,
-                          float numReps,
-                          unsigned int numSegm,
-                          int verbose=0);
-    void printSegmInfo(const Vector<CellID> vcid,
-                       const WordAligMatrix& alig);
-    void printSegmInfoAachen(const Vector<CellID> vcid,
-                             const WordAligMatrix& alig);
-    void obtainBestAlignments(PhraseExtractParameters phePars,
-                              AlignmentExtractor &bestAlignmentsFile,
-                              ostream& outF,
-                              int verbose=0);
-	unsigned int getBestAlignment(PhraseExtractParameters phePars,
-                                  const Vector<string>& ns,
-                                  const Vector<string>& t,
-                                  const WordAligMatrix& waMatrix,
-                                  Vector<CellID>& best_s,
-                                  int verbose=0);
-    unsigned int getBestAligUsingIter(PhraseExtractParameters phePars,
-                                      const Vector<string>& ns,
-                                      const Vector<string>& t,
-                                      const WordAligMatrix& waMatrix,
-                                      Vector<CellID>& best_s,
-                                      int verbose=0);
-	WordAligMatrix getWaMatrixForSegmentation(Vector<CellID>& segmentation);
-    Prob getProbForSegmentation(Vector<CellID>& segmentation);	
 	Bitset<MAX_SENTENCE_LENGTH> zeroFertBitset(Vector<unsigned int> &alig);
     ostream& printPars(ostream &outS,
                        PhraseExtractParameters phePars,
