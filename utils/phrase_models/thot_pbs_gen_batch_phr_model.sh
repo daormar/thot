@@ -26,7 +26,8 @@ if [ $# -lt 1 ]; then
     echo "Usage: thot_pbs_gen_batch_phr_model -pr <int>"
     echo "                                    -s <string> -t <string> -o <string>"
     echo "                                    [-n <int>] [-np <float>] [-lf <float>]"
-    echo "                                    [-af <float>] [-cpr <float>] [-m <int>]"
+    echo "                                    [-af <float>] [-cpr <float>]"
+    echo "                                    [-ao <string>] [-m <int>]"
     echo "                                    [-unk] [-nsh] [-qs <string>] -T <string>"
     echo "                                    -sdir <string> [-debug]"
     echo ""
@@ -49,6 +50,8 @@ if [ $# -lt 1 ]; then
     echo "                        word alignment models (0.000001 by default)"
     echo "-m <int>                Maximum target phrase length during phrase model"
     echo "                        estimation (7 by default)"
+    echo "-ao <string>            Operation between alignments to be executed"
+    echo "                        (and|or|sum|sym1|sym2|grd)."
     echo "-unk                    Introduce special unknown word symbol during"
     echo "                        estimation."
     echo "-nsh                    Do not shuffle load during training (shuffling is"
@@ -79,6 +82,8 @@ else
     cpr_given=0
     cpr_default_val=0.000001
     niters=5
+    ao_given=0
+    ao_opt="-sym1"
     m_val=7
     qs_given=0
     unk_given=0
@@ -160,6 +165,12 @@ else
                 if [ $# -ne 0 ]; then
                     m_val=$1
                     m_given=1
+                fi
+                ;;
+            "-ao") shift
+                if [ $# -ne 0 ]; then
+                    ao_opt="-$1"
+                    ao_given=1
                 fi
                 ;;
             "-qs") shift
@@ -282,7 +293,7 @@ ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_invswm -s $tcorpus
     mv ${outp}_invswm.log ${outp}_invswm_thot_pbs_gen_best_sw_alig.log
 
     # Operate word alignments generated with the sw_models package
-    $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal -sym1 ${outp}_invswm.bestal -o ${outp}_alig_op \
+    $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal ${ao_opt} ${outp}_invswm.bestal -o ${outp}_alig_op \
         ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} 2> /dev/null || exit 1
     # Rename log file
     mv ${outp}_alig_op.log ${outp}_thot_pbs_alig_op.log
