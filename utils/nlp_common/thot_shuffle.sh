@@ -9,7 +9,7 @@ shuffle()
     local seed=$1
     local file=$2
 
-    # Thot_Shuffle file
+    # Shuffle file
     $AWK -v seed=$seed 'BEGIN{srand(seed)}{printf"%f %d %s\n",rand(),NR,$0}' $file \
         | $SORT -k1g -k2n | $AWK '{for(i=3;i<NF;++i) printf"%s ",$i; printf"%s\n",$NF}'
 }
