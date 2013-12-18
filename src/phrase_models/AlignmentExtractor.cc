@@ -59,6 +59,8 @@ AlignmentExtractor& AlignmentExtractor::operator= (const AlignmentExtractor &alE
   fileFormat=alExt.fileFormat;
   fileStream=NULL;
   awkInpStrm=alExt.awkInpStrm;
+  
+  return *this;
 }
 
 //-------------------------
