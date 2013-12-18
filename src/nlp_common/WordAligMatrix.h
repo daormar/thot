@@ -92,7 +92,9 @@ class WordAligMatrix
   WordAligMatrix& operator= (const WordAligMatrix &waMatrix);
   bool operator== (const WordAligMatrix &waMatrix);
   WordAligMatrix& flip(void); //flips every bit of the matrix
-
+  Vector<pair<unsigned int,unsigned int> > obtainAdjacentCells(unsigned int i,
+                                                               unsigned int j);
+    
   // Operations between word alignment matrices
   WordAligMatrix& operator&= (const WordAligMatrix &waMatrix);
       //Bitwise AND of two WordAligMatrix

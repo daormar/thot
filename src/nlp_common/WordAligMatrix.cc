@@ -349,7 +349,8 @@ WordAligMatrix& WordAligMatrix::symmetr1 (const WordAligMatrix &waMatrix)
 WordAligMatrix& WordAligMatrix::symmetr2(const WordAligMatrix &waMatrix)
 {
   unsigned int i,j;
-  WordAligMatrix	aux,prev;
+  WordAligMatrix aux;
+  WordAligMatrix prev;
 		
   if(I==waMatrix.I && J==waMatrix.J)
   {
@@ -381,9 +382,115 @@ WordAligMatrix& WordAligMatrix::symmetr2(const WordAligMatrix &waMatrix)
 //-------------------------
 WordAligMatrix& WordAligMatrix::growDiag(const WordAligMatrix &waMatrix)
 {
-      // TO-DO
-  cerr<<"Warning, growDiag operation not yet implemented!"<<endl;
-  return *this;		
+
+      // Check that the matrices can be operated
+  if(I!=waMatrix.I || J!=waMatrix.J)
+  {
+    return *this;
+  }
+  else
+  {
+        // Matrices can be operated
+
+        // Obtain copy of source matrix
+    WordAligMatrix sourceMatAux=*this;
+
+        // Obtain intersection between source and target
+    *this &=waMatrix;
+
+        // Obtain union between source and target
+    WordAligMatrix joinMat=sourceMatAux;
+    joinMat|=waMatrix;
+    
+        // Grow-diag
+    bool end=false;
+    WordAligMatrix prevMat=*this;
+
+        // Iterate until no new points added
+    while(!end)
+    {
+      for(unsigned int i=0;i<I;++i)
+      {
+        for(unsigned int j=0;j<J;++j)
+        {
+              // Check if (i,j) is aligned
+          if(getValue(i,j))
+          {
+                // Explore neighbourhood
+            Vector<pair<unsigned int,unsigned int> > neighboursVec=obtainAdjacentCells(i,j);
+            for(unsigned int k=0;k<neighboursVec.size();++k)
+            {
+              unsigned int ip=neighboursVec[k].first;
+              unsigned int jp=neighboursVec[k].second;
+              if((!iAligned(ip) || !jAligned(jp)) && joinMat.getValue(ip,jp))
+              {
+                set(ip,jp);
+              }
+            }
+          }
+        }
+      }
+      if(prevMat==*this)
+        end=true;
+      else
+        prevMat=*this;
+    }
+
+        // Final source
+    for(unsigned int i=0;i<I;++i)
+    {
+      for(unsigned int j=0;j<J;++j)
+      {
+        if((!iAligned(i) || !jAligned(j)) && sourceMatAux.getValue(i,j))
+        {
+          set(i,j);
+        }
+      }
+    }
+
+      // Final target
+    for(unsigned int i=0;i<I;++i)
+    {
+      for(unsigned int j=0;j<J;++j)
+      {
+        if((!iAligned(i) || !jAligned(j)) && waMatrix.getValue(i,j))
+        {
+          set(i,j);
+        }
+      }
+    }
+
+        // Return result
+    return *this;
+  }
+}
+
+//-------------------------
+Vector<pair<unsigned int,unsigned int> > WordAligMatrix::obtainAdjacentCells(unsigned int i,
+                                                                             unsigned int j)
+{
+      // Initialize variables
+  Vector<pair<unsigned int,unsigned int> > puintVec;
+  pair<unsigned int,unsigned int> puint;
+
+      // Add neighbour points
+  for(int delta_i=-1;delta_i<=1;++delta_i)
+  {
+    for(int delta_j=-1;delta_j<=1;++delta_j)
+    {
+      if(delta_i!=0 || delta_j!=0)
+      {
+        int ip=i+delta_i;
+        int jp=j+delta_j;
+        if(ip<(int) I && jp<(int) J && ip>=0 && jp>=0)
+        {
+          puintVec.push_back(make_pair((unsigned int) ip,(unsigned int) jp));
+        }
+      }
+    }
+  }
+     // Return result
+  return puintVec;
 }
 
 //-------------------------
