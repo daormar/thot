@@ -34,31 +34,61 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //-------------------------
 AlignmentExtractor::AlignmentExtractor(void)
 {
+  fileStream=NULL;
+}
+
+//----------
+AlignmentExtractor::AlignmentExtractor(const AlignmentExtractor &alExt)
+{
+  ns=alExt.ns;
+  t=alExt.t;
+  wordAligMatrix=alExt.wordAligMatrix;	
+  numReps=alExt.numReps;
+  fileFormat=alExt.fileFormat;
+  fileStream=NULL;
+  awkInpStrm=alExt.awkInpStrm;  
+}
+
+//----------
+AlignmentExtractor& AlignmentExtractor::operator= (const AlignmentExtractor &alExt)
+{
+  ns=alExt.ns;
+  t=alExt.t;
+  wordAligMatrix=alExt.wordAligMatrix;	
+  numReps=alExt.numReps;
+  fileFormat=alExt.fileFormat;
+  fileStream=NULL;
+  awkInpStrm=alExt.awkInpStrm;
 }
 
 //-------------------------
 bool AlignmentExtractor::open(const char *str,
                               unsigned int _fileFormat/*=GIZA_ALIG_FILE_FORMAT*/)
 {
-  FILE *stream;
-  int ret;
-  
-  stream=fopen(str,"r");
-  if(stream==NULL)
+      // Close previous files
+  close();
+
+      // Open new file
+  fileStream=fopen(str,"r");
+  if(fileStream==NULL)
   {
     cerr<<"Error while opening file with alignments: "<<str<<endl;
     return ERROR;
   }
 
-  ret=open_stream(stream,_fileFormat);
+      // Set value of data member fileFormat
+  fileFormat=_fileFormat;
 
-  return ret;
+  return awkInpStrm.open_stream(fileStream);
 }
 
 //-------------------------
 bool AlignmentExtractor::open_stream(FILE *stream,
                                      unsigned int _fileFormat/*=GIZA_ALIG_FILE_FORMAT*/)
 {
+      // Close previous files
+  close();
+  
   fileFormat=_fileFormat;
 
   return awkInpStrm.open_stream(stream);
@@ -67,7 +97,12 @@ bool AlignmentExtractor::open_stream(FILE *stream,
 //-------------------------
 void AlignmentExtractor::close(void)
 {
- awkInpStrm.close();	
+  if(fileStream!=NULL)
+  {
+    fclose(fileStream);
+    fileStream=NULL;
+  }
+  awkInpStrm.close();	
 }
 
 //-------------------------
@@ -676,6 +711,7 @@ void AlignmentExtractor::printAlignmentInGIZAFormat(FILE *file)
 //-------------------------
 AlignmentExtractor::~AlignmentExtractor()
 {
+  close();
 }
 
 //-------------------------

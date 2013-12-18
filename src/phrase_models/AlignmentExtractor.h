@@ -75,6 +75,8 @@ class AlignmentExtractor
 
         // Constructor
 	AlignmentExtractor(void);
+    AlignmentExtractor(const AlignmentExtractor &alExt);
+    AlignmentExtractor& operator= (const AlignmentExtractor &alExt);
 
         // Functions to manipulate files
     bool open(const char *str,
@@ -137,8 +139,9 @@ class AlignmentExtractor
     WordAligMatrix wordAligMatrix;	
     float numReps;
     unsigned int fileFormat;
-
+    FILE* fileStream;
     awkInputStream awkInpStrm;
+    
     bool getNextAlignInGIZAFormat(void);
     bool getNextAlignInAlignOpFormat(void);
 	
