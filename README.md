@@ -120,7 +120,7 @@ Project documentation is being developed. Such documentation include:
 If you need additional help, you can:
 
 - use the [github issue tracker] [8]
-- [send me an e-mail] [9]
+- [send an e-mail to the author] [9]
 - join the [CasMaCat support group] [10]
 
 Additional information about the theoretical foundations of Thot can be
