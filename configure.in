@@ -400,7 +400,7 @@ AC_DEFINE_UNQUOTED(SH_TYPE,${THOT_SH_TYPE},[Define which sentence handler is to 
 
 # Set different models and decoder types based on previously defined
 # shell variables
-export THOT_LM_TYPE="THOT_INCR_INTERP_LM"
+export THOT_LM_TYPE="THOT_INCR_JEL_MER_LM"
 export THOT_PBM_TYPE="ML_PBM"
 export THOT_SMT_MODEL_TYPE="PBLSWMLI"
 export THOT_SW_MODEL_TYPE="THOT_SINCR_IBM2_SWM"

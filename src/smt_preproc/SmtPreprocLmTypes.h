@@ -39,17 +39,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 // corresponding library already defines a label and notes for this
 // model
 
-#define THOT_INTERP_LM                2
-#define THOT_INTERP_LM_LABEL          "Interpolated n-gram language model"
-#define THOT_INTERP_LM_NOTES          ""
-
-#define THOT_INCR_INTERP_LM           3
-#define THOT_INCR_INTERP_LM_LABEL     "Incremental interpolated n-gram language model"
-#define THOT_INCR_INTERP_LM_NOTES     ""
+#define THOT_INCR_JEL_MER_LM           2
+#define THOT_INCR_JEL_MER_LM_LABEL     "Incremental interpolated n-gram language model"
+#define THOT_INCR_JEL_MER_LM_NOTES     ""
 
 // Set the language model used by different statistical machine
 // translation models The valid options are: THOT_BACKOFF_LM,
-// THOT_INTERP_LM... These options can be given before executing
+// THOT_JEL_MER_LM... These options can be given before executing
 // the configure script.
 //
 // Example:
@@ -65,19 +61,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define THOT_CURR_LM_LABEL ARPA_LM_CURR_LM_LABEL
 #define THOT_CURR_LM_NOTES ARPA_LM_CURR_LM_NOTES
 
-#elif THOT_LM_TYPE == THOT_INTERP_LM
+#elif THOT_LM_TYPE == THOT_INCR_JEL_MER_LM
 #include <lt_op_vec.h> // provides an ordering relationship for vectors
-#include <InterpONgramLM.h>
-#define THOT_CURR_LM_TYPE InterpONgramLM
-#define THOT_CURR_LM_LABEL INTERP_LM_LABEL
-#define THOT_CURR_LM_NOTES INTERP_LM_NOTES
-
-#elif THOT_LM_TYPE == THOT_INCR_INTERP_LM
-#include <lt_op_vec.h> // provides an ordering relationship for vectors
-#include <IncrInterpONgramLM.h>
-#define THOT_CURR_LM_TYPE IncrInterpONgramLM
-#define THOT_CURR_LM_LABEL THOT_INCR_INTERP_LM_LABEL
-#define THOT_CURR_LM_NOTES THOT_INCR_INTERP_LM_NOTES
+#include <IncrJelMerNgramLM.h>
+#define THOT_CURR_LM_TYPE IncrJelMerNgramLM
+#define THOT_CURR_LM_LABEL THOT_INCR_JEL_MER_LM_LABEL
+#define THOT_CURR_LM_NOTES THOT_INCR_JEL_MER_LM_NOTES
 
 #endif
 

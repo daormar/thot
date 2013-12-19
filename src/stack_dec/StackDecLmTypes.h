@@ -42,19 +42,24 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define THOT_INCR_INTERP_LM           2 // This constant is
                                              // temporarily defined, the
                                              // correct name should be
-                                             // THOT_INCR_INTERPO_LM
-                                            
-#define THOT_INCR_INTERPO_LM          2
-#define THOT_INCR_INTERPO_LM_LABEL    "Incremental interpolated-order n-gram language model"
-#define THOT_INCR_INTERPO_LM_NOTES    ""
+                                             // THOT_INCR_JEL_MER_LM
 
-#define THOT_CINCR_INTERPO_LM         3
-#define THOT_CINCR_INTERPO_LM_LABEL   "Cached incremental interpolated-order n-gram language model"
-#define THOT_CINCR_INTERPO_LM_NOTES   ""
+#define THOT_INCR_INTERPO_LM          2 // This constant is
+                                             // temporarily defined, the
+                                             // correct name should be
+                                             // THOT_INCR_JEL_MER_LM
 
-#define THOT_SWISE_INTERPO_LM         4
-#define THOT_SWISE_INTERPO_LM_LABEL   "Stepwise interpolated-order n-gram language model"
-#define THOT_SWISE_INTERPO_LM_NOTES   ""
+#define THOT_INCR_JEL_MER_LM          2
+#define THOT_INCR_JEL_MER_LM_LABEL    "Incremental Jelinek-Mercer n-gram language model"
+#define THOT_INCR_JEL_MER_LM_NOTES    ""
+
+#define THOT_CINCR_JEL_MER_LM         3
+#define THOT_CINCR_JEL_MER_LM_LABEL   "Cached incremental interpolated-order n-gram language model"
+#define THOT_CINCR_JEL_MER_LM_NOTES   ""
+
+#define THOT_SWISE_JEL_MER_LM         4
+#define THOT_SWISE_JEL_MER_LM_LABEL   "Stepwise interpolated-order n-gram language model"
+#define THOT_SWISE_JEL_MER_LM_NOTES   ""
 
 #define THOT_INCR_KN_LM               5
 #define THOT_INCR_KN_LM_LABEL         "Incremental Kneser-Ney n-gram language model"
@@ -62,7 +67,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 // Set the language model used by different statistical machine
 // translation models. The valid options are: THOT_BACKOFF_LM,
-// THOT_INTERPO_LM... These options can be given before executing the
+// THOT_JEL_MER_LM... These options can be given before executing the
 // configure script.
 //
 // Example:
@@ -79,28 +84,28 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define THOT_CURR_LM_NOTES ARPA_LM_CURR_LM_NOTES
 typedef THOT_CURR_LM_TYPE::LM_State LM_State;
 
-#elif THOT_LM_TYPE == THOT_INCR_INTERPO_LM
+#elif THOT_LM_TYPE == THOT_INCR_JEL_MER_LM
 #include <lt_op_vec.h> // provides an ordering relationship for vectors
-#include <IncrInterpONgramLM.h>
-#define THOT_CURR_LM_TYPE IncrInterpONgramLM
-#define THOT_CURR_LM_LABEL THOT_INCR_INTERPO_LM_LABEL
-#define THOT_CURR_LM_NOTES THOT_INCR_INTERPO_LM_NOTES
+#include <IncrJelMerNgramLM.h>
+#define THOT_CURR_LM_TYPE IncrJelMerNgramLM
+#define THOT_CURR_LM_LABEL THOT_INCR_JEL_MER_LM_LABEL
+#define THOT_CURR_LM_NOTES THOT_INCR_JEL_MER_LM_NOTES
 typedef THOT_CURR_LM_TYPE::LM_State LM_State;
 
-#elif THOT_LM_TYPE == THOT_CINCR_INTERPO_LM
+#elif THOT_LM_TYPE == THOT_CINCR_JEL_MER_LM
 #include <lt_op_vec.h> // provides an ordering relationship for vectors
-#include <CacheIncrIoNgramLM.h>
-#define THOT_CURR_LM_TYPE CacheIncrIoNgramLM
-#define THOT_CURR_LM_LABEL THOT_CINCR_INTERPO_LM_LABEL
-#define THOT_CURR_LM_NOTES THOT_CINCR_INTERPO_LM_NOTES
+#include <CacheIncrJelMerNgramLM.h>
+#define THOT_CURR_LM_TYPE CacheIncrJelMerNgramLM
+#define THOT_CURR_LM_LABEL THOT_CINCR_JEL_MER_LM_LABEL
+#define THOT_CURR_LM_NOTES THOT_CINCR_JEL_MER_LM_NOTES
 typedef THOT_CURR_LM_TYPE::LM_State LM_State;
 
-#elif THOT_LM_TYPE == THOT_SWISE_INTERPO_LM
+#elif THOT_LM_TYPE == THOT_SWISE_JEL_MER_LM
 #include <lt_op_vec.h> // provides an ordering relationship for vectors
-#include <StepwiseInterpONgramLM.h>
-#define THOT_CURR_LM_TYPE StepwiseInterpONgramLM
-#define THOT_CURR_LM_LABEL THOT_SWISE_INTERPO_LM_LABEL
-#define THOT_CURR_LM_NOTES THOT_SWISE_INTERPO_LM_NOTES
+#include <StepwiseJelMerNgramLM.h>
+#define THOT_CURR_LM_TYPE StepwiseJelMerNgramLM
+#define THOT_CURR_LM_LABEL THOT_SWISE_JEL_MER_LM_LABEL
+#define THOT_CURR_LM_NOTES THOT_SWISE_JEL_MER_LM_NOTES
 typedef THOT_CURR_LM_TYPE::LM_State LM_State;
 
 #elif THOT_LM_TYPE == THOT_INCR_KN_LM

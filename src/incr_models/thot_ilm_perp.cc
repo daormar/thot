@@ -31,7 +31,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
-#include "IncrInterpONgramLM.h"
+#include "IncrJelMerNgramLM.h"
 #include "ctimer.h"
 #include "options.h"
 #include <math.h>
@@ -79,9 +79,9 @@ int main(int argc,char *argv[])
         // Load language model
     switch(lmType)
     {
-      case INTERPO_LM: lm=new IncrInterpONgramLM;
+      case INTERPO_LM: lm=new IncrJelMerNgramLM;
         break;
-      default: lm=new IncrInterpONgramLM;
+      default: lm=new IncrJelMerNgramLM;
         break;
     }
 

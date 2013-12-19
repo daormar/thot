@@ -78,14 +78,14 @@ nlp_common/awkInputStream.cc
 incr_models_h= incr_models/vecx_x_incr_enc.h				\
 incr_models/vecx_x_incr_ecpm.h incr_models/vecx_x_incr_cptable.h	\
 incr_models/lm_ienc.h incr_models/IncrNgramLM.h				\
-incr_models/_incrNgramLM.h incr_models/IncrInterpONgramLM.h		\
-incr_models/_incrInterpONgramLM.h incr_models/IncrEncoder.h		\
+incr_models/_incrNgramLM.h incr_models/IncrJelMerNgramLM.h		\
+incr_models/_incrJelMerNgramLM.h incr_models/IncrEncoder.h		\
 incr_models/_incrEncCondProbModel.h incr_models/IncrCondProbTable.h	\
 incr_models/im_pair.h incr_models/BaseIncrEncoder.h			\
 incr_models/BaseIncrEncCondProbModel.h					\
 incr_models/BaseIncrCondProbTable.h incr_models/BaseIncrCondProbModel.h
 incr_models_defs= incr_models/lm_ienc.cc incr_models/IncrNgramLM.cc	\
-incr_models/IncrInterpONgramLM.cc
+incr_models/IncrJelMerNgramLM.cc
 
 sw_models_h= sw_models/WeightedIncrNormSlm.h				\
 sw_models/SwModelsSwModelTypes.h sw_models/SwModelsSlmTypes.h		\

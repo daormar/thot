@@ -20,26 +20,60 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /*                                                                  */
 /* Module: IncrInterpONgramLM                                       */
 /*                                                                  */
-/* Definitions file: IncrInterpONgramLM.cc                          */
+/* Prototype file: IncrJelMerNgramLM.h                              */
+/*                                                                  */
+/* Description: Class to manage encoded incremental                 */
+/*              Jelinek-Mercer ngram language                       */
+/*              models p(x|Vector<x>).                              */
 /*                                                                  */
 /********************************************************************/
 
+#ifndef _IncrJelMerNgramLM
+#define _IncrJelMerNgramLM
 
 //--------------- Include files --------------------------------------
 
-#include "IncrInterpONgramLM.h"
+#if HAVE_CONFIG_H
+#  include <thot_config.h>
+#endif /* HAVE_CONFIG_H */
 
-//--------------- Global variables -----------------------------------
+#include "_incrJelMerNgramLM.h"
 
-//--------------- Function declarations 
+//--------------- Constants ------------------------------------------
 
-//--------------- Constants
+
+//--------------- typedefs -------------------------------------------
+
+
+//--------------- function declarations ------------------------------
 
 
 //--------------- Classes --------------------------------------------
 
-//------------------------------
-IncrInterpONgramLM::~IncrInterpONgramLM()
+//--------------- IncrJelMerNgramLM class
+
+class IncrJelMerNgramLM: public _incrJelMerNgramLM<Count,Count>
 {
-  
-}
+ public:
+
+  typedef _incrJelMerNgramLM<Count,Count>::SrcTableNode SrcTableNode;
+  typedef _incrJelMerNgramLM<Count,Count>::TrgTableNode TrgTableNode;
+
+      // Constructor
+  IncrJelMerNgramLM():_incrJelMerNgramLM<Count,Count>()
+    {
+          // Set new pointer to table
+      this->tablePtr=new vecx_x_incr_cptable<WordIndex,Count,Count>;
+    }
+
+
+      // Destructor
+  ~IncrJelMerNgramLM();
+   
+ protected:
+};
+
+//---------------
+
+
+#endif

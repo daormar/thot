@@ -18,18 +18,18 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: _incrInterpONgramLM                                      */
+/* Module: _incrJelMerNgramLM                                       */
 /*                                                                  */
-/* Prototype file: _incrInterpONgramLM.h                            */
+/* Prototype file: _incrJelMerNgramLM.h                             */
 /*                                                                  */
 /* Description: Base class to manage encoded incremental            */
-/*              interpolated-order ngram language                   */
+/*              Jelinek-Mercer ngram language                       */
 /*              models p(x|Vector<x>).                              */
 /*                                                                  */
 /********************************************************************/
 
-#ifndef __incrInterpONgramLM
-#define __incrInterpONgramLM
+#ifndef __incrJelMerNgramLM
+#define __incrJelMerNgramLM
 
 //--------------- Include files --------------------------------------
 
@@ -50,10 +50,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- _incrInterpONgramLM class
+//--------------- _incrJelMerNgramLM class
 
 template<class SRC_INFO,class SRCTRG_INFO>
-class _incrInterpONgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
+class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
 {
  public:
 
@@ -61,7 +61,7 @@ class _incrInterpONgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
   typedef typename _incrNgramLM<SRC_INFO,SRCTRG_INFO>::TrgTableNode TrgTableNode;
 
       // Constructor
-  _incrInterpONgramLM():_incrNgramLM<SRC_INFO,SRCTRG_INFO>()
+  _incrJelMerNgramLM():_incrNgramLM<SRC_INFO,SRCTRG_INFO>()
     {
       weights.push_back(0.5);
       weights.push_back(0.5);
@@ -78,7 +78,7 @@ class _incrInterpONgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
   bool print(const char *fileName);
 
       // Destructor
-  ~_incrInterpONgramLM();
+  ~_incrJelMerNgramLM();
    
  protected:
   Vector<double> weights;
@@ -101,8 +101,8 @@ class _incrInterpONgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-Prob _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrc(const Vector<WordIndex>& s,
-                                                             const WordIndex& t)
+Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrc(const Vector<WordIndex>& s,
+                                                            const WordIndex& t)
 {
       // Remove extra BOS symbols
   bool found;
@@ -127,8 +127,8 @@ Prob _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrc(const Vector<WordIn
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-Prob _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrcRec(const Vector<WordIndex>& s,
-                                                                const WordIndex& t)
+Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrcRec(const Vector<WordIndex>& s,
+                                                               const WordIndex& t)
 {
   if(s.size()==0)
   {
@@ -154,7 +154,7 @@ Prob _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrcRec(const Vector<Wor
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-double _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::getWeight(const Vector<WordIndex>& s,
+double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::getWeight(const Vector<WordIndex>& s,
                                                            const WordIndex& /*t*/)
 {
   if(numBucketsPerOrder==1)
@@ -180,14 +180,14 @@ double _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::getWeight(const Vector<WordInd
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-double _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::freqOfNgram(const Vector<WordIndex>& s)
+double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::freqOfNgram(const Vector<WordIndex>& s)
 {
   return (double)this->tablePtr->cSrc(s);
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
+bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
 {
   bool retval;
 
@@ -206,7 +206,7 @@ bool _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *fileName)
+bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *fileName)
 {
       // load weights
   awkInputStream awk;
@@ -242,7 +242,7 @@ bool _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *fileName
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
+bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
 {
   bool retval;
   
@@ -261,7 +261,7 @@ bool _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *fileName)
+bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *fileName)
 {
   FILE *filePtr;
 
@@ -288,7 +288,7 @@ bool _incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *fileNam
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-_incrInterpONgramLM<SRC_INFO,SRCTRG_INFO>::~_incrInterpONgramLM()
+_incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::~_incrJelMerNgramLM()
 {
   
 }
