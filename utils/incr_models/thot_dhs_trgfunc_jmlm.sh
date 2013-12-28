@@ -67,7 +67,7 @@ else
 
     # Calculate perplexity
     echo "$ORDER $NUMBUCK $BUCKSIZE $weights" > ${LM}.weights
-    $bindir/thot_ilm_perp -lm ${LM} -c ${TEST} ${CPERP_FLAG} -v1 > ${SDIR}/verbose_ppl 2>&1
+    $bindir/thot_ilm_perp -lm ${LM} -c ${TEST} -n ${ORDER} ${CPERP_FLAG} -v1 > ${SDIR}/verbose_ppl 2>&1
 ${bindir}/thot_obtain_info_from_verbose_ppl ${SDIR}/verbose_ppl > ${SDIR}/ppl_info
 
     ppl_with_oovw=`cat ${SDIR}/ppl_info | grep "Perplexity:" | $AWK '{printf"%s",$2}'`
