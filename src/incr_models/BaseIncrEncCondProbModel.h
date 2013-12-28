@@ -73,9 +73,9 @@ class BaseIncrEncCondProbModel: public BaseIncrCondProbModel<SRCDATA,TRGDATA,SRC
   virtual void addHSrcHTrgInfo(const HSRCDATA& hs,
                                const HTRGDATA& ht,
                                SRCTRG_INFO st_inf)=0;
-  void incrCountsOfEntryHigh(const HSRCDATA& hs,
-                             const HTRGDATA& ht,
-                             Count c);
+  virtual void incrCountsOfEntryHigh(const HSRCDATA& hs,
+                                     const HTRGDATA& ht,
+                                     Count c)=0;
       // High level version of the incrCountOfEntry function
   void incrCountsOfEntryHighLog(const HSRCDATA& hs,
                                 const HTRGDATA& ht,

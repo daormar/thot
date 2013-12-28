@@ -86,8 +86,8 @@ class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
   double sizeOfBucket;
   
       // Weights related functions
-  double getWeight(const Vector<WordIndex>& s,
-                   const WordIndex& t);
+  double getWeights(const Vector<WordIndex>& s,
+                    const WordIndex& t);
   virtual double freqOfNgram(const Vector<WordIndex>& s);
   bool loadWeights(const char *fileName);
   bool printWeights(const char *fileName);
@@ -132,7 +132,7 @@ Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrcRec(const Vector<Word
 {
   if(s.size()==0)
   {
-    double weight=getWeight(s,t);
+    double weight=getWeights(s,t);
     double zerogramprob=(double)1.0/(double)this->getVocabSize();
 
     return (weight * (double) this->tablePtr->pTrgGivenSrc(s,t))+((1-weight) * zerogramprob);  
@@ -147,15 +147,15 @@ Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrcRec(const Vector<Word
         s_shifted.push_back(s[i]);
       }
     }
-    double weight=getWeight(s,t);
+    double weight=getWeights(s,t);
     return weight * (double) this->tablePtr->pTrgGivenSrc(s,t)+ (1-weight) * (double) pTrgGivenSrcRec(s_shifted,t);
   }
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::getWeight(const Vector<WordIndex>& s,
-                                                           const WordIndex& /*t*/)
+double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::getWeights(const Vector<WordIndex>& s,
+                                                            const WordIndex& /*t*/)
 {
   if(numBucketsPerOrder==1)
   {
