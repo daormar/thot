@@ -31,7 +31,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
+#include "LM_Defs.h"                                                    
+  // NOTE: this file should be included first, since it defines the
+  // _FILE_OFFSET_BITS constant. This constant has to be defined
+  // before including any STL header files to avoid conflicts.
+
+#include "CacheIncrJelMerNgramLM.h"
 #include "IncrJelMerNgramLM.h"
+#include "IncrInterpNgramLM.h"
 #include "ctimer.h"
 #include "options.h"
 #include <math.h>
@@ -41,7 +48,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
-#define INTERPO_LM        2
+#define INTERP_LM         1
+#define JEL_MER_LM        2
+#define CACHE_JEL_MER_LM  3
 
 //--------------- Function Declarations ------------------------------
 
@@ -53,12 +62,10 @@ void printUsage(void);
 
 //--------------- Global variables -----------------------------------
 
-char lmFileName[256];
-char corpusFileName[256];
-char vocFileName[256];
-char context[256];
+std::string lmFileName;
+std::string corpusFileName;
 int verbose=0;
-int lmType=INTERPO_LM;
+int lmType=JEL_MER_LM;
 unsigned int order;
 
 //--------------- Function Definitions -------------------------------
@@ -79,13 +86,17 @@ int main(int argc,char *argv[])
         // Load language model
     switch(lmType)
     {
-      case INTERPO_LM: lm=new IncrJelMerNgramLM;
+      case INTERP_LM: lm=new IncrInterpNgramLM;
+        break;
+      case JEL_MER_LM: lm=new IncrJelMerNgramLM;
+        break;
+      case CACHE_JEL_MER_LM: lm=new CacheIncrJelMerNgramLM;
         break;
       default: lm=new IncrJelMerNgramLM;
         break;
     }
 
-    if(lm->load(lmFileName)==ERROR)
+    if(lm->load(lmFileName.c_str())==ERROR)
     {
       cerr<<"Error while loading language model"<<endl;
       delete lm;
@@ -96,7 +107,7 @@ int main(int argc,char *argv[])
       lm->setNgramOrder(order);
       
       ctimer(&elapsed_ant,&ucpu,&scpu);
-      int ret=lm->perplexity(corpusFileName,sentenceNo,numWords,total_logp,verbose);
+      int ret=lm->perplexity(corpusFileName.c_str(),sentenceNo,numWords,total_logp,verbose);
       if(ret==ERROR)
       {
         delete lm;
@@ -112,7 +123,7 @@ int main(int argc,char *argv[])
       cout<<"* Number of words: "<<numWords<<endl;	  
       cout<<"* Total log10 prob: "<<total_logp<<endl;
       cout<<"* Average-Log10-Likelihood (total_log10_prob/num_ngrams): "<<(float)total_logp/(numWords+sentenceNo)<<endl;
-      cout<<"* Perplexity: "<<exp(-((double)total_logp/(numWords+sentenceNo))*M_LN10)<<endl;
+      cout<<"* Perplexity: "<<exp(-((float)total_logp/(numWords+sentenceNo))*M_LN10)<<endl;
       cout<<"* Retrieving time: "<<total_time<<endl; 	   
 
       delete lm;
@@ -129,7 +140,7 @@ int TakeParameters(int argc,char *argv[])
   int err;
  
       /* Take the corpus file name */
- err=readString(argc,argv, "-c", corpusFileName);
+ err=readSTLstring(argc,argv, "-c", &corpusFileName);
  if(err==-1 || argc<2)
  {
    printUsage();
@@ -137,7 +148,7 @@ int TakeParameters(int argc,char *argv[])
  }
 
      /* Take the language model file name */
- err=readString(argc,argv, "-lm", lmFileName);
+ err=readSTLstring(argc,argv, "-lm", &lmFileName);
  if(err==-1)
  {
    printUsage();
@@ -165,12 +176,26 @@ int TakeParameters(int argc,char *argv[])
    verbose=2;
  }
 
- //     /* Check -io option */
- // err=readOption(argc,argv, "-io");
- // if(err!=-1)
- // {
- //   lmType=INTERPO_LM;
- // }
+     /* Check -jm option */
+ err=readOption(argc,argv, "-jm");
+ if(err!=-1)
+ {
+   lmType=JEL_MER_LM;
+ }
+
+     /* Check -i option */
+ err=readOption(argc,argv, "-i");
+ if(err!=-1)
+ {
+   lmType=INTERP_LM;
+ }
+
+     /* Check -cjm option */
+ err=readOption(argc,argv, "-cjm");
+ if(err!=-1)
+ {
+   lmType=CACHE_JEL_MER_LM;
+ }
 
  return OK;  
 }
@@ -178,11 +203,15 @@ int TakeParameters(int argc,char *argv[])
 //--------------------------------
 void printUsage(void)
 {
- printf("Usage: thot_ilm_perp -c <string> -lm <string> -n <int> [-v|-v1]\n\n");
+ printf("Usage: thot_ilm_perp -c <string> -lm <string> -n <int>\n");
+ printf("                     {-i | -jm | -cjm} \n");
+ printf("                     [-v|-v1]\n");
  printf("-c <string>          Corpus file to be processed.\n\n"); 
  printf("-lm <string>         Language model file name.\n\n");
  printf("-n <int>             Order of the n-grams.\n\n");
- // printf("-io                            Use interpolated n'grams of different orders.\n\n");
+ printf("-i                   Use interpolated model.\n\n");
+ printf("-jm                  Use Jelinek-Mercer n-gram models.\n\n");
+ printf("-cjm                 Use cache-based Jelinek-Mercer n-grams models.\n\n");
  printf("-v|-v1               Verbose modes.\n\n");
 }
 
