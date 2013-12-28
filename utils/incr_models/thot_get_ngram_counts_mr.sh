@@ -161,7 +161,7 @@ set_tmp_dir || exit 1
 
 # Process -unk option
 if [ ${unk_given} -eq 1 ]; then
-    TMPF_PCORPUS=`mktemp $tdir/pcorpus.XXXXXX`
+    TMPF_PCORPUS=`${MKTEMP} $tdir/pcorpus.XXXXXX`
     trap "rm ${TMPF_PCORPUS} ${TMPF_HIST_INFO} 2>/dev/null" EXIT
 
     cat $corpus | replace_first_word_occurrence_by_unk > ${TMPF_PCORPUS}
