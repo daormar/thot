@@ -61,6 +61,14 @@ class lm_ienc: public vecx_x_incr_enc<std::string,WordIndex>
        // Constructor
    lm_ienc();
 
+   bool HighSrc_to_Src(const Vector<std::string>& hs,Vector<WordIndex>& s);
+       // Given a HSRCDATA object "hs" obtains its corresponding encoded
+       // value in "s". Returns true if the encoding was successful
+       // ("hs" exists in the vocabulary).  s stores the corresponding
+       // code if exists, or a not valid one otherwise
+   bool HighTrg_to_Trg(const std::string& ht,WordIndex& t);
+       // The same for HX objects
+
 };
 
 #endif

@@ -32,6 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- lm_ienc class functions
 //
 
+//---------------
 lm_ienc::lm_ienc():vecx_x_incr_enc<std::string,WordIndex>()
 {
       // Introduce standard symbols
@@ -47,4 +48,48 @@ lm_ienc::lm_ienc():vecx_x_incr_enc<std::string,WordIndex>()
   if(maxIdx<SP_SYM1_LM) maxIdx=SP_SYM1_LM;
 
   x_object=maxIdx;
+}
+
+//---------------
+bool lm_ienc::HighSrc_to_Src(const Vector<std::string>& hs,
+                             Vector<WordIndex>& s)
+{
+  typename std::map<std::string,WordIndex>::iterator iter;
+  unsigned int i;
+  bool retval=true;
+  
+  s.clear();
+  for(i=0;i<hs.size();++i)
+  {
+    iter=hx_to_x.find(hs[i]);
+    if(iter==hx_to_x.end())
+    {
+      retval=false;
+      s.push_back(UNK_SYMBOL);
+    }
+    else
+    {
+      s.push_back(iter->second);
+    }
+  }
+  return retval;
+}
+
+//---------------
+bool lm_ienc::HighTrg_to_Trg(const std::string& ht,
+                             WordIndex& t)
+{
+  typename std::map<std::string,WordIndex>::iterator iter;
+
+  iter=hx_to_x.find(ht);
+  if(iter==hx_to_x.end())
+  {
+    t=UNK_SYMBOL;
+    return false;
+  }
+  else
+  {
+    t=iter->second;
+    return true;
+  }
 }
