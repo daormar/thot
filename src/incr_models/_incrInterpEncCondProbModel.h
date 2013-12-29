@@ -1,5 +1,5 @@
 /*
-thot package for statistical machine translation
+incr_models package for statistical machine translation
 Copyright (C) 2013 Daniel Ortiz-Mart\'inez
  
 This library is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files --------------------------------------
 
 #if HAVE_CONFIG_H
-#  include <thot_config.h>
+#  include <incr_models_config.h>
 #endif /* HAVE_CONFIG_H */
 
 #include "BaseIncrEncCondProbModel.h"
@@ -564,6 +564,7 @@ bool _incrInterpEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,SRCT
     this->modelPtrVec[modelIndex]->Src_to_HighSrc(iter->second,hs);
     this->HighSrc_to_Src(hs,global_s);
     nbt.insert(iter->first,global_s);
+    if(nbt.size()>(unsigned int) N) nbt.removeLastElement();
   }
   return ret;
 }
