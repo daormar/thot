@@ -75,17 +75,24 @@ nlp_common/getline.c nlp_common/getdelim.c nlp_common/ctimer.c		\
 nlp_common/ClassDic.cc nlp_common/BasicSocketUtils.cc			\
 nlp_common/awkInputStream.cc
 
-incr_models_h= incr_models/vecx_x_incr_enc.h				\
-incr_models/vecx_x_incr_ecpm.h incr_models/vecx_x_incr_cptable.h	\
+incr_models_h= incr_models/vecx_x_incr_interp_ecpm.h			\
+incr_models/vecx_x_incr_enc.h incr_models/vecx_x_incr_ecpm.h		\
+incr_models/vecx_x_incr_cptable.h incr_models/StlNgtComponent.h		\
 incr_models/lm_ienc.h incr_models/IncrNgramLM.h				\
 incr_models/_incrNgramLM.h incr_models/IncrJelMerNgramLM.h		\
-incr_models/_incrJelMerNgramLM.h incr_models/IncrEncoder.h		\
+incr_models/_incrJelMerNgramLM.h incr_models/IncrInterpNgramLM.h	\
+incr_models/_incrInterpNgramLM.h					\
+incr_models/_incrInterpEncCondProbModel.h incr_models/IncrEncoder.h	\
 incr_models/_incrEncCondProbModel.h incr_models/IncrCondProbTable.h	\
-incr_models/im_pair.h incr_models/BaseIncrEncoder.h			\
+incr_models/im_pair.h incr_models/FileNgTable.h				\
+incr_models/FileHistInfo.h incr_models/CacheLmIncrCpTable.h		\
+incr_models/CacheIncrJelMerNgramLM.h incr_models/BaseIncrEncoder.h	\
 incr_models/BaseIncrEncCondProbModel.h					\
 incr_models/BaseIncrCondProbTable.h incr_models/BaseIncrCondProbModel.h
-incr_models_defs= incr_models/lm_ienc.cc incr_models/IncrNgramLM.cc	\
-incr_models/IncrJelMerNgramLM.cc
+incr_models_defs= incr_models/StlNgtComponent.cc incr_models/lm_ienc.cc	\
+incr_models/IncrNgramLM.cc incr_models/IncrJelMerNgramLM.cc		\
+incr_models/IncrInterpNgramLM.cc incr_models/FileNgTable.cc		\
+incr_models/CacheLmIncrCpTable.cc incr_models/CacheIncrJelMerNgramLM.cc
 
 sw_models_h= sw_models/WeightedIncrNormSlm.h				\
 sw_models/SwModelsSwModelTypes.h sw_models/SwModelsSlmTypes.h		\
