@@ -1,5 +1,5 @@
 /*
-thot package for statistical machine translation
+incr_models package for statistical machine translation
 Copyright (C) 2013 Daniel Ortiz-Mart\'inez
  
 This library is free software; you can redistribute it and/or
@@ -54,7 +54,7 @@ lm_ienc::lm_ienc():vecx_x_incr_enc<std::string,WordIndex>()
 bool lm_ienc::HighSrc_to_Src(const Vector<std::string>& hs,
                              Vector<WordIndex>& s)
 {
-  typename std::map<std::string,WordIndex>::iterator iter;
+  std::map<std::string,WordIndex>::iterator iter;
   unsigned int i;
   bool retval=true;
   
@@ -79,7 +79,7 @@ bool lm_ienc::HighSrc_to_Src(const Vector<std::string>& hs,
 bool lm_ienc::HighTrg_to_Trg(const std::string& ht,
                              WordIndex& t)
 {
-  typename std::map<std::string,WordIndex>::iterator iter;
+  std::map<std::string,WordIndex>::iterator iter;
 
   iter=hx_to_x.find(ht);
   if(iter==hx_to_x.end())
