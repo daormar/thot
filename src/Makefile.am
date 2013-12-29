@@ -206,11 +206,7 @@ downhill_simplex_h= downhill_simplex/step_by_step_dhs.h
 downhill_simplex_defs= downhill_simplex/step_by_step_dhs.c
 
 stack_dec_h= stack_dec/WordPredictor.h stack_dec/WordPenaltyModel.h	\
-stack_dec/WgUncoupledAssistedTrans.h stack_dec/UserNameToUserIdMap.h	\
-stack_dec/TreatCovProblemsPars.h stack_dec/ThotMtFactoryInitPars.h	\
-stack_dec/ThotMtFactory.h stack_dec/ThotMtEngine.h			\
-stack_dec/ThotImtSession.h stack_dec/ThotImtFactoryInitPars.h		\
-stack_dec/ThotImtFactory.h stack_dec/ThotImtEngine.h			\
+stack_dec/WgUncoupledAssistedTrans.h stack_dec/TreatCovProblemsPars.h	\
 stack_dec/ThotDecoderUserPars.h stack_dec/ThotDecoderState.h		\
 stack_dec/ThotDecoderPerUserVars.h stack_dec/ThotDecoder.h		\
 stack_dec/ThotDecoderCommonVars.h stack_dec/ThotDecoderClient.h		\
@@ -250,10 +246,7 @@ stack_dec/BaseHypState.h stack_dec/BaseHypothesisRec.h			\
 stack_dec/BaseHypothesis.h stack_dec/BaseAssistedTrans.h		\
 stack_dec/AssistedTransTypes.h stack_dec/_assistedTrans.h
 stack_dec_defs= stack_dec/WordPredictor.cc				\
-stack_dec/WordPenaltyModel.cc stack_dec/UserNameToUserIdMap.cc		\
-stack_dec/ThotMtFactory.cc stack_dec/ThotMtEngine.cc			\
-stack_dec/ThotImtSession.cc stack_dec/ThotImtFactory.cc			\
-stack_dec/ThotImtEngine.cc stack_dec/ThotDecoderClient.cc		\
+stack_dec/WordPenaltyModel.cc stack_dec/ThotDecoderClient.cc		\
 stack_dec/ThotDecoder.cc stack_dec/PhrScoreInfo.cc			\
 stack_dec/PhrNbestTransTableRefKey.cc					\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
