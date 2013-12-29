@@ -1,5 +1,5 @@
 /*
-incr_models package for statistical machine translation
+thot package for statistical machine translation
 Copyright (C) 2013 Daniel Ortiz-Mart\'inez
  
 This library is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files --------------------------------------
 
 #if HAVE_CONFIG_H
-#  include <incr_models_config.h>
+#  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
 #include "BaseIncrEncCondProbModel.h"

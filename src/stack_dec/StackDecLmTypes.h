@@ -39,29 +39,28 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 // necessary since the corresponding library already defines a label and
 // notes for this model
 
-#define THOT_INCR_INTERP_LM           2 // This constant is
+#define THOT_INCR_INTERP_LM           2
+#define THOT_INCR_INTERP_LM_LABEL     "Interpolation of incremental n-gram language models"
+#define THOT_INCR_INTERP_LM_NOTES     ""
+
+#define THOT_INCR_INTERPO_LM          3 // This constant is
                                              // temporarily defined, the
                                              // correct name should be
                                              // THOT_INCR_JEL_MER_LM
 
-#define THOT_INCR_INTERPO_LM          2 // This constant is
-                                             // temporarily defined, the
-                                             // correct name should be
-                                             // THOT_INCR_JEL_MER_LM
-
-#define THOT_INCR_JEL_MER_LM          2
+#define THOT_INCR_JEL_MER_LM          3
 #define THOT_INCR_JEL_MER_LM_LABEL    "Incremental Jelinek-Mercer n-gram language model"
 #define THOT_INCR_JEL_MER_LM_NOTES    ""
 
-#define THOT_CINCR_JEL_MER_LM         3
-#define THOT_CINCR_JEL_MER_LM_LABEL   "Cached incremental interpolated-order n-gram language model"
+#define THOT_CINCR_JEL_MER_LM         4
+#define THOT_CINCR_JEL_MER_LM_LABEL   "Cached incremental jelinek-mercer n-gram language model"
 #define THOT_CINCR_JEL_MER_LM_NOTES   ""
 
-#define THOT_SWISE_JEL_MER_LM         4
+#define THOT_SWISE_JEL_MER_LM         5
 #define THOT_SWISE_JEL_MER_LM_LABEL   "Stepwise interpolated-order n-gram language model"
 #define THOT_SWISE_JEL_MER_LM_NOTES   ""
 
-#define THOT_INCR_KN_LM               5
+#define THOT_INCR_KN_LM               6
 #define THOT_INCR_KN_LM_LABEL         "Incremental Kneser-Ney n-gram language model"
 #define THOT_INCR_KN_LM_NOTES         ""
 
@@ -82,6 +81,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define THOT_CURR_LM_TYPE ARPA_LM_CURR_LM_TYPE
 #define THOT_CURR_LM_LABEL ARPA_LM_CURR_LM_LABEL
 #define THOT_CURR_LM_NOTES ARPA_LM_CURR_LM_NOTES
+typedef THOT_CURR_LM_TYPE::LM_State LM_State;
+
+#elif THOT_LM_TYPE == THOT_INCR_INTERP_LM
+#include <lt_op_vec.h> // provides an ordering relationship for vectors
+#include <IncrInterpNgramLM.h>
+#define THOT_CURR_LM_TYPE IncrInterpNgramLM
+#define THOT_CURR_LM_LABEL THOT_INCR_INTERP_LM_LABEL
+#define THOT_CURR_LM_NOTES THOT_INCR_INTERP_LM_NOTES
 typedef THOT_CURR_LM_TYPE::LM_State LM_State;
 
 #elif THOT_LM_TYPE == THOT_INCR_JEL_MER_LM

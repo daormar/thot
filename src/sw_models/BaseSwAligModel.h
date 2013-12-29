@@ -283,8 +283,8 @@ void BaseSwAligModel<PPINFO>::clearInfoAboutSentRange(void)
 
 //-------------------------
 template<class PPINFO>
-pair<double,double> BaseSwAligModel<PPINFO>::loglikelihoodForPairRange(pair<unsigned int,unsigned int> sentPairRange,
-                                                                       int verbosity/*=0*/)
+pair<double,double> BaseSwAligModel<PPINFO>::loglikelihoodForPairRange(pair<unsigned int,unsigned int> /*sentPairRange*/,
+                                                                       int /*verbosity*//*=0*/)
 {
   cerr<<"Warning: loglikelihoodForAllSents() functionality not implemented!"<<endl;
   return make_pair(0.0,0.0);  

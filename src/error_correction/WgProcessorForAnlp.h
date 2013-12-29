@@ -555,7 +555,7 @@ template<class ECM_FOR_WG>
 typename WgProcessorForAnlp<ECM_FOR_WG>::NbestHypStates
 WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestHypStates(unsigned int n,
                                                      const RejectedWordsSet& rejectedWords,
-                                                     unsigned int verbose/*=0*/)
+                                                     unsigned int /*verbose*//*=0*/)
 {
       // nbestHypStates stores an ordered list of states
   NbestHypStates nbestHypStates;
@@ -617,7 +617,7 @@ template<class ECM_FOR_WG>
 typename WgProcessorForAnlp<ECM_FOR_WG>::NbestHypSubStates
 WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestHypSubStates(unsigned int n,
                                                         const RejectedWordsSet& rejectedWords,
-                                                        unsigned int verbose/*=0*/)
+                                                        unsigned int /*verbose*//*=0*/)
 {
       // nbestHypStates stores an ordered list of sub-states
   NbestHypSubStates nbestHypSubStates;

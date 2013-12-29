@@ -225,8 +225,7 @@ class IncrIbm1AligModel: public _incrSwAligModel<Vector<Prob> >
    // EM-related functions
    void calcNewLocalSuffStats(pair<unsigned int,unsigned int> sentPairRange,
                               int verbosity=0);
-   virtual double calc_anji_num(unsigned int n,
-                                const Vector<WordIndex>& nsrcSent,
+   virtual double calc_anji_num(const Vector<WordIndex>& nsrcSent,
                                 const Vector<WordIndex>& trgSent,
                                 unsigned int i,
                                 unsigned int j);

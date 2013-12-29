@@ -117,25 +117,25 @@ void CacheLmIncrCpTable::addTableEntry(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-void CacheLmIncrCpTable::addSrcInfo(const Vector<WordIndex>& s,Count s_inf)
+void CacheLmIncrCpTable::addSrcInfo(const Vector<WordIndex>& /*s*/,Count /*s_inf*/)
 {
       // TO-DO
   cerr<<"Warning: addSrcInfo() member function not implemented"<<endl;
 }
 
 //-------------------------
-void CacheLmIncrCpTable::addSrcTrgInfo(const Vector<WordIndex>& s,
-                                       const WordIndex& t,
-                                       Count st_inf)
+void CacheLmIncrCpTable::addSrcTrgInfo(const Vector<WordIndex>& /*s*/,
+                                       const WordIndex& /*t*/,
+                                       Count /*st_inf*/)
 {
         // TO-DO
   cerr<<"Warning: addSrcTrgInfo() member function not implemented"<<endl;
 }
 
 //-------------------------
-void CacheLmIncrCpTable::incrCountsOfEntryLog(const Vector<WordIndex>& s,
-                                              const WordIndex& t,
-                                              LogCount lc)
+void CacheLmIncrCpTable::incrCountsOfEntryLog(const Vector<WordIndex>& /*s*/,
+                                              const WordIndex& /*t*/,
+                                              LogCount /*lc*/)
 {
       // TO-DO
   cerr<<"Warning: incrCountsOfEntryLog() member function not implemented"<<endl;
@@ -155,7 +155,8 @@ im_pair<Count,Count> CacheLmIncrCpTable::infSrcTrg(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Count CacheLmIncrCpTable::getSrcInfo(const Vector<WordIndex>& s,bool& found)
+Count CacheLmIncrCpTable::getSrcInfo(const Vector<WordIndex>& s,
+                                     bool& found)
 {
       // Search on first level cache table
   Count c_s;
@@ -518,10 +519,11 @@ bool CacheLmIncrCpTable::const_iterator::operator++(int)  //postfix
   return operator++();
 }
 //---------------
-int CacheLmIncrCpTable::const_iterator::operator==(const const_iterator& right)
+int CacheLmIncrCpTable::const_iterator::operator==(const const_iterator& /*right*/)
 {
       // TO-DO
   // return this->cachePtIter==right.cachePtIter;
+  return false;
 }
 //---------------
 int CacheLmIncrCpTable::const_iterator::operator!=(const const_iterator& right)

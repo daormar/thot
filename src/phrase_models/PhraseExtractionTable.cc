@@ -1053,7 +1053,7 @@ Bisegm& PhraseExtractionTable::obtainPossibleSegmentations(PhraseExtractParamete
 //-------------------------
 void PhraseExtractionTable::getSegmentationsForEachCell(void)
 {
- unsigned int x,y,z,a,k,numCells,numComb,trgPhraseLength;
+ unsigned int x,y,z,a,k,numCells,trgPhraseLength;
  Vector<CellID> comb;	
  CellID cid;
  Bitset<MAX_SENTENCE_LENGTH> zFertBitset,spurBitset;	
@@ -1065,7 +1065,6 @@ void PhraseExtractionTable::getSegmentationsForEachCell(void)
  zFertBitset=zeroFertBitset(alig);
  spurBitset=spuriousWordsBitset(alig);	
  pruneWasApplied=false;	
- numComb=0;	
   
  for(y=0;y<tlen;++y)
  {
@@ -1130,7 +1129,7 @@ void PhraseExtractionTable::getSegmentationsForEachCell(void)
 //-------------------------
 void PhraseExtractionTable::getSegmentationsForEachCellFast(void)
 {
- unsigned int x,y,z,a,k,numComb,trgPhraseLength;
+ unsigned int x,y,z,a,k,trgPhraseLength;
  Vector<CellID> comb;	
  CellID cid;
  Bitset<MAX_SENTENCE_LENGTH> zFertBitset,spurBitset;	
@@ -1142,7 +1141,6 @@ void PhraseExtractionTable::getSegmentationsForEachCellFast(void)
  zFertBitset=zeroFertBitset(alig);
  spurBitset=spuriousWordsBitset(alig);	
  pruneWasApplied=false;	
- numComb=0;
  
  for(y=0;y<tlen;++y)
  {
@@ -1427,13 +1425,13 @@ bool PhraseExtractionTable::sourcePosInCell(unsigned int j,
 
 //-------------------------
 unsigned int PhraseExtractionTable::leftMostPosInCell(unsigned int x,
-                                                      unsigned int y)
+                                                      unsigned int /*y*/)
 {
  return tlen-x-1;	
 }
 
 //-------------------------
-unsigned int PhraseExtractionTable::rightMostPosInCell(unsigned int x,
+unsigned int PhraseExtractionTable::rightMostPosInCell(unsigned int /*x*/,
                                                        unsigned int y)
 {
  return y;	

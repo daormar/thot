@@ -251,8 +251,8 @@ double IncrHmmAligModel::unsmoothed_logaProb(PositionIndex prev_i,
 double IncrHmmAligModel::cached_logaProb(PositionIndex prev_i,
                                          PositionIndex slen,
                                          PositionIndex i,
-                                         const Vector<WordIndex>& nsrcSent,
-                                         const Vector<WordIndex>& trgSent)
+                                         const Vector<WordIndex>& /*nsrcSent*/,
+                                         const Vector<WordIndex>& /*trgSent*/)
 {
   double d=cachedLogaProbDm.get(prev_i,i);
   if(d!=INVALID_DM_VAL)
@@ -487,7 +487,7 @@ bool IncrHmmAligModel::printAlSmIntFactor(const char* alSmIntFactorFile)
 
 //-------------------------   
 void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sentPairRange,
-                                             int verbosity)
+                                             int /*verbosity*/)
 {
       // Iterate over the training samples
   for(unsigned int n=sentPairRange.first;n<=sentPairRange.second;++n)
@@ -1286,10 +1286,10 @@ LgProb IncrHmmAligModel::bestAligGivenVitMatrices(PositionIndex slen,
 }
 
 //-------------------------
-LgProb IncrHmmAligModel::calcLgProbForAlig(const Vector<WordIndex>& sSent,
-                                           const Vector<WordIndex>& tSent,
-                                           WordAligMatrix aligMatrix,
-                                           int verbose)
+LgProb IncrHmmAligModel::calcLgProbForAlig(const Vector<WordIndex>& /*sSent*/,
+                                           const Vector<WordIndex>& /*tSent*/,
+                                           WordAligMatrix /*aligMatrix*/,
+                                           int /*verbose*/)
 {
       // TO-DO (post-thesis)
   return 0;
@@ -1496,42 +1496,42 @@ LgProb IncrHmmAligModel::noisyOrLgProb(const Vector<WordIndex>& sSent,
 }
 
 //-------------------------
-void IncrHmmAligModel::initPpInfo(unsigned int slen,
-                                  const Vector<WordIndex>& tSent,
-                                  PpInfo& ppInfo)
+void IncrHmmAligModel::initPpInfo(unsigned int /*slen*/,
+                                  const Vector<WordIndex>& /*tSent*/,
+                                  PpInfo& /*ppInfo*/)
 {
       // TO-DO (post-thesis)
 }
 
 //-------------------------
-void IncrHmmAligModel::partialProbWithoutLen(unsigned int srcPartialLen,
-                                             unsigned int slen,
-                                             const Vector<WordIndex>& s_,
-                                             const Vector<WordIndex>& tSent,
-                                             PpInfo& ppInfo)
+void IncrHmmAligModel::partialProbWithoutLen(unsigned int /*srcPartialLen*/,
+                                             unsigned int /*slen*/,
+                                             const Vector<WordIndex>& /*s_*/,
+                                             const Vector<WordIndex>& /*tSent*/,
+                                             PpInfo& /*ppInfo*/)
 {
       // TO-DO (post-thesis)
 }
 
 //-------------------------
-LgProb IncrHmmAligModel::lpFromPpInfo(const PpInfo& ppInfo)
+LgProb IncrHmmAligModel::lpFromPpInfo(const PpInfo& /*ppInfo*/)
 {
       // TO-DO (post-thesis)
   return 0;
 }
 
 //-------------------------
-void IncrHmmAligModel::addHeurForNotAddedWords(int numSrcWordsToBeAdded,
-                                               const Vector<WordIndex>& tSent,
-                                               PpInfo& ppInfo)
+void IncrHmmAligModel::addHeurForNotAddedWords(int /*numSrcWordsToBeAdded*/,
+                                               const Vector<WordIndex>& /*tSent*/,
+                                               PpInfo& /*ppInfo*/)
 {
       // TO-DO (post-thesis)
 }
 
 //-------------------------
-void IncrHmmAligModel::sustHeurForNotAddedWords(int numSrcWordsToBeAdded,
-                                                const Vector<WordIndex>& tSent,
-                                                PpInfo& ppInfo)
+void IncrHmmAligModel::sustHeurForNotAddedWords(int /*numSrcWordsToBeAdded*/,
+                                                const Vector<WordIndex>& /*tSent*/,
+                                                PpInfo& /*ppInfo*/)
 {
       // TO-DO (post-thesis)
 }

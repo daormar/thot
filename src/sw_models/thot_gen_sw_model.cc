@@ -361,7 +361,7 @@ float obtainLr(const thot_gen_sw_model_pars& pars,
   {
         // Init variables
     float lr=FIXED_LR;
-    unsigned int lr_type=pars.lrPars[0];
+    unsigned int lr_type=(unsigned int) pars.lrPars[0];
     float par1=0;
     float par2=0;
     if(pars.lrPars.size()>=2) par1=pars.lrPars[1];

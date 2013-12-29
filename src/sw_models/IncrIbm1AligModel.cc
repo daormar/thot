@@ -154,7 +154,7 @@ Vector<WordIndex> IncrIbm1AligModel::getTrgSent(unsigned int n)
 
 //-------------------------   
 void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sentPairRange,
-                                              int verbosity)
+                                              int /*verbosity*/)
 {
       // Iterate over the training samples
   for(unsigned int n=sentPairRange.first;n<=sentPairRange.second;++n)
@@ -177,7 +177,7 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
       for(unsigned int i=0;i<nsrcSent.size();++i)
       {
             // Smooth numerator
-        double d=calc_anji_num(n,nsrcSent,trgSent,i,j);
+        double d=calc_anji_num(nsrcSent,trgSent,i,j);
         if(d<SMOOTHING_ANJI_NUM) d=SMOOTHING_ANJI_NUM;
             // Add contribution to sum
         sum_anji_num_forall_s+=d;
@@ -212,8 +212,7 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
 }
 
 //-------------------------   
-double IncrIbm1AligModel::calc_anji_num(unsigned int n,
-                                        const Vector<WordIndex>& nsrcSent,
+double IncrIbm1AligModel::calc_anji_num(const Vector<WordIndex>& nsrcSent,
                                         const Vector<WordIndex>& trgSent,
                                         unsigned int i,
                                         unsigned int j)
@@ -646,7 +645,7 @@ void IncrIbm1AligModel::initPpInfo(unsigned int slen,
 }
 
 //-------------------------
-void IncrIbm1AligModel::partialProbWithoutLen(unsigned int srcPartialLen,
+void IncrIbm1AligModel::partialProbWithoutLen(unsigned int /*srcPartialLen*/,
                                               unsigned int slen,
                                               const Vector<WordIndex>& s_,
                                               const Vector<WordIndex>& tSent,
