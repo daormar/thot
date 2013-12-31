@@ -900,11 +900,11 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
 }
 
 //--------------------------
+#ifdef THOT_ENABLE_UPDATE_LLWEIGHTS
 void ThotDecoder::updateLogLinearWeights(std::string refSent,
                                          WordGraph* wgPtr,
                                          int verbose/*=0*/)
 {
-#ifdef THOT_ENABLE_UPDATE_LLWEIGHTS
 # ifndef THOT_DISABLE_REC
         // Obtain n-best list
     unsigned int len=NBEST_LIST_SIZE_FOR_LLWEIGHT_UPDATE;
@@ -960,8 +960,16 @@ void ThotDecoder::updateLogLinearWeights(std::string refSent,
     if(verbose)
       cerr<<"Weights of the loglinear combination will not be modified."<<endl;
 # endif
-#endif
 }
+#else
+void ThotDecoder::updateLogLinearWeights(std::string /*refSent*/,
+                                         WordGraph* /*wgPtr*/,
+                                         int verbose/*=0*/)
+{
+    if(verbose)
+      cerr<<"Updating of log-linear combination weights is disabled."<<endl;  
+}
+#endif
 
 //--------------------------
 void ThotDecoder::setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,

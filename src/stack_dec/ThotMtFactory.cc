@@ -34,7 +34,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------------------
 int ThotMtFactory::init(int argc,
                         char *argv[],
-                        Context *context /*= 0*/)
+                        Context */*context*/ /*= 0*/)
 {
       // Take parameters
   std::string cfgFileName;
