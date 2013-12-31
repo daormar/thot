@@ -19,7 +19,7 @@ version()
 usage()
 {
     echo "Usage: thot_pbs_alig_op {-pr <int>} {-g <string>}"
-    echo "                   {<-and|-or|-sum|-sym1|-sym2> <string>}"
+    echo "                   {<-and|-or|-sum|-sym1|-sym2|-grd> <string>}"
     echo "                   {-o <string>} [-qs <string>]"
     echo "                   [-sdir <string>] [-T <string>]"
     echo "                   [-debug] [--help] [--version]"
@@ -28,7 +28,7 @@ usage()
     echo ""
     echo "-g <string>                     Name of the alignment file in GIZA format."
     echo ""
-    echo "-<and|or|sum|sym1|sym2> <string>"
+    echo "-<and|or|sum|sym1|sym2|grd> <string>"
     echo "                                Operation to be executed, using <string> as"
     echo "                                the second file operand."
     echo ""
@@ -245,6 +245,13 @@ while [ $# -ne 0 ]; do
                 op_given=1
             fi
             ;;
+        "-grd") shift
+            if [ $# -gt 0 ]; then
+                operation="-grd"
+                op_file=$1
+                op_given=1
+            fi
+            ;;
         "-o") shift
             if [ $# -ne 0 ]; then
                 output=$1
@@ -292,7 +299,7 @@ fi
 
 if [ ${op_given} -eq 0 ];then
     # invalid parameters 
-    echo "Error: <-and|-or|-sum|-sym1|-sym2>  option has to be given"
+    echo "Error: <-and|-or|-sum|-sym1|-sym2|grd>  option has to be given"
     exit 1
 fi
 
