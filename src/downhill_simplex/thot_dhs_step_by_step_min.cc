@@ -156,6 +156,7 @@ int main(int argc,char *argv[])
         // Release memory
     free(start);
     free(x);
+    fclose(images_file);
     
     return OK;
   }
@@ -196,12 +197,13 @@ void printVarVec(ostream &outS,double x[])
 Vector<double> xToVarVec(double x[])
 {
   Vector<double> varVec;
-  
+  unsigned int idx=0;
   for(unsigned int i=0;i<fixedVarsBoolVec.size();++i)
   {
     if(!fixedVarsBoolVec[i])
     {
-      varVec.push_back(x[i]);
+      varVec.push_back(x[idx]);
+      ++idx;
     }
     else
       varVec.push_back(fixNonFixVars[i]);
@@ -249,11 +251,13 @@ void gen_init_sol(double x[])
   }
   else
   {
+    unsigned int idx=0;
     for(unsigned int i=0;i<initVals.size();++i)
     {
       if(!fixedVarsBoolVec[i])
       {
-        x[i]=initVals[i];
+        x[idx]=initVals[i];
+        ++idx;
       }
     }
   }
