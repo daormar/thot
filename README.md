@@ -13,9 +13,9 @@ member of the [PRHLT research group] [2] at the [Polytechnic University
 of Valencia] [3].
 
 
-Functionality
--------------
-The toolkit includes the following functionality:
+Features
+--------
+The toolkit includes the following features:
 
 - Phrase-based statistical machine translation decoder
 - Computer-aided translation (post-edition and interactive machine translation)
@@ -179,7 +179,7 @@ Government in a number of research projects, such as the [MIPRCV
 project] [13] that belongs to the [CONSOLIDER programme] [14].
 
 
-Last updated: 26 November 2013,
+Last updated: 7 January 2014,
 [daormar2@gmail.com] [8]
 
 [1]: https://prhlt.iti.upv.es/page/member?user=dortiz
