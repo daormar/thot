@@ -24,16 +24,16 @@ The toolkit includes the following functionality:
 - Client-server implementation of the translation functionality
 - Single word alignment model estimation using the incremental EM algorithm
 - Scalable implementation of the different estimation algorithms using Map-Reduce
+- Compiles on Unix-like and Windows (using Cygwin) systems
 - Integration with the [CasMaCat Workbench] [4] developed in the [CasMaCat project] [5]
 - ...
 
 
 Distribution Details
 --------------------
-Thot is known to compile on Linux and Windows (using cygwin) systems.
-As future work we plan to port the code to other platforms. See the
-"Support" section of this file if you experience problems during
-compilation.
+Thot is known to compile on Unix-like and Windows (using Cygwin)
+systems. See the "Support" section of this file if you experience
+problems during compilation.
 
 It is released under the [GNU Lesser General Public License (LGPL)] [6].
 
@@ -41,10 +41,13 @@ It is released under the [GNU Lesser General Public License (LGPL)] [6].
 Installation
 ------------
 To install Thot, first you need to install the autotools (autoconf,
-autoconf-archive, and automake packages in Ubuntu). 
+autoconf-archive, and automake packages in Ubuntu). If you are planning
+to use Thot on a Windows platform, you also need to install the Cygwin
+environment.
 
-Once the autotools are available, you can proceed with the installation
-of Thot by following the next sequence of steps:
+Once the autotools are available (as well as Cygwin if required), you
+can proceed with the installation of Thot by following the next sequence
+of steps:
 
  1. Obtain the package using git:
 
