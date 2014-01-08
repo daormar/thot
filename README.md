@@ -31,9 +31,10 @@ The toolkit includes the following features:
 
 Distribution Details
 --------------------
-Thot is known to compile on Unix-like and Windows (using Cygwin)
-systems. See the "Support" section of this file if you experience
-problems during compilation.
+Thot has been coded using C++ and shell-scripting. Thot is known to
+compile on Unix-like and Windows (using Cygwin) systems. See the
+"Support" section of this file if you experience problems during
+compilation.
 
 It is released under the [GNU Lesser General Public License (LGPL)] [6].
 
