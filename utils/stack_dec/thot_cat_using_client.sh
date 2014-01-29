@@ -68,9 +68,9 @@ pipe_fail()
 ########
 verify_connection()
 {
-    h=`cat $TMPHYPERR`
+    h=`cat $TMPHYPERR | $GREP "connect() error"`
     if [ "${h}" = "connect() error" ]; then
-        echo "Error: Connection lost!"
+        echo "ERROR: Connection lost!" >&2
         exit 1
     fi
 }
@@ -322,6 +322,9 @@ else
     SKIP_FOLLOW_ITERS="no"
 fi
 
+# Set maximum number of iterations
+MAX_ITERS=200
+
 # Print output header
 print_header $testfile $reffile
 
@@ -351,21 +354,29 @@ if [ -f $testfile -a -f $reffile ]; then
 
     # Read $testfile line by line
     while read -r s; do
+        # Obtain reference sentence
         numSent=`expr $numSent + 1`
         r=`head -${numSent} $reffile | tail -1`
 
-        # initial iteration
-        $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -sc "$s" -v>$TMPHYP 2>$TMPHYPERR
+        # Initialize iteration number
+        iter_num=1
+
+        # Initial iteration
+        $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -sc "$s" -v >$TMPHYP 2>$TMPHYPERR
         verify_connection
+
+        # Update variables
         h=`cat $TMPHYP`
         inittime=`process_time_from_log $TMPHYPERR`
         tottz=`sum_ab $tottz $inittime`
         mintz=`min_ab $mintz $inittime`
         maxtz=`max_ab $maxtz $inittime`
+
+        # Print iteration information
         echo "<TestSample number=\"$numSent\" InitializationTime=\"$inittime\">"
         echo "<source>            $s </source>"
         echo "<reference>         $r </reference>"
-        echo "<hyp time=\"0.000\">  ^$h </hyp>"
+        echo "<hyp time=\"0.000000\">  ^$h </hyp>"
         initial_hyp=h
 
         # following iterations
@@ -374,42 +385,68 @@ if [ -f $testfile -a -f $reffile ]; then
             MAsent=0
             prev=""
             ref_ispref_hyp=`is_pref "$r" "$h"`
-            while [ ${ref_ispref_hyp} -eq 0 ]; do
+            while [ ${ref_ispref_hyp} -eq 0 -a ${iter_num} -lt ${MAX_ITERS} ]; do
+                # Update iteration number
+                iter_num=`expr ${iter_num} + 1`
+
+                # Compute new prefix and previous and new lenghts
                 new_pref=`extend_pref "$r" "$h"`
                 prevl=`len_str "$prev"`
                 new_prefl=`len_str "${new_pref}"`
+
+                # Compute contributions to error measures
                 diffe=`expr ${new_prefl} - ${prevl}`
                 if [ $diffe -gt 1 ]; then
                     MA=`expr $MA + 1`
                     MAsent=`expr $MAsent + 1`
                 fi
                 ngiter=`expr $ngiter + 1`
-                KS=`expr $KS + 1`
                 KSsent=`expr $KSsent + 1`
                 suff=`suffix "$prev" "${new_pref}"`
+                
                 # Append new string to the prefix
                 $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -ap "$suff" -v>$TMPHYP 2>$TMPHYPERR
                 verify_connection
+
+                # Update variables
                 h=`cat $TMPHYP`
                 hprompt=`get_hyp_with_prompt "$h" "${new_pref}"`
                 ittime=`process_time_from_log $TMPHYPERR`
                 tottgz=`sum_ab $tottgz $ittime`
                 mintgz=`min_ab $mintgz $ittime`
                 maxtgz=`max_ab $maxtgz $ittime`
+
+                # Print iteration information
                 echo "<hyp time=\"$ittime\">  ${hprompt} </hyp>"
+
+                # Compute end condition
                 prev="${new_pref}"
                 ref_ispref_hyp=`is_pref "$r" "$h"`
             done
         fi
 
-        # Compute error-related statistics
-        C=`len_str "$r"`
-        CHARS=`expr $CHARS + $C`
-        MAacc=`expr ${MAacc} + 1`
-        mac=`expr ${MAacc} + $MA`
-        macsent=`expr ${MAsent} + 1`
-        KSMR=`echo "" | $AWK -v ks=$KS -v ma=$MA -v maacc=$MAacc -v chars=$CHARS '{printf"%.2f",((ks+ma+maacc)/chars)*100}'`
-        KSMsent=`expr ${KSsent} + ${macsent}`
+        # Print warning if maximum number of iterations was exceeded
+        if [ ${iter_num} -ge ${MAX_ITERS} ]; then
+            echo "WARNING: maximum number of iterations exceeded for sentence number ${numSent}" >&2
+        fi
+
+        # Compute error-related statistics (only if maximum number of
+        # iterations not exceeded)
+        if [ ${iter_num} -lt ${MAX_ITERS} ]; then
+            C=`len_str "$r"`
+            CHARS=`expr $CHARS + $C`
+            MAacc=`expr ${MAacc} + 1`
+            mac=`expr ${MAacc} + $MA`
+            macsent=`expr ${MAsent} + 1`
+            KS=`expr $KS + ${KSsent}`
+            KSMR=`echo "" | $AWK -v ks=$KS -v ma=$MA -v maacc=$MAacc -v chars=$CHARS '{printf"%.2f",((ks+ma+maacc)/chars)*100}'`
+            KSMsent=`expr ${KSsent} + ${macsent}`
+        else
+            C=""
+            KSsent=""
+            macsent=""
+            KSMsent=""
+        fi
 
         # Execute training or adaptation processes if requested
         # check -tr option
@@ -461,7 +498,7 @@ if [ -f $testfile -a -f $reffile ]; then
     if [ ${nc_given} -eq 0 ]; then
         $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -v -clear
     else
-        echo "Warning: server data structures were not cleared" >&2
+        echo "WARNING: server data structures were not cleared" >&2
     fi
 
     # Print experiment tail
