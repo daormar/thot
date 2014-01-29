@@ -180,8 +180,7 @@ Government in a number of research projects, such as the [MIPRCV
 project] [13] that belongs to the [CONSOLIDER programme] [14].
 
 
-Last updated: 7 January 2014,
-[daormar2@gmail.com] [8]
+Last updated: 29 January 2014
 
 [1]: https://prhlt.iti.upv.es/page/member?user=dortiz
 [2]: https://prhlt.iti.upv.es/
