@@ -106,14 +106,14 @@ get_counts()
 
 print_desc()
 {
-    echo "get_ngram_counts written by Daniel Ortiz"
-    echo "get_ngram_counts extracts n-grams counts from a monolingual corpus"
-    echo "type \"get_ngram_counts --help\" to get usage information"
+    echo "thot_get_ngram_counts written by Daniel Ortiz"
+    echo "thot_get_ngram_counts extracts n-grams counts from a monolingual corpus"
+    echo "type \"thot_get_ngram_counts --help\" to get usage information"
 }
 
 version()
 {
-    echo "get_ngram_counts is part of the thot package"
+    echo "thot_get_ngram_counts is part of the thot package"
     echo "thot version "${version}
     echo "thot is GNU software written by Daniel Ortiz"
 }
