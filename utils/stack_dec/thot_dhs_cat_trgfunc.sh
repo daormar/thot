@@ -70,6 +70,14 @@ generate_cfg_file()
     if [ "${CASECONV}" != "" ]; then CASECONV_OPT="-uc ${CASECONV}" ; fi
     if [ "${WGHFILE}" != "" ]; then WGH_OPT="-wgh ${WGHFILE}" ; fi
 
+    # Check variables
+    ls ${TM}* >&2 || ( echo "ERROR: invalid prefix ${TM}" ; exit 1 )
+
+    if [ ! -f ${LM} ]; then
+        echo "ERROR: file ${LM} does not exist" >&2
+        exit 1
+    fi
+
     # Print configuration file
     echo "# Translation model prefix"
     echo "-tm ${TM}"
@@ -193,6 +201,22 @@ else
     if [ "${VERBOSE_SERVER}" = "1" ]; then VERB_SERVER_OPT="-v" ; fi
     if [ "${PRINT_MODELS_PREF}" != "" ]; then PM_OPT="-pm ${PRINT_MODELS_PREF}" ; fi
     if [ "${NNC_PEN_FACTOR}" = "" ]; then NNC_PEN_FACTOR=1000; fi
+
+    # Check variables
+    if [ ! -f ${SERVER} ]; then
+        echo "ERROR: file ${SERVER} does not exist" >&2
+        exit 1
+    fi
+
+    if [ ! -f ${TEST} ]; then
+        echo "ERROR: file ${TEST} does not exist" >&2
+        exit 1
+    fi
+
+    if [ ! -f ${REF} ]; then
+        echo "ERROR: file ${REF} does not exist" >&2
+        exit 1
+    fi
 
     # Read parameters
     SDIR=$1

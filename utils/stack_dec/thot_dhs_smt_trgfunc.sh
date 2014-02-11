@@ -221,6 +221,29 @@ else
     if [ "${OPT_NVALUE}" = "" ]; then OPT_NVALUE=200; fi
     if [ "${QS}" != "" ]; then QS_OPT="-qs \"${QS}\"" ; fi    
 
+    # Check variables
+    if [ ! -f ${PHRDECODER} ]; then
+        echo "ERROR: file ${PHRDECODER} does not exist" >&2
+        exit 1
+    fi
+
+    ls ${TM}* >&2 || ( echo "ERROR: invalid prefix ${TM}" ; exit 1 )
+
+    if [ ! -f ${LM} ]; then
+        echo "ERROR: file ${LM} does not exist" >&2
+        exit 1
+    fi
+
+    if [ ! -f ${TEST} ]; then
+        echo "ERROR: file ${TEST} does not exist" >&2
+        exit 1
+    fi
+
+    if [ ! -f ${REF} ]; then
+        echo "ERROR: file ${REF} does not exist" >&2
+        exit 1
+    fi
+
     # Read parameters
     SDIR=$1
     shift
