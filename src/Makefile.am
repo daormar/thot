@@ -362,4 +362,4 @@ libthot_la_LIBADD= $(ZLIB) $(LGMP)
 libthot_casmacat_la_SOURCES= $(casmacat_engines_h)			\
 $(casmacat_engines_defs) $(casmacat_aligner_h) $(casmacat_aligner_defs)	\
 $(casmacat_confid_h) $(casmacat_confid_defs)
-libthot_casmacat_la_LIBADD= $(ZLIB) $(LGMP)
+libthot_casmacat_la_LIBADD= libthot.la $(ZLIB) $(LGMP)
