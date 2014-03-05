@@ -600,7 +600,7 @@ create_script()
     # Write PBS directives
     echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
     echo "#PBS -e ${name}.e\${PBS_JOBID}" >> ${name}
-    echo "#$ -cwd"
+    echo "#$ -cwd" >> ${name}
 
     # Write command to be executed
     echo "${command}" >> ${name}

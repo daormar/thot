@@ -202,7 +202,7 @@ create_script()
     stream_fname=`${BASENAME} ${name}`
     echo "#PBS -o ${stream_fname}.o\${PBS_JOBID}" >> ${name}
     echo "#PBS -e ${stream_fname}.e\${PBS_JOBID}" >> ${name}
-    echo "#$ -cwd"
+    echo "#$ -cwd" >> ${name}
 #    echo "#$ -o ${stream_fname}.o\$JOB_ID" >> ${name}
 #    echo "#$ -e ${stream_fname}.e\$JOB_ID" >> ${name}
 
