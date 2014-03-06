@@ -15,3 +15,4 @@
 /home/dortiz/smt/software/stack_dec thot_dhs_smt_trgfunc
 /home/dortiz/smt/software/stack_dec thot_cat_using_client
 /home/dortiz/smt/software/stack_dec thot_dhs_cat_trgfunc
+/home/dortiz/smt/software/stack_dec thot_get_sys_trans
