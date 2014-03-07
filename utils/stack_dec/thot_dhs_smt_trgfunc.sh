@@ -88,7 +88,7 @@ gen_trans()
             fi
             # For each sentence to be translated...
             new_opts_added=0
-            for wgfile in `ls $SDIR/sentence*.wg`; do
+            for wgfile in `ls $nbdir/sentence*.wg`; do
                 # Generate new n-best list
 ${bindir}/thot_wg_proc -w $wgfile -n ${OPT_NVALUE} -o $SDIR/process_wg_output 2> ${SDIR}/target_func_proccess_wg.log
                 if [ -f $wgfile.nbl ]; then
@@ -133,7 +133,7 @@ ${bindir}/thot_merge_nbest_list $SDIR/process_wg_output.nbl $wgfile.nbl > $wgfil
             rm ${SDIR}/target_func_aux.trans
         fi 
         # Process n-best list file for each sentence
-        for wgfile in `ls $SDIR/sentence*.wg`; do
+        for wgfile in `ls $nbdir/sentence*.wg`; do
             # Obtain best translation by rescoring the n-best list
 ${bindir}/thot_obtain_best_trans_from_nbl $wgfile.nbl "$weights" >> ${SDIR}/target_func_aux.trans
         done
@@ -255,13 +255,15 @@ else
         shift
     done
 
-    # Prepare all the necessary to process USE_NBEST_OPT variable
+    # Prepare all the necessary things to process USE_NBEST_OPT variable
     if [ "${USE_NBEST_OPT}" -gt 0 ]; then
         if [ ! -z "${WG_OPT}" ]; then
             echo "WARNING: Since USE_NBEST_OPT is greater than zero, WG parameter is discarded" >&2
         fi
         # Define WG_OPT variable
-        WG_OPT="-wg $SDIR/sentence"
+        nbdir=$SDIR/nbl
+        if [ ! -d $nbdir ]; then mkdir $nbdir; fi
+        WG_OPT="-wg $nbdir/sentence"
         # Initialize file containing run_decoder condition
         if [ ! -f $SDIR/run_decoder.txt ]; then 
             echo 1 > $SDIR/run_decoder.txt
