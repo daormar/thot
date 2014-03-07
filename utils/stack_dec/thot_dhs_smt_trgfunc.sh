@@ -227,7 +227,7 @@ else
         exit 1
     fi
 
-    ls ${TM}* >&2 || ( echo "ERROR: invalid prefix ${TM}" ; exit 1 )
+    ls ${TM}* >/dev/null 2>&1 || ( echo "ERROR: invalid prefix ${TM}" ; exit 1 )
 
     if [ ! -f ${LM} ]; then
         echo "ERROR: file ${LM} does not exist" >&2

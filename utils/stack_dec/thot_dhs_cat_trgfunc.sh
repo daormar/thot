@@ -71,7 +71,7 @@ generate_cfg_file()
     if [ "${WGHFILE}" != "" ]; then WGH_OPT="-wgh ${WGHFILE}" ; fi
 
     # Check variables
-    ls ${TM}* >/dev/null || ( echo "ERROR: invalid prefix ${TM}" ; exit 1 )
+    ls ${TM}* >/dev/null 2>&1 || ( echo "ERROR: invalid prefix ${TM}" ; exit 1 )
 
     if [ ! -f ${LM} ]; then
         echo "ERROR: file ${LM} does not exist" >&2
