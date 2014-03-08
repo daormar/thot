@@ -104,9 +104,9 @@ installation instructions.
 Current Status
 --------------
 The Thot toolkit is under development. Original public versions of Thot
-date back to 2005 [Ortiz et al., 2005] and did only include estimation
-of phrase-based models. By contrast, current version offers several new
-features that had not been previously incorporated.
+date back to 2005 [Ortiz-Martínez et al., 2005] and did only include
+estimation of phrase-based models. By contrast, current version offers
+several new features that had not been previously incorporated.
 
 Current work is mainly focused on adding the minimal documentation that
 is required to access the whole functionality implemented by the
@@ -152,7 +152,7 @@ Here is a BiBTeX entry:
   title     = {The New Thot Toolkit for Fully Automatic and Interactive Statistical Machine Translation},
   booktitle = {14th Annual Meeting of the European Association for Computational Linguistics: System Demonstrations},
   year      = {2014},
-  month     = april,
+  month     = {April},
   address   = {Gothenburg, Sweden},
   pages     = "To appear",
 }
@@ -185,7 +185,7 @@ Government in a number of research projects, such as the [MIPRCV
 project] [14] that belongs to the [CONSOLIDER programme] [15].
 
 
-Last updated: 29 January 2014
+Last updated: 08 March 2014
 
 [1]: https://prhlt.iti.upv.es/page/member?user=dortiz
 [2]: https://prhlt.iti.upv.es/
