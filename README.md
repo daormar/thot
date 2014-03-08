@@ -104,9 +104,9 @@ installation instructions.
 Current Status
 --------------
 The Thot toolkit is under development. Original public versions of Thot
-date back to 2005 and did only include estimation of phrase-based
-models. By contrast, current version offers several new features that
-had not been previously incorporated.
+date back to 2005 [Ortiz et al., 2005] and did only include estimation
+of phrase-based models. By contrast, current version offers several new
+features that had not been previously incorporated.
 
 Current work is mainly focused on adding the minimal documentation that
 is required to access the whole functionality implemented by the
@@ -139,22 +139,22 @@ You are welcome to use the code under the terms of the license for
 research or commercial purposes, however please acknowledge its use with
 a citation:
 
-Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
+Daniel Ortiz-Martínez, Francisco Casacuberta. 
 *"Thot: a toolkit to train phrase-based models for statistical machine translation"*.
-Proc. of the Tenth Machine Translation Summit,
-Phuket, Thailand, September 2005.
+14th Annual Meeting of the European Association for Computational Linguistics: System Demonstrations,
+Gothenburg, Sweden, April 2014.
 
 Here is a BiBTeX entry:
 
 <pre>
-@InCollection{Ortiz2005,
-  author =  {D.~Ortiz-Mart\'{\i}nez  and  I.~Garc\'{\i}a-Varea and F.~Casacuberta},
-  title =  {Thot: a Toolkit To Train Phrase-based Statistical Translation Models},
-  booktitle = {Tenth Machine Translation Summit},
-  publisher = {AAMT},
-  year = {2005},
-  address = {Phuket, Thailand},
-  month = {September},
+@InProceedings{Ortiz2014,
+  author    = {D.~Ortiz-Mart\'{\i}nez and F.~Casacuberta},
+  title     = {The New Thot Toolkit for Fully Automatic and Interactive Statistical Machine Translation},
+  booktitle = {14th Annual Meeting of the European Association for Computational Linguistics: System Demonstrations},
+  year      = {2014},
+  month     = april,
+  address   = {Gothenburg, Sweden},
+  pages     = "To appear",
 }
 </pre>
 
@@ -171,13 +171,18 @@ Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta.
 Proceedings of the North American Chapter of the Association for Computational Linguistics - 
 Human Language Technologies (NAACL HLT), 2010. pp. 546-554. [Download] [12].
 
+Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
+*"Thot: a toolkit to train phrase-based models for statistical machine translation"*.
+Proc. of the Tenth Machine Translation Summit,
+Phuket, Thailand, September 2005. [Download] [13]
+
 
 Acknowledgements
 ----------------
 Thot is currently supported by the European Union under the [CasMaCat
 research project] [5]. Thot has also received support from the Spanish
 Government in a number of research projects, such as the [MIPRCV
-project] [13] that belongs to the [CONSOLIDER programme] [14].
+project] [14] that belongs to the [CONSOLIDER programme] [15].
 
 
 Last updated: 29 January 2014
@@ -194,5 +199,6 @@ Last updated: 29 January 2014
 [10]: http://groups.google.com/group/casmacat-support/boxsubscribe
 [11]: https://prhlt.iti.upv.es/aigaion2/attachments/dortiz_thesis_2011.pdf-d12d165f9a2b01b0697000ed7c08c4bc.pdf
 [12]: http://aclweb.org/anthology-new/N/N10/N10-1079.pdf
-[13]: http://miprcv.iti.upv.es/
-[14]: http://www.ingenio2010.es/
+[13]: http://www.mt-archive.info/MTS-2005-Ortiz-Martinez.pdf
+[14]: http://miprcv.iti.upv.es/
+[15]: http://www.ingenio2010.es/
