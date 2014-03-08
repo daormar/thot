@@ -67,6 +67,49 @@ reg_dec_invok()
 }
 
 ########
+check_if_files_differ()
+{
+    # Read parameters
+    prevfile=$1
+    mergedfile=$2
+
+    # Check differences
+    num_lines1=`wc -l ${prevfile} | ${AWK} '{printf"%s\n",$1}'`
+    num_lines2=`wc -l ${mergedfile} | ${AWK} '{printf"%s\n",$1}'`
+    ndiff=`echo "" | $AWK -v nlp=$num_lines1 -v nlm=$num_lines2 '{printf"%d\n",nlm-nlp}'`
+    diff_below_threshold=`diff_is_below_threshold ${OPT_NVALUE} 0.01 $ndiff`
+    if [ ${diff_below_threshold} -eq 1 ]; then
+        echo 0
+    else
+        echo 1
+        echo "${prevfile} $ndiff" >> $SDIR/nbl_diff.txt
+    fi
+}
+
+########
+execute_decoder()
+{
+    # Check if pbs version of the decoder is to be executed
+    decbase=`${BASENAME} ${PHRDECODER}`
+    if [ $decbase = "thot_pbs_dec_ms" ]; then
+        pbsdec="yes"
+    else
+        pbsdec="no"
+    fi
+
+    # Appropriately execute decoder
+    if [ $pbsdec = "yes" ]; then
+        ${PHRDECODER} -tm ${TM} -lm ${LM} -t ${TEST} \
+            -W $W -S $S -A $A -nomon $NOMON $BE -G $G -h $H ${WG_OPT} ${WGP_OPT} -sdir ${SDIR} -qs ${QS} \
+            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || exit 1
+    else
+        ${PHRDECODER} -tm ${TM} -lm ${LM} -t ${TEST} \
+            -W $W -S $S -A $A -nomon $NOMON $BE -G $G -h $H ${WG_OPT} ${WGP_OPT} \
+            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || exit 1
+    fi
+}
+
+########
 gen_trans()
 {
     run_decoder=`decoder_needs_to_be_run`
@@ -75,9 +118,7 @@ gen_trans()
         reg_dec_invok $SDIR/num_dec_invok.txt
 
         # Evaluate target function by running the decoder
-        ${PHRDECODER} -tm ${TM} -lm ${LM} -t ${TEST} \
-            -W $W -S $S -A $A -nomon $NOMON $BE -G $G -h $H ${WG_OPT} ${WGP_OPT} ${QS_OPT}\
-            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || exit 1
+        execute_decoder
         
         # If n-best optimization is enabled, obtain n-best lists from
         # word-graphs and merge with the previously generated ones
@@ -95,17 +136,10 @@ ${bindir}/thot_wg_proc -w $wgfile -n ${OPT_NVALUE} -o $SDIR/process_wg_output 2>
                     # Merge with previous n-best list file
 ${bindir}/thot_merge_nbest_list $SDIR/process_wg_output.nbl $wgfile.nbl > $wgfile.merged_nbl
 
-                    # Obtain info about the previously generated n-best list and the merged file
-                    num_lines1=`wc -l $wgfile.nbl | ${AWK} '{printf"%s\n",$1}'`
-                    num_lines2=`wc -l $wgfile.merged_nbl | ${AWK} '{printf"%s\n",$1}'`
-                    ndiff=`echo "" | $AWK -v nlp=$num_lines1 -v nlm=$num_lines2 '{printf"%d\n",nlm-nlp}'`
-                    diff_below_threshold=`diff_is_below_threshold ${OPT_NVALUE} 0.01 $ndiff`
-                    if [ ${diff_below_threshold} -eq 1 ]; then
-                        files_different=0
-                    else
-                        files_different=1
-                        echo "$wgfile.nbl $ndiff" >> $SDIR/nbl_diff.txt
-                    fi
+                    # Check differences between the previously generated n-best list and the merged file
+                    files_different=`check_if_files_differ $wgfile.nbl $wgfile.merged_nbl`
+                    
+                    # Rename merged file
                     mv $wgfile.merged_nbl $wgfile.nbl
 
                     # Check if no new options have been added
@@ -219,7 +253,6 @@ else
     if [ "${NNC_PEN_FACTOR}" = "" ]; then NNC_PEN_FACTOR=1000; fi
     if [ "${USE_NBEST_OPT}" = "" ]; then USE_NBEST_OPT=0; fi
     if [ "${OPT_NVALUE}" = "" ]; then OPT_NVALUE=200; fi
-    if [ "${QS}" != "" ]; then QS_OPT="-qs \"${QS}\"" ; fi    
 
     # Check variables
     if [ ! -f ${PHRDECODER} ]; then
