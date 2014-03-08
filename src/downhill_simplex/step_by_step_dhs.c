@@ -319,6 +319,7 @@ int step_by_step_simplex(double start[],
 			s += pow((f[j]-favg),2.0)/(n);
 		}
 		s = sqrt(s);
+        fprintf(stderr,"Test for convergence: %g (EPSILON= %g)\n",s,EPSILON);
 		if (s < EPSILON) break;
 	}
 	/* end main loop of the minimization */
