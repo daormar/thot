@@ -140,7 +140,7 @@ research or commercial purposes, however please acknowledge its use with
 a citation:
 
 Daniel Ortiz-Martínez, Francisco Casacuberta. 
-*"Thot: a toolkit to train phrase-based models for statistical machine translation"*.
+*"The New Thot Toolkit for Fully Automatic and Interactive Statistical Machine Translation"*.
 14th Annual Meeting of the European Association for Computational Linguistics: System Demonstrations,
 Gothenburg, Sweden, April 2014.
 
@@ -187,8 +187,8 @@ project] [14] that belongs to the [CONSOLIDER programme] [15].
 
 Last updated: 08 March 2014
 
-[1]: https://prhlt.iti.upv.es/page/member?user=dortiz
-[2]: https://prhlt.iti.upv.es/
+[1]: https://prhlt.upv.es/page/member?user=dortiz
+[2]: https://prhlt.upv.es/
 [3]: http://www.upv.es/
 [4]: http://www.casmacat.eu/index.php?n=Workbench.Workbench
 [5]: http://www.casmacat.eu/
