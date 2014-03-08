@@ -190,6 +190,7 @@ move_wgs()
             pref=${f%.wg}
             num=${pref#$SDIR/wg_${fragm}\_}
             num=`expr $num + $incr`
+            num=`echo $num | $AWK '{printf"%06d",$1}'`
             mv $f ${wgpref}_${num}.wg
             mv $pref.idx ${wgpref}_${num}.idx
             numfiles=`expr $numfiles + 1`
