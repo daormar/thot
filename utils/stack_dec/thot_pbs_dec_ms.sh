@@ -418,13 +418,20 @@ fi
 
 # create shared directory
 if [ -z "$sdir" ]; then
-    # if not given, SDIR will be the /tmp directory
-    SDIR="/tmp/thot_pbs_dec_ms_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+    SDIR=`${MKTEMP} -d /tmp/thot_pbs_dec_ms_XXXXXX`
 
+    #### OLD CODE (NOT SAFE WHEN DIRECTORIES CREATED BY OTHER INSTANCES
+    ####           OF THIS SCRIPT ARE NOT REMOVED)
+    # if not given, SDIR will be the /tmp directory
+    # SDIR="/tmp/thot_pbs_dec_ms_$$"
+    # mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }    
 else
-    SDIR="${sdir}/thot_pbs_dec_ms_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+    SDIR=`${MKTEMP} -d ${sdir}/thot_pbs_dec_ms_XXXXXX`
+
+    #### OLD CODE (NOT SAFE WHEN DIRECTORIES CREATED BY OTHER INSTANCES
+    ####           OF THIS SCRIPT ARE NOT REMOVED)
+    # SDIR="${sdir}/thot_pbs_dec_ms_$$"
+    # mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
 fi
     # remove temp directories on exit
 if [ "$debug" != "-debug" ]; then
