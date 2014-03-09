@@ -158,7 +158,7 @@ if [ ${pm_given} -eq 1 ]; then
 fi
 
 # Clear structures in the server
-$bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -v -clear
+$bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -clear
         
 # Return 0
 exit 0
