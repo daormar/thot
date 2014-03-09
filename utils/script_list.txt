@@ -14,6 +14,7 @@
 /home/dortiz/smt/software/downhill_simplex thot_dhs_min
 /home/dortiz/smt/software/stack_dec thot_pbs_dec_ms
 /home/dortiz/smt/software/stack_dec thot_dhs_smt_trgfunc
+/home/dortiz/smt/software/stack_dec thot_smt_using_client
 /home/dortiz/smt/software/stack_dec thot_cat_using_client
 /home/dortiz/smt/software/stack_dec thot_dhs_cat_trgfunc
 /home/dortiz/smt/software/stack_dec thot_get_sys_trans
