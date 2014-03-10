@@ -277,6 +277,21 @@ while [ $end -ne 1 ]; do
     else
         # A new evaluation of the target function is required
         values=`cat ${TDIR}/adj.out`
-        ${target_func} ${TDIR} ${values} >> ${TDIR}/adj.img || { echo "Error while executing ${target_func}" >&2 ; exit 1; }
+        ${target_func} ${TDIR} ${values} >> ${TDIR}/adj.img || trgfunc_error=1
+
+        # Treat error in target function
+        if [ ${trgfunc_error} -eq 1 ]; then
+            echo "Error while executing ${target_func}" >&2 
+
+            # $TDIR will not be removed if the program was executed with -debug flag
+            if [ "$debug" != "-debug" ]; then
+                echo "NOTE: temporary directory $TDIR will not be removed to allow error diagnosis" >&2
+                trap - EXIT # Do not remove temporary files to be able to diagnose the error
+            fi
+
+            # Return with error code
+            exit 1 
+        fi
+
     fi
 done

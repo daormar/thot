@@ -56,13 +56,13 @@ else
 
     # Check files
     if [ ! -f ${LM} ]; then
-        echo "Error: LM file ${LM} does not exist"
-        exit 0
+        echo "Error: LM file ${LM} does not exist" >&2
+        exit 1
     fi
 
     if [ ! -f ${TEST} ]; then
-        echo "Error: test file ${TEST} does not exist"
-        exit 0
+        echo "Error: test file ${TEST} does not exist" >&2
+        exit 1
     fi
 
     # Calculate perplexity

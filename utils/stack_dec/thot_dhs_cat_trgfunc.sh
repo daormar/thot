@@ -71,7 +71,7 @@ generate_cfg_file()
     if [ "${WGHFILE}" != "" ]; then WGH_OPT="-wgh ${WGHFILE}" ; fi
 
     # Check variables
-    ls ${TM}* >/dev/null 2>&1 || ( echo "ERROR: invalid prefix ${TM}" ; exit 1 )
+    ls ${TM}* >/dev/null 2>&1 || ( echo "ERROR: invalid prefix ${TM}" >&2 ; exit 1 )
 
     if [ ! -f ${LM} ]; then
         echo "ERROR: file ${LM} does not exist" >&2
@@ -259,7 +259,13 @@ else
     # Launch server
     $SERVER -c ${SDIR}/server.cfg ${PORT_OPT} ${VERB_SERVER_OPT} > ${SDIR}/server.log 2>&1 &
     server_pid=$!
-    wait_until_server_is_listening ${SDIR}/server.log || exit 1
+    wait_until_server_is_listening ${SDIR}/server.log || error=1
+
+    # Treat errors while launching server
+    if [ $error -eq 1 ]; then
+        echo "Error while launching server, for additional information see file ${SDIR}/server.log" >&2
+        exit 1
+    fi
 
     # Kill server on exit
     trap "if [ ! -z \"\${server_pid}\" ]; then $bindir/thot_dec_client -i ${SERVER_IP} ${PORT_OPT} -e; wait \${server_pid}; fi;" 0
@@ -269,7 +275,13 @@ else
 
     # Evaluate target function
     ${bindir}/thot_cat_using_client -i ${SERVER_IP} ${PORT_OPT} -t ${TEST} -r ${REF} ${TR_OPT} ${PM_OPT} ${OF} \
-        > ${SDIR}/target_func.cat_iters 2> ${SDIR}/target_func.log || exit 1
+        > ${SDIR}/target_func.cat_iters 2> ${SDIR}/target_func.log || error=1
+
+    # Treat errors while evaluating target function
+    if [ $error -eq 1 ]; then
+        echo "Error while evaluating target function, for additional information see file ${SDIR}/target_func.log" >&2
+        exit 1
+    fi
 
     # Terminate server
     ${bindir}/thot_dec_client -i ${SERVER_IP} ${PORT_OPT} ${UID_OPT} -e

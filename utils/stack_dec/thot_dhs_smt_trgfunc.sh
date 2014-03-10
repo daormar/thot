@@ -101,11 +101,17 @@ execute_decoder()
     if [ $pbsdec = "yes" ]; then
         ${PHRDECODER} -tm ${TM} -lm ${LM} -t ${TEST} \
             -W $W -S $S -A $A -nomon $NOMON $BE -G $G -h $H ${WG_OPT} ${WGP_OPT} -sdir ${SDIR} -qs ${QS} \
-            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || exit 1
+            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || decoder_error=1
     else
         ${PHRDECODER} -tm ${TM} -lm ${LM} -t ${TEST} \
             -W $W -S $S -A $A -nomon $NOMON $BE -G $G -h $H ${WG_OPT} ${WGP_OPT} \
-            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || exit 1
+            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || decoder_error=1
+    fi
+
+    # Treat decoder error if necessary
+    if [ ${decoder_error} -eq 1 ]; then
+        echo "Error while executing decoder, for additional information see file ${SDIR}/target_func.log" >&2
+        exit 1
     fi
 }
 
@@ -260,7 +266,7 @@ else
         exit 1
     fi
 
-    ls ${TM}* >/dev/null 2>&1 || ( echo "ERROR: invalid prefix ${TM}" ; exit 1 )
+    ls ${TM}* >/dev/null 2>&1 || ( echo "ERROR: invalid prefix ${TM}" >&2 ; exit 1 )
 
     if [ ! -f ${LM} ]; then
         echo "ERROR: file ${LM} does not exist" >&2
