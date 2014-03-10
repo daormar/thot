@@ -277,10 +277,10 @@ while [ $end -ne 1 ]; do
     else
         # A new evaluation of the target function is required
         values=`cat ${TDIR}/adj.out`
-        ${target_func} ${TDIR} ${values} >> ${TDIR}/adj.img || trgfunc_error=1
+        ${target_func} ${TDIR} ${values} >> ${TDIR}/adj.img || trgfunc_error="yes"
 
         # Treat error in target function
-        if [ ${trgfunc_error} -eq 1 ]; then
+        if [ "${trgfunc_error}" = "yes" ]; then
             echo "Error while executing ${target_func}" >&2 
 
             # $TDIR will not be removed if the program was executed with -debug flag

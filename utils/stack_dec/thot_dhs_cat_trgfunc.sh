@@ -259,10 +259,10 @@ else
     # Launch server
     $SERVER -c ${SDIR}/server.cfg ${PORT_OPT} ${VERB_SERVER_OPT} > ${SDIR}/server.log 2>&1 &
     server_pid=$!
-    wait_until_server_is_listening ${SDIR}/server.log || error=1
+    wait_until_server_is_listening ${SDIR}/server.log || error="yes"
 
     # Treat errors while launching server
-    if [ $error -eq 1 ]; then
+    if [ "$error" = "yes" ]; then
         echo "Error while launching server, for additional information see file ${SDIR}/server.log" >&2
         exit 1
     fi
@@ -275,10 +275,10 @@ else
 
     # Evaluate target function
     ${bindir}/thot_cat_using_client -i ${SERVER_IP} ${PORT_OPT} -t ${TEST} -r ${REF} ${TR_OPT} ${PM_OPT} ${OF} \
-        > ${SDIR}/target_func.cat_iters 2> ${SDIR}/target_func.log || error=1
+        > ${SDIR}/target_func.cat_iters 2> ${SDIR}/target_func.log || error="yes"
 
     # Treat errors while evaluating target function
-    if [ $error -eq 1 ]; then
+    if [ "$error" = "yes" ]; then
         echo "Error while evaluating target function, for additional information see file ${SDIR}/target_func.log" >&2
         exit 1
     fi

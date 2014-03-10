@@ -101,15 +101,15 @@ execute_decoder()
     if [ $pbsdec = "yes" ]; then
         ${PHRDECODER} -tm ${TM} -lm ${LM} -t ${TEST} \
             -W $W -S $S -A $A -nomon $NOMON $BE -G $G -h $H ${WG_OPT} ${WGP_OPT} -sdir ${SDIR} -qs ${QS} \
-            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || decoder_error=1
+            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || decoder_error="yes"
     else
         ${PHRDECODER} -tm ${TM} -lm ${LM} -t ${TEST} \
             -W $W -S $S -A $A -nomon $NOMON $BE -G $G -h $H ${WG_OPT} ${WGP_OPT} \
-            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || decoder_error=1
+            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || decoder_error="yes"
     fi
 
     # Treat decoder error if necessary
-    if [ ${decoder_error} -eq 1 ]; then
+    if [ "${decoder_error}" = "yes" ]; then
         echo "Error while executing decoder, for additional information see file ${SDIR}/target_func.log" >&2
         exit 1
     fi
