@@ -384,7 +384,7 @@ done
 
 if [ ${pr_given} -eq 0 ]; then
     # invalid parameters 
-    echo "Error: number of processors not given"
+    echo "Error: number of processors not given" >&2
     exit 1
 fi
 
@@ -393,7 +393,7 @@ if [ ${lm_given} -eq 0 ]; then
     exit 1
 else
     if [ ! -f  "${lm}" ]; then
-        echo "Error: file ${lm} with language model does not exist"
+        echo "Error: file ${lm} with language model does not exist" >&2
         exit 1
     fi
 fi
@@ -403,14 +403,14 @@ if [ ${sents_given} -eq 0 ]; then
     exit 1
 else
     if [ ! -f  "${sents}" ]; then
-        echo "Error: file ${sents} with sentences does not exist"
+        echo "Error: file ${sents} with sentences does not exist" >&2
         exit 1
     fi
 fi
 
 if [ ${o_given} -eq 0 ];then
     # invalid parameters 
-    echo "Error: output files prefix must be given"
+    echo "Error: output files prefix must be given" >&2
     exit 1
 fi
 
