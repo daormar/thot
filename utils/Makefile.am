@@ -78,6 +78,7 @@ SUFFIXES= .sh .pl
 	echo "SSH="$(SSH) >> $@
 	echo "HEAD="$(HEAD) >> $@
 	echo "TAIL="$(TAIL) >> $@
+	echo "FIND="$(FIND) >> $@
 	echo "MKTEMP="$(MKTEMP) >> $@
 	echo "QSUB="$(QSUB) >> $@
 	echo "QSUB_WORKS=\""$(QSUB_WORKS)"\"" >> $@
