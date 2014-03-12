@@ -194,23 +194,23 @@ done
 
 if [ ${va_given} -eq 0 ]; then
     # invalid parameters 
-    echo "Error: -va option not given"
+    echo "Error: -va option not given" >&2 
     exit 1
 fi
 
 if [ ${o_given} -eq 0 ]; then
     # invalid parameters 
-    echo "Error: -o option not given"
+    echo "Error: -o option not given" >&2 
     exit 1
 fi
 
 if [ ${u_given} -eq 0 ]; then
     # invalid parameters 
-    echo "Error: -u option not given"
+    echo "Error: -u option not given" >&2 
     exit 1
 else
     if [ ! -x ${target_func} ]; then
-        echo "Error: ${target_func} cannot be executed"
+        echo "Error: ${target_func} cannot be executed" >&2 
         exit 1
     fi
 fi
@@ -218,7 +218,7 @@ fi
 if [ ${r_given} -eq 1 ]; then
     if [ ! -f ${r_val} ]; then
         # invalid parameters 
-        echo "Error: file ${r_val} to resume weight adjustment does not exist"
+        echo "Error: file ${r_val} to resume weight adjustment does not exist" >&2 
         exit 1
     fi
 fi
@@ -229,11 +229,11 @@ fi
 if [ -z "$tdir" ]; then
     # if not given, TDIR will be the /tmp directory
     TDIR="/tmp/thot_dhs_min_$$"
-    mkdir $TDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+    mkdir $TDIR || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
 
 else
     TDIR="${tdir}/thot_dhs_min_$$"
-    mkdir $TDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+    mkdir $TDIR || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
 fi
 
 # remove temp directories on exit
