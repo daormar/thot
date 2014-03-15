@@ -47,9 +47,9 @@ downhill_simplex/thot_trgfunc_example
 
 stack_dec_bin_scripts= stack_dec/thot_pbs_dec_ms		\
 stack_dec/thot_dhs_smt_trgfunc stack_dec/thot_dhs_cat_trgfunc	\
-stack_dec/thot_conf_interv_cat stack_dec/thot_smt_using_client	\
-stack_dec/thot_cat_using_client stack_dec/thot_calc_wer		\
-stack_dec/thot_get_sys_trans
+stack_dec/thot_conf_interv_smt stack_dec/thot_conf_interv_cat	\
+stack_dec/thot_smt_using_client stack_dec/thot_cat_using_client	\
+stack_dec/thot_calc_wer stack_dec/thot_get_sys_trans
 
 CLEANFILES = $(bin_SCRIPTS)
 
