@@ -274,6 +274,10 @@ class WordGraph
       // be invoked for the same hyp. state index. Otherwise the result
       // is undefined.
 
+  void obtainStatesReachableFromInit(Vector<bool>& stateReachableFromInitVec)const;
+      // Obtains bool vector indicating whether a state is reachable
+      // from the initial state
+
   void obtainUsefulStates(Vector<bool>& stateIsUsefulVec,
                           std::map<HypStateIndex,HypStateIndex>& remappedStates)const;
       // Obtains a bool vector indicating whether a state is useful (a
