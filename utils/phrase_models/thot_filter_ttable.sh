@@ -7,17 +7,17 @@
 
 N_DEFAULT=20
 if [ $# -ne 2 -a $# -ne 4 -a $# -ne 6 -a $# -ne 8 ]; then
-    echo "Usage: thot_filter_ttable [-t <string>]"
-    echo "                          -c <string> [-n <int>] [-T <string>]"
-    echo ""
-    echo "-t <thot_pc_ttable> : Thot translation table obtained with the -pc option"
-    echo "                      (can be read from stdin)."
-    echo "-c <test-corpus>    : Test corpus to be translated."
-    echo "-n <int>            : Maximum number of translation options for each target"
-    echo "                      phrase that are considered during a translation process"
-    echo "                      ("${N_DEFAULT}" by default)."
-    echo "-T <tmpdir>         : Use <tmpdir> for temporaries instead of /tmp"
-    echo "                      during the generation of the phrase model"
+    echo "Usage: thot_filter_ttable [-t <string>]" >&2
+    echo "                          -c <string> [-n <int>] [-T <string>]" >&2
+    echo "" >&2
+    echo "-t <thot_pc_ttable> : Thot translation table obtained with the -pc option" >&2
+    echo "                      (can be read from stdin)." >&2
+    echo "-c <test-corpus>    : Test corpus to be translated." >&2
+    echo "-n <int>            : Maximum number of translation options for each target" >&2
+    echo "                      phrase that are considered during a translation process" >&2
+    echo "                      ("${N_DEFAULT}" by default)." >&2
+    echo "-T <tmpdir>         : Use <tmpdir> for temporaries instead of /tmp" >&2
+    echo "                      during the generation of the phrase model" >&2
 else
 
     t_given=0
@@ -57,7 +57,7 @@ else
 
     if [ ${t_given} -eq 1 ]; then
         if [ ! -f ${ttable_file} ]; then
-            echo "Error: file ${ttable_file} does not exist!"
+            echo "Error: file ${ttable_file} does not exist!" >&2
             exit 1
         fi        
     fi
@@ -67,7 +67,7 @@ else
         exit 1
     else
         if [ ! -f ${test_corpus_file} ]; then
-            echo "Error: file ${test_corpus_file} does not exist!"
+            echo "Error: file ${test_corpus_file} does not exist!" >&2
             exit 1
         fi
     fi
