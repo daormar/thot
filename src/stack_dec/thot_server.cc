@@ -18,11 +18,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: thot_dec_server.cc                                       */
+/* Module: thot_server.cc                                           */
 /*                                                                  */
-/* Definitions file: thot_dec_server.cc                             */
+/* Definitions file: thot_server.cc                                 */
 /*                                                                  */
-/* Description: Implements a translator server                      */
+/* Description: Implements a translation server                     */
 /*                                                                  */
 /********************************************************************/
 
@@ -34,7 +34,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <ErrorDefs.h>
 #include <StrProcUtils.h>
 #include <BasicSocketUtils.h>
-#include "thot_dec_server_pars.h"
+#include "thot_server_pars.h"
 #include "client_server_defs.h"
 #include <math.h>
 #include <iostream>
@@ -55,24 +55,24 @@ using namespace std;
                                           // connections that can be
                                           // queued
 
-#define DEFAULT_USER_ID              0
+#define DEFAULT_USER_ID             0
 
 //--------------- Function Declarations -------------------------------
 
 int process_request(int s,
-                    const thot_dec_server_pars& tds_pars,
+                    const thot_server_pars& tds_pars,
                     bool &end);
-int processParameters(thot_dec_server_pars tds_pars);
-int start_server(thot_dec_server_pars tds_pars);
+int processParameters(thot_server_pars tds_pars);
+int start_server(thot_server_pars tds_pars);
 void sigchld_handler(int s);
 int handleParameters(int argc,
                      char *argv[],
-                     thot_dec_server_pars& pars);
+                     thot_server_pars& pars);
 int takeParameters(int argc,
                    const Vector<std::string>& argv_stl,
-                   thot_dec_server_pars& tds_pars);
-int checkParameters(thot_dec_server_pars& tds_pars);
-void printParameters(thot_dec_server_pars tds_pars);
+                   thot_server_pars& tds_pars);
+int checkParameters(thot_server_pars& tds_pars);
+void printParameters(thot_server_pars tds_pars);
 void printUsage(void);
 void printConfig(void);
 void version(void);
@@ -91,7 +91,7 @@ ThotDecoderUserPars tdup;
 //--------------- main function
 int main(int argc,char *argv[])
 {
-  thot_dec_server_pars tds_pars;
+  thot_server_pars tds_pars;
     
   if(handleParameters(argc,argv,tds_pars)==ERROR)
   {
@@ -104,7 +104,7 @@ int main(int argc,char *argv[])
 }
 
 //--------------- processParameters function
-int processParameters(thot_dec_server_pars tds_pars)
+int processParameters(thot_server_pars tds_pars)
 {
       // Process configuration file
   int ret=thotDecoder.initUsingCfgFile(tds_pars.c_str,tdup,tds_pars.v_given);
@@ -116,7 +116,7 @@ int processParameters(thot_dec_server_pars tds_pars)
 }
 
 //--------------- start_server function
-int start_server(thot_dec_server_pars tds_pars)
+int start_server(thot_server_pars tds_pars)
 {
   int sockfd, new_fd;  // Use sockfd to listen to new connections
                        // through new_fd
@@ -206,7 +206,7 @@ void sigchld_handler(int /*s*/)
 
 //--------------- process_requests function
 int process_request(int s,
-                    const thot_dec_server_pars& tds_pars,
+                    const thot_server_pars& tds_pars,
                     bool &end)
 {
       // Variable declarations
@@ -304,7 +304,7 @@ int process_request(int s,
 //--------------- handleParameters function
 int handleParameters(int argc,
                      char *argv[],
-                     thot_dec_server_pars& tds_pars)
+                     thot_server_pars& tds_pars)
 {
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
@@ -344,7 +344,7 @@ int handleParameters(int argc,
 //--------------- takeparameters function
 int takeParameters(int argc,
                    const Vector<std::string>& argv_stl,
-                   thot_dec_server_pars& tds_pars)
+                   thot_server_pars& tds_pars)
 {
   int i=1;
   unsigned int matched;
@@ -406,7 +406,7 @@ int takeParameters(int argc,
 }
 
 //--------------- checkParameters function
-int checkParameters(thot_dec_server_pars& tds_pars)
+int checkParameters(thot_server_pars& tds_pars)
 {
   if(!tds_pars.c_given)
   {
@@ -418,7 +418,7 @@ int checkParameters(thot_dec_server_pars& tds_pars)
 }
 
 //--------------- printParameters function
-void printParameters(thot_dec_server_pars tds_pars)
+void printParameters(thot_server_pars tds_pars)
 {
   cerr<<"Server port: "<<tds_pars.server_port<<endl;
   cerr<<"-v: "<<tds_pars.v_given<<endl;
@@ -427,9 +427,9 @@ void printParameters(thot_dec_server_pars tds_pars)
 //--------------- printUsage function
 void printUsage(void)
 {
-  cerr<<"thot_dec_server written by Daniel Ortiz"<<endl;
-  cerr<<"Usage: thot_dec_server    -c <cfg_file>"<<endl;
-  cerr<<"                          [-p <int>] [ -v ] [--help] [--version] [--config]"<<endl;
+  cerr<<"thot_server written by Daniel Ortiz"<<endl;
+  cerr<<"Usage: thot_server    -c <cfg_file>"<<endl;
+  cerr<<"                      [-p <int>] [ -v ] [--help] [--version] [--config]"<<endl;
   cerr<<endl;
   cerr<<"-c <cfg_file>  Configuration file"<<endl<<endl;  
   cerr<<"-p <int>       Port used by the server"<<endl<<endl;  
@@ -448,7 +448,7 @@ void printConfig(void)
 //--------------- version function
 void version(void)
 {
-  cerr<<"thot_dec_server is part of the thot package "<<endl;
+  cerr<<"thot_server is part of the thot package "<<endl;
   cerr<<"thot version "<<THOT_VERSION<<endl;
   cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
 }

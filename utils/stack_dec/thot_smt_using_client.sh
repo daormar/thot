@@ -7,16 +7,16 @@
 print_desc()
 {
     echo "thot_smt_using_client written by Daniel Ortiz"
-    echo "thot_smt_using_client performs a CAT process using thot_dec_client"
+    echo "thot_smt_using_client performs a CAT process using thot_client"
     echo "type \"thot_smt_using_client --help\" to get usage information."
 }
 
 ########
 version()
 {
-    echo "thot_smt_using_client is part of the stack_dec package"
-    echo "stack_dec version "${version}
-    echo "stack_dec is GNU software written by Daniel Ortiz"
+    echo "thot_smt_using_client is part of the thot package"
+    echo "thot version "${version}
+    echo "thot is GNU software written by Daniel Ortiz"
 }
 
 ########
@@ -144,21 +144,21 @@ while read -r s; do
     fi
 
     # Translate sentence
-    $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -t "$s" || exit 1
+    $bindir/thot_client -i $ip ${port_op} ${uid_op} -t "$s" || exit 1
 
     if [ ${refs_given} -eq 1 ]; then
         # train models after each translation
-        $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" || exit 1
+        $bindir/thot_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" || exit 1
     fi
 done < $testfile
 
 # Print server models if required
 if [ ${pm_given} -eq 1 ]; then
-    ${bindir}/thot_dec_client -i $ip ${port_op} ${uid_op} -o ${pm_out_pref} || exit 1
+    ${bindir}/thot_client -i $ip ${port_op} ${uid_op} -o ${pm_out_pref} || exit 1
 fi
 
 # Clear structures in the server
-$bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -clear || exit 1
+$bindir/thot_client -i $ip ${port_op} ${uid_op} -clear || exit 1
         
 # Return 0
 exit 0

@@ -15,7 +15,7 @@
 /home/dortiz/smt/software/downhill_simplex thot_trgfunc_example
 /home/dortiz/smt/software/stack_dec thot_conf_interv_cat
 /home/dortiz/smt/software/stack_dec thot_conf_interv_smt
-/home/dortiz/smt/software/stack_dec thot_pbs_dec_ms
+/home/dortiz/smt/software/stack_dec thot_pbs_dec
 /home/dortiz/smt/software/stack_dec thot_dhs_smt_trgfunc
 /home/dortiz/smt/software/stack_dec thot_smt_using_client
 /home/dortiz/smt/software/stack_dec thot_cat_using_client

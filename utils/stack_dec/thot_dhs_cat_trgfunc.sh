@@ -7,7 +7,7 @@
 # translation system.  The translations are generated using the
 # "cat_using_client" tool, which is provided by the "thot" package.
 # The "cat_using_client" tool requires the previous execution of the
-# server "thot_dec_server".
+# server "thot_server".
 
 ########
 num_smtw()
@@ -150,7 +150,7 @@ wait_until_server_is_listening()
     max_num_retries=3
     while [ $end -eq 0 ]; do
         # Ensure server is being executed
-        line=`ps aux | grep "thot_dec_server" | grep ${PORT}`
+        line=`ps aux | grep "thot_server" | grep ${PORT}`
 
         if [ -z "${line}" ]; then
             num_retries=`expr ${num_retries} + 1`
@@ -190,7 +190,7 @@ else
     fi
 
     # Initialize variables
-    if [ "${SERVER}" = "" ]; then SERVER=${bindir}/thot_dec_server; fi
+    if [ "${SERVER}" = "" ]; then SERVER=${bindir}/thot_server; fi
     if [ "${SERVER_IP}" = "" ]; then SERVER_IP="127.0.0.1" ; fi
     if [ "${PORT}" != "" ]; then PORT_OPT="-p ${PORT}" ; fi
     if [ "${UID}" != "" ]; then UID_OPT="-uid ${UID}" ; fi
@@ -268,10 +268,10 @@ else
     fi
 
     # Kill server on exit
-    trap "if [ ! -z \"\${server_pid}\" ]; then $bindir/thot_dec_client -i ${SERVER_IP} ${PORT_OPT} -e; wait \${server_pid}; fi;" 0
+    trap "if [ ! -z \"\${server_pid}\" ]; then $bindir/thot_client -i ${SERVER_IP} ${PORT_OPT} -e; wait \${server_pid}; fi;" 0
 
     # Kill server if the script is aborted by means of Ctrl-C or SIGTERM
-    trap "if [ ! -z \"\${server_pid}\" ]; then $bindir/thot_dec_client -i ${SERVER_IP} ${PORT_OPT} -e; wait \${server_pid}; fi; exit 1" 2 15
+    trap "if [ ! -z \"\${server_pid}\" ]; then $bindir/thot_client -i ${SERVER_IP} ${PORT_OPT} -e; wait \${server_pid}; fi; exit 1" 2 15
 
     # Evaluate target function
     ${bindir}/thot_cat_using_client -i ${SERVER_IP} ${PORT_OPT} -t ${TEST} -r ${REF} ${TR_OPT} ${PM_OPT} ${OF} \
@@ -284,7 +284,7 @@ else
     fi
 
     # Terminate server
-    ${bindir}/thot_dec_client -i ${SERVER_IP} ${PORT_OPT} ${UID_OPT} -e
+    ${bindir}/thot_client -i ${SERVER_IP} ${PORT_OPT} ${UID_OPT} -e
     wait ${server_pid}
     server_pid=""
 

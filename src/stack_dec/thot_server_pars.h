@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-#ifndef _thot_dec_client_pars
-#define _thot_dec_client_pars
+#ifndef _thot_server_pars
+#define _thot_server_pars
 
 //--------------- Include files --------------------------------------
 
@@ -25,31 +25,32 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <myVector.h>
-#include <string>
+#include "client_server_defs.h"
 
 using namespace std;
 
 //--------------- Structs --------------------------------------------
 
-struct thot_dec_client_pars
+struct thot_server_pars
 {
-  float f;
-  int integer;
-  unsigned int uinteger;
-  std::string stlString;
-  std::string stlString1;
-  std::string stlString2;
-  std::string stlStringSrc;
-  std::string stlStringRef;
-  std::string sentenceToTranslate;
-  std::string strToAddToPref;
-  std::string serverIP;
-  Vector<float> floatVec;
-  int user_id;
-  int server_request_code;
+  bool c_given;
+  std::string c_str;
+  bool p_given;
   unsigned int server_port;
-  int verbose;
+  bool v_given;
+
+  thot_server_pars()
+    {
+      default_values();
+    }
+
+  void default_values(void)
+    {
+      c_given=false;
+      p_given=false;
+      server_port=DEFAULT_SERVER_PORT;
+      v_given=false;
+    }
 };
 
 #endif

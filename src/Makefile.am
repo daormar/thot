@@ -15,8 +15,8 @@ thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
 thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
 thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
 thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
-thot_dhs_step_by_step_min thot_dec_ms thot_aligner thot_dec_client	\
-thot_dec_server thot_calc_bleu
+thot_dhs_step_by_step_min thot_decoder thot_aligner thot_client		\
+thot_server thot_calc_bleu
 
 else
 bin_PROGRAMS = thot_ilm_perp thot_calc_swm_lgprob thot_gen_sw_model	\
@@ -25,8 +25,8 @@ thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
 thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
 thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
 thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
-thot_dhs_step_by_step_min thot_dec_ms thot_aligner thot_dec_client	\
-thot_dec_server thot_calc_bleu
+thot_dhs_step_by_step_min thot_decoder thot_aligner thot_client		\
+thot_server thot_calc_bleu
 endif
 
 if CASMACAT_LIB_ENABLED
@@ -327,19 +327,19 @@ thot_wg_proc_LDFLAGS = libthot.la
 thot_dhs_step_by_step_min_SOURCES = downhill_simplex/thot_dhs_step_by_step_min.cc
 thot_dhs_step_by_step_min_LDFLAGS = libthot.la
 
-thot_dec_ms_SOURCES = stack_dec/thot_dec_ms.cc
-thot_dec_ms_LDFLAGS = libthot.la
+thot_decoder_SOURCES = stack_dec/thot_decoder.cc
+thot_decoder_LDFLAGS = libthot.la
 
 thot_aligner_SOURCES = stack_dec/thot_aligner.cc
 thot_aligner_LDFLAGS = libthot.la
 
-thot_dec_client_SOURCES = stack_dec/thot_dec_client_pars.h	\
-stack_dec/thot_dec_client.cc
-thot_dec_client_LDFLAGS = libthot.la
+thot_client_SOURCES = stack_dec/thot_client_pars.h	\
+stack_dec/thot_client.cc
+thot_client_LDFLAGS = libthot.la
 
-thot_dec_server_SOURCES = stack_dec/thot_dec_server_pars.h	\
-stack_dec/thot_dec_server.cc
-thot_dec_server_LDFLAGS = libthot.la
+thot_server_SOURCES = stack_dec/thot_server_pars.h	\
+stack_dec/thot_server.cc
+thot_server_LDFLAGS = libthot.la
 
 thot_calc_bleu_SOURCES = stack_dec/thot_calc_bleu.cc
 thot_calc_bleu_LDFLAGS = libthot.la

@@ -4,10 +4,10 @@ UserNameToUserIdMap.cc TreatCovProblemsPars.h ThotMtFactoryInitPars.h	\
 ThotMtFactory.h ThotMtFactory.cc ThotMtEngine.h ThotMtEngine.cc		\
 ThotImtSession.h ThotImtSession.cc ThotImtFactoryInitPars.h		\
 ThotImtFactory.h ThotImtFactory.cc ThotImtEngine.h ThotImtEngine.cc	\
-thot_dec_server_pars.h thot_dec_server.cc ThotDecoderUserPars.h		\
+thot_server_pars.h thot_server.cc ThotDecoderUserPars.h			\
 ThotDecoderState.h ThotDecoderPerUserVars.h ThotDecoder.h		\
 ThotDecoderCommonVars.h ThotDecoderClient.h ThotDecoderClient.cc	\
-ThotDecoder.cc thot_dec_ms.cc thot_dec_client_pars.h thot_dec_client.cc	\
+ThotDecoder.cc thot_decoder.cc thot_client_pars.h thot_client.cc	\
 thot_calc_bleu.cc thot_aligner.cc test_casmacat_engines.cc		\
 SwModelPars.h SwModelInfo.h StackDecWgProcessorForAnlpTypes.h		\
 StackDecSwModelTypes.h StackDecPbModelTypes.h				\

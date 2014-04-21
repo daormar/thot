@@ -18,9 +18,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: thot_dec_ms                                              */
+/* Module: thot_decoder                                             */
 /*                                                                  */
-/* Definitions file: thot_dec_ms.cc                                 */
+/* Definitions file: thot_decoder.cc                                */
 /*                                                                  */
 /* Description: Implements a translation system which translates a  */
 /*              test corpus using a multiple-stack decoder          */
@@ -619,7 +619,7 @@ void printConfig(void)
 
 void printUsage(void)
 {
-  cerr << "thot_dec_ms         -tm <string> -lm <string> -t <string> [-o <string>]"<<endl;
+  cerr << "thot_decoder        -tm <string> -lm <string> -t <string> [-o <string>]"<<endl;
   cerr << "                    [-W <float>] [-S <int>] [-A <int>]"<<endl;
   cerr << "                    [-I <int>] [-G <int>] [-h <int>]"<<endl;
   cerr << "                    [-be] [ -nomon <int>] [-we <float> ... <float>]"<<endl;
@@ -674,7 +674,7 @@ void printUsage(void)
 //--------------- version function
 void version(void)
 {
-  cerr<<"thot_dec_ms is part of the thot package "<<endl;
+  cerr<<"thot_decoder is part of the thot package "<<endl;
   cerr<<"thot version "<<THOT_VERSION<<endl;
   cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
 }

@@ -17,9 +17,9 @@
 /home/dortiz/smt/software/alig_models/phrase_models thot_gen_phr_model
 /home/dortiz/smt/software/error_correction thot_wg_proc
 /home/dortiz/smt/software/downhill_simplex thot_dhs_step_by_step_min
-/home/dortiz/smt/software/stack_dec thot_dec_ms
+/home/dortiz/smt/software/stack_dec thot_decoder
 /home/dortiz/smt/software/stack_dec thot_calc_bleu
 /home/dortiz/smt/software/stack_dec thot_aligner
-/home/dortiz/smt/software/stack_dec thot_dec_client
-/home/dortiz/smt/software/stack_dec thot_dec_server
+/home/dortiz/smt/software/stack_dec thot_client
+/home/dortiz/smt/software/stack_dec thot_server
 /home/dortiz/smt/software/stack_dec test_casmacat_engines

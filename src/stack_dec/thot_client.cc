@@ -18,9 +18,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: thot_dec_client.cc                                       */
+/* Module: thot_client.cc                                           */
 /*                                                                  */
-/* Definitions file: thot_dec_client.cc                             */
+/* Definitions file: thot_client.cc                                 */
 /*                                                                  */
 /* Description: Implements a translator client                      */
 /*                                                                  */
@@ -35,7 +35,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "options.h"
 #include "ctimer.h"
 #include "client_server_defs.h"
-#include "thot_dec_client_pars.h"
+#include "thot_client_pars.h"
 #include <math.h>
 #include <iostream>
 #include <fstream>
@@ -48,10 +48,10 @@ using namespace std;
 
 //--------------- Function Declarations ------------------------------
 
-int process_request(const thot_dec_client_pars& tdcPars);
+int process_request(const thot_client_pars& tdcPars);
 int TakeParameters(int argc,
                    char *argv[],
-                   thot_dec_client_pars& tdcPars);
+                   thot_client_pars& tdcPars);
 void printUsage(void);
 void version(void);
 void printDesc(void);
@@ -64,7 +64,7 @@ void printDesc(void);
 //--------------- main function
 int main(int argc,char *argv[])
 {
-  thot_dec_client_pars tdcPars;
+  thot_client_pars tdcPars;
  
   if(TakeParameters(argc,argv,tdcPars)==OK)
   {// Parameters ok
@@ -88,7 +88,7 @@ int main(int argc,char *argv[])
 
 
 //--------------- main function
-int process_request(const thot_dec_client_pars& tdcPars)
+int process_request(const thot_client_pars& tdcPars)
 {
   string s;
   vector<string> v;
@@ -188,7 +188,7 @@ int process_request(const thot_dec_client_pars& tdcPars)
 
 int TakeParameters(int argc,
                    char *argv[],
-                   thot_dec_client_pars& tdcPars)
+                   thot_client_pars& tdcPars)
 {
  int err;
 
@@ -327,14 +327,14 @@ int TakeParameters(int argc,
 //--------------- printDesc() function
 void printDesc(void)
 {
-  cerr<<"thot_dec_client written by Daniel Ortiz\n";
-  cerr<<"type \"thot_dec_client --help\" to get usage information.\n";
+  cerr<<"thot_client written by Daniel Ortiz\n";
+  cerr<<"type \"thot_client --help\" to get usage information.\n";
 }
 
 //--------------------------------
 void printUsage(void)
 {
-  cerr<<"Usage: thot_dec_client    -i <string> [-p <int>] [-uid <int>]\n";
+  cerr<<"Usage: thot_client        -i <string> [-p <int>] [-uid <int>]\n";
   cerr<<"                          { -tr <srcsent> <refsent> | \n";
   // cerr<<"                          | -tre <srcsent> <refsent> | \n";
   cerr<<"                          | -t <string> | -c <srcsent> <refsent> |\n";
@@ -362,7 +362,7 @@ void printUsage(void)
 //--------------------------------
 void version(void)
 {
-  cerr<<"thot_dec_client is part of the thot package\n";
+  cerr<<"thot_client is part of the thot package\n";
   cerr<<"thot version "<<THOT_VERSION<<endl;
   cerr<<"thot is GNU software written by Daniel Ortiz\n";
 }

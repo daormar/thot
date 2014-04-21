@@ -1,7 +1,7 @@
 # Author: Daniel Ortiz Mart\'inez
 # *- bash -*
 
-# thot_dec_ms for batch systems
+# thot_decoder for batch systems
 
 print_desc()
 {
@@ -19,7 +19,7 @@ version()
 
 config()
 {
-    ${bindir}/thot_dec_ms --config
+    ${bindir}/thot_decoder --config
 }
 
 usage()
@@ -176,7 +176,7 @@ sync()
 
 trans_frag()
 {
-    ${bindir}/thot_dec_ms -tm ${tm} -lm ${lm} -t $SDIR/${fragm} ${dec_pars} ${wg_par}wg_${fragm} >$SDIR/qs_trans_${fragm}.out 2>$SDIR/qs_trans_${fragm}.log
+    ${bindir}/thot_decoder -tm ${tm} -lm ${lm} -t $SDIR/${fragm} ${dec_pars} ${wg_par}wg_${fragm} >$SDIR/qs_trans_${fragm}.out 2>$SDIR/qs_trans_${fragm}.log
     echo "" >$SDIR/qs_trans_${fragm}_end
 }
 

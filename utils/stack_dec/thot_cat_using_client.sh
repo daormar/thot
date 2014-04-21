@@ -9,7 +9,7 @@
 print_desc()
 {
     echo "thot_cat_using_client written by Daniel Ortiz"
-    echo "thot_cat_using_client performs a CAT process using thot_dec_client"
+    echo "thot_cat_using_client performs a CAT process using thot_client"
     echo "type \"thot_cat_using_client --help\" to get usage information."
 }
 
@@ -362,7 +362,7 @@ if [ -f $testfile -a -f $reffile ]; then
         iter_num=1
 
         # Initial iteration
-        $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -sc "$s" -v >$TMPHYP 2>$TMPHYPERR
+        $bindir/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v >$TMPHYP 2>$TMPHYPERR
         verify_connection
 
         # Update variables
@@ -405,7 +405,7 @@ if [ -f $testfile -a -f $reffile ]; then
                 suff=`suffix "$prev" "${new_pref}"`
                 
                 # Append new string to the prefix
-                $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -ap "$suff" -v>$TMPHYP 2>$TMPHYPERR
+                $bindir/thot_client -i $ip ${port_op} ${uid_op} -ap "$suff" -v>$TMPHYP 2>$TMPHYPERR
                 verify_connection
 
                 # Update variables
@@ -452,7 +452,7 @@ if [ -f $testfile -a -f $reffile ]; then
         # check -tr option
         if [ ${tr_given} -eq 1 ]; then
             # train models after each translation
-            $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" -v 2>$TMPHYPERR
+            $bindir/thot_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" -v 2>$TMPHYPERR
             trtime=`process_time_from_log $TMPHYPERR`
             echo "<train time=\"$trtime\">"
             tottrtime=`sum_ab $tottrtime $trtime`
@@ -461,13 +461,13 @@ if [ -f $testfile -a -f $reffile ]; then
         # verify model coverage after training/adaptation (if they were
         # requested)
         if [ ${tr_given} -eq 1 ]; then
-            $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -c "$s" "$r" -v> $TMPHYPCOV 2>$TMPHYPERR
+            $bindir/thot_client -i $ip ${port_op} ${uid_op} -c "$s" "$r" -v> $TMPHYPCOV 2>$TMPHYPERR
             hcov=`cat $TMPHYPCOV`
             vercovtime=`process_time_from_log $TMPHYPERR`
             echo "<hcov time=\"$vercovtime\"> $hcov </hcov>"
             
             # translate source sentence again 
-            $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -sc "$s" -v> $TMPRETRANSHYP 2>$TMPHYPERR
+            $bindir/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v> $TMPRETRANSHYP 2>$TMPHYPERR
             retranshyp=`cat $TMPRETRANSHYP`
             echo "<retrans> $retranshyp </retrans>"
         fi
@@ -475,7 +475,7 @@ if [ -f $testfile -a -f $reffile ]; then
         # # check -tre option
         # if [ ${tre_given} -eq 1 ]; then
         #     # train ec model after each translation
-        #     $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -tre "${initial_hyp}" "$r" -v 2>$TMPHYPERR
+        #     $bindir/thot_client -i $ip ${port_op} ${uid_op} -tre "${initial_hyp}" "$r" -v 2>$TMPHYPERR
         #     trtime=`process_time_from_log $TMPHYPERR`
         #     echo "<train ecm time=\"$trtime\">"    
         # fi
@@ -490,13 +490,13 @@ if [ -f $testfile -a -f $reffile ]; then
 
     # Print server models if required
     if [ ${pm_given} -eq 1 ]; then
-        ${bindir}/thot_dec_client -i $ip ${port_op} ${uid_op} -o ${pm_out_pref} -v
+        ${bindir}/thot_client -i $ip ${port_op} ${uid_op} -o ${pm_out_pref} -v
     fi
     
     # Clear structures in the server (if -nc option was given, server
     # structures are not cleared)
     if [ ${nc_given} -eq 0 ]; then
-        $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -v -clear
+        $bindir/thot_client -i $ip ${port_op} ${uid_op} -v -clear
     else
         echo "WARNING: server data structures were not cleared" >&2
     fi
@@ -509,7 +509,7 @@ if [ -f $testfile -a -f $reffile ]; then
 
 else
     # Clear structures in the server
-    $bindir/thot_dec_client -i $ip ${port_op} ${uid_op} -v -clear
+    $bindir/thot_client -i $ip ${port_op} ${uid_op} -v -clear
 
     # Return 1
     exit 1        
