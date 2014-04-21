@@ -367,14 +367,20 @@ AC_PATH_PROG(DOXYGEN,doxygen)
 
 # Adds an extra argument to configure (enable use of casmacat library)
 AC_MSG_CHECKING(whether to enable combination with casmacat library)
-AC_ARG_ENABLE(casmacat-lib,[  --enable-casmacat-lib   installs thot with the necessary code to combine it with the casmacat library],enable_casmacat_lib=yes,enable_casmacat_lib=no)
-dnl Yes, casmacat library enabled
-if test "$enable_casmacat_lib" = "yes"; then
- AC_MSG_RESULT(yes)
-else
+AC_ARG_WITH([casmacat],
+ [AS_HELP_STRING([--with-casmacat],
+   [installs thot with the necessary code to combine it with the casmacat library @<:@default=no@:>@])],
+ [with_casmacat=$withval],
+ [with_casmacat=no])
+if test "$with_casmacat" = "no"; then
+ enable_casmacat_lib="no"
  AC_MSG_RESULT(no)
+else
+ enable_casmacat_lib="yes"
+ AC_MSG_RESULT(yes)
 fi
 AM_CONDITIONAL([CASMACAT_LIB_ENABLED], [test x${enable_casmacat_lib} = xyes])
+AC_SUBST(CASMACAT_SERVER_LIB_HOME,$with_casmacat)
 
 # Disable pre/post-processing code
 AC_DEFINE(DISABLE_PREPROC_CODE,,[Define if the pre/post-processing code is disabled])
