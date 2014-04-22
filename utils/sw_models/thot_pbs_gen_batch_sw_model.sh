@@ -25,7 +25,7 @@ usage()
     echo "                       [-lf <float>] [-af <float>]"
     echo "                       [-np <float>] [-lc <int>] [-shu] [-qs <string>]"
     echo "                       [-tdir <string>] [-sdir <string>]"
-    echo "                       [--sync-sleep] [-debug] [--help] [--version]"
+    echo "                       [--sync-dep] [-debug] [--help] [--version]"
     echo ""
     echo "-pr <int>          : Number of processors."
     echo "-s <string>        : File with source sentences (give absolute path when"
