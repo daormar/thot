@@ -212,7 +212,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
   std::string comment="#";
 
       // Extract parameters from file
-  ret=extractParsFromFile(cfgFile.c_str(),argc,argv_stl,"#");
+  ret=extractParsFromFile(cfgFile.c_str(),argc,argv_stl,comment);
   if(ret==ERROR)
   {
     return ERROR;
