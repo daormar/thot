@@ -7,12 +7,12 @@ print_desc()
 {
     echo "thot_pbs_get_ngram_counts written by Daniel Ortiz"
     echo "thot_pbs_get_ngram_counts extracts n-grams counts from a monolingual corpus"
-    echo "type \"pbs_get_ngram_counts --help\" to get usage information"
+    echo "type \"thot_pbs_get_ngram_counts --help\" to get usage information"
 }
 
 version()
 {
-    echo "pbs_get_ngram_counts is part of the thot package"
+    echo "thot_pbs_get_ngram_counts is part of the thot package"
     echo "thot version "${version}
     echo "thot is GNU software written by Daniel Ortiz"
 }
@@ -22,7 +22,7 @@ usage()
     echo "thot_pbs_get_ngram_counts -pr <int>"
     echo "                          -c <string> -o <string> -n <int> [-unk]"
     echo "                          [-qs <string>] [-tdir <string>] [-sdir <string>]"
-    echo "                          [-debug] [--help] [--version]"
+    echo "                          [--sync-dep] [-debug] [--help] [--version]"
     echo ""
     echo "-pr <int>          : Number of processors."
     echo "-c <string>        : Corpus file (give absolute path when"
