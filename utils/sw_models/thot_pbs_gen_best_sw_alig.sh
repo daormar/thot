@@ -545,6 +545,6 @@ fi
 job_id_list="${pc_job_ids} ${gaf_job_id} ${rt_job_id}"
 
 # Release job holds
-if [ ! "${QSUB_WORKS}" = "no" ]; then
+if [ ! "${QSUB_WORKS}" = "no" -a ${sync_sleep} -eq 0 ]; then
     release_job_holds "${job_id_list}"
 fi
