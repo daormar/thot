@@ -39,7 +39,7 @@ if [ $# -lt 1 ]; then
     echo "-o <string>             Prefix of the output files (give absolute path when"
     echo "                        using pbs clusters)"
     echo "-n <int>                Number of iterations of the EM algorithm executed by"
-    echo "                        the gen_sw_model tool (5 by default)"
+    echo "                        the thot_gen_sw_model tool (5 by default)"
     echo "-lf <float>             Lexical smoothing interpolation factor for single-word"
     echo "                        models"
     echo "-af <float>             Alignment smoothing interpolation factor for"
