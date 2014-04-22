@@ -539,7 +539,29 @@ bool extractParsFromFile(const char* filename,
     {
       if(awk.NF>=1)
       {
-        if(awk.dollar(1)!=comment)
+            // Decide whether the line is a comment or not
+        std::string firstCol=awk.dollar(1);
+        bool isComment=false;
+        if(firstCol==comment) isComment=true;
+        else
+        {
+              // Check if comment is a prefix of firstCol
+          if(firstCol.size()>=comment.size())
+          {
+            isComment=true;
+            for(unsigned int i=0;i<comment.size();++i)
+            {
+              if(firstCol[i]!=comment[i])
+              {
+                isComment=false;
+                break;
+              }
+            }
+          }
+        }
+
+            // Process line if it is not a comment
+        if(!isComment)
         {
           for(unsigned int i=1;i<=awk.NF;++i)
           {
