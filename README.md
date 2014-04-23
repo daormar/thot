@@ -97,7 +97,7 @@ See "INSTALL" file for more information.
 Installation Including the CasMaCat Workbench
 ---------------------------------------------
 Thot can be combined with the CasMacat Workbench that is being developed
-in the CasMaCat project. [See this webpage] [4] to get the specific
+in the project of the same name. [See this webpage] [4] to get the specific
 installation instructions.
 
 
