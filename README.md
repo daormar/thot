@@ -25,7 +25,7 @@ The toolkit includes the following features:
 - Single word alignment model estimation using the incremental EM algorithm
 - Scalable implementation of the different estimation algorithms using Map-Reduce
 - Compiles on Unix-like and Windows (using Cygwin) systems
-- Integration with the [CasMaCat Workbench] [4] developed in the [CasMaCat project] [5]
+- Integration with the [CasMaCat Workbench] [4] developed in the EU FP7 [CasMaCat project] [5]
 - ...
 
 
