@@ -22,7 +22,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /*                                                                  */
 /* Definitions file: thot_aligner.cc                                */
 /*                                                                  */
-/* Description: Implements a phrase-based alignent system           */
+/* Description: Implements a phrase-based alignment system          */
 /*                                                                  */
 /********************************************************************/
 
@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SmtModelTypes.h"
 #include "MultiStackTypes.h"
 #include "StackDecSwModelTypes.h"
-#include "ctimer.h"  // Module for obtain the elapsed time
+#include "ctimer.h"
 #include "options.h"
 #include "ErrorDefs.h"
 #include <iostream>
@@ -62,51 +62,72 @@ using namespace std;
 #define PALIG_H_DEFAULT NO_HEURISTIC
 #define PALIG_NOMON_DEFAULT 0
 
+//--------------- Type definitions -----------------------------------
+
+struct thot_aligner_pars
+{
+  bool p_option;
+  bool c_option;
+  bool be;
+  float W;
+  int A,E,nomon,S,I,G,heuristic,verbosity;
+  std::string sourceSentencesFile;
+  std::string refSentencesFile;
+  std::string languageModelFileName;
+  std::string transModelPref;
+  std::string wordGraphFileName;
+  float wgPruningThreshold;
+  Vector<float> weightVec;
+};
+
 //--------------- Function Declarations ------------------------------
 
-int init_translator(void);
+int init_translator(const thot_aligner_pars& tap);
 void release_translator(void);
-int align_corpus(void);
+int align_corpus(const thot_aligner_pars& tap);
 Vector<string> stringToStringVector(string s);
 void version(void);
 void print_alig_a3_final(std::string srcstr,
                          std::string trgstr,
                          CURR_MODEL_TYPE::Hypothesis hyp,
-                         unsigned int sentNo);
-int TakeParameters(int argc,char *argv[]);
+                         unsigned int sentNo,
+                         const thot_aligner_pars& tap);
+int handleParameters(int argc,
+                     char *argv[],
+                     thot_aligner_pars& pars);
+int takeParameters(int argc,
+                   char *argv[],
+                   thot_aligner_pars& tap);
+int takeParametersFromCfgFile(std::string cfgFileName,
+                              thot_aligner_pars& tap);
+void takeParametersGivenArgcArgv(int argc,
+                                 char *argv[],
+                                 thot_aligner_pars& tap);
+int checkParameters(const thot_aligner_pars& tap);
+void printParameters(const thot_aligner_pars& tap);
 void printUsage(void);
 void printConfig(void);
-
-//--------------- Type definitions -----------------------------------
-
 
 //--------------- Global variables -----------------------------------
 
 CURR_MODEL_TYPE *pbtModelPtr;
 CURR_MSTACK_TYPE<CURR_MODEL_TYPE>* translatorPtr;
-bool p_option;
-bool c_option;
-bool be;
-float W;
-int A,E,nomon,S,I,G,heuristic,verbosity,bestTrans;
-std::string sourceSentencesFile;
-std::string refSentencesFile;
-std::string languageModelFileName;
-std::string transModelPref;
-std::string wordGraphFileName;
-float wgPruningThreshold;
-unsigned int sentenceNo=0,numWords=0;	
-Vector<float> weightVec;
 
 //--------------- Function Definitions -------------------------------
 
 //--------------- main function
 int main(int argc, char *argv[])
 {
-  if(TakeParameters(argc,argv)==OK)
+      // Take and check parameters
+  thot_aligner_pars tap;
+  if(handleParameters(argc,argv,tap)==ERROR)
+  {
+    return ERROR;
+  }
+  else
   {
         // init translator    
-    if(init_translator()==ERROR)
+    if(init_translator(tap)==ERROR)
     {      
       cerr<<"Error during the initialization of the translator"<<endl;
       return ERROR;
@@ -115,17 +136,16 @@ int main(int argc, char *argv[])
     {
       unsigned int ret;
 
-      ret=align_corpus();
+      ret=align_corpus(tap);
       release_translator();
       if(ret==ERROR) return ERROR;
       else return OK;
     }
   }
-  else return ERROR;
 }
 
 //--------------- init_translator function
-int init_translator(void)
+int init_translator(const thot_aligner_pars& tap)
 {
   int err;
   
@@ -133,14 +153,14 @@ int init_translator(void)
 
   pbtModelPtr=new CURR_MODEL_TYPE();
 
-  err=pbtModelPtr->loadLangModel(languageModelFileName.c_str());
+  err=pbtModelPtr->loadLangModel(tap.languageModelFileName.c_str());
   if(err==ERROR)
   {
     delete pbtModelPtr;
     return ERROR;
   }
 
-  err=pbtModelPtr->loadAligModel(transModelPref.c_str());
+  err=pbtModelPtr->loadAligModel(tap.transModelPref.c_str());
   if(err==ERROR)
   {
     delete pbtModelPtr;
@@ -148,28 +168,28 @@ int init_translator(void)
   }
 
       // Set heuristic
-  pbtModelPtr->setHeuristic(heuristic);
+  pbtModelPtr->setHeuristic(tap.heuristic);
 
       // Set weights
-  pbtModelPtr->setWeights(weightVec);
+  pbtModelPtr->setWeights(tap.weightVec);
   pbtModelPtr->printWeights(cerr);
   cerr<<endl;
 
       // Set model parameters
-  pbtModelPtr->set_W_par(W);
-  pbtModelPtr->set_A_par(A);
-  pbtModelPtr->set_E_par(E);
+  pbtModelPtr->set_W_par(tap.W);
+  pbtModelPtr->set_A_par(tap.A);
+  pbtModelPtr->set_E_par(tap.E);
         // Set non-monotonicity level
-  if(nomon==0)
+  if(tap.nomon==0)
   {
     pbtModelPtr->setMonotoneSearch();
   }
   else
   {
     pbtModelPtr->resetMonotoneSearch();
-    pbtModelPtr->set_U_par(nomon);
+    pbtModelPtr->set_U_par(tap.nomon);
   }
-  pbtModelPtr->setVerbosity(verbosity);
+  pbtModelPtr->setVerbosity(tap.verbosity);
 
       // Create a translator instance
   translatorPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
@@ -178,30 +198,30 @@ int init_translator(void)
   translatorPtr->link_smt_model(pbtModelPtr);
     
       // Set translator parameters
-  translatorPtr->set_S_par(S);
-  translatorPtr->set_I_par(I);
+  translatorPtr->set_S_par(tap.S);
+  translatorPtr->set_I_par(tap.I);
 #ifdef MULTI_STACK_USE_GRAN
-  translatorPtr->set_G_par(G);
+  translatorPtr->set_G_par(tap.G);
 #endif
       // Enable best score pruning if the decoder is not going to obtain
       // n-best translations or word-graphs
-  if(bestTrans==1 && wgPruningThreshold==DISABLE_WORDGRAPH)
+  if(tap.wgPruningThreshold==DISABLE_WORDGRAPH)
     translatorPtr->useBestScorePruning(true);
 
       // Set breadthFirst flag
-  translatorPtr->set_breadthFirst(!be);
+  translatorPtr->set_breadthFirst(!tap.be);
 
 #ifndef THOT_DISABLE_REC
       // Enable word graph according to wgPruningThreshold
-  if(wordGraphFileName!="")
+  if(tap.wordGraphFileName!="")
   {
     
-    if(wgPruningThreshold!=DISABLE_WORDGRAPH)
+    if(tap.wgPruningThreshold!=DISABLE_WORDGRAPH)
       translatorPtr->enableWordGraph();    
   }
 #endif
       // Set translator verbosity
-  translatorPtr->setVerbosity(verbosity);
+  translatorPtr->setVerbosity(tap.verbosity);
 
   return OK;
 }
@@ -213,9 +233,8 @@ void release_translator(void)
   delete translatorPtr;
 }
 
-//--------------- TranslateTestCorpus template function
-
-int align_corpus(void)
+//--------------- align_corpus function
+int align_corpus(const thot_aligner_pars& tap)
 {
   CURR_MODEL_TYPE::Hypothesis result;     // Results of the translation
   CURR_MODEL_TYPE::Hypothesis anotherTrans;     // Another results of the translation
@@ -228,19 +247,19 @@ int align_corpus(void)
   
 
       // Open test corpus file
-  testCorpusFile.open(sourceSentencesFile.c_str());
+  testCorpusFile.open(tap.sourceSentencesFile.c_str());
   if(testCorpusFile.fail())
   {
-    cerr<<"Error while opening file with test sentences "<<sourceSentencesFile<<endl;
+    cerr<<"Error while opening file with test sentences "<<tap.sourceSentencesFile<<endl;
     return ERROR;
   }
   testCorpusFile.seekg(0, ios::beg);
 
       // Open ref corpus file
-  refCorpusFile.open(refSentencesFile.c_str());
+  refCorpusFile.open(tap.refSentencesFile.c_str());
   if(refCorpusFile.fail())
   {
-    cerr<<"Error while opening file with references "<<refSentencesFile<<endl;
+    cerr<<"Error while opening file with references "<<tap.refSentencesFile<<endl;
     return ERROR;
   }
   refCorpusFile.seekg(0, ios::beg);
@@ -264,21 +283,21 @@ int align_corpus(void)
       {
         ++sentNo;
         
-        if(verbosity)
+        if(tap.verbosity)
         {
           cerr<<sentNo<<endl<<srcSentenceString<<endl;
           ctimer(&elapsed_ant,&ucpu,&scpu);
         }
        
             //------- Align sentence
-        if(p_option)
+        if(tap.p_option)
         {
               // Translate with prefix
           result=translatorPtr->translateWithPrefix(srcSentenceString,trgSentenceString);
         }
         else
         {
-          if(c_option)
+          if(tap.c_option)
           {
                 // Verify model coverage
             result=translatorPtr->verifyCoverageForRef(srcSentenceString,trgSentenceString);
@@ -290,13 +309,13 @@ int align_corpus(void)
           }
         }
             //--------------------------
-        if(verbosity) ctimer(&elapsed,&ucpu,&scpu);
+        if(tap.verbosity) ctimer(&elapsed,&ucpu,&scpu);
                
-        print_alig_a3_final(srcSentenceString,trgSentenceString,result,sentNo);
+        print_alig_a3_final(srcSentenceString,trgSentenceString,result,sentNo,tap);
           
-        if(verbosity)
+        if(tap.verbosity)
         {
-          pbtModelPtr->printHyp(result,cerr,verbosity);
+          pbtModelPtr->printHyp(result,cerr,tap.verbosity);
 #         ifdef THOT_STATS
           translatorPtr->printStats();
 #         endif
@@ -306,11 +325,11 @@ int align_corpus(void)
         }
 #ifndef THOT_DISABLE_REC
             // Print wordgraph if the -wg option was given
-        if(wordGraphFileName!="")
+        if(tap.wordGraphFileName!="")
         {
           char wgFileNameForSent[256];
-          sprintf(wgFileNameForSent,"%s_%06d",wordGraphFileName.c_str(),sentNo);
-          translatorPtr->pruneWordGraph(wgPruningThreshold);
+          sprintf(wgFileNameForSent,"%s_%06d",tap.wordGraphFileName.c_str(),sentNo);
+          translatorPtr->pruneWordGraph(tap.wgPruningThreshold);
           translatorPtr->printWordGraph(wgFileNameForSent);
         }
 #endif
@@ -328,39 +347,12 @@ int align_corpus(void)
           outS.close();        
         }
 #endif        
-            //------- Obtain additional alignments
-        for(int n=0;n<bestTrans-1;++n)
-        {
-          if(verbosity)
-          {
-            ctimer(&elapsed_ant,&ucpu,&scpu);
-            cerr<<"Additional alignments "<<n+1<<endl;
-          }
-          anotherTrans=translatorPtr->getNextTrans();
-          if(!pbtModelPtr->isComplete(anotherTrans))
-          {
-            cerr<<"No more additional translations!"<<endl;
-            break;
-          }
-          print_alig_a3_final(srcSentenceString,trgSentenceString,anotherTrans,sentNo);
-          if(verbosity)
-          {
-            ctimer(&elapsed,&ucpu,&scpu);
-            pbtModelPtr->printHyp(anotherTrans,cerr,verbosity);
-            cerr<<" * Time: " << elapsed-elapsed_ant << " secs\n";
-          }
-        }
-        if(bestTrans>1)
-        {
-          cout<<"<eonb>"<<endl;
-        }
-            //--------------------------------------
       }    
     }
     testCorpusFile.close(); 
   }
 
-  if(verbosity)
+  if(tap.verbosity)
   {
     cerr<<"- Time per sentence: "<<total_time/sentNo<<endl;
   }
@@ -372,7 +364,8 @@ int align_corpus(void)
 void print_alig_a3_final(std::string srcstr,
                          std::string trgstr,
                          CURR_MODEL_TYPE::Hypothesis hyp,
-                         unsigned int sentNo)
+                         unsigned int sentNo,
+                         const thot_aligner_pars& tap)
 {
   CURR_MODEL_TYPE::Hypothesis::DataType dataType;
   Vector<std::string> sysTrgVec;
@@ -384,7 +377,7 @@ void print_alig_a3_final(std::string srcstr,
   cout<<"# "<<sentNo <<" ; Align. score= "<<hyp.getScore()<<endl;
   cout<<srcstr<<endl;
   cout<<"NULL ({ })";
-  if(sysTrgVec!=trgVec && !p_option)
+  if(sysTrgVec!=trgVec && !tap.p_option)
   {
         // If the alignment is incomplete, align each target word with
         // each source word
@@ -417,200 +410,216 @@ void print_alig_a3_final(std::string srcstr,
   }
 }
 
-//--------------- TakeParameters function
-int TakeParameters(int argc,char *argv[])
+//--------------- handleParameters function
+int handleParameters(int argc,
+                     char *argv[],
+                     thot_aligner_pars& tap)
 {
- char s[512];
+  if(argc==1 || readOption(argc,argv,"--version")!=-1)
+  {
+    version();
+    return ERROR;
+  }
+  if(readOption(argc,argv,"--help")!=-1)
+  {
+    printUsage();
+    return ERROR;   
+  }
+  if(readOption(argc,argv,"--config")!=-1)
+  {
+    printConfig();
+    return ERROR;   
+  }
+  if(takeParameters(argc,argv,tap)==ERROR)
+  {
+    return ERROR;
+  }
+  else
+  {
+    if(checkParameters(tap)==OK)
+    {
+      printParameters(tap);
+      return OK;
+    }
+    else
+    {
+      return ERROR;
+    }
+  }
+}
+
+//--------------- takeParameters function
+int takeParameters(int argc,
+                   char *argv[],
+                   thot_aligner_pars& tap)
+{
+      // Check if a configuration file was provided
+  std::string cfgFileName;
+  int err=readSTLstring(argc,argv, "-c", &cfgFileName);
+  if(err!=-1)
+  {
+        // Process configuration file
+    err=takeParametersFromCfgFile(cfgFileName,tap);
+    if(err==ERROR) return ERROR;
+  }
+      // process command line parameters
+  takeParametersGivenArgcArgv(argc,argv,tap);
+  return OK;
+}
+
+//--------------- processParameters function
+int takeParametersFromCfgFile(std::string cfgFileName,
+                              thot_aligner_pars& tap)
+{
+      // Extract parameters from configuration file
+    std::string comment="#";
+    int cfgFileArgc;
+    Vector<std::string> cfgFileArgvStl;
+    int ret=extractParsFromFile(cfgFileName.c_str(),cfgFileArgc,cfgFileArgvStl,comment);
+    if(ret==ERROR) return ERROR;
+
+        // Create argv for cfg file
+    char** cfgFileArgv=(char**) malloc(cfgFileArgc*sizeof(char*));
+    for(unsigned int i=0;i<cfgFileArgvStl.size();++i)
+    {
+      cfgFileArgv[i]=(char*) malloc((cfgFileArgvStl[i].size()+1)*sizeof(char));
+      strcpy(cfgFileArgv[i],cfgFileArgvStl[i].c_str());
+    }
+        // Process extracted parameters
+    takeParametersGivenArgcArgv(cfgFileArgc,cfgFileArgv,tap);
+
+        // Release allocated memory
+    for(unsigned int i=0;i<cfgFileArgvStl.size();++i)
+    {
+      free(cfgFileArgv[i]);
+    }
+    free(cfgFileArgv);
+
+        // Return without error
+    return OK;
+}
+
+//--------------- takeParametersGivenArgcArgv function
+void takeParametersGivenArgcArgv(int argc,
+                                 char *argv[],
+                                 thot_aligner_pars& tap)
+{
  int err;
 
- if(argc==1)
- {
-   version();
-   return ERROR;   
- }
-
- err=readOption(argc,argv,"--help");
- if(err!=-1)
- {
-   printUsage();
-   return ERROR;   
- }      
-
-     /* Verify --version option */
- err=readOption(argc,argv, "--version");
- if(err!=-1)
- {
-   version();
-   return ERROR;
- }
-
-     /* Verify --config option */
- err=readOption(argc,argv, "--config");
- if(err!=-1)
- {
-   printConfig();
-   return ERROR;
- }
-
  err=readOption(argc,argv,"-p");
- p_option=true;
+ tap.p_option=true;
  if(err==-1)
  {
-   p_option=false;
+   tap.p_option=false;
  }    
 
  err=readOption(argc,argv,"-c");
- c_option=true;
+ tap.c_option=true;
  if(err==-1)
  {
-   c_option=false;
+   tap.c_option=false;
  }    
- else
- {
-   if(p_option)
-   {
-     cerr<<"Error: -p and -c options cannot be given simultaneously"<<endl;
-     return ERROR;
-   }
- }
  
-     // Takes number of best translations 
- err=readInt(argc,argv, "-b", &(bestTrans));
+     // Takes W parameter 
+ err=readFloat(argc,argv, "-W", &tap.W);
  if(err==-1)
  {
-   bestTrans=1;
- }  
-
-     // Takes nBestTrans 
- err=readFloat(argc,argv, "-W", &W);
- if(err==-1)
- {
-   W=PALIG_W_DEFAULT;
+   tap.W=PALIG_W_DEFAULT;
  }
 
      // Takes S parameter 
- err=readInt(argc,argv, "-S", &(S));
+ err=readInt(argc,argv, "-S", &(tap.S));
  if(err==-1)
  {
-   S=PALIG_S_DEFAULT;
+   tap.S=PALIG_S_DEFAULT;
  }  
 
      // Takes A parameter 
- err=readInt(argc,argv, "-A", &A);
+ err=readInt(argc,argv, "-A", &tap.A);
  if(err==-1)
  {
-   A=PALIG_A_DEFAULT;
+   tap.A=PALIG_A_DEFAULT;
  }
 
      // Takes E parameter 
- err=readInt(argc,argv, "-E", &E);
+ err=readInt(argc,argv, "-E", &tap.E);
  if(err==-1)
  {
-   E=PALIG_E_DEFAULT;
+   tap.E=PALIG_E_DEFAULT;
  }
 
      // Takes nomon parameter 
- err=readInt(argc,argv, "-nomon", &nomon);
+ err=readInt(argc,argv, "-nomon", &tap.nomon);
  if(err==-1)
  {
-   nomon=PALIG_NOMON_DEFAULT;
+   tap.nomon=PALIG_NOMON_DEFAULT;
  }
 
      // Takes N parameter 
- err=readInt(argc,argv, "-I", &I);
+ err=readInt(argc,argv, "-I", &tap.I);
  if(err==-1)
  {
-   I=PALIG_I_DEFAULT;
+   tap.I=PALIG_I_DEFAULT;
  }
 
      // Takes I parameter 
- err=readInt(argc,argv, "-G", &G);
+ err=readInt(argc,argv, "-G", &tap.G);
  if(err==-1)
  {
-   G=PALIG_G_DEFAULT;
+   tap.G=PALIG_G_DEFAULT;
  }
 
      // Takes h parameter 
- err=readInt(argc,argv, "-h", &heuristic);
+ err=readInt(argc,argv, "-h", &tap.heuristic);
  if(err==-1)
  {
-   heuristic=PALIG_H_DEFAULT;
+   tap.heuristic=PALIG_H_DEFAULT;
  }
 
      // Take language model file name
- err=readString(argc,argv, "-lm", s);
- if(err==-1)
- {
-   cerr<<"Error: parameter -lm not given!"<<endl;
-   printUsage();
-   return ERROR;   
- }
- else languageModelFileName=s;
+ err=readSTLstring(argc,argv, "-lm", &tap.languageModelFileName);
 
      // Take read table prefix 
- err=readString(argc,argv, "-tm", s);
- if(err==-1)
- {
-   cerr<<"Error: parameter -tm not given!"<<endl;
-   printUsage();
-   return ERROR;   
- }
- else transModelPref=s;
+ err=readSTLstring(argc,argv, "-tm", &tap.transModelPref);
  
      // Take file name with the test sentences 
- err=readString(argc,argv, "-t",s);
- if(err==-1)
- {
-   cerr<<"Error: parameter -t not given!"<<endl;
-   printUsage();
-   return ERROR;   
- }
- else sourceSentencesFile=s;
+ err=readSTLstring(argc,argv, "-t",&tap.sourceSentencesFile);
 
      // Take file name with the reference sentences
- err=readString(argc,argv, "-r",s);
- if(err==-1)
- {
-   cerr<<"Error: parameter -r not given!"<<endl;
-   printUsage();
-   return ERROR;   
- }
- else refSentencesFile=s;
+ err=readSTLstring(argc,argv, "-r",&tap.refSentencesFile);
 
         // Take -be option
   err=readOption(argc,argv,"-be");
  if(err==-1)
  {
-   be=0;
+   tap.be=0;
  }      
  else
  {
-   be=1;
+   tap.be=1;
  }
 
      // Take -we parameter
- err=readFloatSeq(argc,argv, "-we", weightVec);
+ err=readFloatSeq(argc,argv, "-we", tap.weightVec);
  if(err==-1)
  {
-   weightVec.clear();
+   tap.weightVec.clear();
  }     
 
       // Take -wg parameter
- err=readString(argc,argv, "-wg", s);
+ err=readSTLstring(argc,argv, "-wg", &tap.wordGraphFileName);
  if(err==-1)
  {
-   wordGraphFileName="";
-   wgPruningThreshold=DISABLE_WORDGRAPH;
+   tap.wordGraphFileName="";
+   tap.wgPruningThreshold=DISABLE_WORDGRAPH;
  }
  else
  {
-   wordGraphFileName=s;
-
        // Take -wgp parameter 
-   err=readFloat(argc,argv, "-wgp", &wgPruningThreshold);
+   err=readFloat(argc,argv, "-wgp", &tap.wgPruningThreshold);
    if(err==-1)
    {
-     wgPruningThreshold=UNLIMITED_DENSITY;
+     tap.wgPruningThreshold=UNLIMITED_DENSITY;
    }
  }
  
@@ -627,63 +636,100 @@ int TakeParameters(int argc,char *argv[])
      if(err==-1)
      {
            // -v2 not found
-       verbosity=0;
+       tap.verbosity=0;
      }
      else
      {
            // -v2 found
-       verbosity=3;
+       tap.verbosity=3;
      }
    }
    else
    {
          // -v1 found
-     verbosity=2;
+     tap.verbosity=2;
    }
  }
  else
  {
        // -v found
-   verbosity=1;
+   tap.verbosity=1;
  }
+}
 
- cerr<<"p option: "<<p_option<<endl;
- cerr<<"c option: "<<c_option<<endl;
- cerr<<"b: "<<bestTrans<<endl;
- cerr<<"W: "<<W<<endl;   
- cerr<<"S: "<<S<<endl;   
- cerr<<"A: "<<A<<endl;
- cerr<<"E: "<<E<<endl;
- cerr<<"I: "<<I<<endl;
+//--------------- checkParameters function
+int checkParameters(const thot_aligner_pars& tap)
+{
+  if(tap.languageModelFileName.empty())
+  {
+    cerr<<"Error: parameter -lm not given!"<<endl;
+    return ERROR;   
+  }
+  
+  if(tap.transModelPref.empty())
+  {
+    cerr<<"Error: parameter -tm not given!"<<endl;
+    return ERROR;   
+  }
+
+  if(tap.sourceSentencesFile.empty())
+  {
+    cerr<<"Error: parameter -t not given!"<<endl;
+    return ERROR;   
+  }
+
+  if(tap.refSentencesFile.empty())
+  {
+    cerr<<"Error: parameter -r not given!"<<endl;
+    return ERROR;   
+  }
+
+  if(tap.p_option && tap.c_option)
+  {
+     cerr<<"Error: -p and -c options cannot be given simultaneously"<<endl;
+     return ERROR;
+  }
+
+  return OK;
+}
+
+//--------------- printParameters function
+void printParameters(const thot_aligner_pars& tap)
+{
+ cerr<<"p option: "<<tap.p_option<<endl;
+ cerr<<"c option: "<<tap.c_option<<endl;
+ cerr<<"W: "<<tap.W<<endl;   
+ cerr<<"S: "<<tap.S<<endl;   
+ cerr<<"A: "<<tap.A<<endl;
+ cerr<<"E: "<<tap.E<<endl;
+ cerr<<"I: "<<tap.I<<endl;
 #ifdef MULTI_STACK_USE_GRAN
- cerr<<"G: "<<G<<endl;
+ cerr<<"G: "<<tap.G<<endl;
 #endif
- cerr<<"h: "<<heuristic<<endl;
- cerr<<"be: "<<be<<endl;
- cerr<<"nomon: "<<nomon<<endl;
+ cerr<<"h: "<<tap.heuristic<<endl;
+ cerr<<"be: "<<tap.be<<endl;
+ cerr<<"nomon: "<<tap.nomon<<endl;
  cerr<<"weight vector:";
- for(unsigned int i=0;i<weightVec.size();++i)
-   cerr<<" "<<weightVec[i];
+ for(unsigned int i=0;i<tap.weightVec.size();++i)
+   cerr<<" "<<tap.weightVec[i];
  cerr<<endl;
- cerr<<"lmfile: "<<languageModelFileName<<endl;   
- cerr<<"tm files prefix: "<<transModelPref<<endl;   
- cerr<<"test file: "<<sourceSentencesFile<<endl;   
- cerr<<"ref file: "<<refSentencesFile<<endl;
- if(wordGraphFileName!="")
+ cerr<<"lmfile: "<<tap.languageModelFileName<<endl;   
+ cerr<<"tm files prefix: "<<tap.transModelPref<<endl;   
+ cerr<<"test file: "<<tap.sourceSentencesFile<<endl;   
+ cerr<<"ref file: "<<tap.refSentencesFile<<endl;
+ if(tap.wordGraphFileName!="")
  {
-   cerr<<"word graph file prefix: "<<wordGraphFileName<<endl;
-   if(wgPruningThreshold==UNLIMITED_DENSITY)
+   cerr<<"word graph file prefix: "<<tap.wordGraphFileName<<endl;
+   if(tap.wgPruningThreshold==UNLIMITED_DENSITY)
      cerr<<"word graph pruning threshold: word graph density unrestricted"<<endl;
    else
-     cerr<<"word graph pruning threshold: "<<wgPruningThreshold<<endl;
+     cerr<<"word graph pruning threshold: "<<tap.wgPruningThreshold<<endl;
  }
  else
  {
    cerr<<"word graph file prefix not given (wordgraphs will not be generated)"<<endl;
  }
- cerr<<"verbosity level: "<<verbosity<<endl;
-   
- return OK;
+ cerr<<"verbosity level: "<<tap.verbosity<<endl;
 }
 
 //--------------- stringToStringVector function
@@ -758,8 +804,9 @@ void printConfig(void)
 //--------------- printUsage() function
 void printUsage(void)
 {
-  cerr << "thot_aligner   -tm <string> -lm <string> -t <string>"<<endl;
-  cerr << "               -r <refSentFile> [-p|-c] [-b <int>] [-W <float>]"<<endl;
+  cerr << "thot_aligner   [-c <string>] -tm <string> -lm <string>"<<endl;
+  cerr << "               -t <string> -r <string>"<<endl;
+  cerr << "               [-p|-c] [-W <float>]"<<endl;
   cerr << "               [-S <int>] [-A <int>] [-E <int>] [-U <int>] [-I <int>]"<<endl;
   cerr << "               [-G <int>] [-h <int>] [-be] [-mon]"<<endl;
   cerr << "               [-we <float> ... <float>]"<<endl;
@@ -767,20 +814,14 @@ void printUsage(void)
   cerr << "               [-wg <string> [-wgp <float>] ]"<<endl;
 #endif
   cerr << "               [-v|-v1|-v2] [--help] [--version] [--config]"<<endl<<endl;
+  cerr << " -c <string>          : Configuration file (command-line options override"<<endl;
+  cerr << "                        configuration file options)."<<endl;
   cerr << " -tm <string>         : Prefix of the translation model files."<<endl;
   cerr << " -lm <string>         : Language model file name."<<endl;
   cerr << " -t <string>          : File with the test sentences."<<endl;
   cerr << " -r <string>          : File with the reference sentences."<<endl;
   cerr << " -p                   : Treat the reference sentences as prefixes."<<endl;
   cerr << " -c                   : Verify model coverage for the reference sentence."<<endl;
-#ifdef THOT_DISABLE_REC
-  cerr << " -b <int>             : Obtain <int>-best translations."<<endl;
-#else
-  cerr << " -b <int>             : Obtain <int>-best translations (the <int>-best"<<endl;
-  cerr << "                        recombined hypotheses are obtained). To obtain"<<endl;
-  cerr << "                        real n-best lists generate word graphs first with the"<<endl;
-  cerr << "                        -wg option."<<endl;
-#endif
   cerr << " -W <float>           : Maximum number of translation options/Threshold"<<endl;
   cerr << "                        ("<<PALIG_W_DEFAULT<<" by default)."<<endl;
   cerr << " -S <int>             : S parameter ("<<PALIG_S_DEFAULT<<" by default)."<<endl;    
