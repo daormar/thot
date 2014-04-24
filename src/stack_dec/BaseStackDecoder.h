@@ -83,32 +83,27 @@ class BaseStackDecoder
   virtual void set_I_par(unsigned int _I)=0;
 
       // Basic services
-  virtual Hypothesis translate(std::string s,
-                               double _timeLimit=0)=0; 
+  virtual Hypothesis translate(std::string s)=0; 
       // Translates the sentence 's' using the model fixed previously
       // with 'setModel'
-  virtual Hypothesis getNextTrans(double _timeLimit=0)=0;
+  virtual Hypothesis getNextTrans(void)=0;
       // Obtains the next hypothesis that the algorithm yields
   virtual Hypothesis translateWithRef(std::string s,
-                                      std::string ref,
-                                      double _timeLimit=0)=0;
+                                      std::string ref)=0;
       // Obtains the best alignment for the source and ref sentence pair
   virtual Hypothesis verifyCoverageForRef(std::string s,
-                                          std::string ref,
-                                          double _timeLimit=0)=0;
+                                          std::string ref)=0;
       // Verifies coverage of the translation model given a source
       // sentence s and the desired output ref. For this purpose, the
       // decoder filters those translations of s that are compatible
       // with ref. The resulting hypothesis won't be complete if the
       // model can't generate the reference
   virtual Hypothesis translateWithSuggestion(string s,
-                                             typename Hypothesis::DataType sug,
-                                             double _timeLimit=0)=0;
+                                             typename Hypothesis::DataType sug)=0;
       // Translates string s using hypothesis sug as suggestion instead
       // of using the null hypothesis
   virtual Hypothesis translateWithPrefix(std::string s,
-                                         std::string pref,
-                                         double _timeLimit=0)=0;  
+                                         std::string pref)=0;  
       // Translates std::string s using pref as prefix
 
   virtual void clear(void)=0;

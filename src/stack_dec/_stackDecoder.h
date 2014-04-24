@@ -103,32 +103,27 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
   void set_breadthFirst(bool b);
     
       // Basic services
-  Hypothesis translate(std::string s,
-                       double _timeLimit=0); 
+  Hypothesis translate(std::string s); 
       // Translates the sentence 's' using the model fixed previously
       // with 'setModel'
-  Hypothesis getNextTrans(double _timeLimit=0);
+  Hypothesis getNextTrans(void);
       // Obtains the next hypothesis that the algorithm yields
   Hypothesis translateWithRef(std::string s,
-                              std::string ref,
-                              double _timeLimit=0);   
+                              std::string ref);   
       // Obtains the best alignment for the source and ref sentence pair
   virtual Hypothesis verifyCoverageForRef(std::string s,
-                                          std::string ref,
-                                          double _timeLimit=0);
+                                          std::string ref);
       // Verifies coverage of the translation model given a source
       // sentence s and the desired output ref. For this purpose, the
       // decoder filters those translations of s that are compatible
       // with ref. The resulting hypothesis won't be complete if the
       // model can't generate the reference
   Hypothesis translateWithSuggestion(std::string s,
-                                     typename Hypothesis::DataType sug,
-                                     double _timeLimit=0);
+                                     typename Hypothesis::DataType sug);
       // Translates string s using hypothesis sug as suggestion instead
       // of using the null hypothesis
   Hypothesis translateWithPrefix(std::string s,
-                                 std::string pref,
-                                 double _timeLimit=0);  
+                                 std::string pref);  
       // Translates string s using pref as prefix
 
       // Set different options 
@@ -189,9 +184,6 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
                                  // the translation process
   Score worstScoreAllowed;
   
-  double timeLimit;              // Maximum decoding time
-  double prevElapsedTime;
-
   int verbosity;                 // Verbosity level
     
   void addgToHyp(Hypothesis& hyp);
@@ -337,18 +329,16 @@ void _stackDecoder<SMT_MODEL>::sustractgToHyp(Hypothesis& hyp)
 //---------------------------------------
 template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis
-_stackDecoder<SMT_MODEL>::translate(std::string s,
-                                    double _timeLimit)
+_stackDecoder<SMT_MODEL>::translate(std::string s)
 {
   return translateWithSuggestion(s,
-                                 smtm_ptr->nullHypothesisHypData(),
-                                 _timeLimit);
+                                 smtm_ptr->nullHypothesisHypData());
 }
 
 //---------------------------------------
 template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis
-_stackDecoder<SMT_MODEL>::getNextTrans(double _timeLimit)  
+_stackDecoder<SMT_MODEL>::getNextTrans(void)  
 {
   if(smtm_ptr==NULL)
   {
@@ -363,14 +353,6 @@ _stackDecoder<SMT_MODEL>::getNextTrans(double _timeLimit)
     smtm_ptr->clearStats();
     ++_stack_decoder_stats.sentencesTranslated;
 #endif
-        // If _timeLimit was given, obtain the current time
-    timeLimit=_timeLimit;
-    if(timeLimit>0)
-    {
-      double ucpu,scpu;
-      ctimer(&prevElapsedTime,&ucpu,&scpu);
-    }
-
         // reset bestCompleteHypScore
     this->bestCompleteHypScore=worstScoreAllowed;
         // reset bestCompleteHyp
@@ -393,8 +375,7 @@ _stackDecoder<SMT_MODEL>::getNextTrans(double _timeLimit)
 template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis
 _stackDecoder<SMT_MODEL>::translateWithRef(std::string s,
-                                           std::string ref,
-                                           double _timeLimit) 
+                                           std::string ref) 
 {
   if(smtm_ptr==NULL)
   {
@@ -417,14 +398,6 @@ _stackDecoder<SMT_MODEL>::translateWithRef(std::string s,
       Hypothesis nullHyp;
       nullHyp=smtm_ptr->nullHypothesis();
       return nullHyp;
-    }
-
-        // If _timeLimit was given, obtain the current time
-    timeLimit=_timeLimit;
-    if(timeLimit>0)
-    {
-      double ucpu,scpu;
-      ctimer(&prevElapsedTime,&ucpu,&scpu);
     }
 
         // Execute actions previous to the translation process
@@ -442,8 +415,7 @@ _stackDecoder<SMT_MODEL>::translateWithRef(std::string s,
 template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis
 _stackDecoder<SMT_MODEL>::verifyCoverageForRef(std::string s,
-                                               std::string ref,
-                                               double _timeLimit)
+                                               std::string ref)
 {
   if(smtm_ptr==NULL)
   {
@@ -468,14 +440,6 @@ _stackDecoder<SMT_MODEL>::verifyCoverageForRef(std::string s,
       return nullHyp;
     }
 
-        // If _timeLimit was given, obtain the current time
-    timeLimit=_timeLimit;
-    if(timeLimit>0)
-    {
-      double ucpu,scpu;
-      ctimer(&prevElapsedTime,&ucpu,&scpu);
-    }
-
         // Execute actions previous to the translation process
     pre_trans_actions_ver(s,ref);
   	    
@@ -491,8 +455,7 @@ _stackDecoder<SMT_MODEL>::verifyCoverageForRef(std::string s,
 template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis
 _stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
-                                                  typename Hypothesis::DataType sug,
-                                                  double _timeLimit)
+                                                  typename Hypothesis::DataType sug)
 {
   if(smtm_ptr==NULL)
   {
@@ -516,14 +479,6 @@ _stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
       Hypothesis nullHyp;
       nullHyp=smtm_ptr->nullHypothesis();
       return nullHyp;
-    }
-
-        // If _timeLimit was given, obtain the current time
-    timeLimit=_timeLimit;
-    if(timeLimit>0)
-    {
-      double ucpu,scpu;
-      ctimer(&prevElapsedTime,&ucpu,&scpu);
     }
 
     Hypothesis initialHyp;
@@ -548,8 +503,7 @@ _stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
 template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis
 _stackDecoder<SMT_MODEL>::translateWithPrefix(std::string s,
-                                              std::string pref,
-                                              double _timeLimit)
+                                              std::string pref)
 {
   if(smtm_ptr==NULL)
   {
@@ -572,14 +526,6 @@ _stackDecoder<SMT_MODEL>::translateWithPrefix(std::string s,
       Hypothesis nullHyp;
       nullHyp=smtm_ptr->nullHypothesis();
       return nullHyp;
-    }
-
-        // If _timeLimit was given, obtain the current time
-    timeLimit=_timeLimit;
-    if(timeLimit>0)
-    {
-      double ucpu,scpu;
-      ctimer(&prevElapsedTime,&ucpu,&scpu);
     }
 
         // Execute actions previous to the translation process
@@ -967,13 +913,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(v
       }
     }
     ++iterNo;
-        // If time limit reached, stop the algorithm   
-    if(this->timeLimit>0)
-    {
-      double elapsedTime,ucpu,scpu;
-      ctimer(&elapsedTime,&ucpu,&scpu);
-      if(elapsedTime-this->prevElapsedTime>=this->timeLimit) end=true;
-    } 
   }
   	  
   if(iterNo>=MAX_NUM_OF_ITER) cerr<<"Maximum number of iterations exceeded!\n";
@@ -1078,13 +1017,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
       }
     }
     ++iterNo;
-        // If time limit reached, stop the algorithm   
-    if(this->timeLimit>0)
-    {
-      double elapsedTime,ucpu,scpu;
-      ctimer(&elapsedTime,&ucpu,&scpu);
-      if(elapsedTime-this->prevElapsedTime>=this->timeLimit) end=true;
-    }
   }
   	  
   if(iterNo>=MAX_NUM_OF_ITER) cerr<<"Maximum number of iterations exceeded!\n";
@@ -1189,13 +1121,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVe
       }
     }
     ++iterNo;
-        // If time limit reached, stop the algorithm   
-    if(this->timeLimit>0)
-    {
-      double elapsedTime,ucpu,scpu;
-      ctimer(&elapsedTime,&ucpu,&scpu);
-      if(elapsedTime-this->prevElapsedTime>=this->timeLimit) end=true;
-    }
   }
   	  
   if(iterNo>=MAX_NUM_OF_ITER) cerr<<"Maximum number of iterations exceeded!\n";
@@ -1300,13 +1225,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
       }
     }
     ++iterNo;
-        // If time limit reached, stop the algorithm   
-    if(this->timeLimit>0)
-    {
-      double elapsedTime,ucpu,scpu;
-      ctimer(&elapsedTime,&ucpu,&scpu);
-      if(elapsedTime-this->prevElapsedTime>=this->timeLimit) end=true;
-    }
   }
   	  
   if(iterNo>=MAX_NUM_OF_ITER) cerr<<"Maximum number of iterations exceeded!\n";
