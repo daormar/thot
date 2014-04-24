@@ -33,7 +33,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SmtModelTypes.h"
 #include "MultiStackTypes.h"
 #include "StackDecSwModelTypes.h"
-#include "ctimer.h"  // Module for obtain the elapsed time
+#include "ctimer.h"
 #include "options.h"
 #include "ErrorDefs.h"
 #include <iostream>
@@ -62,65 +62,81 @@ using namespace std;
 #define PMSTACK_H_DEFAULT LOCAL_TD_HEURISTIC
 #define PMSTACK_NOMON_DEFAULT 0
 
-//--------------- Function Declarations ------------------------------
-
-int init_translator(void);
-void release_translator(void);
-int translate_corpus(void);
-Vector<string> stringToStringVector(string s);
-void version(void);
-int TakeParameters(int argc,char *argv[]);
-void printUsage(void);
-void printConfig(void);
-
 //--------------- Type definitions -----------------------------------
 
+struct thot_decoder_pars
+{
+  bool be;
+  float W;
+  int A,nomon,S,I,G,heuristic,verbosity;
+  std::string sourceSentencesFile;
+  std::string languageModelFileName;
+  std::string transModelPref;
+  std::string wordGraphFileName;
+  std::string outFile;
+  float wgPruningThreshold;
+  Vector<float> weightVec;
+};
+
+//--------------- Function Declarations ------------------------------
+
+int init_translator(const thot_decoder_pars& tdp);
+void release_translator(void);
+int translate_corpus(const thot_decoder_pars& tdp);
+Vector<string> stringToStringVector(string s);
+void version(void);
+int handleParameters(int argc,
+                     char *argv[],
+                     thot_decoder_pars& pars);
+int takeParameters(int argc,
+                   char *argv[],
+                   thot_decoder_pars& tdp);
+int takeParametersFromCfgFile(std::string cfgFileName,
+                              thot_decoder_pars& tdp);
+void takeParametersGivenArgcArgv(int argc,
+                                 char *argv[],
+                                 thot_decoder_pars& tdp);
+int checkParameters(const thot_decoder_pars& tdp);
+void printParameters(const thot_decoder_pars& tdp);
+void printUsage(void);
+void printConfig(void);
 
 //--------------- Global variables -----------------------------------
 
 CURR_MODEL_TYPE *pbtModelPtr;
 CURR_MSTACK_TYPE<CURR_MODEL_TYPE>* translatorPtr;
-bool be;
-float W;
-int A,nomon,S,I,G,heuristic,verbosity;
-double timeLimit;
-std::string sourceSentencesFile;
-std::string languageModelFileName;
-std::string transModelPref;
-std::string wordGraphFileName;
-std::string outFile;
-float wgPruningThreshold;
-unsigned int sentenceNo=0,numWords=0;	
-Vector<float> weightVec;
 
 //--------------- Function Definitions -------------------------------
 
 //--------------- main function
 int main(int argc, char *argv[])
 {
-  if(TakeParameters(argc,argv)==OK)
+      // Take and check parameters
+  thot_decoder_pars tdp;
+  if(handleParameters(argc,argv,tdp)==ERROR)
+  {
+    return ERROR;
+  }
+  else
   {
         // init translator    
-    if(init_translator()==ERROR)
+    if(init_translator(tdp)==ERROR)
     {      
       cerr<<"Error during the initialization of the translator"<<endl;
       return ERROR;
     }
     else
     {
-      unsigned int ret;
-
-      ret=translate_corpus();
+      int ret=translate_corpus(tdp);
       release_translator();
       if(ret==ERROR) return ERROR;
       else return OK;
     }
   }
-  else return ERROR;
 }
 
 //--------------- init_translator function
-int init_translator(void)
+int init_translator(const thot_decoder_pars& tdp)
 {
   int err;
   
@@ -128,14 +144,14 @@ int init_translator(void)
 
   pbtModelPtr=new CURR_MODEL_TYPE();
   
-  err=pbtModelPtr->loadLangModel(languageModelFileName.c_str());
+  err=pbtModelPtr->loadLangModel(tdp.languageModelFileName.c_str());
   if(err==ERROR)
   {
     delete pbtModelPtr;
     return ERROR;
   }
 
-  err=pbtModelPtr->loadAligModel(transModelPref.c_str());
+  err=pbtModelPtr->loadAligModel(tdp.transModelPref.c_str());
   if(err==ERROR)
   {
     delete pbtModelPtr;
@@ -143,27 +159,27 @@ int init_translator(void)
   }
 
       // Set heuristic
-  pbtModelPtr->setHeuristic(heuristic);
+  pbtModelPtr->setHeuristic(tdp.heuristic);
 
       // Set weights
-  pbtModelPtr->setWeights(weightVec);
+  pbtModelPtr->setWeights(tdp.weightVec);
   pbtModelPtr->printWeights(cerr);
   cerr<<endl;
 
       // Set model parameters
-  pbtModelPtr->set_W_par(W);
-  pbtModelPtr->set_A_par(A);
+  pbtModelPtr->set_W_par(tdp.W);
+  pbtModelPtr->set_A_par(tdp.A);
       // Set non-monotonicity level
-  if(nomon==0)
+  if(tdp.nomon==0)
   {
     pbtModelPtr->setMonotoneSearch();
   }
   else
   {
     pbtModelPtr->resetMonotoneSearch();
-    pbtModelPtr->set_U_par(nomon);
+    pbtModelPtr->set_U_par(tdp.nomon);
   }
-  pbtModelPtr->setVerbosity(verbosity);
+  pbtModelPtr->setVerbosity(tdp.verbosity);
     
       // Create a translator instance
   translatorPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
@@ -172,29 +188,29 @@ int init_translator(void)
   translatorPtr->link_smt_model(pbtModelPtr);
     
       // Set translator parameters
-  translatorPtr->set_S_par(S);
-  translatorPtr->set_I_par(I);
+  translatorPtr->set_S_par(tdp.S);
+  translatorPtr->set_I_par(tdp.I);
 #ifdef MULTI_STACK_USE_GRAN
-  translatorPtr->set_G_par(G);
+  translatorPtr->set_G_par(tdp.G);
 #endif  
       // Enable best score pruning if the decoder is not going to obtain
       // n-best translations or word-graphs
-  if(wgPruningThreshold==DISABLE_WORDGRAPH)
+  if(tdp.wgPruningThreshold==DISABLE_WORDGRAPH)
     translatorPtr->useBestScorePruning(true);
 
       // Set breadthFirst flag
-  translatorPtr->set_breadthFirst(!be);
+  translatorPtr->set_breadthFirst(!tdp.be);
 
 #ifndef THOT_DISABLE_REC
       // Enable word graph according to wgPruningThreshold
-  if(wordGraphFileName!="")
+  if(tdp.wordGraphFileName!="")
   {
-    if(wgPruningThreshold!=DISABLE_WORDGRAPH)
+    if(tdp.wgPruningThreshold!=DISABLE_WORDGRAPH)
       translatorPtr->enableWordGraph();
   }
 #endif
       // Set translator verbosity
-  translatorPtr->setVerbosity(verbosity);
+  translatorPtr->setVerbosity(tdp.verbosity);
 
   return OK;
 }
@@ -207,8 +223,7 @@ void release_translator(void)
 }
 
 //--------------- TranslateTestCorpus template function
-
-int translate_corpus(void)
+int translate_corpus(const thot_decoder_pars& tdp)
 {
   CURR_MODEL_TYPE::Hypothesis result;     // Results of the translation
   CURR_MODEL_TYPE::Hypothesis anotherTrans;     // Another results of the translation
@@ -220,7 +235,7 @@ int translate_corpus(void)
   
     
       // Open test corpus file
-  testCorpusFile.open(sourceSentencesFile.c_str());    
+  testCorpusFile.open(tdp.sourceSentencesFile.c_str());    
   testCorpusFile.seekg(0, ios::beg);
 
   cerr<<"\n- Translating test corpus sentences...\n\n";
@@ -234,9 +249,9 @@ int translate_corpus(void)
   {
         // Open output file if required
     ofstream outS;
-    if(!outFile.empty())
+    if(!tdp.outFile.empty())
     {
-      outS.open(outFile.c_str(),ios::out);
+      outS.open(tdp.outFile.c_str(),ios::out);
       if(!outS) cerr<<"Error while opening output file."<<endl;
     }
     
@@ -248,26 +263,26 @@ int translate_corpus(void)
       {
         ++sentNo;
         
-        if(verbosity)
+        if(tdp.verbosity)
         {
           cerr<<sentNo<<endl<<srcSentenceString<<endl;
           ctimer(&elapsed_ant,&ucpu,&scpu);
         }
        
             //------- Translate sentence
-        result=translatorPtr->translate(srcSentenceString,timeLimit);
+        result=translatorPtr->translate(srcSentenceString);
 
             //--------------------------
-        if(verbosity) ctimer(&elapsed,&ucpu,&scpu);
+        if(tdp.verbosity) ctimer(&elapsed,&ucpu,&scpu);
 
-        if(outFile.empty())
+        if(tdp.outFile.empty())
           cout<<pbtModelPtr->getTransInPlainText(result)<<endl;
         else
           outS<<pbtModelPtr->getTransInPlainText(result)<<endl;
           
-        if(verbosity)
+        if(tdp.verbosity)
         {
-          pbtModelPtr->printHyp(result,cerr,verbosity);
+          pbtModelPtr->printHyp(result,cerr,tdp.verbosity);
 #         ifdef THOT_STATS
           translatorPtr->printStats();
 #         endif
@@ -277,11 +292,11 @@ int translate_corpus(void)
         }
 #ifndef THOT_DISABLE_REC        
             // Print wordgraph if the -wg option was given
-        if(wordGraphFileName!="")
+        if(tdp.wordGraphFileName!="")
         {
           char wgFileNameForSent[256];
-          sprintf(wgFileNameForSent,"%s_%06d",wordGraphFileName.c_str(),sentNo);
-          translatorPtr->pruneWordGraph(wgPruningThreshold);
+          sprintf(wgFileNameForSent,"%s_%06d",tdp.wordGraphFileName.c_str(),sentNo);
+          translatorPtr->pruneWordGraph(tdp.wgPruningThreshold);
           translatorPtr->printWordGraph(wgFileNameForSent);
         }
 #endif
@@ -302,7 +317,7 @@ int translate_corpus(void)
       }    
     }
         // Close output file
-    if(!outFile.empty())
+    if(!tdp.outFile.empty())
     {
       outS.close();
     }
@@ -311,7 +326,7 @@ int translate_corpus(void)
     testCorpusFile.close();
   }
 
-  if(verbosity)
+  if(tdp.verbosity)
   {
     cerr<<"- Time per sentence: "<<total_time/sentNo<<endl;
   }
@@ -319,170 +334,195 @@ int translate_corpus(void)
   return OK;
 }
 
-//--------------- TakeParameters function
-int TakeParameters(int argc,char *argv[])
+//--------------- handleParameters function
+int handleParameters(int argc,
+                     char *argv[],
+                     thot_decoder_pars& tdp)
 {
- char s[512];
- int err;
+  if(argc==1 || readOption(argc,argv,"--version")!=-1)
+  {
+    version();
+    return ERROR;
+  }
+  if(readOption(argc,argv,"--help")!=-1)
+  {
+    printUsage();
+    return ERROR;   
+  }
+  if(readOption(argc,argv,"--config")!=-1)
+  {
+    printConfig();
+    return ERROR;   
+  }
+  if(takeParameters(argc,argv,tdp)==ERROR)
+  {
+    return ERROR;
+  }
+  else
+  {
+    if(checkParameters(tdp)==OK)
+    {
+      printParameters(tdp);
+      return OK;
+    }
+    else
+    {
+      return ERROR;
+    }
+  }
+}
 
- if(argc==1)
- {
-   version();
-   return ERROR;   
- }
+//--------------- takeParameters function
+int takeParameters(int argc,
+                   char *argv[],
+                   thot_decoder_pars& tdp)
+{
+      // Check if a configuration file was provided
+  std::string cfgFileName;
+  int err=readSTLstring(argc,argv, "-c", &cfgFileName);
+  if(err!=-1)
+  {
+        // Process configuration file
+    err=takeParametersFromCfgFile(cfgFileName,tdp);
+    if(err==ERROR) return ERROR;
+  }
+      // process command line parameters
+  takeParametersGivenArgcArgv(argc,argv,tdp);
+  return OK;
+}
 
- err=readOption(argc,argv,"--help");
- if(err!=-1)
- {
-   printUsage();
-   return ERROR;   
- }      
+//--------------- processParameters function
+int takeParametersFromCfgFile(std::string cfgFileName,
+                              thot_decoder_pars& tdp)
+{
+      // Extract parameters from configuration file
+    std::string comment="#";
+    int cfgFileArgc;
+    Vector<std::string> cfgFileArgvStl;
+    int ret=extractParsFromFile(cfgFileName.c_str(),cfgFileArgc,cfgFileArgvStl,comment);
+    if(ret==ERROR) return ERROR;
 
-     /* Verify --version option */
- err=readOption(argc,argv, "--version");
- if(err!=-1)
- {
-   version();
-   return ERROR;
- }
+        // Create argv for cfg file
+    char** cfgFileArgv=(char**) malloc(cfgFileArgc*sizeof(char*));
+    for(unsigned int i=0;i<cfgFileArgvStl.size();++i)
+    {
+      cfgFileArgv[i]=(char*) malloc((cfgFileArgvStl[i].size()+1)*sizeof(char));
+      strcpy(cfgFileArgv[i],cfgFileArgvStl[i].c_str());
+    }
+        // Process extracted parameters
+    takeParametersGivenArgcArgv(cfgFileArgc,cfgFileArgv,tdp);
 
-     /* Verify --config option */
- err=readOption(argc,argv, "--config");
- if(err!=-1)
- {
-   printConfig();
-   return ERROR;
- }
+        // Release allocated memory
+    for(unsigned int i=0;i<cfgFileArgvStl.size();++i)
+    {
+      free(cfgFileArgv[i]);
+    }
+    free(cfgFileArgv);
 
+        // Return without error
+    return OK;
+}
+
+//--------------- processParameters function
+void takeParametersGivenArgcArgv(int argc,
+                                 char *argv[],
+                                 thot_decoder_pars& tdp)
+{
      // Takes W 
- err=readFloat(argc,argv, "-W", &W);
+ int err=readFloat(argc,argv, "-W", &tdp.W);
  if(err==-1)
  {
-   W=PMSTACK_W_DEFAULT;
+   tdp.W=PMSTACK_W_DEFAULT;
  }
 
      // Takes S parameter 
- err=readInt(argc,argv, "-S", &(S));
+ err=readInt(argc,argv, "-S", &tdp.S);
  if(err==-1)
  {
-   S=PMSTACK_S_DEFAULT;
+   tdp.S=PMSTACK_S_DEFAULT;
  }
 
      // Takes A parameter 
- err=readInt(argc,argv, "-A", &A);
+ err=readInt(argc,argv, "-A", &tdp.A);
  if(err==-1)
  {
-   A=PMSTACK_A_DEFAULT;
+   tdp.A=PMSTACK_A_DEFAULT;
  }
 
      // Takes U parameter 
- err=readInt(argc,argv, "-nomon", &nomon);
+ err=readInt(argc,argv, "-nomon", &tdp.nomon);
  if(err==-1)
  {
-   nomon=PMSTACK_NOMON_DEFAULT;
+   tdp.nomon=PMSTACK_NOMON_DEFAULT;
  }
 
      // Takes I parameter 
- err=readInt(argc,argv, "-I", &I);
+ err=readInt(argc,argv, "-I", &tdp.I);
  if(err==-1)
  {
-   I=PMSTACK_I_DEFAULT;
+   tdp.I=PMSTACK_I_DEFAULT;
  }
 
      // Takes I parameter 
- err=readInt(argc,argv, "-G", &G);
+ err=readInt(argc,argv, "-G", &tdp.G);
  if(err==-1)
  {
-   G=PMSTACK_G_DEFAULT;
+   tdp.G=PMSTACK_G_DEFAULT;
  }
 
      // Takes h parameter 
- err=readInt(argc,argv, "-h", &heuristic);
+ err=readInt(argc,argv, "-h", &tdp.heuristic);
  if(err==-1)
  {
-   heuristic=PMSTACK_H_DEFAULT;
+   tdp.heuristic=PMSTACK_H_DEFAULT;
  }
 
      // Take language model file name
- err=readString(argc,argv, "-lm", s);
- if(err==-1)
- {
-   cerr<<"Error: parameter -lm not given!"<<endl;
-   printUsage();
-   return ERROR;   
- }
- else languageModelFileName=s;
+ err=readSTLstring(argc,argv, "-lm", &tdp.languageModelFileName);
 
      // Take read table prefix 
- err=readString(argc,argv, "-tm", s);
- if(err==-1)
- {
-   cerr<<"Error: parameter -tm not given!"<<endl;
-   printUsage();
-   return ERROR;   
- }
- else transModelPref=s;
+ err=readSTLstring(argc,argv, "-tm", &tdp.transModelPref);
  
      // Take file name with the sentences to be translated 
- err=readString(argc,argv, "-t",s);
- if(err==-1)
- {
-   cerr<<"Error: parameter -t not given!"<<endl;
-   printUsage();
-   return ERROR;   
- }
- else sourceSentencesFile=s;
+ err=readSTLstring(argc,argv, "-t",&tdp.sourceSentencesFile);
 
       // Take output file name
- err=readString(argc,argv, "-o",s);
- if(err!=-1)
- {
-   outFile=s;
- }
+ err=readSTLstring(argc,argv, "-o",&tdp.outFile);
  
        // read -be option
  err=readOption(argc,argv,"-be");
  if(err==-1)
  {
-   be=0;
+   tdp.be=0;
  }      
  else
  {
-   be=1;
+   tdp.be=1;
  }
      
      // Take -we parameter
- err=readFloatSeq(argc,argv, "-we", weightVec);
+ err=readFloatSeq(argc,argv, "-we", tdp.weightVec);
  if(err==-1)
  {
-   weightVec.clear();
+   tdp.weightVec.clear();
  }    
 
      // Take -wg parameter
- err=readString(argc,argv, "-wg", s);
+ err=readSTLstring(argc,argv, "-wg", &tdp.wordGraphFileName);
  if(err==-1)
  {
-   wordGraphFileName="";
-   wgPruningThreshold=DISABLE_WORDGRAPH;
+   tdp.wordGraphFileName="";
+   tdp.wgPruningThreshold=DISABLE_WORDGRAPH;
  }
  else
  {
-   wordGraphFileName=s;
-
        // Take -wgp parameter 
-   err=readFloat(argc,argv, "-wgp", &wgPruningThreshold);
+   err=readFloat(argc,argv, "-wgp", &tdp.wgPruningThreshold);
    if(err==-1)
    {
-     wgPruningThreshold=UNLIMITED_DENSITY;
+     tdp.wgPruningThreshold=UNLIMITED_DENSITY;
    }
  }
-
-     // read maxtime if given
- err=readDouble(argc,argv, "-maxtime", &timeLimit);
- if(err==-1)
- {
-   timeLimit=0;
- }      
 
      // Take verbosity parameter
  err=readOption(argc,argv,"-v");
@@ -497,59 +537,84 @@ int TakeParameters(int argc,char *argv[])
      if(err==-1)
      {
            // -v2 not found
-       verbosity=0;
+       tdp.verbosity=0;
      }
      else
      {
            // -v2 found
-       verbosity=3;
+       tdp.verbosity=3;
      }
    }
    else
    {
          // -v1 found
-     verbosity=2;
+     tdp.verbosity=2;
    }
  }
  else
  {
        // -v found
-   verbosity=1;
+   tdp.verbosity=1;
  }
+}
 
- cerr<<"W: "<<W<<endl;   
- cerr<<"S: "<<S<<endl;   
- cerr<<"A: "<<A<<endl;
- cerr<<"I: "<<I<<endl;
+//--------------- checkParameters function
+int checkParameters(const thot_decoder_pars& tdp)
+{
+  if(tdp.languageModelFileName.empty())
+  {
+    cerr<<"Error: parameter -lm not given!"<<endl;
+    return ERROR;   
+  }
+  
+  if(tdp.transModelPref.empty())
+  {
+    cerr<<"Error: parameter -tm not given!"<<endl;
+    return ERROR;   
+  }
+
+  if(tdp.sourceSentencesFile.empty())
+  {
+    cerr<<"Error: parameter -t not given!"<<endl;
+    return ERROR;   
+  }
+  
+  return OK;
+}
+
+//--------------- printParameters function
+void printParameters(const thot_decoder_pars& tdp)
+{
+ cerr<<"W: "<<tdp.W<<endl;   
+ cerr<<"S: "<<tdp.S<<endl;   
+ cerr<<"A: "<<tdp.A<<endl;
+ cerr<<"I: "<<tdp.I<<endl;
 #ifdef MULTI_STACK_USE_GRAN
- cerr<<"G: "<<G<<endl;
+ cerr<<"G: "<<tdp.G<<endl;
 #endif
- cerr<<"h: "<<heuristic<<endl;
- cerr<<"be: "<<be<<endl;
- cerr<<"nomon: "<<nomon<<endl;
+ cerr<<"h: "<<tdp.heuristic<<endl;
+ cerr<<"be: "<<tdp.be<<endl;
+ cerr<<"nomon: "<<tdp.nomon<<endl;
  cerr<<"weight vector:";
- for(unsigned int i=0;i<weightVec.size();++i)
-   cerr<<" "<<weightVec[i];
+ for(unsigned int i=0;i<tdp.weightVec.size();++i)
+   cerr<<" "<<tdp.weightVec[i];
  cerr<<endl;
- cerr<<"time limit: "<<timeLimit<<endl;   
- cerr<<"lmfile: "<<languageModelFileName<<endl;   
- cerr<<"tm files prefix: "<<transModelPref<<endl;
- cerr<<"test file: "<<sourceSentencesFile<<endl;
- if(wordGraphFileName!="")
+ cerr<<"lmfile: "<<tdp.languageModelFileName<<endl;   
+ cerr<<"tm files prefix: "<<tdp.transModelPref<<endl;
+ cerr<<"test file: "<<tdp.sourceSentencesFile<<endl;
+ if(tdp.wordGraphFileName!="")
  {
-   cerr<<"word graph file prefix: "<<wordGraphFileName<<endl;
-   if(wgPruningThreshold==UNLIMITED_DENSITY)
+   cerr<<"word graph file prefix: "<<tdp.wordGraphFileName<<endl;
+   if(tdp.wgPruningThreshold==UNLIMITED_DENSITY)
      cerr<<"word graph pruning threshold: word graph density unrestricted"<<endl;
    else
-     cerr<<"word graph pruning threshold: "<<wgPruningThreshold<<endl;
+     cerr<<"word graph pruning threshold: "<<tdp.wgPruningThreshold<<endl;
  }
  else
  {
    cerr<<"word graph file prefix not given (wordgraphs will not be generated)"<<endl;
  }
- cerr<<"verbosity level: "<<verbosity<<endl;
- 
- return OK;
+ cerr<<"verbosity level: "<<tdp.verbosity<<endl;
 }
 
 //--------------- stringToStringVector function
@@ -619,15 +684,18 @@ void printConfig(void)
 
 void printUsage(void)
 {
-  cerr << "thot_decoder        -tm <string> -lm <string> -t <string> [-o <string>]"<<endl;
+  cerr << "thot_decoder        [-c <string>] -tm <string> -lm <string>"<<endl;
+  cerr << "                    -t <string> [-o <string>]"<<endl;
   cerr << "                    [-W <float>] [-S <int>] [-A <int>]"<<endl;
   cerr << "                    [-I <int>] [-G <int>] [-h <int>]"<<endl;
   cerr << "                    [-be] [ -nomon <int>] [-we <float> ... <float>]"<<endl;
 #ifndef THOT_DISABLE_REC
   cerr << "                    [-wg <string> [-wgp <float>] ]"<<endl;
 #endif  
-  cerr << "                    [-maxtime <float>] [-v|-v1|-v2]"<<endl;
+  cerr << "                    [-v|-v1|-v2]"<<endl;
   cerr << "                    [--help] [--version] [--config]"<<endl<<endl;
+  cerr << " -c <string>          : Configuration file (command-line options override"<<endl;
+  cerr << "                        configuration file options)."<<endl;
   cerr << " -tm <string>         : Prefix of the translation model files."<<endl;
   cerr << " -lm <string>         : Language model file name."<<endl;
   cerr << " -t <string>          : File with the test sentences."<<endl;
@@ -664,7 +732,6 @@ void printUsage(void)
   cerr << "                        If not given, the number of arcs is not\n";
   cerr << "                        restricted.\n";
 #endif
-  cerr << " -maxtime <float>     : Maximum translation time in seconds."<<endl;
   cerr << " -v|-v1|-v2           : verbose modes."<<endl;
   cerr << " --help               : Display this help and exit."<<endl;
   cerr << " --version            : Output version information and exit."<<endl;
