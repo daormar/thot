@@ -44,102 +44,102 @@ calc_nnc_pen()
                             }'
 }
 
-########
-generate_cfg_file()
-{
-    # Process environment variables
-    if [ "${BASEDIR}" = "" ]; then BASEDIR=${HOME}/traduccion/corpus/Xerox/en_es/v14may2003 ; fi
-    if [ "${TM}" = "" ]; then TM=${BASEDIR}/simplified2/TM/ef_phrase_filt ; fi
-    if [ "${LM}" = "" ]; then LM=${BASEDIR}/simplified2/LM/e.lm ; fi
-    if [ "${ECM}" != "" ]; then ECM_OPT="-ecm $ECM" ; fi
-    if [ "${W}" = "" ]; then W="10" ; fi
-    if [ "${S}" = "" ]; then S="10" ; fi
-    if [ "${A}" = "" ]; then A="7" ; fi
-    if [ "${E}" = "" ]; then E="4" ; fi
-    if [ "${G}" = "" ]; then G="0" ; fi
-    if [ "${NOMON}" = "" ]; then NOMON="0" ; fi
-    if [ "${BE}" != "-be" ]; then BE="" ; fi
-    if [ "${H}" = "" ]; then H="6" ; fi
-    if [ "${NP}" != "" ]; then NP_OPT="-np $NP" ; fi
-    if [ "${WGP}" != "" ]; then WGP_OPT="-wgp $WGP" ; fi
-    if [ "${OLP}" = "" ]; then OLP="0 0 1 5 1 0" ; fi
-    if [ "${SMTW}" = "" ]; then SMTW="0 1 1 1 1 1 1" ; fi
-    if [ "${CATW}" = "" ]; then CATW="1" ; fi
-    if [ "${ECW}" != "" ]; then ECW_OPT="-ecw ${ECW}" ; fi
-    if [ "${SP}" = "" ]; then SP=0 ; fi
-    if [ "${CASECONV}" != "" ]; then CASECONV_OPT="-uc ${CASECONV}" ; fi
-    if [ "${WGHFILE}" != "" ]; then WGH_OPT="-wgh ${WGHFILE}" ; fi
+# ########
+# generate_cfg_file()
+# {
+#     # Process environment variables
+#     if [ "${BASEDIR}" = "" ]; then BASEDIR=${HOME}/traduccion/corpus/Xerox/en_es/v14may2003 ; fi
+#     if [ "${TM}" = "" ]; then TM=${BASEDIR}/simplified2/TM/ef_phrase_filt ; fi
+#     if [ "${LM}" = "" ]; then LM=${BASEDIR}/simplified2/LM/e.lm ; fi
+#     if [ "${ECM}" != "" ]; then ECM_OPT="-ecm $ECM" ; fi
+#     if [ "${W}" = "" ]; then W="10" ; fi
+#     if [ "${S}" = "" ]; then S="10" ; fi
+#     if [ "${A}" = "" ]; then A="7" ; fi
+#     if [ "${E}" = "" ]; then E="4" ; fi
+#     if [ "${G}" = "" ]; then G="0" ; fi
+#     if [ "${NOMON}" = "" ]; then NOMON="0" ; fi
+#     if [ "${BE}" != "-be" ]; then BE="" ; fi
+#     if [ "${H}" = "" ]; then H="6" ; fi
+#     if [ "${NP}" != "" ]; then NP_OPT="-np $NP" ; fi
+#     if [ "${WGP}" != "" ]; then WGP_OPT="-wgp $WGP" ; fi
+#     if [ "${OLP}" = "" ]; then OLP="0 0 1 5 1 0" ; fi
+#     if [ "${SMTW}" = "" ]; then SMTW="0 1 1 1 1 1 1" ; fi
+#     if [ "${CATW}" = "" ]; then CATW="1" ; fi
+#     if [ "${ECW}" != "" ]; then ECW_OPT="-ecw ${ECW}" ; fi
+#     if [ "${SP}" = "" ]; then SP=0 ; fi
+#     if [ "${CASECONV}" != "" ]; then CASECONV_OPT="-uc ${CASECONV}" ; fi
+#     if [ "${WGHFILE}" != "" ]; then WGH_OPT="-wgh ${WGHFILE}" ; fi
 
-    # Check variables
-    ls ${TM}* >/dev/null 2>&1 || ( echo "ERROR: invalid prefix ${TM}" >&2 ; exit 1 )
+#     # Check variables
+#     ls ${TM}* >/dev/null 2>&1 || ( echo "ERROR: invalid prefix ${TM}" >&2 ; exit 1 )
 
-    if [ ! -f ${LM} ]; then
-        echo "ERROR: file ${LM} does not exist" >&2
-        exit 1
-    fi
+#     if [ ! -f ${LM} ]; then
+#         echo "ERROR: file ${LM} does not exist" >&2
+#         exit 1
+#     fi
 
-    # Print configuration file
-    echo "# Translation model prefix"
-    echo "-tm ${TM}"
-    echo ""
-    echo "# Language model"
-    echo "-lm ${LM}"
-    echo ""
-    echo "# Error correction model"
-    echo "${ECM_OPT}"
-    echo ""
-    echo "# W parameter"
-    echo "-W ${W}"
-    echo ""
-    echo "# S parameter"
-    echo "-S ${S}"
-    echo ""
-    echo "# A parameter"
-    echo "-A ${A}"
-    echo ""
-    echo "# E parameter"
-    echo "-E ${E}"
-    echo ""
-    echo "# G parameter"
-    echo "-G ${G}"
-    echo ""
-    echo "# Non-monotonicity level"
-    echo "-nomon ${NOMON}"
-    echo ""
-    echo "# Best-first search flag"
-    echo "${BE}"
-    echo ""
-    echo "# Heuristic function used"
-    echo "-h ${H}"
-    echo ""
-    echo "# Size of the n-best list"
-    echo "${NP}"
-    echo ""
-    echo "# Word graph pruning threshold"
-    echo "${WGP_OPT}"
-    echo ""
-    echo "# Online training parameters (online learning algorithm, learning rate policy, learning step size, EM iterations, E parameter, R parameter)"
-    echo "-olp $OLP"
-    echo ""
-    echo "# SMT weights"
-    echo "-tmw $SMTW"
-    echo ""
-    echo "# CAT weights"
-    echo "-catw $CATW"
-    echo ""
-    echo "# EC weights"
-    echo "${ECW_OPT}"
-    echo ""
-    echo "# Pre/pos-processing type"
-    echo "-sp ${SP}"
-    echo ""
-    echo "# File with pre/pos-processing info"
-    echo "${CASECONV_OPT}"
-    echo ""
-    echo "# Word graph handler option"
-    echo "${WGH_OPT}"
-    echo ""
-}
+#     # Print configuration file
+#     echo "# Translation model prefix"
+#     echo "-tm ${TM}"
+#     echo ""
+#     echo "# Language model"
+#     echo "-lm ${LM}"
+#     echo ""
+#     echo "# Error correction model"
+#     echo "${ECM_OPT}"
+#     echo ""
+#     echo "# W parameter"
+#     echo "-W ${W}"
+#     echo ""
+#     echo "# S parameter"
+#     echo "-S ${S}"
+#     echo ""
+#     echo "# A parameter"
+#     echo "-A ${A}"
+#     echo ""
+#     echo "# E parameter"
+#     echo "-E ${E}"
+#     echo ""
+#     echo "# G parameter"
+#     echo "-G ${G}"
+#     echo ""
+#     echo "# Non-monotonicity level"
+#     echo "-nomon ${NOMON}"
+#     echo ""
+#     echo "# Best-first search flag"
+#     echo "${BE}"
+#     echo ""
+#     echo "# Heuristic function used"
+#     echo "-h ${H}"
+#     echo ""
+#     echo "# Size of the n-best list"
+#     echo "${NP}"
+#     echo ""
+#     echo "# Word graph pruning threshold"
+#     echo "${WGP_OPT}"
+#     echo ""
+#     echo "# Online training parameters (online learning algorithm, learning rate policy, learning step size, EM iterations, E parameter, R parameter)"
+#     echo "-olp $OLP"
+#     echo ""
+#     echo "# SMT weights"
+#     echo "-tmw $SMTW"
+#     echo ""
+#     echo "# CAT weights"
+#     echo "-catw $CATW"
+#     echo ""
+#     echo "# EC weights"
+#     echo "${ECW_OPT}"
+#     echo ""
+#     echo "# Pre/pos-processing type"
+#     echo "-sp ${SP}"
+#     echo ""
+#     echo "# File with pre/pos-processing info"
+#     echo "${CASECONV_OPT}"
+#     echo ""
+#     echo "# Word graph handler option"
+#     echo "${WGH_OPT}"
+#     echo ""
+# }
 
 ########
 wait_until_server_is_listening()
@@ -192,6 +192,7 @@ else
     # Initialize variables
     if [ "${SERVER}" = "" ]; then SERVER=${bindir}/thot_server; fi
     if [ "${SERVER_IP}" = "" ]; then SERVER_IP="127.0.0.1" ; fi
+    if [ "${CFGFILE}" = "" ]; then CFGFILE="server.cfg" ; fi
     if [ "${PORT}" != "" ]; then PORT_OPT="-p ${PORT}" ; fi
     if [ "${UID}" != "" ]; then UID_OPT="-uid ${UID}" ; fi
     if [ "${TEST}" = "" ]; then TEST=${BASEDIR}/raw/DATA/Es-dev ; fi
@@ -205,6 +206,11 @@ else
     # Check variables
     if [ ! -f ${SERVER} ]; then
         echo "ERROR: file ${SERVER} does not exist" >&2
+        exit 1
+    fi
+
+    if [ ! -f ${CFGFILE} ]; then
+        echo "ERROR: file ${CFGFILE} does not exist" >&2
         exit 1
     fi
 
@@ -253,11 +259,11 @@ else
         ECW_OPT="-ecw ${ECW}"
     fi
 
-    # Generate cfg file for server
-    generate_cfg_file > ${SDIR}/server.cfg
+    # # Generate cfg file for server
+    # generate_cfg_file > ${SDIR}/server.cfg
 
     # Launch server
-    $SERVER -c ${SDIR}/server.cfg ${PORT_OPT} ${VERB_SERVER_OPT} > ${SDIR}/server.log 2>&1 &
+    $SERVER -c ${CFGFILE} ${PORT_OPT} ${VERB_SERVER_OPT} > ${SDIR}/server.log 2>&1 &
     server_pid=$!
     wait_until_server_is_listening ${SDIR}/server.log || error="yes"
 

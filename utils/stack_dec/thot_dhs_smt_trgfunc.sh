@@ -99,13 +99,11 @@ execute_decoder()
 
     # Appropriately execute decoder
     if [ $pbsdec = "yes" ]; then
-        ${PHRDECODER} -tm ${TM} -lm ${LM} -t ${TEST} \
-            -W $W -S $S -A $A -nomon $NOMON $BE -G $G -h $H ${WG_OPT} ${WGP_OPT} -sdir ${SDIR} -qs "${QS}" \
-            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || decoder_error="yes"
+        ${PHRDECODER} -c $CFGFILE -t ${TEST} -sdir ${SDIR} -qs "${QS}" \
+            ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || decoder_error="yes"
     else
-        ${PHRDECODER} -tm ${TM} -lm ${LM} -t ${TEST} \
-            -W $W -S $S -A $A -nomon $NOMON $BE -G $G -h $H ${WG_OPT} ${WGP_OPT} \
-            -we ${weights} ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || decoder_error="yes"
+        ${PHRDECODER} -c $CFGFILE -t ${TEST} \
+            ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || decoder_error="yes"
     fi
 
     # Treat decoder error if necessary
@@ -181,8 +179,15 @@ ${bindir}/thot_obtain_best_trans_from_nbl $wgfile.nbl "$weights" >> ${SDIR}/targ
 }
 
 ########
+get_sp_value_from_cfg()
+{
+    echo `$GREP "\-sp" $CFGFILE | $AWK '{printf"%s",$2}'`
+}
+
+########
 posproc_output()
 {
+    SP=`get_sp_value_from_cfg`
     if [ $SP -ne 0 ]; then
         mv ${SDIR}/target_func_aux.trans ${SDIR}/target_func.unpreproc_trans
 
@@ -237,24 +242,13 @@ if [ $# -lt 2 ]; then
 else
     # Initialize variables
     if [ "${PHRDECODER}" = "" ]; then PHRDECODER=${bindir}/thot_decoder; fi
+    if [ "${CFGFILE}" = "" ]; then CFGFILE="server.cfg" ; fi
     if [ "${BASEDIR}" = "" ]; then BASEDIR=${HOME}/traduccion/corpus/Xerox/en_es/v14may2003/simplified2 ; fi
-    if [ "${TM}" = "" ]; then TM=${BASEDIR}/TM/my_ef ; fi
-    if [ "${LM}" = "" ]; then LM=${BASEDIR}/LM/e.lm ; fi
     if [ "${TEST}" = "" ]; then TEST=${BASEDIR}/DATA/Es-dev ; fi
     if [ "${REF}" = "" ]; then REF=${BASEDIR}/DATA/En-dev ; fi
     if [ "${RAW_TEST}" = "" ]; then RAW_TEST="_none_" ; fi
     if [ "${RAW_REF}" = "" ]; then RAW_REF="_none_" ; fi
-    if [ "${SP}" = "" ]; then SP="0" ; fi
     if [ "${PREPROC_FILE}" = "" ]; then PREPROC_FILE="_none_" ; fi
-    if [ "${W}" = "" ]; then W="10" ; fi
-    if [ "${S}" = "" ]; then S="10" ; fi
-    if [ "${A}" = "" ]; then A="7" ; fi
-    if [ "${G}" = "" ]; then G="0" ; fi
-    if [ "${NOMON}" = "" ]; then NOMON="0" ; fi
-    if [ "${BE}" != "-be" ]; then BE="" ; fi
-    if [ "${H}" = "" ]; then H="6" ; fi
-    if [ "${WG}" != "" ]; then WG_OPT="-wg $WG" ; fi    
-    if [ "${WGP}" != "" ]; then WGP_OPT="-wgd $WGP" ; fi    
     if [ "${MEASURE}" = "" ]; then MEASURE="BLEU" ; fi
     if [ "${NNC_PEN_FACTOR}" = "" ]; then NNC_PEN_FACTOR=1000; fi
     if [ "${USE_NBEST_OPT}" = "" ]; then USE_NBEST_OPT=0; fi
@@ -263,6 +257,11 @@ else
     # Check variables
     if [ ! -f ${PHRDECODER} ]; then
         echo "ERROR: file ${PHRDECODER} does not exist" >&2
+        exit 1
+    fi
+
+    if [ ! -f ${CFGFILE} ]; then
+        echo "ERROR: file ${CFGFILE} does not exist" >&2
         exit 1
     fi
 
