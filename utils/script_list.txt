@@ -1,5 +1,6 @@
 # HOME_OF_PACKAGE SCRIPT_NAME
 /home/dortiz/smt/software/incr_models thot_pbs_get_ngram_counts
+/home/dortiz/smt/software/incr_models thot_gen_init_file_with_jmlm_weights
 /home/dortiz/smt/software/incr_models thot_dhs_trgfunc_jmlm
 /home/dortiz/smt/software/incr_models thot_dhs_trgfunc_interplm
 /home/dortiz/smt/software/incr_models thot_repetition_rate
