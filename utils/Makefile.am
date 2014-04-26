@@ -1,5 +1,5 @@
 SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
-error_correction downhill_simplex stack_dec
+error_correction downhill_simplex stack_dec exper
 
 bin_SCRIPTS = $(nlp_common_bin_scripts) $(incr_models_bin_scripts)	\
 $(sw_models_bin_scripts) $(phrase_models_bin_scripts)			\
@@ -52,6 +52,10 @@ stack_dec/thot_dhs_smt_trgfunc stack_dec/thot_dhs_cat_trgfunc	\
 stack_dec/thot_conf_interv_smt stack_dec/thot_conf_interv_cat	\
 stack_dec/thot_smt_using_client stack_dec/thot_cat_using_client	\
 stack_dec/thot_calc_wer stack_dec/thot_get_sys_trans
+
+exper_bin_scripts= exper/thot_tm_train exper/thot_smt_tune	\
+exper/thot_prepare_sys_for_test exper/thot_lm_train		\
+exper/thot_gen_server_cfg_file
 
 CLEANFILES = $(bin_SCRIPTS)
 

@@ -7,3 +7,4 @@
 /home/dortiz/smt/software/error_correction error_correction
 /home/dortiz/smt/software/downhill_simplex downhill_simplex
 /home/dortiz/smt/software/stack_dec stack_dec
+/home/dortiz/smt/software/exper exper

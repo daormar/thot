@@ -6,7 +6,7 @@ ZLIB=@ZLIB@
 AUTOMAKE_OPTIONS = subdir-objects
 
 SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
-error_correction downhill_simplex stack_dec
+error_correction downhill_simplex stack_dec exper
 
 if CASMACAT_LIB_ENABLED
 bin_PROGRAMS = thot_ilm_perp thot_calc_swm_lgprob thot_gen_sw_model	\
@@ -269,12 +269,15 @@ casmacat_engines_h=
 casmacat_engines_defs=
 endif
 
+exper_h=
+exper_defs=
+
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(sw_models_h) $(sw_models_defs)	\
 $(phrase_models_h) $(phrase_models_defs) $(smt_preproc_h)		\
 $(smt_preproc_defs) $(error_correction_h) $(error_correction_defs)	\
 $(downhill_simplex_h) $(downhill_simplex_defs) $(stack_dec_h)		\
-$(stack_dec_defs)
+$(stack_dec_defs) $(exper_h) $(exper_defs)
 
 # programs
 thot_ilm_perp_SOURCES = incr_models/thot_ilm_perp.cc
@@ -352,8 +355,9 @@ endif
 # include headers
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
 $(sw_models_h) $(phrase_models_h) $(smt_preproc_h)			\
-$(error_correction_h) $(downhill_simplex_h) $(stack_dec_h)		\
-$(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
+$(error_correction_h) $(downhill_simplex_h) $(stack_dec_h) $(exper_h)	\
+$(exper_defs) $(casmacat_engines_h) $(casmacat_aligner_h)		\
+$(casmacat_confid_h)
 
 # libraries
 libthot_la_SOURCES= $(thot_sources) 
