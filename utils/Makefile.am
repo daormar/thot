@@ -81,6 +81,7 @@ SUFFIXES= .sh .pl
 	echo "GREP="$(GREP) >> $@
 	echo "UNIQ="$(UNIQ) >> $@
 	echo "BASENAME="$(BASENAME) >> $@
+	echo "DIRNAME="$(DIRNAME) >> $@
 	echo "SSH="$(SSH) >> $@
 	echo "HEAD="$(HEAD) >> $@
 	echo "TAIL="$(TAIL) >> $@
