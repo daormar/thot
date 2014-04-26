@@ -31,7 +31,7 @@ The toolkit includes the following features:
 
 Distribution Details
 --------------------
-Thot has been coded using C++ and shell-scripting. Thot is known to
+Thot has been coded using C, C++ and shell-scripting. Thot is known to
 compile on Unix-like and Windows (using Cygwin) systems. See the
 "Support" section of this file if you experience problems during
 compilation.
@@ -103,17 +103,43 @@ installation instructions.
 
 Current Status
 --------------
-
 The Thot toolkit is under development. Original public versions of Thot
 date back to 2005 [Ortiz-Martínez et al., 2005] and were hosted in
 SourceForge. These original versions were strongly focused on the
 estimation of phrase-based models. By contrast, current version offers
 several new features that had not been previously incorporated.
 
-Current work is mainly focused on adding the minimal documentation that
-is required to access the whole functionality implemented by the
-tool. After completing this task, a list of new extension directions
-will be detailed here.
+A basic usage manual is currently being developed. In addition to this,
+a set specific tools to ease the process of making SMT experiments has
+been created.
+
+In addition to the basic usage manual, there are some toolkit extensions
+that will be incorporated in the next few months:
+
+- Virtualized language models (i.e. accessing language model parameters
+  from disk).
+
+- Interpolation of language and translation models.
+
+- Improved concurrency in the Thot translation server (translation
+  process is not still concurrent).
+
+Finally, here is a list of known issues with the Thot toolkit that are
+currently being addressed:
+
+- Phrase model training is based on HMM-based alignments models
+  estimated by means of incremental EM. This estimation process is
+  computationally demanding and currently constitutes a bottleneck when
+  training phrase models. One already implemented solution is to carry
+  out the estimation in multiple processors. However we are also
+  investigating to improve the efficiency of the estimation algorithm.
+
+- Log-linear model weight adjustment is carried out by means of the
+  downhill simplex algorithm, which is very slow. Downhill simplex will
+  be replaced by a more efficient technique.
+
+- Non-monotonic translation is not yet sufficiently tested, specially
+  with complex corpora such as Europarl.
 
 
 Support
@@ -187,7 +213,7 @@ Government in a number of research projects, such as the [MIPRCV
 project] [14] that belongs to the [CONSOLIDER programme] [15].
 
 
-Last updated: 08 March 2014
+Last updated: 26 April 2014
 
 [1]: https://www.prhlt.upv.es/page/member?user=dortiz
 [2]: https://www.prhlt.upv.es/
