@@ -217,14 +217,14 @@ fi
 
 # Train model
 prefix=$outd/main/trg.lm
-${INCR_MODELS}/bin/thot_pbs_get_ngram_counts -pr ${pr_val} \
+${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
     -c $corpus -o $prefix -n ${n_val} \
     ${qs_opt} "${qs_par}" ${tdir_opt} ${sdir_opt} ${debug_opt} || exit 1
 
 # Generate weights file
 n_buckets=3
 bsize=10
-${INCR_MODELS}/bin/thot_gen_init_file_with_jmlm_weights ${n_val} ${n_buckets} ${bsize} > $prefix.weights
+${bindir}/thot_gen_init_file_with_jmlm_weights ${n_val} ${n_buckets} ${bsize} > $prefix.weights
 
 # Create descriptor file
 create_desc_file $outd

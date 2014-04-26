@@ -104,11 +104,11 @@ lm_downhill()
     export BUCKSIZE=`cat $lmfile.weights | $AWK '{printf"%d",$3}'`
 
     # Generate information for weight initialisation
-    va_opt=`${INCR_MODELS}/bin/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} -0 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
-    iv_opt=`${INCR_MODELS}/bin/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} 0.5 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
+    va_opt=`${INCR_MODELS_HOME}/bin/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} -0 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
+    iv_opt=`${INCR_MODELS_HOME}/bin/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} 0.5 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
 
     # Execute tuning algorithm
-    $DOWNHILL_SIMPLEX_HOME/bin/thot_dhs_min -tdir $tdir -va ${va_opt} -iv ${iv_opt} \
+${bindir}/thot_dhs_min -tdir $tdir -va ${va_opt} -iv ${iv_opt} \
 -ftol $ftol -o ${outd}/lm_adjw -u ${bindir}/thot_dhs_trgfunc_jmlm || exit 1
 }
 
@@ -231,7 +231,7 @@ loglin_downhill()
     iv_opt=`obtain_loglin_iv_opt_values`
 
     # Execute tuning algorithm
-    $DOWNHILL_SIMPLEX_HOME/bin/thot_dhs_min -tdir $tdir -va ${va_opt} -iv ${iv_opt} \
+${bindir}/thot_dhs_min -tdir $tdir -va ${va_opt} -iv ${iv_opt} \
 -ftol $ftol -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc || exit 1
 }
 
