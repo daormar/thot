@@ -104,8 +104,8 @@ lm_downhill()
     export BUCKSIZE=`cat $lmfile.weights | $AWK '{printf"%d",$3}'`
 
     # Generate information for weight initialisation
-    va_opt=`${INCR_MODELS_HOME}/bin/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} -0 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
-    iv_opt=`${INCR_MODELS_HOME}/bin/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} 0.5 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
+va_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} -0 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
+iv_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} 0.5 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
 
     # Execute tuning algorithm
 ${bindir}/thot_dhs_min -tdir $tdir -va ${va_opt} -iv ${iv_opt} \
@@ -218,8 +218,8 @@ loglin_downhill()
     export CFGFILE=${outd}/tune_loglin.cfg
     export TEST=$scorpus
     export REF=$tcorpus
-    export PHRDECODER=${STACK_DEC_HOME}/bin/thot_decoder
-# export PHRDECODER=${STACK_DEC_HOME}/bin/thot_pbs_dec
+export PHRDECODER=${bindir}/thot_decoder
+# export PHRDECODER=${bindir}/thot_pbs_dec
 # export ADD_DEC_OPTIONS="-pr ${pr_val} -sdir $tdir"
 # export QS="${qs_par}"
     export MEASURE="BLEU"
