@@ -127,7 +127,7 @@ that will be incorporated in the next few months:
 Finally, here is a list of known issues with the Thot toolkit that are
 currently being addressed:
 
-- Phrase model training is based on HMM-based alignments models
+- Phrase model training is based on HMM-based word alignment models
   estimated by means of incremental EM. This estimation process is
   computationally demanding and currently constitutes a bottleneck when
   training phrase models. One already implemented solution is to carry
