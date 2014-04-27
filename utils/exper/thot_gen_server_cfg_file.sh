@@ -29,7 +29,7 @@ else
     tmfile=`$HEAD -2 ${tm_desc} | $TAIL -1 | $AWK '{printf"%s",$NF}'`
 
     # Generate configuration file
-    cat ${datadir}/thot_basic.cfg | \
+    cat ${datadir}/cfg_templates/thot_basic.cfg | \
         $SED "s@<lm_file_path>@${lmfile}@" | \
         $SED "s@<tm_file_path>@${tmfile}@"
 fi
