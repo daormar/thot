@@ -128,11 +128,11 @@ Finally, here is a list of known issues with the Thot toolkit that are
 currently being addressed:
 
 - Phrase model training is based on HMM-based word alignment models
-  estimated by means of incremental EM. This estimation process is
-  computationally demanding and currently constitutes a bottleneck when
-  training phrase models. One already implemented solution is to carry
-  out the estimation in multiple processors. However we are also
-  investigating to improve the efficiency of the estimation algorithm.
+  estimated by means of incremental EM. The current implementation is
+  slow and currently constitutes a bottleneck. One already implemented
+  solution is to carry out the estimation in multiple
+  processors. Additionally, we are also investigating to improve the
+  efficiency of the estimation algorithm.
 
 - Log-linear model weight adjustment is carried out by means of the
   downhill simplex algorithm, which is very slow. Downhill simplex will
