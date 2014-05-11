@@ -5,14 +5,14 @@
 
 print_desc()
 {
-    echo "thot_pbs_dec_ms written by Daniel Ortiz"
-    echo "thot_pbs_dec_ms implements a parallel single-stack translator"
-    echo "type \"thot_pbs_dec_ms --help\" to get usage information."
+    echo "thot_pbs_dec written by Daniel Ortiz"
+    echo "thot_pbs_dec implements a parallel single-stack translator"
+    echo "type \"thot_pbs_dec --help\" to get usage information."
 }
 
 version()
 {
-    echo "thot_pbs_dec_ms is part of the thot package"
+    echo "thot_pbs_dec is part of the thot package"
     echo "thot version "${version}
     echo "thot is GNU software written by Daniel Ortiz"
 }
@@ -24,18 +24,18 @@ config()
 
 usage()
 {
-    echo "thot_pbs_dec_ms {-pr <int>} [-sdir <string>]"
+    echo "thot_pbs_dec    [-pr <int>] [-c <string>]"
     echo "                -tm <string> -lm <string> -t <string>"
     echo "                -o <string> [-b <int>] [-W <float>] [-S <int>]"
     echo "                [-A <int>] [-U <int>] [-I <int>] [-bf] [-G <int>]"
     echo "                [-h <int>] [ -mon] [-we <float> ... <float>]"
     echo "                [-wg <string> [-wgp <float>] ]"
-    echo "                [-maxtime <float>] [-qs <string>] [-v|-v1|-v2]"
+    echo "                [-sdir <string>] [-qs <string>] [-v|-v1|-v2]"
     echo "                [-debug] [--help] [--version] [--config]"
     echo ""
     echo " -pr <int>         : Number of processors."
-    echo " -sdir <string>    : Absolute path of a directory common to all"
-    echo "                     processors. If not given /tmp is used"
+    echo " -c <string>       : Configuration file (command-line options override"
+    echo "                     configuration file options)."
     echo " -tm <string>      : Prefix of the phrase model files."
     echo "                     NOTES:"
     echo "                      a) give absolute paths when using pbs clusters."
@@ -68,7 +68,8 @@ usage()
     echo "                                    state is retained.\n"
     echo "                     If not given, the number of arcs is not\n"
     echo "                     restricted.\n";
-    echo " -maxtime <float>  : Maximum translation time in seconds."
+    echo " -sdir <string>    : Absolute path of a directory common to all"
+    echo "                     processors. If not given $HOME is used"
     echo " -qs <string>      : Specific options to be given to the qsub command"
     echo "                     (example: -qs \"-l pmem=1gb\")."
     echo " -v|-v1|-v2        : Verbose modes."     
@@ -176,7 +177,8 @@ sync()
 
 trans_frag()
 {
-    ${bindir}/thot_decoder -tm ${tm} -lm ${lm} -t $SDIR/${fragm} ${dec_pars} ${wg_par}wg_${fragm} >$SDIR/qs_trans_${fragm}.out 2>$SDIR/qs_trans_${fragm}.log
+    ${bindir}/thot_decoder ${cfg_opt} -t $SDIR/${fragm} ${dec_pars} \
+        ${wg_par}wg_${fragm} >$SDIR/qs_trans_${fragm}.out 2>$SDIR/qs_trans_${fragm}.log
     echo "" >$SDIR/qs_trans_${fragm}_end
 }
 
@@ -208,6 +210,7 @@ merge()
 }
 
 pr_given=0
+c_given=0
 tm_given=0
 lm_given=0
 sents_given=0
@@ -216,7 +219,6 @@ dec_pars=""
 debug=""
 o_given=0
 wg_given=0
-maxtime=0
 qs_given=0
 
 if [ $# -eq 0 ]; then
@@ -241,6 +243,13 @@ while [ $# -ne 0 ]; do
                 pr_given=1
             fi
             ;;
+        "-c") shift
+            if [ $# -ne 0 ]; then
+                cfgfile=$1
+                c_given=1
+                cfg_opt="-c $cfgfile"
+            fi
+            ;;
         "-sdir") shift
             if [ $# -ne 0 ]; then
                 sdir=$1
@@ -253,12 +262,14 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 tm=$1
                 tm_given=1
+                dec_pars="${dec_pars} -tm $tm"
             fi
             ;;
         "-lm") shift
             if [ $# -ne 0 ]; then
                 lm=$1
                 lm_given=1
+                dec_pars="${dec_pars} -lm $lm"
             fi
             ;;
         "-t") shift
@@ -354,12 +365,6 @@ while [ $# -ne 0 ]; do
                 wgp=$1
             fi
             ;;
-        "-maxtime") shift
-            if [ $# -ne 0 ]; then
-                maxtime=$1
-                dec_pars="${dec_pars} -maxtime $maxtime"
-            fi
-            ;;
         "-qs") shift
             if [ $# -ne 0 ]; then
                 qs_opts=$1
@@ -388,18 +393,8 @@ if [ ${pr_given} -eq 0 ]; then
     exit 1
 fi
 
-if [ ${lm_given} -eq 0 ]; then
-    echo "Error: language model not given"
-    exit 1
-else
-    if [ ! -f  "${lm}" ]; then
-        echo "Error: file ${lm} with language model does not exist" >&2
-        exit 1
-    fi
-fi
-
 if [ ${sents_given} -eq 0 ]; then
-    echo "Error: file with sentences not given"
+    echo "Error: file with sentences not given" >&2
     exit 1
 else
     if [ ! -f  "${sents}" ]; then
@@ -418,19 +413,19 @@ fi
 
 # create shared directory
 if [ -z "$sdir" ]; then
-    SDIR=`${MKTEMP} -d /tmp/thot_pbs_dec_ms_XXXXXX`
+    SDIR=`${MKTEMP} -d $HOME/thot_pbs_dec_XXXXXX`
 
     #### OLD CODE (NOT SAFE WHEN DIRECTORIES CREATED BY OTHER INSTANCES
     ####           OF THIS SCRIPT ARE NOT REMOVED)
     # if not given, SDIR will be the /tmp directory
-    # SDIR="/tmp/thot_pbs_dec_ms_$$"
+    # SDIR="/tmp/thot_pbs_dec_$$"
     # mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }    
 else
-    SDIR=`${MKTEMP} -d ${sdir}/thot_pbs_dec_ms_XXXXXX`
+    SDIR=`${MKTEMP} -d ${sdir}/thot_pbs_dec_XXXXXX`
 
     #### OLD CODE (NOT SAFE WHEN DIRECTORIES CREATED BY OTHER INSTANCES
     ####           OF THIS SCRIPT ARE NOT REMOVED)
-    # SDIR="${sdir}/thot_pbs_dec_ms_$$"
+    # SDIR="${sdir}/thot_pbs_dec_$$"
     # mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
 fi
     # remove temp directories on exit
