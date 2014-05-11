@@ -37,9 +37,7 @@ usage()
     echo "                      a) give absolute paths when using pbs clusters."
     echo "                      b) ensure there is enough disk space in the partition."
     echo "-sdir <string>     : Absolute path of a directory common to all"
-    echo "                     processors. If not given, the directory for"
-    echo "                     temporaries will be used (/tmp or the"
-    echo "                     directory given by means of the -tdir option)."
+    echo "                     processors. If not given, $HOME will be used."
     echo "                     NOTES:"
     echo "                      a) give absolute paths when using pbs clusters."
     echo "                      b) ensure there is enough disk space in the partition."
@@ -80,7 +78,7 @@ set_shared_dir()
 {
     if [ -z "$sdir" ]; then
         # if not given, SDIR will be created in the $TMP directory
-        SDIR="${TMP}/thot_pbs_get_ngram_counts_sdir_${PPID}_$$"
+        SDIR="$HOME/thot_pbs_get_ngram_counts_sdir_${PPID}_$$"
         mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
     else
         SDIR="${sdir}/thot_pbs_get_ngram_counts_sdir_${PPID}_$$"
