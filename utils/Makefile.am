@@ -14,8 +14,8 @@ incr_models_bin_scripts= incr_models/thot_pbs_get_ngram_counts		\
 incr_models/thot_merge_ngram_counts incr_models/thot_get_ngram_counts	\
 incr_models/thot_get_ngram_counts_mr					\
 incr_models/thot_gen_init_file_with_jmlm_weights			\
-incr_models/thot_dhs_trgfunc_jmlm incr_models/thot_dhs_trgfunc_interplm	\
-incr_models/thot_repetition_rate
+incr_models/thot_pbs_ilm_perp incr_models/thot_dhs_trgfunc_jmlm		\
+incr_models/thot_dhs_trgfunc_interplm incr_models/thot_repetition_rate
 
 sw_models_bin_scripts= sw_models/thot_prune_text_ilextable		\
 sw_models/thot_pbs_gen_best_sw_alig					\
@@ -36,6 +36,7 @@ phrase_models/thot_merge_counts phrase_models/thot_get_nbest_for_trg	\
 phrase_models/thot_gen_phr_model_mr phrase_models/thot_flip_phr		\
 phrase_models/thot_filter_ttable					\
 phrase_models/thot_filter_ttable_given_corpus				\
+phrase_models/thot_pbs_filter_ttable					\
 phrase_models/thot_cut_ttable
 
 smt_preproc_bin_scripts= 
