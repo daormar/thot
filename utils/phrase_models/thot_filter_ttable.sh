@@ -10,13 +10,13 @@ if [ $# -ne 2 -a $# -ne 4 -a $# -ne 6 -a $# -ne 8 ]; then
     echo "Usage: thot_filter_ttable [-t <string>]" >&2
     echo "                          -c <string> [-n <int>] [-T <string>]" >&2
     echo "" >&2
-    echo "-t <thot_pc_ttable> : Thot translation table obtained with the -pc option" >&2
+    echo "-t <string>         : Thot translation table" >&2
     echo "                      (can be read from stdin)." >&2
-    echo "-c <test-corpus>    : Test corpus to be translated." >&2
+    echo "-c <string>         : Test corpus to be translated." >&2
     echo "-n <int>            : Maximum number of translation options for each target" >&2
     echo "                      phrase that are considered during a translation process" >&2
     echo "                      ("${N_DEFAULT}" by default)." >&2
-    echo "-T <tmpdir>         : Use <tmpdir> for temporaries instead of /tmp" >&2
+    echo "-T <string>         : Use <string> for temporaries instead of /tmp" >&2
     echo "                      during the generation of the phrase model" >&2
 else
 
