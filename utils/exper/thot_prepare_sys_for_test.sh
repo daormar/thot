@@ -32,7 +32,12 @@ usage()
     echo "                        NOTES:"
     echo "                         a) give absolute paths when using pbs clusters"
     echo "                         b) the directory should not exist"
-    echo "-tdir <string>          Directory for temporary files."
+    echo "-tdir <string>          Directory for temporary files (/tmp by default)."
+    echo "                        NOTES:"
+    echo "                         a) give absolute paths when using pbs clusters"
+    echo "                         b) ensure there is enough disk space in the partition"
+    echo "-sdir <string>          Absolute path of a directory common to all"
+    echo "                        processors. If not given, $HOME will be used."
     echo "                        NOTES:"
     echo "                         a) give absolute paths when using pbs clusters"
     echo "                         b) ensure there is enough disk space in the partition"
@@ -119,7 +124,9 @@ create_tm_files()
 ########
 filter_ttable()
 {
-${bindir}/thot_filter_ttable -t ${tmfile}.ttable \
+# ${bindir}/thot_filter_ttable -t ${tmfile}.ttable \
+    #     -c $tcorpus -n 20 -T $tdir > ${outd}/tm/${basetmfile}.ttable 2> ${outd}/tm/${basetmfile}.ttable.log
+${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
         -c $tcorpus -n 20 -T $tdir > ${outd}/tm/${basetmfile}.ttable 2> ${outd}/tm/${basetmfile}.ttable.log
 }
 
@@ -153,6 +160,9 @@ fi
 t_given=0
 o_given=0
 tdir_given=0
+tdir="/tmp"
+sdir_given=0
+sdir=$HOME
 
 while [ $# -ne 0 ]; do
     case $1 in
@@ -184,6 +194,12 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 tdir="$1"
                 tdir_given=1
+            fi
+            ;;
+        "-sdir") shift
+            if [ $# -ne 0 ]; then
+                sdir=$1
+                sdir_given=1
             fi
             ;;
     esac
@@ -232,12 +248,16 @@ else
     outd=`get_absolute_path $outd`
 fi
 
-if [ ${tdir_given} -eq 0 ]; then
-    echo "Error! -tdir parameter not given!" >&2
-    exit 1
-else
+if [ ${tdir_given} -eq 1 ]; then
     if [ ! -d ${tdir} ]; then
         echo "Error! directory ${tdir} does not exist" >&2
+        exit 1            
+    fi
+fi
+
+if [ ${sdir_given} -eq 1 ]; then
+    if [ ! -d ${sdir} ]; then
+        echo "Error! directory ${sdir} does not exist" >&2
         exit 1            
     fi
 fi

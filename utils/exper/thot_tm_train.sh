@@ -29,8 +29,8 @@ usage()
     echo "                        [-n <int>] [-np <float>]"
     echo "                        [-af <float>]"
     echo "                        [-ao <string>] [-m <int>]"
-    echo "                        [-unk] [-qs <string>] -tdir <string>"
-    echo "                        -sdir <string> [-debug] [--help] [--version]"
+    echo "                        [-unk] [-qs <string>] [-tdir <string>]"
+    echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
     echo "-pr <int>               Number of processors (1 by default)"
     echo "-s <string>             File with source sentences"
@@ -54,12 +54,12 @@ usage()
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTE: ignore this if not using a PBS cluster"
-    echo "-tdir <string>          Directory for temporary files."
+    echo "-tdir <string>          Directory for temporary files (/tmp by default)."
     echo "                        NOTES:"
     echo "                         a) give absolute paths when using pbs clusters"
     echo "                         b) ensure there is enough disk space in the partition"
     echo "-sdir <string>          Absolute path of a directory common to all"
-    echo "                        processors."
+    echo "                        processors. If not given, $HOME will be used."
     echo "                        NOTES:"
     echo "                         a) give absolute paths when using pbs clusters"
     echo "                         b) ensure there is enough disk space in the partition"
@@ -114,7 +114,9 @@ m_val=7
 qs_given=0
 unk_given=0
 tdir_given=0
+tdir="/tmp"
 sdir_given=0
+sdir=$HOME
 debug=0
 
 while [ $# -ne 0 ]; do
@@ -197,13 +199,13 @@ while [ $# -ne 0 ]; do
             ;;
         "-tdir") shift
             if [ $# -ne 0 ]; then
-                tdir_opt="-T $1"
+                tdir="-T $1"
                 tdir_given=1
             fi
             ;;
         "-sdir") shift
             if [ $# -ne 0 ]; then
-                sdir_opt="-sdir $1"
+                sdir=$1
                 sdir_given=1
             fi
             ;;
@@ -245,7 +247,7 @@ if [ ${o_given} -eq 0 ]; then
     echo "Error! -o parameter not given!" >&2
     exit 1
 else
-    if [ -d ${outd} ]; then
+    if [ -d ${outd}/main ]; then
         echo "Warning! output directory does exist" >&2 
         # echo "Error! output directory should not exist" >&2 
         # exit 1
@@ -257,20 +259,14 @@ else
     outd=`get_absolute_path $outd`
 fi
 
-if [ ${tdir_given} -eq 0 ]; then
-    echo "Error! -tdir parameter not given!" >&2
-    exit 1
-else
+if [ ${tdir_given} -eq 1 ]; then
     if [ ! -d ${tdir} ]; then
         echo "Error! directory ${tdir} does not exist" >&2
-        exit 1            
-    fi
+        exit 1   
+    fi         
 fi
 
-if [ ${sdir_given} -eq 0 ]; then
-    echo "Error! -sdir parameter not given!" >&2
-    exit 1
-else
+if [ ${sdir_given} -eq 1 ]; then
     if [ ! -d ${sdir} ]; then
         echo "Error! directory ${sdir} does not exist" >&2
         exit 1            
@@ -282,7 +278,7 @@ prefix=$outd/main/src_trg
 ${bindir}/thot_pbs_gen_batch_phr_model -pr ${pr_val} \
     -s $tcorpus -t $scorpus -o $prefix -n $niters ${af_opt} ${np_opt} \
     -m ${m_val} ${ao_opt} ${unk_opt}  ${qs_opt} "${qs_par}" \
-    ${tdir_opt} ${sdir_opt} ${debug_opt} || exit 1
+    -T $tdir -sdir $sdir ${debug_opt} || exit 1
 
 # Create descriptor file
 create_desc_file $outd

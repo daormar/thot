@@ -27,7 +27,7 @@ usage()
     echo "thot_smt_tune           [-pr <int>] -c <string>"
     echo "                        -s <string> -t <string> -o <string>"
     echo "                        [-qs <string>]"
-    echo "                        -tdir <string> [-debug] [--help] [--version]"
+    echo "                        [-tdir <string>] [-debug] [--help] [--version]"
     echo ""
     echo "-pr <int>               Number of processors (1 by default)"
     echo "-c <string>             Configuration file"
@@ -40,8 +40,12 @@ usage()
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTE: ignore this if not using a PBS cluster"
-    echo "-tdir <string>          Directory for temporary files. The directory should be"
-    echo "                        accessible by all computation nodes in pbs clusters."
+    echo "-tdir <string>          Directory for temporary files (/tmp by default)."
+    echo "                        NOTES:"
+    echo "                         a) give absolute paths when using pbs clusters"
+    echo "                         b) ensure there is enough disk space in the partition"
+    echo "-sdir <string>          Absolute path of a directory common to all"
+    echo "                        processors. If not given, $HOME will be used."
     echo "                        NOTES:"
     echo "                         a) give absolute paths when using pbs clusters"
     echo "                         b) ensure there is enough disk space in the partition"
@@ -49,8 +53,6 @@ usage()
     echo "                        (for debugging purposes)"
     echo "--help                  Display this help and exit."
     echo "--version               Output version information and exit."
-    echo ""
-    echo "IMPORTANT WARNING: this utility does not yet work properly in pbs clusters"
 }
 
 ########
@@ -218,10 +220,10 @@ loglin_downhill()
     export CFGFILE=${outd}/tune_loglin.cfg
     export TEST=$scorpus
     export REF=$tcorpus
-export PHRDECODER=${bindir}/thot_decoder
-# export PHRDECODER=${bindir}/thot_pbs_dec
-# export ADD_DEC_OPTIONS="-pr ${pr_val} -sdir $tdir"
-# export QS="${qs_par}"
+# export PHRDECODER=${bindir}/thot_decoder
+export PHRDECODER=${bindir}/thot_pbs_dec
+    export ADD_DEC_OPTIONS="-pr ${pr_val} -sdir $sdir"
+    export QS="${qs_par}"
     export MEASURE="BLEU"
     export USE_NBEST_OPT=0
 
@@ -232,7 +234,7 @@ export PHRDECODER=${bindir}/thot_decoder
 
     # Execute tuning algorithm
 ${bindir}/thot_dhs_min -tdir $tdir -va ${va_opt} -iv ${iv_opt} \
--ftol $ftol -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc || exit 1
+-ftol $ftol -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || exit 1
 }
 
 ########
@@ -342,6 +344,9 @@ o_given=0
 qs_given=0
 unk_given=0
 tdir_given=0
+tdir="/tmp"
+sdir_given=0
+sdir=$HOME
 debug=0
 
 while [ $# -ne 0 ]; do
@@ -396,13 +401,13 @@ while [ $# -ne 0 ]; do
             ;;
         "-tdir") shift
             if [ $# -ne 0 ]; then
-                tdir="$1"
+                tdir=$1
                 tdir_given=1
             fi
             ;;
         "-sdir") shift
             if [ $# -ne 0 ]; then
-                sdir_opt="-sdir $1"
+                sdir=$1
                 sdir_given=1
             fi
             ;;
@@ -468,12 +473,16 @@ else
     outd=`get_absolute_path $outd`
 fi
 
-if [ ${tdir_given} -eq 0 ]; then
-    echo "Error! -tdir parameter not given" >&2
-    exit 1
-else
+if [ ${tdir_given} -eq 1 ]; then
     if [ ! -d ${tdir} ]; then
         echo "Error! directory ${tdir} does not exist" >&2
+        exit 1            
+    fi
+fi
+
+if [ ${sdir_given} -eq 1 ]; then
+    if [ ! -d ${sdir} ]; then
+        echo "Error! directory ${sdir} does not exist" >&2
         exit 1            
     fi
 fi
