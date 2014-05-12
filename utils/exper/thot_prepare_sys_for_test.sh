@@ -124,7 +124,7 @@ filter_ttable()
 # ${bindir}/thot_filter_ttable -t ${tmfile}.ttable \
     #     -c $tcorpus -n 20 -T $tdir > ${outd}/tm/${basetmfile}.ttable 2> ${outd}/tm/${basetmfile}.ttable.log
 ${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
-        -c $tcorpus -n 20 -T $tdir > ${outd}/tm/${basetmfile}.ttable 2> ${outd}/tm/${basetmfile}.ttable.log
+        -c $tcorpus -n 20 -T $tdir -o ${outd}/tm/${basetmfile}.ttable
 }
 
 ########
