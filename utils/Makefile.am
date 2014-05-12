@@ -72,6 +72,7 @@ SUFFIXES= .sh .pl
 	echo "pkgname=\""$(PACKAGE_NAME)"\"" >> $@
 	echo "version=\""$(PACKAGE_VERSION)"\"" >> $@
 	echo "bindir="$(prefix)/bin/ >> $@
+	echo "datadir="$(prefix)/share/$(PACKAGE_NAME) >> $@
 	echo "AWK="$(AWK) >> $@
 	echo "SORT="$(SORT) >> $@
 	echo "sortpars=\""$(sortpars)"\"" >> $@
