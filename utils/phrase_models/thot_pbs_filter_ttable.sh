@@ -73,7 +73,7 @@ create_script()
 filter_ttable()
 {
     $bindir/thot_filter_ttable_given_corpus ${ttable_file} ${test_corpus_file} |\
-        $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T $TMP
+        $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T $TMP > $outfile
 
     echo "" > $SDIR/filter_ttable_end
 }
@@ -112,12 +112,14 @@ sync()
 #############
 N_DEFAULT=20
 if [ $# -eq 0 ]; then
-    echo "Usage: thot_pbs_filter_ttable [-t <string>] -c <string> [-n <int>]" >&2
-    echo "                              [-sdir <string>] [-T <string>] [-debug" >&2
+    echo "Usage: thot_pbs_filter_ttable [-t <string>] -c <string>" >&2
+    echo "                              [-n <int>] [-o <string>]" >&2
+    echo "                              [-sdir <string>] [-T <string>] [-debug]" >&2
     echo "" >&2
     echo "-t <string>         : Thot translation table" >&2
     echo "                      (can be read from stdin)." >&2
     echo "-c <string>         : Test corpus to be translated." >&2
+    echo "-o <string>         : Output file." >&2
     echo "-n <int>            : Maximum number of translation options for each target" >&2
     echo "                      phrase that are considered during a translation process" >&2
     echo "                      ("${N_DEFAULT}" by default)." >&2
@@ -131,6 +133,7 @@ else
     t_given=0
     ttable_file=""
     c_given=0
+    o_given=0
     n_val=${N_DEFAULT}
     tmpdir="/tmp"
     sdir=""
@@ -142,22 +145,28 @@ else
                     t_given=1
                 fi
                 ;;
-            "-sdir") shift
-                if [ $# -ne 0 ]; then
-                    sdir=$1                
-                else
-                    sdir=""
-                fi
-                ;;
             "-c") shift
                 if [ $# -ne 0 ]; then
                     test_corpus_file=$1
                     c_given=1
                 fi
                 ;;
+            "-o") shift
+                if [ $# -ne 0 ]; then
+                    outfile=$1
+                    o_given=1
+                fi
+                ;;
             "-n") shift
                 if [ $# -ne 0 ]; then
                     n_val=$1
+                fi
+                ;;
+            "-sdir") shift
+                if [ $# -ne 0 ]; then
+                    sdir=$1                
+                else
+                    sdir=""
                 fi
                 ;;
             "-T") shift
