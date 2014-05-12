@@ -69,7 +69,7 @@ usage()
     echo "                     If not given, the number of arcs is not\n"
     echo "                     restricted.\n";
     echo " -sdir <string>    : Absolute path of a directory common to all"
-    echo "                     processors. If not given $HOME is used"
+    echo "                     processors. If not given \$HOME is used"
     echo " -qs <string>      : Specific options to be given to the qsub command"
     echo "                     (example: -qs \"-l pmem=1gb\")."
     echo " -v|-v1|-v2        : Verbose modes."     

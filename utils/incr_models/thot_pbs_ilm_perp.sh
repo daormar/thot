@@ -123,7 +123,7 @@ if [ $# -eq 0 ]; then
     echo "-tdir <string>       Use <string> for temporaries instead of /tmp" >&2
     echo "                     during the generation of the phrase model" >&2
     echo "-sdir <string>       Absolute path of a directory common to all" >&2
-    echo "                     processors. If not given, $HOME will be used." >&2
+    echo "                     processors. If not given, \$HOME will be used." >&2
     echo "-debug               After ending, do not delete temporary files" >&2
     echo "                     (for debugging purposes)" >&2
     echo "-v|-v1               Verbose modes." >&2

@@ -62,7 +62,7 @@ usage()
     echo "-T <string>                     Use <tmpdir> for temporaries instead of /tmp"
     echo ""
     echo "-sdir <string>                  Absolute path of a directory common to all"
-    echo "                                processors. If not given, $HOME will be used"
+    echo "                                processors. If not given, \$HOME will be used"
     echo ""
     echo "-debug                          After ending, do not delete temporary files"
     echo "                                (for debugging purposes)"

@@ -38,7 +38,7 @@ usage()
     echo "                                command (example: -qs \"-l pmem=1gb\")."
     echo ""
     echo "-sdir <string>                  Absolute path of a directory common to all"
-    echo "                                processors. If not given, $HOME will be used."
+    echo "                                processors. If not given, \$HOME will be used."
     echo ""
     echo "-T <string>                     Use <tmpdir> for temporaries instead of /tmp"
     echo ""

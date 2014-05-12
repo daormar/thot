@@ -45,7 +45,7 @@ usage()
     echo "                    a) give absolute paths when using pbs clusters."
     echo "                    b) ensure there is enough disk space in the partition."
     echo "-sdir <string>     Absolute path of a directory common to all"
-    echo "                   processors. If not given, $HOME will be used."
+    echo "                   processors. If not given, \$HOME will be used."
     echo "                   NOTES:"
     echo "                    a) give absolute paths when using pbs clusters."
     echo "                    b) ensure there is enough disk space in the partition."
