@@ -112,8 +112,8 @@ sync()
 #############
 N_DEFAULT=20
 if [ $# -eq 0 ]; then
-    echo "Usage: thot_pbs_filter_ttable [-t <string>] -c <string>" >&2
-    echo "                              [-n <int>] [-o <string>]" >&2
+    echo "Usage: thot_pbs_filter_ttable -t <string> -c <string>" >&2
+    echo "                              -o <string> [-n <int>]" >&2
     echo "                              [-sdir <string>] [-T <string>] [-debug]" >&2
     echo "" >&2
     echo "-t <string>         : Thot translation table" >&2
@@ -182,15 +182,23 @@ else
 
     # verify parameters
 
-    if [ ${t_given} -eq 1 ]; then
+    if [ ${t_given} -eq 0 ]; then
+        echo "Error: -t option not given"
+        exit 1        
+    else
         if [ ! -f ${ttable_file} ]; then
             echo "Error: file ${ttable_file} does not exist!" >&2
             exit 1
         fi        
     fi
 
+    if [ ${o_given} -eq 0 ]; then
+        echo "Error: -o option not given" >&2
+        exit 1
+    fi
+
     if [ ${c_given} -eq 0 ]; then
-        echo "Error: test corpus not given!"
+        echo "Error: -c option not given!"
         exit 1
     else
         if [ ! -f ${test_corpus_file} ]; then
