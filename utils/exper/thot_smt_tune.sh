@@ -108,7 +108,7 @@ iv_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUC
 
     # Execute tuning algorithm
 ${bindir}/thot_dhs_min -tdir $tdir -va ${va_opt} -iv ${iv_opt} \
--ftol $ftol -o ${outd}/lm_adjw -u ${bindir}/thot_dhs_trgfunc_jmlm || exit 1
+-ftol $ftol -o ${outd}/lm_adjw -u ${bindir}/thot_dhs_trgfunc_jmlm ${debug_opt} || exit 1
 }
 
 ########
