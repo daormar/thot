@@ -107,7 +107,7 @@ va_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUC
 iv_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} 0.5 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
 
     # Execute tuning algorithm
-${bindir}/thot_dhs_min -tdir $tdir -va ${va_opt} -iv ${iv_opt} \
+${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
 -ftol $ftol -o ${outd}/lm_adjw -u ${bindir}/thot_dhs_trgfunc_jmlm ${debug_opt} || exit 1
 }
 
@@ -177,8 +177,8 @@ create_tm_files()
 ########
 filter_ttable()
 {
-${bindir}/thot_filter_ttable -t ${tmfile}.ttable \
-        -c $scorpus -n 20 -T $tdir > ${outd}/tm_dev/${basetmfile}.ttable 2> ${outd}/tm_dev/${basetmfile}.ttable.log
+${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
+        -c $scorpus -n 20 -T $tdir -o ${outd}/tm_dev/${basetmfile}.ttable
 }
 
 ########
@@ -230,7 +230,7 @@ export PHRDECODER=${bindir}/thot_pbs_dec
     iv_opt=`obtain_loglin_iv_opt_values`
 
     # Execute tuning algorithm
-${bindir}/thot_dhs_min -tdir $tdir -va ${va_opt} -iv ${iv_opt} \
+${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
 -ftol $ftol -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || exit 1
 }
 
