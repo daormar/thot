@@ -130,7 +130,7 @@ while [ $# -ne 0 ]; do
         "-qs") shift
             if [ $# -ne 0 ]; then
                 qs_opt="-qs"
-                qs_par=$1
+                qs_par="$1"
                 qs_given=1
             else
                 qs_given=0
