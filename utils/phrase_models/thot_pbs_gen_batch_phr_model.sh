@@ -156,6 +156,7 @@ else
                 if [ $# -ne 0 ]; then
                     cpr_val=$1
                     cpr_given=1
+                fi
                 ;;
             "-m") shift
                 if [ $# -ne 0 ]; then
