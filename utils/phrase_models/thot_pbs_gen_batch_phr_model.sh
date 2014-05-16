@@ -80,7 +80,7 @@ else
     af_given=0
     np_given=0
     cpr_given=0
-    cpr_default_val=0.000001
+    cpr_val=0.000001
     niters=5
     ao_given=0
     ao_opt="-sym1"
@@ -154,12 +154,8 @@ else
                 ;;
             "-cpr") shift
                 if [ $# -ne 0 ]; then
-                    cpr_opt="-cpr $1"
+                    cpr_val=$1
                     cpr_given=1
-                else
-                    cpr_opt="-cpr ${cpr_default_val}"
-                    cpr_given=0
-                fi
                 ;;
             "-m") shift
                 if [ $# -ne 0 ]; then
@@ -270,7 +266,7 @@ else
 
     # Generate direct single word model
 ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $scorpus -t $tcorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
-        ${cpr_opt} ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} 2> /dev/null || exit 1
+        -cpr ${cpr_val} ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} 2> /dev/null || exit 1
     # Rename log file
     mv ${outp}_swm.log ${outp}_swm_thot_pbs_gen_batch_sw_model.log
 
@@ -282,7 +278,7 @@ ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_swm -s $scorpus -t
 
     # Generate inverse single word model
 ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $tcorpus -t $scorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
-        ${cpr_opt} ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} 2> /dev/null || exit 1
+        -cpr ${cpr_val} ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} 2> /dev/null || exit 1
     # Rename log file
     mv ${outp}_invswm.log ${outp}_invswm_thot_pbs_gen_batch_sw_model.log
 
