@@ -78,8 +78,6 @@ bool ThotDecoderClient::sendSentPairForOlTrain(int user_id,
                                                const char *srcSent,
                                                const char *refSent)
 {
-  int retVal;
-  
   if(connected)
   {// Send request
     BasicSocketUtils::writeInt(fileDesc,OL_TRAIN_PAIR);
@@ -87,7 +85,7 @@ bool ThotDecoderClient::sendSentPairForOlTrain(int user_id,
     BasicSocketUtils::writeStr(fileDesc,srcSent);
     BasicSocketUtils::writeStr(fileDesc,refSent);
 
-    retVal=BasicSocketUtils::recvInt(fileDesc);
+    int retVal=BasicSocketUtils::recvInt(fileDesc);
     return retVal;
   }
   else
@@ -102,8 +100,6 @@ bool ThotDecoderClient::sendStrPairForTrainEcm(int user_id,
                                                const char *strx,
                                                const char *stry)
 {
-  int retVal;
-  
   if(connected)
   {// Send request
     BasicSocketUtils::writeInt(fileDesc,TRAIN_ECM);
@@ -111,7 +107,7 @@ bool ThotDecoderClient::sendStrPairForTrainEcm(int user_id,
     BasicSocketUtils::writeStr(fileDesc,strx);
     BasicSocketUtils::writeStr(fileDesc,stry);
 
-    retVal=BasicSocketUtils::recvInt(fileDesc);
+    int retVal=BasicSocketUtils::recvInt(fileDesc);
     return retVal;
   }
   else
@@ -126,16 +122,14 @@ bool ThotDecoderClient::sendSentToTranslate(int user_id,
                                             const char *sentenceToTranslate,
                                             std::string &translatedSentence)
 {
-  int retVal;
- 
   if(connected)
   {// Send request
     BasicSocketUtils::writeInt(fileDesc,TRANSLATE_SENT);
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,sentenceToTranslate);
 
-    retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
-    return retVal;
+    int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
+    return OK;
   }
   else
   {
@@ -150,8 +144,6 @@ bool ThotDecoderClient::sendSentPairVerCov(int user_id,
                                            const char *refSent,
                                            std::string &translatedSentence)
 {
-  int retVal;
-  
   if(connected)
   {// Send request
     BasicSocketUtils::writeInt(fileDesc,VERIFY_COV);
@@ -159,8 +151,8 @@ bool ThotDecoderClient::sendSentPairVerCov(int user_id,
     BasicSocketUtils::writeStr(fileDesc,srcSent);
     BasicSocketUtils::writeStr(fileDesc,refSent);
 
-    retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
-    return retVal;
+    int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
+    return OK;
   }
   else
   {
@@ -174,16 +166,14 @@ bool ThotDecoderClient::startCat(int user_id,
                                  const char *sentenceToTranslate,
                                  std::string &translatedSentence)
 {
-  int retVal;
- 
   if(connected)
   {// Send request
     BasicSocketUtils::writeInt(fileDesc,START_CAT);
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,sentenceToTranslate);
     
-    retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
-    return retVal;
+    int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
+    return OK;
   }
   else
   {
@@ -197,16 +187,14 @@ bool ThotDecoderClient::addStrToPref(int user_id,
                                      const char* strToAddToPref,
                                      std::string &translatedSentence)
 {
-  int retVal;
- 
   if(connected)
   {// Send request
     BasicSocketUtils::writeInt(fileDesc,ADD_STR_TO_PREF);
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,strToAddToPref);
     
-    retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
-    return retVal;
+    int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
+    return OK;
   }
   else
   {
@@ -237,14 +225,12 @@ bool ThotDecoderClient::resetPref(int user_id)
 //--------------------------
 bool ThotDecoderClient::sendClearRequest(int user_id)
 {
-  int retVal;
-    
   if(connected)
   {// Send request
     BasicSocketUtils::writeInt(fileDesc,CLEAR_TRANS);
     BasicSocketUtils::writeInt(fileDesc,user_id);
 
-    retVal=BasicSocketUtils::recvInt(fileDesc);
+    int retVal=BasicSocketUtils::recvInt(fileDesc);
     return retVal;
   }
   else
@@ -258,15 +244,13 @@ bool ThotDecoderClient::sendClearRequest(int user_id)
 bool ThotDecoderClient::sendPrintRequest(int user_id,
                                          const char *printPrefix)
 {
-  int retVal;
-    
   if(connected)
   {// Send request
     BasicSocketUtils::writeInt(fileDesc,PRINT_MODELS);
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,printPrefix);
 
-    retVal=BasicSocketUtils::recvInt(fileDesc);
+    int retVal=BasicSocketUtils::recvInt(fileDesc);
     return retVal;
   }
   else
@@ -291,14 +275,12 @@ void ThotDecoderClient::disconnect(int user_id)
 //--------------------------
 bool ThotDecoderClient::sendEndServerRequest(int user_id)
 {
-  int retVal;
-      
   if(connected)
   {// Send request
     BasicSocketUtils::writeInt(fileDesc,END_SERVER);
     BasicSocketUtils::writeInt(fileDesc,user_id);
   
-    retVal=BasicSocketUtils::recvInt(fileDesc);
+    int retVal=BasicSocketUtils::recvInt(fileDesc);
     close(fileDesc); 
     connected=false;
     return retVal;
