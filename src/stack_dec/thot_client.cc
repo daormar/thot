@@ -136,12 +136,12 @@ int process_request(const thot_client_pars& tdcPars)
       if(tdcPars.verbose) cerr<<"Client: return value= "<<retVal<<endl;
       break;
     case TRANSLATE_SENT: retVal=thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence);
-      if(tdcPars.verbose) cerr<<"Client: translation received"<<endl;
+      if(tdcPars.verbose) cerr<<"Client: return value= "<<retVal<<endl;
       cout<<translatedSentence<<endl;
       break;
     case VERIFY_COV: retVal=thotDecoderClient.sendSentPairVerCov(tdcPars.user_id,tdcPars.stlStringSrc.c_str(),tdcPars.stlStringRef.c_str(),translatedSentence);
       ctimer(&elapsed,&ucpu,&scpu);
-      if(tdcPars.verbose) cerr<<"Client: forced translation received"<<endl;
+      if(tdcPars.verbose) cerr<<"Client: return value= "<<retVal<<endl;
       cout<<translatedSentence<<endl;
       break;
     case START_CAT: retVal=thotDecoderClient.startCat(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence);
