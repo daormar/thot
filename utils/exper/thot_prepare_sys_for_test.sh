@@ -24,12 +24,15 @@ version()
 usage()
 {
     echo "thot_prepare_sys_for_test -c <string> -t <string> -o <string>"
-    echo "                          [-tdir <string>] [-sdir <string>]"
+    echo "                          [-qs <string>] [-tdir <string>] [-sdir <string>]"
     echo "                          [--help] [--version]"
     echo ""
     echo "-c <string>             Configuration file"
     echo "-t <string>             File with test sentences"
     echo "-o <string>             Output directory common to all processors."
+    echo "-qs <string>            Specific options to be given to the qsub command"
+    echo "                        (example: -qs \"-l pmem=1gb\")."
+    echo "                        NOTE: ignore this if not using a PBS cluster"
     echo "-tdir <string>          Directory for temporary files (/tmp by default)."
     echo "                        NOTES:"
     echo "                         a) give absolute paths when using pbs clusters"
@@ -125,7 +128,7 @@ filter_ttable()
 # ${bindir}/thot_filter_ttable -t ${tmfile}.ttable \
     #     -c $tcorpus -n 20 -T $tdir > ${outd}/tm/${basetmfile}.ttable 2> ${outd}/tm/${basetmfile}.ttable.log
 ${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
-        -c $tcorpus -n 20 -T $tdir -o ${outd}/tm/${basetmfile}.ttable
+        -c $tcorpus -n 20 ${qs_opt} "${qs_par}" -T $tdir -o ${outd}/tm/${basetmfile}.ttable
 }
 
 ########
@@ -186,6 +189,15 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 outd=$1
                 o_given=1
+            fi
+            ;;
+        "-qs") shift
+            if [ $# -ne 0 ]; then
+                qs_opt="-qs"
+                qs_par="$1"
+                qs_given=1
+            else
+                qs_given=0
             fi
             ;;
         "-tdir") shift

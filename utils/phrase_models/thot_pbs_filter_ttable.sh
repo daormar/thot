@@ -113,7 +113,7 @@ sync()
 N_DEFAULT=20
 if [ $# -eq 0 ]; then
     echo "Usage: thot_pbs_filter_ttable -t <string> -c <string>" >&2
-    echo "                              -o <string> [-n <int>]" >&2
+    echo "                              -o <string> [-n <int>] [-qs <string>]" >&2
     echo "                              [-sdir <string>] [-T <string>] [-debug]" >&2
     echo "" >&2
     echo "-t <string>         : Thot translation table" >&2
@@ -123,6 +123,8 @@ if [ $# -eq 0 ]; then
     echo "-n <int>            : Maximum number of translation options for each target" >&2
     echo "                      phrase that are considered during a translation process" >&2
     echo "                      ("${N_DEFAULT}" by default)." >&2
+    echo "-qs <string>        : Specific options to be given to the qsub command"
+    echo "                      (example: -qs \"-l pmem=1gb\")."
     echo "-sdir <string>      : Absolute path of a directory common to all" >&2
     echo "                      processors. If not given, \$HOME will be used" >&2
     echo "-T <string>         : Use <string> for temporaries instead of /tmp" >&2
@@ -160,6 +162,14 @@ else
             "-n") shift
                 if [ $# -ne 0 ]; then
                     n_val=$1
+                fi
+                ;;
+            "-qs") shift
+                if [ $# -ne 0 ]; then
+                    qs_opts=$1
+                    qs_given=1
+                else
+                    qs_given=0
                 fi
                 ;;
             "-sdir") shift
