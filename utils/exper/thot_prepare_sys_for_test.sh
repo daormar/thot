@@ -24,7 +24,8 @@ version()
 usage()
 {
     echo "thot_prepare_sys_for_test -c <string> -t <string> -o <string>"
-    echo "                          -tdir <string> [--help] [--version]"
+    echo "                          [-tdir <string>] [-sdir <string>]"
+    echo "                          [--help] [--version]"
     echo ""
     echo "-c <string>             Configuration file"
     echo "-t <string>             File with test sentences"
