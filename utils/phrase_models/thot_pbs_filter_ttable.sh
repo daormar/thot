@@ -221,7 +221,7 @@ else
     # TMP="${tmpdir}/thot_pbs_filter_ttable_$$"
     # mkdir $TMP || { echo "Error: temporary directory cannot be created" ; exit 1; }
     TMP=${tmpdir}
-    if [ -d $TMP]; then
+    if [ ! -d $TMP ]; then
         echo "Error: temporary directory does not exist" 
         exit 1
     fi
