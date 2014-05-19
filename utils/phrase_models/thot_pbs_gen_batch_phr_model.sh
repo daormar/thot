@@ -47,7 +47,7 @@ if [ $# -lt 1 ]; then
     echo "-np <float>             Probability assigned to the alignment with the NULL"
     echo "                        word for single-word models"
     echo "-cpr <float>            Pruning parameter used during the estimation of single"
-    echo "                        word alignment models (0.000001 by default)"
+    echo "                        word alignment models (0.00001 by default)"
     echo "-m <int>                Maximum target phrase length during phrase model"
     echo "                        estimation (7 by default)"
     echo "-ao <string>            Operation between alignments to be executed"
@@ -80,7 +80,7 @@ else
     af_given=0
     np_given=0
     cpr_given=0
-    cpr_val=0.000001
+    cpr_val=0.00001
     niters=5
     ao_given=0
     ao_opt="-sym1"
