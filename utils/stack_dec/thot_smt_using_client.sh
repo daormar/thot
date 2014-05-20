@@ -156,10 +156,6 @@ done < $testfile
 if [ ${pm_given} -eq 1 ]; then
     ${bindir}/thot_client -i $ip ${port_op} ${uid_op} -o ${pm_out_pref} || exit 1
 fi
-
-# Clear structures in the server
-$bindir/thot_client -i $ip ${port_op} ${uid_op} -clear || exit 1
         
 # Return 0
 exit 0
-
