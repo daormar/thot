@@ -28,7 +28,7 @@ usage()
     echo "                      -t <string> -r <string>"
     echo "                      [-tr]"
 #    echo "                      [-tre]"
-    echo "                      [-of] [-nc] [-pm <string>] [--help] [--version]"
+    echo "                      [-of] [-pm <string>] [--help] [--version]"
     echo ""
     echo " -i <string>             : IP address of the server."
     echo " -p <int>                : Server port."
@@ -39,7 +39,6 @@ usage()
     # echo " -tre                    : Train error correcting model after each"
     # echo "                           translation."
     echo " -of                     : Execute only the first iteration."
-    echo " -nc                     : Do not clear server data at exit."
     echo " -pm <string>            : Print server models at exit using"
     echo "                           string as prefix."
     echo " --help                  : Display this help and exit."
@@ -215,7 +214,6 @@ refs_given=0
 tr_given=0
 # tre_given=0
 of=0
-nc_given=0
 pm_given=0
 
 if [ $# -eq 0 ]; then
@@ -268,8 +266,6 @@ while [ $# -ne 0 ]; do
         # "-tre") tre_given="1"
         #     ;;
         "-of") of="1"
-            ;;
-        "-nc") nc_given="1"
             ;;
         "-pm") shift
             if [ $# -ne 0 ]; then
@@ -329,148 +325,147 @@ MAX_ITERS=200
 print_header $testfile $reffile
 
 # Translate corpus
-if [ -f $testfile -a -f $reffile ]; then
-    numSent=0
-    tmpdir=/tmp
-    TMPTIME=`mktemp ${tmpdir}/time.XXXXXX`
-    TMPHYP=`mktemp ${tmpdir}/hyp.XXXXXX`
-    TMPHYPERR=`mktemp ${tmpdir}/hyperr.XXXXXX`
-    TMPHYPCOV=`mktemp ${tmpdir}/hypcov.XXXXXX`
-    TMPRETRANSHYP=`mktemp ${tmpdir}/retranshyp.XXXXXX`
-    TMPTRTIME=`mktemp ${tmpdir}/trtime.XXXXXX`
-    trap "rm $TMPTIME $TMPHYP $TMPHYPERR $TMPHYPCOV $TMPRETRANSHYP $TMPTRTIME 2>/dev/null" EXIT
-    KS=0
-    MA=0
-    CHARS=0
-    MAacc=0 
-    tottz=0
-    mintz=100000
-    maxtz=0
-    tottgz=0
-    mintgz=100000
-    maxtgz=0
-    tottrtime=0
-    ngiter=0
+numSent=0
+tmpdir=/tmp
+TMPTIME=`mktemp ${tmpdir}/time.XXXXXX`
+TMPHYP=`mktemp ${tmpdir}/hyp.XXXXXX`
+TMPHYPERR=`mktemp ${tmpdir}/hyperr.XXXXXX`
+TMPHYPCOV=`mktemp ${tmpdir}/hypcov.XXXXXX`
+TMPRETRANSHYP=`mktemp ${tmpdir}/retranshyp.XXXXXX`
+TMPTRTIME=`mktemp ${tmpdir}/trtime.XXXXXX`
+trap "rm $TMPTIME $TMPHYP $TMPHYPERR $TMPHYPCOV $TMPRETRANSHYP $TMPTRTIME 2>/dev/null" EXIT
+KS=0
+MA=0
+CHARS=0
+MAacc=0 
+tottz=0
+mintz=100000
+maxtz=0
+tottgz=0
+mintgz=100000
+maxtgz=0
+tottrtime=0
+ngiter=0
 
-    # Read $testfile line by line
-    while read -r s; do
-        # Obtain reference sentence
-        numSent=`expr $numSent + 1`
-        r=`head -${numSent} $reffile | tail -1`
+# Read $testfile line by line
+while read -r s; do
+    # Obtain reference sentence
+    numSent=`expr $numSent + 1`
+    r=`head -${numSent} $reffile | tail -1`
 
-        # Initialize iteration number
-        iter_num=1
+    # Initialize iteration number
+    iter_num=1
 
-        # Initial iteration
-        $bindir/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v >$TMPHYP 2>$TMPHYPERR
-        verify_connection
+    # Initial iteration
+    $bindir/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v >$TMPHYP 2>$TMPHYPERR
+    verify_connection
 
         # Update variables
-        h=`cat $TMPHYP`
-        inittime=`process_time_from_log $TMPHYPERR`
-        tottz=`sum_ab $tottz $inittime`
-        mintz=`min_ab $mintz $inittime`
-        maxtz=`max_ab $maxtz $inittime`
+    h=`cat $TMPHYP`
+    inittime=`process_time_from_log $TMPHYPERR`
+    tottz=`sum_ab $tottz $inittime`
+    mintz=`min_ab $mintz $inittime`
+    maxtz=`max_ab $maxtz $inittime`
 
-        # Print iteration information
-        echo "<TestSample number=\"$numSent\" InitializationTime=\"$inittime\">"
-        echo "<source>            $s </source>"
-        echo "<reference>         $r </reference>"
-        echo "<hyp time=\"0.000000\">  ^$h </hyp>"
-        initial_hyp=h
+    # Print iteration information
+    echo "<TestSample number=\"$numSent\" InitializationTime=\"$inittime\">"
+    echo "<source>            $s </source>"
+    echo "<reference>         $r </reference>"
+    echo "<hyp time=\"0.000000\">  ^$h </hyp>"
+    initial_hyp=h
 
-        # following iterations
-        if [ "${SKIP_FOLLOW_ITERS}" != "yes" ]; then
-            KSsent=0
-            MAsent=0
-            prev=""
-            ref_ispref_hyp=`is_pref "$r" "$h"`
-            while [ ${ref_ispref_hyp} -eq 0 -a ${iter_num} -lt ${MAX_ITERS} ]; do
-                # Update iteration number
-                iter_num=`expr ${iter_num} + 1`
+    # following iterations
+    if [ "${SKIP_FOLLOW_ITERS}" != "yes" ]; then
+        KSsent=0
+        MAsent=0
+        prev=""
+        ref_ispref_hyp=`is_pref "$r" "$h"`
+        while [ ${ref_ispref_hyp} -eq 0 -a ${iter_num} -lt ${MAX_ITERS} ]; do
+            # Update iteration number
+            iter_num=`expr ${iter_num} + 1`
 
-                # Compute new prefix and previous and new lenghts
-                new_pref=`extend_pref "$r" "$h"`
-                prevl=`len_str "$prev"`
-                new_prefl=`len_str "${new_pref}"`
+            # Compute new prefix and previous and new lenghts
+            new_pref=`extend_pref "$r" "$h"`
+            prevl=`len_str "$prev"`
+            new_prefl=`len_str "${new_pref}"`
 
-                # Compute contributions to error measures
-                diffe=`expr ${new_prefl} - ${prevl}`
-                if [ $diffe -gt 1 ]; then
-                    MA=`expr $MA + 1`
-                    MAsent=`expr $MAsent + 1`
-                fi
-                ngiter=`expr $ngiter + 1`
-                KSsent=`expr $KSsent + 1`
-                suff=`suffix "$prev" "${new_pref}"`
-                
-                # Append new string to the prefix
-                $bindir/thot_client -i $ip ${port_op} ${uid_op} -ap "$suff" -v>$TMPHYP 2>$TMPHYPERR
-                verify_connection
-
-                # Update variables
-                h=`cat $TMPHYP`
-                hprompt=`get_hyp_with_prompt "$h" "${new_pref}"`
-                ittime=`process_time_from_log $TMPHYPERR`
-                tottgz=`sum_ab $tottgz $ittime`
-                mintgz=`min_ab $mintgz $ittime`
-                maxtgz=`max_ab $maxtgz $ittime`
-
-                # Print iteration information
-                echo "<hyp time=\"$ittime\">  ${hprompt} </hyp>"
-
-                # Compute end condition
-                prev="${new_pref}"
-                ref_ispref_hyp=`is_pref "$r" "$h"`
-            done
-        fi
-
-        # Print warning if maximum number of iterations was exceeded
-        if [ ${iter_num} -ge ${MAX_ITERS} ]; then
-            echo "WARNING: maximum number of iterations exceeded for sentence number ${numSent}" >&2
-        fi
-
-        # Compute error-related statistics (only if maximum number of
-        # iterations not exceeded)
-        if [ ${iter_num} -lt ${MAX_ITERS} ]; then
-            C=`len_str "$r"`
-            CHARS=`expr $CHARS + $C`
-            MAacc=`expr ${MAacc} + 1`
-            mac=`expr ${MAacc} + $MA`
-            macsent=`expr ${MAsent} + 1`
-            KS=`expr $KS + ${KSsent}`
-            KSMR=`echo "" | $AWK -v ks=$KS -v ma=$MA -v maacc=$MAacc -v chars=$CHARS '{printf"%.2f",((ks+ma+maacc)/chars)*100}'`
-            KSMsent=`expr ${KSsent} + ${macsent}`
-        else
-            C=""
-            KSsent=""
-            macsent=""
-            KSMsent=""
-        fi
-
-        # Execute training or adaptation processes if requested
-        # check -tr option
-        if [ ${tr_given} -eq 1 ]; then
-            # train models after each translation
-            $bindir/thot_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" -v 2>$TMPHYPERR
-            trtime=`process_time_from_log $TMPHYPERR`
-            echo "<train time=\"$trtime\">"
-            tottrtime=`sum_ab $tottrtime $trtime`
-        fi
-
-        # verify model coverage after training/adaptation (if they were
-        # requested)
-        if [ ${tr_given} -eq 1 ]; then
-            $bindir/thot_client -i $ip ${port_op} ${uid_op} -c "$s" "$r" -v> $TMPHYPCOV 2>$TMPHYPERR
-            hcov=`cat $TMPHYPCOV`
-            vercovtime=`process_time_from_log $TMPHYPERR`
-            echo "<hcov time=\"$vercovtime\"> $hcov </hcov>"
+            # Compute contributions to error measures
+            diffe=`expr ${new_prefl} - ${prevl}`
+            if [ $diffe -gt 1 ]; then
+                MA=`expr $MA + 1`
+                MAsent=`expr $MAsent + 1`
+            fi
+            ngiter=`expr $ngiter + 1`
+            KSsent=`expr $KSsent + 1`
+            suff=`suffix "$prev" "${new_pref}"`
             
-            # translate source sentence again 
-            $bindir/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v> $TMPRETRANSHYP 2>$TMPHYPERR
-            retranshyp=`cat $TMPRETRANSHYP`
-            echo "<retrans> $retranshyp </retrans>"
-        fi
+            # Append new string to the prefix
+            $bindir/thot_client -i $ip ${port_op} ${uid_op} -ap "$suff" -v>$TMPHYP 2>$TMPHYPERR
+            verify_connection
+
+            # Update variables
+            h=`cat $TMPHYP`
+            hprompt=`get_hyp_with_prompt "$h" "${new_pref}"`
+            ittime=`process_time_from_log $TMPHYPERR`
+            tottgz=`sum_ab $tottgz $ittime`
+            mintgz=`min_ab $mintgz $ittime`
+            maxtgz=`max_ab $maxtgz $ittime`
+
+            # Print iteration information
+            echo "<hyp time=\"$ittime\">  ${hprompt} </hyp>"
+
+            # Compute end condition
+            prev="${new_pref}"
+            ref_ispref_hyp=`is_pref "$r" "$h"`
+        done
+    fi
+
+    # Print warning if maximum number of iterations was exceeded
+    if [ ${iter_num} -ge ${MAX_ITERS} ]; then
+        echo "WARNING: maximum number of iterations exceeded for sentence number ${numSent}" >&2
+    fi
+
+    # Compute error-related statistics (only if maximum number of
+    # iterations not exceeded)
+    if [ ${iter_num} -lt ${MAX_ITERS} ]; then
+        C=`len_str "$r"`
+        CHARS=`expr $CHARS + $C`
+        MAacc=`expr ${MAacc} + 1`
+        mac=`expr ${MAacc} + $MA`
+        macsent=`expr ${MAsent} + 1`
+        KS=`expr $KS + ${KSsent}`
+        KSMR=`echo "" | $AWK -v ks=$KS -v ma=$MA -v maacc=$MAacc -v chars=$CHARS '{printf"%.2f",((ks+ma+maacc)/chars)*100}'`
+        KSMsent=`expr ${KSsent} + ${macsent}`
+    else
+        C=""
+        KSsent=""
+        macsent=""
+        KSMsent=""
+    fi
+
+    # Execute training or adaptation processes if requested
+    # check -tr option
+    if [ ${tr_given} -eq 1 ]; then
+            # train models after each translation
+        $bindir/thot_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" -v 2>$TMPHYPERR
+        trtime=`process_time_from_log $TMPHYPERR`
+        echo "<train time=\"$trtime\">"
+        tottrtime=`sum_ab $tottrtime $trtime`
+    fi
+
+    # verify model coverage after training/adaptation (if they were
+    # requested)
+    if [ ${tr_given} -eq 1 ]; then
+        $bindir/thot_client -i $ip ${port_op} ${uid_op} -c "$s" "$r" -v> $TMPHYPCOV 2>$TMPHYPERR
+        hcov=`cat $TMPHYPCOV`
+        vercovtime=`process_time_from_log $TMPHYPERR`
+        echo "<hcov time=\"$vercovtime\"> $hcov </hcov>"
+        
+        # translate source sentence again 
+        $bindir/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v> $TMPRETRANSHYP 2>$TMPHYPERR
+        retranshyp=`cat $TMPRETRANSHYP`
+        echo "<retrans> $retranshyp </retrans>"
+    fi
 
         # # check -tre option
         # if [ ${tre_given} -eq 1 ]; then
@@ -480,37 +475,21 @@ if [ -f $testfile -a -f $reffile ]; then
         #     echo "<train ecm time=\"$trtime\">"    
         # fi
 
-        # print information about the translation
-        echo "</TestSample>"
-        echo ""
-        echo "<!--(PARTIAL) Sent: ${numSent} ; Chars: ${C} ; key strokes: ${KSsent} ; mouse actions: ${macsent} ; KS+MA: ${KSMsent} -->"
-        echo "<!--(ACUM)    Sent: ${numSent} ; Chars: ${CHARS} ; key strokes: ${KS} ; mouse actions: ${mac} ; KSMR: $KSMR -->"
-        echo ""
-    done < $testfile
+    # print information about the translation
+    echo "</TestSample>"
+    echo ""
+    echo "<!--(PARTIAL) Sent: ${numSent} ; Chars: ${C} ; key strokes: ${KSsent} ; mouse actions: ${macsent} ; KS+MA: ${KSMsent} -->"
+    echo "<!--(ACUM)    Sent: ${numSent} ; Chars: ${CHARS} ; key strokes: ${KS} ; mouse actions: ${mac} ; KSMR: $KSMR -->"
+    echo ""
+done < $testfile
 
-    # Print server models if required
-    if [ ${pm_given} -eq 1 ]; then
-        ${bindir}/thot_client -i $ip ${port_op} ${uid_op} -o ${pm_out_pref} -v
-    fi
-    
-    # Clear structures in the server (if -nc option was given, server
-    # structures are not cleared)
-    if [ ${nc_given} -eq 0 ]; then
-        $bindir/thot_client -i $ip ${port_op} ${uid_op} -v -clear
-    else
-        echo "WARNING: server data structures were not cleared" >&2
-    fi
-
-    # Print experiment tail
-    print_tail
-
-    # Return 0
-    exit 0
-
-else
-    # Clear structures in the server
-    $bindir/thot_client -i $ip ${port_op} ${uid_op} -v -clear
-
-    # Return 1
-    exit 1        
+# Print server models if required
+if [ ${pm_given} -eq 1 ]; then
+    ${bindir}/thot_client -i $ip ${port_op} ${uid_op} -o ${pm_out_pref} -v
 fi
+
+# Print experiment tail
+print_tail
+
+# Return 0
+exit 0
