@@ -111,8 +111,8 @@ sync()
 #############
 if [ $# -eq 0 ]; then
     echo "Usage: thot_pbs_ilm_perp -c <string> -lm <string> -n <int>" >&2
-    echo "                         -o <string> {-i | -jm | -cjm} " >&2
-    echo "                         [-qs <string>] [-tdir <string>] [-sdir <string>]" >&2
+    echo "                         -o <string> {-i | -jm | -cjm} [-qs <string>]" >&2
+    echo "                         [-tdir <string>] [-sdir <string>]" >&2
     echo "                         [-debug] [-v|-v1]" >&2
     echo "-c <string>              Corpus file to be processed." >&2
     echo "-lm <string>             Language model file name." >&2
@@ -120,6 +120,8 @@ if [ $# -eq 0 ]; then
     echo "-o <string>              Output file." >&2
     echo "-i                       Use interpolated model." >&2
     echo "-jm                      Use Jelinek-Mercer n-gram models." >&2
+    echo "-qs <string>             Specific options to be given to the qsub command"
+    echo "                         (example: -qs \"-l pmem=1gb\")."
     echo "-cjm                     Use cache-based Jelinek-Mercer n-grams models." >&2
     echo "-qs <string>             Specific options to be given to the qsub command"
     echo "                         (example: -qs \"-l pmem=1gb\")."
