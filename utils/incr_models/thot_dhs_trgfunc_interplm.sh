@@ -13,6 +13,7 @@ else
     if [ "${TEST}" = "" ]; then TEST=${BASEDIR}/DATA/Es-dev ; fi
     if [ "${ORDER}" = "" ]; then ORDER=3 ; fi
     if [ "${PPL_WITH_OOVW}" = "" ]; then PPL_WITH_OOVW=1; fi
+    if [ "${QS}" != "" ]; then qs_opt="-qs"; fi
 
     NON_NEG_CONST=1
 
@@ -50,7 +51,7 @@ else
 
     # Calculate perplexity
     echo "$weights" > ${LM}.weights
-    $bindir/thot_pbs_ilm_perp -lm ${LM} -c ${TEST} -n ${ORDER} -i -v1 -o ${SDIR}/verbose_ppl
+    $bindir/thot_pbs_ilm_perp -lm ${LM} -c ${TEST} -n ${ORDER} -i -v1 -o ${SDIR}/verbose_ppl ${qs_opt} "${QS}"
 ${bindir}/thot_obtain_info_from_verbose_ppl ${SDIR}/verbose_ppl > ${SDIR}/ppl_info
 
     ppl_with_oovw=`cat ${SDIR}/ppl_info | grep "Perplexity:" | $AWK '{printf"%s",$2}'`
