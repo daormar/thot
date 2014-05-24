@@ -99,7 +99,7 @@ execute_decoder()
 
     # Appropriately execute decoder
     if [ $pbsdec = "yes" ]; then
-        ${PHRDECODER} -c $CFGFILE -t ${TEST} -sdir ${SDIR} -qs "${QS}" \
+        ${PHRDECODER} -c $CFGFILE -t ${TEST} -sdir ${SDIR} ${qs_opt} "${QS}" \
             ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans 2> ${SDIR}/target_func.log || decoder_error="yes"
     else
         ${PHRDECODER} -c $CFGFILE -t ${TEST} \
@@ -253,6 +253,7 @@ else
     if [ "${NNC_PEN_FACTOR}" = "" ]; then NNC_PEN_FACTOR=1000; fi
     if [ "${USE_NBEST_OPT}" = "" ]; then USE_NBEST_OPT=0; fi
     if [ "${OPT_NVALUE}" = "" ]; then OPT_NVALUE=200; fi
+    if [ "${QS}" != "" ]; then qs_opt="-qs"; fi
 
     # Check variables
     if [ ! -f ${PHRDECODER} ]; then
