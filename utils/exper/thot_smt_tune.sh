@@ -101,6 +101,7 @@ lm_downhill()
     export ORDER=`cat $lmfile.weights | $AWK '{printf"%d",$1}'`
     export NUMBUCK=`cat $lmfile.weights | $AWK '{printf"%d",$2}'`
     export BUCKSIZE=`cat $lmfile.weights | $AWK '{printf"%d",$3}'`
+    export QS="${qs_par}"
 
     # Generate information for weight initialisation
 va_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} -0 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
@@ -178,7 +179,7 @@ create_tm_files()
 filter_ttable()
 {
 ${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
-        -c $scorpus -n 20 -T $tdir -o ${outd}/tm_dev/${basetmfile}.ttable
+        -c $scorpus -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${outd}/tm_dev/${basetmfile}.ttable
 }
 
 ########
