@@ -139,6 +139,7 @@ else
     n_val=${N_DEFAULT}
     tmpdir="/tmp"
     sdir=""
+    debug=0
     while [ $# -ne 0 ]; do
         case $1 in
             "-t") shift
@@ -185,6 +186,8 @@ else
                 else
                     tmpdir="/tmp"
                 fi
+                ;;
+            "-debug") debug=1
                 ;;
         esac
         shift
@@ -233,7 +236,7 @@ else
         mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
 
         # remove temp directories on exit
-        if [ "$debug" != "-debug" ]; then
+        if [ $debug -eq 0 ]; then
             trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
         fi
     else
@@ -241,7 +244,7 @@ else
         mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
     
         # remove temp directories on exit
-        if [ "$debug" != "-debug" ]; then
+        if [ $debug -eq 0 ]; then
             trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
         fi
     fi

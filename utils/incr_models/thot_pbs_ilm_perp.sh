@@ -250,7 +250,7 @@ else
         mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
 
         # remove temp directories on exit
-        if [ "$debug" != "-debug" ]; then
+        if [ $debug -eq 0 ]; then
             trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
         fi
     else
@@ -258,7 +258,7 @@ else
         mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
     
         # remove temp directories on exit
-        if [ "$debug" != "-debug" ]; then
+        if [ $debug -eq 0 ]; then
             trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
         fi
     fi
