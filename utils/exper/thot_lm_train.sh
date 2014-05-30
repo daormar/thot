@@ -209,7 +209,7 @@ fi
 # Train model
 prefix=$outd/main/trg.lm
 ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
-    -c $corpus -o $prefix -n ${n_val} \
+    -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
     ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
 
 # Generate weights file
