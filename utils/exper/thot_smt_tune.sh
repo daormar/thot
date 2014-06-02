@@ -109,7 +109,7 @@ iv_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUC
 
     # Execute tuning algorithm
 ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
--ftol $ftol -o ${outd}/lm_adjw -u ${bindir}/thot_dhs_trgfunc_jmlm ${debug_opt} || exit 1
+-ftol ${ftol_lm} -o ${outd}/lm_adjw -u ${bindir}/thot_dhs_trgfunc_jmlm ${debug_opt} || exit 1
 }
 
 ########
@@ -232,7 +232,7 @@ export PHRDECODER=${bindir}/thot_pbs_dec
 
     # Execute tuning algorithm
 ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
--ftol $ftol -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || exit 1
+-ftol ${ftol_loglin} -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || exit 1
 }
 
 ########
@@ -486,7 +486,8 @@ if [ ${sdir_given} -eq 1 ]; then
 fi
 
 # Set default parameters
-ftol=0.001
+ftol_lm=0.1
+ftol_loglin=0.001
 
 # Tune models
 tune_lm
