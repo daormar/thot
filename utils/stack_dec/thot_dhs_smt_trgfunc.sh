@@ -91,7 +91,7 @@ execute_decoder()
 {
     # Check if pbs version of the decoder is to be executed
     decbase=`${BASENAME} ${PHRDECODER}`
-    if [ $decbase = "thot_pbs_dec_ms" ]; then
+    if [ $decbase = "thot_pbs_dec" ]; then
         pbsdec="yes"
     else
         pbsdec="no"
