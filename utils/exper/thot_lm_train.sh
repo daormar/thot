@@ -217,5 +217,9 @@ n_buckets=3
 bsize=10
 ${bindir}/thot_gen_init_file_with_jmlm_weights ${n_val} ${n_buckets} ${bsize} > $prefix.weights
 
+# Generate wp file
+nlines_wp_file=100000
+${bindir}/thot_shuffle 31415 $corpus | $HEAD -${nlines_wp_file} > $prefix.wp
+
 # Create descriptor file
 create_desc_file $outd
