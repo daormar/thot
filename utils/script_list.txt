@@ -25,5 +25,6 @@
 /home/dortiz/smt/software/exper thot_tm_train
 /home/dortiz/smt/software/exper thot_lm_train
 /home/dortiz/smt/software/exper thot_smt_tune
+/home/dortiz/smt/software/exper thot_cat_tune
 /home/dortiz/smt/software/exper thot_prepare_sys_for_test
 /home/dortiz/smt/software/exper thot_gen_server_cfg_file
