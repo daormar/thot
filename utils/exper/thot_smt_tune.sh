@@ -202,7 +202,8 @@ obtain_loglin_nonneg_const()
 ########
 obtain_loglin_va_opt_values()
 {
-    echo `$PHRDECODER --config 2>&1 | $GREP "\- Weights" | $AWK -F , '{for(i=1;i<=NF;++i) printf"-0 "}'`
+    echo "-0 -0 -0 -0 -0 -0 -0 0"
+#    echo `$PHRDECODER --config 2>&1 | $GREP "\- Weights" | $AWK -F , '{for(i=1;i<=NF;++i) printf"-0 "}'`
 }
 
 ########
