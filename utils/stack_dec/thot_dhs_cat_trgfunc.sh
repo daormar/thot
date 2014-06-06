@@ -10,6 +10,18 @@
 # server "thot_server".
 
 ########
+num_smtw()
+{
+    ${SERVER} --config 2>&1 | grep "Weights for the smt model" | $AWK -F "," '{printf"%d",NF}'
+}
+
+########
+num_catw()
+{
+    ${SERVER} --config 2>&1 | grep "Weights for the assisted translator" | $AWK -F "," '{printf"%d",NF}'
+}
+
+########
 calc_nnc_pen()
 {
     we="$1"
@@ -33,6 +45,33 @@ calc_nnc_pen()
 }
 
 ########
+separate_weights()
+{
+    # Obtain number of weights for each model
+    NSMTW=`num_smtw`
+    NCATW=`num_catw`
+    NECW=`expr $NUMW - $NSMTW - $NCATW`
+
+    # Separate weights in groups
+    SMTW=`echo "$weights" | ${AWK} -v ntmw=$NSMTW '{for(i=1;i<=ntmw;++i) printf"%s ",$i;}'`
+    ECW=`echo "$weights" | ${AWK} -v ntmw=$NSMTW -v necw=$NECW '{for(i=ntmw+1;i<=ntmw+necw;++i) printf"%s ",$i;}'`
+    CATW=`echo "$weights" | ${AWK} -v ntmw=$NSMTW -v necw=$NECW '{for(i=ntmw+necw+1;i<=NF;++i) printf"%s ",$i;}'`
+}
+
+########
+create_aux_cfg_file()
+{
+    cat $CFGFILE
+    echo ""
+    echo "# WEIGHTS..."
+    echo "-tmw $SMTW"
+    echo "-catw $CATW"
+    if [ "$ECW" != "" ]; then
+        echo "-ecw ${ECW}"
+    fi
+}
+
+########
 wait_until_server_is_listening()
 {
     log_file=$1
@@ -41,7 +80,7 @@ wait_until_server_is_listening()
     max_num_retries=3
     while [ $end -eq 0 ]; do
         # Ensure server is being executed
-        line=`ps aux | grep "thot_server" | grep ${PORT}`
+        line=`ps aux | ${GREP} "thot_server" | ${GREP} ${PORT}`
 
         if [ -z "${line}" ]; then
             num_retries=`expr ${num_retries} + 1`
@@ -52,7 +91,7 @@ wait_until_server_is_listening()
         fi
 
         # Check if server is listening
-        line=`netstat -an | grep "LISTEN" | grep ":${PORT} "`
+        line=`netstat -an | ${GREP} "LISTEN" | ${GREP} ":${PORT} "`
         if [ ! -z "${line}" ]; then
             end=1
         fi
@@ -126,6 +165,13 @@ else
         shift
     done
 
+    # Separate weights in groups
+    separate_weights
+
+    # Create auxiliary cfg file
+    AUX_CFGFILE=${SDIR}/aux_server.cfg
+    create_aux_cfg_file > ${AUX_CFGFILE}
+
     # Obtain non-negativity constraints penalty (non-negativity
     # constraints can be activated for each individual weight by means
     # of the environment variable NON_NEG_CONST, which contains a bit
@@ -140,7 +186,7 @@ else
     # generate_cfg_file > ${SDIR}/server.cfg
 
     # Launch server
-    $SERVER -c ${CFGFILE} ${PORT_OPT} ${VERB_SERVER_OPT} > ${SDIR}/server.log 2>&1 &
+    $SERVER -c ${AUX_CFGFILE} ${PORT_OPT} ${VERB_SERVER_OPT} > ${SDIR}/server.log 2>&1 &
     server_pid=$!
     wait_until_server_is_listening ${SDIR}/server.log || error="yes"
 
@@ -178,7 +224,7 @@ else
     ${bindir}/thot_conf_interv_cat $SEED ${SDIR}/target_func.cat_iters ${S_CI} ${N_CI} > ${SDIR}/target_func.conf_int
 
     # Calculate the KSMR measure
-    grep "^KSMR" ${SDIR}/target_func.cat_iters | ${AWK} '{printf"KSMR= %s\n",$3}' >> ${SDIR}/target_func.ksmr
+    ${GREP} "^KSMR" ${SDIR}/target_func.cat_iters | ${AWK} '{printf"KSMR= %s\n",$3}' >> ${SDIR}/target_func.ksmr
 
     # Obtain KSMR
     KSMR=`tail -1 ${SDIR}/target_func.ksmr | ${AWK} '{printf"%s",$2}'`
