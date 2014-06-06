@@ -26,8 +26,8 @@ usage()
 {
     echo "thot_pbs_dec    [-pr <int>] [-c <string>]"
     echo "                -tm <string> -lm <string> -t <string>"
-    echo "                -o <string> [-b <int>] [-W <float>] [-S <int>]"
-    echo "                [-A <int>] [-U <int>] [-I <int>] [-bf] [-G <int>]"
+    echo "                -o <string> [-W <float>] [-S <int>]"
+    echo "                [-A <int>] [-U <int>] [-I <int>] [-be] [-G <int>]"
     echo "                [-h <int>] [ -mon] [-we <float> ... <float>]"
     echo "                [-wg <string> [-wgp <float>] ]"
     echo "                [-sdir <string>] [-qs <string>] [-v|-v1|-v2]"
@@ -43,7 +43,6 @@ usage()
     echo " -lm <string>      : Language model file name."
     echo " -t <string>       : File with the sentences to translate."
     echo " -o <string>       : Set output files prefix name."
-    echo " -b <int>          : Obtains <int>-best translations."
     echo " -W <float>        : Maximum number of inverse translations/Threshold"
     echo "                     (10 by default)."
     echo " -S <int>          : S parameter (1024 or 64 by default)."
@@ -52,7 +51,7 @@ usage()
     echo "                     default)."
     echo " -I <int>          : Number of hypotheses expanded at each iteration."
     echo "                     (1 by default)."
-    echo " -bf               : Execute a breadth-first algorithm."
+    echo " -be               : Execute a best-first algorithm."
     echo " -G <int>          : Granularity parameter (0 by default, may not"
     echo "                     be available depending on the compiler options)."
     echo " -h <int>          : Heuristic function used: 0->None, 4->LOCAL_T,"
@@ -62,12 +61,12 @@ usage()
     echo "                        meaning depends on the model type (see -m parameter)."
     echo " -wg <string>      : Print word graph after each translation, the prefix"
     echo "                        of the files is given as parameter."
-    echo " -wgp <float>      : Prune word-graph using the given threshold.\n"
-    echo "                     Threshold=0 -> no pruning is performed.\n"
-    echo "                     Threshold=1 -> only the best arc arriving to each\n"
-    echo "                                    state is retained.\n"
-    echo "                     If not given, the number of arcs is not\n"
-    echo "                     restricted.\n";
+    echo " -wgp <float>      : Prune word-graph using the given threshold."
+    echo "                     Threshold=0 -> no pruning is performed."
+    echo "                     Threshold=1 -> only the best arc arriving to each"
+    echo "                                    state is retained."
+    echo "                     If not given, the number of arcs is not"
+    echo "                     restricted.";
     echo " -sdir <string>    : Absolute path of a directory common to all"
     echo "                     processors. If not given \$HOME is used"
     echo " -qs <string>      : Specific options to be given to the qsub command"
@@ -320,7 +319,7 @@ while [ $# -ne 0 ]; do
                 dec_pars="${dec_pars} -I $I"
             fi
             ;;
-        "-bf") dec_pars="${dec_pars} -bf"
+        "-be") dec_pars="${dec_pars} -be"
             ;;
         "-G") shift
             if [ $# -ne 0 ]; then
