@@ -28,7 +28,7 @@ usage()
     echo "                -tm <string> -lm <string> -t <string>"
     echo "                -o <string> [-W <float>] [-S <int>]"
     echo "                [-A <int>] [-U <int>] [-I <int>] [-be] [-G <int>]"
-    echo "                [-h <int>] [ -mon] [-we <float> ... <float>]"
+    echo "                [-h <int>] [ -mon] [-tmw <float> ... <float>]"
     echo "                [-wg <string> [-wgp <float>] ]"
     echo "                [-sdir <string>] [-qs <string>] [-v|-v1|-v2]"
     echo "                [-debug] [--help] [--version] [--config]"
@@ -57,10 +57,11 @@ usage()
     echo " -h <int>          : Heuristic function used: 0->None, 4->LOCAL_T,"
     echo "                     5->LOCAL_TL, 6->LOCAL_TD (0 by default)."
     echo " -mon              : Perform a monotone search."
-    echo " -we <float>...<float>: Set model weights, the number of weights and their"
-    echo "                        meaning depends on the model type (see -m parameter)."
+    echo " -tmw <float>...<float>:"
+    echo "                     Set model weights, the number of weights and their"
+    echo "                     meaning depends on the model type (see -m parameter)."
     echo " -wg <string>      : Print word graph after each translation, the prefix"
-    echo "                        of the files is given as parameter."
+    echo "                     of the files is given as parameter."
     echo " -wgp <float>      : Prune word-graph using the given threshold."
     echo "                     Threshold=0 -> no pruning is performed."
     echo "                     Threshold=1 -> only the best arc arriving to each"
@@ -335,7 +336,7 @@ while [ $# -ne 0 ]; do
             ;;
         "-mon") dec_pars="${dec_pars} -mon"
             ;;
-        "-we") shift
+        "-tmw") shift
             if [ $# -ne 0 -a ! "`str_is_option $1`" = "1" ]; then
                 end=0
                 while [ $end -eq 0 ]; do
@@ -350,7 +351,7 @@ while [ $# -ne 0 ]; do
                         fi
                     fi
                 done            
-                dec_pars="${dec_pars} -we ${weights}"
+                dec_pars="${dec_pars} -tmw ${weights}"
             fi
             ;;
         "-wg") shift
