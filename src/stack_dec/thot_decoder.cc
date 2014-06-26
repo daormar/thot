@@ -76,6 +76,21 @@ struct thot_decoder_pars
   std::string outFile;
   float wgPruningThreshold;
   Vector<float> weightVec;
+
+  thot_decoder_pars()
+    {
+      W=PMSTACK_W_DEFAULT;
+      S=PMSTACK_S_DEFAULT;
+      A=PMSTACK_A_DEFAULT;
+      nomon=PMSTACK_NOMON_DEFAULT;
+      I=PMSTACK_I_DEFAULT;
+      G=PMSTACK_G_DEFAULT;
+      heuristic=PMSTACK_H_DEFAULT;
+      be=0;
+      wgPruningThreshold=DISABLE_WORDGRAPH;
+      wgPruningThreshold=UNLIMITED_DENSITY;
+      verbosity=0;
+    }
 };
 
 //--------------- Function Declarations ------------------------------
@@ -380,7 +395,7 @@ int takeParameters(int argc,
       // Check if a configuration file was provided
   std::string cfgFileName;
   int err=readSTLstring(argc,argv, "-c", &cfgFileName);
-  if(err!=-1)
+  if(!err)
   {
         // Process configuration file
     err=takeParametersFromCfgFile(cfgFileName,tdp);
@@ -430,52 +445,24 @@ void takeParametersGivenArgcArgv(int argc,
 {
      // Takes W 
  int err=readFloat(argc,argv, "-W", &tdp.W);
- if(err==-1)
- {
-   tdp.W=PMSTACK_W_DEFAULT;
- }
 
      // Takes S parameter 
  err=readInt(argc,argv, "-S", &tdp.S);
- if(err==-1)
- {
-   tdp.S=PMSTACK_S_DEFAULT;
- }
 
      // Takes A parameter 
  err=readInt(argc,argv, "-A", &tdp.A);
- if(err==-1)
- {
-   tdp.A=PMSTACK_A_DEFAULT;
- }
 
      // Takes U parameter 
  err=readInt(argc,argv, "-nomon", &tdp.nomon);
- if(err==-1)
- {
-   tdp.nomon=PMSTACK_NOMON_DEFAULT;
- }
 
      // Takes I parameter 
  err=readInt(argc,argv, "-I", &tdp.I);
- if(err==-1)
- {
-   tdp.I=PMSTACK_I_DEFAULT;
- }
 
      // Takes I parameter 
  err=readInt(argc,argv, "-G", &tdp.G);
- if(err==-1)
- {
-   tdp.G=PMSTACK_G_DEFAULT;
- }
 
      // Takes h parameter 
  err=readInt(argc,argv, "-h", &tdp.heuristic);
- if(err==-1)
- {
-   tdp.heuristic=PMSTACK_H_DEFAULT;
- }
 
      // Take language model file name
  err=readSTLstring(argc,argv, "-lm", &tdp.languageModelFileName);
@@ -491,37 +478,20 @@ void takeParametersGivenArgcArgv(int argc,
  
        // read -be option
  err=readOption(argc,argv,"-be");
- if(err==-1)
- {
-   tdp.be=0;
- }      
- else
+ if(err!=-1)
  {
    tdp.be=1;
- }
+ }      
      
-     // Take -we parameter
- err=readFloatSeq(argc,argv, "-we", tdp.weightVec);
- if(err==-1)
- {
-   tdp.weightVec.clear();
- }    
+     // Take -tmw parameter
+ err=readFloatSeq(argc,argv, "-tmw", tdp.weightVec);
 
      // Take -wg parameter
  err=readSTLstring(argc,argv, "-wg", &tdp.wordGraphFileName);
- if(err==-1)
- {
-   tdp.wordGraphFileName="";
-   tdp.wgPruningThreshold=DISABLE_WORDGRAPH;
- }
- else
+ if(err!=-1)
  {
        // Take -wgp parameter 
    err=readFloat(argc,argv, "-wgp", &tdp.wgPruningThreshold);
-   if(err==-1)
-   {
-     tdp.wgPruningThreshold=UNLIMITED_DENSITY;
-   }
  }
 
      // Take verbosity parameter
@@ -688,54 +658,55 @@ void printUsage(void)
   cerr << "                    -t <string> [-o <string>]"<<endl;
   cerr << "                    [-W <float>] [-S <int>] [-A <int>]"<<endl;
   cerr << "                    [-I <int>] [-G <int>] [-h <int>]"<<endl;
-  cerr << "                    [-be] [ -nomon <int>] [-we <float> ... <float>]"<<endl;
+  cerr << "                    [-be] [ -nomon <int>] [-tmw <float> ... <float>]"<<endl;
 #ifndef THOT_DISABLE_REC
   cerr << "                    [-wg <string> [-wgp <float>] ]"<<endl;
 #endif  
   cerr << "                    [-v|-v1|-v2]"<<endl;
   cerr << "                    [--help] [--version] [--config]"<<endl<<endl;
-  cerr << " -c <string>          : Configuration file (command-line options override"<<endl;
-  cerr << "                        configuration file options)."<<endl;
-  cerr << " -tm <string>         : Prefix of the translation model files."<<endl;
-  cerr << " -lm <string>         : Language model file name."<<endl;
-  cerr << " -t <string>          : File with the test sentences."<<endl;
-  cerr << " -o <string>          : File to store translations (if not given, they are"<<endl;
-  cerr << "                        printed to the standard output)."<<endl;
-  cerr << " -W <float>           : Maximum number of translation options/Threshold"<<endl;
-  cerr << "                        ("<<PMSTACK_W_DEFAULT<<" by default)."<<endl;
-  cerr << " -S <int>             : S parameter ("<<PMSTACK_S_DEFAULT<<" by default)."<<endl;    
-  cerr << " -A <int>             : A parameter ("<<PMSTACK_A_DEFAULT<<" by default)."<<endl;
-  cerr << " -I <int>             : Number of hypotheses expanded at each iteration"<<endl;
-  cerr << "                        ("<<PMSTACK_I_DEFAULT<<" by default)."<<endl;
+  cerr << " -c <string>           : Configuration file (command-line options override"<<endl;
+  cerr << "                         configuration file options)."<<endl;
+  cerr << " -tm <string>          : Prefix of the translation model files."<<endl;
+  cerr << " -lm <string>          : Language model file name."<<endl;
+  cerr << " -t <string>           : File with the test sentences."<<endl;
+  cerr << " -o <string>           : File to store translations (if not given, they are"<<endl;
+  cerr << "                         printed to the standard output)."<<endl;
+  cerr << " -W <float>            : Maximum number of translation options/Threshold"<<endl;
+  cerr << "                         ("<<PMSTACK_W_DEFAULT<<" by default)."<<endl;
+  cerr << " -S <int>              : S parameter ("<<PMSTACK_S_DEFAULT<<" by default)."<<endl;    
+  cerr << " -A <int>              : A parameter ("<<PMSTACK_A_DEFAULT<<" by default)."<<endl;
+  cerr << " -I <int>              : Number of hypotheses expanded at each iteration"<<endl;
+  cerr << "                         ("<<PMSTACK_I_DEFAULT<<" by default)."<<endl;
 #ifdef MULTI_STACK_USE_GRAN
-  cerr << " -G <int>             : Granularity parameter ("<<PMSTACK_G_DEFAULT<<"by default)."<<endl;
+  cerr << " -G <int>              : Granularity parameter ("<<PMSTACK_G_DEFAULT<<"by default)."<<endl;
 #else
-  cerr << " -G <int>             : Parameter not available with the given configuration."<<endl;
+  cerr << " -G <int>              : Parameter not available with the given configuration."<<endl;
 #endif
-  cerr << " -h <int>             : Heuristic function used: "<<NO_HEURISTIC<<"->None, "<<LOCAL_T_HEURISTIC<<"->LOCAL_T, "<<endl;
-  cerr << "                        "<<LOCAL_TD_HEURISTIC<<"->LOCAL_TD ("<<PMSTACK_H_DEFAULT<<" by default)."<<endl;
-  cerr << " -be                  : Execute a best-first algorithm (breadth-first search is"<<endl;
-  cerr << "                        is executed by default)."<<endl;
-  cerr << " -nomon <int>         : Perform a non-monotonic search, allowing the decoder to"<<endl;
-  cerr << "                        skip up to <int> words from the last aligned source"<<endl;
-  cerr << "                        words. If <int> is equal to zero, then a monotonic"<<endl;
-  cerr << "                        search is performed ("<<PMSTACK_NOMON_DEFAULT<<" is the default value)."<<endl;
-  cerr << " -we <float>...<float>: Set model weights, the number of weights and their"<<endl;
-  cerr << "                        meaning depends on the model type (use --config option)."<<endl;
+  cerr << " -h <int>              : Heuristic function used: "<<NO_HEURISTIC<<"->None, "<<LOCAL_T_HEURISTIC<<"->LOCAL_T, "<<endl;
+  cerr << "                         "<<LOCAL_TD_HEURISTIC<<"->LOCAL_TD ("<<PMSTACK_H_DEFAULT<<" by default)."<<endl;
+  cerr << " -be                   : Execute a best-first algorithm (breadth-first search"<<endl;
+  cerr << "                         is executed by default)."<<endl;
+  cerr << " -nomon <int>          : Perform a non-monotonic search, allowing the decoder"<<endl;
+  cerr << "                         to skip up to <int> words from the last aligned source"<<endl;
+  cerr << "                         words. If <int> is equal to zero, then a monotonic"<<endl;
+  cerr << "                         search is performed ("<<PMSTACK_NOMON_DEFAULT<<" is the default value)."<<endl;
+  cerr << " -tmw <float>...<float>: Set model weights, the number of weights and their"<<endl;
+  cerr << "                         meaning depends on the model type (use --config"<<endl;
+  cerr << "                         option)."<<endl;
 #ifndef THOT_DISABLE_REC
-  cerr << " -wg <string>         : Print word graph after each translation, the prefix" <<endl;
-  cerr << "                        of the files is given as parameter."<<endl;
-  cerr << " -wgp <float>         : Prune word-graph using the given threshold.\n";
-  cerr << "                        Threshold=0 -> no pruning is performed.\n";
-  cerr << "                        Threshold=1 -> only the best arc arriving to each\n";
+  cerr << " -wg <string>          : Print word graph after each translation, the prefix" <<endl;
+  cerr << "                         of the files is given as parameter."<<endl;
+  cerr << " -wgp <float>          : Prune word-graph using the given threshold.\n";
+  cerr << "                         Threshold=0 -> no pruning is performed.\n";
+  cerr << "                         Threshold=1 -> only the best arc arriving to each\n";
   cerr << "                                       state is retained.\n";
-  cerr << "                        If not given, the number of arcs is not\n";
-  cerr << "                        restricted.\n";
+  cerr << "                         If not given, the number of arcs is not\n";
+  cerr << "                         restricted.\n";
 #endif
-  cerr << " -v|-v1|-v2           : verbose modes."<<endl;
-  cerr << " --help               : Display this help and exit."<<endl;
-  cerr << " --version            : Output version information and exit."<<endl;
-  cerr << " --config             : Show current configuration."<<endl;
+  cerr << " -v|-v1|-v2            : verbose modes."<<endl;
+  cerr << " --help                : Display this help and exit."<<endl;
+  cerr << " --version             : Output version information and exit."<<endl;
+  cerr << " --config              : Show current configuration."<<endl;
 }
 
 //--------------- version function
