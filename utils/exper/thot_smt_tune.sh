@@ -148,11 +148,8 @@ create_tm_dev_files()
 
     # Create tm files
     for file in `ls ${tmfile}*`; do
-        if [ $file = ${tmfile}.ttable ]; then
-            # Create regular file for the weights
-            cp ${tmfile}.ttable ${outd}/tm_dev/${basetmfile}.ttable || { echo "Error while preparing translation model files" >&2 ; exit 1; }
-        else
-            # Create hard links for the rest of the files
+        if [ $file != ${tmfile}.ttable ]; then
+            # Create hard links for all of the files except the phrase table
             $LN -f $file ${outd}/tm_dev || { echo "Error while preparing translation model files" >&2 ; exit 1; }
         fi
     done
