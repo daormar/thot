@@ -67,19 +67,25 @@ usage()
 }
 
 ########
+is_absolute_path()
+{
+    case $1 in
+        /*) echo 1 ;;
+        *) echo 0 ;;
+    esac
+}
+
+########
 get_absolute_path()
 {
     file=$1
-    dir=`$DIRNAME $file`
-    if [ $dir = "." ]; then
-        dir=""
+    # Check if an absolute path was given
+    absolute=`is_absolute_path $file`
+    if [ $absolute -eq 1 ]; then
+        echo $file
+    else
+        echo $PWD/$file
     fi
-    basefile=`$BASENAME $file`
-    path=`$FIND $PWD/$dir -name ${basefile} 2>/dev/null`
-    if [ -z "$path" ]; then
-        path=$file
-    fi
-    echo $path
 }
 
 ########
