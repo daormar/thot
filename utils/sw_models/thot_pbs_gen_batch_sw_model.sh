@@ -659,6 +659,16 @@ launch()
     fi
 }
 
+job_is_unknown()
+{
+    nl=`$QSTAT ${QSTAT_J_OPT} ${jid} 2>&1 | grep -e "Unknown" -e "do not exist" | wc -l`
+    if [ $nl -ne 0 ]; then
+        echo 1
+    else
+        echo 0
+    fi
+}
+
 pbs_sync()
 {
     # Init vars
@@ -684,8 +694,8 @@ pbs_sync()
             # that have not written the sync file
             num_running_procs=0
             for jid in ${job_ids}; do
-                nl=`$QSTAT ${jid} 2>&1 | grep "Unknown" | wc -l`
-                if [ $nl -eq 0 ]; then
+                job_unknown=`job_is_unknown ${jid}`
+                if [ ${job_unknown} -eq 0 ]; then
                     num_running_procs=`expr ${num_running_procs} + 1`
                 fi
             done
