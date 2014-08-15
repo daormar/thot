@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.57)
 AC_INIT(thot, 3.0.0Beta, danulino@users.sourceforge.net)
-AM_INIT_AUTOMAKE(thot,3.0.0Beta)
+AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER(config.h)
 AX_PREFIX_CONFIG_H([./src/thot_config.h])
 
@@ -66,6 +66,23 @@ fi
 AC_SUBST(QSUB_TERSE_OPT)
 
 AC_PATH_PROGS(QSTAT, qstat)
+
+# check qstat parameter (-j)
+if test "${QSUB_WORKS}" = "yes"; then
+ echo -n "checking whether qstat accepts -j... "
+ ${QSTAT} -j >/dev/null 2>&1
+ if test $? -eq 0; then
+  QSTAT_J_OPT="-j"
+  echo "yes"
+ else
+  QSTAT_J_OPT=""
+  echo "no"
+ fi 
+else
+ QSTAT_J_OPT=""
+fi
+AC_SUBST(QSTAT_J_OPT)
+
 AC_PATH_PROGS(QRLS, qrls)
 
 # Search awk
