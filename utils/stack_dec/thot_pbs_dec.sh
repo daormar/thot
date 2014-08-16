@@ -214,7 +214,7 @@ c_given=0
 tm_given=0
 lm_given=0
 sents_given=0
-sdir=""
+sdir=$HOME
 dec_pars=""
 debug=""
 o_given=0
@@ -253,9 +253,6 @@ while [ $# -ne 0 ]; do
         "-sdir") shift
             if [ $# -ne 0 ]; then
                 sdir=$1
-                
-            else
-                sdir=""
             fi
             ;;
         "-tm") shift
@@ -412,23 +409,20 @@ fi
 # parameters are ok
 
 # create shared directory
-if [ -z "$sdir" ]; then
-    SDIR=`${MKTEMP} -d $HOME/thot_pbs_dec_XXXXXX`
 
-    #### OLD CODE (NOT SAFE WHEN DIRECTORIES CREATED BY OTHER INSTANCES
-    ####           OF THIS SCRIPT ARE NOT REMOVED)
-    # if not given, SDIR will be the /tmp directory
-    # SDIR="/tmp/thot_pbs_dec_$$"
-    # mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }    
-else
-    SDIR=`${MKTEMP} -d ${sdir}/thot_pbs_dec_XXXXXX`
-
-    #### OLD CODE (NOT SAFE WHEN DIRECTORIES CREATED BY OTHER INSTANCES
-    ####           OF THIS SCRIPT ARE NOT REMOVED)
-    # SDIR="${sdir}/thot_pbs_dec_$$"
-    # mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+if [ ! -d ${sdir} ]; then
+    echo "Error: shared directory does not exist"
+    return 1;
 fi
-    # remove temp directories on exit
+
+SDIR=`${MKTEMP} -d ${sdir}/thot_pbs_dec_XXXXXX`
+
+#### OLD CODE (NOT SAFE WHEN DIRECTORIES CREATED BY OTHER INSTANCES
+####           OF THIS SCRIPT ARE NOT REMOVED)
+# SDIR="${sdir}/thot_pbs_dec_$$"
+# mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+
+# remove temp directories on exit
 if [ "$debug" != "-debug" ]; then
     trap "rm -rf $SDIR 2>/dev/null" EXIT
 fi
