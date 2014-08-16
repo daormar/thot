@@ -94,8 +94,8 @@ SUFFIXES= .sh .pl
 	echo "QSUB="$(QSUB) >> $@
 	echo "QSUB_WORKS=\""$(QSUB_WORKS)"\"" >> $@
 	echo "QSUB_TERSE_OPT=\""$(QSUB_TERSE_OPT)"\"" >> $@
-	echo "QSTAT_J_OPT=\""$(QSTAT_J_OPT)"\"" >> $@
 	echo "QSTAT="$(QSTAT) >> $@
+	echo "QSTAT_J_OPT=\""$(QSTAT_J_OPT)"\"" >> $@
 	echo "QRLS="$(QRLS) >> $@
 	cat $< >> $@
 	chmod ugo+x $@
