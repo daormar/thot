@@ -40,7 +40,7 @@ usage()
     echo "-sdir <string>                  Absolute path of a directory common to all"
     echo "                                processors. If not given, \$HOME will be used."
     echo ""
-    echo "-T <string>                     Use <tmpdir> for temporaries instead of /tmp"
+    echo "-T <string>                     Use <string> for temporaries instead of /tmp"
     echo ""
     echo "-debug                          After ending, do not delete temporary files"
     echo "                                (for debugging purposes)"
@@ -174,7 +174,7 @@ op_given=0
 qs_given=0
 tmpdir="/tmp"
 debug=""
-sdir=""
+sdir=$HOME
 
 if [ $# -eq 0 ]; then
     print_desc
@@ -197,9 +197,7 @@ while [ $# -ne 0 ]; do
             ;;
         "-sdir") shift
             if [ $# -ne 0 ]; then
-                sdir=$1                
-            else
-                sdir=""
+                sdir=$1
             fi
             ;;
         "-g") shift
@@ -314,23 +312,12 @@ TMP="${tmpdir}/thot_pbs_alig_op_tmp_$$"
 mkdir $TMP || { echo "Error: temporary directory cannot be created" ; exit 1; }
 
 # create shared directory
-if [ -z "$sdir" ]; then
-    # if not given, SDIR will be the same as $TMP
-    SDIR="$HOME/thot_pbs_alig_op_sdir_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
-
-    # remove temp directories on exit
-    if [ "$debug" != "-debug" ]; then
-        trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
-    fi
-else
-    SDIR="${sdir}/thot_pbs_alig_op_sdir_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+SDIR="${sdir}/thot_pbs_alig_op_sdir_$$"
+mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
     
-    # remove temp directories on exit
-    if [ "$debug" != "-debug" ]; then
-        trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
-    fi
+# remove temp directories on exit
+if [ "$debug" != "-debug" ]; then
+    trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
 fi
 
 # create log file

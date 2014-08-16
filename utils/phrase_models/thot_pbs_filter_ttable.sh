@@ -138,7 +138,7 @@ else
     o_given=0
     n_val=${N_DEFAULT}
     tmpdir="/tmp"
-    sdir=""
+    sdir=$HOME
     debug=0
     while [ $# -ne 0 ]; do
         case $1 in
@@ -176,8 +176,6 @@ else
             "-sdir") shift
                 if [ $# -ne 0 ]; then
                     sdir=$1                
-                else
-                    sdir=""
                 fi
                 ;;
             "-T") shift
@@ -230,23 +228,12 @@ else
     fi
 
     # create shared directory
-    if [ -z "$sdir" ]; then
-        # if not given, SDIR will be the same as $HOME
-        SDIR="$HOME/thot_pbs_filter_ttable_sdir_$$"
-        mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
-
-        # remove temp directories on exit
-        if [ $debug -eq 0 ]; then
-            trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
-        fi
-    else
-        SDIR="${sdir}/thot_pbs_filter_ttable_sdir_$$"
-        mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+    SDIR="${sdir}/thot_pbs_filter_ttable_sdir_$$"
+    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
     
-        # remove temp directories on exit
-        if [ $debug -eq 0 ]; then
-            trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
-        fi
+    # remove temp directories on exit
+    if [ $debug -eq 0 ]; then
+        trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
     fi
 
     # process the input
