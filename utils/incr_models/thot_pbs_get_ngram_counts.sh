@@ -76,14 +76,8 @@ set_tmp_dir()
 
 set_shared_dir()
 {
-    if [ -z "$sdir" ]; then
-        # if not given, SDIR will be created in the $TMP directory
-        SDIR="$HOME/thot_pbs_get_ngram_counts_sdir_${PPID}_$$"
-        mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
-    else
-        SDIR="${sdir}/thot_pbs_get_ngram_counts_sdir_${PPID}_$$"
-        mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
-    fi
+    SDIR="${sdir}/thot_pbs_get_ngram_counts_sdir_${PPID}_$$"
+    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
 
     # Create temporary subdirectories
     chunks_dir=$SDIR/chunks
@@ -421,7 +415,7 @@ generate_counts_file()
 
 pr_given=0
 unk_given=0
-sdir=""
+sdir=$HOME
 qs_given=0
 c_given=0
 n_given=0
@@ -453,8 +447,6 @@ while [ $# -ne 0 ]; do
         "-sdir") shift
             if [ $# -ne 0 ]; then
                 sdir=$1                
-            else
-                sdir=""
             fi
             ;;
         "-c") shift
