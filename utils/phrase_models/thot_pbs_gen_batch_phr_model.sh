@@ -28,8 +28,8 @@ if [ $# -lt 1 ]; then
     echo "                                    [-n <int>] [-np <float>] [-lf <float>]"
     echo "                                    [-af <float>] [-cpr <float>]"
     echo "                                    [-ao <string>] [-m <int>]"
-    echo "                                    [-unk] [-nsh] [-qs <string>] -T <string>"
-    echo "                                    -sdir <string> [-debug]"
+    echo "                                    [-unk] [-nsh] [-qs <string>] [-T <string>]"
+    echo "                                    [-sdir <string>] [-debug]"
     echo ""
     echo "-pr <int>               Number of processors"
     echo "-s <string>             File with source sentences (give absolute path when"
@@ -58,7 +58,7 @@ if [ $# -lt 1 ]; then
     echo "                        important to achieve load balancing)"
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
-    echo "-T <string>             Directory for temporary files."
+    echo "-T <string>             Use <string> for temporaries instead of /tmp"
     echo "                        NOTES:"
     echo "                         a) give absolute paths when using pbs clusters."
     echo "                         b) ensure there is enough disk space in the partition"
@@ -90,7 +90,9 @@ else
     nsh_given=0
     shuff_opt="-shu"
     tdir_given=0
+    tdir=/tmp
     sdir_given=0
+    sdir=$HOME
     debug=0
     lambda_default_val=0.01
     sslen_default_val="Uniform"
@@ -236,20 +238,14 @@ else
         exit 1
     fi
 
-    if [ ${tdir_given} -eq 0 ]; then
-        echo "Error! -T parameter not given!" >&2
-        exit 1
-    else
+    if [ ${tdir_given} -eq 1 ]; then
         if [ ! -d ${tdir} ]; then
             echo "Error! directory ${tdir} does not exist" >&2
             exit 1            
         fi
     fi
 
-    if [ ${sdir_given} -eq 0 ]; then
-        echo "Error! -sdir parameter not given!" >&2
-        exit 1
-    else
+    if [ ${sdir_given} -eq 1 ]; then
         if [ ! -d ${sdir} ]; then
             echo "Error! directory ${sdir} does not exist" >&2
             exit 1            
