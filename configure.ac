@@ -32,6 +32,8 @@ AC_PATH_PROGS(DIRNAME, dirname)
 AC_PATH_PROGS(MKTEMP, mktemp)
 AC_PATH_PROGS(SSH, ssh)
 AC_PATH_PROGS(QSUB, qsub)
+AC_PATH_PROGS(QSTAT, qstat)
+AC_PATH_PROGS(QRLS, qrls)
 
 # check that qsub works
 if test ! -z "$QSUB"; then
@@ -65,8 +67,6 @@ else
 fi
 AC_SUBST(QSUB_TERSE_OPT)
 
-AC_PATH_PROGS(QSTAT, qstat)
-
 # check qstat parameter (-j)
 if test "${QSUB_WORKS}" = "yes"; then
  echo -n "checking whether qstat accepts -j... "
@@ -83,7 +83,6 @@ else
 fi
 AC_SUBST(QSTAT_J_OPT)
 
-AC_PATH_PROGS(QRLS, qrls)
 
 # Search awk
 
