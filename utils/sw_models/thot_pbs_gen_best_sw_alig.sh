@@ -39,14 +39,12 @@ usage()
     echo "-shu               : Shuffle input files before splitting them."
     echo "-qs <string>       : Specific options to be given to the qsub command"
     echo "                     (example: -qs \"-l pmem=1gb\")."
-    echo "-tdir <string>     : Directory for temporary files."
+    echo "-tdir <string>     : Directory for temporary files (/tmp by default)."
     echo "                     NOTES:"
     echo "                      a) give absolute paths when using pbs clusters."
     echo "                      b) ensure there is enough disk space in the partition."
     echo "-sdir <string>     : Absolute path of a directory common to all"
-    echo "                     processors. If not given, the directory for"
-    echo "                     temporaries will be used (/tmp or the"
-    echo "                     directory given by means of the -tdir option)."
+    echo "                     processors. If not given, \$HOME will be used."
     echo "                     NOTES:"
     echo "                      a) give absolute paths when using pbs clusters."
     echo "                      b) ensure there is enough disk space in the partition."
@@ -82,14 +80,13 @@ set_tmp_dir()
 
 set_shared_dir()
 {
-    if [ -z "$sdir" ]; then
-        # if not given, SDIR will be created in the $TMP directory
-        SDIR="${TMP}/thot_pbs_gen_best_sw_alig_sdir_${PPID}_$$"
-        mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
-    else
-        SDIR="${sdir}/thot_pbs_gen_best_sw_alig_sdir_${PPID}_$$"
-        mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
+    if [ ! -d ${sdir} ]; then
+        echo "Error: shared directory does not exist"
+        return 1;
     fi
+
+    SDIR="${sdir}/thot_pbs_gen_best_sw_alig_sdir_${PPID}_$$"
+    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
 
     # Create temporary subdirectories
     chunks_dir=$SDIR/chunks
@@ -359,7 +356,7 @@ pr_given=0
 sw_given=0
 shu_given=0
 qs_given=0
-sdir=""
+sdir=$HOME
 s_given=0
 t_given=0
 o_given=0
@@ -389,8 +386,6 @@ while [ $# -ne 0 ]; do
         "-sdir") shift
             if [ $# -ne 0 ]; then
                 sdir=$1                
-            else
-                sdir=""
             fi
             ;;
         "-sw") shift
