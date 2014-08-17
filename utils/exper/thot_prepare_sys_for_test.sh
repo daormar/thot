@@ -93,6 +93,13 @@ create_lm_files()
         mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; exit 1; }
     fi
 
+    # Check availability of lm files
+    nlines=`ls ${lmfile}* 2>/dev/null | $WC -l`
+    if [ $nlines -eq 0 ]; then
+        echo "Error! language model files could not be found: ${lmfile}"
+        exit 1
+    fi
+
     # Create lm files
     for file in `ls ${lmfile}*`; do
             # Create hard links for each file
