@@ -254,27 +254,22 @@ else
     echo -n ""> ${TDIR}/adj.img
 fi
 
+# Downhill simplex algorithm loop
 while [ $end -ne 1 ]; do
     if [ "${USE_NR_ROUTINES}" = "yes" ]; then
         ${bindir}/dhs_step_by_step_min_nr -va ${vars} ${iv_opt} ${lambda_opt} \
             ${bias_opt} -i ${TDIR}/adj.img -ftol ${ftol} \
             ${verbose_opt} > ${TDIR}/adj.out 2> ${TDIR}/adj.log
+        dhs_err_code=$?
     else
         ${bindir}/thot_dhs_step_by_step_min -va ${vars} ${iv_opt} \
             -i ${TDIR}/adj.img -ftol ${ftol} \
             ${verbose_opt} > ${TDIR}/adj.out 2> ${TDIR}/adj.log
+        dhs_err_code=$?
     fi
     cat ${TDIR}/adj.out >> ${TDIR}/adj.xval
-    err_msg=`tail -2 ${TDIR}/adj.log | head -1 | awk '{printf"%s",$1}'`
-    if [ "${err_msg}" = "Solution" -o "${err_msg}" = "Maximum" ]; then
-        # No more evaluations of the target function are required or
-        # maximum number of function evaluations exceeded
-        cp ${TDIR}/adj.out ${outpref}.out
-        cp ${TDIR}/adj.xval ${outpref}.xval
-        cp ${TDIR}/adj.img ${outpref}.img
-        cp ${TDIR}/adj.log ${outpref}.log
-        end=1
-    else
+    err_msg=`tail -1 ${TDIR}/adj.log`
+    if [ "${err_msg}" = "Image for x required!" ]; then
         # A new evaluation of the target function is required
         values=`cat ${TDIR}/adj.out`
         ${target_func} ${TDIR} ${values} >> ${TDIR}/adj.img || trgfunc_error="yes"
@@ -292,6 +287,19 @@ while [ $end -ne 1 ]; do
             # Return with error code
             exit 1 
         fi
-
+    else
+        # No more evaluations of the target function are required or
+        # there was an error (e.g. maximum number of function
+        # evaluations exceeded)
+        cp ${TDIR}/adj.out ${outpref}.out
+        cp ${TDIR}/adj.xval ${outpref}.xval
+        cp ${TDIR}/adj.img ${outpref}.img
+        cp ${TDIR}/adj.log ${outpref}.log
+        end=1
+        
+        # Inform about errors if any
+        if [ ${dhs_err_code} -ne 0 ]; then
+            echo "Downhill simplex algorithm exited with error status, see file ${outpref}.log" >&2
+        fi
     fi
 done
