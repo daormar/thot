@@ -80,6 +80,24 @@ get_absolute_path()
 }
 
 ########
+check_if_file_is_desc()
+{
+    file=$1
+    if [ ! -f $file ]; then
+        # Files does not exist
+        echo 0
+    else
+        # File exists
+        nl=`$HEAD -1 $file | $GREP -e "thot lm descriptor" -e "thot tm descriptor" | $WC -l`
+        if [ $nl -eq 0 ]; then
+            echo 0
+        else
+            echo 1
+        fi
+    fi
+}
+
+########
 create_lm_files()
 {
     # Obtain path of lm file
@@ -93,21 +111,38 @@ create_lm_files()
         mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; exit 1; }
     fi
 
-    # Check availability of lm files
-    nlines=`ls ${lmfile}* 2>/dev/null | $WC -l`
-    if [ $nlines -eq 0 ]; then
-        echo "Error! language model files could not be found: ${lmfile}"
-        exit 1
-    fi
+    # Check if tm file is a descriptor
+    is_desc=`check_if_file_is_desc ${lmfile}`
 
-    # Create lm files
-    for file in `ls ${lmfile}*`; do
+    if [ ${is_desc} -eq 1 ]; then
+        # TBD
+        echo TBD
+    else
+        # Create main directory
+        if [ ! -d ${outd}/lm/main ]; then
+            mkdir ${outd}/lm/main || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
+        fi
+
+        # Check availability of lm files
+        nlines=`ls ${lmfile}* 2>/dev/null | $WC -l`
+        if [ $nlines -eq 0 ]; then
+            echo "Error! language model files could not be found: ${lmfile}"
+            exit 1
+        fi
+        
+        # Create lm files
+        for file in `ls ${lmfile}*`; do
             # Create hard links for each file
-            $LN -f $file ${outd}/lm || { echo "Error while preparing language model files" >&2 ; exit 1; }
-    done
+            $LN -f $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; exit 1; }
+        done
 
-    # Obtain new lm file name
-    newlmfile=${outd}/lm/${baselmfile}
+        # Obtain new lm file name
+        newlmfile=${outd}/lm/${baselmfile}
+
+        # Create descriptor
+        echo "thot lm descriptor" > ${outd}/lm/lm_desc
+        echo "jm $newlmfile main" >> ${outd}/lm/lm_desc
+    fi
 }
 
 ########
@@ -124,32 +159,49 @@ create_tm_files()
     tmfile=`$GREP "\-tm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
     basetmfile=`basename $tmfile`
 
-    # Check availability of tm files
-    nlines=`ls ${tmfile}* 2>/dev/null | $WC -l`
-    if [ $nlines -eq 0 ]; then
-        echo "Error! translation model files could not be found: ${tmfile}"
-        exit 1
-    fi
+    # Check if tm file is a descriptor
+    is_desc=`check_if_file_is_desc ${tmfile}`
 
-    # Create tm files
-    for file in `ls ${tmfile}*`; do
-        if [ $file != ${tmfile}.ttable ]; then
-            # Create hard links for the all of the files except the phrase table
-            $LN -f $file ${outd}/tm || { echo "Error while preparing translation model files" >&2 ; exit 1; }
+    if [ ${is_desc} -eq 1 ]; then
+        # TBD
+        echo TBD
+    else
+        # Create main directory
+        if [ ! -d ${outd}/tm/main ]; then
+            mkdir ${outd}/tm/main || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
         fi
-    done
 
-    # Obtain new tm file name
-    newtmfile=${outd}/tm/${basetmfile}
+        # Check availability of tm files
+        nlines=`ls ${tmfile}* 2>/dev/null | $WC -l`
+        if [ $nlines -eq 0 ]; then
+            echo "Error! translation model files could not be found: ${tmfile}"
+            exit 1
+        fi
+
+        # Create tm files
+        for file in `ls ${tmfile}*`; do
+            if [ $file != ${tmfile}.ttable ]; then
+                # Create hard links for the all of the files except the phrase table
+                $LN -f $file ${outd}/tm/main || { echo "Error while preparing translation model files" >&2 ; exit 1; }
+            fi
+        done
+
+        # Obtain new tm file name
+        newtmfile=${outd}/tm/main/${basetmfile}
+
+        # Create descriptor
+        echo "thot tm descriptor" > ${outd}/tm/tm_desc
+        echo "$newtmfile main" >> ${outd}/tm/tm_desc
+    fi
 }
 
 ########
 filter_ttable()
 {
 # ${bindir}/thot_filter_ttable -t ${tmfile}.ttable \
-    #     -c $tcorpus -n 20 -T $tdir > ${outd}/tm/${basetmfile}.ttable 2> ${outd}/tm/${basetmfile}.ttable.log
+    #     -c $tcorpus -n 20 -T $tdir > ${outd}/tm/${basetmfile}.ttable 2> ${outd}/tm/main/${basetmfile}.ttable.log
 ${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
-        -c $tcorpus -n 20 ${qs_opt} "${qs_par}" -T $tdir -o ${outd}/tm/${basetmfile}.ttable
+        -c $tcorpus -n 20 ${qs_opt} "${qs_par}" -T $tdir -o ${outd}/tm/main/${basetmfile}.ttable
 }
 
 ########

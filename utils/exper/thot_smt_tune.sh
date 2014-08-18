@@ -86,26 +86,75 @@ get_absolute_path()
 }
 
 ########
+check_if_file_is_desc()
+{
+    file=$1
+    if [ ! -f $file ]; then
+        # Files does not exist
+        echo 0
+    else
+        # File exists
+        nl=`$HEAD -1 $file | $GREP -e "thot lm descriptor" -e "thot tm descriptor" | $WC -l`
+        if [ $nl -eq 0 ]; then
+            echo 0
+        else
+            echo 1
+        fi
+    fi
+}
+
+########
 create_lm_files()
 {
-    # Check availability of lm files
-    nlines=`ls ${lmfile}* 2>/dev/null | $WC -l`
-    if [ $nlines -eq 0 ]; then
-        echo "Error! language model files could not be found: ${lmfile}"
-        exit 1
+    # Obtain path of lm file
+    lmfile=`$GREP "\-lm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
+    baselmfile=`basename $lmfile`
+
+    # Create directory for lm files
+    if [ -d ${outd}/lm ]; then
+        echo "Warning! directory for language model does exist" >&2 
+    else
+        mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; exit 1; }
     fi
 
-    # Create lm files
-    for file in `ls ${lmfile}*`; do
-        if [ $file = ${lmfile}.weights ]; then
-            # Create regular file for the weights
-            cp ${lmfile}.weights ${outd}/lm || { echo "Error while preparing language model files" >&2 ; exit 1; }
-        else
-            # Create hard links for the rest of the files
-            $LN -f $file ${outd}/lm || { echo "Error while preparing language model files" >&2 ; exit 1; }
+    # Check if tm file is a descriptor
+    is_desc=`check_if_file_is_desc ${lmfile}`
+
+    if [ ${is_desc} -eq 1 ]; then
+        # TBD
+        echo TBD
+    else
+        # Create main directory
+        if [ ! -d ${outd}/lm/main ]; then
+            mkdir ${outd}/lm/main || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
         fi
-#        cp $file ${outd}/lm || { echo "Error while preparing language model files" >&2 ; exit 1; }
-    done
+
+        # Check availability of lm files
+        nlines=`ls ${lmfile}* 2>/dev/null | $WC -l`
+        if [ $nlines -eq 0 ]; then
+            echo "Error! language model files could not be found: ${lmfile}"
+            exit 1
+        fi
+
+        # Create lm files
+        for file in `ls ${lmfile}*`; do
+            if [ $file = ${lmfile}.weights ]; then
+                # Create regular file for the weights
+                cp ${lmfile}.weights ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; exit 1; }
+            else
+                # Create hard links for the rest of the files
+                $LN -f $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; exit 1; }
+            fi
+            #        cp $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; exit 1; }
+        done
+        
+        # Obtain new lm file name
+        newlmfile=${outd}/lm/main/${baselmfile}
+
+        # Create descriptor
+        echo "thot lm descriptor" > ${outd}/lm/lm_desc
+        echo "jm $newlmfile main" >> ${outd}/lm/lm_desc
+    fi
 }
 
 
@@ -131,23 +180,11 @@ ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
 
 ########
 tune_lm()
-{
-    # Obtain path of lm file
-    lmfile=`$GREP "\-lm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
-    baselmfile=`basename $lmfile`
+{    
+    echo "Tuning language model..." >&2
 
-    # Create directory for lm files
-    if [ -d ${outd}/lm ]; then
-        echo "Warning! directory for language model does exist" >&2 
-    else
-        mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; exit 1; }
-    fi
-    
     # Create initial lm files
     create_lm_files
-
-    # Obtain new lm file name
-    newlmfile=${outd}/lm/${baselmfile}
 
     # Tune language model
     lm_downhill
@@ -156,44 +193,106 @@ tune_lm()
 ########
 create_tm_dev_files()
 {
-    # Check availability of tm_dev files
-    nlines=`ls ${tmfile}* 2>/dev/null | $WC -l`
-    if [ $nlines -eq 0 ]; then
-        echo "Error! translation model files could not be found: ${tmfile}"
-        exit 1
+    # Obtain path of tm file
+    tmfile=`$GREP "\-tm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
+    basetmfile=`basename $tmfile`
+
+    # Create directory for tm files for development corpus
+    if [ -d ${outd}/tm_dev ]; then
+        echo "Warning! directory for dev. translation model does exist" >&2 
+    else
+        mkdir -p ${outd}/tm_dev || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
     fi
 
-    # Create tm files
-    for file in `ls ${tmfile}*`; do
-        if [ $file != ${tmfile}.ttable ]; then
-            # Create hard links for all of the files except the phrase table
-            $LN -f $file ${outd}/tm_dev || { echo "Error while preparing translation model files" >&2 ; exit 1; }
+    # Check if tm file is a descriptor
+    is_desc=`check_if_file_is_desc ${tmfile}`
+
+    if [ ${is_desc} -eq 1 ]; then
+        # TBD
+        echo TBD
+    else
+        # Create main directory
+        if [ ! -d ${outd}/tm_dev/main ]; then
+            mkdir ${outd}/tm_dev/main || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
         fi
-    done
+
+        # Check availability of tm files
+        nlines=`ls ${tmfile}* 2>/dev/null | $WC -l`
+        if [ $nlines -eq 0 ]; then
+            echo "Error! translation model files could not be found: ${tmfile}"
+            exit 1
+        fi
+
+        # Create tm files
+        for file in `ls ${tmfile}*`; do
+            if [ $file != ${tmfile}.ttable ]; then
+                # Create hard links for all of the files except the phrase table
+                $LN -f $file ${outd}/tm_dev/main || { echo "Error while preparing translation model files" >&2 ; exit 1; }
+            fi
+        done
+        
+        # Obtain new tm file name for development corpus
+        newtmdevfile=${outd}/tm_dev/main/${basetmfile}
+
+        # Create descriptor
+        echo "thot tm descriptor" > ${outd}/tm_dev/tm_desc
+        echo "$newtmdevfile main" >> ${outd}/tm_dev/tm_desc
+    fi
 }
 
 ########
 create_tm_files()
 {
-    # Check availability of tm_dev files
-    nlines=`ls ${tmfile}* 2>/dev/null | $WC -l`
-    if [ $nlines -eq 0 ]; then
-        echo "Error! translation model files could not be found: ${tmfile}"
-        exit 1
+    # Obtain path of tm file
+    tmfile=`$GREP "\-tm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
+    basetmfile=`basename $tmfile`
+
+    # Create directory for tm files
+    if [ -d ${outd}/tm ]; then
+        echo "Warning! directory for translation model does exist" >&2 
+    else
+        mkdir -p ${outd}/tm || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
     fi
 
-    # Create tm files
-    for file in `ls ${tmfile}*`; do
+    # Check if tm file is a descriptor
+    is_desc=`check_if_file_is_desc ${tmfile}`
+
+    if [ ${is_desc} -eq 1 ]; then
+        # TBD
+        echo TBD
+    else
+        # Create main directory
+        if [ ! -d ${outd}/tm/main ]; then
+            mkdir ${outd}/tm/main || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
+        fi
+
+        # Check availability of tm files
+        nlines=`ls ${tmfile}* 2>/dev/null | $WC -l`
+        if [ $nlines -eq 0 ]; then
+            echo "Error! translation model files could not be found: ${tmfile}"
+            exit 1
+        fi
+
+        # Create tm files
+        for file in `ls ${tmfile}*`; do
             # Create hard links for each file
-            $LN -f $file ${outd}/tm || { echo "Error while preparing translation model files" >&2 ; exit 1; }
-    done
+            $LN -f $file ${outd}/tm/main || { echo "Error while preparing translation model files" >&2 ; exit 1; }
+        done
+
+        # Obtain new tm file name
+        newtmfile=${outd}/tm/main/${basetmfile}
+
+        # Create descriptor
+        echo "thot tm descriptor" > ${outd}/tm/tm_desc
+        echo "$newtmfile main" >> ${outd}/tm/tm_desc
+    fi
 }
 
 ########
 filter_ttable()
 {
 ${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
-        -c $scorpus -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${outd}/tm_dev/${basetmfile}.ttable
+        -c $scorpus -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${outd}/tm_dev/main/${basetmfile}.ttable
 }
 
 ########
@@ -277,9 +376,7 @@ create_cfg_file_for_tuned_sys()
 ########
 tune_loglin()
 {
-    # Obtain path of lm file
-    lmfile=`$GREP "\-lm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
-    baselmfile=`basename $lmfile`
+    echo "Tuning loglinear model weights..." >&2
 
     # Create directory for lm files
     if [ -d ${outd}/lm ]; then
@@ -294,27 +391,10 @@ tune_loglin()
         create_lm_files
     fi
 
-    # Obtain new lm file name
-    newlmfile=${outd}/lm/${baselmfile}
-
     ######
-
-    # Obtain path of tm file
-    tmfile=`$GREP "\-tm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
-    basetmfile=`basename $tmfile`
-
-    # Create directory for tm files for development corpus
-    if [ -d ${outd}/tm_dev ]; then
-        echo "Warning! directory for dev. translation model does exist" >&2 
-    else
-        mkdir -p ${outd}/tm_dev || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
-    fi
 
     # Create initial tm_dev files
     create_tm_dev_files
-
-    # Obtain new tm file name for development corpus
-    newtmdevfile=${outd}/tm_dev/${basetmfile}
 
     # Filter translation table
     filter_ttable
@@ -326,13 +406,6 @@ tune_loglin()
     loglin_downhill
 
     ######
-
-    # Create directory for tm files
-    if [ -d ${outd}/tm ]; then
-        echo "Warning! directory for translation model does exist" >&2 
-    else
-        mkdir -p ${outd}/tm || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
-    fi
 
     # Create initial tm files
     create_tm_files

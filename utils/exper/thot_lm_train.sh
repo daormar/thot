@@ -88,8 +88,8 @@ get_absolute_path()
 ########
 create_desc_file()
 {
-    echo "tool: thot_lm_train" > ${outd}/lm_desc
-    echo "main ; corpus file: ${corpus} ; n: ${n_val} ; prefix: $prefix" >> ${outd}/lm_desc
+    echo "thot lm descriptor # tool: thot_lm_train" > ${outd}/lm_desc
+    echo "jm $prefix main # corpus file: ${corpus}" >> ${outd}/lm_desc
 }
 
 ########
