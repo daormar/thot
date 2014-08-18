@@ -193,6 +193,7 @@ else
             "-sdir") shift
                 if [ $# -ne 0 ]; then
                     sdir=$1                
+                fi
                 ;;
             "-debug") debug=1
                 ;;
