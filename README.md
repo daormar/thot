@@ -197,11 +197,11 @@ Advisors: Ismael García Varea and Francisco Casacuberta. [Download] [11].
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
 "*Online Learning for Interactive Statistical Machine Translation*". 
 Proceedings of the North American Chapter of the Association for Computational Linguistics - 
-Human Language Technologies (NAACL HLT), Los Angeles, US, 2010. pp. 546-554. [Download] [12].
+Human Language Technologies (NAACL HLT), pp. 546-554, Los Angeles, US, 2010. [Download] [12].
 
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
 "*Phrase-level alignment generation using a smoothed loglinear phrase-based statistical alignment model*". 
-Proceedings of European Association for Machine Translation (EAMT), Hamburg, Germany, 2008. pp. 160-169. *Best paper award*. [Download] [13]
+Proceedings of European Association for Machine Translation (EAMT), pp. 160-169, Hamburg, Germany, 2008. *Best paper award*. [Download] [13]
 
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
 "*Thot: a toolkit to train phrase-based models for statistical machine translation*".
