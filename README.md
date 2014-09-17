@@ -158,7 +158,9 @@ If you need additional help, you can:
 Additional information about the theoretical foundations of Thot can be
 found in [Ortiz-Martínez, 2011]. One interesting feature of Thot,
 incremental (or online) estimation of statistical models, is also
-described in [Ortiz-Martínez et al., 2010].
+described in [Ortiz-Martínez et al., 2010]. Finally, phrase-level
+alignment generation functionality was described in [Ortiz-Martínez et
+al., 2008].
 
 
 Citation
@@ -169,7 +171,7 @@ a citation:
 
 Daniel Ortiz-Martínez, Francisco Casacuberta. 
 *"The New Thot Toolkit for Fully Automatic and Interactive Statistical Machine Translation"*.
-14th Annual Meeting of the European Association for Computational Linguistics: System Demonstrations,
+In Proc. of the European Association for Computational Linguistics (EACL): System Demonstrations,
 Gothenburg, Sweden, April 2014. pp. 45-48.
 
 Here is a BiBTeX entry:
@@ -178,7 +180,7 @@ Here is a BiBTeX entry:
 @InProceedings{Ortiz2014,
   author    = {D.~Ortiz-Mart\'{\i}nez and F.~Casacuberta},
   title     = {The New Thot Toolkit for Fully Automatic and Interactive Statistical Machine Translation},
-  booktitle = {14th Annual Meeting of the European Association for Computational Linguistics: System Demonstrations},
+  booktitle = {Proc. of the European Association for Computational Linguistics (EACL): System Demonstrations},
   year      = {2014},
   month     = {April},
   address   = {Gothenburg, Sweden},
@@ -196,16 +198,16 @@ Advisors: Ismael García Varea and Francisco Casacuberta. [Download] [11].
 
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
 "*Online Learning for Interactive Statistical Machine Translation*". 
-Proceedings of the North American Chapter of the Association for Computational Linguistics - 
-Human Language Technologies (NAACL HLT), pp. 546-554, Los Angeles, US, 2010. [Download] [12].
+In Proc. of the North American Chapter of the Association for Computational Linguistics - 
+Human Language Technologies (NAACL-HLT), pp. 546-554, Los Angeles, US, 2010. [Download] [12].
 
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
 "*Phrase-level alignment generation using a smoothed loglinear phrase-based statistical alignment model*". 
-Proceedings of European Association for Machine Translation (EAMT), pp. 160-169, Hamburg, Germany, 2008. *Best paper award*. [Download] [13]
+In Proc. of the European Association for Machine Translation (EAMT), pp. 160-169, Hamburg, Germany, 2008. *Best paper award*. [Download] [13]
 
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
 "*Thot: a toolkit to train phrase-based models for statistical machine translation*".
-Proc. of the Tenth Machine Translation Summit (MT-Summit),
+In Proc. of the Machine Translation Summit (MT-Summit),
 Phuket, Thailand, September 2005. [Download] [14]
 
 
