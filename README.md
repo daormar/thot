@@ -227,7 +227,7 @@ Last updated: 17 September 2014
 [6]: http://www.gnu.org/copyleft/lgpl.html
 [7]: https://github.com/daormar/thot/archive/master.zip
 [8]: https://github.com/daormar/thot/issues
-[9]: mailto:daormar2@gmail.com
+[9]: mailto:dortiz@prhlt.upv.es
 [10]: http://groups.google.com/group/casmacat-support/boxsubscribe
 [11]: https://www.prhlt.upv.es/aigaion2/attachments/dortiz_thesis_2011.pdf-d12d165f9a2b01b0697000ed7c08c4bc.pdf
 [12]: http://aclweb.org/anthology-new/N/N10/N10-1079.pdf
