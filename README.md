@@ -182,7 +182,7 @@ Here is a BiBTeX entry:
   year      = {2014},
   month     = {April},
   address   = {Gothenburg, Sweden},
-  pages     = "To appear",
+  pages     = "45--48",
 }
 </pre>
 
@@ -190,19 +190,23 @@ Here is a BiBTeX entry:
 Literature
 ----------
 Daniel Ortiz-Martínez,
-*Advances in Fully-Automatic and Interactive Phrase-Based Statistical Machine Translation*. 
+"*Advances in Fully-Automatic and Interactive Phrase-Based Statistical Machine Translation*". 
 PhD Thesis. Universidad Politécnica de Valencia. 2011. 
 Advisors: Ismael García Varea and Francisco Casacuberta. [Download] [11].
 
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
-*Online Learning for Interactive Statistical Machine Translation*. 
+"*Online Learning for Interactive Statistical Machine Translation*". 
 Proceedings of the North American Chapter of the Association for Computational Linguistics - 
 Human Language Technologies (NAACL HLT), 2010. pp. 546-554. [Download] [12].
 
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
-*"Thot: a toolkit to train phrase-based models for statistical machine translation"*.
-Proc. of the Tenth Machine Translation Summit,
-Phuket, Thailand, September 2005. [Download] [13]
+"*Phrase-level alignment generation using a smoothed loglinear phrase-based statistical alignment model*". 
+Proceedings of European Association for Machine Translation (EAMT), 2008. pp. 160-169. *Best paper award*. [Download] [13]
+
+Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
+"*Thot: a toolkit to train phrase-based models for statistical machine translation*".
+Proc. of the Tenth Machine Translation Summit (MT-Summit),
+Phuket, Thailand, September 2005. [Download] [14]
 
 
 Acknowledgements
@@ -210,10 +214,10 @@ Acknowledgements
 Thot is currently supported by the European Union under the [CasMaCat
 research project] [5]. Thot has also received support from the Spanish
 Government in a number of research projects, such as the [MIPRCV
-project] [14] that belongs to the [CONSOLIDER programme] [15].
+project] [15] that belongs to the [CONSOLIDER programme] [16].
 
 
-Last updated: 26 April 2014
+Last updated: 17 September 2014
 
 [1]: https://www.prhlt.upv.es/page/member?user=dortiz
 [2]: https://www.prhlt.upv.es/
@@ -227,6 +231,7 @@ Last updated: 26 April 2014
 [10]: http://groups.google.com/group/casmacat-support/boxsubscribe
 [11]: https://www.prhlt.upv.es/aigaion2/attachments/dortiz_thesis_2011.pdf-d12d165f9a2b01b0697000ed7c08c4bc.pdf
 [12]: http://aclweb.org/anthology-new/N/N10/N10-1079.pdf
-[13]: http://www.mt-archive.info/MTS-2005-Ortiz-Martinez.pdf
-[14]: http://miprcv.iti.upv.es/
-[15]: http://www.ingenio2010.es/
+[13]: http://mt-archive.info/EAMT-2008-Ortiz-Martinez.pdf
+[14]: http://www.mt-archive.info/MTS-2005-Ortiz-Martinez.pdf
+[15]: http://miprcv.iti.upv.es/
+[16]: http://www.ingenio2010.es/
