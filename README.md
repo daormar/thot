@@ -159,8 +159,8 @@ Additional information about the theoretical foundations of Thot can be
 found in [Ortiz-Martínez, 2011]. One interesting feature of Thot,
 incremental (or online) estimation of statistical models, is also
 described in [Ortiz-Martínez et al., 2010]. Finally, phrase-level
-alignment generation functionality was described in [Ortiz-Martínez et
-al., 2008].
+alignment generation functionality implemented in Thot was proposed in
+[Ortiz-Martínez et al., 2008].
 
 
 Citation
