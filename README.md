@@ -85,14 +85,16 @@ the following:
      $ make
      $ make install
 
-NOTE: the installation directory can be the same directory where the
-Thot package was decompressed.
-
-In order to build and use Thot on Windows platforms, the linux-like
-environment called Cygwin must be downloaded and installed previously.
+The installation directory can be the same directory where the Thot
+package was decompressed.
 
 See "INSTALL" file for more information.
 
+IMPORTANT NOTE: if Thot is being installed in a PBS cluster (a cluster
+providing `qsub` and other related tools), it is important that the
+`configure` script is executed in the main cluster node, so as to
+properly detect the cluster configuration (do not execute it in an
+interactive session).
 
 Installation Including the CasMaCat Workbench
 ---------------------------------------------
