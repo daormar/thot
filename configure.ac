@@ -71,7 +71,7 @@ AC_SUBST(QSUB_TERSE_OPT)
 if test "${QSUB_WORKS}" = "yes"; then
  echo -n "checking whether qstat accepts -j... "
  jid=0
- ${QSTAT} -j ${jid} 2>&1 | $GREP "invalid option"
+ ${QSTAT} -j ${jid} 2>&1 | $GREP "invalid option" >/dev/null 2>&1
  if test $? -eq 0; then
   QSTAT_J_OPT=""
   echo "no"
