@@ -73,11 +73,11 @@ if test "${QSUB_WORKS}" = "yes"; then
  jid=0
  ${QSTAT} -j ${jid} 2>&1 | $GREP "invalid option"
  if test $? -eq 0; then
-  QSTAT_J_OPT="-j"
-  echo "yes"
- else
   QSTAT_J_OPT=""
   echo "no"
+ else
+  QSTAT_J_OPT="-j"
+  echo "yes"
  fi 
 else
  QSTAT_J_OPT=""
