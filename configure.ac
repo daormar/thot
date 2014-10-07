@@ -427,18 +427,10 @@ AC_DEFINE_UNQUOTED(SH_TYPE,${THOT_SH_TYPE},[Define which sentence handler is to 
 
 # Set different models and decoder types based on previously defined
 # shell variables
-export THOT_LM_TYPE="THOT_INCR_JEL_MER_LM"
-export THOT_PBM_TYPE="ML_PBM"
-export THOT_SMT_MODEL_TYPE="PBLSWMLI"
-export THOT_SW_MODEL_TYPE="THOT_SINCR_IBM2_SWM"
-export THOT_AT_TYPE="WG_UNCTRANS"
-export THOT_WGP_TYPE="STD_WGP"
-export THOT_ECM_TYPE="PFSM_FOR_WG_ECM"
-export THOT_SW_MODEL_TYPE="THOT_INCR_HMM_P0_SWM"
 
 # Language model type used
 if test "$THOT_LM_TYPE" = ""; then
-   THOT_LM_TYPE="THOT_BACKOFF_LM"
+   THOT_LM_TYPE="THOT_INCR_JEL_MER_LM"
 fi
 AC_DEFINE_UNQUOTED(LM_TYPE,${THOT_LM_TYPE},[Define which language model is to be used])
 
@@ -450,13 +442,14 @@ AC_DEFINE_UNQUOTED(PBM_TYPE,${THOT_PBM_TYPE},[Define which phrase-based model is
 
 # Smt model type used
 if test "$THOT_SMT_MODEL_TYPE" = ""; then
-   THOT_SMT_MODEL_TYPE="PB"
+   THOT_SMT_MODEL_TYPE="PBLSWMLI"
 fi
 AC_DEFINE_UNQUOTED(SMT_MODEL_TYPE,${THOT_SMT_MODEL_TYPE},[Define which SMT model is to be used])
 
 # Sw model type used
 if test "$THOT_SW_MODEL_TYPE" = ""; then
-   THOT_SW_MODEL_TYPE="THOT_MIX_IBM1_SWM"
+   THOT_SW_MODEL_TYPE="THOT_INCR_HMM_P0_SWM"
+#   THOT_SW_MODEL_TYPE="THOT_SINCR_IBM2_SWM"
 fi
 AC_DEFINE_UNQUOTED(SW_MODEL_TYPE,${THOT_SW_MODEL_TYPE},[Define which single word model is to be used])
 
@@ -468,7 +461,7 @@ AC_DEFINE_UNQUOTED(MSTACK_TYPE,${THOT_MSTACK_TYPE},[Define which multi stack typ
 
 # Error correcting model type used
 if test "$THOT_ECM_TYPE" = ""; then
-   THOT_ECM_TYPE="PFSM_ECM"
+   THOT_ECM_TYPE="PFSM_FOR_WG_ECM"
 fi
 AC_DEFINE_UNQUOTED(ECM_TYPE,${THOT_ECM_TYPE},[Define which general-purpose error correcting model is to be used])
 
@@ -486,7 +479,7 @@ AC_DEFINE_UNQUOTED(WGP_TYPE,${THOT_WGP_TYPE},[Define which word-graph processor 
 
 # Assisted translation type used
 if test "$THOT_AT_TYPE" = ""; then
-   THOT_AT_TYPE="NB_UNCTRANS"
+   THOT_AT_TYPE="WG_UNCTRANS"
 fi
 AC_DEFINE_UNQUOTED(AT_TYPE,${THOT_AT_TYPE},[Define which assisted translator type is to be used])
 
