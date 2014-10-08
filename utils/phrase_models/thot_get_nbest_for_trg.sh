@@ -7,7 +7,7 @@
 # translations whose probability is higher than n*max_prob, where
 # max_prob is the maximum probability of all possible translations for
 # t~
-# NOTE: here, source phrases are those that appears in first place in
+# NOTE: here, source phrases are those that appear in first place in
 # the phrase table
 
 filter_nbest()
