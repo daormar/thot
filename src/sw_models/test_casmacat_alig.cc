@@ -29,6 +29,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
+#include "ThotIbm2AlignerFactory.h"
 #include "ThotHmmAlignerFactory.h"
 #include <iostream>
 #include <iomanip>
@@ -55,6 +56,7 @@ using namespace std;
 //--------------- main function
 int main()
 {
+  ThotIbm2AlignerFactory tibm2af;
   ThotHmmAlignerFactory thaf;
       // TBD
   return EXIT_SUCCESS;

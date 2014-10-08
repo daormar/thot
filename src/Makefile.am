@@ -97,31 +97,38 @@ incr_models/CacheLmIncrCpTable.cc incr_models/CacheIncrJelMerNgramLM.cc
 sw_models_h= sw_models/WeightedIncrNormSlm.h				\
 sw_models/SwModelsSwModelTypes.h sw_models/SwModelsSlmTypes.h		\
 sw_models/SwModelsShTypes.h sw_models/SwDefs.h sw_models/_swAligModel.h	\
+sw_models/SmoothedIncrIbm2AligModel.h					\
 sw_models/SmoothedIncrIbm1AligModel.h sw_models/SentPairCont.h		\
 sw_models/_sentLengthModel.h sw_models/SentenceHandler.h		\
 sw_models/LightSentenceHandler.h sw_models/LexAuxVar.h			\
 sw_models/_incrSwAligModel.h sw_models/IncrLexTable.h			\
+sw_models/IncrIbm2AligTable.h sw_models/IncrIbm2AligModel.h		\
 sw_models/IncrIbm1AligModel.h sw_models/IncrHmmP0AligModel.h		\
 sw_models/IncrHmmAligTable.h sw_models/IncrHmmAligModel.h		\
 sw_models/HmmAligInfo.h sw_models/DoubleMatrix.h			\
 sw_models/BestLgProbForTrgWord.h sw_models/BaseSwAligModel.h		\
 sw_models/BaseStepwiseAligModel.h sw_models/BaseSentLengthModel.h	\
 sw_models/BaseSentenceHandler.h sw_models/aSourceHmm.h			\
-sw_models/aSource.h sw_models/ashPidxPairHashF.h			\
-sw_models/anjm1ip_anjiMatrix.h sw_models/anjiMatrix.h
+sw_models/aSourceHashF.h sw_models/aSource.h				\
+sw_models/ashPidxPairHashF.h sw_models/anjm1ip_anjiMatrix.h		\
+sw_models/anjiMatrix.h
 sw_models_defs= sw_models/WeightedIncrNormSlm.cc			\
+sw_models/SmoothedIncrIbm2AligModel.cc					\
 sw_models/SmoothedIncrIbm1AligModel.cc sw_models/_sentLengthModel.cc	\
 sw_models/SentenceHandler.cc sw_models/LightSentenceHandler.cc		\
-sw_models/IncrLexTable.cc sw_models/IncrIbm1AligModel.cc		\
+sw_models/IncrLexTable.cc sw_models/IncrIbm2AligTable.cc		\
+sw_models/IncrIbm2AligModel.cc sw_models/IncrIbm1AligModel.cc		\
 sw_models/IncrHmmP0AligModel.cc sw_models/IncrHmmAligTable.cc		\
 sw_models/IncrHmmAligModel.cc sw_models/DoubleMatrix.cc			\
 sw_models/aSourceHmm.cc sw_models/aSource.cc				\
 sw_models/anjm1ip_anjiMatrix.cc sw_models/anjiMatrix.cc
 
 if CASMACAT_LIB_ENABLED
-casmacat_aligner_h= sw_models/ThotHmmAligner.h	\
+casmacat_aligner_h= sw_models/ThotIbm2AlignerFactory.h	\
+sw_models/ThotIbm2Aligner.h sw_models/ThotHmmAligner.h	\
 sw_models/ThotHmmAlignerFactory.h
-casmacat_aligner_defs= sw_models/ThotHmmAligner.cc	\
+casmacat_aligner_defs= sw_models/ThotIbm2AlignerFactory.cc	\
+sw_models/ThotIbm2Aligner.cc sw_models/ThotHmmAligner.cc	\
 sw_models/ThotHmmAlignerFactory.cc
 
 casmacat_confid_h= sw_models/ThotIbmMaxConfid.h	\
