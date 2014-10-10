@@ -281,11 +281,11 @@ void PhrLocalSwLiTm::setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPar
   _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >::setOnlineTrainingPars(_onlineTrainingPars,verbose);
     
       // Set R parameter for the direct and the inverse single word models
-  _incrSwAligModel<CURR_SW_MODEL_TYPE::PpInfo>* _incrSwAligModelPtr=
-    dynamic_cast<_incrSwAligModel<CURR_SW_MODEL_TYPE::PpInfo>*>(&swModelInfoPtr->swAligModel);
+  _incrSwAligModel<CURR_SWM_TYPE::PpInfo>* _incrSwAligModelPtr=
+    dynamic_cast<_incrSwAligModel<CURR_SWM_TYPE::PpInfo>*>(&swModelInfoPtr->swAligModel);
 
-  _incrSwAligModel<CURR_SW_MODEL_TYPE::PpInfo>* _incrInvSwAligModelPtr=
-    dynamic_cast<_incrSwAligModel<CURR_SW_MODEL_TYPE::PpInfo>*>(&swModelInfoPtr->invSwAligModel);
+  _incrSwAligModel<CURR_SWM_TYPE::PpInfo>* _incrInvSwAligModelPtr=
+    dynamic_cast<_incrSwAligModel<CURR_SWM_TYPE::PpInfo>*>(&swModelInfoPtr->invSwAligModel);
 
   if(_incrSwAligModelPtr && _incrInvSwAligModelPtr)
   {
@@ -553,8 +553,8 @@ int PhrLocalSwLiTm::batchRetrainSentPair(const char *srcSent,
     for(unsigned int i=0;i<onlineTrainingPars.emIters;++i)
     {
           // Execute batch training
-      _incrSwAligModel<CURR_SW_MODEL_TYPE::PpInfo>* iswamPtr=
-        dynamic_cast<_incrSwAligModel<CURR_SW_MODEL_TYPE::PpInfo>*>(&swModelInfoPtr->swAligModel);
+      _incrSwAligModel<CURR_SWM_TYPE::PpInfo>* iswamPtr=
+        dynamic_cast<_incrSwAligModel<CURR_SWM_TYPE::PpInfo>*>(&swModelInfoPtr->swAligModel);
 
       if(iswamPtr) iswamPtr->efficientBatchTrainingForRange(batchSentRange,verbose);
     }
@@ -568,7 +568,7 @@ int PhrLocalSwLiTm::batchRetrainSentPair(const char *srcSent,
     for(unsigned int i=0;i<onlineTrainingPars.emIters;++i)
     {
           // Execute batch training
-      _incrSwAligModel<CURR_SW_MODEL_TYPE::PpInfo>* iswamPtr=dynamic_cast<_incrSwAligModel<CURR_SW_MODEL_TYPE::PpInfo>*>(&swModelInfoPtr->invSwAligModel);
+      _incrSwAligModel<CURR_SWM_TYPE::PpInfo>* iswamPtr=dynamic_cast<_incrSwAligModel<CURR_SWM_TYPE::PpInfo>*>(&swModelInfoPtr->invSwAligModel);
       if(iswamPtr) iswamPtr->efficientBatchTrainingForRange(batchSentRange,verbose);
     }
 

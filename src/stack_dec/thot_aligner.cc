@@ -753,10 +753,10 @@ void printConfig(void)
   }
 
       // Print single-word model information
-  cerr << "  - Single-word model type: "<<CURR_SW_MODEL_LABEL<<endl;
-  if(strlen(CURR_SW_MODEL_NOTES)!=0)
+  cerr << "  - Single-word model type: "<<CURR_SWM_LABEL<<endl;
+  if(strlen(CURR_SWM_NOTES)!=0)
   {
-    cerr << "  - Single-word model notes: "<<CURR_SW_MODEL_NOTES<<endl;
+    cerr << "  - Single-word model notes: "<<CURR_SWM_NOTES<<endl;
   }
 
       // Print decoding algorithm information

@@ -33,11 +33,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 struct SwModelInfo
 {
       // sw model members
-  CURR_SW_MODEL_TYPE swAligModel;
+  CURR_SWM_TYPE swAligModel;
   SwModelPars swModelPars;
 
       // Inverse sw model members
-  CURR_SW_MODEL_TYPE invSwAligModel;
+  CURR_SWM_TYPE invSwAligModel;
   SwModelPars invSwModelPars;
 
       // Confidence interval for length model
