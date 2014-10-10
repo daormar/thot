@@ -409,7 +409,8 @@ AC_DEFINE(DISABLE_PREPROC_CODE,,[Define if the pre/post-processing code is disab
 
 # swm type used
 if test "$THOT_SWM_TYPE" = ""; then
-   THOT_SWM_TYPE="INCR_HMM_P0_SWM"
+   THOT_SWM_TYPE="THOT_INCR_HMM_P0_SWM"
+#   THOT_SWM_TYPE="THOT_SINCR_IBM2_SWM"
 fi
 AC_DEFINE_UNQUOTED(SWM_TYPE,${THOT_SWM_TYPE},[Define which sentence length model is to be used])
 
@@ -445,13 +446,6 @@ if test "$THOT_SMT_MODEL_TYPE" = ""; then
    THOT_SMT_MODEL_TYPE="PBLSWMLI"
 fi
 AC_DEFINE_UNQUOTED(SMT_MODEL_TYPE,${THOT_SMT_MODEL_TYPE},[Define which SMT model is to be used])
-
-# Sw model type used
-if test "$THOT_SW_MODEL_TYPE" = ""; then
-   THOT_SW_MODEL_TYPE="THOT_INCR_HMM_P0_SWM"
-#   THOT_SW_MODEL_TYPE="THOT_SINCR_IBM2_SWM"
-fi
-AC_DEFINE_UNQUOTED(SW_MODEL_TYPE,${THOT_SW_MODEL_TYPE},[Define which single word model is to be used])
 
 # Multi stack type used
 if test "$THOT_MSTACK_TYPE" = ""; then
