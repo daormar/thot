@@ -84,7 +84,7 @@ int main(int argc,char *argv[])
  {
   if(pairPlusAligFile[0]==0 && sentPairFile[0]==0)
   {
-   THOT_CURR_SWM_TYPE swModel;
+   CURR_SWM_TYPE swModel;
          
    cerr<<"s: "<<srcSent <<endl;
    cerr<<"t: "<<trgSent <<endl;   
@@ -173,7 +173,7 @@ int processPairAligFile(const char *pairPlusAligFile)
  Vector<PositionIndex> fileAligVec;
  WordAligMatrix waMatrix;
  LgProb lp;
- THOT_CURR_SWM_TYPE swModel;
+ CURR_SWM_TYPE swModel;
 
  if(strcmp(pairPlusAligFile,"-")==0)
  {
@@ -239,7 +239,7 @@ int processSentPairFile(const char *sentPairFile)
  Vector<std::string> srcSentVec;
  Vector<std::string> trgSentVec;
  LgProb lp;
- THOT_CURR_SWM_TYPE swModel;
+ CURR_SWM_TYPE swModel;
 
  if(strcmp(sentPairFile,"-")==0)
  {
@@ -431,7 +431,7 @@ int TakeParameters(int argc,char *argv[])
 void printConfig(void)
 {
   cerr<<"* thot_calc_swm_lgprob configuration: "<<endl<<endl;
-  cerr<<" - single-word model type: "<<THOT_CURR_SWM_LABEL<<endl;
+  cerr<<" - single-word model type: "<<CURR_SWM_LABEL<<endl;
   cerr<<" - sentence length model type: "<<CURR_SLM_LABEL<<endl<<endl;
 }
 

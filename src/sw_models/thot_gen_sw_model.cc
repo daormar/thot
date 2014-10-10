@@ -48,7 +48,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 int processParameters(thot_gen_sw_model_pars pars);
 void emIters(thot_gen_sw_model_pars& pars,
-             BaseSwAligModel<THOT_CURR_SWM_TYPE::PpInfo>* swAligModelPtr,
+             BaseSwAligModel<CURR_SWM_TYPE::PpInfo>* swAligModelPtr,
              pair<unsigned int,unsigned int> wholeTrainRange,
              int verbosity);
 float obtainLr(const thot_gen_sw_model_pars& pars,
@@ -93,7 +93,7 @@ int main(int argc,char *argv[])
 //--------------- processParameters function
 int processParameters(thot_gen_sw_model_pars pars)
 {
-  BaseSwAligModel<THOT_CURR_SWM_TYPE::PpInfo> *swAligModelPtr=new THOT_CURR_SWM_TYPE;
+  BaseSwAligModel<CURR_SWM_TYPE::PpInfo> *swAligModelPtr=new CURR_SWM_TYPE;
   int verbosity=0;
 
       // Load model if -l option was given
@@ -110,7 +110,7 @@ int processParameters(thot_gen_sw_model_pars pars)
 
       // Set maximum size in the dimension of n of the matrix of
       // expected values for incremental sw models
-  _incrSwAligModel<THOT_CURR_SWM_TYPE::PpInfo>* _incrSwAligModelPtr=dynamic_cast<_incrSwAligModel<THOT_CURR_SWM_TYPE::PpInfo>*>(swAligModelPtr);
+  _incrSwAligModel<CURR_SWM_TYPE::PpInfo>* _incrSwAligModelPtr=dynamic_cast<_incrSwAligModel<CURR_SWM_TYPE::PpInfo>*>(swAligModelPtr);
   if(_incrSwAligModelPtr)
   {
     if(pars.r_given)
@@ -222,7 +222,7 @@ int processParameters(thot_gen_sw_model_pars pars)
 
 //--------------- emIters function
 void emIters(thot_gen_sw_model_pars& pars,
-             BaseSwAligModel<THOT_CURR_SWM_TYPE::PpInfo>* swAligModelPtr,
+             BaseSwAligModel<CURR_SWM_TYPE::PpInfo>* swAligModelPtr,
              pair<unsigned int,unsigned int> wholeTrainRange,
              int verbosity)
 {
@@ -327,7 +327,7 @@ void emIters(thot_gen_sw_model_pars& pars,
           if(pars.eb_given)
           {
                 // Execute efficient conventional training
-            _incrSwAligModel<THOT_CURR_SWM_TYPE::PpInfo>* _incrSwAligModelPtr=dynamic_cast<_incrSwAligModel<THOT_CURR_SWM_TYPE::PpInfo>*>(swAligModelPtr);
+            _incrSwAligModel<CURR_SWM_TYPE::PpInfo>* _incrSwAligModelPtr=dynamic_cast<_incrSwAligModel<CURR_SWM_TYPE::PpInfo>*>(swAligModelPtr);
             _incrSwAligModelPtr->efficientBatchTrainingForRange(wholeTrainRange,verbosity);
             if(!pars.nl_given)
             {
@@ -762,8 +762,8 @@ int checkParameters(thot_gen_sw_model_pars& pars)
   }
   
       // Check invalid options when using non-incremental sw models
-  BaseSwAligModel<THOT_CURR_SWM_TYPE::PpInfo> *swAligModelPtr=new THOT_CURR_SWM_TYPE;
-  _incrSwAligModel<THOT_CURR_SWM_TYPE::PpInfo>* _incrSwAligModelPtr=dynamic_cast<_incrSwAligModel<THOT_CURR_SWM_TYPE::PpInfo>*>(swAligModelPtr);
+  BaseSwAligModel<CURR_SWM_TYPE::PpInfo> *swAligModelPtr=new CURR_SWM_TYPE;
+  _incrSwAligModel<CURR_SWM_TYPE::PpInfo>* _incrSwAligModelPtr=dynamic_cast<_incrSwAligModel<CURR_SWM_TYPE::PpInfo>*>(swAligModelPtr);
   if(!_incrSwAligModelPtr)
   {
     if(pars.eb_given || pars.i_given || pars.c_given || pars.r_given || pars.mb_given || pars.in_given)
@@ -868,7 +868,7 @@ void printUsage(void)
 void printConfig(void)
 {
   cerr<<"* thot_gen_sw_model configuration: "<<endl;
-  cerr<<" - single-word model type: "<<THOT_CURR_SWM_LABEL<<endl;
+  cerr<<" - single-word model type: "<<CURR_SWM_LABEL<<endl;
   cerr<<" - sentence length model type: "<<CURR_SLM_LABEL<<endl;
 #ifdef THOT_ENABLE_LOAD_PRINT_TEXTPARS 
   cerr<<" - format of parameter files: text"<<endl;
