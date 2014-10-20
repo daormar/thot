@@ -137,7 +137,7 @@ create_lm_files()
         done
 
         # Obtain new lm file name
-        newlmfile=${outd}/lm/${baselmfile}
+        newlmfile=${outd}/lm/main/${baselmfile}
 
         # Create descriptor
         echo "thot lm descriptor" > ${outd}/lm/lm_desc
