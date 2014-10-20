@@ -86,7 +86,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 // executing the configure script.
 //
 // Example:
-// $ export CXXFLAGS="$CXXFLAGS -DTHOT_SWM_TYPE=IBM1_SWM"
+// $ export CXXFLAGS="$CXXFLAGS -DTHOT_SWM_TYPE=THOT_IBM1_SWM"
 // $ configure --prefix=$PWD
 // $ make
 // $ make install
@@ -106,7 +106,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 # define CURR_SWM_TYPE Ibm3AligModel
 # define CURR_SWM_LABEL THOT_IBM3_SWM_LABEL
 
-#elif THOT_SWM_TYPE == IBM4_SWM
+#elif THOT_SWM_TYPE == THOT_IBM4_SWM
 # include "Ibm4AligModel.h"
 # define CURR_SWM_TYPE Ibm4AligModel
 # define CURR_SWM_LABEL THOT_IBM4_SWM_LABEL
