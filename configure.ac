@@ -405,6 +405,23 @@ AC_SUBST(CASMACAT_SERVER_LIB_HOME,$with_casmacat)
 # Disable pre/post-processing code
 AC_DEFINE(DISABLE_PREPROC_CODE,,[Define if the pre/post-processing code is disabled])
 
+dnl Check if we have enable debug support.
+AC_MSG_CHECKING(whether to enable casmacat home edition configuration)
+AC_ARG_ENABLE(casmacat-he,[  --enable-casmacat-he   enable casmacat home edition configuration], enable_casmacat_he=yes,
+              enable_casmacat_he=no)
+
+dnl Yes, debug is enabled
+if test "$enable_casmacat_he" = "yes"; then
+
+ AC_MSG_RESULT(yes)
+
+ AC_DEFINE(CASMACAT_HE,,[Define if casmacat home edition configuration is enabled])
+
+ # Use IBM 2 alignment models
+ THOT_SWM_TYPE="THOT_SINCR_IBM2_SWM"
+
+fi
+
 # Process options given in shell variables
 
 # swm type used
