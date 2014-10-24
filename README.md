@@ -134,8 +134,8 @@ currently being addressed:
   slow and currently constitutes a bottleneck when training phrase
   models from large corpora. One already implemented solution is to
   carry out the estimation in multiple processors. However, we are also
-  investigating alternative optimization techniques than can be
-  efficiently executed in a single processor.
+  investigating alternative optimization techniques than allow us to
+  efficiently execute the estimation process in a single processor.
 
 - Log-linear model weight adjustment is carried out by means of the
   downhill simplex algorithm, which is very slow. Downhill simplex will
