@@ -131,10 +131,11 @@ currently being addressed:
 
 - Phrase model training is based on HMM-based word alignment models
   estimated by means of incremental EM. The current implementation is
-  slow and currently constitutes a bottleneck. One already implemented
-  solution is to carry out the estimation in multiple
-  processors. Additionally, we are also investigating to improve the
-  efficiency of the estimation algorithm.
+  slow and currently constitutes a bottleneck when training phrase
+  models from large corpora. One already implemented solution is to
+  carry out the estimation in multiple processors. However we are also
+  investigating alternative optimization techniques than can be
+  efficiently executed in a single processor.
 
 - Log-linear model weight adjustment is carried out by means of the
   downhill simplex algorithm, which is very slow. Downhill simplex will
@@ -221,7 +222,7 @@ Government in a number of research projects, such as the [MIPRCV
 project] [15] that belongs to the [CONSOLIDER programme] [16].
 
 
-Last updated: 17 September 2014
+Last updated: 24 October 2014
 
 [1]: https://www.prhlt.upv.es/page/member?user=dortiz
 [2]: https://www.prhlt.upv.es/
