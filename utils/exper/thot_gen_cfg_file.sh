@@ -1,11 +1,11 @@
 # Author: Daniel Ortiz Mart\'inez
 # *- bash -*
 
-# Generates a server configuration file given translation and language
+# Generates a thot configuration file given translation and language
 # model descriptors.
 
 if [ $# -ne 2 ]; then
-    echo "Usage: thot_gen_server_cfg_file <lm_desc> <tm_desc>"
+    echo "Usage: thot_gen_cfg_file <lm_desc> <tm_desc>"
 else
     # Read parameters
     lm_desc=$1
