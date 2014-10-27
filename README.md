@@ -181,7 +181,7 @@ Here is a BiBTeX entry:
 
 <pre>
 @InProceedings{Ortiz2014,
-  author    = {D. Ortiz-Mart\'{\i}nez and F. Casacuberta},
+  author    = {Daniel Ortiz-Mart\'{\i}nez and Francisco Casacuberta},
   title     = {The New Thot Toolkit for Fully Automatic and Interactive Statistical Machine Translation},
   booktitle = {Proc. of the European Association for Computational Linguistics (EACL): System Demonstrations},
   year      = {2014},
