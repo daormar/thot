@@ -237,18 +237,18 @@ int readFloatSeq(int argc,
   int i;
   float value;
   
-  floatVec.clear();
   i = 1;
   while (i < argc-1)
   {
     if (!strcmp(argv[i], pszLabel))
     {
+      Vector<float> floatVecAux;
       bool end=false;
       while(!end)
       {
         ++i;
         sscanf(argv[i], "%f", &value);
-        floatVec.push_back(value);
+        floatVecAux.push_back(value);
         if(i==argc-1) end=true;
         else
         {
@@ -258,6 +258,7 @@ int readFloatSeq(int argc,
           }
         }
       }
+      floatVec=floatVecAux;
       return 0;
     }
     i++;
