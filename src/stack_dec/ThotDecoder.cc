@@ -719,7 +719,7 @@ bool ThotDecoder::load_tm(const char* tmFilesPrefix,
 
 //--------------------------
 bool ThotDecoder::load_lm(const char* lmFileName,
-                               int verbose/*=0*/)
+                          int verbose/*=0*/)
 {
   int ret;
   pthread_mutex_lock(&atomic_op_mut);
@@ -1975,23 +1975,27 @@ void ThotDecoder::clearTrans(int /*verbose*//*=0*/)
 }
 
 //--------------------------
-bool ThotDecoder::printModels(const char *printPrefix,
-                              int verbose/*=0*/)
+bool ThotDecoder::printModels(int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
   if(verbose)
   {
-    cerr<<"Printing models stored by the translator using the prefix: "<<printPrefix<<endl;
+    cerr<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<endl<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<endl;;
   }
     
-      // Print phrase-based translation model parameters
-  int ret=tdCommonVars.smtModelPtr->print(printPrefix);
+      // Print alignment model parameters
+  int ret=tdCommonVars.smtModelPtr->printAligModel(tdState.tmFilesPrefixGiven);
   if(ret==OK)
   {
-        // Print error correcting model parameters
-    ret=tdCommonVars.ecModelPtr->print(printPrefix);
+        // Print language model parameters
+    int ret=tdCommonVars.smtModelPtr->printLangModel(tdState.lmfileLoaded);
+    if(ret==OK)
+    {
+          // Print error correcting model parameters
+      ret=tdCommonVars.ecModelPtr->print(tdState.ecmFilesPrefixGiven.c_str()); 
+    }
   }
 
   /////////// end of mutex 

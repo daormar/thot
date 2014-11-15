@@ -162,7 +162,7 @@ int process_request(const thot_client_pars& tdcPars)
       ctimer(&elapsed,&ucpu,&scpu);
       if(tdcPars.verbose) cerr<<"Client: return value= "<<retVal<<endl;
       break;
-    case PRINT_MODELS: retVal=thotDecoderClient.sendPrintRequest(tdcPars.user_id,tdcPars.stlString.c_str());
+    case PRINT_MODELS: retVal=thotDecoderClient.sendPrintRequest(tdcPars.user_id);
       ctimer(&elapsed,&ucpu,&scpu);
       if(tdcPars.verbose) cerr<<"Client: return value= "<<retVal<<endl;
       break;
@@ -305,8 +305,8 @@ int TakeParameters(int argc,
    return OK;
  }
 
-     /* Take the prefix to be used when printing models */
- err=readSTLstring(argc,argv, "-o", &tdcPars.stlString);
+      /* Verify print option */
+ err=readOption(argc,argv, "-pr");
  if(err==0)
  {
    tdcPars.server_request_code=PRINT_MODELS;
@@ -353,7 +353,7 @@ void printUsage(void)
   cerr<<"-ap <string>              Add string to prefix.\n\n";
   cerr<<"-rp <string>              Reset prefix.\n\n";
   cerr<<"-clear                    Clear loaded models.\n\n";
-  cerr<<"-o <string>               Print models.\n\n";
+  cerr<<"-pr                       Print models.\n\n";
   cerr<<"-e                        End server.\n\n";
   cerr<<"-v                        Verbose mode.\n\n";
   cerr<<"--help                    Display this help and exit.\n\n";

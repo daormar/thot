@@ -86,8 +86,7 @@ class ThotDecoderClient
                       std::string &translatedSentence);
     bool resetPref(int user_id);
     bool sendClearRequest(int user_id);
-    bool sendPrintRequest(int user_id,
-                          const char *printPrefix);
+    bool sendPrintRequest(int user_id);
     void disconnect(int user_id);
     bool sendEndServerRequest(int user_id);
     

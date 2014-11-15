@@ -166,8 +166,7 @@ class ThotDecoder
   void clearTrans(int verbose=0);
 
       // Function to print the models
-  bool printModels(const char *printPrefix,
-                   int verbose=0);
+  bool printModels(int verbose=0);
 
       // Destructor
   ~ThotDecoder();

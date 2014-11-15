@@ -241,14 +241,12 @@ bool ThotDecoderClient::sendClearRequest(int user_id)
 }
 
 //--------------------------
-bool ThotDecoderClient::sendPrintRequest(int user_id,
-                                         const char *printPrefix)
+bool ThotDecoderClient::sendPrintRequest(int user_id)
 {
   if(connected)
   {// Send request
     BasicSocketUtils::writeInt(fileDesc,PRINT_MODELS);
     BasicSocketUtils::writeInt(fileDesc,user_id);
-    BasicSocketUtils::writeStr(fileDesc,printPrefix);
 
     int retVal=BasicSocketUtils::recvInt(fileDesc);
     return retVal;

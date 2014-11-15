@@ -287,8 +287,7 @@ int process_request(int s,
       break;
 
     case PRINT_MODELS:
-      BasicSocketUtils::recvStlStr(s,stlStr);
-      retVal=thotDecoder.printModels(stlStr.c_str(),verbose);
+      retVal=thotDecoder.printModels(verbose);
       BasicSocketUtils::writeInt(s,(int)retVal);
       break;
 
