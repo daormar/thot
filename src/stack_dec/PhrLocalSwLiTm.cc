@@ -71,9 +71,9 @@ bool PhrLocalSwLiTm::loadAligModel(const char* prefixFileName)
 }
 
 //---------------------------------
-bool PhrLocalSwLiTm::print(std::string printPrefix)
+bool PhrLocalSwLiTm::printAligModel(std::string printPrefix)
 {
-  bool ret=_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >::print(printPrefix);
+  bool ret=_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >::printAligModel(printPrefix);
   if(ret==ERROR) return ERROR;
 
       // TO-DO

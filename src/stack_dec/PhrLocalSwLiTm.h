@@ -101,7 +101,7 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   bool loadAligModel(const char* prefixFileName);
 
       // Print models
-  bool print(std::string printPrefix);
+  bool printAligModel(std::string printPrefix);
 
   void clear(void);
 

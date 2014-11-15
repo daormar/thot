@@ -99,7 +99,8 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   virtual bool loadAligModel(const char* prefixFileName);
 
       // Print models
-  virtual bool print(std::string printPrefix);
+  virtual bool printLangModel(std::string printPrefix);
+  virtual bool printAligModel(std::string printPrefix);
   
   virtual void clear(void);
 
@@ -487,18 +488,19 @@ bool _phraseBasedTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileNam
 
 //---------------------------------
 template<class HYPOTHESIS>
-bool _phraseBasedTransModel<HYPOTHESIS>::print(std::string printPrefix)
+bool _phraseBasedTransModel<HYPOTHESIS>::printLangModel(std::string printPrefix)
 {
-  bool retVal;
-  char lmFileName[1024];
-  char tmFileName[1024];
-
-  sprintf(lmFileName,"%s.lm",printPrefix.c_str());
-  retVal=langModelInfoPtr->lmodel.print(lmFileName);
+  bool retVal=langModelInfoPtr->lmodel.print(printPrefix.c_str());
   if(retVal==ERROR) return ERROR;
-  
-  sprintf(tmFileName,"%s",printPrefix.c_str());
-  retVal=this->phrModelInfoPtr->invPbModel.print(tmFileName);
+
+  return OK;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+bool _phraseBasedTransModel<HYPOTHESIS>::printAligModel(std::string printPrefix)
+{
+  bool retVal=this->phrModelInfoPtr->invPbModel.print(printPrefix.c_str());
   if(retVal==ERROR) return ERROR;
 
   return OK;

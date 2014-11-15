@@ -86,7 +86,7 @@ class _phrSwTransModel: public _phraseBasedTransModel<HYPOTHESIS>
   bool loadAligModel(const char* prefixFileName);
 
       // Print models
-  bool print(std::string printPrefix);
+  bool printAligModel(std::string printPrefix);
 
   void clear(void);
 
@@ -203,12 +203,10 @@ bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
 
 //---------------------------------
 template<class HYPOTHESIS>
-bool _phrSwTransModel<HYPOTHESIS>::print(std::string printPrefix)
+bool _phrSwTransModel<HYPOTHESIS>::printAligModel(std::string printPrefix)
 {
-  bool ret;
-
       // Print phrase model
-  ret=_phraseBasedTransModel<HYPOTHESIS>::print(printPrefix);
+  bool ret=_phraseBasedTransModel<HYPOTHESIS>::printAligModel(printPrefix);
   if(ret==ERROR) return ERROR;
   
       // Print inverse sw model
