@@ -12,6 +12,7 @@ Thot is being developed by [Daniel Ortiz-Martínez] [1]. Daniel is a
 member of the [PRHLT research group] [2] at the [Polytechnic University
 of Valencia] [3].
 
+**NEWS: basic usage instructions have been added to the Thot manual**
 
 Features
 --------
@@ -111,12 +112,12 @@ SourceForge. These original versions were strongly focused on the
 estimation of phrase-based models. By contrast, current version offers
 several new features that had not been previously incorporated.
 
-A basic usage manual is currently being developed. In addition to this,
-a set specific tools to ease the process of making SMT experiments has
-been created.
+A set of specific tools to ease the process of making SMT experiments
+has been created.  Basic usage instructions have been recently added to
+the Thot manual.
 
-In addition to the basic usage manual, there are some toolkit extensions
-that will be incorporated in the next few months:
+On the other hand, there are some toolkit extensions that will be
+incorporated in the next few months:
 
 - Virtualized language models (i.e. accessing language model parameters
   from disk).
@@ -222,7 +223,7 @@ Government in a number of research projects, such as the [MIPRCV
 project] [15] that belongs to the [CONSOLIDER programme] [16].
 
 
-Last updated: 24 October 2014
+Last updated: 16 November 2014
 
 [1]: https://www.prhlt.upv.es/page/member?user=dortiz
 [2]: https://www.prhlt.upv.es/
