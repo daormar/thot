@@ -213,7 +213,7 @@ while [ $# -ne 0 ]; do
             ;;
         "-tdir") shift
             if [ $# -ne 0 ]; then
-                tdir="-T $1"
+                tdir=$1
                 tdir_given=1
             fi
             ;;
