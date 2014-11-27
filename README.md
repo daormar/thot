@@ -103,6 +103,23 @@ Thot can be combined with the CasMacat Workbench that is being developed
 in the project of the same name. [See this webpage] [4] to get the specific
 installation instructions.
 
+Relation with Existing Software
+-------------------------------
+Due to the strong focus of Thot on online and incremental learning, it
+includes its own programs to carry out language and translation model
+estimation. Specifically, Thot includes tools to work with n-gram
+language models based on incrementally updateable sufficient
+statistics. On the other hand, Thot also includes a set of tools and a
+whole software library to estimate IBM 1, IBM 2 and HMM-based word
+alignment models. The estimation process can be carried out using batch
+and incremental EM algorithms. This functionality is not based on the
+standard GIZA++ software for word alignment model generation.
+
+Additionally, Thot does not use any code from other existing translation
+tools such as Moses. In this regard, Thot is a smaller project which
+tries to offer its own view of the process of statistical machine
+translation, with a strong focus on online learning and also
+incorporating interactive machine translation functionality.
 
 Current Status
 --------------
