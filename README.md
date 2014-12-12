@@ -24,7 +24,7 @@ The toolkit includes the following features:
 - Robust generation of alignments at phrase-level
 - Client-server implementation of the translation functionality
 - Single word alignment model estimation using the incremental EM algorithm
-- Scalable implementation of the different estimation algorithms using Map-Reduce
+- Scalable and parallel model estimation algorithms using Map-Reduce
 - Compiles on Unix-like and Windows (using Cygwin) systems
 - Integration with the [CasMaCat Workbench] [4] developed in the EU FP7 [CasMaCat project] [5]
 - ...
@@ -240,7 +240,7 @@ Government in a number of research projects, such as the [MIPRCV
 project] [15] that belongs to the [CONSOLIDER programme] [16].
 
 
-Last updated: 16 November 2014
+Last updated: 12 December 2014
 
 [1]: https://www.prhlt.upv.es/page/member?user=dortiz
 [2]: https://www.prhlt.upv.es/
