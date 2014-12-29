@@ -219,13 +219,8 @@ else
     fi
 
     # create TMP directory
-    # TMP="${tmpdir}/thot_pbs_filter_ttable_$$"
-    # mkdir $TMP || { echo "Error: temporary directory cannot be created" ; exit 1; }
-    TMP=${tmpdir}
-    if [ ! -d $TMP ]; then
-        echo "Error: temporary directory does not exist" 
-        exit 1
-    fi
+    TMP="${tmpdir}/thot_pbs_filter_ttable_tmp_$$"
+    mkdir $TMP || { echo "Error: temporary directory cannot be created" ; exit 1; }
 
     # create shared directory
     SDIR="${sdir}/thot_pbs_filter_ttable_sdir_$$"
