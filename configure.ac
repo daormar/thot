@@ -420,6 +420,10 @@ if test "$enable_casmacat_he" = "yes"; then
  # Use IBM 2 alignment models
  THOT_SWM_TYPE="THOT_SINCR_IBM2_SWM"
 
+else
+
+ AC_MSG_RESULT(no)
+
 fi
 
 # Process options given in shell variables
