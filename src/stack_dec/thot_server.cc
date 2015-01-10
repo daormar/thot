@@ -45,7 +45,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <wait.h>
+#include <sys/wait.h>
+#include <signal.h>
 
 using namespace std;
 
