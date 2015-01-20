@@ -1,1 +1,1 @@
-autoreconf -I m4 --force
+autoreconf -i -I m4 --force
