@@ -3,13 +3,14 @@
 
 AC_PREREQ(2.57)
 AC_INIT(thot, 3.0.0Beta, danulino@users.sourceforge.net)
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_CONFIG_HEADER(config.h)
 AX_PREFIX_CONFIG_H([./src/thot_config.h])
 
 dnl Initialize Libtool
+LT_CONFIG_LTDL_DIR([libltdl])
 LT_INIT([dlopen])
-LTDL_INIT
+LTDL_INIT([recursive])
 
 # Save previous compilation flags
 CFLAGS_AUX=${CFLAGS}
