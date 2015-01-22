@@ -1,1 +1,16 @@
+echo "Perform checkings before reconfiguring package..."
+
+# Check libtoolize
+err=`libtoolize -n --quiet 2>&1 | grep "not found" | wc -l`
+
+if [ $err -eq 1 ]; then
+   echo "**Error**: libtoolize cannot detect necessary files."
+   echo ""
+   echo "Make sure libtool-ltdl-devel (rpm) / libltdl-dev (deb) or an"
+   echo "appropriate package for your distribution is installed."
+   exit 1
+fi
+
+echo "Reconfigure package..."
+# Reconfigure package
 autoreconf -i -I m4 --force
