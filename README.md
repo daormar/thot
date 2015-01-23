@@ -43,9 +43,9 @@ It is released under the [GNU Lesser General Public License (LGPL)] [6].
 Installation
 ------------
 To install Thot, first you need to install the autotools (autoconf,
-autoconf-archive, and automake packages in Ubuntu). If you are planning
-to use Thot on a Windows platform, you also need to install the Cygwin
-environment.
+autoconf-archive, automake and libtool packages in Ubuntu). If you are
+planning to use Thot on a Windows platform, you also need to install the
+Cygwin environment.
 
 Once the autotools are available (as well as Cygwin if required), you
 can proceed with the installation of Thot by following the next sequence
@@ -240,7 +240,7 @@ Government in a number of research projects, such as the [MIPRCV
 project] [15] that belongs to the [CONSOLIDER programme] [16].
 
 
-Last updated: 12 December 2014
+Last updated: 23 January 2015
 
 [1]: https://www.prhlt.upv.es/page/member?user=dortiz
 [2]: https://www.prhlt.upv.es/
