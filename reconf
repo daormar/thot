@@ -11,6 +11,6 @@ if [ $err -eq 1 ]; then
    exit 1
 fi
 
-echo "Reconfigure package..."
 # Reconfigure package
+echo "Reconfigure package..."
 autoreconf -i -I m4 --force
