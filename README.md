@@ -240,9 +240,9 @@ Government in a number of research projects, such as the [MIPRCV
 project] [15] that belongs to the [CONSOLIDER programme] [16].
 
 
-Last updated: 23 January 2015
+Last updated: 22 February 2015
 
-[1]: https://www.prhlt.upv.es/page/member?user=dortiz
+[1]: http://personales.upv.es/daormar3/
 [2]: https://www.prhlt.upv.es/
 [3]: http://www.upv.es/
 [4]: http://www.casmacat.eu/index.php?n=Workbench.Workbench
