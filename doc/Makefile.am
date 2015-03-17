@@ -1,3 +1,6 @@
+thotdocdir = $(datadir)/$(PACKAGE)/doc
+thotdoc_DATA= thot_manual.pdf
+
 EXTRA_DIST = doxygen_src.cfg thot_manual.pdf
 #################################
 #SUFFIXES = .cfg
