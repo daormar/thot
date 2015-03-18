@@ -1,6 +1,6 @@
-Thot: a Toolkit for Statistical Machine Translation
-===================================================
-Thot is an open source toolkit for statistical machine
+Thot: a Software Toolkit for Statistical Machine Translation
+============================================================
+Thot is an open source software toolkit for statistical machine
 translation. Originally, Thot incorporated tools to train phrase-based
 models. The new version of Thot now includes a state-of-the-art
 phrase-based translation decoder as well as tools to estimate all of the
@@ -234,13 +234,13 @@ Phuket, Thailand, September 2005. [Download] [14]
 
 Acknowledgements
 ----------------
-Thot is currently supported by the European Union under the [CasMaCat
+Thot has been supported by the European Union under the [CasMaCat
 research project] [5]. Thot has also received support from the Spanish
 Government in a number of research projects, such as the [MIPRCV
 project] [15] that belongs to the [CONSOLIDER programme] [16].
 
 
-Last updated: 22 February 2015
+Last updated: 18 March 2015
 
 [1]: http://personales.upv.es/daormar3/
 [2]: https://www.prhlt.upv.es/
