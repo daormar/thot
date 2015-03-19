@@ -488,7 +488,7 @@ int takeParameters(int argc,
       ++matched;
     }
 
-        // -u parameter
+        // -t parameter
     if(argv_stl[i]=="-t" && !matched)
     {
       pars.t_given=true;
@@ -525,7 +525,7 @@ int checkParameters(thot_wg_proc_pars& pars)
 {
   if(!pars.w_given)
   {
-    cerr<<"Error: -s parameter not given!"<<endl;
+    cerr<<"Error: -w parameter not given!"<<endl;
     return ERROR;
   }
 
