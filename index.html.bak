@@ -1,0 +1,308 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Thot Software Toolkit for Statistical Machine Translation</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Thot</h1>
+        <p> <font size="2">Thot toolkit for statistical machine translation </font></p>
+
+        <p class="view"><a href="https://github.com/daormar/thot">View the Project on GitHub <small>daormar/thot</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/daormar/thot/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/daormar/thot/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/daormar/thot">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="thot-a-toolkit-for-statistical-machine-translation" class="anchor" href="#thot-a-toolkit-for-statistical-machine-translation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Thot: a Software Toolkit for Statistical Machine Translation</h1>
+
+<p>Thot is an open source software toolkit for statistical machine
+translation (SMT). Originally, Thot incorporated tools to train
+phrase-based models. The new version of Thot now includes a
+state-of-the-art phrase-based translation decoder as well as tools to
+estimate all of the models involved in the translation process. In
+addition to this, Thot is also able to incrementally update its models
+in real time after presenting an individual sentence pair.</p>
+
+<p>Thot is being developed by <a href="http://personales.upv.es/daormar3/">Daniel Ortiz-Martínez</a>. Daniel is a
+member of the <a href="https://www.prhlt.upv.es/">PRHLT research group</a> at the <a href="http://www.upv.es/">Polytechnic University
+of Valencia</a>.</p>
+
+<p><strong>NEWS: basic usage instructions have been added to the Thot manual</strong></p>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<p>The toolkit includes the following features:</p>
+
+<ul>
+<li>Phrase-based statistical machine translation decoder</li>
+<li>Computer-aided translation (post-editing and interactive machine translation)</li>
+<li>Incremental estimation of all of the models involved in the translation process</li>
+<li>Robust generation of alignments at phrase-level</li>
+<li>Client-server implementation of the translation functionality</li>
+<li>Single word alignment model estimation using the incremental EM algorithm</li>
+<li>Scalable and parallel model estimation algorithms using Map-Reduce</li>
+<li>Compiles on Unix-like and Windows (using Cygwin) systems</li>
+<li>Integration with the <a href="http://www.casmacat.eu/index.php?n=Workbench.Workbench">CasMaCat Workbench</a> developed in the EU FP7 <a href="http://www.casmacat.eu/">CasMaCat project</a>
+</li>
+<li>...</li>
+</ul>
+
+<h2>
+<a id="distribution-details" class="anchor" href="#distribution-details" aria-hidden="true"><span class="octicon octicon-link"></span></a>Distribution Details</h2>
+
+<p>Thot has been coded using C, C++ and shell-scripting. Thot is known to
+compile on Unix-like and Windows (using Cygwin) systems. See the
+"Support" section of this file if you experience problems during
+compilation.</p>
+
+<p>It is released under the <a href="http://www.gnu.org/copyleft/lgpl.html">GNU Lesser General Public License (LGPL)</a>.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>To install Thot, first you need to install the autotools (autoconf,
+autoconf-archive, automake and libtool packages in Ubuntu). If you are
+planning to use Thot on a Windows platform, you also need to install the
+Cygwin environment.</p>
+
+<p>Once the autotools are available (as well as Cygwin if required), you
+can proceed with the installation of Thot by following the next sequence
+of steps:</p>
+
+<ol>
+<li>
+<p>Obtain the package using git:</p>
+
+<pre><code>$ git clone https://github.com/daormar/thot.git
+</code></pre>
+
+<p>Or <a href="https://github.com/daormar/thot/archive/master.zip">download it in a zip file</a></p>
+</li>
+<li><p><code>cd</code> to the directory containing the package's source code and type
+<code>./reconf</code></p></li>
+<li><p>Type <code>./configure</code> to configure the package</p></li>
+<li><p>Type <code>make</code> to compile the package</p></li>
+<li><p>Type <code>make install</code> to install the programs and any data files and
+documentation</p></li>
+<li><p>You can remove the program binaries and object files from the source
+code directory by typing <code>make clean</code></p></li>
+</ol>
+
+<p>By default the files are installed under the /usr/local/ directory (or
+similar, depending of the OS you use); however, since Step 5 requires
+root privileges, another directory can be specified during Step 3 by
+typing:</p>
+
+<pre><code> $ configure --prefix=&lt;absolute-installation-path&gt;
+</code></pre>
+
+<p>For example, if "user1" wants to install the Thot package in the
+directory /home/user1/thot, the sequence of commands to execute should be
+the following:</p>
+
+<pre><code> $ ./reconf
+ $ configure --prefix=/home/user1/thot
+ $ make
+ $ make install
+</code></pre>
+
+<p>The installation directory can be the same directory where the Thot
+package was decompressed.</p>
+
+<p>See "INSTALL" file for more information.</p>
+
+<p>IMPORTANT NOTE: if Thot is being installed in a PBS cluster (a cluster
+providing <code>qsub</code> and other related tools), it is important that the
+<code>configure</code> script is executed in the main cluster node, so as to
+properly detect the cluster configuration (do not execute it in an
+interactive session).</p>
+
+<h2>
+<a id="installation-including-the-casmacat-workbench" class="anchor" href="#installation-including-the-casmacat-workbench" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation Including the CasMaCat Workbench</h2>
+
+<p>Thot can be combined with the CasMacat Workbench that is being developed
+in the project of the same name. <a href="http://www.casmacat.eu/index.php?n=Workbench.Workbench">See this webpage</a> to get the specific
+installation instructions.</p>
+
+<h2>
+<a id="relation-with-existing-software" class="anchor" href="#relation-with-existing-software" aria-hidden="true"><span class="octicon octicon-link"></span></a>Relation with Existing Software</h2>
+
+<p>Due to the strong focus of Thot on online and incremental learning, it
+includes its own programs to carry out language and translation model
+estimation. Specifically, Thot includes tools to work with n-gram
+language models based on incrementally updateable sufficient
+statistics. On the other hand, Thot also includes a set of tools and a
+whole software library to estimate IBM 1, IBM 2 and HMM-based word
+alignment models. The estimation process can be carried out using batch
+and incremental EM algorithms. This functionality is not based on the
+standard GIZA++ software for word alignment model generation.</p>
+
+<p>Additionally, Thot does not use any code from other existing translation
+tools such as Moses. In this regard, Thot is a smaller project which
+tries to offer its own view of the process of statistical machine
+translation, with a strong focus on online learning and also
+incorporating interactive machine translation functionality.</p>
+
+<h2>
+<a id="current-status" class="anchor" href="#current-status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Current Status</h2>
+
+<p>The Thot toolkit is under development. Original public versions of Thot
+date back to 2005 [Ortiz-Martínez et al., 2005] and were hosted in
+SourceForge. These original versions were strongly focused on the
+estimation of phrase-based models. By contrast, current version offers
+several new features that had not been previously incorporated.</p>
+
+<p>A set of specific tools to ease the process of making SMT experiments
+has been created.  Basic usage instructions have been recently added to
+the Thot manual.</p>
+
+<p>On the other hand, there are some toolkit extensions that will be
+incorporated in the next few months:</p>
+
+<ul>
+<li><p>Virtualized language models (i.e. accessing language model parameters
+from disk).</p></li>
+<li><p>Interpolation of language and translation models.</p></li>
+<li><p>Improved concurrency in the Thot translation server (translation
+process is not still concurrent).</p></li>
+</ul>
+
+<p>Finally, here is a list of known issues with the Thot toolkit that are
+currently being addressed:</p>
+
+<ul>
+<li><p>Phrase model training is based on HMM-based word alignment models
+estimated by means of incremental EM. The current implementation is
+slow and currently constitutes a bottleneck when training phrase
+models from large corpora. One already implemented solution is to
+carry out the estimation in multiple processors. However, we are also
+investigating alternative optimization techniques than allow us to
+efficiently execute the estimation process in a single processor.</p></li>
+<li><p>Log-linear model weight adjustment is carried out by means of the
+downhill simplex algorithm, which is very slow. Downhill simplex will
+be replaced by a more efficient technique.</p></li>
+<li><p>Non-monotonic translation is not yet sufficiently tested, specially
+with complex corpora such as Europarl.</p></li>
+</ul>
+
+<h2>
+<a id="support" class="anchor" href="#support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support</h2>
+
+<p>Project documentation is being developed. Such documentation include:</p>
+
+<ul>
+<li>These instructions.</li>
+<li>The Thot manual ("thot_manual.pdf" under the "doc" directory).</li>
+</ul>
+
+<p>If you need additional help, you can:</p>
+
+<ul>
+<li>use the <a href="https://github.com/daormar/thot/issues">github issue tracker</a>
+</li>
+<li><a href="mailto:dortiz@prhlt.upv.es">send an e-mail to the author</a></li>
+<li>join the <a href="http://groups.google.com/group/casmacat-support/boxsubscribe">CasMaCat support group</a>
+</li>
+</ul>
+
+<p>Additional information about the theoretical foundations of Thot can be
+found in [Ortiz-Martínez, 2011]. One interesting feature of Thot,
+incremental (or online) estimation of statistical models, is also
+described in [Ortiz-Martínez et al., 2010]. Finally, phrase-level
+alignment generation functionality implemented in Thot was proposed in
+[Ortiz-Martínez et al., 2008].</p>
+
+<h2>
+<a id="citation" class="anchor" href="#citation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Citation</h2>
+
+<p>You are welcome to use the code under the terms of the license for
+research or commercial purposes, however please acknowledge its use with
+a citation:</p>
+
+<p>Daniel Ortiz-Martínez, Francisco Casacuberta. 
+<em>"The New Thot Toolkit for Fully Automatic and Interactive Statistical Machine Translation"</em>.
+In Proc. of the European Association for Computational Linguistics (EACL): System Demonstrations,
+Gothenburg, Sweden, April 2014. pp. 45-48.</p>
+
+<p>Here is a BiBTeX entry:</p>
+
+<pre>
+@InProceedings{Ortiz2014,
+  author    = {Daniel Ortiz-Mart\'{\i}nez and Francisco Casacuberta},
+  title     = {The New Thot Toolkit for Fully Automatic and Interactive Statistical Machine Translation},
+  booktitle = {Proc. of the European Association for Computational Linguistics (EACL): System Demonstrations},
+  year      = {2014},
+  month     = {April},
+  address   = {Gothenburg, Sweden},
+  pages     = "45--48",
+}
+</pre>
+
+<h2>
+<a id="literature" class="anchor" href="#literature" aria-hidden="true"><span class="octicon octicon-link"></span></a>Literature</h2>
+
+<p>Daniel Ortiz-Martínez,
+"<em>Advances in Fully-Automatic and Interactive Phrase-Based Statistical Machine Translation</em>". 
+PhD Thesis. Universidad Politécnica de Valencia. 2011. 
+Advisors: Ismael García Varea and Francisco Casacuberta. <a href="https://www.prhlt.upv.es/aigaion2/attachments/dortiz_thesis_2011.pdf-d12d165f9a2b01b0697000ed7c08c4bc.pdf">Download</a>.</p>
+
+<p>Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
+"<em>Online Learning for Interactive Statistical Machine Translation</em>". 
+In Proc. of the North American Chapter of the Association for Computational Linguistics - 
+Human Language Technologies (NAACL-HLT), pp. 546-554, Los Angeles, US, 2010. <a href="http://aclweb.org/anthology-new/N/N10/N10-1079.pdf">Download</a>.</p>
+
+<p>Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
+"<em>Phrase-level alignment generation using a smoothed loglinear phrase-based statistical alignment model</em>". 
+In Proc. of the European Association for Machine Translation (EAMT), pp. 160-169, Hamburg, Germany, 2008. <em>Best paper award</em>. <a href="http://mt-archive.info/EAMT-2008-Ortiz-Martinez.pdf">Download</a></p>
+
+<p>Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
+"<em>Thot: a toolkit to train phrase-based models for statistical machine translation</em>".
+In Proc. of the Machine Translation Summit (MT-Summit),
+Phuket, Thailand, September 2005. <a href="http://www.mt-archive.info/MTS-2005-Ortiz-Martinez.pdf">Download</a></p>
+
+<h2>
+<a id="acknowledgements" class="anchor" href="#acknowledgements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Acknowledgements</h2>
+
+<p>Thot has been supported by the European Union under the <a href="http://www.casmacat.eu/">CasMaCat
+research project</a>. Thot has also received support from the Spanish
+Government in a number of research projects, such as the <a href="http://miprcv.iti.upv.es/">MIPRCV
+project</a> that belongs to the <a href="http://www.ingenio2010.es/">CONSOLIDER programme</a>.</p>
+
+<p>Last updated: 18 March 2015</p>
+      </section>
+      <footer>
+        <p><font size="3">This project is maintained by <a href="https://github.com/daormar">daormar</a></font></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-60880705-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
