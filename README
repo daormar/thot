@@ -1,16 +1,17 @@
 Thot: a Software Toolkit for Statistical Machine Translation
-============================================================
+============================================================ 
 Thot is an open source software toolkit for statistical machine
 translation (SMT). Originally, Thot incorporated tools to train
 phrase-based models. The new version of Thot now includes a
 state-of-the-art phrase-based translation decoder as well as tools to
 estimate all of the models involved in the translation process. In
 addition to this, Thot is also able to incrementally update its models
-in real time after presenting an individual sentence pair.
+in real time after presenting an individual sentence pair using online
+learning techniques.
 
 Thot is being developed by [Daniel Ortiz-Martínez] [1]. Daniel is a
-member of the [PRHLT research group] [2] at the [Polytechnic University
-of Valencia] [3].
+member of the [PRHLT research group] [2] at the [Technical University of
+Valencia] [3].
 
 **NEWS: basic usage instructions have been added to the Thot manual**
 
