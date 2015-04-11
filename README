@@ -98,8 +98,7 @@ providing `qsub` and other related tools), it is important that the
 properly detect the cluster configuration (do not execute it in an
 interactive session).
 
-Installation Including the CasMaCat Workbench
----------------------------------------------
+#### Installation Including the CasMaCat Workbench
 Thot can be combined with the CasMacat Workbench that is being developed
 in the project of the same name. [See this webpage] [4] to get the specific
 installation instructions.
