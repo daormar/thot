@@ -1,5 +1,8 @@
 Thot: a Software Toolkit for Statistical Machine Translation
 ============================================================ 
+
+Introduction
+------------
 Thot is an open source software toolkit for statistical machine
 translation (SMT). Originally, Thot incorporated tools to train
 phrase-based models. The new version of Thot now includes a
