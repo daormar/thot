@@ -1,0 +1,3 @@
+#toc > ul { height:auto; border:none; background:none; overflow:hidden; }
+#toc > ul > li { width:auto; height:auto; border:none; float:none; }
+#toc > ul > li > a { height:auto; color:#39c; text-align:left; font-size:90%; }

@@ -4,9 +4,18 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Thot Software Toolkit for Statistical Machine Translation</title>
-
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <!-- begin TOC stuff -->
+    <link rel="stylesheet" href="stylesheets/toc.css">
+    <script src="javascripts/jquery-2.1.3.min.js"></script>
+    <script src="javascripts/jquery.toc.min.js"></script>
+    <script>
+      $(function(){
+        $('#toc').toc({'container': 'section'});
+      });
+    </script>
+    <!-- end TOC stuff -->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,15 +26,17 @@
       <header>
         <h1>Thot</h1>
         <p> <font size="2">Thot toolkit for statistical machine translation </font></p>
-
+        <div id="toc"></div>
         <p class="view"><a href="https://github.com/daormar/thot">View the Project on GitHub <small>daormar/thot</small></a></p>
-
 
         <ul>
           <li><a href="https://github.com/daormar/thot/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/daormar/thot/tarball/master">Download <strong>TAR Ball</strong></a></li>
           <li><a href="https://github.com/daormar/thot">View On <strong>GitHub</strong></a></li>
         </ul>
+        <p><font size="3">This project is maintained by <a href="https://github.com/daormar">daormar</a></font></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
       </header>
       <section>
         <h1>
@@ -135,8 +146,8 @@ providing <code>qsub</code> and other related tools), it is important that the
 properly detect the cluster configuration (do not execute it in an
 interactive session).</p>
 
-<h2>
-<a id="installation-including-the-casmacat-workbench" class="anchor" href="#installation-including-the-casmacat-workbench" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation Including the CasMaCat Workbench</h2>
+<h4>
+<a id="installation-including-the-casmacat-workbench" class="anchor" href="#installation-including-the-casmacat-workbench" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation Including the CasMaCat Workbench</h4>
 
 <p>Thot can be combined with the CasMacat Workbench that is being developed
 in the project of the same name. <a href="http://www.casmacat.eu/index.php?n=Workbench.Workbench">See this webpage</a> to get the specific
@@ -237,7 +248,7 @@ alignment generation functionality implemented in Thot was proposed in
 research or commercial purposes, however please acknowledge its use with
 a citation:</p>
 
-<p>Daniel Ortiz-Martínez, Francisco Casacuberta. 
+<p>Daniel Ortiz-Martínez, Francisco Casacuberta.
 <em>"The New Thot Toolkit for Fully Automatic and Interactive Statistical Machine Translation"</em>.
 In Proc. of the European Association for Computational Linguistics (EACL): System Demonstrations,
 Gothenburg, Sweden, April 2014. pp. 45-48.</p>
@@ -260,20 +271,20 @@ Gothenburg, Sweden, April 2014. pp. 45-48.</p>
 <a id="literature" class="anchor" href="#literature" aria-hidden="true"><span class="octicon octicon-link"></span></a>Literature</h2>
 
 <p>Daniel Ortiz-Martínez,
-"<em>Advances in Fully-Automatic and Interactive Phrase-Based Statistical Machine Translation</em>". 
-PhD Thesis. Universidad Politécnica de Valencia. 2011. 
+"<em>Advances in Fully-Automatic and Interactive Phrase-Based Statistical Machine Translation</em>".
+PhD Thesis. Universidad Politécnica de Valencia. 2011.
 Advisors: Ismael García Varea and Francisco Casacuberta. <a href="https://www.prhlt.upv.es/aigaion2/attachments/dortiz_thesis_2011.pdf-d12d165f9a2b01b0697000ed7c08c4bc.pdf">Download</a>.</p>
 
-<p>Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
-"<em>Online Learning for Interactive Statistical Machine Translation</em>". 
-In Proc. of the North American Chapter of the Association for Computational Linguistics - 
+<p>Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta.
+"<em>Online Learning for Interactive Statistical Machine Translation</em>".
+In Proc. of the North American Chapter of the Association for Computational Linguistics -
 Human Language Technologies (NAACL-HLT), pp. 546-554, Los Angeles, US, 2010. <a href="http://aclweb.org/anthology-new/N/N10/N10-1079.pdf">Download</a>.</p>
 
-<p>Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
-"<em>Phrase-level alignment generation using a smoothed loglinear phrase-based statistical alignment model</em>". 
+<p>Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta.
+"<em>Phrase-level alignment generation using a smoothed loglinear phrase-based statistical alignment model</em>".
 In Proc. of the European Association for Machine Translation (EAMT), pp. 160-169, Hamburg, Germany, 2008. <em>Best paper award</em>. <a href="http://mt-archive.info/EAMT-2008-Ortiz-Martinez.pdf">Download</a></p>
 
-<p>Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
+<p>Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta.
 "<em>Thot: a toolkit to train phrase-based models for statistical machine translation</em>".
 In Proc. of the Machine Translation Summit (MT-Summit),
 Phuket, Thailand, September 2005. <a href="http://www.mt-archive.info/MTS-2005-Ortiz-Martinez.pdf">Download</a></p>
@@ -288,10 +299,6 @@ project</a> that belongs to the <a href="http://www.ingenio2010.es/">CONSOLIDER 
 
 <p>Last updated: 18 March 2015</p>
       </section>
-      <footer>
-        <p><font size="3">This project is maintained by <a href="https://github.com/daormar">daormar</a></font></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
               <script type="text/javascript">
