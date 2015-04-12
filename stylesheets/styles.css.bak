@@ -253,3 +253,7 @@ footer {
     color:#444;
   }
 }
+
+ul.partner-logos { list-style-type:none; margin-left:0; }
+  ul.partner-logos li { display:inline; }
+  ul.partner-logos li img { vertical-align:middle; padding-top:1em; }

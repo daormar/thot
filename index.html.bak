@@ -57,7 +57,12 @@ learning.</p>
 member of the <a href="https://www.prhlt.upv.es/">PRHLT research group</a> at the <a href="http://www.upv.es/">Technical University
 of Valencia</a>.</p>
 
-<p><strong>NEWS: basic usage instructions have been added to the Thot manual</strong></p>
+<h2>
+<a id="news" class="anchor" href="#news" aria-hidden="true"><span class="octicon octicon-link"></span></a>News</h2>
+
+<ul>
+<li>Basic usage instructions have been added to the Thot manual</li>
+</ul>
 
 <h2>
 <a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
@@ -217,13 +222,13 @@ with complex corpora such as Europarl.</p></li>
 </ul>
 
 <h2>
-<a id="support" class="anchor" href="#support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support</h2>
+<a id="docsupport" class="anchor" href="#docsupport" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation and Support</h2>
 
 <p>Project documentation is being developed. Such documentation include:</p>
 
 <ul>
 <li>These instructions.</li>
-<li>The Thot manual ("thot_manual.pdf" under the "doc" directory).</li>
+<li>The <a href="http://daormar.github.io/thot/docsupport/thot_manual.pdf">Thot manual</a> ("thot_manual.pdf" under the "doc" directory).</li>
 </ul>
 
 <p>If you need additional help, you can:</p>
@@ -292,12 +297,19 @@ In Proc. of the Machine Translation Summit (MT-Summit),
 Phuket, Thailand, September 2005. <a href="http://www.mt-archive.info/MTS-2005-Ortiz-Martinez.pdf">Download</a></p>
 
 <h2>
-<a id="acknowledgements" class="anchor" href="#acknowledgements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Acknowledgements</h2>
+<a id="sponsors" class="anchor" href="#sponsors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sponsors</h2>
 
 <p>Thot has been supported by the European Union under the <a href="http://www.casmacat.eu/">CasMaCat
 research project</a>. Thot has also received support from the Spanish
 Government in a number of research projects, such as the <a href="http://miprcv.iti.upv.es/">MIPRCV
 project</a> that belongs to the <a href="http://www.ingenio2010.es/">CONSOLIDER programme</a>.</p>
+
+ <ul class="partner-logos">
+    <li><a href="http://cordis.europa.eu/fp7/home_en.html"><img src="http://daormar.github.io/thot/images/jaune.jpg" alt="EU" height="50" /></a></li>
+    <li><a href="http://www.micinn.es/"><img src="http://daormar.github.io/images/logo-mci.jpg" alt="MCINN" /></a></li>
+    <li><a href="http://www.vlc-campus.com"><img height="50" src="http://daormar.github.io/images/vlc-campus.png" alt="VLC-CAMPUS" /></a></li>
+    <li><a href="http://www.upv.es"><img src="http://daormar.github.io/images/logo-upv-hor.png" alt="UPV" height="50" /></a></li>
+  </ul>
 
 <p>Last updated: 18 March 2015</p>
       </section>
