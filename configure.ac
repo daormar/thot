@@ -187,7 +187,7 @@ do
                       CXXFLAGS="${saved_cxxflags}")],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
 done
 
-dnl Check if we have enable debug support.
+dnl Check if we have to enable debug support.
 AC_MSG_CHECKING(whether to enable debugging)
 AC_ARG_ENABLE(debug,[  --enable-debug   turn on debugging], enable_debug=yes,
               enable_debug=no)
@@ -406,7 +406,7 @@ AC_SUBST(CASMACAT_SERVER_LIB_HOME,$with_casmacat)
 # Disable pre/post-processing code
 AC_DEFINE(DISABLE_PREPROC_CODE,,[Define if the pre/post-processing code is disabled])
 
-dnl Check if we have enable debug support.
+dnl Check if we have to enable casmacat home edition configuration.
 AC_MSG_CHECKING(whether to enable casmacat home edition configuration)
 AC_ARG_ENABLE(casmacat-he,[  --enable-casmacat-he   enable casmacat home edition configuration], enable_casmacat_he=yes,
               enable_casmacat_he=no)
@@ -417,6 +417,27 @@ if test "$enable_casmacat_he" = "yes"; then
  AC_MSG_RESULT(yes)
 
  AC_DEFINE(CASMACAT_HE,,[Define if casmacat home edition configuration is enabled])
+
+ # Use IBM 2 alignment models
+ THOT_SWM_TYPE="THOT_SINCR_IBM2_SWM"
+
+else
+
+ AC_MSG_RESULT(no)
+
+fi
+
+dnl Check if we have to enable IBM 2 model as alignment model.
+AC_MSG_CHECKING(whether to enable IBM 2 model as alignment model)
+AC_ARG_ENABLE(ibm2-alig,[  --enable-ibm2-alig   enable IBM 2 model as alignment model], enable_ibm2_alig=yes,
+              enable_ibm2_alig=no)
+
+dnl Yes, debug is enabled
+if test "$enable_ibm2_alig" = "yes"; then
+
+ AC_MSG_RESULT(yes)
+
+ AC_DEFINE(IBM2_ALIG,,[Define if IBM 2 model is to be used as alignment model])
 
  # Use IBM 2 alignment models
  THOT_SWM_TYPE="THOT_SINCR_IBM2_SWM"
