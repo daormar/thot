@@ -737,7 +737,7 @@ release_job_holds()
 
 print_iter_num_message()
 {
-    echo "*** Iter ${n} (started at "`date`")..." >> $SDIR/log
+    echo "*** EM iteration ${n} out of $niters (started at "`date`")..." >> $SDIR/log
 
     # Create sync file
     echo "" > ${sync_info_dir}/print_iter_num_message
@@ -962,6 +962,9 @@ declare used_scripts_dir=""
 declare sync_info_dir=""
 
 set_shared_dir || exit 1
+
+# Output info about tracking script progress
+echo "NOTE: see file ${SDIR}/log to track model estimation progress" >&2
 
 # Create log file
 echo "**** Parallel process started at: "`date` > $SDIR/log

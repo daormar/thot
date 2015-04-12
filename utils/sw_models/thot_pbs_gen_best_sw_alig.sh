@@ -497,6 +497,9 @@ declare sync_info_dir=""
 
 set_shared_dir || exit 1
 
+# Output info about tracking script progress
+echo "NOTE: see file ${SDIR}/log to track best alignment generation progress" >&2
+
 # Create log file
 echo "**** Parallel process started at: "`date` > $SDIR/log
 

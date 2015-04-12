@@ -295,6 +295,6 @@ ${bindir}/thot_pbs_gen_batch_phr_model -pr ${pr_val} \
     -T $tdir -sdir $sdir ${debug_opt} || exit 1
 
 # Create descriptor file
-echo -n "* Generating descriptor file..." >&2
+echo "* Generating descriptor file... " >&2
 create_desc_file $outd
-echo "Done" >&2
+echo "" >&2

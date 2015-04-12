@@ -320,6 +320,9 @@ if [ "$debug" != "-debug" ]; then
     trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
 fi
 
+# Output info about tracking script progress
+echo "NOTE: see file ${output}.log to track matrix operation progress" >&2
+
 # create log file
 echo "*** Parallel process started at: " `date` > ${output}.log
 echo "">> ${output}.log
