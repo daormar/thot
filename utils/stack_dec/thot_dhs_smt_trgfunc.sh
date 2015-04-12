@@ -108,6 +108,13 @@ execute_decoder()
             2> ${SDIR}/target_func.log || decoder_error="yes"
     fi
 
+    # Sanity check (verify if translations were generated)
+    local num_trans=`wc -l ${SDIR}/target_func_aux.trans | $AWK '{printf "%s",$1}'`
+    local num_trans_test=`wc -l ${TEST} | $AWK '{printf "%s",$1}'`
+    if [ ${num_trans} -ne ${num_trans_test} ]; then
+        decoder_error="yes"
+    fi
+
     # Treat decoder error if necessary
     if [ "${decoder_error}" = "yes" ]; then
         echo "Error while executing decoder, for additional information see file ${SDIR}/target_func.log" >&2
