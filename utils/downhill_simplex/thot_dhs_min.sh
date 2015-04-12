@@ -255,6 +255,8 @@ else
 fi
 
 # Downhill simplex algorithm loop
+echo "Starting downhill simplex optimization..." >&2
+echo "NOTE: see last lines of file $TDIR/adj.log to track optimization progress" >&2
 while [ $end -ne 1 ]; do
     if [ "${USE_NR_ROUTINES}" = "yes" ]; then
         ${bindir}/dhs_step_by_step_min_nr -va ${vars} ${iv_opt} ${lambda_opt} \

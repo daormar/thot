@@ -181,8 +181,6 @@ ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
 ########
 tune_lm()
 {    
-    echo "Tuning language model..." >&2
-
     # Create initial lm files
     create_lm_files
 
@@ -376,8 +374,6 @@ create_cfg_file_for_tuned_sys()
 ########
 tune_loglin()
 {
-    echo "Tuning loglinear model weights..." >&2
-
     # Create directory for lm files
     if [ -d ${outd}/lm ]; then
         lm_dir_already_exist=1
@@ -578,5 +574,10 @@ ftol_lm=0.1
 ftol_loglin=0.001
 
 # Tune models
+echo "* Tuning language model... " >&2
 tune_lm
+echo "" >&2
+
+echo "* Tuning loglinear model weights... " >&2
 tune_loglin
+echo "" >&2
