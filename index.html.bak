@@ -96,6 +96,9 @@ compilation.</p>
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
 
+<h4>
+<a id="basic-installation-procedure" class="anchor" href="#basic-installation-procedure" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic Installation Procedure</h4>
+
 <p>To install Thot, first you need to install the autotools (autoconf,
 autoconf-archive, automake and libtool packages in Ubuntu). If you are
 planning to use Thot on a Windows platform, you also need to install the
@@ -152,6 +155,25 @@ providing <code>qsub</code> and other related tools), it is important that the
 <code>configure</code> script is executed in the main cluster node, so as to
 properly detect the cluster configuration (do not execute it in an
 interactive session).</p>
+
+<h4>
+<a id="alternative-installation-options" class="anchor" href="#alternative-installation-options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Alternative Installation Options</h4>
+
+<p>The Thot configure script can be used to modify the toolkit
+behavior. Here is a list of current installation options:</p>
+
+<ul>
+<li> <b><code>--enable-ibm2-alig</code></b>: Thot currently uses
+HMM-based alignment models to obtain the word alignment matrices
+required for phrase model estimation. One alternative installation
+option allows to replace HMM-based alignment models by IBM 2 alignment
+models. IBM 2 alignment models can be estimated very efficiently without
+significantly affecting translation quality.</li>
+
+<li> <b><code>--with-casmacat</code></b>: this options enables the
+configuration required for the CasMaCat Workbench, see more information
+below.</li>
+</ul>
 
 <h4>
 <a id="installation-including-the-casmacat-workbench" class="anchor" href="#installation-including-the-casmacat-workbench" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation Including the CasMaCat Workbench</h4>
