@@ -51,6 +51,8 @@ It is released under the [GNU Lesser General Public License (LGPL)] [6].
 
 Installation
 ------------
+
+#### Basic Installation Procedure
 To install Thot, first you need to install the autotools (autoconf,
 autoconf-archive, automake and libtool packages in Ubuntu). If you are
 planning to use Thot on a Windows platform, you also need to install the
@@ -106,8 +108,22 @@ providing `qsub` and other related tools), it is important that the
 properly detect the cluster configuration (do not execute it in an
 interactive session).
 
+#### Alternative Installation Options
+The Thot configure script can be used to modify the toolkit
+behavior. Here is a list of current installation options:
+
+- **--enable-ibm2-alig**: Thot currently uses HMM-based alignment models
+to obtain the word alignment matrices required for phrase model
+estimation. One alternative installation option allows to replace
+HMM-based alignment models by IBM 2 alignment models. IBM 2 alignment
+models can be estimated very efficiently without significantly affecting
+translation quality.
+
+- **--with-casmacat**: this options enables the configuration
+required for the CasMaCat Workbench, see more information below.
+
 #### Installation Including the CasMaCat Workbench
-Thot can be combined with the CasMacat Workbench that is being developed
+Thot can be combined with the CasMacat Workbench which has been developed
 in the project of the same name. [See this webpage] [4] to get the specific
 installation instructions.
 
