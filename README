@@ -43,8 +43,8 @@ Distribution Details
 --------------------
 Thot has been coded using C, C++ and shell-scripting. Thot is known to
 compile on Unix-like and Windows (using Cygwin) systems. See the
-"Support" section of this file if you experience problems during
-compilation.
+"Documentation and Support" section of these instructions if you
+experience problems during compilation.
 
 It is released under the [GNU Lesser General Public License (LGPL)] [6].
 
@@ -179,10 +179,10 @@ currently being addressed:
   slow and currently constitutes a bottleneck when training phrase
   models from large corpora. One already implemented solution is to
   carry out the estimation in multiple processors. Another solution is
-  to replace HMM-based models by IBM~2 Models, which can be estimated
+  to replace HMM-based models by IBM 2 Models, which can be estimated
   very efficiently. However, we are also investigating alternative
   optimization techniques to efficiently execute the estimation process
-  in a single processor.
+  of HMM-based models in a single processor.
 
 - Log-linear model weight adjustment is carried out by means of the
   downhill simplex algorithm, which is very slow. Downhill simplex will
