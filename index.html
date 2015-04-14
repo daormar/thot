@@ -86,10 +86,10 @@ of Valencia</a>.</p>
 <h2>
 <a id="distribution-details" class="anchor" href="#distribution-details" aria-hidden="true"><span class="octicon octicon-link"></span></a>Distribution Details</h2>
 
-<p>Thot has been coded using C, C++ and shell-scripting. Thot is known to
-compile on Unix-like and Windows (using Cygwin) systems. See the
-"Support" section of this file if you experience problems during
-compilation.</p>
+<p>Thot has been coded using C, C++ and shell-scripting. Thot is known
+to compile on Unix-like and Windows (using Cygwin) systems. See the
+"Documentation and Support" section of these instructions if you
+experience problems during compilation.</p>
 
 <p>It is released under the <a href="http://www.gnu.org/copyleft/lgpl.html">GNU Lesser General Public License (LGPL)</a>.</p>
 
@@ -195,11 +195,13 @@ alignment models. The estimation process can be carried out using batch
 and incremental EM algorithms. This functionality is not based on the
 standard GIZA++ software for word alignment model generation.</p>
 
-<p>Additionally, Thot does not use any code from other existing translation
-tools such as Moses. In this regard, Thot is a smaller project which
-tries to offer its own view of the process of statistical machine
-translation, with a strong focus on online learning and also
-incorporating interactive machine translation functionality.</p>
+<p>Additionally, Thot does not use any code from other existing
+translation tools such as Moses. In this regard, Thot is a smaller
+project which tries to offer its own view of the process of statistical
+machine translation, with a strong focus on online learning and also
+incorporating interactive machine translation functionality. Another
+interesting feature of the toolkit is its stable and robust translation
+server.</p>
 
 <h2>
 <a id="current-status" class="anchor" href="#current-status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Current Status</h2>
@@ -215,14 +217,15 @@ has been created.  Basic usage instructions have been recently added to
 the Thot manual.</p>
 
 <p>On the other hand, there are some toolkit extensions that will be
-incorporated in the next few months:</p>
+incorporated in the next months:</p>
 
 <ul>
+<li><p>Improved management of concurrency in the Thot translation server
+(concurrent translation processes are currently handled with mutual
+exclusion).</p></li>
 <li><p>Virtualized language models (i.e. accessing language model parameters
 from disk).</p></li>
 <li><p>Interpolation of language and translation models.</p></li>
-<li><p>Improved concurrency in the Thot translation server (translation
-process is not still concurrent).</p></li>
 </ul>
 
 <p>Finally, here is a list of known issues with the Thot toolkit that are
@@ -230,12 +233,14 @@ currently being addressed:</p>
 
 <ul>
 <li><p>Phrase model training is based on HMM-based word alignment models
-estimated by means of incremental EM. The current implementation is
-slow and currently constitutes a bottleneck when training phrase
-models from large corpora. One already implemented solution is to
-carry out the estimation in multiple processors. However, we are also
-investigating alternative optimization techniques to
-efficiently execute the estimation process in a single processor.</p></li>
+estimated by means of incremental EM. The current implementation is slow
+and currently constitutes a bottleneck when training phrase models from
+large corpora. One already implemented solution is to carry out the
+estimation in multiple processors.  Another solution is to replace
+HMM-based models by IBM 2 Models, which can be estimated very
+efficiently. However, we are also investigating alternative optimization
+techniques to efficiently execute the estimation process of HMM-based
+models in a single processor.</p></li>
 <li><p>Log-linear model weight adjustment is carried out by means of the
 downhill simplex algorithm, which is very slow. Downhill simplex will
 be replaced by a more efficient technique.</p></li>
