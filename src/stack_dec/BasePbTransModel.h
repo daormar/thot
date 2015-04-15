@@ -114,10 +114,10 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
   unsigned int partialTransLength(const Hypothesis& hyp)const;
 
       // Expansion-related parameters
-  void set_W_par(float _W);
-  void set_A_par(unsigned int _A);
-  void set_E_par(unsigned int _E);
-  void set_U_par(unsigned int _U);
+  void set_W_par(float W_par);
+  void set_A_par(unsigned int A_par);
+  void set_E_par(unsigned int E_par);
+  void set_U_par(unsigned int U_par);
   void setNonMonotonicity(unsigned int m);
   void setMonotoneSearch(void);
   void resetMonotoneSearch(void);
@@ -345,30 +345,30 @@ Vector<Vector<std::string> > BasePbTransModel<HYPOTHESIS>::getTrgPhrases(const H
 
 //---------------------------------------
 template<class HYPOTHESIS>
-void BasePbTransModel<HYPOTHESIS>::set_W_par(float _W)
+void BasePbTransModel<HYPOTHESIS>::set_W_par(float W_par)
 {
-  W=_W;
+  W=W_par;
 }
 
 //---------------------------------------
 template<class HYPOTHESIS>
-void BasePbTransModel<HYPOTHESIS>::set_A_par(unsigned int _A)
+void BasePbTransModel<HYPOTHESIS>::set_A_par(unsigned int A_par)
 {
-  A=_A;
+  A=A_par;
 }
 
 //---------------------------------------
 template<class HYPOTHESIS>
-void BasePbTransModel<HYPOTHESIS>::set_E_par(unsigned int _E)
+void BasePbTransModel<HYPOTHESIS>::set_E_par(unsigned int E_par)
 {
-  E=_E;
+  E=E_par;
 }
 
 //---------------------------------------
 template<class HYPOTHESIS>
-void BasePbTransModel<HYPOTHESIS>::set_U_par(unsigned int _U)
+void BasePbTransModel<HYPOTHESIS>::set_U_par(unsigned int U_par)
 {
-  U=_U;
+  U=U_par;
 }
 
 //---------------------------------------
