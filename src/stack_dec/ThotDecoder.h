@@ -198,38 +198,38 @@ class ThotDecoder
       // Functions to set decoder parameters
   void setNonMonotonicity(int nomon,
                           int verbose=0);
-  void set_W(float _W,
+  void set_W(float W_par,
              int verbose=0);
   void set_S(int user_id,
-             unsigned int _S,
+             unsigned int S_par,
              int verbose=0);
-  void set_A(unsigned int _A,
+  void set_A(unsigned int A_par,
              int verbose=0);
-  void set_E(unsigned int _E,
+  void set_E(unsigned int E_par,
              int verbose=0);
   void set_be(int user_id,
               int _be,
               int verbose=0);
   bool set_G(int user_id,
-             unsigned int _G,
+             unsigned int G_par,
              int verbose=0);
-  void set_h(unsigned int _h,
+  void set_h(unsigned int h_par,
              int verbose=0);
   bool set_np(int user_id,
-              unsigned int _np,
+              unsigned int np_par,
               int verbose=0);
   bool set_wgp(int user_id,
-               float _wgp,
+               float wgp_par,
                int verbose=0);
   void set_preproc(int user_id,
-                   unsigned int _preprocId,
+                   unsigned int preprocId_par,
                    int verbose=0);
-  void set_tmw(Vector<float> _tmwVec,
+  void set_tmw(Vector<float> tmwVec_par,
                int verbose=0);
-  void set_ecw(Vector<float> _ecwVec,
+  void set_ecw(Vector<float> ecwVec_par,
                int verbose=0);
   void set_catw(int user_id,
-                Vector<float> _catwVec,
+                Vector<float> catwVec_par,
                 int verbose=0);
   bool set_wgh(const char *wgHandlerFileName,
                int verbose=0);

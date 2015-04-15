@@ -1304,7 +1304,7 @@ void ThotDecoder::setNonMonotonicity(int nomon,
 }
 
 //--------------------------
-void ThotDecoder::set_W(float _W,
+void ThotDecoder::set_W(float W_par,
                         int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1312,9 +1312,9 @@ void ThotDecoder::set_W(float _W,
 
   if(verbose)
   {
-    cerr<<"W parameter is set to "<<_W<<endl;
+    cerr<<"W parameter is set to "<<W_par<<endl;
   }
-  tdCommonVars.smtModelPtr->set_W_par(_W);
+  tdCommonVars.smtModelPtr->set_W_par(W_par);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1323,7 +1323,7 @@ void ThotDecoder::set_W(float _W,
 
 //--------------------------
 void ThotDecoder::set_S(int user_id,
-                        unsigned int _S,
+                        unsigned int S_par,
                         int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1335,16 +1335,16 @@ void ThotDecoder::set_S(int user_id,
 
   if(verbose)
   {
-    cerr<<"S parameter is set to "<<_S<<endl;
+    cerr<<"S parameter is set to "<<S_par<<endl;
   }
-  tdPerUserVarsVec[idx].translatorPtr->set_S_par(_S);
+  tdPerUserVarsVec[idx].translatorPtr->set_S_par(S_par);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 }
   
 //--------------------------
-void ThotDecoder::set_A(unsigned int _A,
+void ThotDecoder::set_A(unsigned int A_par,
                         int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1352,16 +1352,16 @@ void ThotDecoder::set_A(unsigned int _A,
 
   if(verbose)
   {
-    cerr<<"A parameter is set to "<<_A<<endl;
+    cerr<<"A parameter is set to "<<A_par<<endl;
   }
-  tdCommonVars.smtModelPtr->set_A_par(_A);
+  tdCommonVars.smtModelPtr->set_A_par(A_par);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 }
   
 //--------------------------
-void ThotDecoder::set_E(unsigned int _E,
+void ThotDecoder::set_E(unsigned int E_par,
                         int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1369,9 +1369,9 @@ void ThotDecoder::set_E(unsigned int _E,
 
   if(verbose)
   {
-    cerr<<"E parameter is set to "<<_E<<endl;
+    cerr<<"E parameter is set to "<<E_par<<endl;
   }
-  tdCommonVars.smtModelPtr->set_E_par(_E);
+  tdCommonVars.smtModelPtr->set_E_par(E_par);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1379,7 +1379,7 @@ void ThotDecoder::set_E(unsigned int _E,
 
 //--------------------------
 void ThotDecoder::set_be(int user_id,
-                         int _be,
+                         int be_par,
                          int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1391,9 +1391,9 @@ void ThotDecoder::set_be(int user_id,
 
   if(verbose)
   {
-    cerr<<"be parameter is set to "<<_be<<endl;
+    cerr<<"be parameter is set to "<<be_par<<endl;
   }
-  tdPerUserVarsVec[idx].translatorPtr->set_breadthFirst(!_be);
+  tdPerUserVarsVec[idx].translatorPtr->set_breadthFirst(!be_par);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1402,7 +1402,7 @@ void ThotDecoder::set_be(int user_id,
 //--------------------------
 #ifdef MULTI_STACK_USE_GRAN
 bool ThotDecoder::set_G(int user_id,
-                        unsigned int _G,
+                        unsigned int G_par,
                         int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1414,9 +1414,9 @@ bool ThotDecoder::set_G(int user_id,
 
   if(verbose)
   {
-    cerr<<"G parameter is set to "<<_G<<endl;
+    cerr<<"G parameter is set to "<<G_par<<endl;
   }
-  tdPerUserVarsVec[idx].translatorPtr->set_G_par(_G);
+  tdPerUserVarsVec[idx].translatorPtr->set_G_par(G_par);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1425,7 +1425,7 @@ bool ThotDecoder::set_G(int user_id,
 }
 #else
 bool ThotDecoder::set_G(int /*user_id*/,
-                        unsigned int /*_G*/,
+                        unsigned int /*G_par*/,
                         int verbose/*=0*/)
 {
   if(verbose)
@@ -1435,7 +1435,7 @@ bool ThotDecoder::set_G(int /*user_id*/,
 #endif
 
 //--------------------------
-void ThotDecoder::set_h(unsigned int _h,
+void ThotDecoder::set_h(unsigned int h_par,
                         int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1443,10 +1443,10 @@ void ThotDecoder::set_h(unsigned int _h,
 
   if(verbose)
   {
-    cerr<<"h parameter is set to "<<_h<<endl;
+    cerr<<"h parameter is set to "<<h_par<<endl;
   }
       // Set heuristic
-  tdCommonVars.smtModelPtr->setHeuristic(_h);
+  tdCommonVars.smtModelPtr->setHeuristic(h_par);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1454,7 +1454,7 @@ void ThotDecoder::set_h(unsigned int _h,
   
 //--------------------------
 bool ThotDecoder::set_np(int user_id,
-                         unsigned int _np,
+                         unsigned int np_par,
                          int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1466,13 +1466,13 @@ bool ThotDecoder::set_np(int user_id,
 
   if(verbose)
   {
-    cerr<<"np parameter is set to "<<_np<<endl;
+    cerr<<"np parameter is set to "<<np_par<<endl;
   }
       // Set np value
   bool b;
   if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
   {
-    tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr->set_n(_np);
+    tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr->set_n(np_par);
     b=OK;
   }
   else
@@ -1491,7 +1491,7 @@ bool ThotDecoder::set_np(int user_id,
 //--------------------------
 #if CURR_ECM_VALID_FOR_WG == 0
 bool ThotDecoder::set_wgp(int /*user_id*/,
-                          float /*_wgp*/,
+                          float /*wgp_par*/,
                           int /*verbose=0*/)
 {
   cerr<<"Warning! wgp parameter is never used in the current configuration."<<endl;
@@ -1499,8 +1499,8 @@ bool ThotDecoder::set_wgp(int /*user_id*/,
 }
 #else
 bool ThotDecoder::set_wgp(int user_id,
-                               float _wgp,
-                               int verbose/*=0*/)
+                          float wgp_par,
+                          int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
@@ -1511,11 +1511,11 @@ bool ThotDecoder::set_wgp(int user_id,
 
   if(verbose)
   {
-    cerr<<"wgp parameter is set to "<<_wgp<<endl;
+    cerr<<"wgp parameter is set to "<<wgp_par<<endl;
   }
       // Set wgp value
   if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
-    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->set_wgp(_wgp);
+    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->set_wgp(wgp_par);
   else
   {
     cerr<<"warning! wgp parameter cannot be applied to translators that do not use word-graphs."<<endl;
@@ -1530,18 +1530,18 @@ bool ThotDecoder::set_wgp(int user_id,
 
 //--------------------------
 void ThotDecoder::set_preproc(int user_id,
-                              unsigned int _preprocId,
+                              unsigned int preprocId_par,
                               int verbose/*=0*/)
 {
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
   if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
 
-  tdState.preprocId=_preprocId;
+  tdState.preprocId=preprocId_par;
   if(tdPerUserVarsVec[idx].prePosProcessorPtr!=0)
     delete tdPerUserVarsVec[idx].prePosProcessorPtr;
   
-  switch(_preprocId)
+  switch(preprocId_par)
   {
     case DISABLE_PREPROC:
       tdPerUserVarsVec[idx].prePosProcessorPtr=0;
@@ -1582,14 +1582,14 @@ void ThotDecoder::set_preproc(int user_id,
 }
   
 //--------------------------
-void ThotDecoder::set_tmw(Vector<float> _tmwVec,
+void ThotDecoder::set_tmw(Vector<float> tmwVec_par,
                                int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
       // Set translation model weights
-  tdCommonVars.smtModelPtr->setWeights(_tmwVec);
+  tdCommonVars.smtModelPtr->setWeights(tmwVec_par);
     
   if(verbose)
   {
@@ -1602,14 +1602,14 @@ void ThotDecoder::set_tmw(Vector<float> _tmwVec,
 }
   
 //--------------------------
-void ThotDecoder::set_ecw(Vector<float> _ecwVec,
+void ThotDecoder::set_ecw(Vector<float> ecwVec_par,
                           int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
       // Set error correcting model weights
-  tdCommonVars.ecModelPtr->setWeights(_ecwVec);
+  tdCommonVars.ecModelPtr->setWeights(ecwVec_par);
     
   if(verbose)
   {
@@ -1623,7 +1623,7 @@ void ThotDecoder::set_ecw(Vector<float> _ecwVec,
   
 //--------------------------
 void ThotDecoder::set_catw(int user_id,
-                           Vector<float> _catwVec,
+                           Vector<float> catwVec_par,
                            int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1634,7 +1634,7 @@ void ThotDecoder::set_catw(int user_id,
   if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
 
       // Set cat weights
-  tdPerUserVarsVec[idx].assistedTransPtr->setWeights(_catwVec);
+  tdPerUserVarsVec[idx].assistedTransPtr->setWeights(catwVec_par);
     
   if(verbose)
   {
@@ -1922,7 +1922,7 @@ bool ThotDecoder::use_caseconv(int user_id,
 
 //--------------------------
 std::string ThotDecoder::preprocStr(int user_id,
-                                         std::string str)
+                                    std::string str)
 {
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
