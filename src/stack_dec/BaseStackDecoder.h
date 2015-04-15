@@ -79,8 +79,8 @@ class BaseStackDecoder
   virtual SMT_MODEL* get_smt_model_ptr(void)=0;
 
       // Functions for setting the decoder parameters
-  virtual void set_S_par(unsigned int _S)=0;
-  virtual void set_I_par(unsigned int _I)=0;
+  virtual void set_S_par(unsigned int S_par)=0;
+  virtual void set_I_par(unsigned int I_par)=0;
 
       // Basic services
   virtual Hypothesis translate(std::string s)=0; 
