@@ -37,12 +37,6 @@ thot package
 #include <stdlib.h>
 #include <math.h>
 
-#ifdef MACOSX
-#include <malloc/malloc.h>
-#else
-#include <malloc.h>
-#endif
-
 #include "ErrorDefs.h"
 #include "getline.h"
 
