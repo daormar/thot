@@ -3,9 +3,9 @@ echo "* Perform checkings before reconfiguring package..."
 # Check autotools
 echo -n "- Checking that autotools are present..."
 err=0
-autoconf --version >/dev/null 2>&1 || err=1
-automake --version >/dev/null 2>&1 || err=1
-libtool --version >/dev/null 2>&1 || err=1
+which autoconf >/dev/null 2>&1 || err=1
+which automake >/dev/null 2>&1 || err=1
+which libtool >/dev/null 2>&1 || err=1
 
 if [ $err -eq 1 ]; then
    echo ""
@@ -17,21 +17,16 @@ else
    echo " OK"
 fi
 
-# Check libtoolize
-echo -n "- Checking libtoolize..."
-err=`libtoolize -n --quiet 2>&1 | grep "not found" | wc -l`
+# Reconfigure package
+echo "* Reconfigure package..."
+autoreconf -i -I m4 --force || err=1
 
 if [ $err -eq 1 ]; then
    echo ""
-   echo "**Error**: libtoolize cannot detect necessary files."
+   echo "**Error**: reconf script has failed."
    echo ""
-   echo "Make sure libtool-ltdl-devel (rpm) / libltdl-dev (deb) or an"
-   echo "appropriate package for your distribution is installed."
+   echo "NOTE: Make sure libtool-ltdl-devel (rpm) / libltdl-dev (deb)"
+   echo "or an appropriate package for your distribution is installed."
+   echo ""
    exit 1
-else
-   echo " OK"
 fi
-
-# Reconfigure package
-echo "* Reconfigure package..."
-autoreconf -i -I m4 --force
