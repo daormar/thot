@@ -98,8 +98,8 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
   SMT_MODEL* get_smt_model_ptr(void);
 
       // Functions for setting the decoder parameters
-  void set_S_par(unsigned int _S);
-  void set_I_par(unsigned int _I);
+  void set_S_par(unsigned int S_par);
+  void set_I_par(unsigned int I_par);
   void set_breadthFirst(bool b);
     
       // Basic services
@@ -277,17 +277,17 @@ SMT_MODEL* _stackDecoder<SMT_MODEL>::get_smt_model_ptr(void)
 
 //---------------------------------------
 template<class SMT_MODEL>
-void _stackDecoder<SMT_MODEL>::set_S_par(unsigned int _S)
+void _stackDecoder<SMT_MODEL>::set_S_par(unsigned int S_par)
 {
-  S=_S;
+  S=S_par;
   stack_ptr->setMaxStackSize(S);
 }
 
 //---------------------------------------
 template<class SMT_MODEL>
-void _stackDecoder<SMT_MODEL>::set_I_par(unsigned int _I)
+void _stackDecoder<SMT_MODEL>::set_I_par(unsigned int I_par)
 {
-  I=_I;
+  I=I_par;
 }
 
 //---------------------------------------
