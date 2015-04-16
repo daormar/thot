@@ -78,11 +78,11 @@ class _nbUncoupledAssistedTrans: public _assistedTrans<SMT_MODEL>
       // Basic services
   virtual std::string translateWithPrefix(std::string s,
                                           std::string pref,
-                                          RejectedWordsSet& rejectedWords=RejectedWordsSet(),
+                                          const RejectedWordsSet& rejectedWords=RejectedWordsSet(),
                                           unsigned int verbose=0)=0;
       // Translates std::string s using pref as prefix, uncoupled version
   virtual std::string addStrToPrefix(std::string s,
-                                     RejectedWordsSet& rejectedWords=RejectedWordsSet(),
+                                     const RejectedWordsSet& rejectedWords=RejectedWordsSet(),
                                      unsigned int verbose=0)=0;
       // Adds the string 's' to the user prefix
   virtual void resetPrefix(void)=0;

@@ -93,7 +93,7 @@ class ThotImtSession: public IInteractiveMtSession
   void setPrefixAux(const vector<string>& prefix,
                     const vector<string>& suffix,
                     const bool last_token_is_partial,
-                    RejectedWordsSet& rejectedWords,
+                    const RejectedWordsSet& rejectedWords,
                     vector<string>& corrected_translation_out);
 };
 #endif

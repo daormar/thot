@@ -1729,7 +1729,7 @@ void ThotDecoder::startCat(int user_id,
 //--------------------------
 void ThotDecoder::addStrToPref(int user_id,
                                const char *strToAddToPref,
-                               RejectedWordsSet& rejectedWords,
+                               const RejectedWordsSet& rejectedWords,
                                std::string &catResult,
                                int verbose/*=0*/)
 {
@@ -1782,8 +1782,8 @@ void ThotDecoder::addStrToPref(int user_id,
     expLastWord=expandLastWord(preprocPref);
     tdPerUserVarsVec[idx].assistedTransPtr->resetPrefix();
     trans=tdPerUserVarsVec[idx].assistedTransPtr->addStrToPrefix(preprocPref,
-                                                           rejectedWords,
-                                                           verbose);
+                                                                 rejectedWords,
+                                                                 verbose);
     pthread_mutex_lock(&preproc_mut);
         /////////// begin of preproc mutex 
     catResult=robustObtainFinalOutput(tdPerUserVarsVec[idx].prePosProcessorPtr,
@@ -1843,7 +1843,7 @@ void ThotDecoder::addStrToPref(int user_id,
 //--------------------------
 void ThotDecoder::setPref(int user_id,
                           const char *prefStr,
-                          RejectedWordsSet& rejectedWords,
+                          const RejectedWordsSet& rejectedWords,
                           std::string &catResult,
                           int verbose/*=0*/)
 {

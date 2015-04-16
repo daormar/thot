@@ -142,12 +142,12 @@ class ThotDecoder
                 int verbose=0);
   void addStrToPref(int user_id,
                     const char *strToAddToPref,
-                    RejectedWordsSet& rejectedWords,
+                    const RejectedWordsSet& rejectedWords,
                     std::string &catResult,
                     int verbose=0);
   void setPref(int user_id,
                const char *prefStr,
-               RejectedWordsSet& rejectedWords,
+               const RejectedWordsSet& rejectedWords,
                std::string &catResult,
                int verbose=0);
   void resetPrefix(int user_id,

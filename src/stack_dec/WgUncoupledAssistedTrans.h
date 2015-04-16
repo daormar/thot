@@ -88,11 +88,11 @@ class WgUncoupledAssistedTrans: public _assistedTrans<SMT_MODEL>
       // Basic services
   std::string translateWithPrefix(std::string s,
                                   std::string pref,
-                                  RejectedWordsSet& rejectedWords=RejectedWordsSet(),
+                                  const RejectedWordsSet& rejectedWords=RejectedWordsSet(),
                                   unsigned int verbose=0);
       // Translates std::string s using pref as prefix, uncoupled version
   std::string addStrToPrefix(std::string s,
-                             RejectedWordsSet& rejectedWords=RejectedWordsSet(),
+                             const RejectedWordsSet& rejectedWords=RejectedWordsSet(),
                              unsigned int verbose=0);
       // Adds the string 's' to the user prefix
   void resetPrefix(void);
@@ -197,7 +197,7 @@ void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::link_wgh(WgHandler* _wgh_pt
 template<class SMT_MODEL,class ECM_FOR_WG>
 std::string WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::translateWithPrefix(std::string s,
                                                                                 std::string pref,
-                                                                                RejectedWordsSet& rejectedWords,
+                                                                                const RejectedWordsSet& rejectedWords,
                                                                                 unsigned int verbose)
 {
       // Set catPrefix data member
@@ -352,7 +352,7 @@ WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::obtainWgUsingTranslator(std::str
 //---------------------------------
 template<class SMT_MODEL,class ECM_FOR_WG>
 std::string WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::addStrToPrefix(std::string s,
-                                                                           RejectedWordsSet& rejectedWords,
+                                                                           const RejectedWordsSet& rejectedWords,
                                                                            unsigned int verbose)
 {
   NbestCorrections nbestCorrections;

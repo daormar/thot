@@ -165,7 +165,7 @@ void ThotImtSession::rejectSuffix(const vector<string>& prefix,
 void ThotImtSession::setPrefixAux(const vector<string>& prefix,
                                   const vector<string>& /*suffix*/,
                                   const bool last_token_is_partial,
-                                  RejectedWordsSet& rejectedWords,
+                                  const RejectedWordsSet& rejectedWords,
                                   vector<string>& corrected_translation_out)
 {
       // Initialize variables
