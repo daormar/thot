@@ -212,7 +212,7 @@ bool TrieOfWords<DATA_TYPE>::erase(const Vector<WordIndex>& keySeq)
         vecTriePtr[keySeq[0]]=NULL;
       }
     }
-    else return NULL;
+    else return false;
   }
 }
 
