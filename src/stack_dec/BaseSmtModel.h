@@ -169,7 +169,8 @@ class BaseSmtModel
                                     int verbose=0);
 
       // Word prediction functions
-  virtual void addSentenceToWordPred(Vector<std::string> strVec);
+  virtual void addSentenceToWordPred(Vector<std::string> strVec,
+                                     int verbose=0);
       // Add a new sentence to the word predictor
   virtual pair<Count,std::string> getBestSuffix(std::string input);
       // Returns a suffix that completes the input string. This function
@@ -265,7 +266,8 @@ int BaseSmtModel<HYPOTHESIS>::treatCoverageProblems(TreatCovProblemsPars<HYPOTHE
 
 //---------------------------------
 template<class HYPOTHESIS>
-void BaseSmtModel<HYPOTHESIS>::addSentenceToWordPred(Vector<std::string> /*strVec*/)
+void BaseSmtModel<HYPOTHESIS>::addSentenceToWordPred(Vector<std::string> /*strVec*/,
+                                                     int /*verbose=0*/)
 {
       /* This function is left void */
 }
