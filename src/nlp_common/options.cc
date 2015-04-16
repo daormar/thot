@@ -509,6 +509,49 @@ Vector<std::string> argv2argv_stl(int argc, char **argv)
 
 
 /**
+ * @brief Reads a sequence of floating point numbers associated to a given label
+ *
+ * @param argv pointer array containing the options introduced in the command-line.
+ * @param argc number of arguments introduced in the command-line.
+ * @param pszLabel string containg the label associated to an option.
+ * @param String vector given as reference which will be used to store
+ * the sequence of floating point numbers.
+ * @return 0 if the label was found, -1 in other case.
+ */
+int readStringSeq(int argc,
+                 char **argv,
+                 const char *pszLabel,
+                 Vector<string>& strVec)
+{
+  int i = 1;
+  while (i < argc-1)
+  {
+    if (!strcmp(argv[i], pszLabel))
+    {
+      Vector<string> strVecAux;
+      bool end=false;
+      while(!end)
+      {
+        ++i;
+        strVecAux.push_back(argv[i]);
+        if(i==argc-1) end=true;
+        else
+        {
+          if(isOption(argv[i+1]))
+          {
+            end=true;
+          }
+        }
+      }
+      strVec=strVecAux;
+      return 0;
+    }
+    i++;
+  }
+  return -1;   
+}
+
+/**
  * @brief Given a file name, extracts the parameters contained in it,
  * ignoring those lines starting with the string "comment".
  *

@@ -107,6 +107,12 @@ int readTwoSTLstrings(int argc,
                       string *val2);
 // Reads two consecutive strings associated to a given label.
 
+int readStringSeq(int argc,
+                  char **argv,
+                  const char *pszLabel,
+                  Vector<string>& strVec);
+// Reads a sequence of strings associated to a given label
+
 Vector<std::string> argv2argv_stl(int argc, char **argv);
 // Converts const char **argv into Vector<std::string>
 
