@@ -194,7 +194,7 @@ template<class DATA_TYPE>
 bool TrieBidOfWords<DATA_TYPE>::erase(const Vector<WordIndex>& /*keySeq*/)
 {
       // TO-DO
-  cerr<<"Warning: erase function not implemented in TrieBidOfWords\n");
+  cerr<<"Warning: erase function not implemented in TrieBidOfWords\n";
   return false;
 }
 
