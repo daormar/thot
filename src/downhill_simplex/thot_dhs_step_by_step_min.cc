@@ -42,6 +42,7 @@ USA.
 #include <stdlib.h>
 #include "ctimer.h"
 #include "options.h"
+#include "StrProcUtils.h"
 #include <math.h>
 #include <iostream>
 #include <fstream>
@@ -74,6 +75,7 @@ void printDesc(void);
 
 unsigned int ndim;
 double ftol;
+Vector<string> fixNonFixVarsStr;
 Vector<float> fixNonFixVars;
 Vector<float> initVals;
 Vector<bool> fixedVarsBoolVec;
@@ -169,14 +171,12 @@ void genFixedVarsBoolVector(void)
       // Init fixed vars boolean vector
   for(unsigned int i=0;i<fixNonFixVars.size();++i)
   {
-     //Check if the value for fixNonFixVars[i] is equal to -0
-    char c[512];
-    sprintf(c,"%f",fixNonFixVars[i]);
-    if(fixNonFixVars[i]==0 && c[0]=='-')
+     //Check if the value for fixNonFixVarsStr[i] is equal to -0
+    if(fixNonFixVars[i]==0 && fixNonFixVarsStr[i][0]=='-')
       fixedVarsBoolVec.push_back(false);
     else
     {
-          // if fixNonFixVars[i]!=-0 the weight is fixed
+          // if fixNonFixVarsStr[i][0]!=-0 the weight is fixed
       fixedVarsBoolVec.push_back(true);
     }
   }
@@ -315,12 +315,15 @@ int TakeParameters(int argc,char *argv[])
  }
 
      /* Take fixed and non-fixed variables */
- fixNonFixVars.clear();
- err=readFloatSeq(argc,argv, "-va", fixNonFixVars);
+ err=readStringSeq(argc,argv, "-va", fixNonFixVarsStr);
  if(err==-1)
  {
    version();
    return ERROR;
+ }
+ else
+ {
+   fixNonFixVars=StrProcUtils::strVecToFloatVec(fixNonFixVarsStr);
  }
 
      /* Take initial values for the variables if given */
