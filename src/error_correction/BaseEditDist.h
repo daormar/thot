@@ -61,8 +61,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- BaseEditDist class declaration
 
-using namespace std;
-
 template<class OBJ>
 class BaseEditDist
 {
