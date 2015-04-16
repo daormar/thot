@@ -79,9 +79,9 @@ void NbSearchStack::pop(void)
 }
 
 //---------------------------------------
-void NbSearchStack::setMaxStackSize(int maxStackSize)
+void NbSearchStack::setMaxStackSize(int _maxStackSize)
 {
-  maxStackSize=maxStackSize;
+  maxStackSize=_maxStackSize;
 }
 
 //---------------------------------------
