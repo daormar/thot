@@ -16,8 +16,8 @@ else
         exit 1
     fi
     # Obtain information
-    sents=`$GREP "*** Sentence" $file | wc -l`
-    wordsplussents=`$GREP "P( " $file | wc -l`
+    sents=`$GREP "\*\*\* Sentence" $file | wc -l | $AWK '{printf"%s",$1}'`
+    wordsplussents=`$GREP "P( " $file | wc -l | $AWK '{printf"%s",$1}'`
     words=`expr $wordsplussents - $sents`
     log10prob=`$GREP "P( " $file | $AWK 'BEGIN{sum=0}{sum+=(log($(NF-1))*(1/log(10)))}END{printf"%.1f",sum}'`
     oovw=`$GREP "P( <unk>" $file | wc -l | $AWK '{printf"%d",$1}'`
