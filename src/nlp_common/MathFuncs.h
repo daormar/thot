@@ -67,12 +67,12 @@ namespace MathFuncs
 #endif
 
   template<size_t N>
+#ifdef THOT_HAVE_GMP
   Bitset<N> bs_numbPermsOfTwoElems(unsigned int m,
                                    unsigned int n)
         // Obtains the number of permutations of two elements and
         // returns it in a Bitset
   {
-#ifdef THOT_HAVE_GMP
     unsigned int  ui_arr[NUM_WORDS(N)];
     size_t countp;
     mpz_t mp_perms;
@@ -111,17 +111,23 @@ namespace MathFuncs
 
           // Return result
     return result;
+  }
 #else
+  Bitset<N> bs_numbPermsOfTwoElems(unsigned int m,
+                                   unsigned int n)
+        // Obtains the number of permutations of two elements and
+        // returns it in a Bitset
+  {
     Bitset<N> result((unsigned long) round(exp(logNumbPermsOfTwoElems(m,n))));
     return result;
-#endif
   }
+#endif
   
+#ifdef THOT_HAVE_GMP
   template<size_t N>
   Bitset<N> bs_randPermOfTwoElems(unsigned int m,
                                   unsigned int n)
   {
-#ifdef THOT_HAVE_GMP
     unsigned int  ui_arr[NUM_WORDS(N)];
     size_t countp;
     mpz_t mp_randperm;
@@ -146,12 +152,16 @@ namespace MathFuncs
 
           // Return result
     return result;
+  }
 #else
+  template<size_t N>
+  Bitset<N> bs_randPermOfTwoElems(unsigned int /*m*/,
+                                  unsigned int /*n*/)
+  {
     Bitset<N> result;
     return result;
-#endif
   }
-    
+#endif    
   
   Prob poisson(double x,double lambda);
       // Generates probabilities for a poisson distribution
