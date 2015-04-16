@@ -251,7 +251,7 @@ if [ ${r_given} -eq 1 ]; then
     cp ${r_val} ${TDIR}/adj.img.old
     cat ${r_val} | $AWK '{printf"<resumed xval>\n"}' > ${TDIR}/adj.xval
 else
-    echo -n ""> ${TDIR}/adj.img
+    echo "" | $AWK '{printf""}' > ${TDIR}/adj.img
 fi
 
 # Downhill simplex algorithm loop
