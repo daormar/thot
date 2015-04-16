@@ -39,7 +39,6 @@ namespace StrProcUtils
     return v;	
   }
 
-
   //--------------- stringToStringVector function
   Vector<std::string> stringToStringVector(std::string s)
   {
@@ -175,4 +174,20 @@ namespace StrProcUtils
     str.push_back(' ');
     return str;
   }
+
+  //--------------- strVecToFloatVec function
+  Vector<float> strVecToFloatVec(Vector<std::string> strVec)
+  {
+    Vector<float> floatVec;
+
+    for(unsigned int i=0;i<strVec.size();++i)
+    {
+      float value;
+      sscanf(strVec[i].c_str(), "%f", &value);
+      floatVec.push_back(value);
+    }
+    
+    return floatVec;
+  }
+
 }

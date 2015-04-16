@@ -28,6 +28,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include <stdio.h>
 #include "myVector.h"
 #include <string>
 
@@ -50,6 +51,8 @@ namespace StrProcUtils
       // Remove last blank character of str if exists
   std::string addBlank(std::string str);
       // Add blank character at the end of str
+  Vector<float> strVecToFloatVec(Vector<std::string> strVec);
+      // Convert string vector into a float vector
 }
 
 #endif
