@@ -510,6 +510,9 @@ split_input || exit 1
 # Declare job id list variable
 declare job_id_list=""
 
+# Init variables
+chunk_id=0
+
 # Generate best alignment
 for i in `ls ${chunks_dir}/src\_chunk\_*`; do
     # Initialize variables
