@@ -70,7 +70,9 @@ class _incrInterpNgramLM: public _incrInterpEncCondProbModel<Vector<std::string>
     }
 
       // basic vecx_x_incr_interp_ecpm function redefinitions
-  void addTableEntryHigh(const Vector<std::string>& hs,const std::string& ht,SRCTRG_INFO info);
+  void addTableEntryHigh(const Vector<std::string>& hs,
+                         const std::string& ht,
+                         im_pair<SRC_INFO,SRCTRG_INFO> inf);
   bool loadEncodingInfo(const char *prefixFileName);
 
   // BaseIncrNgramLM function definitions
@@ -140,7 +142,9 @@ class _incrInterpNgramLM: public _incrInterpEncCondProbModel<Vector<std::string>
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-void _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::addTableEntryHigh(const Vector<std::string>& hs,const std::string& ht,SRCTRG_INFO inf)
+void _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::addTableEntryHigh(const Vector<std::string>& hs,
+                                                                 const std::string& ht,
+                                                                 im_pair<SRC_INFO,SRCTRG_INFO> inf)
 {  
   _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::addTableEntryHigh(hs,ht,inf);
 }
