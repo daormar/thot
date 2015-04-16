@@ -191,23 +191,11 @@ TrieBid<WordIndex,DATA_TYPE>* TrieBidOfWords<DATA_TYPE>::insert(const Vector<Wor
 
 //---------------
 template<class DATA_TYPE>
-bool TrieBidOfWords<DATA_TYPE>::erase(const Vector<WordIndex>& keySeq)
+bool TrieBidOfWords<DATA_TYPE>::erase(const Vector<WordIndex>& /*keySeq*/)
 {
-  if(keySeq.size()==0) return false;
-  else
-  {
-    if(keySeq[0]<vecTriePtr.size())
-    {
-      if(vecTriePtr[keySeq[0]]==NULL) return false;
-      else
-      {
-        vecTriePtr[keySeq[0]]->clear();
-        delete vecTriePtr[keySeq[0]];
-        vecTriePtr[keySeq[0]]=NULL;
-      }
-    }
-    else return NULL;
-  }
+      // TO-DO
+  cerr<<"Warning: erase function not implemented in TrieBidOfWords\n");
+  return false;
 }
 
 //---------------
