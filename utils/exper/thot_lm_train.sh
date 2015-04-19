@@ -224,27 +224,27 @@ if [ ${sdir_given} -eq 1 ]; then
 fi
 
 # Train model
-echo -n "* Training language model... " >&2
+echo "* Training language model... " >&2
 prefix=$outd/main/trg.lm
 ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
     -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
     ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
-echo "Done" >&2
+echo "" >&2
 
 # Generate weights file
-echo -n "* Generating weights file... " >&2
+echo "* Generating weights file... " >&2
 n_buckets=3
 bsize=10
 ${bindir}/thot_gen_init_file_with_jmlm_weights ${n_val} ${n_buckets} ${bsize} > $prefix.weights
-echo "Done" >&2
+echo "" >&2
 
 # Generate wp file
-echo -n "* Generating file for word prediction... " >&2
+echo "* Generating file for word prediction... " >&2
 nlines_wp_file=100000
 ${bindir}/thot_shuffle 31415 $corpus | $HEAD -${nlines_wp_file} > $prefix.wp
-echo "Done" >&2
+echo "" >&2
 
 # Create descriptor file
-echo -n "* Generating descriptor file... " >&2
+echo "* Generating descriptor file... " >&2
 create_desc_file $outd
-echo "Done" >&2
+echo "" >&2
