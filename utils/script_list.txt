@@ -13,7 +13,7 @@
 /home/dortiz/smt/software/alig_models/phrase_models thot_pbs_gen_batch_phr_model
 /home/dortiz/smt/software/error_correction thot_export_wordgraph
 /home/dortiz/smt/software/downhill_simplex thot_dhs_min
-/home/dortiz/smt/software/downhill_simplex thot_trgfunc_example
+/home/dortiz/smt/software/downhill_simplex thot_dhs_trgfunc_example
 /home/dortiz/smt/software/stack_dec thot_conf_interv_cat
 /home/dortiz/smt/software/stack_dec thot_conf_interv_smt
 /home/dortiz/smt/software/stack_dec thot_pbs_dec

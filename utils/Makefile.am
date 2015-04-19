@@ -47,7 +47,7 @@ error_correction/thot_merge_nbest_list					\
 error_correction/thot_export_wordgraph
 
 downhill_simplex_bin_scripts= downhill_simplex/thot_dhs_min	\
-downhill_simplex/thot_trgfunc_example
+downhill_simplex/thot_dhs_trgfunc_example
 
 stack_dec_bin_scripts= stack_dec/thot_pbs_dec			\
 stack_dec/thot_dhs_smt_trgfunc stack_dec/thot_dhs_cat_trgfunc	\
