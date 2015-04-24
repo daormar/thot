@@ -30,7 +30,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,15 +64,10 @@ namespace BasicSocketUtils
       // Basic socket functions
   int init(void);
   int recvStr(int s,char *str);
-  int recvStr(int s,char **strPtr);
   int recvStlStr(int s,std::string& stlstr);
   int recvInt(int s);
-  int recvFloat(int s,float& f);
-  int recvFloatVec(int s,Vector<float>& fVec);
   int writeInt(int fd,int i);
   int writeStr(int fd,const char* s);
-  int writeStrVec(int fd,Vector<std::string> svec);
-  int writeFloat(int fd,float f);
   int connect(const char *dirServ,
               unsigned int port,
               int& fileDesc);

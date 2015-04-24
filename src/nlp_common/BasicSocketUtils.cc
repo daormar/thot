@@ -56,26 +56,6 @@ namespace BasicSocketUtils
     return numbytes;
   }
 
-  //--------------- recvStrPtr function
-  int recvStrPtr(int s,char **strPtr)
-  {
-    int  numbytes;
-
-    numbytes=recvInt(s);
-    *strPtr=(char*) mem_alloc_utils::my_realloc(*strPtr,(numbytes+1)*sizeof(char));
-    if(numbytes>0)
-    {
-      if ((numbytes=recv(s,*strPtr,numbytes,0)) == -1)
-      {
-            // recv() call 
-        cerr<<"recv() error!"<<endl;
-        exit(-1);
-      }
-    }
-    *strPtr[numbytes] = '\0';
-    return numbytes;
-  }
-
   //--------------- recvStlStr function
   int recvStlStr(int s,std::string& stlstr)
   {
@@ -137,24 +117,6 @@ namespace BasicSocketUtils
     return numbytes;
   }
 
-  //--------------- recvFloatVec function
-  int recvFloatVec(int s,Vector<float>& fVec)
-  {
-    int numf;
-    float f;
-    int numbytes=0;
-  
-    fVec.clear();
-    numf=recvInt(s);
-    numbytes+=sizeof(int);
-    for(int i=0;i<numf;++i)
-    {
-      numbytes+=recvFloat(s,f);
-      fVec.push_back(f);
-    }
-    return numbytes;
-  }
-
   //--------------------------
   int writeInt(int fd,int i)
   {
@@ -185,35 +147,6 @@ namespace BasicSocketUtils
      }
     }
     return ret;
-  }
-
-  //--------------------------
-  int writeStrVec(int fd,Vector<std::string> svec)
-  {
-    std::string s;
-
-    for(unsigned int i=0;i<svec.size();++i)
-    {
-      if(i==0) s=svec[0];
-      else s=s+" "+svec[i];
-    }
-  
-    return writeStr(fd,s.c_str());
-  }
-
-  //--------------- writeFloat function
-  int writeFloat(int fd,float f)
-  {
-    char *cPtr;
-    int d;
-    int sign;
-    int ret;
-  
-    cPtr=ecvt(f,5,&d,&sign);
-    cPtr[5]=0;
-    ret=writeInt(fd,d);
-    ret+=writeInt(fd,sign);
-    return ret+writeStr(fd,cPtr);
   }
   
   //--------------- connect function
