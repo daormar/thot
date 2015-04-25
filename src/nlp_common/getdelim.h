@@ -30,6 +30,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  define THOT_TIME_WITH_SYS_TIME 1
 #endif /* HAVE_CONFIG_H */
 
+#include <stdlib.h>
+#include <errno.h>
 #include <stdio.h>
 #if THOT_HAVE_UNISTD_H
 # include <unistd.h>
@@ -40,7 +42,6 @@ extern "C"
 {
 #endif
 #ifndef THOT_HAVE_GETDELIM
-# define GETDELIM_BUFFER 128
   ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *stream);
 #endif
 #ifdef __cplusplus  
