@@ -11,7 +11,7 @@ shuffle()
 
     # Shuffle file
     $AWK -v seed=$seed 'BEGIN{srand(seed)}{printf"%f %d %s\n",rand(),NR,$0}' $file \
-        | $SORT -k1g -k2n | $AWK '{for(i=3;i<NF;++i) printf"%s ",$i; printf"%s\n",$NF}'
+        | $SORT -k1n -k2n | $AWK '{for(i=3;i<NF;++i) printf"%s ",$i; printf"%s\n",$NF}'
 }
 
 thot_shuffle_alt()
