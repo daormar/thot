@@ -26,7 +26,7 @@ usage()
 {
     echo "thot_smt_tune           [-pr <int>] -c <string>"
     echo "                        -s <string> -t <string> -o <string>"
-    echo "                        [-qs <string>]"
+    echo "                        [-tqm <string>] [-qs <string>]"
     echo "                        [-tdir <string>] [-debug] [--help] [--version]"
     echo ""
     echo "-pr <int>               Number of processors (1 by default)"
@@ -34,6 +34,8 @@ usage()
     echo "-s <string>             File with source sentences"
     echo "-t <string>             File with target sentences"
     echo "-o <string>             Output directory common to all processors."
+    echo "-tqm <string>           Set translation quality measure for tuning"
+    echo "                        (BLEU by default, other options: WER)"
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTES:"
@@ -334,7 +336,7 @@ loglin_downhill()
 export PHRDECODER=${bindir}/thot_pbs_dec
     export ADD_DEC_OPTIONS="-pr ${pr_val} -sdir $sdir"
     export QS="${qs_par}"
-    export MEASURE="BLEU"
+    export MEASURE=${tqm}
     export USE_NBEST_OPT=0
 
     # Generate information for weight initialisation
@@ -423,6 +425,8 @@ c_given=0
 s_given=0
 t_given=0
 o_given=0
+tqm="BLEU"
+tqm_given=0
 qs_given=0
 unk_given=0
 tdir_given=0
@@ -467,6 +471,12 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 outd=$1
                 o_given=1
+            fi
+            ;;
+        "-tqm") shift
+            if [ $# -ne 0 ]; then
+                tqm=$1
+                tqm_given=1
             fi
             ;;
         "-qs") shift
