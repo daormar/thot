@@ -427,7 +427,7 @@ while read -r s; do
 
     # Compute error-related statistics (only if maximum number of
     # iterations not exceeded)
-    if [ ${iter_num} -lt ${MAX_ITERS} ]; then
+    if [ ${iter_num} -lt ${MAX_ITERS} -a "${SKIP_FOLLOW_ITERS}" != "yes" ]; then
         C=`len_str "$r"`
         CHARS=`expr $CHARS + $C`
         MAacc=`expr ${MAacc} + 1`
