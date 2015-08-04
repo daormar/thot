@@ -22,15 +22,15 @@ version()
 ########
 usage()
 {
-    echo "thot_smt_using_client -i <server_ip> [-p <int>] [-uid <int>]"
-    echo "                      -t <sentFile> [-r <refFile>]"
+    echo "thot_smt_using_client -i <string> [-p <int>] [-uid <int>]"
+    echo "                      -t <string> [-r <string>]"
     echo "                      [-pm <string>] [--help] [--version]"
     echo ""
-    echo " -i <server_ip>          : IP address of the server."
+    echo " -i <string>             : IP address of the server."
     echo " -p <int>                : Server port."
     echo " -uid <int>              : Set user id."
-    echo " -t <sentFile>           : File with the sentences to translate."
-    echo " -r <refFile>            : File with reference sentences for online"
+    echo " -t <string>             : File with the sentences to translate."
+    echo " -r <string>            : File with reference sentences for online"
     echo "                           training."
     echo " -pm <string>            : Print server models at exit using"
     echo "                           string as prefix."
