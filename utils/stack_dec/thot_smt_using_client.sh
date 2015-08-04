@@ -30,7 +30,7 @@ usage()
     echo " -p <int>                : Server port."
     echo " -uid <int>              : Set user id."
     echo " -t <string>             : File with the sentences to translate."
-    echo " -r <string>            : File with reference sentences for online"
+    echo " -r <string>             : File with reference sentences for online"
     echo "                           training."
     echo " -pm <string>            : Print server models at exit using"
     echo "                           string as prefix."
