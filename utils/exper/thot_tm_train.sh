@@ -28,7 +28,7 @@ usage()
     echo "                        -s <string> -t <string> -o <string>"
     echo "                        [-n <int>] [-np <float>]"
     echo "                        [-af <float>]"
-    echo "                        [-ao <string>] [-m <int>]"
+    echo "                        [-m <int>] [-ao <string>]  [-to <int>]"
     echo "                        [-unk] [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
@@ -46,6 +46,9 @@ usage()
     echo "                        estimation (7 by default)"
     echo "-ao <string>            Operation between alignments to be executed"
     echo "                        (and|or|sum|sym1|sym2|grd)."
+    echo "-to <int>               Maximum number of translation options for each target" >&2
+    echo "                        phrase that are considered during a translation process" >&2
+    echo "                        (20 by default)" >&2
     echo "-unk                    Introduce special unknown word symbol during"
     echo "                        estimation"
     echo "-qs <string>            Specific options to be given to the qsub"
@@ -61,7 +64,7 @@ usage()
     echo "                            on the cluster software. For instance, if using SGE"
     echo "                            software, -qs \"-l h_vmem=1G,h_rt=10:00:00\","
     echo "                            requests 1GB of virtual memory and a time limit"
-    echo "                            of 10 hours." 
+    echo "                            of 10 hours" 
     echo "-tdir <string>          Directory for temporary files (/tmp by default)."
     echo "                        NOTES:"
     echo "                         a) give absolute paths when using pbs clusters"
@@ -73,8 +76,8 @@ usage()
     echo "                         b) ensure there is enough disk space in the partition"
     echo "-debug                  After ending, do not delete temporary files"
     echo "                        (for debugging purposes)"
-    echo "--help                  Display this help and exit."
-    echo "--version               Output version information and exit."
+    echo "--help                  Display this help and exit"
+    echo "--version               Output version information and exit"
 }
 
 ########
@@ -122,9 +125,11 @@ n_given=0
 niters=5
 af_given=0
 np_given=0
+m_val=7
 ao_given=0
 ao_opt="-ao sym1"
-m_val=7
+to_given=0
+to_val=20
 qs_given=0
 unk_given=0
 tdir_given=0
@@ -163,6 +168,12 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 outd=$1
                 o_given=1
+            fi
+            ;;
+        "-to") shift
+            if [ $# -ne 0 ]; then
+                to_val=$1
+                to_given=1
             fi
             ;;
         "-n") shift
@@ -291,7 +302,7 @@ fi
 prefix=$outd/main/src_trg
 ${bindir}/thot_pbs_gen_batch_phr_model -pr ${pr_val} \
     -s $tcorpus -t $scorpus -o $prefix -n $niters ${af_opt} ${np_opt} \
-    -m ${m_val} ${ao_opt} ${unk_opt}  ${qs_opt} "${qs_par}" \
+    -m ${m_val} ${ao_opt} -to ${to_val} ${unk_opt}  ${qs_opt} "${qs_par}" \
     -T $tdir -sdir $sdir ${debug_opt} || exit 1
 
 # Create descriptor file

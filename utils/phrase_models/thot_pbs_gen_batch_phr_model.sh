@@ -27,7 +27,7 @@ if [ $# -lt 1 ]; then
     echo "                                    -s <string> -t <string> -o <string>"
     echo "                                    [-n <int>] [-np <float>] [-lf <float>]"
     echo "                                    [-af <float>] [-cpr <float>]"
-    echo "                                    [-ao <string>] [-m <int>]"
+    echo "                                    [-m <int>] [-ao <string>] [-to <int>]"
     echo "                                    [-unk] [-nsh] [-qs <string>] [-T <string>]"
     echo "                                    [-sdir <string>] [-debug]"
     echo ""
@@ -52,6 +52,9 @@ if [ $# -lt 1 ]; then
     echo "                        estimation (7 by default)"
     echo "-ao <string>            Operation between alignments to be executed"
     echo "                        (and|or|sum|sym1|sym2|grd)."
+    echo "-to <int>               Maximum number of translation options for each target"
+    echo "                        phrase that are considered during a translation process"
+    echo "                        (20 by default)"
     echo "-unk                    Introduce special unknown word symbol during"
     echo "                        estimation."
     echo "-nsh                    Do not shuffle load during training (shuffling is"
@@ -82,9 +85,11 @@ else
     cpr_given=0
     cpr_val=0.00001
     niters=5
+    m_val=7
     ao_given=0
     ao_opt="-sym1"
-    m_val=7
+    to_given=0
+    to_val=20
     qs_given=0
     unk_given=0
     nsh_given=0
@@ -172,6 +177,12 @@ else
                     ao_given=1
                 fi
                 ;;
+            "-to") shift
+                if [ $# -ne 0 ]; then
+                    to_val=$1
+                    to_given=1
+                fi
+                ;;
             "-qs") shift
                 if [ $# -ne 0 ]; then
                     qs_opt="-qs"
@@ -209,7 +220,7 @@ else
 
     if [ ${pr_given} -eq 0 ]; then
         # invalid parameters 
-        echo "Error: number of processors not given"
+        echo "Error: number of processors not given" >&2
         exit 1
     fi
 
@@ -309,6 +320,14 @@ ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_invswm -s $tcorpus
     echo "* Generating phrase model... " >&2
     $bindir/thot_pbs_gen_phr_model -pr ${pr_val} -g ${outp}_alig_op.A3.final -m ${m_val} \
         -o ${outp} ${pml_opt} -pc ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
+    echo "" >&2
+
+    # Constrain number of translation options
+    echo "* Constraining number of translation options... " >&2
+    $bindir/thot_pbs_get_nbest_for_trg -t ${outp}.ttable -n ${to_val} \
+        -p -T $tdir -o $tdir/restrict_trans_opt.ttable || exit 1
+    rm ${outp}.ttable
+    mv $tdir/restrict_trans_opt.ttable ${outp}.ttable
     echo "" >&2
 
     # Generate additional phrase model parameter files
