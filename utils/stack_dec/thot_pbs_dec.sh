@@ -25,7 +25,7 @@ config()
 usage()
 {
     echo "thot_pbs_dec    [-pr <int>] [-c <string>]"
-    echo "                -tm <string> -lm <string> -t <string>"
+    echo "                [-tm <string>] [-lm <string>] -t <string>"
     echo "                -o <string> [-W <float>] [-S <int>]"
     echo "                [-A <int>] [-U <int>] [-I <int>] [-be] [-G <int>]"
     echo "                [-h <int>] [ -mon] [-tmw <float> ... <float>]"
