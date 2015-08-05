@@ -9,6 +9,7 @@ if [ $# -ne 1 -a $# -ne 2 ]; then
     echo "                                       <test_corpus>"
 else
 
+    # Obtain and check parameters
     if [ $# -eq 2 ]; then
         file=$2
         input=$1
@@ -28,6 +29,7 @@ else
         fi
     fi
 
+    # Filter translation table
     cat $input | ${AWK} -v file=$file \
        ' BEGIN { 
                  used=0
