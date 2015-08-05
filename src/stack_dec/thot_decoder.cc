@@ -654,7 +654,7 @@ void printConfig(void)
 
 void printUsage(void)
 {
-  cerr << "thot_decoder        [-c <string>] -tm <string> -lm <string>"<<endl;
+  cerr << "thot_decoder        [-c <string>] [-tm <string>] [-lm <string>]"<<endl;
   cerr << "                    -t <string> [-o <string>]"<<endl;
   cerr << "                    [-W <float>] [-S <int>] [-A <int>]"<<endl;
   cerr << "                    [-I <int>] [-G <int>] [-h <int>]"<<endl;
