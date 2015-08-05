@@ -20,6 +20,7 @@ if [ $# -ne 2 -a $# -ne 4 -a $# -ne 6 -a $# -ne 8 ]; then
     echo "                      during the generation of the phrase model" >&2
 else
 
+    # Take parameters
     t_given=0
     ttable_file=""
     c_given=0
@@ -55,6 +56,7 @@ else
         shift
     done
 
+    # Check parameters
     if [ ${t_given} -eq 1 ]; then
         if [ ! -f ${ttable_file} ]; then
             echo "Error: file ${ttable_file} does not exist!" >&2
@@ -72,6 +74,7 @@ else
         fi
     fi
 
+    # Filter translation table
     $bindir/thot_filter_ttable_given_corpus ${ttable_file} ${test_corpus_file} |\
         $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T ${tmpdir}
 fi
