@@ -13,7 +13,7 @@ echo ""
 # Check thot_lm_train
 echo "**** Checking thot_lm_train..."
 echo ""
-${bindir}/thot_lm_train -c $datadir/toy_corpus/train.en -o $tmpdir/lm -n 3 
+${bindir}/thot_lm_train -c $datadir/toy_corpus/en.train -o $tmpdir/lm -n 3 
 if test $? -eq 0 ; then
     echo "... Done"
 else
@@ -30,7 +30,7 @@ echo ""
 # Check thot_tm_train
 echo "**** Checking thot_tm_train..."
 echo ""
-${bindir}/thot_tm_train -s $datadir/toy_corpus/train.sp -t $datadir/toy_corpus/train.en -o $tmpdir/tm -n 1
+${bindir}/thot_tm_train -s $datadir/toy_corpus/sp.train -t $datadir/toy_corpus/en.train -o $tmpdir/tm -n 1
 if test $? -eq 0 ; then
     echo "... Done"
 else
@@ -64,7 +64,7 @@ echo ""
 # Check thot_smt_tune
 echo "**** Checking thot_smt_tune..."
 echo ""
-${bindir}/thot_smt_tune -c $tmpdir/server.cfg -s $datadir/toy_corpus/dev.sp -t $datadir/toy_corpus/dev.en -o $tmpdir/tune -n 1
+${bindir}/thot_smt_tune -c $tmpdir/server.cfg -s $datadir/toy_corpus/sp.dev -t $datadir/toy_corpus/en.dev -o $tmpdir/tune -n 1
 if test $? -eq 0 ; then
     echo "... Done"
 else
@@ -81,7 +81,7 @@ echo ""
 # Check thot_prepare_sys_for_test
 echo "**** Checking thot_prepare_sys_for_test..."
 echo ""
-${bindir}/thot_prepare_sys_for_test -c $tmpdir/tune/tuned_for_dev.cfg -t $datadir/toy_corpus/test.sp -o $tmpdir/filtdir
+${bindir}/thot_prepare_sys_for_test -c $tmpdir/tune/tuned_for_dev.cfg -t $datadir/toy_corpus/sp.test -o $tmpdir/filtdir
 if test $? -eq 0 ; then
     echo "... Done"
 else
@@ -98,7 +98,7 @@ echo ""
 # Check thot_decoder
 echo "**** Checking thot_decoder..."
 echo ""
-${bindir}/thot_decoder -c $tmpdir/filtdir/test_specific.cfg -t $datadir/toy_corpus/test.sp > $tmpdir/test.out 2> $tmpdir/thot_decoder.log
+${bindir}/thot_decoder -c $tmpdir/filtdir/test_specific.cfg -t $datadir/toy_corpus/sp.test > $tmpdir/test.out 2> $tmpdir/thot_decoder.log
 if test $? -eq 0 ; then
     echo "... Done"
 else
@@ -115,7 +115,7 @@ echo ""
 # Check thot_calc_bleu
 echo "**** Checking thot_calc_bleu..."
 echo ""
-${bindir}/thot_calc_bleu -r $datadir/toy_corpus/test.en -t $tmpdir/test.out
+${bindir}/thot_calc_bleu -r $datadir/toy_corpus/en.test -t $tmpdir/test.out
 if test $? -eq 0 ; then
     echo "... Done"
 else
