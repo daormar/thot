@@ -6,7 +6,7 @@
 print_desc()
 {
     echo "thot_pbs_dec written by Daniel Ortiz"
-    echo "thot_pbs_dec implements a parallel single-stack translator"
+    echo "thot_pbs_dec implements a parallel decoder"
     echo "type \"thot_pbs_dec --help\" to get usage information."
 }
 
