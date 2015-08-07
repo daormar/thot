@@ -57,7 +57,7 @@ stack_dec/thot_calc_wer stack_dec/thot_get_sys_trans
 
 exper_bin_scripts= exper/thot_tm_train exper/thot_smt_tune		\
 exper/thot_cat_tune exper/thot_prepare_sys_for_test exper/thot_lm_train	\
-exper/thot_gen_cfg_file
+exper/thot_gen_cfg_file exper/thot_auto_smt
 
 CLEANFILES = $(bin_SCRIPTS)
 
