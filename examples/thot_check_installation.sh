@@ -30,7 +30,7 @@ echo ""
 # Check thot_tm_train
 echo "**** Checking thot_tm_train..."
 echo ""
-${bindir}/thot_tm_train -s $datadir/toy_corpus/sp.train -t $datadir/toy_corpus/en.train -o $tmpdir/tm -n 1
+${bindir}/thot_tm_train -s $datadir/toy_corpus/sp.train -t $datadir/toy_corpus/en.train -o $tmpdir/tm -n 5
 if test $? -eq 0 ; then
     echo "... Done"
 else
