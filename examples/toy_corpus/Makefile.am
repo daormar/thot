@@ -1,4 +1,4 @@
 toycdir = $(datadir)/$(PACKAGE)/toy_corpus
-toyc_DATA= train.en train.sp dev.en dev.sp test.en test.sp
+toyc_DATA= en.train sp.train en.dev sp.dev en.test sp.test
 
 EXTRA_DIST= $(toyc_DATA)
