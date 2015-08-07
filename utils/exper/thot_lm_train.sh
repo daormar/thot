@@ -223,8 +223,8 @@ if [ ${sdir_given} -eq 1 ]; then
     fi
 fi
 
-# Train model
-echo "* Training language model... " >&2
+# Estimate n-gram model parameters
+echo "* Estimating n-gram model parameters... " >&2
 prefix=$outd/main/trg.lm
 ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
     -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
