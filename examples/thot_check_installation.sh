@@ -64,7 +64,7 @@ echo ""
 # Check thot_smt_tune
 echo "**** Checking thot_smt_tune..."
 echo ""
-${bindir}/thot_smt_tune -c $tmpdir/server.cfg -s $datadir/toy_corpus/sp.dev -t $datadir/toy_corpus/en.dev -o $tmpdir/tune -n 1
+${bindir}/thot_smt_tune -c $tmpdir/server.cfg -s $datadir/toy_corpus/sp.dev -t $datadir/toy_corpus/en.dev -o $tmpdir/tune
 if test $? -eq 0 ; then
     echo "... Done"
 else
@@ -81,7 +81,7 @@ echo ""
 # Check thot_prepare_sys_for_test
 echo "**** Checking thot_prepare_sys_for_test..."
 echo ""
-${bindir}/thot_prepare_sys_for_test -c $tmpdir/tune/tuned_for_dev.cfg -t $datadir/toy_corpus/sp.test -o $tmpdir/filtdir
+${bindir}/thot_prepare_sys_for_test -c $tmpdir/tune/tuned_for_dev.cfg -t $datadir/toy_corpus/sp.test -o $tmpdir/systest
 if test $? -eq 0 ; then
     echo "... Done"
 else
@@ -98,7 +98,7 @@ echo ""
 # Check thot_decoder
 echo "**** Checking thot_decoder..."
 echo ""
-${bindir}/thot_decoder -c $tmpdir/filtdir/test_specific.cfg -t $datadir/toy_corpus/sp.test > $tmpdir/test.out 2> $tmpdir/thot_decoder.log
+${bindir}/thot_decoder -c $tmpdir/systest/test_specific.cfg -t $datadir/toy_corpus/sp.test > $tmpdir/test.out 2> $tmpdir/thot_decoder.log
 if test $? -eq 0 ; then
     echo "... Done"
 else
