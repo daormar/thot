@@ -278,7 +278,7 @@ fi
 if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
     echo "**** Translating test corpus" >&2
 ${bindir}/thot_decoder -pr ${pr_val} -c $outd/systest/test_specific.cfg \
-        -t ${scorpus_test} > $outd/test.out 2> $outd/thot_decoder.log || exit 1
+        -t ${scorpus_test} -o $outd/thot_decoder_out || exit 1
     test_trans_executed="yes"
     echo "" >&2
 fi
@@ -287,6 +287,6 @@ fi
 
 if [ ${test_trans_executed} = "yes" ]; then
     echo "**** Obtaining BLEU score" >&2
-${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $outd/test.out > $outd/test.out.bleu || exit 1
+${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $outd/thot_decoder_out > $outd/test.out.bleu || exit 1
     echo "" >&2
 fi
