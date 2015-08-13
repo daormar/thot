@@ -332,8 +332,8 @@ loglin_downhill()
     export CFGFILE=${outd}/tune_loglin.cfg
     export TEST=$scorpus
     export REF=$tcorpus
-# export PHRDECODER=${bindir}/thot_decoder
-export PHRDECODER=${bindir}/thot_pbs_dec
+export PHRDECODER=${bindir}/thot_decoder
+# export PHRDECODER=${bindir}/thot_dec_ms
     export ADD_DEC_OPTIONS="-pr ${pr_val} -sdir $sdir"
     export QS="${qs_par}"
     export MEASURE=${tqm}
