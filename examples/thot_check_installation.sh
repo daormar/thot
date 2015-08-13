@@ -98,7 +98,7 @@ echo ""
 # Check thot_decoder
 echo "**** Checking thot_decoder..."
 echo ""
-${bindir}/thot_decoder -c $tmpdir/systest/test_specific.cfg -t $datadir/toy_corpus/sp.test > $tmpdir/test.out 2> $tmpdir/thot_decoder.log
+${bindir}/thot_decoder -c $tmpdir/systest/test_specific.cfg -t $datadir/toy_corpus/sp.test -o $tmpdir/thot_decoder_out
 if test $? -eq 0 ; then
     echo "... Done"
 else
@@ -115,7 +115,7 @@ echo ""
 # Check thot_calc_bleu
 echo "**** Checking thot_calc_bleu..."
 echo ""
-${bindir}/thot_calc_bleu -r $datadir/toy_corpus/en.test -t $tmpdir/test.out
+${bindir}/thot_calc_bleu -r $datadir/toy_corpus/en.test -t $tmpdir/thot_decoder_out
 if test $? -eq 0 ; then
     echo "... Done"
 else
