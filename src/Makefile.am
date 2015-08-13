@@ -15,7 +15,7 @@ thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
 thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
 thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
 thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
-thot_dhs_step_by_step_min thot_decoder thot_aligner thot_client		\
+thot_dhs_step_by_step_min thot_ms_dec thot_aligner thot_client		\
 thot_server thot_calc_bleu
 
 else
@@ -25,7 +25,7 @@ thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
 thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
 thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
 thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
-thot_dhs_step_by_step_min thot_decoder thot_aligner thot_client		\
+thot_dhs_step_by_step_min thot_ms_dec thot_aligner thot_client		\
 thot_server thot_calc_bleu
 endif
 
@@ -337,8 +337,8 @@ thot_wg_proc_LDFLAGS = libthot.la
 thot_dhs_step_by_step_min_SOURCES = downhill_simplex/thot_dhs_step_by_step_min.cc
 thot_dhs_step_by_step_min_LDFLAGS = libthot.la
 
-thot_decoder_SOURCES = stack_dec/thot_decoder.cc
-thot_decoder_LDFLAGS = libthot.la
+thot_ms_dec_SOURCES = stack_dec/thot_ms_dec.cc
+thot_ms_dec_LDFLAGS = libthot.la
 
 thot_aligner_SOURCES = stack_dec/thot_aligner.cc
 thot_aligner_LDFLAGS = libthot.la
