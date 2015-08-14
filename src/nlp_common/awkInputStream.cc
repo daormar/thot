@@ -51,19 +51,19 @@ awkInputStream& awkInputStream::operator= (const awkInputStream &awk)
  {
   open((const char*)awk.fileName);
   FS=awk.FS;	
-  while(FNR!=awk.FNR) getline();
+  while(FNR!=awk.FNR) getln();
  }
  return *this;
 }
 
 //----------
-bool awkInputStream::getline(void)
+bool awkInputStream::getln(void)
 {
   if(FS!=0)
   {
     ssize_t read;
 
-    read=::getline(&buff,&buftlen,filePtr);
+    read=getline(&buff,&buftlen,filePtr);
     if(read!=-1)
     {
       buff[read-1]='\0';
@@ -146,12 +146,12 @@ void awkInputStream::close(void)
 }
 
 //----------
-bool awkInputStream::rewind(void)
+bool awkInputStream::rwd(void)
 {
  if(FS!=0)
  {
    FNR=0;
-   ::rewind(filePtr);
+   rewind(filePtr);
    return OK;
  }
  else return ERROR; 

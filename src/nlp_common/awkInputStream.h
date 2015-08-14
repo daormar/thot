@@ -72,12 +72,12 @@ class awkInputStream
 	
 	awkInputStream(void);
 	awkInputStream& operator= (const awkInputStream &awk);
-	bool getline(void);
+	bool getln(void);
     std::string dollar(unsigned int n);
     bool open(const char *str);
     bool open_stream(FILE *stream);
 	void close(void);
-	bool rewind(void);
+	bool rwd(void);
 	void printFields(void);	
 	~awkInputStream();
 	
