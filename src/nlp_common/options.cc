@@ -579,7 +579,7 @@ bool extractParsFromFile(const char* filename,
   }
   else
   {
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.NF>=1)
       {

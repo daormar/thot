@@ -219,7 +219,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *fileName)
   else
   {
     cerr<<"Loading weights from "<<fileName<<endl;
-    if(awk.getline())
+    if(awk.getln())
     {
       this->ngramOrder=atoi(awk.dollar(1).c_str());
       numBucketsPerOrder=atoi(awk.dollar(2).c_str());

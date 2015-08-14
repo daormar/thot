@@ -437,9 +437,9 @@ bool BaseSwAligModel<PPINFO>::obtainBestAlignments(const char *sourceTestFileNam
    cerr<<"Error in target test file, file "<<targetTestFilename<<" does not exist.\n";
    return ERROR;
  }  
- while(srcTest.getline())
+ while(srcTest.getln())
  {
-   if(trgTest.getline())
+   if(trgTest.getln())
    {
      if(srcTest.NF>0 && trgTest.NF>0)
      {

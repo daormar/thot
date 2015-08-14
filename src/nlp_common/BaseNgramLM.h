@@ -242,7 +242,7 @@ int BaseNgramLM<LM_STATE>::perplexity(const char *corpusFileName,
     return ERROR;
   }  
 
-  while(awk.getline())
+  while(awk.getln())
   {
         // Process each sentence
     if(awk.NF>=1)

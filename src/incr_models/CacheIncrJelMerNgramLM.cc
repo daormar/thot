@@ -62,7 +62,7 @@ bool CacheIncrJelMerNgramLM::load(const char *fileName)
   }
   else
   {
-    if(awk.getline())
+    if(awk.getln())
     {
       if(awk.NF==3 && strcmp("****",awk.dollar(1).c_str())==0 &&
          strcmp("cache",awk.dollar(2).c_str())==0 && strcmp("lm",awk.dollar(3).c_str())==0)
@@ -145,7 +145,7 @@ bool CacheIncrJelMerNgramLM::loadSecLevelTable(const char *fileName)
   }
   else
   {   
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.FNR>=1 && awk.NF>=3)
       {

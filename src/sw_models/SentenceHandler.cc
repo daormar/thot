@@ -114,12 +114,12 @@ bool SentenceHandler::readSentencePairs(const char *srcFileName,
      Count runningSrcWords=0;
      Count runningTrgWords=0;
      
-     while(awkSrc.getline())
+     while(awkSrc.getln())
      {
        srcSentStr.clear();
        trgSentStr.clear();
 					   
-       awkTrg.getline();
+       awkTrg.getln();
        for(i=1;i<=awkSrc.NF;++i) 
        {
          srcSentStr.push_back(awkSrc.dollar(i));
@@ -130,7 +130,7 @@ bool SentenceHandler::readSentencePairs(const char *srcFileName,
        }
        if(countFileExists)
        {
-         awkSrcTrgC.getline();
+         awkSrcTrgC.getln();
          Count c=atof(awkSrcTrgC.dollar(1).c_str());
          addSentPair(srcSentStr,trgSentStr,c,sentRangeAux);
              // Update statistics

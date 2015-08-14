@@ -156,7 +156,7 @@ bool IncrIbm2AligTable::loadPlainText(const char* aligNumDenFile)
   else
   { 
         // Read entries
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.NF==6)
       {

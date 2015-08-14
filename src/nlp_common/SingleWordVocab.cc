@@ -176,7 +176,7 @@ bool SingleWordVocab::loadGIZASrcVocab(const char *srcInputVocabFileName)
    pair<WordIndex,Count> vocEntry;
 
        // Read file
-   while(awk.getline())
+   while(awk.getln())
    {
      if(awk.NF>1)
      {
@@ -332,7 +332,7 @@ bool SingleWordVocab::loadGIZATrgVocab(const char *trgInputVocabFileName)
 
    pair<WordIndex,Count> vocEntry;
 
-   while(awk.getline())
+   while(awk.getln())
    {
      if(awk.NF>1)
      {
@@ -388,7 +388,7 @@ bool SingleWordVocab::loadSrcClassDicFile(char *srcClassDicFileName)
    cerr<<"Reading source class dictionary from: "<<srcClassDicFileName<<endl;
    awk.FS='	';
    srcClassDic.addEntry(0,0);   
-   while(awk.getline())
+   while(awk.getln())
    {
      if(awk.NF>1)
      {
@@ -427,7 +427,7 @@ bool SingleWordVocab::loadTrgClassDicFile(char *trgClassDicFileName)
  {
    cerr<<"Reading target class dictionary from: "<<trgClassDicFileName<<endl;
    awk.FS='	';
-   while(awk.getline())
+   while(awk.getln())
    {
      if(awk.NF>1)
      {

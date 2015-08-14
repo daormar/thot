@@ -176,7 +176,7 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
  {
    unsigned int lineno=0;
    
-   while(awk.getline())
+   while(awk.getln())
    {
      ++lineno;
      if(awk.NF==3)
@@ -261,7 +261,7 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
  {
    unsigned int lineno=0;
    sprintf(outputFileName,"%s.A3.final",outputFilesPrefix);
-   while(awk.getline())
+   while(awk.getln())
    {
          // Process the lines of alignOperationsFile
      ++lineno;

@@ -53,7 +53,7 @@ bool WgHandler::load(const char * filename)
         // Clear word graph
     clear();
         // Read file entries
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.NF>=3)
       {

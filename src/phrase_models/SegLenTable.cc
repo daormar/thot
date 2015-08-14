@@ -115,7 +115,7 @@ bool SegLenTable::load_seglentable(const char *segmLengthTableFileName)
  else
  {
    clear();  
-   while(awk.getline())
+   while(awk.getln())
    {
      if(awk.NF==3)
      {

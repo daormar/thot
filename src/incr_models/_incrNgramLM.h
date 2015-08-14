@@ -455,16 +455,16 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
 
         // Obtain n-gram order (it is obtained first because some models
         // need to know the order before adding any n-gram)
-    while(awk.getline())
+    while(awk.getln())
     {
       if(ngramOrder<awk.NF-2) ngramOrder=awk.NF-2;
     }
 
         // Rewind file
-    awk.rewind();
+    awk.rwd();
     
         // Read n-grams
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.NF>1)
       {

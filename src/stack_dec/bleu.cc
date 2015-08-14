@@ -92,12 +92,12 @@ int calc_bleuf(FILE *reff,
     return ERROR;
   }  
 
-  while(refStream.getline())
+  while(refStream.getln())
   {
     unsigned int prec_sent;
     unsigned int total_sent;
     
-    bool ok=sysStream.getline();
+    bool ok=sysStream.getln();
     if(!ok)
     {
       cerr<<"Unexpected end of system file."<<endl;

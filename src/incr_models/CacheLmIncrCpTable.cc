@@ -56,7 +56,7 @@ bool CacheLmIncrCpTable::init(const char *fileName)
     cerr<<"Error while opening file with alpha value: "<<alphafile<<endl;
     return ERROR;
   }
-  awk.getline();
+  awk.getln();
   alpha=atof(awk.dollar(1).c_str());
 
       // Init file n-gram table

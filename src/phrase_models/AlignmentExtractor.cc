@@ -110,7 +110,7 @@ void AlignmentExtractor::close(void)
 //-------------------------
 bool AlignmentExtractor::rewind(void)
 {
- return awkInpStrm.rewind();	
+ return awkInpStrm.rwd();	
 }
 
 //-------------------------
@@ -154,7 +154,7 @@ bool AlignmentExtractor::getNextAlignInGIZAFormat(void)
 
      // Each alignment entry has three lines. The first line 
      // must start with the '#' symbol.
- if(awkInpStrm.getline())
+ if(awkInpStrm.getln())
  {
    if(awkInpStrm.NF>=1 && (strcmp("#",awkInpStrm.dollar(1).c_str())==0 || strcmp("<ALMOHADILLA>",awkInpStrm.dollar(1).c_str())==0))
    {
@@ -165,13 +165,13 @@ bool AlignmentExtractor::getNextAlignInGIZAFormat(void)
        else numReps=atof(awkInpStrm.dollar(2).c_str());
      }
         
-     awkInpStrm.getline();
+     awkInpStrm.getln();
      for(i=1;i<=awkInpStrm.NF;++i)
      {
        t.push_back(awkInpStrm.dollar(i));
      }
 		
-     awkInpStrm.getline();
+     awkInpStrm.getln();
      i=1; slen=0;
      while(i<=awkInpStrm.NF)
      {
@@ -242,18 +242,18 @@ bool AlignmentExtractor::getNextAlignInAlignOpFormat(void)
  
  wordAligMatrix.clear();
 	
- if(awkInpStrm.getline())
+ if(awkInpStrm.getln())
  {
    if(awkInpStrm.NF==2 && strcmp("#",awkInpStrm.dollar(1).c_str())==0)
    {
      numReps=atof(awkInpStrm.dollar(2).c_str());	   
-     awkInpStrm.getline();
+     awkInpStrm.getln();
      for(i=1;i<=awkInpStrm.NF;++i)
      {
        t.push_back(awkInpStrm.dollar(i));
      }
 		
-     awkInpStrm.getline();
+     awkInpStrm.getln();
      for(i=1;i<=awkInpStrm.NF;++i)
      {
        ns.push_back(awkInpStrm.dollar(i));
@@ -262,7 +262,7 @@ bool AlignmentExtractor::getNextAlignInAlignOpFormat(void)
      wordAligMatrix.init(ns.size()-1,t.size());
      for(row=ns.size()-1;row>=1;--row)
      {
-       awkInpStrm.getline();
+       awkInpStrm.getln();
        
        if(awkInpStrm.NF!=t.size()) return 0;
        else

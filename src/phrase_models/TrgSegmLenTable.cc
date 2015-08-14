@@ -129,7 +129,7 @@ bool TrgSegmLenTable::load(const char *segmLengthTableFileName)
  else
  {
    clear();
-   if(awk.getline())
+   if(awk.getln())
    {
      if(strcmp("Uniform",awk.dollar(1).c_str())==0)
      {
@@ -173,7 +173,7 @@ bool TrgSegmLenTable::readAvgSegmLen(const char *avgSegmLenFileName)
  }  
  else
  {
-   awk.getline();
+   awk.getln();
    if(awk.NF==6)
    {
      avgSrcSegmLen=atof(awk.dollar(6).c_str());
@@ -183,7 +183,7 @@ bool TrgSegmLenTable::readAvgSegmLen(const char *avgSegmLenFileName)
      cerr<<"Error in average segment length file: "<<avgSegmLenFileName<<" \n";
      return ERROR;
    }
-   awk.getline();
+   awk.getln();
    if(awk.NF==6)
    {
      avgTrgSegmLen=atof(awk.dollar(6).c_str());

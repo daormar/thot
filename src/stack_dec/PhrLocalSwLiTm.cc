@@ -808,7 +808,7 @@ bool PhrLocalSwLiTm::load_lambda(const char* lambdaFileName)
   }
   else
   {
-    if(awk.getline())
+    if(awk.getln())
     {
       if(awk.NF==1)
       {

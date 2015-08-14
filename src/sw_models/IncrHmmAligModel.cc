@@ -394,7 +394,7 @@ bool IncrHmmAligModel::loadLexSmIntFactor(const char* lexSmIntFactorFile)
   }
   else
   {
-    if(awk.getline())
+    if(awk.getln())
     {
       if(awk.NF==1)
       {
@@ -447,7 +447,7 @@ bool IncrHmmAligModel::loadAlSmIntFactor(const char* alSmIntFactorFile)
   }  
   else
   {
-    if(awk.getline())
+    if(awk.getln())
     {
       if(awk.NF==1)
       {

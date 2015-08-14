@@ -213,7 +213,7 @@ bool XRCE_PrePosProcessor2::loadCapitOptions(const char* filename)
     
     cerr<<"Reading capitalization information from file: "<<filename<<endl;
     
-    while(capitInfoStream.getline())
+    while(capitInfoStream.getln())
     {      
       ++lineNo;
       canonicStr=capitInfoStream.dollar(1);

@@ -1192,7 +1192,7 @@ bool WordGraph::load(const char * filename)
     clear();
     
         // File with word graph successfully opened
-    awk.getline();
+    awk.getln();
     
         // Check if first line has component weights
     if(awk.dollar(1)=="#")
@@ -1210,7 +1210,7 @@ bool WordGraph::load(const char * filename)
           // setCompWeights(_compWeights);
       
           // Read next line
-      awk.getline();
+      awk.getln();
     }
 
         // Read final states
@@ -1222,7 +1222,7 @@ bool WordGraph::load(const char * filename)
     }
 
         // Read file entries
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.NF>=3)
       {

@@ -119,7 +119,7 @@ bool vecx_x_incr_interp_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::load(const char *fileNa
     cerr<<"Loading model file "<<fileName<<endl;
 
     this->release();
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.NF==2)
       {

@@ -68,7 +68,7 @@ bool WordPredictor::loadFileWithSents(const char *fileName)
   {
     cerr<<"WordPredictor: loading file with sentences "<<fileName<<endl;
           
-    while(fileStream.getline())
+    while(fileStream.getln())
     {
       Vector<std::string> strVec;
 
@@ -99,7 +99,7 @@ bool WordPredictor::loadFileWithAdditionalInfo(const char *fileName)
   {
     cerr<<"WordPredictor: loading file with additional info "<<fileName<<" ... ";
           
-    if(fileStream.getline())
+    if(fileStream.getln())
     {
       if(fileStream.NF==1)
       {

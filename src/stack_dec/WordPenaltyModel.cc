@@ -58,7 +58,7 @@ bool WordPenaltyModel::load(const char *filename)
     cerr<<"Error in word penalty model file, file "<<filename<<" does not exist.\n";
     return ERROR;
   }
-  if(awk.getline())
+  if(awk.getln())
   {
     if(strcmp("Logarithmic",awk.dollar(1).c_str())==0)
     {
@@ -191,9 +191,9 @@ bool WordPenaltyModel::readLogPars(const char *logParsFileName)
  }  
  else
  {
-   awk.getline(); // Skip first line
+   awk.getln(); // Skip first line
 
-   awk.getline();
+   awk.getln();
    if(awk.NF==1)
    {
      minLen=atoi(awk.dollar(1).c_str());
@@ -203,7 +203,7 @@ bool WordPenaltyModel::readLogPars(const char *logParsFileName)
      cerr<<"Error in word penalty model file: "<<logParsFileName<<" \n";
      return ERROR;
    }
-   awk.getline();
+   awk.getln();
    if(awk.NF==1)
    {
      maxLen=atoi(awk.dollar(1).c_str())+1;
@@ -230,9 +230,9 @@ bool WordPenaltyModel::readTriPars(const char *triParsFileName)
  }  
  else
  {
-   awk.getline(); // Skip first line
+   awk.getln(); // Skip first line
 
-   awk.getline();
+   awk.getln();
    if(awk.NF==1)
    {
      minLen=atoi(awk.dollar(1).c_str());
@@ -242,7 +242,7 @@ bool WordPenaltyModel::readTriPars(const char *triParsFileName)
      cerr<<"Error in word penalty model file: "<<triParsFileName<<" \n";
      return ERROR;
    }
-   awk.getline();
+   awk.getln();
    if(awk.NF==1)
    {
      maxLen=atoi(awk.dollar(1).c_str())+1;
@@ -269,9 +269,9 @@ bool WordPenaltyModel::readGeomPars(const char *geomParsFileName)
  }  
  else
  {
-   awk.getline(); // Skip first line
+   awk.getln(); // Skip first line
 
-   awk.getline();
+   awk.getln();
    if(awk.NF==1)
    {
      p_geom=atof(awk.dollar(1).c_str());

@@ -72,7 +72,7 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
     cerr<<"Loading model file "<<fileName<<endl;
     
         // Read model entries
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.dollar(1)!="#")
       {
@@ -141,7 +141,7 @@ bool IncrInterpNgramLM::loadWeights(const char *fileName)
     Vector<float> _weights;
 
     cerr<<"Loading weights from "<<fileName<<endl;
-    if(awk.getline())
+    if(awk.getln())
     {
           // Read weights
       for(unsigned int i=1;i<=awk.NF;++i)

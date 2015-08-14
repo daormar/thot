@@ -105,7 +105,7 @@ bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
     this->tablePtr->clear();
     this->modelFileName=fileName;
     
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.NF>1)
       {

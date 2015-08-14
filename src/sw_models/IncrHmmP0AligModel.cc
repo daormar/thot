@@ -95,7 +95,7 @@ bool IncrHmmP0AligModel::loadHmmP0(const char *hmmP0FileName)
   }  
   else
   {
-    if(awk.getline())
+    if(awk.getln())
     {
       if(awk.NF==1)
       {

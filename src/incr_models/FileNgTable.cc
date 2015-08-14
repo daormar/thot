@@ -68,7 +68,7 @@ bool FileNgTable::init(const char *fileName)
     cerr<<"Error while opening file with information of records about source phrases: "<<histrecordsfile<<endl;
     return ERROR;
   }
-  awk.getline();
+  awk.getln();
   for(unsigned int i=1;i<=awk.NF;i+=3)
   {
     unsigned int idx=atoi(awk.dollar(i).c_str());

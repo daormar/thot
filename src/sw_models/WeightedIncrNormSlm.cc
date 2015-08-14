@@ -57,7 +57,7 @@ bool WeightedIncrNormSlm::load(const char *filename)
     cerr<<"Error in sentence length model file, file "<<filename<<" does not exist.\n";
     return ERROR;
   }
-  if(awk.getline())
+  if(awk.getln())
   {
     if(strcmp("Weighted",awk.dollar(1).c_str())==0)
     {
@@ -217,10 +217,10 @@ bool WeightedIncrNormSlm::readNormalPars(const char *normParsFileName)
  }
  else
  {
-   awk.getline(); // Skip first line
+   awk.getln(); // Skip first line
    
        // Read average lengths from second line
-   awk.getline();
+   awk.getln();
    if(awk.NF!=8)
    {
      cerr<<"Anomalous sentence length model file!"<<endl;
@@ -231,7 +231,7 @@ bool WeightedIncrNormSlm::readNormalPars(const char *normParsFileName)
    tlenSum=atoi(awk.dollar(8).c_str());
 
        // Read gaussian parameters
-   while(awk.getline())
+   while(awk.getln())
    {
      if(awk.NF==5)
      {

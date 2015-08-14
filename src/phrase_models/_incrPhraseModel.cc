@@ -302,7 +302,7 @@ bool _incrPhraseModel::load_ttable(const char *_incrPhraseModelFileName)
   }
   else
   {
-    if(awk.getline())
+    if(awk.getln())
     {
       if(awk.NF==4 && strcmp("****",awk.dollar(1).c_str())==0 &&
          strcmp("cache",awk.dollar(2).c_str())==0 && strcmp("ttable",awk.dollar(3).c_str())==0)
@@ -345,7 +345,7 @@ bool _incrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
  }
  else
  {   
-  while(awk.getline())
+  while(awk.getln())
   {
     if(awk.FNR>=1 && awk.NF>1)
     {

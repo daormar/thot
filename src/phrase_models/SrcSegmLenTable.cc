@@ -95,7 +95,7 @@ bool SrcSegmLenTable::load(const char *segmLengthTableFileName)
  else
  {
    clear();
-   if(awk.getline())
+   if(awk.getln())
    {
      if(strcmp("Uniform",awk.dollar(1).c_str())==0)
      {

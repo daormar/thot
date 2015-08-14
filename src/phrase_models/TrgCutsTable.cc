@@ -71,7 +71,7 @@ bool TrgCutsTable::load(const char *trgCutsTableFileName)
  }
  else
  {
-   if(awk.getline())
+   if(awk.getln())
    {
      jumpOnePar=atof(awk.dollar(1).c_str());
      stopJumps=atof(awk.dollar(2).c_str());

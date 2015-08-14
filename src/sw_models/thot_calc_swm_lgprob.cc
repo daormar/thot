@@ -194,7 +194,7 @@ int processPairAligFile(const char *pairPlusAligFile)
  if(ret==ERROR) return ERROR;
 
      // Process input
- while(awk.getline())
+ while(awk.getln())
  {
        // Extract source and target phrases
    unsigned int i=1; 
@@ -260,7 +260,7 @@ int processSentPairFile(const char *sentPairFile)
  if(ret==ERROR) return ERROR;
 
      // Process input
- while(awk.getline())
+ while(awk.getln())
  {
        // Extract source and target phrases
    unsigned int i=1; 

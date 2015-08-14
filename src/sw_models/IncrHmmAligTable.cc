@@ -173,7 +173,7 @@ bool IncrHmmAligTable::loadPlainText(const char* aligNumDenFile)
   }
   else
   { 
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.NF==5)
       {

@@ -215,7 +215,7 @@ bool IncrLexTable::loadPlainText(const char* lexNumDenFile)
   else
   { 
         // Read gaussian parameters
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.NF==4)
       {

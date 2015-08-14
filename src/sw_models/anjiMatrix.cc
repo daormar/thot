@@ -156,12 +156,12 @@ bool anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
   {
         // Read values
     cerr<<"Reading anji maximum size data from file: "<<maxnsizeDataFile<<endl;
-    awk.getline();
+    awk.getln();
     anji_maxnsize=atoi(awk.dollar(1).c_str());
-    awk.getline();
+    awk.getln();
     anji_pointer=atoi(awk.dollar(1).c_str());
     
-    while(awk.getline())
+    while(awk.getln())
     {
       if(awk.NF==2)
       {

@@ -102,9 +102,9 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
      cerr<<"Reading sentence pairs from files: "<<srcFileName<<" and "<<trgFileName<<endl;
      if(countFileExists) cerr<<"Reading sentence pair counts from file "<<sentCountsFile<<endl;
 
-     while(awkSrc.getline())
+     while(awkSrc.getln())
      {
-       if(!awkTrg.getline())
+       if(!awkTrg.getln())
        {
          cerr<<"Error: the number of source and target sentences differ!"<<endl;
          return ERROR;
@@ -135,9 +135,9 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
 void LightSentenceHandler::rewindFiles(void)
 {
       // Rewind files
-  awkSrc.rewind();
-  awkTrg.rewind();
-  awkSrcTrgC.rewind();
+  awkSrc.rwd();
+  awkTrg.rwd();
+  awkSrcTrgC.rwd();
 
       // Read first entry
   getNextLineFromFiles();
@@ -256,15 +256,15 @@ bool LightSentenceHandler::getNextLineFromFiles(void)
 {
   bool ret;
   
-  ret=awkSrc.getline();
+  ret=awkSrc.getln();
   if(ret==false) return false;
 
-  ret=awkTrg.getline();
+  ret=awkTrg.getln();
   if(ret==false) return false;
 
   if(countFileExists)
   {
-    ret=awkSrcTrgC.getline();
+    ret=awkSrcTrgC.getln();
     if(ret==false) return false;
   }
 
