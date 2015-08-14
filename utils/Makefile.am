@@ -49,7 +49,7 @@ error_correction/thot_export_wordgraph
 downhill_simplex_bin_scripts= downhill_simplex/thot_dhs_min	\
 downhill_simplex/thot_dhs_trgfunc_example
 
-stack_dec_bin_scripts= stack_dec/thot_pbs_dec			\
+stack_dec_bin_scripts= stack_dec/thot_decoder			\
 stack_dec/thot_dhs_smt_trgfunc stack_dec/thot_dhs_cat_trgfunc	\
 stack_dec/thot_conf_interv_smt stack_dec/thot_conf_interv_cat	\
 stack_dec/thot_smt_using_client stack_dec/thot_cat_using_client	\
