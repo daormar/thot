@@ -30,6 +30,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  define THOT_TIME_WITH_SYS_TIME 1
 #endif /* HAVE_CONFIG_H */
 
+#define _WITH_GETLINE
 #include <stdlib.h>
 #include <errno.h>
 #include <stdio.h>
