@@ -42,6 +42,7 @@ USA.
 #include <stdlib.h>
 #include "ctimer.h"
 #include "options.h"
+#include "getline.h"
 #include "StrProcUtils.h"
 #include <math.h>
 #include <iostream>
