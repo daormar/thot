@@ -5,24 +5,16 @@
 # such graph into different formats. The output is written to the
 # standard output
 
-# Exports
+#########
+function export_wg_graphviz()
+{
+    # Take parameters
+    graph=$1
 
-if [ $# -ne 1 -a $# -ne 2 ]; then
-    echo "Use: thot_export_wordgraph [<graph_file>]"
-    echo "                           <Format: 0-> basic graphviz format>"
-else
-    if [ $# -eq 1 ]; then
-        format=$1
-    else
-        graph=$1
-        format=$2
-    fi
-
-    if [ $format -eq 0 ]; then
-        echo "digraph word_graph {"
-	echo "rankdir=LR;"
-	echo "size=\"8,5\""
-        ${AWK} 'BEGIN{
+    # Export wordgraph
+    echo "digraph word_graph {"
+    echo "rankdir=LR;"
+    ${AWK} 'BEGIN{
                  lineWithFinalStates=1
                 }
                 {
@@ -49,5 +41,22 @@ else
                  }
                 }' $graph
         echo "}"
+}
+
+#########
+
+if [ $# -ne 1 -a $# -ne 2 ]; then
+    echo "Use: thot_export_wordgraph [<graph_file>]"
+    echo "                           <Format: 0-> basic graphviz format>"
+else
+    if [ $# -eq 1 ]; then
+        format=$1
+    else
+        graph=$1
+        format=$2
+    fi
+
+    if [ $format -eq 0 ]; then
+        export_wg_graphviz $graph
     fi
 fi
