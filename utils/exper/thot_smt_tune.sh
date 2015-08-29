@@ -92,7 +92,7 @@ check_if_file_is_desc()
 {
     file=$1
     if [ ! -f $file ]; then
-        # Files does not exist
+        # File does not exist
         echo 0
     else
         # File exists
@@ -110,6 +110,13 @@ create_lm_files()
 {
     # Obtain path of lm file
     lmfile=`$GREP "\-lm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
+
+    # Check that lm file could be obtained
+    if [ -z "$lmfile" ]; then
+        echo "Error! configuration file seems to be wrong"
+        exit 1
+    fi
+
     baselmfile=`basename $lmfile`
 
     # Create directory for lm files
@@ -195,6 +202,13 @@ create_tm_dev_files()
 {
     # Obtain path of tm file
     tmfile=`$GREP "\-tm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
+
+    # Check that tm file could be obtained
+    if [ -z "$tmfile" ]; then
+        echo "Error! configuration file seems to be wrong"
+        exit 1
+    fi
+
     basetmfile=`basename $tmfile`
 
     # Create directory for tm files for development corpus
@@ -245,6 +259,13 @@ create_tm_files()
 {
     # Obtain path of tm file
     tmfile=`$GREP "\-tm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
+
+    # Check that tm file could be obtained
+    if [ -z "$tmfile" ]; then
+        echo "Error! configuration file seems to be wrong"
+        exit 1
+    fi
+
     basetmfile=`basename $tmfile`
 
     # Create directory for tm files
@@ -548,6 +569,15 @@ else
         # Obtain absolute path
         tcorpus=`get_absolute_path $tcorpus`
     fi
+fi
+
+# Check that source and target files are parallel
+nl_source=`wc -l $scorpus | $AWK '{printf"%d",$1}'`
+nl_target=`wc -l $tcorpus | $AWK '{printf"%d",$1}'`
+
+if [ ${nl_source} -ne ${nl_target} ]; then
+    echo "Error! source and target files have not the same number of lines" >&2 
+    exit 1
 fi
 
 if [ ${o_given} -eq 0 ]; then
