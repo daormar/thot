@@ -268,6 +268,15 @@ else
     fi
 fi
 
+# Check that source and target files are parallel
+nl_source=`wc -l $scorpus | $AWK '{printf"%d",$1}'`
+nl_target=`wc -l $tcorpus | $AWK '{printf"%d",$1}'`
+
+if [ ${nl_source} -ne ${nl_target} ]; then
+    echo "Error! source and target files have not the same number of lines" >&2 
+    exit 1
+fi
+
 if [ ${o_given} -eq 0 ]; then
     echo "Error! -o parameter not given!" >&2
     exit 1
