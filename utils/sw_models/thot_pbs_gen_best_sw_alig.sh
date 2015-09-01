@@ -73,7 +73,7 @@ set_tmp_dir()
     if [ -d ${tdir} ]; then
         TMP=${tdir}
     else
-        echo "Error: temporary directory does not exist"
+        echo "Error: temporary directory does not exist" >&2
         return 1;
     fi
 }
@@ -81,12 +81,12 @@ set_tmp_dir()
 set_shared_dir()
 {
     if [ ! -d ${sdir} ]; then
-        echo "Error: shared directory does not exist"
+        echo "Error: shared directory does not exist" >&2
         return 1;
     fi
 
     SDIR="${sdir}/thot_pbs_gen_best_sw_alig_sdir_${PPID}_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
+    mkdir $SDIR || { echo "Error: shared directory cannot be created" >&2 ; return 1; }
 
     # Create temporary subdirectories
     chunks_dir=$SDIR/chunks
@@ -109,7 +109,7 @@ split_input()
     # Determine fragment size
     local input_size=`wc -l ${srcf} 2>/dev/null | ${AWK} '{printf"%d",$1}'`
     if [ ${input_size} -lt ${pr_val} ]; then
-        echo "Error: problem too small"
+        echo "Error: problem too small" >&2
         exit 1
     fi
     local chunk_size=`expr ${input_size} / ${pr_val}`
@@ -279,8 +279,8 @@ pbs_sync()
             if [ ${num_running_procs} -eq 0 ]; then
                 sync_curr_num_files=`ls -l ${sync_info_dir}/ | grep " ${pref}" | wc -l`
                 if [ ${sync_curr_num_files} -ne ${sync_num_files} ]; then
-                    echo "Error during synchronization"
-                    return 1
+                    echo "Error during synchronization" >&2
+                    return 1 
                 fi
             fi
         done
@@ -321,7 +321,8 @@ proc_chunk()
     echo "** Processing chunk ${chunk} (started at "`date`")..." >> $SDIR/log
 
     ${bindir}/thot_format_corpus_csl ${chunks_dir}/${src_chunk} ${chunks_dir}/${trg_chunk} | \
-        ${bindir}/thot_calc_swm_lgprob -sw ${sw_val} -P - -max > ${aligs_per_chunk_dir}/${chunk}_bestal 2> ${aligs_per_chunk_dir}/${chunk}_bestal.log ; pipe_fail || return 1
+        ${bindir}/thot_calc_swm_lgprob -sw ${sw_val} -P - -max > ${aligs_per_chunk_dir}/${chunk}_bestal 2> ${aligs_per_chunk_dir}/${chunk}_bestal.log ; pipe_fail || \
+        { echo "Error while executing thot_calc_swm_lgprob for ${chunk}" >> $SDIR/log ; return 1; }
 
     # Write date to log file
     echo "Processing of chunk ${chunk} finished ("`date`")" >> $SDIR/log 
@@ -449,38 +450,38 @@ done
 
 if [ ${sw_given} -eq 0 ];then
     # invalid parameters 
-    echo "Error: prefix of single word model files must be given"
+    echo "Error: prefix of single word model files must be given" >&2
     exit 1
 fi
 
 if [ ${s_given} -eq 0 ]; then
-    echo "Error: file with source sentences not given"
+    echo "Error: file with source sentences not given" >&2
     exit 1
 else
     if [ ! -f  "${srcf}" ]; then
-        echo "Error: file ${srcf} with source sentences does not exist"
+        echo "Error: file ${srcf} with source sentences does not exist" >&2
         exit 1
     fi
 fi
 
 if [ ${t_given} -eq 0 ]; then
-    echo "Error: file with target sentences not given"
+    echo "Error: file with target sentences not given" >&2
     exit 1
 else
     if [ ! -f  "${trgf}" ]; then
-        echo "Error: file ${trgf} with target sentences does not exist"
+        echo "Error: file ${trgf} with target sentences does not exist" >&2
     fi
 fi
 
 if [ ${o_given} -eq 0 ];then
     # invalid parameters 
-    echo "Error: output files prefix must be given"
+    echo "Error: output files prefix must be given" >&2
     exit 1
 fi
 
 if [ ${pr_given} -eq 0 ]; then
     # invalid parameters 
-    echo "Error: number of processors must be given"
+    echo "Error: number of processors must be given" >&2
     exit 1
 fi
 
@@ -558,4 +559,13 @@ job_id_list="${pc_job_ids} ${gaf_job_id} ${rt_job_id}"
 # Release job holds
 if [ ! "${QSUB_WORKS}" = "no" -a ${sync_sleep} -eq 0 ]; then
     release_job_holds "${job_id_list}"
+fi
+
+# Check errors
+if [ ${sync_sleep} -eq 1 ]; then
+    num_err=`$GREP "Error while executing thot_calc_swm_lgprob" ${output}.log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        echo "Error during the execution of thot_pbs_gen_best_sw_alig (thot_calc_swm_lgprob)" >&2
+        exit 1
+    fi
 fi

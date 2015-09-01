@@ -78,7 +78,7 @@ set_tmp_dir()
     if [ -d ${tdir} ]; then
         TMP=${tdir}
     else
-        echo "Error: temporary directory does not exist"
+        echo "Error: temporary directory does not exist" >&2
         return 1;
     fi
 }
@@ -86,12 +86,12 @@ set_tmp_dir()
 set_shared_dir()
 {
     if [ ! -d ${sdir} ]; then
-        echo "Error: shared directory does not exist"
+        echo "Error: shared directory does not exist" >&2
         return 1;
     fi
 
     SDIR="${sdir}/thot_pbs_gen_batch_sw_model_sdir_${PPID}_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
+    mkdir $SDIR || { echo "Error: shared directory cannot be created" >&2 ; return 1; }
 
     # Create temporary subdirectories
     chunks_dir=$SDIR/chunks
@@ -124,7 +124,7 @@ split_input()
     # Determine fragment size
     local input_size=`wc -l ${srcf} 2>/dev/null | ${AWK} '{printf"%d",$1}'`
     if [ ${input_size} -lt ${pr_val} ]; then
-        echo "Error: problem too small"
+        echo "Error: problem too small" >&2
         exit 1
     fi
     local chunk_size=`expr ${input_size} / ${pr_val}`
@@ -258,8 +258,11 @@ proc_chunk()
         # Estimate model from chunk
         echo "* Estimate model for chunk ${chunk} (started at "`date`")..." >> $SDIR/log
         ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
-            -l ${init_model_dir}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 -npr ${npr_val} -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk} >> ${models_per_chunk_dir}/${out_chunk}.log 2>&1 ; pipe_fail || return 1
+            -l ${init_model_dir}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 -npr ${npr_val} \
+            -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
+            -o ${models_per_chunk_dir}/${out_chunk} >> ${models_per_chunk_dir}/${out_chunk}.log 2>&1 ; pipe_fail || \
+            { echo "Error while executing thot_gen_batch_sw_model_mr for ${chunk}" >> $SDIR/log ; return 1 ; }
+
         if [ ${debug} -ne 0 -a "${file_format}" = "text" ]; then
             echo "Entries in initial table (${chunk}): "`wc -l ${models_per_chunk_dir}/${out_chunk}.${lex_ext} | $AWK '{printf"%s",$1}'` >> $SDIR/log
         fi
@@ -269,8 +272,11 @@ proc_chunk()
         # Estimate model from chunk
         echo "* Estimate model for chunk ${chunk} (started at "`date`")..." >> $SDIR/log
         ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
-            -l ${filtered_model_dir}/${chunk}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 -npr ${npr_val} -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk} >> ${models_per_chunk_dir}/${out_chunk}.log 2>&1 ; pipe_fail || return 1
+            -l ${filtered_model_dir}/${chunk}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 \
+            -npr ${npr_val} -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
+            -o ${models_per_chunk_dir}/${out_chunk} >> ${models_per_chunk_dir}/${out_chunk}.log 2>&1 ; pipe_fail || \
+            { echo "Error while executing thot_gen_batch_sw_model_mr for ${chunk}" >> $SDIR/log ; return 1 ; }
+
     fi
 
     # Sort counts individually but do not append them
@@ -699,7 +705,7 @@ pbs_sync()
             if [ ${num_running_procs} -eq 0 ]; then
                 sync_curr_num_files=`ls -l ${sync_info_dir}/ | grep " ${pref}" | wc -l`
                 if [ ${sync_curr_num_files} -ne ${sync_num_files} ]; then
-                    echo "Error during synchronization"
+                    echo "Error during synchronization" >&2
                     return 1
                 fi
             fi
@@ -909,39 +915,39 @@ done
 # verify parameters
 
 if [ ${s_given} -eq 0 ]; then
-    echo "Error: file with source sentences not given"
+    echo "Error: file with source sentences not given" >&2
     exit 1
 else
     if [ ! -f  "${srcf}" ]; then
-        echo "Error: file ${srcf} with source sentences does not exist"
+        echo "Error: file ${srcf} with source sentences does not exist" >&2
         exit 1
     fi
 fi
 
 if [ ${t_given} -eq 0 ]; then
-    echo "Error: file with target sentences not given"
+    echo "Error: file with target sentences not given" >&2
     exit 1
 else
     if [ ! -f  "${trgf}" ]; then
-        echo "Error: file ${trgf} with target sentences does not exist"
+        echo "Error: file ${trgf} with target sentences does not exist" >&2
     fi
 fi
 
 if [ ${o_given} -eq 0 ];then
     # invalid parameters 
-    echo "Error: output files prefix must be given"
+    echo "Error: output files prefix must be given" >&2
     exit 1
 fi
 
 if [ ${n_given} -eq 0 ]; then
     # invalid parameters 
-    echo "Error: number of EM iterations must be given"
+    echo "Error: number of EM iterations must be given" >&2
     exit 1
 fi
 
 if [ ${pr_given} -eq 0 ]; then
     # invalid parameters 
-    echo "Error: number of processors must be given"
+    echo "Error: number of processors must be given" >&2
     exit 1
 fi
 
@@ -1148,4 +1154,13 @@ fi
 # Release job holds
 if [ ! "${QSUB_WORKS}" = "no" -a ${sync_sleep} -eq 0 ]; then
     release_job_holds "${job_id_list}"
+fi
+
+# Check errors
+if [ ${sync_sleep} -eq 1 ]; then
+    num_err=`$GREP "Error while executing thot_gen_batch_sw_model_mr" ${output}.log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        echo "Error during the execution of thot_pbs_gen_batch_sw_model (thot_gen_batch_sw_model_mr)" >&2
+        exit 1
+    fi
 fi
