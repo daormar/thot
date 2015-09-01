@@ -183,6 +183,14 @@ else
     scorpus_train=${scorpus_pref}.train
     scorpus_dev=${scorpus_pref}.dev
     scorpus_test=${scorpus_pref}.test
+
+    # Check existence of files
+    for file in ${scorpus_train} ${scorpus_dev} ${scorpus_test}; do
+        if [ ! -f ${file} ]; then
+            echo "Error! file ${file} does not exist" >&2
+            exit 1
+        fi
+    done
 fi
 
 if [ ${t_given} -eq 0 ]; then        
@@ -196,6 +204,37 @@ else
     tcorpus_train=${tcorpus_pref}.train
     tcorpus_dev=${tcorpus_pref}.dev
     tcorpus_test=${tcorpus_pref}.test
+
+    # Check existence of files
+    for file in ${tcorpus_train} ${tcorpus_dev} ${tcorpus_test}; do
+        if [ ! -f ${file} ]; then
+            echo "Error! file ${file} does not exist" >&2
+            exit 1
+        fi
+    done
+
+fi
+
+# Check that source and target files are parallel
+nl_source=`wc -l $scorpus_train | $AWK '{printf"%d",$1}'`
+nl_target=`wc -l $tcorpus_train | $AWK '{printf"%d",$1}'`
+if [ ${nl_source} -ne ${nl_target} ]; then
+    echo "Error! source and target training files have not the same number of lines" >&2 
+    exit 1
+fi
+
+nl_source=`wc -l $scorpus_dev | $AWK '{printf"%d",$1}'`
+nl_target=`wc -l $tcorpus_dev | $AWK '{printf"%d",$1}'`
+if [ ${nl_source} -ne ${nl_target} ]; then
+    echo "Error! source and target development files have not the same number of lines" >&2 
+    exit 1
+fi
+
+nl_source=`wc -l $scorpus_test | $AWK '{printf"%d",$1}'`
+nl_target=`wc -l $tcorpus_test | $AWK '{printf"%d",$1}'`
+if [ ${nl_source} -ne ${nl_target} ]; then
+    echo "Error! source and target test files have not the same number of lines" >&2 
+    exit 1
 fi
 
 if [ ${o_given} -eq 0 ]; then
@@ -236,7 +275,7 @@ if [ -f ${scorpus_train} -a -f ${tcorpus_train} ]; then
 
     # Train language model
     echo "**** Training language model" >&2
-    ${bindir}/thot_lm_train -pr ${pr_val} -c ${tcorpus_train} -o ${outd}/lm -n 4 \
+    ${bindir}/thot_lm_train -pr ${pr_val} -c ${tcorpus_train} -o ${outd}/lm -n 4 -unk \
         ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
 
     # Train translation model
