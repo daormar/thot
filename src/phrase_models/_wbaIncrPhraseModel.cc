@@ -60,7 +60,6 @@ bool _wbaIncrPhraseModel::extendModel(const char *aligFileName,
     cerr<<"Error while reading alignment file."<<endl;
     return ERROR;
   } 
-  cerr<<"Estimating the phrase model from the alignment file "<<aligFileName<<endl;
   if(logFileOpen()) logF<<"Estimating the phrase model from the alignment file "<<aligFileName<<endl;
   extendModelFromAlignments(phePars,BRF,alignmentExtractor,verbose);
   alignmentExtractor.close();
