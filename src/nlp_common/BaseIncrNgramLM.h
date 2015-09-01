@@ -233,9 +233,9 @@ LgProb BaseIncrNgramLM<LM_STATE>::getSentenceLog10Prob(Vector<WordIndex> s,
    
     if(verbose)
     {
-      cerr<<"   P( "<<wordIndexToString(s[i])<<" | ";    
-      for(k=0;k<(int)hist.size();++k) cerr << wordIndexToString(hist[hist.size()-1-k]) <<" ";    
-      cerr<<") = " << exp((double)lp) <<" "<<exp((double)total_lp)<<"\n";	    
+      cout<<"   P( "<<wordIndexToString(s[i])<<" | ";    
+      for(k=0;k<(int)hist.size();++k) cout << wordIndexToString(hist[hist.size()-1-k]) <<" ";    
+      cout<<") = " << exp((double)lp) <<" "<<exp((double)total_lp)<<"\n";	    
     } 
   }
   hist.clear();
@@ -250,9 +250,9 @@ LgProb BaseIncrNgramLM<LM_STATE>::getSentenceLog10Prob(Vector<WordIndex> s,
   
   if(verbose)
   {
-    cerr<<"   P( "<<EOS_STR<<" | ";    
-    for(k=0;k<(int)hist.size();++k) cerr << wordIndexToString(hist[hist.size()-1-k]) <<" ";  
-    cerr<<") = " << exp((double)lp)  <<" "<<exp((double)total_lp)<< "\n";
+    cout<<"   P( "<<EOS_STR<<" | ";    
+    for(k=0;k<(int)hist.size();++k) cout << wordIndexToString(hist[hist.size()-1-k]) <<" ";  
+    cout<<") = " << exp((double)lp)  <<" "<<exp((double)total_lp)<< "\n";
   }	
  
   return total_lp*((double)1/M_LN10);
@@ -287,7 +287,7 @@ int BaseIncrNgramLM<LM_STATE>::perplexity(const char *corpusFileName,
     {
       numWords+=awk.NF;
           
-      if(verbose==2) cerr<<"*** Sentence "<<numOfSentences<<endl;
+      if(verbose==2) cout<<"*** Sentence "<<numOfSentences<<endl;
       
           // Store the sentence into the vector "v"
       v.clear();
@@ -300,11 +300,11 @@ int BaseIncrNgramLM<LM_STATE>::perplexity(const char *corpusFileName,
       else logp=getSentenceLog10ProbStr(v,verbose);
       if(verbose==1)
       {
-        cerr<<logp<<" ";
+        cout<<logp<<" ";
         for(unsigned int i=0;i<v.size();++i)
         {
-          if(i<v.size()-1) cerr<<v[i]<<" ";
-          else cerr<<v[i]<<endl;
+          if(i<v.size()-1) cout<<v[i]<<" ";
+          else cout<<v[i]<<endl;
         }
       }
     }
