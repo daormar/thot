@@ -178,7 +178,9 @@ sync()
 trans_frag()
 {
     ${bindir}/thot_ms_dec ${cfg_opt} -t $SDIR/${fragm} ${dec_pars} \
-        ${wg_par}wg_${fragm} >$SDIR/qs_trans_${fragm}.out 2>$SDIR/qs_trans_${fragm}.log
+        ${wg_par}wg_${fragm} >$SDIR/qs_trans_${fragm}.out 2>$SDIR/qs_trans_${fragm}.log || \
+        { echo "Error while executing thot_ms_dec for $SDIR/${fragm}" >> $SDIR/qs_trans_${fragm}.log; }
+
     echo "" >$SDIR/qs_trans_${fragm}_end
 }
 
@@ -406,7 +408,7 @@ fi
 # create shared directory
 
 if [ ! -d ${sdir} ]; then
-    echo "Error: shared directory does not exist"
+    echo "Error: shared directory does not exist" >&2
     return 1;
 fi
 
@@ -442,7 +444,7 @@ echo "">> ${output}.log
 # fragment input
 input_size=`wc ${sents} 2>/dev/null | ${AWK} '{printf"%d",$(1)}'`
 if [ ${input_size} -lt ${num_procs} ]; then
-    echo "Error: problem too small"
+    echo "Error: problem too small" >&2
     exit 1
 fi
 frag_size=`expr ${input_size} / ${num_procs}`
@@ -482,5 +484,13 @@ cat $SDIR/qs_trans_*.log >> ${output}.log
 ### Check that all queued jobs are finished
 sync $SDIR/merge
 
+# Add footer to log file
 echo "">> ${output}.log
 echo "*** Parallel process finished at: " `date` >> ${output}.log
+
+# Check errors
+num_err=`$GREP "Error while executing thot_ms_dec" ${output}.log | wc -l`
+if [ ${num_err} -gt 0 ]; then
+    echo "Error during the execution of thot_decoder (thot_dec_ms)" >&2
+    exit 1
+fi
