@@ -100,12 +100,11 @@ execute_decoder()
     # Appropriately execute decoder
     if [ $pbsdec = "yes" ]; then
         ${PHRDECODER} -c $CFGFILE -t ${TEST} -tmw $weights -sdir ${SDIR} \
-            ${qs_opt} "${QS}" ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans \
-            2> ${SDIR}/target_func.log || decoder_error="yes"
+            ${qs_opt} "${QS}" ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans || decoder_error="yes"
     else
         ${PHRDECODER} -c $CFGFILE -t ${TEST} -tmw $weights \
             ${ADD_DEC_OPTIONS} -v -o ${SDIR}/target_func_aux.trans \
-            2> ${SDIR}/target_func.log || decoder_error="yes"
+            2> ${SDIR}/target_func_aux.trans.log || decoder_error="yes"
     fi
 
     # Sanity check (verify if translations were generated)
@@ -199,6 +198,7 @@ posproc_output()
     SP=`get_sp_value_from_cfg`
     if [ $SP -ne 0 ]; then
         mv ${SDIR}/target_func_aux.trans ${SDIR}/target_func.unpreproc_trans
+        mv ${SDIR}/target_func_aux.trans.log ${SDIR}/target_func.unpreproc_trans.log
 
         # Check if -p option has to be provided
         if [ $SP -ne 3 ]; then
@@ -217,6 +217,8 @@ ${bindir}/posproc_file -f ${SDIR}/target_func.unpreproc_trans -t $SP ${P_OPT} ${
         REF_FOR_EVAL=${RAW_REF}
     else
         mv ${SDIR}/target_func_aux.trans ${SDIR}/target_func.trans
+        mv ${SDIR}/target_func_aux.trans.log ${SDIR}/target_func.trans.log
+
         # Set file with references for evaluation purposes
         REF_FOR_EVAL=${REF}
     fi
