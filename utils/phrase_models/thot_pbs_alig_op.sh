@@ -118,7 +118,8 @@ alig_op_frag()
 {
     echo "** Processing chunk ${fragm} (started at "`date`")..." >> ${output}.log
 
-    $bindir/thot_alig_op -g $SDIR/${fragm} ${operation} $SDIR/op_file_${fragm} -o $SDIR/${fragm} >/dev/null 2> $SDIR/${fragm}.log
+    $bindir/thot_alig_op -g $SDIR/${fragm} ${operation} $SDIR/op_file_${fragm} -o $SDIR/${fragm} >/dev/null || \
+        { echo "Error while executing thot_alig_op for $SDIR/${fragm}" >> ${output}.log; }
 
     # Write date to log file
     echo "Processing of chunk ${fragm} finished ("`date`")" >> ${output}.log
@@ -368,3 +369,10 @@ sync $SDIR/merge_alig_op
 # finish log file
 echo "">> ${output}.log
 echo "*** Parallel process finished at: " `date` >> ${output}.log
+
+# Check errors
+num_err=`$GREP "Error while executing thot_alig_op" ${output}.log | wc -l`
+if [ ${num_err} -gt 0 ]; then
+    echo "Error during the execution of thot_pbs_alig_op (thot_alig_op)" >&2
+    exit 1
+fi

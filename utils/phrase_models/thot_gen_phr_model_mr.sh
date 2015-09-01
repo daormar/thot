@@ -171,7 +171,7 @@ fi
 # parameters are ok
 
 # train phrase model
-echo "Training model..." 1>&2
+# echo "Training model..." >&2
 
 # set chunk size
 chunk_size=90000
@@ -209,7 +209,7 @@ for i in `ls $TMP/chunk\_*`; do
 done
 
 # Merge counts and print the models
-echo "Merging counts..." 1>&2
+# echo "Merging counts..." >&2
 echo "Merging process started at: " `date` >> $TMP/log
 
 export LC_ALL=""

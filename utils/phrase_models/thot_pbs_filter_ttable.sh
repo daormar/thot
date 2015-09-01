@@ -219,11 +219,11 @@ else
 
     # create TMP directory
     TMP="${tmpdir}/thot_pbs_filter_ttable_tmp_$$"
-    mkdir $TMP || { echo "Error: temporary directory cannot be created" ; exit 1; }
+    mkdir $TMP || { echo "Error: temporary directory cannot be created" >&2 ; exit 1; }
 
     # create shared directory
     SDIR="${sdir}/thot_pbs_filter_ttable_sdir_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+    mkdir $SDIR || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
     
     # remove temp directories on exit
     if [ $debug -eq 0 ]; then

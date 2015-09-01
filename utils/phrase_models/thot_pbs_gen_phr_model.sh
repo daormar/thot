@@ -140,7 +140,8 @@ estimate_frag()
 {
     echo "** Processing chunk ${fragm} (started at "`date`")..." >> ${output}.log
 
-    $bindir/thot_gen_phr_model_mr -g $SDIR/${fragm} ${thot_pars} -o $SDIR/${fragm} -pc -la "$i" -T $tmpdir >/dev/null 2>&1
+    $bindir/thot_gen_phr_model_mr -g $SDIR/${fragm} ${thot_pars} -o $SDIR/${fragm} -pc -la "$i" -T $tmpdir >/dev/null || \
+        { echo "Error while executing thot_gen_phr_model_mr for $SDIR/${fragm}" >> ${output}.log; }
 
     # Write date to log file
     echo "Processing of chunk ${fragm} finished ("`date`")" >> ${output}.log
@@ -312,27 +313,27 @@ done
 if [ ${g_given} -eq 1 ]; then
     # verify that -g file exist
     if [ ${g_given} -eq 1 -a  ! -f  "${a3_file}" ];then
-        echo "Error: file "$a3_file" does not exist "
+        echo "Error: file "$a3_file" does not exist " >&2
         exit 1
     fi
 else
-    echo "Error: -g parameter not given"
+    echo "Error: -g parameter not given" >&2
     exit 1
 fi
 
 if [ ${o_given} -eq 0 ];then
-    echo "Error: -o parameter not given"
+    echo "Error: -o parameter not given" >&2
     exit 1
 fi
 
 if [ ${m_given} -eq 0 ];then
-    echo "Error: -m parameter not given"
+    echo "Error: -m parameter not given" >&2
     exit 1
 fi
 
 if [ ${pr_given} -eq 0 ]; then
     # invalid parameters 
-    echo "Error: number of processors not given"
+    echo "Error: number of processors not given" >&2
     exit 1
 fi
 
@@ -340,7 +341,7 @@ fi
 
 # create TMP directory
 TMP="${tmpdir}/thot_pbs_gen_phr_model_tmp_$$"
-mkdir $TMP || { echo "Error: temporary directory cannot be created" ; exit 1; }
+mkdir $TMP || { echo "Error: temporary directory cannot be created " >&2 ; exit 1; }
 
 # Set tmp dir of the sort command if possible
 if test ${sortT} = "yes"; then
@@ -351,7 +352,7 @@ fi
 
 # create shared directory
 SDIR="${sdir}/thot_pbs_gen_phr_model_sdir_$$"
-mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+mkdir $SDIR || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
     
 # remove temp directories on exit
 if [ "$debug" != "-debug" ]; then
@@ -410,3 +411,10 @@ sync $SDIR/merge_thot
 
 echo "">> ${output}.log
 echo "*** Parallel process finished at: " `date` >> ${output}.log
+
+# Check errors
+num_err=`$GREP "Error while executing thot_gen_phr_model_mr" ${output}.log | wc -l`
+if [ ${num_err} -gt 0 ]; then
+    echo "Error during the execution of thot_pbs_gen_phr_model (thot_gen_phr_model_mr)" >&2
+    exit 1
+fi
