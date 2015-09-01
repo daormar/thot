@@ -370,8 +370,9 @@ proc_chunk()
 
     # Extract counts from chunk and sort them
     $bindir/thot_get_ngram_counts_mr -c ${chunks_dir}/${chunk} -n ${n_val} -tdir $TMP | \
-        add_length_col | sort_counts | add_chunk_id > ${counts_per_chunk_dir}/${chunk}_sorted_counts ; pipe_fail || return 1
-    
+        add_length_col | sort_counts | add_chunk_id > ${counts_per_chunk_dir}/${chunk}_sorted_counts ; pipe_fail || \
+        { echo "Error while executing thot_get_ngram_counts_mr for ${chunks_dir}/${chunk}" >> $SDIR/log; }
+
     # Write date to log file
     echo "Processing of chunk ${chunk} finished ("`date`")" >> $SDIR/log 
 
@@ -594,4 +595,13 @@ job_id_list="${pc_job_ids} ${gcf_job_id} ${rt_job_id}"
 # Release job holds
 if [ ! "${QSUB_WORKS}" = "no" -a ${sync_sleep} -eq 0 ]; then
     release_job_holds "${job_id_list}"
+fi
+
+# Check errors
+if [ ${sync_sleep} -eq 1 ]; then
+    num_err=`$GREP "Error while executing thot_get_ngram_counts_mr" ${output}.log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        echo "Error during the execution of thot_get_ngram_counts (thot_get_ngram_counts_mr)" >&2
+        exit 1
+    fi
 fi

@@ -72,7 +72,8 @@ create_script()
 #############
 ilm_perp()
 {
-    $bindir/thot_ilm_perp -lm ${lmfile} -c ${cfile} -n ${n_val} ${add_opts} > $outfile 2>&1
+    $bindir/thot_ilm_perp -lm ${lmfile} -c ${cfile} -n ${n_val} ${add_opts} > $outfile 2> $outfile.log || \
+        { echo "Error while executing thot_ilm_perp" >> ${outfile}.log ; }
 
     echo "" > $SDIR/ilm_perp_end
 }
@@ -117,7 +118,7 @@ if [ $# -eq 0 ]; then
     echo "-c <string>              Corpus file to be processed." >&2
     echo "-lm <string>             Language model file name." >&2
     echo "-n <int>                 Order of the n-grams." >&2
-    echo "-o <string>              Output file." >&2
+    echo "-o <string>              Prefix of output files." >&2
     echo "-i                       Use interpolated model." >&2
     echo "-jm                      Use Jelinek-Mercer n-gram models." >&2
     echo "-qs <string>             Specific options to be given to the qsub command"
@@ -258,4 +259,12 @@ else
     
     ### Check that all queued jobs are finished
     sync $SDIR/ilm_perp
+
+    # Check errors
+    num_err=`$GREP "Error while executing thot_ilm_perp" ${outfile}.log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        echo "Error during the execution of thot_pbs_ilm_perp (thot_ilm_perp)" >&2
+        exit 1
+    fi
+
 fi
