@@ -13,7 +13,7 @@ echo ""
 # Check thot_lm_train
 echo "**** Checking thot_lm_train..."
 echo ""
-${bindir}/thot_lm_train -c $datadir/toy_corpus/en.train -o $tmpdir/lm -n 3 
+${bindir}/thot_lm_train -c $datadir/toy_corpus/en.train -o $tmpdir/lm -n 4 -unk
 if test $? -eq 0 ; then
     echo "... Done"
 else
