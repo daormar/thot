@@ -239,7 +239,7 @@ else
     fi
 
     # create TMP directory
-    TMP="${tmpdir}/thot_pbs_ilm_perp_$$"
+    TMP="${tmpdir}/thot_pbs_ilm_perp_tmp_$$"
     mkdir $TMP || { echo "Error: temporary directory cannot be created" ; exit 1; }
 
     # create shared directory
