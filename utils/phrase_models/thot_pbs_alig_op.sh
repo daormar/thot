@@ -333,6 +333,11 @@ echo "">> ${output}.log
 # fragment the input
 echo "Spliting input: ${a3_file}..." >> ${output}.log
 input_size=`wc ${a3_file} 2>/dev/null | ${AWK} '{printf"%d",$(1)/3}'`
+if [ ${input_size} -eq 0 ]; then
+    echo "Error: input file ${a3_file} is empty"
+    exit 1
+fi
+
 if [ ${input_size} -lt ${num_hosts} ]; then
     echo "Error: problem too small"
     exit 1
