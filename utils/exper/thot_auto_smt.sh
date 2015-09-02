@@ -276,12 +276,12 @@ if [ -f ${scorpus_train} -a -f ${tcorpus_train} ]; then
     # Train language model
     echo "**** Training language model" >&2
     ${bindir}/thot_lm_train -pr ${pr_val} -c ${tcorpus_train} -o ${outd}/lm -n 4 -unk \
-        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
+        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
 
     # Train translation model
     echo "**** Training translation model" >&2
     ${bindir}/thot_tm_train -pr ${pr_val} -s ${scorpus_train} -t ${tcorpus_train} -o ${outd}/tm -n 5 \
-        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
+        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
 
 else
     echo "Error! training files do not exist" >&2
@@ -299,7 +299,7 @@ echo "" >&2
 if [ -f ${scorpus_dev} -a -f ${tcorpus_dev} ]; then
     echo "**** Tuning model parameters" >&2
     ${bindir}/thot_smt_tune -pr ${pr_val} -c $outd/server.cfg -s ${scorpus_dev} -t ${tcorpus_dev} -o $outd/tune ${qs_opt} \
-        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
+        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
     tuning_executed="yes"
 fi
 
@@ -317,7 +317,7 @@ fi
 if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
     echo "**** Translating test corpus" >&2
 ${bindir}/thot_decoder -pr ${pr_val} -c $outd/systest/test_specific.cfg \
-        -t ${scorpus_test} -o $outd/thot_decoder_out || exit 1
+        -t ${scorpus_test} -o $outd/thot_decoder_out ${debug_opt} || exit 1
     test_trans_executed="yes"
     echo "" >&2
 fi
