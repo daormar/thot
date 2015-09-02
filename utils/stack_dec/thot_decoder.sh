@@ -443,6 +443,11 @@ echo "">> ${output}.log
 
 # fragment input
 input_size=`wc ${sents} 2>/dev/null | ${AWK} '{printf"%d",$(1)}'`
+if [ ${input_size} -eq 0 ]; then
+    echo "Error: input file ${sents} is empty" >&2
+    exit 1
+fi
+
 if [ ${input_size} -lt ${num_procs} ]; then
     echo "Error: problem too small" >&2
     exit 1
