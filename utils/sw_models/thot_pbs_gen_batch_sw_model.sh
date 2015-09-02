@@ -123,6 +123,11 @@ split_input()
 
     # Determine fragment size
     local input_size=`wc -l ${srcf} 2>/dev/null | ${AWK} '{printf"%d",$1}'`
+    if [ ${input_size} -eq 0 ]; then
+        echo "Error: input file ${srcf} is empty" >&2
+        exit 1
+    fi
+
     if [ ${input_size} -lt ${pr_val} ]; then
         echo "Error: problem too small" >&2
         exit 1
