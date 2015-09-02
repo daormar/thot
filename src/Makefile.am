@@ -360,6 +360,7 @@ if CASMACAT_LIB_ENABLED
 endif
 
 # include headers
+includedir= $(prefix)/include/$(PACKAGE)
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
 $(sw_models_h) $(phrase_models_h) $(smt_preproc_h)			\
 $(error_correction_h) $(downhill_simplex_h) $(stack_dec_h) $(exper_h)	\
