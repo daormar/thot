@@ -138,7 +138,7 @@ fi
 # Remove directory for temporaries
 echo "*** Remove directory for temporary files..."
 echo ""
-rm -rf tmpdir
+rm -rf $tmpdir
 
 echo ""
 echo "================"
