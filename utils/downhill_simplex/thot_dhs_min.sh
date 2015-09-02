@@ -12,9 +12,9 @@ print_desc()
 
 version()
 {
-    echo "thot_dhs_min is part of the stack_dec package"
-    echo "stack_dec version "${version}
-    echo "stack_dec is GNU software written by Daniel Ortiz"
+    echo "thot_dhs_min is part of the thot package"
+    echo "thot version "${version}
+    echo "thot is GNU software written by Daniel Ortiz"
 }
 
 usage()
@@ -227,18 +227,18 @@ fi
 
 # create shared directory
 if [ -z "$tdir" ]; then
-    # if not given, TDIR will be the /tmp directory
-    TDIR="/tmp/thot_dhs_min_$$"
-    mkdir $TDIR || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
+    # if not given, TDIR_DHS will be the /tmp directory
+    TDIR_DHS="/tmp/thot_dhs_min_$$"
+    mkdir $TDIR_DHS || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
 
 else
-    TDIR="${tdir}/thot_dhs_min_$$"
-    mkdir $TDIR || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
+    TDIR_DHS="${tdir}/thot_dhs_min_$$"
+    mkdir $TDIR_DHS || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
 fi
 
 # remove temp directories on exit
 if [ "$debug" != "-debug" ]; then
-    trap "rm -rf $TDIR 2>/dev/null" EXIT
+    trap "rm -rf $TDIR_DHS 2>/dev/null" EXIT
 fi
 
 # Execute loop until step by step downhill simplex returns the final
@@ -247,42 +247,42 @@ end=0
 
 # Set initial file with objective function images
 if [ ${r_given} -eq 1 ]; then
-    cp ${r_val} ${TDIR}/adj.img
-    cp ${r_val} ${TDIR}/adj.img.old
-    cat ${r_val} | $AWK '{printf"<resumed xval>\n"}' > ${TDIR}/adj.xval
+    cp ${r_val} ${TDIR_DHS}/adj.img
+    cp ${r_val} ${TDIR_DHS}/adj.img.old
+    cat ${r_val} | $AWK '{printf"<resumed xval>\n"}' > ${TDIR_DHS}/adj.xval
 else
-    echo "" | $AWK '{printf""}' > ${TDIR}/adj.img
+    echo "" | $AWK '{printf""}' > ${TDIR_DHS}/adj.img
 fi
 
 # Downhill simplex algorithm loop
 echo "Starting downhill simplex optimization..." >&2
-echo "NOTE: see last lines of file $TDIR/adj.log to track optimization progress" >&2
+echo "NOTE: see last lines of file $TDIR_DHS/adj.log to track optimization progress" >&2
 while [ $end -ne 1 ]; do
     if [ "${USE_NR_ROUTINES}" = "yes" ]; then
         ${bindir}/dhs_step_by_step_min_nr -va ${vars} ${iv_opt} ${lambda_opt} \
-            ${bias_opt} -i ${TDIR}/adj.img -ftol ${ftol} \
-            ${verbose_opt} > ${TDIR}/adj.out 2> ${TDIR}/adj.log
+            ${bias_opt} -i ${TDIR_DHS}/adj.img -ftol ${ftol} \
+            ${verbose_opt} > ${TDIR_DHS}/adj.out 2> ${TDIR_DHS}/adj.log
         dhs_err_code=$?
     else
         ${bindir}/thot_dhs_step_by_step_min -va ${vars} ${iv_opt} \
-            -i ${TDIR}/adj.img -ftol ${ftol} \
-            ${verbose_opt} > ${TDIR}/adj.out 2> ${TDIR}/adj.log
+            -i ${TDIR_DHS}/adj.img -ftol ${ftol} \
+            ${verbose_opt} > ${TDIR_DHS}/adj.out 2> ${TDIR_DHS}/adj.log
         dhs_err_code=$?
     fi
-    cat ${TDIR}/adj.out >> ${TDIR}/adj.xval
-    err_msg=`tail -1 ${TDIR}/adj.log`
+    cat ${TDIR_DHS}/adj.out >> ${TDIR_DHS}/adj.xval
+    err_msg=`tail -1 ${TDIR_DHS}/adj.log`
     if [ "${err_msg}" = "Image for x required!" ]; then
         # A new evaluation of the target function is required
-        values=`cat ${TDIR}/adj.out`
-        ${target_func} ${TDIR} ${values} >> ${TDIR}/adj.img || trgfunc_error="yes"
+        values=`cat ${TDIR_DHS}/adj.out`
+        ${target_func} ${tdir} ${values} >> ${TDIR_DHS}/adj.img || trgfunc_error="yes"
 
         # Treat error in target function
         if [ "${trgfunc_error}" = "yes" ]; then
             echo "Error while executing ${target_func}" >&2 
 
-            # $TDIR will not be removed if the program was executed with -debug flag
+            # $TDIR_DHS will not be removed if the program was executed with -debug flag
             if [ "$debug" != "-debug" ]; then
-                echo "NOTE: temporary directory $TDIR will not be removed to allow error diagnosis" >&2
+                echo "NOTE: temporary directory $TDIR_DHS will not be removed to allow error diagnosis" >&2
                 trap - EXIT # Do not remove temporary files to be able to diagnose the error
             fi
 
@@ -293,10 +293,10 @@ while [ $end -ne 1 ]; do
         # No more evaluations of the target function are required or
         # there was an error (e.g. maximum number of function
         # evaluations exceeded)
-        cp ${TDIR}/adj.out ${outpref}.out
-        cp ${TDIR}/adj.xval ${outpref}.xval
-        cp ${TDIR}/adj.img ${outpref}.img
-        cp ${TDIR}/adj.log ${outpref}.log
+        cp ${TDIR_DHS}/adj.out ${outpref}.out
+        cp ${TDIR_DHS}/adj.xval ${outpref}.xval
+        cp ${TDIR_DHS}/adj.img ${outpref}.img
+        cp ${TDIR_DHS}/adj.log ${outpref}.log
         end=1
         
         # Inform about errors if any
