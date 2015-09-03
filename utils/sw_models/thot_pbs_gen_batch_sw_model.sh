@@ -265,7 +265,7 @@ proc_chunk()
         ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${init_model_dir}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 -npr ${npr_val} \
             -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk} >> ${models_per_chunk_dir}/${out_chunk}.log 2>&1 ; pipe_fail || \
+            -o ${models_per_chunk_dir}/${out_chunk} ; pipe_fail || \
             { echo "Error while executing thot_gen_batch_sw_model_mr for ${chunk}" >> $SDIR/log ; return 1 ; }
 
         if [ ${debug} -ne 0 -a "${file_format}" = "text" ]; then
@@ -279,7 +279,7 @@ proc_chunk()
         ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${filtered_model_dir}/${chunk}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 \
             -npr ${npr_val} -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk} >> ${models_per_chunk_dir}/${out_chunk}.log 2>&1 ; pipe_fail || \
+            -o ${models_per_chunk_dir}/${out_chunk} ; pipe_fail || \
             { echo "Error while executing thot_gen_batch_sw_model_mr for ${chunk}" >> $SDIR/log ; return 1 ; }
 
     fi

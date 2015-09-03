@@ -626,33 +626,33 @@ done
 # verify parameters
 
 if [ ${s_given} -eq 0 ]; then
-    echo "Error: file with source sentences not given"
+    echo "Error: file with source sentences not given" >&2
     exit 1
 else
     if [ ! -f  "${srcf}" ]; then
-        echo "Error: file ${srcf} with source sentences does not exist"
+        echo "Error: file ${srcf} with source sentences does not exist" >&2
         exit 1
     fi
 fi
 
 if [ ${t_given} -eq 0 ]; then
-    echo "Error: file with target sentences not given"
+    echo "Error: file with target sentences not given" >&2
     exit 1
 else
     if [ ! -f  "${trgf}" ]; then
-        echo "Error: file ${trgf} with target sentences does not exist"
+        echo "Error: file ${trgf} with target sentences does not exist" >&2
     fi
 fi
 
 if [ ${o_given} -eq 0 ];then
     # invalid parameters 
-    echo "Error: output files prefix must be given"
+    echo "Error: output files prefix must be given" >&2
     exit 1
 fi
 
 if [ ${n_given} -eq 0 ]; then
     # invalid parameters 
-    echo "Error: number of EM iterations must be given"
+    echo "Error: number of EM iterations must be given" >&2
     exit 1
 fi
 
