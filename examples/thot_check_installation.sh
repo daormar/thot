@@ -135,6 +135,8 @@ else
     exit 1
 fi
 
+echo ""
+
 # Remove directory for temporaries
 echo "*** Remove directory for temporary files..."
 echo ""
