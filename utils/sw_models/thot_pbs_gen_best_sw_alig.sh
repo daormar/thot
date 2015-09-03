@@ -326,7 +326,8 @@ proc_chunk()
     echo "** Processing chunk ${chunk} (started at "`date`")..." >> $SDIR/log
 
     ${bindir}/thot_format_corpus_csl ${chunks_dir}/${src_chunk} ${chunks_dir}/${trg_chunk} | \
-        ${bindir}/thot_calc_swm_lgprob -sw ${sw_val} -P - -max > ${aligs_per_chunk_dir}/${chunk}_bestal 2> ${aligs_per_chunk_dir}/${chunk}_bestal.log ; pipe_fail || \
+        ${bindir}/thot_calc_swm_lgprob -sw ${sw_val} -P - -max > ${aligs_per_chunk_dir}/${chunk}_bestal \
+        2> ${aligs_per_chunk_dir}/${chunk}_bestal.log ; pipe_fail || \
         { echo "Error while executing thot_calc_swm_lgprob for ${chunk}" >> $SDIR/log ; return 1; }
 
     # Write date to log file
