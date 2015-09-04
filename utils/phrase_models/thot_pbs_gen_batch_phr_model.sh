@@ -285,7 +285,7 @@ ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $scorpus -t $tcorpus -n $
     echo "* Generating best alignment for source-to-target model... " >&2
     echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
 ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_swm -s $scorpus -t $tcorpus \
-        ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} 
+        ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
     # Rename log file
     mv ${outp}_swm.log ${outp}_swm_thot_pbs_gen_best_sw_alig.log
     echo "" >&2
@@ -303,7 +303,7 @@ ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $tcorpus -t $scorpus -n $
     echo "* Generating best alignment for target-to-source model... " >&2
     echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
 ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_invswm -s $tcorpus -t $scorpus \
-        ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt}
+        ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
     # Rename log file
     mv ${outp}_invswm.log ${outp}_invswm_thot_pbs_gen_best_sw_alig.log
     echo "" >&2
