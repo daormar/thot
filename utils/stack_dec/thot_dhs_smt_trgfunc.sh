@@ -100,10 +100,10 @@ execute_decoder()
     # Appropriately execute decoder
     if [ $pbsdec = "yes" ]; then
         ${PHRDECODER} -c $CFGFILE -t ${TEST} -tmw $weights -sdir ${SDIR} \
-            ${qs_opt} "${QS}" ${ADD_DEC_OPTIONS} -v -o ${SDIR}/smt_trgf_aux.trans || decoder_error="yes"
+            ${qs_opt} "${QS}" ${ADD_DEC_OPTIONS} -o ${SDIR}/smt_trgf_aux.trans || decoder_error="yes"
     else
         ${PHRDECODER} -c $CFGFILE -t ${TEST} -tmw $weights \
-            ${ADD_DEC_OPTIONS} -v -o ${SDIR}/smt_trgf_aux.trans \
+            ${ADD_DEC_OPTIONS} -o ${SDIR}/smt_trgf_aux.trans \
             2> ${SDIR}/smt_trgf_aux.trans.log || decoder_error="yes"
     fi
 
