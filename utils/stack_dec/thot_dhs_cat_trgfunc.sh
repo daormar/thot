@@ -204,11 +204,11 @@ else
 
     # Evaluate target function
     ${bindir}/thot_cat_using_client -i ${SERVER_IP} ${PORT_OPT} -t ${TEST} -r ${REF} ${TR_OPT} ${PM_OPT} ${OF} \
-        > ${SDIR}/target_func.cat_iters 2> ${SDIR}/target_func.log || error="yes"
+        > ${SDIR}/cat_trgf.cat_iters 2> ${SDIR}/cat_trgf.log || error="yes"
 
     # Treat errors while evaluating target function
     if [ "$error" = "yes" ]; then
-        echo "Error while evaluating target function, for additional information see file ${SDIR}/target_func.log" >&2
+        echo "Error while evaluating target function, for additional information see file ${SDIR}/cat_trgf.log" >&2
         exit 1
     fi
 
@@ -221,13 +221,13 @@ else
     SEED=31415
     S_CI=`wc -l ${TEST} | $AWK '{printf"%d",$1}'`
     N_CI=1000
-    ${bindir}/thot_conf_interv_cat $SEED ${SDIR}/target_func.cat_iters ${S_CI} ${N_CI} > ${SDIR}/target_func.conf_int
+    ${bindir}/thot_conf_interv_cat $SEED ${SDIR}/cat_trgf.cat_iters ${S_CI} ${N_CI} > ${SDIR}/cat_trgf.conf_int
 
     # Calculate the KSMR measure
-    ${GREP} "^KSMR" ${SDIR}/target_func.cat_iters | ${AWK} '{printf"KSMR= %s\n",$3}' >> ${SDIR}/target_func.ksmr
+    ${GREP} "^KSMR" ${SDIR}/cat_trgf.cat_iters | ${AWK} '{printf"KSMR= %s\n",$3}' >> ${SDIR}/cat_trgf.ksmr
 
     # Obtain KSMR
-    KSMR=`tail -1 ${SDIR}/target_func.ksmr | ${AWK} '{printf"%s",$2}'`
+    KSMR=`tail -1 ${SDIR}/cat_trgf.ksmr | ${AWK} '{printf"%s",$2}'`
     
     # Print target function value
     echo "${KSMR} ${nnc_pen}" | $AWK '{printf"%f\n",$1+$2}'
