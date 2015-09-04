@@ -26,7 +26,7 @@ else
         if [ ${NON_NEG_CONST} -eq 1 ]; then
             neg=`echo "$1" | ${AWK} '{if($1>=0) printf"0\n"; else printf"1\n"}'` 
             if [ $neg -eq 1 ]; then
-                echo "(non-negativity constraints violated)" >> ${SDIR}/target_func.ppl
+                echo "(non-negativity constraints violated)" >> ${SDIR}/interplm_trgf.ppl
                 echo "999999"
                 exit 0
             fi
@@ -67,5 +67,5 @@ ${bindir}/thot_obtain_info_from_verbose_ppl ${SDIR}/verbose_ppl > ${SDIR}/ppl_in
 
     # Print target function image
     echo ${trg_func}
-    echo ${trg_func} >> ${SDIR}/target_func.ppl
+    echo ${trg_func} >> ${SDIR}/interplm_trgf.ppl
 fi
