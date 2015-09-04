@@ -274,7 +274,7 @@ while [ $end -ne 1 ]; do
     if [ "${err_msg}" = "Image for x required!" ]; then
         # A new evaluation of the target function is required
         values=`cat ${TDIR_DHS}/adj.out`
-        ${target_func} ${tdir} ${values} >> ${TDIR_DHS}/adj.img || trgfunc_error="yes"
+        ${target_func} ${TDIR_DHS} ${values} >> ${TDIR_DHS}/adj.img || trgfunc_error="yes"
 
         # Treat error in target function
         if [ "${trgfunc_error}" = "yes" ]; then
