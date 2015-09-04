@@ -496,6 +496,6 @@ echo "*** Parallel process finished at: " `date` >> ${output}.log
 # Check errors
 num_err=`$GREP "Error while executing thot_ms_dec" ${output}.log | wc -l`
 if [ ${num_err} -gt 0 ]; then
-    echo "Error during the execution of thot_decoder (thot_dec_ms)" >&2
+    echo "Error during the execution of thot_decoder (thot_dec_ms), see ${output}.log file" >&2
     exit 1
 fi
