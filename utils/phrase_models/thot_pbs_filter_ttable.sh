@@ -72,8 +72,15 @@ create_script()
 #############
 filter_ttable()
 {
+    # Write date to log file
+    echo "** Processing file ${ttable_file} (started at "`date`")..." >> $SDIR/log
+
     $bindir/thot_filter_ttable_given_corpus ${ttable_file} ${test_corpus_file} |\
-        $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T $TMP > $outfile
+        $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T $TMP > $outfile 2> $SDIR/err || \
+        { echo "Error while executing filter_ttable" >> $SDIR/log ; return 1 ; }
+
+    # Write date to log file
+    echo "Processing of file ${ttable_file} finished ("`date`")" >> $SDIR/log 
 
     echo "" > $SDIR/filter_ttable_end
 }
@@ -230,6 +237,10 @@ else
         trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
     fi
 
+    # create log file
+    echo "*** Parallel process started at: " `date` > $SDIR/log
+    echo "">> $SDIR/log
+
     # process the input
 
     # filter table
@@ -238,4 +249,23 @@ else
     
     ### Check that all queued jobs are finished
     sync $SDIR/filter_ttable
+
+    # Add footer to log file
+    echo "">> $SDIR/log
+    echo "*** Parallel process finished at: " `date` >> $SDIR/log
+
+    # Copy log file to its final location
+    cp $SDIR/log ${outfile}.filter_log
+
+    # Generate file for error diagnosing
+    cp $SDIR/err ${outfile}.filter_err
+
+    # Check errors
+    num_err=`$GREP "Error while executing thot_filter_ttable_given_corpus" ${outfile}.filter_log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        echo "Error during the execution of thot_pbs_filter_ttable (thot_filter_ttable_given_corpus)" >&2
+        echo "File ${output}.filter_err contains information for error diagnosing" >&2
+        exit 1
+    fi
+
 fi

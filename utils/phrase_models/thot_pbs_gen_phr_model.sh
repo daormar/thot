@@ -138,20 +138,23 @@ create_script()
 
 estimate_frag()
 {
-    echo "** Processing chunk ${fragm} (started at "`date`")..." >> ${output}.log
+    echo "** Processing chunk ${fragm} (started at "`date`")..." >> $SDIR/log
+    echo "** Processing chunk ${fragm} (started at "`date`")..." > $SDIR/${fragm}_proc.log
 
-    $bindir/thot_gen_phr_model_mr -g $SDIR/${fragm} ${thot_pars} -o $SDIR/${fragm} -pc -la "$i" -T $tmpdir >/dev/null || \
-        { echo "Error while executing thot_gen_phr_model_mr for $SDIR/${fragm}" >> ${output}.log; }
+    $bindir/thot_gen_phr_model_mr -g $SDIR/${fragm} ${thot_pars} \
+        -o $SDIR/${fragm} -pc -la "$i" -T $tmpdir 2>> $SDIR/${fragm}_proc.log || \
+        { echo "Error while executing estimate_frag for $SDIR/${fragm}" >> $SDIR/log ; return 1 ; }
 
     # Write date to log file
-    echo "Processing of chunk ${fragm} finished ("`date`")" >> ${output}.log
+    echo "Processing of chunk ${fragm} finished ("`date`")" >> $SDIR/log
 
     echo "" > $SDIR/qs_est_${fragm}_end
 }
 
-merge_thot()
+merge_gen_phr()
 {
-    echo "** Merging counts (started at "`date`")..." >> ${output}.log
+    echo "** Merging counts (started at "`date`")..." >> $SDIR/log
+    echo "** Merging counts (started at "`date`")..." > $SDIR/merge.log
 
     export LC_ALL=""
     export LC_COLLATE=C
@@ -159,7 +162,8 @@ merge_thot()
 
     # output format = -pc
     $SORT ${SORT_TMP} -t " " ${sortpars} ${mflag} $SDIR/*.ttable | ${bindir}/thot_merge_counts \
-        | ${bindir}/thot_cut_ttable -c $cutoff > ${output}.ttable
+        | ${bindir}/thot_cut_ttable -c $cutoff > ${output}.ttable 2>> $SDIR/merge.log || \
+        { echo "Error while executing merge_gen_phr" >> $SDIR/log ; return 1 ; }
 
     if [ "${estimation}" = "PML" ]; then
         cat $SDIR/*.seglentable > $tmpdir/${$}seglentable
@@ -168,9 +172,9 @@ merge_thot()
     fi
     
     # Write date to log file
-    echo "Merging process finished ("`date`")" >> ${output}.log
+    echo "Merging process finished ("`date`")" >> $SDIR/log
 
-    echo "" > $SDIR/merge_thot_end
+    echo "" > $SDIR/merge_gen_phr_end
 }
 
 launch()
@@ -360,16 +364,16 @@ if [ "$debug" != "-debug" ]; then
 fi
 
 # Output info about tracking script progress
-echo "NOTE: see file ${output}.log to track model estimation progress" >&2
+echo "NOTE: see file $SDIR/log to track model estimation progress" >&2
 
 # create log file
-echo "*** Parallel process started at: " `date` > ${output}.log
-echo "">> ${output}.log
+echo "*** Parallel process started at: " `date` > $SDIR/log
+echo "">> $SDIR/log
 
 # process the input
 
 # fragment the input
-echo "Spliting input: ${a3_file}..." >> ${output}.log
+echo "Spliting input: ${a3_file}..." >> $SDIR/log
 input_size=`wc ${a3_file} 2>/dev/null | ${AWK} '{printf"%d",$(1)/3}'`
 if [ ${input_size} -eq 0 ]; then
     echo "Error: input file ${a3_file} is empty"
@@ -405,21 +409,26 @@ if [ $sortm = "yes" ]; then
     mflag="-m"
 fi
 
-create_script $SDIR/merge_thot merge_thot
-launch $SDIR/merge_thot
+create_script $SDIR/merge_gen_phr merge_gen_phr
+launch $SDIR/merge_gen_phr
     
 ### Check that all queued jobs are finished
-sync $SDIR/merge_thot
+sync $SDIR/merge_gen_phr
 
-# # merge log files
-# cat $SDIR/*.log >> ${output}.log
 
-echo "">> ${output}.log
-echo "*** Parallel process finished at: " `date` >> ${output}.log
+# Copy log file
+echo "">> $SDIR/log
+echo "*** Parallel process finished at: " `date` >> $SDIR/log
+cp $SDIR/log ${output}.genphr_log
+
+# Generate file for error diagnosing
+cat $SDIR/*_proc.log $SDIR/merge.log >> ${output}.genphr_err
 
 # Check errors
-num_err=`$GREP "Error while executing thot_gen_phr_model_mr" ${output}.log | wc -l`
+num_err=`$GREP "Error while executing" ${output}.genphr_log | wc -l`
 if [ ${num_err} -gt 0 ]; then
-    echo "Error during the execution of thot_pbs_gen_phr_model (thot_gen_phr_model_mr)" >&2
+    prog=`$GREP "Error while executing" ${output}.genphr_log | head -1 | $AWK '{printf"%s",$4}'`
+    echo "Error during the execution of thot_pbs_gen_phr_model (${prog})" >&2
+    echo "File ${output}.genphr_err contains information for error diagnosing" >&2
     exit 1
 fi

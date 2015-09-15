@@ -116,26 +116,30 @@ create_script()
 
 alig_op_frag()
 {
-    echo "** Processing chunk ${fragm} (started at "`date`")..." >> ${output}.log
+    echo "** Processing chunk ${fragm} (started at "`date`")..." >> $SDIR/log
+    echo "** Processing chunk ${fragm} (started at "`date`")..." > $SDIR/${fragm}_proc.log
 
-    $bindir/thot_alig_op -g $SDIR/${fragm} ${operation} $SDIR/op_file_${fragm} -o $SDIR/${fragm} >/dev/null || \
-        { echo "Error while executing thot_alig_op for $SDIR/${fragm}" >> ${output}.log; }
+    $bindir/thot_alig_op -g $SDIR/${fragm} ${operation} $SDIR/op_file_${fragm} \
+        -o $SDIR/${fragm} 2>> $SDIR/${fragm}_proc.log || \
+        { echo "Error while executing alig_op_frag for $SDIR/${fragm}" >> $SDIR/log; return 1 ; }
 
     # Write date to log file
-    echo "Processing of chunk ${fragm} finished ("`date`")" >> ${output}.log
+    echo "Processing of chunk ${fragm} finished ("`date`")" >> $SDIR/log
 
     echo "" > $SDIR/qs_alig_${fragm}_end
 }
 
 merge_alig_op()
 {
-    echo "** Merging alignment files (started at "`date`")..." >> ${output}.log
+    echo "** Merging alignment files (started at "`date`")..." >> $SDIR/log
+    echo "** Merging alignment files (started at "`date`")..." > $SDIR/merge.log
 
     # merge alig files
-    cat $SDIR/*.A3.final > ${output}.A3.final
+    cat $SDIR/*.A3.final > ${output}.A3.final 2>> $SDIR/merge.log || \
+        { echo "Error while executing merge_alig_op" >> $SDIR/log ; return 1 ; }
 
     # Write date to log file
-    echo "Merging process finished ("`date`")" >> ${output}.log
+    echo "Merging process finished ("`date`")" >> $SDIR/log
     
     echo "" > $SDIR/merge_alig_op_end
 }
@@ -322,16 +326,16 @@ if [ "$debug" != "-debug" ]; then
 fi
 
 # Output info about tracking script progress
-echo "NOTE: see file ${output}.log to track matrix operation progress" >&2
+echo "NOTE: see file $SDIR/log to track matrix operation progress" >&2
 
 # create log file
-echo "*** Parallel process started at: " `date` > ${output}.log
-echo "">> ${output}.log
+echo "*** Parallel process started at: " `date` > $SDIR/log
+echo "">> $SDIR/log
 
 # process the input
 
 # fragment the input
-echo "Spliting input: ${a3_file}..." >> ${output}.log
+echo "Spliting input: ${a3_file}..." >> $SDIR/log
 input_size=`wc ${a3_file} 2>/dev/null | ${AWK} '{printf"%d",$(1)/3}'`
 if [ ${input_size} -eq 0 ]; then
     echo "Error: input file ${a3_file} is empty"
@@ -372,12 +376,19 @@ launch $SDIR/merge_alig_op
 sync $SDIR/merge_alig_op
 
 # finish log file
-echo "">> ${output}.log
-echo "*** Parallel process finished at: " `date` >> ${output}.log
+echo "">> $SDIR/log
+echo "*** Parallel process finished at: " `date` >> $SDIR/log
+cp $SDIR/log ${output}.aligop_log
+
+# Generate file for error diagnosing
+cat $SDIR/*_proc.log > ${output}.aligop_err
+cat $SDIR/merge.log >> ${output}.aligop_err
 
 # Check errors
-num_err=`$GREP "Error while executing thot_alig_op" ${output}.log | wc -l`
+num_err=`$GREP "Error while executing" ${output}.aligop_log | wc -l`
 if [ ${num_err} -gt 0 ]; then
-    echo "Error during the execution of thot_pbs_alig_op (thot_alig_op)" >&2
+    prog=`$GREP "Error while executing" ${output}.aligop_log | head -1 | $AWK '{printf"%s",$4}'`
+    echo "Error during the execution of thot_pbs_alig_op (${prog})" >&2
+    echo "File ${output}.aligop_err contains information for error diagnosing" >&2
     exit 1
 fi

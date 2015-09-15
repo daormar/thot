@@ -277,8 +277,6 @@ else
     echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
 ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $scorpus -t $tcorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
         -cpr ${cpr_val} ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
-    # Rename log file
-    mv ${outp}_swm.log ${outp}_swm_thot_pbs_gen_batch_sw_model.log
     echo "" >&2
 
     # Generate best alignments for direct model
@@ -286,8 +284,6 @@ ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $scorpus -t $tcorpus -n $
     echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
 ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_swm -s $scorpus -t $tcorpus \
         ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
-    # Rename log file
-    mv ${outp}_swm.log ${outp}_swm_thot_pbs_gen_best_sw_alig.log
     echo "" >&2
 
     # Generate inverse single word model
@@ -295,8 +291,6 @@ ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_swm -s $scorpus -t
     echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
 ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $tcorpus -t $scorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
         -cpr ${cpr_val} ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
-    # Rename log file
-    mv ${outp}_invswm.log ${outp}_invswm_thot_pbs_gen_batch_sw_model.log
     echo "" >&2
 
     # Generate best alignments for inverse model
@@ -304,30 +298,26 @@ ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $tcorpus -t $scorpus -n $
     echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
 ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_invswm -s $tcorpus -t $scorpus \
         ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
-    # Rename log file
-    mv ${outp}_invswm.log ${outp}_invswm_thot_pbs_gen_best_sw_alig.log
     echo "" >&2
 
     # Operate word alignments generated with the sw_models package
     echo "* Operating word alignments... " >&2
-    $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal ${ao_opt} ${outp}_invswm.bestal -o ${outp}_alig_op \
+    $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal ${ao_opt} ${outp}_invswm.bestal -o ${outp} \
         ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
-    # Rename log file
-    mv ${outp}_alig_op.log ${outp}_thot_pbs_alig_op.log
     echo "" >&2
 
     # Generate phrase model
     echo "* Generating phrase model... " >&2
-    $bindir/thot_pbs_gen_phr_model -pr ${pr_val} -g ${outp}_alig_op.A3.final -m ${m_val} \
+    $bindir/thot_pbs_gen_phr_model -pr ${pr_val} -g ${outp}.A3.final -m ${m_val} \
         -o ${outp} ${pml_opt} -pc ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
     echo "" >&2
 
     # Constrain number of translation options
     echo "* Constraining number of translation options... " >&2
     $bindir/thot_pbs_get_nbest_for_trg -t ${outp}.ttable -n ${to_val} \
-        -p -T $tdir -o $tdir/restrict_trans_opt.ttable || exit 1
-    rm ${outp}.ttable
-    mv $tdir/restrict_trans_opt.ttable ${outp}.ttable
+        -p -T $tdir -o ${outp}.restrict_trans_opt.ttable || exit 1
+    rm ${outp}.ttable || exit 1
+    mv ${outp}.restrict_trans_opt.ttable ${outp}.ttable || exit 1
     echo "" >&2
 
     # Generate additional phrase model parameter files

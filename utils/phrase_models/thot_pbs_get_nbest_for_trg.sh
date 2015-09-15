@@ -76,7 +76,14 @@ create_script()
 #############
 get_nbest_for_trg()
 {
-    cat ${ttable_file} | $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T $TMP > $outfile
+    # Write date to log file
+    echo "** Processing file ${ttable_file} (started at "`date`")..." >> $SDIR/log
+
+    cat ${ttable_file} | $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T $TMP > $outfile 2> $SDIR/err || \
+        { echo "Error while executing get_nbest_for_trg" >> $SDIR/log ; return 1 ; }
+
+    # Write date to log file
+    echo "Processing of file ${ttable_file} finished ("`date`")" >> $SDIR/log 
 
     echo "" > $SDIR/get_nbest_for_trg_end
 }
@@ -214,6 +221,10 @@ else
         trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
     fi
 
+    # create log file
+    echo "*** Parallel process started at: " `date` > $SDIR/log
+    echo "">> $SDIR/log
+
     # process the input
 
     # get n-best translations
@@ -222,4 +233,23 @@ else
     
     ### Check that all queued jobs are finished
     sync $SDIR/get_nbest_for_trg
+
+    # Add footer to log file
+    echo "">> $SDIR/log
+    echo "*** Parallel process finished at: " `date` >> $SDIR/log
+
+    # Copy log file to its final location
+    cp $SDIR/log ${outfile}.getnb_log
+
+    # Generate file for error diagnosing
+    cp $SDIR/err ${outfile}.getnb_err
+
+    # Check errors
+    num_err=`$GREP "Error while executing thot_ilm_perp" ${outfile}.getnb_log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        echo "Error during the execution of thot_pbs_get_nbest_for_trg (get_nbest_for_trg)" >&2
+        echo "File ${output}.getnb_err contains information for error diagnosing" >&2
+        exit 1
+    fi
+
 fi

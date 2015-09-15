@@ -189,14 +189,19 @@ else
     SORT_TMP=""
 fi
 
-echo "*** Process started at: " `date` > $TMP/log
+echo "+++ Process started at: " `date` > $TMP/log
 echo "Spliting input: ${a3_file}..." >> $TMP/log
+echo "Spliting input: ${a3_file}..." >&2
 
 # Split input into chunks and process them separately
 ${SPLIT} -l ${chunk_size} ${a3_file} $TMP/chunk\_ || exit 1
 c=1
 for i in `ls $TMP/chunk\_*`; do
     chunk=`${BASENAME} $i`
+
+    echo "Processing chunk ${chunk}" >> $TMP/log
+    echo "Processing chunk ${chunk}" >&2
+
     ${bindir}/thot_gen_phr_model -g $TMP/${chunk} ${thot_pars} -o $TMP/${chunk} -pc || exit 1
     ${AWK} -v cn=$c '{printf"%s %s\n",$0,cn}' $TMP/${chunk}.ttable >> $TMP/counts
     if [ "${estimation}" = "BRF" ]; then
@@ -209,8 +214,8 @@ for i in `ls $TMP/chunk\_*`; do
 done
 
 # Merge counts and print the models
-# echo "Merging counts..." >&2
-echo "Merging process started at: " `date` >> $TMP/log
+echo "Merging counts..." >> $TMP/log
+echo "Merging counts..." >&2
 
 export LC_ALL=""
 export LC_COLLATE=C
@@ -229,5 +234,5 @@ if [ "${estimation}" = "BRF" ]; then
     ${bindir}/thot_merge_seglen_counts $TMP/seglentable > ${output}.seglentable || exit 1
 fi
 
-echo "*** Process finished at: " `date` >> $TMP/log
+echo "+++ Process finished at: " `date` >> $TMP/log
 mv $TMP/log ${output}.log
