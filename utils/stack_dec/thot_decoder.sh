@@ -161,6 +161,19 @@ launch()
 
 sync()
 {
+    # Init vars
+    local files="$1"
+
+    if [ "${QSUB_WORKS}" = "no" ]; then
+        wait
+        return 0
+    else
+        pbs_sync "$files"
+    fi
+}
+
+pbs_sync()
+{
     local files="$1"
     end=0
     while [ $end -ne 1 ]; do
