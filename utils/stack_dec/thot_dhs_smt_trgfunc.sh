@@ -104,7 +104,7 @@ execute_decoder()
     else
         ${PHRDECODER} -c $CFGFILE -t ${TEST} -tmw $weights \
             ${ADD_DEC_OPTIONS} -o ${SDIR}/smt_trgf_aux.trans \
-            2> ${SDIR}/smt_trgf_aux.trans.log || decoder_error="yes"
+            2> ${SDIR}/smt_trgf_aux.trans.dec_log || decoder_error="yes"
     fi
 
     # Sanity check (verify if translations were generated)
@@ -198,7 +198,7 @@ posproc_output()
     SP=`get_sp_value_from_cfg`
     if [ $SP -ne 0 ]; then
         mv ${SDIR}/smt_trgf_aux.trans ${SDIR}/smt_trgf.unpreproc_trans
-        mv ${SDIR}/smt_trgf_aux.trans.log ${SDIR}/smt_trgf.unpreproc_trans.log
+        mv ${SDIR}/smt_trgf_aux.trans.dec_log ${SDIR}/smt_trgf.unpreproc_trans.dec_log
 
         # Check if -p option has to be provided
         if [ $SP -ne 3 ]; then
@@ -217,7 +217,7 @@ ${bindir}/posproc_file -f ${SDIR}/smt_trgf.unpreproc_trans -t $SP ${P_OPT} ${L_O
         REF_FOR_EVAL=${RAW_REF}
     else
         mv ${SDIR}/smt_trgf_aux.trans ${SDIR}/smt_trgf.trans
-        mv ${SDIR}/smt_trgf_aux.trans.log ${SDIR}/smt_trgf.trans.log
+        mv ${SDIR}/smt_trgf_aux.trans.dec_log ${SDIR}/smt_trgf.trans.dec_log
 
         # Set file with references for evaluation purposes
         REF_FOR_EVAL=${REF}

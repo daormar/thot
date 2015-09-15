@@ -177,10 +177,18 @@ sync()
 
 trans_frag()
 {
-    ${bindir}/thot_ms_dec ${cfg_opt} -t $SDIR/${fragm} ${dec_pars} \
-        ${wg_par}wg_${fragm} >$SDIR/qs_trans_${fragm}.out 2>$SDIR/qs_trans_${fragm}.log || \
-        { echo "Error while executing thot_ms_dec for $SDIR/${fragm}" >> $SDIR/qs_trans_${fragm}.log; }
+    # Write date to log file
+    echo "** Processing chunk ${fragm} (started at "`date`")..." >> $SDIR/log
+    echo "** Processing chunk ${fragm} (started at "`date`")..." > $SDIR/qs_trans_${fragm}.log
 
+    ${bindir}/thot_ms_dec ${cfg_opt} -t $SDIR/${fragm} ${dec_pars} \
+        ${wg_par}wg_${fragm} >$SDIR/qs_trans_${fragm}.out 2>> $SDIR/qs_trans_${fragm}.log || \
+        { echo "Error while executing trans_frag for $SDIR/${fragm}" >> $SDIR/qs_trans_${fragm}.log; return 1 ; }
+
+    # Write date to log file
+    echo "Processing of chunk ${chunk} finished ("`date`")" >> $SDIR/log 
+
+    # Create sync file
     echo "" >$SDIR/qs_trans_${fragm}_end
 }
 
@@ -205,8 +213,13 @@ move_wgs()
 
 merge()
 {
+    # Write date to log file
+    echo "** Merging translations (started at "`date`")..." >> $SDIR/log
+    echo "** Merging translations (started at "`date`")..." > $SDIR/merge.log
+
     # merge trans files
-    cat $SDIR/qs_trans_*.out > ${output}
+    cat $SDIR/qs_trans_*.out > ${output} 2>> $SDIR/merge.log || \
+        { echo "Error while executing merge" >> $SDIR/log; return 1 ; }
 
     echo "" > $SDIR/merge_end
 }
@@ -436,8 +449,8 @@ else
 fi
 
 # create log file
-echo "*** Parallel process started at: " `date` > ${output}.log
-echo "">> ${output}.log
+echo "*** Parallel process started at: " `date` > $SDIR/log
+echo "">> $SDIR/log
 
 # process input
 
@@ -483,19 +496,25 @@ fi
 create_script $SDIR/merge merge
 launch $SDIR/merge
 
-# merge log files
-cat $SDIR/qs_trans_*.log >> ${output}.log
-
 ### Check that all queued jobs are finished
 sync $SDIR/merge
 
 # Add footer to log file
-echo "">> ${output}.log
-echo "*** Parallel process finished at: " `date` >> ${output}.log
+echo "">> $SDIR/log
+echo "*** Parallel process finished at: " `date` >> $SDIR/log
+
+# Copy log file to its final location
+cp $SDIR/log ${output}.dec_log
+
+# Generate file for error diagnosing
+cat $SDIR/qs_trans_*.log > ${output}.dec_err
+cat $SDIR/merge.log >> ${output}.dec_err
 
 # Check errors
-num_err=`$GREP "Error while executing thot_ms_dec" ${output}.log | wc -l`
+num_err=`$GREP "Error while executing" ${output}.dec_log | wc -l`
 if [ ${num_err} -gt 0 ]; then
-    echo "Error during the execution of thot_decoder (thot_dec_ms), see ${output}.log file" >&2
+    prog=`$GREP "Error while executing" ${output}.dec_log | head -1 | $AWK '{printf"%s",$4}'`
+    echo "Error during the execution of thot_decoder (${prog}), see ${output}.dec_err file" >&2
+    echo "File ${output}.err contains information for error diagnosing" >&2
     exit 1
 fi
