@@ -150,8 +150,10 @@ ${bindir}/thot_shuffle ${rand_seed} ${trgf} | ${SPLIT} -l ${chunk_size} - ${chun
 estimate_slmodel()
 {
     echo "*** Estimating sentence length model..." >> $SDIR/log
+    echo "*** Estimating sentence length model..." >> ${slmodel_dir}/log
 
-    ${bindir}/thot-gen-wigauss-sent-len-model ${srcf} ${trgf} > ${slmodel_dir}/model || return 1
+    ${bindir}/thot-gen-wigauss-sent-len-model ${srcf} ${trgf} > ${slmodel_dir}/model || \
+        { echo "Error while executing estimate_slmodel" >> $SDIR/log ; return 1 ; }
 
     # Create sync file
     echo "" > ${sync_info_dir}/estimate_slmodel
@@ -164,7 +166,7 @@ estimate_init_model()
     
     # Generate model for void corpus
     ${bindir}/thot_gen_sw_model -s ${init_model_dir}/void_corpus -t ${init_model_dir}/void_corpus \
-        ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl -o ${init_model_dir}/model > ${init_model_dir}/log 2>&1 ; pipe_fail || return 1
+        ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl -o ${init_model_dir}/model 2> ${init_model_dir}/log ; pipe_fail || return 1
      
     # Add complete vocabularies
     ${bindir}/thot_get_swm_vocab ${srcf} "NULL UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.svcb
@@ -257,6 +259,7 @@ proc_chunk()
 {
     # Write date to log file
     echo "** Processing chunk ${chunk} (started at "`date`")..." >> $SDIR/log
+    echo "** Processing chunk ${chunk} (started at "`date`")..." >> ${models_per_chunk_dir}/${out_chunk}_proc_n$n.log
 
     if [ $n -eq 1 ]; then
         # First iteration
@@ -265,8 +268,8 @@ proc_chunk()
         ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${init_model_dir}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 -npr ${npr_val} \
             -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk} ; pipe_fail || \
-            { echo "Error while executing thot_gen_batch_sw_model_mr for ${chunk}" >> $SDIR/log ; return 1 ; }
+            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}_proc_n$n.log ; pipe_fail || \
+            { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
 
         if [ ${debug} -ne 0 -a "${file_format}" = "text" ]; then
             echo "Entries in initial table (${chunk}): "`wc -l ${models_per_chunk_dir}/${out_chunk}.${lex_ext} | $AWK '{printf"%s",$1}'` >> $SDIR/log
@@ -279,21 +282,26 @@ proc_chunk()
         ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${filtered_model_dir}/${chunk}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 \
             -npr ${npr_val} -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk} ; pipe_fail || \
-            { echo "Error while executing thot_gen_batch_sw_model_mr for ${chunk}" >> $SDIR/log ; return 1 ; }
+            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}_proc_n$n.log ; pipe_fail || \
+            { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
 
     fi
 
     # Sort counts individually but do not append them
     echo "* Sort counts for chunk ${chunk} (started at "`date`")..." >> $SDIR/log
-    sort_counts || return 1
+    sort_counts || { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
 
     # Generate information useful for model filtering 
-    generate_filter_info || return 1
+    generate_filter_info || { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
 
-    # Remove model files for chunk
+    # Remove model files for chunk (except the log file)
     if [ ${debug} -eq 0 ]; then
-        rm ${models_per_chunk_dir}/${out_chunk}*
+        for file in ${models_per_chunk_dir}/${out_chunk}*; do
+            log_ext=`echo $file | $AWK '{print substr($1,length($1)-3)==".log"}'`
+            if [ ${log_ext} -eq 0 ]; then
+                rm $file
+            fi
+        done
     fi
 
     # Write date to log file
@@ -322,10 +330,14 @@ append_alig_sorted_counts_text()
 
 merge_lex_counts()
 {
+    echo "** Merging lex model counts (started at "`date`")..." >> ${curr_tables_dir}/merge_lex_n$n.log
+
     if [ ${file_format} = "text" ]; then
-        merge_lex_counts_text || return 1
+        merge_lex_counts_text 2>> ${curr_tables_dir}/merge_lex_n$n.log || \
+            { echo "Error while executing merge_lex_counts" >> $SDIR/log ; return 1 ; }
     else
-        merge_lex_counts_bin || return 1
+        merge_lex_counts_bin 2>> ${curr_tables_dir}/merge_lex_n$n.log || \
+            { echo "Error while executing merge_lex_counts" >> $SDIR/log ; return 1 ; }
     fi
 
     # Create sync file
@@ -352,10 +364,14 @@ merge_lex_counts_bin()
 
 merge_alig_counts()
 {
+    echo "** Merging alig model counts (started at "`date`")..." >> ${curr_tables_dir}/merge_alig_n$n.log
+
     if [ ${file_format} = "text" ]; then
-        merge_alig_counts_text || return 1
+        merge_alig_counts_text 2>> ${curr_tables_dir}/merge_alig_n$n.log || \
+            { echo "Error while executing merge_alig_counts" >> $SDIR/log ; return 1 ; }
     else
-        merge_alig_counts_bin || return 1
+        merge_alig_counts_bin 2>> ${curr_tables_dir}/merge_alig_n$n.log || \
+            { echo "Error while executing merge_alig_counts" >> $SDIR/log ; return 1 ; }
     fi
 
     # Create sync file
@@ -470,6 +486,8 @@ filter_lex_table_bin()
 
 create_filtered_model()
 {
+    echo "** Creating filtered model for chunk ${chunk} (started at "`date`")..." >> ${filtered_model_dir}/${chunk}_filt_n$n.log
+
     # Define directory name to store filtered model
     chunk_filtered_model_dir=${filtered_model_dir}/${chunk}
 
@@ -486,8 +504,9 @@ create_filtered_model()
 
     # Filter complete lexical model given chunk
     echo "* Filtering lexical table (${chunk})..." >> $SDIR/log
-    filter_lex_table || return 1
-    
+    filter_lex_table 2>> ${filtered_model_dir}/${chunk}_filt_n$n.log || \
+        { echo "Error while executing create_filtered_model" >> $SDIR/log ; return 1 ; }
+
     # Copy current alignment file
     cp ${curr_tables_dir}/merged_alig_counts ${chunk_filtered_model_dir}/model.${alig_ext}
 
@@ -526,33 +545,40 @@ prune_lex_table_bin()
 generate_final_model()
 {
     echo "*** Copying final model (started at "`date`")..." >> $SDIR/log
+    echo "*** Copying final model (started at "`date`")..." >> ${curr_tables_dir}/generate_final_model.log
+
     for f in `ls ${init_model_dir}/model*`; do
         # Copy basic files
         bname=$(basename "$f")
         extension="${bname##*.}"
         filename="${bname%.*}"
-        cp $f ${output}.${extension}
+        cp $f ${output}.${extension} || \
+            { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
     done
     
     # Copy sentence length model
-    cp ${slmodel_dir}/model ${output}.slmodel
+    cp ${slmodel_dir}/model ${output}.slmodel || \
+        { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
 
     # Prune lexical table
     if [ ${npr_val} -eq 0 -a ${cpr_val} = "0" ]; then
-        cp ${curr_tables_dir}/merged_lex_counts ${output}.${lex_ext}
+        cp ${curr_tables_dir}/merged_lex_counts ${output}.${lex_ext} || \
+            { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
     else
         # Prune lexical table
-        prune_lex_table || exit 1
+        prune_lex_table || \
+            { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
     fi
     
     # Copy alignment table if exists
     if [ ${alig_ext} != "none" ]; then
-        cp ${curr_tables_dir}/merged_alig_counts ${output}.${alig_ext}
+        cp ${curr_tables_dir}/merged_alig_counts ${output}.${alig_ext} || \
+            { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
     fi
 
     # Copy log file
     echo "**** Parallel process finished at: "`date` >> $SDIR/log
-    cp $SDIR/log ${output}.log
+    cp $SDIR/log ${output}.genswm_log
 
     # Create sync file
     echo "" > ${sync_info_dir}/generate_final_model
@@ -769,6 +795,8 @@ print_create_filt_models_message()
     # Create sync file
     echo "" > ${sync_info_dir}/print_create_filt_models_message
 }
+
+# main
 
 pr_given=0
 sdir=$HOME
@@ -1141,6 +1169,22 @@ job_id_list="${gfm_job_id} ${job_id_list}"
 # Generate final model synchronization
 sync ${gfm_job_id} "generate_final_model" || exit 1
 
+# Generate file for error diagnosing
+if [ ${sync_sleep} -eq 1 ]; then
+    cat ${slmodel_dir}/log > ${output}.genswm_err
+    # Gather info about each iteration
+    nit=1
+    while [ $nit -le ${niters} ]; do
+        echo "*** EM iteration ${nit} out of $niters" >> ${output}.genswm_err
+        cat ${models_per_chunk_dir}/*_proc_n${nit}.log >> ${output}.genswm_err
+        cat ${curr_tables_dir}/merge_lex_n${nit}.log >> ${output}.genswm_err
+        cat ${curr_tables_dir}/merge_alig_n${nit}.log >> ${output}.genswm_err
+        cat ${filtered_model_dir}/*_filt_n${nit}.log >> ${output}.genswm_err 2> /dev/null
+        nit=`expr $nit + 1`
+    done
+    cat ${curr_tables_dir}/generate_final_model.log >> ${output}.genswm_err
+fi
+
 # Remove temporary files
 if [ ${sync_sleep} -eq 1 ]; then
     # Sync using sleep is enabled
@@ -1156,16 +1200,20 @@ else
     sync ${rt_job_id} "remove_temp" || exit 1
 fi
 
+# Check errors
+if [ ${sync_sleep} -eq 1 ]; then
+    num_err=`$GREP "Error while executing" ${output}.genswm_log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        # Print error messages
+        prog=`$GREP "Error while executing" ${output}.genswm_log | head -1 | $AWK '{printf"%s",$4}'`
+        echo "Error during the execution of thot_pbs_gen_batch_sw_model (${prog})" >&2
+        echo "File ${output}.genswm_err contains information for error diagnosing" >&2
+
+        exit 1
+    fi
+fi
+
 # Release job holds
 if [ ! "${QSUB_WORKS}" = "no" -a ${sync_sleep} -eq 0 ]; then
     release_job_holds "${job_id_list}"
-fi
-
-# Check errors
-if [ ${sync_sleep} -eq 1 ]; then
-    num_err=`$GREP "Error while executing thot_gen_batch_sw_model_mr" ${output}.log | wc -l`
-    if [ ${num_err} -gt 0 ]; then
-        echo "Error during the execution of thot_pbs_gen_batch_sw_model (thot_gen_batch_sw_model_mr)" >&2
-        exit 1
-    fi
 fi
