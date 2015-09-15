@@ -372,11 +372,13 @@ proc_chunk()
 {
     # Write date to log file
     echo "** Processing chunk ${chunk} (started at "`date`")..." >> $SDIR/log
+    echo "** Processing chunk ${chunk} (started at "`date`")..." > ${counts_per_chunk_dir}/${chunk}_sorted_counts.log
 
     # Extract counts from chunk and sort them
-    $bindir/thot_get_ngram_counts_mr -c ${chunks_dir}/${chunk} -n ${n_val} -tdir $TMP | \
-        add_length_col | sort_counts | add_chunk_id > ${counts_per_chunk_dir}/${chunk}_sorted_counts ; pipe_fail || \
-        { echo "Error while executing thot_get_ngram_counts_mr for ${chunks_dir}/${chunk}" >> $SDIR/log; }
+    $bindir/thot_get_ngram_counts_mr -c ${chunks_dir}/${chunk} -n ${n_val} -tdir $TMP | add_length_col | sort_counts | \
+        add_chunk_id > ${counts_per_chunk_dir}/${chunk}_sorted_counts \
+        2>> ${counts_per_chunk_dir}/${chunk}_sorted_counts.log ; pipe_fail || \
+        { echo "Error while executing proc_chunk for ${chunks_dir}/${chunk}" >> $SDIR/log ; return 1 ; }
 
     # Write date to log file
     echo "Processing of chunk ${chunk} finished ("`date`")" >> $SDIR/log 
@@ -403,17 +405,23 @@ merge_sort()
 
 generate_counts_file()
 {
+    # Write date to log file
+    echo "** Generating counts file (started at "`date`")..." >> $SDIR/log
+    echo "** Generating counts file (started at "`date`")..." > ${counts_per_chunk_dir}/gen_counts.log
+
     # Delete output file if exists
     if [ -f ${output} ]; then
         rm ${output}
     fi
 
     # Merge count files
-    merge_sort | remove_length_col | ${bindir}/thot_merge_ngram_counts > ${output} ; pipe_fail || return 1
+    merge_sort | remove_length_col | ${bindir}/thot_merge_ngram_counts > ${output} \
+        2>> ${counts_per_chunk_dir}/gen_counts.log ; pipe_fail || \
+        { echo "Error while executing generate_counts_file" >> $SDIR/log ; return 1 ; }
 
     # Copy log file
     echo "**** Parallel process finished at: "`date` >> $SDIR/log
-    cp $SDIR/log ${output}.log
+    cp $SDIR/log ${output}.getng_log
 
     # Create sync file
     echo "" > ${sync_info_dir}/generate_counts_file
@@ -582,6 +590,12 @@ launch "${job_deps}" generate_counts_file "" gcf_job_id || exit 1
 # Generate counts file synchronization
 sync "${gcf_job_id}" "generate_counts_file" || exit 1
 
+# Generate file for error diagnosing
+if [ ${sync_sleep} -eq 1 ]; then
+    cat ${counts_per_chunk_dir}/*_sorted_counts.log > ${output}.getng_err
+    cat ${counts_per_chunk_dir}/gen_counts.log >> ${output}.getng_err
+fi
+
 # Remove temporary files
 if [ ${sync_sleep} -eq 1 ]; then
     # Sync using sleep is enabled
@@ -594,19 +608,23 @@ else
     sync "${rt_job_id}" "remove_temp" || exit 1
 fi
 
+# Check errors
+if [ ${sync_sleep} -eq 1 ]; then
+    num_err=`$GREP "Error while executing" ${output}.getng_log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        # Print error messages
+        prog=`$GREP "Error while executing" ${output}.getng_log | head -1 | $AWK '{printf"%s",$4}'`
+        echo "Error during the execution of thot_get_ngram_counts (${prog})" >&2
+        echo "File ${output}.getng_err contains information for error diagnosing" >&2
+
+        exit 1
+    fi
+fi
+
 # Update job_id_list
 job_id_list="${pc_job_ids} ${gcf_job_id} ${rt_job_id}"
 
 # Release job holds
 if [ ! "${QSUB_WORKS}" = "no" -a ${sync_sleep} -eq 0 ]; then
     release_job_holds "${job_id_list}"
-fi
-
-# Check errors
-if [ ${sync_sleep} -eq 1 ]; then
-    num_err=`$GREP "Error while executing thot_get_ngram_counts_mr" ${output}.log | wc -l`
-    if [ ${num_err} -gt 0 ]; then
-        echo "Error during the execution of thot_get_ngram_counts (thot_get_ngram_counts_mr)" >&2
-        exit 1
-    fi
 fi

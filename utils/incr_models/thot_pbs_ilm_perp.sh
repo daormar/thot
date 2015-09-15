@@ -72,8 +72,14 @@ create_script()
 #############
 ilm_perp()
 {
-    $bindir/thot_ilm_perp -lm ${lmfile} -c ${cfile} -n ${n_val} ${add_opts} > $outfile 2> $outfile.log || \
-        { echo "Error while executing thot_ilm_perp" >> ${outfile}.log ; }
+    # Write date to log file
+    echo "** Processing file ${cfile} (started at "`date`")..." >> $SDIR/log
+    
+    $bindir/thot_ilm_perp -lm ${lmfile} -c ${cfile} -n ${n_val} ${add_opts} > $outfile 2> $SDIR/err || \
+        { echo "Error while executing thot_ilm_perp" >> $SDIR/log ; return 1 ; }
+
+    # Write date to log file
+    echo "Processing of file ${cfile} finished ("`date`")" >> $SDIR/log 
 
     echo "" > $SDIR/ilm_perp_end
 }
@@ -251,6 +257,10 @@ else
         trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
     fi
 
+    # create log file
+    echo "*** Parallel process started at: " `date` > $SDIR/log
+    echo "">> $SDIR/log
+
     # process the input
 
     # Calculate perplexity
@@ -260,10 +270,21 @@ else
     ### Check that all queued jobs are finished
     sync $SDIR/ilm_perp
 
+    # Add footer to log file
+    echo "">> $SDIR/log
+    echo "*** Parallel process finished at: " `date` >> $SDIR/log
+
+    # Copy log file to its final location
+    cp $SDIR/log ${outfile}.ilmp_log
+
+    # Generate file for error diagnosing
+    cp $SDIR/err ${outfile}.ilmp_err
+
     # Check errors
-    num_err=`$GREP "Error while executing thot_ilm_perp" ${outfile}.log | wc -l`
+    num_err=`$GREP "Error while executing thot_ilm_perp" ${outfile}.ilmp_log | wc -l`
     if [ ${num_err} -gt 0 ]; then
         echo "Error during the execution of thot_pbs_ilm_perp (thot_ilm_perp)" >&2
+        echo "File ${output}.ilmp_err contains information for error diagnosing" >&2
         exit 1
     fi
 
