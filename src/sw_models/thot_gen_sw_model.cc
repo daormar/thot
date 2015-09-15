@@ -85,7 +85,11 @@ int main(int argc,char *argv[])
   }
   else
   {
-    printConfig();    
+    if(pars.v_given || pars.v1_given)
+    {
+      printParameters(pars);
+      printConfig();
+    }
     return processParameters(pars);
   }
 }
@@ -411,7 +415,6 @@ int handleParameters(int argc,
   {
     if(checkParameters(pars)==OK)
     {
-      printParameters(pars);
       return OK;
     }
     else
