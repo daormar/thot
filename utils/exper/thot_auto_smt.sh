@@ -24,6 +24,7 @@ usage()
 {
     echo "thot_auto_smt           [-pr <int>]"
     echo "                        -s <string> -t <string> -o <string>"
+    echo "                        [-n <int>]"
     echo "                        [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
@@ -33,6 +34,8 @@ usage()
     echo "-t <string>             Prefix of files with target sentences (the"
     echo "                        following suffixes are assumed: .train, .dev and .test)"
     echo "-o <string>             Output directory common to all processors."
+    echo "-nit <int>              Number of iterations of the EM algorithm when training"
+    echo "                        single word models"
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTES:"
@@ -102,7 +105,8 @@ pr_val=1
 s_given=0
 t_given=0
 o_given=0
-n_given=0
+nit_given=0
+nitval=5
 qs_given=0
 tdir_given=0
 tdir="/tmp"
@@ -141,6 +145,12 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 outd=$1
                 o_given=1
+            fi
+            ;;
+        "-nit") shift
+            if [ $# -ne 0 ]; then
+                nitval=$1
+                nit_given=1
             fi
             ;;
         "-qs") shift
@@ -280,7 +290,7 @@ if [ -f ${scorpus_train} -a -f ${tcorpus_train} ]; then
 
     # Train translation model
     echo "**** Training translation model" >&2
-    ${bindir}/thot_tm_train -pr ${pr_val} -s ${scorpus_train} -t ${tcorpus_train} -o ${outd}/tm -n 5 \
+    ${bindir}/thot_tm_train -pr ${pr_val} -s ${scorpus_train} -t ${tcorpus_train} -o ${outd}/tm -n ${nitval} \
         ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
 
 else
