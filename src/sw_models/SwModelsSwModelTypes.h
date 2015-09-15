@@ -185,9 +185,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef THOT_SWM_TYPE
         // Default option
-#include "Ibm1AligModel.h"
-#define CURR_SWM_TYPE Ibm1AligModel
-#define CURR_SWM_LABEL THOT_IBM1_SWM_LABEL
+# include "IncrHmmP0AligModel.h"
+# define CURR_SWM_TYPE IncrHmmP0AligModel
+# define CURR_SWM_LABEL THOT_INCR_HMM_P0_SWM_LABEL
+/* #include "Ibm1AligModel.h" */
+/* #define CURR_SWM_TYPE Ibm1AligModel */
+/* #define CURR_SWM_LABEL THOT_IBM1_SWM_LABEL */
 #endif
 
 #endif
