@@ -324,11 +324,12 @@ proc_chunk()
 {
     # Write date to log file
     echo "** Processing chunk ${chunk} (started at "`date`")..." >> $SDIR/log
+    echo "** Processing chunk ${chunk} (started at "`date`")..." > ${aligs_per_chunk_dir}/${chunk}_bestal.log
 
     ${bindir}/thot_format_corpus_csl ${chunks_dir}/${src_chunk} ${chunks_dir}/${trg_chunk} | \
-        ${bindir}/thot_calc_swm_lgprob -sw ${sw_val} -P - -max > ${aligs_per_chunk_dir}/${chunk}_bestal \
-        2> ${aligs_per_chunk_dir}/${chunk}_bestal.log ; pipe_fail || \
-        { echo "Error while executing thot_calc_swm_lgprob for ${chunk}" >> $SDIR/log ; return 1; }
+        ${bindir}/thot_calc_swm_lgprob -sw ${sw_val} -P - -max \
+        > ${aligs_per_chunk_dir}/${chunk}_bestal 2>> ${aligs_per_chunk_dir}/${chunk}_bestal.log ; pipe_fail || \
+        { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1; }
 
     # Write date to log file
     echo "Processing of chunk ${chunk} finished ("`date`")" >> $SDIR/log 
@@ -341,6 +342,10 @@ proc_chunk()
 
 generate_alig_file()
 {
+    # Write date to log file
+    echo "** Generate alignment file (started at "`date`")..." >> $SDIR/log
+    echo "** Generate alignment file (started at "`date`")..." > ${aligs_per_chunk_dir}/merge.log
+
     # Delete output file if exists
     if [ -f ${output}.bestal ]; then
         rm ${output}.bestal
@@ -348,16 +353,19 @@ generate_alig_file()
 
     # Dump alignments in output file
     for f in `ls ${aligs_per_chunk_dir}/*_bestal`; do
-        cat $f >> ${output}.bestal
+        cat $f >> ${output}.bestal 2>> ${aligs_per_chunk_dir}/merge.log || \
+            { echo "Error while executing generate_alig_file" >> $SDIR/log ; return 1; }
     done
 
     # Copy log file
     echo "**** Parallel process finished at: "`date` >> $SDIR/log
-    cp $SDIR/log ${output}.log
+    cp $SDIR/log ${output}.genb_log
 
     # Create sync file
     echo "" > ${sync_info_dir}/generate_alig_file
 }
+
+# main
 
 pr_given=0
 sw_given=0
@@ -545,6 +553,12 @@ launch "${job_deps}" generate_alig_file "" gaf_job_id || exit 1
 # Generate alignment file synchronization
 sync ${gaf_job_id} "generate_alig_file" || exit 1
 
+# Generate file for error diagnosing
+if [ ${sync_sleep} -eq 1 ]; then
+    cat ${aligs_per_chunk_dir}/*_bestal.log > ${output}.genb_err
+    cat ${aligs_per_chunk_dir}/merge.log >> ${output}.genb_err
+fi
+
 # Remove temporary files
 if [ ${sync_sleep} -eq 1 ]; then
     # Sync using sleep is enabled
@@ -559,19 +573,23 @@ else
     sync ${rt_job_id} "remove_temp" || exit 1
 fi
 
+# Check errors
+if [ ${sync_sleep} -eq 1 ]; then
+    num_err=`$GREP "Error while executing" ${output}.genb_log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        # Print error messages
+        prog=`$GREP "Error while executing" ${output}.genb_log | head -1 | $AWK '{printf"%s",$4}'`
+        echo "Error during the execution of thot_pbs_gen_best_sw_alig (${prog})" >&2
+        echo "File ${output}.genb_err contains information for error diagnosing" >&2
+
+        exit 1
+    fi
+fi
+
 # Update job_id_list
 job_id_list="${pc_job_ids} ${gaf_job_id} ${rt_job_id}"
 
 # Release job holds
 if [ ! "${QSUB_WORKS}" = "no" -a ${sync_sleep} -eq 0 ]; then
     release_job_holds "${job_id_list}"
-fi
-
-# Check errors
-if [ ${sync_sleep} -eq 1 ]; then
-    num_err=`$GREP "Error while executing thot_calc_swm_lgprob" ${output}.log | wc -l`
-    if [ ${num_err} -gt 0 ]; then
-        echo "Error during the execution of thot_pbs_gen_best_sw_alig (thot_calc_swm_lgprob)" >&2
-        exit 1
-    fi
 fi

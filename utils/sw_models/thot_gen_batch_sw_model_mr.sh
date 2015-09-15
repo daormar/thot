@@ -86,7 +86,7 @@ set_tmp_dir()
 
 split_input()
 {
-    echo "*** Splitting input: ${srcf} ${trgf}..." >> $TMP/log
+    echo "+++ Splitting input: ${srcf} ${trgf}..." >> $TMP/log
     ${SPLIT} -l ${chunk_size} ${srcf} ${chunks_dir}/src\_chunk\_ || exit 1
     ${SPLIT} -l ${chunk_size} ${trgf} ${chunks_dir}/trg\_chunk\_ || exit 1
 }
@@ -94,10 +94,11 @@ split_input()
 estimate_slmodel()
 {
     if [ ${nsm_given} -eq 1 ]; then
-        echo "*** Warning: no sentence length model will be estimated." >> $TMP/log
+        echo "+++ Warning: no sentence length model will be estimated." >> $TMP/log
         echo "Geometric" > ${slmodel_dir}/model
     else
-        echo "*** Estimating sentence length model..." >> $TMP/log
+        echo "+++ Estimating sentence length model..." >> $TMP/log
+        echo "+++ Estimating sentence length model..." >&2
         ${bindir}/thot-gen-wigauss-sent-len-model ${srcf} ${trgf} > ${slmodel_dir}/model
     fi
 }
@@ -212,11 +213,11 @@ sort_counts_bin()
 proc_chunk()
 {
     if [ $n -eq 1 ]; then
-        # First iteratioan
+        # First iteration
         # Estimate model from chunk
         ${bindir}/thot_gen_sw_model -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${init_model_pref} ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl \
-            -o ${models_per_chunk_dir}/${out_chunk} >> ${models_per_chunk_dir}/${out_chunk}.log 2>&1 ; pipe_fail || return 1
+            -o ${models_per_chunk_dir}/${out_chunk} ; pipe_fail || return 1
         if [ ${debug} -ne 0 -a "${file_format}" = "text" ]; then
             echo "Entries in initial table: "`wc -l ${models_per_chunk_dir}/${out_chunk}.${lex_ext} | $AWK '{printf"%s",$1}'` >> $TMP/log
         fi            
@@ -229,7 +230,7 @@ proc_chunk()
         # Estimate model from chunk
         ${bindir}/thot_gen_sw_model -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${filtered_model_dir}/model ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl \
-            -o ${models_per_chunk_dir}/${out_chunk} >> ${models_per_chunk_dir}/${out_chunk}.log 2>&1 ; pipe_fail || return 1
+            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}.log ; pipe_fail || return 1
     fi
 
     # Sort counts individually but do not append them
@@ -482,7 +483,8 @@ generate_final_model()
         cp ${curr_tables_dir}/merged_lex_counts ${output}.${lex_ext}
     else
         # Prune lexical table
-        echo "*** Pruning lexical table..." >> $TMP/log
+        echo "++ [Map-Reduce] Pruning lexical table..." >> $TMP/log
+        echo "++ [Map-Reduce] Pruning lexical table..." >&2
         prune_lex_table || exit 1
     fi
     
@@ -491,6 +493,8 @@ generate_final_model()
         cp ${curr_tables_dir}/merged_alig_counts ${output}.${alig_ext}
     fi
 }
+
+# main
 
 s_given=0
 t_given=0
@@ -668,7 +672,7 @@ declare slmodel_dir=""
 
 set_tmp_dir || exit 1
 
-echo "**** Process started at: " `date` > $TMP/log
+echo "++++ Process started at: " `date` > $TMP/log
 
 # Determine file format
 declare file_format=""
@@ -691,7 +695,8 @@ estimate_slmodel
 # EM algorithm iterations
 n=1
 while [ $n -le ${niters} ]; do
-    echo "*** Iter ${n}" >> $TMP/log
+    echo "+++ Map-reduce iter ${n}" >> $TMP/log
+    echo "+++ Map-reduce iter ${n}" >&2
 
     chunk_id=0
 
@@ -704,14 +709,16 @@ while [ $n -le ${niters} ]; do
         out_chunk="out_"${chunk}
         chunk_id=`expr $chunk_id + 1`
 
-        echo "** Processing chunk ${chunk}" >> $TMP/log
+        echo "++ [Map-Reduce] Processing chunk ${chunk}" >> $TMP/log
+        echo "++ [Map-Reduce] Processing chunk ${chunk}" >&2
 
         # Process chunk
         proc_chunk || exit 1
     done
 
     # Merge counts for submodels
-    echo "** Merging counts..." >> $TMP/log
+    echo "++ [Map-Reduce] Merging counts..." >> $TMP/log
+    echo "++ [Map-Reduce] Merging counts..." >&2
     
     # Merge lexical counts
     merge_lex_counts || exit 1
@@ -727,5 +734,5 @@ done
 generate_final_model
 
 # Copy log file
-echo "**** Process finished at: " `date` >> $TMP/log
+echo "++++ Process finished at: " `date` >> $TMP/log
 cp $TMP/log ${output}.log
