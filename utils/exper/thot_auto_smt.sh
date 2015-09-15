@@ -247,7 +247,7 @@ else
         # exit 1
     else
         # Create directory
-        mkdir -p ${outd}/main || { echo "Error! cannot create output directory" >&2; exit 1; }
+        mkdir -p ${outd} || { echo "Error! cannot create output directory" >&2; exit 1; }
     fi
     # Obtain absolute path
     outd=`get_absolute_path $outd`
