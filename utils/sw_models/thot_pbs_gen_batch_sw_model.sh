@@ -499,7 +499,8 @@ create_filtered_model()
     # Copy basic files
     if [ ! -f ${chunk_filtered_model_dir}/model.src ]; then
         # Copy void model files
-        cp ${init_model_dir}/model* ${chunk_filtered_model_dir}
+        cp ${init_model_dir}/model* ${chunk_filtered_model_dir} || \
+        { echo "Error while executing create_filtered_model" >> $SDIR/log ; return 1 ; }
     fi
 
     # Filter complete lexical model given chunk
@@ -508,7 +509,8 @@ create_filtered_model()
         { echo "Error while executing create_filtered_model" >> $SDIR/log ; return 1 ; }
 
     # Copy current alignment file
-    cp ${curr_tables_dir}/merged_alig_counts ${chunk_filtered_model_dir}/model.${alig_ext}
+    cp ${curr_tables_dir}/merged_alig_counts ${chunk_filtered_model_dir}/model.${alig_ext} || \
+        { echo "Error while executing create_filtered_model" >> $SDIR/log ; return 1 ; }
 
     # Create sync file
     echo "" > ${sync_info_dir}/create_filtered_model_${chunk}
