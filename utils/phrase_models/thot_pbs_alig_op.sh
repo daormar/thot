@@ -297,29 +297,29 @@ done
 if [ ${g_given} -eq 1 ]; then
     # verify that -g file exist
     if [ ${g_given} -eq 1 -a  ! -f  "${a3_file}" ];then
-        echo "Error: file "$a3_file" does not exist "
+        echo "Error: file "$a3_file" does not exist " >&2
         exit 1
     fi
 else
-    echo "Error: -g option has to be given"
+    echo "Error: -g option has to be given" >&2
     exit 1
 fi
 
 if [ ${o_given} -eq 0 ];then
     # invalid parameters 
-    echo "Error: -o option has to be given"
+    echo "Error: -o option has to be given" >&2
     exit 1
 fi
 
 if [ ${op_given} -eq 0 ];then
     # invalid parameters 
-    echo "Error: <-and|-or|-sum|-sym1|-sym2|grd>  option has to be given"
+    echo "Error: <-and|-or|-sum|-sym1|-sym2|grd>  option has to be given" >&2
     exit 1
 fi
 
 if [ ${pr_given} -eq 0 ]; then
     # invalid parameters 
-    echo "Error: number of processors not given"
+    echo "Error: number of processors not given" >&2
     exit 1
 fi
 
@@ -327,11 +327,11 @@ fi
 
 # create TMP directory
 TMP="${tmpdir}/thot_pbs_alig_op_tmp_$$"
-mkdir $TMP || { echo "Error: temporary directory cannot be created" ; exit 1; }
+mkdir $TMP || { echo "Error: temporary directory cannot be created"  >&2 ; exit 1; }
 
 # create shared directory
 SDIR="${sdir}/thot_pbs_alig_op_sdir_$$"
-mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+mkdir $SDIR || { echo "Error: shared directory cannot be created"  >&2 ; exit 1; }
     
 # remove temp directories on exit
 if [ "$debug" != "-debug" ]; then
@@ -351,12 +351,12 @@ echo "">> $SDIR/log
 echo "Spliting input: ${a3_file}..." >> $SDIR/log
 input_size=`wc ${a3_file} 2>/dev/null | ${AWK} '{printf"%d",$(1)/3}'`
 if [ ${input_size} -eq 0 ]; then
-    echo "Error: input file ${a3_file} is empty"
+    echo "Error: input file ${a3_file} is empty" >&2
     exit 1
 fi
 
 if [ ${input_size} -lt ${num_hosts} ]; then
-    echo "Error: problem too small"
+    echo "Error: problem too small"  >&2
     exit 1
 fi
 frag_size=`expr ${input_size} / ${num_hosts}`

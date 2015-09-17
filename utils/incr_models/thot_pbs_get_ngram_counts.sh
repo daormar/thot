@@ -69,7 +69,7 @@ set_tmp_dir()
     if [ -d ${tdir} ]; then
         TMP=${tdir}
     else
-        echo "Error: temporary directory does not exist"
+        echo "Error: temporary directory does not exist" >&2
         return 1;
     fi
 }
@@ -303,7 +303,7 @@ pbs_sync()
             if [ ${num_running_procs} -eq 0 ]; then
                 sync_curr_num_files=`ls -l ${sync_info_dir}/ | grep " ${pref}" | wc -l`
                 if [ ${sync_curr_num_files} -ne ${sync_num_files} ]; then
-                    echo "Error during synchronization"
+                    echo "Error during synchronization" >&2
                     return 1
                 fi
             fi
@@ -499,7 +499,7 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 tdir=$1
             else
-                tdir="./"
+                tdir="/tmp"
             fi
             ;;
         "-unk") unk_given=1
@@ -517,28 +517,28 @@ done
 # verify parameters
 
 if [ ${c_given} -eq 0 ]; then
-    echo "Error: corpus file not given"
+    echo "Error: corpus file not given" >&2
     exit 1
 else
     if [ ! -f  "${corpus}" ]; then
-        echo "Error: file ${corpus} with training sentences does not exist"
+        echo "Error: file ${corpus} with training sentences does not exist" >&2
         exit 1
     fi
 fi
 
 if [ ${n_given} -eq 0 ]; then
-    echo "Error: order of the n-grams not provided"
+    echo "Error: order of the n-grams not provided" >&2
     exit 1
 fi
 
 if [ ${pr_given} -eq 0 ]; then
     # invalid parameters 
-    echo "Error: number of processors must be given"
+    echo "Error: number of processors must be given" >&2
     exit 1
 fi
 
 if [ ${o_given} -eq 0 ]; then
-    echo "Error: prefix of output files not provided"
+    echo "Error: prefix of output files not provided" >&2
     exit 1
 fi
 

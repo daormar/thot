@@ -229,7 +229,7 @@ else
     # verify parameters
 
     if [ ${c_given} -eq 0 ]; then
-        echo "Error: -c option not given!"
+        echo "Error: -c option not given!" >&2
         exit 1
     else
         if [ ! -f ${cfile} ]; then
@@ -239,7 +239,7 @@ else
     fi
 
     if [ ${lm_given} -eq 0 ]; then
-        echo "Error: -lm option not given!"
+        echo "Error: -lm option not given!" >&2
         exit 1
     else
         if [ ! -f ${lmfile} ]; then
@@ -249,12 +249,12 @@ else
     fi
 
     if [ ${n_given} -eq 0 ]; then
-        echo "Error: -n option not given!"
+        echo "Error: -n option not given!" >&2
         exit 1
     fi
 
     if [ ${o_given} -eq 0 ]; then
-        echo "Error: -o option not given!"
+        echo "Error: -o option not given!" >&2
         exit 1
     fi
 
