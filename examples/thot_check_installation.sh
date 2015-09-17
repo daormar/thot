@@ -58,6 +58,7 @@ if test $? -eq 0 ; then
     echo "... Done"
 else
     mv $sdir/* $debugdir
+    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -77,6 +78,7 @@ if test $? -eq 0 ; then
     echo "... Done"
 else
     mv $sdir/* $debugdir
+    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -95,6 +97,7 @@ if test $? -eq 0 ; then
     echo "... Done"
 else
     mv $sdir/* $debugdir
+    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -114,6 +117,7 @@ if test $? -eq 0 ; then
     echo "... Done"
 else
     mv $sdir/* $debugdir
+    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -133,6 +137,7 @@ if test $? -eq 0 ; then
     echo "... Done"
 else
     mv $sdir/* $debugdir
+    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -152,6 +157,7 @@ if test $? -eq 0 ; then
     echo "... Done"
 else
     mv $sdir/* $debugdir
+    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -170,6 +176,7 @@ if test $? -eq 0 ; then
     echo "... Done"
 else
     mv $sdir/* $debugdir
+    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
