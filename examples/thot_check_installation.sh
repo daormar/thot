@@ -5,7 +5,7 @@
 # Create directory for temporary files
 echo "**** Creating directory for temporary files..."
 echo ""
-tmpdir=`mktemp -d`
+tmpdir=`mktemp -d $HOME/thot_installcheck_XXXXXX`
 # trap "rm -rf $tmpdir 2>/dev/null" EXIT
 echo "Temporary files will be stored in ${tmpdir}"
 echo ""
@@ -13,9 +13,6 @@ echo ""
 # Create directory for debugging information
 debugdir=$tmpdir/debug
 mkdir $debugdir
-
-# Create directory for shared information
-sdir=`mktemp -d $HOME/thot_installcheck_XXXXXX`
 
 # Print warning about possible resource requirements when the software
 # is installed on computer clusters
@@ -53,12 +50,10 @@ fi
 echo "**** Checking thot_lm_train..."
 echo ""
 ${bindir}/thot_lm_train -c $datadir/toy_corpus/en.train -o $tmpdir/lm -n 4 -unk \
-     -tdir $debugdir -sdir $sdir ${qs_opt} "${qs_par}" -debug
+     -tdir $debugdir -sdir ${debugdir} ${qs_opt} "${qs_par}" -debug
 if test $? -eq 0 ; then
     echo "... Done"
 else
-    mv $sdir/* $debugdir
-    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -73,12 +68,10 @@ echo ""
 echo "**** Checking thot_tm_train..."
 echo ""
 ${bindir}/thot_tm_train -s $datadir/toy_corpus/sp.train -t $datadir/toy_corpus/en.train \
-    -o $tmpdir/tm -n 5 -tdir $debugdir -sdir $sdir ${qs_opt} "${qs_par}" -debug
+    -o $tmpdir/tm -n 5 -tdir $debugdir -sdir ${debugdir} ${qs_opt} "${qs_par}" -debug
 if test $? -eq 0 ; then
     echo "... Done"
 else
-    mv $sdir/* $debugdir
-    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -96,8 +89,6 @@ ${bindir}/thot_gen_cfg_file $tmpdir/lm/lm_desc $tmpdir/tm/tm_desc > $tmpdir/serv
 if test $? -eq 0 ; then
     echo "... Done"
 else
-    mv $sdir/* $debugdir
-    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -112,12 +103,10 @@ echo ""
 echo "**** Checking thot_smt_tune..."
 echo ""
 ${bindir}/thot_smt_tune -c $tmpdir/server.cfg -s $datadir/toy_corpus/sp.dev -t $datadir/toy_corpus/en.dev \
-    -o $tmpdir/tune  -tdir $debugdir -sdir $sdir ${qs_opt} "${qs_par}" -debug
+    -o $tmpdir/tune  -tdir $debugdir -sdir ${debugdir} ${qs_opt} "${qs_par}" -debug
 if test $? -eq 0 ; then
     echo "... Done"
 else
-    mv $sdir/* $debugdir
-    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -132,12 +121,10 @@ echo ""
 echo "**** Checking thot_prepare_sys_for_test..."
 echo ""
 ${bindir}/thot_prepare_sys_for_test -c $tmpdir/tune/tuned_for_dev.cfg -t $datadir/toy_corpus/sp.test \
-    ${qs_opt} "${qs_par}" -o $tmpdir/systest -tdir $debugdir -sdir $sdir
+    ${qs_opt} "${qs_par}" -o $tmpdir/systest -tdir $debugdir -sdir ${debugdir}
 if test $? -eq 0 ; then
     echo "... Done"
 else
-    mv $sdir/* $debugdir
-    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -156,8 +143,6 @@ ${bindir}/thot_decoder -c $tmpdir/systest/test_specific.cfg -t $datadir/toy_corp
 if test $? -eq 0 ; then
     echo "... Done"
 else
-    mv $sdir/* $debugdir
-    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -175,8 +160,6 @@ ${bindir}/thot_calc_bleu -r $datadir/toy_corpus/en.test -t $tmpdir/thot_decoder_
 if test $? -eq 0 ; then
     echo "... Done"
 else
-    mv $sdir/* $debugdir
-    rm -rf $sdir
     echo "================================================"
     echo " Test failed!"
     echo " See additional information in ${tmpdir}"
@@ -191,7 +174,6 @@ echo ""
 echo "*** Remove directories used to store temporary files..."
 echo ""
 rm -rf $tmpdir
-rm -rf $sdir
 
 echo ""
 echo "================"
