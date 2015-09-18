@@ -751,6 +751,24 @@ pbs_sync()
     fi
 }
 
+all_procs_ok()
+{
+    # Init variables
+    local job_ids=$1
+    local pref=$2
+    local sync_num_files=`echo "${job_ids}" | $AWK '{printf"%d",NF}'`
+
+    # Obtain number of processes that terminated correctly
+    local sync_curr_num_files=`ls -l ${sync_info_dir}/ | $GREP " ${pref}" | wc -l`
+
+    # Return result
+    if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
+        echo "1"
+    else
+        echo "0"
+    fi
+}
+
 sync()
 {
     # Init vars
@@ -759,7 +777,12 @@ sync()
 
     if [ "${QSUB_WORKS}" = "no" ]; then
         wait
-        return 0
+        sync_ok=`all_procs_ok $job_ids $pref`
+        if [ $sync_ok -eq 1 ]; then
+            return 0
+        else
+            return 1
+        fi
     else
         pbs_sync "${job_ids}" $pref
     fi
@@ -798,8 +821,60 @@ print_create_filt_models_message()
     echo "" > ${sync_info_dir}/print_create_filt_models_message
 }
 
-# main
+gen_log_err_files()
+{
+    if [ ${sync_sleep} -eq 1 ]; then
+        if [ -f $SDIR/log ]; then
+            cp $SDIR/log ${output}.genswm_log
+        fi
 
+        # Generate file for error diagnosing
+        if [ -f ${slmodel_dir}/log ]; then
+            cat ${slmodel_dir}/log > ${output}.genswm_err
+        fi
+        # Gather info about each iteration
+        nit=1
+        while [ $nit -le ${niters} ]; do
+            echo "*** EM iteration ${nit} out of $niters" >> ${output}.genswm_err
+            for f in ${models_per_chunk_dir}/*_proc_n${nit}.log; do
+                cat $f >> ${output}.genswm_err
+            done
+
+            if [ -f ${curr_tables_dir}/merge_lex_n${nit}.log ]; then 
+                cat ${curr_tables_dir}/merge_lex_n${nit}.log >> ${output}.genswm_err
+            fi
+
+            if [ -f ${curr_tables_dir}/merge_alig_n${nit}.log ]; then 
+                cat ${curr_tables_dir}/merge_alig_n${nit}.log >> ${output}.genswm_err
+            fi
+
+            for f in ${filtered_model_dir}/*_filt_n${nit}.log; do
+                cat $f >> ${output}.genswm_err 2> /dev/null
+            done
+
+            nit=`expr $nit + 1`
+        done
+        cat ${curr_tables_dir}/generate_final_model.log >> ${output}.genswm_err
+    fi
+}
+
+report_errors()
+{
+    if [ ${sync_sleep} -eq 1 ]; then
+        num_err=`$GREP "Error while executing" ${output}.genswm_log | wc -l`
+        if [ ${num_err} -gt 0 ]; then
+            # Print error messages
+            prog=`$GREP "Error while executing" ${output}.genswm_log | head -1 | $AWK '{printf"%s",$4}'`
+            echo "Error during the execution of thot_pbs_gen_batch_sw_model (${prog})" >&2
+            echo "File ${output}.genswm_err contains information for error diagnosing" >&2
+         else
+            echo "Synchronization error" >&2
+            echo "File ${output}.genswm_err contains information for error diagnosing" >&2
+        fi
+    fi
+}
+
+# main
 pr_given=0
 sdir=$HOME
 s_given=0
@@ -1025,14 +1100,14 @@ get_model_information
 # Split shuffled input into chunks and process them separately...
 # job_deps=""
 # launch "${job_deps}" split_input "" spl_job_id || exit 1
-# sync "${spl_job_id}" "split_input" || exit 1
+# sync "${spl_job_id}" "split_input" || { gen_log_err_files ; report_errors ; exit 1; }
 split_input
 spl_job_id=""
 
 # Estimate sentence length model
 job_deps=${spl_job_id}
 launch "${job_deps}" estimate_slmodel "" slm_job_id || exit 1
-sync "${slm_job_id}" "estimate_slmodel" || exit 1
+sync "${slm_job_id}" "estimate_slmodel" || { gen_log_err_files ; report_errors ; exit 1; }
 
 # Declare job id list variable
 declare job_id_list=""
@@ -1051,8 +1126,8 @@ while [ $n -le ${niters} ]; do
     fi
     launch "${job_deps}" print_iter_num_message "_n${n}" print_iter_job_id || exit 1
     # Print synchronization
-    sync "${print_iter_job_id}" "print_iter_num_message" || exit 1
-    
+    sync "${print_iter_job_id}" "print_iter_num_message" || { gen_log_err_files ; report_errors ; exit 1; }
+ 
     # Init variables
     chunk_id=0
     pc_job_ids=""
@@ -1074,7 +1149,7 @@ while [ $n -le ${niters} ]; do
     done
 
     # Training synchronization
-    sync "${pc_job_ids}" "proc_chunk" || exit 1
+    sync "${pc_job_ids}" "proc_chunk" || { gen_log_err_files ; report_errors ; exit 1; }
 
     # Merge counts for submodels
 
@@ -1082,7 +1157,7 @@ while [ $n -le ${niters} ]; do
     job_deps=${pc_job_ids}
     launch "${job_deps}" print_merge_start_message "_n${n}" print_merge_job_id || exit 1
     # Print synchronization
-    sync "${print_merge_job_id}" "print_merge_start_message" || exit 1
+    sync "${print_merge_job_id}" "print_merge_start_message" || { gen_log_err_files ; report_errors ; exit 1; }
 
     # Check whether to execute merging of lex and alig counts
     # concurrently
@@ -1098,15 +1173,15 @@ while [ $n -le ${niters} ]; do
         merge_job_ids="${lex_job_id} ${alig_job_id}"
 
         # Merge synchronization
-        sync "${merge_job_ids}" "merge" || exit 1
+        sync "${merge_job_ids}" "merge" || { gen_log_err_files ; report_errors ; exit 1; }
     else
         job_deps=${print_merge_job_id}
         launch "${job_deps}" merge_lex_counts "_n${n}" lex_job_id || exit 1
-        sync "${lex_job_id}" "merge_lex_counts" || exit 1
+        sync "${lex_job_id}" "merge_lex_counts" || { gen_log_err_files ; report_errors ; exit 1; }
 
         job_deps=${lex_job_id}
         launch "${job_deps}" merge_alig_counts "_n${n}" alig_job_id || exit 1
-        sync "${alig_job_id}" "merge_alig_counts" || exit 1
+        sync "${alig_job_id}" "merge_alig_counts" || { gen_log_err_files ; report_errors ; exit 1; }
 
         merge_job_ids="${lex_job_id} ${alig_job_id}"
     fi
@@ -1118,7 +1193,7 @@ while [ $n -le ${niters} ]; do
         job_deps=${merge_job_ids}
         launch "${job_deps}" print_create_filt_models_message "_n${n}" print_create_filt_job_id || exit 1
         # Print synchronization
-        sync "${print_create_filt_job_id}" "print_create_filt_models_message" || exit 1
+        sync "${print_create_filt_job_id}" "print_create_filt_models_message" || { gen_log_err_files ; report_errors ; exit 1; }
             
         f_job_ids=""
         for i in `ls ${chunks_dir}/src\_chunk\_*`; do
@@ -1136,7 +1211,7 @@ while [ $n -le ${niters} ]; do
             f_job_ids=${job_id}" "${f_job_ids}
         done
         # Filter synchronization
-        sync "${f_job_ids}" "create_filtered_model" || exit 1
+        sync "${f_job_ids}" "create_filtered_model" || { gen_log_err_files ; report_errors ; exit 1; }
     fi
 
     # Move scripts to the used scripts directory (required when using
@@ -1169,23 +1244,10 @@ launch "${job_deps}" generate_final_model "" gfm_job_id || exit 1
 job_id_list="${gfm_job_id} ${job_id_list}"
 
 # Generate final model synchronization
-sync ${gfm_job_id} "generate_final_model" || exit 1
+sync ${gfm_job_id} "generate_final_model" || { gen_log_err_files ; report_errors ; exit 1; }
 
-# Generate file for error diagnosing
-if [ ${sync_sleep} -eq 1 ]; then
-    cat ${slmodel_dir}/log > ${output}.genswm_err
-    # Gather info about each iteration
-    nit=1
-    while [ $nit -le ${niters} ]; do
-        echo "*** EM iteration ${nit} out of $niters" >> ${output}.genswm_err
-        cat ${models_per_chunk_dir}/*_proc_n${nit}.log >> ${output}.genswm_err
-        cat ${curr_tables_dir}/merge_lex_n${nit}.log >> ${output}.genswm_err
-        cat ${curr_tables_dir}/merge_alig_n${nit}.log >> ${output}.genswm_err
-        cat ${filtered_model_dir}/*_filt_n${nit}.log >> ${output}.genswm_err 2> /dev/null
-        nit=`expr $nit + 1`
-    done
-    cat ${curr_tables_dir}/generate_final_model.log >> ${output}.genswm_err
-fi
+# Generate log and err files
+gen_log_err_files
 
 # Remove temporary files
 if [ ${sync_sleep} -eq 1 ]; then
@@ -1199,20 +1261,7 @@ else
     # Update job_id_list
     job_id_list="${rt_job_id} ${job_id_list}"
     # Remove temporary files synchronization
-    sync ${rt_job_id} "remove_temp" || exit 1
-fi
-
-# Check errors
-if [ ${sync_sleep} -eq 1 ]; then
-    num_err=`$GREP "Error while executing" ${output}.genswm_log | wc -l`
-    if [ ${num_err} -gt 0 ]; then
-        # Print error messages
-        prog=`$GREP "Error while executing" ${output}.genswm_log | head -1 | $AWK '{printf"%s",$4}'`
-        echo "Error during the execution of thot_pbs_gen_batch_sw_model (${prog})" >&2
-        echo "File ${output}.genswm_err contains information for error diagnosing" >&2
-
-        exit 1
-    fi
+    sync ${rt_job_id} "remove_temp" || { report_errors ; exit 1; }
 fi
 
 # Release job holds

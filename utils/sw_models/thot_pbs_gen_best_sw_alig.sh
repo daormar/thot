@@ -297,6 +297,24 @@ pbs_sync()
     fi
 }
 
+all_procs_ok()
+{
+    # Init variables
+    local job_ids=$1
+    local pref=$2
+    local sync_num_files=`echo "${job_ids}" | $AWK '{printf"%d",NF}'`
+
+    # Obtain number of processes that terminated correctly
+    local sync_curr_num_files=`ls -l ${sync_info_dir}/ | $GREP " ${pref}" | wc -l`
+
+    # Return result
+    if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
+        echo "1"
+    else
+        echo "0"
+    fi
+}
+
 sync()
 {
     # Init vars
@@ -305,7 +323,12 @@ sync()
 
     if [ "${QSUB_WORKS}" = "no" ]; then
         wait
-        return 0
+        sync_ok=`all_procs_ok $job_ids $pref`
+        if [ $sync_ok -eq 1 ]; then
+            return 0
+        else
+            return 1
+        fi
     else
         pbs_sync "${job_ids}" $pref
     fi
@@ -326,7 +349,8 @@ proc_chunk()
     echo "** Processing chunk ${chunk} (started at "`date`")..." >> $SDIR/log
     echo "** Processing chunk ${chunk} (started at "`date`")..." > ${aligs_per_chunk_dir}/${chunk}_bestal.log
 
-    ${bindir}/thot_format_corpus_csl ${chunks_dir}/${src_chunk} ${chunks_dir}/${trg_chunk} | \
+    ${bindir}/thot_format_corpus_csl ${chunks_dir}/${src_chunk} ${chunks_dir}/${trg_chunk} \
+        2>> ${aligs_per_chunk_dir}/${chunk}_bestal.log | \
         ${bindir}/thot_calc_swm_lgprob -sw ${sw_val} -P - -max \
         > ${aligs_per_chunk_dir}/${chunk}_bestal 2>> ${aligs_per_chunk_dir}/${chunk}_bestal.log ; pipe_fail || \
         { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1; }
@@ -365,8 +389,45 @@ generate_alig_file()
     echo "" > ${sync_info_dir}/generate_alig_file
 }
 
-# main
+gen_log_err_files()
+{
+    if [ ${sync_sleep} -eq 1 ]; then
+        if [ -f $SDIR/log ]; then
+            cp $SDIR/log ${output}.genb_log
+        fi
+        
+        # Generate file for error diagnosing
+        if [ -f ${output}.genb_err ]; then
+            rm ${output}.genb_err
+        fi
 
+        for f in ${aligs_per_chunk_dir}/*_bestal.log; do
+            cat $f > ${output}.genb_err
+        done
+
+        if [ -f ${aligs_per_chunk_dir}/merge.log ]; then
+            cat ${aligs_per_chunk_dir}/merge.log >> ${output}.genb_err
+        fi
+    fi
+}
+
+report_errors()
+{
+    if [ ${sync_sleep} -eq 1 ]; then
+        num_err=`$GREP "Error while executing" ${output}.genb_log | wc -l`
+        if [ ${num_err} -gt 0 ]; then
+            # Print error messages
+            prog=`$GREP "Error while executing" ${output}.genb_log | head -1 | $AWK '{printf"%s",$4}'`
+            echo "Error during the execution of thot_pbs_gen_best_sw_alig (${prog})" >&2
+            echo "File ${output}.genb_err contains information for error diagnosing" >&2
+         else
+            echo "Synchronization error" >&2
+            echo "File ${output}.genb_err contains information for error diagnosing" >&2
+       fi
+    fi
+}
+
+# main
 pr_given=0
 sw_given=0
 shu_given=0
@@ -544,20 +605,17 @@ for i in `ls ${chunks_dir}/src\_chunk\_*`; do
 done
 
 # Alignment generation synchronization
-sync "${pc_job_ids}" "proc_chunk" || exit 1
+sync "${pc_job_ids}" "proc_chunk" || { gen_log_err_files ; report_errors ; exit 1; }
 
 # Generate alignment file
 job_deps=${pc_job_ids}
 launch "${job_deps}" generate_alig_file "" gaf_job_id || exit 1
 
 # Generate alignment file synchronization
-sync ${gaf_job_id} "generate_alig_file" || exit 1
+sync ${gaf_job_id} "generate_alig_file" || { gen_log_err_files ; report_errors ; exit 1; }
 
-# Generate file for error diagnosing
-if [ ${sync_sleep} -eq 1 ]; then
-    cat ${aligs_per_chunk_dir}/*_bestal.log > ${output}.genb_err
-    cat ${aligs_per_chunk_dir}/merge.log >> ${output}.genb_err
-fi
+# Generate log and err files
+gen_log_err_files
 
 # Remove temporary files
 if [ ${sync_sleep} -eq 1 ]; then
@@ -570,20 +628,7 @@ else
     # Update job_id_list
     job_id_list="${rt_job_id} ${job_id_list}"
     # Remove temporary files synchronization
-    sync ${rt_job_id} "remove_temp" || exit 1
-fi
-
-# Check errors
-if [ ${sync_sleep} -eq 1 ]; then
-    num_err=`$GREP "Error while executing" ${output}.genb_log | wc -l`
-    if [ ${num_err} -gt 0 ]; then
-        # Print error messages
-        prog=`$GREP "Error while executing" ${output}.genb_log | head -1 | $AWK '{printf"%s",$4}'`
-        echo "Error during the execution of thot_pbs_gen_best_sw_alig (${prog})" >&2
-        echo "File ${output}.genb_err contains information for error diagnosing" >&2
-
-        exit 1
-    fi
+    sync ${rt_job_id} "remove_temp" || { report_errors ; exit 1; }
 fi
 
 # Update job_id_list
