@@ -75,8 +75,8 @@ filter_ttable()
     # Write date to log file
     echo "** Processing file ${ttable_file} (started at "`date`")..." >> $SDIR/log
 
-    $bindir/thot_filter_ttable_given_corpus ${ttable_file} ${test_corpus_file} |\
-        $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T $TMP > $outfile 2> $SDIR/err || \
+    $bindir/thot_filter_ttable_given_corpus ${ttable_file} ${test_corpus_file} 2> $SDIR/err | \
+        $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T $TMP > $outfile 2>> $SDIR/err || \
         { echo "Error while executing filter_ttable" >> $SDIR/log ; return 1 ; }
 
     # Write date to log file
@@ -100,6 +100,29 @@ launch()
 }
 
 #############
+all_procs_ok()
+{
+    # Init variables
+    local files="$1"
+    local sync_num_files=`echo "${files}" | $AWK '{printf"%d",NF}'`    
+    local sync_curr_num_files=0
+
+    # Obtain number of processes that terminated correctly
+    for f in ${files}; do
+        if [ -f ${f}_end ]; then
+            sync_curr_num_files=`expr ${sync_curr_num_files} + 1`
+        fi
+    done
+
+    # Return result
+    if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
+        echo "1"
+    else
+        echo "0"
+    fi
+}
+
+#############
 sync()
 {
     # Init vars
@@ -107,7 +130,12 @@ sync()
 
     if [ "${QSUB_WORKS}" = "no" ]; then
         wait
-        return 0
+        sync_ok=`all_procs_ok "$files"`
+        if [ $sync_ok -eq 1 ]; then
+            return 0
+        else
+            return 1
+        fi
     else
         pbs_sync "$files"
     fi
@@ -128,6 +156,34 @@ pbs_sync()
             fi
         done
     done
+}
+
+#############
+gen_log_err_files()
+{
+    # Copy log file to its final location
+    if [ -f $SDIR/log ]; then
+        cp $SDIR/log ${outfile}.filter_log
+    fi
+
+    # Generate file for error diagnosing
+    if [ -f $SDIR/err ]; then
+        cp $SDIR/err ${outfile}.filter_err
+    fi
+}
+
+#############
+report_errors()
+{
+    # Check errors
+    num_err=`$GREP "Error while executing thot_filter_ttable_given_corpus" ${outfile}.filter_log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        echo "Error during the execution of thot_pbs_filter_ttable (thot_filter_ttable_given_corpus)" >&2
+        echo "File ${output}.filter_err contains information for error diagnosing" >&2
+    else
+        echo "Synchronization error" >&2
+        echo "File ${output}.filter_err contains information for error diagnosing" >&2
+    fi
 }
 
 #############
@@ -262,24 +318,13 @@ else
     launch $SDIR/filter_ttable
     
     ### Check that all queued jobs are finished
-    sync $SDIR/filter_ttable
+    sync $SDIR/filter_ttable || { gen_log_err_files ; report_errors ; exit 1; }
 
     # Add footer to log file
     echo "">> $SDIR/log
     echo "*** Parallel process finished at: " `date` >> $SDIR/log
 
-    # Copy log file to its final location
-    cp $SDIR/log ${outfile}.filter_log
-
-    # Generate file for error diagnosing
-    cp $SDIR/err ${outfile}.filter_err
-
-    # Check errors
-    num_err=`$GREP "Error while executing thot_filter_ttable_given_corpus" ${outfile}.filter_log | wc -l`
-    if [ ${num_err} -gt 0 ]; then
-        echo "Error during the execution of thot_pbs_filter_ttable (thot_filter_ttable_given_corpus)" >&2
-        echo "File ${output}.filter_err contains information for error diagnosing" >&2
-        exit 1
-    fi
+    # Generate log and err files
+    gen_log_err_files
 
 fi
