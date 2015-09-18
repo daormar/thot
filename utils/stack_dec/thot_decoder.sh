@@ -550,8 +550,8 @@ i=1
 for f in `ls $SDIR/frag\_*`; do
     fragm=`${BASENAME} $f`
     # Obtain translations for the current fragment
-    create_script $SDIR/qs_trans_${fragm} trans_frag
-    launch $SDIR/qs_trans_${fragm}
+    create_script $SDIR/qs_trans_${fragm} trans_frag || exit 1
+    launch $SDIR/qs_trans_${fragm} || exit 1
     qs_trans="${qs_trans} $SDIR/qs_trans_${fragm}"
 
     i=`expr $i + 1`
@@ -566,8 +566,8 @@ if [ ${wg_given} -eq 1 ]; then
 fi
 
 # merge files
-create_script $SDIR/merge merge
-launch $SDIR/merge
+create_script $SDIR/merge merge || exit 1
+launch $SDIR/merge || exit 1
 
 ### Check that all queued jobs are finished
 sync $SDIR/merge || { gen_log_err_files ; report_errors ; exit 1; }
