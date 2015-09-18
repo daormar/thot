@@ -341,7 +341,7 @@ sync()
 
     if [ "${QSUB_WORKS}" = "no" ]; then
         wait
-        sync_ok=`all_procs_ok $job_ids $pref`
+        sync_ok=`all_procs_ok "${job_ids}" $pref`
         if [ $sync_ok -eq 1 ]; then
             return 0
         else
@@ -454,16 +454,21 @@ generate_counts_file()
 gen_log_err_files()
 {
     if [ ${sync_sleep} -eq 1 ]; then
-        cp $SDIR/log ${output}.getng_log
+        if [ -f $SDIR/log ]; then
+            cp $SDIR/log ${output}.getng_log
+        fi
+
         if [ -f ${output}.getng_err ]; then
             rm ${output}.getng_err
         fi
+
         for f in ${counts_per_chunk_dir}/*_sorted_counts.log; do
             cat $f >> ${output}.getng_err
         done
-        for f in ${counts_per_chunk_dir}/gen_counts.log; do
+
+        if [ -f ${counts_per_chunk_dir}/gen_counts.log ]; then
             cat $f >> ${output}.getng_err
-        done
+        fi
     fi
 }
 
