@@ -314,8 +314,8 @@ else
     # process the input
 
     # filter table
-    create_script $SDIR/filter_ttable filter_ttable
-    launch $SDIR/filter_ttable
+    create_script $SDIR/filter_ttable filter_ttable || exit 1
+    launch $SDIR/filter_ttable || exit 1
     
     ### Check that all queued jobs are finished
     sync $SDIR/filter_ttable || { gen_log_err_files ; report_errors ; exit 1; }

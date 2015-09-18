@@ -430,8 +430,8 @@ i=1
 for f in `ls $SDIR/frag\_*`; do
     fragm=`${BASENAME} $f`
 
-    create_script $SDIR/qs_alig_${fragm} alig_op_frag
-    launch $SDIR/qs_alig_${fragm}
+    create_script $SDIR/qs_alig_${fragm} alig_op_frag || exit 1
+    launch $SDIR/qs_alig_${fragm} || exit 1
 
     i=`expr $i + 1`
     qs_alig="${qs_alig} $SDIR/qs_alig_${fragm}"
@@ -442,8 +442,8 @@ sync "${qs_alig}" || { gen_log_err_files ; report_errors ; exit 1; }
 
 # merge counts and files
 
-create_script $SDIR/merge_alig_op merge_alig_op
-launch $SDIR/merge_alig_op
+create_script $SDIR/merge_alig_op merge_alig_op || exit 1
+launch $SDIR/merge_alig_op || exit 1
     
 ### Check that all queued jobs are finished
 sync $SDIR/merge_alig_op || { gen_log_err_files ; report_errors ; exit 1; }

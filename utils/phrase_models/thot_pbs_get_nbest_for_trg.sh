@@ -298,8 +298,8 @@ else
     # process the input
 
     # get n-best translations
-    create_script $SDIR/get_nbest_for_trg get_nbest_for_trg
-    launch $SDIR/get_nbest_for_trg
+    create_script $SDIR/get_nbest_for_trg get_nbest_for_trg || exit 1
+    launch $SDIR/get_nbest_for_trg || exit 1
     
     ### Check that all queued jobs are finished
     sync $SDIR/get_nbest_for_trg || { gen_log_err_files ; report_errors ; exit 1; }

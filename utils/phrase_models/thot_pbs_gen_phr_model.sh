@@ -468,8 +468,8 @@ i=1
 for f in `ls $SDIR/frag\_*`; do
     fragm=`${BASENAME} $f`
 
-    create_script $SDIR/qs_est_${fragm} estimate_frag 
-    launch $SDIR/qs_est_${fragm}
+    create_script $SDIR/qs_est_${fragm} estimate_frag || exit 1
+    launch $SDIR/qs_est_${fragm} || exit 1
 
     i=`expr $i + 1`
     qs_est="${qs_est} $SDIR/qs_est_${fragm}"
