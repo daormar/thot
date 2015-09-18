@@ -334,8 +334,8 @@ else
     # process the input
 
     # Calculate perplexity
-    create_script $SDIR/ilm_perp ilm_perp
-    launch $SDIR/ilm_perp
+    create_script $SDIR/ilm_perp ilm_perp || exit 1
+    launch $SDIR/ilm_perp || exit 1
     
     ### Check that all queued jobs are finished
     sync $SDIR/ilm_perp || { gen_log_err_files ; report_errors ; exit 1; }
