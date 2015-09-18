@@ -262,7 +262,7 @@ launch()
 
 job_is_unknown()
 {
-    nl=`$QSTAT ${QSTAT_J_OPT} ${jid} 2>&1 | grep -e "Unknown" -e "do not exist" | wc -l`
+    nl=`$QSTAT ${QSTAT_J_OPT} ${jid} 2>&1 | $GREP -e "Unknown" -e "do not exist" | wc -l`
     if [ $nl -ne 0 ]; then
         echo 1
     else
@@ -285,7 +285,7 @@ pbs_sync()
             
             # Compare current number of sync files written with the required
             # number
-            sync_curr_num_files=`ls -l ${sync_info_dir}/ | grep " ${pref}" | wc -l`
+            sync_curr_num_files=`ls -l ${sync_info_dir}/ | $GREP " ${pref}" | wc -l`
             if [ ${sync_curr_num_files} -eq ${sync_num_files} ]; then
                 sync_end=1
             fi
@@ -301,9 +301,8 @@ pbs_sync()
                 fi
             done
             if [ ${num_running_procs} -eq 0 ]; then
-                sync_curr_num_files=`ls -l ${sync_info_dir}/ | grep " ${pref}" | wc -l`
+                sync_curr_num_files=`ls -l ${sync_info_dir}/ | $GREP " ${pref}" | wc -l`
                 if [ ${sync_curr_num_files} -ne ${sync_num_files} ]; then
-                    echo "Error during synchronization" >&2
                     return 1
                 fi
             fi
@@ -316,6 +315,24 @@ pbs_sync()
     fi
 }
 
+all_procs_ok()
+{
+    # Init variables
+    local job_ids=$1
+    local pref=$2
+    local sync_num_files=`echo "${job_ids}" | $AWK '{printf"%d",NF}'`
+
+    # Obtain number of processes that terminated correctly
+    local sync_curr_num_files=`ls -l ${sync_info_dir}/ | $GREP " ${pref}" | wc -l`
+
+    # Return result
+    if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
+        echo "1"
+    else
+        echo "0"
+    fi
+}
+
 sync()
 {
     # Init vars
@@ -324,7 +341,12 @@ sync()
 
     if [ "${QSUB_WORKS}" = "no" ]; then
         wait
-        return 0
+        sync_ok=`all_procs_ok $job_ids $pref`
+        if [ $sync_ok -eq 1 ]; then
+            return 0
+        else
+            return 1
+        fi
     else
         pbs_sync "${job_ids}" $pref
     fi
@@ -415,7 +437,9 @@ generate_counts_file()
     fi
 
     # Merge count files
-    merge_sort | remove_length_col | ${bindir}/thot_merge_ngram_counts > ${output} \
+    merge_sort 2>> ${counts_per_chunk_dir}/gen_counts.log | \
+        remove_length_col 2>> ${counts_per_chunk_dir}/gen_counts.log | \
+        ${bindir}/thot_merge_ngram_counts > ${output} \
         2>> ${counts_per_chunk_dir}/gen_counts.log ; pipe_fail || \
         { echo "Error while executing generate_counts_file" >> $SDIR/log ; return 1 ; }
 
@@ -427,6 +451,39 @@ generate_counts_file()
     echo "" > ${sync_info_dir}/generate_counts_file
 }
 
+gen_log_err_files()
+{
+    if [ ${sync_sleep} -eq 1 ]; then
+        cp $SDIR/log ${output}.getng_log
+        if [ -f ${output}.getng_err ]; then
+            rm ${output}.getng_err
+        fi
+        for f in ${counts_per_chunk_dir}/*_sorted_counts.log; do
+            cat $f >> ${output}.getng_err
+        done
+        for f in ${counts_per_chunk_dir}/gen_counts.log; do
+            cat $f >> ${output}.getng_err
+        done
+    fi
+}
+
+report_errors()
+{
+    if [ ${sync_sleep} -eq 1 ]; then
+        num_err=`$GREP "Error while executing" ${output}.getng_log | wc -l`
+        if [ ${num_err} -gt 0 ]; then
+            # Print error messages
+            prog=`$GREP "Error while executing" ${output}.getng_log | head -1 | $AWK '{printf"%s",$4}'`
+            echo "Error during the execution of thot_get_ngram_counts (${prog})" >&2
+            echo "File ${output}.getng_err contains information for error diagnosing" >&2
+        else
+            echo "Synchronization error" >&2
+            echo "File ${output}.getng_err contains information for error diagnosing" >&2
+        fi
+    fi
+}
+
+# main
 pr_given=0
 unk_given=0
 sdir=$HOME
@@ -581,20 +638,17 @@ for i in `ls ${chunks_dir}/chunk\_*`; do
 done
 
 # Extract counts synchronization
-sync "${pc_job_ids}" "proc_chunk" || exit 1
+sync "${pc_job_ids}" "proc_chunk" || { gen_log_err_files ; report_errors ; exit 1; }
 
 # Generate counts file
 job_deps=${pc_job_ids}
-launch "${job_deps}" generate_counts_file "" gcf_job_id || exit 1
+launch "${job_deps}" generate_counts_file "" gcf_job_id || exit 1;
 
 # Generate counts file synchronization
-sync "${gcf_job_id}" "generate_counts_file" || exit 1
+sync "${gcf_job_id}" "generate_counts_file" || { gen_log_err_files ; report_errors ; exit 1; }
 
-# Generate file for error diagnosing
-if [ ${sync_sleep} -eq 1 ]; then
-    cat ${counts_per_chunk_dir}/*_sorted_counts.log > ${output}.getng_err
-    cat ${counts_per_chunk_dir}/gen_counts.log >> ${output}.getng_err
-fi
+# Generate log and err files
+gen_log_err_files
 
 # Remove temporary files
 if [ ${sync_sleep} -eq 1 ]; then
@@ -603,22 +657,9 @@ if [ ${sync_sleep} -eq 1 ]; then
 else
     # Sync using sleep is not enabled
     job_deps=${gcf_job_id}
-    launch "${job_deps}" remove_temp "" rt_job_id || exit 1
+    launch "${job_deps}" remove_temp "" rt_job_id || exit 1;
     # Remove temporary files synchronization
-    sync "${rt_job_id}" "remove_temp" || exit 1
-fi
-
-# Check errors
-if [ ${sync_sleep} -eq 1 ]; then
-    num_err=`$GREP "Error while executing" ${output}.getng_log | wc -l`
-    if [ ${num_err} -gt 0 ]; then
-        # Print error messages
-        prog=`$GREP "Error while executing" ${output}.getng_log | head -1 | $AWK '{printf"%s",$4}'`
-        echo "Error during the execution of thot_get_ngram_counts (${prog})" >&2
-        echo "File ${output}.getng_err contains information for error diagnosing" >&2
-
-        exit 1
-    fi
+    sync "${rt_job_id}" "remove_temp" || { report_errors ; exit 1; }
 fi
 
 # Update job_id_list

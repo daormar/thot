@@ -99,6 +99,29 @@ launch()
 }
 
 #############
+all_procs_ok()
+{
+    # Init variables
+    local files="$1"
+    local sync_num_files=`echo "${files}" | $AWK '{printf"%d",NF}'`    
+    local sync_curr_num_files=0
+
+    # Obtain number of processes that terminated correctly
+    for f in ${files}; do
+        if [ -f ${f}_end ]; then
+            sync_curr_num_files=`expr ${sync_curr_num_files} + 1`
+        fi
+    done
+
+    # Return result
+    if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
+        echo "1"
+    else
+        echo "0"
+    fi
+}
+
+#############
 sync()
 {
     # Init vars
@@ -106,7 +129,12 @@ sync()
 
     if [ "${QSUB_WORKS}" = "no" ]; then
         wait
-        return 0
+        sync_ok=`all_procs_ok "$files"`
+        if [ $sync_ok -eq 1 ]; then
+            return 0
+        else
+            return 1
+        fi
     else
         pbs_sync "$files"
     fi
@@ -127,6 +155,34 @@ pbs_sync()
             fi
         done
     done
+}
+
+#############
+gen_log_err_files()
+{
+    # Copy log file to its final location
+    if [ -f $SDIR/log ]; then
+        cp $SDIR/log ${outfile}.ilmp_log
+    fi
+
+    # Generate file for error diagnosing
+    if [ -f $SDIR/err ]; then
+        cp $SDIR/err ${outfile}.ilmp_err
+    fi
+}
+
+#############
+report_errors()
+{
+    # Check errors
+    num_err=`$GREP "Error while executing thot_ilm_perp" ${outfile}.ilmp_log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        echo "Error during the execution of thot_pbs_ilm_perp (thot_ilm_perp)" >&2
+        echo "File ${output}.ilmp_err contains information for error diagnosing" >&2
+    else
+        echo "Synchronization error" >&2
+        echo "File ${output}.ilmp_err contains information for error diagnosing" >&2
+    fi
 }
 
 #############
@@ -260,11 +316,11 @@ else
 
     # create TMP directory
     TMP="${tmpdir}/thot_pbs_ilm_perp_tmp_$$"
-    mkdir $TMP || { echo "Error: temporary directory cannot be created" ; exit 1; }
+    mkdir $TMP || { echo "Error: temporary directory cannot be created" >&2 ; exit 1; }
 
     # create shared directory
     SDIR="${sdir}/thot_pbs_ilm_perp_sdir_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
+    mkdir $SDIR || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
     
     # remove temp directories on exit
     if [ $debug -eq 0 ]; then
@@ -282,24 +338,13 @@ else
     launch $SDIR/ilm_perp
     
     ### Check that all queued jobs are finished
-    sync $SDIR/ilm_perp
+    sync $SDIR/ilm_perp || { gen_log_err_files ; report_errors ; exit 1; }
 
     # Add footer to log file
     echo "">> $SDIR/log
     echo "*** Parallel process finished at: " `date` >> $SDIR/log
-
-    # Copy log file to its final location
-    cp $SDIR/log ${outfile}.ilmp_log
-
-    # Generate file for error diagnosing
-    cp $SDIR/err ${outfile}.ilmp_err
-
-    # Check errors
-    num_err=`$GREP "Error while executing thot_ilm_perp" ${outfile}.ilmp_log | wc -l`
-    if [ ${num_err} -gt 0 ]; then
-        echo "Error during the execution of thot_pbs_ilm_perp (thot_ilm_perp)" >&2
-        echo "File ${output}.ilmp_err contains information for error diagnosing" >&2
-        exit 1
-    fi
+    
+    # Generate log and err files
+    gen_log_err_files
 
 fi
