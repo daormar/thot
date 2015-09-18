@@ -89,11 +89,15 @@ ilm_perp()
 launch()
 {
     local file=$1
+    local outvar=$2
+
     ### qsub invocation
     if [ "${QSUB_WORKS}" = "no" ]; then
         $file &
+        eval "${outvar}=$!"
     else
         local jid=$($QSUB ${QSUB_TERSE_OPT} ${qs_opts} $file | ${TAIL} -1)
+        eval "${outvar}='${jid}'"
     fi
     ###################
 }
@@ -126,6 +130,7 @@ sync()
 {
     # Init vars
     local files="$1"
+    local job_ids="$2"
 
     if [ "${QSUB_WORKS}" = "no" ]; then
         wait
@@ -136,7 +141,18 @@ sync()
             return 1
         fi
     else
-        pbs_sync "$files"
+        pbs_sync "$files" "${job_ids}"
+    fi
+}
+
+#############
+job_is_unknown()
+{
+    nl=`$QSTAT ${QSTAT_J_OPT} ${jid} 2>&1 | $GREP -e "Unknown" -e "do not exist" | wc -l`
+    if [ $nl -ne 0 ]; then
+        echo 1
+    else
+        echo 0
     fi
 }
 
@@ -144,16 +160,31 @@ sync()
 pbs_sync()
 {
     local files="$1"
+    local job_ids="$2"
+    local num_pending_procs=0
     end=0
     while [ $end -ne 1 ]; do
         sleep 3
         end=1
+        # Check if all processes have finished
         for f in ${files}; do
             if [ ! -f ${f}_end ]; then
+                num_pending_procs=`expr ${num_pending_procs} + 1`
                 end=0
-                break
             fi
         done
+
+        # Sanity check
+        num_running_procs=0
+        for jid in ${job_ids}; do
+            job_unknown=`job_is_unknown ${jid}`
+            if [ ${job_unknown} -eq 0 ]; then
+                num_running_procs=`expr ${num_running_procs} + 1`
+            fi
+        done
+        if [ ${num_running_procs} -eq 0 -a ${num_pending_procs} -ge 1 ]; then
+            return 1
+        fi
     done
 }
 
@@ -335,10 +366,10 @@ else
 
     # Calculate perplexity
     create_script $SDIR/ilm_perp ilm_perp || exit 1
-    launch $SDIR/ilm_perp || exit 1
+    launch $SDIR/ilm_perp job_id || exit 1
     
     ### Check that all queued jobs are finished
-    sync $SDIR/ilm_perp || { gen_log_err_files ; report_errors ; exit 1; }
+    sync $SDIR/ilm_perp "${job_id}" || { gen_log_err_files ; report_errors ; exit 1; }
 
     # Add footer to log file
     echo "">> $SDIR/log
