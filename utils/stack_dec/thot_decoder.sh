@@ -150,11 +150,15 @@ create_script()
 launch()
 {
     local file=$1
+    local outvar=$2
+
     ### qsub invocation
     if [ "${QSUB_WORKS}" = "no" ]; then
         $file &
+        eval "${outvar}=$!"
     else
         local jid=$($QSUB ${QSUB_TERSE_OPT} ${qs_opts} $file | ${TAIL} -1)
+        eval "${outvar}='${jid}'"
     fi
     ###################
 }
@@ -185,6 +189,7 @@ sync()
 {
     # Init vars
     local files="$1"
+    local job_ids="$2"
 
     if [ "${QSUB_WORKS}" = "no" ]; then
         wait
@@ -195,23 +200,48 @@ sync()
             return 1
         fi
     else
-        pbs_sync "$files"
+        pbs_sync "$files" "${job_ids}"
+    fi
+}
+
+job_is_unknown()
+{
+    nl=`$QSTAT ${QSTAT_J_OPT} ${jid} 2>&1 | $GREP -e "Unknown" -e "do not exist" | wc -l`
+    if [ $nl -ne 0 ]; then
+        echo 1
+    else
+        echo 0
     fi
 }
 
 pbs_sync()
 {
     local files="$1"
+    local job_ids="$2"
+    local num_pending_procs=0
     end=0
     while [ $end -ne 1 ]; do
         sleep 3
         end=1
+        # Check if all processes have finished
         for f in ${files}; do
             if [ ! -f ${f}_end ]; then
+                num_pending_procs=`expr ${num_pending_procs} + 1`
                 end=0
-                break
             fi
         done
+
+        # Sanity check
+        num_running_procs=0
+        for jid in ${job_ids}; do
+            job_unknown=`job_is_unknown ${jid}`
+            if [ ${job_unknown} -eq 0 ]; then
+                num_running_procs=`expr ${num_running_procs} + 1`
+            fi
+        done
+        if [ ${num_running_procs} -eq 0 -a ${num_pending_procs} -ge 1 ]; then
+            return 1
+        fi
     done
 }
 
@@ -545,20 +575,22 @@ ${SPLIT} -l ${nlines} $sents $SDIR/frag\_ || exit 1
 
 # parallel test corpus translation for each fragment
 qs_trans=""
+jids=""
 i=1
 
 for f in `ls $SDIR/frag\_*`; do
     fragm=`${BASENAME} $f`
     # Obtain translations for the current fragment
     create_script $SDIR/qs_trans_${fragm} trans_frag || exit 1
-    launch $SDIR/qs_trans_${fragm} || exit 1
+    launch $SDIR/qs_trans_${fragm} job_id || exit 1
     qs_trans="${qs_trans} $SDIR/qs_trans_${fragm}"
+    jids="${jids} ${job_id}"
 
     i=`expr $i + 1`
 done
 
 ### Check that all queued jobs are finished
-sync "${qs_trans}" || { gen_log_err_files ; report_errors ; exit 1; }
+sync "${qs_trans}" "${jids}" || { gen_log_err_files ; report_errors ; exit 1; }
 
 # move word graph files if generated
 if [ ${wg_given} -eq 1 ]; then
@@ -567,10 +599,10 @@ fi
 
 # merge files
 create_script $SDIR/merge merge || exit 1
-launch $SDIR/merge || exit 1
+launch $SDIR/merge job_id || exit 1
 
 ### Check that all queued jobs are finished
-sync $SDIR/merge || { gen_log_err_files ; report_errors ; exit 1; }
+sync $SDIR/merge "${job_id}" || { gen_log_err_files ; report_errors ; exit 1; }
 
 # Add footer to log file
 echo "">> $SDIR/log
