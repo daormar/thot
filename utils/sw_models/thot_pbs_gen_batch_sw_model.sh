@@ -777,7 +777,7 @@ sync()
 
     if [ "${QSUB_WORKS}" = "no" ]; then
         wait
-        sync_ok=`all_procs_ok $job_ids $pref`
+        sync_ok=`all_procs_ok "${job_ids}" $pref`
         if [ $sync_ok -eq 1 ]; then
             return 0
         else
