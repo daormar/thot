@@ -159,6 +159,28 @@ launch()
     ###################
 }
 
+all_procs_ok()
+{
+    # Init variables
+    local files="$1"
+    local sync_num_files=`echo "${files}" | $AWK '{printf"%d",NF}'`    
+    local sync_curr_num_files=0
+
+    # Obtain number of processes that terminated correctly
+    for f in ${files}; do
+        if [ -f ${f}_end ]; then
+            sync_curr_num_files=`expr ${sync_curr_num_files} + 1`
+        fi
+    done
+
+    # Return result
+    if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
+        echo "1"
+    else
+        echo "0"
+    fi
+}
+
 sync()
 {
     # Init vars
@@ -166,7 +188,12 @@ sync()
 
     if [ "${QSUB_WORKS}" = "no" ]; then
         wait
-        return 0
+        sync_ok=`all_procs_ok "$files"`
+        if [ $sync_ok -eq 1 ]; then
+            return 0
+        else
+            return 1
+        fi
     else
         pbs_sync "$files"
     fi
@@ -237,6 +264,39 @@ merge()
     echo "" > $SDIR/merge_end
 }
 
+gen_log_err_files()
+{
+    # Copy log file to its final location
+    if [ -f $SDIR/log ]; then
+        cp $SDIR/log ${output}.dec_log
+    fi
+
+    # Generate file for error diagnosing
+    if [ -f ${output}.dec_err ]; then
+        rm ${output}.dec_err
+    fi
+    for f in $SDIR/qs_trans_*.log; do
+        cat $f >> ${output}.dec_err
+    done
+    for f in $SDIR/merge.log; do
+        cat $f >> ${output}.dec_err
+    done
+}
+
+report_errors()
+{
+    num_err=`$GREP "Error while executing" ${output}.dec_log | wc -l`
+    if [ ${num_err} -gt 0 ]; then
+        prog=`$GREP "Error while executing" ${output}.dec_log | head -1 | $AWK '{printf"%s",$4}'`
+        echo "Error during the execution of thot_decoder (${prog}), see ${output}.dec_err file" >&2
+        echo "File ${output}.err contains information for error diagnosing" >&2
+    else
+        echo "Synchronization error" >&2
+        echo "File ${output}.err contains information for error diagnosing" >&2
+    fi
+}
+
+# main
 pr_given=0
 num_procs=1
 c_given=0
@@ -498,7 +558,7 @@ for f in `ls $SDIR/frag\_*`; do
 done
 
 ### Check that all queued jobs are finished
-sync "${qs_trans}"
+sync "${qs_trans}" || { gen_log_err_files ; report_errors ; exit 1; }
 
 # move word graph files if generated
 if [ ${wg_given} -eq 1 ]; then
@@ -510,24 +570,11 @@ create_script $SDIR/merge merge
 launch $SDIR/merge
 
 ### Check that all queued jobs are finished
-sync $SDIR/merge
+sync $SDIR/merge || { gen_log_err_files ; report_errors ; exit 1; }
 
 # Add footer to log file
 echo "">> $SDIR/log
 echo "*** Parallel process finished at: " `date` >> $SDIR/log
 
-# Copy log file to its final location
-cp $SDIR/log ${output}.dec_log
-
-# Generate file for error diagnosing
-cat $SDIR/qs_trans_*.log > ${output}.dec_err
-cat $SDIR/merge.log >> ${output}.dec_err
-
-# Check errors
-num_err=`$GREP "Error while executing" ${output}.dec_log | wc -l`
-if [ ${num_err} -gt 0 ]; then
-    prog=`$GREP "Error while executing" ${output}.dec_log | head -1 | $AWK '{printf"%s",$4}'`
-    echo "Error during the execution of thot_decoder (${prog}), see ${output}.dec_err file" >&2
-    echo "File ${output}.err contains information for error diagnosing" >&2
-    exit 1
-fi
+# Generate log and err files
+gen_log_err_files
