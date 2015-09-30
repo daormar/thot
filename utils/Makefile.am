@@ -39,7 +39,7 @@ phrase_models/thot_filter_ttable_given_corpus				\
 phrase_models/thot_pbs_filter_ttable					\
 phrase_models/thot_pbs_get_nbest_for_trg phrase_models/thot_cut_ttable
 
-smt_preproc_bin_scripts= 
+smt_preproc_bin_scripts= smt_preproc/thot_tokenize
 
 error_correction_bin_scripts= error_correction/thot_rescore_nbest	\
 error_correction/thot_obtain_best_trans_from_nbl			\
@@ -63,8 +63,10 @@ CLEANFILES = $(bin_SCRIPTS)
 
 EXTRA_DIST = 
 
+python_PYTHON= smt_preproc/thot_smt_preproc.py
+
 # Build using suffix rules (portable)
-SUFFIXES= .sh .pl
+SUFFIXES= .sh .pl .py
 
 .sh :
 	rm -f $@
@@ -104,5 +106,13 @@ SUFFIXES= .sh .pl
 	$(PERL) -c $<
 	rm -f $@
 	echo "#! " $(PERL)  > $@
+	cat $< >> $@
+	chmod ugo+x $@
+
+.py:
+	rm -f $@
+	echo "#! " $(PYTHON) > $@
+	echo "import sys" >> $@
+	echo "sys.path.append(\"$(pyexecdir)\")" >> $@	
 	cat $< >> $@
 	chmod ugo+x $@
