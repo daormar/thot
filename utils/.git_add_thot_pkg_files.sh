@@ -4,11 +4,17 @@
 this_pkg_home=${THOT_GITHUB_HOME}
 
 # Add files in utils dir
+
 # .sh
 git add `find ${this_pkg_home}/utils -name "*.sh"| grep -v "utils/\."`
 
 # .pl
 for file in `find ${this_pkg_home}/utils -name "*.pl"`; do
+    git add $file
+done
+
+# .py
+for file in `find ${this_pkg_home}/utils -name "*.py"`; do
     git add $file
 done
 
