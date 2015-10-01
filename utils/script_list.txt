@@ -1,6 +1,7 @@
 # HOME_OF_PACKAGE SCRIPT_NAME
 /home/dortiz/smt/software/smt_preproc thot_smt_preproc
 /home/dortiz/smt/software/smt_preproc thot_tokenize
+/home/dortiz/smt/software/smt_preproc thot_detokenize
 /home/dortiz/smt/software/incr_models thot_pbs_get_ngram_counts
 /home/dortiz/smt/software/incr_models thot_gen_init_file_with_jmlm_weights
 /home/dortiz/smt/software/incr_models thot_dhs_trgfunc_jmlm
