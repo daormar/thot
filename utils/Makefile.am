@@ -7,8 +7,10 @@ $(smt_preproc_bin_scripts) $(error_correction_bin_scripts)		\
 $(downhill_simplex_bin_scripts) $(stack_dec_bin_scripts)		\
 $(exper_bin_scripts)
 
-nlp_common_bin_scripts= nlp_common/thot_shuffle	\
-nlp_common/thot_obtain_info_from_verbose_ppl
+nlp_common_bin_scripts= nlp_common/thot_shuffle				\
+nlp_common/thot_obtain_info_from_verbose_ppl				\
+nlp_common/thot_clean_corpus_ln nlp_common/thot_extract_sents_by_ln.sh	\
+nlp_common/thot_corpus_length
 
 incr_models_bin_scripts= incr_models/thot_pbs_get_ngram_counts		\
 incr_models/thot_merge_ngram_counts incr_models/thot_get_ngram_counts	\
