@@ -3,7 +3,7 @@
 
 # import modules
 import sys, nltk, codecs, math, re, Queue
-from itertools import izip
+import itertools
 from heapq import heappush, heappop
 
 # global variables
@@ -203,7 +203,7 @@ class TransModel:
     def train_tok_tm_par_files(self,rfile,tfile,verbose):
 
         # Read parallel files line by line
-        for rline, tline in zip(rfile,tfile):
+        for rline, tline in itertools.izip(rfile,tfile):
             rline=rline.strip("\n")
             raw_word_array=rline.split()
             tline=tline.strip("\n")
@@ -494,7 +494,7 @@ class LangModel:
         self.set_n(nval)
 
         # Read parallel files line by line
-        for rline, tline in zip(rfile,tfile):
+        for rline, tline in itertools.izip(rfile,tfile):
             rline=rline.strip("\n")
             raw_word_array=rline.split()
             tline=tline.strip("\n")
