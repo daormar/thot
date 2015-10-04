@@ -37,7 +37,7 @@ def main(argv):
     weights = [1,1,1,1]
     verbose=False
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"hf:m:i:w:v",["filename=","mpref=","interp=","weights="])
+        opts, args = getopt.getopt(sys.argv[1:],"hf:m:i:w:v",["help","filename=","mpref=","interp=","weights="])
     except getopt.GetoptError:
         print_help()
         sys.exit(2)

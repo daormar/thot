@@ -27,7 +27,7 @@ def main(argv):
     s_given=False
     t_given=False
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"hs:t:i:a:d:",["srcfn=","trgfn="])
+        opts, args = getopt.getopt(sys.argv[1:],"hs:t:i:a:d:",["help","srcfn=","trgfn="])
     except getopt.GetoptError:
         print_help()
         sys.exit(2)

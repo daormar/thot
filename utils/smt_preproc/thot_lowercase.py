@@ -17,7 +17,7 @@ def main(argv):
     f_given=False
     filename = ""
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"hf:",["filename="])
+        opts, args = getopt.getopt(sys.argv[1:],"hf:",["help","filename="])
     except getopt.GetoptError:
         print_help()
         sys.exit(2)

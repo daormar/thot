@@ -32,7 +32,7 @@ def main(argv):
     opref= ""
     verbose=False
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"hr:t:n:o:v",["rawfn=","tokfn=","nval=","opref="])
+        opts, args = getopt.getopt(sys.argv[1:],"hr:t:n:o:v",["help","rawfn=","tokfn=","nval=","opref="])
     except getopt.GetoptError:
         print_help()
         sys.exit(2)
