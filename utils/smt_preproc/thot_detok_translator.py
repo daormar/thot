@@ -18,8 +18,8 @@ def print_help():
     print >> sys.stderr, "-w \"...\"       Weight vector of length four:"
     print >> sys.stderr, "                <float1> : translation model weight"
     print >> sys.stderr, "                <float2> : phrase penalty model weight"
-    print >> sys.stderr, "                <float3> : language model weight"
-    print >> sys.stderr, "                <float4> : word penalty weight"
+    print >> sys.stderr, "                <float3> : word penalty weight"
+    print >> sys.stderr, "                <float4> : language model weight"
     print >> sys.stderr, "-v             Verbose mode"
     print >> sys.stderr, "--help         Print this help message"
 
@@ -101,7 +101,7 @@ def main(argv):
     print >> sys.stderr, "Loading translation model from file",tmfilename,"..."
     tmodel.load(tmfile)
 
-    # train language model
+    # load language model
     lmodel=smtpr.LangModel()
     lmfilename=mpref+".lm"
     lmfile = codecs.open(lmfilename, 'r', "utf-8")
@@ -112,7 +112,7 @@ def main(argv):
     # translate (detokenize)
     decoder=smtpr.Decoder(tmodel,lmodel,weights)
     print >> sys.stderr, "Detokenizing..."
-    decoder.translate(file,verbose)
+    decoder.detokenize(file,verbose)
 
 if __name__ == "__main__":
 
