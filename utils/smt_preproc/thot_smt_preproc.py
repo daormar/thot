@@ -29,6 +29,11 @@ class TransModel:
         self.s_counts={}
 
     #####
+    def clear(self):
+        self.st_counts.clear()
+        self.s_counts.clear()
+
+    #####
     def increase_count(self,src_words,trg_words,c):
         if(src_words in self.st_counts):
             if(trg_words in self.st_counts[src_words]):
@@ -221,6 +226,33 @@ class TransModel:
             self.train_sent_tok(raw_word_array,tok_array,verbose)
 
     #####
+    def train_sent_rec(self,raw_word_array,lc_word_array,verbose):
+        for i in range(len(raw_word_array)):
+            raw_word=raw_word_array[i]
+            lc_word=lc_word_array[i]
+            self.increase_count(lc_word,raw_word,1)
+
+    #####
+    def train_rec_tm(self,file,verbose):
+
+        # read raw file line by line
+        for line in file:
+            line=line.strip("\n")
+            raw_word_array=line.split()
+            lc_word_array=lowercase(line).split()
+
+            if(verbose==True):
+                print >> sys.stderr,"* Training tm for sentence pair:"
+                print >> sys.stderr," raw:",line.encode("utf-8")
+                print >> sys.stderr," lc:",
+                for i in range(len(lc_word_array)):
+                    print >> sys.stderr,lc_word_array[i].encode("utf-8"),
+                print >> sys.stderr,""
+
+            # Process sentence
+            self.train_sent_rec(raw_word_array,lc_word_array,verbose)
+
+    #####
     def get_mon_hyp_state(self,hyp):
         if(len(hyp.data.coverage)==0):
             return 0
@@ -234,6 +266,13 @@ class LangModel:
         self.n=_global_n
         self.interp_prob=_global_lm_interp_prob
         self.ng_counts={}
+
+
+    #####
+    def clear(self):
+        self.n=_global_n
+        self.interp_prob=_global_lm_interp_prob
+        self.ng_counts.clear()
 
     #####
     def set_n(self,n):
@@ -436,10 +475,10 @@ class LangModel:
                         str=str+tok_array[j]
                         j=j+1
                         if(j>len(tok_array)):
-                            print >> sys.stderr, "Warning: something went wrong while training the translation model"
+                            print >> sys.stderr, "Warning: something went wrong while training the language model"
                             end=True
 
-                # update the translation model
+                # update the language model
                 tm_entry_ok=True
                 tok_words=transform_word(tok_array[prev_j])
                 raw_word=transform_word(tok_array[prev_j])
@@ -502,6 +541,28 @@ class LangModel:
 
             # Process sentence
             self.train_sent_tok(raw_word_array,tok_array,lmvoc,verbose)
+
+    #####
+    def train(self,file,nval,verbose):
+
+        # initialize variables
+        lmvoc={}
+        self.set_n(nval)
+
+        # read raw file line by line
+        for line in file:
+            line=line.strip("\n")
+            word_array=line.split()
+
+            # Process sentence
+            if(verbose==True):
+                print >> sys.stderr,"* Training lm for sentence:",
+                for i in range(len(word_array)):
+                    print >> sys.stderr,word_array[i].encode("utf-8"),
+                print >> sys.stderr,""
+
+            # train language model for current sentence
+            self.train_word_array(word_array)
 
     #####
     def get_lm_state(self,words):
@@ -797,60 +858,59 @@ class Decoder:
             if(verbose==True):
                 print >> sys.stderr,"   option:",opt.encode("utf-8")
 
-            # Extend hypothesis if the translation option contains
-            # the source words involved in the extension
-            if(self.opt_contains_src_words(new_src_words,opt)==True):
-                ## Obtain new hypothesis
-                bfsd_newhyp=BfsHypdata()
+            # Extend hypothesis
 
-                # Obtain coverage for new hyp
-                for k in range(len(hyp.data.coverage)):
-                    bfsd_newhyp.coverage.append(hyp.data.coverage[k])
-                bfsd_newhyp.coverage.append(new_hyp_cov)
+            ## Obtain new hypothesis
+            bfsd_newhyp=BfsHypdata()
 
-                # Obtain list of words for new hyp
-                if(hyp.data.words==""):
-                    bfsd_newhyp.words=opt
-                else:
-                    bfsd_newhyp.words=hyp.data.words
-                    bfsd_newhyp.words=bfsd_newhyp.words+" "+opt
+            # Obtain coverage for new hyp
+            for k in range(len(hyp.data.coverage)):
+                bfsd_newhyp.coverage.append(hyp.data.coverage[k])
+            bfsd_newhyp.coverage.append(new_hyp_cov)
 
-                ## Obtain score for new hyp
+            # Obtain list of words for new hyp
+            if(hyp.data.words==""):
+                bfsd_newhyp.words=opt
+            else:
+                bfsd_newhyp.words=hyp.data.words
+                bfsd_newhyp.words=bfsd_newhyp.words+" "+opt
 
-                # Add translation model contribution
-                tm_lp=self.tm_ext_lp(new_src_words,opt,verbose)
-                w_tm_lp=self.weights[self.tmw_idx]*tm_lp
+            ## Obtain score for new hyp
 
-                # Add phrase penalty contribution
-                pp_lp=self.pp_ext_lp(verbose)
-                w_pp_lp=self.weights[self.phrpenw_idx]*pp_lp
+            # Add translation model contribution
+            tm_lp=self.tm_ext_lp(new_src_words,opt,verbose)
+            w_tm_lp=self.weights[self.tmw_idx]*tm_lp
 
-                # Add word penalty contribution
-                wp_lp=self.wp_ext_lp(opt,verbose)
-                w_wp_lp=self.weights[self.wpenw_idx]*wp_lp
+            # Add phrase penalty contribution
+            pp_lp=self.pp_ext_lp(verbose)
+            w_pp_lp=self.weights[self.phrpenw_idx]*pp_lp
 
-                # Add language model contribution
-                lm_lp=self.lm_ext_lp(hyp.data.words,opt,verbose)
-                w_lm_lp=self.weights[self.lmw_idx]*lm_lp
+            # Add word penalty contribution
+            wp_lp=self.wp_ext_lp(opt,verbose)
+            w_wp_lp=self.weights[self.wpenw_idx]*wp_lp
 
-                # Add language model contribution for <bos> if hyp is
-                # complete
-                w_lm_end_lp=0
-                if(self.cov_is_complete(bfsd_newhyp.coverage,tok_array)):
-                    lm_end_lp=self.lm_ext_lp(bfsd_newhyp.words,_global_eos_str,verbose)
-                    w_lm_end_lp=self.weights[self.lmw_idx]*lm_end_lp
-                    
-                if(verbose==True):
-                    print >> sys.stderr, "   expansion ->","w. lp:",hyp.score+w_tm_lp+w_pp_lp+w_lm_lp+w_lm_end_lp,"; w. tm logprob:",w_tm_lp,"; w. pp logprob:",w_pp_lp,"; w. wp logprob:",w_wp_lp,"; w. lm logprob:",w_lm_lp,"; w. lm end logprob:",w_lm_end_lp,";",str(bfsd_newhyp)
-                    print >> sys.stderr, "   ----"
+            # Add language model contribution
+            lm_lp=self.lm_ext_lp(hyp.data.words,opt,verbose)
+            w_lm_lp=self.weights[self.lmw_idx]*lm_lp
 
-                # Obtain new hypothesis
-                newhyp=Hypothesis()
-                newhyp.score=hyp.score + w_tm_lp + w_pp_lp + w_wp_lp + w_lm_lp + w_lm_end_lp
-                newhyp.data=bfsd_newhyp
+            # Add language model contribution for <bos> if hyp is
+            # complete
+            w_lm_end_lp=0
+            if(self.cov_is_complete(bfsd_newhyp.coverage,tok_array)):
+                lm_end_lp=self.lm_ext_lp(bfsd_newhyp.words,_global_eos_str,verbose)
+                w_lm_end_lp=self.weights[self.lmw_idx]*lm_end_lp
 
-                # Add expansion to list
-                exp_list.append(newhyp)
+            if(verbose==True):
+                print >> sys.stderr, "   expansion ->","w. lp:",hyp.score+w_tm_lp+w_pp_lp+w_lm_lp+w_lm_end_lp,"; w. tm logprob:",w_tm_lp,"; w. pp logprob:",w_pp_lp,"; w. wp logprob:",w_wp_lp,"; w. lm logprob:",w_lm_lp,"; w. lm end logprob:",w_lm_end_lp,";",str(bfsd_newhyp)
+                print >> sys.stderr, "   ----"
+
+            # Obtain new hypothesis
+            newhyp=Hypothesis()
+            newhyp.score=hyp.score + w_tm_lp + w_pp_lp + w_wp_lp + w_lm_lp + w_lm_end_lp
+            newhyp.data=bfsd_newhyp
+
+            # Add expansion to list
+            exp_list.append(newhyp)
 
         # Return result
         return exp_list
@@ -864,20 +924,20 @@ class Decoder:
             return coverage[len(coverage)-1]
     
     #####
-    def hyp_is_complete(self,hyp,tok_array):
+    def hyp_is_complete(self,hyp,src_word_array):
 
-        return self.cov_is_complete(hyp.data.coverage,tok_array)
+        return self.cov_is_complete(hyp.data.coverage,src_word_array)
 
     #####
-    def cov_is_complete(self,coverage,tok_array):
+    def cov_is_complete(self,coverage,src_word_array):
 
-        if(self.last_cov_pos(coverage)==len(tok_array)-1):
+        if(self.last_cov_pos(coverage)==len(src_word_array)-1):
             return True
         else:
             return False
 
     #####
-    def obtain_nblist(self,tok_array,nblsize,verbose):
+    def obtain_nblist(self,src_word_array,nblsize,verbose):
         # Insert initial hypothesis in stack
 #        priority_queue=Queue.PriorityQueue()
         priority_queue=PriorityQueue()
@@ -892,7 +952,7 @@ class Decoder:
         # Obtain n-best hypotheses
         nblist=[]
         for i in xrange(nblsize):
-            hyp=self.best_first_search(tok_array,priority_queue,stdict,verbose)
+            hyp=self.best_first_search(src_word_array,priority_queue,stdict,verbose)
 
             # Append hypothesis to nblist
             if(len(hyp.data.coverage)>0):        
@@ -922,11 +982,12 @@ class Decoder:
                 for j in range(leftmost_src_pos,coverage[i]+1):
                     detok_word=detok_word+tok_array[j]
             
-                # Incorporate detokenize word to detokenized sentence
+                # Incorporate detokenized word to detokenized sentence
                 if(i==0):
                     result=detok_word
                 else:
                     result=result+" "+detok_word
+            # Return detokenized sentence
             return result
         else:
             return ""
@@ -944,7 +1005,7 @@ class Decoder:
                     return(False,hyp)
 
     #####
-    def best_first_search(self,tok_array,priority_queue,stdict,verbose):
+    def best_first_search(self,src_word_array,priority_queue,stdict,verbose):
         # Initialize variables
         end=False
         niter=0
@@ -964,15 +1025,15 @@ class Decoder:
                 if(verbose==True):
                     print >> sys.stderr, "** niter:",niter," ; lp:",hyp.score,";",str(hyp.data)
                 # Stop if the hypothesis is complete
-                if(self.hyp_is_complete(hyp,tok_array)==True):
+                if(self.hyp_is_complete(hyp,src_word_array)==True):
                     end=True
                 else:
                     # Expand hypothesis
                     for l in range(0,_global_a_par):
                         new_hyp_cov=self.last_cov_pos(hyp.data.coverage)+1+l
-                        if(new_hyp_cov<len(tok_array)):
+                        if(new_hyp_cov<len(src_word_array)):
                             # Obtain expansion
-                            exp_list=self.expand(tok_array,hyp,new_hyp_cov,verbose)
+                            exp_list=self.expand(src_word_array,hyp,new_hyp_cov,verbose)
                             # Insert new hypotheses
                             for k in range(len(exp_list)):
                                 # Insert hypothesis
@@ -992,7 +1053,7 @@ class Decoder:
                 print  >> sys.stderr, "Warning: maximum number of iterations exceeded"
             return Hypothesis()
         else:
-            if(self.hyp_is_complete(hyp,tok_array)==True):
+            if(self.hyp_is_complete(hyp,src_word_array)==True):
                 if(verbose==True):
                     print >> sys.stderr, "*** Best first search finished successfully after",niter,"iterations, hyp. score:",hyp.score
                 hyp.score=hyp.score
@@ -1003,7 +1064,7 @@ class Decoder:
                 return Hypothesis()
 
     #####
-    def translate(self,file,verbose):
+    def detokenize(self,file,verbose):
         # read raw file line by line
         lineno=0
         for line in file:
@@ -1036,8 +1097,40 @@ class Decoder:
             else:
                 print ""
 
+    #####
+    def recase(self,file,verbose):
+        # read raw file line by line
+        lineno=0
+        for line in file:
+            # Obtain array with tokenized words
+            lineno=lineno+1
+            line=line.strip("\n")
+            lc_word_array=line.split()
+            nblsize=1
+            if(verbose==True):
+                print >> sys.stderr,""
+                print >> sys.stderr,"**** Processing sentence: ",line.encode("utf-8")
+
+            if(len(lc_word_array)>0):
+                # Obtain n-best list of detokenized sentences
+                nblist=self.obtain_nblist(lc_word_array,nblsize,verbose)
+
+                # Print recased sentence
+                if(len(nblist)==0):
+                    print line.encode("utf-8")
+                    print >> sys.stderr, "Warning: no recased sentences were found for sentence in line",lineno
+                else:
+                    best_hyp=nblist[0]
+                    print best_hyp.data.words.encode("utf-8")
+            else:
+                print ""
+
 ##################################################
 def tokenize(str):
 #        tokens = nltk.word_tokenize(line)
     tokens = nltk.wordpunct_tokenize(str)
     return tokens
+
+##################################################
+def lowercase(str):
+    return str.lower()
