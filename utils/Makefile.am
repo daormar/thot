@@ -43,7 +43,9 @@ phrase_models/thot_pbs_get_nbest_for_trg phrase_models/thot_cut_ttable
 
 smt_preproc_bin_scripts= smt_preproc/thot_tokenize			\
 smt_preproc/thot_train_detok_model smt_preproc/thot_detok_translator	\
-smt_preproc/thot_detokenize smt_preproc/thot_lowercase
+smt_preproc/thot_detokenize smt_preproc/thot_lowercase			\
+smt_preproc/thot_train_rec_lm smt_preproc/thot_train_rec_tm		\
+smt_preproc/thot_rec_translator smt_preproc/thot_recase
 
 error_correction_bin_scripts= error_correction/thot_rescore_nbest	\
 error_correction/thot_obtain_best_trans_from_nbl			\
