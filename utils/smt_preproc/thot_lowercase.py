@@ -3,6 +3,7 @@
 
 # import modules
 import sys, getopt, codecs
+import thot_smt_preproc as smtpr
 
 ##################################################
 def print_help():
@@ -46,7 +47,7 @@ def main(argv):
     # read file line by line
     for line in file:
         line=line.strip("\n")
-        line=line.lower()
+        line=smtpr.lowercase(line)
         print line.encode("utf-8")
 
 if __name__ == "__main__":
