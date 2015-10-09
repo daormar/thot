@@ -37,6 +37,17 @@ AC_PATH_PROGS(QSUB, qsub)
 AC_PATH_PROGS(QSTAT, qstat)
 AC_PATH_PROGS(QRLS, qrls)
 
+# check that PIPESTATUS is available
+echo -n "checking whether PIPESTATUS is available... "
+if test -z "${PIPESTATUS}"; then
+  PIPE_FAIL="disabled_pipe_fail"
+  echo "no"
+else
+  PIPE_FAIL="pipe_fail"
+  echo "yes"
+fi
+AC_SUBST(PIPE_FAIL)
+
 # check that qsub works
 if test ! -z "$QSUB"; then
  echo -n "checking whether qsub works... "

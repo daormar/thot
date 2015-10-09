@@ -99,6 +99,7 @@ SUFFIXES= .sh .pl .py
 	echo "MKTEMP="$(MKTEMP) >> $@
 	echo "LN="$(LN) >> $@
 	echo "WC="$(WC) >> $@
+	echo "PIPE_FAIL="$(PIPE_FAIL) >> $@
 	echo "QSUB="$(QSUB) >> $@
 	echo "QSUB_WORKS=\""$(QSUB_WORKS)"\"" >> $@
 	echo "QSUB_TERSE_OPT=\""$(QSUB_TERSE_OPT)"\"" >> $@
