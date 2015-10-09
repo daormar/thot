@@ -24,7 +24,8 @@ usage()
 {
     echo "thot_auto_smt           [-pr <int>]"
     echo "                        -s <string> -t <string> -o <string>"
-    echo "                        [-n <int>]"
+    echo "                        [--tok]"
+    echo "                        [-nit <int>] [-n <int>]"
     echo "                        [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
@@ -33,9 +34,11 @@ usage()
     echo "                        following suffixes are assumed: .train, .dev and .test)"
     echo "-t <string>             Prefix of files with target sentences (the"
     echo "                        following suffixes are assumed: .train, .dev and .test)"
-    echo "-o <string>             Output directory common to all processors."
+    echo "-o <string>             Output directory common to all processors"
+    echo "--tok                   Execute tokenization stage"
     echo "-nit <int>              Number of iterations of the EM algorithm when training"
-    echo "                        single word models"
+    echo "                        single word models (5 by default)"
+    echo "-n <int>                Order of the n-gram language models (4 by default)"
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTES:"
@@ -105,8 +108,11 @@ pr_val=1
 s_given=0
 t_given=0
 o_given=0
+tok_given=0
 nit_given=0
 nitval=5
+n_given=0
+n_val=4
 qs_given=0
 tdir_given=0
 tdir="/tmp"
@@ -147,10 +153,18 @@ while [ $# -ne 0 ]; do
                 o_given=1
             fi
             ;;
+        "--tok") tok_given=1
+            ;;
         "-nit") shift
             if [ $# -ne 0 ]; then
                 nitval=$1
                 nit_given=1
+            fi
+            ;;
+        "-n") shift
+            if [ $# -ne 0 ]; then
+                n_val=$1
+                n_given=1
             fi
             ;;
         "-qs") shift
@@ -279,13 +293,44 @@ fi
 
 ## Process parameters
 
-# Train models
+# Tokenize corpus if requested
+if [ ${tok_given} -eq 1 ]; then
+    # Create dir
+    if [ ! -d ${outd}/preproc_data ]; then
+        mkdir ${outd}/preproc_data || exit 1
+    fi
+    
+    # Tokenize corpus
+    echo "**** Tokenizing corpus" >&2
+${bindir}/thot_tokenize -f ${scorpus_train} \
+        > ${outd}/preproc_data/src_tok.train 2>${outd}/preproc_data/thot_tokenize.log || exit 1
+${bindir}/thot_tokenize -f ${scorpus_dev} \
+        > ${outd}/preproc_data/src_tok.dev 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
+${bindir}/thot_tokenize -f ${scorpus_test} \
+        > ${outd}/preproc_data/src_tok.test 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
+${bindir}/thot_tokenize -f ${tcorpus_train} \
+        > ${outd}/preproc_data/trg_tok.train 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
+${bindir}/thot_tokenize -f ${tcorpus_dev} \
+        > ${outd}/preproc_data/trg_tok.dev 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
+${bindir}/thot_tokenize -f ${tcorpus_test} \
+        > ${outd}/preproc_data/trg_tok.test 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
+    echo "" >&2
 
+    # Redefine corpus variables
+    scorpus_train=${outd}/preproc_data/src_tok.train
+    scorpus_dev=${outd}/preproc_data/src_tok.dev
+    scorpus_test=${outd}/preproc_data/src_tok.test
+    tcorpus_train=${outd}/preproc_data/trg_tok.train
+    tcorpus_dev=${outd}/preproc_data/trg_tok.dev
+    tcorpus_test=${outd}/preproc_data/trg_tok.test
+fi
+
+# Train models
 if [ -f ${scorpus_train} -a -f ${tcorpus_train} ]; then
 
     # Train language model
     echo "**** Training language model" >&2
-    ${bindir}/thot_lm_train -pr ${pr_val} -c ${tcorpus_train} -o ${outd}/lm -n 4 -unk \
+    ${bindir}/thot_lm_train -pr ${pr_val} -c ${tcorpus_train} -o ${outd}/lm -n ${n_val} -unk \
         ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
 
     # Train translation model
@@ -299,13 +344,11 @@ else
 fi
 
 # Generate cfg file
-
 echo "**** Generating configuration file" >&2
 ${bindir}/thot_gen_cfg_file $outd/lm/lm_desc $outd/tm/tm_desc > $outd/server.cfg || exit 1
 echo "" >&2
 
 # Tune parameters
-
 if [ -f ${scorpus_dev} -a -f ${tcorpus_dev} ]; then
     echo "**** Tuning model parameters" >&2
     ${bindir}/thot_smt_tune -pr ${pr_val} -c $outd/server.cfg -s ${scorpus_dev} -t ${tcorpus_dev} -o $outd/tune ${qs_opt} \
@@ -314,7 +357,6 @@ if [ -f ${scorpus_dev} -a -f ${tcorpus_dev} ]; then
 fi
 
 # Prepare system to translate test corpus
-
 if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
     echo "**** Preparing system to translate test corpus" >&2
     ${bindir}/thot_prepare_sys_for_test -c $outd/tune/tuned_for_dev.cfg -t ${scorpus_test} \
@@ -323,7 +365,6 @@ if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; t
 fi
 
 # Translate test corpus
-
 if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
     echo "**** Translating test corpus" >&2
 ${bindir}/thot_decoder -pr ${pr_val} -c $outd/systest/test_specific.cfg \
@@ -333,9 +374,25 @@ ${bindir}/thot_decoder -pr ${pr_val} -c $outd/systest/test_specific.cfg \
 fi
 
 # Obtain BLEU score
-
 if [ ${test_trans_executed} = "yes" ]; then
     echo "**** Obtaining BLEU score" >&2
-${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $outd/thot_decoder_out > $outd/test.out.bleu || exit 1
+${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $outd/thot_decoder_out > $outd/thot_decoder_out.bleu || exit 1
     echo "" >&2
+fi
+
+### Execute post-processing steps if required
+
+# Define output_file variable
+output_file=$outd/thot_decoder_out
+
+# Detokenization stage
+if [ ${tok_given} = 1 ]; then
+    # Detokenize
+    echo "**** Detokenizing output" >&2
+${bindir}/thot_detokenize -f ${output_file} -r ${tcorpus_pref}.train \
+        > ${output_file}.detok 2> ${outd}/thot_detokenize.log
+    echo "" >&2
+
+    # Redefine output_file variable
+    output_file=${output_file}.detok
 fi
