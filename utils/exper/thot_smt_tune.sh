@@ -123,7 +123,7 @@ create_lm_files()
     if [ -d ${outd}/lm ]; then
         echo "Warning! directory for language model does exist" >&2 
     else
-        mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; exit 1; }
+        mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; return 1; }
     fi
 
     # Check if tm file is a descriptor
@@ -135,7 +135,7 @@ create_lm_files()
     else
         # Create main directory
         if [ ! -d ${outd}/lm/main ]; then
-            mkdir ${outd}/lm/main || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
+            mkdir ${outd}/lm/main || { echo "Error! cannot create directory for translation model" >&2; return 1; }
         fi
 
         # Check availability of lm files
@@ -149,12 +149,12 @@ create_lm_files()
         for file in `ls ${lmfile}*`; do
             if [ $file = ${lmfile}.weights ]; then
                 # Create regular file for the weights
-                cp ${lmfile}.weights ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; exit 1; }
+                cp ${lmfile}.weights ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; return 1; }
             else
                 # Create hard links for the rest of the files
-                $LN -f $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; exit 1; }
+                $LN -f $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; return 1; }
             fi
-            #        cp $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; exit 1; }
+            #        cp $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; return 1; }
         done
         
         # Obtain new lm file name
@@ -184,17 +184,17 @@ iv_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUC
 
     # Execute tuning algorithm
 ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
--ftol ${ftol_lm} -o ${outd}/lm_adjw -u ${bindir}/thot_dhs_trgfunc_jmlm ${debug_opt} || exit 1
+-ftol ${ftol_lm} -o ${outd}/lm_adjw -u ${bindir}/thot_dhs_trgfunc_jmlm ${debug_opt} || return 1
 }
 
 ########
 tune_lm()
 {    
     # Create initial lm files
-    create_lm_files
+    create_lm_files || return 1
 
     # Tune language model
-    lm_downhill
+    lm_downhill || return 1
 }
 
 ########
@@ -215,7 +215,7 @@ create_tm_dev_files()
     if [ -d ${outd}/tm_dev ]; then
         echo "Warning! directory for dev. translation model does exist" >&2 
     else
-        mkdir -p ${outd}/tm_dev || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
+        mkdir -p ${outd}/tm_dev || { echo "Error! cannot create directory for translation model" >&2; return 1; }
     fi
 
     # Check if tm file is a descriptor
@@ -227,7 +227,7 @@ create_tm_dev_files()
     else
         # Create main directory
         if [ ! -d ${outd}/tm_dev/main ]; then
-            mkdir ${outd}/tm_dev/main || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
+            mkdir ${outd}/tm_dev/main || { echo "Error! cannot create directory for translation model" >&2; return 1; }
         fi
 
         # Check availability of tm files
@@ -241,7 +241,7 @@ create_tm_dev_files()
         for file in `ls ${tmfile}*`; do
             if [ $file != ${tmfile}.ttable ]; then
                 # Create hard links for all of the files except the phrase table
-                $LN -f $file ${outd}/tm_dev/main || { echo "Error while preparing translation model files" >&2 ; exit 1; }
+                $LN -f $file ${outd}/tm_dev/main || { echo "Error while preparing translation model files" >&2 ; return 1; }
             fi
         done
         
@@ -272,7 +272,7 @@ create_tm_files()
     if [ -d ${outd}/tm ]; then
         echo "Warning! directory for translation model does exist" >&2 
     else
-        mkdir -p ${outd}/tm || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
+        mkdir -p ${outd}/tm || { echo "Error! cannot create directory for translation model" >&2; return 1; }
     fi
 
     # Check if tm file is a descriptor
@@ -284,7 +284,7 @@ create_tm_files()
     else
         # Create main directory
         if [ ! -d ${outd}/tm/main ]; then
-            mkdir ${outd}/tm/main || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
+            mkdir ${outd}/tm/main || { echo "Error! cannot create directory for translation model" >&2; return 1; }
         fi
 
         # Check availability of tm files
@@ -297,7 +297,7 @@ create_tm_files()
         # Create tm files
         for file in `ls ${tmfile}*`; do
             # Create hard links for each file
-            $LN -f $file ${outd}/tm/main || { echo "Error while preparing translation model files" >&2 ; exit 1; }
+            $LN -f $file ${outd}/tm/main || { echo "Error while preparing translation model files" >&2 ; return 1; }
         done
 
         # Obtain new tm file name
@@ -319,12 +319,12 @@ ${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
 ########
 create_cfg_file_for_tuning()
 {
-    cat $cmdline_cfg | $AWK -v nlm=$newlmfile -v ntm=$newtmdevfile \
+    $AWK -v nlm=$newlmfile -v ntm=$newtmdevfile \
                          '{
                            if($1=="-lm") $2=nlm
                            if($1=="-tm") $2=ntm
                            printf"%s\n",$0
-                          }'
+                          }' $cmdline_cfg
 }
 
 ########
@@ -367,7 +367,7 @@ export PHRDECODER=${bindir}/thot_decoder
 
     # Execute tuning algorithm
 ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
--ftol ${ftol_loglin} -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || exit 1
+-ftol ${ftol_loglin} -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || return 1
 }
 
 ########
@@ -401,7 +401,7 @@ tune_loglin()
     if [ -d ${outd}/lm ]; then
         lm_dir_already_exist=1
     else
-        mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; exit 1; }
+        mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; return 1; }
         lm_dir_already_exist=0
     fi
 
@@ -413,21 +413,21 @@ tune_loglin()
     ######
 
     # Create initial tm_dev files
-    create_tm_dev_files
+    create_tm_dev_files || return 1
 
     # Filter translation table
-    filter_ttable
+    filter_ttable || return 1
 
     # Create cfg file for tuning
     create_cfg_file_for_tuning > ${outd}/tune_loglin.cfg
 
     # Tune log-linear model
-    loglin_downhill
+    loglin_downhill || return 1
 
     ######
 
     # Create initial tm files
-    create_tm_files
+    create_tm_files || return 1
 
     # Create cfg file of tuned system
     create_cfg_file_for_tuned_sys > ${outd}/tuned_for_dev.cfg
@@ -589,7 +589,7 @@ else
         # echo "Error! output directory should not exist" >&2 
         # exit 1
     else
-        mkdir -p ${outd} || { echo "Error! cannot create output directory" >&2; exit 1; }
+        mkdir -p ${outd} || { echo "Error! cannot create output directory" >&2; return 1; }
     fi
     # Obtain absolute path
     outd=`get_absolute_path $outd`
@@ -615,9 +615,9 @@ ftol_loglin=0.001
 
 # Tune models
 echo "* Tuning language model... " >&2
-tune_lm
+tune_lm || exit 1
 echo "" >&2
 
 echo "* Tuning loglinear model weights... " >&2
-tune_loglin
+tune_loglin || exit 1
 echo "" >&2

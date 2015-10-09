@@ -108,7 +108,7 @@ create_lm_files()
     if [ -d ${outd}/lm ]; then
         echo "Warning! directory for language model does exist" >&2 
     else
-        mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; exit 1; }
+        mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; return 1; }
     fi
 
     # Check if tm file is a descriptor
@@ -120,7 +120,7 @@ create_lm_files()
     else
         # Create main directory
         if [ ! -d ${outd}/lm/main ]; then
-            mkdir ${outd}/lm/main || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
+            mkdir ${outd}/lm/main || { echo "Error! cannot create directory for translation model" >&2; return 1; }
         fi
 
         # Check availability of lm files
@@ -133,7 +133,7 @@ create_lm_files()
         # Create lm files
         for file in `ls ${lmfile}*`; do
             # Create hard links for each file
-            $LN -f $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; exit 1; }
+            $LN -f $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; return 1; }
         done
 
         # Obtain new lm file name
@@ -152,7 +152,7 @@ create_tm_files()
     if [ -d ${outd}/tm ]; then
         echo "Warning! directory for translation model does exist" >&2 
     else
-        mkdir -p ${outd}/tm || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
+        mkdir -p ${outd}/tm || { echo "Error! cannot create directory for translation model" >&2; return 1; }
     fi
 
     # Obtain path of tm file
@@ -168,7 +168,7 @@ create_tm_files()
     else
         # Create main directory
         if [ ! -d ${outd}/tm/main ]; then
-            mkdir ${outd}/tm/main || { echo "Error! cannot create directory for translation model" >&2; exit 1; }
+            mkdir ${outd}/tm/main || { echo "Error! cannot create directory for translation model" >&2; return 1; }
         fi
 
         # Check availability of tm files
@@ -182,7 +182,7 @@ create_tm_files()
         for file in `ls ${tmfile}*`; do
             if [ $file != ${tmfile}.ttable ]; then
                 # Create hard links for the all of the files except the phrase table
-                $LN -f $file ${outd}/tm/main || { echo "Error while preparing translation model files" >&2 ; exit 1; }
+                $LN -f $file ${outd}/tm/main || { echo "Error while preparing translation model files" >&2 ; return 1; }
             fi
         done
 
@@ -325,7 +325,7 @@ else
         # echo "Error! output directory should not exist" >&2 
         # exit 1
     else
-        mkdir -p ${outd}/ || { echo "Error! cannot create output directory" >&2; exit 1; }
+        mkdir -p ${outd}/ || { echo "Error! cannot create output directory" >&2; return 1; }
     fi
     # Obtain absolute path
     outd=`get_absolute_path $outd`
@@ -346,13 +346,13 @@ if [ ${sdir_given} -eq 1 ]; then
 fi
 
 # Create lm files
-create_lm_files
+create_lm_files || exit 1
 
 # Create tm files
-create_tm_files
+create_tm_files || exit 1
 
 # Filter tm model
-filter_ttable
+filter_ttable || exit 1
 
 # Generate cfg file
 generate_cfg_file > ${outd}/test_specific.cfg
