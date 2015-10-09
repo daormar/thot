@@ -10,6 +10,22 @@
 # NOTE: here, source phrases are those that appear in first place in
 # the phrase table
 
+disabled_pipe_fail()
+{
+    return $?
+}
+
+pipe_fail()
+{
+    # test if there is at least one command to exit with a non-zero status
+    for pipe_status_elem in ${PIPESTATUS[*]}; do 
+        if test ${pipe_status_elem} -ne 0; then 
+            return 1; 
+        fi 
+    done
+    return 0
+}
+
 exclude_readonly_vars()
 {
     ${AWK} -F "=" 'BEGIN{
@@ -80,7 +96,7 @@ get_nbest_for_trg()
     echo "** Processing file ${ttable_file} (started at "`date`")..." >> $SDIR/log
 
     cat ${ttable_file} 2> $SDIR/err | \
-        $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T $TMP > $outfile 2>> $SDIR/err || \
+        $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T $TMP 2>> $SDIR/err > $outfile ; ${PIPEFAIL} || \
         { echo "Error while executing get_nbest_for_trg" >> $SDIR/log ; return 1 ; }
 
     # Write date to log file
@@ -212,10 +228,10 @@ report_errors()
     num_err=`$GREP "Error while executing thot_ilm_perp" ${outfile}.getnb_log | wc -l`
     if [ ${num_err} -gt 0 ]; then
         echo "Error during the execution of thot_pbs_get_nbest_for_trg (get_nbest_for_trg)" >&2
-        echo "File ${output}.getnb_err contains information for error diagnosing" >&2
+        echo "File ${outfile}.getnb_err contains information for error diagnosing" >&2
     else
         echo "Synchronization error" >&2
-        echo "File ${output}.getnb_err contains information for error diagnosing" >&2
+        echo "File ${outfile}.getnb_err contains information for error diagnosing" >&2
     fi
 }
 

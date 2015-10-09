@@ -135,7 +135,7 @@ merge_alig_op()
     echo "** Merging alignment files (started at "`date`")..." > $SDIR/merge.log
 
     # merge alig files
-    cat $SDIR/*.A3.final > ${output}.A3.final 2>> $SDIR/merge.log || \
+    cat $SDIR/*.A3.final 2>> $SDIR/merge.log > ${output}.A3.final || \
         { echo "Error while executing merge_alig_op" >> $SDIR/log ; return 1 ; }
 
     # Write date to log file

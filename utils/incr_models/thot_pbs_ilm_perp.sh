@@ -75,7 +75,7 @@ ilm_perp()
     # Write date to log file
     echo "** Processing file ${cfile} (started at "`date`")..." >> $SDIR/log
     
-    $bindir/thot_ilm_perp -lm ${lmfile} -c ${cfile} -n ${n_val} ${add_opts} > $outfile 2> $SDIR/err || \
+    $bindir/thot_ilm_perp -lm ${lmfile} -c ${cfile} -n ${n_val} ${add_opts} 2> $SDIR/err > $outfile || \
         { echo "Error while executing thot_ilm_perp" >> $SDIR/log ; return 1 ; }
 
     # Write date to log file

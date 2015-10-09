@@ -57,6 +57,11 @@ usage()
     echo "--version          : Output version information and exit."
 }
 
+disabled_pipe_fail()
+{
+    return $?
+}
+
 pipe_fail()
 {
     # test if there is at least one command to exit with a non-zero status
@@ -352,7 +357,7 @@ proc_chunk()
     ${bindir}/thot_format_corpus_csl ${chunks_dir}/${src_chunk} ${chunks_dir}/${trg_chunk} \
         2>> ${aligs_per_chunk_dir}/${chunk}_bestal.log | \
         ${bindir}/thot_calc_swm_lgprob -sw ${sw_val} -P - -max \
-        > ${aligs_per_chunk_dir}/${chunk}_bestal 2>> ${aligs_per_chunk_dir}/${chunk}_bestal.log ; pipe_fail || \
+        2>> ${aligs_per_chunk_dir}/${chunk}_bestal.log > ${aligs_per_chunk_dir}/${chunk}_bestal ; ${PIPE_FAIL} || \
         { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1; }
 
     # Write date to log file
@@ -377,7 +382,7 @@ generate_alig_file()
 
     # Dump alignments in output file
     for f in `ls ${aligs_per_chunk_dir}/*_bestal`; do
-        cat $f >> ${output}.bestal 2>> ${aligs_per_chunk_dir}/merge.log || \
+        cat $f 2>> ${aligs_per_chunk_dir}/merge.log >> ${output}.bestal || \
             { echo "Error while executing generate_alig_file" >> $SDIR/log ; return 1; }
     done
 

@@ -62,6 +62,11 @@ usage()
     echo "--version          : Output version information and exit."
 }
 
+disabled_pipe_fail()
+{
+    return $?
+}
+
 pipe_fail()
 {
     # test if there is at least one command to exit with a non-zero status
@@ -166,7 +171,7 @@ estimate_init_model()
     
     # Generate model for void corpus
     ${bindir}/thot_gen_sw_model -s ${init_model_dir}/void_corpus -t ${init_model_dir}/void_corpus \
-        ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl -o ${init_model_dir}/model 2> ${init_model_dir}/log ; pipe_fail || return 1
+        ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl -o ${init_model_dir}/model 2> ${init_model_dir}/log || return 1
      
     # Add complete vocabularies
     ${bindir}/thot_get_swm_vocab ${srcf} "NULL UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.svcb
@@ -268,7 +273,7 @@ proc_chunk()
         ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${init_model_dir}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 -npr ${npr_val} \
             -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}_proc_n$n.log ; pipe_fail || \
+            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}_proc_n$n.log || \
             { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
 
         if [ ${debug} -ne 0 -a "${file_format}" = "text" ]; then
@@ -282,7 +287,7 @@ proc_chunk()
         ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${filtered_model_dir}/${chunk}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 \
             -npr ${npr_val} -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}_proc_n$n.log ; pipe_fail || \
+            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}_proc_n$n.log || \
             { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
 
     fi
@@ -347,7 +352,8 @@ merge_lex_counts()
 merge_lex_counts_text()
 {
     # Append and merge lex sorted counts
-    append_lex_sorted_counts_text | ${bindir}/thot_merge_text_ilextable -ns -T $TMP > ${curr_tables_dir}/merged_lex_counts || return 1
+    append_lex_sorted_counts_text | ${bindir}/thot_merge_text_ilextable -ns -T $TMP \
+        > ${curr_tables_dir}/merged_lex_counts ; ${PIPE_FAIL} || return 1
 
     # Delete lex sorted counts
     rm ${curr_tables_dir}/lex_counts_*
@@ -356,7 +362,8 @@ merge_lex_counts_text()
 merge_lex_counts_bin()
 {
     # Merge lex sorted counts
-    ${bindir}/thot_merge_bin_ilextable ${curr_tables_dir}/lex_counts_* > ${curr_tables_dir}/merged_lex_counts || return 1
+    ${bindir}/thot_merge_bin_ilextable ${curr_tables_dir}/lex_counts_* \
+        > ${curr_tables_dir}/merged_lex_counts ; ${PIPE_FAIL} || return 1
 
     # Delete lex sorted counts
     rm ${curr_tables_dir}/lex_counts_*
@@ -382,9 +389,11 @@ merge_alig_counts_text()
 {
     # Append and merge alig sorted counts
     case ${alig_ext} in
-        "hmm_alignd") append_alig_sorted_counts_text | ${bindir}/thot_merge_text_ihmmatable -ns -T $TMP > ${curr_tables_dir}/merged_alig_counts || return 1
+        "hmm_alignd") append_alig_sorted_counts_text | ${bindir}/thot_merge_text_ihmmatable -ns -T $TMP \
+            > ${curr_tables_dir}/merged_alig_counts ; ${PIPE_FAIL} || return 1
             ;;
-        "ibm2_alignd") append_alig_sorted_counts_text | ${bindir}/thot_merge_text_iibm2atable -ns -T $TMP > ${curr_tables_dir}/merged_alig_counts || return 1
+        "ibm2_alignd") append_alig_sorted_counts_text | ${bindir}/thot_merge_text_iibm2atable -ns -T $TMP \
+            > ${curr_tables_dir}/merged_alig_counts ; ${PIPE_FAIL} || return 1
             ;;
     esac
 
@@ -398,9 +407,11 @@ merge_alig_counts_bin()
 {
     # Merge alig sorted counts
     case ${alig_ext} in
-        "hmm_alignd") ${bindir}/thot_merge_bin_ihmmatable ${curr_tables_dir}/alig_counts_* > ${curr_tables_dir}/merged_alig_counts || return 1
+        "hmm_alignd") ${bindir}/thot_merge_bin_ihmmatable ${curr_tables_dir}/alig_counts_* \
+            > ${curr_tables_dir}/merged_alig_counts ; ${PIPE_FAIL} || return 1
             ;;
-        "ibm2_alignd") ${bindir}/thot_merge_bin_iibm2atable ${curr_tables_dir}/alig_counts_*  > ${curr_tables_dir}/merged_alig_counts || return 1
+        "ibm2_alignd") ${bindir}/thot_merge_bin_iibm2atable ${curr_tables_dir}/alig_counts_* \
+            > ${curr_tables_dir}/merged_alig_counts ; ${PIPE_FAIL} || return 1
             ;;
     esac
 
@@ -541,7 +552,8 @@ prune_lex_table_text()
 
 prune_lex_table_bin()
 {
-    ${bindir}/thot_prune_bin_ilextable -l ${curr_tables_dir}/merged_lex_counts -n ${npr_val} -c ${cpr_val} > ${output}.${lex_ext} || return 1
+    ${bindir}/thot_prune_bin_ilextable -l ${curr_tables_dir}/merged_lex_counts -n ${npr_val} -c ${cpr_val} \
+        > ${output}.${lex_ext} || return 1
 }
 
 generate_final_model()

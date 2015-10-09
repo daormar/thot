@@ -53,6 +53,11 @@ usage()
     echo "--version          : Output version information and exit."
 }
 
+disabled_pipe_fail()
+{
+    return $?
+}
+
 pipe_fail()
 {
     # test if there is at least one command to exit with a non-zero status
@@ -398,8 +403,8 @@ proc_chunk()
 
     # Extract counts from chunk and sort them
     $bindir/thot_get_ngram_counts_mr -c ${chunks_dir}/${chunk} -n ${n_val} -tdir $TMP | add_length_col | sort_counts | \
-        add_chunk_id > ${counts_per_chunk_dir}/${chunk}_sorted_counts \
-        2>> ${counts_per_chunk_dir}/${chunk}_sorted_counts.log ; pipe_fail || \
+        add_chunk_id 2>> ${counts_per_chunk_dir}/${chunk}_sorted_counts.log \
+        > ${counts_per_chunk_dir}/${chunk}_sorted_counts ; ${PIPE_FAIL} || \
         { echo "Error while executing proc_chunk for ${chunks_dir}/${chunk}" >> $SDIR/log ; return 1 ; }
 
     # Write date to log file
@@ -439,8 +444,8 @@ generate_counts_file()
     # Merge count files
     merge_sort 2>> ${counts_per_chunk_dir}/gen_counts.log | \
         remove_length_col 2>> ${counts_per_chunk_dir}/gen_counts.log | \
-        ${bindir}/thot_merge_ngram_counts > ${output} \
-        2>> ${counts_per_chunk_dir}/gen_counts.log ; pipe_fail || \
+        ${bindir}/thot_merge_ngram_counts 2>> ${counts_per_chunk_dir}/gen_counts.log \
+        > ${output} ; ${PIPE_FAIL} || \
         { echo "Error while executing generate_counts_file" >> $SDIR/log ; return 1 ; }
 
     # Copy log file

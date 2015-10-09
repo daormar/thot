@@ -80,17 +80,6 @@ usage()
     echo " --config          : Show current configuration."
 }
 
-pipe_fail()
-{
-    # test if there is at least one command to exit with a non-zero status
-    for pipe_status_elem in ${PIPESTATUS[*]}; do 
-        if test ${pipe_status_elem} -ne 0; then 
-            return 1; 
-        fi 
-    done
-    return 0
-}
-
 str_is_option()
 {
     echo "" | ${AWK} -v s=$1 '{if(!match(s,"-[a-zA-Z]")) print "0"; else print "1"}' 
@@ -252,7 +241,7 @@ trans_frag()
     echo "** Processing chunk ${fragm} (started at "`date`")..." > $SDIR/qs_trans_${fragm}.log
 
     ${bindir}/thot_ms_dec ${cfg_opt} -t $SDIR/${fragm} ${dec_pars} \
-        ${wg_par}wg_${fragm} >$SDIR/qs_trans_${fragm}.out 2>> $SDIR/qs_trans_${fragm}.log || \
+        ${wg_par}wg_${fragm} 2>> $SDIR/qs_trans_${fragm}.log >$SDIR/qs_trans_${fragm}.out || \
         { echo "Error while executing trans_frag for $SDIR/${fragm}" >> $SDIR/qs_trans_${fragm}.log; return 1 ; }
 
     # Write date to log file

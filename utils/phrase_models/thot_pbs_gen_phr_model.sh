@@ -73,6 +73,11 @@ usage()
     echo ""
 }
 
+disabled_pipe_fail()
+{
+    return $?
+}
+
 pipe_fail()
 {
     # test if there is at least one command to exit with a non-zero status
@@ -163,7 +168,7 @@ merge_gen_phr()
     # output format = -pc
     $SORT ${SORT_TMP} -t " " ${sortpars} ${mflag} $SDIR/*.ttable 2>> $SDIR/merge.log | \
         ${bindir}/thot_merge_counts 2>> $SDIR/merge.log | \
-        ${bindir}/thot_cut_ttable -c $cutoff > ${output}.ttable 2>> $SDIR/merge.log || \
+        ${bindir}/thot_cut_ttable -c $cutoff 2>> $SDIR/merge.log > ${output}.ttable ; ${PIPE_FAIL} || \
         { echo "Error while executing merge_gen_phr" >> $SDIR/log ; return 1 ; }
 
     if [ "${estimation}" = "PML" ]; then
