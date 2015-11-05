@@ -1,7 +1,7 @@
 # HOME_OF_PACKAGE SCRIPT_NAME
-/home/dortiz/smt/software/nlp_common thot_clean_corpus_ln
 /home/dortiz/smt/software/nlp_common thot_extract_sents_by_ln
 /home/dortiz/smt/software/nlp_common thot_corpus_length
+/home/dortiz/smt/software/smt_preproc thot_clean_corpus_ln
 /home/dortiz/smt/software/smt_preproc thot_smt_preproc
 /home/dortiz/smt/software/smt_preproc thot_tokenize
 /home/dortiz/smt/software/smt_preproc thot_detokenize
