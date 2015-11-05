@@ -3,20 +3,22 @@
 
 ########
 if [ $# -lt 1 ]; then
-    echo "thot_detokenize -f <string> -r <string> [-t <string>]"
+    echo "thot_detokenize -f <string> -r <string> [-t <string>] [-tdir <string>]"
     echo ""
-    echo "-f <string>    File with text to be detokenized (can be read from standard"
-    echo "               input)"
-    echo "-r <string>    File with raw text in the language of interest"
-    echo "-t <string>    File with tokenized version of the raw text using"    
-    echo "               an arbitrary tokenizer. If not given, \"thot_tokenize\" is"
-    echo "               used internally"
+    echo "-f <string>     File with text to be detokenized (can be read from standard"
+    echo "                input)"
+    echo "-r <string>     File with raw text in the language of interest"
+    echo "-t <string>     File with tokenized version of the raw text using"    
+    echo "                an arbitrary tokenizer. If not given, \"thot_tokenize\" is"
+    echo "                used internally"
+    echo "-tdir <string>  Directory for temporary files (/tmp by default)"
 else
     
     # Read parameters
     f_given=0
     r_given=0
     t_given=0
+    tdir=/tmp
     while [ $# -ne 0 ]; do
         case $1 in
         "-f") shift
@@ -36,6 +38,11 @@ else
                 tfile=$1
                 t_given=1
                 topt="-t $tfile"
+            fi
+            ;;
+        "-tdir") shift
+            if [ $# -ne 0 ]; then
+                tdir=$1
             fi
             ;;
         esac
@@ -70,16 +77,11 @@ else
     ## Process parameters
     
     # Create directory for temporary files
-    TMPDIR=`mktemp -d`
+    TMPDIR=`mktemp -d $tdir/thot_detokenize_tdir_XXXXX`
     trap "rm -rf $TMPDIR 2>/dev/null" EXIT
 
-    # Obtain subset of raw file (this is done to speed up computations)
-    maxfsize=500000
-${bindir}/thot_shuffle 31415 ${rfile} > $TMPDIR/rf_shuff
-    head -n ${maxfsize} $TMPDIR/rf_shuff > $TMPDIR/rf_shuff.trunc
-
     # Train models
-    $bindir/thot_train_detok_model -r $TMPDIR/rf_shuff.trunc ${topt} -o $TMPDIR/models
+    $bindir/thot_train_detok_model -r ${rfile} ${topt} -o $TMPDIR/models
 
     # Tune weights
     # TBD
