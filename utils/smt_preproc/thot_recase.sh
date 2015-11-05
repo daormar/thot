@@ -3,16 +3,18 @@
 
 ########
 if [ $# -lt 1 ]; then
-    echo "thot_recase -f <string> -r <string>"
+    echo "thot_recase -f <string> -r <string> [-tdir <string>]"
     echo ""
-    echo "-f <string>    File with text to be recased (can be read from standard"
-    echo "               input)"
-    echo "-r <string>    File with raw text in the language of interest"
+    echo "-f <string>     File with text to be recased (can be read from standard"
+    echo "                input)"
+    echo "-r <string>     File with raw text in the language of interest"
+    echo "-tdir <string>  Directory for temporary files (/tmp by default)"
 else
     
     # Read parameters
     f_given=0
     r_given=0
+    tdir=/tmp
     while [ $# -ne 0 ]; do
         case $1 in
         "-f") shift
@@ -25,6 +27,11 @@ else
             if [ $# -ne 0 ]; then
                 rfile=$1
                 r_given=1
+            fi
+            ;;
+        "-tdir") shift
+            if [ $# -ne 0 ]; then
+                tdir=$1
             fi
             ;;
         esac
@@ -55,21 +62,16 @@ else
     ## Process parameters
     
     # Create directory for temporary files
-    TMPDIR=`mktemp -d`
+    TMPDIR=`mktemp -d $tdir/thot_detokenize_tdir_XXXXX`
     trap "rm -rf $TMPDIR 2>/dev/null" EXIT
-
-    # Obtain subset of raw file (this is done to speed up computations)
-    maxfsize=500000
-${bindir}/thot_shuffle 31415 ${rfile} > $TMPDIR/rf_shuff
-    head -n ${maxfsize} $TMPDIR/rf_shuff > $TMPDIR/rf_shuff.trunc
 
     ## Train models
     
     # Train translation model
-    $bindir/thot_train_rec_tm -r $TMPDIR/rf_shuff.trunc -o $TMPDIR/models
+    $bindir/thot_train_rec_tm -r ${rfile} -o $TMPDIR/models
 
     # Train language model
-    $bindir/thot_train_rec_lm -r $TMPDIR/rf_shuff.trunc -n 3 -o $TMPDIR/models
+    $bindir/thot_train_rec_lm -r ${rfile} -n 3 -o $TMPDIR/models
 
     # Tune weights
     # TBD
