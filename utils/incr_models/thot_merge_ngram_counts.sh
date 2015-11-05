@@ -1,9 +1,8 @@
 # Author: Daniel Ortiz Mart\'inez
 # *- bash -*
 
-# Dado un fichero de cuentas con duplicados
-# obtiene un nuevo fichero por la salida estandar
-# que ya no tiene duplicados.
+# Given a file with counts that may be duplicated, prints a new file to
+# the standard output where the duplicate counts are merged
 
 if [ $# -ne 0 ]; then
 echo "Usage: thot_merge_ngram_counts"
