@@ -71,7 +71,7 @@ else
     $bindir/thot_train_rec_tm -r ${rfile} -o $TMPDIR/models
 
     # Train language model
-    $bindir/thot_train_rec_lm -r ${rfile} -n 3 -o $TMPDIR/models
+    $bindir/thot_train_rec_lm_mr -r ${rfile} -n 3 -o $TMPDIR/models -tdir $tdir
 
     # Tune weights
     # TBD
