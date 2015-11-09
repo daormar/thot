@@ -140,12 +140,11 @@ and incremental EM algorithms. This functionality is not based on the
 standard GIZA++ software for word alignment model generation.
 
 Additionally, Thot does not use any code from other existing translation
-tools such as Moses. In this regard, Thot is a smaller project which
-tries to offer its own view of the process of statistical machine
-translation, with a strong focus on online learning and also
-incorporating interactive machine translation functionality. Another
-interesting feature of the toolkit is its stable and robust translation
-server.
+tools. In this regard, Thot tries to offer its own view of the process
+of statistical machine translation, with a strong focus on online
+learning and also incorporating interactive machine translation
+functionality. Another interesting feature of the toolkit is its stable
+and robust translation server.
 
 Current Status
 --------------
@@ -269,9 +268,9 @@ Government in a number of research projects, such as the [MIPRCV
 project] [16] that belongs to the [CONSOLIDER programme] [17].
 
 
-Last updated: 14 April 2015
+Last updated: 8 October 2015
 
-[1]: http://personales.upv.es/daormar3/
+[1]: http://daormar.github.io/
 [2]: https://www.prhlt.upv.es/
 [3]: http://www.upv.es/
 [4]: http://www.casmacat.eu/index.php?n=Workbench.Workbench
