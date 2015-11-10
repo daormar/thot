@@ -36,10 +36,10 @@ and new features:
 - Improvements in tools to carry out translation experiments and
   incorporation of new ones
 
-- Translation can now be launched in parallel using clusters or
+- Translation can now be executed in parallel using clusters or
   multi-processor systems by means of the thot_decoder tool
 
-- Thot manual has been extended and revised
+- The Thot manual has been extended and revised
 
 - Multiple minor improvements and bug fixes
 
