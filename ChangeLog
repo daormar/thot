@@ -219,7 +219,7 @@ Thot 2.0.2 Beta 17th Jun 2007
        constants defined in the file ErrorDefs.h
 
 --------------------------------------------------------------------
-Thot 2.1.0
+Thot 2.1.0 Beta
 
      - MAJOR CHANGE: NbestTableNode no longer works with probabilities
        but with log-probabilities. This affects to the functions
@@ -291,7 +291,7 @@ Thot 2.1.0
        better management of the temporary files that are used internally
 
 --------------------------------------------------------------------
-Thot 2.1.1
+Thot 2.1.1 Beta
 
      - Solved a portability issue with i/o functions
 
@@ -308,13 +308,13 @@ Thot 2.1.1
        are needed to access the functionality provided by the package.
 
 --------------------------------------------------------------------
-Thot 2.2.0
+Thot 2.2.0 Beta
 
     - Solved a memory management bug in the PhraseExtractionTable class
 
     - Solved portability issues with 64 bit processors
 
-    - Solved possible portability problems with the locales
+    - Solved possible portability problems with locales
 
     - Added the utility "train_giza", which allows to easily train
       IBM models using the GIZA and the mkcls tools
@@ -347,7 +347,7 @@ Thot 2.2.0
     * incrCountsOfEntry(const Vector<string> ...) -> strIncrCountsOfEntry(.)
 
 --------------------------------------------------------------------
-Thot 2.2.1
+Thot 2.2.1 Beta
 
      - Solved some minor bugs
 
@@ -356,7 +356,7 @@ Thot 2.2.1
      - Added the train_phr_model tool
 
 --------------------------------------------------------------------
-Thot 3.0.0
+Thot 3.0.0 Beta
 
 	=> The project has been restarted. Backward compatibility with
 	previous versions of Thot is not ensured.
@@ -384,5 +384,28 @@ Thot 3.0.0
 	- ...
 
 --------------------------------------------------------------------
+Thot 3.1.0 Beta
 
-$Date: 2013/11/20 11:14:40 $
+	- Incorporation of a whole set of pre/post-processing tools
+
+	- Portability increased (Thot has been successfully compiled in
+  	  many different platforms, including Mac OS X, FreeBSD, OpenBSD,
+	  NetBSD, etc.)
+
+	- Improved checking of runtime errors in all of the tools involved
+	  in the translation pipeline
+
+	- Early detection of bugs and portability problems using built-in
+	  checks
+
+	- Improvements in tools to carry out translation experiments and
+   	  incorporation of new ones
+
+	- Translation can now be launched in parallel using clusters or
+  	  multi-processor systems by means of the thot_decoder tool
+
+	- Thot manual has been extended and revised
+
+	- Multiple minor improvements and bug fixes
+
+--------------------------------------------------------------------

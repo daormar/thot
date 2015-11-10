@@ -1,30 +1,26 @@
 --------------------------------------------------------------------
-Thot 3.0.0
+Thot 3.1.0 Beta
 
-	=> The project has been restarted. Backward compatibility with
-	previous versions of Thot is not ensured.
+	- Incorporation of a whole set of pre/post-processing tools
 
-	=> Lots of new features have been added:
+	- Portability increased (Thot has been successfully compiled in
+  	  many different platforms, including Mac OS X, FreeBSD, OpenBSD,
+	  NetBSD, etc.)
 
-        - Phrase-based statistical machine translation decoder
+	- Improved checking of runtime errors in all of the tools involved
+	  in the translation pipeline
 
-	- Computer-aided translation (post-edition and interactive
-	  machine translation)
+	- Early detection of bugs and portability problems using built-in
+	  checks
 
-	- Incremental estimation of all of the models involved in the
-          translation process
+	- Improvements in tools to carry out translation experiments and
+   	  incorporation of new ones
 
-	- Client-server implementation of the translation functionality
+	- Translation can now be launched in parallel using clusters or
+  	  multi-processor systems by means of the thot_decoder tool
 
-	- Single word alignment model estimation using the incremental
-          EM algorithm
+	- Thot manual has been extended and revised
 
-	- Scalable implementation of the different estimation algorithms
-	  using Map-Reduce
-
-	- Integration with the CasMaCat Workbench (http://www.casmacat.eu)
-
-	- ...
+	- Multiple minor improvements and bug fixes
 
 --------------------------------------------------------------------
-
