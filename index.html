@@ -60,9 +60,16 @@ of Valencia</a>.</p>
 
 <h2>
 <a id="news" class="anchor" href="#news" aria-hidden="true"><span class="octicon octicon-link"></span></a>News</h2>
-
+<p>A new version of the toolkit has been released with several improvements and new features:
 <ul>
-<li>Basic usage instructions have been added to the Thot manual.</li>
+<li>Incorporation of a whole set of pre/post-processing tools</li>
+<li>Portability increased (Thot has been successfully compiled in many different platforms, including Mac OS X, FreeBSD, OpenBSD, NetBSD, etc.)</li>
+<li>Improved checking of runtime errors in all of the tools involved in the translation pipeline</li>
+<li>Early detection of bugs and portability problems using built-in checks</li>
+<li>Improvements in tools to carry out translation experiments and incorporation of new ones</li>
+<li>Translation can now be executed in parallel using clusters or multi-processor systems by means of the thot_decoder tool</li>
+<li>The Thot manual has been extended and revised</li>
+<!-- <li>Multiple minor improvements and bug fixes</li> -->
 </ul>
 
 <h2>
@@ -102,12 +109,21 @@ experience problems during compilation.</p>
 
 <p>To install Thot, first you need to install the autotools (autoconf,
 autoconf-archive, automake and libtool packages in Ubuntu). If you are
-planning to use Thot on a Windows platform, you also need to install the
-Cygwin environment.</p>
+planning to use Thot on a Windows platform, you also need to install
+the <a href="https://www.cygwin.com/">Cygwin</a>
+environment. Alternatively, Thot can also be installed on Mac OS X
+systems using <a href="https://www.macports.org/">MacPorts</a>.</p>
 
-<p>Once the autotools are available (as well as Cygwin if required), you
-can proceed with the installation of Thot by following the next sequence
-of steps:</p>
+<p>On the other hand, some of the code used for corpus
+pre/post-processing (see more on this in the Thot manual) is based on
+the <a href="http://www.nltk.org/">Natural Language Toolkit (NLTK)</a>
+library. Those users interested in using the pre/post-processing
+functionality incorporated in Thot will need to install that library as
+well.</p>
+
+<p>Once the autotools are available (as well as other required software
+such as Cygwin, MacPorts or the NLTK library), you can proceed with the
+installation of Thot by following the next sequence of steps:</p>
 
 <ol>
 <li>
