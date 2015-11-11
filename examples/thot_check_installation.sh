@@ -64,10 +64,24 @@ fi
 
 echo ""
 
+# Define corpus variables
+scorpus_train=$datadir/toy_corpus/sp_tok_lc.train
+scorpus_dev=$datadir/toy_corpus/sp_tok_lc.dev
+scorpus_test=$datadir/toy_corpus/sp_tok_lc.test
+tcorpus_train=$datadir/toy_corpus/en_tok_lc.train
+tcorpus_dev=$datadir/toy_corpus/en_tok_lc.dev
+tcorpus_test=$datadir/toy_corpus/en_tok_lc.test
+
+# Show corpus variables
+echo "**** Source partition files: ${scorpus_train} ${scorpus_dev} ${scorpus_test}"
+echo ""
+echo "**** Target partition files: ${tcorpus_train} ${tcorpus_dev} ${tcorpus_test}" 
+echo ""
+
 # Check thot_tm_train
 echo "**** Checking thot_tm_train..."
 echo ""
-${bindir}/thot_tm_train -s $datadir/toy_corpus/sp_tok_lc.train -t $datadir/toy_corpus/en_tok_lc.train \
+${bindir}/thot_tm_train -s ${scorpus_train} -t ${tcorpus_train} \
     -o $tmpdir/tm -n 5 -tdir $debugdir -sdir ${debugdir} ${qs_opt} "${qs_par}" -debug
 if test $? -eq 0 ; then
     echo "... Done"
@@ -102,7 +116,7 @@ echo ""
 # Check thot_smt_tune
 echo "**** Checking thot_smt_tune..."
 echo ""
-${bindir}/thot_smt_tune -c $tmpdir/server.cfg -s $datadir/toy_corpus/sp_tok_lc.dev -t $datadir/toy_corpus/en_tok_lc.dev \
+${bindir}/thot_smt_tune -c $tmpdir/server.cfg -s ${scorpus_dev} -t ${tcorpus_dev} \
     -o $tmpdir/tune  -tdir $debugdir -sdir ${debugdir} ${qs_opt} "${qs_par}" -debug
 if test $? -eq 0 ; then
     echo "... Done"
@@ -120,7 +134,7 @@ echo ""
 # Check thot_prepare_sys_for_test
 echo "**** Checking thot_prepare_sys_for_test..."
 echo ""
-${bindir}/thot_prepare_sys_for_test -c $tmpdir/tune/tuned_for_dev.cfg -t $datadir/toy_corpus/sp_tok_lc.test \
+${bindir}/thot_prepare_sys_for_test -c $tmpdir/tune/tuned_for_dev.cfg -t ${scorpus_test} \
     ${qs_opt} "${qs_par}" -o $tmpdir/systest -tdir $debugdir -sdir ${debugdir}
 if test $? -eq 0 ; then
     echo "... Done"
@@ -138,7 +152,7 @@ echo ""
 # Check thot_decoder
 echo "**** Checking thot_decoder..."
 echo ""
-${bindir}/thot_decoder -c $tmpdir/systest/test_specific.cfg -t $datadir/toy_corpus/sp_tok_lc.test \
+${bindir}/thot_decoder -c $tmpdir/systest/test_specific.cfg -t ${scorpus_test} \
     -o $tmpdir/thot_decoder_out -sdir $debugdir ${qs_opt} "${qs_par}" -debug
 if test $? -eq 0 ; then
     echo "... Done"
@@ -156,7 +170,7 @@ echo ""
 # Check thot_calc_bleu
 echo "**** Checking thot_calc_bleu..."
 echo ""
-${bindir}/thot_calc_bleu -r $datadir/toy_corpus/en_tok_lc.test -t $tmpdir/thot_decoder_out
+${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $tmpdir/thot_decoder_out
 if test $? -eq 0 ; then
     echo "... Done"
 else
