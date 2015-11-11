@@ -156,6 +156,21 @@ Thot can be combined with the CasMacat Workbench which has been developed
 in the project of the same name. [See this webpage] [4] to get the specific
 installation instructions.
 
+#### Checking Package Installation 
+Once the package has been installed, it is possible to perform basic
+checkings in an automatic manner so as to detect portability errors. For
+this purpose, the following command can be used:
+
+     $ make install-check
+
+The tests performed by the previous command involve the execution of the
+main tasks present in a typical SMT pipeline, including training and
+tuning of model parameters as well as generating translations using the
+estimated models (see more on this in the Thot manual).  The command
+internally uses the toy corpus provided with the Thot package to carry
+out the checkings.
+
+
 Relation with Existing Software
 -------------------------------
 Due to the strong focus of Thot on online and incremental learning, it
