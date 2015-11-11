@@ -181,32 +181,24 @@ ${bindir}/thot_clean_corpus_ln -s ${scorpus_train} -t ${tcorpus_train} \
         > ${outd}/preproc_data/train_clean_ln 2>${outd}/preproc_data/thot_clean_corpus_ln.log || exit 1
 ${bindir}/thot_clean_corpus_ln -s ${scorpus_dev} -t ${tcorpus_dev} \
         > ${outd}/preproc_data/dev_clean_ln 2>>${outd}/preproc_data/thot_clean_corpus_ln.log || exit 1
-${bindir}/thot_clean_corpus_ln -s ${scorpus_test} -t ${tcorpus_test}\
-        > ${outd}/preproc_data/test_clean_ln 2>>${outd}/preproc_data/thot_clean_corpus_ln.log || exit 1
 
     # Create file with clean sentence pairs
 ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/train_clean_ln \
         -f ${scorpus_train} > ${outd}/preproc_data/src_${suff}.train || exit 1
 ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/dev_clean_ln \
         -f ${scorpus_dev} > ${outd}/preproc_data/src_${suff}.dev || exit 1
-${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/test_clean_ln \
-        -f ${scorpus_test} > ${outd}/preproc_data/src_${suff}.test || exit 1
 ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/train_clean_ln \
         -f ${tcorpus_train} > ${outd}/preproc_data/trg_${suff}.train || exit 1
 ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/dev_clean_ln \
         -f ${tcorpus_dev} > ${outd}/preproc_data/trg_${suff}.dev || exit 1
-${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/test_clean_ln \
-        -f ${tcorpus_test} > ${outd}/preproc_data/trg_${suff}.test || exit 1
 
     echo "" >&2
 
     # Redefine corpus variables
     scorpus_train=${outd}/preproc_data/src_${suff}.train
     scorpus_dev=${outd}/preproc_data/src_${suff}.dev
-    scorpus_test=${outd}/preproc_data/src_${suff}.test
     tcorpus_train=${outd}/preproc_data/trg_${suff}.train
     tcorpus_dev=${outd}/preproc_data/trg_${suff}.dev
-    tcorpus_test=${outd}/preproc_data/trg_${suff}.test
 }
 
 ########
