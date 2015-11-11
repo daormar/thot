@@ -199,6 +199,21 @@ below.</li>
 in the project of the same name. <a href="http://www.casmacat.eu/index.php?n=Workbench.Workbench">See this webpage</a> to get the specific
 installation instructions.</p>
 
+<h4 id="checking-package-installation">Checking Package Installation</h4>
+
+<p>Once the package has been installed, it is possible to perform basic
+checkings in an automatic manner so as to detect portability errors. For
+this purpose, the following command can be used:</p>
+
+<pre><code> $ make install-check</code></pre>
+
+<p>The tests performed by the previous command involve the execution of
+the main tasks present in a typical SMT pipeline, including training and
+tuning of model parameters as well as generating translations using the
+estimated models (see more on this in the Thot manual). The command
+internally uses the toy corpus provided with the Thot package to carry
+out the checkings.</p>
+
 <h2>
 <a id="relation-with-existing-software" class="anchor" href="#relation-with-existing-software" aria-hidden="true"><span class="octicon octicon-link"></span></a>Relation with Existing Software</h2>
 
