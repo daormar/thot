@@ -17,7 +17,7 @@ def print_help():
     print >> sys.stderr, "-a <int>       Maximum sentence length (80 by default)"
     print >> sys.stderr, "-d <int>       Maximum number of standard deviations allowed in the"
     print >> sys.stderr, "               difference in length between the source and target"
-    print >> sys.stderr, "               sentences (3 by default)"
+    print >> sys.stderr, "               sentences (4 by default)"
     print >> sys.stderr, "--help         Print this help message"
 
 ##################################################
@@ -76,7 +76,7 @@ def main(argv):
     # take parameters
     minlen=1
     maxlen=80
-    d_par=3
+    d_par=4
     s_given=False
     t_given=False
     try:
