@@ -221,14 +221,14 @@ ${bindir}/thot_gen_rtfile -s ${raw_src_pref} \
       
     # Recase output
 ${bindir}/thot_recase -f ${output_file} -r $tdir/rfile_rec -w \
-        -tdir $tdir > ${output_file}.rec 2> ${outd}/output/thot_recase.log
+        -tdir $tdir > ${output_file}_rec 2> ${outd}/output/thot_recase.log
     echo "" >&2
 
     # Remove temporary files
     rm $tdir/rfile_rec
 
     # Redefine output_file variable
-    output_file=${output_file}.rec
+    output_file=${output_file}_rec
 }
 
 ########
@@ -242,14 +242,14 @@ ${bindir}/thot_gen_rtfile -s ${scorpus_pref} \
 
     # Detokenize output
 ${bindir}/thot_detokenize -f ${output_file} -r $tdir/rfile_detok \
-        -tdir $tdir > ${output_file}.detok 2> ${outd}/output/thot_detokenize.log
+        -tdir $tdir > ${output_file}_detok 2> ${outd}/output/thot_detokenize.log
     echo "" >&2
 
     # Remove temporary files
     rm $tdir/rfile_detok
 
     # Redefine output_file variable
-    output_file=${output_file}.detok
+    output_file=${output_file}_detok
 }
 
 ########
