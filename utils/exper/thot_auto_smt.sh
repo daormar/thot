@@ -496,13 +496,13 @@ fi
 
 # Generate cfg file
 echo "**** Generating configuration file" >&2
-${bindir}/thot_gen_cfg_file $outd/lm/lm_desc $outd/tm/tm_desc > $outd/untuned_server.cfg || exit 1
+${bindir}/thot_gen_cfg_file $outd/lm/lm_desc $outd/tm/tm_desc > $outd/before_tuning.cfg || exit 1
 echo "" >&2
 
 # Tune parameters
 if [ -f ${scorpus_dev} -a -f ${tcorpus_dev} ]; then
     echo "**** Tuning model parameters" >&2
-    ${bindir}/thot_smt_tune -pr ${pr_val} -c $outd/untuned_server.cfg -s ${scorpus_dev} -t ${tcorpus_dev} -o $outd/tune ${qs_opt} \
+    ${bindir}/thot_smt_tune -pr ${pr_val} -c $outd/before_tuning.cfg -s ${scorpus_dev} -t ${tcorpus_dev} -o $outd/tune ${qs_opt} \
         ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
     tuning_executed="yes"
 fi
