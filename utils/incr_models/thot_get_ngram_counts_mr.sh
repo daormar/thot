@@ -6,6 +6,22 @@
 # arbitrary size.  The -unk option reserves a certain probability mass
 # for the unknown word.
 
+disabled_pipe_fail()
+{
+    return $?
+}
+
+pipe_fail()
+{
+    # test if there is at least one command to exit with a non-zero status
+    for pipe_status_elem in ${PIPESTATUS[*]}; do 
+        if test ${pipe_status_elem} -ne 0; then 
+            return 1; 
+        fi 
+    done
+    return 0
+}
+
 replace_first_word_occurrence_by_unk()
 {
     ${AWK} '{
@@ -37,8 +53,9 @@ sort_counts()
         SORT_TMP=""
     fi
 
-    ${AWK} '{printf"%d %s\n",NF,$0}' |\
-        ${SORT} ${SORT_TMP} -t " " ${sortpars} | ${AWK} '{for(i=2;i<=NF-1;++i)printf"%s ",$i; printf"%d\n",$NF}'
+    ${AWK} '{printf"%d %s\n",NF,$0}' | \
+        ${SORT} ${SORT_TMP} -t " " ${sortpars} | \
+        ${AWK} '{for(i=2;i<=NF-1;++i)printf"%s ",$i; printf"%d\n",$NF}' ; ${PIPE_FAIL} || return 1
 }
 
 print_desc()
@@ -177,7 +194,8 @@ ${SPLIT} -l ${chunk_size} $proc_corpus $TMP/
 c=1
 for i in `ls $TMP`; do
     
-    ${bindir}/thot_get_ngram_counts -c $TMP/$i -n ${n_val} | ${AWK} -v c=$c '{printf"%s %d\n",$0,c}' >> $TMP/counts
+    ${bindir}/thot_get_ngram_counts -c $TMP/$i -n ${n_val} | \
+        ${AWK} -v c=$c '{printf"%s %d\n",$0,c}' >> $TMP/counts ; ${PIPE_FAIL} || exit 1
     
     c=`expr $c + 1`
     
@@ -185,4 +203,4 @@ for i in `ls $TMP`; do
 done
 
 # Merge counts
-cat $TMP/counts | sort_counts | ${bindir}/thot_merge_ngram_counts 
+cat $TMP/counts | sort_counts | ${bindir}/thot_merge_ngram_counts ; ${PIPE_FAIL} || exit 1
