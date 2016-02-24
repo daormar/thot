@@ -714,8 +714,10 @@ bool BasePbTransModel<HYPOTHESIS>::srcSegmentIsValid(pair<PositionIndex,Position
 {
   unsigned int segmLength=srcSegm.second-srcSegm.first+1;
 
+      // Check segment length
   if(segmLength>A)
     return false;
+  
   if(!forcedSrcSegment.empty())
   {
         // Force source segmentation

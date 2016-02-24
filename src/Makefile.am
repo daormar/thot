@@ -213,12 +213,11 @@ downhill_simplex_h= downhill_simplex/step_by_step_dhs.h
 downhill_simplex_defs= downhill_simplex/step_by_step_dhs.c
 
 stack_dec_h= stack_dec/WordPredictor.h stack_dec/WordPenaltyModel.h	\
-stack_dec/WgUncoupledAssistedTrans.h stack_dec/TreatCovProblemsPars.h	\
-stack_dec/ThotDecoderUserPars.h stack_dec/ThotDecoderState.h		\
-stack_dec/ThotDecoderPerUserVars.h stack_dec/ThotDecoder.h		\
-stack_dec/ThotDecoderCommonVars.h stack_dec/ThotDecoderClient.h		\
-stack_dec/SwModelPars.h stack_dec/SwModelInfo.h				\
-stack_dec/StackDecWgProcessorForAnlpTypes.h				\
+stack_dec/WgUncoupledAssistedTrans.h stack_dec/ThotDecoderUserPars.h	\
+stack_dec/ThotDecoderState.h stack_dec/ThotDecoderPerUserVars.h		\
+stack_dec/ThotDecoder.h stack_dec/ThotDecoderCommonVars.h		\
+stack_dec/ThotDecoderClient.h stack_dec/SwModelPars.h			\
+stack_dec/SwModelInfo.h stack_dec/StackDecWgProcessorForAnlpTypes.h	\
 stack_dec/StackDecSwModelTypes.h stack_dec/StackDecPbModelTypes.h	\
 stack_dec/_stack_decoder_statistics.h stack_dec/_stackDecoderRec.h	\
 stack_dec/_stackDecoder.h stack_dec/StackDecLmTypes.h			\

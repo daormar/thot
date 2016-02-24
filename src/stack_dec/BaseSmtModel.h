@@ -52,7 +52,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "Bitset.h"
 #include "ErrorDefs.h"
 #include "OnlineTrainingPars.h"
-#include "TreatCovProblemsPars.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -165,8 +164,6 @@ class BaseSmtModel
                                   const char *refSent,
                                   const char *sysSent,
                                   int verbose=0);
-  virtual int treatCoverageProblems(TreatCovProblemsPars<HYPOTHESIS> treatCovProblemsPars,
-                                    int verbose=0);
 
       // Word prediction functions
   virtual void addSentenceToWordPred(Vector<std::string> strVec,
@@ -252,15 +249,6 @@ int BaseSmtModel<HYPOTHESIS>::onlineTrainSentPair(const char* /*srcSent*/,
                                                   int /*verbose*/)
 {
   cerr<<"Warning: training of a sentence pair was requested, but such functionality is not provided!"<<endl;
-  return ERROR;
-}
-
-//---------------------------------
-template<class HYPOTHESIS>
-int BaseSmtModel<HYPOTHESIS>::treatCoverageProblems(TreatCovProblemsPars<HYPOTHESIS> /*treatCovProblemsPars*/,
-                                                    int /*verbose*/)
-{
-  cerr<<"Warning: treatment of coverage problems was requested, but such functionality is not provided!"<<endl;
   return ERROR;
 }
 
