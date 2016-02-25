@@ -385,7 +385,13 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   Score unkWordScoreHeur(void);
   void initHeuristic(unsigned int maxSrcPhraseLength);
       // Initialize heuristic for the sentence to be translated
-  
+
+      // Functions related to getTransInPlainTextVec
+  Vector<std::string> getTransInPlainTextVecTs(const Hypothesis& hyp)const;
+  Vector<std::string> getTransInPlainTextVecTps(const Hypothesis& hyp)const;
+  Vector<std::string> getTransInPlainTextVecTrs(const Hypothesis& hyp)const;
+  Vector<std::string> getTransInPlainTextVecTvs(const Hypothesis& hyp)const;
+
       // Heuristic related functions
   virtual Score calcHeuristicScore(const _phraseBasedTransModel::Hypothesis& hyp);
   void initHeuristicLocalt(int maxSrcPhraseLength);
@@ -1313,7 +1319,8 @@ ngramWordIndex _phraseBasedTransModel<HYPOTHESIS>::tmVocabToLmVocab(WordIndex w)
     return nw;
   }
   else
-  { // w found
+  {
+        // w found
     return mapIter->second;
   }  
 }
@@ -1333,8 +1340,6 @@ void _phraseBasedTransModel<HYPOTHESIS>::initTmToLmVocabMap(void)
 template<class HYPOTHESIS>
 void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
 {
-  WordIndex w;
-
       // Clear temporary variables
   clearTempVars();
 
@@ -1360,7 +1365,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
   nsrcSentIdVec.push_back(NULL_WORD);
   for(unsigned int i=0;i<srcSentVec.size();++i)
   {
-    w=stringToSrcWordIndex(srcSentVec[i]);
+    WordIndex w=stringToSrcWordIndex(srcSentVec[i]);
     srcSentIdVec.push_back(w);
     nsrcSentIdVec.push_back(w);
   }
@@ -1375,8 +1380,6 @@ template<class HYPOTHESIS>
 void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ref(std::string srcsent,
                                                                std::string refsent)
 {
-  WordIndex w;
-
       // Clear temporary variables
   clearTempVars();
 
@@ -1398,7 +1401,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ref(std::string srcse
   nsrcSentIdVec.push_back(NULL_WORD);
   for(unsigned int i=0;i<srcSentVec.size();++i)
   {
-    w=stringToSrcWordIndex(srcSentVec[i]);
+    WordIndex w=stringToSrcWordIndex(srcSentVec[i]);
     srcSentIdVec.push_back(w);
     nsrcSentIdVec.push_back(w);
   }
@@ -1410,7 +1413,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ref(std::string srcse
   nrefSentIdVec.push_back(NULL_WORD);
   for(unsigned int i=0;i<refSentVec.size();++i)
   {
-    w=stringToTrgWordIndex(refSentVec[i]);
+    WordIndex w=stringToTrgWordIndex(refSentVec[i]);
     if(w==UNK_WORD && this->verbosity>0)
       cerr<<"Warning: word "<<refSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
     nrefSentIdVec.push_back(w);
@@ -1426,8 +1429,6 @@ template<class HYPOTHESIS>
 void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ver(std::string srcsent,
                                                                std::string refsent)
 {
-  WordIndex w;
-
       // Clear temporary variables
   clearTempVars();
 
@@ -1449,7 +1450,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ver(std::string srcse
   nsrcSentIdVec.push_back(NULL_WORD);
   for(unsigned int i=0;i<srcSentVec.size();++i)
   {
-    w=stringToSrcWordIndex(srcSentVec[i]);
+    WordIndex w=stringToSrcWordIndex(srcSentVec[i]);
     srcSentIdVec.push_back(w);
     nsrcSentIdVec.push_back(w);
   }
@@ -1461,7 +1462,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ver(std::string srcse
   nrefSentIdVec.push_back(NULL_WORD);
   for(unsigned int i=0;i<refSentVec.size();++i)
   {
-    w=stringToTrgWordIndex(refSentVec[i]);
+    WordIndex w=stringToTrgWordIndex(refSentVec[i]);
     if(w==UNK_WORD && this->verbosity>0)
       cerr<<"Warning: word "<<refSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
     nrefSentIdVec.push_back(w);
@@ -1477,8 +1478,6 @@ template<class HYPOTHESIS>
 void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string srcsent,
                                                                   std::string prefix)
 {
-  WordIndex w;
-
       // Clear temporary variables
   clearTempVars();
 
@@ -1501,7 +1500,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string sr
   nsrcSentIdVec.push_back(NULL_WORD);
   for(unsigned int i=0;i<srcSentVec.size();++i)
   {
-    w=stringToSrcWordIndex(srcSentVec[i]);
+    WordIndex w=stringToSrcWordIndex(srcSentVec[i]);
     srcSentIdVec.push_back(w);
     nsrcSentIdVec.push_back(w);
   }
@@ -1515,7 +1514,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string sr
   nprefSentIdVec.push_back(NULL_WORD);
   for(unsigned int i=0;i<prefSentVec.size();++i)
   {
-    w=stringToTrgWordIndex(prefSentVec[i]);
+    WordIndex w=stringToTrgWordIndex(prefSentVec[i]);
     if(w==UNK_WORD && this->verbosity>0)
       cerr<<"Warning: word "<<prefSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
     nprefSentIdVec.push_back(w);
@@ -1680,7 +1679,8 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getHypDataVecForGap(const Hypothesis& h
   HypDataType newHypData;
 
   hypDataTypeVec.clear();
-  
+
+      // Obtain translations for gap
   getTransForHypUncovGap(hyp,srcLeft,srcRight,ttNode,N);
 
   if(this->verbosity>=2)
@@ -1689,6 +1689,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getHypDataVecForGap(const Hypothesis& h
     cerr<<"Filtered "<<ttNode.size()<<" translations"<<endl;
   }
 
+      // Generate hypothesis data for translations
   for(ttNodeIter=ttNode.begin();ttNodeIter!=ttNode.end();++ttNodeIter)
   {
     if(this->verbosity>=3)
@@ -1705,6 +1706,8 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getHypDataVecForGap(const Hypothesis& h
     extendHypDataIdx(srcLeft,srcRight,ttNodeIter->second,newHypData);
     hypDataTypeVec.push_back(newHypData);
   }
+
+      // Return boolean value
   if(hypDataTypeVec.empty()) return false;
   else return true;
 }
@@ -1867,7 +1870,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis
   }
   else
   {
-        // search translations for s on translation table
+        // search translations for s in translation table
     NbestTableNode<PhraseTransTableNodeData> *transTableNodePtr;
     Vector<WordIndex> s_;
     
@@ -1878,7 +1881,8 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis
     
     transTableNodePtr=cPhrNbestTransTable.getTranslationsForKey(make_pair(srcLeft,srcRight));
     if(transTableNodePtr!=NULL)
-    {// translation present in the cache translation table
+    {
+          // translation present in the cache translation table
       nbt=*transTableNodePtr;
       if(nbt.size()==0) return false;
       else return true;
@@ -2449,6 +2453,21 @@ void _phraseBasedTransModel<HYPOTHESIS>::extendHypData(PositionIndex srcLeft,
 template<class HYPOTHESIS>
 Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVec(const _phraseBasedTransModel::Hypothesis& hyp)const
 {
+  switch(state)
+  {
+    case MODEL_TRANS_STATE: return getTransInPlainTextVecTs(hyp);
+    case MODEL_TRANSPREFIX_STATE: return getTransInPlainTextVecTps(hyp);
+    case MODEL_TRANSREF_STATE: return getTransInPlainTextVecTrs(hyp);
+    case MODEL_TRANSVER_STATE: return getTransInPlainTextVecTvs(hyp);
+    default: Vector<std::string> strVec;
+      return strVec;
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTs(const _phraseBasedTransModel::Hypothesis& hyp)const
+{
   Vector<WordIndex> nvwi;
   Vector<WordIndex> vwi;
 
@@ -2461,54 +2480,124 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVec(c
       // Obtain vector of strings
   Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
 
-      // Unknown words contained in trgVecStr. For this purpose, the
-      // model state must be checked
-  if(state==MODEL_TRANS_STATE || state==MODEL_TRANSPREFIX_STATE)
-  {
-        // Model is being used to translate a sentence or to translate a
-        // sentence given a prefix
+      // Treat unknown words contained in trgVecStr. Model is being used
+      // to translate a sentence
         
-        // Remove unknown words from trgVecStr
-    for(unsigned int j=0;j<trgVecStr.size();++j)
+      // Remove unknown words from trgVecStr
+  for(unsigned int j=0;j<trgVecStr.size();++j)
+  {
+    if(trgVecStr[j]==UNK_WORD_STR)
     {
-      if(trgVecStr[j]==UNK_WORD_STR)
+          // Find source word aligned with unknown word
+      for(unsigned int i=0;i<srcSentVec.size();++i)
       {
-        if(state==MODEL_TRANSPREFIX_STATE && j<prefSentVec.size())
+        if(hyp.areAligned(i+1,j+1))
         {
-              // Unknown word must be replaced by a prefix word
-          trgVecStr[j]=prefSentVec[j];
+          trgVecStr[j]=srcSentVec[i];
+          break;
         }
-        else
+      }
+    }
+  }
+  return trgVecStr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTps(const _phraseBasedTransModel::Hypothesis& hyp)const
+{
+  Vector<WordIndex> nvwi;
+  Vector<WordIndex> vwi;
+
+      // Obtain vector of WordIndex
+  nvwi=hyp.getPartialTrans();
+  for(unsigned int j=1;j<nvwi.size();++j)
+  {
+    vwi.push_back(nvwi[j]);
+  }
+      // Obtain vector of strings
+  Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
+
+      // Treat unknown words contained in trgVecStr. Model is being used
+      // to translate a sentence given a prefix
+        
+      // Remove unknown words from trgVecStr
+  for(unsigned int j=0;j<trgVecStr.size();++j)
+  {
+    if(trgVecStr[j]==UNK_WORD_STR)
+    {
+      if(j<prefSentVec.size())
+      {
+            // Unknown word must be replaced by a prefix word
+        trgVecStr[j]=prefSentVec[j];
+      }
+      else
+      {
+            // Find source word aligned with unknown word
+        for(unsigned int i=0;i<srcSentVec.size();++i)
         {
-              // Find source word aligned with unknown word
-          for(unsigned int i=0;i<srcSentVec.size();++i)
+          if(hyp.areAligned(i+1,j+1))
           {
-            if(hyp.areAligned(i+1,j+1))
-            {
-              trgVecStr[j]=srcSentVec[i];
-              break;
-            }
+            trgVecStr[j]=srcSentVec[i];
+            break;
           }
         }
       }
     }
-    return trgVecStr;
   }
-  else
+  return trgVecStr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTrs(const _phraseBasedTransModel::Hypothesis& hyp)const
+{
+    Vector<WordIndex> nvwi;
+  Vector<WordIndex> vwi;
+
+      // Obtain vector of WordIndex
+  nvwi=hyp.getPartialTrans();
+  for(unsigned int j=1;j<nvwi.size();++j)
   {
-    if(state==MODEL_TRANSREF_STATE || state==MODEL_TRANSVER_STATE)
-    {
-          // Model is being used to generate a reference or to verify
-          // model coverage
-      for(unsigned int i=0;i<trgVecStr.size();++i)
-      {
-        if(i<refSentVec.size())
-          trgVecStr[i]=refSentVec[i];
-      }
-      return trgVecStr;
-    }
-    else return trgVecStr;
+    vwi.push_back(nvwi[j]);
   }
+      // Obtain vector of strings
+  Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
+
+      // Treat unknown words contained in trgVecStr. Model is being used
+      // to generate a reference.
+  for(unsigned int i=0;i<trgVecStr.size();++i)
+  {
+    if(i<refSentVec.size())
+      trgVecStr[i]=refSentVec[i];
+  }
+  return trgVecStr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTvs(const _phraseBasedTransModel::Hypothesis& hyp)const
+{
+  Vector<WordIndex> nvwi;
+  Vector<WordIndex> vwi;
+
+      // Obtain vector of WordIndex
+  nvwi=hyp.getPartialTrans();
+  for(unsigned int j=1;j<nvwi.size();++j)
+  {
+    vwi.push_back(nvwi[j]);
+  }
+      // Obtain vector of strings
+  Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
+
+      // Treat unknown words contained in trgVecStr. Model is being used
+      // to verify model coverage
+  for(unsigned int i=0;i<trgVecStr.size();++i)
+  {
+    if(i<refSentVec.size())
+      trgVecStr[i]=refSentVec[i];
+  }
+  return trgVecStr;
 }
 
 //---------------------------------
