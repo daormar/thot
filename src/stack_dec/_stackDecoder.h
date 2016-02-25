@@ -655,7 +655,6 @@ void _stackDecoder<SMT_MODEL>::pre_trans_actions_ref(std::string srcsent,
   refSentence=refsent;
   smtm_ptr->pre_trans_actions_ref(srcsent,refsent);
   specific_pre_trans_actions_ref(srcsent,refsent);
-
   bestCompleteHypScore=worstScoreAllowed;
   bestCompleteHyp=smtm_ptr->nullHypothesis();
 }
@@ -670,7 +669,6 @@ void _stackDecoder<SMT_MODEL>::pre_trans_actions_ver(std::string srcsent,
   refSentence=refsent;
   smtm_ptr->pre_trans_actions_ver(srcsent,refsent);
   specific_pre_trans_actions_ver(srcsent,refsent);
-
   bestCompleteHypScore=worstScoreAllowed;
   bestCompleteHyp=smtm_ptr->nullHypothesis();
 }
@@ -685,7 +683,6 @@ void _stackDecoder<SMT_MODEL>::pre_trans_actions_prefix(std::string srcsent,
   prefixSentence=prefix;
   smtm_ptr->pre_trans_actions_prefix(srcsent,prefix);
   specific_pre_trans_actions_prefix(srcsent,prefix);
-
   bestCompleteHypScore=worstScoreAllowed;
   bestCompleteHyp=smtm_ptr->nullHypothesis();
 }
