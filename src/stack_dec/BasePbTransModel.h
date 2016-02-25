@@ -125,7 +125,6 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
       // Returns true if the search is monotone
 
       // Specific phrase-based functions
-  void forceSourceCoverage(SourceSegmentation _forcedSrcSegment);
   virtual void extendHypData(PositionIndex srcLeft,
                              PositionIndex srcRight,
                              const Vector<std::string>& trgPhrase,
@@ -168,15 +167,11 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
                                  //  1-> monotone search
                                  //  MAX_SENTENCE_LENGTH -> non-monotone search
 
-  SourceSegmentation forcedSrcSegment;
-      // Source segmentation to force during translation processes
-
   int verbosity;                 // Verbosity level
 
   ////// Hypotheses-related functions
 
       // Expansion-related functions
-  bool srcSegmentIsValid(pair<PositionIndex,PositionIndex> srcSegm);
   void extract_gaps(const Hypothesis& hyp,
                     Vector<pair<PositionIndex,PositionIndex> >&  gaps);
   void extract_gaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey,
@@ -401,13 +396,6 @@ bool BasePbTransModel<HYPOTHESIS>::monotoneSearch(void)
   else return false;	 
 }
 
-//---------------------------------------
-template<class HYPOTHESIS>
-void BasePbTransModel<HYPOTHESIS>::forceSourceCoverage(SourceSegmentation _forcedSrcSegment)
-{
-  forcedSrcSegment=_forcedSrcSegment;
-}
-
 //---------------------------------
 template<class HYPOTHESIS>
 void BasePbTransModel<HYPOTHESIS>::setVerbosity(int _verbosity)
@@ -464,22 +452,19 @@ void BasePbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
         {
           segmRightMostj=gaps[k].first+y;
           segmLeftMostj=gaps[k].first+x;
-          if(srcSegmentIsValid(make_pair(segmLeftMostj,segmRightMostj)))
+          getHypDataVecForGap(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
+          if(hypDataVec.size()!=0)
           {
-            getHypDataVecForGap(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
-            if(hypDataVec.size()!=0)
+            for(unsigned int i=0;i<hypDataVec.size();++i)
             {
-              for(unsigned int i=0;i<hypDataVec.size();++i)
-              {
-                this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
-                hypVec.push_back(extHyp);
-                scrCompVec.push_back(scoreComponents);
-              }
-#             ifdef THOT_STATS    
-              basePbTmStats.transOptions+=hypDataVec.size();
-              ++basePbTmStats.getTransCalls;
-#             endif    
+              this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
+              hypVec.push_back(extHyp);
+              scrCompVec.push_back(scoreComponents);
             }
+#           ifdef THOT_STATS    
+            basePbTmStats.transOptions+=hypDataVec.size();
+            ++basePbTmStats.getTransCalls;
+#           endif    
           }
         }
       }
@@ -523,22 +508,19 @@ void BasePbTransModel<HYPOTHESIS>::expand_ref(const Hypothesis& hyp,
         {
           segmRightMostj=gaps[k].first+y;
           segmLeftMostj=gaps[k].first+x;
-          if(srcSegmentIsValid(make_pair(segmLeftMostj,segmRightMostj)))
+          getHypDataVecForGapRef(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
+          if(hypDataVec.size()!=0)
           {
-            getHypDataVecForGapRef(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
-            if(hypDataVec.size()!=0)
+            for(unsigned int i=0;i<hypDataVec.size();++i)
             {
-              for(unsigned int i=0;i<hypDataVec.size();++i)
-              {
-                this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
-                hypVec.push_back(extHyp);
-                scrCompVec.push_back(scoreComponents);
-              }
-#             ifdef THOT_STATS    
-              ++basePbTmStats.getTransCalls;
-              basePbTmStats.transOptions+=hypDataVec.size();
-#             endif    
+              this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
+              hypVec.push_back(extHyp);
+              scrCompVec.push_back(scoreComponents);
             }
+#           ifdef THOT_STATS    
+            ++basePbTmStats.getTransCalls;
+            basePbTmStats.transOptions+=hypDataVec.size();
+#           endif    
           }
         }
       }
@@ -582,22 +564,19 @@ void BasePbTransModel<HYPOTHESIS>::expand_ver(const Hypothesis& hyp,
         {
           segmRightMostj=gaps[k].first+y;
           segmLeftMostj=gaps[k].first+x;
-          if(srcSegmentIsValid(make_pair(segmLeftMostj,segmRightMostj)))
+          getHypDataVecForGapVer(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
+          if(hypDataVec.size()!=0)
           {
-            getHypDataVecForGapVer(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
-            if(hypDataVec.size()!=0)
+            for(unsigned int i=0;i<hypDataVec.size();++i)
             {
-              for(unsigned int i=0;i<hypDataVec.size();++i)
-              {
-                this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
-                hypVec.push_back(extHyp);
-                scrCompVec.push_back(scoreComponents);
-              }
-#             ifdef THOT_STATS    
-              ++basePbTmStats.getTransCalls;
-              basePbTmStats.transOptions+=hypDataVec.size();
-#             endif    
+              this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
+              hypVec.push_back(extHyp);
+              scrCompVec.push_back(scoreComponents);
             }
+#           ifdef THOT_STATS    
+            ++basePbTmStats.getTransCalls;
+            basePbTmStats.transOptions+=hypDataVec.size();
+#           endif    
           }
         }
       }
@@ -641,8 +620,6 @@ void BasePbTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
         {
           segmRightMostj=gaps[k].first+y;
           segmLeftMostj=gaps[k].first+x;
-          if(srcSegmentIsValid(make_pair(segmLeftMostj,segmRightMostj)))
-          {
             getHypDataVecForGapPref(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
             if(hypDataVec.size()!=0)
             {
@@ -657,7 +634,6 @@ void BasePbTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
               basePbTmStats.transOptions+=hypDataVec.size();
 #             endif    
             }
-          }
         }
       }
     }
@@ -706,31 +682,6 @@ unsigned int BasePbTransModel<HYPOTHESIS>::numberOfUncoveredSrcWords(const Hypot
  
   dataType=hyp.getData();
   return numberOfUncoveredSrcWordsHypData(dataType);
-}
-
-//---------------------------------
-template<class HYPOTHESIS>
-bool BasePbTransModel<HYPOTHESIS>::srcSegmentIsValid(pair<PositionIndex,PositionIndex> srcSegm)
-{
-  unsigned int segmLength=srcSegm.second-srcSegm.first+1;
-
-      // Check segment length
-  if(segmLength>A)
-    return false;
-  
-  if(!forcedSrcSegment.empty())
-  {
-        // Force source segmentation
-    unsigned int i;
-    for(i=0;i<forcedSrcSegment.size();++i)
-    {
-      if(forcedSrcSegment[i]==srcSegm)
-        break;
-    }
-    if(i>=forcedSrcSegment.size())
-      return false;
-  }
-  return true;
 }
 
 //---------------------------------
