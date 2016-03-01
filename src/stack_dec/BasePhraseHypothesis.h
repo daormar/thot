@@ -72,8 +72,8 @@ class BasePhraseHypothesis: public BaseHypothesis<SCORE_INFO,DATA_TYPE,EQCLASS_F
   typedef typename BaseHypothesis<SCORE_INFO,DATA_TYPE,EQCLASS_FUNC>::EqClassFunc EqClassFunc;
 
       // Specific functions
-  virtual bool isAligned(PositionIndex i)const=0;
-  virtual bool areAligned(PositionIndex i,PositionIndex j)const=0;
+  virtual bool isAligned(PositionIndex srcPos)const=0;
+  virtual bool areAligned(PositionIndex srcPos,PositionIndex trgPos)const=0;
   virtual Bitset<MAX_SENTENCE_LENGTH_ALLOWED> getKey(void)const=0;
   virtual Vector<WordIndex> getPartialTrans(void)const=0;
   virtual unsigned int partialTransLength(void)const=0;

@@ -77,8 +77,8 @@ class _phraseHypothesis: public BasePhraseHypothesis<SCORE_INFO,PhrHypData,EQCLA
   void setData(const PhrHypData& _data);
 
       // Specific functions
-  bool isAligned(PositionIndex i)const;
-  bool areAligned(PositionIndex i,PositionIndex j)const;
+  bool isAligned(PositionIndex j)const;
+  bool areAligned(PositionIndex j,PositionIndex i)const;
   Bitset<MAX_SENTENCE_LENGTH_ALLOWED> getKey(void)const;
   Vector<WordIndex> getPartialTrans(void)const;
   unsigned int partialTransLength(void)const;
@@ -145,12 +145,12 @@ void _phraseHypothesis<SCORE_INFO,EQCLASS_FUNC>::setData(const PhrHypData& _data
 
 //---------------------------------------
 template<class SCORE_INFO,class EQCLASS_FUNC>
-bool _phraseHypothesis<SCORE_INFO,EQCLASS_FUNC>::isAligned(PositionIndex i)const
+bool _phraseHypothesis<SCORE_INFO,EQCLASS_FUNC>::isAligned(PositionIndex srcPos)const
 {
   for(unsigned int k=0;k<this->data.sourceSegmentation.size();k++)
   {
-    if(i>=this->data.sourceSegmentation[k].first &&
-       i<=this->data.sourceSegmentation[k].second)
+    if(srcPos>=this->data.sourceSegmentation[k].first &&
+       srcPos<=this->data.sourceSegmentation[k].second)
       return true;
   }
   return false;  
@@ -158,23 +158,23 @@ bool _phraseHypothesis<SCORE_INFO,EQCLASS_FUNC>::isAligned(PositionIndex i)const
 
 //---------------------------------------
 template<class SCORE_INFO,class EQCLASS_FUNC>
-bool _phraseHypothesis<SCORE_INFO,EQCLASS_FUNC>::areAligned(PositionIndex i,
-                                                            PositionIndex j)const
+bool _phraseHypothesis<SCORE_INFO,EQCLASS_FUNC>::areAligned(PositionIndex srcPos,
+                                                            PositionIndex trgPos)const
 {
   for(unsigned int k=0;k<this->data.sourceSegmentation.size();k++)
   {
-    if(i>=this->data.sourceSegmentation[k].first &&
-       i<=this->data.sourceSegmentation[k].second)
+    if(srcPos>=this->data.sourceSegmentation[k].first &&
+       srcPos<=this->data.sourceSegmentation[k].second)
     {
       if(k==0)
       {
-        if(j>=1 && j<=this->data.targetSegmentCuts[k])
+        if(trgPos>=1 && trgPos<=this->data.targetSegmentCuts[k])
           return true;
       }
       else
       {
-        if(j>=this->data.targetSegmentCuts[k-1]+1 &&
-           j<=this->data.targetSegmentCuts[k])
+        if(trgPos>=this->data.targetSegmentCuts[k-1]+1 &&
+           trgPos<=this->data.targetSegmentCuts[k])
           return true;
       }
     }
