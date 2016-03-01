@@ -49,6 +49,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "LangModelInfo.h"
 #include "Prob.h"
 #include "SourceSegmentation.h"
+#include "TranslationConstraints.h"
 #include "PhrNbestTransTable.h"
 #include "PhrNbestTransTableRef.h"
 #include "PhrNbestTransTablePref.h"
@@ -194,6 +195,7 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   Vector<std::string> srcSentVec;
   Vector<WordIndex> srcSentIdVec;
   Vector<WordIndex> nsrcSentIdVec;
+  TranslationConstraints trConstraints;
 
       // Temporary data structure to store the reference sentence during
       // each translation process
@@ -373,6 +375,7 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
 
       // Functions related to pre_trans_actions
   virtual void clearTempVars(void);
+  TranslationConstraints obtainTranslationConstraints(std::string srcsent);
   bool lastCharIsBlank(std::string str);
   void verifyDictCoverageForSentence(Vector<std::string>& sentenceVec,
                                      int maxSrcPhraseLength=MAX_SENTENCE_LENGTH_ALLOWED);
@@ -1347,8 +1350,9 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
   state=MODEL_TRANS_STATE;
   
       // Store source sentence to be translated
-  srcSentVec=StrProcUtils::stringToStringVector(srcsent);
-
+  trConstraints.obtainTransConstraints(srcsent,this->verbosity);
+  srcSentVec=trConstraints.getSrcSentVec();
+  
       // Verify coverage for source
   if(this->verbosity>0)
     cerr<<"Verify model coverage for source sentence..."<<endl; 
@@ -1859,40 +1863,73 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis
                                                                 NbestTableNode<Vector<WordIndex> >& nbt,
                                                                 float N)
 {
-      // Check if source phrase has only one word and this word has been
-      // marked as unseen word
-  if(srcLeft==srcRight && unseenSrcWord(srcSentVec[srcLeft-1]))
+      // Check if gap is affected by translation constraints
+  if(trConstraints.srcPhrAffectedByConstraint(make_pair(srcLeft,srcRight)))
   {
-    Vector<WordIndex> unkWordVec;
-    unkWordVec.push_back(UNK_WORD);
-    nbt.insert(0,unkWordVec);
-    return false;
+        // Obtain constrained target translation for gap (if any)
+    Vector<std::string> trgWordVec=trConstraints.getTransForSrcPhr(make_pair(srcLeft,srcRight));
+    if(trgWordVec.size()>0)
+    {
+          // Convert string vector to WordIndex vector
+      Vector<WordIndex> trgWiVec;
+      for(unsigned int i=0;i<trgWordVec.size();++i)
+      {
+        WordIndex w=stringToTrgWordIndex(trgWordVec[i]);
+        trgWiVec.push_back(w);
+      }
+      
+          // Insert translation into n-best table
+      nbt.clear();      
+      nbt.insert(0,trgWiVec);      
+      return true;
+    }
+    else
+    {
+          // No constrained target translation was found
+      nbt.clear();
+      return false;
+    } 
   }
   else
   {
-        // search translations for s in translation table
-    NbestTableNode<PhraseTransTableNodeData> *transTableNodePtr;
-    Vector<WordIndex> s_;
-    
-    for(unsigned int i=srcLeft;i<=srcRight;++i)
+        // The gap to be covered is not affected by translation constraints
+       
+        // Check if source phrase has only one word and this word has
+        // been marked as an unseen word
+    if(srcLeft==srcRight && unseenSrcWord(srcSentVec[srcLeft-1]))
     {
-      s_.push_back(nsrcSentIdVec[i]);
-    }
-    
-    transTableNodePtr=cPhrNbestTransTable.getTranslationsForKey(make_pair(srcLeft,srcRight));
-    if(transTableNodePtr!=NULL)
-    {
-          // translation present in the cache translation table
-      nbt=*transTableNodePtr;
-      if(nbt.size()==0) return false;
-      else return true;
+      Vector<WordIndex> unkWordVec;
+      unkWordVec.push_back(UNK_WORD);
+      nbt.clear();
+      nbt.insert(0,unkWordVec);
+      return false;
     }
     else
-    {   
-      getNbestTransFor_s_(s_,nbt,N);
-      cPhrNbestTransTable.insertEntry(make_pair(srcLeft,srcRight),nbt);
-      if(nbt.size()==0) return false;
-      else return true;
+    {
+          // search translations for s in translation table
+      NbestTableNode<PhraseTransTableNodeData> *transTableNodePtr;
+      Vector<WordIndex> s_;
+    
+      for(unsigned int i=srcLeft;i<=srcRight;++i)
+      {
+        s_.push_back(nsrcSentIdVec[i]);
+      }
+    
+      transTableNodePtr=cPhrNbestTransTable.getTranslationsForKey(make_pair(srcLeft,srcRight));
+      if(transTableNodePtr!=NULL)
+      {
+            // translation present in the cache translation table
+        nbt=*transTableNodePtr;
+        if(nbt.size()==0) return false;
+        else return true;
+      }
+      else
+      {   
+        getNbestTransFor_s_(s_,nbt,N);
+        cPhrNbestTransTable.insertEntry(make_pair(srcLeft,srcRight),nbt);
+        if(nbt.size()==0) return false;
+        else return true;
+      }
     }
   }
 }
