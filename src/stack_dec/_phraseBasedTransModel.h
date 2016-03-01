@@ -384,7 +384,7 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
       // maximum length for the source phrases.
   void manageUnseenSrcWord(std::string srcw);
   bool unseenSrcWord(std::string srcw);
-  bool unseenSrcWordGivenPosition(unsigned int j);
+  bool unseenSrcWordGivenPosition(unsigned int srcPos);
   Score unkWordScoreHeur(void);
   void initHeuristic(unsigned int maxSrcPhraseLength);
       // Initialize heuristic for the sentence to be translated
@@ -882,9 +882,9 @@ bool _phraseBasedTransModel<HYPOTHESIS>::unseenSrcWord(std::string srcw)
 
 //---------------------------------
 template<class HYPOTHESIS>
-bool _phraseBasedTransModel<HYPOTHESIS>::unseenSrcWordGivenPosition(unsigned int j)
+bool _phraseBasedTransModel<HYPOTHESIS>::unseenSrcWordGivenPosition(unsigned int srcPos)
 {
-  return unseenSrcWord(srcSentVec[j-1]);
+  return unseenSrcWord(srcSentVec[srcPos-1]);
 }
 
 //---------------------------------------
