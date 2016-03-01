@@ -2510,27 +2510,53 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTs
 
       // Obtain vector of WordIndex
   nvwi=hyp.getPartialTrans();
-  for(unsigned int j=1;j<nvwi.size();++j)
+  for(unsigned int i=1;i<nvwi.size();++i)
   {
-    vwi.push_back(nvwi[j]);
+    vwi.push_back(nvwi[i]);
   }
       // Obtain vector of strings
   Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
 
       // Treat unknown words contained in trgVecStr. Model is being used
       // to translate a sentence
-        
-      // Remove unknown words from trgVecStr
-  for(unsigned int j=0;j<trgVecStr.size();++j)
+    
+      // Replace unknown words affected by constraints
+
+      // Iterate over constraints
+  std::set<pair<PositionIndex,PositionIndex> > srcPhrSet=trConstraints.getConstrainedSrcPhrases();
+  std::set<pair<PositionIndex,PositionIndex> >::const_iterator const_iter;
+  for(const_iter=srcPhrSet.begin();const_iter!=srcPhrSet.end();++const_iter)
   {
-    if(trgVecStr[j]==UNK_WORD_STR)
+        // Obtain target translation for constraint
+    Vector<std::string> trgPhr=trConstraints.getTransForSrcPhr(*const_iter);
+    
+        // Find first aligned target word
+    for(unsigned int i=0;i<trgVecStr.size();++i)
+    {
+      if(hyp.areAligned(const_iter->first,i+1))
+      {
+        for(unsigned int k=0;k<trgPhr.size();++k)
+        {
+          if(trgVecStr[i+k]==UNK_WORD_STR)
+            trgVecStr[i+k]=trgPhr[k];                      
+        }
+            // Replace unknown words and finish
+        break;
+      }
+    }
+  }
+  
+      // Replace unknown words not affected by constraints
+  for(unsigned int i=0;i<trgVecStr.size();++i)
+  {
+    if(trgVecStr[i]==UNK_WORD_STR)
     {
           // Find source word aligned with unknown word
-      for(unsigned int i=0;i<srcSentVec.size();++i)
+      for(unsigned int j=0;j<srcSentVec.size();++j)
       {
-        if(hyp.areAligned(i+1,j+1))
+        if(hyp.areAligned(j+1,i+1))
         {
-          trgVecStr[j]=srcSentVec[i];
+          trgVecStr[i]=srcSentVec[j];
           break;
         }
       }
@@ -2548,9 +2574,9 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTp
 
       // Obtain vector of WordIndex
   nvwi=hyp.getPartialTrans();
-  for(unsigned int j=1;j<nvwi.size();++j)
+  for(unsigned int i=1;i<nvwi.size();++i)
   {
-    vwi.push_back(nvwi[j]);
+    vwi.push_back(nvwi[i]);
   }
       // Obtain vector of strings
   Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
@@ -2558,24 +2584,24 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTp
       // Treat unknown words contained in trgVecStr. Model is being used
       // to translate a sentence given a prefix
         
-      // Remove unknown words from trgVecStr
-  for(unsigned int j=0;j<trgVecStr.size();++j)
+      // Replace unknown words from trgVecStr
+  for(unsigned int i=0;i<trgVecStr.size();++i)
   {
-    if(trgVecStr[j]==UNK_WORD_STR)
+    if(trgVecStr[i]==UNK_WORD_STR)
     {
-      if(j<prefSentVec.size())
+      if(i<prefSentVec.size())
       {
             // Unknown word must be replaced by a prefix word
-        trgVecStr[j]=prefSentVec[j];
+        trgVecStr[i]=prefSentVec[i];
       }
       else
       {
             // Find source word aligned with unknown word
-        for(unsigned int i=0;i<srcSentVec.size();++i)
+        for(unsigned int j=0;j<srcSentVec.size();++j)
         {
-          if(hyp.areAligned(i+1,j+1))
+          if(hyp.areAligned(j+1,i+1))
           {
-            trgVecStr[j]=srcSentVec[i];
+            trgVecStr[i]=srcSentVec[j];
             break;
           }
         }
@@ -2594,9 +2620,9 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTr
 
       // Obtain vector of WordIndex
   nvwi=hyp.getPartialTrans();
-  for(unsigned int j=1;j<nvwi.size();++j)
+  for(unsigned int i=1;i<nvwi.size();++i)
   {
-    vwi.push_back(nvwi[j]);
+    vwi.push_back(nvwi[i]);
   }
       // Obtain vector of strings
   Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
@@ -2620,9 +2646,9 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTv
 
       // Obtain vector of WordIndex
   nvwi=hyp.getPartialTrans();
-  for(unsigned int j=1;j<nvwi.size();++j)
+  for(unsigned int i=1;i<nvwi.size();++i)
   {
-    vwi.push_back(nvwi[j]);
+    vwi.push_back(nvwi[i]);
   }
       // Obtain vector of strings
   Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
