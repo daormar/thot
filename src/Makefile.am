@@ -223,8 +223,8 @@ stack_dec/_stack_decoder_statistics.h stack_dec/_stackDecoderRec.h	\
 stack_dec/_stackDecoder.h stack_dec/StackDecLmTypes.h			\
 stack_dec/StackDecEcModelTypes.h					\
 stack_dec/StackDecEcModelForNbUcatTypes.h				\
-stack_dec/SourceSegmentation.h stack_dec/SmtStack.h			\
-stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h			\
+stack_dec/SourceSegmentation.h stack_dec/TranslationConstraints.h	\
+stack_dec/SmtStack.h stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h	\
 stack_dec/_smtMultiStack.h stack_dec/SmtModelTypes.h			\
 stack_dec/_smtModel.h stack_dec/SmtDefs.h stack_dec/ScoreCompDefs.h	\
 stack_dec/_phrSwTransModel.h stack_dec/PhrScoreInfo.h			\
@@ -252,9 +252,9 @@ stack_dec/BaseHypState.h stack_dec/BaseHypothesisRec.h			\
 stack_dec/BaseHypothesis.h stack_dec/BaseAssistedTrans.h		\
 stack_dec/AssistedTransTypes.h stack_dec/_assistedTrans.h
 stack_dec_defs= stack_dec/WordPredictor.cc				\
-stack_dec/WordPenaltyModel.cc stack_dec/ThotDecoderClient.cc		\
-stack_dec/ThotDecoder.cc stack_dec/PhrScoreInfo.cc			\
-stack_dec/PhrNbestTransTableRefKey.cc					\
+stack_dec/WordPenaltyModel.cc stack_dec/TranslationConstraints.cc	\
+stack_dec/ThotDecoderClient.cc stack_dec/ThotDecoder.cc			\
+stack_dec/PhrScoreInfo.cc stack_dec/PhrNbestTransTableRefKey.cc		\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\
