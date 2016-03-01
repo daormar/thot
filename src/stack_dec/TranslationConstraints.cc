@@ -141,13 +141,13 @@ void TranslationConstraints::obtainTransConstraints(std::string rawSrcSent,int v
 }
 
 //---------------------------------------
-Vector<std::string> TranslationConstraints::getSrcSentVec(void)
+Vector<std::string> TranslationConstraints::getSrcSentVec(void)const
 {
   return srcSentVec;
 }
 
 //---------------------------------------
-Vector<std::string> TranslationConstraints::getTransForSrcPhr(pair<PositionIndex,PositionIndex> srcPhr)
+Vector<std::string> TranslationConstraints::getTransForSrcPhr(pair<PositionIndex,PositionIndex> srcPhr)const
 {
       // Find translation for source phrase if it exists
   std::map<pair<PositionIndex,PositionIndex>,Vector<std::string> >::const_iterator const_iter;
@@ -165,7 +165,24 @@ Vector<std::string> TranslationConstraints::getTransForSrcPhr(pair<PositionIndex
 }
 
 //---------------------------------------
-bool TranslationConstraints::srcPhrAffectedByConstraint(pair<PositionIndex,PositionIndex> srcPhr)
+std::set<pair<PositionIndex,PositionIndex> > TranslationConstraints::getConstrainedSrcPhrases(void)const
+{
+      // Initialize variables
+  std::set<pair<PositionIndex,PositionIndex> > result;
+  
+      // Iterate over constraints
+  std::map<pair<PositionIndex,PositionIndex>,Vector<std::string> >::const_iterator const_iter;
+  for(const_iter=srcPhrTransMap.begin();const_iter!=srcPhrTransMap.end();++const_iter)
+  {
+    result.insert(const_iter->first);
+  }
+
+      // Return result
+  return result;
+}
+
+//---------------------------------------
+bool TranslationConstraints::srcPhrAffectedByConstraint(pair<PositionIndex,PositionIndex> srcPhr)const
 {
       // Iterate over constraints
   std::map<pair<PositionIndex,PositionIndex>,Vector<std::string> >::const_iterator const_iter;
@@ -181,7 +198,7 @@ bool TranslationConstraints::srcPhrAffectedByConstraint(pair<PositionIndex,Posit
 }
 
 //---------------------------------------
-std::string TranslationConstraints::tokenizeSrcSentence(std::string srcSent)
+std::string TranslationConstraints::tokenizeSrcSentence(std::string srcSent)const
 {
   std::string result;
   
@@ -217,7 +234,7 @@ std::string TranslationConstraints::tokenizeSrcSentence(std::string srcSent)
 }
 
 //---------------------------------------
-std::string TranslationConstraints::obtainStartTag(std::string tagName)
+std::string TranslationConstraints::obtainStartTag(std::string tagName)const
 {
   std::string tag="<";
   tag+=tagName;
@@ -226,7 +243,7 @@ std::string TranslationConstraints::obtainStartTag(std::string tagName)
 }
 
 //---------------------------------------
-std::string TranslationConstraints::obtainEndTag(std::string tagName)
+std::string TranslationConstraints::obtainEndTag(std::string tagName)const
 {
   std::string tag="</";
   tag+=tagName;
@@ -237,7 +254,7 @@ std::string TranslationConstraints::obtainEndTag(std::string tagName)
 //---------------------------------------
 bool TranslationConstraints::xmlTag(std::string srcSent,
                                     unsigned int initialPos,
-                                    unsigned int& endTagPos)
+                                    unsigned int& endTagPos)const
 {
   if(srcSent[initialPos]=='<')
   {
@@ -291,7 +308,7 @@ bool TranslationConstraints::constraintFound(Vector<std::string> tokRawSrcSentVe
                                              unsigned int currPos,
                                              Vector<std::string>& srcPhrase,
                                              Vector<std::string>& trgPhrase,
-                                             unsigned int& finalPos)
+                                             unsigned int& finalPos)const
 {
       // Initialize variables
   unsigned int i=currPos;

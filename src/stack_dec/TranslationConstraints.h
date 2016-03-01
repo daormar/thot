@@ -53,9 +53,10 @@ class TranslationConstraints
       // Services
   void obtainTransConstraints(std::string rawSrcSent,
                               int verbosity=0);
-  Vector<std::string> getSrcSentVec(void);
-  Vector<std::string> getTransForSrcPhr(pair<PositionIndex,PositionIndex> srcPhr);
-  bool srcPhrAffectedByConstraint(pair<PositionIndex,PositionIndex> srcPhr);
+  Vector<std::string> getSrcSentVec(void)const;
+  Vector<std::string> getTransForSrcPhr(pair<PositionIndex,PositionIndex> srcPhr)const;
+  std::set<pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const;
+  bool srcPhrAffectedByConstraint(pair<PositionIndex,PositionIndex> srcPhr)const;
   
  private:
 
@@ -65,17 +66,17 @@ class TranslationConstraints
   std::map<pair<PositionIndex,PositionIndex>,Vector<std::string> > srcPhrTransMap;
 
       // Auxiliary functions
-  std::string tokenizeSrcSentence(std::string srcSent);
-  std::string obtainStartTag(std::string tagName);
-  std::string obtainEndTag(std::string tagName);
+  std::string tokenizeSrcSentence(std::string srcSent)const;
+  std::string obtainStartTag(std::string tagName)const;
+  std::string obtainEndTag(std::string tagName)const;
   bool xmlTag(std::string srcSent,
               unsigned int initialPos,
-              unsigned int& endTagPos);
+              unsigned int& endTagPos)const;
   bool constraintFound(Vector<std::string> tokRawSrcSentVec,
                        unsigned int currPos,
                        Vector<std::string>& srcPhrase,
                        Vector<std::string>& trgPhrase,
-                       unsigned int& finalPos);
+                       unsigned int& finalPos)const;
 };
 
 #endif
