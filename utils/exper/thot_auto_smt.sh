@@ -25,7 +25,7 @@ usage()
     echo "thot_auto_smt           [-pr <int>]"
     echo "                        -s <string> -t <string> -o <string>"
     echo "                        [--skip-clean] [--tok] [--lower] [--no-trans]"
-    echo "                        [-nit <int>] [-n <int>]"
+    echo "                        [-nit <int>] [-n <int>] [-tqm <string>]"
     echo "                        [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
@@ -42,6 +42,8 @@ usage()
     echo "-nit <int>              Number of iterations of the EM algorithm when training"
     echo "                        single word models (5 by default)"
     echo "-n <int>                Order of the n-gram language models (4 by default)"
+    echo "-tqm <string>           Set translation quality measure for tuning"
+    echo "                        (BLEU by default, other options: WER)"
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTES:"
@@ -272,6 +274,8 @@ nit_given=0
 nitval=5
 n_given=0
 n_val=4
+tqm="BLEU"
+tqm_given=0
 qs_given=0
 tdir_given=0
 tdir="/tmp"
@@ -330,6 +334,12 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 n_val=$1
                 n_given=1
+            fi
+            ;;
+        "-tqm") shift
+            if [ $# -ne 0 ]; then
+                tqm=$1
+                tqm_given=1
             fi
             ;;
         "-qs") shift
@@ -505,7 +515,7 @@ echo "" >&2
 if [ -f ${scorpus_dev} -a -f ${tcorpus_dev} ]; then
     echo "**** Tuning model parameters" >&2
     ${bindir}/thot_smt_tune -pr ${pr_val} -c $outd/before_tuning.cfg -s ${scorpus_dev} -t ${tcorpus_dev} -o $outd/tune ${qs_opt} \
-        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+        -tqm ${tqm} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
     tuning_executed="yes"
 fi
 
