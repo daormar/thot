@@ -1496,7 +1496,6 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string sr
     cerr<<"Verify model coverage for source sentence..."<<endl; 
   verifyDictCoverageForSentence(srcSentVec,this->A);
 
-
       // Init source sentence index vector after the coverage has been
       // verified
   srcSentIdVec.clear();
