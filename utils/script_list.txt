@@ -38,3 +38,4 @@
 /home/dortiz/smt/software/exper thot_prepare_sys_for_test
 /home/dortiz/smt/software/exper thot_gen_cfg_file
 /home/dortiz/smt/software/exper thot_auto_smt
+/home/dortiz/smt/software/exper thot_sys_from_scratch
