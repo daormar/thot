@@ -181,7 +181,7 @@ create_tm_files()
         # Create tm files
         for file in `ls ${tmfile}*`; do
             if [ $file != ${tmfile}.ttable ]; then
-                # Create hard links for the all of the files except the phrase table
+                # Create hard links for all of the files except the phrase table
                 $LN -f $file ${outd}/tm/main || { echo "Error while preparing translation model files" >&2 ; return 1; }
             fi
         done
