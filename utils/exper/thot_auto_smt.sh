@@ -107,17 +107,17 @@ tok_corpus()
     # Tokenize corpus
     echo "**** Tokenizing corpus" >&2
     suff="tok"
-${bindir}/thot_tokenize -f ${scorpus_train} \
+    ${bindir}/thot_tokenize -f ${scorpus_train} \
         > ${outd}/preproc_data/src_${suff}.train 2>${outd}/preproc_data/thot_tokenize.log || exit 1
-${bindir}/thot_tokenize -f ${scorpus_dev} \
+    ${bindir}/thot_tokenize -f ${scorpus_dev} \
         > ${outd}/preproc_data/src_${suff}.dev 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
-${bindir}/thot_tokenize -f ${scorpus_test} \
+    ${bindir}/thot_tokenize -f ${scorpus_test} \
         > ${outd}/preproc_data/src_${suff}.test 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
-${bindir}/thot_tokenize -f ${tcorpus_train} \
+    ${bindir}/thot_tokenize -f ${tcorpus_train} \
         > ${outd}/preproc_data/trg_${suff}.train 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
-${bindir}/thot_tokenize -f ${tcorpus_dev} \
+    ${bindir}/thot_tokenize -f ${tcorpus_dev} \
         > ${outd}/preproc_data/trg_${suff}.dev 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
-${bindir}/thot_tokenize -f ${tcorpus_test} \
+    ${bindir}/thot_tokenize -f ${tcorpus_test} \
         > ${outd}/preproc_data/trg_${suff}.test 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
     echo "" >&2
 
@@ -140,17 +140,17 @@ lowercase_corpus()
     else
         suff="tok_lc"
     fi
-${bindir}/thot_lowercase -f ${scorpus_train} \
+    ${bindir}/thot_lowercase -f ${scorpus_train} \
         > ${outd}/preproc_data/src_${suff}.train 2>${outd}/preproc_data/thot_lowercase.log || exit 1
-${bindir}/thot_lowercase -f ${scorpus_dev} \
+    ${bindir}/thot_lowercase -f ${scorpus_dev} \
         > ${outd}/preproc_data/src_${suff}.dev 2>>${outd}/preproc_data/thot_lowercase.log || exit 1
-${bindir}/thot_lowercase -f ${scorpus_test} \
+    ${bindir}/thot_lowercase -f ${scorpus_test} \
         > ${outd}/preproc_data/src_${suff}.test 2>>${outd}/preproc_data/thot_lowercase.log || exit 1
-${bindir}/thot_lowercase -f ${tcorpus_train} \
+    ${bindir}/thot_lowercase -f ${tcorpus_train} \
         > ${outd}/preproc_data/trg_${suff}.train 2>>${outd}/preproc_data/thot_lowercase.log || exit 1
-${bindir}/thot_lowercase -f ${tcorpus_dev} \
+    ${bindir}/thot_lowercase -f ${tcorpus_dev} \
         > ${outd}/preproc_data/trg_${suff}.dev 2>>${outd}/preproc_data/thot_lowercase.log || exit 1
-${bindir}/thot_lowercase -f ${tcorpus_test} \
+    ${bindir}/thot_lowercase -f ${tcorpus_test} \
         > ${outd}/preproc_data/trg_${suff}.test 2>>${outd}/preproc_data/thot_lowercase.log || exit 1
     echo "" >&2
 
@@ -179,19 +179,19 @@ clean_corpus()
     suff="${suff}clean"
 
     # Obtain line numbers of clean sentence pairs
-${bindir}/thot_clean_corpus_ln -s ${scorpus_train} -t ${tcorpus_train} \
+    ${bindir}/thot_clean_corpus_ln -s ${scorpus_train} -t ${tcorpus_train} \
         > ${outd}/preproc_data/train_clean_ln 2>${outd}/preproc_data/thot_clean_corpus_ln.log || exit 1
-${bindir}/thot_clean_corpus_ln -s ${scorpus_dev} -t ${tcorpus_dev} \
+    ${bindir}/thot_clean_corpus_ln -s ${scorpus_dev} -t ${tcorpus_dev} \
         > ${outd}/preproc_data/dev_clean_ln 2>>${outd}/preproc_data/thot_clean_corpus_ln.log || exit 1
 
     # Create file with clean sentence pairs
-${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/train_clean_ln \
+    ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/train_clean_ln \
         -f ${scorpus_train} > ${outd}/preproc_data/src_${suff}.train || exit 1
-${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/dev_clean_ln \
+    ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/dev_clean_ln \
         -f ${scorpus_dev} > ${outd}/preproc_data/src_${suff}.dev || exit 1
-${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/train_clean_ln \
+    ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/train_clean_ln \
         -f ${tcorpus_train} > ${outd}/preproc_data/trg_${suff}.train || exit 1
-${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/dev_clean_ln \
+    ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/dev_clean_ln \
         -f ${tcorpus_dev} > ${outd}/preproc_data/trg_${suff}.dev || exit 1
 
     echo "" >&2
@@ -218,11 +218,11 @@ recase_output()
     fi
 
     # Generate raw text file for recasing
-${bindir}/thot_gen_rtfile -s ${raw_src_pref} \
+    ${bindir}/thot_gen_rtfile -s ${raw_src_pref} \
         -t ${raw_trg_pref} -tdir $tdir > $tdir/rfile_rec
       
     # Recase output
-${bindir}/thot_recase -f ${output_file} -r $tdir/rfile_rec -w \
+    ${bindir}/thot_recase -f ${output_file} -r $tdir/rfile_rec -w \
         -tdir $tdir > ${output_file}_rec 2> ${outd}/output/thot_recase.log
     echo "" >&2
 
@@ -239,11 +239,11 @@ detok_output()
     echo "**** Detokenizing output" >&2
 
     # Generate raw text file for recasing
-${bindir}/thot_gen_rtfile -s ${scorpus_pref} \
+    ${bindir}/thot_gen_rtfile -s ${scorpus_pref} \
         -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok
 
     # Detokenize output
-${bindir}/thot_detokenize -f ${output_file} -r $tdir/rfile_detok \
+    ${bindir}/thot_detokenize -f ${output_file} -r $tdir/rfile_detok \
         -tdir $tdir > ${output_file}_detok 2> ${outd}/output/thot_detokenize.log
     echo "" >&2
 
@@ -542,7 +542,7 @@ if [ ${notrans_given} -eq 0 ]; then
     # Generate translations
     if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
         echo "**** Translating test corpus" >&2
-${bindir}/thot_decoder -pr ${pr_val} -c $outd/systest/test_specific.cfg \
+        ${bindir}/thot_decoder -pr ${pr_val} -c $outd/systest/test_specific.cfg \
             -t ${scorpus_test} -o $outd/output/$curr_date/thot_decoder_out ${debug_opt} || exit 1
         test_trans_executed="yes"
         echo "" >&2
@@ -551,7 +551,7 @@ ${bindir}/thot_decoder -pr ${pr_val} -c $outd/systest/test_specific.cfg \
     # Obtain BLEU score
     if [ ${test_trans_executed} = "yes" ]; then
         echo "**** Obtaining BLEU score" >&2
-${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $outd/output/$curr_date/thot_decoder_out \
+        ${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $outd/output/$curr_date/thot_decoder_out \
             > $outd/output/$curr_date/thot_decoder_out.bleu || exit 1
         echo "" >&2
     fi

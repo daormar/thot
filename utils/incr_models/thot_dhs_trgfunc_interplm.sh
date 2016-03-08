@@ -53,7 +53,7 @@ else
     echo "$weights" > ${LM}.weights
     $bindir/thot_pbs_ilm_perp -lm ${LM} -c ${TEST} -n ${ORDER} -i -v1 \
         -o ${SDIR}/verbose_ppl ${qs_opt} "${QS}" -tdir ${SDIR} -sdir ${SDIR}
-${bindir}/thot_obtain_info_from_verbose_ppl ${SDIR}/verbose_ppl > ${SDIR}/ppl_info
+    ${bindir}/thot_obtain_info_from_verbose_ppl ${SDIR}/verbose_ppl > ${SDIR}/ppl_info
 
     ppl_with_oovw=`cat ${SDIR}/ppl_info | grep "Perplexity:" | $AWK '{printf"%s",$2}'`
     ppl_without_oovw=`cat ${SDIR}/ppl_info | grep "Perplexity without OOV" | $AWK '{printf"%s",$NF}'`

@@ -83,14 +83,14 @@ else
     # Obtain info from subset of target training corpus (this is done to
     # speed up computations)
     maxfsize=500000
-${bindir}/thot_shuffle 31415 ${tcorpus_train} > $TMPDIR/tcorpus_train_shuff
+    ${bindir}/thot_shuffle 31415 ${tcorpus_train} > $TMPDIR/tcorpus_train_shuff
     head -n ${maxfsize} $TMPDIR/tcorpus_train_shuff
 
     # Obtain info from subset of target dev corpus (with given subset
     # size, typically the whole corpus will be included)
     if [ -f ${tcorpus_dev} ]; then
         maxfsize=10000
-${bindir}/thot_shuffle 31415 ${tcorpus_dev} > $TMPDIR/tcorpus_dev_shuff
+        ${bindir}/thot_shuffle 31415 ${tcorpus_dev} > $TMPDIR/tcorpus_dev_shuff
         head -n ${maxfsize} $TMPDIR/tcorpus_dev_shuff
     fi
 
@@ -98,7 +98,7 @@ ${bindir}/thot_shuffle 31415 ${tcorpus_dev} > $TMPDIR/tcorpus_dev_shuff
     # size, typically the whole corpus will be included)
     if [ -f ${scorpus_test} ]; then
         maxfsize=10000
-${bindir}/thot_shuffle 31415 ${scorpus_test} > $TMPDIR/scorpus_test_shuff
+        ${bindir}/thot_shuffle 31415 ${scorpus_test} > $TMPDIR/scorpus_test_shuff
         head -n ${maxfsize} $TMPDIR/scorpus_test_shuff
     fi
 

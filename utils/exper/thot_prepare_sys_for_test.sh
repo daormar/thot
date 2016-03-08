@@ -198,9 +198,9 @@ create_tm_files()
 ########
 filter_ttable()
 {
-# ${bindir}/thot_filter_ttable -t ${tmfile}.ttable \
+    # ${bindir}/thot_filter_ttable -t ${tmfile}.ttable \
     #     -c $tcorpus -n 20 -T $tdir > ${outd}/tm/${basetmfile}.ttable 2> ${outd}/tm/main/${basetmfile}.ttable.log
-${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
+    ${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
         -c $tcorpus -n 20 ${qs_opt} "${qs_par}" -T $tdir -o ${outd}/tm/main/${basetmfile}.ttable
 }
 

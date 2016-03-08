@@ -179,12 +179,12 @@ lm_downhill()
     export QS="${qs_par}"
 
     # Generate information for weight initialisation
-va_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} -0 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
-iv_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} 0.5 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
+    va_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} -0 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
+    iv_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} 0.5 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
 
     # Execute tuning algorithm
-${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
--ftol ${ftol_lm} -o ${outd}/lm_adjw -u ${bindir}/thot_dhs_trgfunc_jmlm ${debug_opt} || return 1
+    ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
+        -ftol ${ftol_lm} -o ${outd}/lm_adjw -u ${bindir}/thot_dhs_trgfunc_jmlm ${debug_opt} || return 1
 }
 
 ########
@@ -312,7 +312,7 @@ create_tm_files()
 ########
 filter_ttable()
 {
-${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
+    ${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
         -c $scorpus -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${outd}/tm_dev/main/${basetmfile}.ttable
 }
 
@@ -353,8 +353,8 @@ loglin_downhill()
     export CFGFILE=${outd}/tune_loglin.cfg
     export TEST=$scorpus
     export REF=$tcorpus
-export PHRDECODER=${bindir}/thot_decoder
-# export PHRDECODER=${bindir}/thot_dec_ms
+    export PHRDECODER=${bindir}/thot_decoder
+    # export PHRDECODER=${bindir}/thot_dec_ms
     export ADD_DEC_OPTIONS="-pr ${pr_val} -sdir $sdir"
     export QS="${qs_par}"
     export MEASURE=${tqm}
@@ -366,8 +366,8 @@ export PHRDECODER=${bindir}/thot_decoder
     iv_opt=`obtain_loglin_iv_opt_values`
 
     # Execute tuning algorithm
-${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
--ftol ${ftol_loglin} -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || return 1
+    ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
+        -ftol ${ftol_loglin} -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || return 1
 }
 
 ########

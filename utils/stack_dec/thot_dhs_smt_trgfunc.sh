@@ -143,10 +143,10 @@ gen_trans()
             new_opts_added=0
             for wgfile in `$FIND $nbdir/ -name sentence*.wg | $SORT`; do
                 # Generate new n-best list
-${bindir}/thot_wg_proc -w $wgfile -n ${OPT_NVALUE} -o $SDIR/process_wg_output 2> ${SDIR}/smt_trgf_proccess_wg.log
+                ${bindir}/thot_wg_proc -w $wgfile -n ${OPT_NVALUE} -o $SDIR/process_wg_output 2> ${SDIR}/smt_trgf_proccess_wg.log
                 if [ -f $wgfile.nbl ]; then
                     # Merge with previous n-best list file
-${bindir}/thot_merge_nbest_list $SDIR/process_wg_output.nbl $wgfile.nbl > $wgfile.merged_nbl
+                    ${bindir}/thot_merge_nbest_list $SDIR/process_wg_output.nbl $wgfile.nbl > $wgfile.merged_nbl
 
                     # Check differences between the previously generated n-best list and the merged file
                     files_different=`check_if_files_differ $wgfile.nbl $wgfile.merged_nbl`
@@ -181,7 +181,7 @@ ${bindir}/thot_merge_nbest_list $SDIR/process_wg_output.nbl $wgfile.nbl > $wgfil
         # Process n-best list file for each sentence
         for wgfile in `$FIND $nbdir/ -name sentence*.wg | $SORT`; do
             # Obtain best translation by rescoring the n-best list
-${bindir}/thot_obtain_best_trans_from_nbl $wgfile.nbl "$weights" >> ${SDIR}/smt_trgf_aux.trans
+            ${bindir}/thot_obtain_best_trans_from_nbl $wgfile.nbl "$weights" >> ${SDIR}/smt_trgf_aux.trans
         done
     fi
 }
@@ -211,7 +211,7 @@ posproc_output()
         fi
 
         # Posprocess output
-${bindir}/posproc_file -f ${SDIR}/smt_trgf.unpreproc_trans -t $SP ${P_OPT} ${L_OPT} > ${SDIR}/smt_trgf.trans 2> ${SDIR}/posproc.log
+        ${bindir}/posproc_file -f ${SDIR}/smt_trgf.unpreproc_trans -t $SP ${P_OPT} ${L_OPT} > ${SDIR}/smt_trgf.trans 2> ${SDIR}/posproc.log
 
         # Set file with references for evaluation purposes
         REF_FOR_EVAL=${RAW_REF}

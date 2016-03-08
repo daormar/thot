@@ -241,7 +241,7 @@ echo "" >&2
 # Generate wp file
 echo "* Generating file for word prediction... " >&2
 nlines_wp_file=100000
-${bindir}/thot_shuffle 31415 $corpus | $HEAD -${nlines_wp_file} > $prefix.wp
+${bindir}/thot_shuffle 31415 $corpus | $HEAD -${nlines_wp_file} > $prefix.wp 
 echo "" >&2
 
 # Create descriptor file
