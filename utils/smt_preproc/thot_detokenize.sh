@@ -81,7 +81,7 @@ else
     trap "rm -rf $TMPDIR 2>/dev/null" EXIT
 
     # Train models
-    $bindir/thot_train_detok_model -r ${rfile} ${topt} -o $TMPDIR/models
+    $bindir/thot_train_detok_model -r ${rfile} ${topt} -o $TMPDIR/models || exit 1
 
     # Tune weights
     # TBD
