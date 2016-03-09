@@ -198,7 +198,7 @@ class TransModel:
     def train_tok_tm(self,file,verbose):
 
         # Initialize variables
-        nsent=0
+        nsent=1
 
         # read raw file line by line
         for line in file:
@@ -222,8 +222,9 @@ class TransModel:
 
     #####
     def train_tok_tm_par_files(self,rfile,tfile,verbose):
+
         # Initialize variables
-        nsent=0
+        nsent=1
 
         # Read parallel files line by line
         for rline, tline in itertools.izip(rfile,tfile):
@@ -545,7 +546,7 @@ class LangModel:
         # initialize variables
         lmvoc={}
         self.set_n(nval)
-        nsent=0
+        nsent=1
 
         # read raw file line by line
         for line in file:
@@ -574,7 +575,7 @@ class LangModel:
         # initialize variables
         lmvoc={}
         self.set_n(nval)
-        nsent=0
+        nsent=1
 
         # Read parallel files line by line
         for rline, tline in itertools.izip(rfile,tfile):
