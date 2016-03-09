@@ -7,7 +7,7 @@
 print_desc()
 {
     echo "thot_sys_from_scratch written by Daniel Ortiz"
-    echo "thot_sys_from_scratch generate translation system from scratch"
+    echo "thot_sys_from_scratch generates a translation system from scratch"
     echo "type \"thot_sys_from_scratch --help\" to get usage information"
 }
 
