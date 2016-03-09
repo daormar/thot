@@ -148,21 +148,28 @@ class TransModel:
             i=0
             j=0
             prev_j=0
+            error=False
 
+            # Obtain transformed raw word array
             while(i<len(raw_word_array)):
                 end=False
                 str=""
-
+                
                 # process current raw word
                 while(end == False):
                     if(raw_word_array[i]==str):
                         end=True
                     else:
-                        str=str+tok_array[j]
-                        j=j+1
-                        if(j>len(tok_array)):
-                            print >> sys.stderr, "Warning: something went wrong while training the translation model"
+                        if(j>=len(tok_array)):
+                            error=True
                             end=True
+                        else:
+                            str=str+tok_array[j]
+                            j=j+1
+
+                # Check that no errors were found while processing current raw word
+                if(error==True):
+                    return False
 
                 # update the translation model
                 tm_entry_ok=True
@@ -183,9 +190,15 @@ class TransModel:
                 # update variables
                 i=i+1
                 prev_j=j
+            
+            # The sentence was successfully processed
+            return True
 
     #####
     def train_tok_tm(self,file,verbose):
+
+        # Initialize variables
+        nsent=0
 
         # read raw file line by line
         for line in file:
@@ -202,10 +215,15 @@ class TransModel:
                 print >> sys.stderr,""
 
             # Process sentence
-            self.train_sent_tok(raw_word_array,tok_array,verbose)
+            retval=self.train_sent_tok(raw_word_array,tok_array,verbose)
+            if(retval==False):
+                print >> sys.stderr, "Warning: something went wrong while training the translation model for sentence",nsent
+            nsent+=1
 
     #####
     def train_tok_tm_par_files(self,rfile,tfile,verbose):
+        # Initialize variables
+        nsent=0
 
         # Read parallel files line by line
         for rline, tline in itertools.izip(rfile,tfile):
@@ -223,7 +241,10 @@ class TransModel:
                 print >> sys.stderr,""
 
             # Process sentence
-            self.train_sent_tok(raw_word_array,tok_array,verbose)
+            retval=self.train_sent_tok(raw_word_array,tok_array,verbose)
+            if(retval==False):
+                print >> sys.stderr, "Warning: something went wrong while training the translation model for sentence",nsent
+            nsent+=1
 
     #####
     def train_sent_rec(self,raw_word_array,lc_word_array,verbose):
@@ -460,6 +481,7 @@ class LangModel:
             i=0
             j=0
             prev_j=0
+            error=False
 
             # Obtain transformed raw word array
             trans_raw_word_array=[]
@@ -472,12 +494,17 @@ class LangModel:
                     if(raw_word_array[i]==str):
                         end=True
                     else:
-                        str=str+tok_array[j]
-                        j=j+1
-                        if(j>len(tok_array)):
-                            print >> sys.stderr, "Warning: something went wrong while training the language model"
+                        if(j>=len(tok_array)):
+                            error=True
                             end=True
+                        else:
+                            str=str+tok_array[j]
+                            j=j+1
 
+                # Check that no errors were found while processing current raw word
+                if(error==True):
+                    return False
+                            
                 # update the language model
                 tm_entry_ok=True
                 tok_words=transform_word(tok_array[prev_j])
@@ -509,12 +536,16 @@ class LangModel:
             # sentence
             self.train_word_array(preproc_trans_raw_word_array)
 
+            # The sentence was successfully processed
+            return True
+
     #####
     def train_tok_lm(self,file,nval,verbose):
 
         # initialize variables
         lmvoc={}
         self.set_n(nval)
+        nsent=0
 
         # read raw file line by line
         for line in file:
@@ -522,8 +553,20 @@ class LangModel:
             raw_word_array=line.split()
             tok_array=tokenize(line)
 
+            if(verbose==True):
+                print >> sys.stderr,"* Training lm for sentence pair:"
+                print >> sys.stderr," raw:",line.encode("utf-8")
+                print >> sys.stderr," tok:",
+                for i in range(len(tok_array)):
+                    print >> sys.stderr,tok_array[i].encode("utf-8"),
+                print >> sys.stderr,""
+
             # Process sentence
-            self.train_sent_tok(raw_word_array,tok_array,lmvoc,verbose)
+            retval=self.train_sent_tok(raw_word_array,tok_array,lmvoc,verbose)
+            if(retval==False):
+                print >> sys.stderr, "Warning: something went wrong while training the language model for sentence",nsent
+            nsent+=1
+
 
     #####
     def train_tok_lm_par_files(self,rfile,tfile,nval,verbose):
@@ -531,6 +574,7 @@ class LangModel:
         # initialize variables
         lmvoc={}
         self.set_n(nval)
+        nsent=0
 
         # Read parallel files line by line
         for rline, tline in itertools.izip(rfile,tfile):
@@ -538,9 +582,20 @@ class LangModel:
             raw_word_array=rline.split()
             tline=tline.strip("\n")
             tok_array=tline.split()
+            
+            if(verbose==True):
+                print >> sys.stderr,"* Training lm for sentence pair:"
+                print >> sys.stderr," raw:",line.encode("utf-8")
+                print >> sys.stderr," tok:",
+                for i in range(len(tok_array)):
+                    print >> sys.stderr,tok_array[i].encode("utf-8"),
+                print >> sys.stderr,""
 
             # Process sentence
-            self.train_sent_tok(raw_word_array,tok_array,lmvoc,verbose)
+            retval=self.train_sent_tok(raw_word_array,tok_array,lmvoc,verbose)
+            if(retval==False):
+                print >> sys.stderr, "Warning: something went wrong while training the language model for sentence",nsent
+            nsent+=1
 
     #####
     def train(self,file,nval,verbose):
