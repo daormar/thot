@@ -83,7 +83,13 @@ get_absolute_path()
     if [ $absolute -eq 1 ]; then
         echo $file
     else
-        echo $PWD/$file
+        oldpwd=$PWD
+        basetmp=`$BASENAME $PWD/$file`
+        dirtmp=`$DIRNAME $PWD/$file`
+        cd $dirtmp
+        result=${PWD}/${basetmp}
+        cd $oldpwd
+        echo $result
     fi
 }
 
