@@ -337,22 +337,18 @@ class LangModel:
             return 1.0/self.obtain_ng_count("")
         else:
             hc=self.obtain_ng_count(self.remove_newest_word(ngram))
-    #        print >> sys.stderr,"***",hc
             if(hc==0):
                 return 0
             else:
                 ngc=self.obtain_ng_count(ngram)
-    #            print >> sys.stderr,"***",ngram,ngc,hc,float(ngc)/float(hc)
                 return float(ngc)/float(hc)
 
     #####
     def obtain_trgsrc_interp_prob(self,ngram):
         ng_array=ngram.split()
         if(len(ng_array)==0):
-    #        print >> sys.stderr,"***",self.obtain_trgsrc_prob(ngram),ngram
             return self.obtain_trgsrc_prob(ngram)
         else:
-    #        print >> sys.stderr,"***",self.obtain_trgsrc_prob(ngram),ngram
             return self.interp_prob * self.obtain_trgsrc_prob(ngram) + (1-self.interp_prob) * self.obtain_trgsrc_interp_prob(self.remove_oldest_word(ngram))
         
     #####
@@ -738,7 +734,10 @@ def transform_word(word):
             return _global_number_str
         else:
             return _global_digit_str
-    elif(word.isalnum()==True and bool(_digits.search(word))==True):
+    elif(is_number(word)==True):
+        return _global_number_str
+#    elif(word.isalnum()==True and bool(_digits.search(word))==True):
+    elif(is_alnum(word)==True and bool(_digits.search(word))==True):
         return _global_alfanum_str
     elif(len(word)>5):
         return _global_common_word_str
@@ -758,6 +757,36 @@ def transform_word(word):
     # else:
     #     return word
 
+##################################################
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+##################################################
+def is_alnum(s):
+    regex=re.compile('[a-zA-Z0-9]+')
+    res=regex.match(s)
+    if(res==None):
+        return False
+    else:
+        return True
+
+##################################################
+def categorize_word(word):
+    if(word.isdigit()==True):
+        if(len(word)>1):
+            return _global_number_str
+        else:
+            return _global_digit_str
+    elif(is_number(word)==True):
+        return _global_number_str
+    elif(is_alnum(word)==True and bool(_digits.search(word))==True):
+        return _global_alfanum_str
+    else:
+        return word
 
 ##################################################
 def is_categ(word):
