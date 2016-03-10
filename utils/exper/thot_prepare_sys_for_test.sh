@@ -216,6 +216,7 @@ generate_cfg_file()
     # Print data regarding development files
     echo "# [SCRIPT_INFO] tool: thot_prepare_sys_for_test"
     echo "# [SCRIPT_INFO] test file: $tcorpus" 
+    echo "# [SCRIPT_INFO] initial cfg file: $cmdline_cfg"
     echo "# [SCRIPT_INFO]"
 
     # Create file from command line file

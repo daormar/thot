@@ -386,6 +386,7 @@ create_cfg_file_for_tuned_sys()
     echo "# [SCRIPT_INFO] tool: thot_smt_tune"
     echo "# [SCRIPT_INFO] source dev. file: $scorpus" 
     echo "# [SCRIPT_INFO] target dev. file: $tcorpus" 
+    echo "# [SCRIPT_INFO] initial cfg file: $cmdline_cfg"
     echo "# [SCRIPT_INFO]"
 
     # Create file from command line file
