@@ -523,27 +523,38 @@ fi
 
 if [ ${notrans_given} -eq 0 ]; then
 
+    # Create dir for model filtering
+    if [ ! -d ${outd}/output/$curr_date ]; then
+        mkdir -p ${outd}/filtered_models || exit 1
+    fi
+
+    # Obtain basename of ${scorpus_test}
+    base_sct=`$BASENAME ${scorpus_test}`
+
     # Prepare system to translate test corpus
     if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
         echo "**** Preparing system to translate test corpus" >&2
-        ${bindir}/thot_prepare_sys_for_test -c $outd/tune/tuned_for_dev.cfg -t ${scorpus_test} \
-            -o $outd/systest ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
+        ${bindir}/thot_prepare_sys_for_test -c $outd/tune/tuned_for_dev.cfg -t ${scorpus_test}  \
+            -o $outd/filtered_models/${base_sct} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
         echo "" >&2
     fi
 
     # Obtain current date
-    curr_date=`date '+%d_%b_%Y'`
+    curr_date=`date '+%Y_%m_%d'`
+
+    # Create variable containing traslator output dir name
+    transoutd=${base_sct}.${curr_date}
 
     # Create translator output dir
-    if [ ! -d ${outd}/output/$curr_date ]; then
-        mkdir -p ${outd}/output/$curr_date || exit 1
+    if [ ! -d ${outd}/output/${transoutd} ]; then
+        mkdir -p ${outd}/output/${transoutd} || exit 1
     fi
 
     # Generate translations
     if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
         echo "**** Translating test corpus" >&2
-        ${bindir}/thot_decoder -pr ${pr_val} -c $outd/systest/test_specific.cfg \
-            -t ${scorpus_test} -o $outd/output/$curr_date/thot_decoder_out ${debug_opt} -v || exit 1
+        ${bindir}/thot_decoder -pr ${pr_val} -c $outd/filtered_models/${base_sct}/test_specific.cfg \
+            -t ${scorpus_test} -o $outd/output/${transoutd}/thot_decoder_out ${debug_opt} -v || exit 1
         test_trans_executed="yes"
         echo "" >&2
     fi
@@ -551,15 +562,15 @@ if [ ${notrans_given} -eq 0 ]; then
     # Obtain BLEU score
     if [ ${test_trans_executed} = "yes" ]; then
         echo "**** Obtaining BLEU score" >&2
-        ${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $outd/output/$curr_date/thot_decoder_out \
-            > $outd/output/$curr_date/thot_decoder_out.bleu || exit 1
+        ${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $outd/output/${transoutd}/thot_decoder_out \
+            > $outd/output/${transoutd}/thot_decoder_out.bleu || exit 1
         echo "" >&2
     fi
 
     ### Execute post-processing steps if required
 
     # Define output_file variable
-    output_file=$outd/output/$curr_date/thot_decoder_out
+    output_file=$outd/output/${transoutd}/thot_decoder_out
 
     # Recasing stage
     if [ ${lower_given} = 1 ]; then
