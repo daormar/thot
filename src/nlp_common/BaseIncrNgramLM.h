@@ -276,7 +276,7 @@ int BaseIncrNgramLM<LM_STATE>::perplexity(const char *corpusFileName,
       // Open corpus file
   if(awk.open(corpusFileName)==ERROR)
   {
-    cerr<<"Error while loading corpus file "<<corpusFileName<<endl;
+    cerr<<"Error while opening corpus file "<<corpusFileName<<endl;
     return ERROR;
   }  
 
