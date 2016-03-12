@@ -144,10 +144,11 @@ create_lm_files()
 
         # Obtain new lm file name
         newlmfile=${outd}/lm/main/${baselmfile}
+        relative_newlmfile=main/${baselmfile}
 
         # Create descriptor
         echo "thot lm descriptor" > ${outd}/lm/lm_desc
-        echo "jm $newlmfile main" >> ${outd}/lm/lm_desc
+        echo "jm ${relative_newlmfile} main" >> ${outd}/lm/lm_desc
     fi
 }
 
@@ -194,10 +195,11 @@ create_tm_files()
 
         # Obtain new tm file name
         newtmfile=${outd}/tm/main/${basetmfile}
+        relative_newtmfile=main/${basetmfile}
 
         # Create descriptor
         echo "thot tm descriptor" > ${outd}/tm/tm_desc
-        echo "$newtmfile main" >> ${outd}/tm/tm_desc
+        echo "${relative_newtmfile} main" >> ${outd}/tm/tm_desc
     fi
 }
 

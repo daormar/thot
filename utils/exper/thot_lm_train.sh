@@ -95,7 +95,7 @@ get_absolute_path()
 create_desc_file()
 {
     echo "thot lm descriptor # tool: thot_lm_train" > ${outd}/lm_desc
-    echo "jm $prefix main # corpus file: ${corpus}" >> ${outd}/lm_desc
+    echo "jm ${relative_prefix} main # corpus file: ${corpus}" >> ${outd}/lm_desc
 }
 
 ########
@@ -232,6 +232,7 @@ fi
 # Estimate n-gram model parameters
 echo "* Estimating n-gram model parameters... " >&2
 prefix=$outd/main/trg.lm
+relative_prefix=main/trg.lm
 ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
     -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
     ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1

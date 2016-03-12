@@ -234,10 +234,11 @@ create_tm_dev_files()
 
         # Obtain new tm file name for development corpus
         newtmdevfile=${outd}/tm_dev/main/${basetmfile}
+        relative_newtmdevfile=main/${basetmfile}
 
         # Create descriptor
         echo "thot tm descriptor" > ${outd}/tm_dev/tm_desc
-        echo "$newtmdevfile main" >> ${outd}/tm_dev/tm_desc
+        echo "${relative_newtmdevfile} main" >> ${outd}/tm_dev/tm_desc
     fi
 }
 
@@ -282,10 +283,11 @@ create_tm_files()
 
         # Obtain new tm file name
         newtmfile=${outd}/tm/main/${basetmfile}
+        relative_newtmfile=main/${basetmfile}
 
         # Create descriptor
         echo "thot tm descriptor" > ${outd}/tm/tm_desc
-        echo "$newtmfile main" >> ${outd}/tm/tm_desc
+        echo "${relative_newtmfile} main" >> ${outd}/tm/tm_desc
     fi
 }
 

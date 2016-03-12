@@ -112,7 +112,7 @@ get_absolute_path()
 create_desc_file()
 {
     echo "thot tm descriptor # tool: thot_tm_train" > ${outd}/tm_desc
-    echo "$prefix main # source file: ${scorpus} ; target file: ${tcorpus}" >> ${outd}/tm_desc
+    echo "${relative_prefix} main # source file: ${scorpus} ; target file: ${tcorpus}" >> ${outd}/tm_desc
 }
 
 ########
@@ -315,6 +315,7 @@ fi
 
 # Train model
 prefix=$outd/main/src_trg
+relative_prefix=main/src_trg
 ${bindir}/thot_pbs_gen_batch_phr_model -pr ${pr_val} \
     -s $tcorpus -t $scorpus -o $prefix -n $niters ${af_opt} ${np_opt} \
     -m ${m_val} ${ao_opt} -to ${to_val} ${unk_opt}  ${qs_opt} "${qs_par}" \

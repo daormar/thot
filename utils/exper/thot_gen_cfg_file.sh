@@ -4,12 +4,62 @@
 # Generates a thot configuration file given translation and language
 # model descriptors.
 
+########
+is_absolute_path()
+{
+    case $1 in
+        /*) echo 1 ;;
+        *) echo 0 ;;
+    esac
+}
+
+########
+get_absolute_path()
+{
+    # Initialize variables
+    file=$1
+    filedir=$2
+
+    # Check if an absolute path was given
+    absolute=`is_absolute_path $file`
+    if [ $absolute -eq 1 ]; then
+        echo $file
+    else
+        oldpwd=$PWD
+        basetmp=`$BASENAME ${filedir}/$file`
+        dirtmp=`$DIRNAME ${filedir}/$file`
+        cd $dirtmp
+        result=${PWD}/${basetmp}
+        cd $oldpwd
+        echo $result
+    fi
+}
+
+########
+obtain_lm_file_path()
+{
+    local_lmfile=`$HEAD -2 ${lm_desc} | $TAIL -1 | $AWK '{printf"%s",$2}'`
+    get_absolute_path ${local_lmfile} ${lm_desc_dir}
+}
+
+########
+obtain_tm_file_path()
+{
+    local_tmfile=`$HEAD -2 ${tm_desc} | $TAIL -1 | $AWK '{printf"%s",$1}'`
+    get_absolute_path ${local_tmfile} ${tm_desc_dir}
+}
+
+########
 if [ $# -ne 2 ]; then
     echo "Usage: thot_gen_cfg_file <lm_desc> <tm_desc>"
 else
     # Read parameters
-    lm_desc=$1
-    tm_desc=$2
+    lm_desc=`get_absolute_path $1 $PWD`
+    tm_desc=`get_absolute_path $2 $PWD`
+
+    # Initialize variables
+    lm_desc_dir=`$DIRNAME ${lm_desc}`
+    tm_desc_dir=`$DIRNAME ${tm_desc}`
 
     # Check files
     if [ ! -f ${tm_desc} ]; then
@@ -23,10 +73,10 @@ else
     fi
 
     # Obtain lm file path
-    lmfile=`$HEAD -2 ${lm_desc} | $TAIL -1 | $AWK '{printf"%s",$2}'`
+    lmfile=`obtain_lm_file_path`
 
     # Obtain tm file path
-    tmfile=`$HEAD -2 ${tm_desc} | $TAIL -1 | $AWK '{printf"%s",$1}'`
+    tmfile=`obtain_tm_file_path`
 
     # Generate configuration file
     cat ${datadir}/cfg_templates/thot_basic.cfg | \
