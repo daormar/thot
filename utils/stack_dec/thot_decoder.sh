@@ -245,7 +245,7 @@ trans_frag()
         { echo "Error while executing trans_frag for $SDIR/${fragm}" >> $SDIR/qs_trans_${fragm}.log; return 1 ; }
 
     # Write date to log file
-    echo "Processing of chunk ${chunk} finished ("`date`")" >> $SDIR/log 
+    echo "Processing of chunk ${fragm} finished ("`date`")" >> $SDIR/log 
 
     # Create sync file
     echo "" >$SDIR/qs_trans_${fragm}_end
