@@ -237,9 +237,9 @@ evaluate()
             echo "${BLEU} ${nnc_pen}" | $AWK '{printf"%f\n",$1+$2}'
             ;;
         "WER") # Calculate the WER measure
-            ${bindir}/thot_calc_wer ${REF_FOR_EVAL} ${SDIR}/smt_trgf.trans | head -1 >> ${SDIR}/smt_trgf.${MEASURE}
+            ${bindir}/thot_calc_wer -r ${REF_FOR_EVAL} -t ${SDIR}/smt_trgf.trans | head -1 >> ${SDIR}/smt_trgf.${MEASURE}
             # Obtain WER
-            WER=`tail -1 ${SDIR}/smt_trgf.${MEASURE} | ${AWK} '{printf"%f\n",$3}'`
+            WER=`tail -1 ${SDIR}/smt_trgf.${MEASURE} | ${AWK} '{printf"%f\n",$2}'`
             # Print target function value
             echo "${WER} ${nnc_pen}" | $AWK '{printf"%f\n",$1+$2}'
             ;;

@@ -52,7 +52,7 @@ echo;
 # Standard evaluation
 echo "Standard evaluation:"
 if [ $measure = "WER" ]; then
-    $bindir/thot_calc_wer $ref $test
+    $bindir/thot_calc_wer -r $ref -t $test
 else
     $bindir/thot_calc_bleu -r $ref -t $test
 fi
@@ -80,7 +80,7 @@ for ((n=1;n<=N;n++)); do
         }
        }'
     if [ $measure = "WER" ]; then
-        a=`$bindir/thot_calc_wer $TMP/ref $TMP/test | head -1 | cut -d " " -f 3`
+        a=`$bindir/thot_calc_wer -r $TMP/ref -t $TMP/test | head -1 | cut -d " " -f 2`
     else
         a=`$bindir/thot_calc_bleu -r $TMP/ref -t $TMP/test | head -1 | cut -d " " -f 2`
     fi
