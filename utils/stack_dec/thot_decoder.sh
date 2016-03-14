@@ -541,9 +541,10 @@ else
 fi
 
 # create log file
-echo "*** Parallel process started at: " `date` > $SDIR/log
+echo "Input file: ${sents}"> $SDIR/log
 echo "">> $SDIR/log
-echo "Input file: ${sents}">> $SDIR/log
+
+echo "*** Parallel process started at: " `date` >> $SDIR/log
 echo "">> $SDIR/log
 
 # process input
