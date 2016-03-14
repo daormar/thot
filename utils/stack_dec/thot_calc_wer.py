@@ -108,7 +108,7 @@ def main(argv):
         # Print verbose information
         if(verbose==1):
             sent_wer=float(sent_eddist)/float(len(ref_word_array))
-            print format(sent_wer,'g'),"|||",rline.encode("utf-8"),tline.encode("utf-8")
+            print format(sent_wer,'g'),"|||",rline.encode("utf-8"),"|||",tline.encode("utf-8")
          
     # Print WER
     WER=(eddist/running_words)
