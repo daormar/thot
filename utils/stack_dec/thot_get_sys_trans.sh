@@ -5,11 +5,11 @@
 # output of cat_using_client
 
 if [ $# -ne 1 ]; then
-echo "Usage: thot_get_sys_trans <cat_using_client_output>"
+    echo "Usage: thot_get_sys_trans <thot_cat_using_client_output>"
 else
 
     file=$1
-    grep "<reference>" -A 1 ${file} | grep "<hyp" | \
+    ${GREP} "<reference>" -A 1 ${file} | ${GREP} "<hyp" | \
               ${AWK} -v n=$1 '{
                                 for(i=3;i<=NF-1;++i)
                                 {
@@ -18,4 +18,5 @@ else
                                 }
                                 printf"\n"
                               }' | sed -e s"/^\^//g"
+
 fi
