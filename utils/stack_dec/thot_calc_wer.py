@@ -111,8 +111,8 @@ def main(argv):
             print format(sent_wer,'g'),"|||",rline.encode("utf-8"),tline.encode("utf-8")
          
     # Print WER
-    WER=(eddist/running_words)*100
-    print "WER:",format(WER,'.2f'),"( 100 *",eddist,"/",running_words,")"
+    WER=(eddist/running_words)
+    print "WER:",format(WER,'g'),"(",eddist,"/",running_words,")"
 
 if __name__ == "__main__":
     main(sys.argv)
