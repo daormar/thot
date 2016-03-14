@@ -112,7 +112,7 @@ def main(argv):
          
     # Print WER
     WER=(eddist/running_words)
-    print "WER:",format(WER,'g'),"(",eddist,"/",running_words,")"
+    print "WER:",format(WER,'g'),"(",format(eddist,'g'),"/",format(running_words,'g'),")"
 
 if __name__ == "__main__":
     main(sys.argv)
