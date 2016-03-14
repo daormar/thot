@@ -31,6 +31,7 @@
 /home/dortiz/smt/software/stack_dec thot_cat_using_client
 /home/dortiz/smt/software/stack_dec thot_dhs_cat_trgfunc
 /home/dortiz/smt/software/stack_dec thot_get_sys_trans
+/home/dortiz/smt/software/stack_dec thot_extract_hyp_info
 /home/dortiz/smt/software/exper thot_tm_train
 /home/dortiz/smt/software/exper thot_lm_train
 /home/dortiz/smt/software/exper thot_smt_tune
