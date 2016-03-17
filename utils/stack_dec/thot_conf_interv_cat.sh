@@ -96,7 +96,6 @@ bootstrap_eval()
     echo "Confidence intervals";
     echo "conf.int.95 = [ $lb95 , $ub95 ] $center95 +- $rad95"
     echo "conf.int.90 = [ $lb90 , $ub90 ] $center90 +- $rad90"
-    echo ""
 }
 
 #####################################################################
