@@ -796,6 +796,120 @@ def is_categ(word):
         return False
 
 ##################################################
+def extract_alig_info(hyp_word_array):
+    # Initialize output variables
+    srcsegms=[]
+    trgcuts=[]
+
+    # Scan hypothesis information
+    info_found=False
+    for i in range(len(hyp_word_array)):
+        if(hyp_word_array[i]=="hypkey:" and hyp_word_array[i-1]=="|"):
+            info_found=True
+            i-=2
+            break;
+    
+    if(info_found):
+        # Obtain target segment cuts
+        trgcuts_found=False
+        while i>0:
+            trgcuts.append(int(hyp_word_array[i]))
+            i-=1
+            if(hyp_word_array[i]=="|"):
+                trgcuts_found=True
+                i-=1
+                break
+        trgcuts.reverse()
+        
+        if(trgcuts_found):
+            # Obtain source segments
+            srcsegms_found=False
+            while i>0:
+                if(i>3):
+                    srcsegms.append((int(hyp_word_array[i-3]),int(hyp_word_array[i-1])))
+                i-=5
+                if(hyp_word_array[i]=="|"):
+                    srcsegms_found=True
+                    break
+            srcsegms.reverse()
+
+    # Return result
+    if(srcsegms_found):
+        return (srcsegms,trgcuts)
+    else:
+        return ([],[])
+
+##################################################
+def extract_categ_words_of_segm(word_array,left,right):
+    # Initialize variables
+    categ_words=[]
+
+    # Explore word array
+#    print len(word_array),left,right
+    for i in range(left,right+1):
+        if(is_categ(word_array[i]) or is_categ(categorize_word(word_array[i]))):
+           categ_words.append((i,word_array[i]))
+
+    # Return result
+    return categ_words
+
+##################################################
+def decategorize_word(trgpos,src_word_array,trg_word_array,srcsegms,trgcuts):
+    # Check if there is alignment information available
+    if(len(srcsegms)==0 or len(trgcuts)==0):
+        return trg_word_array[i]
+    else:
+        # Scan target cuts
+        for k in range(len(trgcuts)):
+            if(k==0):
+                if(trgpos+1<=trgcuts[k]):
+                    trgleft=0
+                    trgright=trgcuts[k]-1
+                    break
+            else:
+                if(trgpos+1>trgcuts[k-1] and trgpos+1<=trgcuts[k]):
+                    trgleft=trgcuts[k-1]
+                    trgright=trgcuts[k]-1
+                    break
+        # Check if trgpos'th word was assigned to one cut
+        if(k<len(trgcuts)):
+            # Obtain source segment limits
+            srcleft=srcsegms[k][0]-1
+            srcright=srcsegms[k][1]-1
+            # Obtain categorized words with their indices
+            src_categ_words=extract_categ_words_of_segm(src_word_array,srcleft,srcright)
+            trg_categ_words=extract_categ_words_of_segm(trg_word_array,trgleft,trgright)
+
+            # Obtain decategorized word
+            decateg_word=""
+            curr_categ_word=trg_word_array[trgpos]
+            curr_categ_word_order=0
+            for l in range(len(trg_categ_words)):
+                if(trg_categ_words[l][0]==trgpos):
+                    break
+                else:
+                    if(trg_categ_words[l][1]==curr_categ_word):
+                        curr_categ_word_order+=1
+
+#            print curr_categ_word,curr_categ_word_order
+            aux_order=0
+            for l in range(len(src_categ_words)):
+                if(categorize_word(src_categ_words[l][1])==curr_categ_word):
+                    if(aux_order==curr_categ_word_order):
+                        decateg_word=src_categ_words[l][1]   
+                        break
+                    else:
+                        aux_order+=1
+
+            # Return decategorized word
+            if(decateg_word==""):
+                return trg_word_array[trgpos]
+            else:
+                return decateg_word
+        else:
+            return trg_word_array[trgpos]
+
+##################################################
 class Decoder:
 
     def __init__(self,tmodel,lmodel,weights):
