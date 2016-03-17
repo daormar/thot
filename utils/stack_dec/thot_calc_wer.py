@@ -77,10 +77,6 @@ def main(argv):
         print >> sys.stderr, "Error! -t parameter not given"
         sys.exit(2)
 
-    # print parameters
-    print >> sys.stderr, "r is %s" % (refsents)
-    print >> sys.stderr, "t is %s" % (syssents)
-
     # open files
     if(r_given==True):
         # open file
