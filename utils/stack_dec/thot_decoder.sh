@@ -492,6 +492,13 @@ done
 
 # verify parameters
 
+if [ ${c_given} -eq 1 ]; then
+    if [ ! -f ${cfgfile} ]; then
+        echo "Error: configuration file does not exist" >&2
+        exit 1
+    fi
+fi
+
 if [ ${sents_given} -eq 0 ]; then
     echo "Error: file with sentences not given" >&2
     exit 1
