@@ -17,7 +17,6 @@ currently a researcher on natural language processing at [Webinterpret]
 [2]. Formerly, he was a member of the [PRHLT research group] [3] as well
 as assistant professor at the [Technical University of Valencia] [4].
 
-
 News
 ----
 A new version of the toolkit has been released with several improvements
@@ -305,12 +304,24 @@ In Proc. of the Machine Translation Summit (MT-Summit),
 Phuket, Thailand, September 2005. [Download] [19]
 
 
+Why Thot?
+---------
+
+The name Thot (also Thoth or Tot) was chosen because it represents the
+Egyptian God of knowledge [20], continuing the tradition of using
+Egyptian names for machine translation tools initiated by other
+developers in the field. Interestingly, Seshat, who is the wife of Thot
+and the Goddess of writing [21], is the name of a very exciting machine
+learning tool [22] for mathematical expression recognition developed by my
+former colleague at PRHLT, Francisco Álvaro [23].
+
+
 Sponsors
 --------
 Thot has been supported by the European Union under the [CasMaCat
 research project] [6]. Thot has also received support from the Spanish
 Government in a number of research projects, such as the [MIPRCV
-project] [20] that belongs to the [CONSOLIDER programme] [21].
+project] [24] that belongs to the [CONSOLIDER programme] [25].
 
 
 [1]: http://daormar.github.io/
@@ -332,5 +343,9 @@ project] [20] that belongs to the [CONSOLIDER programme] [21].
 [17]: http://aclweb.org/anthology-new/N/N10/N10-1079.pdf
 [18]: http://mt-archive.info/EAMT-2008-Ortiz-Martinez.pdf
 [19]: http://www.mt-archive.info/MTS-2005-Ortiz-Martinez.pdf
-[20]: http://miprcv.iti.upv.es/
-[21]: http://www.ingenio2010.es/
+[20]: https://en.wikipedia.org/wiki/Thoth
+[21]: https://en.wikipedia.org/wiki/Seshat
+[22]: https://github.com/falvaro/seshat
+[23]: http://falvaro.github.io/
+[24]: http://miprcv.iti.upv.es/
+[25]: http://www.ingenio2010.es/
