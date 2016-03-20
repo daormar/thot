@@ -7,7 +7,7 @@ ThotImtFactory.cc ThotImtEngine.h ThotImtEngine.cc thot_server_pars.h	\
 thot_server.cc ThotDecoderUserPars.h ThotDecoderState.h			\
 ThotDecoderPerUserVars.h ThotDecoder.h ThotDecoderCommonVars.h		\
 ThotDecoderClient.h ThotDecoderClient.cc ThotDecoder.cc thot_ms_dec.cc	\
-thot_client_pars.h thot_client.cc thot_calc_bleu.cc thot_aligner.cc	\
+thot_client_pars.h thot_client.cc thot_calc_bleu.cc thot_ms_alig.cc	\
 test_casmacat_engines.cc SwModelPars.h SwModelInfo.h			\
 StackDecWgProcessorForAnlpTypes.h StackDecSwModelTypes.h		\
 StackDecPbModelTypes.h _stack_decoder_statistics.h _stackDecoderRec.h	\

@@ -18,9 +18,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: thot_aligner                                             */
+/* Module: thot_ms_alig                                             */
 /*                                                                  */
-/* Definitions file: thot_aligner.cc                                */
+/* Definitions file: thot_ms_alig.cc                                */
 /*                                                                  */
 /* Description: Implements a phrase-based alignment system          */
 /*                                                                  */
@@ -64,7 +64,7 @@ using namespace std;
 
 //--------------- Type definitions -----------------------------------
 
-struct thot_aligner_pars
+struct thot_ms_alig_pars
 {
   bool p_option;
   bool cov_option;
@@ -79,7 +79,7 @@ struct thot_aligner_pars
   float wgPruningThreshold;
   Vector<float> weightVec;
 
-  thot_aligner_pars()
+  thot_ms_alig_pars()
     {
       p_option=false;
       cov_option=false;
@@ -100,29 +100,29 @@ struct thot_aligner_pars
 
 //--------------- Function Declarations ------------------------------
 
-int init_translator(const thot_aligner_pars& tap);
+int init_translator(const thot_ms_alig_pars& tap);
 void release_translator(void);
-int align_corpus(const thot_aligner_pars& tap);
+int align_corpus(const thot_ms_alig_pars& tap);
 Vector<string> stringToStringVector(string s);
 void version(void);
 void print_alig_a3_final(std::string srcstr,
                          std::string trgstr,
                          CURR_MODEL_TYPE::Hypothesis hyp,
                          unsigned int sentNo,
-                         const thot_aligner_pars& tap);
+                         const thot_ms_alig_pars& tap);
 int handleParameters(int argc,
                      char *argv[],
-                     thot_aligner_pars& pars);
+                     thot_ms_alig_pars& pars);
 int takeParameters(int argc,
                    char *argv[],
-                   thot_aligner_pars& tap);
+                   thot_ms_alig_pars& tap);
 int takeParametersFromCfgFile(std::string cfgFileName,
-                              thot_aligner_pars& tap);
+                              thot_ms_alig_pars& tap);
 void takeParametersGivenArgcArgv(int argc,
                                  char *argv[],
-                                 thot_aligner_pars& tap);
-int checkParameters(const thot_aligner_pars& tap);
-void printParameters(const thot_aligner_pars& tap);
+                                 thot_ms_alig_pars& tap);
+int checkParameters(const thot_ms_alig_pars& tap);
+void printParameters(const thot_ms_alig_pars& tap);
 void printUsage(void);
 void printConfig(void);
 
@@ -137,7 +137,7 @@ CURR_MSTACK_TYPE<CURR_MODEL_TYPE>* translatorPtr;
 int main(int argc, char *argv[])
 {
       // Take and check parameters
-  thot_aligner_pars tap;
+  thot_ms_alig_pars tap;
   if(handleParameters(argc,argv,tap)==ERROR)
   {
     return ERROR;
@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
 }
 
 //--------------- init_translator function
-int init_translator(const thot_aligner_pars& tap)
+int init_translator(const thot_ms_alig_pars& tap)
 {
   int err;
   
@@ -252,7 +252,7 @@ void release_translator(void)
 }
 
 //--------------- align_corpus function
-int align_corpus(const thot_aligner_pars& tap)
+int align_corpus(const thot_ms_alig_pars& tap)
 {
   CURR_MODEL_TYPE::Hypothesis result;     // Results of the translation
   CURR_MODEL_TYPE::Hypothesis anotherTrans;     // Another results of the translation
@@ -383,7 +383,7 @@ void print_alig_a3_final(std::string srcstr,
                          std::string trgstr,
                          CURR_MODEL_TYPE::Hypothesis hyp,
                          unsigned int sentNo,
-                         const thot_aligner_pars& tap)
+                         const thot_ms_alig_pars& tap)
 {
   CURR_MODEL_TYPE::Hypothesis::DataType dataType;
   Vector<std::string> sysTrgVec;
@@ -431,7 +431,7 @@ void print_alig_a3_final(std::string srcstr,
 //--------------- handleParameters function
 int handleParameters(int argc,
                      char *argv[],
-                     thot_aligner_pars& tap)
+                     thot_ms_alig_pars& tap)
 {
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
@@ -469,7 +469,7 @@ int handleParameters(int argc,
 //--------------- takeParameters function
 int takeParameters(int argc,
                    char *argv[],
-                   thot_aligner_pars& tap)
+                   thot_ms_alig_pars& tap)
 {
       // Check if a configuration file was provided
   std::string cfgFileName;
@@ -487,7 +487,7 @@ int takeParameters(int argc,
 
 //--------------- processParameters function
 int takeParametersFromCfgFile(std::string cfgFileName,
-                              thot_aligner_pars& tap)
+                              thot_ms_alig_pars& tap)
 {
       // Extract parameters from configuration file
     std::string comment="#";
@@ -520,7 +520,7 @@ int takeParametersFromCfgFile(std::string cfgFileName,
 //--------------- takeParametersGivenArgcArgv function
 void takeParametersGivenArgcArgv(int argc,
                                  char *argv[],
-                                 thot_aligner_pars& tap)
+                                 thot_ms_alig_pars& tap)
 {
  int err;
 
@@ -536,28 +536,28 @@ void takeParametersGivenArgcArgv(int argc,
    tap.cov_option=true;
  }    
  
-     // Takes W parameter 
+     // Take W parameter 
  err=readFloat(argc,argv, "-W", &tap.W);
 
-     // Takes S parameter 
+     // Take S parameter 
  err=readInt(argc,argv, "-S", &(tap.S));
 
-     // Takes A parameter 
+     // Take A parameter 
  err=readInt(argc,argv, "-A", &tap.A);
 
-     // Takes E parameter 
+     // Take E parameter 
  err=readInt(argc,argv, "-E", &tap.E);
 
-     // Takes nomon parameter 
+     // Take nomon parameter 
  err=readInt(argc,argv, "-nomon", &tap.nomon);
 
-     // Takes N parameter 
+     // Take N parameter 
  err=readInt(argc,argv, "-I", &tap.I);
 
-     // Takes I parameter 
+     // Take I parameter 
  err=readInt(argc,argv, "-G", &tap.G);
 
-     // Takes h parameter 
+     // Take h parameter 
  err=readInt(argc,argv, "-h", &tap.heuristic);
 
      // Take language model file name
@@ -625,7 +625,7 @@ void takeParametersGivenArgcArgv(int argc,
 }
 
 //--------------- checkParameters function
-int checkParameters(const thot_aligner_pars& tap)
+int checkParameters(const thot_ms_alig_pars& tap)
 {
   if(tap.languageModelFileName.empty())
   {
@@ -661,7 +661,7 @@ int checkParameters(const thot_aligner_pars& tap)
 }
 
 //--------------- printParameters function
-void printParameters(const thot_aligner_pars& tap)
+void printParameters(const thot_ms_alig_pars& tap)
 {
  cerr<<"p option: "<<tap.p_option<<endl;
  cerr<<"cov option: "<<tap.cov_option<<endl;
@@ -771,7 +771,7 @@ void printConfig(void)
 //--------------- printUsage() function
 void printUsage(void)
 {
-  cerr << "thot_aligner   [-c <string>] [-tm <string>] [-lm <string>]"<<endl;
+  cerr << "thot_ms_alig   [-c <string>] [-tm <string>] [-lm <string>]"<<endl;
   cerr << "               -t <string> -r <string>"<<endl;
   cerr << "               [-p|-cov] [-W <float>]"<<endl;
   cerr << "               [-S <int>] [-A <int>] [-E <int>] [-I <int>]"<<endl;
@@ -794,8 +794,9 @@ void printUsage(void)
   cerr << " -S <int>              : Maximum number of hypotheses that can be stored in"<<endl;
   cerr << "                         each stack ("<<PALIG_S_DEFAULT<<" by default)."<<endl;    
   cerr << " -A <int>              : Maximum length in words of the source phrases to be"<<endl;
-  cerr << "                         translated ("<<PALIG_A_DEFAULT<<" by default)."<<endl;
-  cerr << " -E <int>              : E parameter ("<<PALIG_E_DEFAULT<<" by default)."<<endl;
+  cerr << "                         aligned ("<<PALIG_A_DEFAULT<<" by default)."<<endl;
+  cerr << " -E <int>              : Maximum length in words of the target phrases to be"<<endl;
+  cerr << "                         aligned ("<<PALIG_E_DEFAULT<<" by default)."<<endl;
   cerr << " -I <int>              : Number of hypotheses expanded at each iteration"<<endl;
   cerr << "                         ("<<PALIG_I_DEFAULT<<" by default)."<<endl;
 #ifdef MULTI_STACK_USE_GRAN
@@ -834,7 +835,7 @@ void printUsage(void)
 //--------------- version function
 void version(void)
 {
-  cerr<<"thot_aligner is part of the thot package "<<endl;
+  cerr<<"thot_ms_alig is part of the thot package "<<endl;
   cerr<<"thot version "<<THOT_VERSION<<endl;
   cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
 }
