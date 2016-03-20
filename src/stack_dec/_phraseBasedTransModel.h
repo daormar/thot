@@ -1973,7 +1973,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGapRef(const Hypothe
         // s_{srcLeft}...s_{srcRight} is obtained to ensure that the
         // resulting hypotheses have at least as many gaps as reference
         // words to add
-    if(this->nonMonotonicity==1)
+    if(this->U==0)
       pNbtRefKey.numGaps=1;
     else
     {

@@ -197,16 +197,9 @@ int init_translator(const thot_ms_alig_pars& tap)
   pbtModelPtr->set_W_par(tap.W);
   pbtModelPtr->set_A_par(tap.A);
   pbtModelPtr->set_E_par(tap.E);
-        // Set non-monotonicity level
-  if(tap.nomon==0)
-  {
-    pbtModelPtr->setMonotoneSearch();
-  }
-  else
-  {
-    pbtModelPtr->resetMonotoneSearch();
-    pbtModelPtr->set_U_par(tap.nomon);
-  }
+  pbtModelPtr->set_U_par(tap.nomon);
+
+      // Set verbosity
   pbtModelPtr->setVerbosity(tap.verbosity);
 
       // Create a translator instance
