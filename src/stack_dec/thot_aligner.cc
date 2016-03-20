@@ -771,11 +771,11 @@ void printConfig(void)
 //--------------- printUsage() function
 void printUsage(void)
 {
-  cerr << "thot_aligner   [-c <string>] -tm <string> -lm <string>"<<endl;
+  cerr << "thot_aligner   [-c <string>] [-tm <string>] [-lm <string>]"<<endl;
   cerr << "               -t <string> -r <string>"<<endl;
   cerr << "               [-p|-cov] [-W <float>]"<<endl;
-  cerr << "               [-S <int>] [-A <int>] [-E <int>] [-U <int>] [-I <int>]"<<endl;
-  cerr << "               [-G <int>] [-h <int>] [-be] [-mon]"<<endl;
+  cerr << "               [-S <int>] [-A <int>] [-E <int>] [-I <int>]"<<endl;
+  cerr << "               [-G <int>] [-h <int>] [-be] [-nomon <int>]"<<endl;
   cerr << "               [-tmw <float> ... <float>]"<<endl;
 #ifndef THOT_DISABLE_REC
   cerr << "               [-wg <string> [-wgp <float>] ]"<<endl;
@@ -789,12 +789,13 @@ void printUsage(void)
   cerr << " -r <string>           : File with the reference sentences."<<endl;
   cerr << " -p                    : Treat the reference sentences as prefixes."<<endl;
   cerr << " -cov                  : Verify model coverage for the reference sentence."<<endl;
-  cerr << " -W <float>            : Maximum number of translation options/Threshold"<<endl;
-  cerr << "                         ("<<PALIG_W_DEFAULT<<" by default)."<<endl;
-  cerr << " -S <int>              : S parameter ("<<PALIG_S_DEFAULT<<" by default)."<<endl;    
-  cerr << " -A <int>              : A parameter ("<<PALIG_A_DEFAULT<<" by default)."<<endl;
+  cerr << " -W <float>            : Maximum number of translation options to be considered"<<endl;
+  cerr << "                         per each source phrase ("<<PALIG_W_DEFAULT<<" by default)."<<endl;
+  cerr << " -S <int>              : Maximum number of hypotheses that can be stored in"<<endl;
+  cerr << "                         each stack ("<<PALIG_S_DEFAULT<<" by default)."<<endl;    
+  cerr << " -A <int>              : Maximum length in words of the source phrases to be"<<endl;
+  cerr << "                         translated ("<<PALIG_A_DEFAULT<<" by default)."<<endl;
   cerr << " -E <int>              : E parameter ("<<PALIG_E_DEFAULT<<" by default)."<<endl;
-  cerr << " -U <int>              : Maximum number of skipped words."<<endl;
   cerr << " -I <int>              : Number of hypotheses expanded at each iteration"<<endl;
   cerr << "                         ("<<PALIG_I_DEFAULT<<" by default)."<<endl;
 #ifdef MULTI_STACK_USE_GRAN
