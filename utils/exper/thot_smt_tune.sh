@@ -132,7 +132,7 @@ create_lm_files()
         mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; return 1; }
     fi
 
-    # Check if tm file is a descriptor
+    # Check if lm file is a descriptor
     is_desc=`check_if_file_is_desc ${lmfile}`
 
     if [ ${is_desc} -eq 1 ]; then
