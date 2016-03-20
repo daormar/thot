@@ -6,7 +6,7 @@
 print_desc()
 {
     echo "thot_aligner written by Daniel Ortiz"
-    echo "thot_aligner implements a parallel decoder"
+    echo "thot_aligner implements a parallel phrase-based aligner"
     echo "type \"thot_aligner --help\" to get usage information."
 }
 
@@ -24,9 +24,9 @@ config()
 
 usage()
 {
-    echo "thot_aligner    [-pr <int>] [-c <string>]"
-    echo "                [-tm <string>] [-lm <string>] -t <string> -o <string>"
-    echo "                [-W <float>] [-S <int>] [-A <int>] [-nomon <int>]"
+    echo "thot_aligner    [-pr <int>] [-c <string>] [-tm <string>] [-lm <string>]"
+    echo "                -t <string> -r <string> -o <string>"
+    echo "                [-W <float>] [-S <int>] [-A <int>] [-E <int>] [-nomon <int>]"
     echo "                [-h <int>] [-tmw <float> ... <float>]"
     echo "                [-wg <string> [-wgp <float>] ]"
     echo "                [-sdir <string>] [-qs <string>] [-v|-v1|-v2]"
@@ -40,14 +40,17 @@ usage()
     echo "                      a) give absolute paths when using pbs clusters."
     echo "                      b) ensure that the given path is reachable by all nodes."
     echo " -lm <string>      : Language model file name."
-    echo " -t <string>       : File with the sentences to translate."
+    echo " -t <string>       : File with the sentences to align."
+    echo " -r <string>       : File with the reference sentences."
     echo " -o <string>       : Set output files prefix name."
     echo " -W <float>        : Maximum number of translation options to be considered"
     echo "                     per each source phrase (10 by default)."
     echo " -S <int>          : Maximum number of hypotheses that can be stored in each"
     echo "                     stack (10 by default)."
     echo " -A <int>          : Maximum length in words of the source phrases to be"
-    echo "                     translated (10 by default)."
+    echo "                     aligned (10 by default)."
+    echo " -E <int>          : Maximum length in words of the target phrases to be"
+    echo "                     aligned (10 by default)."
     echo " -nomon <int>      : Perform a non-monotonic search, allowing the decoder"
     echo "                     to skip up to <int> words from the last aligned source"
     echo "                     words. If <int> is equal to zero, then a monotonic"
@@ -231,21 +234,21 @@ pbs_sync()
     done
 }
 
-trans_frag()
+alig_frag()
 {
     # Write date to log file
     echo "** Processing chunk ${fragm} (started at "`date`")..." >> $SDIR/log
-    echo "** Processing chunk ${fragm} (started at "`date`")..." > $SDIR/qs_trans_${fragm}.log
+    echo "** Processing chunk ${fragm} (started at "`date`")..." > $SDIR/qs_alig_${fragm}.log
 
-    ${bindir}/thot_ms_dec ${cfg_opt} -t $SDIR/${fragm} ${dec_pars} \
-        ${wg_par}wg_${fragm} 2>> $SDIR/qs_trans_${fragm}.log >$SDIR/qs_trans_${fragm}.out || \
-        { echo "Error while executing trans_frag for $SDIR/${fragm}" >> $SDIR/qs_trans_${fragm}.log; return 1 ; }
+    ${bindir}/thot_ms_alig ${cfg_opt} -t $SDIR/${src_fragm} -r $SDIR/${sref_fragm} ${alig_pars} \
+        ${wg_par}wg_${fragm} 2>> $SDIR/qs_alig_${fragm}.log >$SDIR/qs_alig_${fragm}.out || \
+        { echo "Error while executing alig_frag for $SDIR/${fragm}" >> $SDIR/qs_alig_${fragm}.log; return 1 ; }
 
     # Write date to log file
     echo "Processing of chunk ${fragm} finished ("`date`")" >> $SDIR/log 
 
     # Create sync file
-    echo "" >$SDIR/qs_trans_${fragm}_end
+    echo "" >$SDIR/qs_alig_${fragm}_end
 }
 
 move_wgs()
@@ -274,7 +277,7 @@ merge()
     echo "** Merging translations (started at "`date`")..." > $SDIR/merge.log
 
     # merge trans files
-    cat $SDIR/qs_trans_*.out > ${output} 2>> $SDIR/merge.log || \
+    cat $SDIR/qs_alig_*.out > ${output} 2>> $SDIR/merge.log || \
         { echo "Error while executing merge" >> $SDIR/log; return 1 ; }
 
     echo "" > $SDIR/merge_end
@@ -291,7 +294,7 @@ gen_log_err_files()
     if [ -f ${output}.dec_err ]; then
         rm ${output}.dec_err
     fi
-    for f in $SDIR/qs_trans_*.log; do
+    for f in $SDIR/qs_alig_*.log; do
         cat $f >> ${output}.dec_err
     done
     for f in $SDIR/merge.log; do
@@ -319,8 +322,9 @@ c_given=0
 tm_given=0
 lm_given=0
 sents_given=0
+refs_given=0
 sdir=$HOME
-dec_pars=""
+alig_pars=""
 debug=""
 o_given=0
 wg_given=0
@@ -364,20 +368,26 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 tm=$1
                 tm_given=1
-                dec_pars="${dec_pars} -tm $tm"
+                alig_pars="${alig_pars} -tm $tm"
             fi
             ;;
         "-lm") shift
             if [ $# -ne 0 ]; then
                 lm=$1
                 lm_given=1
-                dec_pars="${dec_pars} -lm $lm"
+                alig_pars="${alig_pars} -lm $lm"
             fi
             ;;
         "-t") shift
             if [ $# -ne 0 ]; then
                 sents=$1
                 sents_given=1
+            fi
+            ;;
+        "-r") shift
+            if [ $# -ne 0 ]; then
+                refs=$1
+                refs_given=1
             fi
             ;;
         "-o") shift
@@ -389,31 +399,37 @@ while [ $# -ne 0 ]; do
         "-W") shift
             if [ $# -ne 0 ]; then
                 W=$1
-                dec_pars="${dec_pars} -W $W"
+                alig_pars="${alig_pars} -W $W"
             fi
             ;;
         "-S") shift
             if [ $# -ne 0 ]; then
                 S=$1
-                dec_pars="${dec_pars} -S $S"
+                alig_pars="${alig_pars} -S $S"
             fi
             ;;
         "-A") shift
             if [ $# -ne 0 ]; then
                 A=$1
-                dec_pars="${dec_pars} -A $A"
+                alig_pars="${alig_pars} -A $A"
+            fi
+            ;;
+        "-E") shift
+            if [ $# -ne 0 ]; then
+                E=$1
+                alig_pars="${alig_pars} -E $E"
             fi
             ;;
         "-nomon") shift
             if [ $# -ne 0 ]; then
                 U=$1
-                dec_pars="${dec_pars} -nomon $U"
+                alig_pars="${alig_pars} -nomon $U"
             fi
             ;;
         "-h") shift
             if [ $# -ne 0 ]; then
                 h=$1
-                dec_pars="${dec_pars} -h $h"
+                alig_pars="${alig_pars} -h $h"
             fi
             ;;
         "-tmw") shift
@@ -431,7 +447,7 @@ while [ $# -ne 0 ]; do
                         fi
                     fi
                 done            
-                dec_pars="${dec_pars} -tmw ${weights}"
+                alig_pars="${alig_pars} -tmw ${weights}"
             fi
             ;;
         "-wg") shift
@@ -455,11 +471,11 @@ while [ $# -ne 0 ]; do
             ;;
         "-debug") debug="-debug"
             ;;
-        "-v") dec_pars="${dec_pars} -v"
+        "-v") alig_pars="${alig_pars} -v"
             ;;
-        "-v1") dec_pars="${dec_pars} -v1"
+        "-v1") alig_pars="${alig_pars} -v1"
             ;;
-        "-v2") dec_pars="${dec_pars} -v2"
+        "-v2") alig_pars="${alig_pars} -v2"
             ;;
     esac
     shift
@@ -479,7 +495,17 @@ if [ ${sents_given} -eq 0 ]; then
     exit 1
 else
     if [ ! -f  "${sents}" ]; then
-        echo "Error: file ${sents} with sentences does not exist" >&2
+        echo "Error: file ${sents} with sentences to be translated does not exist" >&2
+        exit 1
+    fi
+fi
+
+if [ ${refs_given} -eq 0 ]; then
+    echo "Error: file with sentences not given" >&2
+    exit 1
+else
+    if [ ! -f  "${refs}" ]; then
+        echo "Error: file ${sents} with reference sentences does not exist" >&2
         exit 1
     fi
 fi
@@ -545,26 +571,31 @@ fi
 frag_size=`expr ${input_size} / ${num_procs}`
 frag_size=`expr ${frag_size} + 1`
 nlines=${frag_size}
-${SPLIT} -l ${nlines} $sents $SDIR/frag\_ || exit 1
+${SPLIT} -l ${nlines} $sents $SDIR/src\_frag\_ || exit 1
+${SPLIT} -l ${nlines} $refs $SDIR/ref\_frag\_ || exit 1
 
 # parallel test corpus translation for each fragment
-qs_trans=""
+qs_alig=""
 jids=""
 i=1
 
-for f in `ls $SDIR/frag\_*`; do
+for f in `ls $SDIR/src\_frag\_*`; do
     fragm=`${BASENAME} $f`
+    fragm=${fragm:4}
+    src_fragm="src_"${fragm}
+    ref_fragm="ref_"${fragm}
+
     # Obtain translations for the current fragment
-    create_script $SDIR/qs_trans_${fragm} trans_frag || exit 1
-    launch $SDIR/qs_trans_${fragm} job_id || exit 1
-    qs_trans="${qs_trans} $SDIR/qs_trans_${fragm}"
+    create_script $SDIR/qs_alig_${fragm} alig_frag || exit 1
+    launch $SDIR/qs_alig_${fragm} job_id || exit 1
+    qs_alig="${qs_alig} $SDIR/qs_alig_${fragm}"
     jids="${jids} ${job_id}"
 
     i=`expr $i + 1`
 done
 
 ### Check that all queued jobs are finished
-sync "${qs_trans}" "${jids}" || { gen_log_err_files ; report_errors ; exit 1; }
+sync "${qs_alig}" "${jids}" || { gen_log_err_files ; report_errors ; exit 1; }
 
 # move word graph files if generated
 if [ ${wg_given} -eq 1 ]; then
