@@ -387,8 +387,6 @@ void BasePbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
                                           Vector<Hypothesis>& hypVec,
                                           Vector<Vector<Score> >& scrCompVec)
 {
-  unsigned int k,x,y,gap_length,
-    segmRightMostj,segmLeftMostj;
   Vector<pair<PositionIndex,PositionIndex> > gaps;
   Vector<WordIndex> s_;
   Hypothesis extHyp;
@@ -406,19 +404,24 @@ void BasePbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
   }
    
       // Generate new hypotheses completing the gaps
-  for(k=0;k<gaps.size();++k)
+  for(unsigned int k=0;k<gaps.size();++k)
   {
-    gap_length=gaps[k].second-gaps[k].first+1;
-    for(x=0;x<gap_length;++x)
+    unsigned int gap_length=gaps[k].second-gaps[k].first+1;
+    for(unsigned int x=0;x<gap_length;++x)
     {
       s_.clear();
       if(x<=U) // x should be lower than U, which is the maximum
                // number of words that can be jUmped
       {
-        for(y=x;y<gap_length;++y)
+        for(unsigned int y=x;y<gap_length;++y)
         {
-          segmRightMostj=gaps[k].first+y;
-          segmLeftMostj=gaps[k].first+x;
+          unsigned int segmRightMostj=gaps[k].first+y;
+          unsigned int segmLeftMostj=gaps[k].first+x;
+              // Verify that the source phrase length does not exceed
+              // the limit
+          if((segmRightMostj-segmLeftMostj)+1 > A) 
+            break;
+              // Obtain hypothesis data vector
           getHypDataVecForGap(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
           if(hypDataVec.size()!=0)
           {
@@ -445,8 +448,6 @@ void BasePbTransModel<HYPOTHESIS>::expand_ref(const Hypothesis& hyp,
                                               Vector<Hypothesis>& hypVec,
                                               Vector<Vector<Score> >& scrCompVec)
 {
-  unsigned int k,x,y,gap_length,
-    segmRightMostj,segmLeftMostj;
   Vector<pair<PositionIndex,PositionIndex> > gaps;
   Vector<WordIndex> s_;
   Hypothesis extHyp;
@@ -460,19 +461,24 @@ void BasePbTransModel<HYPOTHESIS>::expand_ref(const Hypothesis& hyp,
   extract_gaps(hyp,gaps);
    
       // Generate new hypotheses completing the gaps
-  for(k=0;k<gaps.size();++k)
+  for(unsigned int k=0;k<gaps.size();++k)
   {
-    gap_length=gaps[k].second-gaps[k].first+1;
-    for(x=0;x<gap_length;++x)
+    unsigned int gap_length=gaps[k].second-gaps[k].first+1;
+    for(unsigned int x=0;x<gap_length;++x)
     {
       s_.clear();
       if(x<=U) // x should be lower than U, which is the maximum
                // number of words that can be jUmped
       {
-        for(y=x;y<gap_length;++y)
+        for(unsigned int y=x;y<gap_length;++y)
         {
-          segmRightMostj=gaps[k].first+y;
-          segmLeftMostj=gaps[k].first+x;
+          unsigned int segmRightMostj=gaps[k].first+y;
+          unsigned int segmLeftMostj=gaps[k].first+x;
+              // Verify that the source phrase length does not exceed
+              // the limit
+          if((segmRightMostj-segmLeftMostj)+1 > A) 
+            break;
+              // Obtain hypothesis data vector
           getHypDataVecForGapRef(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
           if(hypDataVec.size()!=0)
           {
@@ -499,8 +505,6 @@ void BasePbTransModel<HYPOTHESIS>::expand_ver(const Hypothesis& hyp,
                                               Vector<Hypothesis>& hypVec,
                                               Vector<Vector<Score> >& scrCompVec)
 {
-  unsigned int k,x,y,gap_length,
-    segmRightMostj,segmLeftMostj;
   Vector<pair<PositionIndex,PositionIndex> > gaps;
   Vector<WordIndex> s_;
   Hypothesis extHyp;
@@ -514,19 +518,24 @@ void BasePbTransModel<HYPOTHESIS>::expand_ver(const Hypothesis& hyp,
   extract_gaps(hyp,gaps);
    
       // Generate new hypotheses completing the gaps
-  for(k=0;k<gaps.size();++k)
+  for(unsigned int k=0;k<gaps.size();++k)
   {
-    gap_length=gaps[k].second-gaps[k].first+1;
-    for(x=0;x<gap_length;++x)
+    unsigned int gap_length=gaps[k].second-gaps[k].first+1;
+    for(unsigned int x=0;x<gap_length;++x)
     {
       s_.clear();
       if(x<=U) // x should be lower than U, which is the maximum
                // number of words that can be jUmped
       {
-        for(y=x;y<gap_length;++y)
+        for(unsigned int y=x;y<gap_length;++y)
         {
-          segmRightMostj=gaps[k].first+y;
-          segmLeftMostj=gaps[k].first+x;
+          unsigned int segmRightMostj=gaps[k].first+y;
+          unsigned int segmLeftMostj=gaps[k].first+x;
+              // Verify that the source phrase length does not exceed
+              // the limit
+          if((segmRightMostj-segmLeftMostj)+1 > A) 
+            break;
+              // Obtain hypothesis data vector
           getHypDataVecForGapVer(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
           if(hypDataVec.size()!=0)
           {
@@ -553,8 +562,6 @@ void BasePbTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
                                                  Vector<Hypothesis>& hypVec,
                                                  Vector<Vector<Score> >& scrCompVec)
 {
-  unsigned int k,x,y,gap_length,
-    segmRightMostj,segmLeftMostj;
   Vector<pair<PositionIndex,PositionIndex> > gaps;
   Vector<WordIndex> s_;
   Hypothesis extHyp;
@@ -568,33 +575,38 @@ void BasePbTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
   extract_gaps(hyp,gaps);
    
       // Generate new hypotheses completing the gaps
-  for(k=0;k<gaps.size();++k)
+  for(unsigned int k=0;k<gaps.size();++k)
   {
-    gap_length=gaps[k].second-gaps[k].first+1;
-    for(x=0;x<gap_length;++x)
+    unsigned int gap_length=gaps[k].second-gaps[k].first+1;
+    for(unsigned int x=0;x<gap_length;++x)
     {
       s_.clear();
       if(x<=U) // x should be lower than U, which is the maximum
                // number of words that can be jUmped
       {
-        for(y=x;y<gap_length;++y)
+        for(unsigned int y=x;y<gap_length;++y)
         {
-          segmRightMostj=gaps[k].first+y;
-          segmLeftMostj=gaps[k].first+x;
-            getHypDataVecForGapPref(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
-            if(hypDataVec.size()!=0)
+          unsigned int segmRightMostj=gaps[k].first+y;
+          unsigned int segmLeftMostj=gaps[k].first+x;
+              // Verify that the source phrase length does not exceed
+              // the limit
+          if((segmRightMostj-segmLeftMostj)+1 > A) 
+            break;
+              // Obtain hypothesis data vector
+          getHypDataVecForGapPref(hyp,segmLeftMostj,segmRightMostj,hypDataVec,W);
+          if(hypDataVec.size()!=0)
+          {
+            for(unsigned int i=0;i<hypDataVec.size();++i)
             {
-              for(unsigned int i=0;i<hypDataVec.size();++i)
-              {
-                this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
-                hypVec.push_back(extHyp);
-                scrCompVec.push_back(scoreComponents);
-              }
-#             ifdef THOT_STATS    
-              ++basePbTmStats.getTransCalls;
-              basePbTmStats.transOptions+=hypDataVec.size();
-#             endif    
+              this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
+              hypVec.push_back(extHyp);
+              scrCompVec.push_back(scoreComponents);
             }
+#           ifdef THOT_STATS    
+            ++basePbTmStats.getTransCalls;
+            basePbTmStats.transOptions+=hypDataVec.size();
+#           endif    
+          }
         }
       }
     }
