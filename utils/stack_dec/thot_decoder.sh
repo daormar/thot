@@ -25,10 +25,9 @@ config()
 usage()
 {
     echo "thot_decoder    [-pr <int>] [-c <string>]"
-    echo "                [-tm <string>] [-lm <string>] -t <string>"
-    echo "                -o <string> [-W <float>] [-S <int>]"
-    echo "                [-A <int>] [-U <int>] [-I <int>] [-be] [-G <int>]"
-    echo "                [-h <int>] [ -mon] [-tmw <float> ... <float>]"
+    echo "                [-tm <string>] [-lm <string>] -t <string> -o <string>"
+    echo "                [-W <float>] [-S <int>] [-A <int>] [-nomon <int>]"
+    echo "                [-h <int>] [-tmw <float> ... <float>]"
     echo "                [-wg <string> [-wgp <float>] ]"
     echo "                [-sdir <string>] [-qs <string>] [-v|-v1|-v2]"
     echo "                [-debug] [--help] [--version] [--config]"
@@ -43,20 +42,18 @@ usage()
     echo " -lm <string>      : Language model file name."
     echo " -t <string>       : File with the sentences to translate."
     echo " -o <string>       : Set output files prefix name."
-    echo " -W <float>        : Maximum number of inverse translations/Threshold"
-    echo "                     (10 by default)."
-    echo " -S <int>          : S parameter (1024 or 64 by default)."
-    echo " -A <int>          : A parameter (10 by default)."
-    echo " -U <int>          : Maximum number of jumped words (unrestricted by."
-    echo "                     default)."
-    echo " -I <int>          : Number of hypotheses expanded at each iteration."
-    echo "                     (1 by default)."
-    echo " -be               : Execute a best-first algorithm."
-    echo " -G <int>          : Granularity parameter (0 by default, may not"
-    echo "                     be available depending on the compiler options)."
+    echo " -W <float>        : Maximum number of translation options to be considered"
+    echo "                     per each source phrase (10 by default)."
+    echo " -S <int>          : Maximum number of hypotheses that can be stored in each"
+    echo "                     stack (10 by default)."
+    echo " -A <int>          : Maximum length in words of the source phrases to be"
+    echo "                     translated (10 by default)."
+    echo " -nomon <int>      : Perform a non-monotonic search, allowing the decoder"
+    echo "                     to skip up to <int> words from the last aligned source"
+    echo "                     words. If <int> is equal to zero, then a monotonic"
+    echo "                     search is performed (0 is the default value)."
     echo " -h <int>          : Heuristic function used: 0->None, 4->LOCAL_T,"
     echo "                     5->LOCAL_TL, 6->LOCAL_TD (0 by default)."
-    echo " -mon              : Perform a monotone search."
     echo " -tmw <float>...<float>:"
     echo "                     Set model weights, the number of weights and their"
     echo "                     meaning depends on the model type (see -m parameter)."
@@ -389,12 +386,6 @@ while [ $# -ne 0 ]; do
                 o_given=1
             fi
             ;;
-        "-b") shift
-            if [ $# -ne 0 ]; then
-                b=$1
-                dec_pars="${dec_pars} -b $b"
-            fi
-            ;;
         "-W") shift
             if [ $# -ne 0 ]; then
                 W=$1
@@ -413,24 +404,10 @@ while [ $# -ne 0 ]; do
                 dec_pars="${dec_pars} -A $A"
             fi
             ;;
-        "-U") shift
+        "-nomon") shift
             if [ $# -ne 0 ]; then
                 U=$1
-                dec_pars="${dec_pars} -U $U"
-            fi
-            ;;
-        "-I") shift
-            if [ $# -ne 0 ]; then
-                I=$1
-                dec_pars="${dec_pars} -I $I"
-            fi
-            ;;
-        "-be") dec_pars="${dec_pars} -be"
-            ;;
-        "-G") shift
-            if [ $# -ne 0 ]; then
-                G=$1
-                dec_pars="${dec_pars} -G $G"
+                dec_pars="${dec_pars} -nomon $U"
             fi
             ;;
         "-h") shift
@@ -438,8 +415,6 @@ while [ $# -ne 0 ]; do
                 h=$1
                 dec_pars="${dec_pars} -h $h"
             fi
-            ;;
-        "-mon") dec_pars="${dec_pars} -mon"
             ;;
         "-tmw") shift
             if [ $# -ne 0 -a ! "`str_is_option $1`" = "1" ]; then
