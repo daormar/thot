@@ -110,7 +110,7 @@ class _stackDecoderRec: public _stackDecoder<SMT_MODEL>
   bool wgPtrOwnedByObject;
   HypStateDict<Hypothesis>* hypStateDictPtr;
 
-  void pushGivenPredHyp(const Hypothesis& pred_hyp,
+  bool pushGivenPredHyp(const Hypothesis& pred_hyp,
                         const Vector<Score>& scrComps,
                         const Hypothesis& succ_hyp);
       // Overriden function to allow word-graph generation
@@ -235,13 +235,15 @@ void _stackDecoderRec<SMT_MODEL>::clear(void)
 
 //---------------------------------------
 template<class SMT_MODEL>
-void _stackDecoderRec<SMT_MODEL>::pushGivenPredHyp(const Hypothesis& pred_hyp,
+bool _stackDecoderRec<SMT_MODEL>::pushGivenPredHyp(const Hypothesis& pred_hyp,
                                                    const Vector<Score>& scrComps,
                                                    const Hypothesis& succ_hyp)
 
 {
-  this->push(succ_hyp);
+  bool retval=this->push(succ_hyp);
   addArcToWordGraph(pred_hyp,scrComps,succ_hyp);
+
+  return retval;
 }
 
 //---------------------------------------

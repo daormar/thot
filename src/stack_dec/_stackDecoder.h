@@ -212,7 +212,7 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
       // pop operation: pops the top of the stack
       // the pop function also sustracts a heuristic value to hyp
   
-  virtual void pushGivenPredHyp(const Hypothesis& pred_hyp,
+  virtual bool pushGivenPredHyp(const Hypothesis& pred_hyp,
                                 const Vector<Score>& scrComps,
                                 const Hypothesis& succ_hyp);
       // Push hypothesis succ_hyp given its predecessor pred_hyp. This
@@ -805,11 +805,11 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::pop(void
 
 //---------------------------------------
 template<class SMT_MODEL>
-void _stackDecoder<SMT_MODEL>::pushGivenPredHyp(const Hypothesis& /*pred_hyp*/,
+bool _stackDecoder<SMT_MODEL>::pushGivenPredHyp(const Hypothesis& /*pred_hyp*/,
                                                 const Vector<Score>& /*scrComps*/,
                                                 const Hypothesis& succ_hyp)
 {
-  push(succ_hyp);
+  return push(succ_hyp);
 }
 
 //---------------------------------------
@@ -895,14 +895,17 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(v
 
           while(!expandedHyps.empty())
           {
+                // Push expanded hyp into the stack container
+            bool inserted=pushGivenPredHyp(hypsToExpand[i],scrCompVec.back(),expandedHyps.back());
+
             if(verbosity>2)
             {
               ++numExpHyp;
               cerr<<"  Expanded hypothesis "<<numExpHyp<<" : ";
               smtm_ptr->printHyp(expandedHyps.back(),cerr);
+              cerr<<"  (Inserted: "<<inserted<<")"<<endl;
             }
-                // Push expanded hyp into the stack container
-            pushGivenPredHyp(hypsToExpand[i],scrCompVec.back(),expandedHyps.back());
+
             scrCompVec.pop_back();
             expandedHyps.pop_back();
           }
@@ -999,14 +1002,18 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
 
           while(!expandedHyps.empty())
           {
+                // Push expanded hyp into the stack container
+            bool inserted=pushGivenPredHyp(hypsToExpand[i],scrCompVec.back(),expandedHyps.back());
+
+                // Print verbose information
             if(verbosity>2)
             {
               ++numExpHyp;
               cerr<<"  Expanded hypothesis "<<numExpHyp<<" : ";
               smtm_ptr->printHyp(expandedHyps.back(),cerr);
+              cerr<<"  (Inserted: "<<inserted<<")"<<endl;
             }
-                // Push expanded hyp into the stack container
-            pushGivenPredHyp(hypsToExpand[i],scrCompVec.back(),expandedHyps.back());
+
             scrCompVec.pop_back();
             expandedHyps.pop_back();
           }
@@ -1103,14 +1110,17 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVe
 
           while(!expandedHyps.empty())
           {
+                // Push expanded hyp into the stack container
+            bool inserted=pushGivenPredHyp(hypsToExpand[i],scrCompVec.back(),expandedHyps.back());
+
             if(verbosity>2)
             {
               ++numExpHyp;
               cerr<<"  Expanded hypothesis "<<numExpHyp<<" : ";
               smtm_ptr->printHyp(expandedHyps.back(),cerr);
+              cerr<<"  (Inserted: "<<inserted<<")"<<endl;
             }
-                // Push expanded hyp into the stack container
-            pushGivenPredHyp(hypsToExpand[i],scrCompVec.back(),expandedHyps.back());
+
             scrCompVec.pop_back();
             expandedHyps.pop_back();
           }
@@ -1207,14 +1217,17 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
 
           while(!expandedHyps.empty())
           {
+                // Push expanded hyp into the stack container
+            bool inserted=pushGivenPredHyp(hypsToExpand[i],scrCompVec.back(),expandedHyps.back());
+
             if(verbosity>2)
             {
               ++numExpHyp;
               cerr<<"  Expanded hypothesis "<<numExpHyp<<" : ";
               smtm_ptr->printHyp(expandedHyps.back(),cerr);
+              cerr<<"  (Inserted: "<<inserted<<")"<<endl;
             }
-                // Push expanded hyp into the stack container
-            pushGivenPredHyp(hypsToExpand[i],scrCompVec.back(),expandedHyps.back());
+
             scrCompVec.pop_back();
             expandedHyps.pop_back();
           }
