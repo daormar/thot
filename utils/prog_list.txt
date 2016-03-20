@@ -19,7 +19,7 @@
 /home/dortiz/smt/software/downhill_simplex thot_dhs_step_by_step_min
 /home/dortiz/smt/software/stack_dec thot_ms_dec
 /home/dortiz/smt/software/stack_dec thot_calc_bleu
-/home/dortiz/smt/software/stack_dec thot_aligner
+/home/dortiz/smt/software/stack_dec thot_ms_alig
 /home/dortiz/smt/software/stack_dec thot_client
 /home/dortiz/smt/software/stack_dec thot_server
 /home/dortiz/smt/software/stack_dec test_casmacat_engines
