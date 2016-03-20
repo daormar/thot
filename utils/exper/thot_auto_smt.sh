@@ -514,7 +514,7 @@ echo "" >&2
 # Tune parameters
 if [ -f ${scorpus_dev} -a -f ${tcorpus_dev} ]; then
     echo "**** Tuning model parameters" >&2
-    ${bindir}/thot_smt_tune -pr ${pr_val} -c $outd/before_tuning.cfg -s ${scorpus_dev} -t ${tcorpus_dev} -o $outd/tune ${qs_opt} \
+    ${bindir}/thot_smt_tune -pr ${pr_val} -c $outd/before_tuning.cfg -s ${scorpus_dev} -t ${tcorpus_dev} -o $outd/smt_tune ${qs_opt} \
         -tqm ${tqm} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
     tuning_executed="yes"
 fi
@@ -534,7 +534,7 @@ if [ ${notrans_given} -eq 0 ]; then
     # Prepare system to translate test corpus
     if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
         echo "**** Preparing system to translate test corpus" >&2
-        ${bindir}/thot_prepare_sys_for_test -c $outd/tune/tuned_for_dev.cfg -t ${scorpus_test}  \
+        ${bindir}/thot_prepare_sys_for_test -c $outd/smt_tune/tuned_for_dev.cfg -t ${scorpus_test}  \
             -o $outd/filtered_models/${base_sct} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
         echo "" >&2
     fi
