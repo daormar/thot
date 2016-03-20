@@ -184,16 +184,9 @@ int init_translator(const thot_ms_dec_pars& tdp)
       // Set model parameters
   pbtModelPtr->set_W_par(tdp.W);
   pbtModelPtr->set_A_par(tdp.A);
-      // Set non-monotonicity level
-  if(tdp.nomon==0)
-  {
-    pbtModelPtr->setMonotoneSearch();
-  }
-  else
-  {
-    pbtModelPtr->resetMonotoneSearch();
-    pbtModelPtr->set_U_par(tdp.nomon);
-  }
+  pbtModelPtr->set_U_par(tdp.nomon);
+
+      // Set verbosity
   pbtModelPtr->setVerbosity(tdp.verbosity);
     
       // Create a translator instance

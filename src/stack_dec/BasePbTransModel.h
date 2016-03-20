@@ -53,7 +53,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
-#define NON_MONOTONIC_SEARCH   MAX_SENTENCE_LENGTH_ALLOWED+1
 #define PBM_W_DEFAULT          10
 #define PBM_A_DEFAULT          10
 #define PBM_E_DEFAULT          10
@@ -118,9 +117,6 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
   void set_A_par(unsigned int A_par);
   void set_E_par(unsigned int E_par);
   void set_U_par(unsigned int U_par);
-  void setNonMonotonicity(unsigned int m);
-  void setMonotoneSearch(void);
-  void resetMonotoneSearch(void);
   bool monotoneSearch(void);
       // Returns true if the search is monotone
 
@@ -163,10 +159,6 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
                                  // being covered
   unsigned int U;                // Maximum number of words jumped
   
-  unsigned int nonMonotonicity;  // nonMonotonicity level during the search,
-                                 //  1-> monotone search
-                                 //  MAX_SENTENCE_LENGTH -> non-monotone search
-
   int verbosity;                 // Verbosity level
 
   ////// Hypotheses-related functions
@@ -227,7 +219,6 @@ BasePbTransModel<HYPOTHESIS>::BasePbTransModel()
   A=PBM_A_DEFAULT;
   E=PBM_E_DEFAULT;
   U=PBM_U_DEFAULT;
-  resetMonotoneSearch();
       // Set verbosity level
   verbosity=0;
 }
@@ -368,31 +359,9 @@ void BasePbTransModel<HYPOTHESIS>::set_U_par(unsigned int U_par)
 
 //---------------------------------------
 template<class HYPOTHESIS>
-void BasePbTransModel<HYPOTHESIS>::setNonMonotonicity(unsigned int m)
-{
-  if(nonMonotonicity>NON_MONOTONIC_SEARCH) nonMonotonicity=NON_MONOTONIC_SEARCH;
-  else nonMonotonicity=m;	 
-}
-
-//---------------------------------------
-template<class HYPOTHESIS>
-void BasePbTransModel<HYPOTHESIS>::setMonotoneSearch(void)
-{
-  nonMonotonicity=1;	
-}
-
-//---------------------------------------
-template<class HYPOTHESIS>
-void BasePbTransModel<HYPOTHESIS>::resetMonotoneSearch(void)
-{
-  nonMonotonicity=NON_MONOTONIC_SEARCH;
-}
-
-//---------------------------------------
-template<class HYPOTHESIS>
 bool BasePbTransModel<HYPOTHESIS>::monotoneSearch(void)
 {
-  if(nonMonotonicity==1) return true;
+  if(U==0) return true;
   else return false;	 
 }
 
@@ -418,7 +387,7 @@ void BasePbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
                                           Vector<Hypothesis>& hypVec,
                                           Vector<Vector<Score> >& scrCompVec)
 {
-  unsigned int k,startValue,x,y,gap_length,
+  unsigned int k,x,y,gap_length,
     segmRightMostj,segmLeftMostj;
   Vector<pair<PositionIndex,PositionIndex> > gaps;
   Vector<WordIndex> s_;
@@ -440,9 +409,7 @@ void BasePbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
   for(k=0;k<gaps.size();++k)
   {
     gap_length=gaps[k].second-gaps[k].first+1;
-    if(nonMonotonicity>gap_length) startValue=gap_length;
-    else startValue=nonMonotonicity;	  	  
-    for(x=0;x<startValue;++x)
+    for(x=0;x<gap_length;++x)
     {
       s_.clear();
       if(x<=U) // x should be lower than U, which is the maximum
@@ -478,7 +445,7 @@ void BasePbTransModel<HYPOTHESIS>::expand_ref(const Hypothesis& hyp,
                                               Vector<Hypothesis>& hypVec,
                                               Vector<Vector<Score> >& scrCompVec)
 {
-  unsigned int k,startValue,x,y,gap_length,
+  unsigned int k,x,y,gap_length,
     segmRightMostj,segmLeftMostj;
   Vector<pair<PositionIndex,PositionIndex> > gaps;
   Vector<WordIndex> s_;
@@ -496,9 +463,7 @@ void BasePbTransModel<HYPOTHESIS>::expand_ref(const Hypothesis& hyp,
   for(k=0;k<gaps.size();++k)
   {
     gap_length=gaps[k].second-gaps[k].first+1;
-    if(nonMonotonicity>gap_length) startValue=gap_length;
-    else startValue=nonMonotonicity;	  	  
-    for(x=0;x<startValue;++x)
+    for(x=0;x<gap_length;++x)
     {
       s_.clear();
       if(x<=U) // x should be lower than U, which is the maximum
@@ -534,7 +499,7 @@ void BasePbTransModel<HYPOTHESIS>::expand_ver(const Hypothesis& hyp,
                                               Vector<Hypothesis>& hypVec,
                                               Vector<Vector<Score> >& scrCompVec)
 {
-  unsigned int k,startValue,x,y,gap_length,
+  unsigned int k,x,y,gap_length,
     segmRightMostj,segmLeftMostj;
   Vector<pair<PositionIndex,PositionIndex> > gaps;
   Vector<WordIndex> s_;
@@ -552,9 +517,7 @@ void BasePbTransModel<HYPOTHESIS>::expand_ver(const Hypothesis& hyp,
   for(k=0;k<gaps.size();++k)
   {
     gap_length=gaps[k].second-gaps[k].first+1;
-    if(nonMonotonicity>gap_length) startValue=gap_length;
-    else startValue=nonMonotonicity;	  	  
-    for(x=0;x<startValue;++x)
+    for(x=0;x<gap_length;++x)
     {
       s_.clear();
       if(x<=U) // x should be lower than U, which is the maximum
@@ -590,7 +553,7 @@ void BasePbTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
                                                  Vector<Hypothesis>& hypVec,
                                                  Vector<Vector<Score> >& scrCompVec)
 {
-  unsigned int k,startValue,x,y,gap_length,
+  unsigned int k,x,y,gap_length,
     segmRightMostj,segmLeftMostj;
   Vector<pair<PositionIndex,PositionIndex> > gaps;
   Vector<WordIndex> s_;
@@ -608,9 +571,7 @@ void BasePbTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
   for(k=0;k<gaps.size();++k)
   {
     gap_length=gaps[k].second-gaps[k].first+1;
-    if(nonMonotonicity>gap_length) startValue=gap_length;
-    else startValue=nonMonotonicity;	  	  
-    for(x=0;x<startValue;++x)
+    for(x=0;x<gap_length;++x)
     {
       s_.clear();
       if(x<=U) // x should be lower than U, which is the maximum

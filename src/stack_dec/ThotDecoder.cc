@@ -1289,15 +1289,7 @@ void ThotDecoder::setNonMonotonicity(int nomon,
   }
 
       // Set appropriate model parameters
-  if(nomon==0)
-  {
-    tdCommonVars.smtModelPtr->setMonotoneSearch();
-  }
-  else
-  {
-    tdCommonVars.smtModelPtr->resetMonotoneSearch();
-    tdCommonVars.smtModelPtr->set_U_par(nomon);
-  }
+  tdCommonVars.smtModelPtr->set_U_par(nomon);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
