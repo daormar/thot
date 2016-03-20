@@ -49,7 +49,7 @@ usage()
     echo "                     stack (10 by default)."
     echo " -A <int>          : Maximum length in words of the source phrases to be"
     echo "                     aligned (10 by default)."
-    echo " -E <int>          : Constrain target phrase length to be in the interval"
+    echo " -E <int>          : Constrain the target phrase length to be in the interval"
     echo "                     [A-<int> , A+<int>] (5 by default)."
     echo " -nomon <int>      : Perform a non-monotonic search, allowing the decoder"
     echo "                     to skip up to <int> words from the last aligned source"
