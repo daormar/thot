@@ -654,16 +654,16 @@ void printConfig(void)
 
 void printUsage(void)
 {
-  cerr << "thot_ms_dec        [-c <string>] [-tm <string>] [-lm <string>]"<<endl;
-  cerr << "                    -t <string> [-o <string>]"<<endl;
-  cerr << "                    [-W <float>] [-S <int>] [-A <int>]"<<endl;
-  cerr << "                    [-I <int>] [-G <int>] [-h <int>]"<<endl;
-  cerr << "                    [-be] [ -nomon <int>] [-tmw <float> ... <float>]"<<endl;
+  cerr << "thot_ms_dec      [-c <string>] [-tm <string>] [-lm <string>]"<<endl;
+  cerr << "                 -t <string> [-o <string>]"<<endl;
+  cerr << "                 [-W <float>] [-S <int>] [-A <int>]"<<endl;
+  cerr << "                 [-I <int>] [-G <int>] [-h <int>]"<<endl;
+  cerr << "                 [-be] [ -nomon <int>] [-tmw <float> ... <float>]"<<endl;
 #ifndef THOT_DISABLE_REC
-  cerr << "                    [-wg <string> [-wgp <float>] ]"<<endl;
+  cerr << "                 [-wg <string> [-wgp <float>] ]"<<endl;
 #endif  
-  cerr << "                    [-v|-v1|-v2]"<<endl;
-  cerr << "                    [--help] [--version] [--config]"<<endl<<endl;
+  cerr << "                 [-v|-v1|-v2]"<<endl;
+  cerr << "                 [--help] [--version] [--config]"<<endl<<endl;
   cerr << " -c <string>           : Configuration file (command-line options override"<<endl;
   cerr << "                         configuration file options)."<<endl;
   cerr << " -tm <string>          : Prefix of the translation model files."<<endl;
@@ -671,10 +671,12 @@ void printUsage(void)
   cerr << " -t <string>           : File with the test sentences."<<endl;
   cerr << " -o <string>           : File to store translations (if not given, they are"<<endl;
   cerr << "                         printed to the standard output)."<<endl;
-  cerr << " -W <float>            : Maximum number of translation options/Threshold"<<endl;
-  cerr << "                         ("<<PMSTACK_W_DEFAULT<<" by default)."<<endl;
-  cerr << " -S <int>              : S parameter ("<<PMSTACK_S_DEFAULT<<" by default)."<<endl;    
-  cerr << " -A <int>              : A parameter ("<<PMSTACK_A_DEFAULT<<" by default)."<<endl;
+  cerr << " -W <float>            : Maximum number of translation options to be considered"<<endl;
+  cerr << "                         per each source phrase ("<<PMSTACK_W_DEFAULT<<" by default)."<<endl;
+  cerr << " -S <int>              : Maximum number of hypotheses that can be stored in"<<endl;
+  cerr << "                         each stack ("<<PMSTACK_S_DEFAULT<<" by default)."<<endl;    
+  cerr << " -A <int>              : Maximum length in words of the source phrases to be"<<endl;
+  cerr << "                         translated ("<<PMSTACK_A_DEFAULT<<" by default)."<<endl;
   cerr << " -I <int>              : Number of hypotheses expanded at each iteration"<<endl;
   cerr << "                         ("<<PMSTACK_I_DEFAULT<<" by default)."<<endl;
 #ifdef MULTI_STACK_USE_GRAN
