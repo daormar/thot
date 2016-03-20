@@ -123,6 +123,9 @@ create_lm_files()
         mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; exit 1; }
     fi
 
+    # Check if lm file is a descriptor
+    is_desc=`check_if_file_is_desc ${lmfile}`
+
     if [ ${is_desc} -eq 1 ]; then
         # TBD
         echo TBD
@@ -631,5 +634,10 @@ ftol_lm=0.1
 ftol_loglin=0.1
 
 # Tune models
-tune_lm
-tune_loglin
+echo "* Tuning language model... " >&2
+tune_lm || exit 1
+echo "" >&2
+
+echo "* Tuning loglinear model weights... " >&2
+tune_loglin || exit 1
+echo "" >&2
