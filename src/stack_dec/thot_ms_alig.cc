@@ -56,7 +56,7 @@ using namespace std;
 #endif
 
 #define PALIG_A_DEFAULT 10
-#define PALIG_E_DEFAULT 10
+#define PALIG_E_DEFAULT 5
 #define PALIG_I_DEFAULT 1
 #define PALIG_G_DEFAULT 0
 #define PALIG_H_DEFAULT NO_HEURISTIC
@@ -788,8 +788,8 @@ void printUsage(void)
   cerr << "                         each stack ("<<PALIG_S_DEFAULT<<" by default)."<<endl;    
   cerr << " -A <int>              : Maximum length in words of the source phrases to be"<<endl;
   cerr << "                         aligned ("<<PALIG_A_DEFAULT<<" by default)."<<endl;
-  cerr << " -E <int>              : Maximum length in words of the target phrases to be"<<endl;
-  cerr << "                         aligned ("<<PALIG_E_DEFAULT<<" by default)."<<endl;
+  cerr << " -E <int>              : Constrain the target phrase length to be in the"<<endl;
+  cerr << "                         interval [A-<int> , A+<int>] ("<<PALIG_E_DEFAULT<<" by default)."<<endl;
   cerr << " -I <int>              : Number of hypotheses expanded at each iteration"<<endl;
   cerr << "                         ("<<PALIG_I_DEFAULT<<" by default)."<<endl;
 #ifdef MULTI_STACK_USE_GRAN
