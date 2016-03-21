@@ -17,8 +17,8 @@ EXTRA_DIST = doxygen_src.cfg thot_manual.pdf
 #	$(DOXYGEN) doxygen_src.cfg
 #CLEANFILES=./src
 ##################################
-#doc: 
-#	$(DOXYGEN) doxygen_src.cfg
+doc: 
+	$(DOXYGEN) doxygen_src.cfg
 
 clean_doc:
 	rm -rf ./src
