@@ -18,7 +18,7 @@ EXTRA_DIST = doxygen_src.cfg thot_manual.pdf
 #CLEANFILES=./src
 ##################################
 doc: 
-	$(DOXYGEN) doxygen_src.cfg
+	if [ -z '$(DOXYGEN)' ]; then echo "Error: doxygen is not installed" >&2 ; else $(DOXYGEN) doxygen_src.cfg; fi
 
 clean_doc:
 	rm -rf ./src
