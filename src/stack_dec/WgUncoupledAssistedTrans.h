@@ -122,7 +122,9 @@ class WgUncoupledAssistedTrans: public _assistedTrans<SMT_MODEL>
   BaseWgProcessorForAnlp<ECM_FOR_WG>* wgp_ptr;  // Pointer to a word-graph
                                                 // processor
 
-  WordGraph* wg_ptr;  // Pointer to word-graph
+  WordGraph* wg_ptr;  // Pointer to word-graph. It is required only when
+                      // the word-graph is obtained from the word-graph
+                      // handler
   
   WgHandler* wgh_ptr; // Pointer to a word-graph handler
   
@@ -355,25 +357,22 @@ std::string WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::addStrToPrefix(std::
                                                                            const RejectedWordsSet& rejectedWords,
                                                                            unsigned int verbose)
 {
-  NbestCorrections nbestCorrections;
-  
       // Set word-graph processor weights
   wgp_ptr->set_wgw(psutw);
   wgp_ptr->set_ecmw(putw);
-
-  catPrefix=catPrefix+s;
-
-  std::string result="";
     
       // Obtain n-best corrected translations
-  nbestCorrections=wgp_ptr->correct(catPrefix,
-                                    number_of_results,
-                                    rejectedWords,
-                                    verbose);
+  catPrefix=catPrefix+s;
+  NbestCorrections nbestCorrections=wgp_ptr->correct(catPrefix,
+                                                     number_of_results,
+                                                     rejectedWords,
+                                                     verbose);
       // Return the best corrected translation
   Vector<std::string> strVec;
   if(!nbestCorrections.empty())
     strVec=nbestCorrections.begin()->second;
+
+  std::string result="";
   for(unsigned int i=0;i<strVec.size();++i)
   {
     if(i==0) result=strVec[0];
