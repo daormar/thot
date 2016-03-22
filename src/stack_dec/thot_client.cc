@@ -67,7 +67,8 @@ int main(int argc,char *argv[])
   thot_client_pars tdcPars;
  
   if(TakeParameters(argc,argv,tdcPars)==OK)
-  {// Parameters ok
+  {
+        // Parameters ok
    double elapsed_ant,elapsed,ucpu,scpu;
    bool retVal;
 
@@ -75,7 +76,9 @@ int main(int argc,char *argv[])
    {
      ctimer(&elapsed_ant,&ucpu,&scpu);
    }
+       // Process request
    retVal=process_request(tdcPars);
+   
    if(tdcPars.verbose)
    {
      ctimer(&elapsed,&ucpu,&scpu);
