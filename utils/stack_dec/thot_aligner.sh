@@ -50,7 +50,8 @@ usage()
     echo " -A <int>          : Maximum length in words of the source phrases to be"
     echo "                     aligned (10 by default)."
     echo " -E <int>          : Constrain the target phrase length to be in the interval"
-    echo "                     [A-<int> , A+<int>] (5 by default)."
+    echo "                     [splen-<int> , splen+<int>] where splen is the length"
+    echo "                     of the source phrase to be aligned (5 by default)."
     echo " -nomon <int>      : Perform a non-monotonic search, allowing the decoder"
     echo "                     to skip up to <int> words from the last aligned source"
     echo "                     words. If <int> is equal to zero, then a monotonic"
@@ -67,7 +68,7 @@ usage()
     echo "                     Threshold=1 -> only the best arc arriving to each"
     echo "                                    state is retained."
     echo "                     If not given, the number of arcs is not"
-    echo "                     restricted.";
+    echo "                     restricted."
     echo " -sdir <string>    : Absolute path of a directory common to all"
     echo "                     processors. If not given \$HOME is used"
     echo " -qs <string>      : Specific options to be given to the qsub command"
