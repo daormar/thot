@@ -789,7 +789,14 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
                                       int verbose/*=0*/)
 {
   int ret;
-  
+
+      // Check if input sentences are empty
+  if(strlen(srcSent)==0 || strlen(refSent)==0)
+  {
+    cerr<<"Warning: one or both of the input sentences to be trained were empty"<<endl;
+    return ERROR;
+  }
+    
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
@@ -1040,13 +1047,21 @@ bool ThotDecoder::trainEcm(int user_id,
 }
 
 //--------------------------
-void ThotDecoder::translateSentence(int user_id,
+bool ThotDecoder::translateSentence(int user_id,
                                     const char *sentenceToTranslate,
                                     std::string& result,
                                     int verbose/*=0*/)
 {
+      // Check if input sentence is empty
+  if(strlen(sentenceToTranslate)==0)
+  {
+    cerr<<"Warning: input sentence to be translated is empty"<<endl;
+    result.clear();
+    return ERROR;
+  }
+
   pthread_mutex_lock(&atomic_op_mut);
-  /////////// begin of mutex 
+      /////////// begin of mutex 
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
@@ -1081,15 +1096,12 @@ void ThotDecoder::translateSentence(int user_id,
     {
       cerr<<" - target translation: "<<result<<endl;     
     }
-
   }
-  // if(verbose)
-  // {
-  //   tdCommonVars.smtModelPtr->printHyp(hyp,cerr);
-  // }
 
-  /////////// end of mutex 
+      /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
+
+  return OK;
 }
 
 //--------------------------
@@ -1172,8 +1184,16 @@ bool ThotDecoder::translateSentencePrintWg(int user_id,
                                            const char* wgFilename,
                                            int verbose/*=0*/)
 {
+      // Check if input sentence is empty
+  if(strlen(sentenceToTranslate)==0)
+  {
+    cerr<<"Warning: input sentence to be translated is empty"<<endl;
+    result.clear();
+    return ERROR;
+  }
+
   pthread_mutex_lock(&atomic_op_mut);
-  /////////// begin of mutex 
+      /////////// begin of mutex 
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
@@ -1218,10 +1238,10 @@ bool ThotDecoder::translateSentencePrintWg(int user_id,
   ret=tdPerUserVarsVec[idx].translatorPtr->printWordGraph(wgFilename);
 #endif
   
-  /////////// end of mutex 
+      /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  return ret;
+  return ret;  
 }
 
 //--------------------------
@@ -1231,6 +1251,14 @@ bool ThotDecoder::sentPairVerCov(int user_id,
                                  std::string& result,
                                  int verbose/*=0*/)
 {
+      // Check if input sentence is empty
+  if(strlen(srcSent)==0 || strlen(refSent)==0)
+  {
+    cerr<<"Warning: one or both input sentences are empty"<<endl;
+    result.clear();
+    return ERROR;
+  }
+
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
@@ -1657,11 +1685,19 @@ bool ThotDecoder::set_wgh(const char *wgHandlerFileName,
 }
 
 //--------------------------
-void ThotDecoder::startCat(int user_id,
+bool ThotDecoder::startCat(int user_id,
                            const char *sentenceToTranslate,
                            std::string &catResult,
                            int verbose/*=0*/)
 {
+      // Check if input sentence is empty
+  if(strlen(sentenceToTranslate)==0)
+  {
+    cerr<<"Warning: input sentence to be translated is empty"<<endl;
+    catResult.clear();
+    return ERROR;
+  }
+
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
@@ -1716,6 +1752,8 @@ void ThotDecoder::startCat(int user_id,
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
+
+  return OK;
 }
   
 //--------------------------

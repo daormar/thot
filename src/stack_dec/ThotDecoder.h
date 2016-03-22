@@ -120,7 +120,7 @@ class ThotDecoder
                 int verbose=0);
 
       // Functions to translate sentences
-  void translateSentence(int user_id,
+  bool translateSentence(int user_id,
                          const char *sentenceToTranslate,
                          std::string& result,
                          int verbose=0);
@@ -136,7 +136,7 @@ class ThotDecoder
                       int verbose=0);
   
       // CAT-related functions
-  void startCat(int user_id,
+  bool startCat(int user_id,
                 const char *sentenceToTranslate,
                 std::string &catResult,
                 int verbose=0);
