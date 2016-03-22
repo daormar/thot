@@ -297,8 +297,8 @@ WgProcessorForAnlp<ECM_FOR_WG>::correct(std::string prefix,
                                         const RejectedWordsSet& rejectedWords,
                                         unsigned int verbose/*=0*/)
 {
-      // Check if word graph is empty
-  if(wg_ptr->empty())
+      // Check if word graph is uninitialized or empty
+  if(wg_ptr==NULL || wg_ptr->empty())
   {
         // Word graph empty
     cerr<<"Word-graph proccessor error: word-graph is empty!"<<endl;
