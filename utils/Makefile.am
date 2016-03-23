@@ -66,7 +66,8 @@ stack_dec/thot_extract_hyp_info
 
 exper_bin_scripts= exper/thot_tm_train exper/thot_smt_tune		\
 exper/thot_cat_tune exper/thot_prepare_sys_for_test exper/thot_lm_train	\
-exper/thot_gen_cfg_file exper/thot_auto_smt exper/thot_sys_from_scratch
+exper/thot_gen_cfg_file exper/thot_sys_from_scratch exper/thot_auto_smt	\
+exper/thot_trans_test
 
 CLEANFILES = $(bin_SCRIPTS)
 
