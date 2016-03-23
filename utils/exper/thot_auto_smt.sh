@@ -108,26 +108,26 @@ tok_corpus()
     echo "**** Tokenizing corpus" >&2
     suff="tok"
     ${bindir}/thot_tokenize -f ${scorpus_train} \
-        > ${outd}/preproc_data/src_${suff}.train 2>${outd}/preproc_data/thot_tokenize.log || exit 1
+        > ${outd}/${preproc_dir}/src_${suff}.train 2>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
     ${bindir}/thot_tokenize -f ${scorpus_dev} \
-        > ${outd}/preproc_data/src_${suff}.dev 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
+        > ${outd}/${preproc_dir}/src_${suff}.dev 2>>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
     ${bindir}/thot_tokenize -f ${scorpus_test} \
-        > ${outd}/preproc_data/src_${suff}.test 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
+        > ${outd}/${preproc_dir}/src_${suff}.test 2>>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
     ${bindir}/thot_tokenize -f ${tcorpus_train} \
-        > ${outd}/preproc_data/trg_${suff}.train 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
+        > ${outd}/${preproc_dir}/trg_${suff}.train 2>>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
     ${bindir}/thot_tokenize -f ${tcorpus_dev} \
-        > ${outd}/preproc_data/trg_${suff}.dev 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
+        > ${outd}/${preproc_dir}/trg_${suff}.dev 2>>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
     ${bindir}/thot_tokenize -f ${tcorpus_test} \
-        > ${outd}/preproc_data/trg_${suff}.test 2>>${outd}/preproc_data/thot_tokenize.log || exit 1
+        > ${outd}/${preproc_dir}/trg_${suff}.test 2>>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
     echo "" >&2
 
     # Redefine corpus variables
-    scorpus_train=${outd}/preproc_data/src_${suff}.train
-    scorpus_dev=${outd}/preproc_data/src_${suff}.dev
-    scorpus_test=${outd}/preproc_data/src_${suff}.test
-    tcorpus_train=${outd}/preproc_data/trg_${suff}.train
-    tcorpus_dev=${outd}/preproc_data/trg_${suff}.dev
-    tcorpus_test=${outd}/preproc_data/trg_${suff}.test
+    scorpus_train=${outd}/${preproc_dir}/src_${suff}.train
+    scorpus_dev=${outd}/${preproc_dir}/src_${suff}.dev
+    scorpus_test=${outd}/${preproc_dir}/src_${suff}.test
+    tcorpus_train=${outd}/${preproc_dir}/trg_${suff}.train
+    tcorpus_dev=${outd}/${preproc_dir}/trg_${suff}.dev
+    tcorpus_test=${outd}/${preproc_dir}/trg_${suff}.test
 }
 
 ########
@@ -141,26 +141,26 @@ lowercase_corpus()
         suff="tok_lc"
     fi
     ${bindir}/thot_lowercase -f ${scorpus_train} \
-        > ${outd}/preproc_data/src_${suff}.train 2>${outd}/preproc_data/thot_lowercase.log || exit 1
+        > ${outd}/${preproc_dir}/src_${suff}.train 2>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
     ${bindir}/thot_lowercase -f ${scorpus_dev} \
-        > ${outd}/preproc_data/src_${suff}.dev 2>>${outd}/preproc_data/thot_lowercase.log || exit 1
+        > ${outd}/${preproc_dir}/src_${suff}.dev 2>>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
     ${bindir}/thot_lowercase -f ${scorpus_test} \
-        > ${outd}/preproc_data/src_${suff}.test 2>>${outd}/preproc_data/thot_lowercase.log || exit 1
+        > ${outd}/${preproc_dir}/src_${suff}.test 2>>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
     ${bindir}/thot_lowercase -f ${tcorpus_train} \
-        > ${outd}/preproc_data/trg_${suff}.train 2>>${outd}/preproc_data/thot_lowercase.log || exit 1
+        > ${outd}/${preproc_dir}/trg_${suff}.train 2>>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
     ${bindir}/thot_lowercase -f ${tcorpus_dev} \
-        > ${outd}/preproc_data/trg_${suff}.dev 2>>${outd}/preproc_data/thot_lowercase.log || exit 1
+        > ${outd}/${preproc_dir}/trg_${suff}.dev 2>>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
     ${bindir}/thot_lowercase -f ${tcorpus_test} \
-        > ${outd}/preproc_data/trg_${suff}.test 2>>${outd}/preproc_data/thot_lowercase.log || exit 1
+        > ${outd}/${preproc_dir}/trg_${suff}.test 2>>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
     echo "" >&2
 
     # Redefine corpus variables
-    scorpus_train=${outd}/preproc_data/src_${suff}.train
-    scorpus_dev=${outd}/preproc_data/src_${suff}.dev
-    scorpus_test=${outd}/preproc_data/src_${suff}.test
-    tcorpus_train=${outd}/preproc_data/trg_${suff}.train
-    tcorpus_dev=${outd}/preproc_data/trg_${suff}.dev
-    tcorpus_test=${outd}/preproc_data/trg_${suff}.test
+    scorpus_train=${outd}/${preproc_dir}/src_${suff}.train
+    scorpus_dev=${outd}/${preproc_dir}/src_${suff}.dev
+    scorpus_test=${outd}/${preproc_dir}/src_${suff}.test
+    tcorpus_train=${outd}/${preproc_dir}/trg_${suff}.train
+    tcorpus_dev=${outd}/${preproc_dir}/trg_${suff}.dev
+    tcorpus_test=${outd}/${preproc_dir}/trg_${suff}.test
 }
 
 ########
@@ -180,27 +180,27 @@ clean_corpus()
 
     # Obtain line numbers of clean sentence pairs
     ${bindir}/thot_clean_corpus_ln -s ${scorpus_train} -t ${tcorpus_train} \
-        > ${outd}/preproc_data/train_clean_ln 2>${outd}/preproc_data/thot_clean_corpus_ln.log || exit 1
+        > ${outd}/${preproc_dir}/train_clean_ln 2>${outd}/${preproc_dir}/thot_clean_corpus_ln.log || exit 1
     ${bindir}/thot_clean_corpus_ln -s ${scorpus_dev} -t ${tcorpus_dev} \
-        > ${outd}/preproc_data/dev_clean_ln 2>>${outd}/preproc_data/thot_clean_corpus_ln.log || exit 1
+        > ${outd}/${preproc_dir}/dev_clean_ln 2>>${outd}/${preproc_dir}/thot_clean_corpus_ln.log || exit 1
 
     # Create file with clean sentence pairs
-    ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/train_clean_ln \
-        -f ${scorpus_train} > ${outd}/preproc_data/src_${suff}.train || exit 1
-    ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/dev_clean_ln \
-        -f ${scorpus_dev} > ${outd}/preproc_data/src_${suff}.dev || exit 1
-    ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/train_clean_ln \
-        -f ${tcorpus_train} > ${outd}/preproc_data/trg_${suff}.train || exit 1
-    ${bindir}/thot_extract_sents_by_ln -n ${outd}/preproc_data/dev_clean_ln \
-        -f ${tcorpus_dev} > ${outd}/preproc_data/trg_${suff}.dev || exit 1
+    ${bindir}/thot_extract_sents_by_ln -n ${outd}/${preproc_dir}/train_clean_ln \
+        -f ${scorpus_train} > ${outd}/${preproc_dir}/src_${suff}.train || exit 1
+    ${bindir}/thot_extract_sents_by_ln -n ${outd}/${preproc_dir}/dev_clean_ln \
+        -f ${scorpus_dev} > ${outd}/${preproc_dir}/src_${suff}.dev || exit 1
+    ${bindir}/thot_extract_sents_by_ln -n ${outd}/${preproc_dir}/train_clean_ln \
+        -f ${tcorpus_train} > ${outd}/${preproc_dir}/trg_${suff}.train || exit 1
+    ${bindir}/thot_extract_sents_by_ln -n ${outd}/${preproc_dir}/dev_clean_ln \
+        -f ${tcorpus_dev} > ${outd}/${preproc_dir}/trg_${suff}.dev || exit 1
 
     echo "" >&2
 
     # Redefine corpus variables
-    scorpus_train=${outd}/preproc_data/src_${suff}.train
-    scorpus_dev=${outd}/preproc_data/src_${suff}.dev
-    tcorpus_train=${outd}/preproc_data/trg_${suff}.train
-    tcorpus_dev=${outd}/preproc_data/trg_${suff}.dev
+    scorpus_train=${outd}/${preproc_dir}/src_${suff}.train
+    scorpus_dev=${outd}/${preproc_dir}/src_${suff}.dev
+    tcorpus_train=${outd}/${preproc_dir}/trg_${suff}.train
+    tcorpus_dev=${outd}/${preproc_dir}/trg_${suff}.dev
 }
 
 ########
@@ -213,8 +213,8 @@ recase_output()
         raw_src_pref=${scorpus_pref}
         raw_trg_pref=${tcorpus_pref}
     else
-        raw_src_pref=${outd}/preproc_data/trg_tok
-        raw_trg_pref=${outd}/preproc_data/src_tok
+        raw_src_pref=${outd}/${preproc_dir}/trg_tok
+        raw_trg_pref=${outd}/${preproc_dir}/src_tok
     fi
 
     # Generate raw text file for recasing
@@ -475,8 +475,11 @@ echo "--lower is ${lower_given}" >> ${outd}/input_pars.txt
 
 # Create preproc dir if necessary
 if [ ${tok_given} -eq 1 -o ${lower_given} -eq 1 -o ${skip_clean_given} -eq 0 ]; then
-    if [ ! -d ${outd}/preproc_data ]; then
-        mkdir ${outd}/preproc_data || exit 1
+    # Store preproc dir name in a variable
+    preproc_dir=preproc_data/src_trg
+    # Check if the directory exists
+    if [ ! -d ${outd}/${preproc_dir} ]; then
+        mkdir -p ${outd}/${preproc_dir} || exit 1
     fi
 fi
 
