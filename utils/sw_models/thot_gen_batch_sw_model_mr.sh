@@ -99,7 +99,7 @@ estimate_slmodel()
     else
         echo "+++ Estimating sentence length model..." >> $TMP/log
         echo "+++ Estimating sentence length model..." >&2
-        ${bindir}/thot-gen-wigauss-sent-len-model ${srcf} ${trgf} > ${slmodel_dir}/model
+        ${bindir}/thot_gen_wigauss_slen_model ${srcf} ${trgf} > ${slmodel_dir}/model
     fi
 }
 

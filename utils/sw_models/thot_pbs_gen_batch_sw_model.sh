@@ -157,7 +157,7 @@ estimate_slmodel()
     echo "*** Estimating sentence length model..." >> $SDIR/log
     echo "*** Estimating sentence length model..." >> ${slmodel_dir}/log
 
-    ${bindir}/thot-gen-wigauss-sent-len-model ${srcf} ${trgf} > ${slmodel_dir}/model || \
+    ${bindir}/thot_gen_wigauss_slen_model ${srcf} ${trgf} > ${slmodel_dir}/model || \
         { echo "Error while executing estimate_slmodel" >> $SDIR/log ; return 1 ; }
 
     # Create sync file
