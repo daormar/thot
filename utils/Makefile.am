@@ -24,7 +24,7 @@ sw_models/thot_pbs_gen_batch_sw_model					\
 sw_models/thot_merge_text_ilextable					\
 sw_models/thot_merge_text_iibm2atable					\
 sw_models/thot_merge_text_ihmmatable sw_models/thot_get_swm_vocab	\
-sw_models/thot-gen-wigauss-sent-len-model				\
+sw_models/thot_gen_wigauss_slen_model					\
 sw_models/thot_gen_batch_sw_model_mr sw_models/thot_format_corpus_csl	\
 sw_models/thot_filter_text_ilextable
 

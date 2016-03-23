@@ -5,7 +5,7 @@
 # parallel corpus.
 
 if [ $# -ne 2 ]; then
-    echo "Usage: thot-gen-wigauss-sent-len-model <src_sent_file> <trg_sent_file>"
+    echo "Usage: thot_gen_wigauss_slen_model <src_sent_file> <trg_sent_file>"
 else
     src_file=$1
     trg_file=$2
