@@ -464,6 +464,13 @@ if [ ${sdir_given} -eq 1 ]; then
     fi
 fi
 
+## Print parameters
+echo "-s is ${scorpus_pref}" > ${outd}/input_pars.txt
+echo "-t is ${tcorpus_pref}" >> ${outd}/input_pars.txt
+echo "--skip-clean is ${skip_clean_given}" >> ${outd}/input_pars.txt
+echo "--tok is ${tok_given}" >> ${outd}/input_pars.txt
+echo "--lower is ${lower_given}" >> ${outd}/input_pars.txt
+
 ## Process parameters
 
 # Create preproc dir if necessary
