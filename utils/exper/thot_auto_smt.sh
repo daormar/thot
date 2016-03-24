@@ -238,7 +238,7 @@ detok_output()
 {
     echo "**** Detokenizing output" >&2
 
-    # Generate raw text file for recasing
+    # Generate raw text file for detokenizing
     ${bindir}/thot_gen_rtfile -s ${scorpus_pref} \
         -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok
 
