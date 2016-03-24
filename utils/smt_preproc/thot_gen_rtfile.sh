@@ -3,12 +3,12 @@
 
 ########
 if [ $# -lt 1 ]; then
-    echo "thot_gen_rtfile -s <string> -t <string> [-t <string>] [-tdir <string>]"
+    echo "thot_gen_rtfile [-s <string>] -t <string> [-tdir <string>]"
     echo ""
-    echo "-s <string>     Prefix of files with source sentences (the"
-    echo "                following suffixes are assumed: .test)"
-    echo "-t <string>     Prefix of files with target sentences (the"
-    echo "                following suffixes are assumed: .train and .dev)"
+    echo "-s <string>     Prefix of files with source sentences (the following suffixes"
+    echo "                are assumed: .test)"
+    echo "-t <string>     Prefix of files with target sentences (the following suffixes"
+    echo "                are assumed: .train and .dev)"
     echo "-tdir <string>  Directory for temporary files (/tmp by default)"
 else
     
@@ -40,18 +40,16 @@ else
     done
 
     # Check parameters
-    if [ ${s_given} -eq 0 ]; then
-        echo "Error! -s parameter not given" >&2
-        exit 1
+    if [ ${s_given} -eq 1 ]; then
+        # Complete prefix of source files
+        scorpus_test=${scorpus_pref}.test
+
+        # Check existence of files
+        if [ ! -f ${scorpus_test} ]; then
+            echo "Warning! file ${file} does not exist" >&2
+        fi
     fi
 
-    # Complete prefix of source files
-    scorpus_test=${scorpus_pref}.test
-
-    # Check existence of files
-    if [ ! -f ${scorpus_test} ]; then
-        echo "Warning! file ${file} does not exist" >&2
-    fi
 
     if [ ${t_given} -eq 0 ]; then
         echo "Error! -t parameter not given" >&2
@@ -96,10 +94,11 @@ else
 
     # Obtain info from subset of source test corpus (with given subset
     # size, typically the whole corpus will be included)
-    if [ -f ${scorpus_test} ]; then
-        maxfsize=10000
-        ${bindir}/thot_shuffle 31415 ${scorpus_test} > $TMPDIR/scorpus_test_shuff
-        head -n ${maxfsize} $TMPDIR/scorpus_test_shuff
+    if [ ${s_given} -eq 1 ]; then
+        if [ -f ${scorpus_test} ]; then
+            maxfsize=10000
+            ${bindir}/thot_shuffle 31415 ${scorpus_test} > $TMPDIR/scorpus_test_shuff
+            head -n ${maxfsize} $TMPDIR/scorpus_test_shuff
+        fi
     fi
-
 fi
