@@ -91,17 +91,65 @@ get_absolute_path()
 }
 
 ########
+get_name_components()
+{
+    # Initialize parameters
+    _name_aux=$1
+
+    # Test known extensions
+    _basename_result=`basename ${_name_aux} .train`
+    if [ "${_name_aux}" != "${_basename_result}" ]; then
+        echo "${_basename_result} .train"
+        return 0
+    fi
+
+    _basename_result=`basename ${_name_aux} .dev`
+    if [ "${_name_aux}" != "${_basename_result}" ]; then
+        echo "${_basename_result} .dev"
+        return 0
+    fi
+
+    _basename_result=`basename ${_name_aux} .test`
+    if [ "${_name_aux}" != "${_basename_result}" ]; then
+        echo "${_basename_result} .test"
+        return 0
+    fi
+
+    # No extension was found
+    echo ${_name_aux}
+    return 1
+}
+
+########
+add_suffix_to_name()
+{
+    # Initialize variables
+    _name=$1
+    _suffix=$2
+    _name_components="`get_name_components ${_name}`"
+    _name_wo_ext=`echo "${_name_components}" | $AWK '{printf"%s",$1}'`
+    _ext=`echo "${_name_components}" | $AWK '{printf"%s",$2}'`
+
+    # Return result
+    echo ${_name_wo_ext}_${_suffix}${_ext}
+}
+
+########
 tok_corpus()
 {
     # Tokenize corpus
     echo "**** Tokenizing corpus" >&2
+    basename=`$BASENAME ${test_corpus}`
     suff="tok"
+    filename=`add_suffix_to_name $basename $suff`
+
     ${bindir}/thot_tokenize -f ${test_corpus} \
-        > ${outd}/${preproc_dir}/src_${suff}.test 2>>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
+        > ${thot_auto_smt_dir}/${preproc_dir}/${filename} 2>> ${thot_auto_smt_dir}/${preproc_dir}/thot_tokenize.log || exit 1
     echo "" >&2
 
     # Redefine corpus variables
-    test_corpus=${outd}/${preproc_dir}/src_${suff}.test
+    test_corpus_tok=${thot_auto_smt_dir}/${preproc_dir}/${filename}
+    test_corpus=${test_corpus_tok}
 }
 
 ########
@@ -109,17 +157,16 @@ lowercase_corpus()
 {
     # Tokenize corpus
     echo "**** Lowercasing corpus" >&2
-    if [ ${tok_given} -eq 0 ]; then
-        suff="lc"
-    else
-        suff="tok_lc"
-    fi
+    basename=`$BASENAME ${test_corpus}`
+    suff="lc"
+    filename=`add_suffix_to_name $basename $suff`
+
     ${bindir}/thot_lowercase -f ${test_corpus} \
-        > ${outd}/${preproc_dir}/src_${suff}.test 2>>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
+        > ${thot_auto_smt_dir}/${preproc_dir}/${filename} 2>> ${thot_auto_smt_dir}/${preproc_dir}/thot_lowercase.log || exit 1
     echo "" >&2
 
     # Redefine corpus variables
-    test_corpus=${outd}/${preproc_dir}/src_${suff}.test
+    test_corpus=${thot_auto_smt_dir}/${preproc_dir}/${filename}
 }
 
 
@@ -130,16 +177,18 @@ recase_output()
 
     # Determine basic raw files
     if [ ${tok_given} = 0 ]; then
-        raw_src_pref=${scorpus_pref}
         raw_trg_pref=${tcorpus_pref}
+        raw_test_corpus=${test_corpus}
     else
-        raw_src_pref=${thot_auto_smt_dir}/preproc_data/src_trg/trg_tok
         raw_trg_pref=${thot_auto_smt_dir}/preproc_data/src_trg/src_tok
+        raw_test_corpus=${test_corpus_tok}
     fi
 
     # Generate raw text file for recasing
-    ${bindir}/thot_gen_rtfile -s ${raw_src_pref} \
-        -t ${raw_trg_pref} -tdir $tdir > $tdir/rfile_rec
+    ${bindir}/thot_gen_rtfile -t ${raw_trg_pref} -tdir $tdir > $tdir/rfile_rec
+
+    # Add additional info to raw text file
+    cat ${raw_test_corpus} >> $tdir/rfile_rec
       
     # Recase output
     ${bindir}/thot_recase -f ${output_file} -r $tdir/rfile_rec -w \
@@ -158,9 +207,11 @@ detok_output()
 {
     echo "**** Detokenizing output" >&2
 
-    # Generate raw text file for recasing
-    ${bindir}/thot_gen_rtfile -s ${scorpus_pref} \
-        -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok
+    # Generate raw text file for detokenizing
+    ${bindir}/thot_gen_rtfile -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok
+
+    # Add additional info to raw text file
+    cat ${test_corpus_opt} >> $tdir/rfile_rec
 
     # Detokenize output
     ${bindir}/thot_detokenize -f ${output_file} -r $tdir/rfile_detok \
@@ -217,7 +268,7 @@ while [ $# -ne 0 ]; do
             ;;
         "-t") shift
             if [ $# -ne 0 ]; then
-                test_corpus=$1
+                test_corpus_opt=$1
                 t_given=1
             fi
             ;;
@@ -305,7 +356,7 @@ if [ ${t_given} -eq 0 ]; then
     echo "Error! -t parameter not given" >&2
     exit 1
 else
-    if [ ! -f ${test_corpus} ]; then
+    if [ ! -f ${test_corpus_opt} ]; then
         echo "Error! test file with sentences to be translated does not exist"
         exit 1
     fi
@@ -327,19 +378,19 @@ fi
 
 ## Process parameters
 
-# Obtain absolute path of ${test_corpus}
-test_corpus=`get_absolute_path ${test_corpus}`
+# Obtain absolute path of ${test_corpus_opt}
+test_corpus=`get_absolute_path ${test_corpus_opt}`
 
 # Obtain basename of ${test_corpus}
 base_tc=`$BASENAME ${test_corpus}`
 
 # Create preproc dir if necessary
-if [ ${tok_given} -eq 1 -o ${lower_given} -eq 1 -o ${skip_clean_given} -eq 0 ]; then
+if [ ${tok_given} -eq 1 -o ${lower_given} -eq 1 ]; then
     # Store preproc dir name in a variable
     preproc_dir=preproc_data/${base_tc}
     # Check if the directory exists
-    if [ ! -d ${outd}/${preproc_dir} ]; then
-        mkdir -p ${outd}/${preproc_dir} || exit 1
+    if [ ! -d ${thot_auto_smt_dir}/${preproc_dir} ]; then
+        mkdir -p ${thot_auto_smt_dir}/${preproc_dir} || exit 1
     fi
 fi
 
@@ -353,11 +404,12 @@ if [ ${lower_given} -eq 1 ]; then
     lowercase_corpus
 fi
 
-# Translate test corpus if requested
+# Obtain basename of ${test_corpus} after preprocessing
+base_tc=`$BASENAME ${test_corpus}`
 
 # Create dir for model filtering
-if [ ! -d ${outd}/output/$curr_date ]; then
-    mkdir -p ${outd}/filtered_models || exit 1
+if [ ! -d $${thot_auto_smt_dir}/output/$curr_date ]; then
+    mkdir -p ${thot_auto_smt_dir}/filtered_models || exit 1
 fi
 
 # Prepare system to translate test corpus
@@ -375,8 +427,8 @@ curr_date=`date '+%Y_%m_%d'`
 transoutd=${base_tc}.${curr_date}
 
 # Create translator output dir
-if [ ! -d ${outd}/output/${transoutd} ]; then
-    mkdir -p ${outd}/output/${transoutd} || exit 1
+if [ ! -d ${thot_auto_smt_dir}/output/${transoutd} ]; then
+    mkdir -p ${thot_auto_smt_dir}/output/${transoutd} || exit 1
 fi
 
 # Generate translations
