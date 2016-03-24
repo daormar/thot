@@ -236,11 +236,11 @@ recase_output()
 
     # Generate raw text file for recasing
     ${bindir}/thot_gen_rtfile -s ${raw_src_pref} \
-        -t ${raw_trg_pref} -tdir $tdir > $tdir/rfile_rec
+        -t ${raw_trg_pref} -tdir $tdir > $tdir/rfile_rec || exit 1
       
     # Recase output
     ${bindir}/thot_recase -f ${output_file} -r $tdir/rfile_rec -w \
-        -tdir $tdir > ${output_file}_rec 2> ${outd}/output/${transoutd}/thot_recase.log
+        -tdir $tdir > ${output_file}_rec 2> ${outd}/output/${transoutd}/thot_recase.log || exit 1
     echo "" >&2
 
     # Remove temporary files
@@ -257,11 +257,11 @@ detok_output()
 
     # Generate raw text file for detokenizing
     ${bindir}/thot_gen_rtfile -s ${scorpus_pref} \
-        -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok
+        -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok || exit 1
 
     # Detokenize output
     ${bindir}/thot_detokenize -f ${output_file} -r $tdir/rfile_detok \
-        -tdir $tdir > ${output_file}_detok 2> ${outd}/output/${transoutd}/thot_detokenize.log
+        -tdir $tdir > ${output_file}_detok 2> ${outd}/output/${transoutd}/thot_detokenize.log || exit 1
     echo "" >&2
 
     # Remove temporary files
