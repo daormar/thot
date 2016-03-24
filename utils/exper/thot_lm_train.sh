@@ -64,24 +64,6 @@ usage()
 }
 
 ########
-disabled_pipe_fail()
-{
-    return $?
-}
-
-########
-pipe_fail()
-{
-    # test if there is at least one command to exit with a non-zero status
-    for pipe_status_elem in ${PIPESTATUS[*]}; do 
-        if test ${pipe_status_elem} -ne 0; then 
-            return 1; 
-        fi 
-    done
-    return 0
-}
-
-########
 is_absolute_path()
 {
     case $1 in
@@ -266,7 +248,10 @@ echo "" >&2
 # Generate wp file
 echo "* Generating file for word prediction... " >&2
 nlines_wp_file=100000
-${bindir}/thot_shuffle 31415 $corpus | $HEAD -${nlines_wp_file} > $prefix.wp ; ${PIPE_FAIL} || exit 1
+tmpfile=`${MKTEMP}`
+${bindir}/thot_shuffle 31415 $corpus > $tmpfile || exit 1
+$HEAD -${nlines_wp_file} $tmpfile > $prefix.wp || exit 1
+rm $tmpfile
 echo "" >&2
 
 # Create descriptor file
