@@ -180,19 +180,20 @@ recase_output()
         raw_trg_pref=${tcorpus_pref}
         raw_test_corpus=${test_corpus}
     else
-        raw_trg_pref=${thot_auto_smt_dir}/preproc_data/src_trg/src_tok
+        trgbase=`$BASENAME ${tcorpus_pref}`
+        raw_trg_pref=${thot_auto_smt_dir}/preproc_data/initial/${trgbase}_tok
         raw_test_corpus=${test_corpus_tok}
     fi
 
     # Generate raw text file for recasing
-    ${bindir}/thot_gen_rtfile -t ${raw_trg_pref} -tdir $tdir > $tdir/rfile_rec
+    ${bindir}/thot_gen_rtfile -t ${raw_trg_pref} -tdir $tdir > $tdir/rfile_rec || exit 1
 
     # Add additional info to raw text file
     cat ${raw_test_corpus} >> $tdir/rfile_rec
       
     # Recase output
     ${bindir}/thot_recase -f ${output_file} -r $tdir/rfile_rec -w \
-        -tdir $tdir > ${output_file}_rec 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_recase.log
+        -tdir $tdir > ${output_file}_rec 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_recase.log || exit 1
     echo "" >&2
 
     # Remove temporary files
@@ -208,14 +209,14 @@ detok_output()
     echo "**** Detokenizing output" >&2
 
     # Generate raw text file for detokenizing
-    ${bindir}/thot_gen_rtfile -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok
+    ${bindir}/thot_gen_rtfile -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok || exit 1
 
     # Add additional info to raw text file
     cat ${test_corpus_opt} >> $tdir/rfile_rec
 
     # Detokenize output
     ${bindir}/thot_detokenize -f ${output_file} -r $tdir/rfile_detok \
-        -tdir $tdir > ${output_file}_detok 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_detokenize.log
+        -tdir $tdir > ${output_file}_detok 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_detokenize.log || exit 1
     echo "" >&2
 
     # Remove temporary files
@@ -412,13 +413,23 @@ if [ ! -d $${thot_auto_smt_dir}/output/$curr_date ]; then
     mkdir -p ${thot_auto_smt_dir}/filtered_models || exit 1
 fi
 
-# Prepare system to translate test corpus
-if [ -f ${test_corpus} -a -f ${thot_auto_smt_dir}/smt_tune/tuned_for_dev.cfg ]; then
-    echo "**** Preparing system to translate test corpus" >&2
-    ${bindir}/thot_prepare_sys_for_test -c ${thot_auto_smt_dir}/smt_tune/tuned_for_dev.cfg -t ${test_corpus}  \
-        -o ${thot_auto_smt_dir}/filtered_models/${base_tc} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
-    echo "" >&2
+# Determine cfg file to be used
+if [ -f ${thot_auto_smt_dir}/smt_tune/tuned_for_dev.cfg ]; then
+    cfgfile_before_filt=${thot_auto_smt_dir}/smt_tune/tuned_for_dev.cfg
+else
+    if [ -f ${thot_auto_smt_dir}/before_tuning.cfg ]; then
+        cfgfile_before_filt=${thot_auto_smt_dir}/before_tuning.cfg
+    else
+        echo "Error: no appropriate cfg file was found in ${thot_auto_smt_dir}" >&2
+        exit 1
+    fi
 fi
+
+# Prepare system to translate test corpus
+echo "**** Preparing system to translate test corpus" >&2
+${bindir}/thot_prepare_sys_for_test -c ${cfgfile_before_filt} -t ${test_corpus}  \
+    -o ${thot_auto_smt_dir}/filtered_models/${base_tc} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
+echo "" >&2
 
 # Obtain current date
 curr_date=`date '+%Y_%m_%d'`
@@ -432,12 +443,10 @@ if [ ! -d ${thot_auto_smt_dir}/output/${transoutd} ]; then
 fi
 
 # Generate translations
-if [ -f ${test_corpus} -a -f ${thot_auto_smt_dir}/smt_tune/tuned_for_dev.cfg ]; then
-    echo "**** Translating test corpus" >&2
-    ${bindir}/thot_decoder -pr ${pr_val} -c ${thot_auto_smt_dir}/filtered_models/${base_tc}/test_specific.cfg \
-        -t ${test_corpus} -o ${thot_auto_smt_dir}/output/${transoutd}/thot_decoder_out ${debug_opt} -v || exit 1
-    echo "" >&2
-fi
+echo "**** Translating test corpus" >&2
+${bindir}/thot_decoder -pr ${pr_val} -c ${thot_auto_smt_dir}/filtered_models/${base_tc}/test_specific.cfg \
+    -t ${test_corpus} -o ${thot_auto_smt_dir}/output/${transoutd}/thot_decoder_out ${debug_opt} -v || exit 1
+echo "" >&2
 
 ### Execute post-processing steps if required
 
