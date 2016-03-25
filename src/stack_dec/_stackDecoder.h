@@ -374,6 +374,59 @@ _stackDecoder<SMT_MODEL>::getNextTrans(void)
 //---------------------------------------
 template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis
+_stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
+                                                  typename Hypothesis::DataType sug)
+{
+  if(smtm_ptr==NULL)
+  {
+    Hypothesis emptyHyp;
+    cerr<<"Error! model not initialized\n";
+    return emptyHyp;
+  }
+  else
+  {
+#ifdef THOT_STATS
+    _stack_decoder_stats.clear();
+    smtm_ptr->clearStats();
+    ++_stack_decoder_stats.sentencesTranslated;
+#endif
+    
+        // Verify sentence length
+    unsigned int srcSize=StrProcUtils::stringToStringVector(s).size();
+    if(srcSize==0 || srcSize>=MAX_SENTENCE_LENGTH_ALLOWED)
+    {
+      if(srcSize==0)
+        cerr<<"Warning: the sentence to translate is empty"<<endl;
+      else
+        cerr<<"Error: the sentence to translate is too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
+      init_state();
+      Hypothesis nullHyp;
+      nullHyp=smtm_ptr->nullHypothesis();
+      return nullHyp;
+    }
+
+    Hypothesis initialHyp;
+  
+        // Execute actions previous to the translation process
+    pre_trans_actions(s);
+
+        // Obtain initialHyp
+    smtm_ptr->obtainHypFromHypData(sug,initialHyp);
+      
+        // Insert null hypothesis
+    clear();
+    suggest(initialHyp);
+        // Initializes the multi-stack decoder algorithm with a stack
+        // containing the initial hypothesis "initialHyp"
+  
+        // Translate sentence
+    return decode();
+  }
+}
+
+//---------------------------------------
+template<class SMT_MODEL>
+typename _stackDecoder<SMT_MODEL>::Hypothesis
 _stackDecoder<SMT_MODEL>::translateWithRef(std::string s,
                                            std::string ref) 
 {
@@ -390,10 +443,21 @@ _stackDecoder<SMT_MODEL>::translateWithRef(std::string s,
     smtm_ptr->clearStats();
 #endif	
 
-        // verify sentence length
-    if(StrProcUtils::stringToStringVector(s).size()>=MAX_SENTENCE_LENGTH_ALLOWED)
+        // Verify sentence length
+    unsigned int srcSize=StrProcUtils::stringToStringVector(s).size();
+    unsigned int refSize=StrProcUtils::stringToStringVector(ref).size();
+    if(srcSize>=MAX_SENTENCE_LENGTH_ALLOWED || refSize>=MAX_SENTENCE_LENGTH_ALLOWED)
     {
-      cerr<<"Error: the sentence to translate is too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)\n";
+      cerr<<"Error: input sentences too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
+      init_state();
+      Hypothesis nullHyp;
+      nullHyp=smtm_ptr->nullHypothesis();
+      return nullHyp;
+    }
+
+    if(srcSize==0 || refSize==0)
+    {
+      cerr<<"Warning: input sentences empty"<<endl;
       init_state();
       Hypothesis nullHyp;
       nullHyp=smtm_ptr->nullHypothesis();
@@ -430,10 +494,21 @@ _stackDecoder<SMT_MODEL>::verifyCoverageForRef(std::string s,
     smtm_ptr->clearStats();
 #endif	
 
-        // verify sentence length
-    if(StrProcUtils::stringToStringVector(s).size()>=MAX_SENTENCE_LENGTH_ALLOWED)
+        // Verify sentence length
+    unsigned int srcSize=StrProcUtils::stringToStringVector(s).size();
+    unsigned int refSize=StrProcUtils::stringToStringVector(ref).size();
+    if(srcSize>=MAX_SENTENCE_LENGTH_ALLOWED || refSize>=MAX_SENTENCE_LENGTH_ALLOWED)
     {
-      cerr<<"Error: the sentence to translate is too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)\n";
+      cerr<<"Error: input sentences too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
+      init_state();
+      Hypothesis nullHyp;
+      nullHyp=smtm_ptr->nullHypothesis();
+      return nullHyp;
+    }
+
+    if(srcSize==0 || refSize==0)
+    {
+      cerr<<"Warning: input sentences empty"<<endl;
       init_state();
       Hypothesis nullHyp;
       nullHyp=smtm_ptr->nullHypothesis();
@@ -454,54 +529,6 @@ _stackDecoder<SMT_MODEL>::verifyCoverageForRef(std::string s,
 //---------------------------------------
 template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis
-_stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
-                                                  typename Hypothesis::DataType sug)
-{
-  if(smtm_ptr==NULL)
-  {
-    Hypothesis emptyHyp;
-    cerr<<"Error! model not initialized\n";
-    return emptyHyp;
-  }
-  else
-  {
-#ifdef THOT_STATS
-    _stack_decoder_stats.clear();
-    smtm_ptr->clearStats();
-    ++_stack_decoder_stats.sentencesTranslated;
-#endif
-
-        // verify sentence length
-    if(StrProcUtils::stringToStringVector(s).size()>=MAX_SENTENCE_LENGTH_ALLOWED)
-    {
-      cerr<<"Error: the sentence to translate is too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)\n";
-      init_state();
-      Hypothesis nullHyp;
-      nullHyp=smtm_ptr->nullHypothesis();
-      return nullHyp;
-    }
-
-    Hypothesis initialHyp;
-  
-        // Execute actions previous to the translation process
-    pre_trans_actions(s);
-
-        // Obtain initialHyp
-    smtm_ptr->obtainHypFromHypData(sug,initialHyp);
-      
-        // Insert null hypothesis
-    clear();
-    suggest(initialHyp);
-        // Initializes the multi-stack decoder algorithm with a stack
-        // containing the initial hypothesis "initialHyp"
-  
-        // Translate sentence
-    return decode();
-  }
-}
-//---------------------------------------
-template<class SMT_MODEL>
-typename _stackDecoder<SMT_MODEL>::Hypothesis
 _stackDecoder<SMT_MODEL>::translateWithPrefix(std::string s,
                                               std::string pref)
 {
@@ -518,10 +545,21 @@ _stackDecoder<SMT_MODEL>::translateWithPrefix(std::string s,
     smtm_ptr->clearStats();
 #endif
 
-        // verify sentence length
-    if(StrProcUtils::stringToStringVector(s).size()>=MAX_SENTENCE_LENGTH_ALLOWED)
+        // Verify sentence length
+    unsigned int srcSize=StrProcUtils::stringToStringVector(s).size();
+    unsigned int prefSize=StrProcUtils::stringToStringVector(pref).size();
+    if(srcSize>=MAX_SENTENCE_LENGTH_ALLOWED || prefSize>=MAX_SENTENCE_LENGTH_ALLOWED)
     {
-      cerr<<"Error: the sentence to translate is too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)\n";
+      cerr<<"Error: input sentences too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
+      init_state();
+      Hypothesis nullHyp;
+      nullHyp=smtm_ptr->nullHypothesis();
+      return nullHyp;
+    }
+
+    if(srcSize==0 || prefSize==0)
+    {
+      cerr<<"Warning: input sentences empty"<<endl;
       init_state();
       Hypothesis nullHyp;
       nullHyp=smtm_ptr->nullHypothesis();
