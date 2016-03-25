@@ -290,75 +290,76 @@ int align_corpus(const thot_ms_alig_pars& tap)
       getline(testCorpusFile,srcSentenceString);
       getline(refCorpusFile,trgSentenceString);
 
-      if(srcSentenceString!="")
-      {
-        ++sentNo;
+          // Discard last sentence pair if it is empty
+      if(srcSentenceString=="" && trgSentenceString=="" && testCorpusFile.eof())
+        break;
+
+      ++sentNo;
         
-        if(tap.verbosity)
-        {
-          cerr<<sentNo<<endl<<srcSentenceString<<endl;
-          ctimer(&elapsed_ant,&ucpu,&scpu);
-        }
+      if(tap.verbosity)
+      {
+        cerr<<sentNo<<endl<<srcSentenceString<<endl;
+        ctimer(&elapsed_ant,&ucpu,&scpu);
+      }
        
-            //------- Align sentence
-        if(tap.p_option)
+          //------- Align sentence
+      if(tap.p_option)
+      {
+            // Translate with prefix
+        result=translatorPtr->translateWithPrefix(srcSentenceString,trgSentenceString);
+      }
+      else
+      {
+        if(tap.cov_option)
         {
-              // Translate with prefix
-          result=translatorPtr->translateWithPrefix(srcSentenceString,trgSentenceString);
+              // Verify model coverage
+          result=translatorPtr->verifyCoverageForRef(srcSentenceString,trgSentenceString);
         }
         else
         {
-          if(tap.cov_option)
-          {
-                // Verify model coverage
-            result=translatorPtr->verifyCoverageForRef(srcSentenceString,trgSentenceString);
-          }
-          else
-          {
-                // Translate with reference
-            result=translatorPtr->translateWithRef(srcSentenceString,trgSentenceString);
-          }
+              // Translate with reference
+          result=translatorPtr->translateWithRef(srcSentenceString,trgSentenceString);
         }
-            //--------------------------
-        if(tap.verbosity) ctimer(&elapsed,&ucpu,&scpu);
+      }
+          //--------------------------
+      if(tap.verbosity) ctimer(&elapsed,&ucpu,&scpu);
                
-        print_alig_a3_final(srcSentenceString,trgSentenceString,result,sentNo,tap);
+      print_alig_a3_final(srcSentenceString,trgSentenceString,result,sentNo,tap);
           
-        if(tap.verbosity)
-        {
-          pbtModelPtr->printHyp(result,cerr,tap.verbosity);
+      if(tap.verbosity)
+      {
+        pbtModelPtr->printHyp(result,cerr,tap.verbosity);
 #         ifdef THOT_STATS
-          translatorPtr->printStats();
+        translatorPtr->printStats();
 #         endif
 
-          cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<endl<<endl;
-          total_time+=elapsed-elapsed_ant;
-        }
+        cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<endl<<endl;
+        total_time+=elapsed-elapsed_ant;
+      }
 #ifndef THOT_DISABLE_REC
-            // Print wordgraph if the -wg option was given
-        if(tap.wordGraphFileName!="")
-        {
-          char wgFileNameForSent[256];
-          sprintf(wgFileNameForSent,"%s_%06d",tap.wordGraphFileName.c_str(),sentNo);
-          translatorPtr->pruneWordGraph(tap.wgPruningThreshold);
-          translatorPtr->printWordGraph(wgFileNameForSent);
-        }
+          // Print wordgraph if the -wg option was given
+      if(tap.wordGraphFileName!="")
+      {
+        char wgFileNameForSent[256];
+        sprintf(wgFileNameForSent,"%s_%06d",tap.wordGraphFileName.c_str(),sentNo);
+        translatorPtr->pruneWordGraph(tap.wgPruningThreshold);
+        translatorPtr->printWordGraph(wgFileNameForSent);
+      }
 #endif
 #ifdef THOT_ENABLE_GRAPH
-        char printGraphFileName[256];
-        ofstream outS;
-        sprintf(printGraphFileName,"sent%d.graph_file",sentNo);
-        outS.open(printGraphFileName,ios::out);
-        if(!outS) cerr<<"Error while printing search graph to file."<<endl;
-        else
-        {
-          translatorPtr->printSearchGraphStream(outS);
-          outS<<"Stack ID. Out\n";
-          translatorPtr->printGraphForHyp(result,outS);
-          outS.close();        
-        }
+      char printGraphFileName[256];
+      ofstream outS;
+      sprintf(printGraphFileName,"sent%d.graph_file",sentNo);
+      outS.open(printGraphFileName,ios::out);
+      if(!outS) cerr<<"Error while printing search graph to file."<<endl;
+      else
+      {
+        translatorPtr->printSearchGraphStream(outS);
+        outS<<"Stack ID. Out\n";
+        translatorPtr->printGraphForHyp(result,outS);
+        outS.close();        
+      }
 #endif        
-      }    
     }
     testCorpusFile.close(); 
   }
