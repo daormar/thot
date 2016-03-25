@@ -266,63 +266,65 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
         // Translate corpus sentences
     while(!testCorpusFile.eof())
     {
-      getline(testCorpusFile,srcSentenceString); 
-      if(srcSentenceString!="")
-      {
-        ++sentNo;
+      getline(testCorpusFile,srcSentenceString);
+
+          // Discard last sentence if it is empty
+      if(srcSentenceString=="" && testCorpusFile.eof())
+        break;
+      
+      ++sentNo;
         
-        if(tdp.verbosity)
-        {
-          cerr<<sentNo<<endl<<srcSentenceString<<endl;
-          ctimer(&elapsed_ant,&ucpu,&scpu);
-        }
+      if(tdp.verbosity)
+      {
+        cerr<<sentNo<<endl<<srcSentenceString<<endl;
+        ctimer(&elapsed_ant,&ucpu,&scpu);
+      }
        
-            //------- Translate sentence
-        result=translatorPtr->translate(srcSentenceString);
+          //------- Translate sentence
+      result=translatorPtr->translate(srcSentenceString);
 
-            //--------------------------
-        if(tdp.verbosity) ctimer(&elapsed,&ucpu,&scpu);
+          //--------------------------
+      if(tdp.verbosity) ctimer(&elapsed,&ucpu,&scpu);
 
-        if(tdp.outFile.empty())
-          cout<<pbtModelPtr->getTransInPlainText(result)<<endl;
-        else
-          outS<<pbtModelPtr->getTransInPlainText(result)<<endl;
+      if(tdp.outFile.empty())
+        cout<<pbtModelPtr->getTransInPlainText(result)<<endl;
+      else
+        outS<<pbtModelPtr->getTransInPlainText(result)<<endl;
           
-        if(tdp.verbosity)
-        {
-          pbtModelPtr->printHyp(result,cerr,tdp.verbosity);
+      if(tdp.verbosity)
+      {
+        pbtModelPtr->printHyp(result,cerr,tdp.verbosity);
 #         ifdef THOT_STATS
-          translatorPtr->printStats();
+        translatorPtr->printStats();
 #         endif
 
-          cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<endl<<endl;
-          total_time+=elapsed-elapsed_ant;
-        }
+        cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<endl<<endl;
+        total_time+=elapsed-elapsed_ant;
+      }
 #ifndef THOT_DISABLE_REC        
-            // Print wordgraph if the -wg option was given
-        if(tdp.wordGraphFileName!="")
-        {
-          char wgFileNameForSent[256];
-          sprintf(wgFileNameForSent,"%s_%06d",tdp.wordGraphFileName.c_str(),sentNo);
-          translatorPtr->pruneWordGraph(tdp.wgPruningThreshold);
-          translatorPtr->printWordGraph(wgFileNameForSent);
-        }
+          // Print wordgraph if the -wg option was given
+      if(tdp.wordGraphFileName!="")
+      {
+        char wgFileNameForSent[256];
+        sprintf(wgFileNameForSent,"%s_%06d",tdp.wordGraphFileName.c_str(),sentNo);
+        translatorPtr->pruneWordGraph(tdp.wgPruningThreshold);
+        translatorPtr->printWordGraph(wgFileNameForSent);
+      }
 #endif
 #ifdef THOT_ENABLE_GRAPH
-        char printGraphFileName[256];
-        ofstream graphOutS;
-        sprintf(printGraphFileName,"sent%d.graph_file",sentNo);
-        graphOutS.open(printGraphFileName,ios::out);
-        if(!graphOutS) cerr<<"Error while printing search graph to file."<<endl;
-        else
-        {
-          translatorPtr->printSearchGraphStream(graphOutS);
-          graphOutS<<"Stack ID. Out\n";
-          translatorPtr->printGraphForHyp(result,graphOutS);
-          graphOutS.close();        
-        }
+      char printGraphFileName[256];
+      ofstream graphOutS;
+      sprintf(printGraphFileName,"sent%d.graph_file",sentNo);
+      graphOutS.open(printGraphFileName,ios::out);
+      if(!graphOutS) cerr<<"Error while printing search graph to file."<<endl;
+      else
+      {
+        translatorPtr->printSearchGraphStream(graphOutS);
+        graphOutS<<"Stack ID. Out\n";
+        translatorPtr->printGraphForHyp(result,graphOutS);
+        graphOutS.close();        
+      }
 #endif        
-      }    
     }
         // Close output file
     if(!tdp.outFile.empty())
