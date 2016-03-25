@@ -300,6 +300,14 @@ int PhrLocalSwLiTm::onlineTrainSentPair(const char *srcSent,
                                         const char *sysSent,
                                         int verbose)
 {
+      // Check if input sentences are empty
+  if(strlen(srcSent)==0 || strlen(refSent)==0)
+  {
+    cerr<<"Error: cannot process empty input sentences"<<endl;
+    return ERROR;
+  }
+
+      // Train pair according to chosen algorithm
   switch(onlineTrainingPars.onlineLearningAlgorithm)
   {
     case BASIC_INCR_TRAINING:
