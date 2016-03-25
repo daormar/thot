@@ -793,7 +793,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
       // Check if input sentences are empty
   if(strlen(srcSent)==0 || strlen(refSent)==0)
   {
-    cerr<<"Warning: one or both of the input sentences to be trained were empty"<<endl;
+    cerr<<"Error: one or both of the input sentences to be trained are empty"<<endl;
     return ERROR;
   }
     
