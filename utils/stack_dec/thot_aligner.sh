@@ -241,7 +241,7 @@ alig_frag()
     echo "** Processing chunk ${fragm} (started at "`date`")..." >> $SDIR/log
     echo "** Processing chunk ${fragm} (started at "`date`")..." > $SDIR/qs_alig_${fragm}.log
 
-    ${bindir}/thot_ms_alig ${cfg_opt} -t $SDIR/${src_fragm} -r $SDIR/${sref_fragm} ${alig_pars} \
+    ${bindir}/thot_ms_alig ${cfg_opt} -t $SDIR/${src_fragm} -r $SDIR/${ref_fragm} ${alig_pars} \
         ${wg_par}wg_${fragm} 2>> $SDIR/qs_alig_${fragm}.log >$SDIR/qs_alig_${fragm}.out || \
         { echo "Error while executing alig_frag for $SDIR/${fragm}" >> $SDIR/qs_alig_${fragm}.log; return 1 ; }
 
@@ -288,31 +288,31 @@ gen_log_err_files()
 {
     # Copy log file to its final location
     if [ -f $SDIR/log ]; then
-        cp $SDIR/log ${output}.dec_log
+        cp $SDIR/log ${output}.alig_log
     fi
 
     # Generate file for error diagnosing
-    if [ -f ${output}.dec_err ]; then
-        rm ${output}.dec_err
+    if [ -f ${output}.alig_err ]; then
+        rm ${output}.alig_err
     fi
     for f in $SDIR/qs_alig_*.log; do
-        cat $f >> ${output}.dec_err
+        cat $f >> ${output}.alig_err
     done
     for f in $SDIR/merge.log; do
-        cat $f >> ${output}.dec_err
+        cat $f >> ${output}.alig_err
     done
 }
 
 report_errors()
 {
-    num_err=`$GREP "Error while executing" ${output}.dec_log | wc -l`
+    num_err=`$GREP "Error while executing" ${output}.alig_log | wc -l`
     if [ ${num_err} -gt 0 ]; then
-        prog=`$GREP "Error while executing" ${output}.dec_log | head -1 | $AWK '{printf"%s",$4}'`
-        echo "Error during the execution of thot_aligner (${prog}), see ${output}.dec_err file" >&2
-        echo "File ${output}.err contains information for error diagnosing" >&2
+        prog=`$GREP "Error while executing" ${output}.alig_log | head -1 | $AWK '{printf"%s",$4}'`
+        echo "Error during the execution of thot_aligner (${prog})" >&2
+        echo "File ${output}.alig_err contains information for error diagnosing" >&2
     else
         echo "Synchronization error" >&2
-        echo "File ${output}.err contains information for error diagnosing" >&2
+        echo "File ${output}.alig_err contains information for error diagnosing" >&2
     fi
 }
 
@@ -506,7 +506,7 @@ if [ ${refs_given} -eq 0 ]; then
     exit 1
 else
     if [ ! -f  "${refs}" ]; then
-        echo "Error: file ${sents} with reference sentences does not exist" >&2
+        echo "Error: file ${refs} with reference sentences does not exist" >&2
         exit 1
     fi
 fi
@@ -514,6 +514,15 @@ fi
 if [ ${o_given} -eq 0 ];then
     # invalid parameters 
     echo "Error: output files prefix must be given" >&2
+    exit 1
+fi
+
+# Check that test and ref files are parallel
+nl_test=`wc -l $sents | $AWK '{printf"%d",$1}'`
+nl_ref=`wc -l $refs | $AWK '{printf"%d",$1}'`
+
+if [ ${nl_test} -ne ${nl_ref} ]; then
+    echo "Error! test and reference files have not the same number of lines" >&2 
     exit 1
 fi
 
@@ -570,7 +579,7 @@ if [ ${input_size} -lt ${num_procs} ]; then
     exit 1
 fi
 frag_size=`expr ${input_size} / ${num_procs}`
-frag_size=`expr ${frag_size} + 1`
+frag_size=`expr ${frag_size}`
 nlines=${frag_size}
 ${SPLIT} -l ${nlines} $sents $SDIR/src\_frag\_ || exit 1
 ${SPLIT} -l ${nlines} $refs $SDIR/ref\_frag\_ || exit 1
