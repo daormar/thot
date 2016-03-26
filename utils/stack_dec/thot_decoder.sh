@@ -304,11 +304,11 @@ report_errors()
     num_err=`$GREP "Error while executing" ${output}.dec_log | wc -l`
     if [ ${num_err} -gt 0 ]; then
         prog=`$GREP "Error while executing" ${output}.dec_log | head -1 | $AWK '{printf"%s",$4}'`
-        echo "Error during the execution of thot_decoder (${prog}), see ${output}.dec_err file" >&2
-        echo "File ${output}.err contains information for error diagnosing" >&2
+        echo "Error during the execution of thot_decoder (${prog})" >&2
+        echo "File ${output}.dec_err contains information for error diagnosing" >&2
     else
         echo "Synchronization error" >&2
-        echo "File ${output}.err contains information for error diagnosing" >&2
+        echo "File ${output}.dec_err contains information for error diagnosing" >&2
     fi
 }
 
@@ -543,7 +543,7 @@ if [ ${input_size} -lt ${num_procs} ]; then
     exit 1
 fi
 frag_size=`expr ${input_size} / ${num_procs}`
-frag_size=`expr ${frag_size} + 1`
+frag_size=`expr ${frag_size}`
 nlines=${frag_size}
 ${SPLIT} -l ${nlines} $sents $SDIR/frag\_ || exit 1
 
