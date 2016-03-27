@@ -58,7 +58,7 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
                                              pair<unsigned int,unsigned int>& sentRange)
 {
       // Clear sentence handler
- cerr<<"Warning: the previous content of the sentence handler will be removed after calling the readSentencePairs() function"<<endl;
+ cerr<<"Initializing sentence handler..."<<endl;
  clear();
   
      // Fill first field of sentRange
@@ -119,7 +119,8 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
        nsPairsInFiles+=1;
      }
          // Print statistics
-     cerr<<"#Sentence pairs in files: "<<nsPairsInFiles<<endl;
+     if(nsPairsInFiles>0)
+       cerr<<"#Sentence pairs in files: "<<nsPairsInFiles<<endl;
    }
        // Fill second field of sentRange
    sentRange.second=nsPairsInFiles-1;
