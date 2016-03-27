@@ -177,6 +177,10 @@ estimate_init_model()
     ${bindir}/thot_get_swm_vocab ${srcf} "NULL UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.svcb
     ${bindir}/thot_get_swm_vocab ${trgf} "NULL UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.tvcb
 
+    # Create msinfo file
+    echo "0" > ${init_model_dir}/model.msinfo
+    echo "0" >> ${init_model_dir}/model.msinfo
+
     # Function executed correctly
     return 0
 }
