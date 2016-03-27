@@ -210,10 +210,14 @@ int processParameters(thot_gen_sw_model_pars pars)
       // Initialize range of sentences to train
   pair<unsigned int,unsigned int> wholeTrainRange;
   wholeTrainRange.first=0;
-  wholeTrainRange.second=swAligModelPtr->numSentPairs()-1;
+  if(swAligModelPtr->numSentPairs()>0)
+    wholeTrainRange.second=swAligModelPtr->numSentPairs()-1;
+  else
+    wholeTrainRange.second=0;
 
       // EM iterations
-  emIters(pars,swAligModelPtr,wholeTrainRange,verbosity);
+  if(swAligModelPtr->numSentPairs()>0)
+    emIters(pars,swAligModelPtr,wholeTrainRange,verbosity);
   
       // Print results
   swAligModelPtr->print(pars.o_str.c_str());
