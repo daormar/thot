@@ -167,7 +167,7 @@ estimate_slmodel()
 estimate_init_model()
 {
     # Create void corpus
-    echo "" > ${init_model_dir}/void_corpus
+    $TOUCH ${init_model_dir}/void_corpus
     
     # Generate model for void corpus
     ${bindir}/thot_gen_sw_model -s ${init_model_dir}/void_corpus -t ${init_model_dir}/void_corpus \
