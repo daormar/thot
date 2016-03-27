@@ -248,6 +248,7 @@ echo "" >&2
 # Generate word penalty model file
 echo "* Generating word penalty model file... " >&2
 ${bindir}/thot_gen_geom_wpm_file 0.7 > $prefix.wpm
+echo "" >&2
 
 # Generate word prediction file
 echo "* Generating file for word prediction... " >&2
