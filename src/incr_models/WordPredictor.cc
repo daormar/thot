@@ -92,7 +92,7 @@ bool WordPredictor::loadFileWithAdditionalInfo(const char *fileName)
       // Open files
   if(fileStream.open(fileName)==ERROR)
   {
-    cerr<<"WordPredictor: file with additional info "<<fileName<<" not found. No additional info was loaded"<<endl;
+//    cerr<<"WordPredictor: file with additional info "<<fileName<<" not found. No additional info was loaded"<<endl;
     return OK;
   }
   else
