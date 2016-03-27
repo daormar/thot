@@ -55,7 +55,7 @@ bool SentenceHandler::readSentencePairs(const char *srcFileName,
                                         pair<unsigned int,unsigned int>& sentRange)
 {
       // Clear sentence handler
- cerr<<"Warning: the previous content of the sentence handler will be removed after calling the readSentencePairs() function"<<endl;
+ cerr<<"Initializing sentence handler..."<<endl;
  clear();
 
       // Define variables
