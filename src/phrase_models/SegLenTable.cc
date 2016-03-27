@@ -49,30 +49,36 @@ Prob SegLenTable::pk_tlen(unsigned int tlen,unsigned int k)
   }
   else
   {
-    if(ksegmLengthCountMargin[tlen]==0) return 0;
-    else return (double) segmLengthCount[tlen][k]/ksegmLengthCountMargin[tlen];
+    if(ksegmLengthCountMargin[tlen]==0)
+      return 0;
+    else
+      return (double) segmLengthCount[tlen][k]/ksegmLengthCountMargin[tlen];
   }
 }
 
 //-------------------------
 void SegLenTable::constantSegmLengthTable(void)
 {
- unsigned int i,j;
-	
- for(i=0;i<MAX_SENTENCE_LENGTH;++i)
- {
-   ksegmLengthCountMargin[i]=1;
-   for(j=0;j<MAX_SENTENCE_LENGTH;++j)
-   {
-     segmLengthCount[i][j]=1;  
-   }	
- }
+      // Clear data members
+  clear();
+
+      // Initialize values
+  for(unsigned int i=0;i<MAX_SENTENCE_LENGTH;++i)
+  {
+    ksegmLengthCountMargin[i]+=1;
+    for(unsigned int j=0;j<MAX_SENTENCE_LENGTH;++j)
+    {
+      segmLengthCount[i][j]=1;  
+    }
+  }
 }
+
 //-------------------------
 void SegLenTable::uniformSegmLengthTable(void)
 {
       // TODO
 }
+
 //-------------------------
 void SegLenTable::clear(void)
 {
@@ -108,9 +114,10 @@ bool SegLenTable::load_seglentable(const char *segmLengthTableFileName)
  cerr<<"Loading segmentation length table from file "<<segmLengthTableFileName<<endl;
  if(awk.open(segmLengthTableFileName)==ERROR)
  {
-   cerr<<"Warning: segmentation length tablefile not found, segmentation length probability will be assumed to be constant.\n";
+   // cerr<<"Warning: segmentation length tablefile not found, segmentation length probability will be assumed to be constant.\n";
+   cerr<<"Segmentation length probability will be assumed to be constant.\n";
    constantSegmLengthTable();	 
-   return 1;
+   return OK;
  }
  else
  {
@@ -125,12 +132,15 @@ bool SegLenTable::load_seglentable(const char *segmLengthTableFileName)
          segmLengthCount[atoi(awk.dollar(1).c_str())][atoi(awk.dollar(2).c_str())]=atof(awk.dollar(3).c_str());
          ksegmLengthCountMargin[atoi(awk.dollar(1).c_str())]+=atof(awk.dollar(3).c_str());
        }
-       else cerr<<"Error reading seglentable entry, phrase length exceeded!"<<endl;
+       else
+       {
+         cerr<<"Warning reading seglentable entry, phrase length exceeded!"<<endl;
+       }
      }
    }
  }
  
- return 0;	
+ return OK;
 }
 
 //-------------------------
