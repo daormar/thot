@@ -61,12 +61,12 @@ nlp_common/options.h nlp_common/NbestTransTable.h			\
 nlp_common/NbestTableNode.h nlp_common/myVector.h			\
 nlp_common/mem_alloc_utils.h nlp_common/MathFuncs.h			\
 nlp_common/MathDefs.h nlp_common/lt_op_vec.h nlp_common/LogCount.h	\
-nlp_common/LM_Defs.h nlp_common/ins_op_pair.h nlp_common/getline.h	\
-nlp_common/getdelim.h nlp_common/ErrorDefs.h nlp_common/ctimer.h	\
-nlp_common/Count.h nlp_common/ClassDic.h nlp_common/Bitset.h		\
-nlp_common/BasicSocketUtils.h nlp_common/BaseNgramLM.h			\
-nlp_common/BaseIncrNgramLM.h nlp_common/BackoffNode.h			\
-nlp_common/awkInputStream.h
+nlp_common/LM_Defs.h nlp_common/SmtDefs.h nlp_common/ins_op_pair.h	\
+nlp_common/getline.h nlp_common/getdelim.h nlp_common/ErrorDefs.h	\
+nlp_common/ctimer.h nlp_common/Count.h nlp_common/ClassDic.h		\
+nlp_common/Bitset.h nlp_common/BasicSocketUtils.h			\
+nlp_common/BaseNgramLM.h nlp_common/BaseIncrNgramLM.h			\
+nlp_common/BackoffNode.h nlp_common/awkInputStream.h
 nlp_common_defs= nlp_common/WordAligMatrix.cc				\
 nlp_common/StrProcUtils.cc nlp_common/SingleWordVocab.cc		\
 nlp_common/Prob.cc nlp_common/printAligFuncs.cc nlp_common/options.cc	\
@@ -88,11 +88,13 @@ incr_models/im_pair.h incr_models/FileNgTable.h				\
 incr_models/FileHistInfo.h incr_models/CacheLmIncrCpTable.h		\
 incr_models/CacheIncrJelMerNgramLM.h incr_models/BaseIncrEncoder.h	\
 incr_models/BaseIncrEncCondProbModel.h					\
-incr_models/BaseIncrCondProbTable.h incr_models/BaseIncrCondProbModel.h
+incr_models/BaseIncrCondProbTable.h incr_models/BaseIncrCondProbModel.h	\
+incr_models/WordPenaltyModel.h
 incr_models_defs= incr_models/StlNgtComponent.cc incr_models/lm_ienc.cc	\
 incr_models/IncrNgramLM.cc incr_models/IncrJelMerNgramLM.cc		\
 incr_models/IncrInterpNgramLM.cc incr_models/FileNgTable.cc		\
-incr_models/CacheLmIncrCpTable.cc incr_models/CacheIncrJelMerNgramLM.cc
+incr_models/CacheLmIncrCpTable.cc incr_models/CacheIncrJelMerNgramLM.cc	\
+incr_models/WordPenaltyModel.cc
 
 sw_models_h= sw_models/WeightedIncrNormSlm.h				\
 sw_models/SwModelsSwModelTypes.h sw_models/SwModelsSlmTypes.h		\
@@ -212,7 +214,7 @@ error_correction/BaseErrorCorrectingModel.cc
 downhill_simplex_h= downhill_simplex/step_by_step_dhs.h
 downhill_simplex_defs= downhill_simplex/step_by_step_dhs.c
 
-stack_dec_h= stack_dec/WordPredictor.h stack_dec/WordPenaltyModel.h	\
+stack_dec_h= stack_dec/WordPredictor.h					\
 stack_dec/WgUncoupledAssistedTrans.h stack_dec/ThotDecoderUserPars.h	\
 stack_dec/ThotDecoderState.h stack_dec/ThotDecoderPerUserVars.h		\
 stack_dec/ThotDecoder.h stack_dec/ThotDecoderCommonVars.h		\
@@ -226,7 +228,7 @@ stack_dec/StackDecEcModelForNbUcatTypes.h				\
 stack_dec/SourceSegmentation.h stack_dec/TranslationConstraints.h	\
 stack_dec/SmtStack.h stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h	\
 stack_dec/_smtMultiStack.h stack_dec/SmtModelTypes.h			\
-stack_dec/_smtModel.h stack_dec/SmtDefs.h stack_dec/ScoreCompDefs.h	\
+stack_dec/_smtModel.h stack_dec/ScoreCompDefs.h				\
 stack_dec/_phrSwTransModel.h stack_dec/PhrScoreInfo.h			\
 stack_dec/PhrNbestTransTableRefKey.h stack_dec/PhrNbestTransTableRef.h	\
 stack_dec/PhrNbestTransTablePrefKey.h					\
@@ -252,9 +254,9 @@ stack_dec/BaseHypState.h stack_dec/BaseHypothesisRec.h			\
 stack_dec/BaseHypothesis.h stack_dec/BaseAssistedTrans.h		\
 stack_dec/AssistedTransTypes.h stack_dec/_assistedTrans.h
 stack_dec_defs= stack_dec/WordPredictor.cc				\
-stack_dec/WordPenaltyModel.cc stack_dec/TranslationConstraints.cc	\
-stack_dec/ThotDecoderClient.cc stack_dec/ThotDecoder.cc			\
-stack_dec/PhrScoreInfo.cc stack_dec/PhrNbestTransTableRefKey.cc		\
+stack_dec/TranslationConstraints.cc stack_dec/ThotDecoderClient.cc	\
+stack_dec/ThotDecoder.cc stack_dec/PhrScoreInfo.cc			\
+stack_dec/PhrNbestTransTableRefKey.cc					\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\

@@ -1,17 +1,17 @@
-EXTRA_DIST= WordPredictor.h WordPredictor.cc WordPenaltyModel.h		\
-WordPenaltyModel.cc WgUncoupledAssistedTrans.h UserNameToUserIdMap.h	\
-UserNameToUserIdMap.cc ThotMtFactoryInitPars.h ThotMtFactory.h		\
-ThotMtFactory.cc ThotMtEngine.h ThotMtEngine.cc ThotImtSession.h	\
-ThotImtSession.cc ThotImtFactoryInitPars.h ThotImtFactory.h		\
-ThotImtFactory.cc ThotImtEngine.h ThotImtEngine.cc thot_server_pars.h	\
-thot_server.cc ThotDecoderUserPars.h ThotDecoderState.h			\
-ThotDecoderPerUserVars.h ThotDecoder.h ThotDecoderCommonVars.h		\
-ThotDecoderClient.h ThotDecoderClient.cc ThotDecoder.cc thot_ms_dec.cc	\
-thot_client_pars.h thot_client.cc thot_calc_bleu.cc thot_ms_alig.cc	\
-test_casmacat_engines.cc SwModelPars.h SwModelInfo.h			\
-StackDecWgProcessorForAnlpTypes.h StackDecSwModelTypes.h		\
-StackDecPbModelTypes.h _stack_decoder_statistics.h _stackDecoderRec.h	\
-_stackDecoder.h StackDecLmTypes.h StackDecEcModelTypes.h		\
+EXTRA_DIST= WordPredictor.h WordPredictor.cc WgUncoupledAssistedTrans.h	\
+UserNameToUserIdMap.h UserNameToUserIdMap.cc ThotMtFactoryInitPars.h	\
+ThotMtFactory.h ThotMtFactory.cc ThotMtEngine.h ThotMtEngine.cc		\
+ThotImtSession.h ThotImtSession.cc ThotImtFactoryInitPars.h		\
+ThotImtFactory.h ThotImtFactory.cc ThotImtEngine.h ThotImtEngine.cc	\
+thot_server_pars.h thot_server.cc ThotDecoderUserPars.h			\
+ThotDecoderState.h ThotDecoderPerUserVars.h ThotDecoder.h		\
+ThotDecoderCommonVars.h ThotDecoderClient.h ThotDecoderClient.cc	\
+ThotDecoder.cc thot_ms_dec.cc thot_client_pars.h thot_client.cc		\
+thot_calc_bleu.cc thot_ms_alig.cc test_casmacat_engines.cc		\
+SwModelPars.h SwModelInfo.h StackDecWgProcessorForAnlpTypes.h		\
+StackDecSwModelTypes.h StackDecPbModelTypes.h				\
+_stack_decoder_statistics.h _stackDecoderRec.h _stackDecoder.h		\
+StackDecLmTypes.h StackDecEcModelTypes.h				\
 StackDecEcModelForNbUcatTypes.h SourceSegmentation.h			\
 TranslationConstraints.h TranslationConstraints.cc SmtStack.h		\
 _smtStack.h SmtMultiStackRec.h _smtMultiStack.h SmtModelTypes.h		\
