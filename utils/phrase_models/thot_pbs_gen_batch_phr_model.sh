@@ -102,6 +102,7 @@ else
     lambda_default_val=0.01
     sslen_default_val="Uniform"
     tslen_default_val="Geometric"
+    stopj_default_val=0.999
 
     while [ $# -ne 0 ]; do
         case $1 in
@@ -324,6 +325,7 @@ else
     echo "* Generating additional phrase model parameter files... " >&2
     echo ${lambda_default_val} > ${outp}.lambda
     echo ${sslen_default_val} > ${outp}.srcsegmlentable
+    echo ${stopj_default_val} > ${outp}.trgcutstable
     echo ${tslen_default_val} > ${outp}.trgsegmlentable
     echo "" >&2
 
