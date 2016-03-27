@@ -89,12 +89,12 @@ incr_models/FileHistInfo.h incr_models/CacheLmIncrCpTable.h		\
 incr_models/CacheIncrJelMerNgramLM.h incr_models/BaseIncrEncoder.h	\
 incr_models/BaseIncrEncCondProbModel.h					\
 incr_models/BaseIncrCondProbTable.h incr_models/BaseIncrCondProbModel.h	\
-incr_models/WordPenaltyModel.h
+incr_models/WordPenaltyModel.h incr_models/WordPredictor.h
 incr_models_defs= incr_models/StlNgtComponent.cc incr_models/lm_ienc.cc	\
 incr_models/IncrNgramLM.cc incr_models/IncrJelMerNgramLM.cc		\
 incr_models/IncrInterpNgramLM.cc incr_models/FileNgTable.cc		\
 incr_models/CacheLmIncrCpTable.cc incr_models/CacheIncrJelMerNgramLM.cc	\
-incr_models/WordPenaltyModel.cc
+incr_models/WordPenaltyModel.cc incr_models/WordPredictor.cc
 
 sw_models_h= sw_models/WeightedIncrNormSlm.h				\
 sw_models/SwModelsSwModelTypes.h sw_models/SwModelsSlmTypes.h		\
@@ -214,12 +214,12 @@ error_correction/BaseErrorCorrectingModel.cc
 downhill_simplex_h= downhill_simplex/step_by_step_dhs.h
 downhill_simplex_defs= downhill_simplex/step_by_step_dhs.c
 
-stack_dec_h= stack_dec/WordPredictor.h					\
-stack_dec/WgUncoupledAssistedTrans.h stack_dec/ThotDecoderUserPars.h	\
-stack_dec/ThotDecoderState.h stack_dec/ThotDecoderPerUserVars.h		\
-stack_dec/ThotDecoder.h stack_dec/ThotDecoderCommonVars.h		\
-stack_dec/ThotDecoderClient.h stack_dec/SwModelPars.h			\
-stack_dec/SwModelInfo.h stack_dec/StackDecWgProcessorForAnlpTypes.h	\
+stack_dec_h= stack_dec/WgUncoupledAssistedTrans.h			\
+stack_dec/ThotDecoderUserPars.h stack_dec/ThotDecoderState.h		\
+stack_dec/ThotDecoderPerUserVars.h stack_dec/ThotDecoder.h		\
+stack_dec/ThotDecoderCommonVars.h stack_dec/ThotDecoderClient.h		\
+stack_dec/SwModelPars.h stack_dec/SwModelInfo.h				\
+stack_dec/StackDecWgProcessorForAnlpTypes.h				\
 stack_dec/StackDecSwModelTypes.h stack_dec/StackDecPbModelTypes.h	\
 stack_dec/_stack_decoder_statistics.h stack_dec/_stackDecoderRec.h	\
 stack_dec/_stackDecoder.h stack_dec/StackDecLmTypes.h			\
@@ -253,10 +253,9 @@ stack_dec/BasePbTransModelStats.h stack_dec/BasePbTransModel.h		\
 stack_dec/BaseHypState.h stack_dec/BaseHypothesisRec.h			\
 stack_dec/BaseHypothesis.h stack_dec/BaseAssistedTrans.h		\
 stack_dec/AssistedTransTypes.h stack_dec/_assistedTrans.h
-stack_dec_defs= stack_dec/WordPredictor.cc				\
-stack_dec/TranslationConstraints.cc stack_dec/ThotDecoderClient.cc	\
-stack_dec/ThotDecoder.cc stack_dec/PhrScoreInfo.cc			\
-stack_dec/PhrNbestTransTableRefKey.cc					\
+stack_dec_defs= stack_dec/TranslationConstraints.cc			\
+stack_dec/ThotDecoderClient.cc stack_dec/ThotDecoder.cc			\
+stack_dec/PhrScoreInfo.cc stack_dec/PhrNbestTransTableRefKey.cc		\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\

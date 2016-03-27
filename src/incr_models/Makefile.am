@@ -9,4 +9,4 @@ FileNgTable.cc FileHistInfo.h CacheLmIncrCpTable.h			\
 CacheLmIncrCpTable.cc CacheIncrJelMerNgramLM.h				\
 CacheIncrJelMerNgramLM.cc BaseIncrEncoder.h BaseIncrEncCondProbModel.h	\
 BaseIncrCondProbTable.h BaseIncrCondProbModel.h WordPenaltyModel.h	\
-WordPenaltyModel.cc
+WordPenaltyModel.cc WordPredictor.h WordPredictor.cc
