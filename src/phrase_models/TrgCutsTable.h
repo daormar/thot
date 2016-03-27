@@ -47,8 +47,8 @@ using namespace std;
 
 //--------------- Constants ------------------------------------------
 
-#define JUMP_ONE_POS_PAR        0.001
-#define STOP_JUMPS_PAR          0.999
+#define STOP_JUMPS_DEFAULT_PAR          0.999
+#define JUMP_ONE_POS_DEFAULT_PAR        1-STOP_JUMPS_DEFAULT_PAR
 
 //--------------- typedefs -------------------------------------------
 

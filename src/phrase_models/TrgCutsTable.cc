@@ -37,22 +37,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //-------------------------
 TrgCutsTable::TrgCutsTable(void)
 {
-  jumpOnePar=JUMP_ONE_POS_PAR;
-  stopJumps=STOP_JUMPS_PAR;
+  jumpOnePar=JUMP_ONE_POS_DEFAULT_PAR;
+  stopJumps=STOP_JUMPS_DEFAULT_PAR;
 }
 
 //-------------------------
 LgProb TrgCutsTable::trgCutsLgProb(int offset)
 {
-//   float result=0;
-//   offset=abs(offset);
-//   for(int i=0;i<offset;++i)
-//   {
-//     result+=log(JUMP_ONE_POS_PAR);
-//   }
-//   result+=log(1-JUMP_ONE_POS_PAR);
-//   return result;
-
   return ((float)abs(offset)*log(jumpOnePar))+log(stopJumps);
 }
 
@@ -64,8 +55,8 @@ bool TrgCutsTable::load(const char *trgCutsTableFileName)
  cerr<<"Loading model for target sentence cuts from file "<<trgCutsTableFileName<<endl;
  if(awk.open(trgCutsTableFileName)==ERROR)
  {
-   jumpOnePar=JUMP_ONE_POS_PAR;
-   stopJumps=STOP_JUMPS_PAR;
+   jumpOnePar=JUMP_ONE_POS_DEFAULT_PAR;
+   stopJumps=STOP_JUMPS_DEFAULT_PAR;
    cerr<<"Warning: file with model for target sentence cuts does not exist, assuming default parameters, jumpOnePar="<<jumpOnePar<<" ; stopJumps="<<stopJumps<<".\n";
    return ERROR;
  }
@@ -73,8 +64,8 @@ bool TrgCutsTable::load(const char *trgCutsTableFileName)
  {
    if(awk.getln())
    {
-     jumpOnePar=atof(awk.dollar(1).c_str());
-     stopJumps=atof(awk.dollar(2).c_str());
+     stopJumps=atof(awk.dollar(1).c_str());
+     jumpOnePar=1-stopJumps;
      cerr<<"Target sentence cuts parameters: jumpOnePar="<<jumpOnePar<<" ; stopJumps="<<stopJumps<<".\n";
    }
  }
