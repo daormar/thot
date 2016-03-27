@@ -107,7 +107,7 @@ define_init_model_info()
 {
     if [ ${l_given} -eq 0 ]; then
         # Create void corpus
-        echo "" > ${init_model_dir}/void_corpus
+        $TOUCH ${init_model_dir}/void_corpus
     
         # Generate model for void corpus
         ${bindir}/thot_gen_sw_model -s ${init_model_dir}/void_corpus -t ${init_model_dir}/void_corpus \
