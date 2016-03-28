@@ -201,8 +201,6 @@ if [ ${o_given} -eq 0 ]; then
 else
     if [ -d ${outd}/main ]; then
         echo "Warning! output directory does exist" >&2 
-#        echo "Error! output directory should not exist" >&2 
-#        exit 1
     else
         mkdir -p ${outd}/main || { echo "Error! cannot create output directory" >&2; exit 1; }
     fi
@@ -229,13 +227,22 @@ if [ ${sdir_given} -eq 1 ]; then
     fi
 fi
 
+# Obtain number of lines for input file
+nl=`$WC -l $corpus | $AWK '{printf"%s",$1}'`
+
 # Estimate n-gram model parameters
 echo "* Estimating n-gram model parameters... " >&2
 prefix=$outd/main/trg.lm
 relative_prefix=main/trg.lm
-${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
-    -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
-    ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+
+if [ $nl -gt 0 ]; then
+    ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
+        -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
+        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+else
+    ${bindir}/thot_get_ngram_counts -c $corpus -o $prefix \
+        -n ${n_val} > $prefix
+fi
 echo "" >&2
 
 # Generate weights file
