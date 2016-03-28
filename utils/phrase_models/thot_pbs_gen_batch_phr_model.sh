@@ -22,6 +22,106 @@ treat_unk_opt()
 }
 
 ########
+empty_train()
+{
+    # Generate direct and inverse single word models using sw_models package
+
+    # Generate direct single word model
+    echo "* Generating source-to-target single word alignment model... " >&2
+    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
+    ${bindir}/thot_gen_sw_model -s $scorpus -t $tcorpus -n 1 ${lf_opt} ${af_opt} ${np_opt} \
+        -o ${outp}_swm || exit 1
+    echo "0" > ${outp}_swm.msinfo
+    echo "" >&2
+
+
+
+    # Generate inverse single word model
+    echo "* Generating target-to-source single word alignment model... " >&2
+    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
+    ${bindir}/thot_gen_sw_model -s $tcorpus -t $scorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
+        -o ${outp}_invswm || exit 1
+    echo "0" > ${outp}_invswm.msinfo
+    echo "" >&2
+
+    # Generate phrase model
+    echo "* Generating phrase model... " >&2
+    $bindir/thot_gen_phr_model -g ${scorpus} -m ${m_val} \
+        -o ${outp} ${pml_opt} || exit 1
+    echo "" >&2
+
+    # Generate additional phrase model parameter files
+    echo "* Generating additional phrase model parameter files... " >&2
+    echo ${lambda_default_val} > ${outp}.lambda
+    echo ${sslen_default_val} > ${outp}.srcsegmlentable
+    echo ${stopj_default_val} > ${outp}.trgcutstable
+    echo ${tslen_default_val} > ${outp}.trgsegmlentable
+    echo "" >&2
+}
+
+########
+standard_train()
+{
+    # Generate direct and inverse single word models using sw_models package
+
+    # Generate direct single word model
+    echo "* Generating source-to-target single word alignment model... " >&2
+    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
+    ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $scorpus -t $tcorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
+        -cpr ${cpr_val} ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
+    echo "" >&2
+
+    # Generate best alignments for direct model
+    echo "* Generating best alignment for source-to-target model... " >&2
+    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
+    ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_swm -s $scorpus -t $tcorpus \
+        ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
+    echo "" >&2
+
+    # Generate inverse single word model
+    echo "* Generating target-to-source single word alignment model... " >&2
+    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
+    ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $tcorpus -t $scorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
+        -cpr ${cpr_val} ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
+    echo "" >&2
+
+    # Generate best alignments for inverse model
+    echo "* Generating best alignment for target-to-source model... " >&2
+    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
+    ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_invswm -s $tcorpus -t $scorpus \
+        ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
+    echo "" >&2
+
+    # Operate word alignments generated with the sw_models package
+    echo "* Operating word alignments... " >&2
+    $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal ${ao_opt} ${outp}_invswm.bestal -o ${outp} \
+        ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
+    echo "" >&2
+
+    # Generate phrase model
+    echo "* Generating phrase model... " >&2
+    $bindir/thot_pbs_gen_phr_model -pr ${pr_val} -g ${outp}.A3.final -m ${m_val} \
+        -o ${outp} ${pml_opt} ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
+    echo "" >&2
+
+    # Constrain number of translation options
+    echo "* Constraining number of translation options... " >&2
+    $bindir/thot_pbs_get_nbest_for_trg -t ${outp}.ttable -n ${to_val} \
+        -p -T $tdir -o ${outp}.restrict_trans_opt.ttable || exit 1
+    rm ${outp}.ttable || exit 1
+    mv ${outp}.restrict_trans_opt.ttable ${outp}.ttable || exit 1
+    echo "" >&2
+
+    # Generate additional phrase model parameter files
+    echo "* Generating additional phrase model parameter files... " >&2
+    echo ${lambda_default_val} > ${outp}.lambda
+    echo ${sslen_default_val} > ${outp}.srcsegmlentable
+    echo ${stopj_default_val} > ${outp}.trgcutstable
+    echo ${tslen_default_val} > ${outp}.trgsegmlentable
+    echo "" >&2
+}
+
+########
 if [ $# -lt 1 ]; then
     echo "Usage: thot_pbs_gen_batch_phr_model -pr <int>"
     echo "                                    -s <string> -t <string> -o <string>"
@@ -269,65 +369,16 @@ else
         treat_unk_opt
     fi
 
+    # Obtain number of lines for corpus files
+    srcnl=`$WC -l $scorpus | $AWK '{printf"%s",$1}'`
+    trgnl=`$WC -l $tcorpus | $AWK '{printf"%s",$1}'`
+
     # Train models
-
-    # Generate direct and inverse single word models using sw_models package
-
-    # Generate direct single word model
-    echo "* Generating source-to-target single word alignment model... " >&2
-    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
-    ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $scorpus -t $tcorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
-        -cpr ${cpr_val} ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
-    echo "" >&2
-
-    # Generate best alignments for direct model
-    echo "* Generating best alignment for source-to-target model... " >&2
-    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
-    ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_swm -s $scorpus -t $tcorpus \
-        ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
-    echo "" >&2
-
-    # Generate inverse single word model
-    echo "* Generating target-to-source single word alignment model... " >&2
-    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
-    ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $tcorpus -t $scorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
-        -cpr ${cpr_val} ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
-    echo "" >&2
-
-    # Generate best alignments for inverse model
-    echo "* Generating best alignment for target-to-source model... " >&2
-    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
-    ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_invswm -s $tcorpus -t $scorpus \
-        ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
-    echo "" >&2
-
-    # Operate word alignments generated with the sw_models package
-    echo "* Operating word alignments... " >&2
-    $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal ${ao_opt} ${outp}_invswm.bestal -o ${outp} \
-        ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
-    echo "" >&2
-
-    # Generate phrase model
-    echo "* Generating phrase model... " >&2
-    $bindir/thot_pbs_gen_phr_model -pr ${pr_val} -g ${outp}.A3.final -m ${m_val} \
-        -o ${outp} ${pml_opt} -pc ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
-    echo "" >&2
-
-    # Constrain number of translation options
-    echo "* Constraining number of translation options... " >&2
-    $bindir/thot_pbs_get_nbest_for_trg -t ${outp}.ttable -n ${to_val} \
-        -p -T $tdir -o ${outp}.restrict_trans_opt.ttable || exit 1
-    rm ${outp}.ttable || exit 1
-    mv ${outp}.restrict_trans_opt.ttable ${outp}.ttable || exit 1
-    echo "" >&2
-
-    # Generate additional phrase model parameter files
-    echo "* Generating additional phrase model parameter files... " >&2
-    echo ${lambda_default_val} > ${outp}.lambda
-    echo ${sslen_default_val} > ${outp}.srcsegmlentable
-    echo ${stopj_default_val} > ${outp}.trgcutstable
-    echo ${tslen_default_val} > ${outp}.trgsegmlentable
-    echo "" >&2
+    if [ $srcnl -eq 0 -a $trgnl -eq 0 ]; then
+        empty_train
+    else
+        standard_train
+    fi
 
     exit 0
 fi
