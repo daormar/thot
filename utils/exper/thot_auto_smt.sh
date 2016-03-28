@@ -118,11 +118,13 @@ add_suffix_to_name()
 ########
 tok_corpus()
 {
+    # Obtain basenames
+    srcbase=`$BASENAME ${scorpus_pref}`
+    trgbase=`$BASENAME ${tcorpus_pref}`
+
     # Tokenize corpus
     echo "**** Tokenizing corpus" >&2
     suff="tok"
-    srcbase=`$BASENAME ${scorpus_pref}`
-    trgbase=`$BASENAME ${tcorpus_pref}`
 
     ${bindir}/thot_tokenize -f ${scorpus_train} \
         > ${outd}/${preproc_dir}/${srcbase}_${suff}.train 2>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
@@ -150,13 +152,18 @@ tok_corpus()
 ########
 lowercase_corpus()
 {
-    # Tokenize corpus
+    # Obtain basenames
+    srcbase=`$BASENAME ${scorpus_pref}`
+    trgbase=`$BASENAME ${tcorpus_pref}`
+
+    # Lowercase corpus
     echo "**** Lowercasing corpus" >&2
     if [ ${tok_given} -eq 0 ]; then
         suff="lc"
     else
         suff="tok_lc"
     fi
+
     ${bindir}/thot_lowercase -f ${scorpus_train} \
         > ${outd}/${preproc_dir}/${srcbase}_${suff}.train 2>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
     ${bindir}/thot_lowercase -f ${scorpus_dev} \
@@ -183,8 +190,13 @@ lowercase_corpus()
 ########
 clean_corpus()
 {
+    # Obtain basenames
+    srcbase=`$BASENAME ${scorpus_pref}`
+    trgbase=`$BASENAME ${tcorpus_pref}`
+
     # Clean corpus
     echo "**** Cleaning corpus" >&2
+    suff=""
     if [ ${tok_given} -eq 1 ]; then
         suff="tok_"
     fi
