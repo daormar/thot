@@ -211,10 +211,10 @@ if [ ! -d ${outd}/empty_corpus ]; then
 fi
 
 # Create empty corpus
-echo "<artificial_token>" > ${outd}/empty_corpus/src.train
+$TOUCH ${outd}/empty_corpus/src.train
 scorpus_train=${outd}/empty_corpus/src.train
 
-echo "<artificial_token>" > ${outd}/empty_corpus/trg.train
+$TOUCH ${outd}/empty_corpus/trg.train
 tcorpus_train=${outd}/empty_corpus/trg.train
 
 # Train models
