@@ -6,8 +6,8 @@
 print_desc()
 {
     echo "thot_pbs_gen_phr_model written by Daniel Ortiz"
-    echo "thot_pbs_gen_phr_model is a parallelized version of phrase model estimation for pbs clusters"
-    echo "type \"thot_pbs_gen_phr_model --help\" to get usage information."
+    echo "thot_pbs_gen_phr_model implements parallel phrase model estimation"
+    echo "type \"thot_pbs_gen_phr_model --help\" to get usage information"
 }
 
 version()
