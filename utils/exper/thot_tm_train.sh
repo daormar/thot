@@ -289,8 +289,6 @@ if [ ${o_given} -eq 0 ]; then
 else
     if [ -d ${outd}/main ]; then
         echo "Warning! output directory does exist" >&2 
-        # echo "Error! output directory should not exist" >&2 
-        # exit 1
     else
         # Create directory
         mkdir -p ${outd}/main || { echo "Error! cannot create output directory" >&2; exit 1; }
