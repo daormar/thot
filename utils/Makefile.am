@@ -108,6 +108,7 @@ SUFFIXES= .sh .pl .py
 	echo "LN="$(LN) >> $@
 	echo "WC="$(WC) >> $@
 	echo "TOUCH="$(TOUCH) >> $@
+	echo "CUT="$(CUT) >> $@
 	echo "PIPE_FAIL="$(PIPE_FAIL) >> $@
 	echo "QSUB="$(QSUB) >> $@
 	echo "QSUB_WORKS=\""$(QSUB_WORKS)"\"" >> $@
