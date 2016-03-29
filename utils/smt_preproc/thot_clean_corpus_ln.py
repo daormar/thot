@@ -2,7 +2,7 @@
 # *- python -*
 
 # import modules
-import sys, getopt, codecs
+import io, sys, getopt
 import math
 import itertools
 
@@ -127,11 +127,11 @@ def main(argv):
     # open file
     if(s_given==True):
         # open file
-        srcfile = codecs.open(srcfn, 'r', "utf-8")
+        srcfile = io.open(srcfn, 'r', encoding="utf-8")
 
     if(t_given==True):
         # open file
-        trgfile = codecs.open(trgfn, 'r', "utf-8")
+        trgfile = io.open(trgfn, 'r', encoding="utf-8")
 
     # read parallel files line by line
     slen_list=[]

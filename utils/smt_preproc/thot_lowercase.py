@@ -2,7 +2,7 @@
 # *- python -*
 
 # import modules
-import sys, getopt, codecs
+import io, sys, getopt
 import thot_smt_preproc as smtpr
 
 ##################################################
@@ -38,11 +38,11 @@ def main(argv):
     if(f_given==True):
         # open file
 #        file = open(filename, 'r')
-        file = codecs.open(filename, 'r', "utf-8")
+        file = io.open(filename, 'r', encoding="utf-8")
     else:
         # fallback to stdin
 #        file = sys.stdin
-        file=codecs.getreader("utf-8")(sys.stdin)
+        file = io.open(sys.stdin.fileno(), 'r', encoding='utf8')
 
     # read file line by line
     for line in file:

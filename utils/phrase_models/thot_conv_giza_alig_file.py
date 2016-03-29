@@ -5,13 +5,13 @@
 # allows to convert it into other formats.
 
 # import modules
-import sys, getopt, codecs
+import io, sys, getopt
 
 ##################################################
 def print_help():
     print >> sys.stderr, "Usage: thot_conv_giza_alig_file -g <string> -f <int>"
     print >> sys.stderr, ""
-    print >> sys.stderr, "-g <string>  GIZA alignment file"    
+    print >> sys.stderr, "-g <string>  GIZA alignment file"
     print >> sys.stderr, "-f <int>     Output file format,"
     print >> sys.stderr, "             1-> human"
     print >> sys.stderr, "             2-> moses"
@@ -60,7 +60,7 @@ def conv_giza_file_to_human(gfile):
         line3=line3.strip("\n")
         src_info_array=line3.split()
 
-        if not line3: break 
+        if not line3: break
 
         # Process entry
 
@@ -70,12 +70,12 @@ def conv_giza_file_to_human(gfile):
         # Print entry information
         ## print header
         print line1.encode("utf-8")
-        print "trg:",line2.encode("utf-8")	
+        print "trg:",line2.encode("utf-8")
         print "src:",
         for j in range(1,len(srcw_array)):
             print srcw_array[j].encode("utf-8"),
         print ""
-	   
+
         # ## print matrix
         # for j in range(1,len(srcw_array)):
         #     srcpos=len(srcw_array)-j
@@ -140,7 +140,7 @@ def conv_giza_file_to_moses(gfile):
         line3=line3.strip("\n")
         src_info_array=line3.split()
 
-        if not line3: break 
+        if not line3: break
 
         # Process entry
 
@@ -155,7 +155,7 @@ def conv_giza_file_to_moses(gfile):
                 print str(srcpos-1)+"-"+str(trgpos-1),
 
         print ""
-        
+
 
 ##################################################
 def main(argv):
@@ -201,7 +201,7 @@ def main(argv):
     # open files
     if(g_given==True):
         # open file
-        gfile = codecs.open(gfilename, 'r', "utf-8")
+        gfile = io.open(gfilename, 'r', encoding="utf-8")
 
     # process parameters
     if(f_val==1):
@@ -214,7 +214,7 @@ def main(argv):
         print >> sys.stderr, "Warning, option not implemented"
     elif(f_val==5):
         print >> sys.stderr, "Warning, option not implemented"
-        
+
 
 if __name__ == "__main__":
 

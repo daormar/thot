@@ -2,7 +2,7 @@
 # *- python -*
 
 # import modules
-import sys, getopt, nltk, codecs
+import io, sys, getopt, nltk
 
 import thot_smt_preproc as smtpr
 
@@ -89,26 +89,26 @@ def main(argv):
     # open files
     if(f_given==True):
         # open file
-        file = codecs.open(filename, 'r', "utf-8")
+        file = io.open(filename, 'r', encoding="utf-8")
     else:
         # fallback to stdin
-        file=codecs.getreader("utf-8")(sys.stdin)
-    
+        file = io.open(sys.stdin.fileno(), 'r', encoding='utf-8')
+
     # load translation model
     tmodel=smtpr.TransModel()
     tmfilename=mpref+".tm"
-    tmfile = codecs.open(tmfilename, 'r', "utf-8")
+    tmfile = io.open(tmfilename, 'r', encoding="utf-8")
     print >> sys.stderr, "Loading translation model from file",tmfilename,"..."
     tmodel.load(tmfile)
 
     # load language model
     lmodel=smtpr.LangModel()
     lmfilename=mpref+".lm"
-    lmfile = codecs.open(lmfilename, 'r', "utf-8")
+    lmfile = io.open(lmfilename, 'r', encoding="utf-8")
     print >> sys.stderr, "Loading language model from file",lmfilename,"..."
     lmodel.load(lmfile)
     lmodel.set_interp_prob(ival)
-        
+
     # translate (detokenize)
     decoder=smtpr.Decoder(tmodel,lmodel,weights)
     print >> sys.stderr, "Detokenizing..."

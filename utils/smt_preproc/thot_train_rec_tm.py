@@ -2,7 +2,7 @@
 # *- python -*
 
 # import modules
-import sys, getopt, nltk, codecs
+import io, sys, getopt, nltk
 
 import thot_smt_preproc as smtpr
 
@@ -11,7 +11,7 @@ def print_help():
     print >> sys.stderr, "thot_train_rec_tm -r <string> [-n <int>] -o <string>"
     print >> sys.stderr, "                  [-v] [--help]"
     print >> sys.stderr, ""
-    print >> sys.stderr, "-r <string>    File with raw text in the language of interest"    
+    print >> sys.stderr, "-r <string>    File with raw text in the language of interest"
     print >> sys.stderr, "-o <string>    Prefix of output files"
     print >> sys.stderr, "-v             Verbose mode"
     print >> sys.stderr, "--help         Print this help message"
@@ -65,7 +65,7 @@ def main(argv):
     # open files
     if(r_given==True):
         # open file
-        rfile = codecs.open(rfilename, 'r', "utf-8")
+        rfile = io.open(rfilename, 'r', encoding="utf-8")
 
     # train translation model
     print >> sys.stderr, "Training translation model..."
@@ -73,7 +73,7 @@ def main(argv):
     tmodel.train_rec_tm(rfile,verbose)
 
     # print translation model
-    tmfile=codecs.open(opref+".tm", 'w')
+    tmfile = io.open(opref+".tm", 'w', encoding='utf-8')
     tmodel.print_model_to_file(tmfile)
 
 if __name__ == "__main__":

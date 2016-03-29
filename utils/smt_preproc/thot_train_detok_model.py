@@ -2,7 +2,7 @@
 # *- python -*
 
 # import modules
-import sys, getopt, nltk, codecs
+import io, sys, getopt, nltk
 
 import thot_smt_preproc as smtpr
 
@@ -11,9 +11,9 @@ def print_help():
     print >> sys.stderr, "thot_train_detok_model -r <string> [-t <string>] [-n <int>]"
     print >> sys.stderr, "                       -o <string> [-v] [--help]"
     print >> sys.stderr, ""
-    print >> sys.stderr, "-r <string>    File with raw text in the language of interest"    
-    print >> sys.stderr, "-t <string>    File with tokenized version of the raw text using"    
-    print >> sys.stderr, "               an arbitrary tokenizer"    
+    print >> sys.stderr, "-r <string>    File with raw text in the language of interest"
+    print >> sys.stderr, "-t <string>    File with tokenized version of the raw text using"
+    print >> sys.stderr, "               an arbitrary tokenizer"
     print >> sys.stderr, "-n <int>       Order of n-grams for language model"
     print >> sys.stderr, "-o <string>    Prefix of output files"
     print >> sys.stderr, "-v             Verbose mode"
@@ -84,11 +84,11 @@ def main(argv):
     # open files
     if(r_given==True):
         # open file
-        rfile = codecs.open(rfilename, 'r', "utf-8")
+        rfile = io.open(rfilename, 'r', encoding="utf-8")
 
     if(t_given==True):
         # open file
-        tfile = codecs.open(tfilename, 'r', "utf-8")
+        tfile = io.open(tfilename, 'r', encoding="utf-8")
 
     # train translation model
     print >> sys.stderr, "Training translation model..."
@@ -99,16 +99,16 @@ def main(argv):
         tmodel.train_tok_tm(rfile,verbose)
 
     # print translation model
-    tmfile=codecs.open(opref+".tm", 'w')
+    tmfile = io.open(opref+".tm", 'w', encoding='utf-8')
     tmodel.print_model_to_file(tmfile)
 
-    # reopen files 
+    # reopen files
     rfile.close()
-    rfile = codecs.open(rfilename, 'r', "utf-8")
+    rfile = io.open(rfilename, 'r', encoding="utf-8")
 
     if(t_given==True):
         tfile.close()
-        tfile = codecs.open(tfilename, 'r', "utf-8")
+        tfile = io.open(tfilename, 'r', encoding="utf-8")
 
     # train language model
     print >> sys.stderr, "Training language model..."
@@ -119,7 +119,7 @@ def main(argv):
         lmodel.train_tok_lm(rfile,nval,verbose)
 
     # print language model
-    lmfile=codecs.open(opref+".lm", 'w')
+    lmfile = io.open(opref+".lm", 'w', encoding='utf-8')
     lmodel.print_model_to_file(lmfile)
 
 if __name__ == "__main__":
