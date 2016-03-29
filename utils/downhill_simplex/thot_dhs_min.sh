@@ -24,7 +24,7 @@ usage()
     if [ "${USE_NR_ROUTINES}" = "yes" ]; then
     echo "                   [-l <float>] [-b <float>]"
     fi
-    echo "                   -u <string> [-c <string>] -o <string> [-ftol <float>]"
+    echo "                   -u <string> [-a <string>] -o <string> [-ftol <float>]"
     echo "                   [-r <string>] [-tdir <string>]"
     echo "                   [-debug] [-v] [--help] [--version]"
     echo " -va <float>...<float>: Set fixed and non-fixed variable values."
@@ -40,9 +40,9 @@ usage()
     echo " -u <string>          : Path of the executable file involved in the calculation"
     echo "                        of the target function to minimize given the values of"
     echo "                        a set of variables."
-    echo " -c <string>          : Configuration file required by the target function."
-    echo "                        If not given, target function receives the value of the"
-    echo "                        -tdir option."
+    echo " -a <string>          : Additional input parameter required by the target"
+    echo "                        function. If not given, by default the target function"
+    echo "                        receives the value of the -tdir option."
     echo " -o <string>          : Set output files prefix name."
     echo " -ftol <float>        : Fractional convergence tolerance"
     echo "                        (${ftol} by default)."
@@ -87,7 +87,7 @@ iv_opt=""
 lambda_opt=""
 bias_opt=""
 u_given=0
-c_given=0
+a_given=0
 o_given=0
 
 if [ "${USE_NR_ROUTINES}" = "yes" ]; then
@@ -168,10 +168,10 @@ while [ $# -ne 0 ]; do
                 u_given=1
             fi
             ;;
-        "-c") shift
+        "-a") shift
             if [ $# -ne 0 ]; then
-                cfgfile=$1
-                c_given=1
+                addpar=$1
+                a_given=1
             fi
             ;;
         "-o") shift
@@ -226,13 +226,6 @@ else
     fi
 fi
 
-if [ ${c_given} -eq 0 ]; then
-    if [ ! -f ${cfgfile} ]; then
-        echo "Error: ${cfgfile} does not exist" >&2 
-        exit 1
-    fi
-fi
-
 if [ ${r_given} -eq 1 ]; then
     if [ ! -f ${r_val} ]; then
         # invalid parameters 
@@ -260,10 +253,10 @@ if [ "$debug" != "-debug" ]; then
 fi
 
 # Set value of first input parameter of target function
-if [ ${c_given} -eq 0 ]; then
+if [ ${a_given} -eq 0 ]; then
     first_par=$TDIR_DHS
 else
-    first_par=$cfgfile
+    first_par=$addpar
 fi
 
 
