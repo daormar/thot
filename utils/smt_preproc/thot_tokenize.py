@@ -2,7 +2,7 @@
 # *- python -*
 
 # import modules
-import sys, getopt, nltk, codecs
+import io, sys, getopt, nltk
 
 import thot_smt_preproc as smtpr
 
@@ -38,22 +38,18 @@ def main(argv):
     # open file
     if(f_given==True):
         # open file
-        file = codecs.open(filename, 'r', "utf-8")
+        file = io.open(filename, 'r', encoding='utf-8')
     else:
         # fallback to stdin
-        file=codecs.getreader("utf-8")(sys.stdin)
+        file = io.open(sys.stdin.fileno(), 'r', encoding='utf8')
 
     # read file line by line
     for line in file:
         line=line.strip("\n")
         tokens = smtpr.tokenize(line)
-        if(len(tokens)>0):
-            tok_sent=tokens[0]
-            for t in tokens[1:]:
-                tok_sent=tok_sent+" "+t
-        else:
-            tok_sent=""
+        tok_sent = u' '.join(tokens)
         print tok_sent.encode("utf-8")
+    file.close()
 
 if __name__ == "__main__":
     main(sys.argv)

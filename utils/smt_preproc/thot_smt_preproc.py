@@ -40,11 +40,11 @@ class TransModel:
                 self.st_counts[src_words][trg_words]=self.st_counts[src_words][trg_words]+c
                 self.s_counts[src_words]=self.s_counts[src_words]+c
             else:
-                self.st_counts[src_words][trg_words]=1                    
+                self.st_counts[src_words][trg_words]=1
                 self.s_counts[src_words]=self.s_counts[src_words]+c
         else:
             self.st_counts[src_words]={}
-            self.st_counts[src_words][trg_words]=c   
+            self.st_counts[src_words][trg_words]=c
             self.s_counts[src_words]=c
 
     #####
@@ -154,7 +154,7 @@ class TransModel:
             while(i<len(raw_word_array)):
                 end=False
                 str=""
-                
+
                 # process current raw word
                 while(end == False):
                     if(raw_word_array[i]==str):
@@ -178,7 +178,7 @@ class TransModel:
                 for k in range(prev_j+1,j):
                     tok_words=tok_words+" "+transform_word(tok_array[k])
                     raw_word=raw_word+transform_word(tok_array[k])
-                    if(is_categ(transform_word(tok_array[k-1])) and 
+                    if(is_categ(transform_word(tok_array[k-1])) and
                        is_categ(transform_word(tok_array[k]))):
                         tm_entry_ok=False
 
@@ -190,7 +190,7 @@ class TransModel:
                 # update variables
                 i=i+1
                 prev_j=j
-            
+
             # The sentence was successfully processed
             return True
 
@@ -350,7 +350,7 @@ class LangModel:
             return self.obtain_trgsrc_prob(ngram)
         else:
             return self.interp_prob * self.obtain_trgsrc_prob(ngram) + (1-self.interp_prob) * self.obtain_trgsrc_interp_prob(self.remove_oldest_word(ngram))
-        
+
     #####
     def remove_newest_word(self,ngram):
         ng_array=ngram.split()
@@ -501,7 +501,7 @@ class LangModel:
                 # Check that no errors were found while processing current raw word
                 if(error==True):
                     return False
-                            
+
                 # update the language model
                 tm_entry_ok=True
                 tok_words=transform_word(tok_array[prev_j])
@@ -509,7 +509,7 @@ class LangModel:
                 for k in range(prev_j+1,j):
                     tok_words=tok_words+" "+transform_word(tok_array[k])
                     raw_word=raw_word+transform_word(tok_array[k])
-                    if(is_categ(transform_word(tok_array[k-1])) and 
+                    if(is_categ(transform_word(tok_array[k-1])) and
                        is_categ(transform_word(tok_array[k]))):
                         tm_entry_ok=False
 
@@ -579,7 +579,7 @@ class LangModel:
             raw_word_array=rline.split()
             tline=tline.strip("\n")
             tok_array=tline.split()
-            
+
             if(verbose==True):
                 print >> sys.stderr,"* Training lm for sentence pair:"
                 print >> sys.stderr," raw:",line.encode("utf-8")
@@ -725,7 +725,7 @@ class StateInfo:
 ##################################################
 def obtain_state_info(tmodel,lmodel,hyp):
 
-    return StateInfo(tmodel.get_mon_hyp_state(hyp),lmodel.get_hyp_state(hyp))    
+    return StateInfo(tmodel.get_mon_hyp_state(hyp),lmodel.get_hyp_state(hyp))
 
 ##################################################
 def transform_word(word):
@@ -808,7 +808,7 @@ def extract_alig_info(hyp_word_array):
             info_found=True
             i-=2
             break;
-    
+
     if(info_found):
         # Obtain target segment cuts
         trgcuts_found=False
@@ -820,7 +820,7 @@ def extract_alig_info(hyp_word_array):
                 i-=1
                 break
         trgcuts.reverse()
-        
+
         if(trgcuts_found):
             # Obtain source segments
             srcsegms_found=False
@@ -896,7 +896,7 @@ def decategorize_word(trgpos,src_word_array,trg_word_array,srcsegms,trgcuts):
             for l in range(len(src_categ_words)):
                 if(categorize_word(src_categ_words[l][1])==curr_categ_word):
                     if(aux_order==curr_categ_word_order):
-                        decateg_word=src_categ_words[l][1]   
+                        decateg_word=src_categ_words[l][1]
                         break
                     else:
                         aux_order+=1
@@ -1024,12 +1024,12 @@ class Decoder:
             hist=self.lmodel.remove_oldest_word(ngram)
 
         return lp
-        
+
     #####
     def expand(self,tok_array,hyp,new_hyp_cov,verbose):
         # Init result
         exp_list=[]
-        
+
         # Obtain words to be translated
         new_src_words=""
         last_cov_pos=self.last_cov_pos(hyp.data.coverage)
@@ -1116,12 +1116,12 @@ class Decoder:
 
     #####
     def last_cov_pos(self,coverage):
-            
+
         if(len(coverage)==0):
             return -1
         else:
             return coverage[len(coverage)-1]
-    
+
     #####
     def hyp_is_complete(self,hyp,src_word_array):
 
@@ -1154,7 +1154,7 @@ class Decoder:
             hyp=self.best_first_search(src_word_array,priority_queue,stdict,verbose)
 
             # Append hypothesis to nblist
-            if(len(hyp.data.coverage)>0):        
+            if(len(hyp.data.coverage)>0):
                 nblist.append(hyp)
 
         # return result
@@ -1180,7 +1180,7 @@ class Decoder:
                 detok_word=""
                 for j in range(leftmost_src_pos,coverage[i]+1):
                     detok_word=detok_word+tok_array[j]
-            
+
                 # Incorporate detokenized word to detokenized sentence
                 if(i==0):
                     result=detok_word
