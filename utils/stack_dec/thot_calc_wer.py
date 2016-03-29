@@ -2,7 +2,7 @@
 # *- python -*
 
 # import modules
-import sys, getopt, codecs, itertools
+import io, sys, getopt, itertools
 
 ##################################################
 def print_help():
@@ -34,11 +34,11 @@ def levenshtein(s1, s2):
                                                  # and current_row are
                                                  # one character longer
                                                  # than s2
-            deletions = current_row[j] + 1       
+            deletions = current_row[j] + 1
             substitutions = previous_row[j] + (c1 != c2)
             current_row.append(min(insertions, deletions, substitutions))
         previous_row = current_row
-    
+
     # Return result
     return previous_row[-1]
 
@@ -80,11 +80,11 @@ def main(argv):
     # open files
     if(r_given==True):
         # open file
-        rfile = codecs.open(refsents, 'r', "utf-8")
+        rfile = io.open(refsents, 'r', encoding="utf-8")
 
     if(t_given==True):
         # open file
-        tfile = codecs.open(syssents, 'r', "utf-8")
+        tfile = io.open(syssents, 'r', encoding="utf-8")
 
     # Read parallel files line by line
     running_words=0.0
@@ -105,7 +105,7 @@ def main(argv):
         if(verbose==1):
             sent_wer=float(sent_eddist)/float(len(ref_word_array))
             print format(sent_wer,'g'),"|||",rline.encode("utf-8"),"|||",tline.encode("utf-8")
-         
+
     # Print WER
     WER=(eddist/running_words)
     print "WER:",format(WER,'g'),"(",format(eddist,'g'),"/",format(running_words,'g'),")"
