@@ -92,7 +92,7 @@ set_tmp_dir()
 {
     if [ -d ${tdir} ]; then
         # Create directory for temporary files
-        TMP=$tdir/ngcounts.$$
+        TMP=$tdir/thot_get_ngram_counts_mr_${PPID}_$$
         if [ ${debug} -eq 0 ]; then
             trap "rm -rf $TMP* 2>/dev/null" EXIT
         fi
