@@ -2,3 +2,23 @@ Makefile
 *.in
 *.o
 *.lo
+*.deps
+*.dirstamp
+*.libs
+*.la
+
+# http://www.gnu.org/software/autoconf
+
+/autom4te.cache
+/autoscan.log
+/autoscan-*.log
+/aclocal.m4
+/compile
+/config.h.in
+/config.h.in~
+/configure
+/configure.scan
+/depcomp
+/install-sh
+/missing
+/stamp-h1
