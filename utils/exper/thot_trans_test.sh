@@ -32,7 +32,6 @@ usage()
     echo "-t <string>             File with test corpus to be translated"
     echo "--tok                   Execute tokenization stage"
     echo "--lower                 Execute lowercasing stage"
-    echo "--no-trans              Do not generate translations"
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTES:"
