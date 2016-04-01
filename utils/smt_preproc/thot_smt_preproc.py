@@ -127,8 +127,7 @@ class TransModel:
     def print_model_to_file(self,file):
         for k1 in self.st_counts:
             for k2 in self.st_counts[k1]:
-                print >> file, k1.encode("utf-8"),"|||",k2.encode("utf-8"),str(self.st_counts[k1][k2])
-#                file.write(k1.encode("utf-8"))
+                file.write(u'%s ||| %s %d\n'%(k1,k2,self.st_counts[k1][k2]))
 
     #####
     def print_model(self):
@@ -443,7 +442,7 @@ class LangModel:
     def print_model_to_file(self,file):
         for k in self.ng_counts:
             if(k!=""):
-                print >> file, k.encode("utf-8"),str(self.ng_counts[k])
+                file.write(u'%s %d\n'%(k,self.ng_counts[k]))
 
     #####
     def print_model(self):
