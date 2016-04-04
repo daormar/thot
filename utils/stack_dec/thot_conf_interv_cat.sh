@@ -101,15 +101,13 @@ bootstrap_eval()
 #####################################################################
 
 if [ $# -ne 4 -a $# -ne 5 ]; then 
-    echo "Computes significance tests"
+    echo "thot_conf_interv_cat <seed> <cat_results_file> <S> <N> [measure]"; 
     echo ""
-    echo "Use: $SCR <seed> <cat_results_file> <S> <N> [measure]"; 
-    echo ""
-    echo "<seed>              Random seed"
-    echo "<cat_results_file>  File with CAT results"
-    echo "<S>                 Size of the randomly generated subsets"
-    echo "<N>                 Number of subsets"
-    echo "<measure>           KSR|KSMR (KSMR by default)"
+    echo "<seed>                    Random seed"
+    echo "<cat_results_file>        File with CAT results"
+    echo "<S>                       Size of the randomly generated subsets"
+    echo "<N>                       Number of subsets"
+    echo "<measure>                 KSR|KSMR (KSMR by default)"
     exit 1; 
 fi
 
