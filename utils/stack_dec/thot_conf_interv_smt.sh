@@ -96,15 +96,14 @@ bootstrap_eval()
 
 #####################################################################
 if [ $# -ne 6 ]; then 
-    echo "Computes significance tests"
+    echo "thot_conf_interv_smt <seed> <ref_file> <test_file> <S> <N> <measure>"; 
     echo ""
-    echo "$SCR <seed> <ref_file> <test_file> <S> <N> <measure>"; 
-    echo "<seed>              Random seed"
-    echo "<ref_file>          File with references"
-    echo "<test_file>         File with results of system 1"
-    echo "<S>                 Size of the randomly generated subsets"
-    echo "<N>                 Number of subsets"
-    echo "<measure>           Translation quality measure: BLEU | WER"
+    echo "<seed>               Random seed"
+    echo "<ref_file>           File with references"
+    echo "<test_file>          File with results of system 1"
+    echo "<S>                  Size of the randomly generated subsets"
+    echo "<N>                  Number of subsets"
+    echo "<measure>            Translation quality measure: BLEU | WER"
     exit 1; 
 fi
 
