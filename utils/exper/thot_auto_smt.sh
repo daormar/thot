@@ -593,7 +593,7 @@ if [ ${notrans_given} -eq 0 ]; then
     if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
         echo "**** Translating test corpus" >&2
         ${bindir}/thot_decoder -pr ${pr_val} -c $outd/filtered_models/${base_sct}/test_specific.cfg \
-            -t ${scorpus_test} -o $outd/output/${transoutd}/thot_decoder_out ${debug_opt} -v || exit 1
+            -t ${scorpus_test} -o $outd/output/${transoutd}/thot_decoder_out ${debug_opt} -sdir $sdir -v || exit 1
         test_trans_executed="yes"
         echo "" >&2
     fi

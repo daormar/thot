@@ -444,7 +444,8 @@ fi
 # Generate translations
 echo "**** Translating test corpus" >&2
 ${bindir}/thot_decoder -pr ${pr_val} -c ${thot_auto_smt_dir}/filtered_models/${base_tc}/test_specific.cfg \
-    -t ${test_corpus} -o ${thot_auto_smt_dir}/output/${transoutd}/thot_decoder_out ${debug_opt} -v || exit 1
+    -t ${test_corpus} -o ${thot_auto_smt_dir}/output/${transoutd}/thot_decoder_out ${debug_opt} \
+    -sdir $sdir -v || exit 1
 echo "" >&2
 
 ### Execute post-processing steps if required
