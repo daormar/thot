@@ -211,7 +211,7 @@ detok_output()
     ${bindir}/thot_gen_rtfile -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok || exit 1
 
     # Add additional info to raw text file
-    cat ${test_corpus_opt} >> $tdir/rfile_rec
+    cat ${test_corpus_opt} >> $tdir/rfile_detok
 
     # Detokenize output
     ${bindir}/thot_detokenize -f ${output_file} -r $tdir/rfile_detok \
