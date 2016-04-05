@@ -100,7 +100,7 @@ if [ $# -ne 6 ]; then
     echo ""
     echo "<seed>               Random seed"
     echo "<ref_file>           File with references"
-    echo "<test_file>          File with results of system 1"
+    echo "<test_file>          File with system translations"
     echo "<S>                  Size of the randomly generated subsets"
     echo "<N>                  Number of subsets"
     echo "<measure>            Translation quality measure: BLEU | WER"
