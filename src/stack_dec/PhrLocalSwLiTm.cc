@@ -295,10 +295,10 @@ void PhrLocalSwLiTm::setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPar
 }
 
 //---------------------------------
-int PhrLocalSwLiTm::onlineTrainSentPair(const char *srcSent,
-                                        const char *refSent,
-                                        const char *sysSent,
-                                        int verbose)
+int PhrLocalSwLiTm::onlineTrainFeatsSentPair(const char *srcSent,
+                                             const char *refSent,
+                                             const char *sysSent,
+                                             int verbose)
 {
       // Check if input sentences are empty
   if(strlen(srcSent)==0 || strlen(refSent)==0)
@@ -311,10 +311,10 @@ int PhrLocalSwLiTm::onlineTrainSentPair(const char *srcSent,
   switch(onlineTrainingPars.onlineLearningAlgorithm)
   {
     case BASIC_INCR_TRAINING:
-      return incrTrainSentPair(srcSent,refSent,verbose);
+      return incrTrainFeatsSentPair(srcSent,refSent,verbose);
       break;
     case MINIBATCH_TRAINING:
-      return minibatchTrainSentPair(srcSent,refSent,sysSent,verbose);
+      return minibatchTrainFeatsSentPair(srcSent,refSent,sysSent,verbose);
       break;
     case BATCH_RETRAINING:
       return batchRetrainSentPair(srcSent,refSent,verbose);
@@ -327,9 +327,9 @@ int PhrLocalSwLiTm::onlineTrainSentPair(const char *srcSent,
 }
 
 //---------------------------------
-int PhrLocalSwLiTm::incrTrainSentPair(const char *srcSent,
-                                      const char *refSent,
-                                      int verbose/*=0*/)
+int PhrLocalSwLiTm::incrTrainFeatsSentPair(const char *srcSent,
+                                           const char *refSent,
+                                           int verbose/*=0*/)
 {
   int ret;
   Vector<std::string> srcSentStrVec=StrProcUtils::charItemsToVector(srcSent);
@@ -388,10 +388,10 @@ int PhrLocalSwLiTm::incrTrainSentPair(const char *srcSent,
 }
 
 //---------------------------------
-int PhrLocalSwLiTm::minibatchTrainSentPair(const char *srcSent,
-                                           const char *refSent,
-                                           const char *sysSent,
-                                           int verbose/*=0*/)
+int PhrLocalSwLiTm::minibatchTrainFeatsSentPair(const char *srcSent,
+                                                const char *refSent,
+                                                const char *sysSent,
+                                                int verbose/*=0*/)
 {
   Vector<std::string> srcSentStrVec=StrProcUtils::charItemsToVector(srcSent);
   Vector<std::string> trgSentStrVec=StrProcUtils::charItemsToVector(refSent);

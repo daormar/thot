@@ -122,10 +122,10 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
       // Functions for performing on-line training
   void setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPars,
                              int verbose=0);
-  int onlineTrainSentPair(const char *srcSent,
-                          const char *refSent,
-                          const char *sysSent,
-                          int verbose=0);
+  int onlineTrainFeatsSentPair(const char *srcSent,
+                               const char *refSent,
+                               const char *sysSent,
+                               int verbose=0);
 
       // Destructor
   ~PhrLocalSwLiTm();
@@ -177,13 +177,13 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
                         HypDataType& hypd);
 
       // Functions for performing on-line training
-  int incrTrainSentPair(const char *srcSent,
-                        const char *refSent,
-                        int verbose=0);
-  int minibatchTrainSentPair(const char *srcSent,
+  int incrTrainFeatsSentPair(const char *srcSent,
                              const char *refSent,
-                             const char *sysSent,
                              int verbose=0);
+  int minibatchTrainFeatsSentPair(const char *srcSent,
+                                  const char *refSent,
+                                  const char *sysSent,
+                                  int verbose=0);
   int batchRetrainSentPair(const char *srcSent,
                            const char *refSent,
                            int verbose=0);

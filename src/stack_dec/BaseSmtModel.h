@@ -160,10 +160,10 @@ class BaseSmtModel
       // Functions for performing on-line training
   virtual void setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPars,
                                      int verbose=0);
-  virtual int onlineTrainSentPair(const char *srcSent,
-                                  const char *refSent,
-                                  const char *sysSent,
-                                  int verbose=0);
+  virtual int onlineTrainFeatsSentPair(const char *srcSent,
+                                       const char *refSent,
+                                       const char *sysSent,
+                                       int verbose=0);
 
       // Word prediction functions
   virtual void addSentenceToWordPred(Vector<std::string> strVec,
@@ -243,10 +243,10 @@ void BaseSmtModel<HYPOTHESIS>::setOnlineTrainingPars(OnlineTrainingPars /*online
 
 //---------------------------------
 template<class HYPOTHESIS>
-int BaseSmtModel<HYPOTHESIS>::onlineTrainSentPair(const char* /*srcSent*/,
-                                                  const char* /*refSent*/,
-                                                  const char* /*sysSent*/,
-                                                  int /*verbose*/)
+int BaseSmtModel<HYPOTHESIS>::onlineTrainFeatsSentPair(const char* /*srcSent*/,
+                                                       const char* /*refSent*/,
+                                                       const char* /*sysSent*/,
+                                                       int /*verbose*/)
 {
   cerr<<"Warning: training of a sentence pair was requested, but such functionality is not provided!"<<endl;
   return ERROR;

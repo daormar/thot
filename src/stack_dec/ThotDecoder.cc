@@ -839,10 +839,10 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     ctimer(&prevElapsedTime,&ucpu,&scpu);
     
         // Train generative models
-    ret=tdCommonVars.smtModelPtr->onlineTrainSentPair(preprocSrcSent.c_str(),
-                                                      preprocRefSent.c_str(),
-                                                      preprocSysSent.c_str(),
-                                                      verbose);
+    ret=tdCommonVars.smtModelPtr->onlineTrainFeatsSentPair(preprocSrcSent.c_str(),
+                                                           preprocRefSent.c_str(),
+                                                           preprocSysSent.c_str(),
+                                                           verbose);
     ctimer(&elapsedTime,&ucpu,&scpu);
     if(verbose)
     {
@@ -894,7 +894,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
 #endif
 
         // Train generative models
-    ret=tdCommonVars.smtModelPtr->onlineTrainSentPair(srcSent,refSent,sysSent.c_str(),verbose);    
+    ret=tdCommonVars.smtModelPtr->onlineTrainFeatsSentPair(srcSent,refSent,sysSent.c_str(),verbose);    
    
     ctimer(&elapsedTime,&ucpu,&scpu);
     if(verbose) cerr<<"Training time: "<<elapsedTime-prevElapsedTime<<endl;
