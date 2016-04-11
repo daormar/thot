@@ -1315,11 +1315,18 @@ ngramWordIndex _phraseBasedTransModel<HYPOTHESIS>::tmVocabToLmVocab(WordIndex w)
     std::string s=wordIndexToTrgString(w);
         // Add string to the lm vocabulary if necessary
     if(!langModelInfoPtr->lmodel.existSymbol(s))
-      langModelInfoPtr->lmodel.addSymbol(s);
-        // Map tm word to lm word
-    ngramWordIndex nw=langModelInfoPtr->lmodel.stringToWordIndex(s);
-    tmToLmVocMap[w]=nw;
-    return nw;
+    {
+      ngramWordIndex nw=langModelInfoPtr->lmodel.stringToWordIndex(UNK_SYMBOL_STR);
+      tmToLmVocMap[w]=nw;
+      return nw;
+    }
+    else
+    {
+          // Map tm word to lm word
+      ngramWordIndex nw=langModelInfoPtr->lmodel.stringToWordIndex(s);
+      tmToLmVocMap[w]=nw;
+      return nw;
+    } 
   }
   else
   {
