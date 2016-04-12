@@ -1,21 +1,21 @@
 /*
 thot package for statistical machine translation
 Copyright (C) 2013 Daniel Ortiz-Mart\'inez
- 
+
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 3
 of the License, or (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
- 
+
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
 /********************************************************************/
 /*                                                                  */
 /* Module: KbMiraLlWu                                               */
@@ -50,6 +50,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 
 //--------------- typedefs -------------------------------------------
+struct HopeFearData {
+  Vector<Score> hopeFeatures, hopeBleuStats;
+  Vector<Score> fearFeatures;
+  Score hopeScore, hopeBleu;
+  Score fearScore, fearBleu;
+};
 
 
 //--------------- Classes --------------------------------------------
@@ -66,17 +72,28 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
 
       // Compute new weights for an individual sentence
   void update(const std::string& reference,
-              const Vector<string>& nblist,
+              const Vector<std::string>& nblist,
               const Vector<Vector<Score> >& scoreCompsVec,
               const Vector<Score>& currWeightsVec,
               Vector<Score>& newWeightsVec);
 
       // Compute new weights for a closed corpus
   void updateClosedCorpus(const Vector<std::string>& reference,
-                          const Vector<Vector<string> >& nblist,
-                          const Vector<Vector<Score> >& scoreCompsVec,
+                          const Vector<Vector<std::string> >& nblist,
+                          const Vector<Vector<Vector<Score> > >& scoreCompsVec,
                           const Vector<Score>& currWeightsVec,
                           Vector<Score>& newWeightsVec);
+ private:
+  void HopeFear(const Vector<std::string>& nBest,
+                const Vector<Vector<Score> >& nScores,
+                const Vector<Score>& wv,
+                const Vector<unsigned int>& backgroundBleu,
+                HopeFearData* hopeFear);
+  void backgroundBleu(const std::string& candidate,
+                      const std::string& reference,
+                      const Vector<unsigned int>& backgroundBleu,
+                      Score* sentenceBleu,
+                      Vector<unsigned int>& sentenceStats);
 };
 
 #endif
