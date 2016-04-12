@@ -51,6 +51,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "EU_PrePosProcessor2.h"
 #endif
 
+// Log-linear weight updater
+#include "KbMiraLlWu.h"
+
 //--------------- Constants ------------------------------------------
 
 // Default parameter values

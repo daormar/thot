@@ -47,6 +47,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "BaseSmtModel.h"
+#include "BaseLogLinWeightUpdater.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -126,6 +127,8 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
  protected:
 
   OnlineTrainingPars onlineTrainingPars;
+
+  BaseLogLinWeightUpdater* llWeightUpdaterPtr;
     
       // Scoring functions
   virtual Score incrScore(const Hypothesis& prev_hyp,
