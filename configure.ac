@@ -319,6 +319,17 @@ AC_MSG_RESULT(no)
 
 fi
 
+# Adds an extra argument to configure (enable testing)
+AC_MSG_CHECKING(whether to enable code testing)
+AC_ARG_ENABLE(testing,[  --enable-testing   enable code testing],enable_testing=yes,enable_testing=no)
+dnl Yes, code testing enabled
+if test "$enable_testing" = "yes"; then
+ AC_MSG_RESULT(yes)
+else
+ AC_MSG_RESULT(no)
+fi
+AM_CONDITIONAL([CODE_TESTING], [test x${enable_testing} = xyes])
+
 # Checks if the compiler supports ISO C++ standard library
 AC_CXX_HAVE_STD
 if test "$ac_cv_cxx_have_std" = no; then
@@ -354,6 +365,17 @@ if test $ac_cv_lib_z_inflate = yes; then
    AC_DEFINE(HAVE_ZLIB,,[Define if the zlib library is present])
 fi
 AC_SUBST(ZLIB)
+LIBS=${libaux}
+
+# Checks for lm library
+CPPUNIT=""
+libaux=${LIBS}
+AC_CHECK_LIB([cppunit], [strlen])
+if test $ac_cv_lib_cppunit_strlen = yes; then
+   CPPUNIT="-lcppunit"
+   AC_DEFINE(HAVE_CPPUNIT,,[Define if the cppunit library is present])
+fi
+AC_SUBST(CPPUNIT)
 LIBS=${libaux}
 
 # Checks for header files.
@@ -551,4 +573,4 @@ fi
 AC_DEFINE_UNQUOTED(AT_TYPE,${THOT_AT_TYPE},[Define which assisted translator type is to be used])
 
 #AC_CONFIG_FILES([Makefile])
-AC_OUTPUT(Makefile doc/Makefile m4/Makefile src/Makefile src/nlp_common/Makefile src/incr_models/Makefile src/sw_models/Makefile src/phrase_models/Makefile src/smt_preproc/Makefile src/error_correction/Makefile src/downhill_simplex/Makefile src/stack_dec/Makefile src/exper/Makefile utils/Makefile utils/nlp_common/Makefile utils/incr_models/Makefile utils/sw_models/Makefile utils/phrase_models/Makefile utils/smt_preproc/Makefile utils/error_correction/Makefile utils/downhill_simplex/Makefile utils/stack_dec/Makefile utils/exper/Makefile examples/Makefile examples/cfg_templates/Makefile examples/toy_corpus/Makefile)
+AC_OUTPUT(Makefile doc/Makefile m4/Makefile src/Makefile src/nlp_common/Makefile src/incr_models/Makefile src/sw_models/Makefile src/phrase_models/Makefile src/smt_preproc/Makefile src/error_correction/Makefile src/downhill_simplex/Makefile src/stack_dec/Makefile src/exper/Makefile src/testing/Makefile utils/Makefile utils/nlp_common/Makefile utils/incr_models/Makefile utils/sw_models/Makefile utils/phrase_models/Makefile utils/smt_preproc/Makefile utils/error_correction/Makefile utils/downhill_simplex/Makefile utils/stack_dec/Makefile utils/exper/Makefile examples/Makefile examples/cfg_templates/Makefile examples/toy_corpus/Makefile)
