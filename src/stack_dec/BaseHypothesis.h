@@ -52,9 +52,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "Bitset.h"
 #include "SmtDefs.h"
 
-#ifdef THOT_DEBUG
 #include "HypDebugData.h"
-#endif
 
 //--------------- Constants ------------------------------------------
 
