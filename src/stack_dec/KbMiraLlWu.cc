@@ -29,8 +29,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "KbMiraLlWu.h"
 
+#include "bleu.h"
+
 #include <cassert>
 #include <algorithm>
+#include <sstream>
+#include <iterator>
+#include <iostream>
+
 
 //--------------- KbMiraWu class functions
 //
@@ -42,7 +48,40 @@ void KbMiraLlWu::update(const std::string& reference,
                         const Vector<Score>& currWeightsVec,
                         Vector<Score>& newWeightsVec)
 {
-    //  TO-BE-DONE
+  Score c = 0.01;            // Step-size cap C
+  // FIXME: this should be changed by a scorer class
+  Vector<unsigned int> bg(10, 1);  // background corpus stats for BLEU
+                                   // cand_len, ref_len
+                                   // matching, totals for n 1..4
+  assert (nblist.size() == scoreCompsVec.size());
+
+  Vector<Score> wt(currWeightsVec);
+  HopeFearData hfd;
+  HopeFear(reference, nblist, scoreCompsVec, wt, bg, &hfd);
+  // Update weights
+  if (hfd.hopeBleu  > hfd.fearBleu) {
+    Vector<Score> diff(hfd.hopeFeatures.size());
+    for(unsigned int k=0; k<diff.size(); k++)
+      diff[k] = hfd.hopeFeatures[k] - hfd.fearFeatures[k];
+    Score delta = hfd.hopeBleu - hfd.fearBleu;
+    Score diffScore = 0;
+    for(unsigned int k=0; k<diff.size(); k++)
+      diffScore += wt[k]*diff[k];
+    Score loss = delta - diffScore;
+    if(loss > 0) {
+      // Update weights
+      Score diffNorm = 0;
+      for(unsigned int k=0; k<diff.size(); k++)
+        diffNorm += diff[k]*diff[k];
+      Score eta = min(c, loss/diffNorm);
+      for(unsigned int k=0; k<diff.size(); k++)
+        wt[k] += eta*diff[k];
+    }
+  }
+  // evaluate bleu on new weights
+  // std::string maxTranslation;
+  // MaxTranslation(wt, nblist, scoreCompsVec, maxTranslation);
+  newWeightsVec = wt;
 }
 
 //---------------------------------------
@@ -54,76 +93,93 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
 {
   Score c = 0.01;            // Step-size cap C
   Score decay = 0.999;       // Pseudo-corpus decay \gamma
-  unsigned int nIters = 60;  // Max epochs J
+  unsigned int nIters = 1;   // Max epochs J
   unsigned int nSents = references.size(); // number of examples in the corpus
+  // FIXME: this should be changed by a scorer class
   Vector<unsigned int> bg(10, 1);           // background corpus stats for BLEU
                                             // cand_len, ref_len
                                             // matching, totals for n 1..4
-
   assert(nblists.size() == nSents);
   assert(scoreCompsVecs.size() == nSents);
 
-  unsigned int nSolutions = 0;
+  unsigned int nUpdates = 0;
   Vector<Score> wTotals(currWeightsVec);
 
+  Score max_bleu = 0;
   Vector<Score> wt(currWeightsVec);
   for(unsigned int j=0; j<nIters; j++) {
     // MIRA train for one epoch
+    // FIXME: random sampling
     for(unsigned int i=0; i<nSents; i++) {
-      Vector<std::string> nBests(nblists[i]);
-      Vector<Vector<Scores> > nScores(scoreCompsVecs[i]);
-      assert (nBests.size() == nScores.size());
+      assert (nblists[i].size() == scoreCompsVecs[i].size());
       HopeFearData hfd;
-      HopeFear(nBests, nScores, wt, bg, &hfd);
+      HopeFear(references[i], nblists[i], scoreCompsVecs[i], wt, bg, &hfd);
       // Update weights
       if (hfd.hopeBleu  > hfd.fearBleu) {
-        // Vector difference
         Vector<Score> diff(hfd.hopeFeatures.size());
-        for(unsigned int k=0; k<diff.size(); k++) {
-            diff[i] = hfd.fearFeatures[i] - hfd.hopeFeatures[i]
-        }
-        // Bleu difference
+        for(unsigned int k=0; k<diff.size(); k++)
+          diff[k] = hfd.hopeFeatures[k] - hfd.fearFeatures[k];
         Score delta = hfd.hopeBleu - hfd.fearBleu;
-        // Loss and update
         Score diffScore = 0;
-        for(unsigned int k=0; k<diff.size(); k++) {
-          diffScore += wt[k]*diff[k]
-        }
-        Score loss = delta + diffScore;
-        if(verbose) {
-          cerr << "Updating sent " << i << endl;
-          cerr << "Wght: " << wt << endl;
-          cerr << "Hope: " << hfd.hopeFeatures << " BLEU:" << hfd.hopeBleu << " Score:" << hfd.hopeScore << endl;
-          cerr << "Fear: " << hfd.fearFeatures << " BLEU:" << hfd.fearBleu << " Score:" << hfd.fearScore << endl;
-          cerr << "Diff: " << diff << " BLEU:" << delta << " Score:" << diffScore << endl;
-          cerr << "Loss: " << loss <<  " Scale: " << 1 << endl;
-          cerr << endl;
-        }
+        for(unsigned int k=0; k<diff.size(); k++)
+          diffScore += wt[k]*diff[k];
+        Score loss = delta - diffScore;
         if(loss > 0) {
-          diffNorm = 0;
-          for(unsigned int k=0; k<diff.size(); k++) {
-            diffNorm += diff[i]*diff[i];
-          }
+          // Update weights
+          Score diffNorm = 0;
+          for(unsigned int k=0; k<diff.size(); k++)
+            diffNorm += diff[k]*diff[k];
           Score eta = min(c, loss/diffNorm);
           for(unsigned int k=0; k<diff.size(); k++) {
-            wt[i] = wt[i] + eta*diff[i];
-            wTotals[i] += wt[i];
-            nSolutions++;
+            wt[k] += eta*diff[k];
+            wTotals[k] += wt[k];
           }
+          nUpdates++;
         }
         // Update BLEU statistics
-        for(unsigned int k=0; k<bg.size(); k++) {
+        for(unsigned int k=0; k<bg.size(); k++)
           bg[k] = decay*bg[k] + hfd.hopeBleuStats[k];
-        }
       }
     }
+    // average all seen weight vectors
     Vector<Score> wAvg(wTotals.size(), 0);
-    for(unsigned int k=0; k<wAvg.size(); k++) {
-      wAvg[i] = wTotals[i]/nSolutions;
+    for(unsigned int k=0; k<wAvg.size(); k++)
+      wAvg[k] = wTotals[k]/nUpdates;
+    // evaluate bleu of wAvg
+    std::string maxTranslation;
+    Vector<std::string> maxTranslations;
+    for(unsigned int i=0; i<nSents; i++) {
+        MaxTranslation(wAvg, nblists[i], scoreCompsVecs[i], maxTranslation);
+        maxTranslations.push_back(maxTranslation);
     }
-    // TODO: evaluate bleu of wAvg
- }
+    Score bleu;
+    Bleu(maxTranslations, references, bleu);
+    if(bleu > max_bleu) {
+      max_bleu = bleu;
+      newWeightsVec = wAvg;
+    }
+  }
 }
+
+
+//---------------------------------------
+void KbMiraLlWu::MaxTranslation(const Vector<Score>& wv,
+                                const Vector<std::string>& nBest,
+                                const Vector<Vector<Score> >& nScores,
+                                std::string& maxTranslation)
+{
+  Score max_score;
+  for(unsigned int n=0; n<nBest.size(); n++) {
+    Score score = 0;
+    for(unsigned int k=0; k<wv.size(); k++)
+      score += wv[k]*nScores[n][k];
+    if(n==0 || score > max_score) {
+        max_score = score;
+        maxTranslation = nBest[n];
+    }
+  }
+}
+
 
 //---------------------------------------
 void KbMiraLlWu::HopeFear(const std::string reference,
@@ -136,47 +192,128 @@ void KbMiraLlWu::HopeFear(const std::string reference,
   // Hope / fear decode
   Score hope_scale = 1.0;
   Score hope_total_score, fear_total_score;
-  for(unsigned int i=0; i<nBest.size(); i++) {
+  for(unsigned int n=0; n<nBest.size(); n++) {
     Score score = 0;
-    for(unsigned int k=0; k<sentScores.size(); k++) {
-      score += wv[i]*nScores[i][k];
-    }
+    for(unsigned int k=0; k<wv.size(); k++)
+      score += wv[k]*nScores[n][k];
     Score bleu;
     Vector<unsigned int> stats(backgroundBleu.size());
-    backgroundBleu(nBest[i], reference, backgroundBleu, &bleu, stats);
+    sentBckgrndBleu(nBest[n], reference, backgroundBleu, bleu, stats);
     // Hope
-    if(i==0 || (hope_scale*score + bleu) > hope_total_score) {
+    if(n==0 || (hope_scale*score + bleu) > hope_total_score) {
       hope_total_score = hope_scale*score + bleu;
       hopeFear->hopeScore = score;
-      for(unsigned int k=0; k<nScores[i].size(); k++) {
-        hopeFear->hopeFeatures.clear();
-        hopeFear->hopeFeatures.push_back(nScores[i][k]);
-      }
+      hopeFear->hopeFeatures.clear();
+      for(unsigned int k=0; k<nScores[n].size(); k++)
+        hopeFear->hopeFeatures.push_back(nScores[n][k]);
       hopeFear->hopeBleu = bleu;
-      for(unsigned int k=0; k<stats.size(); k++) {
-        hopeFear->hopeBleuStats.clear();
+      hopeFear->hopeBleuStats.clear();
+      for(unsigned int k=0; k<stats.size(); k++)
         hopeFear->hopeBleuStats.push_back(stats[k]);
-      }
     }
     // Fear
-    if(i==0 || (score - bleu) > fear_total_score) {
+    if(n==0 || (score - bleu) > fear_total_score) {
       fear_total_score = score - bleu;
       hopeFear->fearScore = score;
-      for(unsigned int k=0; k<nScores[i].size(); k++) {
-        hopeFear->fearFeatures.clear();
-        hopeFear->fearFeatures.push_back(nScores[i][k]);
-      }
+      hopeFear->fearFeatures.clear();
+      for(unsigned int k=0; k<nScores[n].size(); k++)
+        hopeFear->fearFeatures.push_back(nScores[n][k]);
       hopeFear->fearBleu = bleu;
     }
   }
 }
 
 //---------------------------------------
-void KbMiraLlWu::backgroundBleu(std::string candidate, std::string reference,
-                                Vector<unsigned int>& backgroundBleu,
-                                Score* bleu,
-                                Vector<unsigned int> stats)
+// FIXME: substitute by scoring class
+void KbMiraLlWu::sentBckgrndBleu(const std::string candidate,
+                                 const std::string reference,
+                                 const Vector<unsigned int>& backgroundBleu,
+                                 Score& bleu,
+                                 Vector<unsigned int>& stats)
 {
-  // TODO: get stats for pair of sentences, compute bleu escaled by ref lenght
+  Vector<std::string> candidate_tokens, reference_tokens;
+  std::string item;
 
+  std::stringstream ssc(candidate);
+  while (std::getline(ssc, item, ' '))
+    candidate_tokens.push_back(item);
+
+  std::stringstream ssr(reference);
+  while (std::getline(ssr, item, ' '))
+    reference_tokens.push_back(item);
+
+  unsigned int prec, total;
+  stats[0] = candidate_tokens.size();
+  stats[1] = reference_tokens.size();
+  for(unsigned int sz=1; sz<=4; sz++) {
+    prec_n(reference_tokens, candidate_tokens, sz, prec, total);
+    stats[2*sz] = prec;
+    stats[2*sz+1] = total;
+  }
+  // calculate brevity penalty
+  Score bp;
+  unsigned int rLen, cLen;
+  cLen = stats[0] + backgroundBleu[0];
+  rLen = stats[1] + backgroundBleu[1];
+  if (cLen < rLen)
+    bp = (Score)exp(1-(double)rLen/cLen);
+  else bp = 1;
+
+  // calculate bleu
+  double log_aux = 0;
+  for(unsigned int sz=1; sz<=4; sz++) {
+    prec = stats[sz*2] + backgroundBleu[sz*2];
+    total = stats[sz*2+1] + backgroundBleu[sz*2+1];
+    if (total == 0) log_aux += 1;
+    else            log_aux += my_log((double)prec/total);
+  }
+  log_aux /= 4;
+  bleu = bp * (Score)exp(log_aux);
+  bleu *= reference_tokens.size(); // scale bleu to roughly typical margins
+}
+
+//---------------------------------------
+// FIXME: substitute by scoring class
+void KbMiraLlWu::Bleu(Vector<std::string> candidates,
+                      Vector<std::string> references,
+                      Score& bleu)
+{
+  Vector<unsigned int> stats(6, 0);
+  unsigned int prec, total;
+  for(unsigned int i=0; i<candidates.size(); i++) {
+    Vector<std::string> candidate_tokens, reference_tokens;
+    std::string item;
+
+    std::stringstream ssc(candidates[i]);
+    while (std::getline(ssc, item, ' '))
+      candidate_tokens.push_back(item);
+
+    std::stringstream ssr(references[i]);
+    while (std::getline(ssr, item, ' '))
+      reference_tokens.push_back(item);
+
+    stats[0] += candidate_tokens.size();
+    stats[1] += reference_tokens.size();
+    for(unsigned int sz=1; sz<=4; sz++) {
+      prec_n(reference_tokens, candidate_tokens, sz, prec, total);
+      stats[2*sz] += prec;
+      stats[2*sz+1] += total;
+    }
+  }
+  // calculate brevity penalty
+  Score bp;
+  if (stats[0] < stats[1])
+    bp = (Score)exp((double)1-(double)stats[1]/stats[0]);
+  else bp = 1;
+
+  // calculate bleu
+  double log_aux = 0;
+  for(unsigned int sz=1; sz<=4; sz++) {
+    prec = stats[sz*2];
+    total = stats[sz*2+1];
+    if (total == 0) log_aux += 1;
+    else            log_aux += (Score)my_log((double)prec/total);
+  }
+  log_aux /= 4;
+  bleu = bp * (Score)exp(log_aux);
 }
