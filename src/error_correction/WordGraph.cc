@@ -499,10 +499,7 @@ void WordGraph::nbSearch(unsigned int len,
       }
     }
     ++numIters;  
-  }
-      // Print number of iterations
-  cerr<<"Number of iterations required to obtain n-best list: "<<numIters<<endl;
-          
+  }          
       // Obtain result
   nblist.clear();
   scoreCompsVec.clear();
