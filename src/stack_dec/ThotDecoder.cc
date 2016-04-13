@@ -827,7 +827,6 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
       cerr<<" - preproc. sys translation: "<<preprocSysSent<<endl;
     }
         // Add sentence to word-predictor
-    if(verbose) cerr<<"Adding preprocessed target sentence to the word predictor..."<<endl;
     tdCommonVars.smtModelPtr->addSentenceToWordPred(StrProcUtils::stringToStringVector(preprocRefSent),verbose);
 
     if(verbose) cerr<<"Training models..."<<endl;
@@ -860,7 +859,6 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     std::string sysSent=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
 
         // Add sentence to word-predictor
-    if(verbose) cerr<<"Adding target sentence to the word predictor..."<<endl;
     tdCommonVars.smtModelPtr->addSentenceToWordPred(StrProcUtils::stringToStringVector(refSent),verbose);
 
     if(verbose) cerr<<"Training models..."<<endl;
