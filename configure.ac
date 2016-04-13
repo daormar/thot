@@ -417,6 +417,22 @@ fi
 AM_CONDITIONAL([CASMACAT_LIB_ENABLED], [test x${enable_casmacat_lib} = xyes])
 AC_SUBST(CASMACAT_SERVER_LIB_HOME,$with_casmacat)
 
+# Adds an extra argument to configure (enable updating of log-linear weights)
+AC_MSG_CHECKING(whether to enable updating of log-linear weights)
+AC_ARG_ENABLE(update-llweights,[  --enable-update-llweights   enable updating of log-linear weights],enable_update_llweights=yes,enable_update_llweights=no)
+dnl Yes, updating of log-linear weights enabled
+if test "$enable_update_llweights" = "yes"; then
+ AC_MSG_RESULT(yes)
+else
+ AC_MSG_RESULT(no)
+fi
+AM_CONDITIONAL([ENABLE_UPDATE_LLWEIGHTS], [test x${enable_update_llweights} = xyes])
+
+if test "$enable_update_llweights" = "yes"; then
+ AC_DEFINE(ENABLE_UPDATE_LLWEIGHTS,,[Define if updating of log-linear weights is enabled])
+fi
+AC_SUBST(enable_update_llweights)
+
 # Disable pre/post-processing code
 AC_DEFINE(DISABLE_PREPROC_CODE,,[Define if the pre/post-processing code is disabled])
 
