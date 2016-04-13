@@ -72,8 +72,8 @@ class BaseLogLinWeightUpdater
  public:
 
       // Function to compute new weights
-  virtual void update(std::string reference,
-                      const Vector<string>& nblist,
+  virtual void update(const std::string& reference,
+                      const Vector<std::string>& nblist,
                       const Vector<Vector<Score> >& scoreCompsVec,
                       const Vector<Score>& currWeightsVec,
                       Vector<Score>& newWeightsVec)=0;
