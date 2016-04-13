@@ -33,5 +33,5 @@ client_server_defs.h CatDefs.h bleu.h bleu.cc BaseStackDecoder.h	\
 BaseSmtStack.h BaseSmtMultiStack.h BaseSmtModel.h			\
 BasePhraseHypothesisRec.h BasePhraseHypothesis.h			\
 BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
-BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h			\
+BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h HypDebugData.h	\
 BaseAssistedTrans.h AssistedTransTypes.h _assistedTrans.h
