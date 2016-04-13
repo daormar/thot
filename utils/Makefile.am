@@ -76,8 +76,8 @@ EXTRA_DIST =
 
 python_PYTHON= smt_preproc/thot_smt_preproc.py
 
-# Define Makefile dependency for scripts
-$(bin_SCRIPTS): Makefile
+# # Define Makefile dependency for scripts
+# $(bin_SCRIPTS): Makefile
 
 # Build using suffix rules (portable)
 SUFFIXES= .sh .pl .py
