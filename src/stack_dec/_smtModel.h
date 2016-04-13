@@ -51,6 +51,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
+#define NBEST_LIST_SIZE_FOR_LLWEIGHT_UPDATE 1000
+
 
 //--------------- Classes --------------------------------------------
 
@@ -69,6 +71,9 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
   typedef typename BaseSmtModel<HYPOTHESIS>::Hypothesis Hypothesis;
   typedef typename BaseSmtModel<HYPOTHESIS>::HypScoreInfo HypScoreInfo;
   typedef typename BaseSmtModel<HYPOTHESIS>::HypDataType HypDataType;
+
+      // Constructor
+  _smtModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr);
 
       // Actions to be executed before the translation and before using
       // hypotheses-related functions
@@ -99,6 +104,9 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
       // Functions for performing on-line training
   void setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPars,
                              int verbose);
+  void updateLogLinearWeights(std::string refSent,
+                              WordGraph* wgPtr,
+                              int verbose=0);
 
       // Misc. operations with hypothesis
   virtual void obtainHypFromHypData(const HypDataType& hypDataType,
@@ -143,12 +151,18 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
 
 //---------------------------------
 template<class HYPOTHESIS>
+_smtModel<HYPOTHESIS>::_smtModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr)
+{
+  llWeightUpdaterPtr=_llWeightUpdaterPtr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
 void _smtModel<HYPOTHESIS>::setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPars,
                                                   int /*verbose*/)
 {
   onlineTrainingPars=_onlineTrainingPars;
 }
-
 
 //---------------------------------
 template<class HYPOTHESIS>
@@ -187,6 +201,65 @@ void _smtModel<HYPOTHESIS>::diffScoreCompsForHyps(const Hypothesis& pred_hyp,
   typename Hypothesis::DataType succ_hypd=succ_hyp.getData();
   Hypothesis aux;
   incrScore(pred_hyp,succ_hypd,aux,scoreComponents);
+}
+
+//--------------------------
+template<class HYPOTHESIS>
+void _smtModel<HYPOTHESIS>::updateLogLinearWeights(std::string refSent,
+                                                   WordGraph* wgPtr,
+                                                   int verbose/*=0*/)
+{
+      // Obtain n-best list
+  unsigned int len=NBEST_LIST_SIZE_FOR_LLWEIGHT_UPDATE;
+  Vector<pair<Score,std::string> > nblist;
+  Vector<Vector<Score> > scoreCompsVec;
+  wgPtr->obtainNbestList(len,nblist,scoreCompsVec);
+
+      // Obtain current weights
+  Vector<pair<std::string,float> > compWeights;
+  this->getWeights(compWeights);
+  vector<double> currentWeights;
+  for(unsigned int i=0;i<compWeights.size();++i)
+    currentWeights.push_back(compWeights[i].second);
+  
+      // Print verbose information
+  if(verbose)
+  {
+    cerr<<"Training log linear combination weights (n-best list size= "<<nblist.size()<<")..."<<endl;
+  }
+  
+      // Obtain new weights
+  vector<double> newWeights;
+      // Check if n-best list is empty 
+  if(nblist.empty())
+    newWeights=currentWeights;
+  else
+  {    
+        // Invoke weight update engine
+    std::string reference=refSent;
+    vector<string> nblistWithNoScr;
+    for(unsigned int i=0;i<nblist.size();++i) nblistWithNoScr.push_back(nblist[i].second);
+    llWeightUpdaterPtr->update(reference,
+                               nblistWithNoScr,
+                               scoreCompsVec,
+                               currentWeights,
+                               newWeights);
+  }
+      // Set new weights
+  Vector<float> tmwVec;
+  for(unsigned int i=0;i<newWeights.size();++i) tmwVec.push_back(newWeights[i]);
+  this->setWeights(tmwVec);
+  
+  if(verbose)
+  {
+    cerr<<"The weights of the loglinear combination have been trained:"<<endl;
+    cerr<<" - Previous weights:";
+    for(unsigned int i=0;i<currentWeights.size();++i) cerr<<" "<<currentWeights[i];
+    cerr<<endl;
+    cerr<<" - New weights     :";
+    for(unsigned int i=0;i<newWeights.size();++i) cerr<<" "<<newWeights[i];
+    cerr<<endl;
+  }
 }
 
 #endif

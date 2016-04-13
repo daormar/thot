@@ -63,14 +63,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define TDEC_HEUR_DEFAULT       LOCAL_TD_HEURISTIC
 #define TDEC_NOMON_DEFAULT      0
 
-#define NBEST_LIST_SIZE_FOR_LLWEIGHT_UPDATE 1000
 #define MINIMUM_WORD_LENGTH_TO_EXPAND 1    // Define the minimum
                                            // length in characters that
                                            // is required to expand a
                                            // a word using the word
                                            // predictor
-#define DRR_ALPHA               0.01
-#define DRR_BETA                0.01
 
 //--------------- Classes --------------------------------------------
 

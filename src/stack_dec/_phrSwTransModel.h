@@ -78,7 +78,7 @@ class _phrSwTransModel: public _phraseBasedTransModel<HYPOTHESIS>
   // class functions
   
       // Constructor
-  _phrSwTransModel();
+  _phrSwTransModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr);
       
   // class methods
 
@@ -152,7 +152,7 @@ class _phrSwTransModel: public _phraseBasedTransModel<HYPOTHESIS>
 //--------------- _phrSwTransModel class functions
 //
 template<class HYPOTHESIS>
-_phrSwTransModel<HYPOTHESIS>::_phrSwTransModel():_phraseBasedTransModel<HYPOTHESIS>()
+_phrSwTransModel<HYPOTHESIS>::_phrSwTransModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr):_phraseBasedTransModel<HYPOTHESIS>(_llWeightUpdaterPtr)
 {
       // Create SwModelInfo pointer
   swModelInfoPtr=new SwModelInfo;

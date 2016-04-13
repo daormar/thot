@@ -29,6 +29,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
+#include "KbMiraLlWu.h"
 #include "SmtModelTypes.h"
 #include "MultiStackTypes.h"
 #include "StackDecSwModelTypes.h"
@@ -128,6 +129,7 @@ void printConfig(void);
 
 //--------------- Global variables -----------------------------------
 
+BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 CURR_MODEL_TYPE *pbtModelPtr;
 CURR_MSTACK_TYPE<CURR_MODEL_TYPE>* translatorPtr;
 
@@ -169,12 +171,14 @@ int init_translator(const thot_ms_alig_pars& tap)
   
   cerr<<"\n- Initializing model and test corpus...\n\n";
 
-  pbtModelPtr=new CURR_MODEL_TYPE();
+  llWeightUpdaterPtr=new KbMiraLlWu;
+  pbtModelPtr=new CURR_MODEL_TYPE(llWeightUpdaterPtr);
 
   err=pbtModelPtr->loadLangModel(tap.languageModelFileName.c_str());
   if(err==ERROR)
   {
     delete pbtModelPtr;
+    delete llWeightUpdaterPtr;
     return ERROR;
   }
 
@@ -182,6 +186,7 @@ int init_translator(const thot_ms_alig_pars& tap)
   if(err==ERROR)
   {
     delete pbtModelPtr;
+    delete llWeightUpdaterPtr;
     return ERROR;
   }
 
@@ -719,7 +724,8 @@ Vector<string> stringToStringVector(string s)
 //--------------- printConfig() function
 void printConfig(void)
 {
-  CURR_MODEL_TYPE model;
+  BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
+  CURR_MODEL_TYPE model(llWeightUpdaterPtr);
 
   cerr <<"* Aligner configuration:"<<endl;
       // Print translation model information
@@ -760,6 +766,9 @@ void printConfig(void)
     cerr << "  - Translator notes: "<<CURR_MSTACK_NOTES<<endl;
   }
   cerr << endl;
+
+      // Release pointers
+  delete llWeightUpdaterPtr;
 }
 
 //--------------- printUsage() function

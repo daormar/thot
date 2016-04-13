@@ -36,15 +36,9 @@ ThotDecoder::ThotDecoder()
 {
       // Create server variables
   tdCommonVars.wgHandlerPtr=new WgHandler;
-  tdCommonVars.smtModelPtr=new CURR_MODEL_TYPE();
   tdCommonVars.ecModelPtr=new CURR_ECM_TYPE();
-
-#ifdef THOT_ENABLE_UPDATE_LLWEIGHTS
-  tdCommonVars.weightUpdateEnginePtr=new DRR();
-
-      // Init weight update engine parameters
-  tdCommonVars.weightUpdateEnginePtr->init(DRR_ALPHA,DRR_BETA);
-#endif
+  tdCommonVars.llWeightUpdaterPtr=new KbMiraLlWu;
+  tdCommonVars.smtModelPtr=new CURR_MODEL_TYPE(tdCommonVars.llWeightUpdaterPtr);
   
       // Initialize mutexes and conditions
   pthread_mutex_init(&user_id_to_idx_mut,NULL);
@@ -126,7 +120,8 @@ void ThotDecoder::config(void)
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
-  CURR_MODEL_TYPE model;
+  BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
+  CURR_MODEL_TYPE model(llWeightUpdaterPtr);
   CURR_ECM_TYPE ecm_type;
   
       // Print server configuration
@@ -197,6 +192,9 @@ void ThotDecoder::config(void)
   cerr<<"  - Word-graph processor: "<<CURR_WGP_LABEL<<endl;
   cerr<<endl;
 
+      // Release pointers
+  delete llWeightUpdaterPtr;
+  
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 }
@@ -872,6 +870,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     ctimer(&prevElapsedTime,&ucpu,&scpu);
 
 #ifndef THOT_DISABLE_REC
+#ifdef THOT_ENABLE_UPDATE_LLWEIGHTS
         // Train log-linear weights
 
         // Retrieve pointer to wordgraph (use word-graph provided by the
@@ -883,14 +882,15 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     {
       WordGraph wg;
       wg.load(wgPathStr.c_str());
-      updateLogLinearWeights(refSent,&wg,verbose);
+      tdCommonVars.smtModelPtr->updateLogLinearWeights(refSent,&wg,verbose);
     }
     else
     {
       WordGraph* wgPtr=tdPerUserVarsVec[idx].translatorPtr->getWordGraphPtr();
-      updateLogLinearWeights(refSent,wgPtr,verbose);
+      tdCommonVars.smtModelPtr->updateLogLinearWeights(refSent,wgPtr,verbose);
     }    
     tdPerUserVarsVec[idx].translatorPtr->disableWordGraph();
+#endif
 #endif
 
         // Train generative models
@@ -905,78 +905,6 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
 
   return ret;
 }
-
-//--------------------------
-#ifdef THOT_ENABLE_UPDATE_LLWEIGHTS
-void ThotDecoder::updateLogLinearWeights(std::string refSent,
-                                         WordGraph* wgPtr,
-                                         int verbose/*=0*/)
-{
-# ifndef THOT_DISABLE_REC
-        // Obtain n-best list
-    unsigned int len=NBEST_LIST_SIZE_FOR_LLWEIGHT_UPDATE;
-    Vector<pair<Score,std::string> > nblist;
-    Vector<Vector<Score> > scoreCompsVec;
-    wgPtr->obtainNbestList(len,nblist,scoreCompsVec);
-
-        // Obtain current weights
-    Vector<pair<std::string,float> > compWeights;
-    tdCommonVars.smtModelPtr->getWeights(compWeights);
-    vector<double> currentWeights;
-    for(unsigned int i=0;i<compWeights.size();++i)
-      currentWeights.push_back(compWeights[i].second);
-
-        // Print verbose information
-    if(verbose)
-    {
-      cerr<<"Training log linear combination weights (n-best list size= "<<nblist.size()<<")..."<<endl;
-    }
-
-        // Obtain new weights
-    vector<double> newWeights;
-        // Check if n-best list is empty 
-    if(nblist.empty())
-      newWeights=currentWeights;
-    else
-    {    
-          // Invoke weight update engine
-      std::string reference=refSent;
-      vector<string> nblistWithNoScr;
-      for(unsigned int i=0;i<nblist.size();++i) nblistWithNoScr.push_back(nblist[i].second);
-      tdCommonVars.weightUpdateEnginePtr->computeNewWeights(currentWeights,
-                                                            reference,
-                                                            nblistWithNoScr,
-                                                            scoreCompsVec,
-                                                            newWeights);
-    }
-    if(verbose)
-    {
-      cerr<<"The weights of the loglinear combination have been trained:"<<endl;
-      cerr<<" - Previous weights:";
-      for(unsigned int i=0;i<currentWeights.size();++i) cerr<<" "<<currentWeights[i];
-      cerr<<endl;
-      cerr<<" - New weights     :";
-      for(unsigned int i=0;i<newWeights.size();++i) cerr<<" "<<newWeights[i];
-      cerr<<endl;
-    }
-        // Set new weights
-    Vector<float> tmwVec;
-    for(unsigned int i=0;i<newWeights.size();++i) tmwVec.push_back(newWeights[i]);
-    set_tmw(tmwVec);
-# else
-    if(verbose)
-      cerr<<"Weights of the loglinear combination will not be modified."<<endl;
-# endif
-}
-#else
-void ThotDecoder::updateLogLinearWeights(std::string /*refSent*/,
-                                         WordGraph* /*wgPtr*/,
-                                         int verbose/*=0*/)
-{
-    if(verbose)
-      cerr<<"Updating of log-linear combination weights is disabled."<<endl;  
-}
-#endif
 
 //--------------------------
 void ThotDecoder::setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
@@ -2512,10 +2440,7 @@ ThotDecoder::~ThotDecoder()
   delete tdCommonVars.wgHandlerPtr;
   delete tdCommonVars.smtModelPtr;
   delete tdCommonVars.ecModelPtr;
-
-#ifdef THOT_ENABLE_UPDATE_LLWEIGHTS
-  delete tdCommonVars.weightUpdateEnginePtr;
-#endif
+  delete tdCommonVars.llWeightUpdaterPtr;
   
       // Destroy mutexes and conditions
   pthread_mutex_destroy(&user_id_to_idx_mut);

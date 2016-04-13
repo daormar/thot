@@ -34,7 +34,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //
 
 //---------------------------------------
-PhrLocalSwLiTm::PhrLocalSwLiTm():_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >()
+PhrLocalSwLiTm::PhrLocalSwLiTm(BaseLogLinWeightUpdater* _llWeightUpdaterPtr):_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >(_llWeightUpdaterPtr)
 {
   langModelInfoPtr->langModelPars.wpScaleFactor=0;
   langModelInfoPtr->langModelPars.lmScaleFactor=1.0;

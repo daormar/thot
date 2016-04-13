@@ -93,7 +93,7 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   // class functions
 
   // Constructor
-  PhrLocalSwLiTm();
+  PhrLocalSwLiTm(BaseLogLinWeightUpdater* _llWeightUpdaterPtr);
   
   // class methods
 

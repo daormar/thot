@@ -91,7 +91,7 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   // class functions
 
   // Constructor
-  _phraseBasedTransModel();
+  _phraseBasedTransModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr);
       
   // class methods
 
@@ -423,7 +423,7 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
 //
 
 template<class HYPOTHESIS>
-_phraseBasedTransModel<HYPOTHESIS>::_phraseBasedTransModel()
+_phraseBasedTransModel<HYPOTHESIS>::_phraseBasedTransModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr):BasePbTransModel<HYPOTHESIS>(_llWeightUpdaterPtr)
 {
       // Create pointer to PhraseModelInfo
   phrModelInfoPtr=new PhraseModelInfo;
