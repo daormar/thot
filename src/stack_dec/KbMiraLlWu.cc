@@ -18,9 +18,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: BatchKbMiraWu                                            */
+/* Module: KbMiraLlWu                                               */
 /*                                                                  */
-/* Definitions file: BatchKbMiraWu.cc                               */
+/* Definitions file: KbMiraLlWu.cc                                  */
 /*                                                                  */
 /********************************************************************/
 
@@ -38,7 +38,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 
 
-//--------------- KbMiraWu class functions
+//--------------- KbMiraLlWu class functions
 //
 
 //---------------------------------------
