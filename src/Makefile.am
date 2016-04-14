@@ -2,32 +2,25 @@
 
 LGMP=@LGMP@
 ZLIB=@ZLIB@
+CPPUNIT=@CPPUNIT@
 
 AUTOMAKE_OPTIONS = subdir-objects
 
 SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
 error_correction downhill_simplex stack_dec exper
 
-if CASMACAT_LIB_ENABLED
-bin_PROGRAMS = thot_ilm_perp thot_calc_swm_lgprob thot_gen_sw_model	\
-thot_sort_bin_ilextable thot_sort_bin_ihmmatable			\
-thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
-thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
-thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
-thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
-thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig thot_client		\
-thot_server thot_calc_bleu
-
-else
-bin_PROGRAMS = thot_ilm_perp thot_calc_swm_lgprob thot_gen_sw_model	\
-thot_sort_bin_ilextable thot_sort_bin_ihmmatable			\
-thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
-thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
-thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
-thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
-thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig thot_client		\
-thot_server thot_calc_bleu
+if CODE_TESTING
+TESTING_PROGS= thot_test
 endif
+
+bin_PROGRAMS = thot_ilm_perp thot_calc_swm_lgprob thot_gen_sw_model	\
+thot_sort_bin_ilextable thot_sort_bin_ihmmatable			\
+thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
+thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
+thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
+thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
+thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig thot_client		\
+thot_server thot_calc_bleu $(TESTING_PROGS)
 
 if CASMACAT_LIB_ENABLED
 lib_LTLIBRARIES = libthot.la libthot_casmacat.la
@@ -44,7 +37,7 @@ AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			\
 
 AM_CFLAGS= $(AM_CXXFLAGS)
 
-LDADD = $(LGMP) $(ZLIB)
+LDADD = $(LGMP) $(ZLIB) $(CPPUNIT)
 
 # sources
 common_src_h= thot_config.h
@@ -282,6 +275,9 @@ endif
 exper_h=
 exper_defs=
 
+testing_h= testing/KbMiraLlWuTest.h
+testing_defs= testing/KbMiraLlWuTest.cc
+
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(sw_models_h) $(sw_models_defs)	\
 $(phrase_models_h) $(phrase_models_defs) $(smt_preproc_h)		\
@@ -356,6 +352,11 @@ thot_server_LDFLAGS = libthot.la
 
 thot_calc_bleu_SOURCES = stack_dec/thot_calc_bleu.cc
 thot_calc_bleu_LDFLAGS = libthot.la
+
+if CODE_TESTING
+thot_test_SOURCES = testing/thot_test.cc $(testing_h) $(testing_defs)
+thot_test_LDFLAGS = libthot.la
+endif
 
 if CASMACAT_LIB_ENABLED
 # test_casmacat_engines_SOURCES = stack_dec/test_casmacat_engines.cc
