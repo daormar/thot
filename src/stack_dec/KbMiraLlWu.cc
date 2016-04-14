@@ -115,13 +115,15 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
 
   unsigned int nUpdates = 0;
   Vector<Score> wTotals(currWeightsVec);
+  Vector<Score> max_wAvg;
 
   Score max_bleu = 0;
-  Vector<Score> wt(currWeightsVec);
+  Vector<Score> wt;
   for(unsigned int j=0; j<nIters; j++) {
     // MIRA train for one epoch
     // FIXME: random sampling
     for(unsigned int i=0; i<nSents; i++) {
+
       assert (nblists[i].size() == scoreCompsVecs[i].size());
       HopeFearData hfd;
       HopeFear(references[i], nblists[i], scoreCompsVecs[i], wt, bg, &hfd);
@@ -167,9 +169,10 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
     Bleu(maxTranslations, references, bleu);
     if(bleu > max_bleu) {
       max_bleu = bleu;
-      newWeightsVec = wAvg;
+      max_wAvg = wAvg;
     }
   }
+  newWeightsVec = max_wAvg;
 }
 
 
