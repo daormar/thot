@@ -40,8 +40,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- KbMiraLlWu class functions
 //---------------------------------------
-KbMiraLlWu::KbMiraLlWu(Score C,
-                       Score gamma,
+KbMiraLlWu::KbMiraLlWu(double C,
+                       double gamma,
                        unsigned int J) {
   c = C;
   decay = gamma;
@@ -52,16 +52,16 @@ KbMiraLlWu::KbMiraLlWu(Score C,
 //---------------------------------------
 void KbMiraLlWu::update(const std::string& reference,
                         const Vector<std::string>& nblist,
-                        const Vector<Vector<Score> >& scoreCompsVec,
-                        const Vector<Score>& currWeightsVec,
-                        Vector<Score>& newWeightsVec)
+                        const Vector<Vector<double> >& scoreCompsVec,
+                        const Vector<double>& currWeightsVec,
+                        Vector<double>& newWeightsVec)
 {
   // FIXME: this should be changed by a scorer class
   Vector<unsigned int> bg(10, 1);  // background corpus stats for BLEU
                                    // cand_len, ref_len
                                    // matching, totals for n 1..4
   assert (nblist.size() == scoreCompsVec.size());
-  Vector<Score> wt(currWeightsVec);
+  Vector<double> wt(currWeightsVec);
 
   // evaluate bleu on current weights
   // std::string maxTranslation;
@@ -72,20 +72,20 @@ void KbMiraLlWu::update(const std::string& reference,
   HopeFear(reference, nblist, scoreCompsVec, wt, bg, &hfd);
   // Update weights
   if (hfd.hopeBleu  > hfd.fearBleu) {
-    Vector<Score> diff(hfd.hopeFeatures.size());
+    Vector<double> diff(hfd.hopeFeatures.size());
     for(unsigned int k=0; k<diff.size(); k++)
       diff[k] = hfd.hopeFeatures[k] - hfd.fearFeatures[k];
-    Score delta = hfd.hopeBleu - hfd.fearBleu;
-    Score diffScore = 0;
+    double delta = hfd.hopeBleu - hfd.fearBleu;
+    double diffScore = 0;
     for(unsigned int k=0; k<diff.size(); k++)
       diffScore += wt[k]*diff[k];
-    Score loss = delta - diffScore;
+    double loss = delta - diffScore;
     if(loss > 0) {
       // Update weights
-      Score diffNorm = 0;
+      double diffNorm = 0;
       for(unsigned int k=0; k<diff.size(); k++)
         diffNorm += diff[k]*diff[k];
-      Score eta = min(c, loss/diffNorm);
+      double eta = min(c, loss/diffNorm);
       for(unsigned int k=0; k<diff.size(); k++)
         wt[k] += eta*diff[k];
     }
@@ -101,9 +101,9 @@ void KbMiraLlWu::update(const std::string& reference,
 //---------------------------------------
 void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
                                     const Vector<Vector<std::string> >& nblists,
-                                    const Vector<Vector<Vector<Score> > >& scoreCompsVecs,
-                                    const Vector<Score>& currWeightsVec,
-                                    Vector<Score>& newWeightsVec)
+                                    const Vector<Vector<Vector<double> > >& scoreCompsVecs,
+                                    const Vector<double>& currWeightsVec,
+                                    Vector<double>& newWeightsVec)
 {
   // FIXME: this should be changed by a scorer class
   Vector<unsigned int> bg(10, 1);          // background corpus stats for BLEU
@@ -114,11 +114,11 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
   assert(scoreCompsVecs.size() == nSents);
 
   unsigned int nUpdates = 0;
-  Vector<Score> wTotals(currWeightsVec);
-  Vector<Score> max_wAvg;
+  Vector<double> wTotals(currWeightsVec);
+  Vector<double> max_wAvg;
 
-  Score max_bleu = 0;
-  Vector<Score> wt;
+  double max_bleu = 0;
+  Vector<double> wt(currWeightsVec);
   for(unsigned int j=0; j<nIters; j++) {
     // MIRA train for one epoch
     // FIXME: random sampling
@@ -129,20 +129,20 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
       HopeFear(references[i], nblists[i], scoreCompsVecs[i], wt, bg, &hfd);
       // Update weights
       if (hfd.hopeBleu  > hfd.fearBleu) {
-        Vector<Score> diff(hfd.hopeFeatures.size());
+        Vector<double> diff(hfd.hopeFeatures.size());
         for(unsigned int k=0; k<diff.size(); k++)
           diff[k] = hfd.hopeFeatures[k] - hfd.fearFeatures[k];
-        Score delta = hfd.hopeBleu - hfd.fearBleu;
-        Score diffScore = 0;
+        double delta = hfd.hopeBleu - hfd.fearBleu;
+        double diffScore = 0;
         for(unsigned int k=0; k<diff.size(); k++)
           diffScore += wt[k]*diff[k];
-        Score loss = delta - diffScore;
+        double loss = delta - diffScore;
         if(loss > 0) {
           // Update weights
-          Score diffNorm = 0;
+          double diffNorm = 0;
           for(unsigned int k=0; k<diff.size(); k++)
             diffNorm += diff[k]*diff[k];
-          Score eta = min(c, loss/diffNorm);
+          double eta = min(c, loss/diffNorm);
           for(unsigned int k=0; k<diff.size(); k++) {
             wt[k] += eta*diff[k];
             wTotals[k] += wt[k];
@@ -155,7 +155,7 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
       }
     }
     // average all seen weight vectors
-    Vector<Score> wAvg(wTotals.size(), 0);
+    Vector<double> wAvg(wTotals.size(), 0);
     for(unsigned int k=0; k<wAvg.size(); k++)
       wAvg[k] = wTotals[k]/nUpdates;
     // evaluate bleu of wAvg
@@ -165,7 +165,7 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
         MaxTranslation(wAvg, nblists[i], scoreCompsVecs[i], maxTranslation);
         maxTranslations.push_back(maxTranslation);
     }
-    Score bleu;
+    double bleu;
     Bleu(maxTranslations, references, bleu);
     if(bleu > max_bleu) {
       max_bleu = bleu;
@@ -177,14 +177,14 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
 
 
 //---------------------------------------
-void KbMiraLlWu::MaxTranslation(const Vector<Score>& wv,
+void KbMiraLlWu::MaxTranslation(const Vector<double>& wv,
                                 const Vector<std::string>& nBest,
-                                const Vector<Vector<Score> >& nScores,
+                                const Vector<Vector<double> >& nScores,
                                 std::string& maxTranslation)
 {
-  Score max_score;
+  double max_score;
   for(unsigned int n=0; n<nBest.size(); n++) {
-    Score score = 0;
+    double score = 0;
     for(unsigned int k=0; k<wv.size(); k++)
       score += wv[k]*nScores[n][k];
     // cout << " * " << score << " " << nBest[n] << endl;
@@ -199,19 +199,19 @@ void KbMiraLlWu::MaxTranslation(const Vector<Score>& wv,
 //---------------------------------------
 void KbMiraLlWu::HopeFear(const std::string& reference,
                           const Vector<std::string>& nBest,
-                          const Vector<Vector<Score> >& nScores,
-                          const Vector<Score>& wv,
+                          const Vector<Vector<double> >& nScores,
+                          const Vector<double>& wv,
                           const Vector<unsigned int>& backgroundBleu,
                           HopeFearData* hopeFear)
 {
   // Hope / fear decode
-  Score hope_scale = 1.0;
-  Score hope_total_score, fear_total_score;
+  double hope_scale = 1.0;
+  double hope_total_score, fear_total_score;
   for(unsigned int n=0; n<nBest.size(); n++) {
-    Score score = 0;
+    double score = 0;
     for(unsigned int k=0; k<wv.size(); k++)
       score += wv[k]*nScores[n][k];
-    Score bleu;
+    double bleu;
     Vector<unsigned int> stats(backgroundBleu.size());
     sentBckgrndBleu(nBest[n], reference, backgroundBleu, bleu, stats);
     // Hope
@@ -245,7 +245,7 @@ void KbMiraLlWu::HopeFear(const std::string& reference,
 void KbMiraLlWu::sentBckgrndBleu(const std::string& candidate,
                                  const std::string& reference,
                                  const Vector<unsigned int>& backgroundBleu,
-                                 Score& bleu,
+                                 double& bleu,
                                  Vector<unsigned int>& stats)
 {
   Vector<std::string> candidate_tokens, reference_tokens;
@@ -268,12 +268,12 @@ void KbMiraLlWu::sentBckgrndBleu(const std::string& candidate,
     stats[2*sz+1] = total;
   }
   // calculate brevity penalty
-  Score bp;
+  double bp;
   unsigned int rLen, cLen;
   cLen = stats[0] + backgroundBleu[0];
   rLen = stats[1] + backgroundBleu[1];
   if (cLen < rLen)
-    bp = (Score)exp(1-(double)rLen/cLen);
+    bp = (double)exp(1-(double)rLen/cLen);
   else bp = 1;
 
   // calculate bleu
@@ -285,7 +285,7 @@ void KbMiraLlWu::sentBckgrndBleu(const std::string& candidate,
     else            log_aux += my_log((double)prec/total);
   }
   log_aux /= 4;
-  bleu = bp * (Score)exp(log_aux);
+  bleu = bp * (double)exp(log_aux);
   bleu *= reference_tokens.size(); // scale bleu to roughly typical margins
 }
 
@@ -293,7 +293,7 @@ void KbMiraLlWu::sentBckgrndBleu(const std::string& candidate,
 // FIXME: substitute by scoring class
 void KbMiraLlWu::Bleu(const Vector<std::string>& candidates,
                       const Vector<std::string>& references,
-                      Score& bleu)
+                      double& bleu)
 {
   Vector<unsigned int> stats(6, 0);
   unsigned int prec, total;
@@ -318,9 +318,9 @@ void KbMiraLlWu::Bleu(const Vector<std::string>& candidates,
     }
   }
   // calculate brevity penalty
-  Score bp;
+  double bp;
   if (stats[0] < stats[1])
-    bp = (Score)exp((double)1-(double)stats[1]/stats[0]);
+    bp = (double)exp((double)1-(double)stats[1]/stats[0]);
   else bp = 1;
 
   // calculate bleu
@@ -329,8 +329,8 @@ void KbMiraLlWu::Bleu(const Vector<std::string>& candidates,
     prec = stats[sz*2];
     total = stats[sz*2+1];
     if (total == 0) log_aux += 1;
-    else            log_aux += (Score)my_log((double)prec/total);
+    else            log_aux += (double)my_log((double)prec/total);
   }
   log_aux /= 4;
-  bleu = bp * (Score)exp(log_aux);
+  bleu = bp * (double)exp(log_aux);
 }

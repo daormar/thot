@@ -56,8 +56,8 @@ void KbMiraLlWuTest::testOnlineUpdate()
   nbest.push_back("these sheets are reunidas in the following file :");
   nbest.push_back("those files are reunidas in the following file :");
 
-  Vector<Vector<Score> >nscores;
-  Vector<Score> x;
+  Vector<Vector<double> >nscores;
+  Vector<double> x;
   x.push_back(0.1); x.push_back(0.4);
   nscores.push_back(x);
   x.clear();
@@ -67,8 +67,8 @@ void KbMiraLlWuTest::testOnlineUpdate()
   x.push_back(0.1); x.push_back(0.4);
   nscores.push_back(x);
 
-  Vector<Score> wv(2, 1.);
-  Vector<Score> nwv;
+  Vector<double> wv(2, 1.);
+  Vector<double> nwv;
 
   updater.update(ref, nbest, nscores, wv, nwv);
 

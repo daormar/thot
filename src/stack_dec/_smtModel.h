@@ -212,7 +212,7 @@ void _smtModel<HYPOTHESIS>::updateLogLinearWeights(std::string refSent,
       // Obtain n-best list
   unsigned int len=NBEST_LIST_SIZE_FOR_LLWEIGHT_UPDATE;
   Vector<pair<Score,std::string> > nblist;
-  Vector<Vector<Score> > scoreCompsVec;
+  Vector<Vector<double> > scoreCompsVec;
   wgPtr->obtainNbestList(len,nblist,scoreCompsVec);
 
       // Obtain current weights

@@ -51,10 +51,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- typedefs -------------------------------------------
 struct HopeFearData {
-  Vector<Score> hopeFeatures, hopeBleuStats;
-  Vector<Score> fearFeatures;
-  Score hopeScore, hopeBleu;
-  Score fearScore, fearBleu;
+  Vector<double> hopeFeatures, hopeBleuStats;
+  Vector<double> fearFeatures;
+  double hopeScore, hopeBleu;
+  double fearScore, fearBleu;
 };
 
 
@@ -69,39 +69,39 @@ struct HopeFearData {
 class KbMiraLlWu: public BaseLogLinWeightUpdater
 {
  public:
-  KbMiraLlWu(Score C = 0.01,
-             Score gamma = 0.999,
+  KbMiraLlWu(double C = 0.01,
+             double gamma = 0.999,
              unsigned int J = 60);
 
       // Compute new weights for an individual sentence
   void update(const std::string& reference,
               const Vector<std::string>& nblist,
-              const Vector<Vector<Score> >& scoreCompsVec,
-              const Vector<Score>& currWeightsVec,
-              Vector<Score>& newWeightsVec);
+              const Vector<Vector<double> >& scoreCompsVec,
+              const Vector<double>& currWeightsVec,
+              Vector<double>& newWeightsVec);
 
       // Compute new weights for a closed corpus
   void updateClosedCorpus(const Vector<std::string>& reference,
                           const Vector<Vector<std::string> >& nblist,
-                          const Vector<Vector<Vector<Score> > >& scoreCompsVec,
-                          const Vector<Score>& currWeightsVec,
-                          Vector<Score>& newWeightsVec);
+                          const Vector<Vector<Vector<double> > >& scoreCompsVec,
+                          const Vector<double>& currWeightsVec,
+                          Vector<double>& newWeightsVec);
  private:
-  Score c;              // Step-size cap C
-  Score decay;          // Pseudo-corpus decay \gamma
+  double c;              // Step-size cap C
+  double decay;          // Pseudo-corpus decay \gamma
   unsigned int nIters;  // Max epochs J
 
      // Compute max scoring translaiton according to w
-  void MaxTranslation(const Vector<Score>& w,
+  void MaxTranslation(const Vector<double>& w,
                       const Vector<std::string>& nBest,
-                      const Vector<Vector<Score> >& nScores,
+                      const Vector<Vector<double> >& nScores,
                       std::string &maxTranslation);
 
      // Compute hope/fear translations and stores info in hopeFear
   void HopeFear(const std::string& reference,
                 const Vector<std::string>& nBest,
-                const Vector<Vector<Score> >& nScores,
-                const Vector<Score>& wv,
+                const Vector<Vector<double> >& nScores,
+                const Vector<double>& wv,
                 const Vector<unsigned int>& backgroundBleu,
                 HopeFearData* hopeFear);
 
@@ -109,13 +109,13 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
   void sentBckgrndBleu(const std::string& candidate,
                        const std::string& reference,
                        const Vector<unsigned int>& backgroundBleu,
-                       Score& bleu,
+                       double& bleu,
                        Vector<unsigned int>& stats);
 
     // Bleu for corpus
   void Bleu(const Vector<std::string>& candidates,
             const Vector<std::string>& references,
-            Score& bleu);
+            double& bleu);
 };
 
 #endif
