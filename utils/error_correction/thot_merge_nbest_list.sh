@@ -10,5 +10,5 @@ else
     file2=$2
 
     cat $file1 $file2 | ${AWK} '{if($1!="#") {$1="-"; printf"%s\n",$0}}' | \
-        LC_ALL="" LC_COLLATE=C ${SORT} | uniq | $AWK 'BEGIN{printf"#\n"}{printf"%s\n",$0}'
+        LC_ALL="" LC_COLLATE=C ${SORT} | $UNIQ | $AWK 'BEGIN{printf"#\n"}{printf"%s\n",$0}'
 fi
