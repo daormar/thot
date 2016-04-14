@@ -36,15 +36,17 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------
 PhrLocalSwLiTm::PhrLocalSwLiTm(BaseLogLinWeightUpdater* _llWeightUpdaterPtr):_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >(_llWeightUpdaterPtr)
 {
-  langModelInfoPtr->langModelPars.wpScaleFactor=0;
-  langModelInfoPtr->langModelPars.lmScaleFactor=1.0;
-  phrModelInfoPtr->phraseModelPars.srcSegmLenWeight=1.0;
-  phrModelInfoPtr->phraseModelPars.srcJumpWeight=1.0;
-  phrModelInfoPtr->phraseModelPars.trgSegmLenWeight=1.0;
-  phrModelInfoPtr->phraseModelPars.ptsWeight=1.0;
-  phrModelInfoPtr->phraseModelPars.pstWeight=0;
-  swModelInfoPtr->invSwModelPars.lenWeight=1.0;
-
+  Vector<float> tmwVec;
+  tmwVec.push_back(0); // langModelInfoPtr->langModelPars.wpScaleFactor
+  tmwVec.push_back(1.0); // langModelInfoPtr->langModelPars.lmScaleFactor
+  tmwVec.push_back(1.0); // phrModelInfoPtr->phraseModelPars.srcSegmLenWeight
+  tmwVec.push_back(1.0); // phrModelInfoPtr->phraseModelPars.srcJumpWeight
+  tmwVec.push_back(1.0); // phrModelInfoPtr->phraseModelPars.trgSegmLenWeight
+  tmwVec.push_back(1.0); // phrModelInfoPtr->phraseModelPars.ptsWeight
+  tmwVec.push_back(0); // phrModelInfoPtr->phraseModelPars.pstWeight
+  tmwVec.push_back(1.0); // swModelInfoPtr->invSwModelPars.lenWeight
+  setWeights(tmwVec);
+ 
       // Set default weight of the linear interpolation
   swModelInfoPtr->lambda=PHRSWLITM_DEFAULT_LAMBDA_VALUE;
 
@@ -203,14 +205,14 @@ bool PhrLocalSwLiTm::isCompleteHypData(const HypDataType& hypd)const
 //---------------------------------
 void PhrLocalSwLiTm::setWeights(Vector<float> wVec)
 {
-  if(wVec.size()>WPEN) langModelInfoPtr->langModelPars.wpScaleFactor=wVec[WPEN];
-  if(wVec.size()>LMODEL) langModelInfoPtr->langModelPars.lmScaleFactor=wVec[LMODEL];
-  if(wVec.size()>TSEGMLEN) phrModelInfoPtr->phraseModelPars.trgSegmLenWeight=wVec[TSEGMLEN];
-  if(wVec.size()>SJUMP) phrModelInfoPtr->phraseModelPars.srcJumpWeight=wVec[SJUMP];
-  if(wVec.size()>SSEGMLEN) phrModelInfoPtr->phraseModelPars.srcSegmLenWeight=wVec[SSEGMLEN];
-  if(wVec.size()>PTS) phrModelInfoPtr->phraseModelPars.ptsWeight=wVec[PTS];
-  if(wVec.size()>PST) phrModelInfoPtr->phraseModelPars.pstWeight=wVec[PST];
-  if(wVec.size()>SWLENLI) swModelInfoPtr->invSwModelPars.lenWeight=wVec[SWLENLI];
+  if(wVec.size()>WPEN) langModelInfoPtr->langModelPars.wpScaleFactor=smoothLlWeight(wVec[WPEN]);
+  if(wVec.size()>LMODEL) langModelInfoPtr->langModelPars.lmScaleFactor=smoothLlWeight(wVec[LMODEL]);
+  if(wVec.size()>TSEGMLEN) phrModelInfoPtr->phraseModelPars.trgSegmLenWeight=smoothLlWeight(wVec[TSEGMLEN]);
+  if(wVec.size()>SJUMP) phrModelInfoPtr->phraseModelPars.srcJumpWeight=smoothLlWeight(wVec[SJUMP]);
+  if(wVec.size()>SSEGMLEN) phrModelInfoPtr->phraseModelPars.srcSegmLenWeight=smoothLlWeight(wVec[SSEGMLEN]);
+  if(wVec.size()>PTS) phrModelInfoPtr->phraseModelPars.ptsWeight=smoothLlWeight(wVec[PTS]);
+  if(wVec.size()>PST) phrModelInfoPtr->phraseModelPars.pstWeight=smoothLlWeight(wVec[PST]);
+  if(wVec.size()>SWLENLI) swModelInfoPtr->invSwModelPars.lenWeight=smoothLlWeight(wVec[SWLENLI]);
 }
 
 //---------------------------------

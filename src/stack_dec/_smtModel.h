@@ -52,7 +52,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Constants ------------------------------------------
 
 #define NBEST_LIST_SIZE_FOR_LLWEIGHT_UPDATE 1000
-
+#define SMALL_LLWEIGHT 1e-6
 
 //--------------- Classes --------------------------------------------
 
@@ -143,6 +143,9 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
                           const HypDataType& new_hypd,
                           Hypothesis& new_hyp,
                           Vector<Score>& scoreComponents)=0;
+
+      // Helper functions
+  float smoothLlWeight(float weight);
 };
 
 //--------------- Template method definitions
@@ -259,6 +262,21 @@ void _smtModel<HYPOTHESIS>::updateLogLinearWeights(std::string refSent,
     cerr<<" - New weights     :";
     for(unsigned int i=0;i<newWeights.size();++i) cerr<<" "<<newWeights[i];
     cerr<<endl;
+  }
+}
+
+//--------------------------
+template<class HYPOTHESIS>
+float _smtModel<HYPOTHESIS>::smoothLlWeight(float weight)
+{
+  if(weight<=SMALL_LLWEIGHT && weight>=0)
+    return SMALL_LLWEIGHT;
+  else
+  {
+    if(weight>=-SMALL_LLWEIGHT && weight<0)
+      return -SMALL_LLWEIGHT;
+    else
+      return weight;
   }
 }
 
