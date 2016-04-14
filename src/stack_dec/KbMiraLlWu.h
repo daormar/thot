@@ -69,6 +69,10 @@ struct HopeFearData {
 class KbMiraLlWu: public BaseLogLinWeightUpdater
 {
  public:
+  KbMiraLlWu(Score C = 0.01,
+             Score gamma = 0.999,
+             unsigned int J = 60);
+
       // Compute new weights for an individual sentence
   void update(const std::string& reference,
               const Vector<std::string>& nblist,
@@ -83,6 +87,10 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
                           const Vector<Score>& currWeightsVec,
                           Vector<Score>& newWeightsVec);
  private:
+  Score c;              // Step-size cap C
+  Score decay;          // Pseudo-corpus decay \gamma
+  unsigned int nIters;  // Max epochs J
+
      // Compute max scoring translaiton according to w
   void MaxTranslation(const Vector<Score>& w,
                       const Vector<std::string>& nBest,
@@ -90,7 +98,7 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
                       std::string &maxTranslation);
 
      // Compute hope/fear translations and stores info in hopeFear
-  void HopeFear(const std::string reference,
+  void HopeFear(const std::string& reference,
                 const Vector<std::string>& nBest,
                 const Vector<Vector<Score> >& nScores,
                 const Vector<Score>& wv,
@@ -98,15 +106,15 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
                 HopeFearData* hopeFear);
 
     // Computes background Bleu for candidate and background corpus
-  void sentBckgrndBleu(const std::string candidate,
-                       const std::string reference,
+  void sentBckgrndBleu(const std::string& candidate,
+                       const std::string& reference,
                        const Vector<unsigned int>& backgroundBleu,
                        Score& bleu,
                        Vector<unsigned int>& stats);
 
     // Bleu for corpus
-  void Bleu(Vector<std::string> candidates,
-            Vector<std::string> references,
+  void Bleu(const Vector<std::string>& candidates,
+            const Vector<std::string>& references,
             Score& bleu);
 };
 
