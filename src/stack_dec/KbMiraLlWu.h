@@ -116,6 +116,11 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
   void Bleu(const Vector<std::string>& candidates,
             const Vector<std::string>& references,
             double& bleu);
+
+   //get permutation indices
+  void sampleWoReplacement(unsigned int populationSize,
+                           unsigned int sampleSize,
+                           vector<unsigned int>& samples);
 };
 
 #endif
