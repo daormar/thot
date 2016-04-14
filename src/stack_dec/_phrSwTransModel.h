@@ -237,11 +237,7 @@ template<class HYPOTHESIS>
 Score _phrSwTransModel<HYPOTHESIS>::invSwScore(const Vector<WordIndex>& s_,
                                                const Vector<WordIndex>& t_)
 {
-  if(swModelInfoPtr->invSwModelPars.swWeight==0) return 0;
-  else
-  {
-    return swModelInfoPtr->invSwModelPars.swWeight*(float)invSwLgProb(s_,t_);
-  }  
+  return swModelInfoPtr->invSwModelPars.swWeight*(float)invSwLgProb(s_,t_);
 }
 
 //---------------------------------
@@ -249,11 +245,7 @@ template<class HYPOTHESIS>
 Score _phrSwTransModel<HYPOTHESIS>::swScore(const Vector<WordIndex>& s_,
                                             const Vector<WordIndex>& t_)
 {
-  if(swModelInfoPtr->swModelPars.swWeight==0) return 0;
-  else
-  {  
-    return swModelInfoPtr->swModelPars.swWeight*(float)swLgProb(s_,t_);
-  }
+  return swModelInfoPtr->swModelPars.swWeight*(float)swLgProb(s_,t_);
 }
 
 //---------------------------------
@@ -315,53 +307,46 @@ template<class HYPOTHESIS>
 Score _phrSwTransModel<HYPOTHESIS>::sentLenScoreForPartialHyp(Bitset<MAX_SENTENCE_LENGTH_ALLOWED> key,
                                                               unsigned int curr_tlen)
 {
-  if(swModelInfoPtr->invSwModelPars.lenWeight==0)
+  if(this->state==MODEL_TRANS_STATE)
   {
-    return 0;
+        // The model is being used for translate a sentence
+    uint_pair range=obtainLengthRangeForGaps(key);
+    range.first+=curr_tlen;
+    range.second+=curr_tlen;
+    return sumSentLenScoreRange(this->srcSentVec.size(),range);
   }
   else
   {
-    if(this->state==MODEL_TRANS_STATE)
+    if(this->state==MODEL_TRANSREF_STATE)
     {
-          // The model is being used for translate a sentence
-      uint_pair range=obtainLengthRangeForGaps(key);
-      range.first+=curr_tlen;
-      range.second+=curr_tlen;
+          // The model is being used for align a pair of sentences
+      uint_pair range;
+      range.first=this->refSentVec.size();
+      range.second=this->refSentVec.size();      
       return sumSentLenScoreRange(this->srcSentVec.size(),range);
     }
     else
     {
-      if(this->state==MODEL_TRANSREF_STATE)
+          // The model is being used for translate a sentence given a
+          // prefix
+      if(curr_tlen>=this->prefSentVec.size())
       {
-            // The model is being used for align a pair of sentences
-        uint_pair range;
-        range.first=this->refSentVec.size();
-        range.second=this->refSentVec.size();      
+            // The prefix has been generated
+        uint_pair range=obtainLengthRangeForGaps(key);
+        range.first+=curr_tlen;
+        range.second+=curr_tlen;
         return sumSentLenScoreRange(this->srcSentVec.size(),range);
       }
       else
       {
-            // The model is being used for translate a sentence given a
-            // prefix
-        if(curr_tlen>=this->prefSentVec.size())
-        {
-              // The prefix has been generated
-          uint_pair range=obtainLengthRangeForGaps(key);
-          range.first+=curr_tlen;
-          range.second+=curr_tlen;
-          return sumSentLenScoreRange(this->srcSentVec.size(),range);
-        }
-        else
-        {
-              // The prefix has not been generated yet.  The predicted
-              // sentence range is (length(prefix),MAX_SENTENCE_LENGTH_ALLOWED),
-              // the prediction can be improved but the required code
-              // could be complex.
-          uint_pair range;
-          range.first=this->prefSentVec.size();
-          range.second=MAX_SENTENCE_LENGTH_ALLOWED;      
-          return sumSentLenScoreRange(this->srcSentVec.size(),range);
-        }
+            // The prefix has not been generated yet.  The predicted
+            // sentence range is (length(prefix),MAX_SENTENCE_LENGTH_ALLOWED),
+            // the prediction can be improved but the required code
+            // could be complex.
+        uint_pair range;
+        range.first=this->prefSentVec.size();
+        range.second=MAX_SENTENCE_LENGTH_ALLOWED;      
+        return sumSentLenScoreRange(this->srcSentVec.size(),range);
       }
     }
   }

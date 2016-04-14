@@ -640,25 +640,21 @@ Score _phraseBasedTransModel<HYPOTHESIS>::getNgramScoreGivenState(const Vector<W
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::getScoreEndGivenState(LM_State &state)
 {
-  if(langModelInfoPtr->langModelPars.lmScaleFactor==0) return 0;
+      // Try to find score in cache table
+  NgramCacheTable::iterator nctIter=cachedNgramScores.find(make_pair(S_END,state));
+  if(nctIter!=cachedNgramScores.end())
+  {
+    return nctIter->second;
+  }
   else
   {
-        // Try to find score in cache table
-    NgramCacheTable::iterator nctIter=cachedNgramScores.find(make_pair(S_END,state));
-    if(nctIter!=cachedNgramScores.end())
-    {
-      return nctIter->second;
-    }
-    else
-    {
 #ifdef WORK_WITH_ZERO_GRAM_PROB
-      Score result=langModelInfoPtr->langModelPars.lmScaleFactor*log((double)langModelInfoPtr->lmodel.getZeroGramProb());
+    Score result=langModelInfoPtr->langModelPars.lmScaleFactor*log((double)langModelInfoPtr->lmodel.getZeroGramProb());
 #else
-      Score result=langModelInfoPtr->langModelPars.lmScaleFactor*(double)langModelInfoPtr->lmodel.getLgProbEndGivenState(state);	
+    Score result=langModelInfoPtr->langModelPars.lmScaleFactor*(double)langModelInfoPtr->lmodel.getLgProbEndGivenState(state);	
 #endif
-      cachedNgramScores[make_pair(S_END,state)]=result;
-      return result;
-    }
+    cachedNgramScores[make_pair(S_END,state)]=result;
+    return result;
   }
 }
 
@@ -1045,29 +1041,22 @@ void _phraseBasedTransModel<HYPOTHESIS>::initHeuristicLocalt(int maxSrcPhraseLen
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::heurLmScoreLt(Vector<WordIndex>& t_)
 {
-  if(langModelInfoPtr->langModelPars.lmScaleFactor==0)
-  {
-    return 0;
-  }
-  else
-  {
-    Vector<WordIndex> lmHist;
-    unsigned int i;
-    LM_State lmState;
-    LgProb lp=0;
+  Vector<WordIndex> lmHist;
+  unsigned int i;
+  LM_State lmState;
+  LgProb lp=0;
   
-    if(t_.size()>2)
-    {
-      langModelInfoPtr->lmodel.getStateForBeginOfSentence(lmState);
-      langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(t_[0]),lmState);
-      langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(t_[1]),lmState);
-    }
-    for(i=2;i<t_.size();++i)
-    {
-      lp=lp+(double)langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(t_[i]),lmState);
-    }
-    return lp*(LgProb)langModelInfoPtr->langModelPars.lmScaleFactor;
+  if(t_.size()>2)
+  {
+    langModelInfoPtr->lmodel.getStateForBeginOfSentence(lmState);
+    langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(t_[0]),lmState);
+    langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(t_[1]),lmState);
   }
+  for(i=2;i<t_.size();++i)
+  {
+    lp=lp+(double)langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(t_[i]),lmState);
+  }
+  return lp*(LgProb)langModelInfoPtr->langModelPars.lmScaleFactor;
 }
 
 //---------------------------------
@@ -1085,68 +1074,55 @@ Score _phraseBasedTransModel<HYPOTHESIS>::heurLmScoreLtNoAdmiss(Vector<WordIndex
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::calcRefLmHeurScore(const _phraseBasedTransModel::Hypothesis& hyp)
 {
-  if(langModelInfoPtr->langModelPars.lmScaleFactor==0)
+  if(refHeurLmLgProb.empty())
   {
-    return 0;
-  }
-  else
-  {
-    if(refHeurLmLgProb.empty())
+        // Fill vector with lm components for the reference sentence
+    LgProb lp=0;
+    LM_State lmState;
+    langModelInfoPtr->lmodel.getStateForBeginOfSentence(lmState);
+    
+    refHeurLmLgProb.push_back(NULL_WORD);
+    for(unsigned int i=1;i<nrefSentIdVec.size();++i)
     {
-          // Fill vector with lm components for the reference sentence
-      LgProb lp=0;
-      LM_State lmState;
-      langModelInfoPtr->lmodel.getStateForBeginOfSentence(lmState);
-
-      refHeurLmLgProb.push_back(NULL_WORD);
-      for(unsigned int i=1;i<nrefSentIdVec.size();++i)
-      {
-        lp+=langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(nrefSentIdVec[i]),lmState);
-        refHeurLmLgProb.push_back(lp);
-      }
+      lp+=langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(nrefSentIdVec[i]),lmState);
+      refHeurLmLgProb.push_back(lp);
     }
-        // Return heuristic value
-    unsigned int len=hyp.partialTransLength();
-    LgProb lp=refHeurLmLgProb.back()-refHeurLmLgProb[len];
-
-    return (LgProb)langModelInfoPtr->langModelPars.lmScaleFactor*lp;
   }
+      // Return heuristic value
+  unsigned int len=hyp.partialTransLength();
+  LgProb lp=refHeurLmLgProb.back()-refHeurLmLgProb[len];
+
+  return (LgProb)langModelInfoPtr->langModelPars.lmScaleFactor*lp;
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::calcPrefLmHeurScore(const _phraseBasedTransModel::Hypothesis& hyp)
 {
-  if(langModelInfoPtr->langModelPars.lmScaleFactor==0)
+  if(prefHeurLmLgProb.empty())
   {
-    return 0;
+        // Fill vector with lm components for the reference sentence
+    LgProb lp=0;
+    LM_State lmState;
+    langModelInfoPtr->lmodel.getStateForBeginOfSentence(lmState);
+    
+    prefHeurLmLgProb.push_back(0);
+    for(unsigned int i=1;i<nprefSentIdVec.size();++i)
+    {
+      lp+=langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(nprefSentIdVec[i]),lmState);
+      prefHeurLmLgProb.push_back(lp);
+    }
   }
+      // Return heuristic value
+  LgProb lp;
+  unsigned int len=hyp.partialTransLength();
+  if(len>=nprefSentIdVec.size()-1)
+    lp=0;
   else
   {
-    if(prefHeurLmLgProb.empty())
-    {
-          // Fill vector with lm components for the reference sentence
-      LgProb lp=0;
-      LM_State lmState;
-      langModelInfoPtr->lmodel.getStateForBeginOfSentence(lmState);
-      
-      prefHeurLmLgProb.push_back(0);
-      for(unsigned int i=1;i<nprefSentIdVec.size();++i)
-      {
-        lp+=langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(nprefSentIdVec[i]),lmState);
-        prefHeurLmLgProb.push_back(lp);
-      }
-    }
-        // Return heuristic value
-    LgProb lp;
-    unsigned int len=hyp.partialTransLength();
-    if(len>=nprefSentIdVec.size()-1) lp=0;
-    else
-    {
-      lp=prefHeurLmLgProb.back()-prefHeurLmLgProb[len];
-    }
-    return (LgProb)langModelInfoPtr->langModelPars.lmScaleFactor*lp;
+    lp=prefHeurLmLgProb.back()-prefHeurLmLgProb[len];
   }
+  return (LgProb)langModelInfoPtr->langModelPars.lmScaleFactor*lp;
 }
 
 //---------------------------------
