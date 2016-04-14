@@ -64,16 +64,18 @@ class KbMiraLlWuTest: public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( KbMiraLlWuTest );
   CPPUNIT_TEST( testFeature );
+  CPPUNIT_TEST( testOnlineUpdate );
   CPPUNIT_TEST_SUITE_END();
 
  private:
-  KbMiraLlWu kbMiraLlWu;
-  
+  KbMiraLlWu updater;
+
  public:
   void setUp();
   void tearDown();
 
   void testFeature();
+  void testOnlineUpdate();
 };
 
 #endif

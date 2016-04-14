@@ -38,11 +38,13 @@ CPPUNIT_TEST_SUITE_REGISTRATION( KbMiraLlWuTest );
 //---------------------------------------
 void KbMiraLlWuTest::setUp()
 {
+  updater = new KbMiraLlWu();
 }
 
 //---------------------------------------
 void KbMiraLlWuTest::tearDown()
 {
+  delete updater;
 }
 
 //---------------------------------------
@@ -58,4 +60,36 @@ void KbMiraLlWuTest::testFeature()
   //     // Check
   // CPPUNIT_ASSERT_EQUAL( longNumber, money.getAmount() );
   // CPPUNIT_ASSERT_EQUAL( currencyFF, money.getCurrency() );
+}
+
+//---------------------------------------
+void KbMiraLlWuTest::testOnlineUpdate()
+{
+  std::string ref = "those documents are reunidas in the following file :";
+  Vector<std::string> nbest;
+  nbest.push_back("these documents are reunidas in the following file :");
+  nbest.push_back("these sheets are reunidas in the following file :");
+  nbest.push_back("those files are reunidas in the following file :");
+
+  Vector<Vector<Score> >nscores;
+  Vector<Score> x;
+  x.push_back(0.1); x.push_back(0.5);
+  nscores.push_back(x); // LM0= -48.661 WordPenalty0= -11 PhrasePenalty0= 20 TranslationModel0= -24.4921 -23.0584 -9.11355 -10.1318 TranslationModel1= 8.99907
+  x.clear();
+  x.push_back(0.5); x.push_back(0.1);
+  nscores.push_back(x); // LM0= -59.655 WordPenalty0= -11 PhrasePenalty0= 20 TranslationModel0= -15.7355 -16.9218 -4.97704 -7.49273 TranslationModel1= 8.99907
+  x.clear();
+  x.push_back(0.1); x.push_back(0.4);
+  nscores.push_back(x); // LM0= -55.5461 WordPenalty0= -11 PhrasePenalty0= 20 TranslationModel0= -22.2297 -17.6222 -9.47195 -6.98359 TranslationModel1= 8.99907
+
+  Vector<Score> wv(2, 1.);
+  Vector<Score> nwv;
+
+  updater.update(ref, nbest, nscores, wv, nwv);
+  updater.update(ref, nbest, nscores, nwv, wv);
+  updater.update(ref, nbest, nscores, wv, nwv);
+
+  for(unsigned int k=0; k<wv; k++) {
+    cout << k << ": " << wv[k] << " -> " << nwv[k] << endl;
+  }
 }
