@@ -38,13 +38,13 @@ CPPUNIT_TEST_SUITE_REGISTRATION( KbMiraLlWuTest );
 //---------------------------------------
 void KbMiraLlWuTest::setUp()
 {
-
+  updater = new KbMiraLlWu(0.1, 0.999, 30);
 }
 
 //---------------------------------------
 void KbMiraLlWuTest::tearDown()
 {
-
+  delete updater;
 }
 
 //---------------------------------------
@@ -70,11 +70,45 @@ void KbMiraLlWuTest::testOnlineUpdate()
   Vector<double> wv(2, 1.);
   Vector<double> nwv;
 
-  updater.update(ref, nbest, nscores, wv, nwv);
+  updater->update(ref, nbest, nscores, wv, nwv);
 
-  // for(unsigned int k=0; k<wv.size(); k++) {
-  //   cout << k << ": " << wv[k] << " -> " << nwv[k] << endl;
-  // }
+  CPPUNIT_ASSERT( wv[0] > nwv[0] );
+  CPPUNIT_ASSERT( wv[1] < nwv[1] );
+}
+
+//---------------------------------------
+void KbMiraLlWuTest::testFixedCorpusUpdate()
+{
+  std::string ref = "those documents are reunidas in the following file :";
+  Vector<std::string> references;
+  references.push_back(ref);
+
+  Vector<std::string> nbest;
+  nbest.push_back("these documents are reunidas in the following file :");
+  nbest.push_back("these sheets are reunidas in the following file :");
+  nbest.push_back("those files are reunidas in the following file :");
+  Vector<Vector<std::string> > nblist;
+  nblist.push_back(nbest);
+
+  Vector<Vector<double> >nscores;
+  Vector<double> x;
+  x.push_back(0.1); x.push_back(0.4);
+  nscores.push_back(x);
+  x.clear();
+  x.push_back(0.5); x.push_back(0.1);
+  nscores.push_back(x);
+  x.clear();
+  x.push_back(0.1); x.push_back(0.4);
+  nscores.push_back(x);
+  Vector<Vector<Vector<double> > > sclist;
+  sclist.push_back(nscores);
+
+
+  Vector<double> wv(2, 1.);
+  Vector<double> nwv;
+
+  updater->updateClosedCorpus(references, nblist, sclist, wv, nwv);
+
   CPPUNIT_ASSERT( wv[0] > nwv[0] );
   CPPUNIT_ASSERT( wv[1] < nwv[1] );
 }

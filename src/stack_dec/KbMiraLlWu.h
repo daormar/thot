@@ -81,9 +81,9 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
               Vector<double>& newWeightsVec);
 
       // Compute new weights for a closed corpus
-  void updateClosedCorpus(const Vector<std::string>& reference,
-                          const Vector<Vector<std::string> >& nblist,
-                          const Vector<Vector<Vector<double> > >& scoreCompsVec,
+  void updateClosedCorpus(const Vector<std::string>& references,
+                          const Vector<Vector<std::string> >& nblists,
+                          const Vector<Vector<Vector<double> > >& scoreCompsVecs,
                           const Vector<double>& currWeightsVec,
                           Vector<double>& newWeightsVec);
  private:
