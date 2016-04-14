@@ -58,16 +58,29 @@ void KbMiraLlWu::update(const std::string& reference,
   Vector<Score> wt(currWeightsVec);
   HopeFearData hfd;
   HopeFear(reference, nblist, scoreCompsVec, wt, bg, &hfd);
+  // cout << "BLEU" << endl;
+  // cout << hfd.hopeBleu << " " << hfd.fearBleu << endl;
+  // for(unsigned int k=0; k<bg.size(); k++)
+    // cout << k << " " << bg[k] << " " << hfd.hopeBleuStats[k] << endl;
+
+  // cout << "FEATURES " << hfd.hopeScore << " " << hfd.fearScore << endl;
+  // for(unsigned int k=0; k<hfd.hopeFeatures.size(); k++)
+    // cout << hfd.hopeFeatures[k] << " " << hfd.fearFeatures[k] << endl;
   // Update weights
   if (hfd.hopeBleu  > hfd.fearBleu) {
     Vector<Score> diff(hfd.hopeFeatures.size());
-    for(unsigned int k=0; k<diff.size(); k++)
-      diff[k] = hfd.hopeFeatures[k] - hfd.fearFeatures[k];
+    // cout << "DIFF: [";
+    // for(unsigned int k=0; k<diff.size(); k++) {
+    //   diff[k] = hfd.hopeFeatures[k] - hfd.fearFeatures[k];
+    //   cout << " " << diff[k];
+    // }
+    // cout << " ]"  << endl;
     Score delta = hfd.hopeBleu - hfd.fearBleu;
     Score diffScore = 0;
     for(unsigned int k=0; k<diff.size(); k++)
       diffScore += wt[k]*diff[k];
     Score loss = delta - diffScore;
+    // cout << delta << " " << diffScore << " " << loss << endl;
     if(loss > 0) {
       // Update weights
       Score diffNorm = 0;
@@ -81,6 +94,11 @@ void KbMiraLlWu::update(const std::string& reference,
   // evaluate bleu on new weights
   // std::string maxTranslation;
   // MaxTranslation(wt, nblist, scoreCompsVec, maxTranslation);
+  // cout << "WT: [";
+  // for(unsigned int k=0; k<wt.size(); k++)
+  //   cout << " " << wt[k];
+  // cout << " ]" << endl;
+
   newWeightsVec = wt;
 }
 
@@ -201,6 +219,7 @@ void KbMiraLlWu::HopeFear(const std::string reference,
     sentBckgrndBleu(nBest[n], reference, backgroundBleu, bleu, stats);
     // Hope
     if(n==0 || (hope_scale*score + bleu) > hope_total_score) {
+      // cout << "H: " << nBest[n] << endl;
       hope_total_score = hope_scale*score + bleu;
       hopeFear->hopeScore = score;
       hopeFear->hopeFeatures.clear();
@@ -213,6 +232,7 @@ void KbMiraLlWu::HopeFear(const std::string reference,
     }
     // Fear
     if(n==0 || (score - bleu) > fear_total_score) {
+      // cout << "F: " <<nBest[n] << endl;
       fear_total_score = score - bleu;
       hopeFear->fearScore = score;
       hopeFear->fearFeatures.clear();
