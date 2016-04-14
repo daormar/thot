@@ -184,9 +184,9 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
                                   const char *refSent,
                                   const char *sysSent,
                                   int verbose=0);
-  int batchRetrainSentPair(const char *srcSent,
-                           const char *refSent,
-                           int verbose=0);
+  int batchRetrainFeatsSentPair(const char *srcSent,
+                                const char *refSent,
+                                int verbose=0);
   float calculateNewLearningRate(int verbose=0);
   float werBasedLearningRate(int verbose=0);
   unsigned int map_n_am_suff_stats(unsigned int n);

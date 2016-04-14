@@ -317,7 +317,7 @@ int PhrLocalSwLiTm::onlineTrainFeatsSentPair(const char *srcSent,
       return minibatchTrainFeatsSentPair(srcSent,refSent,sysSent,verbose);
       break;
     case BATCH_RETRAINING:
-      return batchRetrainSentPair(srcSent,refSent,verbose);
+      return batchRetrainFeatsSentPair(srcSent,refSent,verbose);
       break;
     default:
       cerr<<"Warning: requested online learning algoritm with id="<<onlineTrainingPars.onlineLearningAlgorithm<<" is not implemented."<<endl;
@@ -504,9 +504,9 @@ int PhrLocalSwLiTm::minibatchTrainFeatsSentPair(const char *srcSent,
 }
 
 //---------------------------------
-int PhrLocalSwLiTm::batchRetrainSentPair(const char *srcSent,
-                                         const char *refSent,
-                                         int verbose/*=0*/)
+int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
+                                              const char *refSent,
+                                              int verbose/*=0*/)
 {
   Vector<std::string> srcSentStrVec=StrProcUtils::charItemsToVector(srcSent);
   Vector<std::string> trgSentStrVec=StrProcUtils::charItemsToVector(refSent);
