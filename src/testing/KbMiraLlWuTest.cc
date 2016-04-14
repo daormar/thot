@@ -48,21 +48,6 @@ void KbMiraLlWuTest::tearDown()
 }
 
 //---------------------------------------
-void KbMiraLlWuTest::testFeature()
-{
-  //     // Set up
-  // const std::string currencyFF( "FF" );
-  // const double longNumber = 12345678.90123;
-
-  //     // Process
-  // Money money( longNumber, currencyFF );
-
-  //     // Check
-  // CPPUNIT_ASSERT_EQUAL( longNumber, money.getAmount() );
-  // CPPUNIT_ASSERT_EQUAL( currencyFF, money.getCurrency() );
-}
-
-//---------------------------------------
 void KbMiraLlWuTest::testOnlineUpdate()
 {
   std::string ref = "those documents are reunidas in the following file :";

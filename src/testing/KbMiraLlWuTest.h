@@ -63,7 +63,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class KbMiraLlWuTest: public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( KbMiraLlWuTest );
-  CPPUNIT_TEST( testFeature );
   CPPUNIT_TEST( testOnlineUpdate );
   CPPUNIT_TEST_SUITE_END();
 
@@ -74,7 +73,6 @@ class KbMiraLlWuTest: public CppUnit::TestFixture
   void setUp();
   void tearDown();
 
-  void testFeature();
   void testOnlineUpdate();
 };
 
