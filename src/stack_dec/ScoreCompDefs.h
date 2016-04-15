@@ -45,31 +45,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define SWNOLEN    7
 #define SWLEN      8
 
-// Basic error correcting components
-#define ECM        9
-
-// Specific components for PbNoWpTm
-#define LMODEL_NOWP       0
-#define TSEGMLEN_NOWP     1
-#define SJUMP_NOWP        2
-#define SSEGMLEN_NOWP     3
-#define PTS_NOWP          4
-#define PST_NOWP          5
-
-// Specific components for SimplePhrTransModel
-#define LMODEL_SIMPLE     0
-#define PST_SIMPLE        1
-
-// Specific components for SimplePhrSwTm
-#define LMODEL_SIMPLE     0
-#define SWNOLEN_SIMPLE    1
-#define SWLEN_SIMPLE      2
-
-// Specific components for SimplePhrSwTm2
-#define LMODEL_SIMPLE     0
-#define PST_SIMPLE        1
-#define SWLEN_SIMPLE      2
-
 // Specific components for PhrLocalSwLiTm
 #define SWLENLI           7
 

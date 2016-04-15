@@ -36,15 +36,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------
 PhrLocalSwLiTm::PhrLocalSwLiTm(BaseLogLinWeightUpdater* _llWeightUpdaterPtr):_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >(_llWeightUpdaterPtr)
 {
-  Vector<float> tmwVec;
-  tmwVec.push_back(0); // langModelInfoPtr->langModelPars.wpScaleFactor
-  tmwVec.push_back(1.0); // langModelInfoPtr->langModelPars.lmScaleFactor
-  tmwVec.push_back(1.0); // phrModelInfoPtr->phraseModelPars.srcSegmLenWeight
-  tmwVec.push_back(1.0); // phrModelInfoPtr->phraseModelPars.srcJumpWeight
-  tmwVec.push_back(1.0); // phrModelInfoPtr->phraseModelPars.trgSegmLenWeight
-  tmwVec.push_back(1.0); // phrModelInfoPtr->phraseModelPars.ptsWeight
-  tmwVec.push_back(0); // phrModelInfoPtr->phraseModelPars.pstWeight
-  tmwVec.push_back(1.0); // swModelInfoPtr->invSwModelPars.lenWeight
+  Vector<float> tmwVec(8,0.0);
+  tmwVec[WPEN]=0;
+  tmwVec[LMODEL]=1.0;
+  tmwVec[TSEGMLEN]=1.0;
+  tmwVec[SJUMP]=1.0;
+  tmwVec[SSEGMLEN]=1.0;
+  tmwVec[PTS]=1.0;
+  tmwVec[PST]=0;
+  tmwVec[SWLENLI]=1.0;
   setWeights(tmwVec);
  
       // Set default weight of the linear interpolation
