@@ -219,9 +219,9 @@ void printUsage(void)
 {
   cerr << "thot_get_ll_weights [-c <string>]"<<endl;
   cerr << "                    [--help] [--version]"<<endl<<endl;
-  cerr << " -c <string>           : Configuration."<<endl;
-  cerr << " --help                : Display this help and exit."<<endl;
-  cerr << " --version             : Output version information and exit."<<endl;
+  cerr << "-c <string>           : Configuration."<<endl;
+  cerr << "--help                : Display this help and exit."<<endl;
+  cerr << "--version             : Output version information and exit."<<endl;
 }
 
 //---------------
