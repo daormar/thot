@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
   }
 }
 
-//--------------- init_translator function
+//---------------
 int init_translator(const thot_ms_dec_pars& tdp)
 {
   int err;
@@ -228,7 +228,7 @@ int init_translator(const thot_ms_dec_pars& tdp)
   return OK;
 }
 
-//--------------- release_translator function
+//---------------
 void release_translator(void)
 {
   delete pbtModelPtr;
@@ -236,7 +236,7 @@ void release_translator(void)
   delete llWeightUpdaterPtr;
 }
 
-//--------------- TranslateTestCorpus template function
+//---------------
 int translate_corpus(const thot_ms_dec_pars& tdp)
 {
   CURR_MODEL_TYPE::Hypothesis result;     // Results of the translation
@@ -350,7 +350,7 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
   return OK;
 }
 
-//--------------- handleParameters function
+//---------------
 int handleParameters(int argc,
                      char *argv[],
                      thot_ms_dec_pars& tdp)
@@ -388,7 +388,7 @@ int handleParameters(int argc,
   }
 }
 
-//--------------- takeParameters function
+//---------------
 int takeParameters(int argc,
                    char *argv[],
                    thot_ms_dec_pars& tdp)
@@ -407,7 +407,7 @@ int takeParameters(int argc,
   return OK;
 }
 
-//--------------- processParameters function
+//---------------
 int takeParametersFromCfgFile(std::string cfgFileName,
                               thot_ms_dec_pars& tdp)
 {
@@ -439,7 +439,7 @@ int takeParametersFromCfgFile(std::string cfgFileName,
     return OK;
 }
 
-//--------------- processParameters function
+//---------------
 void takeParametersGivenArgcArgv(int argc,
                                  char *argv[],
                                  thot_ms_dec_pars& tdp)
@@ -529,7 +529,7 @@ void takeParametersGivenArgcArgv(int argc,
  }
 }
 
-//--------------- checkParameters function
+//---------------
 int checkParameters(const thot_ms_dec_pars& tdp)
 {
   if(tdp.languageModelFileName.empty())
@@ -553,7 +553,7 @@ int checkParameters(const thot_ms_dec_pars& tdp)
   return OK;
 }
 
-//--------------- printParameters function
+//---------------
 void printParameters(const thot_ms_dec_pars& tdp)
 {
  cerr<<"W: "<<tdp.W<<endl;   
@@ -588,7 +588,7 @@ void printParameters(const thot_ms_dec_pars& tdp)
  cerr<<"verbosity level: "<<tdp.verbosity<<endl;
 }
 
-//--------------- stringToStringVector function
+//---------------
 Vector<string> stringToStringVector(string s)
 {
  Vector<string> vs;	
@@ -605,7 +605,7 @@ Vector<string> stringToStringVector(string s)
  return vs;	
 }
 
-//--------------- printConfig() function
+//---------------
 void printConfig(void)
 {
   BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
@@ -655,8 +655,7 @@ void printConfig(void)
   delete llWeightUpdaterPtr;
 }
 
-//--------------- printUsage() function
-
+//---------------
 void printUsage(void)
 {
   cerr << "thot_ms_dec      [-c <string>] [-tm <string>] [-lm <string>]"<<endl;
@@ -716,7 +715,7 @@ void printUsage(void)
   cerr << " --config              : Show current configuration."<<endl;
 }
 
-//--------------- version function
+//---------------
 void version(void)
 {
   cerr<<"thot_ms_dec is part of the thot package "<<endl;
