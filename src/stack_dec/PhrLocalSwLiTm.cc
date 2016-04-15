@@ -873,14 +873,6 @@ Score PhrLocalSwLiTm::incrScore(const Hypothesis& pred_hyp,
   new_hyp.hDebug=pred_hyp.hDebug;
   Vector<Score> prev_scoreComponents=scoreComponents;
 #endif
-
-      // Subtract previous sum word penalty lgprob
-  scoreComponents[WPEN]=sumWordPenaltyScore(trglen);
-  hypScoreInfo.score-=scoreComponents[WPEN];
-
-      // Subtract previous sentence length model contribution
-  scoreComponents[SWLENLI]=sentLenScoreForPartialHyp(hypKey,trglen);
-  hypScoreInfo.score-=scoreComponents[SWLENLI];
   
   for(unsigned int i=pred_hypd.sourceSegmentation.size();i<new_hypd.sourceSegmentation.size();++i)
   {
@@ -899,44 +891,46 @@ Score PhrLocalSwLiTm::incrScore(const Hypothesis& pred_hyp,
     {
       trgphrase.push_back(new_hypd.ntarget[k]);
     }
-        // Calculate new sum word penalty lgprob
-    scoreComponents[WPEN]=sumWordPenaltyScore(trglen+trgphrase.size());
+        // Calculate new sum word penalty score
+    scoreComponents[WPEN]-=sumWordPenaltyScore(trglen);
+    scoreComponents[WPEN]+=sumWordPenaltyScore(trglen+trgphrase.size());
 
-        // Obtain language model probability
+        // Obtain language model score
     scoreComponents[LMODEL]+=getNgramScoreGivenState(trgphrase,hypScoreInfo.lmHist);
 
-        // target segment length lgprob
+        // target segment length score
     scoreComponents[TSEGMLEN]+=this->trgSegmLenScore(trglen+trgphrase.size(),trglen,0);
 
-        // phrase alignment lgprob      
+        // phrase alignment score      
     int lastSrcPosStart=srcLeft;
     int prevSrcPosEnd;
     if(i>0) prevSrcPosEnd=new_hypd.sourceSegmentation[i-1].second;
     else prevSrcPosEnd=0;
     scoreComponents[SJUMP]+=this->srcJumpScore(abs(lastSrcPosStart-(prevSrcPosEnd+1))); 
 
-        // source segment length lgprob
+        // source segment length score
     scoreComponents[SSEGMLEN]+=srcSegmLenScore(i,new_hypd.sourceSegmentation,this->srcSentVec.size(),trgphrase.size());
 
-        // Obtain translation probability
+        // Obtain translation score
     for(unsigned int k=srcLeft;k<=srcRight;++k)
     {
       s_.push_back(nsrcSentIdVec[k]);
     }
-        // p(s_|t_) smoothed phrase lgprob
+        // p(s_|t_) smoothed phrase score
     scoreComponents[PST]+=smoothedPhrScore_s_t_(s_,trgphrase);
 
-        // p(t_|s_) smoothed phrase lgprob
+        // p(t_|s_) smoothed phrase score
     scoreComponents[PTS]+=smoothedPhrScore_t_s_(s_,trgphrase);
+
+        // Calculate sentence length model contribution
+    scoreComponents[SWLENLI]-=sentLenScoreForPartialHyp(hypKey,trglen);
+    for(unsigned int j=srcLeft;j<=srcRight;++j)
+      hypKey.set(j);
+    scoreComponents[SWLENLI]+=sentLenScoreForPartialHyp(hypKey,trglen+trgphrase.size());
 
         // Increase trglen
     trglen+=trgphrase.size();
 
-        // Calculate sentence length model contribution
-    for(unsigned int j=srcLeft;j<=srcRight;++j)
-      hypKey.set(j);
-    scoreComponents[SWLENLI]=sentLenScoreForPartialHyp(hypKey,trglen);
-    
 #ifdef THOT_DEBUG
     HypDebugData hdData;
 
@@ -948,9 +942,6 @@ Score PhrLocalSwLiTm::incrScore(const Hypothesis& pred_hyp,
       hdData.parameters.push_back(trgphrase[k]);
     }
     hdData.accum=0;
-        // set previous non-cumulative components to zero
-    prev_scoreComponents[WPEN]=0;
-    prev_scoreComponents[SWLENLI]=0;
     for(unsigned int k=0;k<scoreComponents.size();++k)
     {
       hdData.partialContribs.push_back(scoreComponents[k]-prev_scoreComponents[k]);
@@ -963,23 +954,22 @@ Score PhrLocalSwLiTm::incrScore(const Hypothesis& pred_hyp,
   if(numberOfUncoveredSrcWordsHypData(new_hypd)==0 &&
      numberOfUncoveredSrcWordsHypData(pred_hypd)!=0)
   {
-        // Calculate word penalty lgprob
-    scoreComponents[WPEN]=wordPenaltyScore(trglen);
+        // Calculate word penalty score
+    scoreComponents[WPEN]-=sumWordPenaltyScore(trglen);
+    scoreComponents[WPEN]+=wordPenaltyScore(trglen);
 
         // End of sentence score
     scoreComponents[LMODEL]+=getScoreEndGivenState(hypScoreInfo.lmHist);
 
         // Calculate sentence length score
-    scoreComponents[SWLENLI]=sentLenScore(srcSentVec.size(),trglen);
+    scoreComponents[SWLENLI]-=sentLenScoreForPartialHyp(hypKey,trglen);
+    scoreComponents[SWLENLI]+=sentLenScore(srcSentVec.size(),trglen);
 
 #ifdef THOT_DEBUG
     HypDebugData hdData;
       
     hdData.opCode="close";
     hdData.accum=0;
-        // set previous non-cumulative components to zero
-    prev_scoreComponents[WPEN]=0;
-    prev_scoreComponents[SWLENLI]=0;
     for(unsigned int k=0;k<scoreComponents.size();++k)
     {
       hdData.partialContribs.push_back(scoreComponents[k]-prev_scoreComponents[k]);
