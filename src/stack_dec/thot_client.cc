@@ -26,8 +26,17 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /*                                                                  */
 /********************************************************************/
 
+/**
+ * @file PhrLocalSwLiTm.h
+ *
+ * @brief Implements a translator client.
+ */
 
 //--------------- Include files --------------------------------------
+
+#if HAVE_CONFIG_H
+#  include <thot_config.h>
+#endif /* HAVE_CONFIG_H */
 
 #include "ThotDecoderClient.h"
 #include "ErrorDefs.h"
@@ -316,7 +325,7 @@ int TakeParameters(int argc,
    return OK;
  }
 
-     /* Verify verbose option */
+     /* Verify -e option */
  err=readOption(argc,argv, "-e");
  if(err==0)
  {
@@ -330,8 +339,9 @@ int TakeParameters(int argc,
 //--------------- printDesc() function
 void printDesc(void)
 {
-  cerr<<"thot_client written by Daniel Ortiz\n";
-  cerr<<"type \"thot_client --help\" to get usage information.\n";
+  cerr<<"thot_client is part of the thot package "<<endl;
+  cerr<<"thot version "<<THOT_VERSION<<endl;
+  cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
 }
 
 //--------------------------------
@@ -344,23 +354,23 @@ void printUsage(void)
   cerr<<"                             | -sc <string> | -ap <string> | -rp |\n";
   cerr<<"                             | -clear | -o <string> | -e } [ -v ]\n";
   cerr<<"                             [--help] [--version]\n\n";
-  cerr<<"-i <string>                  Set IP address of the server.\n\n";
-  cerr<<"-p <int>                     Server port.\n\n";
-  cerr<<"-uid <int>                   Set user id ("<<DEFAULT_USER_ID<<" by default).\n\n";
-  cerr<<"-tr <srcstring> <refstring>  Train server models given a sentence pair.\n\n";
-  // cerr<<"-tre <srcsent> <refsent>  Train error correcting model given a string pair.\n\n";
-  cerr<<"-t <string>                  Translate sentence.\n\n";
-  cerr<<"-c <srcstring> <refstring>   Verify model coverage for reference sentence.\n\n";
+  cerr<<"-i <string>                  Set IP address of the server.\n";
+  cerr<<"-p <int>                     Server port.\n";
+  cerr<<"-uid <int>                   Set user id ("<<DEFAULT_USER_ID<<" by default).\n";
+  cerr<<"-tr <srcstring> <refstring>  Train server models given a sentence pair.\n";
+  // cerr<<"-tre <srcsent> <refsent>  Train error correcting model given a string pair.\n";
+  cerr<<"-t <string>                  Translate sentence.\n";
+  cerr<<"-c <srcstring> <refstring>   Verify model coverage for reference sentence.\n";
   cerr<<"-sc <string>                 Start CAT system for the given sentence, using the\n";
-  cerr<<"                             null string as prefix.\n\n";
-  cerr<<"-ap <string>                 Add string to prefix.\n\n";
-  cerr<<"-rp <string>                 Reset prefix.\n\n";
-  cerr<<"-clear                       Clear loaded models.\n\n";
-  cerr<<"-pr                          Print models.\n\n";
-  cerr<<"-e                           End server.\n\n";
-  cerr<<"-v                           Verbose mode.\n\n";
-  cerr<<"--help                       Display this help and exit.\n\n";
-  cerr<<"--version                    Output version information and exit.\n\n";
+  cerr<<"                             null string as prefix.\n";
+  cerr<<"-ap <string>                 Add string to prefix.\n";
+  cerr<<"-rp <string>                 Reset prefix.\n";
+  cerr<<"-clear                       Clear loaded models.\n";
+  cerr<<"-pr                          Print models.\n";
+  cerr<<"-e                           End server.\n";
+  cerr<<"-v                           Verbose mode.\n";
+  cerr<<"--help                       Display this help and exit.\n";
+  cerr<<"--version                    Output version information and exit.\n";
 }
 //--------------------------------
 void version(void)
