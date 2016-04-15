@@ -38,8 +38,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iterator>
 #include <iostream>
 
-
 //--------------- KbMiraLlWu class functions
+
 //---------------------------------------
 KbMiraLlWu::KbMiraLlWu(double C,
                        double gamma,
@@ -48,7 +48,6 @@ KbMiraLlWu::KbMiraLlWu(double C,
   decay = gamma;
   nIters = J;
 };
-
 
 //---------------------------------------
 void KbMiraLlWu::update(const std::string& reference,
@@ -184,26 +183,24 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
   newWeightsVec = max_wAvg;
 }
 
-
 //---------------------------------------
 void KbMiraLlWu::MaxTranslation(const Vector<double>& wv,
                                 const Vector<std::string>& nBest,
                                 const Vector<Vector<double> >& nScores,
                                 std::string& maxTranslation)
 {
-  double max_score;
+  double max_score=-DBL_MAX;
   for (unsigned int n=0; n<nBest.size(); n++) {
     double score = 0;
     for (unsigned int k=0; k<wv.size(); k++)
       score += wv[k]*nScores[n][k];
     // cout << " * " << score << " " << nBest[n] << endl;
-    if (n==0 || score > max_score) {
+    if (score > max_score) {
         max_score = score;
         maxTranslation = nBest[n];
     }
   }
 }
-
 
 //---------------------------------------
 void KbMiraLlWu::HopeFear(const std::string& reference,
@@ -215,7 +212,8 @@ void KbMiraLlWu::HopeFear(const std::string& reference,
 {
   // Hope / fear decode
   double hope_scale = 1.0;
-  double hope_total_score, fear_total_score;
+  double hope_total_score=-DBL_MAX;
+  double fear_total_score=-DBL_MAX;
   for (unsigned int n=0; n<nBest.size(); n++) {
     double score = 0;
     for (unsigned int k=0; k<wv.size(); k++)
@@ -224,7 +222,7 @@ void KbMiraLlWu::HopeFear(const std::string& reference,
     Vector<unsigned int> stats(backgroundBleu.size());
     sentBckgrndBleu(nBest[n], reference, backgroundBleu, bleu, stats);
     // Hope
-    if (n==0 || (hope_scale*score + bleu) > hope_total_score) {
+    if ((hope_scale*score + bleu) > hope_total_score) {
       // cout << "H: " << nBest[n] << endl;
       hope_total_score = hope_scale*score + bleu;
       hopeFear->hopeScore = score;
@@ -237,7 +235,7 @@ void KbMiraLlWu::HopeFear(const std::string& reference,
         hopeFear->hopeBleuStats.push_back(stats[k]);
     }
     // Fear
-    if (n==0 || (score - bleu) > fear_total_score) {
+    if ((score - bleu) > fear_total_score) {
       // cout << "F: " <<nBest[n] << endl;
       fear_total_score = score - bleu;
       hopeFear->fearScore = score;
@@ -344,7 +342,7 @@ void KbMiraLlWu::Bleu(const Vector<std::string>& candidates,
   bleu = bp * (double)exp(log_aux);
 }
 
-
+//---------------------------------------
 void KbMiraLlWu::sampleWoReplacement(unsigned int populationSize,
                                      unsigned int sampleSize,
                                      vector<unsigned int>& samples)
