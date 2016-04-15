@@ -403,7 +403,8 @@ bool _incrPhraseModel::print(const char *prefix)
   retVal=printTTable(ttableFileName);
   if(retVal) return false;
 
-  cerr<<"Warning: generation of segmentation length tables is not currently working."<<endl;
+      // Warning: generation of segmentation length tables is not
+      // currently working
   sprintf(segLenTableFileName,"%s.seglentable",prefix);
   return printSegmLengthTable(segLenTableFileName);
 }
