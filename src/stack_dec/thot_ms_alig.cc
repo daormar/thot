@@ -135,7 +135,7 @@ CURR_MSTACK_TYPE<CURR_MODEL_TYPE>* translatorPtr;
 
 //--------------- Function Definitions -------------------------------
 
-//--------------- main function
+//---------------
 int main(int argc, char *argv[])
 {
       // Take and check parameters
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
   }
 }
 
-//--------------- init_translator function
+//---------------
 int init_translator(const thot_ms_alig_pars& tap)
 {
   int err;
@@ -242,14 +242,14 @@ int init_translator(const thot_ms_alig_pars& tap)
   return OK;
 }
 
-//--------------- release_translator function
+//---------------
 void release_translator(void)
 {
   delete pbtModelPtr;
   delete translatorPtr;
 }
 
-//--------------- align_corpus function
+//---------------
 int align_corpus(const thot_ms_alig_pars& tap)
 {
   CURR_MODEL_TYPE::Hypothesis result;     // Results of the translation
@@ -427,7 +427,7 @@ void print_alig_a3_final(std::string srcstr,
   }
 }
 
-//--------------- handleParameters function
+//---------------
 int handleParameters(int argc,
                      char *argv[],
                      thot_ms_alig_pars& tap)
@@ -465,7 +465,7 @@ int handleParameters(int argc,
   }
 }
 
-//--------------- takeParameters function
+//---------------
 int takeParameters(int argc,
                    char *argv[],
                    thot_ms_alig_pars& tap)
@@ -484,7 +484,7 @@ int takeParameters(int argc,
   return OK;
 }
 
-//--------------- processParameters function
+//---------------
 int takeParametersFromCfgFile(std::string cfgFileName,
                               thot_ms_alig_pars& tap)
 {
@@ -516,7 +516,7 @@ int takeParametersFromCfgFile(std::string cfgFileName,
     return OK;
 }
 
-//--------------- takeParametersGivenArgcArgv function
+//---------------
 void takeParametersGivenArgcArgv(int argc,
                                  char *argv[],
                                  thot_ms_alig_pars& tap)
@@ -623,7 +623,7 @@ void takeParametersGivenArgcArgv(int argc,
  }
 }
 
-//--------------- checkParameters function
+//---------------
 int checkParameters(const thot_ms_alig_pars& tap)
 {
   if(tap.languageModelFileName.empty())
@@ -659,7 +659,7 @@ int checkParameters(const thot_ms_alig_pars& tap)
   return OK;
 }
 
-//--------------- printParameters function
+//---------------
 void printParameters(const thot_ms_alig_pars& tap)
 {
  cerr<<"p option: "<<tap.p_option<<endl;
@@ -721,7 +721,7 @@ Vector<string> stringToStringVector(string s)
  return vs;	
 }
 
-//--------------- printConfig() function
+//---------------
 void printConfig(void)
 {
   BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
@@ -771,7 +771,7 @@ void printConfig(void)
   delete llWeightUpdaterPtr;
 }
 
-//--------------- printUsage() function
+//---------------
 void printUsage(void)
 {
   cerr << "thot_ms_alig   [-c <string>] [-tm <string>] [-lm <string>]"<<endl;
@@ -837,7 +837,7 @@ void printUsage(void)
   cerr << " --config              : Show current configuration."<<endl;
 }
 
-//--------------- version function
+//---------------
 void version(void)
 {
   cerr<<"thot_ms_alig is part of the thot package "<<endl;
