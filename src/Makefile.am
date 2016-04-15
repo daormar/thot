@@ -20,7 +20,7 @@ thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
 thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
 thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
 thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig thot_client		\
-thot_server thot_calc_bleu $(TESTING_PROGS)
+thot_server thot_get_ll_weights thot_calc_bleu $(TESTING_PROGS)
 
 if CASMACAT_LIB_ENABLED
 lib_LTLIBRARIES = libthot.la libthot_casmacat.la
@@ -349,6 +349,9 @@ thot_client_LDFLAGS = libthot.la
 thot_server_SOURCES = stack_dec/thot_server_pars.h	\
 stack_dec/thot_server.cc
 thot_server_LDFLAGS = libthot.la
+
+thot_get_ll_weights_SOURCES = stack_dec/thot_get_ll_weights.cc
+thot_get_ll_weights_LDFLAGS = libthot.la
 
 thot_calc_bleu_SOURCES = stack_dec/thot_calc_bleu.cc
 thot_calc_bleu_LDFLAGS = libthot.la
