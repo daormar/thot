@@ -118,14 +118,14 @@ void PfsmEcm::printWeights(ostream &outS)
 //---------------------------------------
 bool PfsmEcm::load(const char */*prefix*/)
 {
-  cerr<<"Warning: This error correction model has not any parameters to load from file"<<endl;
+//  cerr<<"Warning: This error correction model has not any parameters to load from file"<<endl;
   return OK;
 }
 
 //---------------------------------------
 bool PfsmEcm::print(const char */*prefix*/)
 {
-  cerr<<"Warning: This error correction model has not any parameters to print to file"<<endl;
+//  cerr<<"Warning: This error correction model has not any parameters to print to file"<<endl;
   return OK;
 }
 
