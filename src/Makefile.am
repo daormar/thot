@@ -361,11 +361,6 @@ thot_test_SOURCES = testing/thot_test.cc $(testing_h) $(testing_defs)
 thot_test_LDFLAGS = libthot.la
 endif
 
-if CASMACAT_LIB_ENABLED
-# test_casmacat_engines_SOURCES = stack_dec/test_casmacat_engines.cc
-# test_casmacat_engines_LDFLAGS = libthot_casmacat.la libthot.la
-endif
-
 # include headers
 includedir= $(prefix)/include/$(PACKAGE)
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\

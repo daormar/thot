@@ -23,4 +23,3 @@
 /home/dortiz/smt/software/stack_dec thot_client
 /home/dortiz/smt/software/stack_dec thot_server
 /home/dortiz/smt/software/stack_dec thot_get_ll_weights
-/home/dortiz/smt/software/stack_dec test_casmacat_engines
