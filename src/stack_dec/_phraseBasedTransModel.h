@@ -538,28 +538,14 @@ PositionIndex _phraseBasedTransModel<HYPOTHESIS>::getLastSrcPosCovered(const Hyp
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::wordPenaltyScore(unsigned int tlen)
 {
-  if(langModelInfoPtr->langModelPars.wpScaleFactor!=0)
-  {
-    return langModelInfoPtr->langModelPars.wpScaleFactor*(double)langModelInfoPtr->wordPenaltyModel.wordPenaltyScore(tlen);
-  }
-  else
-  {
-    return 0;
-  }
+  return langModelInfoPtr->langModelPars.wpScaleFactor*(double)langModelInfoPtr->wordPenaltyModel.wordPenaltyScore(tlen);
 }
 
 //---------------------------------------
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::sumWordPenaltyScore(unsigned int tlen)
 {
-  if(langModelInfoPtr->langModelPars.wpScaleFactor!=0)
-  {
-    return langModelInfoPtr->langModelPars.wpScaleFactor*(double)langModelInfoPtr->wordPenaltyModel.sumWordPenaltyScore(tlen);
-  }
-  else
-  {
-    return 0;
-  }
+  return langModelInfoPtr->langModelPars.wpScaleFactor*(double)langModelInfoPtr->wordPenaltyModel.sumWordPenaltyScore(tlen);
 }
 
 //---------------------------------------
@@ -593,47 +579,39 @@ template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::getNgramScoreGivenState(const Vector<WordIndex>& target,
                                                                   LM_State &state)
 {
-  if(langModelInfoPtr->langModelPars.lmScaleFactor!=0)
-  {
-        // Score not present in cache table
-    Vector<WordIndex> target_lm;
-    Score unweighted_result=0;
+      // Score not present in cache table
+  Vector<WordIndex> target_lm;
+  Score unweighted_result=0;
 
-        // target_lm stores the target sentence using indices of the language model
-    for(unsigned int i=0;i<target.size();++i)
-    {
-      target_lm.push_back(tmVocabToLmVocab(target[i]));
-    }
-      
-    for(unsigned int i=0;i<target_lm.size();++i)
-    {
-          // Try to find score in cache table
-      NgramCacheTable::iterator nctIter=cachedNgramScores.find(make_pair(target_lm[i],state));
-      if(nctIter!=cachedNgramScores.end())
-      {
-        unweighted_result+=nctIter->second;
-      }
-      else
-      {
-#ifdef WORK_WITH_ZERO_GRAM_PROB
-        Score scr=log((double)langModelInfoPtr->lmodel.getZeroGramProb());
-#else
-        Score scr=(double)langModelInfoPtr->lmodel.getNgramLgProbGivenState(target_lm[i],state);
-#endif
-            // Increase score
-        unweighted_result+=scr;
-            // Update cache table
-        cachedNgramScores[make_pair(target_lm[i],state)]=scr;
-      }
-    }
-        // Return result
-    return langModelInfoPtr->langModelPars.lmScaleFactor*unweighted_result;
-  }
-  
-  else
+      // target_lm stores the target sentence using indices of the language model
+  for(unsigned int i=0;i<target.size();++i)
   {
-    return 0;
+    target_lm.push_back(tmVocabToLmVocab(target[i]));
   }
+      
+  for(unsigned int i=0;i<target_lm.size();++i)
+  {
+        // Try to find score in cache table
+    NgramCacheTable::iterator nctIter=cachedNgramScores.find(make_pair(target_lm[i],state));
+    if(nctIter!=cachedNgramScores.end())
+    {
+      unweighted_result+=nctIter->second;
+    }
+    else
+    {
+#ifdef WORK_WITH_ZERO_GRAM_PROB
+      Score scr=log((double)langModelInfoPtr->lmodel.getZeroGramProb());
+#else
+      Score scr=(double)langModelInfoPtr->lmodel.getNgramLgProbGivenState(target_lm[i],state);
+#endif
+          // Increase score
+      unweighted_result+=scr;
+          // Update cache table
+      cachedNgramScores[make_pair(target_lm[i],state)]=scr;
+    }
+  }
+      // Return result
+  return langModelInfoPtr->langModelPars.lmScaleFactor*unweighted_result;
 }
 
 //---------------------------------------
@@ -679,21 +657,18 @@ template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::phrScore_s_t_(const Vector<WordIndex>& s_,
                                                         const Vector<WordIndex>& t_)
 {
+      // Check if score of phrase pair is stored in cache table
   Score score=0;
-  
-  if(this->phrModelInfoPtr->phraseModelPars.pstWeight!=0)
+  PhrasePairCacheTable::iterator ppctIter=cachedInversePhrScores.find(make_pair(s_,t_));
+  if(ppctIter!=cachedInversePhrScores.end()) return ppctIter->second;
+  else
   {
-        // Check if score of phrase pair is stored in cache table
-    PhrasePairCacheTable::iterator ppctIter=cachedInversePhrScores.find(make_pair(s_,t_));
-    if(ppctIter!=cachedInversePhrScores.end()) return ppctIter->second;
-    else
-    {
-          // Score has not been cached previously
-      score+=this->phrModelInfoPtr->phraseModelPars.pstWeight * (double)this->phrModelInfoPtr->invPbModel.logpt_s_(t_,s_);
-      cachedInversePhrScores[make_pair(s_,t_)]=score;
-    }
+        // Score has not been cached previously
+    score+=this->phrModelInfoPtr->phraseModelPars.pstWeight * (double)this->phrModelInfoPtr->invPbModel.logpt_s_(t_,s_);
+    cachedInversePhrScores[make_pair(s_,t_)]=score;
+
+    return score;
   }
-  return score;
 }
 
 //---------------------------------------
@@ -701,32 +676,24 @@ template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::phrScore_t_s_(const Vector<WordIndex>& s_,
                                                         const Vector<WordIndex>& t_)
 {
-  Score score=0;
-  
-  if(phrModelInfoPtr->phraseModelPars.ptsWeight!=0)
+      // Check if score of phrase pair is stored in cache table
+  PhrasePairCacheTable::iterator ppctIter=cachedDirectPhrScores.find(make_pair(s_,t_));
+  if(ppctIter!=cachedDirectPhrScores.end()) return ppctIter->second;
+  else
   {
-        // Check if score of phrase pair is stored in cache table
-    PhrasePairCacheTable::iterator ppctIter=cachedDirectPhrScores.find(make_pair(s_,t_));
-    if(ppctIter!=cachedDirectPhrScores.end()) return ppctIter->second;
-    else
-    {
-          // Score has not been cached previously
-      score=this->phrModelInfoPtr->phraseModelPars.ptsWeight * (double)this->phrModelInfoPtr->invPbModel.logps_t_(t_,s_);
-      cachedDirectPhrScores[make_pair(s_,t_)]=score;
-    }
+        // Score has not been cached previously
+    Score score=this->phrModelInfoPtr->phraseModelPars.ptsWeight * (double)this->phrModelInfoPtr->invPbModel.logps_t_(t_,s_);
+    cachedDirectPhrScores[make_pair(s_,t_)]=score;
+    
+    return score;
   }
-  return score;
 }
 
 //---------------------------------------
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::srcJumpScore(unsigned int offset)
 {
-  Score score=0;
-  
-  if(phrModelInfoPtr->phraseModelPars.srcJumpWeight!=0)
-    score=this->phrModelInfoPtr->phraseModelPars.srcJumpWeight * (double)this->phrModelInfoPtr->invPbModel.trgCutsLgProb(offset);
-  return score;  
+  return this->phrModelInfoPtr->phraseModelPars.srcJumpWeight * (double)this->phrModelInfoPtr->invPbModel.trgCutsLgProb(offset);
 }
 
 //---------------------------------------
@@ -736,11 +703,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::srcSegmLenScore(unsigned int k,
                                                           unsigned int srcLen,
                                                           unsigned int lastTrgSegmLen)
 {
-  if(phrModelInfoPtr->phraseModelPars.srcSegmLenWeight!=0)
-  {
-    return this->phrModelInfoPtr->phraseModelPars.srcSegmLenWeight * (double)this->phrModelInfoPtr->invPbModel.trgSegmLenLgProb(k,srcSegm,srcLen,lastTrgSegmLen);
-  }
-  else return 0;
+  return this->phrModelInfoPtr->phraseModelPars.srcSegmLenWeight * (double)this->phrModelInfoPtr->invPbModel.trgSegmLenLgProb(k,srcSegm,srcLen,lastTrgSegmLen);
 }
 
 //---------------------------------
@@ -749,11 +712,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::trgSegmLenScore(unsigned int x_k,
                                                           unsigned int x_km1,
                                                           unsigned int trgLen)
 {
-  if(phrModelInfoPtr->phraseModelPars.trgSegmLenWeight!=0)
-  {
-    return this->phrModelInfoPtr->phraseModelPars.trgSegmLenWeight * (double)this->phrModelInfoPtr->invPbModel.srcSegmLenLgProb(x_k,x_km1,trgLen);
-  }
-  else return 0;  
+  return this->phrModelInfoPtr->phraseModelPars.trgSegmLenWeight * (double)this->phrModelInfoPtr->invPbModel.srcSegmLenLgProb(x_k,x_km1,trgLen);
 }
 
 //---------------------------------
