@@ -295,11 +295,7 @@ template<class HYPOTHESIS>
 Score _phrSwTransModel<HYPOTHESIS>::sentLenScore(unsigned int slen,
                                                  unsigned int tlen)
 {
-  LgProb score=0;
-  
-  if(swModelInfoPtr->invSwModelPars.lenWeight!=0)
-    score=swModelInfoPtr->invSwModelPars.lenWeight*(float)swModelInfoPtr->invSwAligModel.sentLenLgProb(tlen,slen);
-  return score;
+  return swModelInfoPtr->invSwModelPars.lenWeight*(float)swModelInfoPtr->invSwAligModel.sentLenLgProb(tlen,slen);
 }
 
 //---------------------------------
