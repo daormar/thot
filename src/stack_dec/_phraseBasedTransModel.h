@@ -1015,7 +1015,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::heurLmScoreLt(Vector<WordIndex>& t_)
   {
     lp=lp+(double)langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(t_[i]),lmState);
   }
-  return lp*(LgProb)langModelInfoPtr->langModelPars.lmScaleFactor;
+  return lp*(double)langModelInfoPtr->langModelPars.lmScaleFactor;
 }
 
 //---------------------------------
@@ -1051,7 +1051,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::calcRefLmHeurScore(const _phraseBasedT
   unsigned int len=hyp.partialTransLength();
   LgProb lp=refHeurLmLgProb.back()-refHeurLmLgProb[len];
 
-  return (LgProb)langModelInfoPtr->langModelPars.lmScaleFactor*lp;
+  return (double)langModelInfoPtr->langModelPars.lmScaleFactor*(double)lp;
 }
 
 //---------------------------------
@@ -1081,7 +1081,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::calcPrefLmHeurScore(const _phraseBased
   {
     lp=prefHeurLmLgProb.back()-prefHeurLmLgProb[len];
   }
-  return (LgProb)langModelInfoPtr->langModelPars.lmScaleFactor*lp;
+  return (double)langModelInfoPtr->langModelPars.lmScaleFactor*(double)lp;
 }
 
 //---------------------------------

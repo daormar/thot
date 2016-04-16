@@ -237,7 +237,7 @@ template<class HYPOTHESIS>
 Score _phrSwTransModel<HYPOTHESIS>::invSwScore(const Vector<WordIndex>& s_,
                                                const Vector<WordIndex>& t_)
 {
-  return swModelInfoPtr->invSwModelPars.swWeight*(float)invSwLgProb(s_,t_);
+  return swModelInfoPtr->invSwModelPars.swWeight*(double)invSwLgProb(s_,t_);
 }
 
 //---------------------------------
@@ -245,7 +245,7 @@ template<class HYPOTHESIS>
 Score _phrSwTransModel<HYPOTHESIS>::swScore(const Vector<WordIndex>& s_,
                                             const Vector<WordIndex>& t_)
 {
-  return swModelInfoPtr->swModelPars.swWeight*(float)swLgProb(s_,t_);
+  return swModelInfoPtr->swModelPars.swWeight*(double)swLgProb(s_,t_);
 }
 
 //---------------------------------
@@ -295,7 +295,7 @@ template<class HYPOTHESIS>
 Score _phrSwTransModel<HYPOTHESIS>::sentLenScore(unsigned int slen,
                                                  unsigned int tlen)
 {
-  return swModelInfoPtr->invSwModelPars.lenWeight*(float)swModelInfoPtr->invSwAligModel.sentLenLgProb(tlen,slen);
+  return swModelInfoPtr->invSwModelPars.lenWeight*(double)swModelInfoPtr->invSwAligModel.sentLenLgProb(tlen,slen);
 }
 
 //---------------------------------
@@ -363,7 +363,7 @@ Prob _phrSwTransModel<HYPOTHESIS>::sumSentLenProb(unsigned int slen,
     sumSentLenProbVec[slen].push_back(-1.0);
 
       // Check if the probability is already stored
-  if((float)sumSentLenProbVec[slen][tlen]>=0.0)
+  if((double)sumSentLenProbVec[slen][tlen]>=0.0)
   {
     return sumSentLenProbVec[slen][tlen];
   }
@@ -390,9 +390,9 @@ Score _phrSwTransModel<HYPOTHESIS>::sumSentLenScoreRange(unsigned int slen,
                                                          uint_pair range)
 {
   if(range.first!=0)
-    return swModelInfoPtr->invSwModelPars.lenWeight*log((float)(sumSentLenProb(slen,range.second)-sumSentLenProb(slen,range.first-1)));
+    return swModelInfoPtr->invSwModelPars.lenWeight*log((double)(sumSentLenProb(slen,range.second)-sumSentLenProb(slen,range.first-1)));
   else
-    return swModelInfoPtr->invSwModelPars.lenWeight*log((float) sumSentLenProb(slen,range.second));
+    return swModelInfoPtr->invSwModelPars.lenWeight*log((double) sumSentLenProb(slen,range.second));
 }
 
 //---------------------------------
