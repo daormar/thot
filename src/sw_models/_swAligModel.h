@@ -40,8 +40,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 #include "BaseSwAligModel.h"
 #include "SingleWordVocab.h"
-#include "SentenceHandler.h"
-#include "LightSentenceHandler.h"
 #include "SwModelsShTypes.h"
 
 using namespace std;
