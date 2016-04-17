@@ -85,8 +85,23 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
   
   
   // class methods
-  
+
+      // Init language and alignment models
+  virtual bool loadLangModel(const char* prefixFileName)=0;
+  virtual bool loadAligModel(const char* prefixFileName)=0;
+
+      // Print models
+  virtual bool printLangModel(std::string printPrefix)=0;
+  virtual bool printAligModel(std::string printPrefix)=0;
+
+  virtual void clear(void)=0;
+
   ////// Hypotheses-related functions
+
+        // Heuristic-related functions
+  virtual void setHeuristic(unsigned int _heuristicId)=0;
+  virtual void addHeuristicToHyp(Hypothesis& hyp)=0;
+  virtual void sustractHeuristicToHyp(Hypothesis& hyp)=0;
 
       // Expansion-related functions
   virtual void expand(const Hypothesis& hyp,
