@@ -66,7 +66,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  * uncoupled assisted translators based on word-graphs.
  */
 
-template<class SMT_MODEL,class ECM_FOR_WG>
+template<class SMT_MODEL>
 class WgUncoupledAssistedTrans: public _assistedTrans<SMT_MODEL>
 {
  public:
@@ -80,7 +80,7 @@ class WgUncoupledAssistedTrans: public _assistedTrans<SMT_MODEL>
   void link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr);
 
       // Link word-graph processor
-  void link_wgp(BaseWgProcessorForAnlp<ECM_FOR_WG>* _wgp_ptr);
+  void link_wgp(BaseWgProcessorForAnlp* _wgp_ptr);
 
       // Link word-graph handler
   void link_wgh(WgHandler* _wgh_ptr);
@@ -119,8 +119,8 @@ class WgUncoupledAssistedTrans: public _assistedTrans<SMT_MODEL>
       // CAT-related data members
   _stackDecoderRec<SMT_MODEL>* sdr_ptr;         // Pointer to a stack decoder
 
-  BaseWgProcessorForAnlp<ECM_FOR_WG>* wgp_ptr;  // Pointer to a word-graph
-                                                // processor
+  BaseWgProcessorForAnlp* wgp_ptr;  // Pointer to a word-graph
+                                    // processor
 
   WordGraph* wg_ptr;  // Pointer to word-graph. It is required only when
                       // the word-graph is obtained from the word-graph
@@ -155,8 +155,8 @@ class WgUncoupledAssistedTrans: public _assistedTrans<SMT_MODEL>
 //--------------- WgUncoupledAssistedTrans template class method definitions
 
 //---------------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::WgUncoupledAssistedTrans(void):_assistedTrans<SMT_MODEL>()
+template<class SMT_MODEL>
+WgUncoupledAssistedTrans<SMT_MODEL>::WgUncoupledAssistedTrans(void):_assistedTrans<SMT_MODEL>()
 {
   psutw=1;
   putw=1;
@@ -171,8 +171,8 @@ WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::WgUncoupledAssistedTrans(void):_
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr)
+template<class SMT_MODEL>
+void WgUncoupledAssistedTrans<SMT_MODEL>::link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr)
 {
   sdr_ptr=dynamic_cast<_stackDecoderRec<SMT_MODEL>*>(_sd_ptr);
   if(!sdr_ptr)
@@ -182,25 +182,25 @@ void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::link_stack_trans(BaseStackD
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::link_wgp(BaseWgProcessorForAnlp<ECM_FOR_WG>* _wgp_ptr)
+template<class SMT_MODEL>
+void WgUncoupledAssistedTrans<SMT_MODEL>::link_wgp(BaseWgProcessorForAnlp* _wgp_ptr)
 {
   wgp_ptr=_wgp_ptr;
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::link_wgh(WgHandler* _wgh_ptr)
+template<class SMT_MODEL>
+void WgUncoupledAssistedTrans<SMT_MODEL>::link_wgh(WgHandler* _wgh_ptr)
 {
   wgh_ptr=_wgh_ptr;
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-std::string WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::translateWithPrefix(std::string s,
-                                                                                std::string pref,
-                                                                                const RejectedWordsSet& rejectedWords,
-                                                                                unsigned int verbose)
+template<class SMT_MODEL>
+std::string WgUncoupledAssistedTrans<SMT_MODEL>::translateWithPrefix(std::string s,
+                                                                     std::string pref,
+                                                                     const RejectedWordsSet& rejectedWords,
+                                                                     unsigned int verbose)
 {
       // Set catPrefix data member
   catPrefix=pref;
@@ -266,11 +266,11 @@ std::string WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::translateWithPrefix(
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
+template<class SMT_MODEL>
 WordGraph*
-WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::obtainWgUsingWgHandler(std::string s,
-                                                                       bool& completeHypReachable,
-                                                                       unsigned int verbose/*=0*/)
+WgUncoupledAssistedTrans<SMT_MODEL>::obtainWgUsingWgHandler(std::string s,
+                                                            bool& completeHypReachable,
+                                                            unsigned int verbose/*=0*/)
 {
   completeHypReachable=false;
   bool found;
@@ -326,11 +326,11 @@ WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::obtainWgUsingWgHandler(std::stri
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
+template<class SMT_MODEL>
 WordGraph*
-WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::obtainWgUsingTranslator(std::string s,
-                                                                        bool& completeHypReachable,
-                                                                        unsigned int /*verbose=0*/)
+WgUncoupledAssistedTrans<SMT_MODEL>::obtainWgUsingTranslator(std::string s,
+                                                             bool& completeHypReachable,
+                                                             unsigned int /*verbose=0*/)
 {
       // Get pointer to the statistical machine translation model
   SMT_MODEL* smtm_ptr=sdr_ptr->get_smt_model_ptr();
@@ -352,10 +352,10 @@ WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::obtainWgUsingTranslator(std::str
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-std::string WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::addStrToPrefix(std::string s,
-                                                                           const RejectedWordsSet& rejectedWords,
-                                                                           unsigned int verbose)
+template<class SMT_MODEL>
+std::string WgUncoupledAssistedTrans<SMT_MODEL>::addStrToPrefix(std::string s,
+                                                                const RejectedWordsSet& rejectedWords,
+                                                                unsigned int verbose)
 {
       // Set word-graph processor weights
   wgp_ptr->set_wgw(psutw);
@@ -382,45 +382,45 @@ std::string WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::addStrToPrefix(std::
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::resetPrefix(void)
+template<class SMT_MODEL>
+void WgUncoupledAssistedTrans<SMT_MODEL>::resetPrefix(void)
 {
   catPrefix.clear();
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::setWeights(Vector<float> wVec)
+template<class SMT_MODEL>
+void WgUncoupledAssistedTrans<SMT_MODEL>::setWeights(Vector<float> wVec)
 {
   if(wVec.size()>=1) psutw=wVec[0];
   if(wVec.size()>=2) putw=wVec[1];
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-unsigned int WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::getNumWeights(void)
+template<class SMT_MODEL>
+unsigned int WgUncoupledAssistedTrans<SMT_MODEL>::getNumWeights(void)
 {
   return 2;
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::printWeights(ostream &outS)
+template<class SMT_MODEL>
+void WgUncoupledAssistedTrans<SMT_MODEL>::printWeights(ostream &outS)
 {
   outS<<"psutw: "<<psutw<<" , ";
   outS<<"putw: "<<putw;
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::clear(void)
+template<class SMT_MODEL>
+void WgUncoupledAssistedTrans<SMT_MODEL>::clear(void)
 {
   resetPrefix();
 }
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::~WgUncoupledAssistedTrans(void)
+template<class SMT_MODEL>
+WgUncoupledAssistedTrans<SMT_MODEL>::~WgUncoupledAssistedTrans(void)
 {
   delete wg_ptr;
 }
@@ -428,8 +428,8 @@ WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::~WgUncoupledAssistedTrans(void)
 //--------------- WgUncoupledAssistedTrans template class function definitions
 
 //---------------------------------
-template<class SMT_MODEL,class ECM_FOR_WG>
-void WgUncoupledAssistedTrans<SMT_MODEL,ECM_FOR_WG>::set_wgp(float _wgp)
+template<class SMT_MODEL>
+void WgUncoupledAssistedTrans<SMT_MODEL>::set_wgp(float _wgp)
 {
   wgp=_wgp;
 }
