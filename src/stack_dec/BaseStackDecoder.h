@@ -45,6 +45,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "BaseSmtModel.h"
 #include "ErrorDefs.h"
 #include <Score.h>
 #include <iostream>
@@ -74,13 +75,14 @@ class BaseStackDecoder
   typedef typename SMT_MODEL::Hypothesis Hypothesis;
 
       // Link statistical translation model with the decoder
-  virtual void link_smt_model(SMT_MODEL* _smtm_ptr)=0;
+  virtual bool link_smt_model(BaseSmtModel<Hypothesis>* _smtm_ptr)=0;
       // Get pointer to the statistical translation model
   virtual SMT_MODEL* get_smt_model_ptr(void)=0;
 
       // Functions for setting the decoder parameters
   virtual void set_S_par(unsigned int S_par)=0;
   virtual void set_I_par(unsigned int I_par)=0;
+  virtual void set_breadthFirst(bool b)=0;
 
       // Basic services
   virtual Hypothesis translate(std::string s)=0; 
