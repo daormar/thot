@@ -127,7 +127,7 @@ void ThotDecoder::config(void)
   /////////// begin of mutex 
 
   BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
-  CURR_MODEL_TYPE model(llWeightUpdaterPtr);
+  BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* modelPtr=new CURR_MODEL_TYPE(tdCommonVars.llWeightUpdaterPtr);
   BaseErrorCorrectingModel* ecModelPtr=new CURR_ECM_TYPE();
   
       // Print server configuration
@@ -139,7 +139,7 @@ void ThotDecoder::config(void)
     cerr << "  - Model notes: "<<CURR_MODEL_NOTES<<endl;
   }
   cerr<<"  - Weights for the smt model and their default values: ";
-  model.printWeights(cerr);
+  modelPtr->printWeights(cerr);
   cerr << endl;
       
       // Print language model information
