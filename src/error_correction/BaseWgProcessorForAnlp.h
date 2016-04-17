@@ -46,6 +46,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "BaseErrorCorrectingModel.h"
 #include <NbestCorrections.h>
 #include <WordGraph.h>
 #include "RejectedWordsSet.h"
@@ -76,7 +77,7 @@ class BaseWgProcessorForAnlp
   
       // Link error correcting model for word-graph with the word-graph
       // processor
-  virtual void link_ecm_wg(ECM_FOR_WG* _ecm_wg_ptr)=0;
+  virtual bool link_ecm_wg(BaseErrorCorrectingModel* _ecm_wg_ptr)=0;
 
   virtual void set_wgw(float _wgWeight)=0;
       // Set word-graph weight
