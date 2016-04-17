@@ -34,6 +34,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SmtModelTypes.h"
 #include "MultiStackTypes.h"
 #include "StackDecSwModelTypes.h"
+#include "BasePbTransModel.h"
+#include "_stackDecoderRec.h"
+#include "BaseStackDecoder.h"
 #include "ctimer.h"
 #include "options.h"
 #include "ErrorDefs.h"
@@ -120,8 +123,8 @@ void printConfig(void);
 //--------------- Global variables -----------------------------------
 
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
-CURR_MODEL_TYPE *pbtModelPtr;
-CURR_MSTACK_TYPE<CURR_MODEL_TYPE>* translatorPtr;
+BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
+_stackDecoderRec<CURR_MODEL_TYPE>* stackDecoderRecPtr;
 
 //--------------- Function Definitions -------------------------------
 
@@ -160,70 +163,70 @@ int init_translator(const thot_ms_dec_pars& tdp)
   cerr<<"\n- Initializing model and test corpus...\n\n";
 
   llWeightUpdaterPtr=new KbMiraLlWu;
-  pbtModelPtr=new CURR_MODEL_TYPE(llWeightUpdaterPtr);
+  smtModelPtr=new CURR_MODEL_TYPE(llWeightUpdaterPtr);
   
-  err=pbtModelPtr->loadLangModel(tdp.languageModelFileName.c_str());
+  err=smtModelPtr->loadLangModel(tdp.languageModelFileName.c_str());
   if(err==ERROR)
   {
-    delete pbtModelPtr;
+    delete smtModelPtr;
     delete llWeightUpdaterPtr;
     return ERROR;
   }
 
-  err=pbtModelPtr->loadAligModel(tdp.transModelPref.c_str());
+  err=smtModelPtr->loadAligModel(tdp.transModelPref.c_str());
   if(err==ERROR)
   {
-    delete pbtModelPtr;
+    delete smtModelPtr;
     delete llWeightUpdaterPtr;
     return ERROR;
   }
 
       // Set heuristic
-  pbtModelPtr->setHeuristic(tdp.heuristic);
+  smtModelPtr->setHeuristic(tdp.heuristic);
 
       // Set weights
-  pbtModelPtr->setWeights(tdp.weightVec);
-  pbtModelPtr->printWeights(cerr);
+  smtModelPtr->setWeights(tdp.weightVec);
+  smtModelPtr->printWeights(cerr);
   cerr<<endl;
 
       // Set model parameters
-  pbtModelPtr->set_W_par(tdp.W);
-  pbtModelPtr->set_A_par(tdp.A);
-  pbtModelPtr->set_U_par(tdp.nomon);
+  smtModelPtr->set_W_par(tdp.W);
+  smtModelPtr->set_A_par(tdp.A);
+  smtModelPtr->set_U_par(tdp.nomon);
 
       // Set verbosity
-  pbtModelPtr->setVerbosity(tdp.verbosity);
+  smtModelPtr->setVerbosity(tdp.verbosity);
     
       // Create a translator instance
-  translatorPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
+  stackDecoderRecPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
 
       // Link translation model
-  translatorPtr->link_smt_model(pbtModelPtr);
+  stackDecoderRecPtr->link_smt_model(smtModelPtr);
     
       // Set translator parameters
-  translatorPtr->set_S_par(tdp.S);
-  translatorPtr->set_I_par(tdp.I);
+  stackDecoderRecPtr->set_S_par(tdp.S);
+  stackDecoderRecPtr->set_I_par(tdp.I);
 #ifdef MULTI_STACK_USE_GRAN
-  translatorPtr->set_G_par(tdp.G);
+  stackDecoderRecPtr->set_G_par(tdp.G);
 #endif  
       // Enable best score pruning if the decoder is not going to obtain
       // n-best translations or word-graphs
   if(tdp.wgPruningThreshold==DISABLE_WORDGRAPH)
-    translatorPtr->useBestScorePruning(true);
+    stackDecoderRecPtr->useBestScorePruning(true);
 
       // Set breadthFirst flag
-  translatorPtr->set_breadthFirst(!tdp.be);
+  stackDecoderRecPtr->set_breadthFirst(!tdp.be);
 
 #ifndef THOT_DISABLE_REC
       // Enable word graph according to wgPruningThreshold
   if(tdp.wordGraphFileName!="")
   {
     if(tdp.wgPruningThreshold!=DISABLE_WORDGRAPH)
-      translatorPtr->enableWordGraph();
+      stackDecoderRecPtr->enableWordGraph();
   }
 #endif
       // Set translator verbosity
-  translatorPtr->setVerbosity(tdp.verbosity);
+  stackDecoderRecPtr->setVerbosity(tdp.verbosity);
 
   return OK;
 }
@@ -231,8 +234,8 @@ int init_translator(const thot_ms_dec_pars& tdp)
 //---------------
 void release_translator(void)
 {
-  delete pbtModelPtr;
-  delete translatorPtr;
+  delete smtModelPtr;
+  delete stackDecoderRecPtr;
   delete llWeightUpdaterPtr;
 }
 
@@ -287,21 +290,21 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
       }
        
           //------- Translate sentence
-      result=translatorPtr->translate(srcSentenceString);
+      result=stackDecoderRecPtr->translate(srcSentenceString);
 
           //--------------------------
       if(tdp.verbosity) ctimer(&elapsed,&ucpu,&scpu);
 
       if(tdp.outFile.empty())
-        cout<<pbtModelPtr->getTransInPlainText(result)<<endl;
+        cout<<smtModelPtr->getTransInPlainText(result)<<endl;
       else
-        outS<<pbtModelPtr->getTransInPlainText(result)<<endl;
+        outS<<smtModelPtr->getTransInPlainText(result)<<endl;
           
       if(tdp.verbosity)
       {
-        pbtModelPtr->printHyp(result,cerr,tdp.verbosity);
+        smtModelPtr->printHyp(result,cerr,tdp.verbosity);
 #         ifdef THOT_STATS
-        translatorPtr->printStats();
+        stackDecoderRecPtr->printStats();
 #         endif
 
         cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<endl<<endl;
@@ -313,8 +316,8 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
       {
         char wgFileNameForSent[256];
         sprintf(wgFileNameForSent,"%s_%06d",tdp.wordGraphFileName.c_str(),sentNo);
-        translatorPtr->pruneWordGraph(tdp.wgPruningThreshold);
-        translatorPtr->printWordGraph(wgFileNameForSent);
+        stackDecoderRecPtr->pruneWordGraph(tdp.wgPruningThreshold);
+        stackDecoderRecPtr->printWordGraph(wgFileNameForSent);
       }
 #endif
 #ifdef THOT_ENABLE_GRAPH
@@ -325,9 +328,9 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
       if(!graphOutS) cerr<<"Error while printing search graph to file."<<endl;
       else
       {
-        translatorPtr->printSearchGraphStream(graphOutS);
+        stackDecoderRecPtr->printSearchGraphStream(graphOutS);
         graphOutS<<"Stack ID. Out\n";
-        translatorPtr->printGraphForHyp(result,graphOutS);
+        stackDecoderRecPtr->printGraphForHyp(result,graphOutS);
         graphOutS.close();        
       }
 #endif        
@@ -609,7 +612,7 @@ Vector<string> stringToStringVector(string s)
 void printConfig(void)
 {
   BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
-  CURR_MODEL_TYPE model(llWeightUpdaterPtr);
+  BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* modelPtr=new CURR_MODEL_TYPE(llWeightUpdaterPtr);
 
   cerr <<"* Translator configuration:"<<endl;
       // Print translation model information
@@ -619,7 +622,7 @@ void printConfig(void)
     cerr << "  - Model notes: "<<CURR_MODEL_NOTES<<endl;
   }
   cerr<<"  - Weights for the smt model and their default values: ";
-  model.printWeights(cerr);
+  modelPtr->printWeights(cerr);
   cerr<<endl;
 
       // Print language model information
@@ -652,6 +655,7 @@ void printConfig(void)
   cerr << endl;
 
       // Release pointers
+  delete modelPtr;
   delete llWeightUpdaterPtr;
 }
 
