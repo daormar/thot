@@ -31,6 +31,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "WgUncoupledAssistedTrans.h"
 #include "StackDecWgProcessorForAnlpTypes.h"
 #include "AssistedTransTypes.h"
+#include "_stackDecoderRec.h"
+#include "BaseStackDecoder.h"
 #include "BasePrePosProcessor.h"
 
 using namespace std;
@@ -41,7 +43,8 @@ class ThotDecoderPerUserVars
 {
  public:
   BasePrePosProcessor* prePosProcessorPtr;
-  CURR_MSTACK_TYPE<CURR_MODEL_TYPE>* translatorPtr;
+  BaseStackDecoder<CURR_MODEL_TYPE>* stackDecoderPtr;
+  _stackDecoderRec<CURR_MODEL_TYPE>* stackDecoderRecPtr;
   BaseEcModelForNbUcat* ecModelForNbUcatPtr;
   BaseAssistedTrans<CURR_MODEL_TYPE>* assistedTransPtr;
   _nbUncoupledAssistedTrans<CURR_MODEL_TYPE>* _nbUncoupledAssistedTransPtr;

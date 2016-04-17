@@ -29,6 +29,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "StackDecSwModelTypes.h"
 #include "StackDecEcModelTypes.h"
 #include "StackDecEcModelForNbUcatTypes.h"
+#include "BasePbTransModel.h"
 #include "BaseErrorCorrectingModel.h"
 #include "BaseLogLinWeightUpdater.h"
 #include <WgHandler.h>
@@ -43,7 +44,7 @@ class ThotDecoderCommonVars
 {
  public:
   WgHandler* wgHandlerPtr;
-  CURR_MODEL_TYPE* smtModelPtr;
+  BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
   BaseErrorCorrectingModel* ecModelPtr;
   bool curr_ecm_valid_for_wg;
   BaseLogLinWeightUpdater* llWeightUpdaterPtr;

@@ -827,7 +827,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     std::string preprocRefSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(refSent,tdState.caseconv,false);
 
         // Obtain system translation
-    CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].translatorPtr->translate(preprocSrcSent.c_str());
+    CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(preprocSrcSent.c_str());
     std::string preprocSysSent=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
 
     if(verbose)
@@ -862,10 +862,10 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
         // Pre/post processing disabled
 
         // Obtain system translation
-#ifndef THOT_DISABLE_REC
-    tdPerUserVarsVec[idx].translatorPtr->enableWordGraph();
-#endif
-    CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].translatorPtr->translate(srcSent);
+    if(tdPerUserVarsVec[idx].stackDecoderRecPtr)
+      tdPerUserVarsVec[idx].stackDecoderRecPtr->enableWordGraph();
+
+    CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(srcSent);
     std::string sysSent=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
 
         // Add sentence to word-predictor
@@ -877,28 +877,29 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     double prevElapsedTime,elapsedTime,ucpu,scpu;
     ctimer(&prevElapsedTime,&ucpu,&scpu);
 
-#ifndef THOT_DISABLE_REC
 #ifdef THOT_ENABLE_UPDATE_LLWEIGHTS
-        // Train log-linear weights
-
-        // Retrieve pointer to wordgraph (use word-graph provided by the
-        // word-graph handler if available)
-    Vector<std::string> sentStrVec=StrProcUtils::stringToStringVector(srcSent);
-    bool found;
-    std::string wgPathStr=tdCommonVars.wgHandlerPtr->pathAssociatedToSentence(sentStrVec,found);
-    if(found)
+    if(tdPerUserVarsVec[idx].stackDecoderRecPtr)
     {
-      WordGraph wg;
-      wg.load(wgPathStr.c_str());
-      tdCommonVars.smtModelPtr->updateLogLinearWeights(refSent,&wg,verbose);
+          // Train log-linear weights
+      
+          // Retrieve pointer to wordgraph (use word-graph provided by the
+          // word-graph handler if available)
+      Vector<std::string> sentStrVec=StrProcUtils::stringToStringVector(srcSent);
+      bool found;
+      std::string wgPathStr=tdCommonVars.wgHandlerPtr->pathAssociatedToSentence(sentStrVec,found);
+      if(found)
+      {
+        WordGraph wg;
+        wg.load(wgPathStr.c_str());
+        tdCommonVars.smtModelPtr->updateLogLinearWeights(refSent,&wg,verbose);
+      }
+      else
+      {
+        WordGraph* wgPtr=tdPerUserVarsVec[idx].stackDecoderRecPtr->getWordGraphPtr();
+        tdCommonVars.smtModelPtr->updateLogLinearWeights(refSent,wgPtr,verbose);
+      }    
+      tdPerUserVarsVec[idx].stackDecoderRecPtr->disableWordGraph();
     }
-    else
-    {
-      WordGraph* wgPtr=tdPerUserVarsVec[idx].translatorPtr->getWordGraphPtr();
-      tdCommonVars.smtModelPtr->updateLogLinearWeights(refSent,wgPtr,verbose);
-    }    
-    tdPerUserVarsVec[idx].translatorPtr->disableWordGraph();
-#endif
 #endif
 
         // Train generative models
@@ -1099,7 +1100,7 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
   else
   {
         // Use translator
-    CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].translatorPtr->translate(sentenceToTranslate.c_str());
+    CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(sentenceToTranslate.c_str());
     std::string result=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
     return result;
   }
@@ -1120,11 +1121,10 @@ bool ThotDecoder::translateSentencePrintWg(int user_id,
   if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
 
       // Enable word graph generation
-#ifndef THOT_DISABLE_REC
-  tdPerUserVarsVec[idx].translatorPtr->enableWordGraph();
-#else
-  cerr<<"Warning! current configuration does not allow to generate word graphs"<<endl;
-#endif
+  if(tdPerUserVarsVec[idx].stackDecoderRecPtr)
+    tdPerUserVarsVec[idx].stackDecoderRecPtr->enableWordGraph();
+  else
+    cerr<<"Warning! current configuration does not allow to generate word graphs"<<endl;
   
   if(verbose)
   {
@@ -1138,13 +1138,13 @@ bool ThotDecoder::translateSentencePrintWg(int user_id,
     {
       cerr<<" - preproc. source: "<<preprocSrcSent<<endl;
     }
-    hyp=tdPerUserVarsVec[idx].translatorPtr->translate(preprocSrcSent.c_str());
+    hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(preprocSrcSent.c_str());
     std::string aux=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
     result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
   }
   else
   {
-    hyp=tdPerUserVarsVec[idx].translatorPtr->translate(sentenceToTranslate);
+    hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(sentenceToTranslate);
     result=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
   }
   if(verbose)
@@ -1154,9 +1154,8 @@ bool ThotDecoder::translateSentencePrintWg(int user_id,
 
       // Print word graph
   int ret=ERROR;
-#ifndef THOT_DISABLE_REC
-  ret=tdPerUserVarsVec[idx].translatorPtr->printWordGraph(wgFilename);
-#endif
+  if(tdPerUserVarsVec[idx].stackDecoderRecPtr)
+    ret=tdPerUserVarsVec[idx].stackDecoderRecPtr->printWordGraph(wgFilename);
   
       /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1192,13 +1191,13 @@ bool ThotDecoder::sentPairVerCov(int user_id,
       cerr<<" - preproc. source: "<<preprocSrcSent<<endl;
       cerr<<" - preproc. reference: "<<preprocRefSent<<endl;
     }
-    hyp=tdPerUserVarsVec[idx].translatorPtr->verifyCoverageForRef(preprocSrcSent.c_str(),preprocRefSent.c_str());
+    hyp=tdPerUserVarsVec[idx].stackDecoderPtr->verifyCoverageForRef(preprocSrcSent.c_str(),preprocRefSent.c_str());
     std::string aux=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
     result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
   }
   else
   {
-    hyp=tdPerUserVarsVec[idx].translatorPtr->verifyCoverageForRef(srcSent,refSent);
+    hyp=tdPerUserVarsVec[idx].stackDecoderPtr->verifyCoverageForRef(srcSent,refSent);
     result=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
   }
   if(verbose)
@@ -1269,7 +1268,7 @@ void ThotDecoder::set_S(int user_id,
   {
     cerr<<"S parameter is set to "<<S_par<<endl;
   }
-  tdPerUserVarsVec[idx].translatorPtr->set_S_par(S_par);
+  tdPerUserVarsVec[idx].stackDecoderPtr->set_S_par(S_par);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1325,7 +1324,7 @@ void ThotDecoder::set_be(int user_id,
   {
     cerr<<"be parameter is set to "<<be_par<<endl;
   }
-  tdPerUserVarsVec[idx].translatorPtr->set_breadthFirst(!be_par);
+  tdPerUserVarsVec[idx].stackDecoderPtr->set_breadthFirst(!be_par);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1348,7 +1347,7 @@ bool ThotDecoder::set_G(int user_id,
   {
     cerr<<"G parameter is set to "<<G_par<<endl;
   }
-  tdPerUserVarsVec[idx].translatorPtr->set_G_par(G_par);
+  tdPerUserVarsVec[idx].stackDecoderPtr->set_G_par(G_par);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1610,7 +1609,7 @@ bool ThotDecoder::startCat(int user_id,
   {
         // Execute specific actions for uncoupled assisted translators
         // Disable best score pruning
-    tdPerUserVarsVec[idx].translatorPtr->useBestScorePruning(false);
+    tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(false);
   }
 
   totalPrefixVec[idx]="";
@@ -1648,7 +1647,7 @@ bool ThotDecoder::startCat(int user_id,
   {
         // Execute specific actions for uncoupled assisted translators
         // Enable best score pruning
-    tdPerUserVarsVec[idx].translatorPtr->useBestScorePruning(true);
+    tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
   }
 
   /////////// end of mutex 
@@ -1686,7 +1685,7 @@ void ThotDecoder::addStrToPref(int user_id,
   {
         // Execute specific actions for uncoupled assisted translators
         // Disable best score pruning
-    tdPerUserVarsVec[idx].translatorPtr->useBestScorePruning(false);
+    tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(false);
   }
   
   if(totalPrefixVec[idx]=="") totalPrefixVec[idx]=strToAddToPref;
@@ -1759,7 +1758,7 @@ void ThotDecoder::addStrToPref(int user_id,
   {
         // Execute specific actions for uncoupled assisted translators
         // Enable best score pruning
-    tdPerUserVarsVec[idx].translatorPtr->useBestScorePruning(true);
+    tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
   }
 
 #if THOT_AT_TYPE != WG_UNCTRANS
@@ -1939,17 +1938,20 @@ bool ThotDecoder::printModels(int verbose/*=0*/)
 int ThotDecoder::init_idx_data(size_t idx)
 {    
       // Create a translator instance
-  tdPerUserVarsVec[idx].translatorPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
+  tdPerUserVarsVec[idx].stackDecoderPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
 
       // Set breadthFirst flag
-  tdPerUserVarsVec[idx].translatorPtr->set_breadthFirst(false);
+  tdPerUserVarsVec[idx].stackDecoderPtr->set_breadthFirst(false);
 
       // Link translation model
-  tdPerUserVarsVec[idx].translatorPtr->link_smt_model(tdCommonVars.smtModelPtr);
+  tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdCommonVars.smtModelPtr);
 
       // Enable best score pruning
-  tdPerUserVarsVec[idx].translatorPtr->useBestScorePruning(true);
+  tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
 
+      // Determine if the translator incorporates hypotheses recombination
+  tdPerUserVarsVec[idx].stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<CURR_MODEL_TYPE>*>(tdPerUserVarsVec[idx].stackDecoderPtr);
+  
       // Create error correcting model for uncoupled cat instance
   tdPerUserVarsVec[idx].ecModelForNbUcatPtr=new CURR_ECM_NB_UCAT_TYPE();
 
@@ -1960,7 +1962,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].assistedTransPtr=new CURR_AT_TYPE<CURR_MODEL_TYPE>();
   
       // Link translator with the assisted translator
-  tdPerUserVarsVec[idx].assistedTransPtr->link_stack_trans(tdPerUserVarsVec[idx].translatorPtr);
+  tdPerUserVarsVec[idx].assistedTransPtr->link_stack_trans(tdPerUserVarsVec[idx].stackDecoderPtr);
 
       // Check if assistedTransPtr points to an uncoupled assisted
       // translator
@@ -2080,7 +2082,7 @@ void ThotDecoder::release_idx_data(size_t idx)
       // Check if data is already released
   if(!idxDataReleased[idx])
   {
-    delete tdPerUserVarsVec[idx].translatorPtr;
+    delete tdPerUserVarsVec[idx].stackDecoderPtr;
     delete tdPerUserVarsVec[idx].ecModelForNbUcatPtr;
     if(tdCommonVars.curr_ecm_valid_for_wg)
     {
