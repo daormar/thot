@@ -33,6 +33,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SmtModelTypes.h"
 #include "MultiStackTypes.h"
 #include "StackDecSwModelTypes.h"
+#include "BasePbTransModel.h"
+#include "_stackDecoderRec.h"
 #include "ctimer.h"
 #include "options.h"
 #include "ErrorDefs.h"
@@ -130,8 +132,8 @@ void printConfig(void);
 //--------------- Global variables -----------------------------------
 
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
-CURR_MODEL_TYPE *pbtModelPtr;
-CURR_MSTACK_TYPE<CURR_MODEL_TYPE>* translatorPtr;
+BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
+_stackDecoderRec<CURR_MODEL_TYPE>* stackDecoderRecPtr;
 
 //--------------- Function Definitions -------------------------------
 
@@ -172,60 +174,60 @@ int init_translator(const thot_ms_alig_pars& tap)
   cerr<<"\n- Initializing model and test corpus...\n\n";
 
   llWeightUpdaterPtr=new KbMiraLlWu;
-  pbtModelPtr=new CURR_MODEL_TYPE(llWeightUpdaterPtr);
+  smtModelPtr=new CURR_MODEL_TYPE(llWeightUpdaterPtr);
 
-  err=pbtModelPtr->loadLangModel(tap.languageModelFileName.c_str());
+  err=smtModelPtr->loadLangModel(tap.languageModelFileName.c_str());
   if(err==ERROR)
   {
-    delete pbtModelPtr;
+    delete smtModelPtr;
     delete llWeightUpdaterPtr;
     return ERROR;
   }
 
-  err=pbtModelPtr->loadAligModel(tap.transModelPref.c_str());
+  err=smtModelPtr->loadAligModel(tap.transModelPref.c_str());
   if(err==ERROR)
   {
-    delete pbtModelPtr;
+    delete smtModelPtr;
     delete llWeightUpdaterPtr;
     return ERROR;
   }
 
       // Set heuristic
-  pbtModelPtr->setHeuristic(tap.heuristic);
+  smtModelPtr->setHeuristic(tap.heuristic);
 
       // Set weights
-  pbtModelPtr->setWeights(tap.weightVec);
-  pbtModelPtr->printWeights(cerr);
+  smtModelPtr->setWeights(tap.weightVec);
+  smtModelPtr->printWeights(cerr);
   cerr<<endl;
 
       // Set model parameters
-  pbtModelPtr->set_W_par(tap.W);
-  pbtModelPtr->set_A_par(tap.A);
-  pbtModelPtr->set_E_par(tap.E);
-  pbtModelPtr->set_U_par(tap.nomon);
+  smtModelPtr->set_W_par(tap.W);
+  smtModelPtr->set_A_par(tap.A);
+  smtModelPtr->set_E_par(tap.E);
+  smtModelPtr->set_U_par(tap.nomon);
 
       // Set verbosity
-  pbtModelPtr->setVerbosity(tap.verbosity);
+  smtModelPtr->setVerbosity(tap.verbosity);
 
       // Create a translator instance
-  translatorPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
+  stackDecoderRecPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
 
       // Link translation model
-  translatorPtr->link_smt_model(pbtModelPtr);
+  stackDecoderRecPtr->link_smt_model(smtModelPtr);
     
       // Set translator parameters
-  translatorPtr->set_S_par(tap.S);
-  translatorPtr->set_I_par(tap.I);
+  stackDecoderRecPtr->set_S_par(tap.S);
+  stackDecoderRecPtr->set_I_par(tap.I);
 #ifdef MULTI_STACK_USE_GRAN
-  translatorPtr->set_G_par(tap.G);
+  stackDecoderRecPtr->set_G_par(tap.G);
 #endif
       // Enable best score pruning if the decoder is not going to obtain
       // n-best translations or word-graphs
   if(tap.wgPruningThreshold==DISABLE_WORDGRAPH)
-    translatorPtr->useBestScorePruning(true);
+    stackDecoderRecPtr->useBestScorePruning(true);
 
       // Set breadthFirst flag
-  translatorPtr->set_breadthFirst(!tap.be);
+  stackDecoderRecPtr->set_breadthFirst(!tap.be);
 
 #ifndef THOT_DISABLE_REC
       // Enable word graph according to wgPruningThreshold
@@ -233,11 +235,11 @@ int init_translator(const thot_ms_alig_pars& tap)
   {
     
     if(tap.wgPruningThreshold!=DISABLE_WORDGRAPH)
-      translatorPtr->enableWordGraph();    
+      stackDecoderRecPtr->enableWordGraph();    
   }
 #endif
       // Set translator verbosity
-  translatorPtr->setVerbosity(tap.verbosity);
+  stackDecoderRecPtr->setVerbosity(tap.verbosity);
 
   return OK;
 }
@@ -245,8 +247,9 @@ int init_translator(const thot_ms_alig_pars& tap)
 //---------------
 void release_translator(void)
 {
-  delete pbtModelPtr;
-  delete translatorPtr;
+  delete llWeightUpdaterPtr;
+  delete smtModelPtr;
+  delete stackDecoderRecPtr;
 }
 
 //---------------
@@ -311,19 +314,19 @@ int align_corpus(const thot_ms_alig_pars& tap)
       if(tap.p_option)
       {
             // Translate with prefix
-        result=translatorPtr->translateWithPrefix(srcSentenceString,trgSentenceString);
+        result=stackDecoderRecPtr->translateWithPrefix(srcSentenceString,trgSentenceString);
       }
       else
       {
         if(tap.cov_option)
         {
               // Verify model coverage
-          result=translatorPtr->verifyCoverageForRef(srcSentenceString,trgSentenceString);
+          result=stackDecoderRecPtr->verifyCoverageForRef(srcSentenceString,trgSentenceString);
         }
         else
         {
               // Translate with reference
-          result=translatorPtr->translateWithRef(srcSentenceString,trgSentenceString);
+          result=stackDecoderRecPtr->translateWithRef(srcSentenceString,trgSentenceString);
         }
       }
           //--------------------------
@@ -333,9 +336,9 @@ int align_corpus(const thot_ms_alig_pars& tap)
           
       if(tap.verbosity)
       {
-        pbtModelPtr->printHyp(result,cerr,tap.verbosity);
+        smtModelPtr->printHyp(result,cerr,tap.verbosity);
 #         ifdef THOT_STATS
-        translatorPtr->printStats();
+        stackDecoderRecPtr->printStats();
 #         endif
 
         cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<endl<<endl;
@@ -347,8 +350,8 @@ int align_corpus(const thot_ms_alig_pars& tap)
       {
         char wgFileNameForSent[256];
         sprintf(wgFileNameForSent,"%s_%06d",tap.wordGraphFileName.c_str(),sentNo);
-        translatorPtr->pruneWordGraph(tap.wgPruningThreshold);
-        translatorPtr->printWordGraph(wgFileNameForSent);
+        stackDecoderRecPtr->pruneWordGraph(tap.wgPruningThreshold);
+        stackDecoderRecPtr->printWordGraph(wgFileNameForSent);
       }
 #endif
 #ifdef THOT_ENABLE_GRAPH
@@ -359,9 +362,9 @@ int align_corpus(const thot_ms_alig_pars& tap)
       if(!outS) cerr<<"Error while printing search graph to file."<<endl;
       else
       {
-        translatorPtr->printSearchGraphStream(outS);
+        stackDecoderRecPtr->printSearchGraphStream(outS);
         outS<<"Stack ID. Out\n";
-        translatorPtr->printGraphForHyp(result,outS);
+        stackDecoderRecPtr->printGraphForHyp(result,outS);
         outS.close();        
       }
 #endif        
@@ -388,7 +391,7 @@ void print_alig_a3_final(std::string srcstr,
   Vector<std::string> sysTrgVec;
   Vector<std::string> trgVec;
     
-  sysTrgVec=pbtModelPtr->getTransInPlainTextVec(hyp);
+  sysTrgVec=smtModelPtr->getTransInPlainTextVec(hyp);
   trgVec=stringToStringVector(trgstr);
   dataType=hyp.getData();
   cout<<"# "<<sentNo <<" ; Align. score= "<<hyp.getScore()<<endl;
@@ -725,7 +728,7 @@ Vector<string> stringToStringVector(string s)
 void printConfig(void)
 {
   BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
-  CURR_MODEL_TYPE model(llWeightUpdaterPtr);
+  BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* modelPtr=new CURR_MODEL_TYPE(llWeightUpdaterPtr);
 
   cerr <<"* Aligner configuration:"<<endl;
       // Print translation model information
@@ -735,7 +738,7 @@ void printConfig(void)
     cerr << "  - Model notes: "<<CURR_MODEL_NOTES<<endl;
   }
   cerr<<"  - Weights for the smt model and their default values: ";
-  model.printWeights(cerr);
+  modelPtr->printWeights(cerr);
   cerr<<endl;
 
       // Print language model information
@@ -768,6 +771,7 @@ void printConfig(void)
   cerr << endl;
 
       // Release pointers
+  delete modelPtr;
   delete llWeightUpdaterPtr;
 }
 
