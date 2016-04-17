@@ -92,7 +92,7 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
       // Constructor. 
 
       // Link statistical translation model with the decoder
-  void link_smt_model(SMT_MODEL* _smtm_ptr);
+  bool link_smt_model(BaseSmtModel<Hypothesis>* _smtm_ptr);
 
       // Get pointer to the statistical translation model
   SMT_MODEL* get_smt_model_ptr(void);
@@ -263,9 +263,14 @@ _stackDecoder<SMT_MODEL>::_stackDecoder(void)
 
 //---------------------------------------
 template<class SMT_MODEL>
-void _stackDecoder<SMT_MODEL>::link_smt_model(SMT_MODEL* _smtm_ptr)
+bool _stackDecoder<SMT_MODEL>::link_smt_model(BaseSmtModel<Hypothesis>* _smtm_ptr)
 {
-  smtm_ptr=_smtm_ptr;  
+      // Link smt model
+  smtm_ptr=dynamic_cast<SMT_MODEL*>(_smtm_ptr);
+  if(smtm_ptr)
+    return true;
+  else
+    return false;
 }
 
 //---------------------------------------
