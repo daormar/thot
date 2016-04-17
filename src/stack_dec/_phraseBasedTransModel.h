@@ -96,14 +96,14 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   // class methods
 
       // Init language and alignment models
-  virtual bool loadLangModel(const char* prefixFileName);
-  virtual bool loadAligModel(const char* prefixFileName);
+  bool loadLangModel(const char* prefixFileName);
+  bool loadAligModel(const char* prefixFileName);
 
       // Print models
-  virtual bool printLangModel(std::string printPrefix);
-  virtual bool printAligModel(std::string printPrefix);
+  bool printLangModel(std::string printPrefix);
+  bool printAligModel(std::string printPrefix);
   
-  virtual void clear(void);
+  void clear(void);
 
       // Actions to be executed before the translation
   void pre_trans_actions(std::string srcsent);
