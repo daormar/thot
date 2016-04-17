@@ -67,7 +67,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  * processing.
  */
 
-template<class ECM_FOR_WG>
 class BaseWgProcessorForAnlp
 {
  public:
