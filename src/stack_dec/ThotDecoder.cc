@@ -37,6 +37,12 @@ ThotDecoder::ThotDecoder()
       // Create server variables
   tdCommonVars.wgHandlerPtr=new WgHandler;
   tdCommonVars.ecModelPtr=new CURR_ECM_TYPE();
+  BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* base_ecm_wg_ptr=dynamic_cast<BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* >(tdCommonVars.ecModelPtr);
+  if(base_ecm_wg_ptr)
+    tdCommonVars.curr_ecm_valid_for_wg=true;
+  else
+    tdCommonVars.curr_ecm_valid_for_wg=false;
+    
   tdCommonVars.llWeightUpdaterPtr=new KbMiraLlWu;
   tdCommonVars.smtModelPtr=new CURR_MODEL_TYPE(tdCommonVars.llWeightUpdaterPtr);
   
@@ -122,7 +128,7 @@ void ThotDecoder::config(void)
 
   BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
   CURR_MODEL_TYPE model(llWeightUpdaterPtr);
-  CURR_ECM_TYPE ecm_type;
+  BaseErrorCorrectingModel* ecModelPtr=new CURR_ECM_TYPE();
   
       // Print server configuration
   cerr<<"* Server configuration"<<endl;
@@ -168,20 +174,23 @@ void ThotDecoder::config(void)
   assisted_trans_type.printWeights(cerr);
   cerr << endl;
 # else
-#  if CURR_ECM_VALID_FOR_WG == 1
-  CURR_AT_TYPE<CURR_MODEL_TYPE,CURR_ECM_TYPE> assisted_trans_type;
-  cerr<<"  - Weights for the assisted translator and their default values: ";
-  assisted_trans_type.printWeights(cerr);
-  cerr << endl;
-#  else
-  cerr<<"Fatal error! current error correcting model cannot be combined with word-graph based assisted translators"<<endl;
-#  endif
+  if(tdCommonVars.curr_ecm_valid_for_wg)
+  {
+    CURR_AT_TYPE<CURR_MODEL_TYPE> assisted_trans_type;
+    cerr<<"  - Weights for the assisted translator and their default values: ";
+    assisted_trans_type.printWeights(cerr);
+    cerr << endl;
+  }
+  else
+  {
+    cerr<<"Fatal error! current error correcting model cannot be combined with word-graph based assisted translators"<<endl;
+  }
 # endif
 
       // Print error correcting model information 
   cerr<<"  - EC model: "<<CURR_ECM_LABEL<<endl;
   cerr<<"  - Weights for the EC model and their default values: ";
-  ecm_type.printWeights(cerr);
+  ecModelPtr->printWeights(cerr);
   cerr << endl;
   cerr<<"  - EC model valid for word-graphs: "<<CURR_ECM_VALID_FOR_WG<<endl;
     
@@ -194,6 +203,7 @@ void ThotDecoder::config(void)
 
       // Release pointers
   delete llWeightUpdaterPtr;
+  delete ecModelPtr;
   
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1411,19 +1421,17 @@ bool ThotDecoder::set_np(int user_id,
 }
   
 //--------------------------
-#if CURR_ECM_VALID_FOR_WG == 0
-bool ThotDecoder::set_wgp(int /*user_id*/,
-                          float /*wgp_par*/,
-                          int /*verbose=0*/)
-{
-  cerr<<"Warning! wgp parameter is never used in the current configuration."<<endl;
-  return OK;
-}
-#else
 bool ThotDecoder::set_wgp(int user_id,
                           float wgp_par,
                           int verbose/*=0*/)
 {
+      // Check if ECM can be used to process word graphs
+  if(tdCommonVars.curr_ecm_valid_for_wg)
+  {
+    cerr<<"Error: EC model is not valid for word-graphs"<<endl;
+    return ERROR;
+  }
+  
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
@@ -1448,7 +1456,6 @@ bool ThotDecoder::set_wgp(int user_id,
 
   return OK;
 }
-#endif
 
 //--------------------------
 void ThotDecoder::set_preproc(int user_id,
@@ -1950,18 +1957,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].ecModelForNbUcatPtr->link_ecm(tdCommonVars.ecModelPtr);
 
       // Create assisted translator instance
-#if THOT_AT_TYPE != WG_UNCTRANS
-      // Create regular assisted translator instance
   tdPerUserVarsVec[idx].assistedTransPtr=new CURR_AT_TYPE<CURR_MODEL_TYPE>();
-#else
-# if CURR_ECM_VALID_FOR_WG == 1
-      // Create word-graph based assisted translator instance
-  tdPerUserVarsVec[idx].assistedTransPtr=new CURR_AT_TYPE<CURR_MODEL_TYPE,CURR_ECM_TYPE>();
-# else
-  cerr<<"Fatal error! current error correcting model cannot be combined with word-graph based assisted translators"<<endl;
-  return ERROR;
-# endif
-#endif
   
       // Link translator with the assisted translator
   tdPerUserVarsVec[idx].assistedTransPtr->link_stack_trans(tdPerUserVarsVec[idx].translatorPtr);
@@ -1984,31 +1980,32 @@ int ThotDecoder::init_idx_data(size_t idx)
 
       // Check if assistedTransPtr points to an uncoupled assisted
       // translator based on word-graphs
-#if CURR_ECM_VALID_FOR_WG == 1
-      // Create word-graph processor instance
-  tdPerUserVarsVec[idx].wgpPtr=new CURR_WGP_TYPE<CURR_ECM_TYPE>;
-    
-  tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<CURR_MODEL_TYPE,CURR_ECM_TYPE>*>(tdPerUserVarsVec[idx].assistedTransPtr);
-  if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
+  BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* base_ecm_wg_ptr=dynamic_cast<BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* >(tdCommonVars.ecModelPtr);
+  if(base_ecm_wg_ptr)
   {
-        // Execute specific actions for uncoupled assisted translators
-        // based on word-graphs
-      
-        // Link ecm for word-graphs to word-graph processor
-    tdPerUserVarsVec[idx].wgpPtr->link_ecm_wg(tdCommonVars.ecModelPtr);
+        // Create word-graph processor instance
+    tdPerUserVarsVec[idx].wgpPtr=new CURR_WGP_TYPE<CURR_ECM_TYPE>;
     
-        // Link word-graph processor to uncoupled assisted translator
-    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->link_wgp(tdPerUserVarsVec[idx].wgpPtr);
+    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<CURR_MODEL_TYPE>*>(tdPerUserVarsVec[idx].assistedTransPtr);
+    if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
+    {
+          // Execute specific actions for uncoupled assisted translators
+          // based on word-graphs
+      
+          // Link ecm for word-graphs to word-graph processor
+      tdPerUserVarsVec[idx].wgpPtr->link_ecm_wg(tdCommonVars.ecModelPtr);
+      
+          // Link word-graph processor to uncoupled assisted translator
+      tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->link_wgp(tdPerUserVarsVec[idx].wgpPtr);
 
-        // Link word-graph handler to uncoupled assisted translator
-    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->link_wgh(tdCommonVars.wgHandlerPtr);
+          // Link word-graph handler to uncoupled assisted translator
+      tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->link_wgh(tdCommonVars.wgHandlerPtr);
 
-        // Set the default word-graph pruning threshold used in coupled
-        // assisted translation
-    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->set_wgp(TD_USER_WGP_DEFAULT);
+          // Set the default word-graph pruning threshold used in coupled
+          // assisted translation
+      tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->set_wgp(TD_USER_WGP_DEFAULT);
+    }
   }
-#endif
-
       // Initialize prePosProcessorPtr for idx
   tdPerUserVarsVec[idx].prePosProcessorPtr=NULL;
 
@@ -2085,9 +2082,10 @@ void ThotDecoder::release_idx_data(size_t idx)
   {
     delete tdPerUserVarsVec[idx].translatorPtr;
     delete tdPerUserVarsVec[idx].ecModelForNbUcatPtr;
-#if CURR_ECM_VALID_FOR_WG == 1
-    delete tdPerUserVarsVec[idx].wgpPtr;
-#endif
+    if(tdCommonVars.curr_ecm_valid_for_wg)
+    {
+      delete tdPerUserVarsVec[idx].wgpPtr;
+    }
     delete tdPerUserVarsVec[idx].assistedTransPtr;
 
     if(tdPerUserVarsVec[idx].prePosProcessorPtr!=NULL)

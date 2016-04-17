@@ -45,10 +45,8 @@ class ThotDecoderPerUserVars
   BaseEcModelForNbUcat* ecModelForNbUcatPtr;
   BaseAssistedTrans<CURR_MODEL_TYPE>* assistedTransPtr;
   _nbUncoupledAssistedTrans<CURR_MODEL_TYPE>* _nbUncoupledAssistedTransPtr;
-#if CURR_ECM_VALID_FOR_WG == 1
-  WgUncoupledAssistedTrans<CURR_MODEL_TYPE,CURR_ECM_TYPE>* wgUncoupledAssistedTransPtr;
-  CURR_WGP_TYPE<CURR_ECM_TYPE>* wgpPtr;
-#endif
+  WgUncoupledAssistedTrans<CURR_MODEL_TYPE>* wgUncoupledAssistedTransPtr;
+  BaseWgProcessorForAnlp* wgpPtr;
 };
 
 #endif

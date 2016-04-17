@@ -29,8 +29,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "StackDecSwModelTypes.h"
 #include "StackDecEcModelTypes.h"
 #include "StackDecEcModelForNbUcatTypes.h"
-#include <WgHandler.h>
+#include "BaseErrorCorrectingModel.h"
 #include "BaseLogLinWeightUpdater.h"
+#include <WgHandler.h>
 //#include <casmacat/IWeightUpdateEngine.h>
 //using namespace casmacat;
 
@@ -43,7 +44,8 @@ class ThotDecoderCommonVars
  public:
   WgHandler* wgHandlerPtr;
   CURR_MODEL_TYPE* smtModelPtr;
-  CURR_ECM_TYPE* ecModelPtr;
+  BaseErrorCorrectingModel* ecModelPtr;
+  bool curr_ecm_valid_for_wg;
   BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 };
 
