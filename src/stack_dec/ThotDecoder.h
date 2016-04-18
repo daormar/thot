@@ -35,13 +35,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "ThotDecoderCommonVars.h"
-#include "ThotDecoderPerUserVars.h"
-#include "ThotDecoderState.h"
-#include "ThotDecoderUserPars.h"
-#include <options.h>
-#include <pthread.h>
-
 #ifndef THOT_DISABLE_PREPROC_CODE
 #include "XRCE_PrePosProcessor1.h" 
 #include "XRCE_PrePosProcessor2.h" 
@@ -53,6 +46,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 // Log-linear weight updater
 #include "KbMiraLlWu.h"
+
+#include "ThotDecoderCommonVars.h"
+#include "ThotDecoderPerUserVars.h"
+#include "ThotDecoderState.h"
+#include "ThotDecoderUserPars.h"
+#include <options.h>
+#include <pthread.h>
 
 //--------------- Constants ------------------------------------------
 
