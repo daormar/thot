@@ -28,5 +28,5 @@ if [ $# -lt 2 ]; then
 else
     file=$1
     weights=$2
-    cat $file | $bindir/thot_rescore_nbest "$weights" | ${SORT} -k1nr | head -1 | get_trans
+    cat $file | $bindir/thot_rescore_nbest "$weights" | ${TAIL} -n +2 | ${SORT} -k1nr | ${HEAD} -1 | get_trans
 fi
