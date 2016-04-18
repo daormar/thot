@@ -133,6 +133,7 @@ void printConfig(void);
 
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
+BaseStackDecoder<CURR_MODEL_TYPE>* stackDecoderPtr;
 _stackDecoderRec<CURR_MODEL_TYPE>* stackDecoderRecPtr;
 
 //--------------- Function Definitions -------------------------------
@@ -209,37 +210,42 @@ int init_translator(const thot_ms_alig_pars& tap)
       // Set verbosity
   smtModelPtr->setVerbosity(tap.verbosity);
 
+      // Determine if the translator incorporates hypotheses recombination
+  stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<CURR_MODEL_TYPE>*>(stackDecoderPtr);
+
       // Create a translator instance
-  stackDecoderRecPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
+  stackDecoderPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
 
       // Link translation model
-  stackDecoderRecPtr->link_smt_model(smtModelPtr);
+  stackDecoderPtr->link_smt_model(smtModelPtr);
     
       // Set translator parameters
-  stackDecoderRecPtr->set_S_par(tap.S);
-  stackDecoderRecPtr->set_I_par(tap.I);
+  stackDecoderPtr->set_S_par(tap.S);
+  stackDecoderPtr->set_I_par(tap.I);
 #ifdef MULTI_STACK_USE_GRAN
-  stackDecoderRecPtr->set_G_par(tap.G);
+  stackDecoderPtr->set_G_par(tap.G);
 #endif
       // Enable best score pruning if the decoder is not going to obtain
       // n-best translations or word-graphs
   if(tap.wgPruningThreshold==DISABLE_WORDGRAPH)
-    stackDecoderRecPtr->useBestScorePruning(true);
+    stackDecoderPtr->useBestScorePruning(true);
 
       // Set breadthFirst flag
-  stackDecoderRecPtr->set_breadthFirst(!tap.be);
+  stackDecoderPtr->set_breadthFirst(!tap.be);
 
-#ifndef THOT_DISABLE_REC
-      // Enable word graph according to wgPruningThreshold
-  if(tap.wordGraphFileName!="")
+  if(stackDecoderRecPtr)
   {
-    
-    if(tap.wgPruningThreshold!=DISABLE_WORDGRAPH)
-      stackDecoderRecPtr->enableWordGraph();    
+        // Enable word graph according to wgPruningThreshold
+    if(tap.wordGraphFileName!="")
+    {
+      
+      if(tap.wgPruningThreshold!=DISABLE_WORDGRAPH)
+        stackDecoderRecPtr->enableWordGraph();    
+    }
   }
-#endif
+  
       // Set translator verbosity
-  stackDecoderRecPtr->setVerbosity(tap.verbosity);
+  stackDecoderPtr->setVerbosity(tap.verbosity);
 
   return OK;
 }
@@ -249,7 +255,7 @@ void release_translator(void)
 {
   delete llWeightUpdaterPtr;
   delete smtModelPtr;
-  delete stackDecoderRecPtr;
+  delete stackDecoderPtr;
 }
 
 //---------------
@@ -314,19 +320,19 @@ int align_corpus(const thot_ms_alig_pars& tap)
       if(tap.p_option)
       {
             // Translate with prefix
-        result=stackDecoderRecPtr->translateWithPrefix(srcSentenceString,trgSentenceString);
+        result=stackDecoderPtr->translateWithPrefix(srcSentenceString,trgSentenceString);
       }
       else
       {
         if(tap.cov_option)
         {
               // Verify model coverage
-          result=stackDecoderRecPtr->verifyCoverageForRef(srcSentenceString,trgSentenceString);
+          result=stackDecoderPtr->verifyCoverageForRef(srcSentenceString,trgSentenceString);
         }
         else
         {
               // Translate with reference
-          result=stackDecoderRecPtr->translateWithRef(srcSentenceString,trgSentenceString);
+          result=stackDecoderPtr->translateWithRef(srcSentenceString,trgSentenceString);
         }
       }
           //--------------------------
@@ -338,22 +344,25 @@ int align_corpus(const thot_ms_alig_pars& tap)
       {
         smtModelPtr->printHyp(result,cerr,tap.verbosity);
 #         ifdef THOT_STATS
-        stackDecoderRecPtr->printStats();
+        stackDecoderPtr->printStats();
 #         endif
 
         cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<endl<<endl;
         total_time+=elapsed-elapsed_ant;
       }
-#ifndef THOT_DISABLE_REC
-          // Print wordgraph if the -wg option was given
-      if(tap.wordGraphFileName!="")
+
+      if(stackDecoderRecPtr)
       {
-        char wgFileNameForSent[256];
-        sprintf(wgFileNameForSent,"%s_%06d",tap.wordGraphFileName.c_str(),sentNo);
-        stackDecoderRecPtr->pruneWordGraph(tap.wgPruningThreshold);
-        stackDecoderRecPtr->printWordGraph(wgFileNameForSent);
+            // Print wordgraph if the -wg option was given
+        if(tap.wordGraphFileName!="")
+        {
+          char wgFileNameForSent[256];
+          sprintf(wgFileNameForSent,"%s_%06d",tap.wordGraphFileName.c_str(),sentNo);
+          stackDecoderRecPtr->pruneWordGraph(tap.wgPruningThreshold);
+          stackDecoderRecPtr->printWordGraph(wgFileNameForSent);
+        }
       }
-#endif
+      
 #ifdef THOT_ENABLE_GRAPH
       char printGraphFileName[256];
       ofstream outS;
@@ -362,9 +371,9 @@ int align_corpus(const thot_ms_alig_pars& tap)
       if(!outS) cerr<<"Error while printing search graph to file."<<endl;
       else
       {
-        stackDecoderRecPtr->printSearchGraphStream(outS);
+        stackDecoderPtr->printSearchGraphStream(outS);
         outS<<"Stack ID. Out\n";
-        stackDecoderRecPtr->printGraphForHyp(result,outS);
+        stackDecoderPtr->printGraphForHyp(result,outS);
         outS.close();        
       }
 #endif        
@@ -784,9 +793,7 @@ void printUsage(void)
   cerr << "               [-S <int>] [-A <int>] [-E <int>] [-I <int>]"<<endl;
   cerr << "               [-G <int>] [-h <int>] [-be] [-nomon <int>]"<<endl;
   cerr << "               [-tmw <float> ... <float>]"<<endl;
-#ifndef THOT_DISABLE_REC
   cerr << "               [-wg <string> [-wgp <float>] ]"<<endl;
-#endif
   cerr << "               [-v|-v1|-v2] [--help] [--version] [--config]"<<endl<<endl;
   cerr << " -c <string>           : Configuration file (command-line options override"<<endl;
   cerr << "                         configuration file options)."<<endl;
@@ -824,7 +831,6 @@ void printUsage(void)
   cerr << " -tmw <float>...<float>: Set model weights, the number of weights and their"<<endl;
   cerr << "                         meaning depends on the model type (use --config"<<endl;
   cerr << "                         option)."<<endl;
-#ifndef THOT_DISABLE_REC
   cerr << " -wg <string>          : Print word graph after each translation, the prefix" <<endl;
   cerr << "                         of the files is given as parameter."<<endl;
   cerr << " -wgp <float>          : Prune word-graph using the given threshold.\n";
@@ -833,7 +839,6 @@ void printUsage(void)
   cerr << "                                        state is retained.\n";
   cerr << "                         If not given, the number of arcs is not\n";
   cerr << "                         restricted.\n";
-#endif
   cerr << "                         not restricted."<<endl;
   cerr << " -v|-v1|-v2            : verbose modes."<<endl;
   cerr << " --help                : Display this help and exit."<<endl;
