@@ -233,7 +233,12 @@ int process_request(int s,
   
       // Init user parameters
   retVal=thotDecoder.initUserPars(user_id,tdup,verbose);
-  if(retVal==ERROR) return ERROR;
+  if(retVal==ERROR)
+  {
+    end=true;
+    if(verbose) cerr<<"Server: shutting down"<<endl;
+    return ERROR;
+  }
 
       // Process request
   switch(server_request_code)
