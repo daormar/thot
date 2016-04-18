@@ -82,6 +82,7 @@ class BaseStackDecoder
       // Functions for setting the decoder parameters
   virtual void set_S_par(unsigned int S_par)=0;
   virtual void set_I_par(unsigned int I_par)=0;
+  virtual void set_G_par(unsigned int G_par);
   virtual void set_breadthFirst(bool b)=0;
 
       // Basic services
@@ -118,7 +119,14 @@ class BaseStackDecoder
   virtual bool printSearchGraph(const char* filename);
   virtual void printSearchGraphStream(ostream &outS)=0;
   virtual void printGraphForHyp(const Hypothesis& hyp,ostream &outS)=0;
-  
+
+      // Set verbosity level
+  virtual void setVerbosity(int _verbosity)=0;
+
+# ifdef THOT_STATS
+  virtual void printStats(void);
+# endif
+
       // Destructor
   virtual ~BaseStackDecoder(){};
 };
@@ -146,5 +154,20 @@ bool BaseStackDecoder<SMT_MODEL>::printSearchGraph(const char* filename)
     return OK;
   }
 }
+
+//---------------------------------------
+template<class SMT_MODEL>
+void BaseStackDecoder<SMT_MODEL>::set_G_par(unsigned int /*G_par*/)
+{
+  cerr<<"Error: granularity parameter not available"<<endl;
+}
+
+//---------------------------------------
+# ifdef THOT_STATS
+template<class SMT_MODEL>
+void BaseStackDecoder<SMT_MODEL>::printStats(void)
+{
+}
+# endif
 
 #endif
