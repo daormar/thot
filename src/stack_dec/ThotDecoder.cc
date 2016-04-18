@@ -1336,7 +1336,6 @@ void ThotDecoder::set_be(int user_id,
 }
 
 //--------------------------
-#ifdef MULTI_STACK_USE_GRAN
 bool ThotDecoder::set_G(int user_id,
                         unsigned int G_par,
                         int verbose/*=0*/)
@@ -1359,16 +1358,6 @@ bool ThotDecoder::set_G(int user_id,
 
   return OK;
 }
-#else
-bool ThotDecoder::set_G(int /*user_id*/,
-                        unsigned int /*G_par*/,
-                        int verbose/*=0*/)
-{
-  if(verbose)
-    cerr<<"Warning! G parameter is not used with the current multi-stack algorithm."<<endl;
-  return OK;
-}
-#endif
 
 //--------------------------
 void ThotDecoder::set_h(unsigned int h_par,
