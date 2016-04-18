@@ -129,6 +129,7 @@ void ThotDecoder::config(void)
   BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
   BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* modelPtr=new CURR_MODEL_TYPE(tdCommonVars.llWeightUpdaterPtr);
   BaseErrorCorrectingModel* ecModelPtr=new CURR_ECM_TYPE();
+  BaseAssistedTrans<CURR_MODEL_TYPE>* assistedTransPtr=new CURR_AT_TYPE<CURR_MODEL_TYPE>();
   
       // Print server configuration
   cerr<<"* Server configuration"<<endl;
@@ -168,31 +169,33 @@ void ThotDecoder::config(void)
       
       // Print assisted translator information
   cerr<<"  - Assisted translator type: "<<CURR_AT_LABEL<<endl;
-# if THOT_AT_TYPE != WG_UNCTRANS
-  CURR_AT_TYPE<CURR_MODEL_TYPE> assisted_trans_type;
-  cerr<<"  - Weights for the assisted translator and their default values: ";
-  assisted_trans_type.printWeights(cerr);
-  cerr << endl;
-# else
-  if(tdCommonVars.curr_ecm_valid_for_wg)
+  WgUncoupledAssistedTrans<CURR_MODEL_TYPE>* wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<CURR_MODEL_TYPE>*>(assistedTransPtr);
+  if(!wgUncoupledAssistedTransPtr)
   {
-    CURR_AT_TYPE<CURR_MODEL_TYPE> assisted_trans_type;
     cerr<<"  - Weights for the assisted translator and their default values: ";
-    assisted_trans_type.printWeights(cerr);
+    assistedTransPtr->printWeights(cerr);
     cerr << endl;
   }
   else
   {
-    cerr<<"Fatal error! current error correcting model cannot be combined with word-graph based assisted translators"<<endl;
+    if(tdCommonVars.curr_ecm_valid_for_wg)
+    {
+      cerr<<"  - Weights for the assisted translator and their default values: ";
+      assistedTransPtr->printWeights(cerr);
+      cerr << endl;
+    }
+    else
+    {
+      cerr<<"Fatal error! current error correcting model cannot be combined with word-graph based assisted translators"<<endl;
+    }
   }
-# endif
 
       // Print error correcting model information 
   cerr<<"  - EC model: "<<CURR_ECM_LABEL<<endl;
   cerr<<"  - Weights for the EC model and their default values: ";
   ecModelPtr->printWeights(cerr);
   cerr << endl;
-  cerr<<"  - EC model valid for word-graphs: "<<CURR_ECM_VALID_FOR_WG<<endl;
+  cerr<<"  - EC model valid for word-graphs: "<<tdCommonVars.curr_ecm_valid_for_wg<<endl;
     
       // Print error correcting model information for uncoupled cat
   cerr<<"  - EC model for n-best uncoupled cat type: "<<CURR_ECM_NB_UCAT_LABEL<<endl;
@@ -203,7 +206,9 @@ void ThotDecoder::config(void)
 
       // Release pointers
   delete llWeightUpdaterPtr;
+  delete modelPtr;
   delete ecModelPtr;
+  delete assistedTransPtr;
   
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1425,7 +1430,7 @@ bool ThotDecoder::set_wgp(int user_id,
                           int verbose/*=0*/)
 {
       // Check if ECM can be used to process word graphs
-  if(tdCommonVars.curr_ecm_valid_for_wg)
+  if(!tdCommonVars.curr_ecm_valid_for_wg)
   {
     cerr<<"Error: EC model is not valid for word-graphs"<<endl;
     return ERROR;
@@ -1669,18 +1674,21 @@ void ThotDecoder::addStrToPref(int user_id,
 // non-reentrant flex code), because of this, a specific mutex has been
 // added.
 
-#if THOT_AT_TYPE != WG_UNCTRANS
-  pthread_mutex_lock(&atomic_op_mut);
-      /////////// begin of mutex
-#else
-      // Increase non_atomic_ops_running variable
-  increase_non_atomic_ops_running();
-#endif
-
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
   if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
 
+  if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
+  {  
+    pthread_mutex_lock(&atomic_op_mut);
+        /////////// begin of mutex
+  }
+  else
+  {
+        // Increase non_atomic_ops_running variable
+    increase_non_atomic_ops_running();
+  }
+  
   if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
   {
         // Execute specific actions for uncoupled assisted translators
@@ -1761,13 +1769,16 @@ void ThotDecoder::addStrToPref(int user_id,
     tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
   }
 
-#if THOT_AT_TYPE != WG_UNCTRANS
-      /////////// end of mutex 
-  pthread_mutex_unlock(&atomic_op_mut);
-#else
-      // Decrease non_atomic_ops_running variable
-  decrease_non_atomic_ops_running();
-#endif
+  if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
+  {  
+        /////////// end of mutex 
+    pthread_mutex_unlock(&atomic_op_mut);
+  }
+  else
+  {
+        // Decrease non_atomic_ops_running variable
+    decrease_non_atomic_ops_running();
+  }
 }
 
 //--------------------------
@@ -1982,8 +1993,7 @@ int ThotDecoder::init_idx_data(size_t idx)
 
       // Check if assistedTransPtr points to an uncoupled assisted
       // translator based on word-graphs
-  BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* base_ecm_wg_ptr=dynamic_cast<BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* >(tdCommonVars.ecModelPtr);
-  if(base_ecm_wg_ptr)
+  if(tdCommonVars.curr_ecm_valid_for_wg)
   {
         // Create word-graph processor instance
     tdPerUserVarsVec[idx].wgpPtr=new CURR_WGP_TYPE<CURR_ECM_TYPE>;
