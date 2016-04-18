@@ -124,6 +124,7 @@ void printConfig(void);
 
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
+BaseStackDecoder<CURR_MODEL_TYPE>* stackDecoderPtr;
 _stackDecoderRec<CURR_MODEL_TYPE>* stackDecoderRecPtr;
 
 //--------------- Function Definitions -------------------------------
@@ -198,35 +199,39 @@ int init_translator(const thot_ms_dec_pars& tdp)
   smtModelPtr->setVerbosity(tdp.verbosity);
     
       // Create a translator instance
-  stackDecoderRecPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
+  stackDecoderPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
+
+      // Determine if the translator incorporates hypotheses recombination
+  stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<CURR_MODEL_TYPE>*>(stackDecoderPtr);
 
       // Link translation model
-  stackDecoderRecPtr->link_smt_model(smtModelPtr);
+  stackDecoderPtr->link_smt_model(smtModelPtr);
     
       // Set translator parameters
-  stackDecoderRecPtr->set_S_par(tdp.S);
-  stackDecoderRecPtr->set_I_par(tdp.I);
+  stackDecoderPtr->set_S_par(tdp.S);
+  stackDecoderPtr->set_I_par(tdp.I);
 #ifdef MULTI_STACK_USE_GRAN
-  stackDecoderRecPtr->set_G_par(tdp.G);
+  stackDecoderPtr->set_G_par(tdp.G);
 #endif  
       // Enable best score pruning if the decoder is not going to obtain
       // n-best translations or word-graphs
   if(tdp.wgPruningThreshold==DISABLE_WORDGRAPH)
-    stackDecoderRecPtr->useBestScorePruning(true);
+    stackDecoderPtr->useBestScorePruning(true);
 
       // Set breadthFirst flag
-  stackDecoderRecPtr->set_breadthFirst(!tdp.be);
+  stackDecoderPtr->set_breadthFirst(!tdp.be);
 
-#ifndef THOT_DISABLE_REC
-      // Enable word graph according to wgPruningThreshold
-  if(tdp.wordGraphFileName!="")
+  if(stackDecoderRecPtr)
   {
-    if(tdp.wgPruningThreshold!=DISABLE_WORDGRAPH)
-      stackDecoderRecPtr->enableWordGraph();
+        // Enable word graph according to wgPruningThreshold
+    if(tdp.wordGraphFileName!="")
+    {
+      if(tdp.wgPruningThreshold!=DISABLE_WORDGRAPH)
+        stackDecoderRecPtr->enableWordGraph();
+    }
   }
-#endif
       // Set translator verbosity
-  stackDecoderRecPtr->setVerbosity(tdp.verbosity);
+  stackDecoderPtr->setVerbosity(tdp.verbosity);
 
   return OK;
 }
@@ -235,7 +240,7 @@ int init_translator(const thot_ms_dec_pars& tdp)
 void release_translator(void)
 {
   delete smtModelPtr;
-  delete stackDecoderRecPtr;
+  delete stackDecoderPtr;
   delete llWeightUpdaterPtr;
 }
 
@@ -290,7 +295,7 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
       }
        
           //------- Translate sentence
-      result=stackDecoderRecPtr->translate(srcSentenceString);
+      result=stackDecoderPtr->translate(srcSentenceString);
 
           //--------------------------
       if(tdp.verbosity) ctimer(&elapsed,&ucpu,&scpu);
@@ -304,22 +309,25 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
       {
         smtModelPtr->printHyp(result,cerr,tdp.verbosity);
 #         ifdef THOT_STATS
-        stackDecoderRecPtr->printStats();
+        stackDecoderPtr->printStats();
 #         endif
 
         cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<endl<<endl;
         total_time+=elapsed-elapsed_ant;
       }
-#ifndef THOT_DISABLE_REC        
-          // Print wordgraph if the -wg option was given
-      if(tdp.wordGraphFileName!="")
+
+      if(stackDecoderRecPtr)
       {
-        char wgFileNameForSent[256];
-        sprintf(wgFileNameForSent,"%s_%06d",tdp.wordGraphFileName.c_str(),sentNo);
-        stackDecoderRecPtr->pruneWordGraph(tdp.wgPruningThreshold);
-        stackDecoderRecPtr->printWordGraph(wgFileNameForSent);
+            // Print wordgraph if the -wg option was given
+        if(tdp.wordGraphFileName!="")
+        {
+          char wgFileNameForSent[256];
+          sprintf(wgFileNameForSent,"%s_%06d",tdp.wordGraphFileName.c_str(),sentNo);
+          stackDecoderRecPtr->pruneWordGraph(tdp.wgPruningThreshold);
+          stackDecoderRecPtr->printWordGraph(wgFileNameForSent);
+        }
       }
-#endif
+
 #ifdef THOT_ENABLE_GRAPH
       char printGraphFileName[256];
       ofstream graphOutS;
@@ -328,9 +336,9 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
       if(!graphOutS) cerr<<"Error while printing search graph to file."<<endl;
       else
       {
-        stackDecoderRecPtr->printSearchGraphStream(graphOutS);
+        stackDecoderPtr->printSearchGraphStream(graphOutS);
         graphOutS<<"Stack ID. Out\n";
-        stackDecoderRecPtr->printGraphForHyp(result,graphOutS);
+        stackDecoderPtr->printGraphForHyp(result,graphOutS);
         graphOutS.close();        
       }
 #endif        
@@ -667,9 +675,7 @@ void printUsage(void)
   cerr << "                 [-W <float>] [-S <int>] [-A <int>]"<<endl;
   cerr << "                 [-I <int>] [-G <int>] [-h <int>]"<<endl;
   cerr << "                 [-be] [ -nomon <int>] [-tmw <float> ... <float>]"<<endl;
-#ifndef THOT_DISABLE_REC
   cerr << "                 [-wg <string> [-wgp <float>] ]"<<endl;
-#endif  
   cerr << "                 [-v|-v1|-v2]"<<endl;
   cerr << "                 [--help] [--version] [--config]"<<endl<<endl;
   cerr << " -c <string>           : Configuration file (command-line options override"<<endl;
@@ -703,7 +709,6 @@ void printUsage(void)
   cerr << " -tmw <float>...<float>: Set model weights, the number of weights and their"<<endl;
   cerr << "                         meaning depends on the model type (use --config"<<endl;
   cerr << "                         option)."<<endl;
-#ifndef THOT_DISABLE_REC
   cerr << " -wg <string>          : Print word graph after each translation, the prefix" <<endl;
   cerr << "                         of the files is given as parameter."<<endl;
   cerr << " -wgp <float>          : Prune word-graph using the given threshold.\n";
@@ -712,7 +717,6 @@ void printUsage(void)
   cerr << "                                       state is retained.\n";
   cerr << "                         If not given, the number of arcs is not\n";
   cerr << "                         restricted.\n";
-#endif
   cerr << " -v|-v1|-v2            : verbose modes."<<endl;
   cerr << " --help                : Display this help and exit."<<endl;
   cerr << " --version             : Output version information and exit."<<endl;
