@@ -96,17 +96,7 @@ class ThotDecoder
                    const ThotDecoderUserPars& tdup,
                    int verbose);
 
-      // Functions to load models
-  bool load_tm(const char* tmFilesPrefix,
-               int verbose=0);
-  bool load_lm(const char* lmFileName,
-               int verbose=0);
-  bool load_ecm(const char* ecmFilesPrefix,
-                int verbose=0);
-
       // Functions to train models
-  void setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
-                          int verbose=0);
   bool onlineTrainSentPair(int user_id,
                            const char *srcSent,
                            const char *refSent,
@@ -194,6 +184,18 @@ class ThotDecoder
   void unlock_non_atomic_op_mut(void);  
   void increase_non_atomic_ops_running(void);
   void decrease_non_atomic_ops_running(void);
+
+      // Functions to load models
+  bool load_tm(const char* tmFilesPrefix,
+               int verbose=0);
+  bool load_lm(const char* lmFileName,
+               int verbose=0);
+  bool load_ecm(const char* ecmFilesPrefix,
+                int verbose=0);
+
+      // Training-related functions
+  void setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
+                          int verbose=0);
 
       // Functions to set decoder parameters
   void setNonMonotonicity(int nomon,
