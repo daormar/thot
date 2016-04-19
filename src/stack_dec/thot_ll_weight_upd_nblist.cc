@@ -104,6 +104,18 @@ int main(int argc,char *argv[])
   }
   else
   {
+        // Print parameters
+    cerr<<"-w option is";
+    for(unsigned int i=0;i<pars.llWeightVec.size();++i)
+      cerr<<" "<<pars.llWeightVec[i];
+    cerr<<endl;
+    cerr<<"-nb option is "<<pars.fileWithNbestLists<<endl;
+    cerr<<"-r option is "<<pars.fileWithReferences<<endl;
+    cerr<<"-va option is";
+    for(unsigned int i=0;i<pars.includeVarStr.size();++i)
+      cerr<<" "<<pars.includeVarBool[i];
+    cerr<<endl;
+
         // Initialize weight updater
     llWeightUpdaterPtr=new KbMiraLlWu;
 
@@ -164,7 +176,7 @@ int takeParameters(int argc,
   if(err==ERROR)
     return ERROR;
 
-      // Obtain fixed and non fixed variables
+      // Obtain included variables
   err=readStringSeq(argc,argv, "-va", pars.includeVarStr);
   if(err==ERROR)
     return ERROR;
