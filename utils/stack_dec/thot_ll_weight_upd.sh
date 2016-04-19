@@ -122,10 +122,10 @@ gen_nbest_lists_iter()
 {
     # Generate translations and word graphs
     $bindir/thot_decoder -pr ${nprocs} -c ${cfgfile} -tmw ${llweights} -t ${testfile} \
-        -o ${TDIR_LLWU}/trans/thot_decoder_out_${niter} -wg ${TDIR_LLWU}/wg/${niter} || exit 1
+        -o ${TDIR_LLWU}/trans/${niter}_thot_decoder_out -wg ${TDIR_LLWU}/wg/${niter} || exit 1
 
     # Evaluate translation quality
-    $bindir/thot_calc_bleu -r ${reffile} -t ${TDIR_LLWU}/trans/thot_decoder_out_${niter} > ${TDIR_LLWU}/trans/thot_decoder_out_${niter}.bleu || exit 1
+    $bindir/thot_calc_bleu -r ${reffile} -t ${TDIR_LLWU}/trans/${niter}_thot_decoder_out > ${TDIR_LLWU}/trans/${niter}_thot_decoder_out.bleu || exit 1
 
     # Obtain n-best lists from word graphs
     for wgfile in ${TDIR_LLWU}/wg/${niter}*.wg; do
@@ -174,6 +174,21 @@ obtain_curr_nblists()
             ${bindir}/thot_merge_nbest_list $nblfile ${TDIR_LLWU}/curr_nblist/$sentid.nbl > temp.nbl || exit 1
             mv temp.nbl ${TDIR_LLWU}/curr_nblist/$sentid.nbl
         done
+    fi
+}
+
+##################
+update_best_quality()
+{
+    if [ -z "${best_quality}" ]; then
+        best_quality=${quality}
+        best_llweights=${llweights}
+    else
+        curr_best_quality_worse=`echo ${best_quality} ${quality} | $AWK '{printf"%d",$1<$2}'`
+        if [ ${curr_best_quality_worse} -eq 1 ]; then
+            best_quality=${quality}
+            best_llweights=${llweights}
+        fi
     fi
 }
 
@@ -371,6 +386,9 @@ while [ $niter -le $maxiters ]; do
     quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/nblist/${niter} ${TDIR_LLWU}/${niter}_best_trans`
     echo "* Current translation quality: ${quality}" >&2
 
+    # Update best quality
+    update_best_quality
+
     # Obtain current n-best lists
     echo "* Obtaining current n-best lists..." >&2
     obtain_curr_nblists
@@ -381,6 +399,7 @@ while [ $niter -le $maxiters ]; do
 
     # Get new log-linear model weights
     llweights=`get_new_llweights`
+    echo "* New weights: ${llweights}" >&2
 
     # Increase niter
     niter=`expr $niter + 1`
@@ -393,5 +412,8 @@ done
 quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/curr_nblist/ ${TDIR_LLWU}/curr_nblist_best_trans`
 echo "* Final translation quality calculated from current n-best lists: ${quality}" >&2
 
+# Update best quality after last iteration
+update_best_quality
+
 # Print result
-echo ${llweights}
+echo ${best_llweights}
