@@ -118,9 +118,8 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
             double& bleu);
 
    //get permutation indices
-  void sampleWoReplacement(unsigned int populationSize,
-                           unsigned int sampleSize,
-                           vector<unsigned int>& samples);
+  void sampleWoReplacement(unsigned int nSamples,
+                           vector<unsigned int>& indices);
 };
 
 #endif
