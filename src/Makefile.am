@@ -19,8 +19,9 @@ thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
 thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
 thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
 thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
-thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig thot_client		\
-thot_server thot_get_ll_weights thot_calc_bleu $(TESTING_PROGS)
+thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig			\
+thot_ll_weight_upd_nblist thot_client thot_server thot_get_ll_weights	\
+thot_calc_bleu $(TESTING_PROGS)
 
 if CASMACAT_LIB_ENABLED
 lib_LTLIBRARIES = libthot.la libthot_casmacat.la
@@ -284,76 +285,105 @@ $(downhill_simplex_h) $(downhill_simplex_defs) $(stack_dec_h)		\
 $(stack_dec_defs) $(exper_h) $(exper_defs)
 
 # programs
+
+##########
 thot_ilm_perp_SOURCES = incr_models/thot_ilm_perp.cc
 thot_ilm_perp_LDFLAGS = libthot.la
 
+##########
 thot_calc_swm_lgprob_SOURCES = sw_models/thot_calc_swm_lgprob.cc
 thot_calc_swm_lgprob_LDFLAGS = libthot.la
 
+##########
 thot_gen_sw_model_SOURCES = sw_models/thot_gen_sw_model_pars.h	\
 sw_models/thot_gen_sw_model.cc
 thot_gen_sw_model_LDFLAGS = libthot.la
 
+##########
 thot_sort_bin_ilextable_SOURCES = sw_models/thot_sort_bin_ilextable.cc
 thot_sort_bin_ilextable_LDFLAGS = libthot.la
 
+##########
 thot_sort_bin_ihmmatable_SOURCES = sw_models/thot_sort_bin_ihmmatable.cc
 thot_sort_bin_ihmmatable_LDFLAGS = libthot.la
 
+##########
 thot_sort_bin_iibm2atable_SOURCES = sw_models/thot_sort_bin_iibm2atable.cc
 thot_sort_bin_iibm2atable_LDFLAGS = libthot.la
 
+##########
 thot_merge_bin_ilextable_SOURCES = sw_models/thot_merge_bin_ilextable.cc
 thot_merge_bin_ilextable_LDFLAGS = libthot.la
 
+##########
 thot_merge_bin_ihmmatable_SOURCES = sw_models/thot_merge_bin_ihmmatable.cc
 thot_merge_bin_ihmmatable_LDFLAGS = libthot.la
 
+##########
 thot_merge_bin_iibm2atable_SOURCES = sw_models/thot_merge_bin_iibm2atable.cc
 thot_merge_bin_iibm2atable_LDFLAGS = libthot.la
 
+##########
 thot_gen_bin_lex_filter_info_SOURCES = sw_models/thot_gen_bin_lex_filter_info.cc
 thot_gen_bin_lex_filter_info_LDFLAGS = libthot.la
 
+##########
 thot_filter_bin_ilextable_SOURCES = sw_models/thot_filter_bin_ilextable.cc
 thot_filter_bin_ilextable_LDFLAGS = libthot.la
 
+##########
 thot_prune_bin_ilextable_SOURCES = sw_models/thot_prune_bin_ilextable.cc
 thot_prune_bin_ilextable_LDFLAGS = libthot.la
 
+##########
 thot_alig_op_SOURCES = phrase_models/thot_alig_op.cc
 thot_alig_op_LDFLAGS = libthot.la
 
+##########
 thot_gen_phr_model_SOURCES = phrase_models/thot_gen_phr_model.cc
 thot_gen_phr_model_LDFLAGS = libthot.la
 
+##########
 thot_wg_proc_SOURCES = error_correction/thot_wg_proc_pars.h	\
 error_correction/thot_wg_proc.cc
 thot_wg_proc_LDFLAGS = libthot.la
 
+##########
 thot_dhs_step_by_step_min_SOURCES = downhill_simplex/thot_dhs_step_by_step_min.cc
 thot_dhs_step_by_step_min_LDFLAGS = libthot.la
 
+##########
 thot_ms_dec_SOURCES = stack_dec/thot_ms_dec.cc
 thot_ms_dec_LDFLAGS = libthot.la
 
+##########
 thot_ms_alig_SOURCES = stack_dec/thot_ms_alig.cc
 thot_ms_alig_LDFLAGS = libthot.la
 
+##########
+thot_ll_weight_upd_nblist_SOURCES =		\
+stack_dec/thot_ll_weight_upd_nblist.cc
+thot_ll_weight_upd_nblist_LDFLAGS = libthot.la
+
+##########
 thot_client_SOURCES = stack_dec/thot_client_pars.h	\
 stack_dec/thot_client.cc
 thot_client_LDFLAGS = libthot.la
 
+##########
 thot_server_SOURCES = stack_dec/thot_server_pars.h	\
 stack_dec/thot_server.cc
 thot_server_LDFLAGS = libthot.la
 
+##########
 thot_get_ll_weights_SOURCES = stack_dec/thot_get_ll_weights.cc
 thot_get_ll_weights_LDFLAGS = libthot.la
 
+##########
 thot_calc_bleu_SOURCES = stack_dec/thot_calc_bleu.cc
 thot_calc_bleu_LDFLAGS = libthot.la
 
+##########
 if CODE_TESTING
 thot_test_SOURCES = testing/thot_test.cc $(testing_h) $(testing_defs)
 thot_test_LDFLAGS = libthot.la

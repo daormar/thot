@@ -14,8 +14,9 @@ _stackDecoder.h StackDecLmTypes.h StackDecEcModelTypes.h		\
 StackDecEcModelForNbUcatTypes.h SourceSegmentation.h			\
 TranslationConstraints.h TranslationConstraints.cc SmtStack.h		\
 _smtStack.h SmtMultiStackRec.h _smtMultiStack.h SmtModelTypes.h		\
-BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc _smtModel.h	\
-ScoreCompDefs.h _phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc	\
+BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc			\
+thot_ll_weight_upd_nblist.cc _smtModel.h ScoreCompDefs.h		\
+_phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc			\
 PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc			\
 PhrNbestTransTableRef.h PhrNbestTransTablePrefKey.h			\
 PhrNbestTransTablePrefKey.cc PhrNbestTransTablePref.h			\
