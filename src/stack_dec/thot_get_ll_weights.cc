@@ -116,7 +116,8 @@ void get_ll_weights(const thot_get_ll_weights_pars& pars)
   pbtModelPtr=new CURR_MODEL_TYPE(llWeightUpdaterPtr);
   
       // Set weights
-  pbtModelPtr->setWeights(pars.weightVec);
+  if(!pars.weightVec.empty())
+    pbtModelPtr->setWeights(pars.weightVec);
   pbtModelPtr->printWeights(cout);
   cout<<endl;
 
@@ -129,12 +130,12 @@ int handleParameters(int argc,
                      char *argv[],
                      thot_get_ll_weights_pars& pars)
 {
-  if(argc==1 || readOption(argc,argv,"--version")!=-1)
+  if(readOption(argc,argv,"--version")==OK)
   {
     version();
     return ERROR;
   }
-  if(readOption(argc,argv,"--help")!=-1)
+  if(readOption(argc,argv,"--help")==OK)
   {
     printUsage();
     return ERROR;   
@@ -165,8 +166,8 @@ int takeParameters(int argc,
   }
   else
   {
-    cerr<<"Error: -c option was not given"<<endl;
-    return ERROR;
+    cerr<<"Warning: -c option was not given"<<endl;
+    return OK;
   }
       // process command line parameters
   takeParametersGivenArgcArgv(argc,argv,pars);
