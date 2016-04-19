@@ -141,13 +141,17 @@ gen_nbest_lists_iter()
 ##################
 obtain_trans_quality_from_nblists()
 {
+    # Take parameters
+    local_pref=$1
+    local_outfile=$2
+
     # Obtain best translations for current iteration
-    for nblfile in ${TDIR_LLWU}/nblist/${niter}*.nbl; do
-        ${bindir}/thot_obtain_best_trans_from_nbl $nblfile "${llweights}" >> ${TDIR_LLWU}/${niter}_best_trans
+    for nblfile in ${local_pref}*.nbl; do
+        ${bindir}/thot_obtain_best_trans_from_nbl $nblfile "${llweights}" >> ${local_outfile}
     done
             
     # Calculate translation quality
-    local_quality=`$bindir/thot_calc_bleu -r ${reffile} -t ${TDIR_LLWU}/${niter}_best_trans | $AWK '{printf"%s",$2}'`
+    local_quality=`$bindir/thot_calc_bleu -r ${reffile} -t ${local_outfile} | $AWK '{printf"%s",$2}'`
 
     echo ${local_quality}
 }
@@ -389,7 +393,7 @@ while [ $niter -le $maxiters ]; do
     gen_nbest_lists_iter
 
     # Obtain translation quality
-    quality=`obtain_trans_quality_from_nblists`
+    quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/nblist/${niter} ${TDIR_LLWU}/${niter}_best_trans`
     echo "* Current translation quality: ${quality}" >&2
 
     # Obtain current n-best lists
@@ -409,6 +413,10 @@ while [ $niter -le $maxiters ]; do
     echo "" >&2
 
 done
+
+# Obtain final quality from current n-best lists
+quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/curr_nblist/ ${TDIR_LLWU}/curr_nblist_best_trans`
+echo "* Final translation quality calculated from current n-best lists: ${quality}" >&2
 
 # Print result
 echo ${llweights}
