@@ -166,7 +166,7 @@ int takeParameters(int argc,
   }
   else
   {
-    cerr<<"Warning: -c option was not given (execute --help for additional information)"<<endl;
+//    cerr<<"Warning: -c option was not given (execute --help for additional information)"<<endl;
     return OK;
   }
       // process command line parameters
