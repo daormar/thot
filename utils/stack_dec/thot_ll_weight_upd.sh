@@ -24,7 +24,7 @@ usage()
 {
     echo "thot_ll_weight_upd [-pr <int>] -c <string> -t <string> -r <string>"
     echo "                   [-va <bool> ... <bool>]"
-    echo "                   [-n <int>] [-tdir <string>]"
+    echo "                   [-n <int>] [-i <int>] [-tdir <string>]"
     echo "                   [-debug] [-v] [--help] [--version]"
     echo " -pr <int>            : Number of processors."
     echo " -c <string>          : Configuration file."
@@ -33,7 +33,8 @@ usage()
     echo " -va <bool>...<bool>  : Set variable values to be excluded or included."
     echo "                        Each value equal to 0 excludes the variable and"
     echo "                        values equal to 1 include the variable."
-    echo " -n <string>          : Size of the n-best lists."
+    echo " -n <int>             : Size of the n-best lists."
+    echo " -i <int>             : Number of iterations."
     echo " -tdir <string>       : Absolute path of a directory for storing temporary"
     echo "                        files. If not given /tmp is used."
     echo " -v                   : Verbose mode."
@@ -213,6 +214,8 @@ va_given=0
 va_opt=""
 n_given=0
 n_val=100
+i_given=0
+maxiters=10
 verbose_opt=""
 tdir=""
 debug=""
@@ -260,6 +263,12 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 n_val=$1
                 n_given=1
+            fi
+            ;;
+        "-i") shift
+            if [ $# -ne 0 ]; then
+                maxiters=$1
+                i_given=1
             fi
             ;;
         "-va") shift
@@ -348,7 +357,6 @@ mkdir ${TDIR_LLWU}/curr_nblist
 llweights=`obtain_init_llweights`
 
 # Start iterations
-maxiters=2
 niter=1
 
 while [ $niter -le $maxiters ]; do
