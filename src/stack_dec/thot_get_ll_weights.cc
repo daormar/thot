@@ -166,7 +166,7 @@ int takeParameters(int argc,
   }
   else
   {
-    cerr<<"Warning: -c option was not given"<<endl;
+    cerr<<"Warning: -c option was not given (execute --help for additional information)"<<endl;
     return OK;
   }
       // process command line parameters
@@ -220,7 +220,7 @@ void printUsage(void)
 {
   cerr << "thot_get_ll_weights [-c <string>]"<<endl;
   cerr << "                    [--help] [--version]"<<endl<<endl;
-  cerr << "-c <string>           : Configuration."<<endl;
+  cerr << "-c <string>           : Configuration file."<<endl;
   cerr << "--help                : Display this help and exit."<<endl;
   cerr << "--version             : Output version information and exit."<<endl;
 }
