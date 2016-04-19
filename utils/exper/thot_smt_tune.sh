@@ -336,23 +336,33 @@ create_cfg_file_for_tuning()
                           }' $cmdline_cfg
 }
 
+##################
+obtain_llweights_names()
+{
+    local_line=`$bindir/thot_get_ll_weights`
+    local_llw_names=`echo ${local_line} | $AWK '{for(i=1;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
+    echo ${local_llw_names}
+}
+
 ########
 obtain_loglin_nonneg_const()
 {
-    echo `$PHRDECODER --config 2>&1 | $GREP "\- Weights" | $AWK -F , '{for(i=1;i<=NF;++i) {if(i==1 || i==3) printf"0 "; else printf"1 "}}'`
+    local_llw_names=`obtain_llweights_names`
+    echo "${local_llw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wp" || $i=="tseglenw") printf"0 "; else printf"1 "}'
 }
 
 ########
 obtain_loglin_va_opt_values()
 {
-    echo "-0 -0 -0 -0 -0 -0 -0 0"
-#    echo `$PHRDECODER --config 2>&1 | $GREP "\- Weights" | $AWK -F , '{for(i=1;i<=NF;++i) printf"-0 "}'`
+    local_llw_names=`obtain_llweights_names`
+    echo "${local_llw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"-0 "}'
 }
 
 ########
 obtain_loglin_iv_opt_values()
 {
-    echo `$PHRDECODER --config 2>&1 | $GREP "\- Weights" | $AWK -F , '{for(i=1;i<=NF;++i) printf"1 "}'`
+    local_llw_names=`obtain_llweights_names`
+    echo "${local_llw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'
 }
 
 ########
@@ -370,9 +380,9 @@ loglin_downhill()
     export USE_NBEST_OPT=0
 
     # Generate information for weight initialisation
-    export NON_NEG_CONST=`obtain_loglin_nonneg_const`
-    va_opt=`obtain_loglin_va_opt_values`
-    iv_opt=`obtain_loglin_iv_opt_values`
+    export NON_NEG_CONST="`obtain_loglin_nonneg_const`"
+    va_opt="`obtain_loglin_va_opt_values`"
+    iv_opt="`obtain_loglin_iv_opt_values`"
 
     # Execute tuning algorithm
     ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
