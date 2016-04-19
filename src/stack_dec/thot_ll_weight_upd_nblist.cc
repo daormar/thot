@@ -245,6 +245,8 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
     return ERROR;
   }
 
+  // cerr<<"**** Processing file"<<nbfile<<endl;
+  
       // Read n-best file
   while(awk.getln())
   {
@@ -284,6 +286,7 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
           // Extend output variables
       scoreComps.push_back(scoreCompsForTrans);
       nblist.push_back(nbest);
+
       // cerr<<"|||||||||"<<nbest<<"||||||"<<endl;
       // for(unsigned int i=0;i<scoreCompsForTrans.size();++i)
       // {
