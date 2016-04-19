@@ -24,7 +24,6 @@ usage()
 {
     echo "thot_ll_weight_upd [-pr <int>] -c <string> -t <string> -r <string>"
     echo "                   [-va <bool> ... <bool>]"
-    # echo "                   [-iv <float> ... <float>] -o <string>"
     echo "                   [-n <int>] [-tdir <string>]"
     echo "                   [-debug] [-v] [--help] [--version]"
     echo " -pr <int>            : Number of processors."
@@ -34,9 +33,6 @@ usage()
     echo " -va <bool>...<bool>  : Set variable values to be excluded or included."
     echo "                        Each value equal to 0 excludes the variable and"
     echo "                        values equal to 1 include the variable."
-    # echo " -iv <float>...<float>: Initial values for the variables (fixed values set by"
-    # echo "                        -va are not affected by -iv)."
-    # echo " -o <string>          : Set output files prefix."
     echo " -n <string>          : Size of the n-best lists."
     echo " -tdir <string>       : Absolute path of a directory for storing temporary"
     echo "                        files. If not given /tmp is used."
@@ -191,8 +187,8 @@ proc_curr_nblists()
     fi
     
     # Update weights given n-best lists
-    $bindir/thot_ll_weight_upd_nblist -w ${llweights} -va ${va_values} \
-        -nb ${TDIR_LLWU}/nbl_files.txt -r ${reffile} >> ${TDIR_LLWU}/weights_per_iter.txt || exit 1
+    $bindir/thot_ll_weight_upd_nblist -w ${llweights} ${va_opt} \
+        -nb ${TDIR_LLWU}/nbl_files.txt -r ${reffile} >> ${TDIR_LLWU}/weights_per_iter.txt 2>${TDIR_LLWU}/${niter}_thot_ll_weight_upd_nblist.log || exit 1
 }
 
 ##################
@@ -214,8 +210,7 @@ c_given=0
 t_given=0
 r_given=0
 va_given=0
-# iv_opt=""
-# o_given=0
+va_opt=""
 n_given=0
 n_val=100
 verbose_opt=""
@@ -283,32 +278,9 @@ while [ $# -ne 0 ]; do
                     fi
                 done            
                 va_given=1
+                va_opt="-va ${va_values}"
             fi
             ;;
-        # "-iv") shift
-        #     if [ $# -ne 0 -a ! "`str_is_option $1`" = "1" ]; then
-        #         end=0
-        #         while [ $end -eq 0 ]; do
-        #             iv_values=$iv_values" "$1
-        #             if [ $# -le 1 ]; then
-        #                 end=1
-        #             else
-        #                 if [ "`str_is_option $2`" = "1" ]; then
-        #                     end=1
-        #                 else
-        #                     shift
-        #                 fi
-        #             fi
-        #         done            
-        #         iv_opt="-iv ${iv_values}"
-        #     fi
-        #     ;;
-        # "-o") shift
-        #     if [ $# -ne 0 ]; then
-        #         outpref=$1
-        #         o_given=1
-        #     fi
-        #     ;;
         "-debug") debug="-debug"
             ;;
         "-v") verbose_opt="-v"
@@ -348,11 +320,6 @@ else
         exit 1
     fi
 fi
-
-# if [ ${o_given} -eq 0 ]; then
-#     echo "Error: -o option not given" >&2 
-#     exit 1
-# fi
 
 # parameters are ok
 
