@@ -49,6 +49,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
+#define KBMIRA_RANDOM_SEED 31415
 
 //--------------- typedefs -------------------------------------------
 struct HopeFearData {

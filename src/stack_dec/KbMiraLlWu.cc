@@ -56,7 +56,7 @@ void KbMiraLlWu::update(const std::string& reference,
                         const Vector<double>& currWeightsVec,
                         Vector<double>& newWeightsVec)
 {
-  srand(time(NULL));
+  srand(KBMIRA_RANDOM_SEED);
   double max_bleu = 0;
   Vector<double> best_wt;
   // FIXME: this should be changed by a scorer class
@@ -111,7 +111,7 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
                                     const Vector<double>& currWeightsVec,
                                     Vector<double>& newWeightsVec)
 {
-  srand(time(NULL));
+  srand(KBMIRA_RANDOM_SEED);
   unsigned int MAX_RESTARTS=5, nReStarts=0;
 
   // FIXME: this should be changed by a scorer class
