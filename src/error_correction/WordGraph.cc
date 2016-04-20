@@ -422,7 +422,6 @@ void WordGraph::nbSearch(unsigned int len,
 
       // Create null hypothesis
   NbSearchHyp nbSearchHyp;
-//  nbSearchHyp.push_back(INITIAL_STATE);
 
       // Declare stack and set maximum size
   NbSearchStack nbSearchStack;
