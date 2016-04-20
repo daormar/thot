@@ -359,7 +359,8 @@ bool WordGraph::arcPruned(WordGraphArcId wordGraphArcId)const
 //---------------------------------------
 void WordGraph::obtainNbestList(unsigned int len,
                                 Vector<pair<Score,std::string> >& nblist,
-                                Vector<Vector<Score> >& scoreCompsVec)
+                                Vector<Vector<Score> >& scoreCompsVec,
+                                int verbosity/*=false*/)
 {
       // Check if word-graph is empty
   if(wordGraphArcs.empty())
@@ -376,7 +377,7 @@ void WordGraph::obtainNbestList(unsigned int len,
     obtainNbSearchHeurInfo(heurForEachState);
   
         // Execute A-star search
-    nbSearch(len,heurForEachState,nblist,scoreCompsVec);
+    nbSearch(len,heurForEachState,nblist,scoreCompsVec,verbosity);
   }
 }
 
@@ -414,7 +415,8 @@ void WordGraph::obtainNbSearchHeurInfo(Vector<Score>& heurForEachState)
 void WordGraph::nbSearch(unsigned int len,
                          const Vector<Score>& heurForEachState,
                          Vector<pair<Score,std::string> >& nblist,
-                         Vector<Vector<Score> >& scoreCompsVec)
+                         Vector<Vector<Score> >& scoreCompsVec,
+                         int verbosity/*=false*/)
 {
   // Perform A-star search
 
@@ -437,6 +439,9 @@ void WordGraph::nbSearch(unsigned int len,
   bool end=false;
   while(!end)
   {
+    if(verbosity>=1)
+      cerr<<"* Iteration "<<numIters<<endl;
+    
         // Check if there are "len" complete hypotheses
     if(completeHypStack.size()>=len)
     {
@@ -453,7 +458,15 @@ void WordGraph::nbSearch(unsigned int len,
 
             // Subtract heuristic
         scrHypPair.first-=heurForEachState[scrHypPair.second.back()];        
-        
+
+        if(verbosity>=1)
+        {
+          cerr<<"- Top of the stack: "<<scrHypPair.first<<" ;";
+          for(unsigned int j=0;j<scrHypPair.second.size();++j)
+            cerr<<" "<<scrHypPair.second[j];
+          cerr<<endl;
+        }
+
             // Check if hyp is complete
         if(hypIsComplete(scrHypPair.second))
         {
@@ -461,6 +474,9 @@ void WordGraph::nbSearch(unsigned int len,
         }
         else
         {
+          if(verbosity>=1)
+            cerr<<"- Expanding top of the stack..."<<endl;
+
             // Expand hypothesis
           HypStateIndex hidx=scrHypPair.second.back();
           Vector<WordGraphArcId> wgArcIds;
@@ -482,6 +498,11 @@ void WordGraph::nbSearch(unsigned int len,
               newScrHypPair.second.push_back(wgArc.succStateIndex);
                   // Push into vector
               scrHypPairVec.push_back(newScrHypPair);
+
+              if(verbosity>=1)
+              {
+                cerr<<"  Adding extension, score contribution: "<<wgArc.arcScore<<" ; successor state: "<<wgArc.succStateIndex<<endl;
+              }
             }
           }
           
@@ -498,11 +519,17 @@ void WordGraph::nbSearch(unsigned int len,
         end=true;
       }
     }
-    ++numIters;  
+    ++numIters;
+    if(verbosity>=1) cerr<<endl;
   }          
       // Obtain result
   nblist.clear();
   scoreCompsVec.clear();
+  if(verbosity>=1)
+  {
+    cerr<<"* Verbose info about complete hypotheses..."<<endl;
+  }
+  
   while(!completeHypStack.empty())
   {
         // Pop top of the stack
@@ -516,6 +543,15 @@ void WordGraph::nbSearch(unsigned int len,
       
         // Add to vector
     nblist.push_back(make_pair(scrHypPair.first,translation));
+
+        // Print verbose information
+    if(verbosity>=1)
+    {
+      cerr<<scrHypPair.first<<" ||| "<<translation<<" |||";
+      for(unsigned int j=0;j<scrHypPair.second.size();++j)
+        cerr<<" "<<scrHypPair.second[j];
+      cerr<<endl;
+    }
   }
 }
 
@@ -658,7 +694,7 @@ void WordGraph::obtainWgComposedOfUsefulStates(void)
 }
 
 //---------------------------------------
-void WordGraph::order_arcs_topol(void)
+void WordGraph::orderArcsTopol(void)
 {
       // Define auxiliary variables
   WordGraphArcs wordGraphArcsAux;
@@ -728,7 +764,7 @@ void WordGraph::order_arcs_topol(void)
     if(!atLeastOneArcAdded)
     {
           // Print error message
-      cerr<<"Error while executing order_arcs_topol() function, anomalous word-graph"<<endl;
+      cerr<<"Error while executing orderArcsTopol() function, anomalous word-graph"<<endl;
           // End while loop
       break;
     }

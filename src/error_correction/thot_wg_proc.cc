@@ -152,7 +152,7 @@ int processParameters(thot_wg_proc_pars pars)
           // Obtain n-best list
       Vector<pair<Score,std::string> > nblist;
       Vector<Vector<Score> > scoreCompsVec;
-      wgAux.obtainNbestList(pars.nbListLen,nblist,scoreCompsVec);
+      wgAux.obtainNbestList(pars.nbListLen,nblist,scoreCompsVec,pars.v_given);
 
           // Print file
       std::string nbListFile=pars.o_str;
@@ -169,7 +169,7 @@ int processParameters(thot_wg_proc_pars pars)
           // Obtain n-best list
       Vector<pair<Score,std::string> > nblist;
       Vector<Vector<Score> > scoreCompsVec;
-      wordGraph.obtainNbestList(pars.nbListLen,nblist,scoreCompsVec);
+      wordGraph.obtainNbestList(pars.nbListLen,nblist,scoreCompsVec,pars.v_given);
 
           // Print file
       std::string nbListFile=pars.o_str;
@@ -183,7 +183,7 @@ int processParameters(thot_wg_proc_pars pars)
   if(pars.t_given)
   {
     WordGraph wgAux=wordGraph;
-    wgAux.order_arcs_topol();
+    wgAux.orderArcsTopol();
     std::string wgArcsTopOrdFile=pars.o_str;
     wgArcsTopOrdFile=wgArcsTopOrdFile+".wg_arcs_top_order";
     ret=wgAux.print(wgArcsTopOrdFile.c_str());
