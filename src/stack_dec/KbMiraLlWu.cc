@@ -43,10 +43,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------
 KbMiraLlWu::KbMiraLlWu(double C,
                        double gamma,
-                       unsigned int J) {
+                       unsigned int J,
+                       unsigned int epochs_to_restart,
+                       unsigned int max_restarts) {
   c = C;
   decay = gamma;
   nIters = J;
+  epochsToRestart = epochs_to_restart;
+  maxRestarts = max_restarts;
 };
 
 //---------------------------------------
@@ -57,7 +61,6 @@ void KbMiraLlWu::update(const std::string& reference,
                         Vector<double>& newWeightsVec)
 {
   srand(KBMIRA_RANDOM_SEED);
-  unsigned int MAX_RESTARTS=5, EPOCHS_TO_RESTART=30, nReStarts=0;
 
       // FIXME: this should be changed by a scorer class
   Vector<unsigned int> bg(10, 1);  // background corpus stats for BLEU
@@ -69,6 +72,7 @@ void KbMiraLlWu::update(const std::string& reference,
   Vector<double> wTotals(currWeightsVec);
   Vector<double> max_wAvg;
 
+  unsigned int nReStarts=0;
   double bleu, iter_max_bleu = 0, iter_max_j = 0, max_bleu = 0;
   Vector<double> wt(currWeightsVec);
   for(unsigned int j=0; j<nIters; j++) {
@@ -123,8 +127,8 @@ void KbMiraLlWu::update(const std::string& reference,
     cerr << nReStarts << " " << j << " " << iter_max_j << " " << bleu << " " << max_bleu << endl;
 
     // restart weights if no improvement in X epochs;
-    if (j-iter_max_j > EPOCHS_TO_RESTART) {
-      if (nReStarts < MAX_RESTARTS) {
+    if (j-iter_max_j > epochsToRestart) {
+      if (nReStarts < maxRestarts) {
         nReStarts++;
         j = 0;
         iter_max_j = 0;
@@ -149,7 +153,6 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
                                     Vector<double>& newWeightsVec)
 {
   srand(KBMIRA_RANDOM_SEED);
-  unsigned int MAX_RESTARTS=5, EPOCHS_TO_RESTART=20, nReStarts=0;
 
   // FIXME: this should be changed by a scorer class
   Vector<unsigned int> bg(10, 1);          // background corpus stats for BLEU
@@ -163,12 +166,11 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
   Vector<double> wTotals(currWeightsVec);
   Vector<double> max_wAvg;
 
-  double total_loss;
+  unsigned int nReStarts = 0;
   double bleu, iter_max_bleu = 0, iter_max_j = 0, max_bleu = 0;
   Vector<double> wt(currWeightsVec);
   for(unsigned int j=0; j<nIters; j++) {
     // MIRA train for one epoch
-    total_loss = 0;
     Vector<unsigned int> indices(nSents);
     sampleWoReplacement(nSents, indices);
     for (unsigned int z=0; z<nSents; z++) {
@@ -186,7 +188,6 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
         for (unsigned int k=0; k<diff.size(); k++)
           diffScore += wt[k]*diff[k];
         double loss = delta - diffScore;
-        total_loss += loss;
 
         if (loss > 0) {
           // Update weights
@@ -231,8 +232,8 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
     cerr << nReStarts << " " << j << " " << iter_max_j << " " << bleu << " " << max_bleu << endl;
 
     // restart weights if no improvement in X epochs;
-    if (j-iter_max_j > EPOCHS_TO_RESTART) {
-      if (nReStarts < MAX_RESTARTS) {
+    if (j-iter_max_j > epochsToRestart) {
+      if (nReStarts < maxRestarts) {
         nReStarts++;
         j = 0;
         iter_max_j = 0;

@@ -72,7 +72,9 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
  public:
   KbMiraLlWu(double C = 0.01,
              double gamma = 0.999,
-             unsigned int J = 60);
+             unsigned int J = 60,
+             unsigned int epochs_to_restart = 20,
+             unsigned int max_restarts = 5);
 
       // Compute new weights for an individual sentence
   void update(const std::string& reference,
@@ -91,6 +93,8 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
   double c;              // Step-size cap C
   double decay;          // Pseudo-corpus decay \gamma
   unsigned int nIters;  // Max epochs J
+  unsigned int epochsToRestart; // epochs without improvement before re-start
+  unsigned int maxRestarts;     // max number of re-starts
 
      // Compute max scoring translaiton according to w
   void MaxTranslation(const Vector<double>& w,
