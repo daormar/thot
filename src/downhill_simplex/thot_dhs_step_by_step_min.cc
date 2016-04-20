@@ -153,8 +153,8 @@ int main(int argc,char *argv[])
     }
     
     cerr<<"Solution ..."<<endl;
-    printVarVec(cerr,x);
-    printVarVec(cout,x);
+    printVarVec(cerr,start);
+    printVarVec(cout,start);
     
         // Release memory
     free(start);
