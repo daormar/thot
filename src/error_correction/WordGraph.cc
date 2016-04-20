@@ -422,7 +422,7 @@ void WordGraph::nbSearch(unsigned int len,
 
       // Create null hypothesis
   NbSearchHyp nbSearchHyp;
-  nbSearchHyp.push_back(INITIAL_STATE);
+//  nbSearchHyp.push_back(INITIAL_STATE);
 
       // Declare stack and set maximum size
   NbSearchStack nbSearchStack;
@@ -456,8 +456,18 @@ void WordGraph::nbSearch(unsigned int len,
         pair<Score,NbSearchHyp> scrHypPair=nbSearchStack.top();
         nbSearchStack.pop();
 
+            // Obtain index of last state
+        HypStateIndex lastHypStateIndex;
+        if(scrHypPair.second.empty())
+          lastHypStateIndex=INITIAL_STATE;
+        else
+        {
+          WordGraphArc wgArc=wordGraphArcId2WordGraphArc(scrHypPair.second.back());
+          lastHypStateIndex=wgArc.succStateIndex;
+        }
+        
             // Subtract heuristic
-        scrHypPair.first-=heurForEachState[scrHypPair.second.back()];        
+        scrHypPair.first-=heurForEachState[lastHypStateIndex];
 
         if(verbosity>=1)
         {
@@ -478,9 +488,8 @@ void WordGraph::nbSearch(unsigned int len,
             cerr<<"- Expanding top of the stack..."<<endl;
 
             // Expand hypothesis
-          HypStateIndex hidx=scrHypPair.second.back();
           Vector<WordGraphArcId> wgArcIds;
-          getArcIdsToSuccStates(hidx,wgArcIds);
+          getArcIdsToSuccStates(lastHypStateIndex,wgArcIds);
 
           Vector<pair<Score,NbSearchHyp> > scrHypPairVec;
           for(unsigned int i=0;i<wgArcIds.size();++i)
@@ -494,8 +503,8 @@ void WordGraph::nbSearch(unsigned int len,
               newScrHypPair.first+=wgArc.arcScore;
                   // Add heuristic
               newScrHypPair.first+=heurForEachState[wgArc.succStateIndex];   
-                  // Add new state
-              newScrHypPair.second.push_back(wgArc.succStateIndex);
+                  // Add new arc
+              newScrHypPair.second.push_back(wgArcIds[i]);
                   // Push into vector
               scrHypPairVec.push_back(newScrHypPair);
 
@@ -549,7 +558,11 @@ void WordGraph::nbSearch(unsigned int len,
     {
       cerr<<scrHypPair.first<<" ||| "<<translation<<" |||";
       for(unsigned int j=0;j<scrHypPair.second.size();++j)
-        cerr<<" "<<scrHypPair.second[j];
+      {
+        WordGraphArc wgArc=wordGraphArcId2WordGraphArc(scrHypPair.second[j]);
+        HypStateIndex hidx=wgArc.succStateIndex;
+        cerr<<" "<<hidx;
+      }
       cerr<<endl;
     }
   }
@@ -561,7 +574,8 @@ bool WordGraph::hypIsComplete(const NbSearchHyp& nbSearchHyp)
   if(nbSearchHyp.empty()) return false;
   else
   {
-    HypStateIndex hidx=nbSearchHyp.back();
+    WordGraphArc wgArc=wordGraphArcId2WordGraphArc(nbSearchHyp.back());
+    HypStateIndex hidx=wgArc.succStateIndex;
     if(stateIsFinal(hidx))
       return true;
     else
@@ -576,48 +590,29 @@ std::string WordGraph::stringAssociatedToHyp(const NbSearchHyp& nbSearchHyp,
   std::string str;
   for(unsigned int i=0;i<nbSearchHyp.size();++i)
   {
-        // Obtain predecessor state
-    HypStateIndex predIdx=nbSearchHyp[i];
+    WordGraphArcId wgArcId=nbSearchHyp[i];
+    WordGraphArc wgArc=wordGraphArcId2WordGraphArc(wgArcId);
 
-        // Check if there is a successor
-    if(i+1<nbSearchHyp.size())
+        // Add words to str
+    if(i!=0)
+      str=str+" ";
+    
+    for(unsigned int k=0;k<wgArc.words.size();++k)
     {
-          // Obtain successor state
-      HypStateIndex succIdx=nbSearchHyp[i+1];
+      str=str+wgArc.words[k];
+      if(k!=wgArc.words.size()-1)
+        str=str+" ";
+    }
 
-          // Obtain arcs from predIdx
-      Vector<WordGraphArcId> wgArcIds;
-      getArcIdsToSuccStates(predIdx,wgArcIds);
-
-          // Find arc from predIdx to succIdx
-      for(unsigned int j=0;j<wgArcIds.size();++j)
+        // Sum score components
+    if(wgArcId<scrCompsVec.size())
+    {
+      if(i==0)
+        scoreComps=scrCompsVec[wgArcId];
+      else
       {
-        WordGraphArc wgArc=wordGraphArcId2WordGraphArc(wgArcIds[j]);
-        if(succIdx==wgArc.succStateIndex)
-        {
-              // Add words to str
-          if(i!=0)
-            str=str+" ";
-          for(unsigned int k=0;k<wgArc.words.size();++k)
-          {
-            str=str+wgArc.words[k];
-            if(k!=wgArc.words.size()-1)
-              str=str+" ";
-          }
-              // Sum score components
-          if(wgArcIds[j]<scrCompsVec.size())
-          {
-            if(i==0)
-              scoreComps=scrCompsVec[wgArcIds[j]];
-            else
-            {
-              for(unsigned int k=0;k<scoreComps.size();++k)
-                scoreComps[k]+=scrCompsVec[wgArcIds[j]][k];
-            }
-          }
-              // Break for loop (arc has already been found)
-          break;
-        }
+        for(unsigned int k=0;k<scoreComps.size();++k)
+          scoreComps[k]+=scrCompsVec[wgArcId][k];
       }
     }
   }
@@ -893,6 +888,7 @@ void WordGraph::calcPrevScoresWeights(HypStateIndex hypStateIndex,
     }
   }
 }
+
 //---------------------------------------
 bool WordGraph::checkIfAltWeightsAppliable(const Vector<float>& altCompWeights)const
 {

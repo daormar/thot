@@ -26,10 +26,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "myVector.h"
-#include "HypStateIndex.h"
+#include "WordGraphArcId.h"
 
 //--------------- typedefs -------------------------------------------
 
-typedef Vector<HypStateIndex> NbSearchHyp;
+typedef Vector<WordGraphArcId> NbSearchHyp;
 
 #endif
