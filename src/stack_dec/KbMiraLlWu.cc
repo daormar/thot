@@ -57,19 +57,24 @@ void KbMiraLlWu::update(const std::string& reference,
                         Vector<double>& newWeightsVec)
 {
   srand(KBMIRA_RANDOM_SEED);
-  double max_bleu = 0;
-  Vector<double> best_wt;
-  // FIXME: this should be changed by a scorer class
+  unsigned int MAX_RESTARTS=5, EPOCHS_TO_RESTART=30, nReStarts=0;
+
+      // FIXME: this should be changed by a scorer class
   Vector<unsigned int> bg(10, 1);  // background corpus stats for BLEU
                                    // cand_len, ref_len
                                    // matching, totals for n 1..4
   assert (nblist.size() == scoreCompsVec.size());
-  Vector<double> wt(currWeightsVec);
 
-  for (unsigned int j=0; j<nIters; j++) {
+  unsigned int nUpdates = 1;
+  Vector<double> wTotals(currWeightsVec);
+  Vector<double> max_wAvg;
+
+  double bleu, iter_max_bleu = 0, iter_max_j = 0, max_bleu = 0;
+  Vector<double> wt(currWeightsVec);
+  for(unsigned int j=0; j<nIters; j++) {
+    // MIRA train for one epoch
     HopeFearData hfd;
     HopeFear(reference, nblist, scoreCompsVec, wt, bg, &hfd);
-    // Update weights
     if (hfd.hopeBleu  > hfd.fearBleu) {
       Vector<double> diff(hfd.hopeFeatures.size());
       for (unsigned int k=0; k<diff.size(); k++)
@@ -79,29 +84,61 @@ void KbMiraLlWu::update(const std::string& reference,
       for (unsigned int k=0; k<diff.size(); k++)
         diffScore += wt[k]*diff[k];
       double loss = delta - diffScore;
+
       if (loss > 0) {
         // Update weights
         double diffNorm = 0;
         for (unsigned int k=0; k<diff.size(); k++)
           diffNorm += diff[k]*diff[k];
         double eta = min(c, loss/diffNorm);
-        for (unsigned int k=0; k<diff.size(); k++)
+        for (unsigned int k=0; k<diff.size(); k++) {
           wt[k] += eta*diff[k];
+          wTotals[k] += wt[k];
+        }
+        nUpdates++;
+      }
+      // Update BLEU statistics
+      for (unsigned int k=0; k<bg.size(); k++)
+        bg[k] = decay*bg[k] + hfd.hopeBleuStats[k];
+    }
+
+    // average all seen weight vectors
+    Vector<double> wAvg(wTotals.size(), 0);
+    for (unsigned int k=0; k<wAvg.size(); k++)
+      wAvg[k] = wTotals[k]/nUpdates;
+
+    // evaluate bleu of wAvg
+    std::string maxTranslation;
+    MaxTranslation(wAvg, nblist, scoreCompsVec, maxTranslation);
+    sentenceBleu(maxTranslation, reference, bleu);
+    if (bleu > iter_max_bleu) {
+      iter_max_j = j;
+      iter_max_bleu = bleu;
+      if (iter_max_bleu > max_bleu) {
+        max_bleu = iter_max_bleu;
+        max_wAvg = wAvg;
       }
     }
-    // check BLEU on new weights
-    double bleu;
-    std::string maxTranslation;
-    Vector<unsigned int> stats(bg.size());
-    MaxTranslation(wt, nblist, scoreCompsVec, maxTranslation);
-    sentBckgrndBleu(maxTranslation, reference, bg, bleu, stats);
-    //Bleu(maxTranslations, references, bleu);
-    if (bleu > max_bleu) {
-      max_bleu = bleu;
-      best_wt = wt;
+
+    cerr << nReStarts << " " << j << " " << iter_max_j << " " << bleu << " " << max_bleu << endl;
+
+    // restart weights if no improvement in X epochs;
+    if (j-iter_max_j > EPOCHS_TO_RESTART) {
+      if (nReStarts < MAX_RESTARTS) {
+        nReStarts++;
+        j = 0;
+        iter_max_j = 0;
+        iter_max_bleu = 0;
+        nUpdates = 1;
+        for(unsigned int k=0; k<wt.size(); k++) {
+          wt[k] = currWeightsVec[k];
+          wTotals[k] = currWeightsVec[k];
+        }
+      }
+      else break;
     }
   }
-  newWeightsVec = best_wt;
+  newWeightsVec = max_wAvg;
 }
 
 //---------------------------------------
@@ -112,7 +149,7 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
                                     Vector<double>& newWeightsVec)
 {
   srand(KBMIRA_RANDOM_SEED);
-  unsigned int MAX_RESTARTS=5, nReStarts=0;
+  unsigned int MAX_RESTARTS=5, EPOCHS_TO_RESTART=20, nReStarts=0;
 
   // FIXME: this should be changed by a scorer class
   Vector<unsigned int> bg(10, 1);          // background corpus stats for BLEU
@@ -126,23 +163,8 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
   Vector<double> wTotals(currWeightsVec);
   Vector<double> max_wAvg;
 
-  // // evaluate bleu of ini
-  // std::string borrar;
-  // Vector<std::string> borrarV;
-  // for (unsigned int i=0; i<nSents; i++) {
-  //   MaxTranslation(currWeightsVec, nblists[i], scoreCompsVecs[i], borrar);
-  //   borrarV.push_back(borrar);
-  // }
-  // double bleu;
-  // Bleu(borrarV, references, bleu);
-  // cout << "INIW: ";
-  // for(unsigned int k=0; k<currWeightsVec.size(); k++)
-  //   cout << currWeightsVec[k] << " ";
-  // cout << endl;
-  // cout << "-1 " << bleu << endl;
-
   double total_loss;
-  double max_bleu = 0, max_j = 0;
+  double bleu, iter_max_bleu = 0, iter_max_j = 0, max_bleu = 0;
   Vector<double> wt(currWeightsVec);
   for(unsigned int j=0; j<nIters; j++) {
     // MIRA train for one epoch
@@ -152,19 +174,9 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
     for (unsigned int z=0; z<nSents; z++) {
       unsigned int i = indices[z];
 
-      // cout << i << endl;
-      // cout << "WT: ";
-      // for(unsigned int k=0; k<wt.size(); k++)
-      //   cout << wt[k] << ' ';
-      // cout << endl;
-
       assert (nblists[i].size() == scoreCompsVecs[i].size());
       HopeFearData hfd;
       HopeFear(references[i], nblists[i], scoreCompsVecs[i], wt, bg, &hfd);
-      // Update weights
-
-      //cout << "HB: " << hfd.hopeBleu << " " << hfd.fearBleu << endl;
-
       if (hfd.hopeBleu  > hfd.fearBleu) {
         Vector<double> diff(hfd.hopeFeatures.size());
         for (unsigned int k=0; k<diff.size(); k++)
@@ -175,7 +187,6 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
           diffScore += wt[k]*diff[k];
         double loss = delta - diffScore;
         total_loss += loss;
-        //cout << "LOSS: " << loss << endl;
 
         if (loss > 0) {
           // Update weights
@@ -193,24 +204,12 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
         for (unsigned int k=0; k<bg.size(); k++)
           bg[k] = decay*bg[k] + hfd.hopeBleuStats[k];
       }
-
-      // cout << "NWT: ";
-      // for(unsigned int k=0; k<wt.size(); k++)
-      //   cout << wt[k] << ' ';
-      // cout << endl;
-
     }
 
     // average all seen weight vectors
     Vector<double> wAvg(wTotals.size(), 0);
     for (unsigned int k=0; k<wAvg.size(); k++)
       wAvg[k] = wTotals[k]/nUpdates;
-
-    // cout << "LOSS: " << total_loss << endl;
-    // cout << "AWT: ";
-    // for(unsigned int k=0; k<wt.size(); k++)
-    //   cout << wt[k] << ' ';
-    // cout << endl;
 
     // evaluate bleu of wAvg
     std::string maxTranslation;
@@ -219,27 +218,32 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
       MaxTranslation(wAvg, nblists[i], scoreCompsVecs[i], maxTranslation);
       maxTranslations.push_back(maxTranslation);
     }
-    double bleu;
     Bleu(maxTranslations, references, bleu);
-    if(bleu > max_bleu) {
-      max_bleu = bleu;
-      max_wAvg = wAvg;
-      max_j = j;
+    if (bleu > iter_max_bleu) {
+      iter_max_j = j;
+      iter_max_bleu = bleu;
+      if (iter_max_bleu > max_bleu) {
+        max_bleu = iter_max_bleu;
+        max_wAvg = wAvg;
+      }
     }
 
-    //cout << nReStarts << " " << j << " " << bleu << " " << max_bleu << endl;
+    cerr << nReStarts << " " << j << " " << iter_max_j << " " << bleu << " " << max_bleu << endl;
 
     // restart weights if no improvement in X epochs;
-    if (j-max_j > 20 && nReStarts < MAX_RESTARTS) {
-      //cout << "RESTART" << endl;
-      j = 0;
-      max_j = 0;
-      nUpdates = 0;
-      nReStarts ++;
-      for(unsigned int k=0; k<wt.size(); k++) {
-        wt[k] = currWeightsVec[k];
-        wTotals[k] = 0;
+    if (j-iter_max_j > EPOCHS_TO_RESTART) {
+      if (nReStarts < MAX_RESTARTS) {
+        nReStarts++;
+        j = 0;
+        iter_max_j = 0;
+        iter_max_bleu = 0;
+        nUpdates = 1;
+        for(unsigned int k=0; k<wt.size(); k++) {
+          wt[k] = currWeightsVec[k];
+          wTotals[k] = currWeightsVec[k];
+        }
       }
+      else break;
     }
   }
   newWeightsVec = max_wAvg;
@@ -407,6 +411,52 @@ void KbMiraLlWu::Bleu(const Vector<std::string>& candidates,
   log_aux /= 4;
   bleu = bp * (double)exp(log_aux);
 }
+
+//---------------------------------------
+// FIXME: substitute by scoring class
+void KbMiraLlWu::sentenceBleu(const std::string& candidate,
+                              const std::string& reference,
+                              double& bleu)
+{
+  Vector<unsigned int> stats(10, 1);
+  unsigned int prec, total;
+  Vector<std::string> candidate_tokens, reference_tokens;
+  std::string item;
+
+  std::stringstream ssc(candidate);
+  while (std::getline(ssc, item, ' '))
+    candidate_tokens.push_back(item);
+
+  std::stringstream ssr(reference);
+  while (std::getline(ssr, item, ' '))
+    reference_tokens.push_back(item);
+
+  stats[0] += candidate_tokens.size();
+  stats[1] += reference_tokens.size();
+  for (unsigned int sz=1; sz<=4; sz++) {
+    prec_n(reference_tokens, candidate_tokens, sz, prec, total);
+    stats[2*sz] += prec;
+    stats[2*sz+1] += total;
+  }
+
+  // calculate brevity penalty
+  double bp;
+  if (stats[0] < stats[1])
+    bp = (double)exp((double)1-(double)stats[1]/stats[0]);
+  else bp = 1;
+
+  // calculate bleu
+  double log_aux = 0;
+  for (unsigned int sz=1; sz<=4; sz++) {
+    prec = stats[sz*2];
+    total = stats[sz*2+1];
+    if (total == 0) log_aux += 1;
+    else            log_aux += (double)my_log((double)prec/total);
+  }
+  log_aux /= 4;
+  bleu = bp * (double)exp(log_aux);
+}
+
 
 //---------------------------------------
 void KbMiraLlWu::sampleWoReplacement(unsigned int nSamples,
