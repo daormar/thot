@@ -13,8 +13,8 @@ if CODE_TESTING
 TESTING_PROGS= thot_test
 endif
 
-bin_PROGRAMS = thot_ilm_perp thot_calc_swm_lgprob thot_gen_sw_model	\
-thot_sort_bin_ilextable thot_sort_bin_ihmmatable			\
+bin_PROGRAMS = thot_ilm_perp thot_lm_weight_upd thot_calc_swm_lgprob	\
+thot_gen_sw_model thot_sort_bin_ilextable thot_sort_bin_ihmmatable	\
 thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
 thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
 thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
@@ -289,6 +289,10 @@ $(stack_dec_defs) $(exper_h) $(exper_defs)
 ##########
 thot_ilm_perp_SOURCES = incr_models/thot_ilm_perp.cc
 thot_ilm_perp_LDFLAGS = libthot.la
+
+##########
+thot_lm_weight_upd_SOURCES = incr_models/thot_lm_weight_upd.cc
+thot_lm_weight_upd_LDFLAGS = libthot.la
 
 ##########
 thot_calc_swm_lgprob_SOURCES = sw_models/thot_calc_swm_lgprob.cc
