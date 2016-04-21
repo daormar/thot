@@ -1,5 +1,6 @@
 # HOME_OF_PACKAGE PROGRAM_NAME
 /home/dortiz/smt/software/incr_models thot_ilm_perp
+/home/dortiz/smt/software/incr_models thot_lm_weight_upd
 /home/dortiz/smt/software/alig_models/sw_models thot_calc_swm_lgprob
 /home/dortiz/smt/software/alig_models/sw_models thot_gen_sw_model
 /home/dortiz/smt/software/alig_models/sw_models thot_sort_bin_ilextable
