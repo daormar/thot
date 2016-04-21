@@ -58,14 +58,17 @@ extern "C"
                            FILE *images_file,                         
                            int* nfunk,
                            double* y,
-                           double* x);
+                           double* x,
+                           int verbosity);
   int get_next_funk(FILE* images_file,
-                    double* y);
+                    double* y,
+                    int verbosity);
   int step_by_step_objfunc(FILE* images_file,
                            int n,
                            double* curr_vertex,
                            double* x,
-                           double* y);
+                           double* y,
+                           int verbosity);
 
 #ifdef __cplusplus  
 }

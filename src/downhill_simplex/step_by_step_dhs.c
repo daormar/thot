@@ -50,7 +50,8 @@ int step_by_step_simplex(double start[],
                          FILE *images_file,
                          int* nfunk,
                          double* y,
-                         double* x)
+                         double* x,
+                         int verbosity)
 {	
 	int vs;         /* vertex with smallest value */
 	int vh;         /* vertex with next smallest value */
@@ -119,19 +120,22 @@ int step_by_step_simplex(double start[],
 	/* find the initial function values */
 	for (j=0;j<=n;j++) {
           //f[j] = objfunc(v[j]);
-      ret=step_by_step_objfunc(images_file,n,v[j],x,&f[j]);
+      ret=step_by_step_objfunc(images_file,n,v[j],x,&f[j],verbosity);
       if(ret==DSO_EVAL_FUNC) return DSO_EVAL_FUNC;
 	}
 	
 	k = n+1;
 	
 	/* print out the initial values */
-	fprintf(stderr,"Initial Values\n");
-	for (j=0;j<=n;j++) {
-	  for (i=0;i<n;i++) {
-        fprintf(stderr,"%f %f\n",v[j][i],f[j]);
-	  }
-	}
+    if(verbosity>=1)
+    {
+      fprintf(stderr,"Initial Values\n");
+      for (j=0;j<=n;j++) {
+        for (i=0;i<n;i++) {
+          fprintf(stderr,"%f %f\n",v[j][i],f[j]);
+        }
+      }
+    }
 	
 	
 	/* begin the main loop of the minimization */
@@ -181,7 +185,7 @@ int step_by_step_simplex(double start[],
       constrain(vr,n);
     }
             //fr = objfunc(vr);
-        ret=step_by_step_objfunc(images_file,n,vr,x,&fr);
+        ret=step_by_step_objfunc(images_file,n,vr,x,&fr,verbosity);
         if(ret==DSO_EVAL_FUNC) return DSO_EVAL_FUNC;
         
 		k++;
@@ -203,7 +207,7 @@ int step_by_step_simplex(double start[],
         constrain(ve,n);
       }
                 //fe = objfunc(ve);
-            ret=step_by_step_objfunc(images_file,n,ve,x,&fe);
+            ret=step_by_step_objfunc(images_file,n,ve,x,&fe,verbosity);
             if(ret==DSO_EVAL_FUNC) return DSO_EVAL_FUNC;
             
 			k++;
@@ -238,7 +242,7 @@ int step_by_step_simplex(double start[],
           constrain(vc,n);
         }
                     //fc = objfunc(vc);
-                ret=step_by_step_objfunc(images_file,n,vc,x,&fc);
+                ret=step_by_step_objfunc(images_file,n,vc,x,&fc,verbosity);
                 if(ret==DSO_EVAL_FUNC) return DSO_EVAL_FUNC;
 
 				k++;
@@ -253,7 +257,7 @@ int step_by_step_simplex(double start[],
           constrain(vc,n);
         }
                     //fc = objfunc(vc);
-                ret=step_by_step_objfunc(images_file,n,vc,x,&fc);
+                ret=step_by_step_objfunc(images_file,n,vc,x,&fc,verbosity);
                 if(ret==DSO_EVAL_FUNC) return DSO_EVAL_FUNC;
 
 				k++;
@@ -283,7 +287,7 @@ int step_by_step_simplex(double start[],
           constrain(v[vg],n);
         }
                     //f[vg] = objfunc(v[vg]);
-                ret=step_by_step_objfunc(images_file,n,v[vg],x,&f[vg]);
+                ret=step_by_step_objfunc(images_file,n,v[vg],x,&f[vg],verbosity);
                 if(ret==DSO_EVAL_FUNC) return DSO_EVAL_FUNC;
 
 				k++;
@@ -291,7 +295,7 @@ int step_by_step_simplex(double start[],
           constrain(v[vh],n);
         }
                     //f[vh] = objfunc(v[vh]);
-                ret=step_by_step_objfunc(images_file,n,v[vh],x,&f[vh]);
+                ret=step_by_step_objfunc(images_file,n,v[vh],x,&f[vh],verbosity);
                 if(ret==DSO_EVAL_FUNC) return DSO_EVAL_FUNC;
 
 				k++;
@@ -301,12 +305,15 @@ int step_by_step_simplex(double start[],
 		}
 		
 		/* print out the value at each iteration */
-		fprintf(stderr,"Iteration %d\n",itr);
-		for (j=0;j<=n;j++) {
-  	  for (i=0;i<n;i++) {
-        fprintf(stderr,"%f %f\n",v[j][i],f[j]);
-		  }
-  	}
+        if(verbosity)
+        {
+          fprintf(stderr,"Iteration %d\n",itr);
+          for (j=0;j<=n;j++) {
+            for (i=0;i<n;i++) {
+              fprintf(stderr,"%f %f\n",v[j][i],f[j]);
+            }
+          }
+        }
 		
 		/* test for convergence */
 		fsum = 0.0;
@@ -319,7 +326,10 @@ int step_by_step_simplex(double start[],
 			s += pow((f[j]-favg),2.0)/(n);
 		}
 		s = sqrt(s);
-        fprintf(stderr,"Test for convergence: %g (EPSILON= %g)\n",s,EPSILON);
+        if(verbosity>=1)
+        {
+          fprintf(stderr,"Test for convergence: %g (EPSILON= %g)\n",s,EPSILON);
+        }
 		if (s < EPSILON) break;
 	}
 	/* end main loop of the minimization */
@@ -331,20 +341,28 @@ int step_by_step_simplex(double start[],
 			vs = j;
 		}
 	}
-	
-	fprintf(stderr,"The minimum was found at\n"); 
-	for (j=0;j<n;j++) {
-      fprintf(stderr,"%e\n",v[vs][j]);
+    
+	if(verbosity>=1)
+    {
+      fprintf(stderr,"The minimum was found at\n");
+    }
+    
+    for (j=0;j<n;j++) {
+      if(verbosity>=1)
+        fprintf(stderr,"%e\n",v[vs][j]);
       start[j] = v[vs][j];
-	}
+    }
+    
         //min=objfunc(v[vs]);
-    ret=step_by_step_objfunc(images_file,n,v[vs],x,&min);
+    ret=step_by_step_objfunc(images_file,n,v[vs],x,&min,verbosity);
     if(ret==DSO_EVAL_FUNC) return DSO_EVAL_FUNC;
 
 	k++;
-	fprintf(stderr,"%d Function Evaluations\n",k);
-	fprintf(stderr,"%d Iterations through program\n",itr);
-	
+    if(verbosity>=1)
+    {
+      fprintf(stderr,"%d Function Evaluations\n",k);
+      fprintf(stderr,"%d Iterations through program\n",itr);
+	}
 	free(f);
 	free(vr);
 	free(ve);
@@ -360,7 +378,8 @@ int step_by_step_simplex(double start[],
 
 //--------------------------------------------------------
 int get_next_funk(FILE *images_file,
-                  double *y)
+                  double *y,
+                  int verbosity)
 {
   size_t bufflen=100*sizeof(char);
   char * buff=(char *)malloc(bufflen);
@@ -381,7 +400,10 @@ int get_next_funk(FILE *images_file,
   else
   {
     *y=atof(buff);
-    fprintf(stderr,"funk= %f\n",*y);
+    if(verbosity>=1)
+    {
+      fprintf(stderr,"funk= %f\n",*y);
+    }
     free(buff);
     return OK;
   }
@@ -392,14 +414,15 @@ int step_by_step_objfunc(FILE* images_file,
                          int n,
                          double* curr_vertex,
                          double* x,
-                         double* y)
+                         double* y,
+                         int verbosity)
 {
       // Define variables
   int ret;
   int r;
   
       // Obtain next trg function value
-  ret=get_next_funk(images_file,y);
+  ret=get_next_funk(images_file,y,verbosity);
 
       // Copy vertex to x variable
   for(r=0;r<n;r++)

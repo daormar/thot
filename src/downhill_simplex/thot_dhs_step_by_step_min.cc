@@ -136,7 +136,8 @@ int main(int argc,char *argv[])
                              images_file,
                              &nfunk,
                              &y,
-                             x);
+                             x,
+                             true);
 
         // Check return code
     if(ret==DSO_EVAL_FUNC)
