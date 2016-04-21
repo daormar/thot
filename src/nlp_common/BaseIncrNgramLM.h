@@ -22,7 +22,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /*                                                                  */
 /* Prototype file: BaseIncrNgramLM.h                                */
 /*                                                                  */
-/* Description: Abstract class to manage incremental n'gram         */
+/* Description: Abstract class to manage incremental n-gram         */
 /*              language models                                     */
 /*                                                                  */
 /********************************************************************/
@@ -102,22 +102,6 @@ class BaseIncrNgramLM: public BaseNgramLM<LM_STATE>
   virtual void clearVocab(void)=0;
       // Clears encoding information
 
-      // Functions to obtain probability for a given sentence
-  virtual LgProb getSentenceLog10Prob(Vector<WordIndex> s,
-                                      int verbose=0);
-      // Calculates the log-probability of the sentence 's' given as a
-      // WordIndex vector
-  virtual LgProb getSentenceLog10ProbStr(Vector<std::string> s,
-                                         int verbose=0);
-      // Calculates the log-probability of the sentence 's' given as a
-      // string vector
-      // Functions to obtain perplexity for a given corpus
-  virtual int perplexity(const char *corpusFileName,
-                         unsigned int& numOfSentences,
-                         unsigned int& numWords,
-                         LgProb& perp,
-                         int verbose=0);
-
       // Functions to access model counts
   virtual Count cHist(const Vector<WordIndex>& vu)=0;
   virtual Count cNgram(const WordIndex& w,
@@ -189,129 +173,6 @@ template<class LM_STATE>
 Prob BaseIncrNgramLM<LM_STATE>::getZeroGramProb(void)
 {
   return (double) 1/getVocabSize();  
-}
-
-//---------------
-template<class LM_STATE>
-LgProb BaseIncrNgramLM<LM_STATE>::getSentenceLog10ProbStr(Vector<std::string> s,
-                                                          int verbose/*=false*/)
-{
-  Vector<WordIndex> vwi;
-
-  for(unsigned int i=0;i<s.size();++i)
-  {
-    vwi.push_back(stringToWordIndex(s[i]));
-  }
-  return getSentenceLog10Prob(vwi,verbose);
-}
-//---------------
-template<class LM_STATE>
-LgProb BaseIncrNgramLM<LM_STATE>::getSentenceLog10Prob(Vector<WordIndex> s,
-                                                       int verbose/*=false*/)
-{
-  LgProb lp;
-  LgProb total_lp=0;	
-  Vector<WordIndex> hist,aux;
-  int i,j,k;
-  LM_STATE state;
-  getStateForBeginOfSentence(state);	
-  unsigned int ngram_order=getNgramOrder();
-  bool found;
-  
-  for(i=0;i<(int)s.size();++i) aux.push_back(s[s.size()-1-i]);
-  s=aux;	 
-  for(i=(int)s.size()-1;i>=0;--i)
-  {
-    hist.clear();
-    for(j=1;j<(int)ngram_order;++j)
-    {
-      if(i+j>=(int)s.size()) hist.push_back(getBosId(found));   
-      else hist.push_back(s[i+j]);	
-    }
-    lp=getNgramLgProbGivenState(s[i],state);  
-    total_lp=total_lp+lp;  
-   
-    if(verbose)
-    {
-      cout<<"   P( "<<wordIndexToString(s[i])<<" | ";    
-      for(k=0;k<(int)hist.size();++k) cout << wordIndexToString(hist[hist.size()-1-k]) <<" ";    
-      cout<<") = " << exp((double)lp) <<" "<<exp((double)total_lp)<<"\n";	    
-    } 
-  }
-  hist.clear();
- 
-  for(j=0;j<(int)ngram_order-1;++j)
-  {
-    if(j>=(int)s.size()) hist.push_back(getBosId(found));   
-    else hist.push_back(s[j]);		
-  } 
-  lp=getLgProbEndGivenState(state);    
-  total_lp=total_lp+lp; 
-  
-  if(verbose)
-  {
-    cout<<"   P( "<<EOS_STR<<" | ";    
-    for(k=0;k<(int)hist.size();++k) cout << wordIndexToString(hist[hist.size()-1-k]) <<" ";  
-    cout<<") = " << exp((double)lp)  <<" "<<exp((double)total_lp)<< "\n";
-  }	
- 
-  return total_lp*((double)1/M_LN10);
-}
-
-//---------------
-template<class LM_STATE>
-int BaseIncrNgramLM<LM_STATE>::perplexity(const char *corpusFileName,
-                                          unsigned int& numOfSentences,
-                                          unsigned int& numWords,
-                                          LgProb& perp,
-                                          int verbose)
-{
-  LgProb logp;
-  perp=0;	
-  awkInputStream awk;
-  Vector<std::string> v;	
-
-  numWords=0;
-  numOfSentences=0;
-      // Open corpus file
-  if(awk.open(corpusFileName)==ERROR)
-  {
-    cerr<<"Error while opening corpus file "<<corpusFileName<<endl;
-    return ERROR;
-  }  
-
-  while(awk.getln())
-  {
-        // Process each sentence
-    if(awk.NF>=1)
-    {
-      numWords+=awk.NF;
-          
-      if(verbose==2) cout<<"*** Sentence "<<numOfSentences<<endl;
-      
-          // Store the sentence into the vector "v"
-      v.clear();
-      for(unsigned int i=1;i<=awk.NF;++i)
-      {
-        v.push_back(awk.dollar(i));
-      }
-          // Calculate the probability of the sentence
-      if(verbose>0) logp=getSentenceLog10ProbStr(v,verbose-1);
-      else logp=getSentenceLog10ProbStr(v,verbose);
-      if(verbose==1)
-      {
-        cout<<logp<<" ";
-        for(unsigned int i=0;i<v.size();++i)
-        {
-          if(i<v.size()-1) cout<<v[i]<<" ";
-          else cout<<v[i]<<endl;
-        }
-      }
-    }
-    perp+=logp; 
-    ++numOfSentences;	 
-  }
-  return OK;
 }
 
 //---------------
