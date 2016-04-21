@@ -37,10 +37,17 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+extern "C" {
+#include "step_by_step_dhs.h"
+}
+
 #include "IncrNgramLM.h"
+#include <stdio.h>
 
 //--------------- Constants ------------------------------------------
 
+#define DHS_FTOL       0.01
+#define DHS_SCALE_PAR  1
 
 //--------------- typedefs -------------------------------------------
 
@@ -73,6 +80,10 @@ class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
       // basic vecx_x_ecpm function redefinitions
   Prob pTrgGivenSrc(const Vector<WordIndex>& s,const WordIndex& t);
 
+      // Functions to update model weights
+  int updateModelWeights(const char *corpusFileName,
+                         int verbose=0);
+
       // Functions to load and print the model
   bool load(const char *fileName);
   bool print(const char *fileName);
@@ -86,13 +97,13 @@ class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
   double sizeOfBucket;
   
       // Weights related functions
-  double getWeights(const Vector<WordIndex>& s,
-                    const WordIndex& t);
+  double getJelMerWeight(const Vector<WordIndex>& s,
+                         const WordIndex& t);
   virtual double freqOfNgram(const Vector<WordIndex>& s);
   bool loadWeights(const char *fileName);
   bool printWeights(const char *fileName);
 
-      // recursive function to interpolate models
+      // Recursive function to interpolate models
   Prob pTrgGivenSrcRec(const Vector<WordIndex>& s,
                        const WordIndex& t);
 };
@@ -132,7 +143,7 @@ Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrcRec(const Vector<Word
 {
   if(s.size()==0)
   {
-    double weight=getWeights(s,t);
+    double weight=getJelMerWeight(s,t);
     double zerogramprob=(double)1.0/(double)this->getVocabSize();
 
     return (weight * (double) this->tablePtr->pTrgGivenSrc(s,t))+((1-weight) * zerogramprob);  
@@ -147,19 +158,125 @@ Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrcRec(const Vector<Word
         s_shifted.push_back(s[i]);
       }
     }
-    double weight=getWeights(s,t);
+    double weight=getJelMerWeight(s,t);
     return weight * (double) this->tablePtr->pTrgGivenSrc(s,t)+ (1-weight) * (double) pTrgGivenSrcRec(s_shifted,t);
   }
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::getWeights(const Vector<WordIndex>& s,
-                                                            const WordIndex& /*t*/)
+int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *corpusFileName,
+                                                                 int verbose/*=0*/)
+{
+      // Initialize downhill simplex input parameters
+  Vector<double> initial_weights=weights;
+  int ndim=weights.size();
+  double* start=(double*) malloc(ndim*sizeof(double));
+  for(unsigned int i=0;i<weights.size();++i)
+    start[i]=weights[i];
+  int nfunk;
+  double* x=(double*) malloc(ndim*sizeof(double));
+  double y;
+
+      // Create temporary file
+  FILE* tmp_file=tmpfile();
+  
+  if(tmp_file==0)
+  {
+    cerr<<"Error updating of Jelinek Mercer's language model weights, tmp file could not be created"<<endl;
+    return ERROR;
+  }
+    
+      // Execute downhill simplex algorithm
+  int ret;
+  bool end=false;
+  while(!end)
+  {
+        // Set initial weights (each call to step_by_step_simplex starts
+        // from the initial weights)
+    for(unsigned int i=0;i<initial_weights.size();++i)
+      start[i]=initial_weights[i];
+    
+        // Execute step by step simplex
+    double curr_dhs_ftol;
+    ret=step_by_step_simplex(start,ndim,DHS_FTOL,DHS_SCALE_PAR,NULL,tmp_file,&nfunk,&y,x,&curr_dhs_ftol,false);
+
+    switch(ret)
+    {
+      case OK: end=true;
+        break;
+      case DSO_NMAX_ERROR: cerr<<"Error updating of Jelinek Mercer's language model weights, maximum number of iterations exceeded"<<endl;
+        end=true;
+        break;
+      case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
+        unsigned int numOfSentences;
+        unsigned int numWords;
+        LgProb totalLogProb;
+        bool weightsArePositive=true;
+        bool weightsAreBelowOne=true;
+        double perp;
+            // Fix weights to be evaluated
+        for(unsigned int i=0;i<weights.size();++i)
+        {
+          weights[i]=x[i];
+          if(weights[i]<0) weightsArePositive=false;
+          if(weights[i]>=1) weightsAreBelowOne=false;
+        }
+        if(weightsArePositive && weightsAreBelowOne)
+        {
+              // Obtain perplexity
+          this->perplexity(corpusFileName,numOfSentences,numWords,totalLogProb,perp);
+        }
+        else
+          perp=DBL_MAX;
+            // Print result to tmp file
+        fprintf(tmp_file,"%g\n",perp);
+        fflush(tmp_file);
+            // step_by_step_simplex needs that the file position
+            // indicator is set at the start of the stream
+        rewind(tmp_file);
+            // Print verbose information
+        if(verbose>=1)
+        {
+          cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<DHS_FTOL<<") ; ";
+          cerr<<"weights=";
+          for(unsigned int i=0;i<weights.size();++i)
+            cerr<<" "<<weights[i];
+          cerr<<" ; perp= "<<perp<<endl; 
+        }
+        break;
+    }
+  }
+  
+      // Set new weights if updating was successful
+  if(ret==OK)
+  {
+    for(unsigned int i=0;i<weights.size();++i)
+      weights[i]=start[i];
+  }
+  else
+  {
+    weights=initial_weights;
+  }
+  
+      // Clear variables
+  free(start);
+  free(x);
+  fclose(tmp_file);
+
+  if(ret!=OK)
+    return ERROR;
+  else
+    return OK;
+}
+
+//---------------
+template<class SRC_INFO,class SRCTRG_INFO>
+double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::getJelMerWeight(const Vector<WordIndex>& s,
+                                                                 const WordIndex& /*t*/)
 {
   if(numBucketsPerOrder==1)
   {
-//    cerr<<numBucketsPerOrder<<endl;
     return weights[s.size()];
   }
   else
@@ -170,8 +287,6 @@ double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::getWeights(const Vector<WordInd
     unsigned int bucketIdx=(unsigned int) trunc(c/sizeOfBucket);
     if(bucketIdx>numBucketsPerOrder-1)
       bucketIdx=numBucketsPerOrder-1;
-
-//    cerr<<numBucketsPerOrder<<" "<<sizeOfBucket<<" "<<c<<" "<<order<<" "<<bucketIdx<<" "<<((order-1)*numBucketsPerOrder)+bucketIdx<<" "<<weights.size()<<endl;
     
         // Return weight
     return weights[((order-1)*numBucketsPerOrder)+bucketIdx];
