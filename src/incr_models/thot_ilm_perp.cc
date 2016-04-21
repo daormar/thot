@@ -76,7 +76,8 @@ int main(int argc,char *argv[])
   LgProb total_logp=0;	
   std::string s;
   vector<string> v;	
-  unsigned int sentenceNo=0,numWords=0;	
+  unsigned int sentenceNo=0,numWords=0;
+  double perp;
   double total_time=0,elapsed_ant,elapsed,ucpu,scpu;
 
   if(TakeParameters(argc,argv)==OK)
@@ -107,7 +108,7 @@ int main(int argc,char *argv[])
       lm->setNgramOrder(order);
       
       ctimer(&elapsed_ant,&ucpu,&scpu);
-      int ret=lm->perplexity(corpusFileName.c_str(),sentenceNo,numWords,total_logp,verbose);
+      int ret=lm->perplexity(corpusFileName.c_str(),sentenceNo,numWords,total_logp,perp,verbose);
       if(ret==ERROR)
       {
         delete lm;
@@ -123,7 +124,7 @@ int main(int argc,char *argv[])
       cout<<"* Number of words: "<<numWords<<endl;	  
       cout<<"* Total log10 prob: "<<total_logp<<endl;
       cout<<"* Average-Log10-Likelihood (total_log10_prob/num_ngrams): "<<(float)total_logp/(numWords+sentenceNo)<<endl;
-      cout<<"* Perplexity: "<<exp(-((float)total_logp/(numWords+sentenceNo))*M_LN10)<<endl;
+      cout<<"* Perplexity: "<<perp<<endl;
       cout<<"* Retrieving time: "<<total_time<<endl; 	   
 
       delete lm;
