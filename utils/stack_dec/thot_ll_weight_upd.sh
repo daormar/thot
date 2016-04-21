@@ -23,8 +23,8 @@ version()
 usage()
 {
     echo "thot_ll_weight_upd [-pr <int>] -c <string> -t <string> -r <string>"
-    echo "                   [-va <bool> ... <bool>] [-n <int>]"
-    echo "                   [-i <int>] [-sdir <string>] [-qs <string>]"
+    echo "                   [-va <bool> ... <bool>] [-n <int>] [-i <int>]"
+    echo "                   [-qs <string>] [-sdir <string>] [-sdir <string>]"
     echo "                   [-debug] [-v] [--help] [--version]"
     echo " -pr <int>            : Number of processors."
     echo " -c <string>          : Configuration file."
@@ -35,10 +35,26 @@ usage()
     echo "                        values equal to 1 include the variable."
     echo " -n <int>             : Size of the n-best lists."
     echo " -i <int>             : Number of iterations."
+    echo " -qs <string>         : Specific options to be given to the qsub"
+    echo "                        command (example: -qs \"-l pmem=1gb\")"
+    echo "                        NOTES:"
+    echo "                         a) ignore this if not using a PBS cluster"
+    echo "                         b) -qs option may be crucial to ensure the correct"
+    echo "                            execution of the tool. The main purpose of -qs"
+    echo "                            is to reserve the required cluster resources."
+    echo "                            If the necessary resources are not met the"
+    echo "                            execution will abort."
+    echo "                            Resources are reserved in different ways depending"
+    echo "                            on the cluster software. For instance, if using SGE"
+    echo "                            software, -qs \"-l h_vmem=1G,h_rt=10:00:00\","
+    echo "                            requests 1GB of virtual memory and a time limit"
+    echo "                            of 10 hours." 
+    echo " -tdir <string>       : Directory for temporary files (/tmp by default)."
+    echo "                        NOTES:"
+    echo "                         a) give absolute paths when using pbs clusters"
+    echo "                         b) ensure there is enough disk space in the partition"
     echo " -sdir <string>       : Absolute path of a directory common to all"
     echo "                        processors. If not given \$HOME is used"
-    echo " -qs <string>         : Specific options to be given to the qsub command"
-    echo "                        (example: -qs \"-l pmem=1gb\")."
     echo " -v                   : Verbose mode."
     echo " -debug               : After ending, do not delete temporary files"
     echo "                        (for debugging purposes)."
@@ -124,17 +140,17 @@ gen_nbest_lists_iter()
 {
     # Generate translations and word graphs
     $bindir/thot_decoder -pr ${nprocs} -c ${cfgfile} -tmw ${llweights} -t ${testfile} \
-        -o ${SDIR_LLWU}/trans/${niter}_thot_decoder_out -wg ${SDIR_LLWU}/wg/${niter} \
+        -o ${TDIR_LLWU}/trans/${niter}_thot_decoder_out -wg ${TDIR_LLWU}/wg/${niter} \
         -sdir $sdir ${qs_opt} "${qs_par}" || exit 1
 
     # Evaluate translation quality
-    $bindir/thot_calc_bleu -r ${reffile} -t ${SDIR_LLWU}/trans/${niter}_thot_decoder_out > ${SDIR_LLWU}/trans/${niter}_thot_decoder_out.bleu || exit 1
+    $bindir/thot_calc_bleu -r ${reffile} -t ${TDIR_LLWU}/trans/${niter}_thot_decoder_out > ${TDIR_LLWU}/trans/${niter}_thot_decoder_out.bleu || exit 1
 
     # Obtain n-best lists from word graphs
-    for wgfile in ${SDIR_LLWU}/wg/${niter}*.wg; do
+    for wgfile in ${TDIR_LLWU}/wg/${niter}*.wg; do
         basewgfile=`$BASENAME $wgfile`
         sentid=`get_sentid ${basewgfile}`
-        ${bindir}/thot_wg_proc -w $wgfile -n ${n_val} -o ${SDIR_LLWU}/nblist/${niter}_${sentid} 2>> ${SDIR_LLWU}/nblist/thot_wg_proc.log || exit 1
+        ${bindir}/thot_wg_proc -w $wgfile -n ${n_val} -o ${TDIR_LLWU}/nblist/${niter}_${sentid} 2>> ${TDIR_LLWU}/nblist/thot_wg_proc.log || exit 1
     done
 }
 
@@ -162,20 +178,20 @@ obtain_curr_nblists()
     if [ $niter -eq 1 ]; then
         # During first iteration, current n-best list are those
         # generated for initial translation
-        for nblfile in ${SDIR_LLWU}/nblist/${niter}*.nbl; do
+        for nblfile in ${TDIR_LLWU}/nblist/${niter}*.nbl; do
             basenblfile=`$BASENAME $nblfile`
             sentid=`get_sentid ${basenblfile}`
-            cp $nblfile ${SDIR_LLWU}/curr_nblist/$sentid.nbl
+            cp $nblfile ${TDIR_LLWU}/curr_nblist/$sentid.nbl
         done
     else
         # During subsequent iterations, current n-best lists are
         # obtained by merging n-best lists of the previous iteration
         # with those of the current translation
-        for nblfile in ${SDIR_LLWU}/nblist/${niter}*.nbl; do
+        for nblfile in ${TDIR_LLWU}/nblist/${niter}*.nbl; do
             basenblfile=`$BASENAME $nblfile`
             sentid=`get_sentid ${basenblfile}`
-            ${bindir}/thot_merge_nbest_list $nblfile ${SDIR_LLWU}/curr_nblist/$sentid.nbl > temp.nbl || exit 1
-            mv temp.nbl ${SDIR_LLWU}/curr_nblist/$sentid.nbl
+            ${bindir}/thot_merge_nbest_list $nblfile ${TDIR_LLWU}/curr_nblist/$sentid.nbl > temp.nbl || exit 1
+            mv temp.nbl ${TDIR_LLWU}/curr_nblist/$sentid.nbl
         done
     fi
 }
@@ -199,21 +215,21 @@ update_best_quality()
 proc_curr_nblists()
 {
     # Generate file containing file names of current n-best lists
-    if [ ! -f ${SDIR_LLWU}/nbl_files.txt ]; then
-        for file in ${SDIR_LLWU}/curr_nblist/*nbl; do
-            echo $file >> ${SDIR_LLWU}/nbl_files.txt
+    if [ ! -f ${TDIR_LLWU}/nbl_files.txt ]; then
+        for file in ${TDIR_LLWU}/curr_nblist/*nbl; do
+            echo $file >> ${TDIR_LLWU}/nbl_files.txt
         done
     fi
     
     # Update weights given n-best lists
     $bindir/thot_ll_weight_upd_nblist -w ${llweights} ${va_opt} \
-        -nb ${SDIR_LLWU}/nbl_files.txt -r ${reffile} >> ${SDIR_LLWU}/weights_per_iter.txt 2>${SDIR_LLWU}/${niter}_thot_ll_weight_upd_nblist.log || exit 1
+        -nb ${TDIR_LLWU}/nbl_files.txt -r ${reffile} >> ${TDIR_LLWU}/weights_per_iter.txt 2>${TDIR_LLWU}/${niter}_thot_ll_weight_upd_nblist.log || exit 1
 }
 
 ##################
 get_new_llweights()
 {
-    $TAIL -1 ${SDIR_LLWU}/weights_per_iter.txt | $AWK '{for(i=3;i<=NF;++i){printf"%s",$i; if(i!=NF) printf" "}}'
+    $TAIL -1 ${TDIR_LLWU}/weights_per_iter.txt | $AWK '{for(i=3;i<=NF;++i){printf"%s",$i; if(i!=NF) printf" "}}'
 }
     
 ##################
@@ -236,6 +252,7 @@ i_given=0
 maxiters=10
 verbose_opt=""
 sdir=$HOME
+tdir=/tmp
 qs_given=0
 debug=""
 
@@ -251,6 +268,11 @@ while [ $# -ne 0 ]; do
         "-sdir") shift
             if [ $# -ne 0 ]; then
                 sdir=$1
+            fi
+            ;;
+        "-tdir") shift
+            if [ $# -ne 0 ]; then
+                tdir=$1
             fi
             ;;
         "-pr") shift
@@ -358,25 +380,32 @@ fi
 
 # parameters are ok
 
-# create shared directory
+# Check shared directory
 
 if [ ! -d ${sdir} ]; then
     echo "Error: shared directory does not exist" >&2
     return 1;
 fi
 
-SDIR_LLWU=`${MKTEMP} -d ${sdir}/thot_ll_weight_upd_XXXXXX`
+# Create tmp directory
+
+if [ ! -d ${tdir} ]; then
+    echo "Error: tmp directory does not exist" >&2
+    return 1;
+fi
+
+TDIR_LLWU=`${MKTEMP} -d ${tdir}/thot_ll_weight_upd_XXXXXX`
 
 # Remove temp directories on exit
 if [ "$debug" != "-debug" ]; then
-    trap "rm -rf $SDIR_LLWU 2>/dev/null" EXIT
+    trap "rm -rf $TDIR_LLWU 2>/dev/null" EXIT
 fi
 
 # Create additional directories
-mkdir ${SDIR_LLWU}/trans
-mkdir ${SDIR_LLWU}/wg
-mkdir ${SDIR_LLWU}/nblist
-mkdir ${SDIR_LLWU}/curr_nblist
+mkdir ${TDIR_LLWU}/trans
+mkdir ${TDIR_LLWU}/wg
+mkdir ${TDIR_LLWU}/nblist
+mkdir ${TDIR_LLWU}/curr_nblist
 
 # Obtain initial translation model weights
 llweights=`obtain_init_llweights`
@@ -393,7 +422,7 @@ while [ $niter -le $maxiters ]; do
     gen_nbest_lists_iter
 
     # Obtain translation quality
-    quality=`obtain_trans_quality_from_nblists ${SDIR_LLWU}/nblist/${niter} ${SDIR_LLWU}/${niter}_best_trans`
+    quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/nblist/${niter} ${TDIR_LLWU}/${niter}_best_trans`
     echo "* Current translation quality: ${quality}" >&2
 
     # Update best quality
@@ -419,7 +448,7 @@ while [ $niter -le $maxiters ]; do
 done
 
 # Obtain final quality from current n-best lists
-quality=`obtain_trans_quality_from_nblists ${SDIR_LLWU}/curr_nblist/ ${SDIR_LLWU}/curr_nblist_best_trans`
+quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/curr_nblist/ ${TDIR_LLWU}/curr_nblist_best_trans`
 echo "* Final translation quality calculated from current n-best lists: ${quality}" >&2
 
 # Update best quality after last iteration
