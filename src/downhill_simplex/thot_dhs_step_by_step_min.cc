@@ -76,6 +76,7 @@ void printDesc(void);
 
 unsigned int ndim;
 double ftol;
+double curr_ftol;
 Vector<string> fixNonFixVarsStr;
 Vector<float> fixNonFixVars;
 Vector<float> initVals;
@@ -137,8 +138,9 @@ int main(int argc,char *argv[])
                              &nfunk,
                              &y,
                              x,
+                             &curr_ftol,
                              true);
-
+    
         // Check return code
     if(ret==DSO_EVAL_FUNC)
     {
