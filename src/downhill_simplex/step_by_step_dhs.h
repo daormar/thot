@@ -33,6 +33,7 @@ thot package
 #ifndef _step_by_step_dhs_h
 #define _step_by_step_dhs_h
 
+#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -52,13 +53,14 @@ extern "C"
   void my_constraints(double x[], int n);
   int step_by_step_simplex(double start[],
                            int n,
-                           double EPSILON,
+                           double FTOL,
                            double scale,
                            void (*constrain)(double[],int n),
                            FILE *images_file,                         
                            int* nfunk,
                            double* y,
                            double* x,
+                           double* curr_ftol,
                            int verbosity);
   int get_next_funk(FILE* images_file,
                     double* y,
@@ -69,6 +71,13 @@ extern "C"
                            double* x,
                            double* y,
                            int verbosity);
+  void deallocate_dhs_mem(int n,
+                          double** v,
+                          double* f,
+                          double* vr,
+                          double* ve,
+                          double* vc,
+                          double* vm);
 
 #ifdef __cplusplus  
 }
