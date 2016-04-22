@@ -81,12 +81,16 @@ class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
   Prob pTrgGivenSrc(const Vector<WordIndex>& s,const WordIndex& t);
 
       // Functions to update model weights
-  int updateModelWeights(const char *corpusFileName,
-                         int verbose=0);
+  virtual int updateModelWeights(const char *corpusFileName,
+                                 int verbose=0);
 
-      // Functions to load and print the model
+      // Functions to load and print the model (including model weights)
   bool load(const char *fileName);
   bool print(const char *fileName);
+
+      // Functions to load and print model weights
+  bool loadWeights(const char *prefixOfLmFiles);
+  bool printWeights(const char *prefixOfLmFiles);
 
       // Destructor
   ~_incrJelMerNgramLM();
@@ -100,8 +104,6 @@ class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
   double getJelMerWeight(const Vector<WordIndex>& s,
                          const WordIndex& t);
   virtual double freqOfNgram(const Vector<WordIndex>& s);
-  bool loadWeights(const char *fileName);
-  bool printWeights(const char *fileName);
 
       // Recursive function to interpolate models
   Prob pTrgGivenSrcRec(const Vector<WordIndex>& s,
@@ -307,9 +309,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
   bool retval;
 
       // load weights
-  std::string fileNameW=fileName;
-  fileNameW=fileNameW+".weights";
-  retval=loadWeights(fileNameW.c_str());
+  retval=loadWeights(fileName);
   if(retval==ERROR) return ERROR;
 
       // load n-grams
@@ -321,12 +321,16 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *fileName)
+bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *prefixOfLmFiles)
 {
+      // Obtain name of file with weights
+  std::string fileName=prefixOfLmFiles;
+  fileName=fileName+".weights";
+
       // load weights
   awkInputStream awk;
   weights.clear();
-  if(awk.open(fileName)==ERROR)
+  if(awk.open(fileName.c_str())==ERROR)
   {
     cerr<<"Error, file with weights "<<fileName<<" cannot be read"<<endl;
     return ERROR;
@@ -362,9 +366,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
   bool retval;
   
       // Print weights
-  std::string fileNameW=fileName;
-  fileNameW=fileNameW+".weights";
-  retval=printWeights(fileNameW.c_str());
+  retval=printWeights(fileName);
   if(retval==ERROR) return ERROR;
 
       // print n-grams
@@ -376,12 +378,16 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *fileName)
+bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *prefixOfLmFiles)
 {
+      // Obtain name of file with weights
+  std::string fileName=prefixOfLmFiles;
+  fileName=fileName+".weights";
+  
   FILE *filePtr;
 
       // print weights
-  filePtr=fopen(fileName,"w");
+  filePtr=fopen(fileName.c_str(),"w");
   if(filePtr==NULL)
   {
     cerr<<"Error while printing file with lm weights"<<endl;
