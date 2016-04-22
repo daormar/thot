@@ -113,10 +113,6 @@ class BaseNgramLM
                          LgProb& totalLogProb,
                          double& perp,
                          int verbose=0);
-
-      // Functions to update model weights
-  virtual int updateModelWeights(const char *corpusFileName,
-                                 int verbose=0);
   
       // Functions to extend the model
   virtual int trainSentence(Vector<std::string> strVec,
@@ -282,15 +278,6 @@ int BaseNgramLM<LM_STATE>::perplexity(const char *corpusFileName,
 
   perp=exp(-((double)totalLogProb/(numWords+numOfSentences))*M_LN10);
 
-  return OK;
-}
-
-//---------------
-template<class LM_STATE>
-int BaseNgramLM<LM_STATE>::updateModelWeights(const char */*corpusFileName*/,
-                                              int /*verbose=0*/)
-{
-  cerr<<"Warning: model weight updating of a sentence was requested, but such functionality is not provided"<<endl;
   return OK;
 }
 
