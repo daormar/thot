@@ -439,6 +439,40 @@ fi
 AM_CONDITIONAL([CASMACAT_LIB_ENABLED], [test x${enable_casmacat_lib} = xyes])
 AC_SUBST(CASMACAT_SERVER_LIB_HOME,$with_casmacat)
 
+# Disable pre/post-processing code
+AC_DEFINE(DISABLE_PREPROC_CODE,,[Define if the pre/post-processing code is disabled])
+
+dnl Check if we have to enable casmacat home edition configuration.
+AC_MSG_CHECKING(whether to enable casmacat home edition configuration)
+AC_ARG_ENABLE(casmacat-he,[  --enable-casmacat-he   enable casmacat home edition configuration], enable_casmacat_he=yes,
+              enable_casmacat_he=no)
+dnl Yes, debug is enabled
+if test "$enable_casmacat_he" = "yes"; then
+ AC_MSG_RESULT(yes)
+
+ AC_DEFINE(CASMACAT_HE,,[Define if casmacat home edition configuration is enabled])
+
+ # Use IBM 2 alignment models
+ THOT_SWM_TYPE="THOT_SINCR_IBM2_SWM"
+else
+ AC_MSG_RESULT(no)
+fi
+
+dnl Check if fast language model downhill simplex algorithm is disabled.
+AC_MSG_CHECKING(whether to disable fast lm downhill simplex algorithm)
+AC_ARG_ENABLE(fast-dhslm,[  --disable-fast-dhslm   disable fast language model downhill simplex algorithm], disable_fast_dhslm=yes,
+              disable_fast_dhslm=no)
+dnl Yes, debug is disabled
+if test "$disable_fast_dhslm" = "yes"; then
+DISABLE_FAST_DHSLM="1"
+AC_SUBST(DISABLE_FAST_DHSLM)
+AC_MSG_RESULT(yes)
+else
+DISABLE_FAST_DHSLM="0"
+AC_SUBST(DISABLE_FAST_DHSLM)
+AC_MSG_RESULT(no)
+fi
+
 # Adds an extra argument to configure (enable updating of log-linear weights)
 AC_MSG_CHECKING(whether to enable updating of log-linear weights)
 AC_ARG_ENABLE(update-llweights,[  --enable-update-llweights   enable updating of log-linear weights],enable_update_llweights=yes,enable_update_llweights=no)
@@ -452,46 +486,11 @@ AM_CONDITIONAL([ENABLE_UPDATE_LLWEIGHTS], [test x${enable_update_llweights} = xy
 
 if test "$enable_update_llweights" = "yes"; then
  AC_DEFINE(ENABLE_UPDATE_LLWEIGHTS,,[Define if updating of log-linear weights is enabled])
-fi
-AC_SUBST(enable_update_llweights)
-
-# Disable pre/post-processing code
-AC_DEFINE(DISABLE_PREPROC_CODE,,[Define if the pre/post-processing code is disabled])
-
-dnl Check if we have to enable casmacat home edition configuration.
-AC_MSG_CHECKING(whether to enable casmacat home edition configuration)
-AC_ARG_ENABLE(casmacat-he,[  --enable-casmacat-he   enable casmacat home edition configuration], enable_casmacat_he=yes,
-              enable_casmacat_he=no)
-
-dnl Yes, debug is enabled
-if test "$enable_casmacat_he" = "yes"; then
-
- AC_MSG_RESULT(yes)
-
- AC_DEFINE(CASMACAT_HE,,[Define if casmacat home edition configuration is enabled])
-
- # Use IBM 2 alignment models
- THOT_SWM_TYPE="THOT_SINCR_IBM2_SWM"
-
+ ENABLE_UPDATE_LLWEIGHTS=1
+ AC_SUBST(ENABLE_UPDATE_LLWEIGHTS)
 else
-
- AC_MSG_RESULT(no)
-
-fi
-
-dnl Check if fast language model downhill simplex algorithm is disabled.
-AC_MSG_CHECKING(whether to disable fast lm downhill simplex algorithm)
-AC_ARG_ENABLE(fast-lmdhs,[  --disable-fast-lmdhs   disable fast language model downhill simplex algorithm], disable_fast_lmdhs=yes,
-              disable_fast_lmdhs=no)
-dnl Yes, debug is disabled
-if test "$disable_fast_lmdhs" = "yes"; then
-DISABLE_FAST_LMDHS="1"
-AC_SUBST(DISABLE_FAST_LMDHS)
-AC_MSG_RESULT(yes)
-else
-DISABLE_FAST_LMDHS="0"
-AC_SUBST(DISABLE_FAST_LMDHS)
-AC_MSG_RESULT(no)
+ ENABLE_UPDATE_LLWEIGHTS=0
+ AC_SUBST(ENABLE_UPDATE_LLWEIGHTS)
 fi
 
 dnl Check if we have to enable IBM 2 model as alignment model.
