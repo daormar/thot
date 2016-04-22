@@ -479,6 +479,21 @@ else
 
 fi
 
+dnl Check if fast language model downhill simplex algorithm is disabled.
+AC_MSG_CHECKING(whether to disable fast lm downhill simplex algorithm)
+AC_ARG_ENABLE(fast-lmdhs,[  --disable-fast-lmdhs   disable fast language model downhill simplex algorithm], disable_fast_lmdhs=yes,
+              disable_fast_lmdhs=no)
+dnl Yes, debug is disabled
+if test "$disable_fast_lmdhs" = "yes"; then
+DISABLE_FAST_LMDHS="1"
+AC_SUBST(DISABLE_FAST_LMDHS)
+AC_MSG_RESULT(yes)
+else
+DISABLE_FAST_LMDHS="0"
+AC_SUBST(DISABLE_FAST_LMDHS)
+AC_MSG_RESULT(no)
+fi
+
 dnl Check if we have to enable IBM 2 model as alignment model.
 AC_MSG_CHECKING(whether to enable IBM 2 model as alignment model)
 AC_ARG_ENABLE(ibm2-alig,[  --enable-ibm2-alig   enable IBM 2 model as alignment model], enable_ibm2_alig=yes,
