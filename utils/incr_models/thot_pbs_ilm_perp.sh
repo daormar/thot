@@ -228,9 +228,9 @@ if [ $# -eq 0 ]; then
     echo "-o <string>              Prefix of output files." >&2
     echo "-i                       Use interpolated model." >&2
     echo "-jm                      Use Jelinek-Mercer n-gram models." >&2
+    echo "-cjm                     Use cache-based Jelinek-Mercer n-grams models." >&2
     echo "-qs <string>             Specific options to be given to the qsub command"
     echo "                         (example: -qs \"-l pmem=1gb\")."
-    echo "-cjm                     Use cache-based Jelinek-Mercer n-grams models." >&2
     echo "-qs <string>             Specific options to be given to the qsub command"
     echo "                         (example: -qs \"-l pmem=1gb\")."
     echo "-tdir <string>           Use <string> for temporaries instead of /tmp" >&2
