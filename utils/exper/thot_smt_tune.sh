@@ -177,7 +177,7 @@ create_lm_files()
 lm_downhill_fast()
 {
     # Execute tuning algorithm
-    ${bindir}/thot_lm_weight_upd -lm $newlmfile -c $tcorpus -v 2> ${outd}/lm_adjw.log
+    ${bindir}/thot_lm_weight_upd -lm $newlmfile -c $tcorpus -v 2> ${outd}/lm_adjw.log || return 1
 }
 
 ########
@@ -207,8 +207,11 @@ tune_lm()
     create_lm_files || return 1
 
     # Tune language model
-#    lm_downhill || return 1
-    lm_downhill_fast || return 1
+    if [ $DISABLE_FAST_LMDHS -eq 1 ];
+        lm_downhill || return 1
+    else
+        lm_downhill_fast || return 1
+    fi
 }
 
 ########
