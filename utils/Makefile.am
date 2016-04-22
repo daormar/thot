@@ -116,6 +116,7 @@ SUFFIXES= .sh .pl .py
 	echo "QSTAT="$(QSTAT) >> $@
 	echo "QSTAT_J_OPT=\""$(QSTAT_J_OPT)"\"" >> $@
 	echo "QRLS="$(QRLS) >> $@
+	echo "DISABLE_FAST_LMDHS="$(DISABLE_FAST_LMDHS) >> $@
 	cat $< >> $@
 	chmod ugo+x $@
 

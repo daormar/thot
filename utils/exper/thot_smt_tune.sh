@@ -173,6 +173,12 @@ create_lm_files()
     fi
 }
 
+########
+lm_downhill_fast()
+{
+    # Execute tuning algorithm
+    ${bindir}/thot_lm_weight_upd -lm $newlmfile -c $tcorpus -v 2> ${outd}/lm_adjw.log
+}
 
 ########
 lm_downhill()
@@ -201,7 +207,8 @@ tune_lm()
     create_lm_files || return 1
 
     # Tune language model
-    lm_downhill || return 1
+#    lm_downhill || return 1
+    lm_downhill_fast || return 1
 }
 
 ########
