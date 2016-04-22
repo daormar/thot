@@ -6,6 +6,7 @@
 # phrase that are considered during a translation process. The utility
 # can be executed in a PBS cluster.
 
+#############
 exclude_readonly_vars()
 {
     ${AWK} -F "=" 'BEGIN{
@@ -21,30 +22,21 @@ exclude_readonly_vars()
                         }'
 }
 
+#############
 exclude_bashisms()
 {
     $AWK '{if(index($1,"=(")==0) printf"%s\n",$0}'
 }
 
+#############
 write_functions()
 {
     for f in `${AWK} '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
         $SED -n /^$f/,/^}/p $0
-        # $AWK -v f=$f '{
-        #                if($1==f)
-        #                {
-        #                 printf"%s\n",$0
-        #                 found=1
-        #                }
-        #                else
-        #                {
-        #                 if(found) printf"%s\n",$0
-        #                 if($1=="}") found=0
-        #                }
-        #               }' $0
     done
 }
 
+#############
 create_script()
 {
     # Init variables
@@ -229,8 +221,6 @@ if [ $# -eq 0 ]; then
     echo "-i                       Use interpolated model." >&2
     echo "-jm                      Use Jelinek-Mercer n-gram models." >&2
     echo "-cjm                     Use cache-based Jelinek-Mercer n-grams models." >&2
-    echo "-qs <string>             Specific options to be given to the qsub command"
-    echo "                         (example: -qs \"-l pmem=1gb\")."
     echo "-qs <string>             Specific options to be given to the qsub command"
     echo "                         (example: -qs \"-l pmem=1gb\")."
     echo "-tdir <string>           Use <string> for temporaries instead of /tmp" >&2
