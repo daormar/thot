@@ -207,7 +207,7 @@ tune_lm()
     create_lm_files || return 1
 
     # Tune language model
-    if [ $DISABLE_FAST_LMDHS -eq 1 ];
+    if [ $DISABLE_FAST_DHSLM -eq 1 ]; then
         lm_downhill || return 1
     else
         lm_downhill_fast || return 1
@@ -362,7 +362,7 @@ obtain_loglin_nonneg_const()
 }
 
 ########
-obtain_loglin_va_opt_values()
+obtain_loglin_dhs_va_opt_values()
 {
     local_llw_names=`obtain_llweights_names`
     echo "${local_llw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"-0 "}'
@@ -391,12 +391,34 @@ loglin_downhill()
 
     # Generate information for weight initialisation
     export NON_NEG_CONST="`obtain_loglin_nonneg_const`"
-    va_opt="`obtain_loglin_va_opt_values`"
+    va_opt="`obtain_loglin_dhs_va_opt_values`"
     iv_opt="`obtain_loglin_iv_opt_values`"
 
     # Execute tuning algorithm
     ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
         -ftol ${ftol_loglin} -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || return 1
+}
+
+########
+obtain_loglin_upd_va_opt_values()
+{
+    local_llw_names=`obtain_llweights_names`
+    echo "${local_llw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"1 "}'
+}
+
+########
+loglin_upd()
+{
+    # Generate information for weight initialisation
+    va_opt="`obtain_loglin_upd_va_opt_values`"
+
+    # Default parameters
+    ll_wu_niters=7
+
+    ${bindir}/thot_ll_weight_upd -pr ${pr_val} -va ${va_opt} \
+        -c ${outd}/tune_loglin.cfg -t $scorpus -r $tcorpus -i ${ll_wu_niters} \
+        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} \
+        > ${outd}/tm_adjw.out 2> ${outd}/tm_adjw.log || return 1
 }
 
 ########
@@ -452,7 +474,11 @@ tune_loglin()
     create_cfg_file_for_tuning > ${outd}/tune_loglin.cfg
 
     # Tune log-linear model
-    loglin_downhill || return 1
+    if [ $ENABLE_UPDATE_LLWEIGHTS -eq 1 ]; then
+        loglin_upd || return 1
+    else
+        loglin_downhill || return 1
+    fi
 
     ######
 
