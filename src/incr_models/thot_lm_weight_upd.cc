@@ -75,6 +75,7 @@ void version(void);
 //--------------- Global variables -----------------------------------
 
 BaseIncrNgramLM<Vector<WordIndex> >* incrNgramLmPtr;
+_incrJelMerNgramLM<Count,Count>* incrJelMerLmPtr;
 
 //--------------- Function Definitions -------------------------------
 
@@ -97,6 +98,15 @@ int main(int argc,char *argv[])
         // Initialize weight updater
     incrNgramLmPtr=new IncrJelMerNgramLM;
 
+        // Check if the model has weights to be updated
+    incrJelMerLmPtr=dynamic_cast<_incrJelMerNgramLM<Count,Count>* >(incrNgramLmPtr);
+    if(!incrJelMerLmPtr)
+    {
+      cerr<<"Current model does not have weights to be updated"<<endl;
+      delete incrNgramLmPtr;
+      return OK;
+    }
+    
         // Update language model weights
     int retVal=update_lm_weights(pars);
 
@@ -187,17 +197,17 @@ int update_lm_weights(const thot_lmwu_pars& pars)
   int retVal;
 
       // Load model
-  retVal=incrNgramLmPtr->load(pars.langModelFilePrefix.c_str());
+  retVal=incrJelMerLmPtr->load(pars.langModelFilePrefix.c_str());
   if(retVal==ERROR)
     return ERROR;
   
       // Update weights
-  retVal=incrNgramLmPtr->updateModelWeights(pars.fileWithCorpus.c_str(),pars.verbosity);
+  retVal=incrJelMerLmPtr->updateModelWeights(pars.fileWithCorpus.c_str(),pars.verbosity);
   if(retVal==ERROR)
     return ERROR;
 
-      // Print model with updated weights
-  retVal=incrNgramLmPtr->print(pars.langModelFilePrefix.c_str());
+      // Print updated weights
+  retVal=incrJelMerLmPtr->printWeights(pars.langModelFilePrefix.c_str());
   if(retVal==ERROR)
     return ERROR;
   
