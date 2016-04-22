@@ -450,9 +450,11 @@ done
 # Obtain final quality from current n-best lists
 quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/curr_nblist/ ${TDIR_LLWU}/curr_nblist_best_trans`
 echo "* Final translation quality calculated from current n-best lists: ${quality}" >&2
+echo "" >&2
 
 # Update best quality after last iteration
 update_best_quality
 
 # Print result
+echo "* Best weights: ${best_llweights}" >&2
 echo ${best_llweights}
