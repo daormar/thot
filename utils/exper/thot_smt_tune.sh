@@ -63,6 +63,10 @@ usage()
     echo "                        (for debugging purposes)"
     echo "--help                  Display this help and exit."
     echo "--version               Output version information and exit."
+    echo ""
+    echo "NOTE: When executing the tool in PBS clusters, it is required that the"
+    echo "      configuration file and all the files pointed by it are stored in"
+    echo "      a place visible to all processors."
 }
 
 ########

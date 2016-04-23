@@ -29,6 +29,7 @@ usage()
     echo ""
     echo "-pr <int>               Number of processors (1 by default)"
     echo "-d <string>             Path to output directory generated with thot_auto_smt"
+    echo "                        NOTE: the directory should be visible to all processors"
     echo "-t <string>             File with test corpus to be translated"
     echo "--tok                   Execute tokenization stage"
     echo "--lower                 Execute lowercasing stage"
