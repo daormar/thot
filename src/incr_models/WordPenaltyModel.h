@@ -60,7 +60,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- WordPenaltyModel class
 
-class WordPenaltyModel
+class WordPenaltyModel: public BaseWordPenaltyModel
 {
  public:
 
