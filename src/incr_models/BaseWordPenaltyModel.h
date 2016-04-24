@@ -57,13 +57,13 @@ class BaseWordPenaltyModel
       // Load model parameters
   virtual bool load(const char* filename)=0;
 
-      // returns log(wp(strVec))
+      // returns log(wp(tl=len(strVec)))
   virtual LgProb wordPenaltyScoreStr(Vector<std::string> strVec){return wordPenaltyScore(strVec.size());};
 
       // returns log(wp(tl=tlen))
   virtual LgProb wordPenaltyScore(unsigned int tlen)=0;
 
-      // returns log(wp(strVec))
+      // returns log(wp(tl>=len(strVec)))
   virtual LgProb sumWordPenaltyScoreStr(Vector<std::string> strVec) {return sumWordPenaltyScore(strVec.size());};
 
       // returns log(wp(tl>=tlen))
