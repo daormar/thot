@@ -67,7 +67,7 @@ class BaseWordPenaltyModel
   virtual LgProb sumWordPenaltyScore(unsigned int tlen)=0;
 
       // clear function
-  virtual void clear(void);
+  virtual void clear(void)=0;
 
         // Destructor
   virtual ~BaseWordPenaltyModel(){};
