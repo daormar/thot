@@ -54,9 +54,6 @@ class BaseWordPenaltyModel
 {
  public:
   
-      // Load model parameters
-  virtual bool load(const char* filename)=0;
-
       // returns log(wp(tl=len(strVec)))
   virtual LgProb wordPenaltyScoreStr(Vector<std::string> strVec){return wordPenaltyScore(strVec.size());};
 

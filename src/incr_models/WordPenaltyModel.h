@@ -67,9 +67,6 @@ class WordPenaltyModel
       // Constructor
   WordPenaltyModel(void);
   
-      // Load model parameters
-  bool load(const char* filename);
-
       // returns log(wp(tl=tlen))
   LgProb wordPenaltyScore(unsigned int tlen);
       // returns log(wp(tl>=tlen))
