@@ -9,5 +9,5 @@ IncrCondProbTable.h im_pair.h FileNgTable.h FileNgTable.cc		\
 FileHistInfo.h CacheLmIncrCpTable.h CacheLmIncrCpTable.cc		\
 CacheIncrJelMerNgramLM.h CacheIncrJelMerNgramLM.cc BaseIncrEncoder.h	\
 BaseIncrEncCondProbModel.h BaseIncrCondProbTable.h			\
-BaseIncrCondProbModel.h WordPenaltyModel.h WordPenaltyModel.cc		\
-WordPredictor.h WordPredictor.cc
+BaseIncrCondProbModel.h BaseWordPenaltyModel.h WordPenaltyModel.h	\
+WordPenaltyModel.cc WordPredictor.h WordPredictor.cc

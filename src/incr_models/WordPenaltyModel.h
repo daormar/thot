@@ -36,6 +36,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "BaseWordPenaltyModel.h"
 #include <string.h>
 #include "awkInputStream.h"
 #include "ErrorDefs.h"
@@ -69,10 +70,10 @@ class WordPenaltyModel
       // Load model parameters
   bool load(const char* filename);
 
-  LgProb wordPenaltyScore(unsigned int tlen);
       // returns log(wp(tl=tlen))
-  LgProb sumWordPenaltyScore(unsigned int tlen);
+  LgProb wordPenaltyScore(unsigned int tlen);
       // returns log(wp(tl>=tlen))
+  LgProb sumWordPenaltyScore(unsigned int tlen);
 
       // clear function
   void clear(void);
@@ -92,23 +93,23 @@ class WordPenaltyModel
   Vector<LgProb> sum_wlp;
       // Precalculates the sum of the word penalty
   
-  LgProb sumWordPenaltyScoreAux(unsigned int tlen);
       // auxiliary function for sumWordPenaltyScore()
+  LgProb sumWordPenaltyScoreAux(unsigned int tlen);
+      // Word penalty using a logarithmic distribution
   LgProb wordPenaltyScoreLogarithmic(unsigned int tlen);
   Prob sumSentLenProbLogarithmic(unsigned int tlen);
-      // Word penalty using a logarithmic distribution
   
+      // Word penalty using a triangular distribution
   LgProb wordPenaltyScoreTriang(unsigned int tlen);
   Prob sumSentLenProbTriang(unsigned int tlen);
-      // Word penalty using a triangular distribution
   
-  LgProb wordPenaltyScoreGeom(unsigned int tlen);
       // Word penalty using a geometric distribution
+  LgProb wordPenaltyScoreGeom(unsigned int tlen);
   
+      // Functions to read distribution parameters
   bool readLogPars(const char *logParsFileName);
   bool readTriPars(const char *triParsFileName);
   bool readGeomPars(const char *geomParsFileName);
-      // Functions to read distribution parameters
 };
 
 #endif

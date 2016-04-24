@@ -83,7 +83,8 @@ incr_models/FileHistInfo.h incr_models/CacheLmIncrCpTable.h		\
 incr_models/CacheIncrJelMerNgramLM.h incr_models/BaseIncrEncoder.h	\
 incr_models/BaseIncrEncCondProbModel.h					\
 incr_models/BaseIncrCondProbTable.h incr_models/BaseIncrCondProbModel.h	\
-incr_models/WordPenaltyModel.h incr_models/WordPredictor.h
+incr_models/BaseWordPenaltyModel.h incr_models/WordPenaltyModel.h	\
+incr_models/WordPredictor.h
 incr_models_defs= incr_models/StlNgtComponent.cc incr_models/lm_ienc.cc	\
 incr_models/IncrNgramLM.cc incr_models/IncrJelMerNgramLM.cc		\
 incr_models/IncrInterpNgramLM.cc incr_models/FileNgTable.cc		\
