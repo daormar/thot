@@ -593,7 +593,7 @@ done
 
 # Check parameters
 if [ ${c_given} -eq 0 ]; then
-    echo "Error! -cfg parameter not given" >&2
+    echo "Error! -c parameter not given" >&2
     exit 1
 else
     if [ ! -f ${cmdline_cfg} ]; then
