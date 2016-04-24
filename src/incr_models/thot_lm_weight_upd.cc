@@ -221,6 +221,7 @@ void printUsage(void)
   cerr<<"                   [--help] [--version]"<<endl;
   cerr<<endl;
   cerr<<"-lm <string>       Prefix of language model files."<<endl;
+  cerr<<"                   (Warning: current weights will be overwritten)."<<endl;
   cerr<<"-c <string>        Development corpus."<<endl;
   cerr<<"-v                 Enable verbose mode."<<endl;
   cerr<<"--help             Display this help and exit."<<endl;
