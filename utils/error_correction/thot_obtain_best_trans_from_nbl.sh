@@ -28,5 +28,6 @@ if [ $# -lt 2 ]; then
 else
     file=$1
     weights=$2
-    cat $file | $bindir/thot_rescore_nbest "$weights" | ${TAIL} -n +2 | ${SORT} -k1nr | ${HEAD} -1 | get_trans
+    cat $file | $bindir/thot_rescore_nbest "$weights" | ${TAIL} -n +2 | ${SORT} -k1nr | ${AWK} '{if(FNR==1) printf"%s\n",$0}' | get_trans
+    # NOTE: 'awk' is used above instead of 'head' to avoid Broken Pipe errors due to SIGPIPE signal
 fi
