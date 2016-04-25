@@ -159,7 +159,7 @@ bool BaseStackDecoder<SMT_MODEL>::printSearchGraph(const char* filename)
 template<class SMT_MODEL>
 void BaseStackDecoder<SMT_MODEL>::set_G_par(unsigned int /*G_par*/)
 {
-  cerr<<"Error: granularity parameter not available"<<endl;
+//  cerr<<"Warning: granularity parameter not available"<<endl;
 }
 
 //---------------------------------------
