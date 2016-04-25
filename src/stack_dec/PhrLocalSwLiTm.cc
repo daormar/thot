@@ -40,9 +40,6 @@ PhrLocalSwLiTm::PhrLocalSwLiTm(void):_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEq
   stepNum=0;
 }
 
-//--------------- PhrLocalSwLiTm class methods
-//
-
 //---------------------------------
 bool PhrLocalSwLiTm::loadAligModel(const char* prefixFileName)
 {
@@ -269,11 +266,11 @@ void PhrLocalSwLiTm::setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPar
   _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >::setOnlineTrainingPars(_onlineTrainingPars,verbose);
     
       // Set R parameter for the direct and the inverse single word models
-  _incrSwAligModel<CURR_SWM_TYPE::PpInfo>* _incrSwAligModelPtr=
-    dynamic_cast<_incrSwAligModel<CURR_SWM_TYPE::PpInfo>*>(&swModelInfoPtr->swAligModel);
+  _incrSwAligModel<PpInfo>* _incrSwAligModelPtr=
+    dynamic_cast<_incrSwAligModel<PpInfo>*>(swModelInfoPtr->swAligModelPtr);
 
-  _incrSwAligModel<CURR_SWM_TYPE::PpInfo>* _incrInvSwAligModelPtr=
-    dynamic_cast<_incrSwAligModel<CURR_SWM_TYPE::PpInfo>*>(&swModelInfoPtr->invSwAligModel);
+  _incrSwAligModel<PpInfo>* _incrInvSwAligModelPtr=
+    dynamic_cast<_incrSwAligModel<PpInfo>*>(swModelInfoPtr->invSwAligModelPtr);
 
   if(_incrSwAligModelPtr && _incrInvSwAligModelPtr)
   {
@@ -334,8 +331,8 @@ int PhrLocalSwLiTm::incrTrainFeatsSentPair(const char *srcSent,
   updateAligModelsTrgVoc(refSentStrVec);
 
       // Add sentence pair to the single word models
-  swModelInfoPtr->swAligModel.addSentPair(srcSentStrVec,refSentStrVec,onlineTrainingPars.learnStepSize,sentRange);
-  swModelInfoPtr->invSwAligModel.addSentPair(refSentStrVec,srcSentStrVec,onlineTrainingPars.learnStepSize,sentRange);
+  swModelInfoPtr->swAligModelPtr->addSentPair(srcSentStrVec,refSentStrVec,onlineTrainingPars.learnStepSize,sentRange);
+  swModelInfoPtr->invSwAligModelPtr->addSentPair(refSentStrVec,srcSentStrVec,onlineTrainingPars.learnStepSize,sentRange);
 
       // Iterate over E_par interlaced samples
   unsigned int curr_sample=sentRange.second;
@@ -350,11 +347,11 @@ int PhrLocalSwLiTm::incrTrainFeatsSentPair(const char *srcSent,
 
           // Train sw model
       if(verbose) cerr<<"Training single-word model..."<<endl;
-      swModelInfoPtr->swAligModel.trainSentPairRange(make_pair(n,n),verbose);
+      swModelInfoPtr->swAligModelPtr->trainSentPairRange(make_pair(n,n),verbose);
 
           // Train inverse sw model
       if(verbose) cerr<<"Training inverse single-word model..."<<endl;
-      swModelInfoPtr->invSwAligModel.trainSentPairRange(make_pair(n,n),verbose);
+      swModelInfoPtr->invSwAligModelPtr->trainSentPairRange(make_pair(n,n),verbose);
 
           // Add new translation options
       if(verbose) cerr<<"Adding new translation options..."<<endl;
@@ -408,8 +405,8 @@ int PhrLocalSwLiTm::minibatchTrainFeatsSentPair(const char *srcSent,
       updateAligModelsTrgVoc(vecTrgSent[n]);
 
           // Add sentence pair to the single word models
-      swModelInfoPtr->swAligModel.addSentPair(vecSrcSent[n],vecTrgSent[n],1,sentRange);
-      swModelInfoPtr->invSwAligModel.addSentPair(vecTrgSent[n],vecSrcSent[n],1,sentRange);
+      swModelInfoPtr->swAligModelPtr->addSentPair(vecSrcSent[n],vecTrgSent[n],1,sentRange);
+      swModelInfoPtr->invSwAligModelPtr->addSentPair(vecTrgSent[n],vecSrcSent[n],1,sentRange);
     }
 
         // Initialize minibatchSentRange variable
@@ -421,25 +418,25 @@ int PhrLocalSwLiTm::minibatchTrainFeatsSentPair(const char *srcSent,
       cerr<<"Processing mini-batch of size "<<minibatchSize<<" , "<<minibatchSentRange.first<<" - "<<minibatchSentRange.second<<endl;
 
         // Set learning rate for sw model if possible
-    BaseStepwiseAligModel* bswamPtr=dynamic_cast<BaseStepwiseAligModel*>(&swModelInfoPtr->swAligModel);
+    BaseStepwiseAligModel* bswamPtr=dynamic_cast<BaseStepwiseAligModel*>(swModelInfoPtr->swAligModelPtr);
     if(bswamPtr) bswamPtr->set_nu_val(learningRate);
 
         // Train sw model
     if(verbose) cerr<<"Training single-word model..."<<endl;
     for(unsigned int i=0;i<onlineTrainingPars.emIters;++i)
     {
-      swModelInfoPtr->swAligModel.trainSentPairRange(minibatchSentRange,verbose);
+      swModelInfoPtr->swAligModelPtr->trainSentPairRange(minibatchSentRange,verbose);
     }
 
         // Set learning rate for inverse sw model if possible
-    BaseStepwiseAligModel* ibswamPtr=dynamic_cast<BaseStepwiseAligModel*>(&swModelInfoPtr->invSwAligModel);
+    BaseStepwiseAligModel* ibswamPtr=dynamic_cast<BaseStepwiseAligModel*>(swModelInfoPtr->invSwAligModelPtr);
     if(ibswamPtr) ibswamPtr->set_nu_val(learningRate);
 
         // Train inverse sw model
     if(verbose) cerr<<"Training inverse single-word model..."<<endl;
     for(unsigned int i=0;i<onlineTrainingPars.emIters;++i)
     {
-      swModelInfoPtr->invSwAligModel.trainSentPairRange(minibatchSentRange,verbose);
+      swModelInfoPtr->invSwAligModelPtr->trainSentPairRange(minibatchSentRange,verbose);
     }
 
         // Generate word alignments
@@ -450,11 +447,11 @@ int PhrLocalSwLiTm::minibatchTrainFeatsSentPair(const char *srcSent,
       WordAligMatrix waMatrix;
       WordAligMatrix invWaMatrix;
   
-      swModelInfoPtr->swAligModel.obtainBestAlignmentVecStr(vecSrcSent[n],vecTrgSent[n],waMatrix);
-      swModelInfoPtr->invSwAligModel.obtainBestAlignmentVecStr(vecTrgSent[n],vecSrcSent[n],invWaMatrix);
+      swModelInfoPtr->swAligModelPtr->obtainBestAlignmentVecStr(vecSrcSent[n],vecTrgSent[n],waMatrix);
+      swModelInfoPtr->invSwAligModelPtr->obtainBestAlignmentVecStr(vecTrgSent[n],vecSrcSent[n],invWaMatrix);
   
           // Operate alignments
-      Vector<std::string> nrefSentStrVec=swModelInfoPtr->swAligModel.addNullWordToStrVec(vecTrgSent[n]);  
+      Vector<std::string> nrefSentStrVec=swModelInfoPtr->swAligModelPtr->addNullWordToStrVec(vecTrgSent[n]);  
 
       waMatrix.transpose();
 
@@ -519,8 +516,8 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
       
         // Batch learning is being performed, clear models
     if(verbose) cerr<<"Clearing previous model..."<<endl;
-    swModelInfoPtr->swAligModel.clear();
-    swModelInfoPtr->invSwAligModel.clear();
+    swModelInfoPtr->swAligModelPtr->clear();
+    swModelInfoPtr->invSwAligModelPtr->clear();
     phrModelInfoPtr->invPbModelPtr->clear();
     langModelInfoPtr->lModelPtr->clear();
 
@@ -531,8 +528,8 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
       updateAligModelsTrgVoc(vecTrgSent[n]);
 
           // Add sentence pair to the single word models
-      swModelInfoPtr->swAligModel.addSentPair(vecSrcSent[n],vecTrgSent[n],1,sentRange);
-      swModelInfoPtr->invSwAligModel.addSentPair(vecTrgSent[n],vecSrcSent[n],1,sentRange);
+      swModelInfoPtr->swAligModelPtr->addSentPair(vecSrcSent[n],vecTrgSent[n],1,sentRange);
+      swModelInfoPtr->invSwAligModelPtr->addSentPair(vecTrgSent[n],vecSrcSent[n],1,sentRange);
     }
 
         // Initialize batchSentRange variable
@@ -544,7 +541,7 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
       cerr<<"Processing batch of size "<<batchSentRange.second-batchSentRange.first+1<<" , "<<batchSentRange.first<<" - "<<batchSentRange.second<<endl;
 
         // Set learning rate for sw model if possible
-    BaseStepwiseAligModel* bswamPtr=dynamic_cast<BaseStepwiseAligModel*>(&swModelInfoPtr->swAligModel);
+    BaseStepwiseAligModel* bswamPtr=dynamic_cast<BaseStepwiseAligModel*>(swModelInfoPtr->swAligModelPtr);
     if(bswamPtr) bswamPtr->set_nu_val(learningRate);
 
         // Train sw model
@@ -552,14 +549,14 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
     for(unsigned int i=0;i<onlineTrainingPars.emIters;++i)
     {
           // Execute batch training
-      _incrSwAligModel<CURR_SWM_TYPE::PpInfo>* iswamPtr=
-        dynamic_cast<_incrSwAligModel<CURR_SWM_TYPE::PpInfo>*>(&swModelInfoPtr->swAligModel);
+      _incrSwAligModel<PpInfo>* iswamPtr=
+        dynamic_cast<_incrSwAligModel<PpInfo>*>(swModelInfoPtr->swAligModelPtr);
 
       if(iswamPtr) iswamPtr->efficientBatchTrainingForRange(batchSentRange,verbose);
     }
 
         // Set learning rate for inverse sw model if possible
-    BaseStepwiseAligModel* ibswamPtr=dynamic_cast<BaseStepwiseAligModel*>(&swModelInfoPtr->invSwAligModel);
+    BaseStepwiseAligModel* ibswamPtr=dynamic_cast<BaseStepwiseAligModel*>(swModelInfoPtr->invSwAligModelPtr);
     if(ibswamPtr) ibswamPtr->set_nu_val(learningRate);
 
         // Train inverse sw model
@@ -567,7 +564,7 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
     for(unsigned int i=0;i<onlineTrainingPars.emIters;++i)
     {
           // Execute batch training
-      _incrSwAligModel<CURR_SWM_TYPE::PpInfo>* iswamPtr=dynamic_cast<_incrSwAligModel<CURR_SWM_TYPE::PpInfo>*>(&swModelInfoPtr->invSwAligModel);
+      _incrSwAligModel<PpInfo>* iswamPtr=dynamic_cast<_incrSwAligModel<PpInfo>*>(swModelInfoPtr->invSwAligModelPtr);
       if(iswamPtr) iswamPtr->efficientBatchTrainingForRange(batchSentRange,verbose);
     }
 
@@ -579,11 +576,11 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
       WordAligMatrix waMatrix;
       WordAligMatrix invWaMatrix;
   
-      swModelInfoPtr->swAligModel.obtainBestAlignmentVecStr(vecSrcSent[n],vecTrgSent[n],waMatrix);
-      swModelInfoPtr->invSwAligModel.obtainBestAlignmentVecStr(vecTrgSent[n],vecSrcSent[n],invWaMatrix);
+      swModelInfoPtr->swAligModelPtr->obtainBestAlignmentVecStr(vecSrcSent[n],vecTrgSent[n],waMatrix);
+      swModelInfoPtr->invSwAligModelPtr->obtainBestAlignmentVecStr(vecTrgSent[n],vecSrcSent[n],invWaMatrix);
   
           // Operate alignments
-      Vector<std::string> nrefSentStrVec=swModelInfoPtr->swAligModel.addNullWordToStrVec(vecTrgSent[n]);  
+      Vector<std::string> nrefSentStrVec=swModelInfoPtr->swAligModelPtr->addNullWordToStrVec(vecTrgSent[n]);  
 
       waMatrix.transpose();
 
@@ -725,18 +722,18 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
     Vector<std::string> srcSentStrVec;
     Vector<std::string> refSentStrVec;
     Count c;
-    swModelInfoPtr->swAligModel.nthSentPair(n,srcSentStrVec,refSentStrVec,c);
+    swModelInfoPtr->swAligModelPtr->nthSentPair(n,srcSentStrVec,refSentStrVec,c);
 
         // Generate alignments
     WordAligMatrix waMatrix;
     WordAligMatrix invWaMatrix;
   
-    swModelInfoPtr->swAligModel.obtainBestAlignmentVecStr(srcSentStrVec,refSentStrVec,waMatrix);
-    swModelInfoPtr->invSwAligModel.obtainBestAlignmentVecStr(refSentStrVec,srcSentStrVec,invWaMatrix);
+    swModelInfoPtr->swAligModelPtr->obtainBestAlignmentVecStr(srcSentStrVec,refSentStrVec,waMatrix);
+    swModelInfoPtr->invSwAligModelPtr->obtainBestAlignmentVecStr(refSentStrVec,srcSentStrVec,invWaMatrix);
   
         // Operate alignments
-    Vector<std::string> nsrcSentStrVec=swModelInfoPtr->swAligModel.addNullWordToStrVec(srcSentStrVec);
-    Vector<std::string> nrefSentStrVec=swModelInfoPtr->swAligModel.addNullWordToStrVec(refSentStrVec);  
+    Vector<std::string> nsrcSentStrVec=swModelInfoPtr->swAligModelPtr->addNullWordToStrVec(srcSentStrVec);
+    Vector<std::string> nrefSentStrVec=swModelInfoPtr->swAligModelPtr->addNullWordToStrVec(refSentStrVec);  
 
     waMatrix.transpose();
 

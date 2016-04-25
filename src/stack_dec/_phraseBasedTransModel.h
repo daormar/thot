@@ -468,17 +468,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::loadLangModel(const char* prefixFileNam
       // Initializes language model
   if(langModelInfoPtr->lModelPtr->load(prefixFileName)==ERROR)
     return ERROR;
-  
-  /*     // load WordPenaltyModel info */
-  /* penFile=prefixFileName; */
-  /* penFile=penFile+".wpm"; */
-  /* err=langModelInfoPtr->wpModelPtr->load(penFile.c_str()); */
-  /* if(err==ERROR) */
-  /* { */
-  /*   cerr<<"Warning: File for initializing the word penalty model not provided!"<<endl; */
-  /*   cerr<<"Using word penalty model based on a geometric distribution."<<endl; */
-  /* } */
-  
+    
       // load WordPredictor info
   predFile=prefixFileName;
   predFile=predFile+".wp";
