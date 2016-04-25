@@ -247,6 +247,10 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
       else break;
     }
   }
+  cerr << "FW: [ ";
+  for (unsigned int k=0; k<max_wAvg.size(); k++)
+    cerr << max_wAvg[k] << " ";
+  cerr << "]" << endl;
   newWeightsVec = max_wAvg;
 }
 
