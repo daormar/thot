@@ -26,12 +26,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "SmtModelTypes.h"
-#include "StackDecSwModelTypes.h"
-#include "StackDecEcModelTypes.h"
-#include "StackDecEcModelForNbUcatTypes.h"
 #include "BasePbTransModel.h"
 #include "BaseErrorCorrectingModel.h"
 #include "BaseLogLinWeightUpdater.h"
+#include "SwModelInfo.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
 #include <WgHandler.h>
@@ -45,6 +43,7 @@ using namespace std;
 class ThotDecoderCommonVars
 {
  public:
+  SwModelInfo* swModelInfoPtr;
   PhraseModelInfo* phrModelInfoPtr;
   LangModelInfo* langModelInfoPtr;
   WgHandler* wgHandlerPtr;

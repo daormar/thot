@@ -25,26 +25,33 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <StackDecSwModelTypes.h>
+//#include <StackDecSwModelTypes.h>
+#include "BaseSwAligModel.h"
 #include "SwModelPars.h"
+#include "Prob.h"
+#include "myVector.h"
 
 //--------------- Constants ------------------------------------------
 
 #define DEFAULT_LVALUE_CONF_INTERV  0.01
 #define DEFAULT_RVALUE_CONF_INTERV  0.99
 #define DEFAULT_MAX_INTERV_SIZE    20
-#define DEFAULT_LAMBDA_VALUE  0.9
+#define DEFAULT_LAMBDA_VALUE        0.9
+
+//--------------- typedefs -------------------------------------------
+
+typedef BaseSwAligModel<Vector<Prob> >::PpInfo PpInfo;
 
 //--------------- SwModelInfo struct
 
 struct SwModelInfo
 {
       // sw model members
-  CURR_SWM_TYPE swAligModel;
+  BaseSwAligModel<Vector<Prob> >* swAligModelPtr; // CURR_SWM_TYPE swAligModel;
   SwModelPars swModelPars;
 
       // Inverse sw model members
-  CURR_SWM_TYPE invSwAligModel;
+  BaseSwAligModel<Vector<Prob> >* invSwAligModelPtr; // CURR_SWM_TYPE invSwAligModel;
   SwModelPars invSwModelPars;
 
       // Confidence interval for length model

@@ -40,15 +40,18 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "SmtModelTypes.h"
+#include "BasePbTransModel.h"
+#include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
+#include "StackDecSwModelTypes.h"
 #include "StackDecPbModelTypes.h"
+#include "SwModelInfo.h"
+#include "PhraseModelInfo.h"
 #include "StackDecLmTypes.h"
 #include "LangModelInfo.h"
 #include "WordPenaltyModel.h"
 #include "KbMiraLlWu.h"
-#include "SmtModelTypes.h"
-#include "StackDecSwModelTypes.h"
-#include "BasePbTransModel.h"
 
 #include "options.h"
 #include "ErrorDefs.h"
@@ -94,8 +97,9 @@ void printConfig(void);
 
 //--------------- Global variables -----------------------------------
 
-PhraseModelInfo* phrModelInfoPtr;
 LangModelInfo* langModelInfoPtr;
+PhraseModelInfo* phrModelInfoPtr;
+SwModelInfo* swModelInfoPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
 
@@ -120,10 +124,13 @@ int main(int argc, char *argv[])
 //--------------- get_ll_weights function
 void get_ll_weights(const thot_get_ll_weights_pars& pars)
 {
-  phrModelInfoPtr=new PhraseModelInfo;
-  phrModelInfoPtr->invPbModelPtr=new THOT_CURR_PBM_TYPE;
   langModelInfoPtr=new LangModelInfo;
   langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
+  phrModelInfoPtr=new PhraseModelInfo;
+  phrModelInfoPtr->invPbModelPtr=new THOT_CURR_PBM_TYPE;
+  swModelInfoPtr=new SwModelInfo;
+  swModelInfoPtr->swAligModelPtr=new CURR_SWM_TYPE;
+  swModelInfoPtr->invSwAligModelPtr=new CURR_SWM_TYPE;
   langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
   BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
 
@@ -137,6 +144,11 @@ void get_ll_weights(const thot_get_ll_weights_pars& pars)
     base_pbtm_ptr->link_lm_info(langModelInfoPtr);
     base_pbtm_ptr->link_pm_info(phrModelInfoPtr);
   }
+  _phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* >(smtModelPtr);
+  if(base_pbswtm_ptr)
+  {
+    base_pbswtm_ptr->link_swm_info(swModelInfoPtr);
+  }
   
       // Set weights
   if(!pars.weightVec.empty())
@@ -144,12 +156,15 @@ void get_ll_weights(const thot_get_ll_weights_pars& pars)
   smtModelPtr->printWeights(cout);
   cout<<endl;
 
-        // Delete pointers
-  delete phrModelInfoPtr->invPbModelPtr;
-  delete phrModelInfoPtr;
+      // Delete pointers
   delete langModelInfoPtr->lModelPtr;
   delete langModelInfoPtr->wpModelPtr;
   delete langModelInfoPtr;
+  delete phrModelInfoPtr->invPbModelPtr;
+  delete phrModelInfoPtr;
+  delete swModelInfoPtr->swAligModelPtr;
+  delete swModelInfoPtr->invSwAligModelPtr;
+  delete swModelInfoPtr;
   delete smtModelPtr;
   delete llWeightUpdaterPtr;
 }

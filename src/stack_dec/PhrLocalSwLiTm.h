@@ -95,8 +95,6 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   // Constructor
   PhrLocalSwLiTm(void);
   
-  // class methods
-
       // Init alignment model
   bool loadAligModel(const char* prefixFileName);
 
