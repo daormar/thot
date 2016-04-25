@@ -35,6 +35,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 ThotDecoder::ThotDecoder()
 {
       // Create server variables
+  tdCommonVars.phrModelInfoPtr=new PhraseModelInfo;
+  tdCommonVars.phrModelInfoPtr->invPbModelPtr=new THOT_CURR_PBM_TYPE;
   tdCommonVars.langModelInfoPtr=new LangModelInfo;
   tdCommonVars.langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
   tdCommonVars.langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
@@ -53,7 +55,10 @@ ThotDecoder::ThotDecoder()
   tdCommonVars.smtModelPtr->link_ll_weight_upd(tdCommonVars.llWeightUpdaterPtr);
   _phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* >(tdCommonVars.smtModelPtr);
   if(base_pbtm_ptr)
+  {
     base_pbtm_ptr->link_lm_info(tdCommonVars.langModelInfoPtr);
+    base_pbtm_ptr->link_pm_info(tdCommonVars.phrModelInfoPtr);
+  }
   
       // Initialize mutexes and conditions
   pthread_mutex_init(&user_id_to_idx_mut,NULL);
@@ -135,6 +140,8 @@ void ThotDecoder::config(void)
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
+  PhraseModelInfo* phrModelInfoPtr=new PhraseModelInfo;
+  BaseIncrPhraseModel* invPbModelPtr=new THOT_CURR_PBM_TYPE;
   LangModelInfo* langModelInfoPtr=new LangModelInfo;
   langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
   langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
@@ -147,7 +154,10 @@ void ThotDecoder::config(void)
   modelPtr->link_ll_weight_upd(tdCommonVars.llWeightUpdaterPtr);
   _phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* >(modelPtr);
   if(base_pbtm_ptr)
-    base_pbtm_ptr->link_lm_info(tdCommonVars.langModelInfoPtr);
+  {
+    base_pbtm_ptr->link_lm_info(langModelInfoPtr);
+    base_pbtm_ptr->link_pm_info(phrModelInfoPtr);
+  }
 
       // Instantiate assisted translator
   BaseAssistedTrans<CURR_MODEL_TYPE>* assistedTransPtr=new CURR_AT_TYPE<CURR_MODEL_TYPE>();
@@ -226,6 +236,8 @@ void ThotDecoder::config(void)
   cerr<<endl;
 
       // Release pointers
+  delete invPbModelPtr;
+  delete phrModelInfoPtr;
   delete langModelInfoPtr->lModelPtr;
   delete langModelInfoPtr->wpModelPtr;
   delete langModelInfoPtr;
@@ -2458,6 +2470,8 @@ ThotDecoder::~ThotDecoder()
   release();
 
       // Delete pointers
+  delete tdCommonVars.phrModelInfoPtr->invPbModelPtr;
+  delete tdCommonVars.phrModelInfoPtr;
   delete tdCommonVars.langModelInfoPtr->lModelPtr;
   delete tdCommonVars.langModelInfoPtr->wpModelPtr;
   delete tdCommonVars.langModelInfoPtr;

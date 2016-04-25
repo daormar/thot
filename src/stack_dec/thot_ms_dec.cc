@@ -31,6 +31,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files --------------------------------------
 
 #include "_phraseBasedTransModel.h"
+#include "StackDecPbModelTypes.h"
 #include "StackDecLmTypes.h"
 #include "LangModelInfo.h"
 #include "WordPenaltyModel.h"
@@ -127,6 +128,7 @@ void printConfig(void);
 
 //--------------- Global variables -----------------------------------
 
+PhraseModelInfo* phrModelInfoPtr;
 LangModelInfo* langModelInfoPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
@@ -169,17 +171,22 @@ int init_translator(const thot_ms_dec_pars& tdp)
   
   cerr<<"\n- Initializing model and test corpus...\n\n";
 
+  phrModelInfoPtr=new PhraseModelInfo;
+  phrModelInfoPtr->invPbModelPtr=new THOT_CURR_PBM_TYPE;
   langModelInfoPtr=new LangModelInfo;
   langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
   langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
   llWeightUpdaterPtr=new KbMiraLlWu;
-        // Instantiate smt model
+      // Instantiate smt model
   smtModelPtr=new CURR_MODEL_TYPE();
       // Link pointers
   smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
   _phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* >(smtModelPtr);
   if(base_pbtm_ptr)
+  {
     base_pbtm_ptr->link_lm_info(langModelInfoPtr);
+    base_pbtm_ptr->link_pm_info(phrModelInfoPtr);
+  }
   
   err=smtModelPtr->loadLangModel(tdp.languageModelFileName.c_str());
   if(err==ERROR)
@@ -252,6 +259,8 @@ int init_translator(const thot_ms_dec_pars& tdp)
 //---------------
 void release_translator(void)
 {
+  delete phrModelInfoPtr->invPbModelPtr;
+  delete phrModelInfoPtr;
   delete langModelInfoPtr->lModelPtr;
   delete langModelInfoPtr->wpModelPtr;
   delete langModelInfoPtr;

@@ -53,6 +53,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "_phrSwTransModel.h"
 #include "PhrLocalSwLiTmHypRec.h"
 #include <BaseStepwiseAligModel.h>
+#include "_wbaIncrPhraseModel.h"
 #include <PhrasePair.h>
 #include <PhraseExtractParameters.h>
 #include "EditDistForVec.h"

@@ -46,6 +46,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 // Types defining decoder architecture
 #include "_phraseBasedTransModel.h"
+#include "StackDecPbModelTypes.h"
 #include "StackDecLmTypes.h"
 #include "WordPenaltyModel.h"
 #include "KbMiraLlWu.h"

@@ -470,11 +470,14 @@ int PhrLocalSwLiTm::minibatchTrainFeatsSentPair(const char *srcSent,
     }
 
         // Train phrase-based model
-#if THOT_PBM_TYPE == ML_PBM || THOT_PBM_TYPE == SWISE_ML_PBM
-    if(verbose) cerr<<"Training phrase-based model..."<<endl;
-    PhraseExtractParameters phePars;
-    phrModelInfoPtr->invPbModel.extModelFromPairAligVec(phePars,false,vecTrgSent,vecSrcSent,invWaMatrixVec,(Count)learningRate,verbose);
-#endif
+    _wbaIncrPhraseModel* wbaIncrPhraseModelPtr=dynamic_cast<_wbaIncrPhraseModel* >(phrModelInfoPtr->invPbModelPtr);
+    if(wbaIncrPhraseModelPtr)
+    {
+      if(verbose) cerr<<"Training phrase-based model..."<<endl;
+      PhraseExtractParameters phePars;
+      wbaIncrPhraseModelPtr->extModelFromPairAligVec(phePars,false,vecTrgSent,vecSrcSent,invWaMatrixVec,(Count)learningRate,verbose);
+    }
+    
         // Train language model
     if(verbose) cerr<<"Training language model..."<<endl;    
     langModelInfoPtr->lModelPtr->trainSentenceVec(vecTrgSent,(Count)learningRate,(Count)0,verbose);
@@ -518,7 +521,7 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
     if(verbose) cerr<<"Clearing previous model..."<<endl;
     swModelInfoPtr->swAligModel.clear();
     swModelInfoPtr->invSwAligModel.clear();
-    phrModelInfoPtr->invPbModel.clear();
+    phrModelInfoPtr->invPbModelPtr->clear();
     langModelInfoPtr->lModelPtr->clear();
 
     for(unsigned int n=0;n<vecSrcSent.size();++n)
@@ -596,11 +599,13 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
     }
 
         // Train phrase-based model
-#if THOT_PBM_TYPE == ML_PBM || THOT_PBM_TYPE == SWISE_ML_PBM
-    if(verbose) cerr<<"Training phrase-based model..."<<endl;
-    PhraseExtractParameters phePars;
-    phrModelInfoPtr->invPbModel.extModelFromPairAligVec(phePars,false,vecTrgSent,vecSrcSent,invWaMatrixVec,(Count)learningRate,verbose);
-#endif
+    _wbaIncrPhraseModel* wbaIncrPhraseModelPtr=dynamic_cast<_wbaIncrPhraseModel* >(phrModelInfoPtr->invPbModelPtr);
+    if(wbaIncrPhraseModelPtr)
+    {
+      if(verbose) cerr<<"Training phrase-based model..."<<endl;
+      PhraseExtractParameters phePars;
+      wbaIncrPhraseModelPtr->extModelFromPairAligVec(phePars,false,vecTrgSent,vecSrcSent,invWaMatrixVec,(Count)learningRate,verbose);
+    }
         // Train language model
     if(verbose) cerr<<"Training language model..."<<endl;    
     langModelInfoPtr->lModelPtr->trainSentenceVec(vecTrgSent,(Count)learningRate,(Count)0,verbose);
@@ -710,85 +715,88 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
 // NOTE: a complete training step requires the addition of new
 // translation options. This can be achieved using the well-known
 // phrase-extract algorithm. The required functionality is only
-// implemented at this moment by the pb models with the labels
-// ML_PBM and SWISE_ML_PBM
-#if THOT_PBM_TYPE == ML_PBM || THOT_PBM_TYPE == SWISE_ML_PBM
-
-      // Obtain sentence pair
-  Vector<std::string> srcSentStrVec;
-  Vector<std::string> refSentStrVec;
-  Count c;
-  swModelInfoPtr->swAligModel.nthSentPair(n,srcSentStrVec,refSentStrVec,c);
-
-      // Generate alignments
-  WordAligMatrix waMatrix;
-  WordAligMatrix invWaMatrix;
+// implemented at this moment by the pb models deriving from the
+// _wbaIncrPhraseModel class
   
-  swModelInfoPtr->swAligModel.obtainBestAlignmentVecStr(srcSentStrVec,refSentStrVec,waMatrix);
-  swModelInfoPtr->invSwAligModel.obtainBestAlignmentVecStr(refSentStrVec,srcSentStrVec,invWaMatrix);
+  _wbaIncrPhraseModel* wbaIncrPhraseModelPtr=dynamic_cast<_wbaIncrPhraseModel* >(phrModelInfoPtr->invPbModelPtr);
+  if(wbaIncrPhraseModelPtr)
+  {
+        // Obtain sentence pair
+    Vector<std::string> srcSentStrVec;
+    Vector<std::string> refSentStrVec;
+    Count c;
+    swModelInfoPtr->swAligModel.nthSentPair(n,srcSentStrVec,refSentStrVec,c);
+
+        // Generate alignments
+    WordAligMatrix waMatrix;
+    WordAligMatrix invWaMatrix;
   
-      // Operate alignments
-  Vector<std::string> nsrcSentStrVec=swModelInfoPtr->swAligModel.addNullWordToStrVec(srcSentStrVec);
-  Vector<std::string> nrefSentStrVec=swModelInfoPtr->swAligModel.addNullWordToStrVec(refSentStrVec);  
-
-  waMatrix.transpose();
-
-      // Execute symmetrization
-  invWaMatrix.symmetr1(waMatrix);
-  if(verbose)
-  {
-    printAlignmentInGIZAFormat(cerr,nrefSentStrVec,srcSentStrVec,invWaMatrix,"Operated word alignment for phrase model training:");
-  }
-
-      // Extract consistent pairs
-  Vector<PhrasePair> vecPhPair;
-  PhraseExtractParameters phePars;
-  phrModelInfoPtr->invPbModel.extractPhrasesFromPairPlusAlig(phePars,
-                                                             nrefSentStrVec,
-                                                             srcSentStrVec,
-                                                             invWaMatrix,
-                                                             vecPhPair,
-                                                             verbose);
-
-      // Obtain mapped_n
-  unsigned int mapped_n=map_n_am_suff_stats(n);
+    swModelInfoPtr->swAligModel.obtainBestAlignmentVecStr(srcSentStrVec,refSentStrVec,waMatrix);
+    swModelInfoPtr->invSwAligModel.obtainBestAlignmentVecStr(refSentStrVec,srcSentStrVec,invWaMatrix);
   
-      // Grow vecVecPhPair if necessary
-  Vector<PhrasePair> vpp;
-  while(vecVecPhPair.size()<=mapped_n) vecVecPhPair.push_back(vpp);
-    
-      // Subtract current phrase model current sufficient statistics
-  for(unsigned int i=0;i<vecVecPhPair[mapped_n].size();++i)
-  {
-    phrModelInfoPtr->invPbModel.strIncrCountsOfEntry(vecVecPhPair[mapped_n][i].s_,
-                                    vecVecPhPair[mapped_n][i].t_,
-                                    -1);
-  }
+        // Operate alignments
+    Vector<std::string> nsrcSentStrVec=swModelInfoPtr->swAligModel.addNullWordToStrVec(srcSentStrVec);
+    Vector<std::string> nrefSentStrVec=swModelInfoPtr->swAligModel.addNullWordToStrVec(refSentStrVec);  
 
-      // Add new phrase model current sufficient statistics
-  if(verbose) cerr<<"List of extracted consistent phrase pairs:"<<endl;
-  for(unsigned int i=0;i<vecPhPair.size();++i)
-  {
-    phrModelInfoPtr->invPbModel.strIncrCountsOfEntry(vecPhPair[i].s_,
-                                    vecPhPair[i].t_,
-                                    1);
+    waMatrix.transpose();
+
+        // Execute symmetrization
+    invWaMatrix.symmetr1(waMatrix);
     if(verbose)
     {
-      for(unsigned int j=0;j<vecPhPair[i].s_.size();++j) cerr<<vecPhPair[i].s_[j]<<" ";
-      cerr<<"|||";
-      for(unsigned int j=0;j<vecPhPair[i].t_.size();++j) cerr<<" "<<vecPhPair[i].t_[j];
-      cerr<<endl;
+      printAlignmentInGIZAFormat(cerr,nrefSentStrVec,srcSentStrVec,invWaMatrix,"Operated word alignment for phrase model training:");
     }
-  }
-  
-      // Store new phrase model current sufficient statistics
-  vecVecPhPair[mapped_n]=vecPhPair;
 
-  return OK;
-#else
-  cerr<<"Warning: addition of new translation options not supported in this configuration!"<<endl;
-  return ERROR;
-#endif  
+        // Extract consistent pairs
+    Vector<PhrasePair> vecPhPair;
+    PhraseExtractParameters phePars;
+    wbaIncrPhraseModelPtr->extractPhrasesFromPairPlusAlig(phePars,
+                                                          nrefSentStrVec,
+                                                          srcSentStrVec,
+                                                          invWaMatrix,
+                                                          vecPhPair,
+                                                          verbose);
+        // Obtain mapped_n
+    unsigned int mapped_n=map_n_am_suff_stats(n);
+  
+        // Grow vecVecPhPair if necessary
+    Vector<PhrasePair> vpp;
+    while(vecVecPhPair.size()<=mapped_n) vecVecPhPair.push_back(vpp);
+    
+        // Subtract current phrase model current sufficient statistics
+    for(unsigned int i=0;i<vecVecPhPair[mapped_n].size();++i)
+    {
+      phrModelInfoPtr->invPbModelPtr->strIncrCountsOfEntry(vecVecPhPair[mapped_n][i].s_,
+                                                           vecVecPhPair[mapped_n][i].t_,
+                                                           -1);
+    }
+
+        // Add new phrase model current sufficient statistics
+    if(verbose) cerr<<"List of extracted consistent phrase pairs:"<<endl;
+    for(unsigned int i=0;i<vecPhPair.size();++i)
+    {
+      phrModelInfoPtr->invPbModelPtr->strIncrCountsOfEntry(vecPhPair[i].s_,
+                                                           vecPhPair[i].t_,
+                                                           1);
+      if(verbose)
+      {
+        for(unsigned int j=0;j<vecPhPair[i].s_.size();++j) cerr<<vecPhPair[i].s_[j]<<" ";
+        cerr<<"|||";
+        for(unsigned int j=0;j<vecPhPair[i].t_.size();++j) cerr<<" "<<vecPhPair[i].t_[j];
+        cerr<<endl;
+      }
+    }
+  
+        // Store new phrase model current sufficient statistics
+    vecVecPhPair[mapped_n]=vecPhPair;
+
+    return OK;
+  }
+  else
+  {
+    cerr<<"Warning: addition of new translation options not supported in this configuration!"<<endl;
+    return ERROR;
+  }
 }
 
 //---------------------------------
@@ -982,18 +990,18 @@ Score PhrLocalSwLiTm::smoothedPhrScore_s_t_(const Vector<WordIndex>& s_,
   {
     if(swModelInfoPtr->lambda==1.0)
     {
-      return (float)phrModelInfoPtr->invPbModel.logpt_s_(t_,s_);
+      return (float)phrModelInfoPtr->invPbModelPtr->logpt_s_(t_,s_);
     }
     else
     {
-      float sum1=log(swModelInfoPtr->lambda)+(float)phrModelInfoPtr->invPbModel.logpt_s_(t_,s_);
-#if THOT_PBM_TYPE == ML_PBM
+      float sum1=log(swModelInfoPtr->lambda)+(float)phrModelInfoPtr->invPbModelPtr->logpt_s_(t_,s_);
+// #if THOT_PBM_TYPE == ML_PBM
           // Avoid those cases in which the phrase model
           // smoothing probability is greater than the one given by the
           // lexical distribution
       if(sum1<=log(PHRASE_PROB_SMOOTH))
         sum1=PHRSWLITM_LGPROB_SMOOTH;
-#endif
+// #endif
       float sum2=log(1.0-swModelInfoPtr->lambda)+(float)invSwLgProb(s_,t_);
       float interp=MathFuncs::lns_sumlog(sum1,sum2);
       return phrModelInfoPtr->phraseModelPars.pstWeight*(double)interp;
@@ -1010,18 +1018,18 @@ Score PhrLocalSwLiTm::smoothedPhrScore_t_s_(const Vector<WordIndex>& s_,
   {
     if(swModelInfoPtr->lambda==1.0)
     {
-      return (float)phrModelInfoPtr->invPbModel.logps_t_(t_,s_);
+      return (float)phrModelInfoPtr->invPbModelPtr->logps_t_(t_,s_);
     }
     else
     {
-      float sum1=log(swModelInfoPtr->lambda)+(float)phrModelInfoPtr->invPbModel.logps_t_(t_,s_);
-#if THOT_PBM_TYPE == ML_PBM
+      float sum1=log(swModelInfoPtr->lambda)+(float)phrModelInfoPtr->invPbModelPtr->logps_t_(t_,s_);
+// #if THOT_PBM_TYPE == ML_PBM
           // Avoid those cases in which the phrase model
           // smoothing probability is greater than the one given by the
           // lexical distribution
       if(sum1<=log(PHRASE_PROB_SMOOTH))
         sum1=PHRSWLITM_LGPROB_SMOOTH;
-#endif
+// #endif
       float sum2=log(1.0-swModelInfoPtr->lambda)+(float)swLgProb(s_,t_);
       float interp=MathFuncs::lns_sumlog(sum1,sum2);
 

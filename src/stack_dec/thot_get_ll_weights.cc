@@ -41,6 +41,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_phraseBasedTransModel.h"
+#include "StackDecPbModelTypes.h"
 #include "StackDecLmTypes.h"
 #include "LangModelInfo.h"
 #include "WordPenaltyModel.h"
@@ -93,6 +94,7 @@ void printConfig(void);
 
 //--------------- Global variables -----------------------------------
 
+PhraseModelInfo* phrModelInfoPtr;
 LangModelInfo* langModelInfoPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
@@ -118,6 +120,8 @@ int main(int argc, char *argv[])
 //--------------- get_ll_weights function
 void get_ll_weights(const thot_get_ll_weights_pars& pars)
 {
+  phrModelInfoPtr=new PhraseModelInfo;
+  phrModelInfoPtr->invPbModelPtr=new THOT_CURR_PBM_TYPE;
   langModelInfoPtr=new LangModelInfo;
   langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
   langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
@@ -131,6 +135,7 @@ void get_ll_weights(const thot_get_ll_weights_pars& pars)
   if(base_pbtm_ptr)
   {
     base_pbtm_ptr->link_lm_info(langModelInfoPtr);
+    base_pbtm_ptr->link_pm_info(phrModelInfoPtr);
   }
   
       // Set weights
@@ -140,6 +145,8 @@ void get_ll_weights(const thot_get_ll_weights_pars& pars)
   cout<<endl;
 
         // Delete pointers
+  delete phrModelInfoPtr->invPbModelPtr;
+  delete phrModelInfoPtr;
   delete langModelInfoPtr->lModelPtr;
   delete langModelInfoPtr->wpModelPtr;
   delete langModelInfoPtr;

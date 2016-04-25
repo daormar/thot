@@ -25,19 +25,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "StackDecPbModelTypes.h"
-#include "BasePbTransModel.h"
+#include "BaseIncrPhraseModel.h"
 #include "PhraseModelPars.h"
 
 //--------------- PhraseModelInfo struct
 
 struct PhraseModelInfo
 {
-  THOT_CURR_PBM_TYPE invPbModel;
-      // THOT_CURR_PBM_TYPE is defined in
-      // StackDecPbModelTypes.h. THOT_CURR_PBM_TYPE must respect
-      // the interface for phrase-based models given in the file
-      // BasePhraseModel.h provided by the phrase_models package.
+  BaseIncrPhraseModel* invPbModelPtr;
   PhraseModelPars phraseModelPars;
 };
 

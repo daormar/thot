@@ -32,6 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BasePbTransModel.h"
 #include "BaseErrorCorrectingModel.h"
 #include "BaseLogLinWeightUpdater.h"
+#include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
 #include <WgHandler.h>
 //#include <casmacat/IWeightUpdateEngine.h>
@@ -44,6 +45,7 @@ using namespace std;
 class ThotDecoderCommonVars
 {
  public:
+  PhraseModelInfo* phrModelInfoPtr;
   LangModelInfo* langModelInfoPtr;
   WgHandler* wgHandlerPtr;
   BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;

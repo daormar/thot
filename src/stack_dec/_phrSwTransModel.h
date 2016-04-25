@@ -172,15 +172,15 @@ bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
   this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName=prefixFileName;
   this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName+="_swm.tvcb";
 
-  ret=this->phrModelInfoPtr->invPbModel.loadSrcVocab(this->phrModelInfoPtr->phraseModelPars.srcTrainVocabFileName.c_str());
+  ret=this->phrModelInfoPtr->invPbModelPtr->loadSrcVocab(this->phrModelInfoPtr->phraseModelPars.srcTrainVocabFileName.c_str());
   if(ret==ERROR) return ERROR;
 
-  ret=this->phrModelInfoPtr->invPbModel.loadTrgVocab(this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName.c_str());
+  ret=this->phrModelInfoPtr->invPbModelPtr->loadTrgVocab(this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName.c_str());
   if(ret==ERROR) return ERROR;
 
   // Load phrase model
   this->phrModelInfoPtr->phraseModelPars.readTablePrefix=prefixFileName;
-  if(this->phrModelInfoPtr->invPbModel.load(prefixFileName)!=0)
+  if(this->phrModelInfoPtr->invPbModelPtr->load(prefixFileName)!=0)
   {
     cerr<<"Error while reading phrase model file\n";
     return ERROR;
@@ -544,7 +544,7 @@ void _phrSwTransModel<HYPOTHESIS>::clearTempVars(void)
 template<class HYPOTHESIS>
 WordIndex _phrSwTransModel<HYPOTHESIS>::addSrcSymbolToAligModels(std::string s)
 {
-  WordIndex windex_ipbm=this->phrModelInfoPtr->invPbModel.addTrgSymbol(s,0);
+  WordIndex windex_ipbm=this->phrModelInfoPtr->invPbModelPtr->addTrgSymbol(s,0);
   WordIndex windex_lex=swModelInfoPtr->swAligModel.addSrcSymbol(s,0);
   WordIndex windex_ilex=swModelInfoPtr->invSwAligModel.addTrgSymbol(s,0);
   if(windex_ipbm!=windex_lex || windex_ipbm!=windex_ilex)
@@ -559,7 +559,7 @@ WordIndex _phrSwTransModel<HYPOTHESIS>::addSrcSymbolToAligModels(std::string s)
 template<class HYPOTHESIS>
 WordIndex _phrSwTransModel<HYPOTHESIS>::addTrgSymbolToAligModels(std::string t)
 {
-  WordIndex windex_ipbm=this->phrModelInfoPtr->invPbModel.addSrcSymbol(t,0);
+  WordIndex windex_ipbm=this->phrModelInfoPtr->invPbModelPtr->addSrcSymbol(t,0);
   WordIndex windex_lex=swModelInfoPtr->swAligModel.addTrgSymbol(t,0);
   WordIndex windex_ilex=swModelInfoPtr->invSwAligModel.addSrcSymbol(t,0);
   if(windex_ipbm!=windex_lex || windex_ipbm!=windex_ilex)
