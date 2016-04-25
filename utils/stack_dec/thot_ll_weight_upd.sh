@@ -440,6 +440,10 @@ while [ $niter -le $maxiters ]; do
     llweights=`get_new_llweights`
     echo "* New weights: ${llweights}" >&2
 
+    # Obtain translation quality for new weights
+    quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/nblist/${niter} ${TDIR_LLWU}/${niter}_best_trans`
+    echo "* Translation quality for new weights: ${quality}" >&2
+
     # Increase niter
     niter=`expr $niter + 1`
 
