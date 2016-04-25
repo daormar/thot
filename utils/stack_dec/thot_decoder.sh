@@ -79,7 +79,7 @@ usage()
     echo "NOTE: When executing the tool in PBS clusters, it is required that the"
     echo "      configuration file and all the files pointed by it are stored in"
     echo "      a place visible to all processors. The same applies to the files"
-    echo "      provided by -tm and -lm options if given.
+    echo "      provided by -tm and -lm options if given."
 }
 
 str_is_option()
