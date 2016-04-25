@@ -419,6 +419,9 @@ loglin_upd()
     # Default parameters
     ll_wu_niters=7
 
+    echo "NOTE: see file ${outd}/tm_adjw.log to track optimization progress" >&2
+
+    # Execute weight update algorithm
     ${bindir}/thot_ll_weight_upd -pr ${pr_val} -va ${va_opt} \
         -c ${outd}/tune_loglin.cfg -t $scorpus -r $tcorpus -i ${ll_wu_niters} \
         ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} \
