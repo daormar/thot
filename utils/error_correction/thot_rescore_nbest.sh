@@ -6,7 +6,7 @@
 # input.
 
 if [ $# -eq 0 ]; then
-    echo "Usage: rescore_nbest \"<weight1> <weight2> ... <weightn>\""
+    echo "Usage: thot_rescore_nbest \"<weight1> <weight2> ... <weightn>\""
 else
     weights=$1
     ${AWK} -v weights="$weights" \
