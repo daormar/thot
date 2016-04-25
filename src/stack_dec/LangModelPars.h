@@ -25,8 +25,14 @@ struct LangModelPars
 {
   string languageModelFileName;
   float wpScaleFactor;
-  float lmScaleFactor;	
+  float lmScaleFactor;
+
+      // Constructor
+  LangModelPars(void)
+    {
+      wpScaleFactor=0.0;
+      lmScaleFactor=1.0;
+    }
 };
 
 #endif
-

@@ -81,7 +81,7 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
   // class functions
 
       // Constructor
-  BasePbTransModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr);
+  BasePbTransModel(void);
   
   
   // class methods
@@ -228,7 +228,7 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
 
 //---------------------------------
 template<class HYPOTHESIS>
-BasePbTransModel<HYPOTHESIS>::BasePbTransModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr):_smtModel<HYPOTHESIS>(_llWeightUpdaterPtr)
+BasePbTransModel<HYPOTHESIS>::BasePbTransModel(void):_smtModel<HYPOTHESIS>()
 {
   W=PBM_W_DEFAULT;
   A=PBM_A_DEFAULT;

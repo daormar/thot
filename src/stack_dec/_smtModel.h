@@ -73,7 +73,10 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
   typedef typename BaseSmtModel<HYPOTHESIS>::HypDataType HypDataType;
 
       // Constructor
-  _smtModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr);
+  _smtModel(void);
+
+      // Link log-linear weight updater with model
+  void link_ll_weight_upd(BaseLogLinWeightUpdater* _llWeightUpdaterPtr);
 
       // Actions to be executed before the translation and before using
       // hypotheses-related functions
@@ -154,7 +157,13 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
 
 //---------------------------------
 template<class HYPOTHESIS>
-_smtModel<HYPOTHESIS>::_smtModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr)
+_smtModel<HYPOTHESIS>::_smtModel(void)
+{
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _smtModel<HYPOTHESIS>::link_ll_weight_upd(BaseLogLinWeightUpdater* _llWeightUpdaterPtr)
 {
   llWeightUpdaterPtr=_llWeightUpdaterPtr;
 }

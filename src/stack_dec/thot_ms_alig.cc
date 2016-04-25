@@ -29,12 +29,18 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
+#include "_phraseBasedTransModel.h"
+#include "StackDecLmTypes.h"
+#include "LangModelInfo.h"
+#include "WordPenaltyModel.h"
 #include "KbMiraLlWu.h"
 #include "SmtModelTypes.h"
-#include "MultiStackTypes.h"
 #include "StackDecSwModelTypes.h"
 #include "BasePbTransModel.h"
+#include "MultiStackTypes.h"
 #include "_stackDecoderRec.h"
+#include "BaseStackDecoder.h"
+
 #include "ctimer.h"
 #include "options.h"
 #include "ErrorDefs.h"
@@ -131,6 +137,7 @@ void printConfig(void);
 
 //--------------- Global variables -----------------------------------
 
+LangModelInfo* langModelInfoPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
 BaseStackDecoder<CURR_MODEL_TYPE>* stackDecoderPtr;
@@ -174,22 +181,29 @@ int init_translator(const thot_ms_alig_pars& tap)
   
   cerr<<"\n- Initializing model and test corpus...\n\n";
 
+  langModelInfoPtr=new LangModelInfo;
+  langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
+  langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
   llWeightUpdaterPtr=new KbMiraLlWu;
-  smtModelPtr=new CURR_MODEL_TYPE(llWeightUpdaterPtr);
+        // Instantiate smt model
+  smtModelPtr=new CURR_MODEL_TYPE();
+      // Link pointers
+  smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
+  _phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* >(smtModelPtr);
+  if(base_pbtm_ptr)
+    base_pbtm_ptr->link_lm_info(langModelInfoPtr);
 
   err=smtModelPtr->loadLangModel(tap.languageModelFileName.c_str());
   if(err==ERROR)
   {
-    delete smtModelPtr;
-    delete llWeightUpdaterPtr;
+    release_translator();
     return ERROR;
   }
 
   err=smtModelPtr->loadAligModel(tap.transModelPref.c_str());
   if(err==ERROR)
   {
-    delete smtModelPtr;
-    delete llWeightUpdaterPtr;
+    release_translator();
     return ERROR;
   }
 
@@ -253,9 +267,12 @@ int init_translator(const thot_ms_alig_pars& tap)
 //---------------
 void release_translator(void)
 {
+  delete langModelInfoPtr->lModelPtr;
+  delete langModelInfoPtr->wpModelPtr;
+  delete langModelInfoPtr;
+  delete stackDecoderPtr;
   delete llWeightUpdaterPtr;
   delete smtModelPtr;
-  delete stackDecoderPtr;
 }
 
 //---------------
@@ -736,9 +753,6 @@ Vector<string> stringToStringVector(string s)
 //---------------
 void printConfig(void)
 {
-  BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
-  BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* modelPtr=new CURR_MODEL_TYPE(llWeightUpdaterPtr);
-
   cerr <<"* Aligner configuration:"<<endl;
       // Print translation model information
   cerr<< "  - Statistical machine translation model type: "<<CURR_MODEL_LABEL<<endl;
@@ -746,9 +760,6 @@ void printConfig(void)
   {
     cerr << "  - Model notes: "<<CURR_MODEL_NOTES<<endl;
   }
-  cerr<<"  - Weights for the smt model and their default values: ";
-  modelPtr->printWeights(cerr);
-  cerr<<endl;
 
       // Print language model information
   cerr << "  - Language model type: "<<THOT_CURR_LM_LABEL<<endl;
@@ -778,10 +789,6 @@ void printConfig(void)
     cerr << "  - Translator notes: "<<CURR_MSTACK_NOTES<<endl;
   }
   cerr << endl;
-
-      // Release pointers
-  delete modelPtr;
-  delete llWeightUpdaterPtr;
 }
 
 //---------------

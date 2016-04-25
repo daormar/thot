@@ -34,22 +34,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //
 
 //---------------------------------------
-PhrLocalSwLiTm::PhrLocalSwLiTm(BaseLogLinWeightUpdater* _llWeightUpdaterPtr):_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >(_llWeightUpdaterPtr)
+PhrLocalSwLiTm::PhrLocalSwLiTm(void):_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >()
 {
-  Vector<float> tmwVec(8,0.0);
-  tmwVec[WPEN]=0;
-  tmwVec[LMODEL]=1.0;
-  tmwVec[TSEGMLEN]=1.0;
-  tmwVec[SJUMP]=1.0;
-  tmwVec[SSEGMLEN]=1.0;
-  tmwVec[PTS]=1.0;
-  tmwVec[PST]=0;
-  tmwVec[SWLENLI]=1.0;
-  setWeights(tmwVec);
- 
-      // Set default weight of the linear interpolation
-  swModelInfoPtr->lambda=PHRSWLITM_DEFAULT_LAMBDA_VALUE;
-
       // Initialize stepNum data member
   stepNum=0;
 }
@@ -104,7 +90,7 @@ PhrLocalSwLiTm::Hypothesis PhrLocalSwLiTm::nullHypothesis(void)
   scoreInfo.score=0;
 
       // Init language model state
-  langModelInfoPtr->lmodel.getStateForBeginOfSentence(scoreInfo.lmHist);
+  langModelInfoPtr->lModelPtr->getStateForBeginOfSentence(scoreInfo.lmHist);
 
         // Initial word penalty lgprob
   scoreInfo.score+=sumWordPenaltyScore(0);
@@ -340,7 +326,7 @@ int PhrLocalSwLiTm::incrTrainFeatsSentPair(const char *srcSent,
 
       // Train language model
   if(verbose) cerr<<"Training language model..."<<endl;
-  ret=langModelInfoPtr->lmodel.trainSentence(refSentStrVec,onlineTrainingPars.learnStepSize,0,verbose);
+  ret=langModelInfoPtr->lModelPtr->trainSentence(refSentStrVec,onlineTrainingPars.learnStepSize,0,verbose);
   if(ret==ERROR) return ERROR;
 
       // Revise vocabularies of the alignment models
@@ -491,7 +477,7 @@ int PhrLocalSwLiTm::minibatchTrainFeatsSentPair(const char *srcSent,
 #endif
         // Train language model
     if(verbose) cerr<<"Training language model..."<<endl;    
-    langModelInfoPtr->lmodel.trainSentenceVec(vecTrgSent,(Count)learningRate,(Count)0,verbose);
+    langModelInfoPtr->lModelPtr->trainSentenceVec(vecTrgSent,(Count)learningRate,(Count)0,verbose);
 
         // Clear vectors with source and target sentences
     vecSrcSent.clear();
@@ -533,7 +519,7 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
     swModelInfoPtr->swAligModel.clear();
     swModelInfoPtr->invSwAligModel.clear();
     phrModelInfoPtr->invPbModel.clear();
-    langModelInfoPtr->lmodel.clear();
+    langModelInfoPtr->lModelPtr->clear();
 
     for(unsigned int n=0;n<vecSrcSent.size();++n)
     {
@@ -617,7 +603,7 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
 #endif
         // Train language model
     if(verbose) cerr<<"Training language model..."<<endl;    
-    langModelInfoPtr->lmodel.trainSentenceVec(vecTrgSent,(Count)learningRate,(Count)0,verbose);
+    langModelInfoPtr->lModelPtr->trainSentenceVec(vecTrgSent,(Count)learningRate,(Count)0,verbose);
   }
   
   return OK;
@@ -812,8 +798,7 @@ bool PhrLocalSwLiTm::load_lambda(const char* lambdaFileName)
   
   if(awk.open(lambdaFileName)==ERROR)
   {
-    cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist. Assuming lambda="<<PHRSWLITM_DEFAULT_LAMBDA_VALUE<<endl;
-    swModelInfoPtr->lambda=PHRSWLITM_DEFAULT_LAMBDA_VALUE;
+    cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist. Current lambda="<<swModelInfoPtr->lambda<<endl;
     return OK;
   }
   else

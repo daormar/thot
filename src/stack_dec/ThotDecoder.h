@@ -44,7 +44,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "EU_PrePosProcessor2.h"
 #endif
 
-// Log-linear weight updater
+// Types defining decoder architecture
+#include "_phraseBasedTransModel.h"
+#include "StackDecLmTypes.h"
+#include "WordPenaltyModel.h"
 #include "KbMiraLlWu.h"
 
 #include "ThotDecoderCommonVars.h"

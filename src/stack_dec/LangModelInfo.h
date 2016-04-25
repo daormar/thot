@@ -25,22 +25,21 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "StackDecLmTypes.h"
 #include "LangModelPars.h"
-#include "WordPenaltyModel.h"
+
+#include "BaseNgramLM.h"
+#include "BaseWordPenaltyModel.h"
 #include "WordPredictor.h"
+#include "WordIndex.h"
+#include "myVector.h"
 
 //--------------- LangModelInfo struct
 
 struct LangModelInfo
 {
-  THOT_CURR_LM_TYPE lmodel;
-      // THOT_CURR_LM_TYPE is defined in
-      // StackDecLmTypes.h. THOT_CURR_LM_TYPE must respect the
-      // interface for language models given in the file BaseNgramLM.h
-      // provided by the nlp_common package.
+  BaseNgramLM<Vector<WordIndex> >* lModelPtr;
   LangModelPars langModelPars;
-  WordPenaltyModel wordPenaltyModel;
+  BaseWordPenaltyModel* wpModelPtr;
   WordPredictor wordPredictor;
 };
 

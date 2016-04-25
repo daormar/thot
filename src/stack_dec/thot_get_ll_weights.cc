@@ -40,10 +40,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "_phraseBasedTransModel.h"
+#include "StackDecLmTypes.h"
+#include "LangModelInfo.h"
+#include "WordPenaltyModel.h"
 #include "KbMiraLlWu.h"
 #include "SmtModelTypes.h"
-#include "MultiStackTypes.h"
 #include "StackDecSwModelTypes.h"
+#include "BasePbTransModel.h"
+
 #include "options.h"
 #include "ErrorDefs.h"
 #include <iostream>
@@ -88,8 +93,9 @@ void printConfig(void);
 
 //--------------- Global variables -----------------------------------
 
+LangModelInfo* langModelInfoPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
-CURR_MODEL_TYPE *pbtModelPtr;
+BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
 
 //--------------- Function Definitions -------------------------------
 
@@ -112,16 +118,32 @@ int main(int argc, char *argv[])
 //--------------- get_ll_weights function
 void get_ll_weights(const thot_get_ll_weights_pars& pars)
 {
-  llWeightUpdaterPtr=new KbMiraLlWu;
-  pbtModelPtr=new CURR_MODEL_TYPE(llWeightUpdaterPtr);
+  langModelInfoPtr=new LangModelInfo;
+  langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
+  langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
+  BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
+
+      // Instantiate smt model
+  smtModelPtr=new CURR_MODEL_TYPE();
+      // Link pointers
+  smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
+  _phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* >(smtModelPtr);
+  if(base_pbtm_ptr)
+  {
+    base_pbtm_ptr->link_lm_info(langModelInfoPtr);
+  }
   
       // Set weights
   if(!pars.weightVec.empty())
-    pbtModelPtr->setWeights(pars.weightVec);
-  pbtModelPtr->printWeights(cout);
+    smtModelPtr->setWeights(pars.weightVec);
+  smtModelPtr->printWeights(cout);
   cout<<endl;
 
-  delete pbtModelPtr;
+        // Delete pointers
+  delete langModelInfoPtr->lModelPtr;
+  delete langModelInfoPtr->wpModelPtr;
+  delete langModelInfoPtr;
+  delete smtModelPtr;
   delete llWeightUpdaterPtr;
 }
 

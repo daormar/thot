@@ -31,6 +31,16 @@ struct PhraseModelPars
   double trgSegmLenWeight;
   double srcJumpWeight;
   double srcSegmLenWeight;
+
+      // Constructor
+  PhraseModelPars(void)
+    {
+      ptsWeight=1.0;
+      pstWeight=0.0;
+      trgSegmLenWeight=1.0;
+      srcJumpWeight=1.0;
+      srcSegmLenWeight=1.0;
+    };
 };
 
 #endif

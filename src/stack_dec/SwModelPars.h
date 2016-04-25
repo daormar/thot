@@ -31,6 +31,14 @@ struct SwModelPars
   
       // sw model weights
   float swWeight;
+
+      // Constructor
+  SwModelPars(void)
+    {
+      swNoLenWeight=1.0;
+      lenWeight=1.0;
+      swWeight=1.0;
+    };
 };
 
 #endif

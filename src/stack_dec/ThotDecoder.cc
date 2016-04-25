@@ -35,6 +35,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 ThotDecoder::ThotDecoder()
 {
       // Create server variables
+  tdCommonVars.langModelInfoPtr=new LangModelInfo;
+  tdCommonVars.langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
+  tdCommonVars.langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
   tdCommonVars.wgHandlerPtr=new WgHandler;
   tdCommonVars.ecModelPtr=new CURR_ECM_TYPE();
   BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* base_ecm_wg_ptr=dynamic_cast<BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* >(tdCommonVars.ecModelPtr);
@@ -42,9 +45,15 @@ ThotDecoder::ThotDecoder()
     tdCommonVars.curr_ecm_valid_for_wg=true;
   else
     tdCommonVars.curr_ecm_valid_for_wg=false;
-    
   tdCommonVars.llWeightUpdaterPtr=new KbMiraLlWu;
-  tdCommonVars.smtModelPtr=new CURR_MODEL_TYPE(tdCommonVars.llWeightUpdaterPtr);
+
+      // Instantiate smt model
+  tdCommonVars.smtModelPtr=new CURR_MODEL_TYPE();
+      // Link pointers
+  tdCommonVars.smtModelPtr->link_ll_weight_upd(tdCommonVars.llWeightUpdaterPtr);
+  _phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* >(tdCommonVars.smtModelPtr);
+  if(base_pbtm_ptr)
+    base_pbtm_ptr->link_lm_info(tdCommonVars.langModelInfoPtr);
   
       // Initialize mutexes and conditions
   pthread_mutex_init(&user_id_to_idx_mut,NULL);
@@ -126,9 +135,21 @@ void ThotDecoder::config(void)
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
-  BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
-  BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* modelPtr=new CURR_MODEL_TYPE(tdCommonVars.llWeightUpdaterPtr);
+  LangModelInfo* langModelInfoPtr=new LangModelInfo;
+  langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
+  langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
   BaseErrorCorrectingModel* ecModelPtr=new CURR_ECM_TYPE();
+  BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
+
+      // Instantiate smt model
+  BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* modelPtr=new CURR_MODEL_TYPE();
+      // Link pointers
+  modelPtr->link_ll_weight_upd(tdCommonVars.llWeightUpdaterPtr);
+  _phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* >(modelPtr);
+  if(base_pbtm_ptr)
+    base_pbtm_ptr->link_lm_info(tdCommonVars.langModelInfoPtr);
+
+      // Instantiate assisted translator
   BaseAssistedTrans<CURR_MODEL_TYPE>* assistedTransPtr=new CURR_AT_TYPE<CURR_MODEL_TYPE>();
   
       // Print server configuration
@@ -205,6 +226,9 @@ void ThotDecoder::config(void)
   cerr<<endl;
 
       // Release pointers
+  delete langModelInfoPtr->lModelPtr;
+  delete langModelInfoPtr->wpModelPtr;
+  delete langModelInfoPtr;
   delete llWeightUpdaterPtr;
   delete modelPtr;
   delete ecModelPtr;
@@ -2434,6 +2458,9 @@ ThotDecoder::~ThotDecoder()
   release();
 
       // Delete pointers
+  delete tdCommonVars.langModelInfoPtr->lModelPtr;
+  delete tdCommonVars.langModelInfoPtr->wpModelPtr;
+  delete tdCommonVars.langModelInfoPtr;
   delete tdCommonVars.wgHandlerPtr;
   delete tdCommonVars.smtModelPtr;
   delete tdCommonVars.ecModelPtr;

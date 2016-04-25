@@ -59,7 +59,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
-#define PHRSWLITM_DEFAULT_LAMBDA_VALUE  0.9
 #define PHRSWLITM_LGPROB_SMOOTH         -9999999
 #define PHRSWLITM_DEFAULT_LR            0.5
 #define PHRSWLITM_DEFAULT_LR_ALPHA_PAR  0.75
@@ -93,7 +92,7 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   // class functions
 
   // Constructor
-  PhrLocalSwLiTm(BaseLogLinWeightUpdater* _llWeightUpdaterPtr);
+  PhrLocalSwLiTm(void);
   
   // class methods
 

@@ -28,6 +28,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <StackDecSwModelTypes.h>
 #include "SwModelPars.h"
 
+//--------------- Constants ------------------------------------------
+
+#define DEFAULT_LVALUE_CONF_INTERV  0.01
+#define DEFAULT_RVALUE_CONF_INTERV  0.99
+#define DEFAULT_MAX_INTERV_SIZE    20
+#define DEFAULT_LAMBDA_VALUE  0.9
+
 //--------------- SwModelInfo struct
 
 struct SwModelInfo
@@ -48,6 +55,16 @@ struct SwModelInfo
 
       // Weight of the linear interpolation
   float lambda;
+
+  SwModelInfo(void)
+    {
+          // Initialize variables related to the generation of length ranges
+      lenModelConfInterv.first=DEFAULT_LVALUE_CONF_INTERV;
+      lenModelConfInterv.second=DEFAULT_RVALUE_CONF_INTERV;
+      maxIntervalSize=DEFAULT_MAX_INTERV_SIZE;
+          // Set default weight of the linear interpolation
+      lambda=DEFAULT_LAMBDA_VALUE;
+    };
 };
 
 #endif

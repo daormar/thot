@@ -91,8 +91,11 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   // class functions
 
   // Constructor
-  _phraseBasedTransModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr);
-      
+  _phraseBasedTransModel();
+
+      // Link language model information
+  void link_lm_info(LangModelInfo* _langModelInfoPtr);
+
   // class methods
 
       // Init language and alignment models
@@ -423,20 +426,24 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
 //
 
 template<class HYPOTHESIS>
-_phraseBasedTransModel<HYPOTHESIS>::_phraseBasedTransModel(BaseLogLinWeightUpdater* _llWeightUpdaterPtr):BasePbTransModel<HYPOTHESIS>(_llWeightUpdaterPtr)
+_phraseBasedTransModel<HYPOTHESIS>::_phraseBasedTransModel(void):BasePbTransModel<HYPOTHESIS>()
 {
       // Create pointer to PhraseModelInfo
   phrModelInfoPtr=new PhraseModelInfo;
-
-      // Create pointer to LangModelInfo
-  langModelInfoPtr=new LangModelInfo;
 
       // Set state info
   state=MODEL_IDLE_STATE;
 
       // Initially, no heuristic is used
   heuristicId=NO_HEURISTIC;
+}
 
+//---------------------------------
+template<class HYPOTHESIS>
+void _phraseBasedTransModel<HYPOTHESIS>::link_lm_info(LangModelInfo* _langModelInfoPtr)
+{
+  langModelInfoPtr=_langModelInfoPtr;
+  
       // Initialize tm to lm vocab map
   initTmToLmVocabMap();
 }
@@ -452,18 +459,18 @@ bool _phraseBasedTransModel<HYPOTHESIS>::loadLangModel(const char* prefixFileNam
   langModelInfoPtr->langModelPars.languageModelFileName=prefixFileName;
   
       // Initializes language model
-  if(langModelInfoPtr->lmodel.load(prefixFileName)==ERROR)
+  if(langModelInfoPtr->lModelPtr->load(prefixFileName)==ERROR)
     return ERROR;
   
-      // load WordPenaltyModel info
-  penFile=prefixFileName;
-  penFile=penFile+".wpm";
-  err=langModelInfoPtr->wordPenaltyModel.load(penFile.c_str());
-  if(err==ERROR)
-  {
-    cerr<<"Warning: File for initializing the word penalty model not provided!"<<endl;
-    cerr<<"Using word penalty model based on a geometric distribution."<<endl;
-  }
+  /*     // load WordPenaltyModel info */
+  /* penFile=prefixFileName; */
+  /* penFile=penFile+".wpm"; */
+  /* err=langModelInfoPtr->wpModelPtr->load(penFile.c_str()); */
+  /* if(err==ERROR) */
+  /* { */
+  /*   cerr<<"Warning: File for initializing the word penalty model not provided!"<<endl; */
+  /*   cerr<<"Using word penalty model based on a geometric distribution."<<endl; */
+  /* } */
   
       // load WordPredictor info
   predFile=prefixFileName;
@@ -499,7 +506,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileNam
 template<class HYPOTHESIS>
 bool _phraseBasedTransModel<HYPOTHESIS>::printLangModel(std::string printPrefix)
 {
-  bool retVal=langModelInfoPtr->lmodel.print(printPrefix.c_str());
+  bool retVal=langModelInfoPtr->lModelPtr->print(printPrefix.c_str());
   if(retVal==ERROR) return ERROR;
 
   return OK;
@@ -520,8 +527,8 @@ template<class HYPOTHESIS>
 void _phraseBasedTransModel<HYPOTHESIS>::clear(void)
 {
   this->phrModelInfoPtr->invPbModel.clear();
-  langModelInfoPtr->lmodel.clear();
-  langModelInfoPtr->wordPenaltyModel.clear();
+  langModelInfoPtr->lModelPtr->clear();
+  langModelInfoPtr->wpModelPtr->clear();
   langModelInfoPtr->wordPredictor.clear();
       // Set state info
   state=MODEL_IDLE_STATE;
@@ -538,14 +545,14 @@ PositionIndex _phraseBasedTransModel<HYPOTHESIS>::getLastSrcPosCovered(const Hyp
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::wordPenaltyScore(unsigned int tlen)
 {
-  return langModelInfoPtr->langModelPars.wpScaleFactor*(double)langModelInfoPtr->wordPenaltyModel.wordPenaltyScore(tlen);
+  return langModelInfoPtr->langModelPars.wpScaleFactor*(double)langModelInfoPtr->wpModelPtr->wordPenaltyScore(tlen);
 }
 
 //---------------------------------------
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::sumWordPenaltyScore(unsigned int tlen)
 {
-  return langModelInfoPtr->langModelPars.wpScaleFactor*(double)langModelInfoPtr->wordPenaltyModel.sumWordPenaltyScore(tlen);
+  return langModelInfoPtr->langModelPars.wpScaleFactor*(double)langModelInfoPtr->wpModelPtr->sumWordPenaltyScore(tlen);
 }
 
 //---------------------------------------
@@ -567,7 +574,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::nbestLmScoringFunc(const Vector<WordIn
         // Score is not stored in the cache table
     Vector<WordIndex> hist;
     LM_State state;    
-    langModelInfoPtr->lmodel.getStateForWordSeq(hist,state);
+    langModelInfoPtr->lModelPtr->getStateForWordSeq(hist,state);
     Score scr=getNgramScoreGivenState(target,state);
     cnbLmScores[target]=scr;
     return scr;
@@ -600,9 +607,9 @@ Score _phraseBasedTransModel<HYPOTHESIS>::getNgramScoreGivenState(const Vector<W
     else
     {
 #ifdef WORK_WITH_ZERO_GRAM_PROB
-      Score scr=log((double)langModelInfoPtr->lmodel.getZeroGramProb());
+      Score scr=log((double)langModelInfoPtr->lModelPtr->getZeroGramProb());
 #else
-      Score scr=(double)langModelInfoPtr->lmodel.getNgramLgProbGivenState(target_lm[i],state);
+      Score scr=(double)langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(target_lm[i],state);
 #endif
           // Increase score
       unweighted_result+=scr;
@@ -627,9 +634,9 @@ Score _phraseBasedTransModel<HYPOTHESIS>::getScoreEndGivenState(LM_State &state)
   else
   {
 #ifdef WORK_WITH_ZERO_GRAM_PROB
-    Score result=langModelInfoPtr->langModelPars.lmScaleFactor*log((double)langModelInfoPtr->lmodel.getZeroGramProb());
+    Score result=langModelInfoPtr->langModelPars.lmScaleFactor*log((double)langModelInfoPtr->lModelPtr->getZeroGramProb());
 #else
-    Score result=langModelInfoPtr->langModelPars.lmScaleFactor*(double)langModelInfoPtr->lmodel.getLgProbEndGivenState(state);	
+    Score result=langModelInfoPtr->langModelPars.lmScaleFactor*(double)langModelInfoPtr->lModelPtr->getLgProbEndGivenState(state);	
 #endif
     cachedNgramScores[make_pair(S_END,state)]=result;
     return result;
@@ -647,7 +654,7 @@ LgProb _phraseBasedTransModel<HYPOTHESIS>::getSentenceLgProb(const Vector<WordIn
   unsigned int i;
   for(i=0;i<target.size();++i)
     s.push_back(tmVocabToLmVocab(target[i]));
-  lmLgProb=(double)langModelInfoPtr->lmodel.getSentenceLog10Prob(s,verbose)*M_LN10; 
+  lmLgProb=(double)langModelInfoPtr->lModelPtr->getSentenceLog10Prob(s,verbose)*M_LN10; 
 
   return lmLgProb;  
 }
@@ -753,7 +760,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::clearTempVars(void)
   cPhrNbestTransTable.clear();
 
       // Clear temporary variables of the language model
-  langModelInfoPtr->lmodel.clearTempVars();
+  langModelInfoPtr->lModelPtr->clearTempVars();
 
       // Clear temporary variables of the phrase model
   this->phrModelInfoPtr->invPbModel.clearTempVars();
@@ -865,7 +872,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::unkWordScoreHeur(void)
       // Obtain lm scores
   Vector<WordIndex> hist;
   LM_State state;    
-  langModelInfoPtr->lmodel.getStateForWordSeq(hist,state);
+  langModelInfoPtr->lModelPtr->getStateForWordSeq(hist,state);
   t_.clear();
   t_.push_back(UNK_WORD);
   result+=getNgramScoreGivenState(t_,state);
@@ -1007,13 +1014,13 @@ Score _phraseBasedTransModel<HYPOTHESIS>::heurLmScoreLt(Vector<WordIndex>& t_)
   
   if(t_.size()>2)
   {
-    langModelInfoPtr->lmodel.getStateForBeginOfSentence(lmState);
-    langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(t_[0]),lmState);
-    langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(t_[1]),lmState);
+    langModelInfoPtr->lModelPtr->getStateForBeginOfSentence(lmState);
+    langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(tmVocabToLmVocab(t_[0]),lmState);
+    langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(tmVocabToLmVocab(t_[1]),lmState);
   }
   for(i=2;i<t_.size();++i)
   {
-    lp=lp+(double)langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(t_[i]),lmState);
+    lp=lp+(double)langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(tmVocabToLmVocab(t_[i]),lmState);
   }
   return lp*(double)langModelInfoPtr->langModelPars.lmScaleFactor;
 }
@@ -1024,7 +1031,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::heurLmScoreLtNoAdmiss(Vector<WordIndex
 {
   Vector<WordIndex> hist;
   LM_State state;    
-  langModelInfoPtr->lmodel.getStateForWordSeq(hist,state);
+  langModelInfoPtr->lModelPtr->getStateForWordSeq(hist,state);
   Score scr=getNgramScoreGivenState(t_,state);
   return scr;
 }
@@ -1038,12 +1045,12 @@ Score _phraseBasedTransModel<HYPOTHESIS>::calcRefLmHeurScore(const _phraseBasedT
         // Fill vector with lm components for the reference sentence
     LgProb lp=0;
     LM_State lmState;
-    langModelInfoPtr->lmodel.getStateForBeginOfSentence(lmState);
+    langModelInfoPtr->lModelPtr->getStateForBeginOfSentence(lmState);
     
     refHeurLmLgProb.push_back(NULL_WORD);
     for(unsigned int i=1;i<nrefSentIdVec.size();++i)
     {
-      lp+=langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(nrefSentIdVec[i]),lmState);
+      lp+=langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(tmVocabToLmVocab(nrefSentIdVec[i]),lmState);
       refHeurLmLgProb.push_back(lp);
     }
   }
@@ -1063,12 +1070,12 @@ Score _phraseBasedTransModel<HYPOTHESIS>::calcPrefLmHeurScore(const _phraseBased
         // Fill vector with lm components for the reference sentence
     LgProb lp=0;
     LM_State lmState;
-    langModelInfoPtr->lmodel.getStateForBeginOfSentence(lmState);
+    langModelInfoPtr->lModelPtr->getStateForBeginOfSentence(lmState);
     
     prefHeurLmLgProb.push_back(0);
     for(unsigned int i=1;i<nprefSentIdVec.size();++i)
     {
-      lp+=langModelInfoPtr->lmodel.getNgramLgProbGivenState(tmVocabToLmVocab(nprefSentIdVec[i]),lmState);
+      lp+=langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(tmVocabToLmVocab(nprefSentIdVec[i]),lmState);
       prefHeurLmLgProb.push_back(lp);
     }
   }
@@ -1249,16 +1256,16 @@ ngramWordIndex _phraseBasedTransModel<HYPOTHESIS>::tmVocabToLmVocab(WordIndex w)
         // Obtain string from index
     std::string s=wordIndexToTrgString(w);
         // Add string to the lm vocabulary if necessary
-    if(!langModelInfoPtr->lmodel.existSymbol(s))
+    if(!langModelInfoPtr->lModelPtr->existSymbol(s))
     {
-      ngramWordIndex nw=langModelInfoPtr->lmodel.stringToWordIndex(UNK_SYMBOL_STR);
+      ngramWordIndex nw=langModelInfoPtr->lModelPtr->stringToWordIndex(UNK_SYMBOL_STR);
       tmToLmVocMap[w]=nw;
       return nw;
     }
     else
     {
           // Map tm word to lm word
-      ngramWordIndex nw=langModelInfoPtr->lmodel.stringToWordIndex(s);
+      ngramWordIndex nw=langModelInfoPtr->lModelPtr->stringToWordIndex(s);
       tmToLmVocMap[w]=nw;
       return nw;
     } 
@@ -1275,7 +1282,7 @@ template<class HYPOTHESIS>
 void _phraseBasedTransModel<HYPOTHESIS>::initTmToLmVocabMap(void)
 {
   tmToLmVocMap.clear();
-  tmToLmVocMap[UNK_WORD]=langModelInfoPtr->lmodel.stringToWordIndex(UNK_SYMBOL_STR);
+  tmToLmVocMap[UNK_WORD]=langModelInfoPtr->lModelPtr->stringToWordIndex(UNK_SYMBOL_STR);
 }
 
 //--------------- _phraseBasedTransModel class methods
@@ -1584,10 +1591,10 @@ _phraseBasedTransModel<HYPOTHESIS>::getBestSuffixGivenHist(Vector<std::string> h
     LM_State aux;
 
         // Initialize language model state given history
-    langModelInfoPtr->lmodel.getStateForBeginOfSentence(lmState);
+    langModelInfoPtr->lModelPtr->getStateForBeginOfSentence(lmState);
     for(unsigned int i=0;i<hist.size();++i)
     {
-      langModelInfoPtr->lmodel.getNgramLgProbGivenState(langModelInfoPtr->lmodel.stringToWordIndex(hist[i]),lmState);
+      langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(langModelInfoPtr->lModelPtr->stringToWordIndex(hist[i]),lmState);
     }
 
         // Obtain probability for each suffix given history
@@ -1597,7 +1604,7 @@ _phraseBasedTransModel<HYPOTHESIS>::getBestSuffixGivenHist(Vector<std::string> h
       
       aux=lmState;
       lastw=input+suffixListIter->second;
-      lp=langModelInfoPtr->lmodel.getNgramLgProbGivenState(langModelInfoPtr->lmodel.stringToWordIndex(lastw),aux);
+      lp=langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(langModelInfoPtr->lModelPtr->stringToWordIndex(lastw),aux);
       if(maxlp<lp)
       {
         bestCountSuffix.first=suffixListIter->first;
@@ -2626,9 +2633,6 @@ _phraseBasedTransModel<HYPOTHESIS>::~_phraseBasedTransModel()
 {
       // Delete pointer to PhraseModelInfo
   delete phrModelInfoPtr;
-
-      // Delete pointer to LangModelInfo
-  delete langModelInfoPtr;
 }
 
 //-------------------------
