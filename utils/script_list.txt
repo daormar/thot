@@ -12,7 +12,6 @@
 /home/dortiz/smt/software/incr_models thot_dhs_trgfunc_jmlm
 /home/dortiz/smt/software/incr_models thot_dhs_trgfunc_interplm
 /home/dortiz/smt/software/incr_models thot_repetition_rate
-/home/dortiz/smt/software/incr_models thot_gen_geom_wpm_file
 /home/dortiz/smt/software/alig_models/sw_models thot_pbs_gen_batch_sw_model
 /home/dortiz/smt/software/alig_models/sw_models thot_pbs_gen_best_sw_alig
 /home/dortiz/smt/software/alig_models/phrase_models thot_filter_ttable

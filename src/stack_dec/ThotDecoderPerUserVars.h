@@ -25,12 +25,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "MultiStackTypes.h"
 #include "CatDefs.h"
 #include "_nbUncoupledAssistedTrans.h"
 #include "WgUncoupledAssistedTrans.h"
-#include "StackDecWgProcessorForAnlpTypes.h"
-#include "AssistedTransTypes.h"
+#include "BaseAssistedTrans.h"
 #include "_stackDecoderRec.h"
 #include "BaseStackDecoder.h"
 #include "BasePrePosProcessor.h"

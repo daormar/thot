@@ -45,10 +45,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 // Types defining decoder architecture
-#include "StackDecEcModelForNbUcatTypes.h"
-#include "StackDecSwModelTypes.h"
-#include "StackDecEcModelTypes.h"
+#include "StackDecWgProcessorForAnlpTypes.h"
+#include "AssistedTransTypes.h"
+#include "MultiStackTypes.h"
 #include "_phraseBasedTransModel.h"
+#include "StackDecEcModelForNbUcatTypes.h"
+#include "StackDecEcModelTypes.h"
+#include "StackDecSwModelTypes.h"
 #include "StackDecPbModelTypes.h"
 #include "StackDecLmTypes.h"
 #include "WordPenaltyModel.h"
