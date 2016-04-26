@@ -36,8 +36,5 @@ else
         SORT_TMP=""
     fi
 
-    export LC_ALL=""
-    export LC_COLLATE=C
-
-    cat ${ttable_file} | ${bindir}/thot_put_st_lengths2 | ${SORT} ${SORT_TMP} ${sortpars} | ${bindir}/thot_remove_st_lengths2
+    cat ${ttable_file} | ${bindir}/thot_put_st_lengths2 | LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} | ${bindir}/thot_remove_st_lengths2
 fi

@@ -217,16 +217,12 @@ done
 echo "Merging counts..." >> $TMP/log
 echo "Merging counts..." >&2
 
-export LC_ALL=""
-export LC_COLLATE=C
-export LC_NUMERIC=C
-
 # output format = -pc
 if [ ${label_given} -eq 0 ]; then
-    sort ${SORT_TMP} -t " " ${sortpars} $TMP/counts | ${bindir}/thot_merge_counts \
+    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} $TMP/counts | ${bindir}/thot_merge_counts \
         | ${bindir}/thot_cut_ttable -c $cutoff > ${output}.ttable ; pipe_fail || exit 1
 else
-    sort ${SORT_TMP} -t " " ${sortpars} $TMP/counts | ${bindir}/thot_merge_counts | ${bindir}/thot_cut_ttable -c $cutoff \
+    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} $TMP/counts | ${bindir}/thot_merge_counts | ${bindir}/thot_cut_ttable -c $cutoff \
         | ${AWK} -v label=$label '{printf"%s %s\n",$0,label}' > ${output}.ttable ; pipe_fail || exit 1
 fi
 
