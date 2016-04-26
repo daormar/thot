@@ -169,6 +169,24 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
   unsigned int nReStarts = 0;
   double bleu, iter_max_bleu = 0, iter_max_j = 0, max_bleu = 0;
   Vector<double> wt(currWeightsVec);
+
+
+  // evaluate bleu of currWeightsVec
+  cerr << "CW: ";
+  for (unsigned int k=0; k<currWeightsVec.size(); k++)
+    cerr << currWeightsVec[k] << " ";
+  cerr << "]" << endl;
+  std::string mT;
+  Vector<std::string> mTs;
+  for (unsigned int i=0; i<nSents; i++) {
+    MaxTranslation(currWeightsVec, nblists[i], scoreCompsVecs[i], mT);
+    mTs.push_back(mT);
+    //cerr << i << " " << mT << endl;
+  }
+  Bleu(mTs, references, bleu);
+  cerr << bleu << endl;
+
+
   for(unsigned int j=0; j<nIters; j++) {
     // MIRA train for one epoch
     Vector<unsigned int> indices(nSents);
@@ -395,6 +413,7 @@ void KbMiraLlWu::Bleu(const Vector<std::string>& candidates,
       stats[2*sz+1] += total;
     }
   }
+
   // calculate brevity penalty
   double bp;
   if (stats[0] < stats[1])
