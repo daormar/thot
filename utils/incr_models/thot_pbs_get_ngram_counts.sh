@@ -379,15 +379,13 @@ remove_length_col()
 sort_counts()
 {
     # Set sort command options
-    export LC_ALL=""
-    export LC_COLLATE=C
     if test ${sortT} = "yes"; then
         SORT_TMP="-T $TMP"
     else
         SORT_TMP=""
     fi
 
-    ${SORT} ${SORT_TMP} -t " " ${sortpars}
+    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars}
 }
 
 add_chunk_id()
@@ -427,7 +425,7 @@ merge_sort()
         SORT_TMP=""
     fi
 
-    ${SORT} ${SORT_TMP} -t " " ${sortpars} -m ${counts_per_chunk_dir}/*_sorted_counts
+    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} -m ${counts_per_chunk_dir}/*_sorted_counts
 }
 
 generate_counts_file()

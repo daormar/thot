@@ -161,12 +161,8 @@ merge_gen_phr()
     echo "** Merging counts (started at "`date`")..." >> $SDIR/log
     echo "** Merging counts (started at "`date`")..." > $SDIR/merge.log
 
-    export LC_ALL=""
-    export LC_COLLATE=C
-    export LC_NUMERIC=C
-
     # output format = -pc
-    $SORT ${SORT_TMP} -t " " ${sortpars} ${mflag} $SDIR/*.ttable 2>> $SDIR/merge.log | \
+    LC_ALL=C $SORT ${SORT_TMP} -t " " ${sortpars} ${mflag} $SDIR/*.ttable 2>> $SDIR/merge.log | \
         ${bindir}/thot_merge_counts 2>> $SDIR/merge.log | \
         ${bindir}/thot_cut_ttable -c $cutoff 2>> $SDIR/merge.log > ${output}.ttable ; ${PIPE_FAIL} || \
         { echo "Error while executing merge_gen_phr" >> $SDIR/log ; return 1 ; }

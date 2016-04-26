@@ -145,6 +145,6 @@ else
     if [ ${ns_given} -eq 1 ]; then
         cat $table | merge_sorted_counts
     else
-        cat $table | ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n | merge_sorted_counts
+        cat $table | LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n | merge_sorted_counts
     fi
 fi

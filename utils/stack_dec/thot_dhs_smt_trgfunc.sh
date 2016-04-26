@@ -141,7 +141,7 @@ gen_trans()
             fi
             # For each sentence to be translated...
             new_opts_added=0
-            for wgfile in `$FIND $nbdir/ -name sentence*.wg | $SORT`; do
+            for wgfile in `$FIND $nbdir/ -name sentence*.wg | LC_ALL=C $SORT`; do
                 # Generate new n-best list
                 ${bindir}/thot_wg_proc -w $wgfile -n ${OPT_NVALUE} -o $SDIR/process_wg_output 2> ${SDIR}/smt_trgf_proccess_wg.log
                 if [ -f $wgfile.nbl ]; then
@@ -179,7 +179,7 @@ gen_trans()
             rm ${SDIR}/smt_trgf.trans
         fi 
         # Process n-best list file for each sentence
-        for wgfile in `$FIND $nbdir/ -name sentence*.wg | $SORT`; do
+        for wgfile in `$FIND $nbdir/ -name sentence*.wg | LC_ALL=C $SORT`; do
             # Obtain best translation by rescoring the n-best list
             ${bindir}/thot_obtain_best_trans_from_nbl $wgfile.nbl "$weights" >> ${SDIR}/smt_trgf.trans
         done

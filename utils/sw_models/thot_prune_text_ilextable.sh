@@ -155,5 +155,5 @@ else
     fi
 
     # Prune table
-    cat $table | ${SORT} ${SORT_TMP} ${sortpars} -k1n -k3gr | prune_sorted_table
+    cat $table | LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k3gr | prune_sorted_table
 fi

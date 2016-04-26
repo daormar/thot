@@ -45,8 +45,6 @@ replace_first_word_occurrence_by_unk()
 sort_counts()
 {
     # Set sort command options
-    export LC_ALL=""
-    export LC_COLLATE=C
     if test ${sortT} = "yes"; then
         SORT_TMP="-T $TMP"
     else
@@ -54,7 +52,7 @@ sort_counts()
     fi
 
     ${AWK} '{printf"%d %s\n",NF,$0}' | \
-        ${SORT} ${SORT_TMP} -t " " ${sortpars} | \
+        LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} | \
         ${AWK} '{for(i=2;i<=NF-1;++i)printf"%s ",$i; printf"%d\n",$NF}' ; ${PIPE_FAIL} || return 1
 }
 
