@@ -45,8 +45,6 @@ replace_first_word_occurrence_by_unk()
 sort_counts()
 {
     # Set sort command options
-    export LC_ALL=""
-    export LC_COLLATE=C
     if test ${sortT} = "yes"; then
         SORT_TMP="-T $TMP"
     else
