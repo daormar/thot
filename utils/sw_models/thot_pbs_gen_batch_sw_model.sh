@@ -216,15 +216,15 @@ determine_file_format()
 
 sort_lex_counts_text()
 {
-    ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n
+    LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n
 }
 
 sort_alig_counts_text()
 {
     case ${alig_ext} in
-        "hmm_alignd") ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n
+        "hmm_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n
             ;;
-        "ibm2_alignd")  ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -k4n
+        "ibm2_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -k4n
             ;;
     esac
 }
@@ -324,15 +324,15 @@ proc_chunk()
 
 append_lex_sorted_counts_text()
 {
-    ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -m ${curr_tables_dir}/lex_counts_*
+    LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -m ${curr_tables_dir}/lex_counts_*
 }
 
 append_alig_sorted_counts_text()
 {
     case ${alig_ext} in
-        "hmm_alignd") ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -m ${curr_tables_dir}/alig_counts_*
+        "hmm_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -m ${curr_tables_dir}/alig_counts_*
             ;;
-        "ibm2_alignd")  ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -k4n -m ${curr_tables_dir}/alig_counts_*
+        "ibm2_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -k4n -m ${curr_tables_dir}/alig_counts_*
             ;;
     esac
 }
