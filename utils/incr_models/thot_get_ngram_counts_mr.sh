@@ -54,7 +54,7 @@ sort_counts()
     fi
 
     ${AWK} '{printf"%d %s\n",NF,$0}' | \
-        ${SORT} ${SORT_TMP} -t " " ${sortpars} | \
+        LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} | \
         ${AWK} '{for(i=2;i<=NF-1;++i)printf"%s ",$i; printf"%d\n",$NF}' ; ${PIPE_FAIL} || return 1
 }
 

@@ -387,7 +387,7 @@ sort_counts()
         SORT_TMP=""
     fi
 
-    ${SORT} ${SORT_TMP} -t " " ${sortpars}
+    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars}
 }
 
 add_chunk_id()
@@ -427,7 +427,7 @@ merge_sort()
         SORT_TMP=""
     fi
 
-    ${SORT} ${SORT_TMP} -t " " ${sortpars} -m ${counts_per_chunk_dir}/*_sorted_counts
+    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} -m ${counts_per_chunk_dir}/*_sorted_counts
 }
 
 generate_counts_file()
