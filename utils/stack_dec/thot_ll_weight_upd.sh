@@ -90,9 +90,9 @@ get_sentid()
 ##################
 obtain_cfg_llweights()
 {
-    local_line=`$bindir/thot_get_ll_weights -c $cfgfile`
-    local_cfg_llw_names=`echo ${local_line} | $AWK '{for(i=1;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
-    local_cfg_llw_values=`echo ${local_line} | $AWK '{for(i=2;i<=NF;i+=3) printf"%s ",$i}'`
+    local_line=`$bindir/thot_get_ll_weights -c $cfgfile | $HEAD -1`
+    local_cfg_llw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
+    local_cfg_llw_values=`echo ${local_line} | $AWK '{for(i=6;i<=NF;i+=3) printf"%s ",$i}'`
     echo ${local_cfg_llw_values}
 }
 
