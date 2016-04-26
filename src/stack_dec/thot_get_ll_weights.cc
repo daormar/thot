@@ -40,18 +40,23 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "AssistedTransTypes.h"
 #include "SmtModelTypes.h"
 #include "BasePbTransModel.h"
 #include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
 #include "StackDecSwModelTypes.h"
-#include "StackDecPbModelTypes.h"
 #include "SwModelInfo.h"
+#include "StackDecPbModelTypes.h"
 #include "PhraseModelInfo.h"
 #include "StackDecLmTypes.h"
 #include "LangModelInfo.h"
 #include "WordPenaltyModel.h"
 #include "KbMiraLlWu.h"
+#include "BaseLogLinWeightUpdater.h"
+#include "StackDecEcModelTypes.h"
+#include "BaseEcmForWg.h"
+#include "BaseErrorCorrectionModel.h"
 
 #include "options.h"
 #include "ErrorDefs.h"
@@ -72,7 +77,9 @@ using namespace std;
 
 struct thot_get_ll_weights_pars
 {
-  Vector<float> weightVec;
+  Vector<float> tmWeightVec;
+  Vector<float> catWeightVec;
+  Vector<float> ecmWeightVec;
 };
 
 //--------------- Function Declarations ------------------------------
@@ -132,6 +139,7 @@ void get_ll_weights(const thot_get_ll_weights_pars& pars)
   swModelInfoPtr->swAligModelPtr=new CURR_SWM_TYPE;
   swModelInfoPtr->invSwAligModelPtr=new CURR_SWM_TYPE;
   langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
+  BaseErrorCorrectionModel* ecModelPtr=new CURR_ECM_TYPE();
   BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
 
       // Instantiate smt model
@@ -149,13 +157,54 @@ void get_ll_weights(const thot_get_ll_weights_pars& pars)
   {
     base_pbswtm_ptr->link_swm_info(swModelInfoPtr);
   }
+      // Set log-linear model weights
+  if(!pars.tmWeightVec.empty())
+    smtModelPtr->setWeights(pars.tmWeightVec);
   
-      // Set weights
-  if(!pars.weightVec.empty())
-    smtModelPtr->setWeights(pars.weightVec);
+      // Print log-linear model weights
+  cout<<"- Log-linear model weights= ";
   smtModelPtr->printWeights(cout);
   cout<<endl;
 
+      // Instantiate assisted translator
+  BaseAssistedTrans<CURR_MODEL_TYPE>* assistedTransPtr=new CURR_AT_TYPE<CURR_MODEL_TYPE>();
+
+      // Set assisted translator weights
+  if(!pars.catWeightVec.empty())
+    assistedTransPtr->setWeights(pars.catWeightVec);
+
+      // Print assisted translator weights
+  WgUncoupledAssistedTrans<CURR_MODEL_TYPE>* wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<CURR_MODEL_TYPE>*>(assistedTransPtr);
+  if(!wgUncoupledAssistedTransPtr)
+  {
+    cout<<"- Assisted translator weights= ";
+    assistedTransPtr->printWeights(cout);
+    cout << endl;
+  }
+  else
+  {
+    BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* base_ecm_wg_ptr=dynamic_cast<BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* >(ecModelPtr);
+    if(base_ecm_wg_ptr)
+    {
+      cout<<"- Assisted translator weights= ";
+      assistedTransPtr->printWeights(cout);
+      cout << endl;
+    }
+    else
+    {
+      cout<<"Warning: current error correcting model cannot be combined with word-graph based assisted translators"<<endl;
+    }
+  }
+
+      // Set error correction model weights
+  if(!pars.ecmWeightVec.empty())
+    ecModelPtr->setWeights(pars.ecmWeightVec);
+
+      // Print error correction model weights
+  cout<<"- Error correction model weights= ";
+  ecModelPtr->printWeights(cout);
+  cout<<endl;
+  
       // Delete pointers
   delete langModelInfoPtr->lModelPtr;
   delete langModelInfoPtr->wpModelPtr;
@@ -167,6 +216,8 @@ void get_ll_weights(const thot_get_ll_weights_pars& pars)
   delete swModelInfoPtr;
   delete smtModelPtr;
   delete llWeightUpdaterPtr;
+  delete ecModelPtr;
+  delete assistedTransPtr;
 }
 
 //--------------- handleParameters function
@@ -256,7 +307,11 @@ void takeParametersGivenArgcArgv(int argc,
                                  thot_get_ll_weights_pars& pars)
 {
       // Take -tmw parameter
-  readFloatSeq(argc,argv, "-tmw", pars.weightVec);
+  readFloatSeq(argc,argv, "-tmw", pars.tmWeightVec);
+      // Take -catw parameter
+  readFloatSeq(argc,argv, "-catw", pars.catWeightVec);
+      // Take -ecw parameter
+  readFloatSeq(argc,argv, "-ecw", pars.ecmWeightVec);
 }
 
 //---------------
