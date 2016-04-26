@@ -51,11 +51,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "_phraseBasedTransModel.h"
 #include "StackDecEcModelForNbUcatTypes.h"
 #include "StackDecEcModelTypes.h"
+#include "_phrSwTransModel.h"
 #include "StackDecSwModelTypes.h"
 #include "StackDecPbModelTypes.h"
 #include "StackDecLmTypes.h"
 #include "WordPenaltyModel.h"
 #include "KbMiraLlWu.h"
+#include "BaseEcmForWg.h"
 
 #include "ThotDecoderCommonVars.h"
 #include "ThotDecoderPerUserVars.h"
