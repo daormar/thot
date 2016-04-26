@@ -51,7 +51,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "Prob.h"
 #include "myVector.h"
 #include <map>
-#include "BaseErrorCorrectingModel.h"
+#include "BaseErrorCorrectionModel.h"
 #include "NbestCorrections.h"
 
 using namespace std;
@@ -79,7 +79,7 @@ class BaseEcModelForNbUcat
 
       // Link error correcting model with the error correcting model for
       // uncoupled cat
-  virtual void link_ecm(BaseErrorCorrectingModel* _ecm_ptr)=0;
+  virtual void link_ecm(BaseErrorCorrectionModel* _ecm_ptr)=0;
 
   virtual NbestCorrections correct(const Vector<std::string>& outputSentVec,
                                    const Vector<unsigned int>& sourceCuts,

@@ -27,7 +27,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "SmtModelTypes.h"
 #include "BasePbTransModel.h"
-#include "BaseErrorCorrectingModel.h"
+#include "BaseErrorCorrectionModel.h"
 #include "BaseLogLinWeightUpdater.h"
 #include "SwModelInfo.h"
 #include "PhraseModelInfo.h"
@@ -48,7 +48,7 @@ class ThotDecoderCommonVars
   LangModelInfo* langModelInfoPtr;
   WgHandler* wgHandlerPtr;
   BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
-  BaseErrorCorrectingModel* ecModelPtr;
+  BaseErrorCorrectionModel* ecModelPtr;
   bool curr_ecm_valid_for_wg;
   BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 };

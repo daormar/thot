@@ -54,7 +54,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "PrefAlignInfo.h"
 #include "Prob.h"
 #include "BaseEcModelForNbUcat.h"
-#include "BaseErrorCorrectingModel.h"
+#include "BaseErrorCorrectionModel.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -79,7 +79,7 @@ class NonPbEcModelForNbUcat: public BaseEcModelForNbUcat
 
       // Link error correcting model with the error correcting model for
       // uncoupled cat
-  void link_ecm(BaseErrorCorrectingModel* _ecm_ptr);
+  void link_ecm(BaseErrorCorrectionModel* _ecm_ptr);
 
   NbestCorrections correct(const Vector<std::string>& outputSentVec,
                            const Vector<unsigned int>& sourceCuts,
@@ -111,7 +111,7 @@ class NonPbEcModelForNbUcat: public BaseEcModelForNbUcat
   unsigned int maxMapSize;
   MonolingSegmNbest monolingSegmNbest;
 
-  BaseErrorCorrectingModel *ecm_ptr;
+  BaseErrorCorrectionModel *ecm_ptr;
   
   MonolingSegmNbest nonPhraseBasedAlign(const Vector<std::string>& _outputSentVec,
                                         const Vector<std::string>& _prefixVec,

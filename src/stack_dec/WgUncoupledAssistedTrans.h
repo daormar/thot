@@ -46,7 +46,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <StrProcUtils.h>
 #include "_assistedTrans.h"
-#include "BaseErrorCorrectingModel.h"
+#include "BaseErrorCorrectionModel.h"
 #include "_stackDecoderRec.h"
 #include "NbestCorrections.h"
 #include "BaseWgProcessorForAnlp.h"

@@ -8,5 +8,5 @@ NbSearchStack.cc NbSearchHyp.h NbestCorrections.h HypStateIndex.h	\
 _editDist.h EditDistForVecString.h EditDistForVecString.cc		\
 EditDistForVec.h EditDistForStr.h EditDistForStr.cc _editDistBasedEcm.h	\
 _editDistBasedEcm.cc BaseWgProcessorForAnlp.h				\
-BaseErrorCorrectingModel.h BaseErrorCorrectingModel.cc BaseEditDist.h	\
+BaseErrorCorrectionModel.h BaseErrorCorrectionModel.cc BaseEditDist.h	\
 BaseEcModelForNbUcat.h BaseEcmForWg.h

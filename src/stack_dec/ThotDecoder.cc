@@ -156,7 +156,7 @@ void ThotDecoder::config(void)
   swModelInfoPtr->swAligModelPtr=new CURR_SWM_TYPE;
   swModelInfoPtr->invSwAligModelPtr=new CURR_SWM_TYPE;
   langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
-  BaseErrorCorrectingModel* ecModelPtr=new CURR_ECM_TYPE();
+  BaseErrorCorrectionModel* ecModelPtr=new CURR_ECM_TYPE();
   BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
 
       // Instantiate smt model

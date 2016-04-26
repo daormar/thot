@@ -192,7 +192,7 @@ error_correction/_editDist.h error_correction/EditDistForVecString.h	\
 error_correction/EditDistForVec.h error_correction/EditDistForStr.h	\
 error_correction/_editDistBasedEcm.h					\
 error_correction/BaseWgProcessorForAnlp.h				\
-error_correction/BaseErrorCorrectingModel.h				\
+error_correction/BaseErrorCorrectionModel.h				\
 error_correction/BaseEditDist.h error_correction/BaseEcModelForNbUcat.h	\
 error_correction/BaseEcmForWg.h
 error_correction_defs= error_correction/WordGraph.cc			\
@@ -202,7 +202,7 @@ error_correction/NbSearchStack.cc					\
 error_correction/EditDistForVecString.cc				\
 error_correction/EditDistForStr.cc					\
 error_correction/_editDistBasedEcm.cc					\
-error_correction/BaseErrorCorrectingModel.cc
+error_correction/BaseErrorCorrectionModel.cc
 
 downhill_simplex_h= downhill_simplex/step_by_step_dhs.h
 downhill_simplex_defs= downhill_simplex/step_by_step_dhs.c

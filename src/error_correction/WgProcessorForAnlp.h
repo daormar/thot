@@ -80,7 +80,7 @@ class WgProcessorForAnlp: public BaseWgProcessorForAnlp
   
       // Link error correcting model for word-graph with the word-graph
       // processor
-  bool link_ecm_wg(BaseErrorCorrectingModel* _ecm_wg_ptr);
+  bool link_ecm_wg(BaseErrorCorrectionModel* _ecm_wg_ptr);
 
   void set_wgw(float _wgWeight);
       // Set word-graph weight
@@ -269,7 +269,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::link_wg(const WordGraph* _wg_ptr)
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-bool WgProcessorForAnlp<ECM_FOR_WG>::link_ecm_wg(BaseErrorCorrectingModel* _ecm_wg_ptr)
+bool WgProcessorForAnlp<ECM_FOR_WG>::link_ecm_wg(BaseErrorCorrectionModel* _ecm_wg_ptr)
 {
       // Link ecm for word-graphs
   ecm_wg_ptr=dynamic_cast<ECM_FOR_WG*>(_ecm_wg_ptr);

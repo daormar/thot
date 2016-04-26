@@ -44,7 +44,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "BaseErrorCorrectingModel.h"
+#include "BaseErrorCorrectionModel.h"
 #include "EditDistForVecString.h"
 #include "WordAndCharLevelOps.h"
 
@@ -60,7 +60,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  * correcting models based on edit distance
  */
 
-class _editDistBasedEcm: public BaseErrorCorrectingModel
+class _editDistBasedEcm: public BaseErrorCorrectionModel
 {    
  protected:
 
