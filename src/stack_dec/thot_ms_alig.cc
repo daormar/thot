@@ -29,18 +29,21 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
-#include "_phraseBasedTransModel.h"
-#include "StackDecPbModelTypes.h"
-#include "StackDecLmTypes.h"
-#include "LangModelInfo.h"
-#include "WordPenaltyModel.h"
-#include "KbMiraLlWu.h"
-#include "SmtModelTypes.h"
-#include "StackDecSwModelTypes.h"
-#include "BasePbTransModel.h"
 #include "MultiStackTypes.h"
 #include "_stackDecoderRec.h"
 #include "BaseStackDecoder.h"
+#include "SmtModelTypes.h"
+#include "BasePbTransModel.h"
+#include "_phrSwTransModel.h"
+#include "_phraseBasedTransModel.h"
+#include "StackDecSwModelTypes.h"
+#include "StackDecPbModelTypes.h"
+#include "StackDecLmTypes.h"
+#include "SwModelInfo.h"
+#include "PhraseModelInfo.h"
+#include "LangModelInfo.h"
+#include "WordPenaltyModel.h"
+#include "KbMiraLlWu.h"
 
 #include "ctimer.h"
 #include "options.h"
@@ -138,8 +141,9 @@ void printConfig(void);
 
 //--------------- Global variables -----------------------------------
 
-PhraseModelInfo* phrModelInfoPtr;
 LangModelInfo* langModelInfoPtr;
+PhraseModelInfo* phrModelInfoPtr;
+SwModelInfo* swModelInfoPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
 BaseStackDecoder<CURR_MODEL_TYPE>* stackDecoderPtr;
@@ -183,10 +187,13 @@ int init_translator(const thot_ms_alig_pars& tap)
   
   cerr<<"\n- Initializing model and test corpus...\n\n";
 
-  phrModelInfoPtr=new PhraseModelInfo;
-  phrModelInfoPtr->invPbModelPtr=new THOT_CURR_PBM_TYPE;
   langModelInfoPtr=new LangModelInfo;
   langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
+  phrModelInfoPtr=new PhraseModelInfo;
+  phrModelInfoPtr->invPbModelPtr=new THOT_CURR_PBM_TYPE;
+  swModelInfoPtr=new SwModelInfo;
+  swModelInfoPtr->swAligModelPtr=new CURR_SWM_TYPE;
+  swModelInfoPtr->invSwAligModelPtr=new CURR_SWM_TYPE;
   langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
   llWeightUpdaterPtr=new KbMiraLlWu;
       // Instantiate smt model
@@ -198,6 +205,11 @@ int init_translator(const thot_ms_alig_pars& tap)
   {
     base_pbtm_ptr->link_lm_info(langModelInfoPtr);
     base_pbtm_ptr->link_pm_info(phrModelInfoPtr);
+  }
+  _phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* >(smtModelPtr);
+  if(base_pbswtm_ptr)
+  {
+    base_pbswtm_ptr->link_swm_info(swModelInfoPtr);
   }
 
   err=smtModelPtr->loadLangModel(tap.languageModelFileName.c_str());
@@ -243,9 +255,7 @@ int init_translator(const thot_ms_alig_pars& tap)
       // Set translator parameters
   stackDecoderPtr->set_S_par(tap.S);
   stackDecoderPtr->set_I_par(tap.I);
-#ifdef MULTI_STACK_USE_GRAN
   stackDecoderPtr->set_G_par(tap.G);
-#endif
       // Enable best score pruning if the decoder is not going to obtain
       // n-best translations or word-graphs
   if(tap.wgPruningThreshold==DISABLE_WORDGRAPH)
@@ -274,11 +284,14 @@ int init_translator(const thot_ms_alig_pars& tap)
 //---------------
 void release_translator(void)
 {
-  delete phrModelInfoPtr->invPbModelPtr;
-  delete phrModelInfoPtr;
   delete langModelInfoPtr->lModelPtr;
   delete langModelInfoPtr->wpModelPtr;
   delete langModelInfoPtr;
+  delete phrModelInfoPtr->invPbModelPtr;
+  delete phrModelInfoPtr;
+  delete swModelInfoPtr->swAligModelPtr;
+  delete swModelInfoPtr->invSwAligModelPtr;
+  delete swModelInfoPtr;
   delete stackDecoderPtr;
   delete llWeightUpdaterPtr;
   delete smtModelPtr;

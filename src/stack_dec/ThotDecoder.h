@@ -45,6 +45,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 // Types defining decoder architecture
+#include "StackDecEcModelForNbUcatTypes.h"
+#include "StackDecSwModelTypes.h"
+#include "StackDecEcModelTypes.h"
 #include "_phraseBasedTransModel.h"
 #include "StackDecPbModelTypes.h"
 #include "StackDecLmTypes.h"
