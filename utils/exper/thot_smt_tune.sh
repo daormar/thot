@@ -353,8 +353,8 @@ create_cfg_file_for_tuning()
 ##################
 obtain_llweights_names()
 {
-    local_line=`$bindir/thot_get_ll_weights`
-    local_llw_names=`echo ${local_line} | $AWK '{for(i=1;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
+    local_line=`$bindir/thot_get_ll_weights | $HEAD -1`
+    local_llw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
     echo ${local_llw_names}
 }
 
