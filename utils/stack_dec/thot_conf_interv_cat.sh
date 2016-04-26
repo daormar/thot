@@ -74,10 +74,10 @@ bootstrap_eval()
     echo "Mean: $mean"
     stDev=`cat $TMP/scef | $AWK -v med=$mean '{aux=$0-med; stDev+=aux*aux;}END{printf "%f", sqrt(stDev/(NR-1));}'`
     echo "stDev: $stDev"
-    echo;
+    echo ""
 
     # Obtain confidence intervals
-    $SORT -n $TMP/scef > $TMP/scef.sorted;
+    LC_ALL=C $SORT -n $TMP/scef > $TMP/scef.sorted;
     l95=`echo "" | $AWK -v N=$N '{printf"%d",0.025*N+1}' `
     l90=`echo "" | $AWK -v N=$N '{printf"%d",0.05*N+1}' `;
     s95=`echo "" | $AWK -v N=$N -v l95=${l95} '{printf"%d",N-l95+1}' `;
@@ -92,7 +92,7 @@ bootstrap_eval()
     center90=`echo "" | $AWK -v l=$lb90 -v u=$ub90 '{printf"%f",l+(u-l)/2}'`
     rad90=`echo "" | $AWK -v l=$lb90 -v u=$ub90 '{printf"%f",(u-l)/2}'`
 
-    # Output results
+    # Print results
     echo "Confidence intervals";
     echo "conf.int.95 = [ $lb95 , $ub95 ] $center95 +- $rad95"
     echo "conf.int.90 = [ $lb90 , $ub90 ] $center90 +- $rad90"

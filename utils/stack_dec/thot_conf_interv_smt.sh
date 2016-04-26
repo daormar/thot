@@ -73,7 +73,7 @@ bootstrap_eval()
     echo ""
 
     # Obtain confidence intervals
-    $SORT -n $TMP/scef > $TMP/scef.sorted;
+    LC_ALL=C $SORT -n $TMP/scef > $TMP/scef.sorted;
     l95=`echo "" | $AWK -v N=$N '{printf"%d",0.025*N+1}' `
     l90=`echo "" | $AWK -v N=$N '{printf"%d",0.05*N+1}' `;
     s95=`echo "" | $AWK -v N=$N -v l95=${l95} '{printf"%d",N-l95+1}' `;
