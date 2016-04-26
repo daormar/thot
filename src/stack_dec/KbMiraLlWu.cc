@@ -181,7 +181,7 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
   for (unsigned int i=0; i<nSents; i++) {
     MaxTranslation(currWeightsVec, nblists[i], scoreCompsVecs[i], mT);
     mTs.push_back(mT);
-    cerr << i << " " << mT << endl;
+    //cerr << i << " " << mT << endl;
   }
   Bleu(mTs, references, bleu);
   cerr << bleu << endl;
@@ -265,10 +265,6 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
       else break;
     }
   }
-  cerr << "FW: [ ";
-  for (unsigned int k=0; k<max_wAvg.size(); k++)
-    cerr << max_wAvg[k] << " ";
-  cerr << "]" << endl;
   newWeightsVec = max_wAvg;
 }
 
@@ -423,25 +419,17 @@ void KbMiraLlWu::Bleu(const Vector<std::string>& candidates,
   if (stats[0] < stats[1])
     bp = (double)exp((double)1-(double)stats[1]/stats[0]);
   else bp = 1;
-  cerr << "bp: " << bp << endl;
 
   // calculate bleu
-  cerr << "PR: [ ";
   double log_aux = 0;
   for (unsigned int sz=1; sz<=4; sz++) {
     prec = stats[sz*2];
     total = stats[sz*2+1];
     if (total == 0) log_aux += 1;
     else            log_aux += (double)my_log((double)prec/total);
-    cerr << exp((double)my_log((double)prec/total)) << " ";
   }
   log_aux /= 4;
-  cerr << "] -> " << exp(log_aux) << endl;
   bleu = bp * (double)exp(log_aux);
-  cerr << bleu << " [ ";
-  for (unsigned int k=0;k<stats.size(); k++)
-    cerr << stats[k] << " ";
-  cerr << "]" << endl;
 }
 
 //---------------------------------------

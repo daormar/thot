@@ -73,8 +73,8 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
   KbMiraLlWu(double C = 0.01,
              double gamma = 0.999,
              unsigned int J = 30,
-             unsigned int epochs_to_restart = 8,
-             unsigned int max_restarts = 2);
+             unsigned int epochs_to_restart = 6,
+             unsigned int max_restarts = 1);
 
       // Compute new weights for an individual sentence
   void update(const std::string& reference,
