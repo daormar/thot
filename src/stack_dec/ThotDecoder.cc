@@ -888,7 +888,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
 
         // Obtain system translation
     CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(preprocSrcSent.c_str());
-    std::string preprocSysSent=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
+    std::string preprocSysSent=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
 
     if(verbose)
     {
@@ -926,7 +926,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
       tdPerUserVarsVec[idx].stackDecoderRecPtr->enableWordGraph();
 
     CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(srcSent);
-    std::string sysSent=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
+    std::string sysSent=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
 
         // Add sentence to word-predictor
     tdCommonVars.smtModelPtr->addSentenceToWordPred(StrProcUtils::stringToStringVector(refSent),verbose);
@@ -1161,7 +1161,7 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
   {
         // Use translator
     CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(sentenceToTranslate.c_str());
-    std::string result=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
+    std::string result=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
     return result;
   }
 }
@@ -1199,17 +1199,17 @@ bool ThotDecoder::translateSentencePrintWg(int user_id,
       cerr<<" - preproc. source: "<<preprocSrcSent<<endl;
     }
     hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(preprocSrcSent.c_str());
-    std::string aux=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
+    std::string aux=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
     result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
   }
   else
   {
     hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(sentenceToTranslate);
-    result=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
+    result=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
   }
   if(verbose)
   {
-    tdCommonVars.smtModelPtr->printHyp(hyp,cerr);
+    tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,cerr);
   }
 
       // Print word graph
@@ -1252,25 +1252,25 @@ bool ThotDecoder::sentPairVerCov(int user_id,
       cerr<<" - preproc. reference: "<<preprocRefSent<<endl;
     }
     hyp=tdPerUserVarsVec[idx].stackDecoderPtr->verifyCoverageForRef(preprocSrcSent.c_str(),preprocRefSent.c_str());
-    std::string aux=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
+    std::string aux=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
     result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
   }
   else
   {
     hyp=tdPerUserVarsVec[idx].stackDecoderPtr->verifyCoverageForRef(srcSent,refSent);
-    result=tdCommonVars.smtModelPtr->getTransInPlainText(hyp);
+    result=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
   }
   if(verbose)
   {
-    tdCommonVars.smtModelPtr->printHyp(hyp,cerr);
-    if(!tdCommonVars.smtModelPtr->isComplete(hyp))
+    tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,cerr);
+    if(!tdPerUserVarsVec[idx].smtModelPtr->isComplete(hyp))
       cerr<<"No coverage for sentence pair!"<<endl;
   }
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  if(!tdCommonVars.smtModelPtr->isComplete(hyp))
+  if(!tdPerUserVarsVec[idx].smtModelPtr->isComplete(hyp))
     return OK;
   else return ERROR;
 }
@@ -1998,8 +1998,14 @@ int ThotDecoder::init_idx_data(size_t idx)
       // Set breadthFirst flag
   tdPerUserVarsVec[idx].stackDecoderPtr->set_breadthFirst(false);
 
-      // Link translation model
-  tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdCommonVars.smtModelPtr);
+      // Create statistical machine translation model instance (it is
+      // cloned from the main one)
+  BaseSmtModel<CURR_MODEL_TYPE::Hypothesis>* baseSmtModelPtr=tdCommonVars.smtModelPtr->clone();
+  tdPerUserVarsVec[idx].smtModelPtr=dynamic_cast<BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* >(baseSmtModelPtr);
+  
+      // Link statistical machine translation model
+//  tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdCommonVars.smtModelPtr);
+  tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
 
       // Enable best score pruning
   tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
@@ -2136,6 +2142,7 @@ void ThotDecoder::release_idx_data(size_t idx)
       // Check if data is already released
   if(!idxDataReleased[idx])
   {
+    delete tdPerUserVarsVec[idx].smtModelPtr;
     delete tdPerUserVarsVec[idx].stackDecoderPtr;
     delete tdPerUserVarsVec[idx].ecModelForNbUcatPtr;
     if(tdCommonVars.curr_ecm_valid_for_wg)
