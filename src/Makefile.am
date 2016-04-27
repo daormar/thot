@@ -131,10 +131,10 @@ sw_models/ThotIbmMaxConfidFactory.h
 casmacat_confid_defs= sw_models/ThotIbmMaxConfid.cc	\
 sw_models/ThotIbmMaxConfidFactory.cc
 else
-casmacat_alig_h= 
+casmacat_alig_h=
 casmacat_alig_defs=
 
-casmacat_confid_h= 
+casmacat_confid_h=
 casmacat_confid_defs=
 endif
 
@@ -176,7 +176,7 @@ phrase_models/BasePhraseModel.cc phrase_models/BaseIncrPhraseModel.cc	\
 phrase_models/AlignmentExtractor.cc phrase_models/AlignmentContainer.cc
 
 smt_preproc_h= smt_preproc/SmtPreprocDefs.h smt_preproc/BasePrePosProcessor.h
-smt_preproc_defs= 
+smt_preproc_defs=
 
 error_correction_h= error_correction/WordGraphStateData.h		\
 error_correction/WordGraph.h error_correction/WordGraphArcId.h		\
@@ -222,6 +222,7 @@ stack_dec/SourceSegmentation.h stack_dec/TranslationConstraints.h	\
 stack_dec/SmtStack.h stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h	\
 stack_dec/_smtMultiStack.h stack_dec/SmtModelTypes.h			\
 stack_dec/BaseLogLinWeightUpdater.h stack_dec/KbMiraLlWu.h		\
+stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h \
 stack_dec/_smtModel.h stack_dec/ScoreCompDefs.h				\
 stack_dec/_phrSwTransModel.h stack_dec/PhrScoreInfo.h			\
 stack_dec/PhrNbestTransTableRefKey.h stack_dec/PhrNbestTransTableRef.h	\
@@ -249,7 +250,9 @@ stack_dec/BaseHypothesis.h stack_dec/HypDebugData.h			\
 stack_dec/BaseAssistedTrans.h stack_dec/AssistedTransTypes.h		\
 stack_dec/_assistedTrans.h
 stack_dec_defs= stack_dec/TranslationConstraints.cc			\
-stack_dec/KbMiraLlWu.cc stack_dec/ThotDecoderClient.cc			\
+stack_dec/KbMiraLlWu.cc \
+stack_dec/MiraBleu.cc \
+stack_dec/ThotDecoderClient.cc			\
 stack_dec/ThotDecoder.cc stack_dec/PhrScoreInfo.cc			\
 stack_dec/PhrNbestTransTableRefKey.cc					\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
@@ -403,7 +406,7 @@ $(exper_defs) $(casmacat_engines_h) $(casmacat_aligner_h)		\
 $(casmacat_confid_h)
 
 # libraries
-libthot_la_SOURCES= $(thot_sources) 
+libthot_la_SOURCES= $(thot_sources)
 libthot_la_LIBADD= $(ZLIB) $(LGMP)
 
 libthot_casmacat_la_SOURCES= $(casmacat_engines_h)			\
