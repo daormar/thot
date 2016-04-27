@@ -315,7 +315,7 @@ Score _phrSwTransModel<HYPOTHESIS>::sentLenScoreForPartialHyp(Bitset<MAX_SENTENC
     uint_pair range=obtainLengthRangeForGaps(key);
     range.first+=curr_tlen;
     range.second+=curr_tlen;
-    return sumSentLenScoreRange(this->srcSentVec.size(),range);
+    return sumSentLenScoreRange(this->pbtmInputVars.srcSentVec.size(),range);
   }
   else
   {
@@ -323,21 +323,21 @@ Score _phrSwTransModel<HYPOTHESIS>::sentLenScoreForPartialHyp(Bitset<MAX_SENTENC
     {
           // The model is being used for align a pair of sentences
       uint_pair range;
-      range.first=this->refSentVec.size();
-      range.second=this->refSentVec.size();      
-      return sumSentLenScoreRange(this->srcSentVec.size(),range);
+      range.first=this->pbtmInputVars.refSentVec.size();
+      range.second=this->pbtmInputVars.refSentVec.size();      
+      return sumSentLenScoreRange(this->pbtmInputVars.srcSentVec.size(),range);
     }
     else
     {
           // The model is being used for translate a sentence given a
           // prefix
-      if(curr_tlen>=this->prefSentVec.size())
+      if(curr_tlen>=this->pbtmInputVars.prefSentVec.size())
       {
             // The prefix has been generated
         uint_pair range=obtainLengthRangeForGaps(key);
         range.first+=curr_tlen;
         range.second+=curr_tlen;
-        return sumSentLenScoreRange(this->srcSentVec.size(),range);
+        return sumSentLenScoreRange(this->pbtmInputVars.srcSentVec.size(),range);
       }
       else
       {
@@ -346,9 +346,9 @@ Score _phrSwTransModel<HYPOTHESIS>::sentLenScoreForPartialHyp(Bitset<MAX_SENTENC
             // the prediction can be improved but the required code
             // could be complex.
         uint_pair range;
-        range.first=this->prefSentVec.size();
+        range.first=this->pbtmInputVars.prefSentVec.size();
         range.second=MAX_SENTENCE_LENGTH_ALLOWED;      
-        return sumSentLenScoreRange(this->srcSentVec.size(),range);
+        return sumSentLenScoreRange(this->pbtmInputVars.srcSentVec.size(),range);
       }
     }
   }
@@ -409,7 +409,7 @@ uint_pair _phrSwTransModel<HYPOTHESIS>::obtainLengthRangeForGaps(const Bitset<MA
   Vector<pair<PositionIndex,PositionIndex> > gaps;
   uint_pair result;
   
-  J=this->srcSentVec.size();
+  J=this->pbtmInputVars.srcSentVec.size();
   this->extract_gaps(hypKey,gaps);
   for(unsigned int i=0;i<gaps.size();++i)
   {
@@ -433,7 +433,7 @@ void _phrSwTransModel<HYPOTHESIS>::initLenRangeForGapsVec(int maxSrcPhraseLength
   uint_pair target_uip;
   Vector<WordIndex> s_;
     
-  J=this->nsrcSentIdVec.size()-1;
+  J=this->pbtmInputVars.nsrcSentIdVec.size()-1;
   lenRangeForGaps.clear();
       // Initialize row vector    
   for(unsigned int j=0;j<J;++j) row.push_back(make_pair(0,0));
@@ -458,7 +458,7 @@ void _phrSwTransModel<HYPOTHESIS>::initLenRangeForGapsVec(int maxSrcPhraseLength
       else
       {
         for(unsigned int j=segmLeftMostj;j<=segmRightMostj;++j)
-          s_.push_back(this->nsrcSentIdVec[j+1]);
+          s_.push_back(this->pbtmInputVars.nsrcSentIdVec[j+1]);
   
             // obtain translations for s_
         this->getNbestTransFor_s_(s_,ttNode,this->W);
@@ -477,7 +477,7 @@ void _phrSwTransModel<HYPOTHESIS>::initLenRangeForGapsVec(int maxSrcPhraseLength
         else
         {
               // Check if source word has been marked as unseen
-          if(s_.size()==1 && this->unseenSrcWord(this->srcSentVec[segmLeftMostj]))
+          if(s_.size()==1 && this->unseenSrcWord(this->pbtmInputVars.srcSentVec[segmLeftMostj]))
           {
             target_uip.first=1;
             target_uip.second=1;

@@ -50,8 +50,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "LangModelInfo.h"
 #include "SourceSegmentation.h"
 #include "NbestTransCacheData.h"
+#include "PbTransModelInputVars.h"
 #include "PhrasePairCacheTable.h"
-#include "TranslationConstraints.h"
 #include "ScoreCompDefs.h"
 #include "Prob.h"
 #include <math.h>
@@ -151,6 +151,10 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   ~_phraseBasedTransModel();
 
  protected:
+  
+      // Data structure to store input variables
+  PbTransModelInputVars pbtmInputVars;
+
       // Language model members
   LangModelInfo* langModelInfoPtr;
   NgramCacheTable cachedNgramScores;
@@ -173,29 +177,13 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   unsigned int heuristicId;
       // Heuristic probability vector
   Vector<Vector<Score> > heuristicScoreVec; 
-
-  unsigned int state; // state information
-    
-      // Temporary data structure to store the source sentence during
-      // each translation process
-  Vector<std::string> srcSentVec;
-  Vector<WordIndex> srcSentIdVec;
-  Vector<WordIndex> nsrcSentIdVec;
-  TranslationConstraints trConstraints;
-
-      // Temporary data structure to store the reference sentence during
-      // each translation process
-  Vector<std::string> refSentVec;
-  Vector<WordIndex> nrefSentIdVec;
+      // Additional data structures to store information about heuristics
   Vector<LgProb> refHeurLmLgProb;
-    
-      // Temporary data structure to store the prefix sentence during
-      // each translation process
-  bool lastCharOfPrefIsBlank;
-  Vector<std::string> prefSentVec;
-  Vector<WordIndex> nprefSentIdVec;
   Vector<LgProb> prefHeurLmLgProb;
 
+      // Variable to store state of the translation model
+  unsigned int state;
+      
       // Training-related data members
   Vector<Vector<std::string> > wordPredSentVec;
 
@@ -704,15 +692,7 @@ template<class HYPOTHESIS>
 void _phraseBasedTransModel<HYPOTHESIS>::clearTempVars(void)
 {
   // Clear input information
-  srcSentVec.clear();
-  srcSentIdVec.clear();
-  nsrcSentIdVec.clear();
-  refSentVec.clear();
-  nrefSentIdVec.clear();
-  refHeurLmLgProb.clear();
-  prefSentVec.clear();
-  nprefSentIdVec.clear();
-  prefHeurLmLgProb.clear();
+  pbtmInputVars.clear();
 
   // Clear set of unseen words
   unseenWordsSet.clear();
@@ -735,6 +715,10 @@ void _phraseBasedTransModel<HYPOTHESIS>::clearTempVars(void)
 
       // Clear information of the heuristic used in the translation
   heuristicScoreVec.clear();
+
+      // Clear additional heuristic information
+  refHeurLmLgProb.clear();
+  prefHeurLmLgProb.clear();
 
       // Clear temporary variables of the language model
   langModelInfoPtr->lModelPtr->clearTempVars();
@@ -808,7 +792,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::unseenSrcWord(std::string srcw)
 template<class HYPOTHESIS>
 bool _phraseBasedTransModel<HYPOTHESIS>::unseenSrcWordGivenPosition(unsigned int srcPos)
 {
-  return unseenSrcWord(srcSentVec[srcPos-1]);
+  return unseenSrcWord(pbtmInputVars.srcSentVec[srcPos-1]);
 }
 
 //---------------------------------------
@@ -870,7 +854,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::initHeuristicLocalt(int maxSrcPhraseLen
   Score score_ts;
   Vector<WordIndex> s_;
     
-  unsigned int J=nsrcSentIdVec.size()-1;
+  unsigned int J=pbtmInputVars.nsrcSentIdVec.size()-1;
   heuristicScoreVec.clear();
       // Initialize row vector    
   for(unsigned int j=0;j<J;++j) row.push_back(-FLT_MAX);
@@ -895,7 +879,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::initHeuristicLocalt(int maxSrcPhraseLen
       else
       {
         for(unsigned int j=segmLeftMostj;j<=segmRightMostj;++j)
-          s_.push_back(nsrcSentIdVec[j+1]);
+          s_.push_back(pbtmInputVars.nsrcSentIdVec[j+1]);
   
             // obtain translations for s_
         getNbestTransFor_s_(s_,ttNode,this->W);
@@ -1010,9 +994,9 @@ Score _phraseBasedTransModel<HYPOTHESIS>::calcRefLmHeurScore(const _phraseBasedT
     langModelInfoPtr->lModelPtr->getStateForBeginOfSentence(lmState);
     
     refHeurLmLgProb.push_back(NULL_WORD);
-    for(unsigned int i=1;i<nrefSentIdVec.size();++i)
+    for(unsigned int i=1;i<pbtmInputVars.nrefSentIdVec.size();++i)
     {
-      lp+=langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(tmVocabToLmVocab(nrefSentIdVec[i]),lmState);
+      lp+=langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(tmVocabToLmVocab(pbtmInputVars.nrefSentIdVec[i]),lmState);
       refHeurLmLgProb.push_back(lp);
     }
   }
@@ -1035,16 +1019,16 @@ Score _phraseBasedTransModel<HYPOTHESIS>::calcPrefLmHeurScore(const _phraseBased
     langModelInfoPtr->lModelPtr->getStateForBeginOfSentence(lmState);
     
     prefHeurLmLgProb.push_back(0);
-    for(unsigned int i=1;i<nprefSentIdVec.size();++i)
+    for(unsigned int i=1;i<pbtmInputVars.nprefSentIdVec.size();++i)
     {
-      lp+=langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(tmVocabToLmVocab(nprefSentIdVec[i]),lmState);
+      lp+=langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(tmVocabToLmVocab(pbtmInputVars.nprefSentIdVec[i]),lmState);
       prefHeurLmLgProb.push_back(lp);
     }
   }
       // Return heuristic value
   LgProb lp;
   unsigned int len=hyp.partialTransLength();
-  if(len>=nprefSentIdVec.size()-1)
+  if(len>=pbtmInputVars.nprefSentIdVec.size()-1)
     lp=0;
   else
   {
@@ -1063,7 +1047,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::heuristicLocalt(const Hypothesis& hyp)
     unsigned int J;
     Vector<pair<PositionIndex,PositionIndex> > gaps;
     
-    J=srcSentVec.size();
+    J=pbtmInputVars.srcSentVec.size();
     this->extract_gaps(hyp,gaps);
     for(unsigned int i=0;i<gaps.size();++i)
     {
@@ -1098,7 +1082,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::heuristicLocaltd(const Hypothesis& hyp
   if(state==MODEL_TRANS_STATE)
   {
         // Get local t heuristic information
-    J=srcSentVec.size();
+    J=pbtmInputVars.srcSentVec.size();
     this->extract_gaps(hyp,gaps);
     for(unsigned int i=0;i<gaps.size();++i)
     {
@@ -1261,13 +1245,13 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
   state=MODEL_TRANS_STATE;
   
       // Store source sentence to be translated
-  trConstraints.obtainTransConstraints(srcsent,this->verbosity);
-  srcSentVec=trConstraints.getSrcSentVec();
+  pbtmInputVars.trConstraints.obtainTransConstraints(srcsent,this->verbosity);
+  pbtmInputVars.srcSentVec=pbtmInputVars.trConstraints.getSrcSentVec();
   
       // Verify coverage for source
   if(this->verbosity>0)
     cerr<<"Verify model coverage for source sentence..."<<endl; 
-  verifyDictCoverageForSentence(srcSentVec,this->A);
+  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->A);
 
       // Store source sentence as an array of WordIndex.
       // Note: this must be done after verifying the coverage for the
@@ -1275,14 +1259,14 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
 
       // Init source sentence index vector after the coverage has been
       // verified
-  srcSentIdVec.clear();
-  nsrcSentIdVec.clear();
-  nsrcSentIdVec.push_back(NULL_WORD);
-  for(unsigned int i=0;i<srcSentVec.size();++i)
+  pbtmInputVars.srcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.srcSentVec.size();++i)
   {
-    WordIndex w=stringToSrcWordIndex(srcSentVec[i]);
-    srcSentIdVec.push_back(w);
-    nsrcSentIdVec.push_back(w);
+    WordIndex w=stringToSrcWordIndex(pbtmInputVars.srcSentVec[i]);
+    pbtmInputVars.srcSentIdVec.push_back(w);
+    pbtmInputVars.nsrcSentIdVec.push_back(w);
   }
 
       // Initialize heuristic (the source sentence must be previously
@@ -1302,36 +1286,36 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ref(std::string srcse
   state=MODEL_TRANSREF_STATE;
 
       // Store source sentence to be translated
-  srcSentVec=StrProcUtils::stringToStringVector(srcsent);
+  pbtmInputVars.srcSentVec=StrProcUtils::stringToStringVector(srcsent);
 
       // Verify coverage for source
   if(this->verbosity>0)
     cerr<<"Verify model coverage for source sentence..."<<endl; 
-  verifyDictCoverageForSentence(srcSentVec,this->A);
+  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->A);
 
       // Init source sentence index vector after the coverage has been
       // verified
-  srcSentIdVec.clear();
-  nsrcSentIdVec.clear();
-  nsrcSentIdVec.push_back(NULL_WORD);
-  for(unsigned int i=0;i<srcSentVec.size();++i)
+  pbtmInputVars.srcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.srcSentVec.size();++i)
   {
-    WordIndex w=stringToSrcWordIndex(srcSentVec[i]);
-    srcSentIdVec.push_back(w);
-    nsrcSentIdVec.push_back(w);
+    WordIndex w=stringToSrcWordIndex(pbtmInputVars.srcSentVec[i]);
+    pbtmInputVars.srcSentIdVec.push_back(w);
+    pbtmInputVars.nsrcSentIdVec.push_back(w);
   }
 
       // Store reference sentence
-  refSentVec=StrProcUtils::stringToStringVector(refsent);
+  pbtmInputVars.refSentVec=StrProcUtils::stringToStringVector(refsent);
 
-  nrefSentIdVec.clear();
-  nrefSentIdVec.push_back(NULL_WORD);
-  for(unsigned int i=0;i<refSentVec.size();++i)
+  pbtmInputVars.nrefSentIdVec.clear();
+  pbtmInputVars.nrefSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.refSentVec.size();++i)
   {
-    WordIndex w=stringToTrgWordIndex(refSentVec[i]);
+    WordIndex w=stringToTrgWordIndex(pbtmInputVars.refSentVec[i]);
     if(w==UNK_WORD && this->verbosity>0)
-      cerr<<"Warning: word "<<refSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
-    nrefSentIdVec.push_back(w);
+      cerr<<"Warning: word "<<pbtmInputVars.refSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
+    pbtmInputVars.nrefSentIdVec.push_back(w);
   }
 
       // Initialize heuristic (the source sentence must be previously
@@ -1351,36 +1335,36 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ver(std::string srcse
   state=MODEL_TRANSVER_STATE;
 
       // Store source sentence to be translated
-  srcSentVec=StrProcUtils::stringToStringVector(srcsent);
+  pbtmInputVars.srcSentVec=StrProcUtils::stringToStringVector(srcsent);
 
       // Verify coverage for source
   if(this->verbosity>0)
     cerr<<"Verify model coverage for source sentence..."<<endl; 
-  verifyDictCoverageForSentence(srcSentVec,this->A);
+  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->A);
 
       // Init source sentence index vector after the coverage has been
       // verified
-  srcSentIdVec.clear();
-  nsrcSentIdVec.clear();
-  nsrcSentIdVec.push_back(NULL_WORD);
-  for(unsigned int i=0;i<srcSentVec.size();++i)
+  pbtmInputVars.srcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.srcSentVec.size();++i)
   {
-    WordIndex w=stringToSrcWordIndex(srcSentVec[i]);
-    srcSentIdVec.push_back(w);
-    nsrcSentIdVec.push_back(w);
+    WordIndex w=stringToSrcWordIndex(pbtmInputVars.srcSentVec[i]);
+    pbtmInputVars.srcSentIdVec.push_back(w);
+    pbtmInputVars.nsrcSentIdVec.push_back(w);
   }
 
       // Store reference sentence
-  refSentVec=StrProcUtils::stringToStringVector(refsent);
+  pbtmInputVars.refSentVec=StrProcUtils::stringToStringVector(refsent);
 
-  nrefSentIdVec.clear();
-  nrefSentIdVec.push_back(NULL_WORD);
-  for(unsigned int i=0;i<refSentVec.size();++i)
+  pbtmInputVars.nrefSentIdVec.clear();
+  pbtmInputVars.nrefSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.refSentVec.size();++i)
   {
-    WordIndex w=stringToTrgWordIndex(refSentVec[i]);
+    WordIndex w=stringToTrgWordIndex(pbtmInputVars.refSentVec[i]);
     if(w==UNK_WORD && this->verbosity>0)
-      cerr<<"Warning: word "<<refSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
-    nrefSentIdVec.push_back(w);
+      cerr<<"Warning: word "<<pbtmInputVars.refSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
+    pbtmInputVars.nrefSentIdVec.push_back(w);
   }
 
       // Initialize heuristic (the source sentence must be previously
@@ -1400,38 +1384,38 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string sr
   state=MODEL_TRANSPREFIX_STATE;
 
       // Store source sentence to be translated
-  srcSentVec=StrProcUtils::stringToStringVector(srcsent);
+  pbtmInputVars.srcSentVec=StrProcUtils::stringToStringVector(srcsent);
 
       // Verify coverage for source
   if(this->verbosity>0)
     cerr<<"Verify model coverage for source sentence..."<<endl; 
-  verifyDictCoverageForSentence(srcSentVec,this->A);
+  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->A);
 
       // Init source sentence index vector after the coverage has been
       // verified
-  srcSentIdVec.clear();
-  nsrcSentIdVec.clear();
-  nsrcSentIdVec.push_back(NULL_WORD);
-  for(unsigned int i=0;i<srcSentVec.size();++i)
+  pbtmInputVars.srcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.srcSentVec.size();++i)
   {
-    WordIndex w=stringToSrcWordIndex(srcSentVec[i]);
-    srcSentIdVec.push_back(w);
-    nsrcSentIdVec.push_back(w);
+    WordIndex w=stringToSrcWordIndex(pbtmInputVars.srcSentVec[i]);
+    pbtmInputVars.srcSentIdVec.push_back(w);
+    pbtmInputVars.nsrcSentIdVec.push_back(w);
   }
 
       // Store prefix sentence
-  if(lastCharIsBlank(prefix)) lastCharOfPrefIsBlank=true;
-  else lastCharOfPrefIsBlank=false;
-  prefSentVec=StrProcUtils::stringToStringVector(prefix);
+  if(lastCharIsBlank(prefix)) pbtmInputVars.lastCharOfPrefIsBlank=true;
+  else pbtmInputVars.lastCharOfPrefIsBlank=false;
+  pbtmInputVars.prefSentVec=StrProcUtils::stringToStringVector(prefix);
 
-  nprefSentIdVec.clear();
-  nprefSentIdVec.push_back(NULL_WORD);
-  for(unsigned int i=0;i<prefSentVec.size();++i)
+  pbtmInputVars.nprefSentIdVec.clear();
+  pbtmInputVars.nprefSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.prefSentVec.size();++i)
   {
-    WordIndex w=stringToTrgWordIndex(prefSentVec[i]);
+    WordIndex w=stringToTrgWordIndex(pbtmInputVars.prefSentVec[i]);
     if(w==UNK_WORD && this->verbosity>0)
-      cerr<<"Warning: word "<<prefSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
-    nprefSentIdVec.push_back(w);
+      cerr<<"Warning: word "<<pbtmInputVars.prefSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
+    pbtmInputVars.nprefSentIdVec.push_back(w);
   }
 
       // Initialize heuristic (the source sentence must be previously
@@ -1609,7 +1593,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getHypDataVecForGap(const Hypothesis& h
     if(this->verbosity>=3)
     {
       cerr<<"   ";
-      for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->srcSentVec[i-1]<<" ";
+      for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->pbtmInputVars.srcSentVec[i-1]<<" ";
       cerr<<"||| ";
       for(unsigned int i=0;i<ttNodeIter->second.size();++i)
         cerr<<this->wordIndexToTrgString(ttNodeIter->second[i])<<" ";
@@ -1654,7 +1638,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getHypDataVecForGapRef(const Hypothesis
     if(this->verbosity>=3)
     {
       cerr<<"   ";
-      for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->srcSentVec[i-1]<<" ";
+      for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->pbtmInputVars.srcSentVec[i-1]<<" ";
       cerr<<"||| ";
       for(unsigned int i=0;i<ttNodeIter->second.size();++i)
         cerr<<this->wordIndexToTrgString(ttNodeIter->second[i])<<" ";
@@ -1702,7 +1686,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getHypDataVecForGapVer(const Hypothesis
     if(this->verbosity>=3)
     {
       cerr<<"   ";
-      for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->srcSentVec[i-1]<<" ";
+      for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->pbtmInputVars.srcSentVec[i-1]<<" ";
       cerr<<"||| ";
       for(unsigned int i=0;i<ttNodeIter->second.size();++i)
         cerr<<this->wordIndexToTrgString(ttNodeIter->second[i])<<" ";
@@ -1750,7 +1734,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getHypDataVecForGapPref(const Hypothesi
     if(this->verbosity>=3)
     {
       cerr<<"   ";
-      for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->srcSentVec[i-1]<<" ";
+      for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->pbtmInputVars.srcSentVec[i-1]<<" ";
       cerr<<"||| ";
       for(unsigned int i=0;i<ttNodeIter->second.size();++i)
         cerr<<this->wordIndexToTrgString(ttNodeIter->second[i])<<" ";
@@ -1774,10 +1758,10 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis
                                                                 float N)
 {
       // Check if gap is affected by translation constraints
-  if(trConstraints.srcPhrAffectedByConstraint(make_pair(srcLeft,srcRight)))
+  if(pbtmInputVars.trConstraints.srcPhrAffectedByConstraint(make_pair(srcLeft,srcRight)))
   {
         // Obtain constrained target translation for gap (if any)
-    Vector<std::string> trgWordVec=trConstraints.getTransForSrcPhr(make_pair(srcLeft,srcRight));
+    Vector<std::string> trgWordVec=pbtmInputVars.trConstraints.getTransForSrcPhr(make_pair(srcLeft,srcRight));
     if(trgWordVec.size()>0)
     {
           // Convert string vector to WordIndex vector
@@ -1806,7 +1790,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis
        
         // Check if source phrase has only one word and this word has
         // been marked as an unseen word
-    if(srcLeft==srcRight && unseenSrcWord(srcSentVec[srcLeft-1]))
+    if(srcLeft==srcRight && unseenSrcWord(pbtmInputVars.srcSentVec[srcLeft-1]))
     {
       Vector<WordIndex> unkWordVec;
       unkWordVec.push_back(UNK_WORD);
@@ -1822,7 +1806,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis
     
       for(unsigned int i=srcLeft;i<=srcRight;++i)
       {
-        s_.push_back(nsrcSentIdVec[i]);
+        s_.push_back(pbtmInputVars.nsrcSentIdVec[i]);
       }
     
       transTableNodePtr=nbTransCacheData.cPhrNbestTransTable.getTranslationsForKey(make_pair(srcLeft,srcRight));
@@ -1859,7 +1843,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGapRef(const Hypothe
       // Obtain source phrase
   for(unsigned int i=srcLeft;i<=srcRight;++i)
   {
-    s_.push_back(nsrcSentIdVec[i]);
+    s_.push_back(pbtmInputVars.nsrcSentIdVec[i]);
   }
 
       // Obtain length limits for target phrase
@@ -1870,7 +1854,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGapRef(const Hypothe
   ntarget=hyp.getPartialTrans();	
 
   nbt.clear();
-  if(ntarget.size()>nrefSentIdVec.size()) return false;
+  if(ntarget.size()>pbtmInputVars.nrefSentIdVec.size()) return false;
   if(this->numberOfUncoveredSrcWords(hyp)-(srcRight-srcLeft+1)>0)
   {
         // This is not the last gap to be covered
@@ -1903,9 +1887,9 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGapRef(const Hypothe
     }
     else
     {// translations not present in the cache translation table
-      for(PositionIndex i=ntarget.size();i<nrefSentIdVec.size()-pNbtRefKey.numGaps;++i)
+      for(PositionIndex i=ntarget.size();i<pbtmInputVars.nrefSentIdVec.size()-pNbtRefKey.numGaps;++i)
       {
-        t_.push_back(nrefSentIdVec[i]);
+        t_.push_back(pbtmInputVars.nrefSentIdVec[i]);
         if(t_.size()>=minTrgSize && t_.size()<=maxTrgSize)
         {
           Score scr=nbestTransScoreCached(s_,t_);
@@ -1927,8 +1911,8 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGapRef(const Hypothe
   else
   {
         // The last gap will be covered
-    for(PositionIndex i=ntarget.size();i<nrefSentIdVec.size();++i)
-      t_.push_back(nrefSentIdVec[i]);
+    for(PositionIndex i=ntarget.size();i<pbtmInputVars.nrefSentIdVec.size();++i)
+      t_.push_back(pbtmInputVars.nrefSentIdVec[i]);
     if(t_.size()>=minTrgSize && t_.size()<=maxTrgSize)
     {
       Score scr=nbestTransScoreCached(s_,t_);
@@ -1960,7 +1944,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGapPref(const Hypoth
 {
   unsigned int ntrgSize=hyp.getPartialTrans().size();
       // Check if the prefix has been generated
-  if(ntrgSize<nprefSentIdVec.size())
+  if(ntrgSize<pbtmInputVars.nprefSentIdVec.size())
   {
         // The prefix has not been generated
     NbestTableNode<PhraseTransTableNodeData> *transTableNodePtr;
@@ -2020,7 +2004,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::transUncovGapPrefNoGen(const Hypothesis
   nbt.clear();
   for(unsigned int i=srcLeft;i<=srcRight;++i)
   {
-    s_.push_back(nsrcSentIdVec[i]);
+    s_.push_back(pbtmInputVars.nsrcSentIdVec[i]);
   }
       // Obtain length limits for target phrase
   unsigned int minTrgSize=0;
@@ -2040,11 +2024,11 @@ void _phraseBasedTransModel<HYPOTHESIS>::transUncovGapPrefNoGen(const Hypothesis
 
         // Add translations with length lower than the prefix length.
     Vector<WordIndex> t_;
-    if(nprefSentIdVec.size()>1)
+    if(pbtmInputVars.nprefSentIdVec.size()>1)
     {
-      for(PositionIndex i=ntrgSize;i<nprefSentIdVec.size()-1;++i)
+      for(PositionIndex i=ntrgSize;i<pbtmInputVars.nprefSentIdVec.size()-1;++i)
       {
-        t_.push_back(nprefSentIdVec[i]);
+        t_.push_back(pbtmInputVars.nprefSentIdVec[i]);
         if(t_.size()>=minTrgSize && t_.size()<=maxTrgSize)
         {
           Score scr=nbestTransScoreCached(s_,t_);
@@ -2064,8 +2048,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::transUncovGapPrefNoGen(const Hypothesis
   
       // Insert the remaining prefix itself in nbt
   Vector<WordIndex> remainingPref;
-  for(unsigned int i=ntrgSize;i<nprefSentIdVec.size();++i)
-    remainingPref.push_back(nprefSentIdVec[i]);
+  for(unsigned int i=ntrgSize;i<pbtmInputVars.nprefSentIdVec.size();++i)
+    remainingPref.push_back(pbtmInputVars.nprefSentIdVec[i]);
   nbt.insert(nbestTransScoreLastCached(s_,remainingPref),remainingPref);
 }
 
@@ -2083,8 +2067,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::genListOfTransLongerThanPref(Vector<Wor
   nbt.clear();
   
       // Store the remaining prefix to be generated in remainingPref
-  for(unsigned int i=ntrgSize;i<nprefSentIdVec.size();++i)
-    remainingPref.push_back(nprefSentIdVec[i]);
+  for(unsigned int i=ntrgSize;i<pbtmInputVars.nprefSentIdVec.size();++i)
+    remainingPref.push_back(pbtmInputVars.nprefSentIdVec[i]);
 
       // Obtain translations for source segment s_
   this->phrModelInfoPtr->invPbModelPtr->getTransFor_t_(s_,srctn);
@@ -2098,8 +2082,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::genListOfTransLongerThanPref(Vector<Wor
           // as prefix
       bool equal;
       if(trgWordVecIsPrefix(remainingPref,
-                            lastCharOfPrefIsBlank,
-                            prefSentVec.back(),
+                            pbtmInputVars.lastCharOfPrefIsBlank,
+                            pbtmInputVars.prefSentVec.back(),
                             srctnIter->first,
                             equal))
       {
@@ -2433,12 +2417,12 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTs
       // Replace unknown words affected by constraints
 
       // Iterate over constraints
-  std::set<pair<PositionIndex,PositionIndex> > srcPhrSet=trConstraints.getConstrainedSrcPhrases();
+  std::set<pair<PositionIndex,PositionIndex> > srcPhrSet=pbtmInputVars.trConstraints.getConstrainedSrcPhrases();
   std::set<pair<PositionIndex,PositionIndex> >::const_iterator const_iter;
   for(const_iter=srcPhrSet.begin();const_iter!=srcPhrSet.end();++const_iter)
   {
         // Obtain target translation for constraint
-    Vector<std::string> trgPhr=trConstraints.getTransForSrcPhr(*const_iter);
+    Vector<std::string> trgPhr=pbtmInputVars.trConstraints.getTransForSrcPhr(*const_iter);
     
         // Find first aligned target word
     for(unsigned int i=0;i<trgVecStr.size();++i)
@@ -2462,11 +2446,11 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTs
     if(trgVecStr[i]==UNK_WORD_STR)
     {
           // Find source word aligned with unknown word
-      for(unsigned int j=0;j<srcSentVec.size();++j)
+      for(unsigned int j=0;j<pbtmInputVars.srcSentVec.size();++j)
       {
         if(hyp.areAligned(j+1,i+1))
         {
-          trgVecStr[i]=srcSentVec[j];
+          trgVecStr[i]=pbtmInputVars.srcSentVec[j];
           break;
         }
       }
@@ -2499,19 +2483,19 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTp
   {
     if(trgVecStr[i]==UNK_WORD_STR)
     {
-      if(i<prefSentVec.size())
+      if(i<pbtmInputVars.prefSentVec.size())
       {
             // Unknown word must be replaced by a prefix word
-        trgVecStr[i]=prefSentVec[i];
+        trgVecStr[i]=pbtmInputVars.prefSentVec[i];
       }
       else
       {
             // Find source word aligned with unknown word
-        for(unsigned int j=0;j<srcSentVec.size();++j)
+        for(unsigned int j=0;j<pbtmInputVars.srcSentVec.size();++j)
         {
           if(hyp.areAligned(j+1,i+1))
           {
-            trgVecStr[i]=srcSentVec[j];
+            trgVecStr[i]=pbtmInputVars.srcSentVec[j];
             break;
           }
         }
@@ -2541,8 +2525,8 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTr
       // to generate a reference.
   for(unsigned int i=0;i<trgVecStr.size();++i)
   {
-    if(i<refSentVec.size())
-      trgVecStr[i]=refSentVec[i];
+    if(i<pbtmInputVars.refSentVec.size())
+      trgVecStr[i]=pbtmInputVars.refSentVec[i];
   }
   return trgVecStr;
 }
@@ -2567,8 +2551,8 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTv
       // to verify model coverage
   for(unsigned int i=0;i<trgVecStr.size();++i)
   {
-    if(i<refSentVec.size())
-      trgVecStr[i]=refSentVec[i];
+    if(i<pbtmInputVars.refSentVec.size())
+      trgVecStr[i]=pbtmInputVars.refSentVec[i];
   }
   return trgVecStr;
 }

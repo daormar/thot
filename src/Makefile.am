@@ -231,23 +231,24 @@ stack_dec/PhrLocalSwLiTmHypRec.h stack_dec/PhrLocalSwLiTm.h		\
 stack_dec/PhrHypState.h stack_dec/PhrHypNumcovJumpsEqClassF.h		\
 stack_dec/PhrHypNumcovJumps01EqClassF.h stack_dec/PhrHypEqClassF.h	\
 stack_dec/PhrHypData.h stack_dec/PhrasePairCacheTable.h			\
-stack_dec/NbestTransCacheData.h stack_dec/PhraseModelPars.h		\
-stack_dec/PhraseModelInfo.h stack_dec/_phraseHypothesisRec.h		\
-stack_dec/_phraseHypothesis.h stack_dec/PhraseCacheTable.h		\
-stack_dec/_phraseBasedTransModel.h stack_dec/OnlineTrainingPars.h	\
-stack_dec/NgramCacheTable.h stack_dec/_nbUncoupledAssistedTrans.h	\
-stack_dec/MultiStackTypes.h stack_dec/multi_stack_decoder_rec.h		\
-stack_dec/LangModelPars.h stack_dec/LangModelInfo.h			\
-stack_dec/HypStateDict.h stack_dec/HypStateDictData.h			\
-stack_dec/HypSortCriterion.h stack_dec/client_server_defs.h		\
-stack_dec/CatDefs.h stack_dec/bleu.h stack_dec/BaseStackDecoder.h	\
-stack_dec/BaseSmtStack.h stack_dec/BaseSmtMultiStack.h			\
-stack_dec/BaseSmtModel.h stack_dec/BasePhraseHypothesisRec.h		\
-stack_dec/BasePhraseHypothesis.h stack_dec/BasePbTransModelStats.h	\
-stack_dec/BasePbTransModel.h stack_dec/BaseHypState.h			\
-stack_dec/BaseHypothesisRec.h stack_dec/BaseHypothesis.h		\
-stack_dec/HypDebugData.h stack_dec/BaseAssistedTrans.h			\
-stack_dec/AssistedTransTypes.h stack_dec/_assistedTrans.h
+stack_dec/PbTransModelInputVars.h stack_dec/NbestTransCacheData.h	\
+stack_dec/PhraseModelPars.h stack_dec/PhraseModelInfo.h			\
+stack_dec/_phraseHypothesisRec.h stack_dec/_phraseHypothesis.h		\
+stack_dec/PhraseCacheTable.h stack_dec/_phraseBasedTransModel.h		\
+stack_dec/OnlineTrainingPars.h stack_dec/NgramCacheTable.h		\
+stack_dec/_nbUncoupledAssistedTrans.h stack_dec/MultiStackTypes.h	\
+stack_dec/multi_stack_decoder_rec.h stack_dec/LangModelPars.h		\
+stack_dec/LangModelInfo.h stack_dec/HypStateDict.h			\
+stack_dec/HypStateDictData.h stack_dec/HypSortCriterion.h		\
+stack_dec/client_server_defs.h stack_dec/CatDefs.h stack_dec/bleu.h	\
+stack_dec/BaseStackDecoder.h stack_dec/BaseSmtStack.h			\
+stack_dec/BaseSmtMultiStack.h stack_dec/BaseSmtModel.h			\
+stack_dec/BasePhraseHypothesisRec.h stack_dec/BasePhraseHypothesis.h	\
+stack_dec/BasePbTransModelStats.h stack_dec/BasePbTransModel.h		\
+stack_dec/BaseHypState.h stack_dec/BaseHypothesisRec.h			\
+stack_dec/BaseHypothesis.h stack_dec/HypDebugData.h			\
+stack_dec/BaseAssistedTrans.h stack_dec/AssistedTransTypes.h		\
+stack_dec/_assistedTrans.h
 stack_dec_defs= stack_dec/TranslationConstraints.cc			\
 stack_dec/KbMiraLlWu.cc \
 stack_dec/MiraBleu.cc \

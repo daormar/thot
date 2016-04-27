@@ -847,7 +847,7 @@ PhrLocalSwLiTm::numberOfUncoveredSrcWordsHypData(const HypDataType& hypd)const
   for(k=0;k<hypd.sourceSegmentation.size();k++)
 	n+=hypd.sourceSegmentation[k].second-hypd.sourceSegmentation[k].first+1; 
 
-  return (srcSentVec.size()-n);  
+  return (pbtmInputVars.srcSentVec.size()-n);  
 }
 
 //---------------------------------
@@ -905,12 +905,12 @@ Score PhrLocalSwLiTm::incrScore(const Hypothesis& pred_hyp,
     scoreComponents[SJUMP]+=this->srcJumpScore(abs(lastSrcPosStart-(prevSrcPosEnd+1))); 
 
         // source segment length score
-    scoreComponents[SSEGMLEN]+=srcSegmLenScore(i,new_hypd.sourceSegmentation,this->srcSentVec.size(),trgphrase.size());
+    scoreComponents[SSEGMLEN]+=srcSegmLenScore(i,new_hypd.sourceSegmentation,this->pbtmInputVars.srcSentVec.size(),trgphrase.size());
 
         // Obtain translation score
     for(unsigned int k=srcLeft;k<=srcRight;++k)
     {
-      s_.push_back(nsrcSentIdVec[k]);
+      s_.push_back(pbtmInputVars.nsrcSentIdVec[k]);
     }
         // p(s_|t_) smoothed phrase score
     scoreComponents[PST]+=smoothedPhrScore_s_t_(s_,trgphrase);
@@ -959,7 +959,7 @@ Score PhrLocalSwLiTm::incrScore(const Hypothesis& pred_hyp,
 
         // Calculate sentence length score
     scoreComponents[SWLENLI]-=sentLenScoreForPartialHyp(hypKey,trglen);
-    scoreComponents[SWLENLI]+=sentLenScore(srcSentVec.size(),trglen);
+    scoreComponents[SWLENLI]+=sentLenScore(pbtmInputVars.srcSentVec.size(),trglen);
 
 #ifdef THOT_DEBUG
     HypDebugData hdData;
@@ -1108,12 +1108,12 @@ bool PhrLocalSwLiTm::hypDataTransIsPrefixOfTargetRef(const HypDataType& hypd,
   PositionIndex ntrgSize,nrefSentSize;
   
   ntrgSize=hypd.ntarget.size();
-  nrefSentSize=nrefSentIdVec.size();	
+  nrefSentSize=pbtmInputVars.nrefSentIdVec.size();	
 	
   if(ntrgSize>nrefSentSize) return false;
   for(PositionIndex i=1;i<ntrgSize;++i)
   {
-    if(nrefSentIdVec[i]!=hypd.ntarget[i]) return false;
+    if(pbtmInputVars.nrefSentIdVec[i]!=hypd.ntarget[i]) return false;
   }
   if(ntrgSize==nrefSentSize) equal=true;
   else equal=false;
