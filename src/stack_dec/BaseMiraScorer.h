@@ -20,7 +20,8 @@ class BaseMiraScorer
 public:
     // Functions to manage background corpus
   virtual void resetBackgroundCorpus()=0;
-  virtual void updateBackgroundCorpus(const Vector<unsigned int>& stats)=0;
+  virtual void updateBackgroundCorpus(const Vector<unsigned int>& stats,
+                                      double decay)=0;
 
     // Score for sentence with background corpus stats
   virtual void sentBackgroundScore(const std::string& candidate,

@@ -9,7 +9,7 @@
 
 #include "BaseMiraScorer.h"
 #include <cassert>
-
+#include <iostream>
 
 class MiraBleu : public BaseMiraScorer
 {
@@ -23,13 +23,14 @@ public:
   void resetBackgroundCorpus() {
     backgroundBleu.clear();
     for (unsigned int i=0; i<N_STATS; i++)
-      backgroundBleu.push_back(0);
+      backgroundBleu.push_back(1);
   }
 
-  void updateBackgroundCorpus(const Vector<unsigned int>& stats) {
+  void updateBackgroundCorpus(const Vector<unsigned int>& stats,
+                              double decay) {
     assert (stats.size() == N_STATS);
     for (unsigned int i=0; i<N_STATS; i++)
-      backgroundBleu[i] += stats[i];
+      backgroundBleu[i] = decay*backgroundBleu[i] + stats[i];
   }
 
     // Score for sentence with background corpus stats
