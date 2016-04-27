@@ -40,6 +40,12 @@ PhrLocalSwLiTm::PhrLocalSwLiTm(void):_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEq
   stepNum=0;
 }
 
+//---------------------------------------
+BaseSmtModel<PhrLocalSwLiTmHypRec<HypEqClassF> >* PhrLocalSwLiTm::clone(void)
+{
+  return new PhrLocalSwLiTm(*this);
+}
+
 //---------------------------------
 bool PhrLocalSwLiTm::loadAligModel(const char* prefixFileName)
 {

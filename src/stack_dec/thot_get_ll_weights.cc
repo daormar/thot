@@ -30,8 +30,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /**
  * @file thot_get_ll_weights.cc
  *
- * @brief implements a log-linear weight updater given a set of n-best
- * lists
+ * @brief Prints the values of the log-linear weights for a given
+ *        configuration file.
  */
 
 //--------------- Include files --------------------------------------
@@ -157,12 +157,12 @@ void get_ll_weights(const thot_get_ll_weights_pars& pars)
   {
     base_pbswtm_ptr->link_swm_info(swModelInfoPtr);
   }
-      // Set log-linear model weights
+      // Set smt model weights
   if(!pars.tmWeightVec.empty())
     smtModelPtr->setWeights(pars.tmWeightVec);
   
-      // Print log-linear model weights
-  cout<<"- Log-linear model weights= ";
+      // Print SMT model weights
+  cout<<"- SMT model weights= ";
   smtModelPtr->printWeights(cout);
   cout<<endl;
 

@@ -52,6 +52,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "StackDecEcModelForNbUcatTypes.h"
 #include "StackDecEcModelTypes.h"
 #include "_phrSwTransModel.h"
+#include "BaseSmtModel.h"
 #include "StackDecSwModelTypes.h"
 #include "StackDecPbModelTypes.h"
 #include "StackDecLmTypes.h"

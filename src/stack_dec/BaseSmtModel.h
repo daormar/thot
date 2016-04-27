@@ -85,6 +85,9 @@ class BaseSmtModel
   typedef typename HYPOTHESIS::ScoreInfo HypScoreInfo;
   typedef typename HYPOTHESIS::DataType HypDataType;
 
+      // Virtual object copy
+  virtual BaseSmtModel<HYPOTHESIS>* clone(void)=0;
+
       // Actions to be executed before the translation and before using
       // hypotheses-related functions
   virtual void pre_trans_actions(std::string srcsent)=0;
