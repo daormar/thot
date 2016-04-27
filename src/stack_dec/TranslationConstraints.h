@@ -57,6 +57,8 @@ class TranslationConstraints
   Vector<std::string> getTransForSrcPhr(pair<PositionIndex,PositionIndex> srcPhr)const;
   std::set<pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const;
   bool srcPhrAffectedByConstraint(pair<PositionIndex,PositionIndex> srcPhr)const;
+
+  void clear(void);
   
  private:
 

@@ -394,3 +394,11 @@ bool TranslationConstraints::constraintFound(Vector<std::string> tokRawSrcSentVe
     return false;
   }
 }
+
+//---------------------------------------
+void TranslationConstraints::clear(void)
+{
+  xmlTagSet.clear();
+  srcSentVec.clear();
+  srcPhrTransMap.clear();
+}
