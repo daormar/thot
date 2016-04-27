@@ -362,7 +362,7 @@ obtain_loglin_va_opt_values()
     smtval=`echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"-0 "}'`
 
     local_ecmw_names=`obtain_ecmweights_names`
-    ecval=`echo "${local_ecmw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="vocSize") printf"128 "; else printf"-0 "}'`
+    ecval=`echo "${local_ecmw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="vocSize") printf"128 "; else if($i=="hProb") printf"0.8 "; else printf"-0 "}'`
 
     local_catw_names=`obtain_catweights_names`
     catval=`echo "${local_catw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"-0 "}'`
