@@ -117,7 +117,7 @@ echo ""
 echo "**** Checking thot_smt_tune..."
 echo ""
 ${bindir}/thot_smt_tune -c $tmpdir/server.cfg -s ${scorpus_dev} -t ${tcorpus_dev} \
-    -o $tmpdir/tune  -tdir $debugdir -sdir ${debugdir} ${qs_opt} "${qs_par}" -debug
+    -o $tmpdir/smt_tune  -tdir $debugdir -sdir ${debugdir} ${qs_opt} "${qs_par}" -debug
 if test $? -eq 0 ; then
     echo "... Done"
 else
@@ -134,7 +134,7 @@ echo ""
 # Check thot_prepare_sys_for_test
 echo "**** Checking thot_prepare_sys_for_test..."
 echo ""
-${bindir}/thot_prepare_sys_for_test -c $tmpdir/tune/tuned_for_dev.cfg -t ${scorpus_test} \
+${bindir}/thot_prepare_sys_for_test -c $tmpdir/smt_tune/tuned_for_dev.cfg -t ${scorpus_test} \
     ${qs_opt} "${qs_par}" -o $tmpdir/systest -tdir $debugdir -sdir ${debugdir}
 if test $? -eq 0 ; then
     echo "... Done"
