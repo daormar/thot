@@ -45,6 +45,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "BaseLogLinWeightUpdater.h"
+#include "BaseMiraScorer.h"
 #include <float.h>
 
 //--------------- Constants ------------------------------------------
@@ -53,10 +54,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- typedefs -------------------------------------------
 struct HopeFearData {
-  Vector<double> hopeFeatures, hopeBleuStats;
-  Vector<double> fearFeatures;
-  double hopeScore, hopeBleu;
-  double fearScore, fearBleu;
+  Vector<double> hopeFeatures, fearFeatures;
+  Vector<unsigned int> hopeQualityStats;
+  double hopeScore, hopeQuality;
+  double fearScore, fearQuality;
 };
 
 //--------------- Classes --------------------------------------------
@@ -73,8 +74,9 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
   KbMiraLlWu(double C = 0.01,
              double gamma = 0.999,
              unsigned int J = 30,
-             unsigned int epochs_to_restart = 6,
-             unsigned int max_restarts = 1);
+             unsigned int epochs_to_restart = 8,
+             unsigned int max_restarts = 2);
+  ~KbMiraLlWu();
 
       // Compute new weights for an individual sentence
   void update(const std::string& reference,
@@ -95,6 +97,7 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
   unsigned int nIters;  // Max epochs J
   unsigned int epochsToRestart; // epochs without improvement before re-start
   unsigned int maxRestarts;     // max number of re-starts
+  BaseMiraScorer *scorer;
 
      // Compute max scoring translaiton according to w
   void MaxTranslation(const Vector<double>& w,
@@ -107,25 +110,7 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
                 const Vector<std::string>& nBest,
                 const Vector<Vector<double> >& nScores,
                 const Vector<double>& wv,
-                const Vector<unsigned int>& backgroundBleu,
                 HopeFearData* hopeFear);
-
-    // Computes background Bleu for candidate and background corpus
-  void sentBckgrndBleu(const std::string& candidate,
-                       const std::string& reference,
-                       const Vector<unsigned int>& backgroundBleu,
-                       double& bleu,
-                       Vector<unsigned int>& stats);
-
-    // Bleu for corpus
-  void Bleu(const Vector<std::string>& candidates,
-            const Vector<std::string>& references,
-            double& bleu);
-
-    // Bleu for sentence
-  void sentenceBleu(const std::string& candidate,
-                    const std::string& reference,
-                    double& bleu);
 
    //get permutation indices
   void sampleWoReplacement(unsigned int nSamples,

@@ -4,7 +4,6 @@
 //--------------- Include files --------------------------------------
 
 #include "MiraBleu.h"
-
 #include "bleu.h"
 
 #include <sstream>
@@ -59,16 +58,17 @@ void MiraBleu::split(const std::string& sentence,
 void MiraBleu::sentBackgroundScore(const std::string& candidate,
                                    const std::string& reference,
                                    double& bleu,
-                                   Vector<unsigned int>& stats)
+                                   Vector<unsigned int>& sentStats)
 {
   Vector<std::string> candidate_tokens, reference_tokens;
   split(candidate, candidate_tokens);
   split(reference, reference_tokens);
 
-  statsForSentence(candidate_tokens, reference_tokens, stats);
+  statsForSentence(candidate_tokens, reference_tokens, sentStats);
 
+  Vector<unsigned int> stats;
   for (unsigned int i=0; i<N_STATS; i++)
-    stats[i] += backgroundBleu[i];
+    stats.push_back(sentStats[i] + backgroundBleu[i]);
 
   // scale bleu to roughly typical margins
   bleu = scoreFromStats(stats) * reference_tokens.size();
