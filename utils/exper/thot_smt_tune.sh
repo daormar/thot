@@ -351,32 +351,32 @@ create_cfg_file_for_tuning()
 }
 
 ##################
-obtain_llweights_names()
+obtain_smtweights_names()
 {
     local_line=`$bindir/thot_get_ll_weights | $HEAD -1`
-    local_llw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
-    echo ${local_llw_names}
+    local_smtw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
+    echo ${local_smtw_names}
 }
 
 ########
 obtain_loglin_nonneg_const()
 {
-    local_llw_names=`obtain_llweights_names`
-    echo "${local_llw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wp" || $i=="tseglenw") printf"0 "; else printf"1 "}'
+    local_smtw_names=`obtain_smtweights_names`
+    echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wp" || $i=="tseglenw") printf"0 "; else printf"1 "}'
 }
 
 ########
 obtain_loglin_dhs_va_opt_values()
 {
-    local_llw_names=`obtain_llweights_names`
-    echo "${local_llw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"-0 "}'
+    local_smtw_names=`obtain_smtweights_names`
+    echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"-0 "}'
 }
 
 ########
 obtain_loglin_iv_opt_values()
 {
-    local_llw_names=`obtain_llweights_names`
-    echo "${local_llw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'
+    local_smtw_names=`obtain_smtweights_names`
+    echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'
 }
 
 ########
@@ -406,8 +406,8 @@ loglin_downhill()
 ########
 obtain_loglin_upd_va_opt_values()
 {
-    local_llw_names=`obtain_llweights_names`
-    echo "${local_llw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"1 "}'
+    local_smtw_names=`obtain_smtweights_names`
+    echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"1 "}'
 }
 
 ########
@@ -432,7 +432,7 @@ loglin_upd()
 create_cfg_file_for_tuned_sys()
 {
     # Obtain log-linear weights
-    tmweights=`cat ${outd}/tm_adjw.out`
+    smtweights=`cat ${outd}/tm_adjw.out`
 
     # Print data regarding development files
     echo "# [SCRIPT_INFO] tool: thot_smt_tune"
@@ -443,11 +443,11 @@ create_cfg_file_for_tuned_sys()
 
     # Create file from command line file
     cat ${outd}/tune_loglin.cfg | $SED s'@/tm_dev/@/tm/@'| \
-        $AWK -v tmweights="$tmweights" \
+        $AWK -v smtweights="$smtweights" \
                             '{
                                if($1=="#" && $2=="-tmw")
                                {
-                                 printf"-tmw %s\n",tmweights
+                                 printf"-tmw %s\n",smtweights
                                }
                                else printf "%s\n",$0
                              }'
