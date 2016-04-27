@@ -14,10 +14,9 @@ _stackDecoder.h StackDecLmTypes.h StackDecEcModelTypes.h		\
 StackDecEcModelForNbUcatTypes.h SourceSegmentation.h			\
 TranslationConstraints.h TranslationConstraints.cc SmtStack.h		\
 _smtStack.h SmtMultiStackRec.h _smtMultiStack.h SmtModelTypes.h		\
-BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc			\
-BaseMiraScorer.h MiraBleu.h MiraBleu.cc \
-thot_ll_weight_upd_nblist.cc _smtModel.h ScoreCompDefs.h		\
-_phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc			\
+BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc BaseMiraScorer.h	\
+MiraBleu.h MiraBleu.cc thot_ll_weight_upd_nblist.cc _smtModel.h		\
+ScoreCompDefs.h _phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc	\
 PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc			\
 PhrNbestTransTableRef.h PhrNbestTransTablePrefKey.h			\
 PhrNbestTransTablePrefKey.cc PhrNbestTransTablePref.h			\
@@ -27,12 +26,12 @@ PhrHypNumcovJumpsEqClassF.h PhrHypNumcovJumpsEqClassF.cc		\
 PhrHypNumcovJumps01EqClassF.h PhrHypNumcovJumps01EqClassF.cc		\
 PhrHypEqClassF.h PhrHypEqClassF.cc PhrHypData.h PhrasePairCacheTable.h	\
 PhraseModelPars.h PhraseModelInfo.h _phraseHypothesisRec.h		\
-_phraseHypothesis.h PhraseCacheTable.h _phraseBasedTransModel.h		\
-OnlineTrainingPars.h NgramCacheTable.h _nbUncoupledAssistedTrans.h	\
-MultiStackTypes.h multi_stack_decoder_rec.h LangModelPars.h		\
-LangModelInfo.h HypStateDict.h HypStateDictData.h HypSortCriterion.h	\
-client_server_defs.h CatDefs.h bleu.h bleu.cc BaseStackDecoder.h	\
-BaseSmtStack.h BaseSmtMultiStack.h BaseSmtModel.h			\
+_phraseHypothesis.h PhraseCacheTable.h NbestTransCacheData.h		\
+_phraseBasedTransModel.h OnlineTrainingPars.h NgramCacheTable.h		\
+_nbUncoupledAssistedTrans.h MultiStackTypes.h multi_stack_decoder_rec.h	\
+LangModelPars.h LangModelInfo.h HypStateDict.h HypStateDictData.h	\
+HypSortCriterion.h client_server_defs.h CatDefs.h bleu.h bleu.cc	\
+BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h BaseSmtModel.h	\
 BasePhraseHypothesisRec.h BasePhraseHypothesis.h			\
 BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
 BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h HypDebugData.h	\
