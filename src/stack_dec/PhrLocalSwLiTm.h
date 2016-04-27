@@ -92,9 +92,12 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
 
   // class functions
 
-  // Constructor
+      // Constructor
   PhrLocalSwLiTm(void);
-  
+
+      // Virtual object copy
+  BaseSmtModel<PhrLocalSwLiTmHypRec<HypEqClassF> >* clone(void);
+
       // Init alignment model
   bool loadAligModel(const char* prefixFileName);
 
