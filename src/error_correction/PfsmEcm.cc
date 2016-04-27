@@ -70,28 +70,41 @@ void PfsmEcm::setWeights(Vector<float> wVec)
 {
   if(wVec.size()==5)
   {
-        // Check if model weights are greater than zero (negative
+        // Check if hProb is greater or equal to one (one or greater
+        // probabilities are not allowed since they don't define a valid
+        // error model)
+    bool hprob_ge_one=false;
+    if(wVec[1]>=1)
+    {
+      hprob_ge_one=true;
+    }
+    
+        // Check if model weights are lower or equal to zero (negative
         // weights produce negative probabilities, zero weights are not
         // allowed)
-    bool gtzero=true;
+    bool weights_le_zero=false;
     for(unsigned int i=0;i<wVec.size();++i)
     {
       if(wVec[i]<=0)
       {
-        gtzero=false;
+        weights_le_zero=true;
         break;
       }
     }
 
         // Set weights
-    if(gtzero)
+    if(!hprob_ge_one && !weights_le_zero)
     {
       ecModelPars=wVec;
       setErrorModel(wVec[0],wVec[1],wVec[2],wVec[3],wVec[4],true);
     }
     else
     {
-      cerr<<"Warning: ecm model weights cannot be negative or zero, model weights were not changed"<<endl;
+      if(hprob_ge_one)
+        cerr<<"Warning: hProb parameter cannot be equal or above one"<<endl;
+      if(weights_le_zero)
+        cerr<<"Warning: error correction model weights cannot be negative or zero"<<endl;
+      cerr<<"Error correction model weights were not changed"<<endl;
     }
   }
 }
