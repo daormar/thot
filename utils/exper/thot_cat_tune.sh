@@ -316,12 +316,41 @@ create_cfg_file_for_tuning()
                           }'
 }
 
+##################
+obtain_smtweights_names()
+{
+    local_line=`$bindir/thot_get_ll_weights | $GREP "\- SMT model weights="`
+    local_smtw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
+    echo ${local_smtw_names}
+}
+
+##################
+obtain_ecmweights_names()
+{
+    local_line=`$bindir/thot_get_ll_weights | $GREP "\- Error correction model weights="`
+    local_ecmw_names=`echo ${local_line} | $AWK '{for(i=6;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
+    echo ${local_ecmw_names}
+}
+
+##################
+obtain_catweights_names()
+{
+    local_line=`$bindir/thot_get_ll_weights | $GREP "\- Assisted translator weights="`
+    local_catw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
+    echo ${local_catw_names}
+}
+
 ########
 obtain_loglin_nonneg_const()
 {
-    smtval=`$SERVER --config 2>&1 | $GREP "\- Weights for the smt" | $AWK -F , '{for(i=1;i<=NF;++i) {if(i==1 || i==3) printf"0 "; else printf"1 "}}'`
-    ecval=`$SERVER --config 2>&1 | $GREP "\- Weights for the EC model" | $AWK -F , '{for(i=1;i<=NF;++i) printf"1 "}'`
-    catval=`$SERVER --config 2>&1 | $GREP "\- Weights for the assisted translator" | $AWK -F , '{for(i=1;i<=NF;++i) printf"1 "}'`
+    local_smtw_names=`obtain_smtweights_names`
+    smtval=`echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wp" || $i=="tseglenw") printf"0 "; else printf"1 "}'`
+
+    local_ecmw_names=`obtain_ecmweights_names`
+    ecval=`echo "${local_ecmw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'`
+
+    local_catw_names=`obtain_catweights_names`
+    catval=`echo "${local_catw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'`
 
     echo "$smtval $ecval $catval"
 }
@@ -329,12 +358,14 @@ obtain_loglin_nonneg_const()
 ########
 obtain_loglin_va_opt_values()
 {
-    smtval="-0 -0 -0 -0 -0 -0 -0 0"
-    # smtval=`$SERVER --config 2>&1 | $GREP "\- Weights for the smt" | $AWK -F , '{for(i=1;i<=NF;++i) printf"-0 "}'`
-    ecval="128 0.8 -0 -0 -0"
-    # ecval=`$SERVER --config 2>&1 | $GREP "\- Weights for the EC model" | $AWK -F , '{for(i=1;i<=NF;++i) printf"-0 "}'`
-    catval="1 -0"
-    # catval=`$SERVER --config 2>&1 | $GREP "\- Weights for the assisted translator" | $AWK -F , '{for(i=1;i<=NF;++i) printf"-0 "}'`
+    local_smtw_names=`obtain_smtweights_names`
+    smtval=`echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"-0 "}'`
+
+    local_ecmw_names=`obtain_ecmweights_names`
+    ecval=`echo "${local_ecmw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="vocSize") printf"128 "; else printf"-0 "}'`
+
+    local_catw_names=`obtain_catweights_names`
+    catval=`echo "${local_catw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"-0 "}'`
 
     echo "$smtval $ecval $catval"
 }
@@ -342,9 +373,14 @@ obtain_loglin_va_opt_values()
 ########
 obtain_loglin_iv_opt_values()
 {
-    smtval=`$SERVER --config 2>&1 | $GREP "\- Weights for the smt" | $AWK -F , '{for(i=1;i<=NF;++i) printf"1 "}'`
-    ecval=`$SERVER --config 2>&1 | $GREP "\- Weights for the EC model" | $AWK -F , '{for(i=1;i<=NF;++i) printf"1 "}'`
-    catval=`$SERVER --config 2>&1 | $GREP "\- Weights for the assisted translator" | $AWK -F , '{for(i=1;i<=NF;++i) printf"1 "}'`
+    local_smtw_names=`obtain_smtweights_names`
+    smtval=`echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'`
+
+    local_ecmw_names=`obtain_ecmweights_names`
+    ecval=`echo "${local_ecmw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'`
+
+    local_catw_names=`obtain_catweights_names`
+    catval=`echo "${local_catw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'`
 
     echo "$smtval $ecval $catval"
 }
@@ -393,9 +429,9 @@ separate_weights()
     NECW=`expr $NUMW - $NSMTW - $NCATW`
 
     # Separate weights in groups
-    SMTW=`echo "$weights" | ${AWK} -v ntmw=$NSMTW '{for(i=1;i<=ntmw;++i) printf"%s ",$i;}'`
-    ECW=`echo "$weights" | ${AWK} -v ntmw=$NSMTW -v necw=$NECW '{for(i=ntmw+1;i<=ntmw+necw;++i) printf"%s ",$i;}'`
-    CATW=`echo "$weights" | ${AWK} -v ntmw=$NSMTW -v necw=$NECW '{for(i=ntmw+necw+1;i<=NF;++i) printf"%s ",$i;}'`
+    SMTW=`echo "$weights" | ${AWK} -v nsmtw=$NSMTW '{for(i=1;i<=nsmtw;++i) printf"%s ",$i;}'`
+    ECW=`echo "$weights" | ${AWK} -v nsmtw=$NSMTW -v necw=$NECW '{for(i=nsmtw+1;i<=nsmtw+necw;++i) printf"%s ",$i;}'`
+    CATW=`echo "$weights" | ${AWK} -v nsmtw=$NSMTW -v necw=$NECW '{for(i=nsmtw+necw+1;i<=NF;++i) printf"%s ",$i;}'`
 }
 
 ########
@@ -416,10 +452,10 @@ create_cfg_file_for_tuned_sys()
 
     # Create file from command line file
     cat ${outd}/tune_loglin.cfg | $SED s'@/tm_dev/@/tm/@'| \
-        $AWK -v tmw="$SMTW" -v catw="$CATW" -v ecw="$ECW" \
+        $AWK -v smtw="$SMTW" -v catw="$CATW" -v ecw="$ECW" \
                             '{
-                               if($1=="#" && $2=="-tmw")
-                                 printf"-tmw %s\n",tmw
+                               if($1=="#" && $2=="-smtw")
+                                 printf"-smtw %s\n",smtw
                                else
                                {
                                 if($1=="#" && $2=="-catw")
