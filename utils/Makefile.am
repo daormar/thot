@@ -16,8 +16,7 @@ incr_models/thot_merge_ngram_counts incr_models/thot_get_ngram_counts	\
 incr_models/thot_get_ngram_counts_mr					\
 incr_models/thot_gen_init_file_with_jmlm_weights			\
 incr_models/thot_pbs_ilm_perp incr_models/thot_dhs_trgfunc_jmlm		\
-incr_models/thot_dhs_trgfunc_interplm incr_models/thot_repetition_rate	\
-incr_models/thot_gen_geom_wpm_file
+incr_models/thot_dhs_trgfunc_interplm incr_models/thot_repetition_rate
 
 sw_models_bin_scripts= sw_models/thot_prune_text_ilextable		\
 sw_models/thot_pbs_gen_best_sw_alig					\
