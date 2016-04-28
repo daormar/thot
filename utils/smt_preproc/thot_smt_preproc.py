@@ -1325,32 +1325,41 @@ class Decoder:
 
 ##################################################
 _white = re.compile("^(\s*).*?(\s*)$")
+def _tokenize(string):
+    leading_white, tailing_white = _white.search(string).groups()
+    m = _white.search(string)
+    tok = u' '.join(nltk.word_tokenize(string))
+    return leading_white + tok + tailing_white
+
 def tokenize(string):
 #        tokens = nltk.word_tokenize(line)
     #tokens = nltk.wordpunct_tokenize(str)
     #return tokens
     skel = annotated_string_to_xml_skeleton(string)
-    for idx, (is_text, element) in enumerate(skel):
-        if is_text:
-            leading_white, tailing_white = _white.search(element).groups()
-            m = _white.search(element)
-            tok = u' '.join(nltk.word_tokenize(element))
-            skel[idx][1] = leading_white + tok + tailing_white
+    for idx, (is_annotation, element) in enumerate(skel):
+        if is_annotation:
+            skel[idx][1] = [_tokenize(txt) for txt in element]
+        else:
+            skel[idx][1] = _tokenize(element)
+
     return xml_skeleton_to_annotated_string(skel)
 
 ##################################################
 def lowercase(string):
     #return str.lower()
     skel = annotated_string_to_xml_skeleton(string)
-    for idx, (is_text, element) in enumerate(skel):
-        if is_text:
+    for idx, (is_annotation, element) in enumerate(skel):
+        if is_annotation:
+            proc_element = [txt.lower() for txt in element]
+            skel[idx][1] = proc_element
+        else:
             skel[idx][1] = element.lower()
     return xml_skeleton_to_annotated_string(skel)
 
 ##################################################
-grp_ann = "p" #"phr_pair_annot"
-src_ann = "s" #"src_segm"
-trg_ann = "t" #"trg_segm"
+grp_ann = "phr_pair_annot"
+src_ann = "src_segm"
+trg_ann = "trg_segm"
 ann_patt = u"<%s>[ ]*<%s>(.+?)<\/%s>[ ]*<%s>(.+?)<\/%s>[ ]*<\/%s>" % (grp_ann,
                                                                       src_ann, src_ann,
                                                                       trg_ann, trg_ann,
@@ -1359,17 +1368,20 @@ _annotation = re.compile(ann_patt)
 def annotated_string_to_xml_skeleton(annotated):
     """
     Parses a string looking for annotations: <phr_pair_annot> <src_segm> <trg_segm>
-    returns a vector where each element is a pair (is_text, text/annotation)
+    returns a vector where each element is a pair (is_annotation, text/annotation)
     """
     offset = 0
     skeleton = list()
     for m in _annotation.finditer(annotated):
         if offset < m.start():
-            skeleton.append( [True, annotated[offset:m.start()]] )
+            is_annotation = False
+            skeleton.append( [is_annotation, annotated[offset:m.start()]] )
         offset = m.end()
-        skeleton.append( [False, m.groups()] )
+        is_annotation = True
+        skeleton.append( [is_annotation, m.groups()] )
     if offset < len(annotated):
-        skeleton.append( [True, annotated[offset:]] )
+        is_annotation = False
+        skeleton.append( [is_annotation, annotated[offset:]] )
     #print "A2S:", skeleton
     return skeleton
 
@@ -1379,8 +1391,8 @@ def xml_skeleton_to_annotated_string(skeleton):
     Joins back the elements in a skeleton to return an annotated string
     """
     annotated = u""
-    for is_text, element in skeleton:
-        if is_text:
+    for is_annotation, element in skeleton:
+        if not is_annotation:
             annotated += element
         else:
             annotated += "<%s><%s>%s</%s><%s>%s</%s></%s>" % (grp_ann,

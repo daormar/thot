@@ -161,7 +161,6 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
       sampleWoReplacement(nSents, indices);
       for (unsigned int z=0; z<nSents; z++) {
         unsigned int i = indices[z];
-
         assert (nblists[i].size() == scoreCompsVecs[i].size());
         HopeFearData hfd;
         HopeFear(references[i], nblists[i], scoreCompsVecs[i], wt, &hfd);
