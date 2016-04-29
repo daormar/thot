@@ -113,7 +113,7 @@ std::string XRCE_PrePosProcessor2::capitalize(std::string str)
   Vector<std::string> resultVec;
   std::string best_word;
   std::map<std::string,Vector<std::string> >::iterator mapCapitIter;
-  THOT_CURR_LM_TYPE::LM_State lm_state;
+  IncrJelMerNgramLM::LM_State lm_state;
   unsigned int i=0;
   
   lmodel.getStateForBeginOfSentence(lm_state);
@@ -135,7 +135,7 @@ std::string XRCE_PrePosProcessor2::capitalize(std::string str)
     mapCapitIter=capitMap.find(strVec[i]);
     if(mapCapitIter!=capitMap.end())
     {
-      THOT_CURR_LM_TYPE::LM_State lm_state_aux;
+      IncrJelMerNgramLM::LM_State lm_state_aux;
       LgProb best_lgp=-FLT_MAX;
       LgProb lgp;
           // Score capitalization options
@@ -171,7 +171,7 @@ std::string XRCE_PrePosProcessor2::capitalize(std::string str)
     mapCapitIter=capitMap.find(strVec[i]);
     if(mapCapitIter!=capitMap.end())
     {
-      THOT_CURR_LM_TYPE::LM_State lm_state_aux;
+      IncrJelMerNgramLM::LM_State lm_state_aux;
       LgProb best_lgp=-FLT_MAX;
       LgProb lgp;
           // Score capitalization options

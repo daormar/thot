@@ -56,7 +56,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "awkInputStream.h"
 #include "preprocess.h"
 #include "postprocess.h"
-#include "SmtPreprocLmTypes.h"
+#include <IncrJelMerNgramLM.h>
 
 using namespace std;
 
@@ -102,7 +102,7 @@ class XRCE_PrePosProcessor2: public BasePrePosProcessor
   std::map<std::string,Vector<std::string> > capitMap;
 
       // Language model members
-  THOT_CURR_LM_TYPE lmodel;
+  IncrJelMerNgramLM lmodel;
   std::string languageModelFileName;
 
   std::string capitalize(std::string str);
