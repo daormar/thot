@@ -60,7 +60,11 @@ class BaseNgramLM
  public:
 
   typedef LM_STATE LM_State;
+  
+      // Declarations related to dynamic class loading
+  typedef BaseNgramLM* create_t(std::string);
 
+  
       // Probability functions
   virtual LgProb getNgramLgProb(WordIndex w,const Vector<WordIndex>& vu)=0;
       // returns the probability of an n-gram, uv[0] stores the n-1'th
