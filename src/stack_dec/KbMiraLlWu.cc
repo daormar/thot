@@ -28,7 +28,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files --------------------------------------
 
 #include "KbMiraLlWu.h"
-#include "MiraBleu.h"
 
 #include <cstdlib>
 #include <cassert>
