@@ -63,7 +63,9 @@ class BasePhraseModel
     typedef BasePhraseTable::SrcTableNode SrcTableNode;
     typedef BasePhraseTable::TrgTableNode TrgTableNode;
 
-
+        // Declarations related to dynamic class loading
+    typedef BasePhraseModel* create_t(std::string);
+    
         // Functions to access model probabilities
 
     virtual Prob pk_tlen(unsigned int tlen,unsigned int k)=0;
