@@ -63,7 +63,6 @@ class BaseNgramLM
   
       // Declarations related to dynamic class loading
   typedef BaseNgramLM* create_t(std::string);
-
   
       // Probability functions
   virtual LgProb getNgramLgProb(WordIndex w,const Vector<WordIndex>& vu)=0;
@@ -141,11 +140,7 @@ class BaseNgramLM
   virtual void clearTempVars(void){}
 
       // Destructor
-  virtual ~BaseNgramLM(){};
-   
- protected:
-
-
+  virtual ~BaseNgramLM(){};   
 };
 
 //--------------- Template function definitions
