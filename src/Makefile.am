@@ -216,10 +216,9 @@ stack_dec/ThotDecoderState.h stack_dec/ThotDecoderPerUserVars.h		\
 stack_dec/ThotDecoder.h stack_dec/ThotDecoderCommonVars.h		\
 stack_dec/ThotDecoderClient.h stack_dec/SwModelPars.h			\
 stack_dec/SwModelInfo.h stack_dec/StackDecWgProcessorForAnlpTypes.h	\
-stack_dec/StackDecSwModelTypes.h stack_dec/StackDecPbModelTypes.h	\
-stack_dec/_stack_decoder_statistics.h stack_dec/_stackDecoderRec.h	\
-stack_dec/_stackDecoder.h stack_dec/StackDecLmTypes.h			\
-stack_dec/StackDecEcModelTypes.h					\
+stack_dec/StackDecSwModelTypes.h stack_dec/_stack_decoder_statistics.h	\
+stack_dec/_stackDecoderRec.h stack_dec/_stackDecoder.h			\
+stack_dec/StackDecLmTypes.h stack_dec/StackDecEcModelTypes.h		\
 stack_dec/StackDecEcModelForNbUcatTypes.h				\
 stack_dec/SourceSegmentation.h stack_dec/TranslationConstraints.h	\
 stack_dec/SmtStack.h stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h	\
