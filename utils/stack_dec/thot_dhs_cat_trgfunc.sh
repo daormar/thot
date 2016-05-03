@@ -10,15 +10,39 @@
 # of "thot_server".
 
 ########
+obtain_smtweights_names()
+{
+    local_line=`$bindir/thot_get_ll_weights | $GREP "\- SMT model weights="`
+    local_smtw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
+    echo ${local_smtw_names}
+}
+
+########
+obtain_ecmweights_names()
+{
+    local_line=`$bindir/thot_get_ll_weights | $GREP "\- Error correction model weights="`
+    local_ecmw_names=`echo ${local_line} | $AWK '{for(i=6;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
+    echo ${local_ecmw_names}
+}
+
+########
+obtain_catweights_names()
+{
+    local_line=`$bindir/thot_get_ll_weights | $GREP "\- Assisted translator weights="`
+    local_catw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
+    echo ${local_catw_names}
+}
+
+########
 num_smtw()
 {
-    ${SERVER} --config 2>&1 | grep "Weights for the smt model" | $AWK -F "," '{printf"%d",NF}'
+    obtain_smtweights_names | $AWK '{printf"%d",NF}'
 }
 
 ########
 num_catw()
 {
-    ${SERVER} --config 2>&1 | grep "Weights for the assisted translator" | $AWK -F "," '{printf"%d",NF}'
+    obtain_catweights_names | $AWK '{printf"%d",NF}'
 }
 
 ########
