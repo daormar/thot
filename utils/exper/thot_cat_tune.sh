@@ -410,13 +410,13 @@ loglin_downhill()
 ########
 num_smtw()
 {
-    ${SERVER} --config 2>&1 | grep "Weights for the smt model" | $AWK -F "," '{printf"%d",NF}'
+    obtain_smtweights_names | $AWK '{printf"%d",NF}'
 }
 
 ########
 num_catw()
 {
-    ${SERVER} --config 2>&1 | grep "Weights for the assisted translator" | $AWK -F "," '{printf"%d",NF}'
+    obtain_catweights_names | $AWK '{printf"%d",NF}'
 }
 
 ########
