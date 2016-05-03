@@ -54,7 +54,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "_phrSwTransModel.h"
 #include "BaseSmtModel.h"
 #include "StackDecSwModelTypes.h"
-#include "StackDecPbModelTypes.h"
 #include "StackDecLmTypes.h"
 #include "WordPenaltyModel.h"
 #include "KbMiraLlWu.h"
@@ -99,7 +98,6 @@ class ThotDecoder
   
       // Main functions
   void release(void);
-  void config(void);
 
       // Functions to initialize the decoder
   int initUsingCfgFile(std::string cfgFile,

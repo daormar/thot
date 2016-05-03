@@ -47,7 +47,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "_phraseBasedTransModel.h"
 #include "StackDecSwModelTypes.h"
 #include "SwModelInfo.h"
-#include "StackDecPbModelTypes.h"
 #include "PhraseModelInfo.h"
 #include "StackDecLmTypes.h"
 #include "LangModelInfo.h"
@@ -58,6 +57,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BaseEcmForWg.h"
 #include "BaseErrorCorrectionModel.h"
 
+#include "DynClassFactoryHandler.h"
 #include "options.h"
 #include "ErrorDefs.h"
 #include <iostream>
@@ -84,7 +84,7 @@ struct thot_get_ll_weights_pars
 
 //--------------- Function Declarations ------------------------------
 
-void get_ll_weights(const thot_get_ll_weights_pars& tdp);
+int get_ll_weights(const thot_get_ll_weights_pars& tdp);
 int translate_corpus(const thot_get_ll_weights_pars& tdp);
 Vector<string> stringToStringVector(string s);
 void version(void);
@@ -100,10 +100,10 @@ void takeParametersGivenArgcArgv(int argc,
                                  char *argv[],
                                  thot_get_ll_weights_pars& tdp);
 void printUsage(void);
-void printConfig(void);
 
 //--------------- Global variables -----------------------------------
 
+DynClassFactoryHandler dynClassFactoryHandler;
 LangModelInfo* langModelInfoPtr;
 PhraseModelInfo* phrModelInfoPtr;
 SwModelInfo* swModelInfoPtr;
@@ -123,18 +123,30 @@ int main(int argc, char *argv[])
   }
   else
   {
-    get_ll_weights(pars);
-    return OK;
+    int ret=get_ll_weights(pars);
+    return ret;
   }
 }
 
 //--------------- get_ll_weights function
-void get_ll_weights(const thot_get_ll_weights_pars& pars)
+int get_ll_weights(const thot_get_ll_weights_pars& pars)
 {
+      // Initialize class factories
+  int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
+  if(err==ERROR)
+    return ERROR;
+
   langModelInfoPtr=new LangModelInfo;
   langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
+
   phrModelInfoPtr=new PhraseModelInfo;
-  phrModelInfoPtr->invPbModelPtr=new THOT_CURR_PBM_TYPE;
+  phrModelInfoPtr->invPbModelPtr=dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(dynClassFactoryHandler.basePhraseModelInitPars);
+  if(phrModelInfoPtr->invPbModelPtr==NULL)
+  {
+    cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+
   swModelInfoPtr=new SwModelInfo;
   swModelInfoPtr->swAligModelPtr=new CURR_SWM_TYPE;
   swModelInfoPtr->invSwAligModelPtr=new CURR_SWM_TYPE;
@@ -218,6 +230,11 @@ void get_ll_weights(const thot_get_ll_weights_pars& pars)
   delete llWeightUpdaterPtr;
   delete ecModelPtr;
   delete assistedTransPtr;
+
+      // Release class factories
+  dynClassFactoryHandler.release_smt();
+
+  return OK;
 }
 
 //--------------- handleParameters function

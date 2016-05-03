@@ -37,7 +37,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
 #include "StackDecSwModelTypes.h"
-#include "StackDecPbModelTypes.h"
 #include "StackDecLmTypes.h"
 #include "SwModelInfo.h"
 #include "PhraseModelInfo.h"
@@ -45,6 +44,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "WordPenaltyModel.h"
 #include "KbMiraLlWu.h"
 
+#include "DynClassFactoryHandler.h"
 #include "ctimer.h"
 #include "options.h"
 #include "ErrorDefs.h"
@@ -137,10 +137,10 @@ void takeParametersGivenArgcArgv(int argc,
 int checkParameters(const thot_ms_alig_pars& tap);
 void printParameters(const thot_ms_alig_pars& tap);
 void printUsage(void);
-void printConfig(void);
 
 //--------------- Global variables -----------------------------------
 
+DynClassFactoryHandler dynClassFactoryHandler;
 LangModelInfo* langModelInfoPtr;
 PhraseModelInfo* phrModelInfoPtr;
 SwModelInfo* swModelInfoPtr;
@@ -185,12 +185,24 @@ int init_translator(const thot_ms_alig_pars& tap)
 {
   int err;
   
-  cerr<<"\n- Initializing model and test corpus...\n\n";
+  cerr<<"\n- Initializing aligner...\n\n";
+
+      // Initialize class factories
+  err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
+  if(err==ERROR)
+    return ERROR;
 
   langModelInfoPtr=new LangModelInfo;
   langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
+
   phrModelInfoPtr=new PhraseModelInfo;
-  phrModelInfoPtr->invPbModelPtr=new THOT_CURR_PBM_TYPE;
+  phrModelInfoPtr->invPbModelPtr=dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(dynClassFactoryHandler.basePhraseModelInitPars);
+  if(phrModelInfoPtr->invPbModelPtr==NULL)
+  {
+    cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+
   swModelInfoPtr=new SwModelInfo;
   swModelInfoPtr->swAligModelPtr=new CURR_SWM_TYPE;
   swModelInfoPtr->invSwAligModelPtr=new CURR_SWM_TYPE;
@@ -295,6 +307,8 @@ void release_translator(void)
   delete stackDecoderPtr;
   delete llWeightUpdaterPtr;
   delete smtModelPtr;
+
+  dynClassFactoryHandler.release_smt();
 }
 
 //---------------
@@ -491,11 +505,6 @@ int handleParameters(int argc,
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
-  }
-  if(readOption(argc,argv,"--config")!=-1)
-  {
-    printConfig();
     return ERROR;   
   }
   if(takeParameters(argc,argv,tap)==ERROR)
@@ -773,47 +782,6 @@ Vector<string> stringToStringVector(string s)
 }
 
 //---------------
-void printConfig(void)
-{
-  cerr <<"* Aligner configuration:"<<endl;
-      // Print translation model information
-  cerr<< "  - Statistical machine translation model type: "<<CURR_MODEL_LABEL<<endl;
-  if(strlen(CURR_MODEL_NOTES)!=0)
-  {
-    cerr << "  - Model notes: "<<CURR_MODEL_NOTES<<endl;
-  }
-
-      // Print language model information
-  cerr << "  - Language model type: "<<THOT_CURR_LM_LABEL<<endl;
-  if(strlen(THOT_CURR_LM_NOTES)!=0)
-  {
-    cerr << "  - Language model notes: "<<THOT_CURR_LM_NOTES<<endl;
-  }
-
-      // Print phrase-based model information
-  cerr << "  - Phrase-based model type: "<<THOT_CURR_PBM_LABEL<<endl;
-  if(strlen(THOT_CURR_PBM_NOTES)!=0)
-  {
-    cerr << "  - Phrase-based model notes: "<<THOT_CURR_PBM_NOTES<<endl;
-  }
-
-      // Print single-word model information
-  cerr << "  - Single-word model type: "<<CURR_SWM_LABEL<<endl;
-  if(strlen(CURR_SWM_NOTES)!=0)
-  {
-    cerr << "  - Single-word model notes: "<<CURR_SWM_NOTES<<endl;
-  }
-
-      // Print decoding algorithm information
-  cerr << "  - Translator type: "<<CURR_MSTACK_LABEL<<endl;
-  if(strlen(CURR_MSTACK_NOTES)!=0)
-  {
-    cerr << "  - Translator notes: "<<CURR_MSTACK_NOTES<<endl;
-  }
-  cerr << endl;
-}
-
-//---------------
 void printUsage(void)
 {
   cerr << "thot_ms_alig   [-c <string>] [-tm <string>] [-lm <string>]"<<endl;
@@ -823,7 +791,7 @@ void printUsage(void)
   cerr << "               [-G <int>] [-h <int>] [-be] [-nomon <int>]"<<endl;
   cerr << "               [-tmw <float> ... <float>]"<<endl;
   cerr << "               [-wg <string> [-wgp <float>] ]"<<endl;
-  cerr << "               [-v|-v1|-v2] [--help] [--version] [--config]"<<endl<<endl;
+  cerr << "               [-v|-v1|-v2] [--help] [--version]"<<endl<<endl;
   cerr << " -c <string>           : Configuration file (command-line options override"<<endl;
   cerr << "                         configuration file options)."<<endl;
   cerr << " -tm <string>          : Prefix of the translation model files."<<endl;

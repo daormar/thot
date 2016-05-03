@@ -34,12 +34,24 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------------------
 ThotDecoder::ThotDecoder()
 {
+      // Initialize class factories
+  int err=tdCommonVars.dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
+  if(err==ERROR)
+    exit(ERROR);
+
       // Create server variables
   tdCommonVars.langModelInfoPtr=new LangModelInfo;
   tdCommonVars.langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
   tdCommonVars.langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
+
   tdCommonVars.phrModelInfoPtr=new PhraseModelInfo;
-  tdCommonVars.phrModelInfoPtr->invPbModelPtr=new THOT_CURR_PBM_TYPE;
+  tdCommonVars.phrModelInfoPtr->invPbModelPtr=tdCommonVars.dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.basePhraseModelInitPars);
+  if(tdCommonVars.phrModelInfoPtr->invPbModelPtr==NULL)
+  {
+    cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
   tdCommonVars.swModelInfoPtr=new SwModelInfo;
   tdCommonVars.swModelInfoPtr->swAligModelPtr=new CURR_SWM_TYPE;
   tdCommonVars.swModelInfoPtr->invSwAligModelPtr=new CURR_SWM_TYPE;
@@ -137,133 +149,6 @@ void ThotDecoder::release(void)
   totalPrefixVec.clear();
   userIdToIdx.clear();
   idxDataReleased.clear();
-  
-  /////////// end of mutex 
-  pthread_mutex_unlock(&atomic_op_mut);
-}
-
-//--------------------------
-void ThotDecoder::config(void)
-{
-  pthread_mutex_lock(&atomic_op_mut);
-  /////////// begin of mutex 
-
-  LangModelInfo* langModelInfoPtr=new LangModelInfo;
-  langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
-  PhraseModelInfo* phrModelInfoPtr=new PhraseModelInfo;
-  phrModelInfoPtr->invPbModelPtr=new THOT_CURR_PBM_TYPE;
-  SwModelInfo* swModelInfoPtr=new SwModelInfo;
-  swModelInfoPtr->swAligModelPtr=new CURR_SWM_TYPE;
-  swModelInfoPtr->invSwAligModelPtr=new CURR_SWM_TYPE;
-  langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
-  BaseErrorCorrectionModel* ecModelPtr=new CURR_ECM_TYPE();
-  BaseLogLinWeightUpdater* llWeightUpdaterPtr=new KbMiraLlWu;
-
-      // Instantiate smt model
-  BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* modelPtr=new CURR_MODEL_TYPE();
-      // Link pointers
-  modelPtr->link_ll_weight_upd(tdCommonVars.llWeightUpdaterPtr);
-  _phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* >(modelPtr);
-  if(base_pbtm_ptr)
-  {
-    base_pbtm_ptr->link_lm_info(langModelInfoPtr);
-    base_pbtm_ptr->link_pm_info(phrModelInfoPtr);
-  }
-  _phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* >(modelPtr);
-  if(base_pbswtm_ptr)
-  {
-    base_pbswtm_ptr->link_swm_info(tdCommonVars.swModelInfoPtr);
-  }
-
-      // Instantiate assisted translator
-  BaseAssistedTrans<CURR_MODEL_TYPE>* assistedTransPtr=new CURR_AT_TYPE<CURR_MODEL_TYPE>();
-  
-      // Print server configuration
-  cerr<<"* Server configuration"<<endl;
-      // Print translation model information
-  cerr<<"  - Statistical machine translation model type: "<<CURR_MODEL_LABEL<<endl;
-  if(strlen(CURR_MODEL_NOTES)!=0)
-  {
-    cerr << "  - Model notes: "<<CURR_MODEL_NOTES<<endl;
-  }
-  cerr<<"  - Weights for the smt model and their default values: ";
-  modelPtr->printWeights(cerr);
-  cerr << endl;
-      
-      // Print language model information
-  cerr << "  - Language model type: "<<THOT_CURR_LM_LABEL<<endl;
-  if(strlen(THOT_CURR_LM_NOTES)!=0)
-  {
-    cerr << "  - Language model notes: "<<THOT_CURR_LM_NOTES<<endl;
-  }
-    
-      // Print phrase-based model information
-  cerr << "  - Phrase-based model type: "<<THOT_CURR_PBM_LABEL<<endl;
-  if(strlen(THOT_CURR_PBM_NOTES)!=0)
-  {
-    cerr << "  - Phrase-based model notes: "<<THOT_CURR_PBM_NOTES<<endl;
-  }
-
-      // Print single-word model information
-  cerr << "  - Single-word model type: "<<CURR_SWM_LABEL<<endl;
-  if(strlen(CURR_SWM_NOTES)!=0)
-  {
-    cerr << "  - Single-word model notes: "<<CURR_SWM_NOTES<<endl;
-  }
-
-      // Print decoding algorithm information
-  cerr<<"  - Translator type: "<<CURR_MSTACK_LABEL<<endl;
-      
-      // Print assisted translator information
-  cerr<<"  - Assisted translator type: "<<CURR_AT_LABEL<<endl;
-  WgUncoupledAssistedTrans<CURR_MODEL_TYPE>* wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<CURR_MODEL_TYPE>*>(assistedTransPtr);
-  if(!wgUncoupledAssistedTransPtr)
-  {
-    cerr<<"  - Weights for the assisted translator and their default values: ";
-    assistedTransPtr->printWeights(cerr);
-    cerr << endl;
-  }
-  else
-  {
-    if(tdCommonVars.curr_ecm_valid_for_wg)
-    {
-      cerr<<"  - Weights for the assisted translator and their default values: ";
-      assistedTransPtr->printWeights(cerr);
-      cerr << endl;
-    }
-    else
-    {
-      cerr<<"Fatal error! current error correcting model cannot be combined with word-graph based assisted translators"<<endl;
-    }
-  }
-
-      // Print error correcting model information 
-  cerr<<"  - EC model: "<<CURR_ECM_LABEL<<endl;
-  cerr<<"  - Weights for the EC model and their default values: ";
-  ecModelPtr->printWeights(cerr);
-  cerr << endl;
-  cerr<<"  - EC model valid for word-graphs: "<<tdCommonVars.curr_ecm_valid_for_wg<<endl;
-    
-      // Print error correcting model information for uncoupled cat
-  cerr<<"  - EC model for n-best uncoupled cat type: "<<CURR_ECM_NB_UCAT_LABEL<<endl;
-      
-      // Print word-graph processor information
-  cerr<<"  - Word-graph processor: "<<CURR_WGP_LABEL<<endl;
-  cerr<<endl;
-
-      // Release pointers
-  delete langModelInfoPtr->lModelPtr;
-  delete langModelInfoPtr->wpModelPtr;
-  delete langModelInfoPtr;
-  delete phrModelInfoPtr->invPbModelPtr;
-  delete phrModelInfoPtr;
-  delete swModelInfoPtr->swAligModelPtr;
-  delete swModelInfoPtr->invSwAligModelPtr;
-  delete swModelInfoPtr;
-  delete llWeightUpdaterPtr;
-  delete modelPtr;
-  delete ecModelPtr;
-  delete assistedTransPtr;
   
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -2508,6 +2393,9 @@ ThotDecoder::~ThotDecoder()
   delete tdCommonVars.smtModelPtr;
   delete tdCommonVars.ecModelPtr;
   delete tdCommonVars.llWeightUpdaterPtr;
+
+      // Release class factory handler
+  tdCommonVars.dynClassFactoryHandler.release_smt();
   
       // Destroy mutexes and conditions
   pthread_mutex_destroy(&user_id_to_idx_mut);

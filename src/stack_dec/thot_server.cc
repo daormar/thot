@@ -62,9 +62,11 @@ using namespace std;
 
 int process_request(int s,
                     const thot_server_pars& tds_pars,
+                    const ThotDecoderUserPars& tdu_pars,
                     bool &end);
 int processParameters(thot_server_pars tds_pars);
-int start_server(thot_server_pars tds_pars);
+int start_server(thot_server_pars tds_pars,
+                 ThotDecoderUserPars tdu_pars);
 void sigchld_handler(int s);
 int handleParameters(int argc,
                      char *argv[],
@@ -75,7 +77,6 @@ int takeParameters(int argc,
 int checkParameters(thot_server_pars& tds_pars);
 void printParameters(thot_server_pars tds_pars);
 void printUsage(void);
-void printConfig(void);
 void version(void);
 
 //--------------- Type definitions ------------------------------------
@@ -83,8 +84,10 @@ void version(void);
 
 //--------------- Global variables ------------------------------------
 
-ThotDecoder thotDecoder;
-ThotDecoderUserPars tdup;
+ThotDecoder* thotDecoderPtr;
+    // NOTE: a pointer is used to avoid early call to class constructor
+    // (it is a costly process that otherwise would be executed even if
+    // only the help message is to be printed)
 
 //--------------- Function Definitions --------------------------------
 
@@ -108,16 +111,24 @@ int main(int argc,char *argv[])
 int processParameters(thot_server_pars tds_pars)
 {
       // Process configuration file
-  int ret=thotDecoder.initUsingCfgFile(tds_pars.c_str,tdup,tds_pars.v_given);
-  if(ret==ERROR) return ERROR;
+  ThotDecoderUserPars tdu_pars;
+  thotDecoderPtr=new ThotDecoder;
+  int ret=thotDecoderPtr->initUsingCfgFile(tds_pars.c_str,tdu_pars,tds_pars.v_given);
+  if(ret==ERROR)
+  {
+    delete thotDecoderPtr;
+    return ERROR;
+  }
 
       // Parameters ok, start server...
-  int retCode=start_server(tds_pars);
+  int retCode=start_server(tds_pars,tdu_pars);
+  delete thotDecoderPtr;
   return retCode;
 }
 
 //--------------- start_server function
-int start_server(thot_server_pars tds_pars)
+int start_server(thot_server_pars tds_pars,
+                 ThotDecoderUserPars tdu_pars)
 {
   int sockfd, new_fd;  // Use sockfd to listen to new connections
                        // through new_fd
@@ -183,7 +194,7 @@ int start_server(thot_server_pars tds_pars)
       cerr<<"Server: got connection from "<<inet_ntoa(their_addr.sin_addr)<<endl;
     }
 
-    process_request(new_fd,tds_pars,end); 
+    process_request(new_fd,tds_pars,tdu_pars,end); 
   
 //    if (!fork())
 //    { // this is the child process
@@ -208,6 +219,7 @@ void sigchld_handler(int /*s*/)
 //--------------- process_requests function
 int process_request(int s,
                     const thot_server_pars& tds_pars,
+                    const ThotDecoderUserPars& tdu_pars,
                     bool &end)
 {
       // Variable declarations
@@ -232,7 +244,7 @@ int process_request(int s,
   if(verbose) cerr<<"Server: received request from user "<<user_id<<endl;
   
       // Init user parameters
-  retVal=thotDecoder.initUserPars(user_id,tdup,verbose);
+  retVal=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
   if(retVal==ERROR)
   {
     end=true;
@@ -246,61 +258,61 @@ int process_request(int s,
     case OL_TRAIN_PAIR:
       BasicSocketUtils::recvStlStr(s,stlStrSrc);
       BasicSocketUtils::recvStlStr(s,stlStrRef);
-      retVal=thotDecoder.onlineTrainSentPair(user_id,stlStrSrc.c_str(),stlStrRef.c_str(),verbose);
+      retVal=thotDecoderPtr->onlineTrainSentPair(user_id,stlStrSrc.c_str(),stlStrRef.c_str(),verbose);
       BasicSocketUtils::writeInt(s,(int)retVal);
       break;
 
     case TRAIN_ECM:
       BasicSocketUtils::recvStlStr(s,stlStr1);
       BasicSocketUtils::recvStlStr(s,stlStr2);
-      retVal=thotDecoder.trainEcm(user_id,stlStr1.c_str(),stlStr2.c_str(),verbose);
+      retVal=thotDecoderPtr->trainEcm(user_id,stlStr1.c_str(),stlStr2.c_str(),verbose);
       BasicSocketUtils::writeInt(s,(int)retVal);
       break;
 
     case TRANSLATE_SENT:
       BasicSocketUtils::recvStlStr(s,stlStr);
-      thotDecoder.translateSentence(user_id,stlStr.c_str(),result,verbose);
+      thotDecoderPtr->translateSentence(user_id,stlStr.c_str(),result,verbose);
       BasicSocketUtils::writeStr(s,result.c_str());
       break;
 
     case VERIFY_COV:
       BasicSocketUtils::recvStlStr(s,stlStrSrc);
       BasicSocketUtils::recvStlStr(s,stlStrRef);
-      retVal=thotDecoder.sentPairVerCov(user_id,stlStrSrc.c_str(),stlStrRef.c_str(),result,verbose);
+      retVal=thotDecoderPtr->sentPairVerCov(user_id,stlStrSrc.c_str(),stlStrRef.c_str(),result,verbose);
       BasicSocketUtils::writeStr(s,result.c_str());
       break;
 
     case START_CAT:
       BasicSocketUtils::recvStlStr(s,stlStr);
-      thotDecoder.startCat(user_id,stlStr.c_str(),catResult,verbose);
+      thotDecoderPtr->startCat(user_id,stlStr.c_str(),catResult,verbose);
       BasicSocketUtils::writeStr(s,catResult.c_str());
       break;
 
     case ADD_STR_TO_PREF:
       BasicSocketUtils::recvStlStr(s,stlStr);
-      thotDecoder.addStrToPref(user_id,stlStr.c_str(),emptyRejWordsSet,catResult,verbose);
+      thotDecoderPtr->addStrToPref(user_id,stlStr.c_str(),emptyRejWordsSet,catResult,verbose);
       BasicSocketUtils::writeStr(s,catResult.c_str());
       break;
 
     case RESET_PREF:
-      thotDecoder.resetPrefix(user_id);
+      thotDecoderPtr->resetPrefix(user_id);
       BasicSocketUtils::writeInt(s,OK);
       break;
       
     case CLEAR_TRANS:
-      thotDecoder.clearTrans(verbose);
+      thotDecoderPtr->clearTrans(verbose);
       BasicSocketUtils::writeInt(s,(int)retVal);
       break;
 
     case PRINT_MODELS:
-      retVal=thotDecoder.printModels(verbose);
+      retVal=thotDecoderPtr->printModels(verbose);
       BasicSocketUtils::writeInt(s,(int)retVal);
       break;
 
     case END_SERVER: end=true;
       if(verbose) cerr<<"Server: shutting down"<<endl;
       BasicSocketUtils::writeInt(s,1);
-      thotDecoder.clearTrans(verbose);
+      thotDecoderPtr->clearTrans(verbose);
       break;
   }
   return retVal;
@@ -319,11 +331,6 @@ int handleParameters(int argc,
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
-  }
-  if(readOption(argc,argv,"--config")!=-1)
-  {
-    printConfig();
     return ERROR;   
   }
   
@@ -434,20 +441,13 @@ void printUsage(void)
 {
   cerr<<"thot_server written by Daniel Ortiz"<<endl;
   cerr<<"Usage: thot_server    -c <cfg_file>"<<endl;
-  cerr<<"                      [-p <int>] [ -v ] [--help] [--version] [--config]"<<endl;
+  cerr<<"                      [-p <int>] [ -v ] [--help] [--version]"<<endl;
   cerr<<endl;
   cerr<<"-c <cfg_file>  Configuration file"<<endl<<endl;  
   cerr<<"-p <int>       Port used by the server"<<endl<<endl;  
   cerr<<"-v             Verbose mode"<<endl<<endl;
   cerr<<"--help         Print this help and exit"<<endl<<endl;
   cerr<<"--version      Output version information and exit"<<endl<<endl;
-  cerr<<"--config       Show server configuration and exit"<<endl<<endl;
-}
-
-//--------------- printConfig() function
-void printConfig(void)
-{
-  thotDecoder.config();
 }
 
 //--------------- version function

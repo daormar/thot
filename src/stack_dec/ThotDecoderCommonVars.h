@@ -33,8 +33,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
 #include <WgHandler.h>
-//#include <casmacat/IWeightUpdateEngine.h>
-//using namespace casmacat;
+#include "DynClassFactoryHandler.h"
 
 using namespace std;
 
@@ -51,6 +50,8 @@ class ThotDecoderCommonVars
   BaseErrorCorrectionModel* ecModelPtr;
   bool curr_ecm_valid_for_wg;
   BaseLogLinWeightUpdater* llWeightUpdaterPtr;
+
+  DynClassFactoryHandler dynClassFactoryHandler;
 };
 
 #endif
