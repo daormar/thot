@@ -13,6 +13,10 @@ if CODE_TESTING
 TESTING_PROGS= thot_test
 endif
 
+if CASMACAT_LIB_ENABLED
+CASMACAT_LIBS= libthot_casmacat.la
+endif
+
 bin_PROGRAMS = thot_ilm_perp thot_lm_weight_upd thot_calc_swm_lgprob	\
 thot_gen_sw_model thot_sort_bin_ilextable thot_sort_bin_ihmmatable	\
 thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
@@ -23,11 +27,8 @@ thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig			\
 thot_ll_weight_upd_nblist thot_client thot_server thot_get_ll_weights	\
 thot_calc_bleu $(TESTING_PROGS)
 
-if CASMACAT_LIB_ENABLED
-lib_LTLIBRARIES = libthot.la libthot_casmacat.la
-else
-lib_LTLIBRARIES = libthot.la
-endif
+lib_LTLIBRARIES = libthot.la libwba_incr_phrase_model_factory.la	\
+$(CASMACAT_LIBS)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
@@ -39,7 +40,7 @@ AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
 
 AM_CFLAGS= $(AM_CXXFLAGS)
 
-LDADD = $(LGMP) $(ZLIB) $(CPPUNIT)
+LDADD = $(LGMP) $(ZLIB) $(CPPUNIT) -ldl
 
 # sources
 common_src_h= thot_config.h
@@ -290,6 +291,12 @@ $(smt_preproc_defs) $(error_correction_h) $(error_correction_defs)	\
 $(downhill_simplex_h) $(downhill_simplex_defs) $(stack_dec_h)		\
 $(stack_dec_defs) $(exper_h) $(exper_defs)
 
+# Class factories
+
+##########
+wba_incr_phrase_model_factory_h= 
+wba_incr_phrase_model_factory_defs= phrase_models/WbaIncrPhraseModelFactory.cc
+
 # programs
 
 ##########
@@ -408,9 +415,17 @@ $(exper_defs) $(casmacat_engines_h) $(casmacat_aligner_h)		\
 $(casmacat_confid_h)
 
 # libraries
+
+##########
 libthot_la_SOURCES= $(thot_sources)
 libthot_la_LIBADD= $(ZLIB) $(LGMP)
 
+##########
+libwba_incr_phrase_model_factory_la_SOURCES= $(wba_incr_phrase_model_factory_h)	\
+$(wba_incr_phrase_model_factory_defs)
+libwba_incr_phrase_model_factory_la_LIBADD= $(ZLIB) $(LGMP)
+
+##########
 libthot_casmacat_la_SOURCES= $(casmacat_engines_h)			\
 $(casmacat_engines_defs) $(casmacat_aligner_h) $(casmacat_aligner_defs)	\
 $(casmacat_confid_h) $(casmacat_confid_defs)
