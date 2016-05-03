@@ -1,4 +1,4 @@
-SUBDIRS= cfg_templates toy_corpus
+SUBDIRS= cfg_templates toy_corpus ini_files
 
 EXTRA_DIST = thot_check_installation.sh
 
