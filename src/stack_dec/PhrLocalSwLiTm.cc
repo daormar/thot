@@ -720,7 +720,7 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
 // phrase-extract algorithm. The required functionality is only
 // implemented at this moment by the pb models deriving from the
 // _wbaIncrPhraseModel class
-  
+
   _wbaIncrPhraseModel* wbaIncrPhraseModelPtr=dynamic_cast<_wbaIncrPhraseModel* >(phrModelInfoPtr->invPbModelPtr);
   if(wbaIncrPhraseModelPtr)
   {
@@ -769,18 +769,18 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
         // Subtract current phrase model current sufficient statistics
     for(unsigned int i=0;i<vecVecPhPair[mapped_n].size();++i)
     {
-      phrModelInfoPtr->invPbModelPtr->strIncrCountsOfEntry(vecVecPhPair[mapped_n][i].s_,
-                                                           vecVecPhPair[mapped_n][i].t_,
-                                                           -1);
+      wbaIncrPhraseModelPtr->strIncrCountsOfEntry(vecVecPhPair[mapped_n][i].s_,
+                                                  vecVecPhPair[mapped_n][i].t_,
+                                                  -1);
     }
 
         // Add new phrase model current sufficient statistics
     if(verbose) cerr<<"List of extracted consistent phrase pairs:"<<endl;
     for(unsigned int i=0;i<vecPhPair.size();++i)
     {
-      phrModelInfoPtr->invPbModelPtr->strIncrCountsOfEntry(vecPhPair[i].s_,
-                                                           vecPhPair[i].t_,
-                                                           1);
+      wbaIncrPhraseModelPtr->strIncrCountsOfEntry(vecPhPair[i].s_,
+                                                  vecPhPair[i].t_,
+                                                  1);
       if(verbose)
       {
         for(unsigned int j=0;j<vecPhPair[i].s_.size();++j) cerr<<vecPhPair[i].s_[j]<<" ";

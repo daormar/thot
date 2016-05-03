@@ -54,6 +54,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "PhrLocalSwLiTmHypRec.h"
 #include <BaseStepwiseAligModel.h>
 #include "_wbaIncrPhraseModel.h"
+#include "BaseIncrPhraseModel.h"
 #include <PhrasePair.h>
 #include <PhraseExtractParameters.h>
 #include "EditDistForVec.h"

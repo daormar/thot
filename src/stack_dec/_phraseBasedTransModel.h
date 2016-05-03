@@ -161,6 +161,7 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   
       // Phrase model members
   PhraseModelInfo* phrModelInfoPtr;
+      // Members useful for caching data
   PhrasePairCacheTable cachedDirectPhrScores;
   PhrasePairCacheTable cachedInversePhrScores;
 
@@ -2059,8 +2060,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::genListOfTransLongerThanPref(Vector<Wor
                                                                       unsigned int ntrgSize,
                                                                       NbestTableNode<Vector<WordIndex> >& nbt)
 {
-  BaseIncrPhraseModel::SrcTableNode srctn;
-  BaseIncrPhraseModel::SrcTableNode::iterator srctnIter;
+  BasePhraseModel::SrcTableNode srctn;
+  BasePhraseModel::SrcTableNode::iterator srctnIter;
   Vector<WordIndex> remainingPref;
 
       // clear nbt
@@ -2153,8 +2154,8 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getNbestTransFor_s_(Vector<WordIndex> s
   }  
   return b;
 #else
-  BaseIncrPhraseModel::SrcTableNode srctn;
-  BaseIncrPhraseModel::SrcTableNode::iterator srctnIter;
+  BasePhraseModel::SrcTableNode srctn;
+  BasePhraseModel::SrcTableNode::iterator srctnIter;
   bool ret;
 
       // Obtain the whole list of translations

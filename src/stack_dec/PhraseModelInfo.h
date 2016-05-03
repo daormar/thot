@@ -25,14 +25,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "BaseIncrPhraseModel.h"
+#include "BasePhraseModel.h"
 #include "PhraseModelPars.h"
 
 //--------------- PhraseModelInfo struct
 
 struct PhraseModelInfo
 {
-  BaseIncrPhraseModel* invPbModelPtr;
+  BasePhraseModel* invPbModelPtr;
   PhraseModelPars phraseModelPars;
 };
 
