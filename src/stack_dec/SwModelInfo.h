@@ -47,11 +47,11 @@ typedef BaseSwAligModel<Vector<Prob> >::PpInfo PpInfo;
 struct SwModelInfo
 {
       // sw model members
-  BaseSwAligModel<Vector<Prob> >* swAligModelPtr; // CURR_SWM_TYPE swAligModel;
+  BaseSwAligModel<Vector<Prob> >* swAligModelPtr;
   SwModelPars swModelPars;
 
       // Inverse sw model members
-  BaseSwAligModel<Vector<Prob> >* invSwAligModelPtr; // CURR_SWM_TYPE invSwAligModel;
+  BaseSwAligModel<Vector<Prob> >* invSwAligModelPtr;
   SwModelPars invSwModelPars;
 
       // Confidence interval for length model
