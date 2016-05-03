@@ -9,7 +9,8 @@ $(exper_bin_scripts)
 
 nlp_common_bin_scripts= nlp_common/thot_shuffle				\
 nlp_common/thot_obtain_info_from_verbose_ppl				\
-nlp_common/thot_extract_sents_by_ln nlp_common/thot_corpus_length
+nlp_common/thot_extract_sents_by_ln nlp_common/thot_corpus_length	\
+nlp_common/thot_handle_ini_files
 
 incr_models_bin_scripts= incr_models/thot_pbs_get_ngram_counts		\
 incr_models/thot_merge_ngram_counts incr_models/thot_get_ngram_counts	\
