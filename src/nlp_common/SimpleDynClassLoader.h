@@ -27,7 +27,7 @@ class SimpleDynClassLoader
   SimpleDynClassLoader();
 
       // Functions to open and close modules
-  bool open_module(std::string module);
+  bool open_module(std::string module,int verbose=1);
   void close_module();
 
       // Function to create objects
@@ -65,10 +65,13 @@ void SimpleDynClassLoader<T>::close_module()
 
 //---------------------------------
 template <class T>
-bool SimpleDynClassLoader<T>::open_module(std::string module)
+bool SimpleDynClassLoader<T>::open_module(std::string module,int verbose/*=1*/)
 {
       // Clear previous data
   close_module();
+
+  if(verbose>=1)
+    std::cerr<<"Opening module "<<module<<endl;
   
   dll_handle = dlopen(module.c_str(), RTLD_LAZY);
 
