@@ -17,11 +17,6 @@ version()
     echo "thot is GNU software written by Daniel Ortiz"
 }
 
-config()
-{
-    ${bindir}/thot_ms_dec --config
-}
-
 usage()
 {
     echo "thot_aligner    [-pr <int>] [-c <string>] [-tm <string>] [-lm <string>]"
@@ -30,7 +25,7 @@ usage()
     echo "                [-h <int>] [-tmw <float> ... <float>]"
     echo "                [-wg <string> [-wgp <float>] ]"
     echo "                [-sdir <string>] [-qs <string>] [-v|-v1|-v2]"
-    echo "                [-debug] [--help] [--version] [--config]"
+    echo "                [-debug] [--help] [--version]"
     echo ""
     echo " -pr <int>         : Number of processors."
     echo " -c <string>       : Configuration file (command-line options override"
@@ -78,7 +73,6 @@ usage()
     echo "                     (for debugging purposes)"
     echo " --help            : Display this help and exit"
     echo " --version         : Output version information and exit"
-    echo " --config          : Show current configuration."
 }
 
 str_is_option()
@@ -342,9 +336,6 @@ while [ $# -ne 0 ]; do
             exit 0
             ;;
         "--version") version
-            exit 0
-            ;;
-        "--config") config
             exit 0
             ;;
         "-pr") shift
