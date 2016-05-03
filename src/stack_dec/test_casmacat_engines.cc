@@ -18,11 +18,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: test.cc                                                  */
+/* Module: test_casmacat_engines                                    */
 /*                                                                  */
-/* Definitions file: test.cc                                        */
+/* Definitions file: test_casmacat_engines.cc                       */
 /*                                                                  */
-/* Description: tests the casmacat engines.                         */
 /*                                                                  */   
 /********************************************************************/
 
@@ -56,7 +55,7 @@ int casmacat_imt_engine(void);
 //--------------- Function Definitions -------------------------------
 
 
-//--------------- main function
+//---------------
 int main()
 {
   int ret;
