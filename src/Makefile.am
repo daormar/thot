@@ -30,10 +30,11 @@ lib_LTLIBRARIES = libthot.la
 endif
 
 # flags
-AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			\
--I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models	\
--I$(srcdir)/smt_preproc -I$(srcdir)/error_correction			\
--I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec			\
+AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
+-I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models		\
+-I$(srcdir)/smt_preproc -I$(srcdir)/error_correction				\
+-I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec				\
+-DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\"	\
 -I$(CASMACAT_SERVER_LIB_HOME)/src/include
 
 AM_CFLAGS= $(AM_CXXFLAGS)
@@ -60,14 +61,15 @@ nlp_common/getline.h nlp_common/getdelim.h nlp_common/ErrorDefs.h	\
 nlp_common/ctimer.h nlp_common/Count.h nlp_common/ClassDic.h		\
 nlp_common/Bitset.h nlp_common/BasicSocketUtils.h			\
 nlp_common/BaseNgramLM.h nlp_common/BaseIncrNgramLM.h			\
-nlp_common/BackoffNode.h nlp_common/awkInputStream.h
+nlp_common/BackoffNode.h nlp_common/awkInputStream.h			\
+nlp_common/DynClassFileHandler.h nlp_common/SimpleDynClassLoader.h
 nlp_common_defs= nlp_common/WordAligMatrix.cc				\
 nlp_common/StrProcUtils.cc nlp_common/SingleWordVocab.cc		\
 nlp_common/Prob.cc nlp_common/printAligFuncs.cc nlp_common/options.cc	\
 nlp_common/mem_alloc_utils.cc nlp_common/MathFuncs.cc			\
 nlp_common/getline.c nlp_common/getdelim.c nlp_common/ctimer.c		\
 nlp_common/ClassDic.cc nlp_common/BasicSocketUtils.cc			\
-nlp_common/awkInputStream.cc
+nlp_common/awkInputStream.cc nlp_common/DynClassFileHandler.cc
 
 incr_models_h= incr_models/vecx_x_incr_interp_ecpm.h			\
 incr_models/vecx_x_incr_enc.h incr_models/vecx_x_incr_ecpm.h		\
@@ -207,12 +209,12 @@ error_correction/BaseErrorCorrectionModel.cc
 downhill_simplex_h= downhill_simplex/step_by_step_dhs.h
 downhill_simplex_defs= downhill_simplex/step_by_step_dhs.c
 
-stack_dec_h= stack_dec/WgUncoupledAssistedTrans.h			\
-stack_dec/ThotDecoderUserPars.h stack_dec/ThotDecoderState.h		\
-stack_dec/ThotDecoderPerUserVars.h stack_dec/ThotDecoder.h		\
-stack_dec/ThotDecoderCommonVars.h stack_dec/ThotDecoderClient.h		\
-stack_dec/SwModelPars.h stack_dec/SwModelInfo.h				\
-stack_dec/StackDecWgProcessorForAnlpTypes.h				\
+stack_dec_h= stack_dec/DynClassFactoryHandler.h				\
+stack_dec/WgUncoupledAssistedTrans.h stack_dec/ThotDecoderUserPars.h	\
+stack_dec/ThotDecoderState.h stack_dec/ThotDecoderPerUserVars.h		\
+stack_dec/ThotDecoder.h stack_dec/ThotDecoderCommonVars.h		\
+stack_dec/ThotDecoderClient.h stack_dec/SwModelPars.h			\
+stack_dec/SwModelInfo.h stack_dec/StackDecWgProcessorForAnlpTypes.h	\
 stack_dec/StackDecSwModelTypes.h stack_dec/StackDecPbModelTypes.h	\
 stack_dec/_stack_decoder_statistics.h stack_dec/_stackDecoderRec.h	\
 stack_dec/_stackDecoder.h stack_dec/StackDecLmTypes.h			\
@@ -222,8 +224,8 @@ stack_dec/SourceSegmentation.h stack_dec/TranslationConstraints.h	\
 stack_dec/SmtStack.h stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h	\
 stack_dec/_smtMultiStack.h stack_dec/SmtModelTypes.h			\
 stack_dec/BaseLogLinWeightUpdater.h stack_dec/KbMiraLlWu.h		\
-stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h \
-stack_dec/MiraBleuLenLim.h stack_dec/_smtModel.h	\
+stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h				\
+stack_dec/MiraBleuLenLim.h stack_dec/_smtModel.h			\
 stack_dec/ScoreCompDefs.h stack_dec/_phrSwTransModel.h			\
 stack_dec/PhrScoreInfo.h stack_dec/PhrNbestTransTableRefKey.h		\
 stack_dec/PhrNbestTransTableRef.h stack_dec/PhrNbestTransTablePrefKey.h	\
@@ -250,12 +252,11 @@ stack_dec/BaseHypState.h stack_dec/BaseHypothesisRec.h			\
 stack_dec/BaseHypothesis.h stack_dec/HypDebugData.h			\
 stack_dec/BaseAssistedTrans.h stack_dec/AssistedTransTypes.h		\
 stack_dec/_assistedTrans.h
-stack_dec_defs= stack_dec/TranslationConstraints.cc			\
-stack_dec/KbMiraLlWu.cc \
-stack_dec/MiraBleu.cc stack_dec/MiraBleuLenLim.cc \
-stack_dec/ThotDecoderClient.cc			\
-stack_dec/ThotDecoder.cc stack_dec/PhrScoreInfo.cc			\
-stack_dec/PhrNbestTransTableRefKey.cc					\
+stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
+stack_dec/TranslationConstraints.cc stack_dec/KbMiraLlWu.cc		\
+stack_dec/MiraBleu.cc stack_dec/MiraBleuLenLim.cc			\
+stack_dec/ThotDecoderClient.cc stack_dec/ThotDecoder.cc			\
+stack_dec/PhrScoreInfo.cc stack_dec/PhrNbestTransTableRefKey.cc		\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\

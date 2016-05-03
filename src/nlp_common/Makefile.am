@@ -9,4 +9,5 @@ MathDefs.h lt_op_vec.h LogCount.h LM_Defs.h SmtDefs.h ins_op_pair.h	\
 getline.h getline.c getdelim.h getdelim.c ErrorDefs.h ctimer.h ctimer.c	\
 Count.h ClassDic.h ClassDic.cc Bitset.h BasicSocketUtils.h		\
 BasicSocketUtils.cc BaseNgramLM.h BaseIncrNgramLM.h BackoffNode.h	\
-awkInputStream.h awkInputStream.cc
+awkInputStream.h awkInputStream.cc DynClassFileHandler.h		\
+DynClassFileHandler.cc SimpleDynClassLoader.h
