@@ -44,9 +44,6 @@ int ThotImtFactory::init(int argc,
       // Check parameters
   ret=checkPars(pars);
   if(ret==EXIT_FAILURE) return EXIT_FAILURE;
-
-      // If --config option given, print configuration
-  if(pars.config_given) thotDecoder.config();
   
       // Init ThotDecoder instance
   int verbose=true;

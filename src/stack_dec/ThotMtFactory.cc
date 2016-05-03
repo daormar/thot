@@ -44,9 +44,6 @@ int ThotMtFactory::init(int argc,
       // Check parameters
   ret=checkPars(pars);
   if(ret==EXIT_FAILURE) return EXIT_FAILURE;
-
-      // If --config option given, print configuration
-  if(pars.config_given) thotDecoder.config();
   
       // Init ThotDecoder instance
   int verbose=true;
@@ -110,13 +107,6 @@ int ThotMtFactory::takeInitPars(int argc,
     if(argv_stl[i]=="-v" && !matched)
     {
       pars.v_given=true;
-      ++matched;
-    }
-
-        // --config parameter
-    if(argv_stl[i]=="--config" && !matched)
-    {
-      pars.config_given=true;
       ++matched;
     }
 

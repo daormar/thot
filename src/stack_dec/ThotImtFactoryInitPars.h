@@ -37,7 +37,6 @@ struct ThotImtFactoryInitPars
   bool c_given;
   std::string c_str;
   bool v_given;
-  bool config_given;
 
   ThotImtFactoryInitPars()
     {
@@ -48,7 +47,6 @@ struct ThotImtFactoryInitPars
     {
       c_given=false;
       v_given=false;
-      config_given=false;
     }
 };
 
