@@ -437,7 +437,7 @@ else
  AC_MSG_RESULT(yes)
 fi
 AM_CONDITIONAL([CASMACAT_LIB_ENABLED], [test x${enable_casmacat_lib} = xyes])
-AC_SUBST(CASMACAT_SERVER_LIB_HOME,$with_casmacat)
+AC_SUBST(CASMACAT_LIB_ENABLED,$with_casmacat)
 
 # Disable pre/post-processing code
 AC_DEFINE(DISABLE_PREPROC_CODE,,[Define if the pre/post-processing code is disabled])
