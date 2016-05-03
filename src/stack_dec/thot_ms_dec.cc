@@ -46,6 +46,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "KbMiraLlWu.h"
 #include "MultiStackTypes.h"
 
+#include "DynClassFactoryHandler.h"
 #include "ctimer.h"
 #include "options.h"
 #include "ErrorDefs.h"
@@ -131,6 +132,7 @@ void printConfig(void);
 
 //--------------- Global variables -----------------------------------
 
+DynClassFactoryHandler dynClassFactoryHandler;
 LangModelInfo* langModelInfoPtr;
 PhraseModelInfo* phrModelInfoPtr;
 SwModelInfo* swModelInfoPtr;
