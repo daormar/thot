@@ -291,9 +291,6 @@ else
     if [ ! "${NON_NEG_CONST}" = "" ]; then
         nnc_pen=`calc_nnc_pen "${weights}" "${NON_NEG_CONST}" ${NNC_PEN_FACTOR}`
     fi
-
-    # Print translator config
-    ${PHRDECODER} --config > ${SDIR}/trans.cfg 2>&1
     
     # Generate translations
     gen_trans
