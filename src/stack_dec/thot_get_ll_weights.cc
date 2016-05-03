@@ -80,6 +80,7 @@ struct thot_get_ll_weights_pars
   Vector<float> tmWeightVec;
   Vector<float> catWeightVec;
   Vector<float> ecmWeightVec;
+  int verbosity;
 };
 
 //--------------- Function Declarations ------------------------------
@@ -132,7 +133,7 @@ int main(int argc, char *argv[])
 int get_ll_weights(const thot_get_ll_weights_pars& pars)
 {
       // Initialize class factories
-  int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
+  int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH,pars.verbosity);
   if(err==ERROR)
     return ERROR;
 
@@ -232,7 +233,7 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   delete assistedTransPtr;
 
       // Release class factories
-  dynClassFactoryHandler.release_smt();
+  dynClassFactoryHandler.release_smt(pars.verbosity);
 
   return OK;
 }
@@ -252,6 +253,13 @@ int handleParameters(int argc,
     printUsage();
     return ERROR;   
   }
+  if(readOption(argc,argv,"-v")==OK)
+  {
+    pars.verbosity=1;
+  }
+  else
+    pars.verbosity=0;
+      
   if(takeParameters(argc,argv,pars)==ERROR)
   {
     return ERROR;
@@ -334,9 +342,10 @@ void takeParametersGivenArgcArgv(int argc,
 //---------------
 void printUsage(void)
 {
-  cerr << "thot_get_ll_weights [-c <string>]"<<endl;
+  cerr << "thot_get_ll_weights [-c <string>] [-v]"<<endl;
   cerr << "                    [--help] [--version]"<<endl<<endl;
   cerr << "-c <string>           : Configuration file."<<endl;
+  cerr << "-v                    : Enable verbose model."<<endl;
   cerr << "--help                : Display this help and exit."<<endl;
   cerr << "--version             : Output version information and exit."<<endl;
 }
