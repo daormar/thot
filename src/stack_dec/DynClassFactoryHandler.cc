@@ -37,14 +37,15 @@ DynClassFactoryHandler::DynClassFactoryHandler()
 }
 
 //--------------------------
-int DynClassFactoryHandler::init_smt(std::string fileName)
+int DynClassFactoryHandler::init_smt(std::string fileName,
+                                     int verbose/*=1*/)
 {
       // Release data structure
   release_smt();
 
       // Initialize smt dynamic classes...
   
-  if(dynClassFileHandler.load(fileName)==ERROR)
+  if(dynClassFileHandler.load(fileName,verbose)==ERROR)
   {
     cerr<<"Error while loading ini file"<<endl;
     return ERROR;
@@ -63,7 +64,7 @@ int DynClassFactoryHandler::init_smt(std::string fileName)
     return ERROR;
   }   
       // Load class derived from BasePhraseModel dynamically
-  if(!basePhraseModelDynClassLoader.open_module(soFileName))
+  if(!basePhraseModelDynClassLoader.open_module(soFileName,verbose))
   {
     cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
     return ERROR;
@@ -75,8 +76,8 @@ int DynClassFactoryHandler::init_smt(std::string fileName)
 }
 
 //--------------------------
-void DynClassFactoryHandler::release_smt(void)
+void DynClassFactoryHandler::release_smt(int verbose/*=1*/)
 {
       // Close modules
-  basePhraseModelDynClassLoader.close_module();
+  basePhraseModelDynClassLoader.close_module(verbose);
 }

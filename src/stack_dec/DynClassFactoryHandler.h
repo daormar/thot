@@ -48,8 +48,9 @@ struct DynClassFactoryHandler
   
       // Functions
   DynClassFactoryHandler();
-  int init_smt(std::string fileName);
-  void release_smt(void);
+  int init_smt(std::string fileName,
+               int verbose=1);
+  void release_smt(int verbose=1);
 };
 
 #endif
