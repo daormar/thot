@@ -95,9 +95,8 @@ incr_models/CacheLmIncrCpTable.cc incr_models/CacheIncrJelMerNgramLM.cc	\
 incr_models/WordPenaltyModel.cc incr_models/WordPredictor.cc
 
 sw_models_h= sw_models/WeightedIncrNormSlm.h				\
-sw_models/SwModelsSwModelTypes.h sw_models/SwModelsSlmTypes.h		\
-sw_models/SwModelsShTypes.h sw_models/SwDefs.h sw_models/_swAligModel.h	\
-sw_models/SmoothedIncrIbm2AligModel.h					\
+sw_models/SwModelsSwModelTypes.h sw_models/SwDefs.h			\
+sw_models/_swAligModel.h sw_models/SmoothedIncrIbm2AligModel.h		\
 sw_models/SmoothedIncrIbm1AligModel.h sw_models/SentPairCont.h		\
 sw_models/_sentLengthModel.h sw_models/LightSentenceHandler.h		\
 sw_models/LexAuxVar.h sw_models/_incrSwAligModel.h			\
