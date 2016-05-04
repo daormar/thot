@@ -103,12 +103,21 @@ class EditDistForVecString: public EditDistForVec<std::string>
   void incrEditDistPrefix(const std::string& xWord,
                           const Vector<std::string>& incr_y,
                           const Vector<Score> prevScoreVec,
-                          SubstCostMap& substCostMap,
                           Vector<Score>& newScoreVec,
                           Vector<int>& opIdVec);
       // Incrementally calculates edit distance given xWord, incr_y,
       // previous vector of costs and new partially calculated vector of
       // costs
+
+  void incrEditDistPrefixCached(const std::string& xWord,
+                                const Vector<std::string>& incr_y,
+                                const Vector<Score> prevScoreVec,
+                                SubstCostMap& substCostMap,
+                                Vector<Score>& newScoreVec,
+                                Vector<int>& opIdVec);
+      // Incrementally calculates edit distance given xWord, incr_y,
+      // previous vector of costs and new partially calculated vector of
+      // costs (uses substCostMap to cache subsitution costs)
 
   void setErrorModel(Score _hitCost,
                      Score _insCost,

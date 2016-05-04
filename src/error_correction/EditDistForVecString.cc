@@ -181,9 +181,26 @@ void EditDistForVecString::incrEditDistPrefixFirstRow(const Vector<std::string>&
 void EditDistForVecString::incrEditDistPrefix(const std::string& xWord,
                                               const Vector<std::string>& incr_y,
                                               const Vector<Score> prevScoreVec,
-                                              SubstCostMap& substCostMap,
                                               Vector<Score>& newScoreVec,
                                               Vector<int>& opIdVec)
+{
+  SubstCostMap substCostMap;
+  
+  incrEditDistPrefixCached(xWord,
+                           incr_y,
+                           prevScoreVec,
+                           substCostMap,
+                           newScoreVec,
+                           opIdVec);
+}
+
+//---------------------------------------
+void EditDistForVecString::incrEditDistPrefixCached(const std::string& xWord,
+                                                    const Vector<std::string>& incr_y,
+                                                    const Vector<Score> prevScoreVec,
+                                                    SubstCostMap& substCostMap,
+                                                    Vector<Score>& newScoreVec,
+                                                    Vector<int>& opIdVec)
 {
       // Execute typical edit distance algorithm except for the specific
       // substitution cost for the last word (note: y is the incomplete
