@@ -30,16 +30,18 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files ---------------------------------------
 
-#include <math.h>
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include "SwModelsSwModelTypes.h"
+#include "BaseSwAligModel.h"
 #include <WordAligMatrix.h>
 #include <printAligFuncs.h>
+#include "DynClassFileHandler.h"
+#include "SimpleDynClassLoader.h"
 #include <options.h>
 #include <ctimer.h>
 #include <StrProcUtils.h>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <math.h>
 
 //--------------- Constants -------------------------------------------
 
@@ -48,9 +50,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 int TakeParameters(int argc,char *argv[]);
 void printUsage(void);
-int processPairAligFile(BaseSwAligModel<CURR_SWM_TYPE::PpInfo> *swAligModelPtr,
+int init_swm(void);
+void release_swm(void);
+int processPairAligFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
                         const char *pairPlusAligFile);
-int processSentPairFile(BaseSwAligModel<CURR_SWM_TYPE::PpInfo> *swAligModelPtr,
+int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
                         const char *sentPairFile);
 void version(void);
 
@@ -58,6 +62,9 @@ void version(void);
 
 
 //--------------- Global variables ------------------------------------
+
+SimpleDynClassLoader<BaseSwAligModel<Vector<Prob> > > baseSwAligModelDynClassLoader;
+BaseSwAligModel<Vector<Prob> >* swAligModelPtr;
 
 char swFilePrefix[512];
 char outputFilesPrefix[512];
@@ -82,7 +89,8 @@ int main(int argc,char *argv[])
  if(TakeParameters(argc,argv)==OK)
  {
        // Create model instance
-  BaseSwAligModel<CURR_SWM_TYPE::PpInfo> *swAligModelPtr=new CURR_SWM_TYPE;
+  if(init_swm()==ERROR)
+    return ERROR;
 
   if(pairPlusAligFile[0]==0 && sentPairFile[0]==0)
   {         
@@ -91,7 +99,7 @@ int main(int argc,char *argv[])
    ret=swAligModelPtr->load(swFilePrefix);
    if(ret==ERROR)
    {
-     delete swAligModelPtr;
+     release_swm();
      return ERROR;
    }
    if(alig_given) 
@@ -147,7 +155,7 @@ int main(int argc,char *argv[])
       ret=processPairAligFile(swAligModelPtr,pairPlusAligFile);
       if(ret==ERROR)
       {
-        delete swAligModelPtr;
+        release_swm();
         return ERROR;
       }
     }
@@ -157,22 +165,71 @@ int main(int argc,char *argv[])
       ret=processSentPairFile(swAligModelPtr,sentPairFile);
       if(ret==ERROR)
       {
-        delete swAligModelPtr;
+        release_swm();
         return ERROR;
       }
     }
   }
 
       // Release model instance
-  delete swAligModelPtr;
+  release_swm();
  }
-
  
  return OK;
 }
 
 //---------------
-int processPairAligFile(BaseSwAligModel<CURR_SWM_TYPE::PpInfo> *swAligModelPtr,
+int init_swm(void)
+{
+      // Initialize dynamic class file handler
+  DynClassFileHandler dynClassFileHandler;
+  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH)==ERROR)
+  {
+    cerr<<"Error while loading ini file"<<endl;
+    return ERROR;
+  }
+      // Define variables to obtain base class infomation
+  std::string baseClassName;
+  std::string soFileName;
+  std::string initPars;
+
+      ////////// Obtain info for BaseSwAligModel class
+  baseClassName="BaseSwAligModel";
+  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==ERROR)
+  {
+    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
+    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    return ERROR;
+  }
+   
+      // Load class derived from BaseSwAligModel dynamically
+  if(!baseSwAligModelDynClassLoader.open_module(soFileName))
+  {
+    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    return ERROR;
+  }
+
+  swAligModelPtr=baseSwAligModelDynClassLoader.make_obj(initPars);
+  if(swAligModelPtr==NULL)
+  {
+    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    baseSwAligModelDynClassLoader.close_module();
+    
+    return ERROR;
+  }
+
+  return OK;
+}
+
+//---------------
+void release_swm(void)
+{
+  delete swAligModelPtr;
+  baseSwAligModelDynClassLoader.close_module();
+}
+
+//---------------
+int processPairAligFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
                         const char *pairPlusAligFile)
 {
  bool ret;
@@ -240,7 +297,7 @@ int processPairAligFile(BaseSwAligModel<CURR_SWM_TYPE::PpInfo> *swAligModelPtr,
 }
 
 //---------------
-int processSentPairFile(BaseSwAligModel<CURR_SWM_TYPE::PpInfo> *swAligModelPtr,
+int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
                         const char *sentPairFile)
 {
  bool ret;
@@ -424,10 +481,10 @@ int TakeParameters(int argc,char *argv[])
 void printUsage(void)
 {
  cerr<<"Usage: thot_calc_swm_lgprob -sw <string>\n";
- cerr<<"                       {-ss <string> -ts <string>\n";
- cerr<<"                       [-a <string>] [-max] | -F <string>\n";
- cerr<<"                       | -P <string> [-max]} [-v|-v1] \n";
- cerr<<"                       [--help]\n\n";
+ cerr<<"                            {-ss <string> -ts <string>\n";
+ cerr<<"                            [-a <string>] [-max] | -F <string>\n";
+ cerr<<"                            | -P <string> [-max]} [-v|-v1] \n";
+ cerr<<"                            [--help]\n\n";
  cerr<<"-sw <string>                Prefix of the single-word model files\n";
  cerr<<"                            to load\n\n";
  cerr<<"-ss <string>                Source sentence\n\n";	
