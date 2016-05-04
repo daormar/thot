@@ -27,8 +27,8 @@ thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig			\
 thot_ll_weight_upd_nblist thot_client thot_server thot_get_ll_weights	\
 thot_calc_bleu $(TESTING_PROGS)
 
-lib_LTLIBRARIES = libthot.la wba_incr_phrase_model_factory.la	\
-$(CASMACAT_LIBS)
+lib_LTLIBRARIES = libthot.la incr_jel_mer_ngram_lm_factory.la	\
+wba_incr_phrase_model_factory.la $(CASMACAT_LIBS)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
@@ -291,6 +291,10 @@ $(stack_dec_defs) $(exper_h) $(exper_defs)
 # Class factories
 
 ##########
+incr_jel_mer_ngram_lm_factory_h= 
+incr_jel_mer_ngram_lm_factory_defs= phrase_models/WbaIncrPhraseModelFactory.cc
+
+##########
 wba_incr_phrase_model_factory_h= 
 wba_incr_phrase_model_factory_defs= phrase_models/WbaIncrPhraseModelFactory.cc
 
@@ -416,6 +420,12 @@ $(casmacat_confid_h)
 ##########
 libthot_la_SOURCES= $(thot_sources)
 libthot_la_LIBADD= $(ZLIB) $(LGMP)
+
+##########
+incr_jel_mer_ngram_lm_factory_la_SOURCES= $(incr_jel_mer_ngram_lm_factory_h)	\
+$(incr_jel_mer_ngram_lm_factory_defs)
+incr_jel_mer_ngram_lm_factory_la_LIBADD= libthot.la $(ZLIB) $(LGMP)
+incr_jel_mer_ngram_lm_factory_la_LDFLAGS= -module
 
 ##########
 wba_incr_phrase_model_factory_la_SOURCES= $(wba_incr_phrase_model_factory_h)	\
