@@ -23,4 +23,5 @@ HmmAligInfo.h DoubleMatrix.h DoubleMatrix.cc BestLgProbForTrgWord.h	\
 BaseSwAligModel.h BaseStepwiseAligModel.h BaseSentLengthModel.h		\
 BaseSentenceHandler.h aSourceHmm.h aSourceHmm.cc aSourceHashF.h		\
 aSource.h aSource.cc ashPidxPairHashF.h anjm1ip_anjiMatrix.h		\
-anjm1ip_anjiMatrix.cc anjiMatrix.h anjiMatrix.cc
+anjm1ip_anjiMatrix.cc anjiMatrix.h anjiMatrix.cc			\
+SmoothedIncrIbm2AligModelFactory.cc IncrHmmP0AligModelFactory.cc
