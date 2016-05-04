@@ -100,10 +100,7 @@ class PfsmEcm: public _editDistBasedEcm
       // load() and print() functions
   bool load(const char *prefix);
   bool print(const char *prefix);
-  
-      // clearTempVars() function
-  void clearTempVars(void);
-  
+    
       // Destructor
   ~PfsmEcm();
   

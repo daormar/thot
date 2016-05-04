@@ -275,7 +275,6 @@ void NonPbEcModelForNbUcat::clear(void)
 //---------------------------------------
 void NonPbEcModelForNbUcat::clearTempVars(void)
 {
-  ecm_ptr->clearTempVars();
 }
 
 //---------------------------------------

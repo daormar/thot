@@ -111,14 +111,10 @@ class PfsmEcmForWg: public PfsmEcm, public BaseEcmForWg<PfsmEcmForWgEsi>
   void removeLastPosFromEsi(EcmScoreInfo& esi);
       // Removes last position from the EcmScoreInfo object "esi".
 
-      // clearTempVars() function
-  void clearTempVars(void);
-
       // Destructor
   ~PfsmEcmForWg();
 
  protected:
 
-  SubstCostMap substCostMap;
 };
 #endif

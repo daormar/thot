@@ -97,9 +97,6 @@ class BaseErrorCorrectionModel
 
       // clear() function
   virtual void clear(void){};
-
-      // clearTempVars() function
-  virtual void clearTempVars(void)=0;
   
       // Destructor
   virtual ~BaseErrorCorrectionModel(){};

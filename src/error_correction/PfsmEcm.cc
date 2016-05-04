@@ -222,11 +222,6 @@ Score PfsmEcm::simGivenPrefOpsPfsm(Vector<std::string> x,
 }
 
 //---------------------------------------
-void PfsmEcm::clearTempVars(void)
-{
-}
-
-//---------------------------------------
 PfsmEcm::~PfsmEcm()
 {
   
