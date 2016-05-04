@@ -62,7 +62,6 @@ int takeParameters(int argc,
 int checkParameters(thot_gen_sw_model_pars& pars);
 void printParameters(thot_gen_sw_model_pars pars);
 void printUsage(void);
-void printConfig(void);
 void version(void);
 
 //--------------- Type definitions ------------------------------------
@@ -88,7 +87,6 @@ int main(int argc,char *argv[])
     if(pars.v_given || pars.v1_given)
     {
       printParameters(pars);
-      printConfig();
     }
     return processParameters(pars);
   }
@@ -403,11 +401,6 @@ int handleParameters(int argc,
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
-  }
-  if(readOption(argc,argv,"--config")!=-1)
-  {
-    printConfig();
     return ERROR;   
   }
   Vector<std::string> argv_stl=argv2argv_stl(argc,argv);
@@ -829,7 +822,7 @@ void printUsage(void)
   cerr<<"                      | -i [-c] [-r <int> [-in]] ]\n";
   cerr<<"                      [-np <float>] [-lf <float>] [-af <float>]\n";
   cerr<<"                      -o <string>\n";
-  cerr<<"                      [-v|-v1] [--help] [--version] [--config]\n\n";
+  cerr<<"                      [-v|-v1] [--help] [--version]\n\n";
   cerr<<"-s <string>           File with source training sentences.\n";
   cerr<<"-t <string>           File with target training sentences.\n";
   cerr<<"-l <string>           Prefix of the model files to be loaded.\n";
@@ -868,21 +861,6 @@ void printUsage(void)
   cerr<<"-v | -v1              Verbose modes.\n";
   cerr<<"--help                Display this help and exit.\n";
   cerr<<"--version             Output version information and exit.\n";
-  cerr<<"--config              Print configuration.\n\n";
-}
-
-//--------------- printConfig function
-void printConfig(void)
-{
-  cerr<<"* thot_gen_sw_model configuration: "<<endl;
-  cerr<<" - single-word model type: "<<CURR_SWM_LABEL<<endl;
-  cerr<<" - sentence length model type: "<<CURR_SLM_LABEL<<endl;
-#ifdef THOT_ENABLE_LOAD_PRINT_TEXTPARS 
-  cerr<<" - format of parameter files: text"<<endl;
-#else
-  cerr<<" - format of parameter files: binary"<<endl;
-#endif
-  
 }
 
 //--------------- version function

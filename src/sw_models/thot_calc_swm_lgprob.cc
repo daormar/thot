@@ -52,7 +52,6 @@ int processPairAligFile(BaseSwAligModel<CURR_SWM_TYPE::PpInfo> *swAligModelPtr,
                         const char *pairPlusAligFile);
 int processSentPairFile(BaseSwAligModel<CURR_SWM_TYPE::PpInfo> *swAligModelPtr,
                         const char *sentPairFile);
-void printConfig(void);
 void version(void);
 
 //--------------- Type definitions ------------------------------------
@@ -338,14 +337,6 @@ int TakeParameters(int argc,char *argv[])
    return ERROR;   
  }      
 
- // Verify --config option 
- err=readOption(argc,argv, "--config");
- if(err!=-1)
- {
-   printConfig();
-   return ERROR;
- }
-
  // Take the giza files prefix 
  err=readString(argc,argv, "-sw", swFilePrefix);
  if(err==-1)
@@ -430,21 +421,13 @@ int TakeParameters(int argc,char *argv[])
 }
 
 //---------------
-void printConfig(void)
-{
-  cerr<<"* thot_calc_swm_lgprob configuration: "<<endl<<endl;
-  cerr<<" - single-word model type: "<<CURR_SWM_LABEL<<endl;
-  cerr<<" - sentence length model type: "<<CURR_SLM_LABEL<<endl<<endl;
-}
-
-//---------------
 void printUsage(void)
 {
  cerr<<"Usage: thot_calc_swm_lgprob -sw <string>\n";
  cerr<<"                       {-ss <string> -ts <string>\n";
  cerr<<"                       [-a <string>] [-max] | -F <string>\n";
  cerr<<"                       | -P <string> [-max]} [-v|-v1] \n";
- cerr<<"                       [--help] [--config]\n\n";
+ cerr<<"                       [--help]\n\n";
  cerr<<"-sw <string>                Prefix of the single-word model files\n";
  cerr<<"                            to load\n\n";
  cerr<<"-ss <string>                Source sentence\n\n";	
@@ -461,7 +444,6 @@ void printUsage(void)
  cerr<<"                            Format: src ||| trg\n\n";
  cerr<<"-v | -v1                    Verbose mode\n\n";
  cerr<<"--help                      Display this help and exit\n\n";
- cerr<<"--config                    Print configuration\n\n";
 }
 
 //---------------
