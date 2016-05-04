@@ -27,7 +27,7 @@ thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig			\
 thot_ll_weight_upd_nblist thot_client thot_server thot_get_ll_weights	\
 thot_calc_bleu $(TESTING_PROGS)
 
-lib_LTLIBRARIES = libthot.la libwba_incr_phrase_model_factory.la	\
+lib_LTLIBRARIES = libthot.la wba_incr_phrase_model_factory.la	\
 $(CASMACAT_LIBS)
 
 # flags
@@ -419,9 +419,10 @@ libthot_la_SOURCES= $(thot_sources)
 libthot_la_LIBADD= $(ZLIB) $(LGMP)
 
 ##########
-libwba_incr_phrase_model_factory_la_SOURCES= $(wba_incr_phrase_model_factory_h)	\
+wba_incr_phrase_model_factory_la_SOURCES= $(wba_incr_phrase_model_factory_h)	\
 $(wba_incr_phrase_model_factory_defs)
-libwba_incr_phrase_model_factory_la_LIBADD= $(ZLIB) $(LGMP)
+wba_incr_phrase_model_factory_la_LIBADD= $(ZLIB) $(LGMP)
+wba_incr_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 libthot_casmacat_la_SOURCES= $(casmacat_engines_h)			\
