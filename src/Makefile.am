@@ -421,7 +421,7 @@ libthot_la_LIBADD= $(ZLIB) $(LGMP)
 ##########
 wba_incr_phrase_model_factory_la_SOURCES= $(wba_incr_phrase_model_factory_h)	\
 $(wba_incr_phrase_model_factory_defs)
-wba_incr_phrase_model_factory_la_LIBADD= $(ZLIB) $(LGMP)
+wba_incr_phrase_model_factory_la_LIBADD= libthot.la $(ZLIB) $(LGMP)
 wba_incr_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
