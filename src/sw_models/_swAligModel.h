@@ -40,7 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 #include "BaseSwAligModel.h"
 #include "SingleWordVocab.h"
-#include "SwModelsShTypes.h"
+#include <LightSentenceHandler.h>
 
 using namespace std;
 
@@ -127,7 +127,7 @@ class _swAligModel: public BaseSwAligModel<PPINFO>
 	
 	SingleWordVocab swVocab;
 
-    CURR_SH_TYPE sentenceHandler;
+    LightSentenceHandler sentenceHandler;
 };
 
 //--------------- _swAligModel class method definitions
