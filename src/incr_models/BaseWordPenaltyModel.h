@@ -53,7 +53,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class BaseWordPenaltyModel
 {
  public:
-  
+
+      // Declarations related to dynamic class loading
+  typedef BaseWordPenaltyModel* create_t(std::string);
+
       // returns log(wp(tl=len(strVec)))
   virtual LgProb wordPenaltyScoreStr(Vector<std::string> strVec){return wordPenaltyScore(strVec.size());};
 
