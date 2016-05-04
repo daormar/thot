@@ -39,7 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_incrSwAligModel.h"
-#include "SwModelsSlmTypes.h"
+#include "WeightedIncrNormSlm.h"
 #include "anjiMatrix.h"
 #include "IncrLexTable.h"
 #include "BestLgProbForTrgWord.h"
@@ -183,7 +183,7 @@ class IncrIbm1AligModel: public _incrSwAligModel<Vector<Prob> >
 
   protected:
       
-   CURR_SLM_TYPE sentLengthModel;
+   WeightedIncrNormSlm sentLengthModel;
 
    anjiMatrix anji;
    anjiMatrix anji_aux;

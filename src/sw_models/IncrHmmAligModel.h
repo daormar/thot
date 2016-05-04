@@ -42,7 +42,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <MathFuncs.h>
 #include "_incrSwAligModel.h"
-#include "SwModelsSlmTypes.h"
+#include "WeightedIncrNormSlm.h"
 #include "anjiMatrix.h"
 #include "anjm1ip_anjiMatrix.h"
 #include "aSourceHmm.h"
@@ -216,7 +216,7 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    IncrHmmAligTable incrHmmAligTable;
        // Table with alignment parameters
    
-   CURR_SLM_TYPE sentLengthModel;
+   WeightedIncrNormSlm sentLengthModel;
 
    double aligSmoothInterpFactor;
    double lexSmoothInterpFactor;
