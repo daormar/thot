@@ -233,9 +233,6 @@ class WordGraph
       // clear() function
   void clear(void);
 
-      // clearTempVars() function
-  void clearTempVars(void);
-
  protected:
   typedef Vector<WordGraphArc> WordGraphArcs;
   typedef Vector<WordGraphStateData> WordGraphStates;

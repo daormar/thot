@@ -1416,8 +1416,3 @@ void WordGraph::clear(void)
   scrCompsVec.clear();
   compWeights.clear();
 }
-
-//---------------------------------------
-void WordGraph::clearTempVars(void)
-{
-}
