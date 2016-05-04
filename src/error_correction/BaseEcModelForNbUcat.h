@@ -62,9 +62,7 @@ using namespace std;
 //--------------- Classes --------------------------------------------
 
 
-//--------------- BaseEcModelForNbUcat template class: interface for
-//--------------- error correcting models for uncoupled computer
-//--------------- assisted translation based on n-best lists
+//--------------- BaseEcModelForNbUcat template class
 
 /**
  * @brief The BaseEcModelForNbUcat abstract template class is a base
