@@ -70,6 +70,9 @@ class BaseSwAligModel
 
     typedef PPINFO PpInfo;
 
+    // Declarations related to dynamic class loading
+    typedef BaseSwAligModel* create_t(std::string);
+
     // Constructor
 	BaseSwAligModel(void);
 
