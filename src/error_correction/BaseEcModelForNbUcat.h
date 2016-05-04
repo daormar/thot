@@ -75,6 +75,9 @@ class BaseEcModelForNbUcat
 {
  public:
 
+      // Declarations related to dynamic class loading
+  typedef BaseEcModelForNbUcat* create_t(std::string);
+
       // Link error correcting model with the error correcting model for
       // uncoupled cat
   virtual void link_ecm(BaseErrorCorrectionModel* _ecm_ptr)=0;

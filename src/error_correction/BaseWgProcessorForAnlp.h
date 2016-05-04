@@ -70,7 +70,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class BaseWgProcessorForAnlp
 {
  public:
-  
+
+      // Declarations related to dynamic class loading
+  typedef BaseWgProcessorForAnlp* create_t(std::string);
+
       // Link word-graph with word-graph processor
   virtual void link_wg(const WordGraph* _wg_ptr)=0;
   

@@ -66,7 +66,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class BaseErrorCorrectionModel
 {
  public:
-  
+
+      // Declarations related to dynamic class loading
+  typedef BaseErrorCorrectionModel* create_t(std::string);
+
       // Basic functions
   virtual Score similarity(Vector<std::string> x,
                            Vector<std::string> y)=0;
