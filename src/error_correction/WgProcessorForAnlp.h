@@ -261,10 +261,6 @@ void WgProcessorForAnlp<ECM_FOR_WG>::link_wg(const WordGraph* _wg_ptr)
 
       // Clear word-graph processor data structures
   clear();
-
-      // Clear temporary variables of ecm_wg_ptr
-  if(ecm_wg_ptr!=NULL)
-    ecm_wg_ptr->clearTempVars();
 }
 
 //---------------------------------------
