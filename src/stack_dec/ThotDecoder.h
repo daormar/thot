@@ -47,16 +47,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 // Types defining decoder architecture
 #include "StackDecWgProcessorForAnlpTypes.h"
 #include "AssistedTransTypes.h"
-#include "MultiStackTypes.h"
 #include "_phraseBasedTransModel.h"
 #include "StackDecEcModelForNbUcatTypes.h"
 #include "StackDecEcModelTypes.h"
 #include "_phrSwTransModel.h"
 #include "BaseSmtModel.h"
-#include "StackDecSwModelTypes.h"
-#include "StackDecLmTypes.h"
-#include "WordPenaltyModel.h"
-#include "KbMiraLlWu.h"
 #include "BaseEcmForWg.h"
 
 #include "ThotDecoderCommonVars.h"

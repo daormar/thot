@@ -41,9 +41,21 @@ ThotDecoder::ThotDecoder()
 
       // Create server variables
   tdCommonVars.langModelInfoPtr=new LangModelInfo;
-  tdCommonVars.langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
-  tdCommonVars.langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
 
+  tdCommonVars.langModelInfoPtr->wpModelPtr=tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelInitPars);
+  if(tdCommonVars.langModelInfoPtr->wpModelPtr==NULL)
+  {
+    cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
+  tdCommonVars.langModelInfoPtr->lModelPtr=tdCommonVars.dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseNgramLMInitPars);
+  if(tdCommonVars.langModelInfoPtr->lModelPtr==NULL)
+  {
+    cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+  
   tdCommonVars.phrModelInfoPtr=new PhraseModelInfo;
   tdCommonVars.phrModelInfoPtr->invPbModelPtr=tdCommonVars.dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.basePhraseModelInitPars);
   if(tdCommonVars.phrModelInfoPtr->invPbModelPtr==NULL)
@@ -53,16 +65,41 @@ ThotDecoder::ThotDecoder()
   }
 
   tdCommonVars.swModelInfoPtr=new SwModelInfo;
-  tdCommonVars.swModelInfoPtr->swAligModelPtr=new CURR_SWM_TYPE;
-  tdCommonVars.swModelInfoPtr->invSwAligModelPtr=new CURR_SWM_TYPE;
+  tdCommonVars.swModelInfoPtr->swAligModelPtr=tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars);
+  if(tdCommonVars.swModelInfoPtr->swAligModelPtr==NULL)
+  {
+    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
+  tdCommonVars.swModelInfoPtr->invSwAligModelPtr=tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars);
+  if(tdCommonVars.swModelInfoPtr->invSwAligModelPtr==NULL)
+  {
+    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
   tdCommonVars.wgHandlerPtr=new WgHandler;
-  tdCommonVars.ecModelPtr=new CURR_ECM_TYPE();
+
+  tdCommonVars.ecModelPtr=tdCommonVars.dynClassFactoryHandler.baseErrorCorrectionModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseErrorCorrectionModelInitPars);
+  if(tdCommonVars.ecModelPtr==NULL)
+  {
+    cerr<<"Error: BaseErrorCorrectionModel pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
   BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* base_ecm_wg_ptr=dynamic_cast<BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* >(tdCommonVars.ecModelPtr);
   if(base_ecm_wg_ptr)
     tdCommonVars.curr_ecm_valid_for_wg=true;
   else
     tdCommonVars.curr_ecm_valid_for_wg=false;
-  tdCommonVars.llWeightUpdaterPtr=new KbMiraLlWu;
+
+  tdCommonVars.llWeightUpdaterPtr=tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
+  if(tdCommonVars.llWeightUpdaterPtr==NULL)
+  {
+    cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
 
       // Instantiate smt model
   tdCommonVars.smtModelPtr=new CURR_MODEL_TYPE();
@@ -1878,7 +1915,12 @@ bool ThotDecoder::printModels(int verbose/*=0*/)
 int ThotDecoder::init_idx_data(size_t idx)
 {    
       // Create a translator instance
-  tdPerUserVarsVec[idx].stackDecoderPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
+  tdPerUserVarsVec[idx].stackDecoderPtr=tdCommonVars.dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseStackDecoderInitPars);
+  if(tdPerUserVarsVec[idx].stackDecoderPtr==NULL)
+  {
+    cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
 
       // Set breadthFirst flag
   tdPerUserVarsVec[idx].stackDecoderPtr->set_breadthFirst(false);
@@ -1889,7 +1931,6 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].smtModelPtr=dynamic_cast<BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* >(baseSmtModelPtr);
   
       // Link statistical machine translation model
-//  tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdCommonVars.smtModelPtr);
   tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
 
       // Enable best score pruning
@@ -2071,7 +2112,9 @@ size_t ThotDecoder::get_vecidx_for_user_id(int user_id)
     idxDataReleased.push_back(false);
     ThotDecoderPerUserVars tdPerUserVars;
     tdPerUserVarsVec.push_back(tdPerUserVars);
-    init_idx_data(tdPerUserVarsVec.size()-1);
+    int ret=init_idx_data(tdPerUserVarsVec.size()-1);
+    if(ret==ERROR)
+      exit(1);
     
     std::string totalPrefix;
     totalPrefixVec.push_back(totalPrefix);

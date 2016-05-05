@@ -29,15 +29,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
-#include "MultiStackTypes.h"
 #include "_stackDecoderRec.h"
 #include "BaseStackDecoder.h"
 #include "SmtModelTypes.h"
 #include "BasePbTransModel.h"
 #include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
-#include "StackDecSwModelTypes.h"
-#include "StackDecLmTypes.h"
 #include "SwModelInfo.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
@@ -193,7 +190,19 @@ int init_translator(const thot_ms_alig_pars& tap)
     return ERROR;
 
   langModelInfoPtr=new LangModelInfo;
-  langModelInfoPtr->lModelPtr=new THOT_CURR_LM_TYPE;
+  langModelInfoPtr->wpModelPtr=dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(dynClassFactoryHandler.baseWordPenaltyModelInitPars);
+  if(langModelInfoPtr->wpModelPtr==NULL)
+  {
+    cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
+  langModelInfoPtr->lModelPtr=dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(dynClassFactoryHandler.baseNgramLMInitPars);
+  if(langModelInfoPtr->lModelPtr==NULL)
+  {
+    cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
 
   phrModelInfoPtr=new PhraseModelInfo;
   phrModelInfoPtr->invPbModelPtr=dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(dynClassFactoryHandler.basePhraseModelInitPars);
@@ -204,10 +213,27 @@ int init_translator(const thot_ms_alig_pars& tap)
   }
 
   swModelInfoPtr=new SwModelInfo;
-  swModelInfoPtr->swAligModelPtr=new CURR_SWM_TYPE;
-  swModelInfoPtr->invSwAligModelPtr=new CURR_SWM_TYPE;
-  langModelInfoPtr->wpModelPtr=new WordPenaltyModel;
-  llWeightUpdaterPtr=new KbMiraLlWu;
+  swModelInfoPtr->swAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
+  if(swModelInfoPtr->swAligModelPtr==NULL)
+  {
+    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
+  swModelInfoPtr->invSwAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
+  if(swModelInfoPtr->invSwAligModelPtr==NULL)
+  {
+    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
+  llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
+  if(llWeightUpdaterPtr==NULL)
+  {
+    cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
       // Instantiate smt model
   smtModelPtr=new CURR_MODEL_TYPE();
       // Link pointers
@@ -255,11 +281,16 @@ int init_translator(const thot_ms_alig_pars& tap)
       // Set verbosity
   smtModelPtr->setVerbosity(tap.verbosity);
 
+      // Create a translator instance
+  stackDecoderPtr=dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(dynClassFactoryHandler.baseStackDecoderInitPars);
+  if(stackDecoderPtr==NULL)
+  {
+    cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+
       // Determine if the translator incorporates hypotheses recombination
   stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<CURR_MODEL_TYPE>*>(stackDecoderPtr);
-
-      // Create a translator instance
-  stackDecoderPtr=new CURR_MSTACK_TYPE<CURR_MODEL_TYPE>();
 
       // Link translation model
   stackDecoderPtr->link_smt_model(smtModelPtr);
