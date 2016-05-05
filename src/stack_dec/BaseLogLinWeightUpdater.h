@@ -70,6 +70,9 @@ class BaseLogLinWeightUpdater
 {
  public:
 
+      // Declarations related to dynamic class loading
+  typedef BaseLogLinWeightUpdater* create_t(std::string);
+
       // Function to compute new weights
   virtual void update(const std::string& reference,
                       const Vector<std::string>& nblist,
