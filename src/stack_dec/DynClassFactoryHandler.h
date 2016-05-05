@@ -25,7 +25,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "BaseStackDecoder.h"
+#include "SmtModelTypes.h"
+#include "BaseLogLinWeightUpdater.h"
+#include "BaseErrorCorrectionModel.h"
 #include "BasePhraseModel.h"
+#include "BaseSwAligModel.h"
+#include "BaseNgramLM.h"
+#include "BaseWordPenaltyModel.h"
 
 #include "DynClassFileHandler.h"
 #include "SimpleDynClassLoader.h"
@@ -43,9 +50,27 @@ struct DynClassFactoryHandler
   DynClassFileHandler dynClassFileHandler;
   
       // Loaders for the different classes
+  SimpleDynClassLoader<BaseWordPenaltyModel> baseWordPenaltyModelDynClassLoader;
+  std::string baseWordPenaltyModelInitPars;
+
+  SimpleDynClassLoader<BaseNgramLM<Vector<WordIndex> > > baseNgramLMDynClassLoader;
+  std::string baseNgramLMInitPars;
+
+  SimpleDynClassLoader<BaseSwAligModel<Vector<Prob> > > baseSwAligModelDynClassLoader;
+  std::string baseSwAligModelInitPars;
+
   SimpleDynClassLoader<BasePhraseModel> basePhraseModelDynClassLoader;
   std::string basePhraseModelInitPars;
-  
+
+  SimpleDynClassLoader<BaseErrorCorrectionModel> baseErrorCorrectionModelDynClassLoader;
+  std::string baseErrorCorrectionModelInitPars;
+
+  SimpleDynClassLoader<BaseLogLinWeightUpdater> baseLogLinWeightUpdaterDynClassLoader;
+  std::string baseLogLinWeightUpdaterInitPars;
+
+  SimpleDynClassLoader<BaseStackDecoder<CURR_MODEL_TYPE> > baseStackDecoderDynClassLoader;
+  std::string baseStackDecoderInitPars;
+
       // Functions
   DynClassFactoryHandler();
   int init_smt(std::string fileName,
