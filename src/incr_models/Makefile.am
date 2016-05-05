@@ -11,4 +11,4 @@ CacheIncrJelMerNgramLM.h CacheIncrJelMerNgramLM.cc BaseIncrEncoder.h	\
 BaseIncrEncCondProbModel.h BaseIncrCondProbTable.h			\
 BaseIncrCondProbModel.h BaseWordPenaltyModel.h WordPenaltyModel.h	\
 WordPenaltyModel.cc WordPredictor.h WordPredictor.cc			\
-IncrJelMerNgramLMFactory.cc
+IncrJelMerNgramLMFactory.cc WordPenaltyModelFactory.cc

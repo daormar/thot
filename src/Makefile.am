@@ -27,7 +27,8 @@ thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig			\
 thot_ll_weight_upd_nblist thot_client thot_server thot_get_ll_weights	\
 thot_calc_bleu $(TESTING_PROGS)
 
-lib_LTLIBRARIES = libthot.la incr_jel_mer_ngram_lm_factory.la		\
+lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
+incr_jel_mer_ngram_lm_factory.la					\
 smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la wba_incr_phrase_model_factory.la	\
 pfsm_ecm_for_wg_factory.la $(CASMACAT_LIBS)
@@ -293,6 +294,11 @@ $(stack_dec_defs) $(exper_h) $(exper_defs)
 # Class factories
 
 ##########
+word_penalty_model_factory_h= 
+word_penalty_model_factory_defs=		\
+incr_models/WordPenaltyModelFactory.cc
+
+##########
 incr_jel_mer_ngram_lm_factory_h= 
 incr_jel_mer_ngram_lm_factory_defs=		\
 incr_models/IncrJelMerNgramLMFactory.cc
@@ -439,6 +445,12 @@ $(casmacat_confid_h)
 ##########
 libthot_la_SOURCES= $(thot_sources)
 libthot_la_LIBADD= $(ZLIB) $(LGMP)
+
+##########
+word_penalty_model_factory_la_SOURCES= $(word_penalty_model_factory_h)	\
+$(word_penalty_model_factory_defs)
+word_penalty_model_factory_la_LIBADD= libthot.la
+word_penalty_model_factory_la_LDFLAGS= -module
 
 ##########
 incr_jel_mer_ngram_lm_factory_la_SOURCES= $(incr_jel_mer_ngram_lm_factory_h)	\
