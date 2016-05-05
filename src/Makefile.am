@@ -31,7 +31,7 @@ lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la					\
 smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la wba_incr_phrase_model_factory.la	\
-pfsm_ecm_for_wg_factory.la $(CASMACAT_LIBS)
+pfsm_ecm_for_wg_factory.la kb_mira_ll_wu_factory.la $(CASMACAT_LIBS)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
@@ -323,6 +323,11 @@ pfsm_ecm_for_wg_factory_h=
 pfsm_ecm_for_wg_factory_defs=		\
 error_correction/PfsmEcmForWgFactory.cc
 
+##########
+kb_mira_ll_wu_factory_h= 
+kb_mira_ll_wu_factory_defs=		\
+stack_dec/KbMiraLlWuFactory.cc
+
 # programs
 
 ##########
@@ -481,6 +486,12 @@ pfsm_ecm_for_wg_factory_la_SOURCES= $(pfsm_ecm_for_wg_factory_h)	\
 $(pfsm_ecm_for_wg_factory_defs)
 pfsm_ecm_for_wg_factory_la_LIBADD= libthot.la
 pfsm_ecm_for_wg_factory_la_LDFLAGS= -module
+
+##########
+kb_mira_ll_wu_factory_la_SOURCES= $(kb_mira_ll_wu_factory_h)	\
+$(kb_mira_ll_wu_factory_defs)
+kb_mira_ll_wu_factory_la_LIBADD= libthot.la
+kb_mira_ll_wu_factory_la_LDFLAGS= -module
 
 ##########
 libthot_casmacat_la_SOURCES= $(casmacat_engines_h)			\
