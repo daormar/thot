@@ -73,6 +73,7 @@ class BaseWgProcessorForAnlp
 
       // Declarations related to dynamic class loading
   typedef BaseWgProcessorForAnlp* create_t(std::string);
+  typedef std::string type_id_t(void);
 
       // Link word-graph with word-graph processor
   virtual void link_wg(const WordGraph* _wg_ptr)=0;

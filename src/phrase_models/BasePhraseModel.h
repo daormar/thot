@@ -65,6 +65,7 @@ class BasePhraseModel
 
         // Declarations related to dynamic class loading
     typedef BasePhraseModel* create_t(std::string);
+    typedef std::string type_id_t(void);
     
         // Functions to access model probabilities
 

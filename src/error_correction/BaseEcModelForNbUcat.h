@@ -77,6 +77,7 @@ class BaseEcModelForNbUcat
 
       // Declarations related to dynamic class loading
   typedef BaseEcModelForNbUcat* create_t(std::string);
+  typedef std::string type_id_t(void);
 
       // Link error correcting model with the error correcting model for
       // uncoupled cat

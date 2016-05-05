@@ -36,3 +36,9 @@ extern "C" BaseSwAligModel<Vector<Prob> >* create(std::string /*str*/)
 {
   return new SmoothedIncrIbm2AligModel;
 }
+
+//---------------
+extern "C" std::string type_id(void)
+{
+  return "SmoothedIncrIbm2AligModel";
+}

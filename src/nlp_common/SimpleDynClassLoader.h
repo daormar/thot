@@ -33,10 +33,14 @@ class SimpleDynClassLoader
       // Function to create objects
   T* make_obj(std::string str);
 
+      // Function for type identification
+  std::string obj_type_id(void);
+  
   ~SimpleDynClassLoader();
 
  private:
   typename T::create_t* create;
+  typename T::type_id_t* type_id;
   void* dll_handle;
   std::string module_name;
 };
@@ -84,13 +88,13 @@ bool SimpleDynClassLoader<T>::open_module(std::string module,int verbose/*=1*/)
   close_module();
 
   if(verbose>=1)
-    std::cerr<<"Opening module "<<module<<endl;
+    std::cerr<<"Opening module "<<module<<" ... ";
   
   dll_handle = dlopen(module.c_str(), RTLD_LAZY);
 
   if(!dll_handle)
   {
-    std::cerr << "Failed to open library: " << dlerror() << std::endl;
+    std::cerr <<endl<<"Failed to open library: " << dlerror() << std::endl;
     return false;
   }
 
@@ -101,10 +105,22 @@ bool SimpleDynClassLoader<T>::open_module(std::string module,int verbose/*=1*/)
   const char * err = dlerror();
   if(err)
   {
-    std::cerr << "Failed to load create symbol: " << err << std::endl;
+    std::cerr <<endl<< "Failed to load create symbol: " << err << std::endl;
     close_module();
     return false;
   }
+
+  type_id = (typename T::type_id_t*) dlsym(dll_handle, "type_id");
+  err = dlerror();
+  if(err)
+  {
+    std::cerr <<endl<< "Failed to load type_id symbol: " << err << std::endl;
+    close_module();
+    return false;
+  }
+
+  if(verbose>=1)
+    std::cerr<<"Done, typeid: "<<type_id()<<endl;
 
   module_name=module;
   
@@ -120,6 +136,17 @@ T* SimpleDynClassLoader<T>::make_obj(std::string str)
     return NULL;
   }
   return create(str);
+}
+
+//---------------------------------
+template <class T>
+std::string SimpleDynClassLoader<T>::obj_type_id(void)
+{
+  if(!type_id)
+  {
+    return "";
+  }
+  return type_id();
 }
 
 //---------------------------------

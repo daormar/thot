@@ -63,6 +63,7 @@ class BaseNgramLM
   
       // Declarations related to dynamic class loading
   typedef BaseNgramLM* create_t(std::string);
+  typedef std::string type_id_t(void);
   
       // Probability functions
   virtual LgProb getNgramLgProb(WordIndex w,const Vector<WordIndex>& vu)=0;

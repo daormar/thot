@@ -36,3 +36,9 @@ extern "C" BasePhraseModel* create(std::string /*str*/)
 {
   return new WbaIncrPhraseModel;
 }
+
+//---------------
+extern "C" std::string type_id(void)
+{
+  return "WbaIncrPhraseModel";
+}

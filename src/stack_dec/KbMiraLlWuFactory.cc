@@ -36,3 +36,9 @@ extern "C" BaseLogLinWeightUpdater* create(std::string /*str*/)
 {
   return new KbMiraLlWu;
 }
+
+//---------------
+extern "C" std::string type_id(void)
+{
+  return "KbMiraLlWu";
+}

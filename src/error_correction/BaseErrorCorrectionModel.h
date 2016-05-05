@@ -69,6 +69,7 @@ class BaseErrorCorrectionModel
 
       // Declarations related to dynamic class loading
   typedef BaseErrorCorrectionModel* create_t(std::string);
+  typedef std::string type_id_t(void);
 
       // Basic functions
   virtual Score similarity(Vector<std::string> x,

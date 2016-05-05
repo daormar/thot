@@ -36,3 +36,9 @@ extern "C" BaseErrorCorrectionModel* create(std::string /*str*/)
 {
   return new PfsmEcmForWg;
 }
+
+//---------------
+extern "C" std::string type_id(void)
+{
+  return "PfsmEcmForWg";
+}

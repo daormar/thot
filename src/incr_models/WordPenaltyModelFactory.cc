@@ -36,3 +36,9 @@ extern "C" BaseWordPenaltyModel* create(std::string /*str*/)
 {
   return new WordPenaltyModel;
 }
+
+//---------------
+extern "C" std::string type_id(void)
+{
+  return "WordPenaltyModel";
+}

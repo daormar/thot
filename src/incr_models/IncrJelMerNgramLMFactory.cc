@@ -36,3 +36,9 @@ extern "C" BaseNgramLM<Vector<WordIndex> >* create(std::string /*str*/)
 {
   return new IncrJelMerNgramLM;
 }
+
+//---------------
+extern "C" std::string type_id(void)
+{
+  return "IncrJelMerNgramLM";
+}

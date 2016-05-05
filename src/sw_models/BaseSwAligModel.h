@@ -72,6 +72,7 @@ class BaseSwAligModel
 
     // Declarations related to dynamic class loading
     typedef BaseSwAligModel* create_t(std::string);
+    typedef std::string type_id_t(void);
 
     // Constructor
 	BaseSwAligModel(void);

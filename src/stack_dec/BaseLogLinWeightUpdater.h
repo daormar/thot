@@ -72,6 +72,7 @@ class BaseLogLinWeightUpdater
 
       // Declarations related to dynamic class loading
   typedef BaseLogLinWeightUpdater* create_t(std::string);
+  typedef std::string type_id_t(void);
 
       // Function to compute new weights
   virtual void update(const std::string& reference,
