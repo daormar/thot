@@ -294,19 +294,23 @@ $(stack_dec_defs) $(exper_h) $(exper_defs)
 
 ##########
 incr_jel_mer_ngram_lm_factory_h= 
-incr_jel_mer_ngram_lm_factory_defs= phrase_models/WbaIncrPhraseModelFactory.cc
+incr_jel_mer_ngram_lm_factory_defs=		\
+incr_models/IncrJelMerNgramLMFactory.cc
 
 ##########
 smoothed_incr_ibm2_alig_model_factory_h= 
-smoothed_incr_ibm2_alig_model_factory_defs= phrase_models/WbaIncrPhraseModelFactory.cc
+smoothed_incr_ibm2_alig_model_factory_defs=		\
+sw_models/SmoothedIncrIbm2AligModelFactory.cc
 
 ##########
 incr_hmm_p0_alig_model_factory_h= 
-incr_hmm_p0_alig_model_factory_defs= phrase_models/WbaIncrPhraseModelFactory.cc
+incr_hmm_p0_alig_model_factory_defs=		\
+sw_models/IncrHmmP0AligModelFactory.cc
 
 ##########
 wba_incr_phrase_model_factory_h= 
-wba_incr_phrase_model_factory_defs= phrase_models/WbaIncrPhraseModelFactory.cc
+wba_incr_phrase_model_factory_defs=		\
+phrase_models/WbaIncrPhraseModelFactory.cc
 
 # programs
 
@@ -434,29 +438,29 @@ libthot_la_LIBADD= $(ZLIB) $(LGMP)
 ##########
 incr_jel_mer_ngram_lm_factory_la_SOURCES= $(incr_jel_mer_ngram_lm_factory_h)	\
 $(incr_jel_mer_ngram_lm_factory_defs)
-incr_jel_mer_ngram_lm_factory_la_LIBADD= libthot.la $(ZLIB) $(LGMP)
+incr_jel_mer_ngram_lm_factory_la_LIBADD= libthot.la
 incr_jel_mer_ngram_lm_factory_la_LDFLAGS= -module
 
 ##########
 smoothed_incr_ibm2_alig_model_factory_la_SOURCES= $(smoothed_incr_ibm2_alig_model_factory_h)	\
 $(smoothed_incr_ibm2_alig_model_factory_defs)
-smoothed_incr_ibm2_alig_model_factory_la_LIBADD= libthot.la $(ZLIB) $(LGMP)
+smoothed_incr_ibm2_alig_model_factory_la_LIBADD= libthot.la
 smoothed_incr_ibm2_alig_model_factory_la_LDFLAGS= -module
 
 ##########
 incr_hmm_p0_alig_model_factory_la_SOURCES= $(incr_hmm_p0_alig_model_factory_h)	\
 $(incr_hmm_p0_alig_model_factory_defs)
-incr_hmm_p0_alig_model_factory_la_LIBADD= libthot.la $(ZLIB) $(LGMP)
+incr_hmm_p0_alig_model_factory_la_LIBADD= libthot.la
 incr_hmm_p0_alig_model_factory_la_LDFLAGS= -module
 
 ##########
 wba_incr_phrase_model_factory_la_SOURCES= $(wba_incr_phrase_model_factory_h)	\
 $(wba_incr_phrase_model_factory_defs)
-wba_incr_phrase_model_factory_la_LIBADD= libthot.la $(ZLIB) $(LGMP)
+wba_incr_phrase_model_factory_la_LIBADD= libthot.la
 wba_incr_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 libthot_casmacat_la_SOURCES= $(casmacat_engines_h)			\
 $(casmacat_engines_defs) $(casmacat_aligner_h) $(casmacat_aligner_defs)	\
 $(casmacat_confid_h) $(casmacat_confid_defs)
-libthot_casmacat_la_LIBADD= libthot.la $(ZLIB) $(LGMP)
+libthot_casmacat_la_LIBADD= libthot.la
