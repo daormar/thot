@@ -37,3 +37,9 @@ extern "C" BaseStackDecoder<PhrLocalSwLiTm>* create(std::string /*str*/)
 {
   return new multi_stack_decoder_rec<PhrLocalSwLiTm>;
 }
+
+//---------------
+extern "C" std::string type_id(void)
+{
+  return "multi_stack_decoder_rec<PhrLocalSwLiTm>";
+}
