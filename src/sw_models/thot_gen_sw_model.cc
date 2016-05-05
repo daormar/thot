@@ -828,7 +828,7 @@ int checkParameters(thot_gen_sw_model_pars& pars)
   {
     if(pars.eb_given || pars.i_given || pars.c_given || pars.r_given || pars.mb_given || pars.in_given)
     {
-      delete swAligModelPtr;
+      release_swm();
       cerr<<"Error: parameters -eb, -mb, -i, -c, -r and -in cannot be used with non-incremental single word models"<<endl;
       return ERROR;
     }
