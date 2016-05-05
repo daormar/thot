@@ -30,7 +30,7 @@ thot_calc_bleu $(TESTING_PROGS)
 lib_LTLIBRARIES = libthot.la incr_jel_mer_ngram_lm_factory.la		\
 smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la wba_incr_phrase_model_factory.la	\
-$(CASMACAT_LIBS)
+pfsm_ecm_for_wg_factory.la $(CASMACAT_LIBS)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
@@ -312,6 +312,11 @@ wba_incr_phrase_model_factory_h=
 wba_incr_phrase_model_factory_defs=		\
 phrase_models/WbaIncrPhraseModelFactory.cc
 
+##########
+pfsm_ecm_for_wg_factory_h= 
+pfsm_ecm_for_wg_factory_defs=		\
+error_correction/PfsmEcmForWgFactory.cc
+
 # programs
 
 ##########
@@ -458,6 +463,12 @@ wba_incr_phrase_model_factory_la_SOURCES= $(wba_incr_phrase_model_factory_h)	\
 $(wba_incr_phrase_model_factory_defs)
 wba_incr_phrase_model_factory_la_LIBADD= libthot.la
 wba_incr_phrase_model_factory_la_LDFLAGS= -module
+
+##########
+pfsm_ecm_for_wg_factory_la_SOURCES= $(pfsm_ecm_for_wg_factory_h)	\
+$(pfsm_ecm_for_wg_factory_defs)
+pfsm_ecm_for_wg_factory_la_LIBADD= libthot.la
+pfsm_ecm_for_wg_factory_la_LDFLAGS= -module
 
 ##########
 libthot_casmacat_la_SOURCES= $(casmacat_engines_h)			\
