@@ -32,7 +32,8 @@ incr_jel_mer_ngram_lm_factory.la					\
 smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la wba_incr_phrase_model_factory.la	\
 pfsm_ecm_for_wg_factory.la kb_mira_ll_wu_factory.la			\
-multi_stack_decoder_rec__swli_factory.la $(CASMACAT_LIBS)
+multi_stack_decoder_rec__swli_factory.la				\
+wg_uncoupled_assisted_trans__swli_factory.la $(CASMACAT_LIBS)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
@@ -334,6 +335,11 @@ multi_stack_decoder_rec__swli_factory_h=
 multi_stack_decoder_rec__swli_factory_defs=		\
 stack_dec/multi_stack_decoder_rec__swli_factory.cc
 
+##########
+wg_uncoupled_assisted_trans__swli_factory_h= 
+wg_uncoupled_assisted_trans__swli_factory_defs=		\
+stack_dec/WgUncoupledAssistedTransSwLiFactory.cc
+
 # programs
 
 ##########
@@ -504,6 +510,13 @@ multi_stack_decoder_rec__swli_factory_la_SOURCES= $(multi_stack_decoder_rec__swl
 $(multi_stack_decoder_rec__swli_factory_defs)
 multi_stack_decoder_rec__swli_factory_la_LIBADD= libthot.la
 multi_stack_decoder_rec__swli_factory_la_LDFLAGS= -module
+
+##########
+wg_uncoupled_assisted_trans__swli_factory_la_SOURCES=	\
+$(wg_uncoupled_assisted_trans__swli_factory_h)		\
+$(wg_uncoupled_assisted_trans__swli_factory_defs)
+wg_uncoupled_assisted_trans__swli_factory_la_LIBADD= libthot.la
+wg_uncoupled_assisted_trans__swli_factory_la_LDFLAGS= -module
 
 ##########
 libthot_casmacat_la_SOURCES= $(casmacat_engines_h)			\

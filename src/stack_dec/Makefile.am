@@ -38,4 +38,5 @@ BasePhraseHypothesisRec.h BasePhraseHypothesis.h			\
 BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
 BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h HypDebugData.h	\
 BaseAssistedTrans.h AssistedTransTypes.h _assistedTrans.h		\
-KbMiraLlWuFactory.cc multi_stack_decoder_rec__swli_factory.cc
+KbMiraLlWuFactory.cc multi_stack_decoder_rec__swli_factory.cc		\
+WgUncoupledAssistedTransSwLiFactory.cc
