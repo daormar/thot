@@ -25,6 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "WgUncoupledAssistedTrans.h"
 #include "BaseAssistedTrans.h"
 #include "BaseStackDecoder.h"
 #include "SmtModelTypes.h"
