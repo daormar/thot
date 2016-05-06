@@ -40,7 +40,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "AssistedTransTypes.h"
 #include "SmtModelTypes.h"
 #include "BasePbTransModel.h"
 #include "_phrSwTransModel.h"
@@ -48,11 +47,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SwModelInfo.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
-#include "WordPenaltyModel.h"
-#include "KbMiraLlWu.h"
 #include "BaseLogLinWeightUpdater.h"
-#include "StackDecEcModelTypes.h"
-#include "BaseEcmForWg.h"
 #include "BaseErrorCorrectionModel.h"
 
 #include "DynClassFactoryHandler.h"
@@ -109,6 +104,7 @@ SwModelInfo* swModelInfoPtr;
 BaseErrorCorrectionModel* ecModelPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
+BaseWgProcessorForAnlp* wgpPtr;
 BaseAssistedTrans<CURR_MODEL_TYPE>* assistedTransPtr;
 
 //--------------- Function Definitions -------------------------------
@@ -133,7 +129,7 @@ int main(int argc, char *argv[])
 int get_ll_weights(const thot_get_ll_weights_pars& pars)
 {
       // Initialize class factories
-  int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH,pars.verbosity);
+  int err=dynClassFactoryHandler.init_smt_and_imt(THOT_MASTER_INI_PATH,pars.verbosity);
   if(err==ERROR)
     return ERROR;
 
@@ -208,13 +204,26 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   if(!pars.tmWeightVec.empty())
     smtModelPtr->setWeights(pars.tmWeightVec);
   
-      // Print SMT model weights
+      // Print smt model weights
   cout<<"- SMT model weights= ";
   smtModelPtr->printWeights(cout);
   cout<<endl;
 
+      // Check if error correction model is valid for word graphs
+  wgpPtr=dynClassFactoryHandler.baseWgProcessorForAnlpDynClassLoader.make_obj(dynClassFactoryHandler.baseWgProcessorForAnlpInitPars);
+  if(wgpPtr==NULL)
+  {
+    cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
       // Instantiate assisted translator
-  assistedTransPtr=new CURR_AT_TYPE<CURR_MODEL_TYPE>();
+  assistedTransPtr=dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(dynClassFactoryHandler.baseAssistedTransInitPars);
+  if(assistedTransPtr==NULL)
+  {
+    cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
 
       // Set assisted translator weights
   if(!pars.catWeightVec.empty())
@@ -230,8 +239,7 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   }
   else
   {
-    BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* base_ecm_wg_ptr=dynamic_cast<BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* >(ecModelPtr);
-    if(base_ecm_wg_ptr)
+    if(wgpPtr->link_ecm_wg(ecModelPtr))
     {
       cout<<"- Assisted translator weights= ";
       assistedTransPtr->printWeights(cout);
@@ -264,10 +272,11 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   delete smtModelPtr;
   delete llWeightUpdaterPtr;
   delete ecModelPtr;
+  delete wgpPtr;
   delete assistedTransPtr;
 
       // Release class factories
-  dynClassFactoryHandler.release_smt(pars.verbosity);
+  dynClassFactoryHandler.release_smt_and_imt(pars.verbosity);
 
   return OK;
 }
