@@ -45,14 +45,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 // Types defining decoder architecture
-#include "StackDecWgProcessorForAnlpTypes.h"
-#include "AssistedTransTypes.h"
 #include "_phraseBasedTransModel.h"
-#include "StackDecEcModelForNbUcatTypes.h"
-#include "StackDecEcModelTypes.h"
 #include "_phrSwTransModel.h"
 #include "BaseSmtModel.h"
-#include "BaseEcmForWg.h"
+#include "BaseErrorCorrectionModel.h"
 
 #include "ThotDecoderCommonVars.h"
 #include "ThotDecoderPerUserVars.h"

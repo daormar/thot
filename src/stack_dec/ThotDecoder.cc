@@ -35,7 +35,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 ThotDecoder::ThotDecoder()
 {
       // Initialize class factories
-  int err=tdCommonVars.dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
+  int err=tdCommonVars.dynClassFactoryHandler.init_smt_and_imt(THOT_MASTER_INI_PATH);
   if(err==ERROR)
     exit(ERROR);
 
@@ -88,11 +88,23 @@ ThotDecoder::ThotDecoder()
     exit(ERROR);
   }
 
-  BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* base_ecm_wg_ptr=dynamic_cast<BaseEcmForWg<CURR_ECM_TYPE::EcmScoreInfo>* >(tdCommonVars.ecModelPtr);
-  if(base_ecm_wg_ptr)
-    tdCommonVars.curr_ecm_valid_for_wg=true;
+      // Check if error correction model is valid for word graphs
+  BaseWgProcessorForAnlp* wgpPtr;
+  wgpPtr=tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpInitPars);
+  if(wgpPtr==NULL)
+  {
+    cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
   else
-    tdCommonVars.curr_ecm_valid_for_wg=false;
+  {
+    if(!wgpPtr->link_ecm_wg(tdCommonVars.ecModelPtr))
+      tdCommonVars.curr_ecm_valid_for_wg=false;
+    else
+      tdCommonVars.curr_ecm_valid_for_wg=true;
+        // Delete temporary pointer
+    delete wgpPtr;
+  }
 
   tdCommonVars.llWeightUpdaterPtr=tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(tdCommonVars.llWeightUpdaterPtr==NULL)
@@ -1940,13 +1952,23 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<CURR_MODEL_TYPE>*>(tdPerUserVarsVec[idx].stackDecoderPtr);
   
       // Create error correcting model for uncoupled cat instance
-  tdPerUserVarsVec[idx].ecModelForNbUcatPtr=new CURR_ECM_NB_UCAT_TYPE();
-
+  tdPerUserVarsVec[idx].ecModelForNbUcatPtr=tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatInitPars);
+  if(tdPerUserVarsVec[idx].ecModelForNbUcatPtr==NULL)
+  {
+    cerr<<"Error: BaseEcModelForNbUcat pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+  
       // Link ecm for ucat with ecm
   tdPerUserVarsVec[idx].ecModelForNbUcatPtr->link_ecm(tdCommonVars.ecModelPtr);
 
       // Create assisted translator instance
-  tdPerUserVarsVec[idx].assistedTransPtr=new CURR_AT_TYPE<CURR_MODEL_TYPE>();
+  tdPerUserVarsVec[idx].assistedTransPtr=tdCommonVars.dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseAssistedTransInitPars);
+  if(tdPerUserVarsVec[idx].assistedTransPtr==NULL)
+  {
+    cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
   
       // Link translator with the assisted translator
   tdPerUserVarsVec[idx].assistedTransPtr->link_stack_trans(tdPerUserVarsVec[idx].stackDecoderPtr);
@@ -1972,7 +1994,12 @@ int ThotDecoder::init_idx_data(size_t idx)
   if(tdCommonVars.curr_ecm_valid_for_wg)
   {
         // Create word-graph processor instance
-    tdPerUserVarsVec[idx].wgpPtr=new CURR_WGP_TYPE<CURR_ECM_TYPE>;
+    tdPerUserVarsVec[idx].wgpPtr=tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpInitPars);
+    if(tdPerUserVarsVec[idx].wgpPtr==NULL)
+    {
+      cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<endl;
+      return ERROR;
+    }
     
     tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<CURR_MODEL_TYPE>*>(tdPerUserVarsVec[idx].assistedTransPtr);
     if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
@@ -2438,7 +2465,7 @@ ThotDecoder::~ThotDecoder()
   delete tdCommonVars.llWeightUpdaterPtr;
 
       // Release class factory handler
-  tdCommonVars.dynClassFactoryHandler.release_smt();
+  tdCommonVars.dynClassFactoryHandler.release_smt_and_imt();
   
       // Destroy mutexes and conditions
   pthread_mutex_destroy(&user_id_to_idx_mut);
