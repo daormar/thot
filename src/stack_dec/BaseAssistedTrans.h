@@ -69,7 +69,11 @@ template<class SMT_MODEL>
 class BaseAssistedTrans
 {
  public:
-  
+
+      // Declarations related to dynamic class loading
+  typedef BaseAssistedTrans* create_t(std::string);
+  typedef std::string type_id_t(void);
+
       // Link stack decoder with the assisted translator
   virtual void link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr)=0;
 
