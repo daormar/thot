@@ -9,4 +9,5 @@ _editDist.h EditDistForVecString.h EditDistForVecString.cc		\
 EditDistForVec.h EditDistForStr.h EditDistForStr.cc _editDistBasedEcm.h	\
 _editDistBasedEcm.cc BaseWgProcessorForAnlp.h				\
 BaseErrorCorrectionModel.h BaseErrorCorrectionModel.cc BaseEditDist.h	\
-BaseEcModelForNbUcat.h BaseEcmForWg.h PfsmEcmForWgFactory.cc
+BaseEcModelForNbUcat.h BaseEcmForWg.h PfsmEcmForWgFactory.cc		\
+NonPbEcModelForNbUcatFactory.cc WgProcessorForAnlpPfsmFactory.cc
