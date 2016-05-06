@@ -32,7 +32,8 @@ incr_jel_mer_ngram_lm_factory.la					\
 smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la wba_incr_phrase_model_factory.la	\
 pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
-kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
+wg_processor_for_anlp__pfsm_factory.la kb_mira_ll_wu_factory.la		\
+multi_stack_decoder_rec__swli_factory.la				\
 wg_uncoupled_assisted_trans__swli_factory.la $(CASMACAT_LIBS)
 
 # flags
@@ -331,6 +332,11 @@ non_pb_ec_model_for_nb_ucat_factory_defs=		\
 error_correction/NonPbEcModelForNbUcatFactory.cc
 
 ##########
+wg_processor_for_anlp__pfsm_factory_h= 
+wg_processor_for_anlp__pfsm_factory_defs=		\
+error_correction/WgProcessorForAnlpPfsmFactory.cc
+
+##########
 kb_mira_ll_wu_factory_h= 
 kb_mira_ll_wu_factory_defs=		\
 stack_dec/KbMiraLlWuFactory.cc
@@ -510,6 +516,13 @@ $(non_pb_ec_model_for_nb_ucat_factory_h)	\
 $(non_pb_ec_model_for_nb_ucat_factory_defs)
 non_pb_ec_model_for_nb_ucat_factory_la_LIBADD= libthot.la
 non_pb_ec_model_for_nb_ucat_factory_la_LDFLAGS= -module
+
+##########
+wg_processor_for_anlp__pfsm_factory_la_SOURCES=	\
+$(wg_processor_for_anlp__pfsm_factory_h)	\
+$(wg_processor_for_anlp__pfsm_factory_defs)
+wg_processor_for_anlp__pfsm_factory_la_LIBADD= libthot.la
+wg_processor_for_anlp__pfsm_factory_la_LDFLAGS= -module
 
 ##########
 kb_mira_ll_wu_factory_la_SOURCES= $(kb_mira_ll_wu_factory_h)	\
