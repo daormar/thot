@@ -6,6 +6,7 @@ import sys, nltk, codecs, math, re, Queue
 import itertools
 from heapq import heappush, heappop
 
+
 # global variables
 _global_n=2
 _global_lm_interp_prob=0.5
@@ -1324,8 +1325,20 @@ class Decoder:
                 print ""
 
 ##################################################
+class Tokenizer:
+
+    def __init__(self):
+        self.RX = re.compile(r'(\w+)|([^\w\s]+)', re.U)
+
+    def tokenize(self, s):
+        aux = filter(None, self.RX.split(s))
+        return filter(None, [s.strip() for s in aux])
+
+
+##################################################
 def _tokenize(string):
-    tok = nltk.wordpunct_tokenize(string)
+    #tok = nltk.wordpunct_tokenize(string)
+    tok = Tokenizer().tokenize(string)
     return tok
 
 def tokenize(string):
@@ -1334,7 +1347,9 @@ def tokenize(string):
     #return tokens
     skel = annotated_string_to_xml_skeleton(string)
     for idx, (is_tag, txt) in enumerate(skel):
-        if not is_tag:
+        if is_tag:
+            skel[idx][1] = [ skel[idx][1] ]
+        else:
             skel[idx][1] = _tokenize(txt)
     return xml_skeleton_to_tokens(skel)
 
@@ -1343,47 +1358,26 @@ def xml_skeleton_to_tokens(skeleton):
     Joins back the elements in a skeleton to return a list of tokens
     """
     annotated = []
-    for is_annotation, element in skeleton:
-        if not is_annotation:
-            annotated += element
-        else:
-            aux = ["<%s>" % grp_ann]
-            aux.extend( ["<%s>" % src_ann] + element[0] + ["</%s>" % src_ann] )
-            aux.extend( ["<%s>" % trg_ann] + element[0] + ["</%s>" % trg_ann] )
-            aux.append("</%s>" % grp_ann)
-            annotated += aux
+    for _, tokens in skeleton:
+        annotated.extend(tokens)
     return annotated
 
 ##################################################
 def lowercase(string):
     #return str.lower()
     skel = annotated_string_to_xml_skeleton(string)
-    for idx, (is_annotation, element) in enumerate(skel):
-        if is_annotation:
-            proc_element = [txt.lower().strip() for txt in element]
-            skel[idx][1] = proc_element
+    for idx, (is_tag, txt) in enumerate(skel):
+        if is_tag:
+            skel[idx][1] = txt.strip()
         else:
-            skel[idx][1] = element.lower().strip()
+            skel[idx][1] = txt.lower().strip()
     return xml_skeleton_to_string(skel)
 
 def xml_skeleton_to_string(skeleton):
     """
     Joins back the elements in a skeleton to return an annotated string
     """
-    annotated = u""
-    for is_annotation, element in skeleton:
-        if not is_annotation:
-            annotated += element
-        else:
-            annotated += "<%s> <%s>%s</%s> <%s>%s</%s> </%s>" % (grp_ann,
-                                                                 src_ann,
-                                                                 element[0],
-                                                                 src_ann,
-                                                                 trg_ann,
-                                                                 element[1],
-                                                                 trg_ann,
-                                                                 grp_ann)
-    return annotated
+    return u" ".join(txt for _,txt in skeleton)
 
 
 ##################################################
