@@ -25,8 +25,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "StackDecLmTypes.h"
-#include "Prob.h"
+#include "LM_State.h"
+#include "Score.h"
 
 //--------------- Classes --------------------------------------------
 
@@ -34,14 +34,14 @@ class PhrScoreInfo
 {
   public:
 
-   LgProb score;
+   Score score;
   
        // Language model info
    LM_State lmHist;
 
-   LgProb getScore(void)const;
-   void addHeuristic(LgProb h);
-   void sustractHeuristic(LgProb h);
+   Score getScore(void)const;
+   void addHeuristic(Score h);
+   void sustractHeuristic(Score h);
 };
 
 #endif

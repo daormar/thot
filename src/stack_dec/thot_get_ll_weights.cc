@@ -40,7 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "SmtModelTypes.h"
+#include "SmtModel.h"
 #include "BasePbTransModel.h"
 #include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
@@ -103,9 +103,9 @@ PhraseModelInfo* phrModelInfoPtr;
 SwModelInfo* swModelInfoPtr;
 BaseErrorCorrectionModel* ecModelPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
-BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
+BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
 BaseWgProcessorForAnlp* wgpPtr;
-BaseAssistedTrans<CURR_MODEL_TYPE>* assistedTransPtr;
+BaseAssistedTrans<SmtModel>* assistedTransPtr;
 
 //--------------- Function Definitions -------------------------------
 
@@ -186,16 +186,16 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   }
 
       // Instantiate smt model
-  smtModelPtr=new CURR_MODEL_TYPE();
+  smtModelPtr=new SmtModel();
       // Link pointers
   smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
-  _phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* >(smtModelPtr);
+  _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
   if(base_pbtm_ptr)
   {
     base_pbtm_ptr->link_lm_info(langModelInfoPtr);
     base_pbtm_ptr->link_pm_info(phrModelInfoPtr);
   }
-  _phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* >(smtModelPtr);
+  _phrSwTransModel<SmtModel::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
   if(base_pbswtm_ptr)
   {
     base_pbswtm_ptr->link_swm_info(swModelInfoPtr);
@@ -230,7 +230,7 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
     assistedTransPtr->setWeights(pars.catWeightVec);
 
       // Print assisted translator weights
-  WgUncoupledAssistedTrans<CURR_MODEL_TYPE>* wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<CURR_MODEL_TYPE>*>(assistedTransPtr);
+  WgUncoupledAssistedTrans<SmtModel>* wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<SmtModel>*>(assistedTransPtr);
   if(!wgUncoupledAssistedTransPtr)
   {
     cout<<"- Assisted translator weights= ";

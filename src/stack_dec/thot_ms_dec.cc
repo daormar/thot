@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "_stackDecoderRec.h"
 #include "BaseStackDecoder.h"
-#include "SmtModelTypes.h"
+#include "SmtModel.h"
 #include "BasePbTransModel.h"
 #include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
@@ -130,9 +130,9 @@ LangModelInfo* langModelInfoPtr;
 PhraseModelInfo* phrModelInfoPtr;
 SwModelInfo* swModelInfoPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
-BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* smtModelPtr;
-BaseStackDecoder<CURR_MODEL_TYPE>* stackDecoderPtr;
-_stackDecoderRec<CURR_MODEL_TYPE>* stackDecoderRecPtr;
+BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
+BaseStackDecoder<SmtModel>* stackDecoderPtr;
+_stackDecoderRec<SmtModel>* stackDecoderRecPtr;
 
 //--------------- Function Definitions -------------------------------
 
@@ -221,16 +221,16 @@ int init_translator(const thot_ms_dec_pars& tdp)
   }
 
       // Instantiate smt model
-  smtModelPtr=new CURR_MODEL_TYPE();
+  smtModelPtr=new SmtModel();
       // Link pointers
   smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
-  _phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* >(smtModelPtr);
+  _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
   if(base_pbtm_ptr)
   {
     base_pbtm_ptr->link_lm_info(langModelInfoPtr);
     base_pbtm_ptr->link_pm_info(phrModelInfoPtr);
   }
-  _phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* >(smtModelPtr);
+  _phrSwTransModel<SmtModel::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
   if(base_pbswtm_ptr)
   {
     base_pbswtm_ptr->link_swm_info(swModelInfoPtr);
@@ -275,7 +275,7 @@ int init_translator(const thot_ms_dec_pars& tdp)
   }
 
       // Determine if the translator incorporates hypotheses recombination
-  stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<CURR_MODEL_TYPE>*>(stackDecoderPtr);
+  stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<SmtModel>*>(stackDecoderPtr);
 
       // Link translation model
   stackDecoderPtr->link_smt_model(smtModelPtr);
@@ -329,8 +329,8 @@ void release_translator(void)
 //---------------
 int translate_corpus(const thot_ms_dec_pars& tdp)
 {
-  CURR_MODEL_TYPE::Hypothesis result;     // Results of the translation
-  CURR_MODEL_TYPE::Hypothesis anotherTrans;     // Another results of the translation
+  SmtModel::Hypothesis result;     // Results of the translation
+  SmtModel::Hypothesis anotherTrans;     // Another results of the translation
   int sentNo=0;    
   double elapsed_ant,elapsed,ucpu,scpu,total_time=0;
       

@@ -28,7 +28,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "WgUncoupledAssistedTrans.h"
 #include "BaseAssistedTrans.h"
 #include "BaseStackDecoder.h"
-#include "SmtModelTypes.h"
+#include "SmtModel.h"
 #include "BaseLogLinWeightUpdater.h"
 #include "BaseWgProcessorForAnlp.h"
 #include "BaseEcModelForNbUcat.h"
@@ -57,10 +57,10 @@ struct DynClassFactoryHandler
   SimpleDynClassLoader<BaseWordPenaltyModel> baseWordPenaltyModelDynClassLoader;
   std::string baseWordPenaltyModelInitPars;
 
-  SimpleDynClassLoader<BaseNgramLM<Vector<WordIndex> > > baseNgramLMDynClassLoader;
+  SimpleDynClassLoader<BaseNgramLM<LM_State> > baseNgramLMDynClassLoader;
   std::string baseNgramLMInitPars;
 
-  SimpleDynClassLoader<BaseSwAligModel<Vector<Prob> > > baseSwAligModelDynClassLoader;
+  SimpleDynClassLoader<BaseSwAligModel<PpInfo> > baseSwAligModelDynClassLoader;
   std::string baseSwAligModelInitPars;
 
   SimpleDynClassLoader<BasePhraseModel> basePhraseModelDynClassLoader;
@@ -78,10 +78,10 @@ struct DynClassFactoryHandler
   SimpleDynClassLoader<BaseLogLinWeightUpdater> baseLogLinWeightUpdaterDynClassLoader;
   std::string baseLogLinWeightUpdaterInitPars;
 
-  SimpleDynClassLoader<BaseStackDecoder<CURR_MODEL_TYPE> > baseStackDecoderDynClassLoader;
+  SimpleDynClassLoader<BaseStackDecoder<SmtModel> > baseStackDecoderDynClassLoader;
   std::string baseStackDecoderInitPars;
 
-  SimpleDynClassLoader<BaseAssistedTrans<CURR_MODEL_TYPE> > baseAssistedTransDynClassLoader;
+  SimpleDynClassLoader<BaseAssistedTrans<SmtModel> > baseAssistedTransDynClassLoader;
   std::string baseAssistedTransInitPars;
   
       // Functions

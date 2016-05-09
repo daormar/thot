@@ -114,16 +114,16 @@ ThotDecoder::ThotDecoder()
   }
 
       // Instantiate smt model
-  tdCommonVars.smtModelPtr=new CURR_MODEL_TYPE();
+  tdCommonVars.smtModelPtr=new SmtModel();
       // Link pointers
   tdCommonVars.smtModelPtr->link_ll_weight_upd(tdCommonVars.llWeightUpdaterPtr);
-  _phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<CURR_MODEL_TYPE::Hypothesis>* >(tdCommonVars.smtModelPtr);
+  _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
   if(base_pbtm_ptr)
   {
     base_pbtm_ptr->link_lm_info(tdCommonVars.langModelInfoPtr);
     base_pbtm_ptr->link_pm_info(tdCommonVars.phrModelInfoPtr);
   }
-  _phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<CURR_MODEL_TYPE::Hypothesis>* >(tdCommonVars.smtModelPtr);
+  _phrSwTransModel<SmtModel::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
   if(base_pbswtm_ptr)
   {
     base_pbswtm_ptr->link_swm_info(tdCommonVars.swModelInfoPtr);
@@ -821,7 +821,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     std::string preprocRefSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(refSent,tdState.caseconv,false);
 
         // Obtain system translation
-    CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(preprocSrcSent.c_str());
+    SmtModel::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(preprocSrcSent.c_str());
     std::string preprocSysSent=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
 
     if(verbose)
@@ -859,7 +859,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     if(tdPerUserVarsVec[idx].stackDecoderRecPtr)
       tdPerUserVarsVec[idx].stackDecoderRecPtr->enableWordGraph();
 
-    CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(srcSent);
+    SmtModel::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(srcSent);
     std::string sysSent=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
 
         // Add sentence to word-predictor
@@ -1094,7 +1094,7 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
   else
   {
         // Use translator
-    CURR_MODEL_TYPE::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(sentenceToTranslate.c_str());
+    SmtModel::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(sentenceToTranslate.c_str());
     std::string result=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
     return result;
   }
@@ -1124,7 +1124,7 @@ bool ThotDecoder::translateSentencePrintWg(int user_id,
   {
     cerr<<"Translating sentence: "<<sentenceToTranslate<<endl;
   }
-  CURR_MODEL_TYPE::Hypothesis hyp;
+  SmtModel::Hypothesis hyp;
   if(tdState.preprocId)
   {
     std::string preprocSrcSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(sentenceToTranslate,tdState.caseconv,false);
@@ -1175,7 +1175,7 @@ bool ThotDecoder::sentPairVerCov(int user_id,
   {
     cerr<<"Verifying model coverage for sentence pair: "<<srcSent<<" ||| "<<refSent<<endl;
   }
-  CURR_MODEL_TYPE::Hypothesis hyp;
+  SmtModel::Hypothesis hyp;
   if(tdState.preprocId)
   {
     std::string preprocSrcSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(srcSent,tdState.caseconv,false);
@@ -1939,8 +1939,8 @@ int ThotDecoder::init_idx_data(size_t idx)
 
       // Create statistical machine translation model instance (it is
       // cloned from the main one)
-  BaseSmtModel<CURR_MODEL_TYPE::Hypothesis>* baseSmtModelPtr=tdCommonVars.smtModelPtr->clone();
-  tdPerUserVarsVec[idx].smtModelPtr=dynamic_cast<BasePbTransModel<CURR_MODEL_TYPE::Hypothesis>* >(baseSmtModelPtr);
+  BaseSmtModel<SmtModel::Hypothesis>* baseSmtModelPtr=tdCommonVars.smtModelPtr->clone();
+  tdPerUserVarsVec[idx].smtModelPtr=dynamic_cast<BasePbTransModel<SmtModel::Hypothesis>* >(baseSmtModelPtr);
   
       // Link statistical machine translation model
   tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
@@ -1949,7 +1949,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
 
       // Determine if the translator incorporates hypotheses recombination
-  tdPerUserVarsVec[idx].stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<CURR_MODEL_TYPE>*>(tdPerUserVarsVec[idx].stackDecoderPtr);
+  tdPerUserVarsVec[idx].stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<SmtModel>*>(tdPerUserVarsVec[idx].stackDecoderPtr);
   
       // Create error correcting model for uncoupled cat instance
   tdPerUserVarsVec[idx].ecModelForNbUcatPtr=tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatInitPars);
@@ -1975,7 +1975,7 @@ int ThotDecoder::init_idx_data(size_t idx)
 
       // Check if assistedTransPtr points to an uncoupled assisted
       // translator
-  tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr=dynamic_cast<_nbUncoupledAssistedTrans<CURR_MODEL_TYPE>*>(tdPerUserVarsVec[idx].assistedTransPtr);
+  tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr=dynamic_cast<_nbUncoupledAssistedTrans<SmtModel>*>(tdPerUserVarsVec[idx].assistedTransPtr);
   if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
   {
         // Execute specific actions for uncoupled assisted translators
@@ -2001,7 +2001,7 @@ int ThotDecoder::init_idx_data(size_t idx)
       return ERROR;
     }
     
-    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<CURR_MODEL_TYPE>*>(tdPerUserVarsVec[idx].assistedTransPtr);
+    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<SmtModel>*>(tdPerUserVarsVec[idx].assistedTransPtr);
     if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
     {
           // Execute specific actions for uncoupled assisted translators

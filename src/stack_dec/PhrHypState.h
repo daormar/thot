@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "StackDecLmTypes.h"
+#include "LM_State.h"
 #include "PositionIndex.h"
 #include "SmtDefs.h"
 #include "BaseHypState.h"

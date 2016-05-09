@@ -25,13 +25,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-
-#include <StatModelDefs.h>
-#include "StackDecLmTypes.h"
+#include "LM_State.h"
 #include <Score.h>
 #include <utility>
 #include <map>
-#include <myVector.h>
 
 //--------------- Classes --------------------------------------------
 

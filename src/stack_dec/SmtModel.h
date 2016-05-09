@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-#ifndef _StackDecWgProcessorForAnlpTypes_h
-#define _StackDecWgProcessorForAnlpTypes_h
+#ifndef _CurrSmtModel_h
+#define _CurrSmtModel_h
 
 //--------------- Include files --------------------------------------
 
@@ -25,28 +25,20 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "PhrLocalSwLiTm.h"
+#include "WordIndex.h"
+#include "myVector.h"
+
 //--------------- Constants ------------------------------------------
 
-#define STD_WGP                1
-#define STD_WGP_LABEL          "Standard word-graph processor"
-#define STD_WGP_NOTES          ""
+// Set the SMT model type used by different programs such as
+// thot_ms_dec, thot_ms_alig, thot_server, etc. 
 
-// Set the error correcting model type used by uncoupled assisted
-// translators.  The valid options are: STD_WGP, ... These options can
-// be given before executing the configure script.
-//
-// Example:
-// $ export THOT_WGP_TYPE="STD_WGP"
-// $ configure --prefix=$PWD
-// $ make
-// $ make install
+#define SMT_MODEL_TYPE_NAME "PhrLocalSwLiTm"
+#define SMT_MODEL_DESC      "Lm + phrase-based model and local sw model linearly-interpolated"
 
-#if THOT_WGP_TYPE == STD_WGP
-# include <WgProcessorForAnlp.h>
-# define CURR_WGP_TYPE WgProcessorForAnlp
-# define CURR_WGP_LABEL STD_WGP_LABEL
-# define CURR_WGP_NOTES STD_WGP_NOTES
+//--------------- User defined types ---------------------------------
 
-#endif
+typedef PhrLocalSwLiTm SmtModel;
 
 #endif

@@ -25,7 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-//#include <StackDecSwModelTypes.h>
+#include "PpInfo.h"
 #include "BaseSwAligModel.h"
 #include "SwModelPars.h"
 #include "Prob.h"
@@ -40,18 +40,17 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- typedefs -------------------------------------------
 
-typedef BaseSwAligModel<Vector<Prob> >::PpInfo PpInfo;
 
 //--------------- SwModelInfo struct
 
 struct SwModelInfo
 {
       // sw model members
-  BaseSwAligModel<Vector<Prob> >* swAligModelPtr;
+  BaseSwAligModel<PpInfo>* swAligModelPtr;
   SwModelPars swModelPars;
 
       // Inverse sw model members
-  BaseSwAligModel<Vector<Prob> >* invSwAligModelPtr;
+  BaseSwAligModel<PpInfo>* invSwAligModelPtr;
   SwModelPars invSwModelPars;
 
       // Confidence interval for length model

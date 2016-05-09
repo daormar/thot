@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-#ifndef _ThotDecoderCommonVars_h
-#define _ThotDecoderCommonVars_h
+#ifndef _PpInfo_h
+#define _PpInfo_h
 
 //--------------- Include files --------------------------------------
 
@@ -25,33 +25,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "SmtModel.h"
-#include "BasePbTransModel.h"
-#include "BaseErrorCorrectionModel.h"
-#include "BaseLogLinWeightUpdater.h"
-#include "SwModelInfo.h"
-#include "PhraseModelInfo.h"
-#include "LangModelInfo.h"
-#include <WgHandler.h>
-#include "DynClassFactoryHandler.h"
+#include "WordIndex.h"
+#include "myVector.h"
 
-using namespace std;
+//--------------- User defined types ---------------------------------
 
-//--------------- Classes --------------------------------------------
-
-class ThotDecoderCommonVars
-{
- public:
-  SwModelInfo* swModelInfoPtr;
-  PhraseModelInfo* phrModelInfoPtr;
-  LangModelInfo* langModelInfoPtr;
-  WgHandler* wgHandlerPtr;
-  BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
-  BaseErrorCorrectionModel* ecModelPtr;
-  bool curr_ecm_valid_for_wg;
-  BaseLogLinWeightUpdater* llWeightUpdaterPtr;
-
-  DynClassFactoryHandler dynClassFactoryHandler;
-};
+typedef Vector<WordIndex> PpInfo;
 
 #endif

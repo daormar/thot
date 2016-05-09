@@ -31,19 +31,19 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- PhrScoreInfo class functions
 
-LgProb PhrScoreInfo::getScore(void)const
+Score PhrScoreInfo::getScore(void)const
 {
   return score;
 }
 
 //---------------------------------
-void PhrScoreInfo::addHeuristic(LgProb h)
+void PhrScoreInfo::addHeuristic(Score h)
 {
   score=score+h;
 }
 
 //---------------------------------
-void PhrScoreInfo::sustractHeuristic(LgProb h)
+void PhrScoreInfo::sustractHeuristic(Score h)
 {
   score=score-h;
 }

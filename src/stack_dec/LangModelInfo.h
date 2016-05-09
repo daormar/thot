@@ -27,6 +27,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "LangModelPars.h"
 
+#include "LM_State.h"
 #include "BaseNgramLM.h"
 #include "BaseWordPenaltyModel.h"
 #include "WordPredictor.h"
@@ -37,7 +38,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 struct LangModelInfo
 {
-  BaseNgramLM<Vector<WordIndex> >* lModelPtr;
+  BaseNgramLM<LM_State>* lModelPtr;
   LangModelPars langModelPars;
   BaseWordPenaltyModel* wpModelPtr;
   WordPredictor wordPredictor;
