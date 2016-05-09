@@ -242,8 +242,8 @@ recase_output()
         raw_src_pref=${scorpus_pref}
         raw_trg_pref=${tcorpus_pref}
     else
-        raw_src_pref=${outd}/${preproc_dir}/src_tok
-        raw_trg_pref=${outd}/${preproc_dir}/trg_tok
+        raw_src_pref=${outd}/${preproc_dir}/${srcbase}_tok
+        raw_trg_pref=${outd}/${preproc_dir}/${trgbase}_tok
     fi
 
     # Generate raw text file for recasing
