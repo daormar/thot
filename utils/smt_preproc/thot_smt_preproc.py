@@ -1389,13 +1389,15 @@ def xml_skeleton_to_string(skeleton):
 
 
 ##################################################
-grp_ann = "p" #"phr_pair_annot"
-src_ann = "s" #"src_segm"
-trg_ann = "t" #"trg_segm"
+grp_ann = "phr_pair_annot"
+src_ann = "src_segm"
+trg_ann = "trg_segm"
 ann_patt = u"<%s>[ ]*<%s>(.+?)<\/%s>[ ]*<%s>(.+?)<\/%s>[ ]*<\/%s>" % (grp_ann,
                                                                       src_ann, src_ann,
                                                                       trg_ann, trg_ann,
                                                                       grp_ann)
+len_ann = "l"
+len_patt = u"<%s>\d+</%s>" % (len_ann, len_ann)
 _annotation = re.compile(ann_patt)
 def annotated_string_to_xml_skeleton(annotated):
     """
