@@ -1325,7 +1325,7 @@ class Decoder:
 
 ##################################################
 def _tokenize(string):
-    tok = nltk.word_tokenize(string)
+    tok = nltk.wordpunct_tokenize(string)
     return tok
 
 def tokenize(string):
@@ -1420,7 +1420,7 @@ def annotated_string_to_xml_skeleton(annotated):
             skeleton.extend( ann )
     if offset < len(annotated):
         skeleton.append( [False, annotated[offset:]] )
-    print skeleton
+    #print skeleton
     return skeleton
 
 ##################################################
