@@ -1333,11 +1333,9 @@ def tokenize(string):
     #tokens = nltk.wordpunct_tokenize(str)
     #return tokens
     skel = annotated_string_to_xml_skeleton(string)
-    for idx, (is_annotation, element) in enumerate(skel):
-        if is_annotation:
-            skel[idx][1] = [_tokenize(txt) for txt in element]
-        else:
-            skel[idx][1] = _tokenize(element)
+    for idx, (is_tag, txt) in enumerate(skel):
+        if not is_tag:
+            skel[idx][1] = _tokenize(txt)
     return xml_skeleton_to_tokens(skel)
 
 def xml_skeleton_to_tokens(skeleton):
@@ -1389,33 +1387,40 @@ def xml_skeleton_to_string(skeleton):
 
 
 ##################################################
-grp_ann = "phr_pair_annot"
-src_ann = "src_segm"
-trg_ann = "trg_segm"
-ann_patt = u"<%s>[ ]*<%s>(.+?)<\/%s>[ ]*<%s>(.+?)<\/%s>[ ]*<\/%s>" % (grp_ann,
-                                                                      src_ann, src_ann,
-                                                                      trg_ann, trg_ann,
-                                                                      grp_ann)
+grp_ann = "p" #"phr_pair_annot"
+src_ann = "s" #"src_segm"
+trg_ann = "t" #"trg_segm"
+dic_patt = u"(<%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<\/%s>)" % (grp_ann,
+                                                                                  src_ann, src_ann,
+                                                                                  trg_ann, trg_ann,
+                                                                                  grp_ann)
 len_ann = "l"
-len_patt = u"<%s>\d+</%s>" % (len_ann, len_ann)
-_annotation = re.compile(ann_patt)
+len_patt = u"(<%s>)(\d+)(</%s>)" % (len_ann, len_ann)
+
+
+_annotation = re.compile(dic_patt + "|" + len_patt)
 def annotated_string_to_xml_skeleton(annotated):
     """
-    Parses a string looking for annotations: <phr_pair_annot> <src_segm> <trg_segm>
-    returns a vector where each element is a pair (is_annotation, text/annotation)
+    Parses a string looking for XML annotations
+    returns a vector where each element is a pair (is_tag, text)
     """
     offset = 0
     skeleton = list()
     for m in _annotation.finditer(annotated):
         if offset < m.start():
-            is_annotation = False
-            skeleton.append( [is_annotation, annotated[offset:m.start()]] )
+            skeleton.append( [False, annotated[offset:m.start()]] )
         offset = m.end()
-        is_annotation = True
-        skeleton.append( [is_annotation, m.groups()] )
+        g = m.groups()
+        if len(g) == 3:
+            ann = [[True, g[0]], [False, g[1]], [True, g[2]]]
+            skeleton.extend(ann)
+        else:
+            ann = [[True, g[0]], [True, g[1]], [False, g[2]], [True, g[3]],
+                   [True, g[4]], [False, g[5]], [True, g[6]], [True, g[7]]]
+            skeleton.extend( ann )
     if offset < len(annotated):
-        is_annotation = False
-        skeleton.append( [is_annotation, annotated[offset:]] )
+        skeleton.append( [False, annotated[offset:]] )
+    print skeleton
     return skeleton
 
 ##################################################
