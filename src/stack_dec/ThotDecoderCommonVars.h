@@ -25,7 +25,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "SmtModel.h"
+#include THOT_SMTMODEL_H // Define SmtModel type. It is set in
+                              // configure by checking SMTMODEL_H
+                              // variable (default value: SmtModel.h)
 #include "BasePbTransModel.h"
 #include "BaseErrorCorrectionModel.h"
 #include "BaseLogLinWeightUpdater.h"

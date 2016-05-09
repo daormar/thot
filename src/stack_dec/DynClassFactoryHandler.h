@@ -28,7 +28,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "WgUncoupledAssistedTrans.h"
 #include "BaseAssistedTrans.h"
 #include "BaseStackDecoder.h"
-#include "SmtModel.h"
+#include THOT_SMTMODEL_H // Define SmtModel type. It is set in
+                              // configure by checking SMTMODEL_H
+                              // variable (default value: SmtModel.h)
 #include "BaseLogLinWeightUpdater.h"
 #include "BaseWgProcessorForAnlp.h"
 #include "BaseEcModelForNbUcat.h"

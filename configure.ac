@@ -509,14 +509,25 @@ fi
 
 # Process options given in shell variables
 
-# Set different models and decoder types based on previously defined
-# shell variables
+# Set different types based on previously defined shell variables
 
-dnl # Smt model type used
-dnl if test "$THOT_SMT_MODEL_TYPE" = ""; then
-dnl    THOT_SMT_MODEL_TYPE="PBLSWMLI"
-dnl fi
-dnl AC_DEFINE_UNQUOTED(SMT_MODEL_TYPE,${THOT_SMT_MODEL_TYPE},[Define which SMT model is to be used])
+# LM_State type used
+if test "$LM_STATE_H" = ""; then
+   LM_STATE_H="LM_State.h"
+fi
+AC_DEFINE_UNQUOTED(LM_STATE_H,"${LM_STATE_H}",[File name with LM_State type definition])
+
+# PpInfo type used
+if test "$PPINFO_H" = ""; then
+   PPINFO_H="PpInfo.h"
+fi
+AC_DEFINE_UNQUOTED(PPINFO_H,"${PPINFO_H}",[File name with PpInfo type definition])
+
+# SmtModel type used
+if test "$SMTMODEL_H" = ""; then
+   SMTMODEL_H="SmtModel.h"
+fi
+AC_DEFINE_UNQUOTED(SMTMODEL_H,"${SMTMODEL_H}",[File name with SmtModel type definition])
 
 #AC_CONFIG_FILES([Makefile])
 AC_OUTPUT(Makefile doc/Makefile m4/Makefile src/Makefile src/nlp_common/Makefile src/incr_models/Makefile src/sw_models/Makefile src/phrase_models/Makefile src/smt_preproc/Makefile src/error_correction/Makefile src/downhill_simplex/Makefile src/stack_dec/Makefile src/exper/Makefile src/testing/Makefile utils/Makefile utils/nlp_common/Makefile utils/incr_models/Makefile utils/sw_models/Makefile utils/phrase_models/Makefile utils/smt_preproc/Makefile utils/error_correction/Makefile utils/downhill_simplex/Makefile utils/stack_dec/Makefile utils/exper/Makefile examples/Makefile examples/cfg_templates/Makefile examples/toy_corpus/Makefile examples/ini_files/Makefile)
