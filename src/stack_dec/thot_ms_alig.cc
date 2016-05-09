@@ -189,6 +189,12 @@ int init_translator(const thot_ms_alig_pars& tap)
   
   cerr<<"\n- Initializing aligner...\n\n";
 
+      // Show static types
+  cerr<<"Static types:"<<endl;
+  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
+  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
+  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+
       // Initialize class factories
   err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
   if(err==ERROR)

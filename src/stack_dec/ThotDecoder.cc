@@ -34,6 +34,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------------------
 ThotDecoder::ThotDecoder()
 {
+      // Show static types
+  cerr<<"Static types:"<<endl;
+  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
+  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
+  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+
       // Initialize class factories
   int err=tdCommonVars.dynClassFactoryHandler.init_smt_and_imt(THOT_MASTER_INI_PATH);
   if(err==ERROR)
