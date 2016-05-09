@@ -48,8 +48,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function Declarations -------------------------------
 
-int init_swm(void);
-void release_swm(void);
+int init_swm(int verbosity);
+void release_swm(int verbosity);
 int processParameters(thot_gen_sw_model_pars pars);
 void emIters(thot_gen_sw_model_pars& pars,
              BaseSwAligModel<Vector<Prob> >* swAligModelPtr,
@@ -99,11 +99,11 @@ int main(int argc,char *argv[])
 }
 
 //---------------
-int init_swm(void)
+int init_swm(int verbosity)
 {
       // Initialize dynamic class file handler
   DynClassFileHandler dynClassFileHandler;
-  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH)==ERROR)
+  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH,verbosity)==ERROR)
   {
     cerr<<"Error while loading ini file"<<endl;
     return ERROR;
@@ -123,7 +123,7 @@ int init_swm(void)
   }
    
       // Load class derived from BaseSwAligModel dynamically
-  if(!baseSwAligModelDynClassLoader.open_module(soFileName))
+  if(!baseSwAligModelDynClassLoader.open_module(soFileName,verbosity))
   {
     cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
     return ERROR;
@@ -142,10 +142,10 @@ int init_swm(void)
 }
 
 //---------------
-void release_swm(void)
+void release_swm(int verbosity)
 {
   delete swAligModelPtr;
-  baseSwAligModelDynClassLoader.close_module();
+  baseSwAligModelDynClassLoader.close_module(verbosity);
 }
 
 //--------------- processParameters function
@@ -153,7 +153,7 @@ int processParameters(thot_gen_sw_model_pars pars)
 {
   int verbosity=0;
 
-  if(init_swm()==ERROR)
+  if(init_swm(true)==ERROR)
     return ERROR;
   
       // Load model if -l option was given
@@ -163,7 +163,7 @@ int processParameters(thot_gen_sw_model_pars pars)
     int ret=swAligModelPtr->load(pars.l_str.c_str());
     if(ret==ERROR)
     {
-      release_swm();
+      release_swm(true);
       return ERROR;
     }
   }
@@ -236,7 +236,7 @@ int processParameters(thot_gen_sw_model_pars pars)
                                               pui);
     if(ret==ERROR)
     {
-      release_swm();
+      release_swm(true);
       return ERROR;
     }
   }
@@ -279,7 +279,7 @@ int processParameters(thot_gen_sw_model_pars pars)
   swAligModelPtr->print(pars.o_str.c_str());
 
       // Delete pointer
-  release_swm();
+  release_swm(true);
   
   return OK;
 }
@@ -820,7 +820,7 @@ int checkParameters(thot_gen_sw_model_pars& pars)
   }
   
       // Check invalid options when using non-incremental sw models
-  if(init_swm()==ERROR)
+  if(init_swm(false)==ERROR)
     return ERROR;
       
   _incrSwAligModel<Vector<Prob> >* _incrSwAligModelPtr=dynamic_cast<_incrSwAligModel<Vector<Prob> >*>(swAligModelPtr);
@@ -828,13 +828,13 @@ int checkParameters(thot_gen_sw_model_pars& pars)
   {
     if(pars.eb_given || pars.i_given || pars.c_given || pars.r_given || pars.mb_given || pars.in_given)
     {
-      release_swm();
+      release_swm(false);
       cerr<<"Error: parameters -eb, -mb, -i, -c, -r and -in cannot be used with non-incremental single word models"<<endl;
       return ERROR;
     }
   }
   
-  release_swm();
+  release_swm(false);
   
   return OK;
 }
