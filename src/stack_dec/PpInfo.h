@@ -28,6 +28,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "WordIndex.h"
 #include "myVector.h"
 
+//--------------- Constants ------------------------------------------
+
+// Set the PpInfo type used to store information about partial
+// probabilities.
+
+#define PPINFO_TYPE_NAME "Vector<WordIndex>"
+#define PPINFO_DESC      ""
+
 //--------------- User defined types ---------------------------------
 
 typedef Vector<WordIndex> PpInfo;
