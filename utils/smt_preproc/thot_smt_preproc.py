@@ -1324,12 +1324,9 @@ class Decoder:
                 print ""
 
 ##################################################
-_white = re.compile("^(\s*).*?(\s*)$")
 def _tokenize(string):
-    leading_white, tailing_white = _white.search(string).groups()
-    m = _white.search(string)
-    tok = u' '.join(nltk.word_tokenize(string))
-    return leading_white + tok + tailing_white
+    tok = nltk.word_tokenize(string)
+    return tok
 
 def tokenize(string):
 #        tokens = nltk.word_tokenize(line)
@@ -1341,8 +1338,23 @@ def tokenize(string):
             skel[idx][1] = [_tokenize(txt) for txt in element]
         else:
             skel[idx][1] = _tokenize(element)
+    return xml_skeleton_to_tokens(skel)
 
-    return xml_skeleton_to_annotated_string(skel)
+def xml_skeleton_to_tokens(skeleton):
+    """
+    Joins back the elements in a skeleton to return a list of tokens
+    """
+    annotated = []
+    for is_annotation, element in skeleton:
+        if not is_annotation:
+            annotated += element
+        else:
+            aux = ["<%s>" % grp_ann]
+            aux.extend( ["<%s>" % src_ann] + element[0] + ["</%s>" % src_ann] )
+            aux.extend( ["<%s>" % trg_ann] + element[0] + ["</%s>" % trg_ann] )
+            aux.append("</%s>" % grp_ann)
+            annotated += aux
+    return annotated
 
 ##################################################
 def lowercase(string):
@@ -1350,16 +1362,36 @@ def lowercase(string):
     skel = annotated_string_to_xml_skeleton(string)
     for idx, (is_annotation, element) in enumerate(skel):
         if is_annotation:
-            proc_element = [txt.lower() for txt in element]
+            proc_element = [txt.lower().strip() for txt in element]
             skel[idx][1] = proc_element
         else:
-            skel[idx][1] = element.lower()
-    return xml_skeleton_to_annotated_string(skel)
+            skel[idx][1] = element.lower().strip()
+    return xml_skeleton_to_string(skel)
+
+def xml_skeleton_to_string(skeleton):
+    """
+    Joins back the elements in a skeleton to return an annotated string
+    """
+    annotated = u""
+    for is_annotation, element in skeleton:
+        if not is_annotation:
+            annotated += element
+        else:
+            annotated += "<%s> <%s>%s</%s> <%s>%s</%s> </%s>" % (grp_ann,
+                                                                 src_ann,
+                                                                 element[0],
+                                                                 src_ann,
+                                                                 trg_ann,
+                                                                 element[1],
+                                                                 trg_ann,
+                                                                 grp_ann)
+    return annotated
+
 
 ##################################################
-grp_ann = "phr_pair_annot"
-src_ann = "src_segm"
-trg_ann = "trg_segm"
+grp_ann = "p" #"phr_pair_annot"
+src_ann = "s" #"src_segm"
+trg_ann = "t" #"trg_segm"
 ann_patt = u"<%s>[ ]*<%s>(.+?)<\/%s>[ ]*<%s>(.+?)<\/%s>[ ]*<\/%s>" % (grp_ann,
                                                                       src_ann, src_ann,
                                                                       trg_ann, trg_ann,
@@ -1382,26 +1414,6 @@ def annotated_string_to_xml_skeleton(annotated):
     if offset < len(annotated):
         is_annotation = False
         skeleton.append( [is_annotation, annotated[offset:]] )
-    #print "A2S:", skeleton
     return skeleton
 
 ##################################################
-def xml_skeleton_to_annotated_string(skeleton):
-    """
-    Joins back the elements in a skeleton to return an annotated string
-    """
-    annotated = u""
-    for is_annotation, element in skeleton:
-        if not is_annotation:
-            annotated += element
-        else:
-            annotated += "<%s><%s>%s</%s><%s>%s</%s></%s>" % (grp_ann,
-                                                              src_ann,
-                                                              element[0],
-                                                              src_ann,
-                                                              trg_ann,
-                                                              element[1],
-                                                              trg_ann,
-                                                              grp_ann)
-    #print "S2A:", skeleton, "->", annotated
-    return annotated
