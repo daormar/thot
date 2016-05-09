@@ -453,7 +453,8 @@ if test "$enable_casmacat_he" = "yes"; then
  AC_DEFINE(CASMACAT_HE,,[Define if casmacat home edition configuration is enabled])
 
  # Use IBM 2 alignment models
- THOT_SWM_TYPE="THOT_SINCR_IBM2_SWM"
+ AC_SUBST(ENABLE_IBM2_ALIG,"yes")
+
 else
  AC_MSG_RESULT(no)
 fi
@@ -500,91 +501,22 @@ AC_ARG_ENABLE(ibm2-alig,[  --enable-ibm2-alig   enable IBM 2 model as alignment 
 
 dnl Yes, debug is enabled
 if test "$enable_ibm2_alig" = "yes"; then
-
  AC_MSG_RESULT(yes)
-
- AC_DEFINE(IBM2_ALIG,,[Define if IBM 2 model is to be used as alignment model])
-
- # Use IBM 2 alignment models
- THOT_SWM_TYPE="THOT_SINCR_IBM2_SWM"
-
+ AC_SUBST(ENABLE_IBM2_ALIG,"yes")
 else
-
  AC_MSG_RESULT(no)
-
 fi
 
 # Process options given in shell variables
 
-# swm type used
-if test "$THOT_SWM_TYPE" = ""; then
-   THOT_SWM_TYPE="THOT_INCR_HMM_P0_SWM"
-#   THOT_SWM_TYPE="THOT_SINCR_IBM2_SWM"
-fi
-AC_DEFINE_UNQUOTED(SWM_TYPE,${THOT_SWM_TYPE},[Define which sentence length model is to be used])
-
-# slm type used
-if test "$THOT_SLM_TYPE" = ""; then
-   THOT_SLM_TYPE="WISLM_NORM"
-fi
-AC_DEFINE_UNQUOTED(SLM_TYPE,${THOT_SLM_TYPE},[Define which sentence length model is to be used])
-
-# sh type used
-if test "$THOT_SH_TYPE" = ""; then
-   THOT_SH_TYPE="LSENT_HANDLER"
-fi
-AC_DEFINE_UNQUOTED(SH_TYPE,${THOT_SH_TYPE},[Define which sentence handler is to be used])
-
 # Set different models and decoder types based on previously defined
 # shell variables
 
-# Language model type used
-if test "$THOT_LM_TYPE" = ""; then
-   THOT_LM_TYPE="THOT_INCR_JEL_MER_LM"
-fi
-AC_DEFINE_UNQUOTED(LM_TYPE,${THOT_LM_TYPE},[Define which language model is to be used])
-
-# Phrase-based model type used
-if test "$THOT_PBM_TYPE" = ""; then
-   THOT_PBM_TYPE="ML_PBM"
-fi
-AC_DEFINE_UNQUOTED(PBM_TYPE,${THOT_PBM_TYPE},[Define which phrase-based model is to be used])
-
-# Smt model type used
-if test "$THOT_SMT_MODEL_TYPE" = ""; then
-   THOT_SMT_MODEL_TYPE="PBLSWMLI"
-fi
-AC_DEFINE_UNQUOTED(SMT_MODEL_TYPE,${THOT_SMT_MODEL_TYPE},[Define which SMT model is to be used])
-
-# Multi stack type used
-if test "$THOT_MSTACK_TYPE" = ""; then
-   THOT_MSTACK_TYPE="MSTACK"
-fi
-AC_DEFINE_UNQUOTED(MSTACK_TYPE,${THOT_MSTACK_TYPE},[Define which multi stack type is to be used])
-
-# Error correcting model type used
-if test "$THOT_ECM_TYPE" = ""; then
-   THOT_ECM_TYPE="PFSM_FOR_WG_ECM"
-fi
-AC_DEFINE_UNQUOTED(ECM_TYPE,${THOT_ECM_TYPE},[Define which general-purpose error correcting model is to be used])
-
-# Error correcting model for uncoupled cat type used
-if test "$THOT_ECM_NB_UCAT_TYPE" = ""; then
-   THOT_ECM_NB_UCAT_TYPE="NONPB_ECM_NB_UCAT"
-fi
-AC_DEFINE_UNQUOTED(ECM_NB_UCAT_TYPE,${THOT_ECM_NB_UCAT_TYPE},[Define which error correcting model for uncoupled cat is to be used])
-
-# Word-graph processor type used
-if test "$THOT_WGP_TYPE" = ""; then
-   THOT_WGP_TYPE="STD_WGP"
-fi
-AC_DEFINE_UNQUOTED(WGP_TYPE,${THOT_WGP_TYPE},[Define which word-graph processor is to be used])
-
-# Assisted translation type used
-if test "$THOT_AT_TYPE" = ""; then
-   THOT_AT_TYPE="WG_UNCTRANS"
-fi
-AC_DEFINE_UNQUOTED(AT_TYPE,${THOT_AT_TYPE},[Define which assisted translator type is to be used])
+dnl # Smt model type used
+dnl if test "$THOT_SMT_MODEL_TYPE" = ""; then
+dnl    THOT_SMT_MODEL_TYPE="PBLSWMLI"
+dnl fi
+dnl AC_DEFINE_UNQUOTED(SMT_MODEL_TYPE,${THOT_SMT_MODEL_TYPE},[Define which SMT model is to be used])
 
 #AC_CONFIG_FILES([Makefile])
 AC_OUTPUT(Makefile doc/Makefile m4/Makefile src/Makefile src/nlp_common/Makefile src/incr_models/Makefile src/sw_models/Makefile src/phrase_models/Makefile src/smt_preproc/Makefile src/error_correction/Makefile src/downhill_simplex/Makefile src/stack_dec/Makefile src/exper/Makefile src/testing/Makefile utils/Makefile utils/nlp_common/Makefile utils/incr_models/Makefile utils/sw_models/Makefile utils/phrase_models/Makefile utils/smt_preproc/Makefile utils/error_correction/Makefile utils/downhill_simplex/Makefile utils/stack_dec/Makefile utils/exper/Makefile examples/Makefile examples/cfg_templates/Makefile examples/toy_corpus/Makefile examples/ini_files/Makefile)
