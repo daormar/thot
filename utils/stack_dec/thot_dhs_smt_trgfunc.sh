@@ -7,9 +7,6 @@
 # The translations are generated using the "thot_decoder" tool,
 # which is provided by the "thot" package.
 
-# NOTE: The BLEU measure can be replaced by the WER measure by setting
-# the appropriate value of the MEASURE value.
-
 ########
 calc_nnc_pen()
 {
@@ -189,23 +186,10 @@ gen_trans()
 ########
 evaluate()
 {
-    # Use variable MEASURE to switch between different translation quality/error measures
-    case $MEASURE in
-        "BLEU") # Calculate the BLEU measure
-            ${bindir}/thot_calc_bleu -r ${REF} -t  ${SDIR}/smt_trgf.trans >> ${SDIR}/smt_trgf.${MEASURE}
-            # Obtain BLEU
-            BLEU=`tail -1 ${SDIR}/smt_trgf.${MEASURE} | ${AWK} '{printf"%f\n",1-$2}'`
-            # Print target function value
-            echo "${BLEU} ${nnc_pen}" | $AWK '{printf"%f\n",$1+$2}'
-            ;;
-        "WER") # Calculate the WER measure
-            ${bindir}/thot_calc_wer -r ${REF} -t ${SDIR}/smt_trgf.trans | head -1 >> ${SDIR}/smt_trgf.${MEASURE}
-            # Obtain WER
-            WER=`tail -1 ${SDIR}/smt_trgf.${MEASURE} | ${AWK} '{printf"%f\n",$2}'`
-            # Print target function value
-            echo "${WER} ${nnc_pen}" | $AWK '{printf"%f\n",$1+$2}'
-            ;;
-    esac
+    ${bindir}/thot_scorer -r ${REF} -t  ${SDIR}/smt_trgf.trans >> ${SDIR}/smt_trgf.score
+    SCORE=`tail -1 ${SDIR}/smt_trgf.score | ${AWK} '{printf"%f\n",1-$2}'`
+    # Print target function value
+    echo "${SCORE} ${nnc_pen}" | $AWK '{printf"%f\n",$1+$2}'
 }
 
 ########
@@ -222,7 +206,6 @@ else
     if [ "${RAW_TEST}" = "" ]; then RAW_TEST="_none_" ; fi
     if [ "${RAW_REF}" = "" ]; then RAW_REF="_none_" ; fi
     if [ "${PREPROC_FILE}" = "" ]; then PREPROC_FILE="_none_" ; fi
-    if [ "${MEASURE}" = "" ]; then MEASURE="BLEU" ; fi
     if [ "${NNC_PEN_FACTOR}" = "" ]; then NNC_PEN_FACTOR=1000; fi
     if [ "${USE_NBEST_OPT}" = "" ]; then USE_NBEST_OPT=0; fi
     if [ "${OPT_NVALUE}" = "" ]; then OPT_NVALUE=200; fi
