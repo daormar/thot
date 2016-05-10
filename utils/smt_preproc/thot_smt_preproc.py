@@ -1336,21 +1336,17 @@ class Tokenizer:
 
 
 ##################################################
-def _tokenize(string):
-    #tok = nltk.wordpunct_tokenize(string)
-    tok = Tokenizer().tokenize(string)
-    return tok
-
 def tokenize(string):
 #        tokens = nltk.word_tokenize(line)
     #tokens = nltk.wordpunct_tokenize(str)
     #return tokens
+    tokenizer = Tokenizer()
     skel = annotated_string_to_xml_skeleton(string)
     for idx, (is_tag, txt) in enumerate(skel):
         if is_tag:
             skel[idx][1] = [ skel[idx][1] ]
         else:
-            skel[idx][1] = _tokenize(txt)
+            skel[idx][1] = tokenizer.tokenize(txt)
     return xml_skeleton_to_tokens(skel)
 
 def xml_skeleton_to_tokens(skeleton):
@@ -1389,7 +1385,7 @@ dic_patt = u"(<%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<\/%s>)" %
                                                                                   trg_ann, trg_ann,
                                                                                   grp_ann)
 len_ann = "l"
-len_patt = u"(<%s>)(\d+)(</%s>)" % (len_ann, len_ann)
+len_patt = u"(<%s>)[ ]*(\d+)[ ]*(</%s>)" % (len_ann, len_ann)
 
 
 _annotation = re.compile(dic_patt + "|" + len_patt)
@@ -1405,16 +1401,22 @@ def annotated_string_to_xml_skeleton(annotated):
             skeleton.append( [False, annotated[offset:m.start()]] )
         offset = m.end()
         g = m.groups()
-        if len(g) == 3:
-            ann = [[True, g[0]], [False, g[1]], [True, g[2]]]
-            skeleton.extend(ann)
+        dic_g = filter(None, g[0:8])
+        len_g = filter(None, g[8:11])
+        ann = None
+        if dic_g:
+            ann = [[True, dic_g[0]],
+                     [True, dic_g[1]], [False, dic_g[2]], [True, dic_g[3]],
+                     [True, dic_g[4]], [False, dic_g[5]], [True, dic_g[6]],
+                   [True, dic_g[7]]]
+        elif len_g:
+            ann = [[True, len_g[0]], [False, len_g[1]], [True, len_g[2]]]
         else:
-            ann = [[True, g[0]], [True, g[1]], [False, g[2]], [True, g[3]],
-                   [True, g[4]], [False, g[5]], [True, g[6]], [True, g[7]]]
-            skeleton.extend( ann )
+            sys.stderr.write('WARNING:\n - s: %s\n - g: %s\n' % (annotated,g))
+        if ann is not None:
+            skeleton.extend(ann)
     if offset < len(annotated):
         skeleton.append( [False, annotated[offset:]] )
-    #print skeleton
     return skeleton
 
 ##################################################
