@@ -41,8 +41,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 // Log-linear weight updater
-#include "KbMiraLlWu.h"
+#include "BaseLogLinWeightUpdater.h"
 
+#include "DynClassFactoryHandler.h"
 #include "awkInputStream.h"
 #include "ErrorDefs.h"
 #include "options.h"
@@ -89,6 +90,7 @@ void version(void);
 
 //--------------- Global variables -----------------------------------
 
+DynClassFactoryHandler dynClassFactoryHandler;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 
 //--------------- Function Definitions -------------------------------
@@ -117,14 +119,26 @@ int main(int argc,char *argv[])
     cerr<<endl;
 
         // Initialize weight updater
-    llWeightUpdaterPtr=new KbMiraLlWu;
+    int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH,false);
+    if(err==ERROR)
+      return ERROR;
+
+    llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
+    if(llWeightUpdaterPtr==NULL)
+    {
+      cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+      return ERROR;
+    }
 
         // Update log-linear weights
     int retVal=update_ll_weights(pars);
 
         // Release weight updater
     delete llWeightUpdaterPtr;
-    
+
+        // Release class factories
+    dynClassFactoryHandler.release_smt(false);
+
     return retVal;
   }
 }
