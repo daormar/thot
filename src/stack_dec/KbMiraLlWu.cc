@@ -29,12 +29,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "KbMiraLlWu.h"
 
-#include <cstdlib>
-#include <cassert>
-#include <algorithm>
-#include <iterator>
-#include <iostream>
-
 //--------------- KbMiraLlWu class functions
 
 //---------------------------------------
@@ -42,19 +36,28 @@ KbMiraLlWu::KbMiraLlWu(double C,
                        double gamma,
                        unsigned int J,
                        unsigned int epochs_to_restart,
-                       unsigned int max_restarts) {
+                       unsigned int max_restarts)
+{
   c = C;
   decay = gamma;
   nIters = J;
   epochsToRestart = epochs_to_restart;
   maxRestarts = max_restarts;
-  // FIXME: by parameter
-  scorer = new MiraBleu();
-};
+}
 
 //---------------------------------------
-KbMiraLlWu::~KbMiraLlWu() {
-  delete scorer;
+KbMiraLlWu::~KbMiraLlWu()
+{
+}
+
+//---------------------------------------
+bool KbMiraLlWu::link_scorer(BaseScorer* baseScorerPtr)
+{
+  scorer=dynamic_cast<BaseMiraScorer*>(baseScorerPtr);
+  if(scorer)
+    return true;
+  else
+    return false;
 }
 
 //---------------------------------------

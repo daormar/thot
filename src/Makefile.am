@@ -32,8 +32,8 @@ incr_jel_mer_ngram_lm_factory.la					\
 smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la wba_incr_phrase_model_factory.la	\
 pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
-wg_processor_for_anlp__pfsm_factory.la kb_mira_ll_wu_factory.la		\
-multi_stack_decoder_rec__swli_factory.la				\
+wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
+kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
 wg_uncoupled_assisted_trans__swli_factory.la $(CASMACAT_LIBS)
 
 # flags
@@ -225,7 +225,8 @@ stack_dec/_stackDecoder.h stack_dec/SourceSegmentation.h		\
 stack_dec/TranslationConstraints.h stack_dec/SmtStack.h			\
 stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h			\
 stack_dec/_smtMultiStack.h stack_dec/BaseLogLinWeightUpdater.h		\
-stack_dec/KbMiraLlWu.h stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h	\
+stack_dec/KbMiraLlWu.h stack_dec/BaseScorer.h				\
+stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h				\
 stack_dec/MiraBleuLenLim.h stack_dec/_smtModel.h			\
 stack_dec/ScoreCompDefs.h stack_dec/_phrSwTransModel.h			\
 stack_dec/PhrScoreInfo.h stack_dec/PhrNbestTransTableRefKey.h		\
@@ -331,6 +332,10 @@ error_correction/NonPbEcModelForNbUcatFactory.cc
 wg_processor_for_anlp__pfsm_factory_h= 
 wg_processor_for_anlp__pfsm_factory_defs=		\
 error_correction/WgProcessorForAnlpPfsmFactory.cc
+
+##########
+mira_bleu_factory_h= 
+mira_bleu_factory_defs= stack_dec/MiraBleuFactory.cc
 
 ##########
 kb_mira_ll_wu_factory_h= 
@@ -519,6 +524,12 @@ $(wg_processor_for_anlp__pfsm_factory_h)	\
 $(wg_processor_for_anlp__pfsm_factory_defs)
 wg_processor_for_anlp__pfsm_factory_la_LIBADD= libthot.la
 wg_processor_for_anlp__pfsm_factory_la_LDFLAGS= -module
+
+##########
+mira_bleu_factory_la_SOURCES= $(mira_bleu_factory_h)	\
+$(mira_bleu_factory_defs)
+mira_bleu_factory_la_LIBADD= libthot.la
+mira_bleu_factory_la_LDFLAGS= -module
 
 ##########
 kb_mira_ll_wu_factory_la_SOURCES= $(kb_mira_ll_wu_factory_h)	\

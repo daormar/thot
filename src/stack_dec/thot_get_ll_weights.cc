@@ -50,6 +50,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
 #include "BaseLogLinWeightUpdater.h"
+#include "BaseScorer.h"
 #include "BaseErrorCorrectionModel.h"
 
 #include "DynClassFactoryHandler.h"
@@ -104,6 +105,7 @@ LangModelInfo* langModelInfoPtr;
 PhraseModelInfo* phrModelInfoPtr;
 SwModelInfo* swModelInfoPtr;
 BaseErrorCorrectionModel* ecModelPtr;
+BaseScorer* scorerPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
 BaseWgProcessorForAnlp* wgpPtr;
@@ -189,8 +191,22 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
     exit(ERROR);
   }
 
+  scorerPtr=dynClassFactoryHandler.baseScorerDynClassLoader.make_obj(dynClassFactoryHandler.baseScorerInitPars);
+  if(scorerPtr==NULL)
+  {
+    cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
   llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(llWeightUpdaterPtr==NULL)
+  {
+    cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
+      // Link scorer to weight updater
+  if(!llWeightUpdaterPtr->link_scorer(scorerPtr))
   {
     cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
     exit(ERROR);
@@ -281,6 +297,7 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   delete swModelInfoPtr->invSwAligModelPtr;
   delete swModelInfoPtr;
   delete smtModelPtr;
+  delete scorerPtr;
   delete llWeightUpdaterPtr;
   delete ecModelPtr;
   delete wgpPtr;

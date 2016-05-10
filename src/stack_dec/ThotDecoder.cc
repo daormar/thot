@@ -112,10 +112,24 @@ ThotDecoder::ThotDecoder()
     delete wgpPtr;
   }
 
+  tdCommonVars.scorerPtr=tdCommonVars.dynClassFactoryHandler.baseScorerDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseScorerInitPars);
+  if(tdCommonVars.scorerPtr==NULL)
+  {
+    cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
   tdCommonVars.llWeightUpdaterPtr=tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(tdCommonVars.llWeightUpdaterPtr==NULL)
   {
     cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
+      // Link scorer to weight updater
+  if(!tdCommonVars.llWeightUpdaterPtr->link_scorer(tdCommonVars.scorerPtr))
+  {
+    cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<endl;
     exit(ERROR);
   }
 
@@ -2469,6 +2483,7 @@ ThotDecoder::~ThotDecoder()
   delete tdCommonVars.smtModelPtr;
   delete tdCommonVars.ecModelPtr;
   delete tdCommonVars.llWeightUpdaterPtr;
+  delete tdCommonVars.scorerPtr;
 
       // Release class factory handler
   tdCommonVars.dynClassFactoryHandler.release_smt_and_imt();

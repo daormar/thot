@@ -13,7 +13,7 @@ SwModelInfo.h _stack_decoder_statistics.h _stackDecoderRec.h		\
 _stackDecoder.h SourceSegmentation.h TranslationConstraints.h		\
 TranslationConstraints.cc SmtStack.h _smtStack.h SmtMultiStackRec.h	\
 _smtMultiStack.h BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc	\
-BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraBleuLenLim.h		\
+BaseScorer.h BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraBleuLenLim.h	\
 MiraBleuLenLim.cc thot_ll_weight_upd_nblist.cc _smtModel.h		\
 ScoreCompDefs.h _phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc	\
 PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc			\
@@ -36,4 +36,4 @@ BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
 BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h HypDebugData.h	\
 BaseAssistedTrans.h _assistedTrans.h KbMiraLlWuFactory.cc		\
 multi_stack_decoder_rec__swli_factory.cc				\
-WgUncoupledAssistedTransSwLiFactory.cc
+WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc

@@ -8,16 +8,21 @@
 #endif /* HAVE_CONFIG_H */
 
 
+#include "BaseScorer.h"
 #include "myVector.h"
 #include <string>
 
+//--------------- Classes --------------------------------------------
+
+//--------------- BaseMiraScorer class
 
 /**
  * @brief Base class to implement MIRA scorers.
  */
-class BaseMiraScorer
+
+class BaseMiraScorer: public BaseScorer
 {
-public:
+ public:
     // Functions to manage background corpus
   virtual void resetBackgroundCorpus()=0;
   virtual void updateBackgroundCorpus(const Vector<unsigned int>& stats,

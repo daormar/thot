@@ -91,6 +91,7 @@ void version(void);
 //--------------- Global variables -----------------------------------
 
 DynClassFactoryHandler dynClassFactoryHandler;
+BaseScorer* baseScorerPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 
 //--------------- Function Definitions -------------------------------
@@ -118,10 +119,17 @@ int main(int argc,char *argv[])
       cerr<<" "<<pars.includeVarBool[i];
     cerr<<endl;
 
-        // Initialize weight updater
+        // Initialize pointers
     int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH,false);
     if(err==ERROR)
       return ERROR;
+
+    baseScorerPtr=dynClassFactoryHandler.baseScorerDynClassLoader.make_obj(dynClassFactoryHandler.baseScorerInitPars);
+    if(baseScorerPtr==NULL)
+    {
+      cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
+      return ERROR;
+    }
 
     llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
     if(llWeightUpdaterPtr==NULL)
@@ -130,10 +138,18 @@ int main(int argc,char *argv[])
       return ERROR;
     }
 
+        // Link scorer to weight updater
+    if(!llWeightUpdaterPtr->link_scorer(baseScorerPtr))
+    {
+      cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<endl;
+      return ERROR;
+    }
+    
         // Update log-linear weights
     int retVal=update_ll_weights(pars);
 
-        // Release weight updater
+        // Release pointers
+    delete baseScorerPtr;
     delete llWeightUpdaterPtr;
 
         // Release class factories

@@ -140,6 +140,21 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
       // Store init parameters for BaseErrorCorrectionModel
   baseErrorCorrectionModelInitPars=initPars;
 
+      ///////////// Obtain info for BaseScorer class
+  baseClassName="BaseScorer";
+  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==ERROR)
+  {
+    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
+    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    return ERROR;
+  }   
+      // Load class derived from BaseScorer dynamically
+  if(!baseScorerDynClassLoader.open_module(soFileName,verbose))
+  {
+    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    return ERROR;
+  }     
+
       ///////////// Obtain info for BaseLogLinWeightUpdater class
   baseClassName="BaseLogLinWeightUpdater";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==ERROR)
@@ -186,6 +201,7 @@ void DynClassFactoryHandler::release_smt(int verbose/*=1*/)
   baseSwAligModelDynClassLoader.close_module(verbose);
   basePhraseModelDynClassLoader.close_module(verbose);
   baseErrorCorrectionModelDynClassLoader.close_module(verbose);
+  baseScorerDynClassLoader.close_module(verbose);
   baseLogLinWeightUpdaterDynClassLoader.close_module(verbose);
   baseStackDecoderDynClassLoader.close_module(verbose);
 }

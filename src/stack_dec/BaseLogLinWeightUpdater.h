@@ -46,6 +46,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "BaseScorer.h"
 #include "myVector.h"
 #include <string>
 #include <utility>
@@ -58,7 +59,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- BaseLogLinWeightUpdater template class
+//--------------- BaseLogLinWeightUpdater class
 
 /**
  * @brief Base abstract class that defines the interface that a
@@ -74,6 +75,9 @@ class BaseLogLinWeightUpdater
   typedef BaseLogLinWeightUpdater* create_t(std::string);
   typedef std::string type_id_t(void);
 
+      // Function to link scorer
+  virtual bool link_scorer(BaseScorer* baseScorerPtr)=0;
+  
       // Function to compute new weights
   virtual void update(const std::string& reference,
                       const Vector<std::string>& nblist,

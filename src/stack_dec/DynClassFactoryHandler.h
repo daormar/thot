@@ -32,6 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                               // configure by checking SMTMODEL_H
                               // variable (default value: SmtModel.h)
 #include "BaseLogLinWeightUpdater.h"
+#include "BaseScorer.h"
 #include "BaseWgProcessorForAnlp.h"
 #include "BaseEcModelForNbUcat.h"
 #include "BaseErrorCorrectionModel.h"
@@ -76,10 +77,13 @@ struct DynClassFactoryHandler
   
   SimpleDynClassLoader<BaseWgProcessorForAnlp> baseWgProcessorForAnlpDynClassLoader;
   std::string baseWgProcessorForAnlpInitPars;
-  
+
+  SimpleDynClassLoader<BaseScorer> baseScorerDynClassLoader;
+  std::string baseScorerInitPars;
+
   SimpleDynClassLoader<BaseLogLinWeightUpdater> baseLogLinWeightUpdaterDynClassLoader;
   std::string baseLogLinWeightUpdaterInitPars;
-
+  
   SimpleDynClassLoader<BaseStackDecoder<SmtModel> > baseStackDecoderDynClassLoader;
   std::string baseStackDecoderInitPars;
 

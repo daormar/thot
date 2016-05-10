@@ -47,6 +47,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BaseLogLinWeightUpdater.h"
 #include "MiraBleu.h"
 #include "BaseMiraScorer.h"
+
+#include <cstdlib>
+#include <cassert>
+#include <algorithm>
+#include <iterator>
+#include <iostream>
 #include <float.h>
 
 //--------------- Constants ------------------------------------------
@@ -63,7 +69,7 @@ struct HopeFearData {
 
 //--------------- Classes --------------------------------------------
 
-//--------------- KbMiraLlWu template class
+//--------------- KbMiraLlWu class
 
 /**
  * @brief Class implementing the K-best MIRA algorithm.
@@ -78,6 +84,9 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
              unsigned int epochs_to_restart = 8,
              unsigned int max_restarts = 2);
   ~KbMiraLlWu();
+
+      // Function to link scorer
+  bool link_scorer(BaseScorer* baseScorerPtr);
 
       // Compute new weights for an individual sentence
   void update(const std::string& reference,
