@@ -25,7 +25,7 @@ usage()
     echo "thot_auto_smt           [-pr <int>]"
     echo "                        -s <string> -t <string> -o <string>"
     echo "                        [--skip-clean] [--tok] [--lower] [--no-trans]"
-    echo "                        [-nit <int>] [-n <int>] [-tqm <string>]"
+    echo "                        [-nit <int>] [-n <int>]"
     echo "                        [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
@@ -42,8 +42,6 @@ usage()
     echo "-nit <int>              Number of iterations of the EM algorithm when training"
     echo "                        single word models (5 by default)"
     echo "-n <int>                Order of the n-gram language models (4 by default)"
-    echo "-tqm <string>           Set translation quality measure for tuning"
-    echo "                        (BLEU by default, other options: WER)"
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTES:"
@@ -303,8 +301,6 @@ nit_given=0
 nitval=5
 n_given=0
 n_val=4
-tqm="BLEU"
-tqm_given=0
 qs_given=0
 tdir_given=0
 tdir="/tmp"
@@ -363,12 +359,6 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 n_val=$1
                 n_given=1
-            fi
-            ;;
-        "-tqm") shift
-            if [ $# -ne 0 ]; then
-                tqm=$1
-                tqm_given=1
             fi
             ;;
         "-qs") shift
@@ -554,7 +544,7 @@ echo "" >&2
 if [ -f ${scorpus_dev} -a -f ${tcorpus_dev} ]; then
     echo "**** Tuning model parameters" >&2
     ${bindir}/thot_smt_tune -pr ${pr_val} -c $outd/before_tuning.cfg -s ${scorpus_dev} -t ${tcorpus_dev} -o $outd/smt_tune ${qs_opt} \
-        -tqm ${tqm} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
     tuning_executed="yes"
 fi
 
@@ -595,6 +585,14 @@ if [ ${notrans_given} -eq 0 ]; then
         ${bindir}/thot_decoder -pr ${pr_val} -c $outd/filtered_models/${base_sct}/test_specific.cfg \
             -t ${scorpus_test} -o $outd/output/${transoutd}/thot_decoder_out ${debug_opt} -sdir $sdir -v || exit 1
         test_trans_executed="yes"
+        echo "" >&2
+    fi
+
+    # Obtain score given by thot_scorer
+    if [ ${test_trans_executed} = "yes" ]; then
+        echo "**** Obtaining thot_scorer score" >&2
+        ${bindir}/thot_scorer -r ${tcorpus_test} -t $outd/output/${transoutd}/thot_decoder_out \
+            > $outd/output/${transoutd}/thot_decoder_out.score || exit 1
         echo "" >&2
     fi
 
