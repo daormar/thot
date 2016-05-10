@@ -258,7 +258,7 @@ int calc_score(const thot_scorer_pars& pars)
                              score);
   
       // Print result
-  cout<<"Score: "<<score<<endl;
+  cout<<"Score= "<<score<<endl;
   
   return OK;
 }
