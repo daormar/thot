@@ -204,7 +204,7 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
         MaxTranslation(wAvg, nblists[i], scoreCompsVecs[i], maxTranslation);
         maxTranslations.push_back(maxTranslation);
       }
-      scorer->Score(maxTranslations, references, quality);
+      scorer->corpusScore(maxTranslations, references, quality);
       if (quality > iter_max_quality) {
         iter_max_j = j;
         iter_max_quality = quality;

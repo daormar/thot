@@ -54,9 +54,9 @@ class BaseScorer
   typedef std::string type_id_t(void);
 
     // Score for corpus
-  virtual void Score(const Vector<std::string>& candidates,
-                     const Vector<std::string>& references,
-                     double& score)=0;
+  virtual void corpusScore(const Vector<std::string>& candidates,
+                           const Vector<std::string>& references,
+                           double& score)=0;
 
     // Score for sentence
   virtual void sentScore(const std::string& candidate,
