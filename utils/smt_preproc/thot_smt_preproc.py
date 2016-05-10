@@ -18,8 +18,8 @@ _global_unk_word_str="<unk>"
 _global_eos_str="<eos>"
 _global_bos_str="<bos>"
 _global_categ_set=frozenset([_global_common_word_str,_global_number_str,_global_digit_str,_global_alfanum_str])
-_digits = re.compile('\d')
-_alnum = re.compile('[a-zA-Z0-9]+')
+_global_digits = re.compile('\d')
+_global_alnum = re.compile('[a-zA-Z0-9]+')
 _global_a_par=7
 _global_maxniters=100000
 _global_tm_smooth_prob=0.000001
@@ -737,8 +737,7 @@ def transform_word(word):
             return _global_digit_str
     elif(is_number(word)==True):
         return _global_number_str
-#    elif(word.isalnum()==True and bool(_digits.search(word))==True):
-    elif(is_alnum(word)==True and bool(_digits.search(word))==True):
+    elif(is_alnum(word)==True and bool(_global_digits.search(word))==True):
         return _global_alfanum_str
     elif(len(word)>5):
         return _global_common_word_str
@@ -751,7 +750,7 @@ def transform_word(word):
     #     else:
     #         return _global_digit_str
     # elif(word.isalnum()==True):
-    #     if(bool(_digits.search(word))==True):
+    #     if(bool(_global_digits.search(word))==True):
     #         return _global_alfanum_str
     #     else:
     #         return _global_common_word_str
@@ -768,7 +767,7 @@ def is_number(s):
 
 ##################################################
 def is_alnum(s):
-    res = _alnum.match(s)
+    res = _global_alnum.match(s)
     if(res==None):
         return False
     else:
@@ -783,7 +782,7 @@ def categorize_word(word):
             return _global_digit_str
     elif(is_number(word)==True):
         return _global_number_str
-    elif(is_alnum(word)==True and bool(_digits.search(word))==True):
+    elif(is_alnum(word)==True and bool(_global_digits.search(word))==True):
         return _global_alfanum_str
     else:
         return word
@@ -845,7 +844,6 @@ def extract_categ_words_of_segm(word_array,left,right):
     categ_words=[]
 
     # Explore word array
-#    print len(word_array),left,right
     for i in range(left,right+1):
         if(is_categ(word_array[i]) or is_categ(categorize_word(word_array[i]))):
            categ_words.append((i,word_array[i]))
@@ -891,7 +889,6 @@ def decategorize_word(trgpos,src_word_array,trg_word_array,srcsegms,trgcuts):
                     if(trg_categ_words[l][1]==curr_categ_word):
                         curr_categ_word_order+=1
 
-#            print curr_categ_word,curr_categ_word_order
             aux_order=0
             for l in range(len(src_categ_words)):
                 if(categorize_word(src_categ_words[l][1])==curr_categ_word):
@@ -1014,8 +1011,6 @@ class Decoder:
                 ngram=word
             else:
                 ngram=hist+" "+word
-            # print >> sys.stderr,"  logprob(",word,"|",hist,")="
-            # lp_ng=math.log(lmodel.obtain_trgsrc_prob(ngram))
             lp_ng=math.log(self.lmodel.obtain_trgsrc_interp_prob(ngram))
             lp=lp+lp_ng
             if(verbose==True):
@@ -1138,7 +1133,6 @@ class Decoder:
     #####
     def obtain_nblist(self,src_word_array,nblsize,verbose):
         # Insert initial hypothesis in stack
-#        priority_queue=Queue.PriorityQueue()
         priority_queue=PriorityQueue()
         hyp=Hypothesis()
         priority_queue.put(hyp)
@@ -1334,7 +1328,6 @@ class Tokenizer:
         aux = filter(None, self.RX.split(s))
         return filter(None, [s.strip() for s in aux])
 
-
 ##################################################
 def tokenize(string):
 #        tokens = nltk.word_tokenize(line)
@@ -1349,6 +1342,7 @@ def tokenize(string):
             skel[idx][1] = tokenizer.tokenize(txt)
     return xml_skeleton_to_tokens(skel)
 
+##################################################
 def xml_skeleton_to_tokens(skeleton):
     """
     Joins back the elements in a skeleton to return a list of tokens
@@ -1369,12 +1363,12 @@ def lowercase(string):
             skel[idx][1] = txt.lower().strip()
     return xml_skeleton_to_string(skel)
 
+##################################################
 def xml_skeleton_to_string(skeleton):
     """
     Joins back the elements in a skeleton to return an annotated string
     """
     return u" ".join(txt for _,txt in skeleton)
-
 
 ##################################################
 grp_ann = "p" #"phr_pair_annot"
