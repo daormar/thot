@@ -25,7 +25,7 @@ thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
 thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
 thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig			\
 thot_ll_weight_upd_nblist thot_client thot_server thot_get_ll_weights	\
-thot_calc_bleu $(TESTING_PROGS)
+thot_scorer thot_calc_bleu $(TESTING_PROGS)
 
 lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la					\
@@ -450,6 +450,10 @@ thot_server_LDFLAGS = libthot.la
 ##########
 thot_get_ll_weights_SOURCES = stack_dec/thot_get_ll_weights.cc
 thot_get_ll_weights_LDFLAGS = libthot.la
+
+##########
+thot_scorer_SOURCES = stack_dec/thot_scorer.cc
+thot_scorer_LDFLAGS = libthot.la
 
 ##########
 thot_calc_bleu_SOURCES = stack_dec/thot_calc_bleu.cc
