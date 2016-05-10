@@ -196,12 +196,12 @@ int takeParameters(int argc,
                    char *argv[],
                    thot_llwu_nblist_pars& pars)
 {
-      // Take language model file name
+      // Take -nb parameter
   int err=readSTLstring(argc,argv, "-nb", &pars.fileWithNbestLists);
   if(err==ERROR)
     return ERROR;
   
-      // Take language model file name
+      // Take -r parameter
   err=readSTLstring(argc,argv, "-r", &pars.fileWithReferences);
   if(err==ERROR)
     return ERROR;
