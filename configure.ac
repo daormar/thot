@@ -368,7 +368,7 @@ fi
 AC_SUBST(ZLIB)
 LIBS=${libaux}
 
-# Checks for lm library
+# Checks for cppunit library
 CPPUNIT=""
 libaux=${LIBS}
 AC_CHECK_LIB([cppunit], [strlen])
