@@ -93,14 +93,21 @@ pair<double,double> IncrIbm1AligModel::loglikelihoodForPairRange(pair<unsigned i
                                                                  int verbosity/*=0*/)
 {
   double loglikelihood=0;
+  unsigned int numSents=0;
   
   for(unsigned int n=sentPairRange.first;n<=sentPairRange.second;++n)
   {
     if(verbosity) cerr<<"* Calculating log-likelihood for sentence "<<n<<endl;
         // Add log-likelihood
-    loglikelihood+=(double)calcLgProb(getSrcSent(n),getTrgSent(n),verbosity);
+    Vector<WordIndex> nthSrcSent=getSrcSent(n);
+    Vector<WordIndex> nthTrgSent=getTrgSent(n);
+    if(!nthSrcSent.empty() && !nthTrgSent.empty())
+    {
+      loglikelihood+=(double)calcLgProb(nthSrcSent,nthTrgSent,verbosity);
+      ++numSents;
+    }
   }
-  return make_pair(loglikelihood,loglikelihood/(double)(sentPairRange.second-sentPairRange.first+1));
+  return make_pair(loglikelihood,loglikelihood/(double) numSents);
 }
 
 //-------------------------
@@ -165,48 +172,53 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
     Vector<WordIndex> srcSent=getSrcSent(n);
     Vector<WordIndex> nsrcSent=extendWithNullWord(srcSent);
     Vector<WordIndex> trgSent=getTrgSent(n);
-    Count weight;
-    sentenceHandler.getCount(n,weight);
 
-        // Calculate new estimation of anji
-    for(unsigned int j=1;j<=trgSent.size();++j)
+        // Process sentence pair only if both sentences are not empty
+    if(!srcSent.empty() && !trgSent.empty())
     {
-          // Obtain sum_anji_num_forall_s
-      double sum_anji_num_forall_s=0;
-      Vector<double> numVec;
-      for(unsigned int i=0;i<nsrcSent.size();++i)
-      {
-            // Smooth numerator
-        double d=calc_anji_num(nsrcSent,trgSent,i,j);
-        if(d<SMOOTHING_ANJI_NUM) d=SMOOTHING_ANJI_NUM;
-            // Add contribution to sum
-        sum_anji_num_forall_s+=d;
-            // Store num in numVec
-        numVec.push_back(d);
-      }
-          // Set value of anji_aux
-      for(unsigned int i=0;i<nsrcSent.size();++i)
-      {
-        anji_aux.set(np,j,i,numVec[i]/sum_anji_num_forall_s);
-      }
-    }
+      Count weight;
+      sentenceHandler.getCount(n,weight);
 
-        // Gather sufficient statistics
-    if(anji_aux.n_size()!=0)
-    {
-      for(unsigned int j=0;j<anji_aux.nj_size(np);++j)
+          // Calculate new estimation of anji
+      for(unsigned int j=1;j<=trgSent.size();++j)
       {
-        for(unsigned int i=0;i<anji_aux.nji_size(np,j);++i)
+            // Obtain sum_anji_num_forall_s
+        double sum_anji_num_forall_s=0;
+        Vector<double> numVec;
+        for(unsigned int i=0;i<nsrcSent.size();++i)
         {
-              // Fill variables for np,j,i
-          fillEmAuxVars(n,np,i,j,nsrcSent,trgSent,weight);
-
-              // Update anji
-          anji.set(n,j,i,anji_aux.get_invp(np,j,i));
+              // Smooth numerator
+          double d=calc_anji_num(nsrcSent,trgSent,i,j);
+          if(d<SMOOTHING_ANJI_NUM) d=SMOOTHING_ANJI_NUM;
+              // Add contribution to sum
+          sum_anji_num_forall_s+=d;
+              // Store num in numVec
+          numVec.push_back(d);
+        }
+            // Set value of anji_aux
+        for(unsigned int i=0;i<nsrcSent.size();++i)
+        {
+          anji_aux.set(np,j,i,numVec[i]/sum_anji_num_forall_s);
         }
       }
-          // clear anji_aux data structure
-      anji_aux.clear();
+
+          // Gather sufficient statistics
+      if(anji_aux.n_size()!=0)
+      {
+        for(unsigned int j=0;j<anji_aux.nj_size(np);++j)
+        {
+          for(unsigned int i=0;i<anji_aux.nji_size(np,j);++i)
+          {
+                // Fill variables for np,j,i
+            fillEmAuxVars(n,np,i,j,nsrcSent,trgSent,weight);
+
+                // Update anji
+            anji.set(n,j,i,anji_aux.get_invp(np,j,i));
+          }
+        }
+            // clear anji_aux data structure
+        anji_aux.clear();
+      }
     }
   }
 }

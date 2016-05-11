@@ -100,14 +100,21 @@ pair<double,double> IncrHmmAligModel::loglikelihoodForPairRange(pair<unsigned in
                                                                 int verbosity/*=0*/)
 {
   double loglikelihood=0;
-  
+  unsigned int numSents=0;
+
   for(unsigned int n=sentPairRange.first;n<=sentPairRange.second;++n)
   {
     if(verbosity) cerr<<"* Calculating log-likelihood for sentence "<<n<<endl;
         // Add log-likelihood
-    loglikelihood+=(double)calcLgProb(getSrcSent(n),getTrgSent(n),verbosity);
+    Vector<WordIndex> nthSrcSent=getSrcSent(n);
+    Vector<WordIndex> nthTrgSent=getTrgSent(n);
+    if(!nthSrcSent.empty() && !nthTrgSent.empty())
+    {
+      loglikelihood+=(double)calcLgProb(nthSrcSent,nthTrgSent,verbosity);
+      ++numSents;
+    }
   }
-  return make_pair(loglikelihood,loglikelihood/(double)(sentPairRange.second-sentPairRange.first+1));
+  return make_pair(loglikelihood,loglikelihood/(double) numSents);
 }
 
 //-------------------------
@@ -495,22 +502,27 @@ void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sen
         // Init vars for n'th sample
     Vector<WordIndex> srcSent=getSrcSent(n);
     Vector<WordIndex> trgSent=getTrgSent(n);
-    Count weight;
-    sentenceHandler.getCount(n,weight);
-    
-        // Calculate suff. stats. for anji values
-    calc_lanji(n,extendWithNullWord(srcSent),trgSent,weight);
-    
-        // Calculate suff. stats. for anjm1ip_anji values
-    calc_lanjm1ip_anji(n,extendWithNullWordAlig(srcSent),trgSent,weight);
 
-        // Clear cached alpha and beta values
-    alpha_values.clear();
-    beta_values.clear();
+        // Process sentence pair only if both sentences are not empty
+    if(!srcSent.empty() && !trgSent.empty())
+    {
+      Count weight;
+      sentenceHandler.getCount(n,weight);
+    
+          // Calculate suff. stats. for anji values
+      calc_lanji(n,extendWithNullWord(srcSent),trgSent,weight);
+    
+          // Calculate suff. stats. for anjm1ip_anji values
+      calc_lanjm1ip_anji(n,extendWithNullWordAlig(srcSent),trgSent,weight);
 
-        // Clear auxiliary log prob double matrices
-    cachedLogProbtsDm.clear();
-    cachedLogaProbDm.clear();
+          // Clear cached alpha and beta values
+      alpha_values.clear();
+      beta_values.clear();
+
+          // Clear auxiliary log prob double matrices
+      cachedLogProbtsDm.clear();
+      cachedLogaProbDm.clear();
+    }
   }
 }
 
