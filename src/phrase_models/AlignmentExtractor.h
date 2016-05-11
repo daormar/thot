@@ -20,13 +20,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /*                                            */
 /* AlignmentExtractor class                   */
 /*                                            */
-/* Daniel Ortiz <dortiz@iti.upv.es>, Jun 2004 */
 /* ------------------------------------------ */
 
 #ifndef _AlignmentExtractor_h
 #define _AlignmentExtractor_h
 
-//************ Include files
+//--------------- Include files --------------------------------------
 
 #if HAVE_CONFIG_H
 #  include <thot_config.h>
@@ -42,7 +41,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "WordAligMatrix.h"
 #include "printAligFuncs.h"
 
-//************ Constants
+//--------------- Constants ------------------------------------------
 
 #define ENDOFFILE 0
 #define NO_ERRORS 1
@@ -50,7 +49,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define GIZA_ALIG_FILE_FORMAT 0
 #define ALIG_OP_FILE_FORMAT 1
 
-//************ Typedefs
+
+//--------------- typedefs -------------------------------------------
 
 struct aligOpDescription
 {
@@ -67,7 +67,7 @@ class AlignmentExtractor;
 ostream& operator << (ostream &outS,AlignmentExtractor &ae);
 
 //--------------- AlignmentExtractor class: class for extracting
-//--------------- sentence pair alignments from a GIZA xxx.A3.final file
+//                sentence pair alignments from a GIZA xxx.A3.final file
 
 class AlignmentExtractor
 {
@@ -125,11 +125,6 @@ class AlignmentExtractor
                   bool transpose=0,
                   bool verbose=0);
 	
-    /* void printAlignmentInGIZAFormat(ostream &outS); */
-    /*     // prints the current alignment in GIZA format */
-    /* void printAlignmentInGIZAFormat(FILE *file); */
-    /*     // prints the current alignment in GIZA format using libc functions */
-
         // Destructor
 	~AlignmentExtractor();
 	
