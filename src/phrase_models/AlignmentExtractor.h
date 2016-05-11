@@ -125,10 +125,10 @@ class AlignmentExtractor
                   bool transpose=0,
                   bool verbose=0);
 	
-    void printAlignmentInGIZAFormat(ostream &outS);
-        // prints the current alignment in GIZA format
-    void printAlignmentInGIZAFormat(FILE *file);
-        // prints the current alignment in GIZA format using libc functions
+    /* void printAlignmentInGIZAFormat(ostream &outS); */
+    /*     // prints the current alignment in GIZA format */
+    /* void printAlignmentInGIZAFormat(FILE *file); */
+    /*     // prints the current alignment in GIZA format using libc functions */
 
         // Destructor
 	~AlignmentExtractor();

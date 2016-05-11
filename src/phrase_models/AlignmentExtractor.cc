@@ -352,7 +352,9 @@ bool AlignmentExtractor::join(const char *GizaAligFileName,
        cerr<<"Warning: sentences to operate are not equal!!!"<<" (Sent. pair:"<<numSent<<")"<<endl;
      }
 
-     printAlignmentInGIZAFormat(outF);
+     char header[256];
+     sprintf(header,"# %g",numReps);
+     printAlignmentInGIZAFormat(outF,ns,t,wordAligMatrix,header);
    }
    alExt.close();
  }
@@ -408,7 +410,9 @@ bool AlignmentExtractor::intersect(const char *GizaAligFileName,
        cerr<<"Warning: sentences to operate are not equal!!!"<<" (Sent. pair:"<<numSent<<")"<<endl;
      }
 
-     printAlignmentInGIZAFormat(outF);
+     char header[256];
+     sprintf(header,"# %g",numReps);
+     printAlignmentInGIZAFormat(outF,ns,t,wordAligMatrix,header);
    }
    alExt.close(); 
  }
@@ -464,7 +468,9 @@ bool AlignmentExtractor::sum(const char *GizaAligFileName,
        cerr<<"Warning: sentences to operate are not equal!!!"<<" (Sent. pair:"<<numSent<<")"<<endl;
      }
 
-     printAlignmentInGIZAFormat(outF);
+     char header[256];
+     sprintf(header,"# %g",numReps);
+     printAlignmentInGIZAFormat(outF,ns,t,wordAligMatrix,header);
    }
    alExt.close();
  }
@@ -519,7 +525,10 @@ bool AlignmentExtractor::symmetr1(const char *GizaAligFileName,
      {
        cerr<<"Warning: sentences to operate are not equal!!!"<<" (Sent. pair:"<<numSent<<")"<<endl;
      }
-     printAlignmentInGIZAFormat(outF);
+
+     char header[256];
+     sprintf(header,"# %g",numReps);
+     printAlignmentInGIZAFormat(outF,ns,t,wordAligMatrix,header);
    }
    alExt.close();
  }
@@ -576,7 +585,9 @@ bool AlignmentExtractor::symmetr2(const char *GizaAligFileName,
        cerr<<"Warning: sentences to operate are not equal!!!"<<" (Sent. pair:"<<numSent<<")"<<endl;
      }
 
-     printAlignmentInGIZAFormat(outF);
+     char header[256];
+     sprintf(header,"# %g",numReps);
+     printAlignmentInGIZAFormat(outF,ns,t,wordAligMatrix,header);
    }
    alExt.close();
  }
@@ -633,81 +644,15 @@ bool AlignmentExtractor::growDiag(const char *GizaAligFileName,
        cerr<<"Warning: sentences to operate are not equal!!!"<<" (Sent. pair:"<<numSent<<")"<<endl;
      }
 
-     printAlignmentInGIZAFormat(outF);
+     char header[256];
+     sprintf(header,"# %g",numReps);
+     printAlignmentInGIZAFormat(outF,ns,t,wordAligMatrix,header);
    }
    alExt.close();
  }
  rewind();
 
  return OK;
-}
-
-//-------------------------
-void AlignmentExtractor::printAlignmentInGIZAFormat(ostream &outS)
-{
-  unsigned int i,j,n;
-  string header;
-
-  outS<<"# "<<numReps<<endl;
-  for(i=0;i<t.size();++i)
-  {
-    if(i<t.size()-1) outS<<t[i]<<" ";
-    else outS<<t[i]<<endl; 
-  }
-    
-  for(i=0;i<ns.size();++i)
-  {
-    outS<<ns[i]<<" ({ ";
-    for(j=0;j<wordAligMatrix.get_J();++j) 
-    {
-      if(i==0){if(!wordAligMatrix.jAligned(j)) outS<<j+1<<" ";}
-      else
-      {
-        if(wordAligMatrix.getValue(i-1,j)!=0)
-        {
-          for(n=0;n<wordAligMatrix.getValue(i-1,j);++n) outS<<j+1<<" ";
-        }
-      }
-    }
-    outS<<"}) ";	  
-  }
-  outS<<endl; 
-}
-
-//-------------------------
-void AlignmentExtractor::printAlignmentInGIZAFormat(FILE *file)
-{
-  unsigned int i,j,n;
-  string header;
-
-  fprintf(file,"# %f\n",numReps);
-
-  for(i=0;i<t.size();++i)
-  {
-    if(i<t.size()-1) fprintf(file,"%s ",t[i].c_str());
-    else fprintf(file,"%s\n",t[i].c_str());
-  }
-    
-  for(i=0;i<ns.size();++i)
-  {
-    fprintf(file,"%s ({ ",ns[i].c_str());
-    for(j=0;j<wordAligMatrix.get_J();++j) 
-    {
-      if(i==0)
-      {
-        if(!wordAligMatrix.jAligned(j)) fprintf(file,"%d ",j+1);
-      }
-      else
-      {
-        if(wordAligMatrix.getValue(i-1,j)!=0)
-        {
-          for(n=0;n<wordAligMatrix.getValue(i-1,j);++n) fprintf(file,"%d ",j+1);
-        }
-      }
-    }
-    fprintf(file,"}) ");
-  }
-  fprintf(file,"\n");
 }
 
 //-------------------------
