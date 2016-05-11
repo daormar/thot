@@ -45,9 +45,10 @@ void printAlignmentInGIZAFormat(ostream &outS,
   for(i=0;i<t.size();++i)
   {
     if(i<t.size()-1) outS<<t[i]<<" ";
-    else outS<<t[i]<<endl; 
+    else outS<<t[i]; 
   }
-    
+  outS<<endl;
+  
   for(i=0;i<ns.size();++i)
   {
     outS<<ns[i]<<" ({ ";
@@ -83,8 +84,10 @@ void printAlignmentInMyFormat(ostream &outS,
   for(i=0;i<t.size();++i)
   {
     if(i<t.size()-1) outS<<t[i]<<" ";
-    else outS<<t[i]<<endl; 
+    else outS<<t[i]; 
   }
+  outS<<endl;
+  
   for(i=0;i<ns.size();++i)
   {
     if(i<ns.size()-1) outS<<ns[i]<<" ";
@@ -105,9 +108,10 @@ void printAlignmentInGIZAFormat(FILE* outf,
   for(i=0;i<t.size();++i)
   {
     if(i<t.size()-1) fprintf(outf,"%s ",t[i].c_str());
-    else fprintf(outf,"%s\n",t[i].c_str()); 
+    else fprintf(outf,"%s",t[i].c_str()); 
   }
-    
+  fprintf(outf,"\n");
+  
   for(i=0;i<ns.size();++i)
   {
     fprintf(outf,"%s ({ ",ns[i].c_str());
@@ -142,8 +146,10 @@ void printAlignmentInMyFormat(FILE* outf,
   for(i=0;i<t.size();++i)
   {
     if(i<t.size()-1) fprintf(outf,"%s ",t[i].c_str());
-    else fprintf(outf,"%s\n",t[i].c_str());
+    else fprintf(outf,"%s",t[i].c_str());
   }
+  fprintf(outf,"\n");
+          
   for(i=0;i<ns.size();++i)
   {
     if(i<ns.size()-1) fprintf(outf,"%s ",ns[i].c_str());
