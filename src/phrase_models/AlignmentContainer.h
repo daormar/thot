@@ -37,9 +37,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "PhraseDefs.h"
 #include "AlignmentExtractor.h"
+#include "PhraseDefs.h"
 #include "AligInfo.h"
+#include <printAligFuncs.h>
 #include <map>
 #include "awkInputStream.h"
 
