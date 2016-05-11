@@ -487,20 +487,27 @@ LgProb IncrIbm1AligModel::obtainBestAlignment(Vector<WordIndex> srcSentIndexVect
                                               Vector<WordIndex> trgSentIndexVector,
                                               WordAligMatrix& bestWaMatrix)
 {
-  Vector<PositionIndex> bestAlig;
-  LgProb lgProb;
-  lgProb=logaProbIbm1(srcSentIndexVector.size(),
-                      trgSentIndexVector.size());
-  lgProb+=sentLenLgProb(srcSentIndexVector.size(),
-                        trgSentIndexVector.size());
-  lgProb+=lexM1LpForBestAlig(addNullWordToWidxVec(srcSentIndexVector),
-                             trgSentIndexVector,
-                             bestAlig);
+  if(srcSentIndexVector.empty() || trgSentIndexVector.empty())
+  {
+    bestWaMatrix.init(srcSentIndexVector.size(),trgSentIndexVector.size());    
+    return SMALL_LG_NUM;
+  }
+  else
+  {
+    Vector<PositionIndex> bestAlig;
+    LgProb lgProb=logaProbIbm1(srcSentIndexVector.size(),
+                               trgSentIndexVector.size());
+    lgProb+=sentLenLgProb(srcSentIndexVector.size(),
+                          trgSentIndexVector.size());
+    lgProb+=lexM1LpForBestAlig(addNullWordToWidxVec(srcSentIndexVector),
+                               trgSentIndexVector,
+                               bestAlig);
 
-  bestWaMatrix.init(srcSentIndexVector.size(),trgSentIndexVector.size());
-  bestWaMatrix.putAligVec(bestAlig);
+    bestWaMatrix.init(srcSentIndexVector.size(),trgSentIndexVector.size());
+    bestWaMatrix.putAligVec(bestAlig);
 
-  return lgProb;
+    return lgProb;
+  }
 }
 
 //-------------------------
@@ -569,7 +576,14 @@ LgProb IncrIbm1AligModel::calcLgProb(const Vector<WordIndex>& sSent,
                                      const Vector<WordIndex>& tSent,
                                      int verbose)
 {
-  return calcSumIBM1LgProb(addNullWordToWidxVec(sSent),tSent,verbose);
+  if(sSent.empty() || tSent.empty())
+  {
+    return SMALL_LG_NUM;
+  }
+  else
+  {
+    return calcSumIBM1LgProb(addNullWordToWidxVec(sSent),tSent,verbose);
+  }
 }
 
 //-------------------------

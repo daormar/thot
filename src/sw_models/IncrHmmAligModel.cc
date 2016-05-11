@@ -1150,26 +1150,34 @@ LgProb IncrHmmAligModel::obtainBestAlignment(Vector<WordIndex> srcSentIndexVecto
                                              Vector<WordIndex> trgSentIndexVector,
                                              WordAligMatrix& bestWaMatrix)
 {
-      // Obtain extended source vector
-  Vector<WordIndex> nSrcSentIndexVector=extendWithNullWord(srcSentIndexVector);
-      // Call function to obtain best lgprob and viterbi alignment
-  Vector<Vector<LgProb> > vitMatrix;
-  Vector<Vector<PositionIndex> > predMatrix;
-  viterbiAlgorithm(nSrcSentIndexVector,
-                   trgSentIndexVector,
-                   vitMatrix,
-                   predMatrix);
-  Vector<PositionIndex> bestAlig;
-  LgProb vit_lp=bestAligGivenVitMatrices(srcSentIndexVector.size(),vitMatrix,predMatrix,bestAlig);
-      // Obtain best word alignment vector from the Viterbi matrices
-  bestWaMatrix.init(srcSentIndexVector.size(),trgSentIndexVector.size());
-  bestWaMatrix.putAligVec(bestAlig);
+  if(srcSentIndexVector.empty() || trgSentIndexVector.empty())
+  {
+    bestWaMatrix.init(srcSentIndexVector.size(),trgSentIndexVector.size());    
+    return SMALL_LG_NUM;
+  }
+  else
+  {
+        // Obtain extended source vector
+    Vector<WordIndex> nSrcSentIndexVector=extendWithNullWord(srcSentIndexVector);
+        // Call function to obtain best lgprob and viterbi alignment
+    Vector<Vector<LgProb> > vitMatrix;
+    Vector<Vector<PositionIndex> > predMatrix;
+    viterbiAlgorithm(nSrcSentIndexVector,
+                     trgSentIndexVector,
+                     vitMatrix,
+                     predMatrix);
+    Vector<PositionIndex> bestAlig;
+    LgProb vit_lp=bestAligGivenVitMatrices(srcSentIndexVector.size(),vitMatrix,predMatrix,bestAlig);
+        // Obtain best word alignment vector from the Viterbi matrices
+    bestWaMatrix.init(srcSentIndexVector.size(),trgSentIndexVector.size());
+    bestWaMatrix.putAligVec(bestAlig);
 
         // Calculate sentence length model lgprob
-  LgProb slm_lp=sentLenLgProb(srcSentIndexVector.size(),
-                              trgSentIndexVector.size());
+    LgProb slm_lp=sentLenLgProb(srcSentIndexVector.size(),
+                                trgSentIndexVector.size());
 
-  return slm_lp+vit_lp;
+    return slm_lp+vit_lp;
+  }
 }
 
 //-------------------------
@@ -1312,22 +1320,28 @@ LgProb IncrHmmAligModel::calcLgProb(const Vector<WordIndex>& sSent,
                                     const Vector<WordIndex>& tSent,
                                     int verbose)
 {
+  if(sSent.empty() || tSent.empty())
+  {
+    return SMALL_LG_NUM;
+  }
+  else
+  {
+        // Calculate sentence length model lgprob
+    LgProb slp=sentLenLgProb(sSent.size(),tSent.size());
+    
+        // Obtain extended source vector
+    Vector<WordIndex> nSrcSentIndexVector=extendWithNullWord(sSent);
+    
+        // Calculate hmm lgprob
+    LgProb flp=forwardAlgorithm(nSrcSentIndexVector,
+                                tSent,
+                                verbose);
 
-      // Calculate sentence length model lgprob
-  LgProb slp=sentLenLgProb(sSent.size(),tSent.size());
-
-      // Obtain extended source vector
-  Vector<WordIndex> nSrcSentIndexVector=extendWithNullWord(sSent);
-
-      // Calculate hmm lgprob
-  LgProb flp=forwardAlgorithm(nSrcSentIndexVector,
-                              tSent,
-                              verbose);
-
-  if(verbose)
-    cerr<<"lp= "<<slp+flp<<" ; slm_lp= "<<slp<<" ; lp-slm_lp= "<<flp<<endl;
-
-  return slp+flp;
+    if(verbose)
+      cerr<<"lp= "<<slp+flp<<" ; slm_lp= "<<slp<<" ; lp-slm_lp= "<<flp<<endl;
+    
+    return slp+flp;
+  }
 }
 
 //-------------------------
