@@ -3,6 +3,7 @@
 
 AC_PREREQ(2.57)
 AC_INIT(thot, 3.1.0Beta, dortiz@prhlt.upv.es)
+AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_CONFIG_HEADER(config.h)
 AX_PREFIX_CONFIG_H([./src/thot_config.h])
