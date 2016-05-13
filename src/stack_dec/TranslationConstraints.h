@@ -25,15 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <utility>
-#include <string>
-#include <set>
-#include <map>
-#include <iostream>
-#include "StrProcUtils.h"
-#include "PositionIndex.h"
-#include "myVector.h"
-#include "ErrorDefs.h"
+#include "BaseTranslationConstraints.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -43,7 +35,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Typedefs -------------------------------------------
 
-class TranslationConstraints
+class TranslationConstraints: public BaseTranslationConstraints
 {
  public:
 
@@ -57,6 +49,12 @@ class TranslationConstraints
   Vector<std::string> getTransForSrcPhr(pair<PositionIndex,PositionIndex> srcPhr)const;
   std::set<pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const;
   bool srcPhrAffectedByConstraint(pair<PositionIndex,PositionIndex> srcPhr)const;
+  bool translationSatisfiesConstraints(const Vector<std::string>& targetWordVec,
+                                       const Vector<pair<PositionIndex,PositionIndex> >& alignedPositions)const;
+      // NOTE: alignedPositions is a vector representing alignments
+      // between source and target words.  The first index corresponds
+      // to source word positions and the second one to target word
+      // positions
 
   void clear(void);
   

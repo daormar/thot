@@ -222,6 +222,7 @@ stack_dec/ThotDecoder.h stack_dec/ThotDecoderCommonVars.h		\
 stack_dec/ThotDecoderClient.h stack_dec/SwModelPars.h			\
 stack_dec/_stack_decoder_statistics.h stack_dec/_stackDecoderRec.h	\
 stack_dec/_stackDecoder.h stack_dec/SourceSegmentation.h		\
+stack_dec/BaseTranslationConstraints.h					\
 stack_dec/TranslationConstraints.h stack_dec/SmtStack.h			\
 stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h			\
 stack_dec/_smtMultiStack.h stack_dec/BaseLogLinWeightUpdater.h		\

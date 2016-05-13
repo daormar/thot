@@ -396,6 +396,13 @@ bool TranslationConstraints::constraintFound(Vector<std::string> tokRawSrcSentVe
 }
 
 //---------------------------------------
+bool TranslationConstraints::translationSatisfiesConstraints(const Vector<std::string>& /*targetWordVec*/,
+                                                             const Vector<pair<PositionIndex,PositionIndex> >& /*alignedPositions*/)const
+{
+  return true;
+}
+
+//---------------------------------------
 void TranslationConstraints::clear(void)
 {
   xmlTagSet.clear();
