@@ -121,8 +121,7 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
   unsigned int distToNullHyp(const Hypothesis& hyp);
   virtual void aligMatrix(const Hypothesis& hyp,
                           Vector<pair<PositionIndex,PositionIndex> >& amatrix);
-      // Returns an alignment matrix for the hypothesis hyp. This
-      // function is required for assisted translation purposes
+      // Returns an alignment matrix for 'hyp' hypothesis
 
       // Printing functions and data conversion
   unsigned int partialTransLength(const Hypothesis& hyp)const;
