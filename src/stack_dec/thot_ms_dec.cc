@@ -45,6 +45,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SwModelInfo.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
+#include "BaseTranslationConstraints.h"
+#include "BaseLogLinWeightUpdater.h"
 
 #include "DynClassFactoryHandler.h"
 #include "ctimer.h"
@@ -135,6 +137,7 @@ DynClassFactoryHandler dynClassFactoryHandler;
 LangModelInfo* langModelInfoPtr;
 PhraseModelInfo* phrModelInfoPtr;
 SwModelInfo* swModelInfoPtr;
+BaseTranslationConstraints* trConstraintsPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
 BaseStackDecoder<SmtModel>* stackDecoderPtr;
@@ -232,10 +235,18 @@ int init_translator(const thot_ms_dec_pars& tdp)
     exit(ERROR);
   }
 
+  trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
+  if(trConstraintsPtr==NULL)
+  {
+    cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
       // Instantiate smt model
   smtModelPtr=new SmtModel();
       // Link pointers
   smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
+  smtModelPtr->link_trans_constraints(trConstraintsPtr);
   _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
   if(base_pbtm_ptr)
   {
@@ -333,6 +344,7 @@ void release_translator(void)
   delete swModelInfoPtr;
   delete stackDecoderPtr;
   delete llWeightUpdaterPtr;
+  delete trConstraintsPtr;
   delete smtModelPtr;
 
   dynClassFactoryHandler.release_smt();

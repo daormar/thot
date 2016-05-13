@@ -49,6 +49,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SwModelInfo.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
+#include "BaseTranslationConstraints.h"
 #include "BaseLogLinWeightUpdater.h"
 #include "BaseScorer.h"
 #include "BaseErrorCorrectionModel.h"
@@ -105,8 +106,9 @@ LangModelInfo* langModelInfoPtr;
 PhraseModelInfo* phrModelInfoPtr;
 SwModelInfo* swModelInfoPtr;
 BaseErrorCorrectionModel* ecModelPtr;
-BaseScorer* scorerPtr;
+BaseTranslationConstraints* trConstraintsPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
+BaseScorer* scorerPtr;
 BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
 BaseWgProcessorForAnlp* wgpPtr;
 BaseAssistedTrans<SmtModel>* assistedTransPtr;
@@ -212,10 +214,18 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
     exit(ERROR);
   }
 
+  trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
+  if(trConstraintsPtr==NULL)
+  {
+    cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
       // Instantiate smt model
   smtModelPtr=new SmtModel();
       // Link pointers
   smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
+  smtModelPtr->link_trans_constraints(trConstraintsPtr);
   _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
   if(base_pbtm_ptr)
   {
@@ -299,6 +309,7 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   delete smtModelPtr;
   delete scorerPtr;
   delete llWeightUpdaterPtr;
+  delete trConstraintsPtr;
   delete ecModelPtr;
   delete wgpPtr;
   delete assistedTransPtr;

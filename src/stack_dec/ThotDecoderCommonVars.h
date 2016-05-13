@@ -28,6 +28,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include THOT_SMTMODEL_H // Define SmtModel type. It is set in
                               // configure by checking SMTMODEL_H
                               // variable (default value: SmtModel.h)
+#include "BaseTranslationConstraints.h"
 #include "BaseLogLinWeightUpdater.h"
 #include "BaseScorer.h"
 #include "BasePbTransModel.h"
@@ -52,9 +53,10 @@ class ThotDecoderCommonVars
   BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
   BaseErrorCorrectionModel* ecModelPtr;
   bool curr_ecm_valid_for_wg;
-  BaseLogLinWeightUpdater* llWeightUpdaterPtr;
   BaseScorer* scorerPtr;
-
+  BaseLogLinWeightUpdater* llWeightUpdaterPtr;
+  BaseTranslationConstraints* trConstraintsPtr;
+  
   DynClassFactoryHandler dynClassFactoryHandler;
 };
 

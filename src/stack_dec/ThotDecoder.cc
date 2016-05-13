@@ -133,10 +133,18 @@ ThotDecoder::ThotDecoder()
     exit(ERROR);
   }
 
+  tdCommonVars.trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
+  if(tdCommonVars.trConstraintsPtr==NULL)
+  {
+    cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
       // Instantiate smt model
   tdCommonVars.smtModelPtr=new SmtModel();
       // Link pointers
   tdCommonVars.smtModelPtr->link_ll_weight_upd(tdCommonVars.llWeightUpdaterPtr);
+  tdCommonVars.smtModelPtr->link_trans_constraints(tdCommonVars.trConstraintsPtr);
   _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
   if(base_pbtm_ptr)
   {
@@ -2483,6 +2491,7 @@ ThotDecoder::~ThotDecoder()
   delete tdCommonVars.smtModelPtr;
   delete tdCommonVars.ecModelPtr;
   delete tdCommonVars.llWeightUpdaterPtr;
+  delete tdCommonVars.trConstraintsPtr;
   delete tdCommonVars.scorerPtr;
 
       // Release class factory handler
