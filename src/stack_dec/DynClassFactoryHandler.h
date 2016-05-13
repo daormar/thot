@@ -31,6 +31,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include THOT_SMTMODEL_H // Define SmtModel type. It is set in
                               // configure by checking SMTMODEL_H
                               // variable (default value: SmtModel.h)
+#include "BaseTranslationConstraints.h"
 #include "BaseLogLinWeightUpdater.h"
 #include "BaseScorer.h"
 #include "BaseWgProcessorForAnlp.h"
@@ -83,7 +84,10 @@ struct DynClassFactoryHandler
 
   SimpleDynClassLoader<BaseLogLinWeightUpdater> baseLogLinWeightUpdaterDynClassLoader;
   std::string baseLogLinWeightUpdaterInitPars;
-  
+
+  SimpleDynClassLoader<BaseTranslationConstraints> baseTranslationConstraintsDynClassLoader;
+  std::string baseTranslationConstraintsInitPars;
+
   SimpleDynClassLoader<BaseStackDecoder<SmtModel> > baseStackDecoderDynClassLoader;
   std::string baseStackDecoderInitPars;
 
