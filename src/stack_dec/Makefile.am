@@ -37,4 +37,5 @@ BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
 BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h HypDebugData.h	\
 BaseAssistedTrans.h _assistedTrans.h KbMiraLlWuFactory.cc		\
 multi_stack_decoder_rec__swli_factory.cc				\
-WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc
+WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc		\
+TranslationConstraintsFactory.cc

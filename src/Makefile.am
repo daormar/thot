@@ -34,7 +34,8 @@ incr_hmm_p0_alig_model_factory.la wba_incr_phrase_model_factory.la	\
 pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
 wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
 kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
-wg_uncoupled_assisted_trans__swli_factory.la $(CASMACAT_LIBS)
+wg_uncoupled_assisted_trans__swli_factory.la				\
+translation_constraints_factory.la $(CASMACAT_LIBS)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
@@ -343,6 +344,11 @@ kb_mira_ll_wu_factory_defs=		\
 stack_dec/KbMiraLlWuFactory.cc
 
 ##########
+translation_constraints_factory_h= 
+translation_constraints_factory_defs=		\
+stack_dec/TranslationConstraintsFactory.cc
+
+##########
 multi_stack_decoder_rec__swli_factory_h= 
 multi_stack_decoder_rec__swli_factory_defs=		\
 stack_dec/multi_stack_decoder_rec__swli_factory.cc
@@ -540,6 +546,13 @@ kb_mira_ll_wu_factory_la_SOURCES= $(kb_mira_ll_wu_factory_h)	\
 $(kb_mira_ll_wu_factory_defs)
 kb_mira_ll_wu_factory_la_LIBADD= libthot.la
 kb_mira_ll_wu_factory_la_LDFLAGS= -module
+
+##########
+translation_constraints_factory_la_SOURCES=	\
+$(translation_constraints_factory_h)		\
+$(translation_constraints_factory_defs)
+translation_constraints_factory_la_LIBADD= libthot.la
+translation_constraints_factory_la_LDFLAGS= -module
 
 ##########
 multi_stack_decoder_rec__swli_factory_la_SOURCES= $(multi_stack_decoder_rec__swli_factory_h)	\
