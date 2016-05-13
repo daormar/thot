@@ -1,7 +1,7 @@
 #!/bin/bash
 # Add thot package files using git
 
-this_pkg_home=${THOT_GITHUB_HOME}
+this_pkg_home=${THOT_HOME}
 
 # Add files in utils dir
 

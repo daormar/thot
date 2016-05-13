@@ -1,7 +1,7 @@
-#!/bin/bash
+º#!/bin/bash
 # Remove thot package files using git
 
-this_pkg_home=${THOT_GITHUB_HOME}
+this_pkg_home=${THOT_HOME}
 
 # Remove files in utils dir
 # .sh
