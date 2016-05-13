@@ -350,7 +350,6 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
 
       // Functions related to pre_trans_actions
   virtual void clearTempVars(void);
-  TranslationConstraints obtainTranslationConstraints(std::string srcsent);
   bool lastCharIsBlank(std::string str);
   void verifyDictCoverageForSentence(Vector<std::string>& sentenceVec,
                                      int maxSrcPhraseLength=MAX_SENTENCE_LENGTH_ALLOWED);
@@ -1246,8 +1245,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
   state=MODEL_TRANS_STATE;
   
       // Store source sentence to be translated
-  pbtmInputVars.trConstraints.obtainTransConstraints(srcsent,this->verbosity);
-  pbtmInputVars.srcSentVec=pbtmInputVars.trConstraints.getSrcSentVec();
+  this->trConstraintsPtr->obtainTransConstraints(srcsent,this->verbosity);
+  pbtmInputVars.srcSentVec=this->trConstraintsPtr->getSrcSentVec();
   
       // Verify coverage for source
   if(this->verbosity>0)
@@ -1759,10 +1758,10 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis
                                                                 float N)
 {
       // Check if gap is affected by translation constraints
-  if(pbtmInputVars.trConstraints.srcPhrAffectedByConstraint(make_pair(srcLeft,srcRight)))
+  if(this->trConstraintsPtr->srcPhrAffectedByConstraint(make_pair(srcLeft,srcRight)))
   {
         // Obtain constrained target translation for gap (if any)
-    Vector<std::string> trgWordVec=pbtmInputVars.trConstraints.getTransForSrcPhr(make_pair(srcLeft,srcRight));
+    Vector<std::string> trgWordVec=this->trConstraintsPtr->getTransForSrcPhr(make_pair(srcLeft,srcRight));
     if(trgWordVec.size()>0)
     {
           // Convert string vector to WordIndex vector
@@ -2418,12 +2417,12 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTs
       // Replace unknown words affected by constraints
 
       // Iterate over constraints
-  std::set<pair<PositionIndex,PositionIndex> > srcPhrSet=pbtmInputVars.trConstraints.getConstrainedSrcPhrases();
+  std::set<pair<PositionIndex,PositionIndex> > srcPhrSet=this->trConstraintsPtr->getConstrainedSrcPhrases();
   std::set<pair<PositionIndex,PositionIndex> >::const_iterator const_iter;
   for(const_iter=srcPhrSet.begin();const_iter!=srcPhrSet.end();++const_iter)
   {
         // Obtain target translation for constraint
-    Vector<std::string> trgPhr=pbtmInputVars.trConstraints.getTransForSrcPhr(*const_iter);
+    Vector<std::string> trgPhr=this->trConstraintsPtr->getTransForSrcPhr(*const_iter);
     
         // Find first aligned target word
     for(unsigned int i=0;i<trgVecStr.size();++i)

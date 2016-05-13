@@ -25,7 +25,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "TranslationConstraints.h"
 #include "WordIndex.h"
 #include <string>
 #include "myVector.h"
@@ -42,7 +41,6 @@ class PbTransModelInputVars
   Vector<std::string> srcSentVec;
   Vector<WordIndex> srcSentIdVec;
   Vector<WordIndex> nsrcSentIdVec;
-  TranslationConstraints trConstraints;
 
       // Variables to store the reference sentence during each
       // translation process
@@ -61,7 +59,6 @@ class PbTransModelInputVars
     srcSentVec.clear();
     srcSentIdVec.clear();
     nsrcSentIdVec.clear();
-    trConstraints.clear();
     refSentVec.clear();
     nrefSentIdVec.clear();
     lastCharOfPrefIsBlank=false;

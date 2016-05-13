@@ -47,6 +47,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "BaseSmtModel.h"
+#include "BaseTranslationConstraints.h"
 #include "BaseLogLinWeightUpdater.h"
 
 //--------------- Constants ------------------------------------------
@@ -77,6 +78,9 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
 
       // Link log-linear weight updater with model
   void link_ll_weight_upd(BaseLogLinWeightUpdater* _llWeightUpdaterPtr);
+
+      // Link translation constraints with model
+  void link_trans_constraints(BaseTranslationConstraints* _trConstraintsPtr);
 
       // Actions to be executed before the translation and before using
       // hypotheses-related functions
@@ -140,6 +144,7 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
   OnlineTrainingPars onlineTrainingPars;
 
   BaseLogLinWeightUpdater* llWeightUpdaterPtr;
+  BaseTranslationConstraints* trConstraintsPtr;
     
       // Scoring functions
   virtual Score incrScore(const Hypothesis& prev_hyp,
@@ -166,6 +171,13 @@ template<class HYPOTHESIS>
 void _smtModel<HYPOTHESIS>::link_ll_weight_upd(BaseLogLinWeightUpdater* _llWeightUpdaterPtr)
 {
   llWeightUpdaterPtr=_llWeightUpdaterPtr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _smtModel<HYPOTHESIS>::link_trans_constraints(BaseTranslationConstraints* _trConstraintsPtr)
+{
+  trConstraintsPtr=_trConstraintsPtr;
 }
 
 //---------------------------------
