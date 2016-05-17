@@ -73,7 +73,7 @@ class _phraseHypothesisRec: public BasePhraseHypothesisRec<SCORE_INFO,PhrHypData
   void setScoreInfo(const ScoreInfo& _scoreInfo);
   ScoreInfo getScoreInfo(void)const;
   void addHeuristic(Score h);
-  void sustractHeuristic(Score h);
+  void subtractHeuristic(Score h);
   PhrHypData getData(void)const;
   void setData(const PhrHypData& _data);
 
@@ -110,9 +110,9 @@ void _phraseHypothesisRec<SCORE_INFO,EQCLASS_FUNC,HYPSTATE>::addHeuristic(Score 
 
 //---------------------------------------
 template<class SCORE_INFO,class EQCLASS_FUNC,class HYPSTATE>
-void _phraseHypothesisRec<SCORE_INFO,EQCLASS_FUNC,HYPSTATE>::sustractHeuristic(Score h)
+void _phraseHypothesisRec<SCORE_INFO,EQCLASS_FUNC,HYPSTATE>::subtractHeuristic(Score h)
 {
-  scoreInfo.sustractHeuristic(h);    
+  scoreInfo.subtractHeuristic(h);    
 }
 
 //---------------------------------------

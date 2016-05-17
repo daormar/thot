@@ -77,7 +77,7 @@ class BaseHypothesisRec: public BaseHypothesis<SCORE_INFO,DATA_TYPE,EQCLASS_FUNC
   virtual void setScoreInfo(const ScoreInfo& ScInf)=0;
   virtual ScoreInfo getScoreInfo(void)const=0;
   virtual void addHeuristic(Score h)=0;
-  virtual void sustractHeuristic(Score h)=0;
+  virtual void subtractHeuristic(Score h)=0;
   virtual DATA_TYPE getData(void)const=0;
   virtual void setData(const DATA_TYPE& _data)=0;
   virtual Bitset<MAX_SENTENCE_LENGTH_ALLOWED> getKey(void)const=0;

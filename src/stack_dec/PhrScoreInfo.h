@@ -43,7 +43,7 @@ class PhrScoreInfo
 
    Score getScore(void)const;
    void addHeuristic(Score h);
-   void sustractHeuristic(Score h);
+   void subtractHeuristic(Score h);
 };
 
 #endif

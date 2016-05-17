@@ -126,11 +126,25 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
                                                  std::string input);
 
   ////// Hypotheses-related functions
-  
+
+      // Expansion-related functions
+  void expand(const Hypothesis& hyp,
+              Vector<Hypothesis>& hypVec,
+              Vector<Vector<Score> >& scrCompVec);
+  void expand_ref(const Hypothesis& hyp,
+                  Vector<Hypothesis>& hypVec,
+                  Vector<Vector<Score> >& scrCompVec);
+  void expand_ver(const Hypothesis& hyp,
+                  Vector<Hypothesis>& hypVec,
+                  Vector<Vector<Score> >& scrCompVec);
+  void expand_prefix(const Hypothesis& hyp,
+                     Vector<Hypothesis>& hypVec,
+                     Vector<Vector<Score> >& scrCompVec);
+
       // Heuristic-related functions
   void setHeuristic(unsigned int _heuristicId);
   void addHeuristicToHyp(Hypothesis& hyp);
-  void sustractHeuristicToHyp(Hypothesis& hyp);
+  void subtractHeuristicToHyp(Hypothesis& hyp);
 
       // Printing functions and data conversion
   void printHyp(const Hypothesis& hyp,
@@ -201,6 +215,11 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   ////// Hypotheses-related functions
 
       // Expansion-related functions
+  void extract_gaps(const Hypothesis& hyp,
+                    Vector<pair<PositionIndex,PositionIndex> >& gaps);
+  void extract_gaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey,
+                    Vector<pair<PositionIndex,PositionIndex> >& gaps);
+  unsigned int get_num_gaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey);
 
       // Specific phrase-based functions
   virtual void extendHypDataIdx(PositionIndex srcLeft,
@@ -208,19 +227,19 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
                                 const Vector<WordIndex>& trgPhraseIdx,
                                 HypDataType& hypd)=0;
 
-  bool getHypDataVecForGap(const Hypothesis& hyp,
-                           PositionIndex srcLeft,
-                           PositionIndex srcRight,
-                           Vector<HypDataType>& hypDataTypeVec,
-                           float N);
+  virtual bool getHypDataVecForGap(const Hypothesis& hyp,
+                                   PositionIndex srcLeft,
+                                   PositionIndex srcRight,
+                                   Vector<HypDataType>& hypDataTypeVec,
+                                   float N);
       // Get N-best translations for a subphrase of the source sentence
       // to be translated .  If N is between 0 and 1 then N represents a
       // threshold. 
-  bool getHypDataVecForGapRef(const Hypothesis& hyp,
-                              PositionIndex srcLeft,
-                              PositionIndex srcRight,
-                              Vector<HypDataType>& hypDataTypeVec,
-                              float N);
+  virtual bool getHypDataVecForGapRef(const Hypothesis& hyp,
+                                      PositionIndex srcLeft,
+                                      PositionIndex srcRight,
+                                      Vector<HypDataType>& hypDataTypeVec,
+                                      float N);
       // This function is identical to the previous function but is to
       // be used when the translation process is conducted by a given
       // reference sentence
@@ -232,11 +251,11 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
       // This function is identical to the previous function but is to
       // be used when the translation process is performed to verify the
       // coverage of the model given a reference sentence
-  bool getHypDataVecForGapPref(const Hypothesis& hyp,
-                               PositionIndex srcLeft,
-                               PositionIndex srcRight,
-                               Vector<HypDataType>& hypDataTypeVec,
-                               float N);
+  virtual bool getHypDataVecForGapPref(const Hypothesis& hyp,
+                                       PositionIndex srcLeft,
+                                       PositionIndex srcRight,
+                                       Vector<HypDataType>& hypDataTypeVec,
+                                       float N);
       // This function is identical to the previous function but is to
       // be used when the translation process is conducted by a given
       // prefix
@@ -882,7 +901,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::initHeuristicLocalt(int maxSrcPhraseLen
           s_.push_back(pbtmInputVars.nsrcSentIdVec[j+1]);
   
             // obtain translations for s_
-        getNbestTransFor_s_(s_,ttNode,this->W);
+        getNbestTransFor_s_(s_,ttNode,this->pbTransModelPars.W);
         if(ttNode.size()!=0) // Obtain best p(s_|t_)
         {
           bestScore_ts=-FLT_MAX;
@@ -1251,7 +1270,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
       // Verify coverage for source
   if(this->verbosity>0)
     cerr<<"Verify model coverage for source sentence..."<<endl; 
-  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->A);
+  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->pbTransModelPars.A);
 
       // Store source sentence as an array of WordIndex.
       // Note: this must be done after verifying the coverage for the
@@ -1271,7 +1290,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
-  initHeuristic(this->A);
+  initHeuristic(this->pbTransModelPars.A);
 }
 
 //---------------------------------
@@ -1291,7 +1310,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ref(std::string srcse
       // Verify coverage for source
   if(this->verbosity>0)
     cerr<<"Verify model coverage for source sentence..."<<endl; 
-  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->A);
+  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->pbTransModelPars.A);
 
       // Init source sentence index vector after the coverage has been
       // verified
@@ -1320,7 +1339,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ref(std::string srcse
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
-  initHeuristic(this->A);
+  initHeuristic(this->pbTransModelPars.A);
 }
 
 //---------------------------------
@@ -1340,7 +1359,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ver(std::string srcse
       // Verify coverage for source
   if(this->verbosity>0)
     cerr<<"Verify model coverage for source sentence..."<<endl; 
-  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->A);
+  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->pbTransModelPars.A);
 
       // Init source sentence index vector after the coverage has been
       // verified
@@ -1369,7 +1388,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ver(std::string srcse
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
-  initHeuristic(this->A);
+  initHeuristic(this->pbTransModelPars.A);
 }
 
 //---------------------------------
@@ -1389,7 +1408,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string sr
       // Verify coverage for source
   if(this->verbosity>0)
     cerr<<"Verify model coverage for source sentence..."<<endl; 
-  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->A);
+  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->pbTransModelPars.A);
 
       // Init source sentence index vector after the coverage has been
       // verified
@@ -1420,7 +1439,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string sr
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
-  initHeuristic(this->A);
+  initHeuristic(this->pbTransModelPars.A);
 }
 
 //---------------------------------
@@ -1561,6 +1580,328 @@ _phraseBasedTransModel<HYPOTHESIS>::getBestSuffixGivenHist(Vector<std::string> h
         // Return best suffix
     return bestCountSuffix;
   }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _phraseBasedTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
+                                                Vector<Hypothesis>& hypVec,
+                                                Vector<Vector<Score> >& scrCompVec)
+{
+  Vector<pair<PositionIndex,PositionIndex> > gaps;
+  Vector<WordIndex> s_;
+  Hypothesis extHyp;
+  Vector<HypDataType> hypDataVec;
+  Vector<Score> scoreComponents;
+  
+  hypVec.clear();
+  scrCompVec.clear();
+  
+      // Extract gaps	
+  extract_gaps(hyp,gaps);
+  if(this->verbosity>=2)
+  {
+    cerr<<"  gaps: "<<gaps.size()<<endl;
+  }
+   
+      // Generate new hypotheses completing the gaps
+  for(unsigned int k=0;k<gaps.size();++k)
+  {
+    unsigned int gap_length=gaps[k].second-gaps[k].first+1;
+    for(unsigned int x=0;x<gap_length;++x)
+    {
+      s_.clear();
+      if(x<=this->pbTransModelPars.U) // x should be lower than U, which is the maximum
+               // number of words that can be jUmped
+      {
+        for(unsigned int y=x;y<gap_length;++y)
+        {
+          unsigned int segmRightMostj=gaps[k].first+y;
+          unsigned int segmLeftMostj=gaps[k].first+x;
+              // Verify that the source phrase length does not exceed
+              // the limit
+          if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A) 
+            break;
+              // Obtain hypothesis data vector
+          getHypDataVecForGap(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W);
+          if(hypDataVec.size()!=0)
+          {
+            for(unsigned int i=0;i<hypDataVec.size();++i)
+            {
+                  // Create hypothesis extension
+              this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
+                  // Obtain information about hypothesis extension
+              Vector<std::string> targetWordVec=this->getTransInPlainTextVec(extHyp);
+              Vector<pair<PositionIndex,PositionIndex> > aligPos;
+              this->aligMatrix(extHyp,aligPos);
+                  // Check if translation constraints are satisfied
+              if(this->trConstraintsPtr->translationSatisfiesConstraints(targetWordVec,aligPos))
+              {
+                hypVec.push_back(extHyp);
+                scrCompVec.push_back(scoreComponents);
+              }
+            }
+#           ifdef THOT_STATS    
+            this->basePbTmStats.transOptions+=hypDataVec.size();
+            ++this->basePbTmStats.getTransCalls;
+#           endif    
+          }
+        }
+      }
+    }
+  }   
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _phraseBasedTransModel<HYPOTHESIS>::expand_ref(const Hypothesis& hyp,
+                                                    Vector<Hypothesis>& hypVec,
+                                                    Vector<Vector<Score> >& scrCompVec)
+{
+  Vector<pair<PositionIndex,PositionIndex> > gaps;
+  Vector<WordIndex> s_;
+  Hypothesis extHyp;
+  Vector<HypDataType> hypDataVec;
+  Vector<Score> scoreComponents;
+
+  hypVec.clear();
+  scrCompVec.clear();
+  
+      // Extract gaps	
+  extract_gaps(hyp,gaps);
+   
+      // Generate new hypotheses completing the gaps
+  for(unsigned int k=0;k<gaps.size();++k)
+  {
+    unsigned int gap_length=gaps[k].second-gaps[k].first+1;
+    for(unsigned int x=0;x<gap_length;++x)
+    {
+      s_.clear();
+      if(x<=this->pbTransModelPars.U) // x should be lower than U, which is the maximum
+                     // number of words that can be jUmped
+      {
+        for(unsigned int y=x;y<gap_length;++y)
+        {
+          unsigned int segmRightMostj=gaps[k].first+y;
+          unsigned int segmLeftMostj=gaps[k].first+x;
+              // Verify that the source phrase length does not exceed
+              // the limit
+          if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A) 
+            break;
+              // Obtain hypothesis data vector
+          getHypDataVecForGapRef(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W);
+          if(hypDataVec.size()!=0)
+          {
+            for(unsigned int i=0;i<hypDataVec.size();++i)
+            {
+              this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
+              hypVec.push_back(extHyp);
+              scrCompVec.push_back(scoreComponents);
+            }
+#           ifdef THOT_STATS    
+            ++this->basePbTmStats.getTransCalls;
+            this->basePbTmStats.transOptions+=hypDataVec.size();
+#           endif    
+          }
+        }
+      }
+    }
+  }     
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _phraseBasedTransModel<HYPOTHESIS>::expand_ver(const Hypothesis& hyp,
+                                                    Vector<Hypothesis>& hypVec,
+                                                    Vector<Vector<Score> >& scrCompVec)
+{
+  Vector<pair<PositionIndex,PositionIndex> > gaps;
+  Vector<WordIndex> s_;
+  Hypothesis extHyp;
+  Vector<HypDataType> hypDataVec;
+  Vector<Score> scoreComponents;
+
+  hypVec.clear();
+  scrCompVec.clear();
+  
+      // Extract gaps	
+  extract_gaps(hyp,gaps);
+   
+      // Generate new hypotheses completing the gaps
+  for(unsigned int k=0;k<gaps.size();++k)
+  {
+    unsigned int gap_length=gaps[k].second-gaps[k].first+1;
+    for(unsigned int x=0;x<gap_length;++x)
+    {
+      s_.clear();
+      if(x<=this->pbTransModelPars.U) // x should be lower than U, which is the maximum
+               // number of words that can be jUmped
+      {
+        for(unsigned int y=x;y<gap_length;++y)
+        {
+          unsigned int segmRightMostj=gaps[k].first+y;
+          unsigned int segmLeftMostj=gaps[k].first+x;
+              // Verify that the source phrase length does not exceed
+              // the limit
+          if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A) 
+            break;
+              // Obtain hypothesis data vector
+          getHypDataVecForGapVer(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W);
+          if(hypDataVec.size()!=0)
+          {
+            for(unsigned int i=0;i<hypDataVec.size();++i)
+            {
+              this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
+              hypVec.push_back(extHyp);
+              scrCompVec.push_back(scoreComponents);
+            }
+#           ifdef THOT_STATS    
+            ++this->basePbTmStats.getTransCalls;
+            this->basePbTmStats.transOptions+=hypDataVec.size();
+#           endif    
+          }
+        }
+      }
+    }
+  }       
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _phraseBasedTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
+                                                       Vector<Hypothesis>& hypVec,
+                                                       Vector<Vector<Score> >& scrCompVec)
+{
+  Vector<pair<PositionIndex,PositionIndex> > gaps;
+  Vector<WordIndex> s_;
+  Hypothesis extHyp;
+  Vector<HypDataType> hypDataVec;
+  Vector<Score> scoreComponents;
+
+  hypVec.clear();
+  scrCompVec.clear();
+
+      // Extract gaps	
+  extract_gaps(hyp,gaps);
+   
+      // Generate new hypotheses completing the gaps
+  for(unsigned int k=0;k<gaps.size();++k)
+  {
+    unsigned int gap_length=gaps[k].second-gaps[k].first+1;
+    for(unsigned int x=0;x<gap_length;++x)
+    {
+      s_.clear();
+      if(x<=this->pbTransModelPars.U) // x should be lower than U, which is the maximum
+               // number of words that can be jUmped
+      {
+        for(unsigned int y=x;y<gap_length;++y)
+        {
+          unsigned int segmRightMostj=gaps[k].first+y;
+          unsigned int segmLeftMostj=gaps[k].first+x;
+              // Verify that the source phrase length does not exceed
+              // the limit
+          if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A) 
+            break;
+              // Obtain hypothesis data vector
+          getHypDataVecForGapPref(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W);
+          if(hypDataVec.size()!=0)
+          {
+            for(unsigned int i=0;i<hypDataVec.size();++i)
+            {
+              this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
+              hypVec.push_back(extHyp);
+              scrCompVec.push_back(scoreComponents);
+            }
+#           ifdef THOT_STATS    
+            ++this->basePbTmStats.getTransCalls;
+            this->basePbTmStats.transOptions+=hypDataVec.size();
+#           endif    
+          }
+        }
+      }
+    }
+  }       
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _phraseBasedTransModel<HYPOTHESIS>::extract_gaps(const Hypothesis& hyp,
+                                                      Vector<pair<PositionIndex,PositionIndex> >& gaps)
+{
+  extract_gaps(hyp.getKey(),gaps);
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _phraseBasedTransModel<HYPOTHESIS>::extract_gaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey,
+                                                      Vector<pair<PositionIndex,PositionIndex> >& gaps)
+{
+      // Extract all uncovered gaps
+  pair<PositionIndex,PositionIndex> gap;
+  unsigned int srcSentLen=this->numberOfUncoveredSrcWordsHypData(this->nullHypothesisHypData());
+  unsigned int j;
+  
+      // Extract gaps
+  gaps.clear();
+  bool crossing_a_gap=false;	
+	
+  for(j=1;j<=srcSentLen;++j)
+  {
+    if(crossing_a_gap==false && hypKey.test(j)==0)
+    {
+      crossing_a_gap=true;
+      gap.first=j;
+    }
+	
+    if(crossing_a_gap==true && hypKey.test(j)==1)
+    {
+      crossing_a_gap=false;
+      gap.second=j-1;
+      gaps.push_back(gap);	
+    }	
+  }
+  if(crossing_a_gap==true)
+  {
+    gap.second=j-1;
+    gaps.push_back(gap);
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+unsigned int
+_phraseBasedTransModel<HYPOTHESIS>::get_num_gaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey)
+{
+      // Count all uncovered gaps
+  unsigned int result=0;
+  unsigned int j;
+  bool crossing_a_gap;
+  unsigned int srcSentLen;
+  HypDataType nullHypData=this->nullHypothesisHypData();
+
+  srcSentLen=this->numberOfUncoveredSrcWordsHypData(nullHypData);
+  
+      // count gaps	
+  crossing_a_gap=false;	
+	
+  for(j=1;j<=srcSentLen;++j)
+  {
+    if(crossing_a_gap==false && hypKey.test(j)==0)
+    {
+      crossing_a_gap=true;
+    }
+	
+    if(crossing_a_gap==true && hypKey.test(j)==1)
+    {
+      crossing_a_gap=false;
+      ++result;	
+    }	
+  }
+  if(crossing_a_gap==true)
+  {
+    ++result;
+  }
+  return result;
 }
 
 //---------------------------------
@@ -1848,8 +2189,8 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGapRef(const Hypothe
 
       // Obtain length limits for target phrase
   unsigned int minTrgSize=0;
-  if(s_.size()>this->E) minTrgSize=s_.size()-this->E;
-  unsigned int maxTrgSize=s_.size()+this->E;
+  if(s_.size()>this->pbTransModelPars.E) minTrgSize=s_.size()-this->pbTransModelPars.E;
+  unsigned int maxTrgSize=s_.size()+this->pbTransModelPars.E;
 
   ntarget=hyp.getPartialTrans();	
 
@@ -1868,7 +2209,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGapRef(const Hypothe
         // s_{srcLeft}...s_{srcRight} is obtained to ensure that the
         // resulting hypotheses have at least as many gaps as reference
         // words to add
-    if(this->U==0)
+    if(this->pbTransModelPars.U==0)
       pNbtRefKey.numGaps=1;
     else
     {
@@ -2008,8 +2349,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::transUncovGapPrefNoGen(const Hypothesis
   }
       // Obtain length limits for target phrase
   unsigned int minTrgSize=0;
-  if(s_.size()>this->E) minTrgSize=s_.size()-this->E;
-  unsigned int maxTrgSize=s_.size()+this->E;
+  if(s_.size()>this->pbTransModelPars.E) minTrgSize=s_.size()-this->pbTransModelPars.E;
+  unsigned int maxTrgSize=s_.size()+this->pbTransModelPars.E;
     
   unsigned int ntrgSize=hyp.getPartialTrans().size();
 
@@ -2237,9 +2578,9 @@ void _phraseBasedTransModel<HYPOTHESIS>::addHeuristicToHyp(Hypothesis& hyp)
 
 //---------------------------------
 template<class HYPOTHESIS>
-void _phraseBasedTransModel<HYPOTHESIS>::sustractHeuristicToHyp(Hypothesis& hyp)
+void _phraseBasedTransModel<HYPOTHESIS>::subtractHeuristicToHyp(Hypothesis& hyp)
 {
-  hyp.sustractHeuristic(calcHeuristicScore(hyp));
+  hyp.subtractHeuristic(calcHeuristicScore(hyp));
 }
 
 //---------------------------------

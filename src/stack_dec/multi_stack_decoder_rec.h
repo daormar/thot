@@ -130,8 +130,8 @@ void multi_stack_decoder_rec<SMT_MODEL>::printSearchGraphStream(ostream &outS)
 
       hyp=*stackIter;
       outS<<"Stack ID. "<<mStackIter->first<<endl;
-      this->smtm_ptr->sustractHeuristicToHyp(hyp);
-      this->sustractgToHyp(hyp);
+      this->smtm_ptr->subtractHeuristicToHyp(hyp);
+      this->subtractgToHyp(hyp);
       this->printGraphForHyp(hyp,outS);
     }
   }

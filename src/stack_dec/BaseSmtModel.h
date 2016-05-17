@@ -102,7 +102,7 @@ class BaseSmtModel
 
       // Heuristic-related functions
   virtual void addHeuristicToHyp(Hypothesis& hyp);
-  virtual void sustractHeuristicToHyp(Hypothesis& hyp);
+  virtual void subtractHeuristicToHyp(Hypothesis& hyp);
 
       // Expansion-related functions
   virtual void expand(const Hypothesis& hyp,
@@ -210,7 +210,7 @@ void BaseSmtModel<HYPOTHESIS>::addHeuristicToHyp(Hypothesis& /*hyp*/)
 
 //---------------------------------
 template<class HYPOTHESIS>
-void BaseSmtModel<HYPOTHESIS>::sustractHeuristicToHyp(Hypothesis& /*hyp*/)
+void BaseSmtModel<HYPOTHESIS>::subtractHeuristicToHyp(Hypothesis& /*hyp*/)
 {
   
 }

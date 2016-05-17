@@ -43,7 +43,7 @@ void PhrScoreInfo::addHeuristic(Score h)
 }
 
 //---------------------------------
-void PhrScoreInfo::sustractHeuristic(Score h)
+void PhrScoreInfo::subtractHeuristic(Score h)
 {
   score=score-h;
 }

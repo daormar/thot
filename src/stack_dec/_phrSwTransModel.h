@@ -444,7 +444,8 @@ void _phrSwTransModel<HYPOTHESIS>::initLenRangeForGapsVec(int maxSrcPhraseLength
   for(unsigned int y=0;y<J;++y)
   {
     for(unsigned int x=J-y-1;x<J;++x)
-    {// obtain phrase
+    {
+          // obtain phrase
       segmRightMostj=y;
       segmLeftMostj=J-x-1; 
       s_.clear();
@@ -461,7 +462,7 @@ void _phrSwTransModel<HYPOTHESIS>::initLenRangeForGapsVec(int maxSrcPhraseLength
           s_.push_back(this->pbtmInputVars.nsrcSentIdVec[j+1]);
   
             // obtain translations for s_
-        this->getNbestTransFor_s_(s_,ttNode,this->W);
+        this->getNbestTransFor_s_(s_,ttNode,this->pbTransModelPars.W);
         
         if(ttNode.size()!=0) // Obtain best p(s_|t_)
         {
@@ -601,7 +602,7 @@ template<class HYPOTHESIS>
 void _phrSwTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
 {
   _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(srcsent);
-  initLenRangeForGapsVec(this->A);
+  initLenRangeForGapsVec(this->pbTransModelPars.A);
 }
 
 //---------------------------------
@@ -610,7 +611,7 @@ void _phrSwTransModel<HYPOTHESIS>::pre_trans_actions_ref(std::string srcsent,
                                                          std::string refsent)
 {
   _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ref(srcsent,refsent);
-  initLenRangeForGapsVec(this->A);  
+  initLenRangeForGapsVec(this->pbTransModelPars.A);  
 }
 
 //---------------------------------
@@ -619,7 +620,7 @@ void _phrSwTransModel<HYPOTHESIS>::pre_trans_actions_ver(std::string srcsent,
                                                          std::string refsent)
 {
   _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ver(srcsent,refsent);
-  initLenRangeForGapsVec(this->A);  
+  initLenRangeForGapsVec(this->pbTransModelPars.A);  
 }
 
 //---------------------------------
@@ -628,7 +629,7 @@ void _phrSwTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string srcsent,
                                                             std::string prefix)
 {
   _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(srcsent,prefix);
-  initLenRangeForGapsVec(this->A);
+  initLenRangeForGapsVec(this->pbTransModelPars.A);
 }
 
 //---------------------------------

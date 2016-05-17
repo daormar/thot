@@ -89,7 +89,7 @@ class BaseHypothesis
       // is required when using multiple stack translators without
       // granularity
   virtual void addHeuristic(Score h)=0;
-  virtual void sustractHeuristic(Score h)=0;
+  virtual void subtractHeuristic(Score h)=0;
   virtual DATA_TYPE getData(void)const=0;
   virtual void setData(const DATA_TYPE& _data)=0;
   virtual Bitset<MAX_SENTENCE_LENGTH_ALLOWED> getKey(void)const=0;

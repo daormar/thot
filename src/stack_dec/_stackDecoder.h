@@ -187,7 +187,7 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
   int verbosity;                 // Verbosity level
     
   void addgToHyp(Hypothesis& hyp);
-  void sustractgToHyp(Hypothesis& hyp);
+  void subtractgToHyp(Hypothesis& hyp);
   
   void pre_trans_actions(std::string srcsent);
   void pre_trans_actions_ref(std::string srcsent,
@@ -210,7 +210,7 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
       // NOTE: hyp is not passed by reference to avoid collateral effects
   Hypothesis pop(void);	
       // pop operation: pops the top of the stack
-      // the pop function also sustracts a heuristic value to hyp
+      // the pop function also subtracts a heuristic value to hyp
   
   virtual bool pushGivenPredHyp(const Hypothesis& pred_hyp,
                                 const Vector<Score>& scrComps,
@@ -321,14 +321,14 @@ void _stackDecoder<SMT_MODEL>::addgToHyp(Hypothesis& hyp)
 
 //---------------------------------------
 template<class SMT_MODEL>
-void _stackDecoder<SMT_MODEL>::sustractgToHyp(Hypothesis& hyp)
+void _stackDecoder<SMT_MODEL>::subtractgToHyp(Hypothesis& hyp)
 {
   unsigned int i;
   double g;
     
   i=smtm_ptr->distToNullHyp(hyp);
   g=(double)i*(double)G_EPSILON;
-  hyp.sustractHeuristic(g);
+  hyp.subtractHeuristic(g);
 }
 
 //---------------------------------------
@@ -832,8 +832,8 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::pop(void
     {
       hyp=stack_ptr->pop();
     }
-    sustractgToHyp(hyp);
-    smtm_ptr->sustractHeuristicToHyp(hyp);
+    subtractgToHyp(hyp);
+    smtm_ptr->subtractHeuristicToHyp(hyp);
     return hyp;
   }
   else
@@ -841,7 +841,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::pop(void
         // Non breadth-first search
     Hypothesis hyp;
     hyp=stack_ptr->pop();
-    smtm_ptr->sustractHeuristicToHyp(hyp);
+    smtm_ptr->subtractHeuristicToHyp(hyp);
     return hyp;
   }
 }
