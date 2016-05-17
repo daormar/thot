@@ -179,9 +179,9 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
 
       // Expansion-related functions
   void extract_gaps(const Hypothesis& hyp,
-                    Vector<pair<PositionIndex,PositionIndex> >&  gaps);
+                    Vector<pair<PositionIndex,PositionIndex> >& gaps);
   void extract_gaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey,
-                    Vector<pair<PositionIndex,PositionIndex> >&  gaps);
+                    Vector<pair<PositionIndex,PositionIndex> >& gaps);
   unsigned int get_num_gaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey);
   virtual bool getHypDataVecForGap(const Hypothesis& hyp,
                                    PositionIndex srcLeft,
@@ -441,9 +441,18 @@ void BasePbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
           {
             for(unsigned int i=0;i<hypDataVec.size();++i)
             {
+                  // Create hypothesis extension
               this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
-              hypVec.push_back(extHyp);
-              scrCompVec.push_back(scoreComponents);
+                  // Obtain information about hypothesis extension
+              Vector<std::string> targetWordVec=this->getTransInPlainTextVec(extHyp);
+              Vector<pair<PositionIndex,PositionIndex> > aligPos;
+              this->aligMatrix(extHyp,aligPos);
+                  // Check if translation constraints are satisfied
+              if(this->trConstraintsPtr->translationSatisfiesConstraints(targetWordVec,aligPos))
+              {
+                hypVec.push_back(extHyp);
+                scrCompVec.push_back(scoreComponents);
+              }
             }
 #           ifdef THOT_STATS    
             basePbTmStats.transOptions+=hypDataVec.size();
@@ -674,7 +683,7 @@ unsigned int BasePbTransModel<HYPOTHESIS>::numberOfUncoveredSrcWords(const Hypot
 //---------------------------------
 template<class HYPOTHESIS>
 void BasePbTransModel<HYPOTHESIS>::extract_gaps(const Hypothesis& hyp,
-                                                Vector<pair<PositionIndex,PositionIndex> >&  gaps)
+                                                Vector<pair<PositionIndex,PositionIndex> >& gaps)
 {
   extract_gaps(hyp.getKey(),gaps);
 }
@@ -682,7 +691,7 @@ void BasePbTransModel<HYPOTHESIS>::extract_gaps(const Hypothesis& hyp,
 //---------------------------------
 template<class HYPOTHESIS>
 void BasePbTransModel<HYPOTHESIS>::extract_gaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey,
-                                                Vector<pair<PositionIndex,PositionIndex> >&  gaps)
+                                                Vector<pair<PositionIndex,PositionIndex> >& gaps)
 {
       // Extract all uncovered gaps
   pair<PositionIndex,PositionIndex> gap;
