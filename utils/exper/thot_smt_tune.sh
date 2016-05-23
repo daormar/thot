@@ -414,7 +414,7 @@ loglin_upd()
     va_opt="`obtain_loglin_upd_va_opt_values`"
 
     # Default parameters
-    ll_wu_niters=7
+    ll_wu_niters=10
 
     echo "NOTE: see file ${outd}/tm_adjw.log to track optimization progress" >&2
 
