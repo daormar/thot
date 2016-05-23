@@ -39,3 +39,4 @@
 /home/dortiz/smt/software/stack_dec MiraBleuFactory
 /home/dortiz/smt/software/stack_dec TranslationConstraintsFactory
 /home/dortiz/smt/software/stack_dec WgUncoupledAssistedTransSwLiFactory
+/home/dortiz/smt/software/stack_dec multi_stack_decoder_rec__swli_factory
