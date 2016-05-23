@@ -482,6 +482,7 @@ while [ $end -eq 0 ]; do
     niter=`expr $niter + 1`
 
     # Verify ending conditions
+
     if [ $niter -ge $maxiters ]; then
         end=1
     fi
