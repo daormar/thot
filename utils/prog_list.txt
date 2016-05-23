@@ -1,6 +1,8 @@
 # HOME_OF_PACKAGE PROGRAM_NAME
 /home/dortiz/smt/software/incr_models thot_ilm_perp
 /home/dortiz/smt/software/incr_models thot_lm_weight_upd
+/home/dortiz/smt/software/incr_models IncrJelMerNgramLMFactory
+/home/dortiz/smt/software/incr_models WordPenaltyModelFactory
 /home/dortiz/smt/software/alig_models/sw_models thot_calc_swm_lgprob
 /home/dortiz/smt/software/alig_models/sw_models thot_gen_sw_model
 /home/dortiz/smt/software/alig_models/sw_models thot_sort_bin_ilextable
@@ -14,9 +16,15 @@
 /home/dortiz/smt/software/alig_models/sw_models thot_prune_bin_ilextable
 /home/dortiz/smt/software/alig_models/sw_models test_casmacat_alig
 /home/dortiz/smt/software/alig_models/sw_models test_casmacat_confid
+/home/dortiz/smt/software/alig_models/sw_models SmoothedIncrIbm2AligModelFactory
+/home/dortiz/smt/software/alig_models/sw_models IncrHmmP0AligModelFactory
 /home/dortiz/smt/software/alig_models/phrase_models thot_alig_op
 /home/dortiz/smt/software/alig_models/phrase_models thot_gen_phr_model
+/home/dortiz/smt/software/alig_models/phrase_models WbaIncrPhraseModelFactory
 /home/dortiz/smt/software/error_correction thot_wg_proc
+/home/dortiz/smt/software/error_correction NonPbEcModelForNbUcatFactory
+/home/dortiz/smt/software/error_correction PfsmEcmForWgFactory
+/home/dortiz/smt/software/error_correction WgProcessorForAnlpPfsmFactory
 /home/dortiz/smt/software/downhill_simplex thot_dhs_step_by_step_min
 /home/dortiz/smt/software/stack_dec thot_ms_dec
 /home/dortiz/smt/software/stack_dec thot_calc_bleu
@@ -27,3 +35,7 @@
 /home/dortiz/smt/software/stack_dec thot_scorer
 /home/dortiz/smt/software/stack_dec thot_ll_weight_upd_nblist
 /home/dortiz/smt/software/stack_dec test_casmacat_engines
+/home/dortiz/smt/software/stack_dec KbMiraLlWuFactory
+/home/dortiz/smt/software/stack_dec MiraBleuFactory
+/home/dortiz/smt/software/stack_dec TranslationConstraintsFactory
+/home/dortiz/smt/software/stack_dec WgUncoupledAssistedTransSwLiFactory
