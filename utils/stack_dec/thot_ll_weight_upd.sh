@@ -231,7 +231,36 @@ get_new_llweights()
 {
     $TAIL -1 ${TDIR_LLWU}/weights_per_iter.txt | $AWK '{for(i=3;i<=NF;++i){printf"%s",$i; if(i!=NF) printf" "}}'
 }
-    
+
+##################
+convergence_reached()
+{
+    local_trans_qual_vector="$1"
+    local_longest_decr_streak=$2
+    local_decreasing_streak_len=`echo ${local_trans_qual_vector} | $AWK '{
+                                             best_score=$1
+                                             decr_streak_len=1
+                                             for(i=2;i<=NF;++i)
+                                             {
+                                               if(best_score<$i)
+                                               {
+                                                best_score=$i
+                                                decr_streak_len=1
+                                               }
+                                               else
+                                               {
+                                                ++decr_streak_len
+                                               }
+                                             }
+                                             printf "%d",decr_streak_len
+                                            }'`
+    if [ ${local_decreasing_streak_len} -ge ${local_longest_decr_streak} ]; then
+        echo 1
+    else
+        echo 0
+    fi
+}     
+
 ##################
 
 if [ $# -eq 0 ]; then
@@ -412,8 +441,10 @@ llweights=`obtain_init_llweights`
 
 # Start iterations
 niter=1
+trans_qual_vector=""
+end=0
 
-while [ $niter -le $maxiters ]; do
+while [ $end -eq 0 ]; do
 
     echo "*** Iteration $niter , current weights: ${llweights}" >&2
     
@@ -423,6 +454,7 @@ while [ $niter -le $maxiters ]; do
 
     # Obtain translation quality
     quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/nblist/${niter} ${TDIR_LLWU}/${niter}_best_trans`
+    trans_qual_vector="${trans_qual_vector} ${quality}"
     echo "* Current translation quality: ${quality}" >&2
 
     # Update best quality
@@ -441,11 +473,24 @@ while [ $niter -le $maxiters ]; do
     echo "* New weights: ${llweights}" >&2
 
     # Obtain translation quality for new weights
-    quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/nblist/${niter} ${TDIR_LLWU}/${niter}_best_trans_new_weights`
-    echo "* Translation quality for new weights: ${quality}" >&2
+    if [ "$debug" = "-debug" ]; then
+        quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/nblist/${niter} ${TDIR_LLWU}/${niter}_best_trans_new_weights`
+        echo "* Translation quality for new weights: ${quality}" >&2
+    fi
 
     # Increase niter
     niter=`expr $niter + 1`
+
+    # Verify ending conditions
+    if [ $niter -ge $maxiters ]; then
+        end=1
+    fi
+
+    longest_decr_streak=3
+    converg=`convergence_reached "${trans_qual_vector}" ${longest_decr_streak}`
+    if [ $converg -eq 1 ]; then
+        end=1
+    fi
 
     echo "" >&2
 
