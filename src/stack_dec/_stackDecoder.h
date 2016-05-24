@@ -861,7 +861,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(v
 {
   bool end=false;
   Vector<Hypothesis> hypsToExpand;
-  Hypothesis result;
+  Hypothesis result=smtm_ptr->nullHypothesis();
   unsigned int iterNo=1;
     
   while(!end && iterNo<MAX_NUM_OF_ITER)
@@ -968,7 +968,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
 {
   bool end=false;
   Vector<Hypothesis> hypsToExpand;
-  Hypothesis result;
+  Hypothesis result=smtm_ptr->nullHypothesis();
   unsigned int iterNo=1;
 
   while(!end && iterNo<MAX_NUM_OF_ITER)
@@ -1076,7 +1076,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVe
 {
   bool end=false;
   Vector<Hypothesis> hypsToExpand;
-  Hypothesis result;
+  Hypothesis result=smtm_ptr->nullHypothesis();  
   unsigned int iterNo=1;
 
   while(!end && iterNo<MAX_NUM_OF_ITER)
@@ -1183,7 +1183,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
 {
   bool end=false;
   Vector<Hypothesis> hypsToExpand;
-  Hypothesis result;
+  Hypothesis result=smtm_ptr->nullHypothesis();
   unsigned int iterNo=1;
 
   while(!end && iterNo<MAX_NUM_OF_ITER)
