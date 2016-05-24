@@ -80,9 +80,9 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
  public:
   KbMiraLlWu(double C = 0.01,
              double gamma = 0.999,
-             unsigned int J = 30,
-             unsigned int epochs_to_restart = 8,
-             unsigned int max_restarts = 2);
+             unsigned int J = 60,
+             unsigned int epochs_to_restart = 20,
+             unsigned int max_restarts = 1);
   ~KbMiraLlWu();
 
       // Function to link scorer
