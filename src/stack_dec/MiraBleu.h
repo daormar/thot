@@ -68,7 +68,7 @@ public:
 
 private:
   unsigned int N_STATS;
-  Vector <unsigned int> backgroundBleu; // background corpus stats for BLEU
+  Vector <double> backgroundBleu; // background corpus stats for BLEU
 
   double scoreFromStats(Vector<unsigned int>& stats);
   void statsForSentence(const Vector<std::string>& candidate_tokens,

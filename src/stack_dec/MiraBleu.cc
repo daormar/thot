@@ -84,8 +84,14 @@ void MiraBleu::sentBackgroundScore(const std::string& candidate,
   for (unsigned int i=0; i<N_STATS; i++)
     stats.push_back(sentStats[i] + backgroundBleu[i]);
 
+  // cerr << "stats: [";
+  // for(unsigned k=0; k<stats.size(); k++)
+  //   cerr << stats[k] << " ";
+  // cerr << "]" << endl;
+  // cerr << scoreFromStats(stats) << "*" <<  reference_tokens.size()<< endl;
+
   // scale bleu to roughly typical margins
-  bleu = scoreFromStats(stats) * reference_tokens.size();
+  bleu = scoreFromStats(stats) * stats[1]; // according to chiang
 }
 
 //---------------------------------------
@@ -105,8 +111,11 @@ void MiraBleu::corpusScore(const Vector<std::string>& candidates,
     for (unsigned int i=0; i<N_STATS; i++)
       corpusStats[i] += stats[i];
   }
+  // cerr << "CS: [";
+  // for(unsigned int k=0; k<N_STATS; k++)
+  //   cerr << corpusStats[k] << " ";
+  // cerr << "]" << endl;
   bleu = scoreFromStats(corpusStats);
-
 }
 
 //---------------------------------------

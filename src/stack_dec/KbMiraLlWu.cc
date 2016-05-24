@@ -74,8 +74,8 @@ void KbMiraLlWu::update(const std::string& reference,
   Vector<double> max_wAvg;
   double quality, max_quality = 0;
 
+  scorer->resetBackgroundCorpus();
   for (unsigned int nReStarts=0; nReStarts<maxRestarts; nReStarts++) {
-    scorer->resetBackgroundCorpus();
     double iter_max_quality = 0;
     unsigned int iter_max_j = 0, nUpdates = 1;
     Vector<double> wt(currWeightsVec);
@@ -148,11 +148,29 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
   assert(nblists.size() == nSents);
   assert(scoreCompsVecs.size() == nSents);
 
+  // //##########################################################################
+  // // evaluate bleu of currWeightsVec
+  // cerr << "CW: ";
+  // for (unsigned int k=0; k<currWeightsVec.size(); k++)
+  //   cerr << currWeightsVec[k] << " ";
+  // cerr << "]" << endl;
+  // std::string mT;
+  // Vector<std::string> mTs;
+  // for (unsigned int i=0; i<nSents; i++) {
+  //   MaxTranslation(currWeightsVec, nblists[i], scoreCompsVecs[i], mT);
+  //   mTs.push_back(mT);
+  //   //cerr << i << " " << mT << endl;
+  // }
+  // double bleu;
+  // scorer->corpusScore(mTs, references, bleu);
+  // cerr << bleu << endl;
+  // //##########################################################################
+
   Vector<double> max_wAvg;
   double quality, max_quality = 0;
 
+  scorer->resetBackgroundCorpus();
   for (unsigned int nReStarts=0; nReStarts<maxRestarts; nReStarts++) {
-    scorer->resetBackgroundCorpus();
     double iter_max_quality = 0;
     unsigned int iter_max_j = 0, nUpdates = 1;
     Vector<double> wt(currWeightsVec);
@@ -183,7 +201,9 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
               diffNorm += diff[k]*diff[k];
             double eta = min(c, loss/diffNorm);
             for (unsigned int k=0; k<diff.size(); k++) {
+              //cerr << k << " : " << wt[k];
               wt[k] += eta*diff[k];
+              //cerr << " ( " << eta << " " << diff[k] << " ) " << wt[k] << endl;
               wTotals[k] += wt[k];
             }
             nUpdates++;
@@ -267,15 +287,17 @@ void KbMiraLlWu::HopeFear(const std::string& reference,
 
     // cerr << nBest[n] << endl;
     // cerr << reference << endl;
-    // cerr << quality << ": [ ";
+    // cerr << quality << " : [ ";
     // for (unsigned int k=0; k<qStats.size(); k++)
     //   cerr << qStats[k] << " ";
-    // cerr << "]" << endl;
+    // cerr << "] " << score << " " << quality;
+    // cerr << "( " << hope_scale*score + quality << " " << hope_total_score;
+    // cerr << " , " << score-quality << " " << fear_total_score << " )" << endl;
 
     // Hope
     if ((hope_scale*score + quality) > hope_total_score) {
       hope_total_score = hope_scale*score + quality;
-      //cerr << n << " : " << nBest[n] << score << " " << quality << " " << hope_total_score << endl;
+      // cerr << n << " : " << nBest[n] << score << " " << quality << " " << hope_total_score << endl;
       hopeFear->hopeScore = score;
       hopeFear->hopeFeatures.clear();
       for (unsigned int k=0; k<nScores[n].size(); k++)
@@ -286,7 +308,7 @@ void KbMiraLlWu::HopeFear(const std::string& reference,
     // Fear
     if ((score - quality) > fear_total_score) {
       fear_total_score = score - quality;
-      //cerr << n << " : " << nBest[n] << score << " " << quality << " " << fear_total_score << endl;
+      // cerr << n << " : " << nBest[n] << score << " " << quality << " " << fear_total_score << endl;
       hopeFear->fearScore = score;
       hopeFear->fearFeatures.clear();
       for (unsigned int k=0; k<nScores[n].size(); k++)
