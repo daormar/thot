@@ -773,7 +773,7 @@ bool _stackDecoder<SMT_MODEL>::push(Hypothesis hyp)
     }
     else
     {
-          // apply best score pruning
+          // Apply best score pruning
           // The following check is done to perform best score
           // pruning
       if((double)hyp.getScore()>=(double)bestCompleteHypScore) 
@@ -860,8 +860,8 @@ template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(void)
 {
   bool end=false;
-  Hypothesis result;
   Vector<Hypothesis> hypsToExpand;
+  Hypothesis result;
   unsigned int iterNo=1;
     
   while(!end && iterNo<MAX_NUM_OF_ITER)
@@ -911,7 +911,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(v
           {
                 // Return the first complete hypothesis as the final
                 // translation
-            bestCompleteHyp=hypsToExpand[i];
+            result=hypsToExpand[i];
             end=true;
           }
           else push(hypsToExpand[i]);
@@ -959,7 +959,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(v
   }
   	  
   if(iterNo>=MAX_NUM_OF_ITER) cerr<<"Maximum number of iterations exceeded!\n";
-  return bestCompleteHyp; 
+  return result; 
 }
 
 //---------------------------------------
@@ -967,8 +967,8 @@ template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWithRef(void)
 {
   bool end=false;
-  Hypothesis result;
   Vector<Hypothesis> hypsToExpand;
+  Hypothesis result;
   unsigned int iterNo=1;
 
   while(!end && iterNo<MAX_NUM_OF_ITER)
@@ -1018,7 +1018,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
           {
                 // Return the first complete hypothesis as the final
                 // translation
-            bestCompleteHyp=hypsToExpand[i];
+            result=hypsToExpand[i];
             end=true;
           }
           else push(hypsToExpand[i]);
@@ -1067,7 +1067,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
   }
   	  
   if(iterNo>=MAX_NUM_OF_ITER) cerr<<"Maximum number of iterations exceeded!\n";
-  return bestCompleteHyp;	 
+  return result;
 }
 
 //---------------------------------------
@@ -1075,8 +1075,8 @@ template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVer(void)
 {
   bool end=false;
-  Hypothesis result;
   Vector<Hypothesis> hypsToExpand;
+  Hypothesis result;
   unsigned int iterNo=1;
 
   while(!end && iterNo<MAX_NUM_OF_ITER)
@@ -1126,7 +1126,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVe
           {
                 // Return the first complete hypothesis as the final
                 // translation
-            bestCompleteHyp=hypsToExpand[i];
+            result=hypsToExpand[i];
             end=true;
           }
           else push(hypsToExpand[i]);
@@ -1174,7 +1174,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVe
   }
   	  
   if(iterNo>=MAX_NUM_OF_ITER) cerr<<"Maximum number of iterations exceeded!\n";
-  return bestCompleteHyp;	 
+  return result;
 }
 
 //---------------------------------------
@@ -1182,8 +1182,8 @@ template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWithPrefix(void)
 {
   bool end=false;
-  Hypothesis result;
   Vector<Hypothesis> hypsToExpand;
+  Hypothesis result;
   unsigned int iterNo=1;
 
   while(!end && iterNo<MAX_NUM_OF_ITER)
@@ -1233,7 +1233,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
           {
                 // Return the first complete hypothesis as the final
                 // translation
-            bestCompleteHyp=hypsToExpand[i];
+            result=hypsToExpand[i];
             end=true;
           }
           else push(hypsToExpand[i]);
@@ -1281,7 +1281,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
   }
   	  
   if(iterNo>=MAX_NUM_OF_ITER) cerr<<"Maximum number of iterations exceeded!\n";
-  return bestCompleteHyp;	 
+  return result;
 }
 
 //---------------------------------------
