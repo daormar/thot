@@ -899,7 +899,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(v
     if(hypsToExpand.empty()) end=true;
     else	   
     {
-          // Expand each hypothesis
+          // There are hypotheses to be expanded
       for(unsigned int i=0;i<hypsToExpand.size();++i)
       {
             // If the hypothesis is complete, finish the decoding
@@ -918,10 +918,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(v
         }
         else
         {
-          Vector<Hypothesis> expandedHyps;
-          Vector<Vector<Score> > scrCompVec;
-          int numExpHyp=0;
-          
               // If the hypothesis is not complete, expand it
 #        ifdef THOT_STATS
           ++this->_stack_decoder_stats.totalExpansionNo;
@@ -932,7 +928,24 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(v
             cerr<<"  Expanding hypothesis: ";
             smtm_ptr->printHyp(hypsToExpand[i],cerr);
           }
+          
+          Vector<Hypothesis> expandedHyps;
+          Vector<Vector<Score> > scrCompVec;
+          int numExpHyp=0;
           smtm_ptr->expand(hypsToExpand[i],expandedHyps,scrCompVec);
+
+              // Update result variable (choose hypothesis further to
+              // null hypothesis with a higher score)
+          if(smtm_ptr->distToNullHyp(result) < smtm_ptr->distToNullHyp(hypsToExpand[i]))
+          {
+            result=hypsToExpand[i];
+          }
+          else
+          {
+            if(smtm_ptr->distToNullHyp(result) == smtm_ptr->distToNullHyp(hypsToExpand[i]) && result.getScore() < hypsToExpand[i].getScore())
+              result=hypsToExpand[i];
+          }
+          
           if(verbosity>1)
             cerr<<"  Generated "<<expandedHyps.size()<<" expansions"<<endl;
 
@@ -1006,7 +1019,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
     if(hypsToExpand.empty()) end=true;
     else	   
     {
-          // Expand each hypothesis
+          // There are hypotheses to be expanded
       for(unsigned int i=0;i<hypsToExpand.size();++i)
       {
             // If the hypothesis is complete, finish the decoding
@@ -1025,11 +1038,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
         }
         else
         {
-          Vector<Hypothesis> expandedHyps;
-          Vector<Vector<Score> > scrCompVec;
-          int numExpHyp=0;
-          
-              // If the hypothesis is not complete, expand it
+              // If the hypothesis is not complete, expand it          
 #        ifdef THOT_STATS
           ++this->_stack_decoder_stats.totalExpansionNo;
 #        endif  
@@ -1039,7 +1048,12 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
             cerr<<"  Expanding hypothesis: ";
             smtm_ptr->printHyp(hypsToExpand[i],cerr);
           }
+
+          Vector<Hypothesis> expandedHyps;
+          Vector<Vector<Score> > scrCompVec;
+          int numExpHyp=0;
           smtm_ptr->expand_ref(hypsToExpand[i],expandedHyps,scrCompVec);
+
           if(verbosity>1)
             cerr<<"  Generated "<<expandedHyps.size()<<" expansions"<<endl;
 
@@ -1114,7 +1128,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVe
     if(hypsToExpand.empty()) end=true;
     else	   
     {
-          // Expand each hypothesis
+          // There are hypotheses to be expanded
       for(unsigned int i=0;i<hypsToExpand.size();++i)
       {
             // If the hypothesis is complete, finish the decoding
@@ -1133,11 +1147,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVe
         }
         else
         {
-          Vector<Hypothesis> expandedHyps;
-          Vector<Vector<Score> > scrCompVec;
-          int numExpHyp=0;
-          
-              // If the hypothesis is not complete, expand it
+              // If the hypothesis is not complete, expand it          
 #        ifdef THOT_STATS
           ++this->_stack_decoder_stats.totalExpansionNo;
 #        endif  
@@ -1147,7 +1157,12 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVe
             cerr<<"  Expanding hypothesis: ";
             smtm_ptr->printHyp(hypsToExpand[i],cerr);
           }
+
+          Vector<Hypothesis> expandedHyps;
+          Vector<Vector<Score> > scrCompVec;
+          int numExpHyp=0;
           smtm_ptr->expand_ver(hypsToExpand[i],expandedHyps,scrCompVec);
+          
           if(verbosity>1)
             cerr<<"  Generated "<<expandedHyps.size()<<" expansions"<<endl;
 
@@ -1221,7 +1236,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
     if(hypsToExpand.empty()) end=true;
     else	   
     {
-          // Expand each hypothesis
+          // There are hypotheses to be expanded
       for(unsigned int i=0;i<hypsToExpand.size();++i)
       {
             // If the hypothesis is complete, finish the decoding
@@ -1240,11 +1255,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
         }
         else
         {
-          Vector<Hypothesis> expandedHyps;
-          Vector<Vector<Score> > scrCompVec;
-          int numExpHyp=0;
-          
-              // If the hypothesis is not complete, expand it
+              // If the hypothesis is not complete, expand it          
 #        ifdef THOT_STATS
           ++this->_stack_decoder_stats.totalExpansionNo;
 #        endif  
@@ -1254,7 +1265,12 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
             cerr<<"  Expanding hypothesis: ";
             smtm_ptr->printHyp(hypsToExpand[i],cerr);
           }
+
+          Vector<Hypothesis> expandedHyps;
+          Vector<Vector<Score> > scrCompVec;
+          int numExpHyp=0;
           smtm_ptr->expand_prefix(hypsToExpand[i],expandedHyps,scrCompVec);
+
           if(verbosity>1)
             cerr<<"  Generated "<<expandedHyps.size()<<" expansions"<<endl;
 
