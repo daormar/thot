@@ -539,7 +539,7 @@ if [ ${input_size} -lt ${num_procs} ]; then
     exit 1
 fi
 frag_size=`expr ${input_size} / ${num_procs}`
-frag_size=`expr ${frag_size}`
+frag_size=`expr ${frag_size} + 1`
 nlines=${frag_size}
 ${SPLIT} -l ${nlines} $sents $SDIR/frag\_ || exit 1
 
