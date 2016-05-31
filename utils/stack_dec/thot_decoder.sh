@@ -234,11 +234,11 @@ trans_frag()
 {
     # Write date to log file
     echo "** Processing chunk ${fragm} (started at "`date`")..." >> $SDIR/log
-    echo "** Processing chunk ${fragm} (started at "`date`")..." > $SDIR/qs_trans_${fragm}.log
+    echo "** Processing chunk ${fragm} (started at "`date`")..." > $SDIR/qs_trans_${fragm}.err
 
     ${bindir}/thot_ms_dec ${cfg_opt} -t $SDIR/${fragm} ${dec_pars} \
-        ${wg_par}wg_${fragm} 2>> $SDIR/qs_trans_${fragm}.log >$SDIR/qs_trans_${fragm}.out || \
-        { echo "Error while executing trans_frag for $SDIR/${fragm}" >> $SDIR/qs_trans_${fragm}.log; return 1 ; }
+        ${wg_par}wg_${fragm} 2>> $SDIR/qs_trans_${fragm}.err >$SDIR/qs_trans_${fragm}.out || \
+        { echo "Error while executing trans_frag for $SDIR/${fragm}" >> $SDIR/qs_trans_${fragm}.err; return 1 ; }
 
     # Write date to log file
     echo "Processing of chunk ${fragm} finished ("`date`")" >> $SDIR/log 
@@ -290,7 +290,7 @@ gen_log_err_files()
     if [ -f ${output}.dec_err ]; then
         rm ${output}.dec_err
     fi
-    for f in $SDIR/qs_trans_*.log; do
+    for f in $SDIR/qs_trans_*.err; do
         cat $f >> ${output}.dec_err
     done
     for f in $SDIR/merge.log; do
