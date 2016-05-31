@@ -141,7 +141,7 @@ gen_nbest_lists_iter()
     # Generate translations and word graphs
     $bindir/thot_decoder -pr ${nprocs} -c ${cfgfile} -tmw ${llweights} -t ${testfile} \
         -o ${TDIR_LLWU}/trans/${niter}_thot_decoder_out -wg ${TDIR_LLWU}/wg/${niter} \
-        -sdir $sdir ${qs_opt} "${qs_par}" || exit 1
+        -sdir $sdir ${qs_opt} "${qs_par}" -v || exit 1
 
     # Evaluate translation quality
     $bindir/thot_calc_bleu -r ${reffile} -t ${TDIR_LLWU}/trans/${niter}_thot_decoder_out > ${TDIR_LLWU}/trans/${niter}_thot_decoder_out.bleu || exit 1
