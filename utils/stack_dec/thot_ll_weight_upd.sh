@@ -483,7 +483,7 @@ while [ $end -eq 0 ]; do
 
     # Verify ending conditions
 
-    if [ $niter -ge $maxiters ]; then
+    if [ $niter -gt $maxiters ]; then
         end=1
     fi
 
