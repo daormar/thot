@@ -81,8 +81,8 @@ class AlignmentContainer
                   bool transpose=0);
 	bool symmetr2(const char *_GizaAligFileName,
                   bool transpose=0);
-	bool growDiag(const char *_GizaAligFileName,
-                  bool transpose=0);
+	bool growDiagFinal(const char *_GizaAligFileName,
+                       bool transpose=0);
 	Vector<unsigned int>
       vecString2VecUnsigInt(Vector<string> vStr,
                             map<string,unsigned int> & vocab,

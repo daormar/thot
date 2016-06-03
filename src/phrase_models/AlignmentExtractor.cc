@@ -597,10 +597,10 @@ bool AlignmentExtractor::symmetr2(const char *GizaAligFileName,
 }
 
 //-------------------------
-bool AlignmentExtractor::growDiag(const char *GizaAligFileName,
-                                  const char *outFileName,
-                                  bool transpose,
-                                  bool verbose)
+bool AlignmentExtractor::growDiagFinal(const char *GizaAligFileName,
+                                       const char *outFileName,
+                                       bool transpose,
+                                       bool verbose)
 {
  AlignmentExtractor alExt;
  unsigned int numSent=0;
@@ -637,7 +637,7 @@ bool AlignmentExtractor::growDiag(const char *GizaAligFileName,
      if(transpose) alExt.transposeAlig();
      if(t==alExt.t && ns==alExt.ns)
      {
-       wordAligMatrix.growDiag(alExt.wordAligMatrix);	
+       wordAligMatrix.growDiagFinal(alExt.wordAligMatrix);	
      }
      else
      {

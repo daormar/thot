@@ -73,7 +73,7 @@ char GizaAligFileName[256];
 char outputFilesPrefix[256];
 char GIZA_OpFileName[256];
 int verbose,transposeFlag,gtFlag,exhaustive;
-bool compactOutput,andOp,orOp,sumOp,symmetr1Op,symmetr2Op,growDiagOp;
+bool compactOutput,andOp,orOp,sumOp,symmetr1Op,symmetr2Op,growDiagFinalOp;
 
 //--------------- Function Definitions -------------------------------
 
@@ -104,7 +104,7 @@ int main(int argc,char *argv[])
          if(sumOp) alignmentContainer.sum(GIZA_OpFileName,transposeFlag);
          if(symmetr1Op) alignmentContainer.symmetr1(GIZA_OpFileName,transposeFlag);
          if(symmetr2Op) alignmentContainer.symmetr2(GIZA_OpFileName,transposeFlag);	   
-         if(growDiagOp) alignmentContainer.growDiag(GIZA_OpFileName,transposeFlag);	   
+         if(growDiagFinalOp) alignmentContainer.growDiagFinal(GIZA_OpFileName,transposeFlag);	   
        }
 
 #      ifdef _GLIBCXX_USE_LFS
@@ -150,7 +150,7 @@ int main(int argc,char *argv[])
          if(sumOp) return alExt.sum(GIZA_OpFileName,outputFileName,transposeFlag,verbose);
          if(symmetr1Op) return alExt.symmetr1(GIZA_OpFileName,outputFileName,transposeFlag,verbose);
          if(symmetr2Op) return alExt.symmetr2(GIZA_OpFileName,outputFileName,transposeFlag,verbose);	   
-         if(growDiagOp) return alExt.growDiag(GIZA_OpFileName,outputFileName,transposeFlag,verbose);	   
+         if(growDiagFinalOp) return alExt.growDiagFinal(GIZA_OpFileName,outputFileName,transposeFlag,verbose);	   
        }
        return OK;
      } 
@@ -219,7 +219,7 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
        {
          invalid_op=false;
          if(verbose) cerr<<"-grd "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
-		 ret=alignmentContainer.growDiag((char*)awk.dollar(2).c_str(),transpose);	
+		 ret=alignmentContainer.growDiagFinal((char*)awk.dollar(2).c_str(),transpose);	
        }
        if(ret==ERROR)
        {
@@ -304,7 +304,7 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
        {
          invalid_op=false;
          if(verbose) cerr<<"-grd "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
-		 ret=alignmentExtractor.growDiag((char*)awk.dollar(2).c_str(),outputFileName,transpose);
+		 ret=alignmentExtractor.growDiagFinal((char*)awk.dollar(2).c_str(),outputFileName,transpose);
        }
        if(ret==ERROR)
        {
@@ -479,10 +479,10 @@ int TakeParameters(int argc,char *argv[])
 
   /* Verify -grd option */
  err=readString(argc,argv, "-grd", GIZA_OpFileName);
- growDiagOp=true;  
+ growDiagFinalOp=true;  
  if(err==-1)
  {
-   growDiagOp=false; 
+   growDiagFinalOp=false; 
  }
 
  /* Verify noCompact option */
@@ -535,7 +535,8 @@ void printUsage(void)
  cerr<<"                             performs and, or, sum, sym1, sym2 or grd\n";
  cerr<<"                             operations with the given GIZA file.\n";
  cerr<<"                             Note: sym1 and sym2 are two different versions\n";
- cerr<<"                             of the alignment symmetrization.\n\n";
+ cerr<<"                             of the alignment symmetrization, and grd.\n";
+ cerr<<"                             correspondes to grow-diag-final operation.\n\n";
  cerr<<"-f <string>                  Gives a file with a sequence of alignment\n";
  cerr<<"                             operations over the initial Giza file name.\n";	
  cerr<<"                             Operations: '-and|-or|-sum|-sym1|-sym2|-grd'\n";

@@ -277,8 +277,8 @@ bool AlignmentContainer::symmetr2(const char *_GizaAligFileName,
 }
 
 //-------------------------
-bool AlignmentContainer::growDiag(const char *_GizaAligFileName,
-                                  bool transpose/*=0*/)
+bool AlignmentContainer::growDiagFinal(const char *_GizaAligFileName,
+                                       bool transpose/*=0*/)
 {
  AlignmentExtractor alExt;
  map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
@@ -301,7 +301,7 @@ bool AlignmentContainer::growDiag(const char *_GizaAligFileName,
 	   {
          if(vecString2VecUnsigInt(alExt.get_ns(),sVocab,sVocabInv)==alIter->second[i].s)
          {
-           alIter->second[i].wordAligMatrix.growDiag(alExt.get_wamatrix());	
+           alIter->second[i].wordAligMatrix.growDiagFinal(alExt.get_wamatrix());	
          }			
 	   }
      }

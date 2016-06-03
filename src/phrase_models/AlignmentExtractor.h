@@ -120,10 +120,10 @@ class AlignmentExtractor
                   const char *outFileName,
                   bool transpose=0,
                   bool verbose=0);
-	bool growDiag(const char *GizaAligFileName,
-                  const char *outFileName,
-                  bool transpose=0,
-                  bool verbose=0);
+	bool growDiagFinal(const char *GizaAligFileName,
+                       const char *outFileName,
+                       bool transpose=0,
+                       bool verbose=0);
 	
         // Destructor
 	~AlignmentExtractor();
