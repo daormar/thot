@@ -1194,13 +1194,28 @@ void IncrHmmAligModel::viterbiAlgorithm(const Vector<WordIndex>& nSrcSentIndexVe
   predMatrix.clear();
 
       // Make room for matrices
-  Vector<LgProb> dVec;
-  dVec.insert(dVec.begin(),trgSentIndexVector.size()+1,SMALL_LG_NUM);
-  vitMatrix.insert(vitMatrix.begin(),nSrcSentIndexVector.size()+1,dVec);
+  Vector<LgProb> lgVec;
+  lgVec.insert(lgVec.begin(),trgSentIndexVector.size()+1,SMALL_LG_NUM);
+  vitMatrix.insert(vitMatrix.begin(),nSrcSentIndexVector.size()+1,lgVec);
   
   Vector<PositionIndex> pidxVec;
   pidxVec.insert(pidxVec.begin(),trgSentIndexVector.size()+1,0);
   predMatrix.insert(predMatrix.begin(),nSrcSentIndexVector.size()+1,pidxVec);
+
+      // Create data structure to cache lexical log-probs
+  lgVec.clear();
+  lgVec.insert(lgVec.begin(),trgSentIndexVector.size()+1,SMALL_LG_NUM);
+  Vector<Vector<LgProb> > cached_logpts;
+  cached_logpts.insert(cached_logpts.begin(),nSrcSentIndexVector.size()+1,lgVec);
+
+      // Cache lexical log-probs
+  for(PositionIndex j=1;j<=trgSentIndexVector.size();++j)
+  {
+    for(PositionIndex i=1;i<=nSrcSentIndexVector.size();++i)
+    {
+      cached_logpts[i][j]=logpts(nSrcSentIndexVector[i-1],trgSentIndexVector[j-1]);        
+    }
+  }
   
       // Fill matrices
   for(PositionIndex j=1;j<=trgSentIndexVector.size();++j)
@@ -1209,7 +1224,7 @@ void IncrHmmAligModel::viterbiAlgorithm(const Vector<WordIndex>& nSrcSentIndexVe
     {
       if(j==1)
       {
-        vitMatrix[i][j]=logaProb(0,slen,i)+logpts(nSrcSentIndexVector[i-1],trgSentIndexVector[j-1]);
+        vitMatrix[i][j]=logaProb(0,slen,i)+cached_logpts[i][j];
         predMatrix[i][j]=0;
       }
       else
@@ -1218,7 +1233,7 @@ void IncrHmmAligModel::viterbiAlgorithm(const Vector<WordIndex>& nSrcSentIndexVe
         {
           LgProb lp=vitMatrix[i_tilde][j-1]+
                     logaProb(i_tilde,slen,i)+
-                    logpts(nSrcSentIndexVector[i-1],trgSentIndexVector[j-1]);
+                    cached_logpts[i][j];
           if(lp>vitMatrix[i][j])
           {
             vitMatrix[i][j]=lp;
@@ -1354,9 +1369,9 @@ LgProb IncrHmmAligModel::forwardAlgorithm(const Vector<WordIndex>& nSrcSentIndex
 
       // Make room for matrix
   Vector<Vector<LgProb> > forwardMatrix;
-  Vector<LgProb> dVec;
-  dVec.insert(dVec.begin(),trgSentIndexVector.size()+1,0.0);
-  forwardMatrix.insert(forwardMatrix.begin(),nSrcSentIndexVector.size()+1,dVec);
+  Vector<LgProb> lgVec;
+  lgVec.insert(lgVec.begin(),trgSentIndexVector.size()+1,0.0);
+  forwardMatrix.insert(forwardMatrix.begin(),nSrcSentIndexVector.size()+1,lgVec);
   
       // Fill matrix
   for(PositionIndex j=1;j<=trgSentIndexVector.size();++j)
