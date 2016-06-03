@@ -396,7 +396,7 @@ WordAligMatrix& WordAligMatrix::growDiag(const WordAligMatrix &waMatrix)
     WordAligMatrix sourceMatAux=*this;
 
         // Obtain intersection between source and target
-    *this &=waMatrix;
+    *this&=waMatrix;
 
         // Obtain union between source and target
     WordAligMatrix joinMat=sourceMatAux;
@@ -448,7 +448,7 @@ WordAligMatrix& WordAligMatrix::growDiag(const WordAligMatrix &waMatrix)
       }
     }
 
-      // Final target
+        // Final target
     for(unsigned int i=0;i<I;++i)
     {
       for(unsigned int j=0;j<J;++j)
@@ -459,7 +459,7 @@ WordAligMatrix& WordAligMatrix::growDiag(const WordAligMatrix &waMatrix)
         }
       }
     }
-
+    
         // Return result
     return *this;
   }
