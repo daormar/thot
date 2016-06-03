@@ -110,8 +110,8 @@ class WordAligMatrix
       //Combine two WordAligMatrix in the Och way (1999)
   WordAligMatrix& symmetr2  (const WordAligMatrix &waMatrix);
       //Combine two WordAligMatrix in the Och way (2002, Master thesis)
-  WordAligMatrix& growDiag  (const WordAligMatrix &waMatrix);
-      //Combine two WordAligMatrix using grow-diag
+  WordAligMatrix& growDiagFinal  (const WordAligMatrix &waMatrix);
+      //Combine two WordAligMatrix using grow-diag-final
 
   // Predicates
   bool jAligned(unsigned int j)const;

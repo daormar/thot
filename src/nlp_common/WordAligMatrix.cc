@@ -380,7 +380,7 @@ WordAligMatrix& WordAligMatrix::symmetr2(const WordAligMatrix &waMatrix)
 }
 
 //-------------------------
-WordAligMatrix& WordAligMatrix::growDiag(const WordAligMatrix &waMatrix)
+WordAligMatrix& WordAligMatrix::growDiagFinal(const WordAligMatrix &waMatrix)
 {
 
       // Check that the matrices can be operated
