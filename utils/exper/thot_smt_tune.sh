@@ -208,11 +208,22 @@ tune_lm()
     # Create initial lm files
     create_lm_files || return 1
 
-    # Tune language model
-    if [ $DISABLE_FAST_DHSLM -eq 1 ]; then
-        lm_downhill || return 1
+    # Define boolean variable to check if weight file exists
+    if [ -f ${lmfile}.weights ]; then
+        weight_file_exists=1
     else
-        lm_downhill_fast || return 1
+        weight_file_exists=0
+    fi
+
+    # Tune language model if weight file was found
+    if [ ${weight_file_exists} -eq 1 ]; then
+        if [ $DISABLE_FAST_DHSLM -eq 1 ]; then
+            lm_downhill || return 1
+        else
+            lm_downhill_fast || return 1
+        fi
+    else
+        echo "Warning! Language model weights will not be adjusted (unable to find ${lmfile}.weights file)" >&2 
     fi
 }
 
@@ -404,7 +415,8 @@ loglin_downhill()
 obtain_loglin_upd_va_opt_values()
 {
     local_smtw_names=`obtain_smtweights_names`
-    echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"1 "}'
+#    echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"1 "}'
+    echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'
 }
 
 ########
