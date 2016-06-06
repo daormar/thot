@@ -30,6 +30,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files ---------------------------------------
 
+#include "IncrHmmAligModel.h"
+#include "CachedHmmAligLgProbVit.h"
 #include "BaseSwAligModel.h"
 #include <WordAligMatrix.h>
 #include <printAligFuncs.h>
@@ -139,11 +141,6 @@ int main(int argc,char *argv[])
                                                   trgSent.c_str(),
                                                   waMatrix);  
        cout<<"Single-word model logprob for the best alignment= "<<lp<<endl;
-       if(verbosity)
-       {
-         cerr<<"Best alignment:"<<endl;
-         cerr<<waMatrix<<endl;
-       }
      }
    }
   }
@@ -300,12 +297,18 @@ int processPairAligFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
 int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
                         const char *sentPairFile)
 {
+      // Define variables
  bool ret;
  awkInputStream awk;
  Vector<std::string> srcSentVec;
  Vector<std::string> trgSentVec;
  LgProb lp;
 
+     // Define variables required to speed up generation of best
+     // alignments for HMM alignment models
+ CachedHmmAligLgProbVit cached_logap;
+ IncrHmmAligModel* incrHmmAligModelPtr=dynamic_cast<IncrHmmAligModel*>(swAligModelPtr);
+ 
  if(strcmp(sentPairFile,"-")==0)
  {
        // read input from standard input
@@ -349,16 +352,20 @@ int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
      WordAligMatrix waMatrix;
 
          // Obtain best alignment
-     lp=swAligModelPtr->obtainBestAlignmentVecStr(srcSentVec,
-                                                  trgSentVec,
-                                                  waMatrix);
-
-     if(verbosity>0)
+     if(incrHmmAligModelPtr)
      {
-       cerr<<"Best alignment:"<<endl;
-       cerr<<waMatrix;
+       lp=incrHmmAligModelPtr->obtainBestAlignmentVecStrCached(srcSentVec,
+                                                               trgSentVec,
+                                                               cached_logap,
+                                                               waMatrix);
      }
-
+     else
+     {
+       lp=swAligModelPtr->obtainBestAlignmentVecStr(srcSentVec,
+                                                    trgSentVec,
+                                                    waMatrix);
+     }
+     
          // Print alignment in GIZA format
      char header[256];
      sprintf(header,"# Alignment probability= %f",(double)lp);
@@ -373,6 +380,7 @@ int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
      cout<<awk.dollar(0)<<" ||| "<<lp<<endl;
    }
  }
+ 
  return OK;   
 }
 
