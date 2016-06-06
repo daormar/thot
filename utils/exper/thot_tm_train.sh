@@ -26,7 +26,7 @@ usage()
 {
     echo "thot_tm_train           [-pr <int>]"
     echo "                        -s <string> -t <string> -o <string>"
-    echo "                        [-n <int>] [-af <float>] [-np <float>]"
+    echo "                        [-nit <int>] [-af <float>] [-np <float>]"
     echo "                        [-m <int>] [-ao <string>] [-to <int>]"
     echo "                        [-unk] [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
@@ -35,7 +35,7 @@ usage()
     echo "-s <string>             File with source sentences"
     echo "-t <string>             File with target sentences"
     echo "-o <string>             Output directory common to all processors."
-    echo "-n <int>                Number of iterations of the EM algorithm executed by"
+    echo "-nit <int>              Number of iterations of the EM algorithm executed by"
     echo "                        the thot_gen_sw_model tool (5 by default)"
     echo "-af <float>             Alignment smoothing interpolation factor for"
     echo "                        single-word models"
@@ -315,7 +315,7 @@ fi
 prefix=$outd/main/src_trg
 relative_prefix=main/src_trg
 ${bindir}/thot_pbs_gen_batch_phr_model -pr ${pr_val} \
-    -s $tcorpus -t $scorpus -o $prefix -n $niters ${af_opt} ${np_opt} \
+    -s $tcorpus -t $scorpus -o $prefix -nit $niters ${af_opt} ${np_opt} \
     -m ${m_val} ${ao_opt} -to ${to_val} ${unk_opt}  ${qs_opt} "${qs_par}" \
     -T $tdir -sdir $sdir ${debug_opt} || exit 1
 
