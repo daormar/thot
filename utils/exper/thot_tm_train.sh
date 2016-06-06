@@ -26,9 +26,8 @@ usage()
 {
     echo "thot_tm_train           [-pr <int>]"
     echo "                        -s <string> -t <string> -o <string>"
-    echo "                        [-n <int>] [-np <float>]"
-    echo "                        [-af <float>]"
-    echo "                        [-m <int>] [-ao <string>]  [-to <int>]"
+    echo "                        [-n <int>] [-af <float>] [-np <float>]"
+    echo "                        [-m <int>] [-ao <string>] [-to <int>]"
     echo "                        [-unk] [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
@@ -43,7 +42,7 @@ usage()
     echo "-np <float>             Probability assigned to the alignment with the NULL"
     echo "                        word for single-word models"
     echo "-m <int>                Maximum target phrase length during phrase model"
-    echo "                        estimation (7 by default)"
+    echo "                        estimation (10 by default)"
     echo "-ao <string>            Operation between alignments to be executed"
     echo "                        (and|or|sum|sym1|sym2|grd)."
     echo "-to <int>               Maximum number of translation options for each target" >&2
@@ -131,9 +130,10 @@ n_given=0
 niters=5
 af_given=0
 np_given=0
-m_val=7
+m_val=10
 ao_given=0
 ao_opt="-ao sym1"
+#ao_opt="-ao grd"
 to_given=0
 to_val=20
 qs_given=0
