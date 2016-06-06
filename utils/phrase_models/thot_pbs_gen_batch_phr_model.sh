@@ -28,7 +28,6 @@ empty_train()
 
     # Generate direct single word model
     echo "* Generating source-to-target single word alignment model... " >&2
-    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
     ${bindir}/thot_gen_sw_model -s $scorpus -t $tcorpus -n 1 ${lf_opt} ${af_opt} ${np_opt} \
         -o ${outp}_swm || exit 1
     echo "0" > ${outp}_swm.msinfo
@@ -38,7 +37,6 @@ empty_train()
 
     # Generate inverse single word model
     echo "* Generating target-to-source single word alignment model... " >&2
-    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
     ${bindir}/thot_gen_sw_model -s $tcorpus -t $scorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
         -o ${outp}_invswm || exit 1
     echo "0" > ${outp}_invswm.msinfo
@@ -73,7 +71,6 @@ standard_train()
 
     # Generate best alignments for direct model
     echo "* Generating best alignment for source-to-target model... " >&2
-    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
     ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_swm -s $scorpus -t $tcorpus \
         ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
     echo "" >&2
@@ -87,7 +84,6 @@ standard_train()
 
     # Generate best alignments for inverse model
     echo "* Generating best alignment for target-to-source model... " >&2
-    echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
     ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_invswm -s $tcorpus -t $scorpus \
         ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
     echo "" >&2
