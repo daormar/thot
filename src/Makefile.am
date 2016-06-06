@@ -110,6 +110,7 @@ sw_models/IncrLexTable.h sw_models/IncrIbm2AligTable.h			\
 sw_models/IncrIbm2AligModel.h sw_models/IncrIbm1AligModel.h		\
 sw_models/IncrHmmP0AligModel.h sw_models/IncrHmmAligTable.h		\
 sw_models/IncrHmmAligModel.h sw_models/HmmAligInfo.h			\
+sw_models/CachedHmmAligLgProbVit.h sw_models/CachedHmmAligLgProbVit.cc	\
 sw_models/DoubleMatrix.h sw_models/BestLgProbForTrgWord.h		\
 sw_models/BaseSwAligModel.h sw_models/BaseStepwiseAligModel.h		\
 sw_models/BaseSentLengthModel.h sw_models/BaseSentenceHandler.h		\
