@@ -40,18 +40,19 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <MathFuncs.h>
 #include "_incrSwAligModel.h"
 #include "WeightedIncrNormSlm.h"
 #include "anjiMatrix.h"
 #include "anjm1ip_anjiMatrix.h"
 #include "aSourceHmm.h"
 #include "HmmAligInfo.h"
+#include "CachedHmmAligLgProbVit.h"
 #include "DoubleMatrix.h"
 #include "IncrLexTable.h"
 #include "IncrHmmAligTable.h"
 #include "ashPidxPairHashF.h"
 #include "LexAuxVar.h"
+#include <MathFuncs.h>
 
 #if __GNUC__>2
 #include <ext/hash_map>
@@ -139,10 +140,18 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    bool getEntriesForTarget(WordIndex t,
                             SrcTableNode& srctn);
    
-   // Functions to generate alignments 
+   // Functions to generate alignments
+   virtual LgProb obtainBestAlignmentVecStrCached(Vector<std::string> srcSentenceVector,
+                                                  Vector<std::string> trgSentenceVector,
+                                                  CachedHmmAligLgProbVit& cached_logap,
+                                                  WordAligMatrix& bestWaMatrix);	
    LgProb obtainBestAlignment(Vector<WordIndex> srcSentIndexVector,
                               Vector<WordIndex> trgSentIndexVector,
                               WordAligMatrix& bestWaMatrix);
+   virtual LgProb obtainBestAlignmentCached(Vector<WordIndex> srcSentIndexVector,
+                                            Vector<WordIndex> trgSentIndexVector,
+                                            CachedHmmAligLgProbVit& cached_logap,
+                                            WordAligMatrix& bestWaMatrix);
 
    // Functions to calculate probabilities for alignments
    LgProb calcLgProbForAlig(const Vector<WordIndex>& sSent,
@@ -275,6 +284,13 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
                          Vector<Vector<PositionIndex> >& predMatrix);
        // Execute the Viterbi algorithm to obtain the best HMM word
        // alignment
+   void viterbiAlgorithmCached(const Vector<WordIndex>& nSrcSentIndexVector,
+                               const Vector<WordIndex>& trgSentIndexVector,
+                               CachedHmmAligLgProbVit& cached_logap,
+                               Vector<Vector<LgProb> >& vitMatrix,
+                               Vector<Vector<PositionIndex> >& predMatrix);
+       // Cached version of viterbiAlgorithm()
+
    LgProb bestAligGivenVitMatrices(PositionIndex slen,
                                    const Vector<Vector<LgProb> >& vitMatrix,
                                    const Vector<Vector<PositionIndex> >& predMatrix,

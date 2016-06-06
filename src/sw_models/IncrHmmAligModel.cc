@@ -1146,9 +1146,35 @@ LgProb IncrHmmAligModel::sentLenLgProb(unsigned int slen,
 }
 
 //-------------------------
+LgProb IncrHmmAligModel::obtainBestAlignmentVecStrCached(Vector<std::string> srcSentenceVector,
+                                                         Vector<std::string> trgSentenceVector,
+                                                         CachedHmmAligLgProbVit& cached_logap,
+                                                         WordAligMatrix& bestWaMatrix)
+{
+  LgProb lp;
+  Vector<WordIndex> srcSentIndexVector,trgSentIndexVector;
+
+  srcSentIndexVector=strVectorToSrcIndexVector(srcSentenceVector);
+  trgSentIndexVector=strVectorToTrgIndexVector(trgSentenceVector);
+  lp=obtainBestAlignmentCached(srcSentIndexVector,trgSentIndexVector,cached_logap,bestWaMatrix);
+  
+  return lp;
+}
+
+//-------------------------
 LgProb IncrHmmAligModel::obtainBestAlignment(Vector<WordIndex> srcSentIndexVector,
                                              Vector<WordIndex> trgSentIndexVector,
                                              WordAligMatrix& bestWaMatrix)
+{
+  CachedHmmAligLgProbVit cached_logap;
+  return obtainBestAlignmentCached(srcSentIndexVector,trgSentIndexVector,cached_logap,bestWaMatrix);
+}
+
+//-------------------------
+LgProb IncrHmmAligModel::obtainBestAlignmentCached(Vector<WordIndex> srcSentIndexVector,
+                                                   Vector<WordIndex> trgSentIndexVector,
+                                                   CachedHmmAligLgProbVit& cached_logap,
+                                                   WordAligMatrix& bestWaMatrix)
 {
   if(srcSentIndexVector.empty() || trgSentIndexVector.empty())
   {
@@ -1162,10 +1188,11 @@ LgProb IncrHmmAligModel::obtainBestAlignment(Vector<WordIndex> srcSentIndexVecto
         // Call function to obtain best lgprob and viterbi alignment
     Vector<Vector<LgProb> > vitMatrix;
     Vector<Vector<PositionIndex> > predMatrix;
-    viterbiAlgorithm(nSrcSentIndexVector,
-                     trgSentIndexVector,
-                     vitMatrix,
-                     predMatrix);
+    viterbiAlgorithmCached(nSrcSentIndexVector,
+                           trgSentIndexVector,
+                           cached_logap,
+                           vitMatrix,
+                           predMatrix);
     Vector<PositionIndex> bestAlig;
     LgProb vit_lp=bestAligGivenVitMatrices(srcSentIndexVector.size(),vitMatrix,predMatrix,bestAlig);
         // Obtain best word alignment vector from the Viterbi matrices
@@ -1185,6 +1212,17 @@ void IncrHmmAligModel::viterbiAlgorithm(const Vector<WordIndex>& nSrcSentIndexVe
                                         const Vector<WordIndex>& trgSentIndexVector,
                                         Vector<Vector<LgProb> >& vitMatrix,
                                         Vector<Vector<PositionIndex> >& predMatrix)
+{
+  CachedHmmAligLgProbVit cached_logap;
+  viterbiAlgorithmCached(nSrcSentIndexVector,trgSentIndexVector,cached_logap,vitMatrix,predMatrix);
+}
+
+//-------------------------
+void IncrHmmAligModel::viterbiAlgorithmCached(const Vector<WordIndex>& nSrcSentIndexVector,
+                                              const Vector<WordIndex>& trgSentIndexVector,
+                                              CachedHmmAligLgProbVit& cached_logap,
+                                              Vector<Vector<LgProb> >& vitMatrix,
+                                              Vector<Vector<PositionIndex> >& predMatrix)
 {
       // Obtain slen
   PositionIndex slen=getSrcLen(nSrcSentIndexVector);
@@ -1224,15 +1262,25 @@ void IncrHmmAligModel::viterbiAlgorithm(const Vector<WordIndex>& nSrcSentIndexVe
     {
       if(j==1)
       {
-        vitMatrix[i][j]=logaProb(0,slen,i)+cached_logpts[i][j];
+            // Update cached alignment log-probs if required
+        if(!cached_logap.isDefined(0,slen,i))
+          cached_logap.set(0,slen,i,logaProb(0,slen,i));
+
+            // Update matrices
+        vitMatrix[i][j]=cached_logap.get(0,slen,i)+cached_logpts[i][j];
         predMatrix[i][j]=0;
       }
       else
       {
         for(PositionIndex i_tilde=1;i_tilde<=nSrcSentIndexVector.size();++i_tilde)
         {
+              // Update cached alignment log-probs if required
+          if(!cached_logap.isDefined(i_tilde,slen,i))
+            cached_logap.set(i_tilde,slen,i,logaProb(i_tilde,slen,i));
+          
+              // Update matrices
           LgProb lp=vitMatrix[i_tilde][j-1]+
-                    logaProb(i_tilde,slen,i)+
+                    cached_logap.get(i_tilde,slen,i)+
                     cached_logpts[i][j];
           if(lp>vitMatrix[i][j])
           {
