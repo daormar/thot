@@ -25,7 +25,7 @@ usage()
     echo "thot_auto_smt           [-pr <int>]"
     echo "                        -s <string> -t <string> -o <string>"
     echo "                        [--skip-clean] [--tok] [--lower] [--no-trans]"
-    echo "                        [-nit <int>] [-n <int>]"
+    echo "                        [-nit <int>] [-n <int>] [-m <int>] [-ao <string>]"
     echo "                        [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
@@ -42,6 +42,10 @@ usage()
     echo "-nit <int>              Number of iterations of the EM algorithm when training"
     echo "                        single word models (5 by default)"
     echo "-n <int>                Order of the n-gram language models (4 by default)"
+    echo "-m <int>                Maximum target phrase length during phrase model"
+    echo "                        estimation (10 by default)"
+    echo "-ao <string>            Operation between alignments to be executed"
+    echo "                        (and|or|sum|sym1|sym2|grd)."
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTES:"
@@ -301,6 +305,9 @@ nit_given=0
 nitval=5
 n_given=0
 n_val=4
+m_val=10
+ao_given=0
+ao_opt="-ao sym1"
 qs_given=0
 tdir_given=0
 tdir="/tmp"
@@ -359,6 +366,18 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 n_val=$1
                 n_given=1
+            fi
+            ;;
+        "-m") shift
+            if [ $# -ne 0 ]; then
+                m_val=$1
+                m_given=1
+            fi
+            ;;
+        "-ao") shift
+            if [ $# -ne 0 ]; then
+                ao_opt="-ao $1"
+                ao_given=1
             fi
             ;;
         "-qs") shift
@@ -529,8 +548,8 @@ if [ -f ${scorpus_train} -a -f ${tcorpus_train} ]; then
 
     # Train translation model
     echo "**** Training translation model" >&2
-    ${bindir}/thot_tm_train -pr ${pr_val} -s ${scorpus_train} -t ${tcorpus_train} -o ${outd}/tm -n ${nitval} \
-        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+    ${bindir}/thot_tm_train -pr ${pr_val} -s ${scorpus_train} -t ${tcorpus_train} -o ${outd}/tm -nit ${nitval} \
+        -m ${m_val} ${ao_opt} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
 
 else
     echo "Error! training files do not exist" >&2
