@@ -278,7 +278,7 @@ va_opt=""
 n_given=0
 n_val=100
 i_given=0
-maxiters=10
+maxiters=12
 verbose_opt=""
 sdir=$HOME
 tdir=/tmp
@@ -460,7 +460,7 @@ while [ 1 ]; do
     update_best_quality
 
     # Verify ending conditions
-    if [ $niter -gt $maxiters ]; then
+    if [ $niter -ge $maxiters ]; then
         echo "" >&2
         break
     fi
