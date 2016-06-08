@@ -38,7 +38,7 @@ struct PhraseModelPars
       ptsWeight=1.0;
       pstWeight=0.000001;
       trgSegmLenWeight=1.0;
-      srcJumpWeight=1.0;
+      srcJumpWeight=0.01;
       srcSegmLenWeight=1.0;
     };
 };
