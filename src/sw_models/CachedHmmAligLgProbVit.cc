@@ -40,7 +40,7 @@ bool CachedHmmAligLgProbVit::isDefined(PositionIndex prev_i,
 {
   if(cachedLgProbs.size()>prev_i && cachedLgProbs[prev_i].size()>slen && cachedLgProbs[prev_i][slen].size()>i)
   {
-    if(cachedLgProbs[prev_i][slen][i]>=(LgProb)CACHED_HMM_ALIG_LGPROB_VIT_INVALID_VAL)
+    if(cachedLgProbs[prev_i][slen][i]>=(double)CACHED_HMM_ALIG_LGPROB_VIT_INVALID_VAL)
       return false;
     else
       return true;
@@ -55,26 +55,26 @@ bool CachedHmmAligLgProbVit::isDefined(PositionIndex prev_i,
 void CachedHmmAligLgProbVit::set(PositionIndex prev_i,
                                  PositionIndex slen,
                                  PositionIndex i,
-                                 LgProb lp)
+                                 double lp)
 {
       // Make room in cachedLgProbs if necessary
-  Vector<Vector<LgProb> > lpVecVec;
+  Vector<Vector<double> > lpVecVec;
   while(cachedLgProbs.size()<=prev_i)
     cachedLgProbs.push_back(lpVecVec);
 
-  Vector<LgProb> lpVec;
+  Vector<double> lpVec;
   while(cachedLgProbs[prev_i].size()<=slen)
     cachedLgProbs[prev_i].push_back(lpVec);
 
   while(cachedLgProbs[prev_i][slen].size()<=i)
-    cachedLgProbs[prev_i][slen].push_back((LgProb)CACHED_HMM_ALIG_LGPROB_VIT_INVALID_VAL);
+    cachedLgProbs[prev_i][slen].push_back((double)CACHED_HMM_ALIG_LGPROB_VIT_INVALID_VAL);
 
       // Set value
   cachedLgProbs[prev_i][slen][i]=lp;
 }
 
 //-------------------------
-LgProb CachedHmmAligLgProbVit::get(PositionIndex prev_i,
+double CachedHmmAligLgProbVit::get(PositionIndex prev_i,
                                    PositionIndex slen,
                                    PositionIndex i)
 {

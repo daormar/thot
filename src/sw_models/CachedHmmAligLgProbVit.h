@@ -35,7 +35,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "Prob.h"
 #include "SwDefs.h"
 
 //--------------- Constants ------------------------------------------
@@ -61,14 +60,13 @@ class CachedHmmAligLgProbVit
   void set(PositionIndex prev_i,
            PositionIndex slen,
            PositionIndex i,
-           LgProb lp);
-  LgProb get(PositionIndex prev_i,
+           double lp);
+  double get(PositionIndex prev_i,
              PositionIndex slen,
              PositionIndex i);
   
  private:
-  Vector<Vector<Vector<LgProb> > > cachedLgProbs;
-  
+  Vector<Vector<Vector<double> > > cachedLgProbs;
 };
 
 #endif
