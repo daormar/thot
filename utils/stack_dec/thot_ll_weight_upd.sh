@@ -442,9 +442,8 @@ llweights=`obtain_init_llweights`
 # Start iterations
 niter=1
 trans_qual_vector=""
-end=0
 
-while [ $end -eq 0 ]; do
+while [ 1 ]; do
 
     echo "*** Iteration $niter , current weights: ${llweights}" >&2
     
@@ -460,6 +459,19 @@ while [ $end -eq 0 ]; do
     # Update best quality
     update_best_quality
 
+    # Verify ending conditions
+    if [ $niter -gt $maxiters ]; then
+        echo "" >&2
+        break
+    fi
+
+    longest_decr_streak=4
+    converg=`convergence_reached "${trans_qual_vector}" ${longest_decr_streak}`
+    if [ $converg -eq 1 ]; then
+        echo "" >&2
+        break
+    fi
+
     # Obtain current n-best lists
     echo "* Obtaining current n-best lists..." >&2
     obtain_curr_nblists
@@ -471,39 +483,19 @@ while [ $end -eq 0 ]; do
     # Get new log-linear model weights
     llweights=`get_new_llweights`
     echo "* New weights: ${llweights}" >&2
-
+        
     # Obtain translation quality for new weights
     if [ "$debug" = "-debug" ]; then
         quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/nblist/${niter} ${TDIR_LLWU}/${niter}_best_trans_new_weights`
         echo "* Translation quality for new weights: ${quality}" >&2
     fi
-
+    
     # Increase niter
     niter=`expr $niter + 1`
-
-    # Verify ending conditions
-
-    if [ $niter -gt $maxiters ]; then
-        end=1
-    fi
-
-    longest_decr_streak=3
-    converg=`convergence_reached "${trans_qual_vector}" ${longest_decr_streak}`
-    if [ $converg -eq 1 ]; then
-        end=1
-    fi
-
+    
     echo "" >&2
-
+    
 done
-
-# Obtain final quality from current n-best lists
-quality=`obtain_trans_quality_from_nblists ${TDIR_LLWU}/curr_nblist/ ${TDIR_LLWU}/curr_nblist_best_trans`
-echo "* Final translation quality calculated from current n-best lists: ${quality}" >&2
-echo "" >&2
-
-# Update best quality after last iteration
-update_best_quality
 
 # Print result
 echo "* Best weights: ${best_llweights}" >&2
