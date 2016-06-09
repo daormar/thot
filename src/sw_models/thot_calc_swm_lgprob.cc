@@ -31,7 +31,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files ---------------------------------------
 
 #include "IncrHmmAligModel.h"
-#include "CachedHmmAligLgProbVit.h"
+#include "CachedHmmAligLgProb.h"
 #include "BaseSwAligModel.h"
 #include <WordAligMatrix.h>
 #include <printAligFuncs.h>
@@ -306,7 +306,7 @@ int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
 
      // Define variables required to speed up generation of best
      // alignments for HMM alignment models
- CachedHmmAligLgProbVit cached_logap;
+ CachedHmmAligLgProb cached_logap;
  IncrHmmAligModel* incrHmmAligModelPtr=dynamic_cast<IncrHmmAligModel*>(swAligModelPtr);
  
  if(strcmp(sentPairFile,"-")==0)

@@ -18,16 +18,16 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: CachedHmmAligLgProbVit.h                                 */
+/* Module: CachedHmmAligLgProb.h                                    */
 /*                                                                  */
-/* Prototype file: CachedHmmAligLgProbVit                           */
+/* Prototype file: CachedHmmAligLgProb                              */
 /*                                                                  */
 /* Description: Manages an IBM translation table.                   */
 /*                                                                  */
 /********************************************************************/
 
-#ifndef _CachedHmmAligLgProbVit
-#define _CachedHmmAligLgProbVit
+#ifndef _CachedHmmAligLgProb
+#define _CachedHmmAligLgProb
 
 //--------------- Include files --------------------------------------
 
@@ -49,9 +49,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- CachedHmmAligLgProbVit class
+//--------------- CachedHmmAligLgProb class
 
-class CachedHmmAligLgProbVit
+class CachedHmmAligLgProb
 {
  public:
   bool isDefined(PositionIndex prev_i,

@@ -1,4 +1,4 @@
-EXTRA_DIST= WeightedIncrNormSlm.h WeightedIncrNormSlm.cc			\
+EXTRA_DIST= WeightedIncrNormSlm.h WeightedIncrNormSlm.cc		\
 thot_sort_bin_ilextable.cc thot_sort_bin_iibm2atable.cc			\
 thot_sort_bin_ihmmatable.cc thot_prune_bin_ilextable.cc			\
 thot_merge_bin_ilextable.cc thot_merge_bin_iibm2atable.cc		\
@@ -19,7 +19,7 @@ IncrIbm2AligTable.h IncrIbm2AligTable.cc IncrIbm2AligModel.h		\
 IncrIbm2AligModel.cc IncrIbm1AligModel.h IncrIbm1AligModel.cc		\
 IncrHmmP0AligModel.h IncrHmmP0AligModel.cc IncrHmmAligTable.h		\
 IncrHmmAligTable.cc IncrHmmAligModel.h IncrHmmAligModel.cc		\
-HmmAligInfo.h CachedHmmAligLgProbVit.h CachedHmmAligLgProbVit.cc	\
+HmmAligInfo.h CachedHmmAligLgProb.h CachedHmmAligLgProb.cc		\
 DoubleMatrix.h DoubleMatrix.cc BestLgProbForTrgWord.h BaseSwAligModel.h	\
 BaseStepwiseAligModel.h BaseSentLengthModel.h BaseSentenceHandler.h	\
 aSourceHmm.h aSourceHmm.cc aSourceHashF.h aSource.h aSource.cc		\
