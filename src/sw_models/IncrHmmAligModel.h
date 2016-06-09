@@ -46,7 +46,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "anjm1ip_anjiMatrix.h"
 #include "aSourceHmm.h"
 #include "HmmAligInfo.h"
-#include "CachedHmmAligLgProbVit.h"
+#include "CachedHmmAligLgProb.h"
 #include "DoubleMatrix.h"
 #include "IncrLexTable.h"
 #include "IncrHmmAligTable.h"
@@ -146,14 +146,14 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    // Functions to generate alignments
    virtual LgProb obtainBestAlignmentVecStrCached(Vector<std::string> srcSentenceVector,
                                                   Vector<std::string> trgSentenceVector,
-                                                  CachedHmmAligLgProbVit& cached_logap,
+                                                  CachedHmmAligLgProb& cached_logap,
                                                   WordAligMatrix& bestWaMatrix);	
    LgProb obtainBestAlignment(Vector<WordIndex> srcSentIndexVector,
                               Vector<WordIndex> trgSentIndexVector,
                               WordAligMatrix& bestWaMatrix);
    virtual LgProb obtainBestAlignmentCached(Vector<WordIndex> srcSentIndexVector,
                                             Vector<WordIndex> trgSentIndexVector,
-                                            CachedHmmAligLgProbVit& cached_logap,
+                                            CachedHmmAligLgProb& cached_logap,
                                             WordAligMatrix& bestWaMatrix);
 
    // Functions to calculate probabilities for alignments
@@ -291,7 +291,7 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
        // alignment
    void viterbiAlgorithmCached(const Vector<WordIndex>& nSrcSentIndexVector,
                                const Vector<WordIndex>& trgSentIndexVector,
-                               CachedHmmAligLgProbVit& cached_logap,
+                               CachedHmmAligLgProb& cached_logap,
                                Vector<Vector<double> >& vitMatrix,
                                Vector<Vector<PositionIndex> >& predMatrix);
        // Cached version of viterbiAlgorithm()

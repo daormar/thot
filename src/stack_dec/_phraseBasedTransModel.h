@@ -398,6 +398,8 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   Score heuristicLocalt(const Hypothesis& hyp);
   void initHeuristicLocaltd(int maxSrcPhraseLength);
   Score heuristicLocaltd(const Hypothesis& hyp);
+  Vector<unsigned int> min_jumps(const Vector<pair<PositionIndex,PositionIndex> >& gaps,
+                                 PositionIndex lastSrcPosCovered)const;
 
       // Vocabulary functions
   WordIndex stringToSrcWordIndex(std::string s)const;
@@ -953,19 +955,6 @@ void _phraseBasedTransModel<HYPOTHESIS>::initHeuristicLocalt(int maxSrcPhraseLen
       }       
     } 
   }
-
-/* #ifdef THOT_DEBUG */
-/*   cerr<<"Table with heuristic values: "<<endl; */
-/*   for(unsigned int y=0;y<J;++y) */
-/*   { */
-/*     for(unsigned int x=0;x<J;++x) */
-/*     { */
-/*       if((double)heuristicScoreVec[y][x]==-FLT_MAX) fprintf(stderr,"     -inf ");  */
-/*       else fprintf(stderr,"%.8f ",(double)heuristicScoreVec[y][x]); */
-/*     } */
-/*     cerr<<endl; */
-/*   } */
-/* #endif */
 }
 
 //---------------------------------
@@ -1087,50 +1076,79 @@ void _phraseBasedTransModel<HYPOTHESIS>::initHeuristicLocaltd(int maxSrcPhraseLe
 {
   initHeuristicLocalt(maxSrcPhraseLength);
 }
+
 //---------------------------------
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::heuristicLocaltd(const Hypothesis& hyp)
 {
-  Score result=0;
-  unsigned int J;
-  Vector<pair<PositionIndex,PositionIndex> > gaps;
-  pair<PositionIndex,PositionIndex> leftGap;
-  pair<PositionIndex,PositionIndex> rightGap;
-  PositionIndex lastSrcPosCovered;
 
   if(state==MODEL_TRANS_STATE)
   {
+    Score result=0;
+    
         // Get local t heuristic information
-    J=pbtmInputVars.srcSentVec.size();
+    unsigned int J=pbtmInputVars.srcSentVec.size();
+    Vector<pair<PositionIndex,PositionIndex> > gaps;
     this->extract_gaps(hyp,gaps);
     for(unsigned int i=0;i<gaps.size();++i)
     {
       result+=heuristicScoreVec[gaps[i].second-1][J-gaps[i].first];	
     }
+
+        // Distortion heuristic information
+    PositionIndex lastSrcPosCovered=getLastSrcPosCovered(hyp);
+    Vector<unsigned int> jumps=min_jumps(gaps,lastSrcPosCovered);
+    for(unsigned int k=0;k<jumps.size();++k)
+      result+=srcJumpScore(jumps[k]);
+
+    return result;
+
+    /* pair<PositionIndex,PositionIndex> leftGap; */
+    /* pair<PositionIndex,PositionIndex> rightGap; */
+    /* leftGap.first=0; */
+    /* leftGap.second=0; */
+    /* rightGap.first=MAX_SENTENCE_LENGTH_ALLOWED+1; */
+    /* rightGap.second=MAX_SENTENCE_LENGTH_ALLOWED+1; */
+    /* for(unsigned int i=0;i<gaps.size();++i) */
+    /* { */
+    /*   if(gaps[i].second<lastSrcPosCovered && leftGap.second<gaps[i].second) */
+    /*     leftGap=gaps[i]; */
+    /*   if(gaps[i].first>lastSrcPosCovered && rightGap.first>gaps[i].first) */
+    /*     rightGap=gaps[i]; */
+    /* } */
+    /* if(leftGap.first!=0) */
+    /*   result+=srcJumpScore(abs((int)leftGap.first-((int)lastSrcPosCovered+1))); */
+    /* if(rightGap.first!=MAX_SENTENCE_LENGTH_ALLOWED+1) */
+    /*   result+=srcJumpScore(abs((int)rightGap.first-((int)lastSrcPosCovered+1))); */
+    /* return result; */
   }
   else
   {
         // TO-DO
+    return 0;
   }
-      // Distortion heuristic information
-  lastSrcPosCovered=getLastSrcPosCovered(hyp);
-  leftGap.first=0;
-  leftGap.second=0;
-  rightGap.first=MAX_SENTENCE_LENGTH_ALLOWED+1;
-  rightGap.second=MAX_SENTENCE_LENGTH_ALLOWED+1;
-  for(unsigned int i=0;i<gaps.size();++i)
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Vector<unsigned int> _phraseBasedTransModel<HYPOTHESIS>::min_jumps(const Vector<pair<PositionIndex,PositionIndex> >& gaps,
+                                                                   PositionIndex lastSrcPosCovered)const
+{
+  Vector<unsigned int> result;
+  PositionIndex j=lastSrcPosCovered;
+  for(unsigned int k=0;k<gaps.size();++k)
   {
-    if(gaps[i].second<lastSrcPosCovered && leftGap.second<gaps[i].second)
-      leftGap=gaps[i];
-    if(gaps[i].first>lastSrcPosCovered && rightGap.first>gaps[i].first)
-      rightGap=gaps[i];
+    if(j>gaps[k].first)
+      result.push_back(j-gaps[k].first);
+    else
+      result.push_back(gaps[k].first-j);
+
+    j=gaps[k].second;
   }
-  if(leftGap.first!=0)
-    result+=srcJumpScore(abs((int)leftGap.first-((int)lastSrcPosCovered+1)));
-  if(rightGap.first!=MAX_SENTENCE_LENGTH_ALLOWED+1)
-    result+=srcJumpScore(abs((int)rightGap.first-((int)lastSrcPosCovered+1)));
+  
   return result;
 }
+
 //---------------------------------
 template<class HYPOTHESIS>
 WordIndex _phraseBasedTransModel<HYPOTHESIS>::stringToSrcWordIndex(std::string s)const

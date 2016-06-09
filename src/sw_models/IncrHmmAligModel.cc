@@ -1277,7 +1277,7 @@ LgProb IncrHmmAligModel::sentLenLgProb(unsigned int slen,
 //-------------------------
 LgProb IncrHmmAligModel::obtainBestAlignmentVecStrCached(Vector<std::string> srcSentenceVector,
                                                          Vector<std::string> trgSentenceVector,
-                                                         CachedHmmAligLgProbVit& cached_logap,
+                                                         CachedHmmAligLgProb& cached_logap,
                                                          WordAligMatrix& bestWaMatrix)
 {
   LgProb lp;
@@ -1295,14 +1295,14 @@ LgProb IncrHmmAligModel::obtainBestAlignment(Vector<WordIndex> srcSentIndexVecto
                                              Vector<WordIndex> trgSentIndexVector,
                                              WordAligMatrix& bestWaMatrix)
 {
-  CachedHmmAligLgProbVit cached_logap;
+  CachedHmmAligLgProb cached_logap;
   return obtainBestAlignmentCached(srcSentIndexVector,trgSentIndexVector,cached_logap,bestWaMatrix);
 }
 
 //-------------------------
 LgProb IncrHmmAligModel::obtainBestAlignmentCached(Vector<WordIndex> srcSentIndexVector,
                                                    Vector<WordIndex> trgSentIndexVector,
-                                                   CachedHmmAligLgProbVit& cached_logap,
+                                                   CachedHmmAligLgProb& cached_logap,
                                                    WordAligMatrix& bestWaMatrix)
 {
   if(srcSentIndexVector.empty() || trgSentIndexVector.empty())
@@ -1342,14 +1342,14 @@ void IncrHmmAligModel::viterbiAlgorithm(const Vector<WordIndex>& nSrcSentIndexVe
                                         Vector<Vector<double> >& vitMatrix,
                                         Vector<Vector<PositionIndex> >& predMatrix)
 {
-  CachedHmmAligLgProbVit cached_logap;
+  CachedHmmAligLgProb cached_logap;
   viterbiAlgorithmCached(nSrcSentIndexVector,trgSentIndexVector,cached_logap,vitMatrix,predMatrix);
 }
 
 //-------------------------
 void IncrHmmAligModel::viterbiAlgorithmCached(const Vector<WordIndex>& nSrcSentIndexVector,
                                               const Vector<WordIndex>& trgSentIndexVector,
-                                              CachedHmmAligLgProbVit& cached_logap,
+                                              CachedHmmAligLgProb& cached_logap,
                                               Vector<Vector<double> >& vitMatrix,
                                               Vector<Vector<PositionIndex> >& predMatrix)
 {

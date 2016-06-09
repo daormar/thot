@@ -18,25 +18,25 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /*********************************************************************/
 /*                                                                   */
-/* Module: CachedHmmAligLgProbVit                                    */
+/* Module: CachedHmmAligLgProb                                       */
 /*                                                                   */
-/* Definitions file: CachedHmmAligLgProbVit.cc                       */
+/* Definitions file: CachedHmmAligLgProb.cc                          */
 /*                                                                   */
 /*********************************************************************/
 
 
 //--------------- Include files ---------------------------------------
 
-#include "CachedHmmAligLgProbVit.h"
+#include "CachedHmmAligLgProb.h"
 
 
-//--------------- CachedHmmAligLgProbVit function declarations 
+//--------------- CachedHmmAligLgProb function declarations 
 
 
 //-------------------------
-bool CachedHmmAligLgProbVit::isDefined(PositionIndex prev_i,
-                                       PositionIndex slen,
-                                       PositionIndex i)
+bool CachedHmmAligLgProb::isDefined(PositionIndex prev_i,
+                                    PositionIndex slen,
+                                    PositionIndex i)
 {
   if(cachedLgProbs.size()>prev_i && cachedLgProbs[prev_i].size()>slen && cachedLgProbs[prev_i][slen].size()>i)
   {
@@ -52,10 +52,10 @@ bool CachedHmmAligLgProbVit::isDefined(PositionIndex prev_i,
 }
 
 //-------------------------
-void CachedHmmAligLgProbVit::set(PositionIndex prev_i,
-                                 PositionIndex slen,
-                                 PositionIndex i,
-                                 double lp)
+void CachedHmmAligLgProb::set(PositionIndex prev_i,
+                              PositionIndex slen,
+                              PositionIndex i,
+                              double lp)
 {
       // Make room in cachedLgProbs if necessary
   Vector<Vector<double> > lpVecVec;
@@ -74,9 +74,9 @@ void CachedHmmAligLgProbVit::set(PositionIndex prev_i,
 }
 
 //-------------------------
-double CachedHmmAligLgProbVit::get(PositionIndex prev_i,
-                                   PositionIndex slen,
-                                   PositionIndex i)
+double CachedHmmAligLgProb::get(PositionIndex prev_i,
+                                PositionIndex slen,
+                                PositionIndex i)
 {
   return cachedLgProbs[prev_i][slen][i];
 }
