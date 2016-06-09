@@ -362,7 +362,7 @@ create_cfg_file_for_tuning()
 ##################
 obtain_smtweights_names()
 {
-    local_line=`$bindir/thot_get_ll_weights | $HEAD -1`
+    local_line=`${bindir}/thot_get_ll_weights | $HEAD -1`
     local_smtw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
     echo ${local_smtw_names}
 }
