@@ -190,8 +190,8 @@ obtain_curr_nblists()
         for nblfile in ${TDIR_LLWU}/nblist/${niter}*.nbl; do
             basenblfile=`$BASENAME $nblfile`
             sentid=`get_sentid ${basenblfile}`
-            ${bindir}/thot_merge_nbest_list $nblfile ${TDIR_LLWU}/curr_nblist/$sentid.nbl > temp.nbl || exit 1
-            mv temp.nbl ${TDIR_LLWU}/curr_nblist/$sentid.nbl
+            ${bindir}/thot_merge_nbest_list $nblfile ${TDIR_LLWU}/curr_nblist/$sentid.nbl > ${TDIR_LLWU}/temp.nbl || exit 1
+            mv ${TDIR_LLWU}/temp.nbl ${TDIR_LLWU}/curr_nblist/$sentid.nbl
         done
     fi
 }
