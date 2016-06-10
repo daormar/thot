@@ -490,10 +490,10 @@ tune_loglin()
     create_cfg_file_for_tuning > ${outd}/tune_loglin.cfg
 
     # Tune log-linear model
-    if [ $ENABLE_UPDATE_LLWEIGHTS -eq 1 ]; then
-        loglin_upd || return 1
-    else
+    if [ $ENABLE_DOWNHILL_LLW -eq 1 ]; then
         loglin_downhill || return 1
+    else
+        loglin_upd || return 1
     fi
 
     ######

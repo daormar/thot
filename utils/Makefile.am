@@ -117,7 +117,7 @@ SUFFIXES= .sh .pl .py
 	echo "QSTAT_J_OPT=\""$(QSTAT_J_OPT)"\"" >> $@
 	echo "QRLS="$(QRLS) >> $@
 	echo "DISABLE_FAST_DHSLM="$(DISABLE_FAST_DHSLM) >> $@
-	echo "ENABLE_UPDATE_LLWEIGHTS="$(ENABLE_UPDATE_LLWEIGHTS) >> $@
+	echo "ENABLE_DOWNHILL_LLW="$(ENABLE_DOWNHILL_LLW) >> $@
 	cat $< >> $@
 	chmod ugo+x $@
 

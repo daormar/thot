@@ -476,8 +476,8 @@ AC_MSG_RESULT(no)
 fi
 
 # Adds an extra argument to configure (enable updating of log-linear weights)
-AC_MSG_CHECKING(whether to enable updating of log-linear weights)
-AC_ARG_ENABLE(update-llweights,[  --enable-update-llweights   enable updating of log-linear weights],enable_update_llweights=yes,enable_update_llweights=no)
+AC_MSG_CHECKING(whether to enable online updating of log-linear weights)
+AC_ARG_ENABLE(update-llweights,[  --enable-update-llweights   enable online updating of log-linear weights],enable_update_llweights=yes,enable_update_llweights=no)
 dnl Yes, updating of log-linear weights enabled
 if test "$enable_update_llweights" = "yes"; then
  AC_MSG_RESULT(yes)
@@ -488,11 +488,24 @@ AM_CONDITIONAL([ENABLE_UPDATE_LLWEIGHTS], [test x${enable_update_llweights} = xy
 
 if test "$enable_update_llweights" = "yes"; then
  AC_DEFINE(ENABLE_UPDATE_LLWEIGHTS,,[Define if updating of log-linear weights is enabled])
- ENABLE_UPDATE_LLWEIGHTS=1
- AC_SUBST(ENABLE_UPDATE_LLWEIGHTS)
+fi
+
+# Adds an extra argument to configure (enable downhill simplex for ll weight updating)
+AC_MSG_CHECKING(whether to enable downhill simplex algorithm for log-linear weight updating)
+AC_ARG_ENABLE(enable-downhill-llw,[  --enable-downhill-llw   enable downhill simplex algorithm for log-linear weight updating],enable_downhill_llw=yes,enable_downhill_llw=no)
+dnl Yes, downhill simplex for ll weight updating enabled
+if test "$enable_downhill_llw" = "yes"; then
+ AC_MSG_RESULT(yes)
 else
- ENABLE_UPDATE_LLWEIGHTS=0
- AC_SUBST(ENABLE_UPDATE_LLWEIGHTS)
+ AC_MSG_RESULT(no)
+fi
+
+if test "$enable_downhill_llw" = "yes"; then
+ ENABLE_DOWNHILL_LLW=1
+ AC_SUBST(ENABLE_DOWNHILL_LLW)
+else
+ ENABLE_DOWNHILL_LLW=0
+ AC_SUBST(ENABLE_DOWNHILL_LLW)
 fi
 
 dnl Check if we have to enable IBM 2 model as alignment model.
