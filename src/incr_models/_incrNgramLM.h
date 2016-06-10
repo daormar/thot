@@ -106,8 +106,8 @@ class _incrNgramLM: public _incrEncCondProbModel<Vector<std::string>,std::string
   LgProb getLgProbEndStr(const Vector<string>& rq);
 
       // Probability functions using states
-  bool getStateForWordSeq(const Vector<ngramWordIndex>& wordSeq,
-                          Vector<ngramWordIndex>& state); 
+  bool getStateForWordSeq(const Vector<WordIndex>& wordSeq,
+                          Vector<WordIndex>& state); 
   void getStateForBeginOfSentence(Vector<WordIndex> &state);
   LgProb getNgramLgProbGivenState(WordIndex w,Vector<WordIndex> &state);
   LgProb getNgramLgProbGivenStateStr(std::string s,Vector<WordIndex> &state);
@@ -275,8 +275,8 @@ LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEndStr(const Vector<string>&
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getStateForWordSeq(const Vector<ngramWordIndex>& wordSeq,
-                                                            Vector<ngramWordIndex>& state)
+bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getStateForWordSeq(const Vector<WordIndex>& wordSeq,
+                                                            Vector<WordIndex>& state)
 {
   state=wordSeq;
   return true;

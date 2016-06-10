@@ -186,7 +186,7 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   std::set<std::string> unseenWordsSet;
       
       // Mapping between phrase and language model vocabularies
-  map<WordIndex,ngramWordIndex> tmToLmVocMap;
+  map<WordIndex,WordIndex> tmToLmVocMap;
 
       // Heuristic function to be used
   unsigned int heuristicId;
@@ -410,7 +410,7 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   Vector<std::string> trgIndexVectorToStrVector(Vector<WordIndex> trgidxVec)const;
   std::string phraseToStr(const Vector<WordIndex>& phr)const;
   Vector<std::string> phraseToStrVec(const Vector<WordIndex>& phr)const;
-  ngramWordIndex tmVocabToLmVocab(WordIndex w);
+  WordIndex tmVocabToLmVocab(WordIndex w);
   void initTmToLmVocabMap(void);
 };
 
@@ -636,7 +636,7 @@ LgProb _phraseBasedTransModel<HYPOTHESIS>::getSentenceLgProb(const Vector<WordIn
 {
   LgProb lmLgProb=0;
  	 
-  Vector<ngramWordIndex> s;
+  Vector<WordIndex> s;
   unsigned int i;
   for(i=0;i<target.size();++i)
     s.push_back(tmVocabToLmVocab(target[i]));
@@ -1228,9 +1228,9 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::phraseToStrVec(const Vec
 
 //---------------------------------
 template<class HYPOTHESIS>
-ngramWordIndex _phraseBasedTransModel<HYPOTHESIS>::tmVocabToLmVocab(WordIndex w)
+WordIndex _phraseBasedTransModel<HYPOTHESIS>::tmVocabToLmVocab(WordIndex w)
 {
-  std::map<WordIndex,ngramWordIndex>::const_iterator mapIter;
+  std::map<WordIndex,WordIndex>::const_iterator mapIter;
   
   mapIter=tmToLmVocMap.find(w);
   if(mapIter==tmToLmVocMap.end())
@@ -1241,14 +1241,14 @@ ngramWordIndex _phraseBasedTransModel<HYPOTHESIS>::tmVocabToLmVocab(WordIndex w)
         // Add string to the lm vocabulary if necessary
     if(!langModelInfoPtr->lModelPtr->existSymbol(s))
     {
-      ngramWordIndex nw=langModelInfoPtr->lModelPtr->stringToWordIndex(UNK_SYMBOL_STR);
+      WordIndex nw=langModelInfoPtr->lModelPtr->stringToWordIndex(UNK_SYMBOL_STR);
       tmToLmVocMap[w]=nw;
       return nw;
     }
     else
     {
           // Map tm word to lm word
-      ngramWordIndex nw=langModelInfoPtr->lModelPtr->stringToWordIndex(s);
+      WordIndex nw=langModelInfoPtr->lModelPtr->stringToWordIndex(s);
       tmToLmVocMap[w]=nw;
       return nw;
     } 
