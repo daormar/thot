@@ -546,7 +546,7 @@ void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sen
 }
 
 //-------------------------   
-void IncrHmmAligModel::calcAlphaMatrix(unsigned int n,
+void IncrHmmAligModel::calcAlphaMatrix(unsigned int /*n*/,
                                        const Vector<WordIndex>& nsrcSent,
                                        const Vector<WordIndex>& trgSent)
 {
@@ -587,7 +587,7 @@ void IncrHmmAligModel::calcAlphaMatrix(unsigned int n,
 }
 
 //-------------------------   
-void IncrHmmAligModel::calcBetaMatrix(unsigned int n,
+void IncrHmmAligModel::calcBetaMatrix(unsigned int /*n*/,
                                       const Vector<WordIndex>& nsrcSent,
                                       const Vector<WordIndex>& trgSent)
 {
