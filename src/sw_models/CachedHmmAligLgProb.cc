@@ -80,3 +80,9 @@ double CachedHmmAligLgProb::get(PositionIndex prev_i,
 {
   return cachedLgProbs[prev_i][slen][i];
 }
+
+//-------------------------
+void CachedHmmAligLgProb::clear(void)
+{
+  cachedLgProbs.clear();
+}

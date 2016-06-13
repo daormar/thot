@@ -64,6 +64,7 @@ class CachedHmmAligLgProb
   double get(PositionIndex prev_i,
              PositionIndex slen,
              PositionIndex i);
+  void clear(void);
   
  private:
   Vector<Vector<Vector<double> > > cachedLgProbs;
