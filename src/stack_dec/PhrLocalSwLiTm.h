@@ -141,8 +141,10 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   Vector<Vector<PhrasePair> > vecVecPhPair;
   unsigned int stepNum;
   
-      // Function lo load the lambda parameter
-  bool load_lambda(const char* lambdaFileName);
+      // Function lo load and print lambda values
+  bool load_lambdas(const char* lambdaFileName);
+  bool print_lambdas(const char* lambdaFileName);
+  ostream& print_lambdas(ostream &outS);
 
       // Misc. operations with hypothesis
   unsigned int

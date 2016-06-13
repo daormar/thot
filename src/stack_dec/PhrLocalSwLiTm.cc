@@ -55,7 +55,7 @@ bool PhrLocalSwLiTm::loadAligModel(const char* prefixFileName)
       // Load lambda file
   std::string lambdaFile=prefixFileName;
   lambdaFile=lambdaFile+".lambda";
-  ret=load_lambda(lambdaFile.c_str());
+  ret=load_lambdas(lambdaFile.c_str());
   if(ret==ERROR) return ERROR;
     
   return OK;
@@ -803,13 +803,13 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
 }
 
 //---------------------------------
-bool PhrLocalSwLiTm::load_lambda(const char* lambdaFileName)
+bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
 {
   awkInputStream awk;
   
   if(awk.open(lambdaFileName)==ERROR)
   {
-    cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist. Current lambda="<<swModelInfoPtr->lambda<<endl;
+    cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist. Current values-> lambda_swm="<<swModelInfoPtr->lambda_swm<<" , lambda_invswm"<<swModelInfoPtr->lambda_invswm<<endl;
     return OK;
   }
   else
@@ -818,23 +818,60 @@ bool PhrLocalSwLiTm::load_lambda(const char* lambdaFileName)
     {
       if(awk.NF==1)
       {
-        swModelInfoPtr->lambda=atof(awk.dollar(1).c_str());
-        cerr<<"Read lambda value from file: "<<lambdaFileName<<" (lambda="<<swModelInfoPtr->lambda<<")"<<endl;
+        swModelInfoPtr->lambda_swm=atof(awk.dollar(1).c_str());
+        swModelInfoPtr->lambda_invswm=atof(awk.dollar(1).c_str());
+        cerr<<"Read lambda value from file: "<<lambdaFileName<<" (lambda_swm="<<swModelInfoPtr->lambda_swm<<", lambda_invswm="<<swModelInfoPtr->lambda_invswm<<")"<<endl;
         return OK;
       }
       else
       {
-        cerr<<"Anomalous file with the lambda value."<<endl;
-        return ERROR;
+        if(awk.NF==2)
+        {
+          swModelInfoPtr->lambda_swm=atof(awk.dollar(1).c_str());
+          swModelInfoPtr->lambda_invswm=atof(awk.dollar(2).c_str());
+          cerr<<"Read lambda value from file: "<<lambdaFileName<<" (lambda_swm="<<swModelInfoPtr->lambda_swm<<", lambda_invswm="<<swModelInfoPtr->lambda_invswm<<")"<<endl;
+          return OK;
+        }
+        else
+        {
+          cerr<<"Anomalous file with lambda values."<<endl;
+          return ERROR;
+        }
       }
     }
     else
     {
-      cerr<<"Anomalous file with the lambda value."<<endl;
+      cerr<<"Anomalous file with lambda values."<<endl;
       return ERROR;
     }
   }  
   return OK;
+}
+
+//---------------------------------
+bool PhrLocalSwLiTm::print_lambdas(const char* lambdaFileName)
+{
+  ofstream outF;
+
+  outF.open(lambdaFileName,ios::out);
+  if(!outF)
+  {
+    cerr<<"Error while printing file with lambda values."<<endl;
+    return ERROR;
+  }
+  else
+  {
+    print_lambdas(outF);
+    outF.close();	
+    return OK;
+  }   
+}
+
+//-------------------------
+ostream& PhrLocalSwLiTm::print_lambdas(ostream &outS)
+{
+  outS<<swModelInfoPtr->lambda_swm<<" "<<swModelInfoPtr->lambda_invswm<<endl;
+  return outS;
 }
 
 //---------------------------------
@@ -991,13 +1028,13 @@ Score PhrLocalSwLiTm::smoothedPhrScore_s_t_(const Vector<WordIndex>& s_,
 {
   if(phrModelInfoPtr->phraseModelPars.pstWeight!=0)
   {
-    if(swModelInfoPtr->lambda==1.0)
+    if(swModelInfoPtr->lambda_invswm==1.0)
     {
       return (float)phrModelInfoPtr->invPbModelPtr->logpt_s_(t_,s_);
     }
     else
     {
-      float sum1=log(swModelInfoPtr->lambda)+(float)phrModelInfoPtr->invPbModelPtr->logpt_s_(t_,s_);
+      float sum1=log(swModelInfoPtr->lambda_invswm)+(float)phrModelInfoPtr->invPbModelPtr->logpt_s_(t_,s_);
 // #if THOT_PBM_TYPE == ML_PBM
           // Avoid those cases in which the phrase model
           // smoothing probability is greater than the one given by the
@@ -1005,7 +1042,7 @@ Score PhrLocalSwLiTm::smoothedPhrScore_s_t_(const Vector<WordIndex>& s_,
       if(sum1<=log(PHRASE_PROB_SMOOTH))
         sum1=PHRSWLITM_LGPROB_SMOOTH;
 // #endif
-      float sum2=log(1.0-swModelInfoPtr->lambda)+(float)invSwLgProb(s_,t_);
+      float sum2=log(1.0-swModelInfoPtr->lambda_invswm)+(float)invSwLgProb(s_,t_);
       float interp=MathFuncs::lns_sumlog(sum1,sum2);
       return phrModelInfoPtr->phraseModelPars.pstWeight*(double)interp;
     }
@@ -1019,13 +1056,13 @@ Score PhrLocalSwLiTm::smoothedPhrScore_t_s_(const Vector<WordIndex>& s_,
 {
   if(phrModelInfoPtr->phraseModelPars.ptsWeight!=0)
   {
-    if(swModelInfoPtr->lambda==1.0)
+    if(swModelInfoPtr->lambda_swm==1.0)
     {
       return (float)phrModelInfoPtr->invPbModelPtr->logps_t_(t_,s_);
     }
     else
     {
-      float sum1=log(swModelInfoPtr->lambda)+(float)phrModelInfoPtr->invPbModelPtr->logps_t_(t_,s_);
+      float sum1=log(swModelInfoPtr->lambda_swm)+(float)phrModelInfoPtr->invPbModelPtr->logps_t_(t_,s_);
 // #if THOT_PBM_TYPE == ML_PBM
           // Avoid those cases in which the phrase model
           // smoothing probability is greater than the one given by the
@@ -1033,7 +1070,7 @@ Score PhrLocalSwLiTm::smoothedPhrScore_t_s_(const Vector<WordIndex>& s_,
       if(sum1<=log(PHRASE_PROB_SMOOTH))
         sum1=PHRSWLITM_LGPROB_SMOOTH;
 // #endif
-      float sum2=log(1.0-swModelInfoPtr->lambda)+(float)swLgProb(s_,t_);
+      float sum2=log(1.0-swModelInfoPtr->lambda_swm)+(float)swLgProb(s_,t_);
       float interp=MathFuncs::lns_sumlog(sum1,sum2);
 
       return phrModelInfoPtr->phraseModelPars.ptsWeight*(double)interp;

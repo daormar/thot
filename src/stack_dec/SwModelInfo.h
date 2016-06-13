@@ -61,8 +61,9 @@ struct SwModelInfo
       // Maximum interval size for length range
   unsigned int maxIntervalSize;  
 
-      // Weight of the linear interpolation
-  float lambda;
+      // Linear interpolation weights
+  float lambda_swm;
+  float lambda_invswm;
 
   SwModelInfo(void)
     {
@@ -70,8 +71,9 @@ struct SwModelInfo
       lenModelConfInterv.first=DEFAULT_LVALUE_CONF_INTERV;
       lenModelConfInterv.second=DEFAULT_RVALUE_CONF_INTERV;
       maxIntervalSize=DEFAULT_MAX_INTERV_SIZE;
-          // Set default weight of the linear interpolation
-      lambda=DEFAULT_LAMBDA_VALUE;
+          // Set default linear interpolation weights
+      lambda_swm=DEFAULT_LAMBDA_VALUE;
+      lambda_invswm=DEFAULT_LAMBDA_VALUE;
     };
 };
 
