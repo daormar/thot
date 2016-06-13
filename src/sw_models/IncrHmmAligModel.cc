@@ -261,13 +261,22 @@ double IncrHmmAligModel::cached_logaProb(PositionIndex prev_i,
                                          const Vector<WordIndex>& /*nsrcSent*/,
                                          const Vector<WordIndex>& /*trgSent*/)
 {
-  double d=cachedLogaProbDm.get(prev_i,i);
-  if(d!=INVALID_DM_VAL)
-    return d;
+  // double d=cachedLogaProbDm.get(prev_i,i);
+  // if(d!=INVALID_DM_VAL)
+  //   return d;
+  // else
+  // {
+  //   d=(double)logaProb(prev_i,slen,i);
+  //   cachedLogaProbDm.set(prev_i,i,d);
+  //   return d;
+  // }
+
+  if(cachedLogaProb.isDefined(prev_i,slen,i))
+    return cachedLogaProb.get(prev_i,slen,i);
   else
   {
-    d=(double)logaProb(prev_i,slen,i);
-    cachedLogaProbDm.set(prev_i,i,d);
+    double d=(double)logaProb(prev_i,slen,i);
+    cachedLogaProb.set(prev_i,slen,i,d);
     return d;
   }
 }
@@ -525,11 +534,15 @@ void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sen
       // alpha_values.clear();
       // beta_values.clear();
 
-          // Clear auxiliary log prob double matrices
+          // Clear cached lexical log prob
       cachedLogProbtsDm.clear();
-      cachedLogaProbDm.clear();
+      
+      // // Clear cached alignment log prob
+      // cachedLogaProbDm.clear();
     }
   }
+      // Clear cached alignment log prob
+  cachedLogaProb.clear();
 }
 
 //-------------------------   
@@ -1441,24 +1454,6 @@ double IncrHmmAligModel::bestAligGivenVitMatrices(PositionIndex slen,
         // Initialize bestAlig
     bestAlig.clear();
     bestAlig.insert(bestAlig.begin(),predMatrix[0].size()-1,0);
-
-//   for(unsigned int j=0;j<vitMatrix.size();++j)
-//   {
-//     for(unsigned int i=0;i<vitMatrix[j].size();++i)
-//     {
-//       cerr<<vitMatrix[i][j]<<" ";
-//     }
-//     cerr<<endl;
-//   }
-//   cerr<<endl;
-//   for(unsigned int j=0;j<predMatrix.size();++j)
-//   {
-//     for(unsigned int i=0;i<predMatrix[j].size();++i)
-//     {
-//       cerr<<predMatrix[i][j]<<" ";
-//     }
-//     cerr<<endl;
-//   }
   
         // Find last word alignment
     PositionIndex last_j=predMatrix[1].size()-1;
@@ -1478,12 +1473,6 @@ double IncrHmmAligModel::bestAligGivenVitMatrices(PositionIndex slen,
     {
       bestAlig[j-2]=predMatrix[bestAlig[j-1]][j];
     }
-
-//   for(unsigned int j=0;j<bestAlig.size();++j)
-//   {
-//     cerr<<bestAlig[j]<<" ";
-//   }
-//   cerr<<endl;
   
         // Set null word alignments appropriately
     for(unsigned int j=0;j<bestAlig.size();++j)
@@ -1549,7 +1538,22 @@ double IncrHmmAligModel::forwardAlgorithm(const Vector<WordIndex>& nSrcSentIndex
   Vector<double> dVec;
   dVec.insert(dVec.begin(),trgSentIndexVector.size()+1,0.0);
   forwardMatrix.insert(forwardMatrix.begin(),nSrcSentIndexVector.size()+1,dVec);
-  
+
+      // Create data structure to cache lexical log-probs
+  dVec.clear();
+  dVec.insert(dVec.begin(),trgSentIndexVector.size()+1,SMALL_LG_NUM);
+  Vector<Vector<double> > cached_logpts;
+  cached_logpts.insert(cached_logpts.begin(),nSrcSentIndexVector.size()+1,dVec);
+
+      // Cache lexical log-probs
+  for(PositionIndex j=1;j<=trgSentIndexVector.size();++j)
+  {
+    for(PositionIndex i=1;i<=nSrcSentIndexVector.size();++i)
+    {
+      cached_logpts[i][j]=logpts(nSrcSentIndexVector[i-1],trgSentIndexVector[j-1]);        
+    }
+  }
+
       // Fill matrix
   for(PositionIndex j=1;j<=trgSentIndexVector.size();++j)
   {
@@ -1557,7 +1561,7 @@ double IncrHmmAligModel::forwardAlgorithm(const Vector<WordIndex>& nSrcSentIndex
     {
       if(j==1)
       {
-        forwardMatrix[i][j]=logaProb(0,slen,i)+logpts(nSrcSentIndexVector[i-1],trgSentIndexVector[j-1]);
+        forwardMatrix[i][j]=logaProb(0,slen,i)+cached_logpts[i][j];
       }
       else
       {
@@ -1565,7 +1569,7 @@ double IncrHmmAligModel::forwardAlgorithm(const Vector<WordIndex>& nSrcSentIndex
         {
           double lp=forwardMatrix[i_tilde][j-1]+
             (double)logaProb(i_tilde,slen,i)+
-            (double)logpts(nSrcSentIndexVector[i-1],trgSentIndexVector[j-1]);
+            cached_logpts[i][j];
           if(i_tilde==1)
             forwardMatrix[i][j]=lp;
           else
@@ -1601,7 +1605,7 @@ double IncrHmmAligModel::forwardAlgorithm(const Vector<WordIndex>& nSrcSentIndex
 double IncrHmmAligModel::lgProbGivenForwardMatrix(const Vector<Vector<double> >& forwardMatrix)
 {
       // Sum lgprob for each i
-  double lp;
+  double lp=SMALL_LG_NUM;
   PositionIndex last_j=forwardMatrix[1].size()-1;
   for(unsigned int i=1;i<=forwardMatrix.size()-1;++i)
   {

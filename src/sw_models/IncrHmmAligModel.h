@@ -221,7 +221,8 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
 
    typedef hash_map<pair<aSourceHmm,PositionIndex>,pair<float,float>,ashPidxPairHashF> AligAuxVar;
    AligAuxVar aligAuxVar;
-   DoubleMatrix cachedLogaProbDm;
+   /* DoubleMatrix cachedLogaProbDm; */
+   CachedHmmAligLgProb cachedLogaProb;
        // EM algorithm auxiliary variables
 
    IncrLexTable incrLexTable;
