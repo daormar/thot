@@ -50,7 +50,7 @@ empty_train()
 
     # Generate additional phrase model parameter files
     echo "* Generating additional phrase model parameter files... " >&2
-    echo ${lambda_default_val} > ${outp}.lambda
+    echo "${lambda_default_val} ${lambda_default_val}" > ${outp}.lambda
     echo ${sslen_default_val} > ${outp}.srcsegmlentable
     echo ${stopj_default_val} > ${outp}.trgcutstable
     echo ${tslen_default_val} > ${outp}.trgsegmlentable
@@ -110,7 +110,7 @@ standard_train()
 
     # Generate additional phrase model parameter files
     echo "* Generating additional phrase model parameter files... " >&2
-    echo ${lambda_default_val} > ${outp}.lambda
+    echo "${lambda_default_val} ${lambda_default_val}" > ${outp}.lambda
     echo ${sslen_default_val} > ${outp}.srcsegmlentable
     echo ${stopj_default_val} > ${outp}.trgcutstable
     echo ${tslen_default_val} > ${outp}.trgsegmlentable
