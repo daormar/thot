@@ -176,7 +176,7 @@ recase_output()
     echo "**** Recasing output" >&2
 
     # Determine basic raw files
-    if [ ${tok_given} = 0 ]; then
+    if [ ${tok_given} -eq 0 ]; then
         raw_trg_pref=${tcorpus_pref}
         raw_test_corpus=${test_corpus}
     else
@@ -185,19 +185,22 @@ recase_output()
         raw_test_corpus=${test_corpus_tok}
     fi
 
+    # Create tmp file
+    rfile_rec=`mktemp $tdir/rfile_rec.XXXXX`
+
     # Generate raw text file for recasing
-    ${bindir}/thot_gen_rtfile -t ${raw_trg_pref} -tdir $tdir > $tdir/rfile_rec || exit 1
+    ${bindir}/thot_gen_rtfile -t ${raw_trg_pref} -tdir $tdir > ${rfile_rec} || exit 1
 
     # Add additional info to raw text file
-    cat ${raw_test_corpus} >> $tdir/rfile_rec
+    cat ${raw_test_corpus} >> ${rfile_rec}
       
     # Recase output
-    ${bindir}/thot_recase -f ${output_file} -r $tdir/rfile_rec -w \
+    ${bindir}/thot_recase -f ${output_file} -r ${rfile_rec} -w \
         -tdir $tdir > ${output_file}_rec 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_recase.log || exit 1
     echo "" >&2
 
     # Remove temporary files
-    rm $tdir/rfile_rec
+    rm ${rfile_rec}
 
     # Redefine output_file variable
     output_file=${output_file}_rec
@@ -208,19 +211,22 @@ detok_output()
 {
     echo "**** Detokenizing output" >&2
 
+    # Create tmp file
+    rfile_detok=`mktemp $tdir/rfile_detok.XXXXX`
+
     # Generate raw text file for detokenizing
-    ${bindir}/thot_gen_rtfile -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok || exit 1
+    ${bindir}/thot_gen_rtfile -t ${tcorpus_pref} -tdir $tdir > ${rfile_detok} || exit 1
 
     # Add additional info to raw text file
-    cat ${test_corpus_opt} >> $tdir/rfile_detok
+    cat ${test_corpus_opt} >> ${rfile_detok}
 
     # Detokenize output
-    ${bindir}/thot_detokenize -f ${output_file} -r $tdir/rfile_detok \
+    ${bindir}/thot_detokenize -f ${output_file} -r ${rfile_detok} \
         -tdir $tdir > ${output_file}_detok 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_detokenize.log || exit 1
     echo "" >&2
 
     # Remove temporary files
-    rm $tdir/rfile_detok
+    rm ${rfile_detok}
 
     # Redefine output_file variable
     output_file=${output_file}_detok
@@ -454,14 +460,31 @@ echo "" >&2
 # Define output_file variable
 output_file=${thot_auto_smt_dir}/output/${transoutd}/thot_decoder_out
 
-# Recasing stage
-if [ ${lower_given} = 1 ]; then
-    # Recase
-    recase_output
-fi
+# Obtain lower option of thot_auto_smt thotiment
+lower_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-lower is" | $AWK '{printf"%s",$3}'`
 
-# Detokenization stage
-if [ ${tok_given} = 1 ]; then
-    # Detokenize
-    detok_output
+# Obtain tok option of thot_auto_smt thotiment
+tok_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-tok is" | $AWK '{printf"%s",$3}'`
+
+# Only execute recasing and detokenization if text was lowercased and
+# tokenized during thot_auto_smt thotiment
+
+if [ ${lower_opt_thot_auto_smt} -eq 1 -a ${tok_opt_thot_auto_smt} -eq 1 ]; then
+
+    # Recasing stage
+    if [ ${lower_given} -eq 1 ]; then
+        # Recase
+        recase_output
+    fi
+
+    # Detokenization stage
+    if [ ${tok_given} -eq 1 ]; then
+        # Detokenize
+        detok_output
+    fi
+
+else
+
+    echo "Warning: recasing and detokenization will not be carried out (text was not tokenized and lowercased during thot_auto_smt thotiment)" >&2
+
 fi
