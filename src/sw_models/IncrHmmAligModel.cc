@@ -170,23 +170,6 @@ double IncrHmmAligModel::unsmoothed_logpts(WordIndex s,
 }
 
 //-------------------------
-double IncrHmmAligModel::cached_logpts(PositionIndex i,
-                                       PositionIndex j,
-                                       const Vector<WordIndex>& nsrcSent,
-                                       const Vector<WordIndex>& trgSent)
-{
-  double d=cachedLogProbtsDm.get(i,j);
-  if(d!=INVALID_DM_VAL)
-    return d;
-  else
-  {
-    d=(double) logpts(nsrcSent[i-1],trgSent[j-1]);
-    cachedLogProbtsDm.set(i,j,d);
-    return d;
-  }
-}
-
-//-------------------------
 LgProb IncrHmmAligModel::logpts(WordIndex s,
                                 WordIndex t)
 {
@@ -261,22 +244,12 @@ double IncrHmmAligModel::cached_logaProb(PositionIndex prev_i,
                                          const Vector<WordIndex>& /*nsrcSent*/,
                                          const Vector<WordIndex>& /*trgSent*/)
 {
-  // double d=cachedLogaProbDm.get(prev_i,i);
-  // if(d!=INVALID_DM_VAL)
-  //   return d;
-  // else
-  // {
-  //   d=(double)logaProb(prev_i,slen,i);
-  //   cachedLogaProbDm.set(prev_i,i,d);
-  //   return d;
-  // }
-
-  if(cachedLogaProb.isDefined(prev_i,slen,i))
-    return cachedLogaProb.get(prev_i,slen,i);
+  if(cachedAligLogProbs.isDefined(prev_i,slen,i))
+    return cachedAligLogProbs.get(prev_i,slen,i);
   else
   {
     double d=(double)logaProb(prev_i,slen,i);
-    cachedLogaProb.set(prev_i,slen,i,d);
+    cachedAligLogProbs.set(prev_i,slen,i,d);
     return d;
   }
 }
@@ -502,6 +475,27 @@ bool IncrHmmAligModel::printAlSmIntFactor(const char* alSmIntFactorFile)
 }
 
 //-------------------------   
+void IncrHmmAligModel::initCachedLexicalLps(const Vector<WordIndex>& nSrcSentIndexVector,
+                                            const Vector<WordIndex>& trgSentIndexVector,
+                                            Vector<Vector<double> >& cachedLps)
+{
+      // Create data structure to cache lexical log-probs
+  Vector<double> dVec;
+  dVec.insert(dVec.begin(),trgSentIndexVector.size()+1,SMALL_LG_NUM);
+  cachedLps.clear();
+  cachedLps.insert(cachedLps.begin(),nSrcSentIndexVector.size()+1,dVec);
+
+      // Cache lexical log-probs
+  for(PositionIndex j=1;j<=trgSentIndexVector.size();++j)
+  {
+    for(PositionIndex i=1;i<=nSrcSentIndexVector.size();++i)
+    {
+      cachedLps[i][j]=logpts(nSrcSentIndexVector[i-1],trgSentIndexVector[j-1]);        
+    }
+  }
+}
+
+//-------------------------   
 void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sentPairRange,
                                              int /*verbosity*/)
 {
@@ -517,6 +511,9 @@ void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sen
     {
       Count weight;
       sentenceHandler.getCount(n,weight);
+
+          // Initialize data structure to cache lexical log-probs
+      initCachedLexicalLps(extendWithNullWord(srcSent),trgSent,cachedLexLogProbs);
 
           // Calculate alpha and beta matrices
       calcAlphaMatrix(n,extendWithNullWord(srcSent),trgSent);
@@ -535,14 +532,11 @@ void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sen
       // beta_values.clear();
 
           // Clear cached lexical log prob
-      cachedLogProbtsDm.clear();
-      
-      // // Clear cached alignment log prob
-      // cachedLogaProbDm.clear();
+      cachedLexLogProbs.clear();
     }
   }
       // Clear cached alignment log prob
-  cachedLogaProb.clear();
+  cachedAligLogProbs.clear();
 }
 
 //-------------------------   
@@ -567,7 +561,7 @@ void IncrHmmAligModel::calcAlphaMatrix(unsigned int /*n*/,
       if(j==1)
       {
         alphaMatrix[i][j]=cached_logaProb(0,slen,i,nsrcSent,trgSent)+
-          cached_logpts(i,j,nsrcSent,trgSent);
+          cachedLexLogProbs[i][j];
       }
       else
       {
@@ -575,7 +569,7 @@ void IncrHmmAligModel::calcAlphaMatrix(unsigned int /*n*/,
         {
           double lp=alphaMatrix[i_tilde][j-1]+
             cached_logaProb(i_tilde,slen,i,nsrcSent,trgSent)+
-            cached_logpts(i,j,nsrcSent,trgSent);
+            cachedLexLogProbs[i][j];
           if(i_tilde==1)
             alphaMatrix[i][j]=lp;
           else
@@ -614,8 +608,8 @@ void IncrHmmAligModel::calcBetaMatrix(unsigned int /*n*/,
         for(PositionIndex i_tilde=1;i_tilde<=nsrcSent.size();++i_tilde)
         {
           double lp=betaMatrix[i_tilde][j+1]+
-            cached_logaProb(i,slen,i_tilde,nsrcSent,trgSent)+
-            cached_logpts(i_tilde,j+1,nsrcSent,trgSent);
+            cached_logaProb(i,slen,i_tilde,nsrcSent,trgSent)+            
+            cachedLexLogProbs[i_tilde][j+1];
           if(i_tilde==1)
             betaMatrix[i][j]=lp;
           else
@@ -877,7 +871,7 @@ double IncrHmmAligModel::calc_lanjm1ip_anji_num_je1(PositionIndex slen,
                                                     const Vector<WordIndex>& trgSent)
 {
   double result=cached_logaProb(0,slen,i,nsrcSent,trgSent)+
-    cached_logpts(i,1,nsrcSent,trgSent)+
+    cachedLexLogProbs[i][1]+
     log_beta(slen,i,1,nsrcSent,trgSent);
   if(result<SMALL_LG_NUM) result=SMALL_LG_NUM;
   return result;
@@ -893,7 +887,7 @@ double IncrHmmAligModel::calc_lanjm1ip_anji_num_jg1(PositionIndex ip,
 {
   double result=log_alpha(slen,ip,j-1,nsrcSent,trgSent)+
     cached_logaProb(ip,slen,i,nsrcSent,trgSent)+
-    cached_logpts(i,j,nsrcSent,trgSent)+
+    cachedLexLogProbs[i][j]+
     log_beta(slen,i,j,nsrcSent,trgSent);
   if(result<SMALL_LG_NUM) result=SMALL_LG_NUM;
   return result;
@@ -1012,7 +1006,7 @@ double IncrHmmAligModel::log_alpha_precalc(PositionIndex /*slen*/,
 // {
 //   if(j==1)
 //   {
-//     return cached_logaProb(0,slen,i,nsrcSent,trgSent)+cached_logpts(i,j,nsrcSent,trgSent);
+//     return cached_logaProb(0,slen,i,nsrcSent,trgSent)+cachedLexLogProbs[i][j];
 //   }
 //   else
 //   {
@@ -1021,7 +1015,7 @@ double IncrHmmAligModel::log_alpha_precalc(PositionIndex /*slen*/,
 //     {
 //       double lp=log_alpha(slen,i_tilde,j-1,nsrcSent,trgSent)+
 //         cached_logaProb(i_tilde,slen,i,nsrcSent,trgSent)+
-//         cached_logpts(i,j,nsrcSent,trgSent);
+//         cachedLexLogProbs[i][j];
 //       if(i_tilde==1) result=lp;
 //       else result=MathFuncs::lns_sumlog(lp,result);
 //     }
@@ -1087,7 +1081,7 @@ double IncrHmmAligModel::log_beta_precalc(PositionIndex /*slen*/,
 //     for(PositionIndex i_tilde=1;i_tilde<=nsrcSent.size();++i_tilde)
 //     {
 //       LgProb lp=cached_logaProb(i,slen,i_tilde,nsrcSent,trgSent)+
-//         cached_logpts(i_tilde,j+1,nsrcSent,trgSent)+
+//         cachedLexLogProbs[i_tilde][j+1]+
 //         log_beta(slen,i_tilde,j+1,nsrcSent,trgSent);
 //       if(i_tilde==1) result=lp;
 //       else result=MathFuncs::lns_sumlog(lp,result);
@@ -1372,7 +1366,7 @@ void IncrHmmAligModel::viterbiAlgorithmCached(const Vector<WordIndex>& nSrcSentI
       // Clear matrices
   vitMatrix.clear();
   predMatrix.clear();
-
+  
       // Make room for matrices
   Vector<double> dVec;
   dVec.insert(dVec.begin(),trgSentIndexVector.size()+1,SMALL_LG_NUM);
@@ -1382,20 +1376,9 @@ void IncrHmmAligModel::viterbiAlgorithmCached(const Vector<WordIndex>& nSrcSentI
   pidxVec.insert(pidxVec.begin(),trgSentIndexVector.size()+1,0);
   predMatrix.insert(predMatrix.begin(),nSrcSentIndexVector.size()+1,pidxVec);
 
-      // Create data structure to cache lexical log-probs
-  dVec.clear();
-  dVec.insert(dVec.begin(),trgSentIndexVector.size()+1,SMALL_LG_NUM);
+      // Initialize data structure to cache lexical log-probs
   Vector<Vector<double> > cached_logpts;
-  cached_logpts.insert(cached_logpts.begin(),nSrcSentIndexVector.size()+1,dVec);
-
-      // Cache lexical log-probs
-  for(PositionIndex j=1;j<=trgSentIndexVector.size();++j)
-  {
-    for(PositionIndex i=1;i<=nSrcSentIndexVector.size();++i)
-    {
-      cached_logpts[i][j]=logpts(nSrcSentIndexVector[i-1],trgSentIndexVector[j-1]);        
-    }
-  }
+  initCachedLexicalLps(nSrcSentIndexVector,trgSentIndexVector,cached_logpts);
   
       // Fill matrices
   for(PositionIndex j=1;j<=trgSentIndexVector.size();++j)
@@ -1533,26 +1516,16 @@ double IncrHmmAligModel::forwardAlgorithm(const Vector<WordIndex>& nSrcSentIndex
       // Obtain slen
   PositionIndex slen=getSrcLen(nSrcSentIndexVector);
 
+  
       // Make room for matrix
   Vector<Vector<double> > forwardMatrix;
   Vector<double> dVec;
   dVec.insert(dVec.begin(),trgSentIndexVector.size()+1,0.0);
   forwardMatrix.insert(forwardMatrix.begin(),nSrcSentIndexVector.size()+1,dVec);
 
-      // Create data structure to cache lexical log-probs
-  dVec.clear();
-  dVec.insert(dVec.begin(),trgSentIndexVector.size()+1,SMALL_LG_NUM);
+      // Initialize data structure to cache lexical log-probs
   Vector<Vector<double> > cached_logpts;
-  cached_logpts.insert(cached_logpts.begin(),nSrcSentIndexVector.size()+1,dVec);
-
-      // Cache lexical log-probs
-  for(PositionIndex j=1;j<=trgSentIndexVector.size();++j)
-  {
-    for(PositionIndex i=1;i<=nSrcSentIndexVector.size();++i)
-    {
-      cached_logpts[i][j]=logpts(nSrcSentIndexVector[i-1],trgSentIndexVector[j-1]);        
-    }
-  }
+  initCachedLexicalLps(nSrcSentIndexVector,trgSentIndexVector,cached_logpts);
 
       // Fill matrix
   for(PositionIndex j=1;j<=trgSentIndexVector.size();++j)

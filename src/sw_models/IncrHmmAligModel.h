@@ -216,13 +216,12 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
        // Data structures for manipulating expected values
 
    LexAuxVar lexAuxVar;
-   DoubleMatrix cachedLogProbtsDm;
+   Vector<Vector<double> > cachedLexLogProbs;
        // EM algorithm auxiliary variables
 
    typedef hash_map<pair<aSourceHmm,PositionIndex>,pair<float,float>,ashPidxPairHashF> AligAuxVar;
    AligAuxVar aligAuxVar;
-   /* DoubleMatrix cachedLogaProbDm; */
-   CachedHmmAligLgProb cachedLogaProb;
+   CachedHmmAligLgProb cachedAligLogProbs;
        // EM algorithm auxiliary variables
 
    IncrLexTable incrLexTable;
@@ -262,12 +261,11 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    double get_nloglikelihood(unsigned int n);
 
    // Auxiliary scoring functions
+   void initCachedLexicalLps(const Vector<WordIndex>& nSrcSentIndexVector,
+                             const Vector<WordIndex>& trgSentIndexVector,
+                             Vector<Vector<double> >& cachedLps);
    double unsmoothed_logpts(WordIndex s,
                             WordIndex t);
-   double cached_logpts(PositionIndex i,
-                        PositionIndex j,
-                        const Vector<WordIndex>& nsrcSent,
-                        const Vector<WordIndex>& trgSent);
        // Returns log(p(t|s)) without smoothing
    virtual double unsmoothed_logaProb(PositionIndex prev_i,
                                       PositionIndex slen,
