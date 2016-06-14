@@ -1395,7 +1395,7 @@ void IncrHmmAligModel::viterbiAlgorithmCached(const Vector<WordIndex>& nSrcSentI
       {
             // Update cached alignment log-probs if required
         if(!cached_logap.isDefined(0,slen,i))
-          cached_logap.set(0,slen,i,logaProb(0,slen,i));
+          cached_logap.set_boundary_check(0,slen,i,logaProb(0,slen,i));
 
             // Update matrices
         vitMatrix[i][j]=cached_logap.get(0,slen,i)+cached_logpts[i][j];
@@ -1407,7 +1407,7 @@ void IncrHmmAligModel::viterbiAlgorithmCached(const Vector<WordIndex>& nSrcSentI
         {
               // Update cached alignment log-probs if required
           if(!cached_logap.isDefined(i_tilde,slen,i))
-            cached_logap.set(i_tilde,slen,i,logaProb(i_tilde,slen,i));
+            cached_logap.set_boundary_check(i_tilde,slen,i,logaProb(i_tilde,slen,i));
           
               // Update matrices
           double lp=vitMatrix[i_tilde][j-1]+
