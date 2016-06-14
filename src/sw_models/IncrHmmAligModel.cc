@@ -518,7 +518,7 @@ void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sen
           // Initialize data structure to cache lexical log-probs
       initCachedLexicalLps(extendWithNullWord(srcSent),trgSent,cachedLexLogProbs);
 
-          // Make room for data structure to cache lexical log-probs
+          // Make room for data structure to cache alignment log-probs
       cachedAligLogProbs.makeRoomGivenNSrcSentLen(extendWithNullWord(srcSent).size());
       
           // Calculate alpha and beta matrices
