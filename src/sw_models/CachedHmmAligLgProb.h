@@ -54,9 +54,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class CachedHmmAligLgProb
 {
  public:
+  void makeRoomGivenNSrcSentLen(PositionIndex nsrclen);
   bool isDefined(PositionIndex prev_i,
                  PositionIndex slen,
                  PositionIndex i);
+  void set_boundary_check(PositionIndex prev_i,
+                          PositionIndex slen,
+                          PositionIndex i,
+                          double lp);
   void set(PositionIndex prev_i,
            PositionIndex slen,
            PositionIndex i,

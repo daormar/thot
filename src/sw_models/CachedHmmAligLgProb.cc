@@ -32,6 +32,26 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- CachedHmmAligLgProb function declarations 
 
+//-------------------------
+void CachedHmmAligLgProb::makeRoomGivenNSrcSentLen(PositionIndex nsrclen)
+{
+  Vector<Vector<double> > lpVecVec;
+  while(cachedLgProbs.size()<=nsrclen)
+    cachedLgProbs.push_back(lpVecVec);
+
+  for(unsigned int i=0;i<cachedLgProbs.size();++i)
+  {
+    Vector<double> lpVec;
+    while(cachedLgProbs[i].size()<=nsrclen)
+      cachedLgProbs[i].push_back(lpVec);
+
+    for(unsigned int j=0;j<cachedLgProbs[i].size();++j)
+    {
+      while(cachedLgProbs[i][j].size()<=nsrclen)
+        cachedLgProbs[i][j].push_back((double)CACHED_HMM_ALIG_LGPROB_VIT_INVALID_VAL);
+    }
+  }
+}
 
 //-------------------------
 bool CachedHmmAligLgProb::isDefined(PositionIndex prev_i,
@@ -52,10 +72,10 @@ bool CachedHmmAligLgProb::isDefined(PositionIndex prev_i,
 }
 
 //-------------------------
-void CachedHmmAligLgProb::set(PositionIndex prev_i,
-                              PositionIndex slen,
-                              PositionIndex i,
-                              double lp)
+void CachedHmmAligLgProb::set_boundary_check(PositionIndex prev_i,
+                                             PositionIndex slen,
+                                             PositionIndex i,
+                                             double lp)
 {
       // Make room in cachedLgProbs if necessary
   Vector<Vector<double> > lpVecVec;
@@ -70,6 +90,15 @@ void CachedHmmAligLgProb::set(PositionIndex prev_i,
     cachedLgProbs[prev_i][slen].push_back((double)CACHED_HMM_ALIG_LGPROB_VIT_INVALID_VAL);
 
       // Set value
+  cachedLgProbs[prev_i][slen][i]=lp;
+}
+
+//-------------------------
+void CachedHmmAligLgProb::set(PositionIndex prev_i,
+                              PositionIndex slen,
+                              PositionIndex i,
+                              double lp)
+{
   cachedLgProbs[prev_i][slen][i]=lp;
 }
 
