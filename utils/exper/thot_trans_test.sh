@@ -460,14 +460,14 @@ echo "" >&2
 # Define output_file variable
 output_file=${thot_auto_smt_dir}/output/${transoutd}/thot_decoder_out
 
-# Obtain lower option of thot_auto_smt thotiment
+# Obtain lower option of thot_auto_smt execution
 lower_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-lower is" | $AWK '{printf"%s",$3}'`
 
-# Obtain tok option of thot_auto_smt thotiment
+# Obtain tok option of thot_auto_smt execution
 tok_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-tok is" | $AWK '{printf"%s",$3}'`
 
 # Only execute recasing and detokenization if text was lowercased and
-# tokenized during thot_auto_smt thotiment
+# tokenized during thot_auto_smt execution
 
 if [ ${lower_opt_thot_auto_smt} -eq 1 -a ${tok_opt_thot_auto_smt} -eq 1 ]; then
 
@@ -485,6 +485,6 @@ if [ ${lower_opt_thot_auto_smt} -eq 1 -a ${tok_opt_thot_auto_smt} -eq 1 ]; then
 
 else
 
-    echo "Warning: recasing and detokenization will not be carried out (text was not tokenized and lowercased during thot_auto_smt thotiment)" >&2
+    echo "Warning: recasing and detokenization will not be carried out (text was not tokenized and lowercased during thot_auto_smt execution)" >&2
 
 fi
