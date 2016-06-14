@@ -507,6 +507,7 @@ void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sen
   {
         // Init vars for n'th sample
     Vector<WordIndex> srcSent=getSrcSent(n);
+    Vector<WordIndex> nsrcSent=extendWithNullWord(srcSent);
     Vector<WordIndex> trgSent=getTrgSent(n);
 
         // Process sentence pair only if both sentences are not empty
@@ -516,17 +517,17 @@ void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sen
       sentenceHandler.getCount(n,weight);
 
           // Initialize data structure to cache lexical log-probs
-      initCachedLexicalLps(extendWithNullWord(srcSent),trgSent,cachedLexLogProbs);
+      initCachedLexicalLps(nsrcSent,trgSent,cachedLexLogProbs);
 
           // Make room for data structure to cache alignment log-probs
-      cachedAligLogProbs.makeRoomGivenNSrcSentLen(extendWithNullWord(srcSent).size());
+      cachedAligLogProbs.makeRoomGivenNSrcSentLen(nsrcSent.size());
       
           // Calculate alpha and beta matrices
-      calcAlphaMatrix(n,extendWithNullWord(srcSent),trgSent);
-      calcBetaMatrix(n,extendWithNullWord(srcSent),trgSent);
+      calcAlphaMatrix(n,nsrcSent,trgSent);
+      calcBetaMatrix(n,nsrcSent,trgSent);
       
           // Calculate sufficient statistics for anji values
-      calc_lanji(n,extendWithNullWord(srcSent),trgSent,weight);
+      calc_lanji(n,nsrcSent,trgSent,weight);
     
           // Calculate sufficient statistics for anjm1ip_anji values
       calc_lanjm1ip_anji(n,extendWithNullWordAlig(srcSent),trgSent,weight);
