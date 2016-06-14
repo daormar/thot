@@ -244,15 +244,6 @@ double IncrHmmAligModel::cached_logaProb(PositionIndex prev_i,
                                          const Vector<WordIndex>& /*nsrcSent*/,
                                          const Vector<WordIndex>& /*trgSent*/)
 {
-  // if(cachedAligLogProbs.isDefined(prev_i,slen,i))
-  //   return cachedAligLogProbs.get(prev_i,slen,i);
-  // else
-  // {
-  //   double d=(double)logaProb(prev_i,slen,i);
-  //   cachedAligLogProbs.set_boundary_check(prev_i,slen,i,d);
-  //   return d;
-  // }
-
   double d=cachedAligLogProbs.get(prev_i,slen,i);
   if(d<CACHED_HMM_ALIG_LGPROB_VIT_INVALID_VAL)
   {
