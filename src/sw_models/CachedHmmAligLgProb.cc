@@ -35,20 +35,23 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //-------------------------
 void CachedHmmAligLgProb::makeRoomGivenNSrcSentLen(PositionIndex nsrclen)
 {
-  Vector<Vector<double> > lpVecVec;
-  while(cachedLgProbs.size()<=nsrclen)
-    cachedLgProbs.push_back(lpVecVec);
-
-  for(unsigned int i=0;i<cachedLgProbs.size();++i)
+  if(cachedLgProbs.size()<=nsrclen)
   {
-    Vector<double> lpVec;
-    while(cachedLgProbs[i].size()<=nsrclen)
-      cachedLgProbs[i].push_back(lpVec);
+    Vector<Vector<double> > lpVecVec;
+    while(cachedLgProbs.size()<=nsrclen)
+      cachedLgProbs.push_back(lpVecVec);
 
-    for(unsigned int j=0;j<cachedLgProbs[i].size();++j)
+    for(unsigned int i=0;i<cachedLgProbs.size();++i)
     {
-      while(cachedLgProbs[i][j].size()<=nsrclen)
-        cachedLgProbs[i][j].push_back((double)CACHED_HMM_ALIG_LGPROB_VIT_INVALID_VAL);
+      Vector<double> lpVec;
+      while(cachedLgProbs[i].size()<=nsrclen)
+        cachedLgProbs[i].push_back(lpVec);
+
+      for(unsigned int j=0;j<cachedLgProbs[i].size();++j)
+      {
+        while(cachedLgProbs[i][j].size()<=nsrclen)
+          cachedLgProbs[i][j].push_back((double)CACHED_HMM_ALIG_LGPROB_VIT_INVALID_VAL);
+      }
     }
   }
 }
