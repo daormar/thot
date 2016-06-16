@@ -1371,14 +1371,14 @@ def xml_skeleton_to_string(skeleton):
     return u" ".join(txt for _,txt in skeleton)
 
 ##################################################
-grp_ann = "p" #"phr_pair_annot"
-src_ann = "s" #"src_segm"
-trg_ann = "t" #"trg_segm"
+grp_ann = "phr_pair_annot"
+src_ann = "src_segm"
+trg_ann = "trg_segm"
 dic_patt = u"(<%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<\/%s>)" % (grp_ann,
                                                                                   src_ann, src_ann,
                                                                                   trg_ann, trg_ann,
                                                                                   grp_ann)
-len_ann = "l"
+len_ann = "length_limit"
 len_patt = u"(<%s>)[ ]*(\d+)[ ]*(</%s>)" % (len_ann, len_ann)
 
 
