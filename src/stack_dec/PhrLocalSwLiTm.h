@@ -49,6 +49,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+extern "C" {
+#include "step_by_step_dhs.h"
+}
+
 #include "PhrHypNumcovJumps01EqClassF.h"
 #include "_phrSwTransModel.h"
 #include "PhrLocalSwLiTmHypRec.h"
@@ -67,6 +71,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define PHRSWLITM_DEFAULT_LR_PAR1       0.99
 #define PHRSWLITM_DEFAULT_LR_PAR2       0.75
 #define PHRSWLITM_LR_RESID_WER          0.2
+#define PHRSWLITM_DHS_FTOL              0.01
+#define PHRSWLITM_DHS_SCALE_PAR         1
 
 //--------------- typedefs -------------------------------------------
 
@@ -107,6 +113,11 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
 
   void clear(void);
 
+      // Functions to update linear interpolation weights
+  int updateLinInterpWeights(std::string srcDevCorpusFileName,
+                             std::string trgDevCorpusFileName,
+                             int verbose=0);
+
   ////// Hypotheses-related functions
 
       // Misc. operations with hypothesis
@@ -140,7 +151,18 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   Vector<Vector<std::string> > vecSysSent;  
   Vector<Vector<PhrasePair> > vecVecPhPair;
   unsigned int stepNum;
-  
+
+      // Functions related to linear interpolation weights updating
+  int phraseModelPerplexity(std::string srcDevCorpusFileName,
+                            std::string trgDevCorpusFileName,
+                            double& perp,
+                            int verbose=0);
+  int new_dhs_eval(std::string srcDevCorpusFileName,
+                   std::string trgDevCorpusFileName,
+                   FILE* tmp_file,
+                   double* x,
+                   double& obj_func);
+
       // Function lo load and print lambda values
   bool load_lambdas(const char* lambdaFileName);
   bool print_lambdas(const char* lambdaFileName);

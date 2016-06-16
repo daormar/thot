@@ -83,6 +83,191 @@ void PhrLocalSwLiTm::clear(void)
 }
 
 //---------------------------------
+int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
+                                           std::string trgDevCorpusFileName,
+                                           int verbose/*=0*/)
+{
+      // Initialize downhill simplex input parameters
+  Vector<double> initial_weights;
+  initial_weights.push_back(swModelInfoPtr->lambda_swm);
+  initial_weights.push_back(swModelInfoPtr->lambda_invswm);
+  int ndim=initial_weights.size();
+  double* start=(double*) malloc(ndim*sizeof(double));
+  int nfunk;
+  double* x=(double*) malloc(ndim*sizeof(double));
+  double y;
+
+      // Create temporary file
+  FILE* tmp_file=tmpfile();
+  
+  if(tmp_file==0)
+  {
+    cerr<<"Error updating linear interpolation weights of the phrase model, tmp file could not be created"<<endl;
+    return ERROR;
+  }
+    
+      // Execute downhill simplex algorithm
+  int ret;
+  bool end=false;
+  while(!end)
+  {
+        // Set initial weights (each call to step_by_step_simplex starts
+        // from the initial weights)
+    for(unsigned int i=0;i<initial_weights.size();++i)
+      start[i]=initial_weights[i];
+    
+        // Execute step by step simplex
+    double curr_dhs_ftol;
+    ret=step_by_step_simplex(start,ndim,PHRSWLITM_DHS_FTOL,PHRSWLITM_DHS_SCALE_PAR,NULL,tmp_file,&nfunk,&y,x,&curr_dhs_ftol,false);
+
+    switch(ret)
+    {
+      case OK: end=true;
+        break;
+      case DSO_NMAX_ERROR: cerr<<"Error updating linear interpolation weights of the phrase model, maximum number of iterations exceeded"<<endl;
+        end=true;
+        break;
+      case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
+        double perp;
+        int retEval=new_dhs_eval(srcDevCorpusFileName,trgDevCorpusFileName,tmp_file,x,perp);
+        if(retEval==ERROR)
+        {
+          end=true;
+          break;
+        }
+            // Print verbose information
+        if(verbose>=1)
+        {
+          cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<PHRSWLITM_DHS_FTOL<<") ; ";
+          cerr<<"weights= "<<swModelInfoPtr->lambda_swm<<" "<<swModelInfoPtr->lambda_invswm<<endl;
+          cerr<<" ; perp= "<<perp<<endl; 
+        }
+        break;
+    }
+  }
+  
+      // Set new weights if updating was successful
+  if(ret==OK)
+  {
+    swModelInfoPtr->lambda_swm=start[0];
+    swModelInfoPtr->lambda_invswm=start[1];
+  }
+  else
+  {
+    swModelInfoPtr->lambda_swm=initial_weights[0];
+    swModelInfoPtr->lambda_invswm=initial_weights[1];
+  }
+  
+      // Clear variables
+  free(start);
+  free(x);
+  fclose(tmp_file);
+
+  if(ret!=OK)
+    return ERROR;
+  else
+    return OK; 
+}
+
+//---------------
+int PhrLocalSwLiTm::phraseModelPerplexity(std::string srcDevCorpusFileName,
+                                          std::string trgDevCorpusFileName,
+                                          double& perp,
+                                          int verbose/*=0*/)
+{
+// NOTE: calculation of phrase model perplexity requires the ability to
+// extract new translation options. This can be achieved using the
+// well-known phrase-extract algorithm. The required functionality is
+// only implemented at this moment by the pb models deriving from the
+// _wbaIncrPhraseModel class
+
+  _wbaIncrPhraseModel* wbaIncrPhraseModelPtr=dynamic_cast<_wbaIncrPhraseModel* >(phrModelInfoPtr->invPbModelPtr);
+  if(wbaIncrPhraseModelPtr)
+  {
+        // Obtain sentence pair
+    Vector<std::string> srcSentStrVec;
+    Vector<std::string> refSentStrVec;
+    Count c;
+
+        // Generate alignments
+    WordAligMatrix waMatrix;
+    WordAligMatrix invWaMatrix;
+  
+    swModelInfoPtr->swAligModelPtr->obtainBestAlignmentVecStr(srcSentStrVec,refSentStrVec,waMatrix);
+    swModelInfoPtr->invSwAligModelPtr->obtainBestAlignmentVecStr(refSentStrVec,srcSentStrVec,invWaMatrix);
+  
+        // Operate alignments
+    Vector<std::string> nsrcSentStrVec=swModelInfoPtr->swAligModelPtr->addNullWordToStrVec(srcSentStrVec);
+    Vector<std::string> nrefSentStrVec=swModelInfoPtr->swAligModelPtr->addNullWordToStrVec(refSentStrVec);  
+
+    waMatrix.transpose();
+
+        // Execute symmetrization
+    invWaMatrix.symmetr1(waMatrix);
+
+        // Extract consistent pairs
+    Vector<PhrasePair> vecPhPair;
+    PhraseExtractParameters phePars;
+    wbaIncrPhraseModelPtr->extractPhrasesFromPairPlusAlig(phePars,
+                                                          nrefSentStrVec,
+                                                          srcSentStrVec,
+                                                          invWaMatrix,
+                                                          vecPhPair,
+                                                          verbose);
+
+        // TBD
+
+    return OK;
+  }
+  else
+  {
+    cerr<<"Warning: perplexity calculation for phrase-based models not supported in this configuration!"<<endl;
+    return ERROR;
+  }  
+}
+
+//---------------
+int PhrLocalSwLiTm::new_dhs_eval(std::string srcDevCorpusFileName,
+                                 std::string trgDevCorpusFileName,
+                                 FILE* tmp_file,
+                                 double* x,
+                                 double& obj_func)
+{
+  LgProb totalLogProb;
+  bool weightsArePositive=true;
+  bool weightsAreBelowOne=true;
+  int retVal;
+  
+      // Fix weights to be evaluated
+  swModelInfoPtr->lambda_swm=x[0];
+  swModelInfoPtr->lambda_invswm=x[1];
+  for(unsigned int i=0;i<2;++i)
+  {
+    if(x[i]<0) weightsArePositive=false;
+    if(x[i]>=1) weightsAreBelowOne=false;
+  }
+  
+  if(weightsArePositive && weightsAreBelowOne)
+  {
+        // Obtain perplexity
+    retVal=phraseModelPerplexity(srcDevCorpusFileName,trgDevCorpusFileName,obj_func);
+  }
+  else
+  {
+    obj_func=DBL_MAX;
+    retVal=OK;
+  }
+      // Print result to tmp file
+  fprintf(tmp_file,"%g\n",obj_func);
+  fflush(tmp_file);
+      // step_by_step_simplex needs that the file position
+      // indicator is set at the start of the stream
+  rewind(tmp_file);
+
+  return retVal;
+}
+
+//---------------------------------
 PhrLocalSwLiTm::Hypothesis PhrLocalSwLiTm::nullHypothesis(void)
 {
   Hypothesis hyp;
@@ -766,7 +951,7 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
     Vector<PhrasePair> vpp;
     while(vecVecPhPair.size()<=mapped_n) vecVecPhPair.push_back(vpp);
     
-        // Subtract current phrase model current sufficient statistics
+        // Subtract current phrase model sufficient statistics
     for(unsigned int i=0;i<vecVecPhPair[mapped_n].size();++i)
     {
       wbaIncrPhraseModelPtr->strIncrCountsOfEntry(vecVecPhPair[mapped_n][i].s_,
