@@ -207,14 +207,14 @@ int init_translator(const thot_ms_alig_pars& tap)
   if(langModelInfoPtr->wpModelPtr==NULL)
   {
     cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   langModelInfoPtr->lModelPtr=dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(dynClassFactoryHandler.baseNgramLMInitPars);
   if(langModelInfoPtr->lModelPtr==NULL)
   {
     cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   phrModelInfoPtr=new PhraseModelInfo;
@@ -230,28 +230,28 @@ int init_translator(const thot_ms_alig_pars& tap)
   if(swModelInfoPtr->swAligModelPtr==NULL)
   {
     cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   swModelInfoPtr->invSwAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
   if(swModelInfoPtr->invSwAligModelPtr==NULL)
   {
     cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(llWeightUpdaterPtr==NULL)
   {
     cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(trConstraintsPtr==NULL)
   {
     cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
       // Instantiate smt model

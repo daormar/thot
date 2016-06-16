@@ -153,14 +153,14 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   if(langModelInfoPtr->wpModelPtr==NULL)
   {
     cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   langModelInfoPtr->lModelPtr=dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(dynClassFactoryHandler.baseNgramLMInitPars);
   if(langModelInfoPtr->lModelPtr==NULL)
   {
     cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   phrModelInfoPtr=new PhraseModelInfo;
@@ -176,49 +176,49 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   if(swModelInfoPtr->swAligModelPtr==NULL)
   {
     cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   swModelInfoPtr->invSwAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
   if(swModelInfoPtr->invSwAligModelPtr==NULL)
   {
     cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   ecModelPtr=dynClassFactoryHandler.baseErrorCorrectionModelDynClassLoader.make_obj(dynClassFactoryHandler.baseErrorCorrectionModelInitPars);
   if(ecModelPtr==NULL)
   {
     cerr<<"Error: BaseErrorCorrectionModel pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   scorerPtr=dynClassFactoryHandler.baseScorerDynClassLoader.make_obj(dynClassFactoryHandler.baseScorerInitPars);
   if(scorerPtr==NULL)
   {
     cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(llWeightUpdaterPtr==NULL)
   {
     cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
       // Link scorer to weight updater
   if(!llWeightUpdaterPtr->link_scorer(scorerPtr))
   {
     cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
   trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(trConstraintsPtr==NULL)
   {
     cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
       // Instantiate smt model
@@ -251,7 +251,7 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   if(wgpPtr==NULL)
   {
     cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    return ERROR;
   }
 
       // Instantiate assisted translator
