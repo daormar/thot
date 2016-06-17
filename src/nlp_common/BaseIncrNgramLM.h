@@ -41,6 +41,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include "myVector.h"
 #include <string>
+#include <map>
 
 //--------------- Constants ------------------------------------------
 
@@ -144,7 +145,7 @@ class BaseIncrNgramLM: public BaseNgramLM<LM_STATE>
    
  protected:
 
-  typedef map<pair<std::string,Vector<std::string> >,Count> NgramCountMap;
+  typedef std::map<pair<std::string,Vector<std::string> >,Count> NgramCountMap;
 
   void collectNgramCounts(Vector<std::string> strVec,
                           NgramCountMap& ngramCountMap);
