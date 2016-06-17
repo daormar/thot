@@ -17,15 +17,15 @@ if CASMACAT_LIB_ENABLED
 CASMACAT_LIBS= libthot_casmacat.la
 endif
 
-bin_PROGRAMS = thot_ilm_perp thot_lm_weight_upd thot_calc_swm_lgprob	\
-thot_gen_sw_model thot_sort_bin_ilextable thot_sort_bin_ihmmatable	\
-thot_sort_bin_iibm2atable thot_merge_bin_ilextable			\
-thot_merge_bin_ihmmatable thot_merge_bin_iibm2atable			\
-thot_gen_bin_lex_filter_info thot_filter_bin_ilextable			\
-thot_prune_bin_ilextable thot_alig_op thot_gen_phr_model thot_wg_proc	\
-thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig			\
-thot_ll_weight_upd_nblist thot_client thot_server thot_get_ll_weights	\
-thot_scorer thot_calc_bleu $(TESTING_PROGS)
+bin_PROGRAMS = thot_lm_perp thot_ilm_perp thot_lm_weight_upd		\
+thot_calc_swm_lgprob thot_gen_sw_model thot_sort_bin_ilextable		\
+thot_sort_bin_ihmmatable thot_sort_bin_iibm2atable			\
+thot_merge_bin_ilextable thot_merge_bin_ihmmatable			\
+thot_merge_bin_iibm2atable thot_gen_bin_lex_filter_info			\
+thot_filter_bin_ilextable thot_prune_bin_ilextable thot_alig_op		\
+thot_gen_phr_model thot_wg_proc thot_dhs_step_by_step_min thot_ms_dec	\
+thot_ms_alig thot_ll_weight_upd_nblist thot_client thot_server		\
+thot_get_ll_weights thot_scorer thot_calc_bleu $(TESTING_PROGS)
 
 lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la					\
@@ -360,6 +360,10 @@ wg_uncoupled_assisted_trans__swli_factory_defs=		\
 stack_dec/WgUncoupledAssistedTransSwLiFactory.cc
 
 # programs
+
+##########
+thot_lm_perp_SOURCES = incr_models/thot_lm_perp.cc
+thot_lm_perp_LDFLAGS = libthot.la
 
 ##########
 thot_ilm_perp_SOURCES = incr_models/thot_ilm_perp.cc
