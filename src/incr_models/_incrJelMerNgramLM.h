@@ -101,9 +101,10 @@ class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
   double sizeOfBucket;
 
       // Downhill-simplex related functions
-  double new_dhs_eval(const char *corpusFileName,
-                      FILE* tmp_file,
-                      double* x);
+  int new_dhs_eval(const char *corpusFileName,
+                   FILE* tmp_file,
+                   double* x,
+                   double& obj_func);
 
       // Weights related functions
   double getJelMerWeight(const Vector<WordIndex>& s,
@@ -214,7 +215,13 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
         end=true;
         break;
       case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
-        double perp=new_dhs_eval(corpusFileName,tmp_file,x);
+        double perp;
+        int retEval=new_dhs_eval(corpusFileName,tmp_file,x,perp);
+        if(retEval==ERROR)
+        {
+          end=true;
+          break;
+        }
             // Print verbose information
         if(verbose>=1)
         {
@@ -252,16 +259,17 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::new_dhs_eval(const char *corpusFileName,
-                                                              FILE* tmp_file,
-                                                              double* x)
+int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::new_dhs_eval(const char *corpusFileName,
+                                                           FILE* tmp_file,
+                                                           double* x,
+                                                           double& obj_func)
 {
   unsigned int numOfSentences;
   unsigned int numWords;
   LgProb totalLogProb;
   bool weightsArePositive=true;
   bool weightsAreBelowOne=true;
-  double perp;
+  int retVal;
   
       // Fix weights to be evaluated
   for(unsigned int i=0;i<weights.size();++i)
@@ -273,18 +281,21 @@ double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::new_dhs_eval(const char *corpus
   if(weightsArePositive && weightsAreBelowOne)
   {
         // Obtain perplexity
-    this->perplexity(corpusFileName,numOfSentences,numWords,totalLogProb,perp);
+    retVal=this->perplexity(corpusFileName,numOfSentences,numWords,totalLogProb,obj_func);
   }
   else
-    perp=DBL_MAX;
+  {
+    obj_func=DBL_MAX;
+    retVal=OK;
+  }
       // Print result to tmp file
-  fprintf(tmp_file,"%g\n",perp);
+  fprintf(tmp_file,"%g\n",obj_func);
   fflush(tmp_file);
       // step_by_step_simplex needs that the file position
       // indicator is set at the start of the stream
   rewind(tmp_file);
 
-  return perp;
+  return retVal;
 }
 
 //---------------
