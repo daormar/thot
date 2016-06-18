@@ -405,9 +405,11 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   WordIndex stringToSrcWordIndex(std::string s)const;
   std::string wordIndexToSrcString(WordIndex w)const;
   Vector<std::string> srcIndexVectorToStrVector(Vector<WordIndex> srcidxVec)const;
+  Vector<WordIndex> strVectorToSrcIndexVector(Vector<std::string> srcStrVec)const;
   WordIndex stringToTrgWordIndex(std::string s)const;
   std::string wordIndexToTrgString(WordIndex w)const;
   Vector<std::string> trgIndexVectorToStrVector(Vector<WordIndex> trgidxVec)const;
+  Vector<WordIndex> strVectorToTrgIndexVector(Vector<std::string> trgStrVec)const;
   std::string phraseToStr(const Vector<WordIndex>& phr)const;
   Vector<std::string> phraseToStrVec(const Vector<WordIndex>& phr)const;
   WordIndex tmVocabToLmVocab(WordIndex w);
@@ -1178,6 +1180,19 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::srcIndexVectorToStrVecto
 
 //--------------------------------- 
 template<class HYPOTHESIS>
+Vector<WordIndex> _phraseBasedTransModel<HYPOTHESIS>::strVectorToSrcIndexVector(Vector<std::string> srcStrVec)const
+{
+  Vector<WordIndex> widxVec;
+  unsigned int i;
+
+  for(i=0;i<srcStrVec.size();++i)
+    widxVec.push_back(stringToSrcWordIndex(srcStrVec[i])); 	 
+	
+  return widxVec;
+}
+
+//--------------------------------- 
+template<class HYPOTHESIS>
 WordIndex _phraseBasedTransModel<HYPOTHESIS>::stringToTrgWordIndex(std::string s)const
 {
   return this->phrModelInfoPtr->invPbModelPtr->stringToSrcWordIndex(s);
@@ -1201,6 +1216,19 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::trgIndexVectorToStrVecto
     vStr.push_back(wordIndexToTrgString(trgidxVec[i])); 	 
 	
   return vStr;
+}
+
+//--------------------------------- 
+template<class HYPOTHESIS>
+Vector<WordIndex> _phraseBasedTransModel<HYPOTHESIS>::strVectorToTrgIndexVector(Vector<std::string> trgStrVec)const
+{
+  Vector<WordIndex> widxVec;
+  unsigned int i;
+
+  for(i=0;i<trgStrVec.size();++i)
+    widxVec.push_back(stringToTrgWordIndex(trgStrVec[i])); 	 
+	
+  return widxVec;
 }
 
 //---------------------------------
