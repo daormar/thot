@@ -125,7 +125,7 @@ void KbMiraLlWu::update(const std::string& reference,
           max_wAvg = wAvg;
         }
       }
-      cerr << nReStarts << " " << j << " " << iter_max_j << " " << quality << " " << max_quality << endl;
+      //cerr << nReStarts << " " << j << " " << iter_max_j << " " << quality << " " << max_quality << endl;
 
       // restart weights if no improvement in X epochs;
       if (j-iter_max_j > epochsToRestart)
@@ -234,7 +234,7 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
         }
       }
 
-      cerr << nReStarts << " " << j << " " << iter_max_j << " " << quality << " " << max_quality << endl;
+      //cerr << nReStarts << " " << j << " " << iter_max_j << " " << quality << " " << max_quality << endl;
 
       // restart weights if no improvement in X epochs;
       if (j-iter_max_j > epochsToRestart)
