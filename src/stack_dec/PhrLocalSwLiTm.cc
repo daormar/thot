@@ -67,7 +67,11 @@ bool PhrLocalSwLiTm::printAligModel(std::string printPrefix)
   bool ret=_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >::printAligModel(printPrefix);
   if(ret==ERROR) return ERROR;
 
-      // TO-DO
+      // Print lambda file
+  std::string lambdaFile=printPrefix;
+  lambdaFile=lambdaFile+".lambda";
+  ret=print_lambdas(lambdaFile.c_str());
+  if(ret==ERROR) return ERROR;
   
   return OK;
 }
@@ -105,9 +109,14 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
     cerr<<"Error updating linear interpolation weights of the phrase model, tmp file could not be created"<<endl;
     return ERROR;
   }
-    
+
+      // Extract phrase pairs from development corpus
+  Vector<Vector<PhrasePair> > phrPairs;
+  int ret=extractPhrPairsFromDevCorpus(srcDevCorpusFileName,trgDevCorpusFileName,phrPairs,verbose);
+  if(ret!=OK)
+    return ERROR;
+  
       // Execute downhill simplex algorithm
-  int ret;
   bool end=false;
   while(!end)
   {
@@ -129,7 +138,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
         break;
       case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
         double perp;
-        int retEval=new_dhs_eval(srcDevCorpusFileName,trgDevCorpusFileName,tmp_file,x,perp);
+        int retEval=new_dhs_eval(phrPairs,tmp_file,x,perp);
         if(retEval==ERROR)
         {
           end=true;
@@ -139,7 +148,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
         if(verbose>=1)
         {
           cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<PHRSWLITM_DHS_FTOL<<") ; ";
-          cerr<<"weights= "<<swModelInfoPtr->lambda_swm<<" "<<swModelInfoPtr->lambda_invswm<<endl;
+          cerr<<"weights= "<<swModelInfoPtr->lambda_swm<<" "<<swModelInfoPtr->lambda_invswm;
           cerr<<" ; perp= "<<perp<<endl; 
         }
         break;
@@ -170,25 +179,14 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
 }
 
 //---------------
-int PhrLocalSwLiTm::phraseModelPerplexity(std::string srcDevCorpusFileName,
-                                          std::string trgDevCorpusFileName,
-                                          double& perp,
-                                          int verbose/*=0*/)
+int PhrLocalSwLiTm::extractConsistentPhrasePairs(const Vector<std::string>& srcSentStrVec,
+                                                 const Vector<std::string>& refSentStrVec,
+                                                 Vector<PhrasePair>& vecPhPair,
+                                                 bool verbose/*=0*/)
 {
-// NOTE: calculation of phrase model perplexity requires the ability to
-// extract new translation options. This can be achieved using the
-// well-known phrase-extract algorithm. The required functionality is
-// only implemented at this moment by the pb models deriving from the
-// _wbaIncrPhraseModel class
-
   _wbaIncrPhraseModel* wbaIncrPhraseModelPtr=dynamic_cast<_wbaIncrPhraseModel* >(phrModelInfoPtr->invPbModelPtr);
   if(wbaIncrPhraseModelPtr)
   {
-        // Obtain sentence pair
-    Vector<std::string> srcSentStrVec;
-    Vector<std::string> refSentStrVec;
-    Count c;
-
         // Generate alignments
     WordAligMatrix waMatrix;
     WordAligMatrix invWaMatrix;
@@ -206,7 +204,6 @@ int PhrLocalSwLiTm::phraseModelPerplexity(std::string srcDevCorpusFileName,
     invWaMatrix.symmetr1(waMatrix);
 
         // Extract consistent pairs
-    Vector<PhrasePair> vecPhPair;
     PhraseExtractParameters phePars;
     wbaIncrPhraseModelPtr->extractPhrasesFromPairPlusAlig(phePars,
                                                           nrefSentStrVec,
@@ -214,21 +211,117 @@ int PhrLocalSwLiTm::phraseModelPerplexity(std::string srcDevCorpusFileName,
                                                           invWaMatrix,
                                                           vecPhPair,
                                                           verbose);
+    return OK;
+  }
+  else
+  {
+    cerr<<"Warning: phrase pair extraction not supported in this configuration!"<<endl;
+    return ERROR;
+  }
+}
 
-        // TBD
+//---------------
+int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileName,
+                                                 std::string trgDevCorpusFileName,
+                                                 Vector<Vector<PhrasePair> >& phrPairs,
+                                                 int verbose/*=0*/)
+{
+// NOTE: this function requires the ability to extract new translation
+// options. This can be achieved using the well-known phrase-extract
+// algorithm. The required functionality is only implemented at this
+// moment by the pb models deriving from the _wbaIncrPhraseModel class
 
+  _wbaIncrPhraseModel* wbaIncrPhraseModelPtr=dynamic_cast<_wbaIncrPhraseModel* >(phrModelInfoPtr->invPbModelPtr);
+  if(wbaIncrPhraseModelPtr)
+  {
+    awkInputStream srcDevStream;
+    awkInputStream trgDevStream;
+
+        // Open files
+    if(srcDevStream.open(srcDevCorpusFileName.c_str())==ERROR)
+    {
+      cerr<<"Unable to open file with source development sentences."<<endl;
+      return ERROR;
+    }  
+    if(trgDevStream.open(trgDevCorpusFileName.c_str())==ERROR)
+    {
+      cerr<<"Unable to open file with target development sentences."<<endl;
+      return ERROR;
+    }  
+
+        // Iterate over all sentences
+    phrPairs.clear();
+    while(srcDevStream.getln())
+    {
+      if(!trgDevStream.getln())
+      {
+        cerr<<"Unexpected end of file with target development sentences."<<endl;
+        return ERROR;      
+      }
+
+          // Obtain sentence pair
+      Vector<std::string> srcSentStrVec;
+      Vector<std::string> refSentStrVec;
+      Count c;
+
+          // Extract source sentence
+      for(unsigned int i=1;i<=srcDevStream.NF;++i)
+        srcSentStrVec.push_back(srcDevStream.dollar(i));
+
+          // Extract target sentence
+      for(unsigned int i=1;i<=trgDevStream.NF;++i)
+        refSentStrVec.push_back(trgDevStream.dollar(i));
+
+          // Extract consistent phrase pairs
+      Vector<PhrasePair> vecPhPair;
+      extractConsistentPhrasePairs(srcSentStrVec,refSentStrVec,vecPhPair,verbose);
+
+          // Add vector of phrase pairs
+      phrPairs.push_back(vecPhPair);
+    }
+    
+        // Close files
+    srcDevStream.close();
+    trgDevStream.close();
+    
     return OK;
   }
   else
   {
     cerr<<"Warning: perplexity calculation for phrase-based models not supported in this configuration!"<<endl;
     return ERROR;
-  }  
+  }
 }
 
 //---------------
-int PhrLocalSwLiTm::new_dhs_eval(std::string srcDevCorpusFileName,
-                                 std::string trgDevCorpusFileName,
+double PhrLocalSwLiTm::phraseModelPerplexity(const Vector<Vector<PhrasePair> >& phrPairs,
+                                             int /*verbose=0*/)
+{
+      // Iterate over all sentences
+  double loglikelihood=0;
+  unsigned int numPhrPairs=0;
+  
+      // Obtain perplexity contribution for consistent phrase pairs
+  for(unsigned int i=0;i<phrPairs.size();++i)
+  {
+    for(unsigned int j=0;j<phrPairs[i].size();++j)
+    {
+      Vector<WordIndex> srcPhrasePair=strVectorToSrcIndexVector(phrPairs[i][j].s_);
+      Vector<WordIndex> trgPhrasePair=strVectorToTrgIndexVector(phrPairs[i][j].t_);
+      loglikelihood+=(double)smoothedPhrScore_s_t_(srcPhrasePair,trgPhrasePair);
+      loglikelihood+=(double)smoothedPhrScore_t_s_(srcPhrasePair,trgPhrasePair);
+    }
+        // Update number of phrase pairs
+    numPhrPairs+=phrPairs[i].size();
+  }
+
+      // Return perplexity
+  return -1*(loglikelihood/(double)numPhrPairs);
+}
+
+
+//---------------
+int PhrLocalSwLiTm::new_dhs_eval(const Vector<Vector<PhrasePair> >& phrPairs,
                                  FILE* tmp_file,
                                  double* x,
                                  double& obj_func)
@@ -236,7 +329,6 @@ int PhrLocalSwLiTm::new_dhs_eval(std::string srcDevCorpusFileName,
   LgProb totalLogProb;
   bool weightsArePositive=true;
   bool weightsAreBelowOne=true;
-  int retVal;
   
       // Fix weights to be evaluated
   swModelInfoPtr->lambda_swm=x[0];
@@ -250,13 +342,13 @@ int PhrLocalSwLiTm::new_dhs_eval(std::string srcDevCorpusFileName,
   if(weightsArePositive && weightsAreBelowOne)
   {
         // Obtain perplexity
-    retVal=phraseModelPerplexity(srcDevCorpusFileName,trgDevCorpusFileName,obj_func);
+    obj_func=phraseModelPerplexity(phrPairs,obj_func);
   }
   else
   {
     obj_func=DBL_MAX;
-    retVal=OK;
   }
+  
       // Print result to tmp file
   fprintf(tmp_file,"%g\n",obj_func);
   fflush(tmp_file);
@@ -264,7 +356,7 @@ int PhrLocalSwLiTm::new_dhs_eval(std::string srcDevCorpusFileName,
       // indicator is set at the start of the stream
   rewind(tmp_file);
 
-  return retVal;
+  return OK;
 }
 
 //---------------------------------
@@ -280,7 +372,7 @@ PhrLocalSwLiTm::Hypothesis PhrLocalSwLiTm::nullHypothesis(void)
       // Init language model state
   langModelInfoPtr->lModelPtr->getStateForBeginOfSentence(scoreInfo.lmHist);
 
-        // Initial word penalty lgprob
+      // Initial word penalty lgprob
   scoreInfo.score+=sumWordPenaltyScore(0);
 
       // Add sentence length model contribution
@@ -915,35 +1007,10 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
     Count c;
     swModelInfoPtr->swAligModelPtr->nthSentPair(n,srcSentStrVec,refSentStrVec,c);
 
-        // Generate alignments
-    WordAligMatrix waMatrix;
-    WordAligMatrix invWaMatrix;
-  
-    swModelInfoPtr->swAligModelPtr->obtainBestAlignmentVecStr(srcSentStrVec,refSentStrVec,waMatrix);
-    swModelInfoPtr->invSwAligModelPtr->obtainBestAlignmentVecStr(refSentStrVec,srcSentStrVec,invWaMatrix);
-  
-        // Operate alignments
-    Vector<std::string> nsrcSentStrVec=swModelInfoPtr->swAligModelPtr->addNullWordToStrVec(srcSentStrVec);
-    Vector<std::string> nrefSentStrVec=swModelInfoPtr->swAligModelPtr->addNullWordToStrVec(refSentStrVec);  
-
-    waMatrix.transpose();
-
-        // Execute symmetrization
-    invWaMatrix.symmetr1(waMatrix);
-    if(verbose)
-    {
-      printAlignmentInGIZAFormat(cerr,nrefSentStrVec,srcSentStrVec,invWaMatrix,"Operated word alignment for phrase model training:");
-    }
-
-        // Extract consistent pairs
+        // Extract consistent phrase pairs
     Vector<PhrasePair> vecPhPair;
-    PhraseExtractParameters phePars;
-    wbaIncrPhraseModelPtr->extractPhrasesFromPairPlusAlig(phePars,
-                                                          nrefSentStrVec,
-                                                          srcSentStrVec,
-                                                          invWaMatrix,
-                                                          vecPhPair,
-                                                          verbose);
+    extractConsistentPhrasePairs(srcSentStrVec,refSentStrVec,vecPhPair,verbose);
+
         // Obtain mapped_n
     unsigned int mapped_n=map_n_am_suff_stats(n);
   
@@ -1215,7 +1282,7 @@ Score PhrLocalSwLiTm::smoothedPhrScore_s_t_(const Vector<WordIndex>& s_,
   {
     if(swModelInfoPtr->lambda_invswm==1.0)
     {
-      return (float)phrModelInfoPtr->invPbModelPtr->logpt_s_(t_,s_);
+      return phrModelInfoPtr->phraseModelPars.pstWeight*(double)phrModelInfoPtr->invPbModelPtr->logpt_s_(t_,s_);
     }
     else
     {
@@ -1243,7 +1310,7 @@ Score PhrLocalSwLiTm::smoothedPhrScore_t_s_(const Vector<WordIndex>& s_,
   {
     if(swModelInfoPtr->lambda_swm==1.0)
     {
-      return (float)phrModelInfoPtr->invPbModelPtr->logps_t_(t_,s_);
+      return phrModelInfoPtr->phraseModelPars.ptsWeight*(double)phrModelInfoPtr->invPbModelPtr->logps_t_(t_,s_);
     }
     else
     {

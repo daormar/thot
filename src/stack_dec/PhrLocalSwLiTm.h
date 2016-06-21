@@ -71,7 +71,7 @@ extern "C" {
 #define PHRSWLITM_DEFAULT_LR_PAR1       0.99
 #define PHRSWLITM_DEFAULT_LR_PAR2       0.75
 #define PHRSWLITM_LR_RESID_WER          0.2
-#define PHRSWLITM_DHS_FTOL              0.01
+#define PHRSWLITM_DHS_FTOL              0.001
 #define PHRSWLITM_DHS_SCALE_PAR         1
 
 //--------------- typedefs -------------------------------------------
@@ -153,12 +153,13 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   unsigned int stepNum;
 
       // Functions related to linear interpolation weights updating
-  int phraseModelPerplexity(std::string srcDevCorpusFileName,
-                            std::string trgDevCorpusFileName,
-                            double& perp,
-                            int verbose=0);
-  int new_dhs_eval(std::string srcDevCorpusFileName,
-                   std::string trgDevCorpusFileName,
+  int extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileName,
+                                   std::string trgDevCorpusFileName,
+                                   Vector<Vector<PhrasePair> >& phrPairs,
+                                   int verbose/*=0*/);
+  double phraseModelPerplexity(const Vector<Vector<PhrasePair> >& phrPairs,
+                               int verbose=0);
+  int new_dhs_eval(const Vector<Vector<PhrasePair> >& phrPairs,
                    FILE* tmp_file,
                    double* x,
                    double& obj_func);
@@ -203,6 +204,10 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
                         HypDataType& hypd);
 
       // Functions for performing on-line training
+  int extractConsistentPhrasePairs(const Vector<std::string>& srcSentStrVec,
+                                   const Vector<std::string>& refSentStrVec,
+                                   Vector<PhrasePair>& vecPhPair,
+                                   bool verbose=0);
   int incrTrainFeatsSentPair(const char *srcSent,
                              const char *refSent,
                              int verbose=0);
