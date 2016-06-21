@@ -15,8 +15,8 @@ BaseTranslationConstraints.h TranslationConstraints.h			\
 TranslationConstraints.cc SmtStack.h _smtStack.h SmtMultiStackRec.h	\
 _smtMultiStack.h BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc	\
 BaseScorer.h BaseMiraScorer.h MiraBleu.h MiraBleu.cc			\
-thot_ll_weight_upd_nblist.cc _smtModel.h ScoreCompDefs.h		\
-_phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc			\
+thot_li_weight_upd.cc thot_ll_weight_upd_nblist.cc _smtModel.h		\
+ScoreCompDefs.h _phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc	\
 PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc			\
 PhrNbestTransTableRef.h PhrNbestTransTablePrefKey.h			\
 PhrNbestTransTablePrefKey.cc PhrNbestTransTablePref.h			\
