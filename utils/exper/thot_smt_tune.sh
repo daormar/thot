@@ -420,7 +420,7 @@ loglin_downhill()
 
     # Execute tuning algorithm
     ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
-        -ftol ${ftol_loglin} -o ${outd}/tm_adjw -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || return 1
+        -ftol ${ftol_loglin} -o ${outd}/tm_ll_adjw -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || return 1
 }
 
 ########
@@ -440,20 +440,27 @@ loglin_upd()
     # Default parameters
     ll_wu_niters=10
 
-    echo "NOTE: see file ${outd}/tm_adjw.log to track optimization progress" >&2
+    echo "NOTE: see file ${outd}/tm_ll_adjw.log to track optimization progress" >&2
 
     # Execute weight update algorithm
     ${bindir}/thot_ll_weight_upd -pr ${pr_val} -va ${va_opt} \
         -c ${outd}/tune_loglin.cfg -t $scorpus -r $tcorpus -i ${ll_wu_niters} \
         ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} \
-        > ${outd}/tm_adjw.out 2> ${outd}/tm_adjw.log || return 1
+        > ${outd}/tm_ll_adjw.out 2> ${outd}/tm_ll_adjw.log || return 1
+}
+
+########
+linear_interp_upd()
+{
+    ${bindir}/thot_li_weight_upd -tm ${newtmdevfile} -s $scorpus -t $tcorpus -v \
+        2> ${outd}/tm_li_adjw.log || return 1
 }
 
 ########
 create_cfg_file_for_tuned_sys()
 {
     # Obtain log-linear weights
-    smtweights=`cat ${outd}/tm_adjw.out`
+    smtweights=`cat ${outd}/tm_ll_adjw.out`
 
     # Print data regarding development files
     echo "# [SCRIPT_INFO] tool: thot_smt_tune"
@@ -499,6 +506,13 @@ tune_tm()
     echo "" >&2
     echo "- Filtering translation table for development corpus..." >&2
     filter_ttable || return 1
+
+    # Tune linear interpolation weights
+    if [ $ENABLE_UPDATE_LIWEIGHTS -eq 1 ]; then
+        echo "" >&2
+        echo "- Tuning phrase model linear interpolation weights..." >&2
+        linear_interp_upd || return 1
+    fi
 
     # Create cfg file for tuning
     create_cfg_file_for_tuning > ${outd}/tune_loglin.cfg
