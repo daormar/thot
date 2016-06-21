@@ -162,6 +162,8 @@ fi
 # Set TMP directory
 set_tmp_dir || exit 1
 
+echo "Training language model..." >&2
+
 # Split corpus into chunks of fixed size
 ${SPLIT} -l ${chunk_size} $corpus $TMP/
 
