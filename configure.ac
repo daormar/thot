@@ -475,6 +475,25 @@ AC_SUBST(DISABLE_FAST_DHSLM)
 AC_MSG_RESULT(no)
 fi
 
+# Adds an extra argument to configure (enable updating of linear interpolation weights)
+AC_MSG_CHECKING(whether to enable updating of phrase model linear interpolation weights)
+AC_ARG_ENABLE(update-liweights,[  --enable-update-liweights   enable updating of phrase mode linear interpolation weights],enable_update_liweights=yes,enable_update_liweights=no)
+dnl Yes, updating of log-linear weights enabled
+if test "$enable_update_liweights" = "yes"; then
+ AC_MSG_RESULT(yes)
+else
+ AC_MSG_RESULT(no)
+fi
+AM_CONDITIONAL([ENABLE_UPDATE_LIWEIGHTS], [test x${enable_update_liweights} = xyes])
+
+if test "$enable_update_liweights" = "yes"; then
+ ENABLE_UPDATE_LIWEIGHTS=1
+ AC_SUBST(ENABLE_UPDATE_LIWEIGHTS)
+else
+ ENABLE_UPDATE_LIWEIGHTS=0
+ AC_SUBST(ENABLE_UPDATE_LIWEIGHTS)
+fi
+
 # Adds an extra argument to configure (enable updating of log-linear weights)
 AC_MSG_CHECKING(whether to enable online updating of log-linear weights)
 AC_ARG_ENABLE(update-llweights,[  --enable-update-llweights   enable online updating of log-linear weights],enable_update_llweights=yes,enable_update_llweights=no)
