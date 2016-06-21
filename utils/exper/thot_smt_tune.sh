@@ -475,7 +475,7 @@ create_cfg_file_for_tuned_sys()
 }
 
 ########
-tune_loglin()
+tune_tm()
 {
     # Create directory for lm files
     if [ -d ${outd}/lm ]; then
@@ -496,12 +496,16 @@ tune_loglin()
     create_tm_dev_files || return 1
 
     # Filter translation table
+    echo "" >&2
+    echo "- Filtering translation table for development corpus..." >&2
     filter_ttable || return 1
 
     # Create cfg file for tuning
     create_cfg_file_for_tuning > ${outd}/tune_loglin.cfg
 
     # Tune log-linear model
+    echo "" >&2
+    echo "- Tuning log-linear model weights..." >&2
     if [ $ENABLE_DOWNHILL_LLW -eq 1 ]; then
         loglin_downhill || return 1
     else
@@ -690,10 +694,10 @@ ftol_lm=0.1
 ftol_loglin=0.001
 
 # Tune models
-echo "* Tuning language model... " >&2
+echo "* Tuning language model..." >&2
 tune_lm || exit 1
 echo "" >&2
 
-echo "* Tuning loglinear model weights... " >&2
-tune_loglin || exit 1
+echo "* Tuning translation model..." >&2
+tune_tm || exit 1
 echo "" >&2
