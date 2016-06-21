@@ -240,7 +240,7 @@ recase_output()
     echo "**** Recasing output" >&2
 
     # Determine basic raw files
-    if [ ${tok_given} = 0 ]; then
+    if [ ${tok_given} -eq 0 ]; then
         raw_src_pref=${scorpus_pref}
         raw_trg_pref=${tcorpus_pref}
     else
@@ -250,7 +250,7 @@ recase_output()
 
     # Generate raw text file for recasing
     ${bindir}/thot_gen_rtfile -s ${raw_src_pref} \
-        -t ${raw_trg_pref} -tdir $tdir > $tdir/rfile_rec || exit 1
+        -t ${raw_trg_pref} -tdir $tdir > $tdir/rfile_rec 2> ${outd}/output/${transoutd}/thot_gen_rtfile_rec.log || exit 1
       
     # Recase output
     ${bindir}/thot_recase -f ${output_file} -r $tdir/rfile_rec -w \
@@ -271,7 +271,7 @@ detok_output()
 
     # Generate raw text file for detokenizing
     ${bindir}/thot_gen_rtfile -s ${scorpus_pref} \
-        -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok || exit 1
+        -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok 2> ${outd}/output/${transoutd}/thot_gen_rtfile_detok.log || exit 1
 
     # Detokenize output
     ${bindir}/thot_detokenize -f ${output_file} -r $tdir/rfile_detok \
@@ -631,13 +631,13 @@ if [ ${notrans_given} -eq 0 ]; then
     output_file=$outd/output/${transoutd}/thot_decoder_out
 
     # Recasing stage
-    if [ ${lower_given} = 1 ]; then
+    if [ ${lower_given} -eq 1 ]; then
         # Recase
         recase_output
     fi
 
     # Detokenization stage
-    if [ ${tok_given} = 1 ]; then
+    if [ ${tok_given} -eq 1 ]; then
         # Detokenize
         detok_output
     fi
