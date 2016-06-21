@@ -50,11 +50,16 @@ else
         fi
     fi
 
-
     if [ ${t_given} -eq 0 ]; then
         echo "Error! -t parameter not given" >&2
         exit 1
     fi
+
+    # Print parameters
+    if [ ${s_given} -eq 1 ]; then
+        echo "-s is ${scorpus_pref}" >&2
+    fi
+    echo "-t is ${tcorpus_pref}" >&2
 
     # Complete prefix of target files
     tcorpus_train=${tcorpus_pref}.train
