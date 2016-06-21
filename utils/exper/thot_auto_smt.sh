@@ -22,57 +22,59 @@ version()
 ########
 usage()
 {
-    echo "thot_auto_smt           [-pr <int>]"
-    echo "                        -s <string> -t <string> -o <string>"
-    echo "                        [--skip-clean] [--tok] [--lower] [--no-trans]"
-    echo "                        [-nit <int>] [-n <int>] [-m <int>] [-ao <string>]"
-    echo "                        [-qs <string>] [-tdir <string>]"
-    echo "                        [-sdir <string>] [-debug] [--help] [--version]"
+    echo "thot_auto_smt          [-pr <int>]"
+    echo "                       -s <string> -t <string> -o <string>"
+    echo "                       [--skip-clean] [--tok] [--lower] [--no-lim] [--no-trans]"
+    echo "                       [-nit <int>] [-n <int>] [-m <int>] [-ao <string>]"
+    echo "                       [-qs <string>] [-tdir <string>]"
+    echo "                       [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
-    echo "-pr <int>               Number of processors (1 by default)"
-    echo "-s <string>             Prefix of files with source sentences (the"
-    echo "                        following suffixes are assumed: .train, .dev and .test)"
-    echo "-t <string>             Prefix of files with target sentences (the"
-    echo "                        following suffixes are assumed: .train, .dev and .test)"
-    echo "-o <string>             Output directory common to all processors"
-    echo "--skip-clean            Skip corpus cleaning stage"
-    echo "--tok                   Execute tokenization stage"
-    echo "--lower                 Execute lowercasing stage"
-    echo "--no-trans              Do not generate translations"
-    echo "-nit <int>              Number of iterations of the EM algorithm when training"
-    echo "                        single word models (5 by default)"
-    echo "-n <int>                Order of the n-gram language models (4 by default)"
-    echo "-m <int>                Maximum target phrase length during phrase model"
-    echo "                        estimation (10 by default)"
-    echo "-ao <string>            Operation between alignments to be executed"
-    echo "                        (and|or|sum|sym1|sym2|grd)."
-    echo "-qs <string>            Specific options to be given to the qsub"
-    echo "                        command (example: -qs \"-l pmem=1gb\")"
-    echo "                        NOTES:"
-    echo "                         a) ignore this if not using a PBS cluster"
-    echo "                         b) -qs option may be crucial to ensure the correct"
-    echo "                            execution of the tool. The main purpose of -qs"
-    echo "                            is to reserve the required cluster resources."
-    echo "                            If the necessary resources are not met the"
-    echo "                            execution will abort."
-    echo "                            Resources are reserved in different ways depending"
-    echo "                            on the cluster software. For instance, if using SGE"
-    echo "                            software, -qs \"-l h_vmem=1G,h_rt=10:00:00\","
-    echo "                            requests 1GB of virtual memory and a time limit"
-    echo "                            of 10 hours" 
-    echo "-tdir <string>          Directory for temporary files (/tmp by default)."
-    echo "                        NOTES:"
-    echo "                         a) give absolute paths when using pbs clusters"
-    echo "                         b) ensure there is enough disk space in the partition"
-    echo "-sdir <string>          Absolute path of a directory common to all"
-    echo "                        processors. If not given, \$HOME will be used."
-    echo "                        NOTES:"
-    echo "                         a) give absolute paths when using pbs clusters"
-    echo "                         b) ensure there is enough disk space in the partition"
-    echo "-debug                  After ending, do not delete temporary files"
-    echo "                        (for debugging purposes)"
-    echo "--help                  Display this help and exit"
-    echo "--version               Output version information and exit"
+    echo "-pr <int>              Number of processors (1 by default)"
+    echo "-s <string>            Prefix of files with source sentences (the"
+    echo "                       following suffixes are assumed: .train, .dev and .test)"
+    echo "-t <string>            Prefix of files with target sentences (the"
+    echo "                       following suffixes are assumed: .train, .dev and .test)"
+    echo "-o <string>            Output directory common to all processors"
+    echo "--skip-clean           Skip corpus cleaning stage"
+    echo "--tok                  Execute tokenization stage"
+    echo "--lower                Execute lowercasing stage"
+    echo "--no-lim               Do not limit size of files used to train recaser and"
+    echo "                       detokenizer (requires more memory)"
+    echo "--no-trans             Do not generate translations"
+    echo "-nit <int>             Number of iterations of the EM algorithm when training"
+    echo "                       single word models (5 by default)"
+    echo "-n <int>               Order of the n-gram language models (4 by default)"
+    echo "-m <int>               Maximum target phrase length during phrase model"
+    echo "                       estimation (10 by default)"
+    echo "-ao <string>           Operation between alignments to be executed"
+    echo "                       (and|or|sum|sym1|sym2|grd)."
+    echo "-qs <string>           Specific options to be given to the qsub"
+    echo "                       command (example: -qs \"-l pmem=1gb\")"
+    echo "                       NOTES:"
+    echo "                        a) ignore this if not using a PBS cluster"
+    echo "                        b) -qs option may be crucial to ensure the correct"
+    echo "                           execution of the tool. The main purpose of -qs"
+    echo "                           is to reserve the required cluster resources."
+    echo "                           If the necessary resources are not met the"
+    echo "                           execution will abort."
+    echo "                           Resources are reserved in different ways depending"
+    echo "                           on the cluster software. For instance, if using SGE"
+    echo "                           software, -qs \"-l h_vmem=1G,h_rt=10:00:00\","
+    echo "                           requests 1GB of virtual memory and a time limit"
+    echo "                           of 10 hours" 
+    echo "-tdir <string>         Directory for temporary files (/tmp by default)."
+    echo "                       NOTES:"
+    echo "                        a) give absolute paths when using pbs clusters"
+    echo "                        b) ensure there is enough disk space in the partition"
+    echo "-sdir <string>         Absolute path of a directory common to all"
+    echo "                       processors. If not given, \$HOME will be used."
+    echo "                       NOTES:"
+    echo "                        a) give absolute paths when using pbs clusters"
+    echo "                        b) ensure there is enough disk space in the partition"
+    echo "-debug                 After ending, do not delete temporary files"
+    echo "                       (for debugging purposes)"
+    echo "--help                 Display this help and exit"
+    echo "--version              Output version information and exit"
 }
 
 ########
@@ -249,8 +251,8 @@ recase_output()
     fi
 
     # Generate raw text file for recasing
-    ${bindir}/thot_gen_rtfile -s ${raw_src_pref} \
-        -t ${raw_trg_pref} -tdir $tdir > $tdir/rfile_rec 2> ${outd}/output/${transoutd}/thot_gen_rtfile_rec.log || exit 1
+    ${bindir}/thot_gen_rtfile -s ${raw_src_pref} -t ${raw_trg_pref} \
+        ${nolim_opt} -tdir $tdir > $tdir/rfile_rec 2> ${outd}/output/${transoutd}/thot_gen_rtfile_rec.log || exit 1
       
     # Recase output
     ${bindir}/thot_recase -f ${output_file} -r $tdir/rfile_rec -w \
@@ -270,8 +272,8 @@ detok_output()
     echo "**** Detokenizing output" >&2
 
     # Generate raw text file for detokenizing
-    ${bindir}/thot_gen_rtfile -s ${scorpus_pref} \
-        -t ${tcorpus_pref} -tdir $tdir > $tdir/rfile_detok 2> ${outd}/output/${transoutd}/thot_gen_rtfile_detok.log || exit 1
+    ${bindir}/thot_gen_rtfile -s ${scorpus_pref} -t ${tcorpus_pref} \
+        ${nolim_opt} -tdir $tdir > $tdir/rfile_detok 2> ${outd}/output/${transoutd}/thot_gen_rtfile_detok.log || exit 1
 
     # Detokenize output
     ${bindir}/thot_detokenize -f ${output_file} -r $tdir/rfile_detok \
@@ -300,6 +302,7 @@ o_given=0
 skip_clean_given=0
 tok_given=0
 lower_given=0
+nolim_given=0
 notrans_given=0
 nit_given=0
 nitval=5
@@ -353,6 +356,9 @@ while [ $# -ne 0 ]; do
         "--tok") tok_given=1
             ;;
         "--lower") lower_given=1
+            ;;
+        "--no-lim") nolim_given=1
+            nolim_opt="--no-lim"
             ;;
         "--no-trans") notrans_given=1
             ;;
