@@ -62,7 +62,7 @@ else
     ## Process parameters
     
     # Create directory for temporary files
-    TMPDIR=`mktemp -d $tdir/thot_detokenize_tdir_XXXXX`
+    TMPDIR=`mktemp -d $tdir/thot_recase_tdir_XXXXX`
     trap "rm -rf $TMPDIR 2>/dev/null" EXIT
 
     ## Train models
