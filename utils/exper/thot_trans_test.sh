@@ -22,8 +22,8 @@ version()
 ########
 usage()
 {
-    echo "thot_trans_test         [-pr <int>]"
-    echo "                        -d <string> -t <string> [--tok] [--lower]"
+    echo "thot_trans_test         [-pr <int>] -d <string>"
+    echo "                        -t <string> [--tok] [--lower] [--no-lim]"
     echo "                        [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
@@ -33,6 +33,8 @@ usage()
     echo "-t <string>             File with test corpus to be translated"
     echo "--tok                   Execute tokenization stage"
     echo "--lower                 Execute lowercasing stage"
+    echo "--no-lim                Do not limit size of files used to train recaser and"
+    echo "                        detokenizer (requires more memory)"
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTES:"
@@ -189,7 +191,7 @@ recase_output()
     rfile_rec=`mktemp $tdir/rfile_rec.XXXXX`
 
     # Generate raw text file for recasing
-    ${bindir}/thot_gen_rtfile -t ${raw_trg_pref} -tdir $tdir > ${rfile_rec} || exit 1
+    ${bindir}/thot_gen_rtfile -t ${raw_trg_pref} ${nolim_opt} -tdir $tdir > ${rfile_rec} || exit 1
 
     # Add additional info to raw text file
     cat ${raw_test_corpus} >> ${rfile_rec}
@@ -215,7 +217,7 @@ detok_output()
     rfile_detok=`mktemp $tdir/rfile_detok.XXXXX`
 
     # Generate raw text file for detokenizing
-    ${bindir}/thot_gen_rtfile -t ${tcorpus_pref} -tdir $tdir > ${rfile_detok} || exit 1
+    ${bindir}/thot_gen_rtfile -t ${tcorpus_pref} ${nolim_opt} -tdir $tdir > ${rfile_detok} || exit 1
 
     # Add additional info to raw text file
     cat ${test_corpus_opt} >> ${rfile_detok}
@@ -282,6 +284,9 @@ while [ $# -ne 0 ]; do
         "--tok") tok_given=1
             ;;
         "--lower") lower_given=1
+            ;;
+        "--no-lim") nolim_given=1
+            nolim_opt="--no-lim"
             ;;
         "-qs") shift
             if [ $# -ne 0 ]; then
