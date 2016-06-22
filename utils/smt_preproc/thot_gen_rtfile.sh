@@ -93,7 +93,7 @@ else
     if [ ${nolim_given} -eq 1 ]; then
         cat ${tcorpus_train}
     else
-        maxfsize=800000
+        maxfsize=500000
         ${bindir}/thot_shuffle 31415 ${tcorpus_train} > $TMPDIR/tcorpus_train_shuff
         head -n ${maxfsize} $TMPDIR/tcorpus_train_shuff
     fi
