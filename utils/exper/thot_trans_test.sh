@@ -191,7 +191,8 @@ recase_output()
     rfile_rec=`mktemp $tdir/rfile_rec.XXXXX`
 
     # Generate raw text file for recasing
-    ${bindir}/thot_gen_rtfile -t ${raw_trg_pref} ${nolim_opt} -tdir $tdir > ${rfile_rec} || exit 1
+    ${bindir}/thot_gen_rtfile -t ${raw_trg_pref} ${nolim_opt} -tdir $tdir \
+        > ${rfile_rec} 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_gen_rtfile_rec.log || exit 1
 
     # Add additional info to raw text file
     cat ${raw_test_corpus} >> ${rfile_rec}
@@ -217,7 +218,8 @@ detok_output()
     rfile_detok=`mktemp $tdir/rfile_detok.XXXXX`
 
     # Generate raw text file for detokenizing
-    ${bindir}/thot_gen_rtfile -t ${tcorpus_pref} ${nolim_opt} -tdir $tdir > ${rfile_detok} || exit 1
+    ${bindir}/thot_gen_rtfile -t ${tcorpus_pref} ${nolim_opt} -tdir $tdir \
+        > ${rfile_detok} 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_gen_rtfile_detok.log || exit 1
 
     # Add additional info to raw text file
     cat ${test_corpus_opt} >> ${rfile_detok}
