@@ -3,12 +3,14 @@
 
 ########
 if [ $# -lt 1 ]; then
-    echo "thot_gen_rtfile [-s <string>] -t <string> [--no-lim] [-tdir <string>]"
+    echo "thot_gen_rtfile [-s <string>] -t <string> [-e <string>] [--no-lim]"
+    echo "                [-tdir <string>]"
     echo ""
     echo "-s <string>     Prefix of files with source sentences (the following suffixes"
     echo "                are assumed: .test)"
     echo "-t <string>     Prefix of files with target sentences (the following suffixes"
     echo "                are assumed: .train and .dev)"
+    echo "-e <string>     Incorporate extra file"
     echo "--no-lim        Do not limit size of training files (requires more memory)"
     echo "-tdir <string>  Directory for temporary files (/tmp by default)"
 else
@@ -16,6 +18,7 @@ else
     # Read parameters
     s_given=0
     t_given=0
+    e_given=0
     nolim_given=0
     tdir=/tmp
     while [ $# -ne 0 ]; do
@@ -30,6 +33,12 @@ else
             if [ $# -ne 0 ]; then
                 tcorpus_pref=$1
                 t_given=1
+            fi
+            ;;
+        "-e") shift
+            if [ $# -ne 0 ]; then
+                ecorpus=$1
+                e_given=1
             fi
             ;;
         "--no-lim") nolim_given=1
@@ -50,7 +59,14 @@ else
 
         # Check existence of files
         if [ ! -f ${scorpus_test} ]; then
-            echo "Warning! file ${file} does not exist" >&2
+            echo "Warning! file ${scorpus_test} does not exist" >&2
+        fi
+    fi
+
+    if [ ${e_given} -eq 1 ]; then
+        # Check existence of files
+        if [ ! -f ${ecorpus} ]; then
+            echo "Warning! file ${ecorpus} does not exist" >&2
         fi
     fi
 
@@ -64,6 +80,9 @@ else
         echo "-s is ${scorpus_pref}" >&2
     fi
     echo "-t is ${tcorpus_pref}" >&2
+    if [ ${e_given} -eq 1 ]; then
+        echo "-e is ${ecorpus}" >&2
+    fi
     echo "--no-lim is ${nolim_given}" >&2
 
     # Complete prefix of target files
@@ -122,5 +141,10 @@ else
                 head -n ${maxfsize} $TMPDIR/scorpus_test_shuff
             fi
         fi
+    fi
+
+    # Add extra corpus if given
+    if [ ${e_given} -eq 1 ]; then
+        cat ${ecorpus}
     fi
 fi
