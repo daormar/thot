@@ -103,9 +103,9 @@ standard_train()
     # Constrain number of translation options
     echo "* Constraining number of translation options... " >&2
     $bindir/thot_pbs_get_nbest_for_trg -t ${outp}.ttable -n ${to_val} \
-        -p -T $tdir -o ${outp}.restrict_trans_opt.ttable || exit 1
+        -p -T $tdir -o ${outp}_restrict_trans_opt.ttable || exit 1
     rm ${outp}.ttable || exit 1
-    mv ${outp}.restrict_trans_opt.ttable ${outp}.ttable || exit 1
+    mv ${outp}_restrict_trans_opt.ttable ${outp}.ttable || exit 1
     echo "" >&2
 
     # Generate additional phrase model parameter files
