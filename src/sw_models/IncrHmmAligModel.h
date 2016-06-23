@@ -306,6 +306,8 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
        // Execute Forward algorithm to obtain the log-probability of a
        // sentence pair
    double lgProbGivenForwardMatrix(const Vector<Vector<double> >& forwardMatrix);
+   LgProb calcVitIbm1LgProb(const Vector<WordIndex>& srcSentIndexVector,
+                            const Vector<WordIndex>& trgSentIndexVector);
    virtual LgProb calcSumIBM1LgProb(const Vector<WordIndex>& sSent,
                                     const Vector<WordIndex>& tSent,
                                     int verbose);

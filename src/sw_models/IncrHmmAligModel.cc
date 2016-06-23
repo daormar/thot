@@ -1608,8 +1608,36 @@ LgProb IncrHmmAligModel::calcLgProbPhr(const Vector<WordIndex>& sPhr,
                                        const Vector<WordIndex>& tPhr,
                                        int verbose/*=0*/)
 {
+//  return calcVitIbm1LgProb(sPhr,tPhr);
 //  return calcSumIBM1LgProb(sPhr,tPhr,verbose);
   return noisyOrLgProb(sPhr,tPhr,verbose);
+}
+
+//-------------------------
+LgProb IncrHmmAligModel::calcVitIbm1LgProb(const Vector<WordIndex>& srcSentIndexVector,
+                                           const Vector<WordIndex>& trgSentIndexVector)
+{
+ LgProb aligLgProb;
+ LgProb lp;
+ LgProb max_lp;
+ Vector<WordIndex> nSrcSentIndexVector=addNullWordToWidxVec(srcSentIndexVector);
+
+ aligLgProb=0;
+ for(unsigned int j=0;j<trgSentIndexVector.size();++j)
+ {
+   max_lp=-FLT_MAX;
+   for(unsigned int i=0;i<nSrcSentIndexVector.size();++i)
+   {
+     lp=log((double)pts(nSrcSentIndexVector[i],trgSentIndexVector[j]));
+     if(max_lp<=lp)
+     {
+       max_lp=lp;
+     }
+   }
+   aligLgProb=aligLgProb+max_lp;
+ }
+
+ return aligLgProb;
 }
 
 //-------------------------
