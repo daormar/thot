@@ -82,6 +82,29 @@ bool anjiMatrix::init_nth_entry(unsigned int n,
 }
 
 //-------------------------
+bool anjiMatrix::reset_entries(void)
+{
+  if(anji_maxnsize>0)
+  {
+        // Reset values
+    for(unsigned int n=0;n<anji.size();++n)
+    {
+      for(unsigned int j=0;j<anji[n].size();++j)
+      {
+        for(unsigned int i=0;i<anji[n][j].size();++i)
+        {
+          anji[n][j][i]=INVALID_ANJI_VAL;
+        }
+      }
+    }
+
+    return OK;
+  }
+  else
+    return ERROR;
+}
+
+//-------------------------
 void anjiMatrix::set_maxnsize(unsigned int _anji_maxnsize)
 {
   clear();

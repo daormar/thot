@@ -71,7 +71,8 @@ class anjiMatrix
                        PositionIndex nslen,
                        PositionIndex tlen,
                        unsigned int& mapped_n);
-
+   bool reset_entries(void);
+   
       // Functions to handle anji
    void set_maxnsize(unsigned int _anji_maxnsize);
    unsigned int get_maxnsize(void);
