@@ -167,11 +167,12 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
   for(unsigned int n=sentPairRange.first;n<=sentPairRange.second;++n)
   {
         // Calculate sufficient statistics
+
         // Init vars for n'th sample
-    unsigned int np=1;
     Vector<WordIndex> srcSent=getSrcSent(n);
     Vector<WordIndex> nsrcSent=extendWithNullWord(srcSent);
     Vector<WordIndex> trgSent=getTrgSent(n);
+    unsigned int n_aux=1;
 
         // Process sentence pair only if both sentences are not empty
     if(!srcSent.empty() && !trgSent.empty())
@@ -198,22 +199,22 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
             // Set value of anji_aux
         for(unsigned int i=0;i<nsrcSent.size();++i)
         {
-          anji_aux.set(np,j,i,numVec[i]/sum_anji_num_forall_s);
+          anji_aux.set(n_aux,j,i,numVec[i]/sum_anji_num_forall_s);
         }
       }
 
           // Gather sufficient statistics
       if(anji_aux.n_size()!=0)
       {
-        for(unsigned int j=0;j<anji_aux.nj_size(np);++j)
+        for(unsigned int j=1;j<=trgSent.size();++j)
         {
-          for(unsigned int i=0;i<anji_aux.nji_size(np,j);++i)
+          for(unsigned int i=0;i<nsrcSent.size();++i)
           {
-                // Fill variables for np,j,i
-            fillEmAuxVars(n,np,i,j,nsrcSent,trgSent,weight);
+                // Fill variables for n_aux,j,i
+            fillEmAuxVars(n,n_aux,i,j,nsrcSent,trgSent,weight);
 
                 // Update anji
-            anji.set(n,j,i,anji_aux.get_invp(np,j,i));
+            anji.set(n,j,i,anji_aux.get_invp(n_aux,j,i));
           }
         }
             // clear anji_aux data structure
@@ -248,7 +249,7 @@ double IncrIbm1AligModel::calc_anji_num(const Vector<WordIndex>& nsrcSent,
 
 //-------------------------   
 void IncrIbm1AligModel::fillEmAuxVars(unsigned int n,
-                                      unsigned int np,
+                                      unsigned int n_aux,
                                       PositionIndex i,
                                       PositionIndex j,
                                       const Vector<WordIndex>& nsrcSent,
@@ -265,13 +266,13 @@ void IncrIbm1AligModel::fillEmAuxVars(unsigned int n,
       weighted_curr_anji=SMOOTHING_WEIGHTED_ANJI;
   }
 
-  float weighted_new_anji=(float)weight*anji_aux.get_invp(np,j,i);
+  float weighted_new_anji=(float)weight*anji_aux.get_invp(n_aux,j,i);
   if(weighted_new_anji!=0 && weighted_new_anji<SMOOTHING_WEIGHTED_ANJI)
     weighted_new_anji=SMOOTHING_WEIGHTED_ANJI;
 
   WordIndex s=nsrcSent[i];
   WordIndex t=trgSent[j-1];
-
+  
       // Obtain logarithms
   float weighted_curr_lanji;
   if(weighted_curr_anji==0)
