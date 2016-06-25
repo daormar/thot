@@ -100,7 +100,7 @@ define_init_model_info()
     
         # Generate model for void corpus
         ${bindir}/thot_gen_sw_model -s ${init_model_dir}/void_corpus -t ${init_model_dir}/void_corpus \
-            ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl -o ${init_model_dir}/model > ${init_model_dir}/log 2>&1 ; return 1
+            ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl -o ${init_model_dir}/model > ${init_model_dir}/log 2>&1 || return 1
      
         # Add complete vocabularies
         ${bindir}/thot_get_swm_vocab ${srcf} "NULL UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.svcb
@@ -210,7 +210,7 @@ proc_chunk()
         # Estimate model from chunk
         ${bindir}/thot_gen_sw_model -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${init_model_pref} ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl \
-            -o ${models_per_chunk_dir}/${out_chunk} ; return 1
+            -o ${models_per_chunk_dir}/${out_chunk} || return 1
         if [ ${debug} -ne 0 -a "${file_format}" = "text" ]; then
             echo "Entries in initial table: "`wc -l ${models_per_chunk_dir}/${out_chunk}.${lex_ext} | $AWK '{printf"%s",$1}'` >> $TMP/log
         fi            
@@ -223,7 +223,7 @@ proc_chunk()
         # Estimate model from chunk
         ${bindir}/thot_gen_sw_model -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${filtered_model_dir}/model ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl \
-            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}.log ; return 1
+            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}.log || return 1
     fi
 
     # Sort counts individually but do not append them
