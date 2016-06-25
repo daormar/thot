@@ -63,10 +63,16 @@ class anjm1ip_anjiMatrix
 {
   public:
 
-      // Constructor
+       // Constructor
    anjm1ip_anjiMatrix(void);
-   
-      // Functions to handle anjm1ip_anji
+
+       // Function to initialize entries
+   bool init_nth_entry(unsigned int n,
+                       PositionIndex nslen,
+                       PositionIndex tlen,
+                       unsigned int& mapped_n);
+       
+       // Functions to handle anjm1ip_anji
    void set_maxnsize(unsigned int _anjm1ip_anji_maxnsize);
    unsigned int get_maxnsize(void);
    unsigned int n_size(void);
@@ -81,18 +87,35 @@ class anjm1ip_anjiMatrix
             unsigned int i,
             unsigned int ip,
             float f);
+   void set_fast(unsigned int mapped_n,
+                 unsigned int j,
+                 unsigned int i,
+                 unsigned int ip,
+                 float f);
    float get(unsigned int n,
              unsigned int j,
              unsigned int i,
              unsigned int ip);
+   float get_fast(unsigned int mapped_n,
+                  unsigned int j,
+                  unsigned int i,
+                  unsigned int ip);
    float get_invp(unsigned int n,
                   unsigned int j,
                   unsigned int i,
                   unsigned int ip);
+   float get_invp_fast(unsigned int mapped_n,
+                       unsigned int j,
+                       unsigned int i,
+                       unsigned int ip);
    float get_invlogp(unsigned int n,
                      unsigned int j,
                      unsigned int i,
                      unsigned int ip);
+   float get_invlogp_fast(unsigned int mapped_n,
+                          unsigned int j,
+                          unsigned int i,
+                          unsigned int ip);
 
        // load function
    bool load(const char* prefFileName);
@@ -104,6 +127,7 @@ class anjm1ip_anjiMatrix
    void clear(void);
 
   protected:
+   
    unsigned int anjm1ip_anji_maxnsize;
    unsigned int anjm1ip_anji_pointer;
    Vector<Vector<Vector<Vector<float> > > > anjm1ip_anji;
@@ -123,6 +147,7 @@ class anjm1ip_anjiMatrix
                         unsigned int &np);
        // Return index for n in anji, the index is created if it does
        // not exist
+   
    pair<bool,unsigned int> read_np_to_n_vector(unsigned int np);
    pair<bool,unsigned int> read_n_to_np_vector(unsigned int n);
    void update_np_to_n_vector(unsigned int np,
