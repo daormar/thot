@@ -211,8 +211,6 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    anjm1ip_anjiMatrix lanjm1ip_anji_aux;
    Vector<Vector<double> > alphaMatrix;
    Vector<Vector<double> > betaMatrix;
-   /* DoubleMatrix alpha_values; */
-   /* DoubleMatrix beta_values;    */
        // Data structures for manipulating expected values
 
    LexAuxVar lexAuxVar;
@@ -330,15 +328,17 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
                    const Vector<WordIndex>& nsrcSent,
                    const Vector<WordIndex>& trgSent,
                    const Count& weight);
+   void fillEmAuxVarsLex(unsigned int mapped_n,
+                         unsigned int mapped_n_aux,
+                         PositionIndex i,
+                         PositionIndex j,
+                         const Vector<WordIndex>& nsrcSent,
+                         const Vector<WordIndex>& trgSent,
+                         const Count& weight);
    void calc_lanjm1ip_anji(unsigned int n,
                            const Vector<WordIndex>& nsrcSent,
                            const Vector<WordIndex>& trgSent,
                            const Count& weight);
-   void gatherAligSuffStats(unsigned int n,
-                            unsigned int np,
-                            const Vector<WordIndex>& nsrcSent,
-                            const Vector<WordIndex>& trgSent,
-                            const Count& weight);
    bool isFirstNullAligPar(PositionIndex ip,
                            unsigned int slen,
                            PositionIndex i);
@@ -357,6 +357,18 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
                                      PositionIndex j,
                                      const Vector<WordIndex>& nsrcSent,
                                      const Vector<WordIndex>& trgSent);
+   void gatherAligSuffStats(unsigned int mapped_n,
+                            unsigned int mapped_n_aux,
+                            const Vector<WordIndex>& nsrcSent,
+                            const Vector<WordIndex>& trgSent,
+                            const Count& weight);
+   void fillEmAuxVarsAlig(unsigned int mapped_n,
+                          unsigned int mapped_n_aux,
+                          PositionIndex slen,
+                          PositionIndex ip,
+                          PositionIndex i,
+                          PositionIndex j,
+                          const Count& weight);
    void getHmmAligInfo(PositionIndex ip,
                        unsigned int slen,
                        PositionIndex i,
@@ -375,55 +387,11 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
                     PositionIndex j,
                     const Vector<WordIndex>& nsrcSent,
                     const Vector<WordIndex>& trgSent);
-   double log_alpha_precalc(PositionIndex slen,
-                            PositionIndex i,
-                            PositionIndex j,
-                            const Vector<WordIndex>& nsrcSent,
-                            const Vector<WordIndex>& trgSent);
-   /* double log_alpha_standalone(PositionIndex slen, */
-   /*                             PositionIndex i, */
-   /*                             PositionIndex j, */
-   /*                             const Vector<WordIndex>& nsrcSent, */
-   /*                             const Vector<WordIndex>& trgSent); */
-   /* double log_alpha_rec(PositionIndex slen, */
-   /*                      PositionIndex i, */
-   /*                      PositionIndex j, */
-   /*                      const Vector<WordIndex>& nsrcSent, */
-   /*                      const Vector<WordIndex>& trgSent); */
    double log_beta(PositionIndex slen,
                    PositionIndex i,
                    PositionIndex j,
                    const Vector<WordIndex>& nsrcSent,
                    const Vector<WordIndex>& trgSent);
-   double log_beta_precalc(PositionIndex slen,
-                           PositionIndex i,
-                           PositionIndex j,
-                           const Vector<WordIndex>& nsrcSent,
-                           const Vector<WordIndex>& trgSent);
-   /* double log_beta_standalone(PositionIndex slen, */
-   /*                            PositionIndex i, */
-   /*                            PositionIndex j, */
-   /*                            const Vector<WordIndex>& nsrcSent, */
-   /*                            const Vector<WordIndex>& trgSent); */
-   /* double log_beta_rec(PositionIndex slen, */
-   /*                     PositionIndex i, */
-   /*                     PositionIndex j, */
-   /*                     const Vector<WordIndex>& nsrcSent, */
-   /*                     const Vector<WordIndex>& trgSent); */
-   void fillEmAuxVarsLex(unsigned int n,
-                         unsigned int np,
-                         PositionIndex i,
-                         PositionIndex j,
-                         const Vector<WordIndex>& nsrcSent,
-                         const Vector<WordIndex>& trgSent,
-                         const Count& weight);
-   void fillEmAuxVarsAlig(unsigned int n,
-                          unsigned int np,
-                          PositionIndex slen,
-                          PositionIndex ip,
-                          PositionIndex i,
-                          PositionIndex j,
-                          const Count& weight);
    void updateParsLex(void);
    void updateParsAlig(void);
    virtual float obtainLogNewSuffStat(float lcurrSuffStat,

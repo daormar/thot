@@ -172,7 +172,14 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
     Vector<WordIndex> srcSent=getSrcSent(n);
     Vector<WordIndex> nsrcSent=extendWithNullWord(srcSent);
     Vector<WordIndex> trgSent=getTrgSent(n);
+
+        // Initialize anji and anji_aux
+    unsigned int mapped_n;
+    anji.init_nth_entry(n,nsrcSent.size(),trgSent.size(),mapped_n);
+    
     unsigned int n_aux=1;
+    unsigned int mapped_n_aux;
+    anji_aux.init_nth_entry(n_aux,nsrcSent.size(),trgSent.size(),mapped_n_aux);
 
         // Process sentence pair only if both sentences are not empty
     if(!srcSent.empty() && !trgSent.empty())
@@ -199,7 +206,7 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
             // Set value of anji_aux
         for(unsigned int i=0;i<nsrcSent.size();++i)
         {
-          anji_aux.set(n_aux,j,i,numVec[i]/sum_anji_num_forall_s);
+          anji_aux.set_fast(mapped_n_aux,j,i,numVec[i]/sum_anji_num_forall_s);
         }
       }
 
@@ -211,10 +218,10 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
           for(unsigned int i=0;i<nsrcSent.size();++i)
           {
                 // Fill variables for n_aux,j,i
-            fillEmAuxVars(n,n_aux,i,j,nsrcSent,trgSent,weight);
+            fillEmAuxVars(mapped_n,mapped_n_aux,i,j,nsrcSent,trgSent,weight);
 
                 // Update anji
-            anji.set(n,j,i,anji_aux.get_invp(n_aux,j,i));
+            anji.set_fast(mapped_n,j,i,anji_aux.get_invp(n_aux,j,i));
           }
         }
             // clear anji_aux data structure
@@ -248,8 +255,8 @@ double IncrIbm1AligModel::calc_anji_num(const Vector<WordIndex>& nsrcSent,
 }
 
 //-------------------------   
-void IncrIbm1AligModel::fillEmAuxVars(unsigned int n,
-                                      unsigned int n_aux,
+void IncrIbm1AligModel::fillEmAuxVars(unsigned int mapped_n,
+                                      unsigned int mapped_n_aux,
                                       PositionIndex i,
                                       PositionIndex j,
                                       const Vector<WordIndex>& nsrcSent,
@@ -258,7 +265,7 @@ void IncrIbm1AligModel::fillEmAuxVars(unsigned int n,
 {
       // Init vars
   float weighted_curr_anji=0;
-  float curr_anji=anji.get(n,j,i);
+  float curr_anji=anji.get_fast(mapped_n,j,i);
   if(curr_anji!=INVALID_ANJI_VAL)
   {
     weighted_curr_anji=(float)weight*curr_anji;
@@ -266,7 +273,7 @@ void IncrIbm1AligModel::fillEmAuxVars(unsigned int n,
       weighted_curr_anji=SMOOTHING_WEIGHTED_ANJI;
   }
 
-  float weighted_new_anji=(float)weight*anji_aux.get_invp(n_aux,j,i);
+  float weighted_new_anji=(float)weight*anji_aux.get_invp_fast(mapped_n_aux,j,i);
   if(weighted_new_anji!=0 && weighted_new_anji<SMOOTHING_WEIGHTED_ANJI)
     weighted_new_anji=SMOOTHING_WEIGHTED_ANJI;
 

@@ -98,21 +98,21 @@ double IncrIbm2AligModel::calc_anji_num_alig(PositionIndex i,
 }
 
 //-------------------------   
-void IncrIbm2AligModel::fillEmAuxVars(unsigned int n,
-                                      unsigned int np,
+void IncrIbm2AligModel::fillEmAuxVars(unsigned int mapped_n,
+                                      unsigned int mapped_n_aux,
                                       PositionIndex i,
                                       PositionIndex j,
                                       const Vector<WordIndex>& nsrcSent,
                                       const Vector<WordIndex>& trgSent,
                                       const Count& weight)
 {
-  IncrIbm1AligModel::fillEmAuxVars(n,np,i,j,nsrcSent,trgSent,weight);
-  fillEmAuxVarsAlig(n,np,i,j,nsrcSent.size()-1,trgSent.size(),weight);
+  IncrIbm1AligModel::fillEmAuxVars(mapped_n,mapped_n_aux,i,j,nsrcSent,trgSent,weight);
+  fillEmAuxVarsAlig(mapped_n,mapped_n_aux,i,j,nsrcSent.size()-1,trgSent.size(),weight);
 }
 
 //-------------------------   
-void IncrIbm2AligModel::fillEmAuxVarsAlig(unsigned int n,
-                                          unsigned int np,
+void IncrIbm2AligModel::fillEmAuxVarsAlig(unsigned int mapped_n,
+                                          unsigned int mapped_n_aux,
                                           PositionIndex i,
                                           PositionIndex j,
                                           PositionIndex slen,
@@ -120,7 +120,7 @@ void IncrIbm2AligModel::fillEmAuxVarsAlig(unsigned int n,
                                           const Count& weight)
 {
       // Init vars
-  float curr_anji=anji.get(n,j,i);
+  float curr_anji=anji.get_fast(mapped_n,j,i);
   float weighted_curr_anji=0;
   if(curr_anji!=INVALID_ANJI_VAL)
   {
@@ -129,7 +129,7 @@ void IncrIbm2AligModel::fillEmAuxVarsAlig(unsigned int n,
       weighted_curr_anji=SMOOTHING_WEIGHTED_ANJI;
   }
 
-  float weighted_new_anji=(float)weight*anji_aux.get_invp(np,j,i);
+  float weighted_new_anji=(float)weight*anji_aux.get_invp_fast(mapped_n_aux,j,i);
   if(weighted_new_anji<SMOOTHING_WEIGHTED_ANJI)
     weighted_new_anji=SMOOTHING_WEIGHTED_ANJI;
   

@@ -229,8 +229,8 @@ class IncrIbm1AligModel: public _incrSwAligModel<Vector<Prob> >
                                 const Vector<WordIndex>& trgSent,
                                 unsigned int i,
                                 unsigned int j);
-   virtual void fillEmAuxVars(unsigned int n,
-                              unsigned int np,
+   virtual void fillEmAuxVars(unsigned int mapped_n,
+                              unsigned int mapped_n_aux,
                               PositionIndex i,
                               PositionIndex j,
                               const Vector<WordIndex>& nsrcSent,

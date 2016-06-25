@@ -633,9 +633,16 @@ void IncrHmmAligModel::calc_lanji(unsigned int n,
                                   const Vector<WordIndex>& trgSent,
                                   const Count& weight)
 {
-  unsigned int np=1;
-
   PositionIndex slen=getSrcLen(nsrcSent);
+
+        // Initialize data structures
+  unsigned int mapped_n;
+  lanji.init_nth_entry(n,nsrcSent.size(),trgSent.size(),mapped_n);
+    
+  unsigned int n_aux=1;
+  unsigned int mapped_n_aux;
+  lanji_aux.init_nth_entry(n_aux,nsrcSent.size(),trgSent.size(),mapped_n_aux);
+
 
       // Calculate new estimation of lanji
   for(unsigned int j=1;j<=trgSent.size();++j)
@@ -666,7 +673,7 @@ void IncrHmmAligModel::calc_lanji(unsigned int n,
       if(lanji_val>EXP_VAL_LOG_MAX) lanji_val=EXP_VAL_LOG_MAX;
       if(lanji_val<EXP_VAL_LOG_MIN) lanji_val=EXP_VAL_LOG_MIN;
           // Store expected value
-      lanji_aux.set(np,j,i,lanji_val);
+      lanji_aux.set_fast(mapped_n_aux,j,i,lanji_val);
     }
   }
 
@@ -676,10 +683,10 @@ void IncrHmmAligModel::calc_lanji(unsigned int n,
     for(unsigned int i=1;i<=nsrcSent.size();++i)
     {
           // Reestimate lexical parameters
-      fillEmAuxVarsLex(n,np,i,j,nsrcSent,trgSent,weight);
+      fillEmAuxVarsLex(mapped_n,mapped_n_aux,i,j,nsrcSent,trgSent,weight);
       
           // Update lanji
-      lanji.set(n,j,i,lanji_aux.get_invlogp(np,j,i));
+      lanji.set_fast(mapped_n,j,i,lanji_aux.get_invlogp(n_aux,j,i));
     }
   }
   
@@ -688,15 +695,67 @@ void IncrHmmAligModel::calc_lanji(unsigned int n,
 }
 
 //-------------------------   
+void IncrHmmAligModel::fillEmAuxVarsLex(unsigned int mapped_n,
+                                        unsigned int mapped_n_aux,
+                                        PositionIndex i,
+                                        PositionIndex j,
+                                        const Vector<WordIndex>& nsrcSent,
+                                        const Vector<WordIndex>& trgSent,
+                                        const Count& weight)
+{
+      // Init vars
+  float curr_lanji=lanji.get_fast(mapped_n,j,i);
+  float weighted_curr_lanji=SMALL_LG_NUM;
+  if(curr_lanji!=INVALID_ANJI_VAL)
+  {
+    weighted_curr_lanji=(float)log((float)weight)+curr_lanji;
+    if(weighted_curr_lanji<SMALL_LG_NUM)
+      weighted_curr_lanji=SMALL_LG_NUM;
+  }
+
+  float weighted_new_lanji=(float)log((float)weight)+lanji_aux.get_invlogp_fast(mapped_n_aux,j,i);
+  if(weighted_new_lanji<SMALL_LG_NUM)
+    weighted_new_lanji=SMALL_LG_NUM;
+
+  WordIndex s=nsrcSent[i-1];
+  WordIndex t=trgSent[j-1];
+
+      // Store contributions
+  while(lexAuxVar.size()<=s)
+  {
+    LexAuxVarElem lexAuxVarElem;
+    lexAuxVar.push_back(lexAuxVarElem);
+  }
+  
+  LexAuxVarElem::iterator lexAuxVarElemIter=lexAuxVar[s].find(t);
+  if(lexAuxVarElemIter!=lexAuxVar[s].end())
+  {
+    if(weighted_curr_lanji!=SMALL_LG_NUM)
+      lexAuxVarElemIter->second.first=MathFuncs::lns_sumlog_float(lexAuxVarElemIter->second.first,weighted_curr_lanji);
+    lexAuxVarElemIter->second.second=MathFuncs::lns_sumlog_float(lexAuxVarElemIter->second.second,weighted_new_lanji);
+  }
+  else
+  {
+    lexAuxVar[s][t]=make_pair(weighted_curr_lanji,weighted_new_lanji);
+  }
+}
+
+//-------------------------   
 void IncrHmmAligModel::calc_lanjm1ip_anji(unsigned int n,
                                           const Vector<WordIndex>& nsrcSent,
                                           const Vector<WordIndex>& trgSent,
                                           const Count& weight)
 {
-  unsigned int np=1;
-
   PositionIndex slen=getSrcLen(nsrcSent);
 
+      // Initialize data structures
+  unsigned int mapped_n;
+  lanjm1ip_anji.init_nth_entry(n,nsrcSent.size(),trgSent.size(),mapped_n);
+    
+  unsigned int n_aux=1;
+  unsigned int mapped_n_aux;
+  lanjm1ip_anji_aux.init_nth_entry(n_aux,nsrcSent.size(),trgSent.size(),mapped_n_aux);
+  
       // Calculate new estimation of lanjm1ip_anji
   for(unsigned int j=1;j<=trgSent.size();++j)
   {
@@ -770,7 +829,7 @@ void IncrHmmAligModel::calc_lanjm1ip_anji(unsigned int n,
         if(lanjm1ip_anji_val>EXP_VAL_LOG_MAX) lanjm1ip_anji_val=EXP_VAL_LOG_MAX;
         if(lanjm1ip_anji_val<EXP_VAL_LOG_MIN) lanjm1ip_anji_val=EXP_VAL_LOG_MIN;
             // Store expected value
-        lanjm1ip_anji_aux.set(np,j,i,0,lanjm1ip_anji_val);
+        lanjm1ip_anji_aux.set_fast(mapped_n_aux,j,i,0,lanjm1ip_anji_val);
       }
       else
       {
@@ -785,22 +844,22 @@ void IncrHmmAligModel::calc_lanjm1ip_anji(unsigned int n,
                 // Smooth expected value
             if(lanjm1ip_anji_val>EXP_VAL_LOG_MAX) lanjm1ip_anji_val=EXP_VAL_LOG_MAX;
             if(lanjm1ip_anji_val<EXP_VAL_LOG_MIN) lanjm1ip_anji_val=EXP_VAL_LOG_MIN;
-            lanjm1ip_anji_aux.set(np,j,i,ip,lanjm1ip_anji_val);
+            lanjm1ip_anji_aux.set_fast(mapped_n_aux,j,i,ip,lanjm1ip_anji_val);
           }
         }
       }
     }
   }
       // Gather alignment sufficient statistics
-  gatherAligSuffStats(n,np,nsrcSent,trgSent,weight);
+  gatherAligSuffStats(mapped_n,mapped_n_aux,nsrcSent,trgSent,weight);
 
       // clear lanjm1ip_anji_aux data structure
   lanjm1ip_anji_aux.clear();
 }
 
 //-------------------------   
-void IncrHmmAligModel::gatherAligSuffStats(unsigned int n,
-                                           unsigned int np,
+void IncrHmmAligModel::gatherAligSuffStats(unsigned int mapped_n,
+                                           unsigned int mapped_n_aux,
                                            const Vector<WordIndex>& nsrcSent,
                                            const Vector<WordIndex>& trgSent,
                                            const Count& weight)
@@ -814,12 +873,11 @@ void IncrHmmAligModel::gatherAligSuffStats(unsigned int n,
     {
       if(j==1)
       {
-            // Obtain information about alignment
             // Reestimate alignment parameters
-        fillEmAuxVarsAlig(n,np,slen,0,i,j,weight);
+        fillEmAuxVarsAlig(mapped_n,mapped_n_aux,slen,0,i,j,weight);
             
             // Update lanjm1ip_anji
-        lanjm1ip_anji.set(n,j,i,0,lanjm1ip_anji_aux.get_invlogp(np,j,i,0));
+        lanjm1ip_anji.set_fast(mapped_n,j,i,0,lanjm1ip_anji_aux.get_invlogp_fast(mapped_n_aux,j,i,0));
       }
       else
       {
@@ -830,13 +888,55 @@ void IncrHmmAligModel::gatherAligSuffStats(unsigned int n,
           if(validAlig)
           {
                 // Reestimate alignment parameters
-            fillEmAuxVarsAlig(n,np,slen,ip,i,j,weight);
+            fillEmAuxVarsAlig(mapped_n,mapped_n_aux,slen,ip,i,j,weight);
                 // Update lanjm1ip_anji
-            lanjm1ip_anji.set(n,j,i,ip,lanjm1ip_anji_aux.get_invlogp(np,j,i,ip));
+            lanjm1ip_anji.set_fast(mapped_n,j,i,ip,lanjm1ip_anji_aux.get_invlogp_fast(mapped_n_aux,j,i,ip));
           }
         }
       }
     }
+  }
+}
+
+//-------------------------   
+void IncrHmmAligModel::fillEmAuxVarsAlig(unsigned int mapped_n,
+                                         unsigned int mapped_n_aux,
+                                         PositionIndex slen,
+                                         PositionIndex ip,
+                                         PositionIndex i,
+                                         PositionIndex j,
+                                         const Count& weight)
+{
+      // Init vars
+  float curr_lanjm1ip_anji=lanjm1ip_anji.get_fast(mapped_n,j,i,ip);
+  float weighted_curr_lanjm1ip_anji=SMALL_LG_NUM;
+  if(curr_lanjm1ip_anji!=INVALID_ANJM1IP_ANJI_VAL)
+  {
+    weighted_curr_lanjm1ip_anji=(float)log((float)weight)+curr_lanjm1ip_anji;
+    if(weighted_curr_lanjm1ip_anji<SMALL_LG_NUM)
+      weighted_curr_lanjm1ip_anji=SMALL_LG_NUM;
+  }
+
+  float weighted_new_lanjm1ip_anji=(float)log((float)weight)+lanjm1ip_anji_aux.get_invlogp_fast(mapped_n_aux,j,i,ip);
+  if(weighted_new_lanjm1ip_anji<SMALL_LG_NUM)
+    weighted_new_lanjm1ip_anji=SMALL_LG_NUM;
+
+      // Init aSourceHmm data structure
+  aSourceHmm asHmm;
+  asHmm.prev_i=ip;
+  asHmm.slen=slen;
+
+      // Gather local suff. statistics
+  AligAuxVar::iterator aligAuxVarIter=aligAuxVar.find(make_pair(asHmm,i));
+  if(aligAuxVarIter!=aligAuxVar.end())
+  {
+    if(weighted_curr_lanjm1ip_anji!=SMALL_LG_NUM)
+      aligAuxVarIter->second.first=MathFuncs::lns_sumlog_float(aligAuxVarIter->second.first,weighted_curr_lanjm1ip_anji);
+   aligAuxVarIter->second.second=MathFuncs::lns_sumlog_float(aligAuxVarIter->second.second,weighted_new_lanjm1ip_anji);
+  }
+  else
+  {
+    aligAuxVar[make_pair(asHmm,i)]=make_pair(weighted_curr_lanjm1ip_anji,weighted_new_lanjm1ip_anji);
   }
 }
 
@@ -964,183 +1064,23 @@ PositionIndex IncrHmmAligModel::getModifiedIp(PositionIndex ip,
 }
 
 //-------------------------   
-double IncrHmmAligModel::log_alpha(PositionIndex slen,
+double IncrHmmAligModel::log_alpha(PositionIndex /*slen*/,
                                    PositionIndex i,
                                    PositionIndex j,
-                                   const Vector<WordIndex>& nsrcSent,
-                                   const Vector<WordIndex>& trgSent)
-{
-  return log_alpha_precalc(slen,i,j,nsrcSent,trgSent);
-//  return log_alpha_standalone(slen,i,j,nsrcSent,trgSent);
-}
-
-//-------------------------   
-double IncrHmmAligModel::log_alpha_precalc(PositionIndex /*slen*/,
-                                           PositionIndex i,
-                                           PositionIndex j,
-                                           const Vector<WordIndex>& /*nsrcSent*/,
-                                           const Vector<WordIndex>& /*trgSent*/)
+                                   const Vector<WordIndex>& /*nsrcSent*/,
+                                   const Vector<WordIndex>& /*trgSent*/)
 {
   return alphaMatrix[i][j];
 }
 
-// //-------------------------   
-// double IncrHmmAligModel::log_alpha_standalone(PositionIndex slen,
-//                                              PositionIndex i,
-//                                              PositionIndex j,
-//                                              const Vector<WordIndex>& nsrcSent,
-//                                              const Vector<WordIndex>& trgSent)
-// {
-//   double cached_alpha=alpha_values.get(i,j);
-//   if(cached_alpha!=INVALID_DM_VAL)
-//   {
-//     return cached_alpha;
-//   }
-//   else
-//   {
-//     double d=log_alpha_rec(slen,i,j,nsrcSent,trgSent);
-//     alpha_values.set(i,j,d);
-//     return d;
-//   }
-// }
-
-// //-------------------------   
-// double IncrHmmAligModel::log_alpha_rec(PositionIndex slen,
-//                                        PositionIndex i,
-//                                        PositionIndex j,
-//                                        const Vector<WordIndex>& nsrcSent,
-//                                        const Vector<WordIndex>& trgSent)
-// {
-//   if(j==1)
-//   {
-//     return cached_logaProb(0,slen,i,nsrcSent,trgSent)+cachedLexLogProbs[i][j];
-//   }
-//   else
-//   {
-//     double result;
-//     for(PositionIndex i_tilde=1;i_tilde<=nsrcSent.size();++i_tilde)
-//     {
-//       double lp=log_alpha(slen,i_tilde,j-1,nsrcSent,trgSent)+
-//         cached_logaProb(i_tilde,slen,i,nsrcSent,trgSent)+
-//         cachedLexLogProbs[i][j];
-//       if(i_tilde==1) result=lp;
-//       else result=MathFuncs::lns_sumlog(lp,result);
-//     }
-//     return result;
-//   }
-// }
-
 //-------------------------   
-double IncrHmmAligModel::log_beta(PositionIndex slen,
+double IncrHmmAligModel::log_beta(PositionIndex /*slen*/,
                                   PositionIndex i,
                                   PositionIndex j,
-                                  const Vector<WordIndex>& nsrcSent,
-                                  const Vector<WordIndex>& trgSent)
-{
-  return log_beta_precalc(slen,i,j,nsrcSent,trgSent);
-//  return log_beta_standalone(slen,i,j,nsrcSent,trgSent);
-}
-
-//-------------------------   
-double IncrHmmAligModel::log_beta_precalc(PositionIndex /*slen*/,
-                                          PositionIndex i,
-                                          PositionIndex j,
-                                          const Vector<WordIndex>& /*nsrcSent*/,
-                                          const Vector<WordIndex>& /*trgSent*/)
+                                  const Vector<WordIndex>& /*nsrcSent*/,
+                                  const Vector<WordIndex>& /*trgSent*/)
 {
   return betaMatrix[i][j];
-}
-
-// //-------------------------   
-// double IncrHmmAligModel::log_beta_standalone(PositionIndex slen,
-//                                              PositionIndex i,
-//                                              PositionIndex j,
-//                                              const Vector<WordIndex>& nsrcSent,
-//                                              const Vector<WordIndex>& trgSent)
-// {
-//   double cached_beta=beta_values.get(i,j);
-//   if(cached_beta!=INVALID_DM_VAL)
-//   {
-//     return cached_beta;
-//   }
-//   else
-//   {
-//     double d=log_beta_rec(slen,i,j,nsrcSent,trgSent);
-//     beta_values.set(i,j,d);
-//     return d;
-//   }
-// }
-
-// //-------------------------   
-// double IncrHmmAligModel::log_beta_rec(PositionIndex slen,
-//                                       PositionIndex i,
-//                                       PositionIndex j,
-//                                       const Vector<WordIndex>& nsrcSent,
-//                                       const Vector<WordIndex>& trgSent)
-// {
-//   if(j==trgSent.size())
-//   {
-//     return log(1.0);
-//   }
-//   else
-//   {
-//     double result;
-//     for(PositionIndex i_tilde=1;i_tilde<=nsrcSent.size();++i_tilde)
-//     {
-//       LgProb lp=cached_logaProb(i,slen,i_tilde,nsrcSent,trgSent)+
-//         cachedLexLogProbs[i_tilde][j+1]+
-//         log_beta(slen,i_tilde,j+1,nsrcSent,trgSent);
-//       if(i_tilde==1) result=lp;
-//       else result=MathFuncs::lns_sumlog(lp,result);
-//     }
-//     return result;
-//   }
-// }
-
-//-------------------------   
-void IncrHmmAligModel::fillEmAuxVarsLex(unsigned int n,
-                                        unsigned int np,
-                                        PositionIndex i,
-                                        PositionIndex j,
-                                        const Vector<WordIndex>& nsrcSent,
-                                        const Vector<WordIndex>& trgSent,
-                                        const Count& weight)
-{
-      // Init vars
-  float curr_lanji=lanji.get(n,j,i);
-  float weighted_curr_lanji=SMALL_LG_NUM;
-  if(curr_lanji!=INVALID_ANJI_VAL)
-  {
-    weighted_curr_lanji=(float)log((float)weight)+curr_lanji;
-    if(weighted_curr_lanji<SMALL_LG_NUM)
-      weighted_curr_lanji=SMALL_LG_NUM;
-  }
-
-  float weighted_new_lanji=(float)log((float)weight)+lanji_aux.get_invlogp(np,j,i);
-  if(weighted_new_lanji<SMALL_LG_NUM)
-    weighted_new_lanji=SMALL_LG_NUM;
-
-  WordIndex s=nsrcSent[i-1];
-  WordIndex t=trgSent[j-1];
-
-      // Store contributions
-  while(lexAuxVar.size()<=s)
-  {
-    LexAuxVarElem lexAuxVarElem;
-    lexAuxVar.push_back(lexAuxVarElem);
-  }
-  
-  LexAuxVarElem::iterator lexAuxVarElemIter=lexAuxVar[s].find(t);
-  if(lexAuxVarElemIter!=lexAuxVar[s].end())
-  {
-    if(weighted_curr_lanji!=SMALL_LG_NUM)
-      lexAuxVarElemIter->second.first=MathFuncs::lns_sumlog_float(lexAuxVarElemIter->second.first,weighted_curr_lanji);
-    lexAuxVarElemIter->second.second=MathFuncs::lns_sumlog_float(lexAuxVarElemIter->second.second,weighted_new_lanji);
-  }
-  else
-  {
-    lexAuxVar[s][t]=make_pair(weighted_curr_lanji,weighted_new_lanji);
-  }
 }
 
 //-------------------------   
@@ -1183,48 +1123,6 @@ void IncrHmmAligModel::updateParsLex(void)
   }
       // Clear auxiliary variables
   lexAuxVar.clear();
-}
-
-//-------------------------   
-void IncrHmmAligModel::fillEmAuxVarsAlig(unsigned int n,
-                                         unsigned int np,
-                                         PositionIndex slen,
-                                         PositionIndex ip,
-                                         PositionIndex i,
-                                         PositionIndex j,
-                                         const Count& weight)
-{
-      // Init vars
-  float curr_lanjm1ip_anji=lanjm1ip_anji.get(n,j,i,ip);
-  float weighted_curr_lanjm1ip_anji=SMALL_LG_NUM;
-  if(curr_lanjm1ip_anji!=INVALID_ANJM1IP_ANJI_VAL)
-  {
-    weighted_curr_lanjm1ip_anji=(float)log((float)weight)+curr_lanjm1ip_anji;
-    if(weighted_curr_lanjm1ip_anji<SMALL_LG_NUM)
-      weighted_curr_lanjm1ip_anji=SMALL_LG_NUM;
-  }
-
-  float weighted_new_lanjm1ip_anji=(float)log((float)weight)+lanjm1ip_anji_aux.get_invlogp(np,j,i,ip);
-  if(weighted_new_lanjm1ip_anji<SMALL_LG_NUM)
-    weighted_new_lanjm1ip_anji=SMALL_LG_NUM;
-
-      // Init aSourceHmm data structure
-  aSourceHmm asHmm;
-  asHmm.prev_i=ip;
-  asHmm.slen=slen;
-
-      // Gather local suff. stats.
-  AligAuxVar::iterator aligAuxVarIter=aligAuxVar.find(make_pair(asHmm,i));
-  if(aligAuxVarIter!=aligAuxVar.end())
-  {
-    if(weighted_curr_lanjm1ip_anji!=SMALL_LG_NUM)
-      aligAuxVarIter->second.first=MathFuncs::lns_sumlog_float(aligAuxVarIter->second.first,weighted_curr_lanjm1ip_anji);
-   aligAuxVarIter->second.second=MathFuncs::lns_sumlog_float(aligAuxVarIter->second.second,weighted_new_lanjm1ip_anji);
-  }
-  else
-  {
-    aligAuxVar[make_pair(asHmm,i)]=make_pair(weighted_curr_lanjm1ip_anji,weighted_new_lanjm1ip_anji);
-  }
 }
 
 //-------------------------   
@@ -1912,8 +1810,6 @@ void IncrHmmAligModel::clear(void)
   lanjm1ip_anji_aux.clear();
   alphaMatrix.clear();
   betaMatrix.clear();
-  // alpha_values.clear();
-  // beta_values.clear();
   incrLexTable.clear();
   incrHmmAligTable.clear();
   sentLengthModel.clear();
