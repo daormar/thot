@@ -853,7 +853,9 @@ gen_log_err_files()
         while [ $nit -le ${niters} ]; do
             echo "*** EM iteration ${nit} out of $niters" >> ${output}.genswm_err
             for f in ${models_per_chunk_dir}/*_proc_n${nit}.log; do
-                cat $f >> ${output}.genswm_err
+                if [ -f $f ]; then
+                    cat $f >> ${output}.genswm_err
+                fi
             done
 
             if [ -f ${curr_tables_dir}/merge_lex_n${nit}.log ]; then 
@@ -870,7 +872,10 @@ gen_log_err_files()
 
             nit=`expr $nit + 1`
         done
-        cat ${curr_tables_dir}/generate_final_model.log >> ${output}.genswm_err
+
+        if [ -f ${curr_tables_dir}/generate_final_model.log ]; then
+            cat ${curr_tables_dir}/generate_final_model.log >> ${output}.genswm_err
+        fi
     fi
 }
 
