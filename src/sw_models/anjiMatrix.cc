@@ -324,8 +324,8 @@ void anjiMatrix::set_fast(unsigned int mapped_n,
                           unsigned int i,
                           float f)
 {
-      // Set value
-  anji[mapped_n][j][i]=f;
+  if(anji_maxnsize>0)
+    anji[mapped_n][j][i]=f;
 }
 
 //-------------------------   
@@ -350,7 +350,10 @@ float anjiMatrix::get_fast(unsigned int mapped_n,
                            unsigned int j,
                            unsigned int i)
 {
-  return anji[mapped_n][j][i];
+  if(anji_maxnsize>0)
+    return anji[mapped_n][j][i];
+  else
+    return INVALID_ANJI_VAL;
 }
 
 //-------------------------   

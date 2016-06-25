@@ -170,7 +170,8 @@ void anjm1ip_anjiMatrix::set_fast(unsigned int mapped_n,
                                   unsigned int ip,
                                   float f)
 {
-  anjm1ip_anji[mapped_n][j][i][ip]=f;
+  if(anjm1ip_anji_maxnsize>0)
+    anjm1ip_anji[mapped_n][j][i][ip]=f;
 }
 
 //-------------------------
@@ -198,7 +199,10 @@ float anjm1ip_anjiMatrix::get_fast(unsigned int mapped_n,
                                    unsigned int i,
                                    unsigned int ip)
 {
-  return anjm1ip_anji[mapped_n][j][i][ip];
+  if(anjm1ip_anji_maxnsize>0)
+    return anjm1ip_anji[mapped_n][j][i][ip];
+  else
+    return INVALID_ANJM1IP_ANJI_VAL;
 }
 
 //-------------------------   
