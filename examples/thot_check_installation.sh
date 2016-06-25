@@ -82,7 +82,7 @@ echo ""
 echo "**** Checking thot_tm_train..."
 echo ""
 ${bindir}/thot_tm_train -s ${scorpus_train} -t ${tcorpus_train} \
-    -o $tmpdir/tm -n 5 -tdir $debugdir -sdir ${debugdir} ${qs_opt} "${qs_par}" -debug
+    -o $tmpdir/tm -nit 5 -tdir $debugdir -sdir ${debugdir} ${qs_opt} "${qs_par}" -debug
 if test $? -eq 0 ; then
     echo "... Done"
 else
