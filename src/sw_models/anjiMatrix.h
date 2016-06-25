@@ -65,7 +65,13 @@ class anjiMatrix
 
       // Constructor
    anjiMatrix(void);
-   
+
+       // Function to initialize entries
+   bool init_nth_entry(unsigned int n,
+                       PositionIndex nslen,
+                       PositionIndex tlen,
+                       unsigned int& mapped_n);
+
       // Functions to handle anji
    void set_maxnsize(unsigned int _anji_maxnsize);
    unsigned int get_maxnsize(void);
@@ -77,15 +83,28 @@ class anjiMatrix
             unsigned int j,
             unsigned int i,
             float f);
+   void set_fast(unsigned int mapped_n,
+                 unsigned int j,
+                 unsigned int i,
+                 float f);
    float get(unsigned int n,
              unsigned int j,
              unsigned int i);
+   float get_fast(unsigned int mapped_n,
+                  unsigned int j,
+                  unsigned int i);
    float get_invp(unsigned int n,
                   unsigned int j,
                   unsigned int i);
+   float get_invp_fast(unsigned int mapped_n,
+                       unsigned int j,
+                       unsigned int i);
    float get_invlogp(unsigned int n,
                      unsigned int j,
                      unsigned int i);
+   float get_invlogp_fast(unsigned int mapped_n,
+                          unsigned int j,
+                          unsigned int i);
 
        // load function
    bool load(const char* prefFileName);
