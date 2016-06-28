@@ -66,7 +66,7 @@ class anjiMatrix
       // Constructor
    anjiMatrix(void);
 
-       // Function to initialize entries
+       // Functions to initialize entries
    bool init_nth_entry(unsigned int n,
                        PositionIndex nslen,
                        PositionIndex tlen,
