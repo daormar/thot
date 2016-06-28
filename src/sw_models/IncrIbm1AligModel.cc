@@ -182,60 +182,14 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
     Vector<WordIndex> nsrcSent=extendWithNullWord(srcSent);
     Vector<WordIndex> trgSent=getTrgSent(n);
 
+    Count weight;
+    sentenceHandler.getCount(n,weight);
+
         // Process sentence pair only if both sentences are not empty
     if(sentenceLengthIsOk(srcSent) && sentenceLengthIsOk(trgSent))
     {
-          // Initialize anji and anji_aux
-      unsigned int mapped_n;
-      anji.init_nth_entry(n,nsrcSent.size(),trgSent.size(),mapped_n);
-    
-      unsigned int n_aux=1;
-      unsigned int mapped_n_aux;
-      anji_aux.init_nth_entry(n_aux,nsrcSent.size(),trgSent.size(),mapped_n_aux);
-
-      Count weight;
-      sentenceHandler.getCount(n,weight);
-
-          // Calculate new estimation of anji
-      for(unsigned int j=1;j<=trgSent.size();++j)
-      {
-            // Obtain sum_anji_num_forall_s
-        double sum_anji_num_forall_s=0;
-        Vector<double> numVec;
-        for(unsigned int i=0;i<nsrcSent.size();++i)
-        {
-              // Smooth numerator
-          double d=calc_anji_num(nsrcSent,trgSent,i,j);
-          if(d<SMOOTHING_ANJI_NUM) d=SMOOTHING_ANJI_NUM;
-              // Add contribution to sum
-          sum_anji_num_forall_s+=d;
-              // Store num in numVec
-          numVec.push_back(d);
-        }
-            // Set value of anji_aux
-        for(unsigned int i=0;i<nsrcSent.size();++i)
-        {
-          anji_aux.set_fast(mapped_n_aux,j,i,numVec[i]/sum_anji_num_forall_s);
-        }
-      }
-
-          // Gather sufficient statistics
-      if(anji_aux.n_size()!=0)
-      {
-        for(unsigned int j=1;j<=trgSent.size();++j)
-        {
-          for(unsigned int i=0;i<nsrcSent.size();++i)
-          {
-                // Fill variables for n_aux,j,i
-            fillEmAuxVars(mapped_n,mapped_n_aux,i,j,nsrcSent,trgSent,weight);
-
-                // Update anji
-            anji.set_fast(mapped_n,j,i,anji_aux.get_invp(n_aux,j,i));
-          }
-        }
-            // clear anji_aux data structure
-        anji_aux.clear();
-      }
+          // Calculate sufficient statistics for anji values
+      calc_anji(n,nsrcSent,trgSent,weight);
     }
     else
     {
@@ -244,6 +198,62 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
         cerr<<"Warning, training pair "<<n+1<<" discarded due to sentence length (slen: "<<srcSent.size()<<" , tlen: "<<trgSent.size()<<")"<<endl;
       }
     }
+  }
+}
+
+//-------------------------   
+void IncrIbm1AligModel::calc_anji(unsigned int n,
+                                  const Vector<WordIndex>& nsrcSent,
+                                  const Vector<WordIndex>& trgSent,
+                                  const Count& weight)
+{
+      // Initialize anji and anji_aux
+  unsigned int mapped_n;
+  anji.init_nth_entry(n,nsrcSent.size(),trgSent.size(),mapped_n);
+    
+  unsigned int n_aux=1;
+  unsigned int mapped_n_aux;
+  anji_aux.init_nth_entry(n_aux,nsrcSent.size(),trgSent.size(),mapped_n_aux);
+
+      // Calculate new estimation of anji
+  for(unsigned int j=1;j<=trgSent.size();++j)
+  {
+        // Obtain sum_anji_num_forall_s
+    double sum_anji_num_forall_s=0;
+    Vector<double> numVec;
+    for(unsigned int i=0;i<nsrcSent.size();++i)
+    {
+          // Smooth numerator
+      double d=calc_anji_num(nsrcSent,trgSent,i,j);
+      if(d<SMOOTHING_ANJI_NUM) d=SMOOTHING_ANJI_NUM;
+          // Add contribution to sum
+      sum_anji_num_forall_s+=d;
+          // Store num in numVec
+      numVec.push_back(d);
+    }
+        // Set value of anji_aux
+    for(unsigned int i=0;i<nsrcSent.size();++i)
+    {
+      anji_aux.set_fast(mapped_n_aux,j,i,numVec[i]/sum_anji_num_forall_s);
+    }
+  }
+
+      // Gather sufficient statistics
+  if(anji_aux.n_size()!=0)
+  {
+    for(unsigned int j=1;j<=trgSent.size();++j)
+    {
+      for(unsigned int i=0;i<nsrcSent.size();++i)
+      {
+            // Fill variables for n_aux,j,i
+        fillEmAuxVars(mapped_n,mapped_n_aux,i,j,nsrcSent,trgSent,weight);
+
+            // Update anji
+        anji.set_fast(mapped_n,j,i,anji_aux.get_invp(n_aux,j,i));
+      }
+    }
+        // clear anji_aux data structure
+    anji_aux.clear();
   }
 }
 
