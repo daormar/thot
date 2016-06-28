@@ -101,7 +101,7 @@ pair<double,double> IncrIbm1AligModel::loglikelihoodForPairRange(pair<unsigned i
         // Add log-likelihood
     Vector<WordIndex> nthSrcSent=getSrcSent(n);
     Vector<WordIndex> nthTrgSent=getTrgSent(n);
-    if(!nthSrcSent.empty() && !nthTrgSent.empty())
+    if(sentenceLengthIsOk(nthSrcSent) && sentenceLengthIsOk(nthTrgSent))
     {
       loglikelihood+=(double)calcLgProb(nthSrcSent,nthTrgSent,verbosity);
       ++numSents;
@@ -159,9 +159,18 @@ Vector<WordIndex> IncrIbm1AligModel::getTrgSent(unsigned int n)
   return trgs;
 }
 
+//-------------------------
+bool IncrIbm1AligModel::sentenceLengthIsOk(const Vector<WordIndex> sentence)
+{
+  if(sentence.empty() || sentence.size()>IBM_SWM_MAX_SENT_LENGTH)
+    return false;
+  else
+    return true;
+}
+
 //-------------------------   
 void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sentPairRange,
-                                              int /*verbosity*/)
+                                              int verbosity)
 {
       // Iterate over the training samples
   for(unsigned int n=sentPairRange.first;n<=sentPairRange.second;++n)
@@ -173,17 +182,17 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
     Vector<WordIndex> nsrcSent=extendWithNullWord(srcSent);
     Vector<WordIndex> trgSent=getTrgSent(n);
 
-        // Initialize anji and anji_aux
-    unsigned int mapped_n;
-    anji.init_nth_entry(n,nsrcSent.size(),trgSent.size(),mapped_n);
-    
-    unsigned int n_aux=1;
-    unsigned int mapped_n_aux;
-    anji_aux.init_nth_entry(n_aux,nsrcSent.size(),trgSent.size(),mapped_n_aux);
-
         // Process sentence pair only if both sentences are not empty
-    if(!srcSent.empty() && !trgSent.empty())
+    if(sentenceLengthIsOk(srcSent) && sentenceLengthIsOk(trgSent))
     {
+          // Initialize anji and anji_aux
+      unsigned int mapped_n;
+      anji.init_nth_entry(n,nsrcSent.size(),trgSent.size(),mapped_n);
+    
+      unsigned int n_aux=1;
+      unsigned int mapped_n_aux;
+      anji_aux.init_nth_entry(n_aux,nsrcSent.size(),trgSent.size(),mapped_n_aux);
+
       Count weight;
       sentenceHandler.getCount(n,weight);
 
@@ -226,6 +235,13 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
         }
             // clear anji_aux data structure
         anji_aux.clear();
+      }
+    }
+    else
+    {
+      if(verbosity)
+      {
+        cerr<<"Warning, training pair "<<n+1<<" discarded due to sentence length (slen: "<<srcSent.size()<<" , tlen: "<<trgSent.size()<<")"<<endl;
       }
     }
   }
@@ -495,12 +511,7 @@ LgProb IncrIbm1AligModel::obtainBestAlignment(Vector<WordIndex> srcSentIndexVect
                                               Vector<WordIndex> trgSentIndexVector,
                                               WordAligMatrix& bestWaMatrix)
 {
-  if(srcSentIndexVector.empty() || trgSentIndexVector.empty())
-  {
-    bestWaMatrix.init(srcSentIndexVector.size(),trgSentIndexVector.size());    
-    return SMALL_LG_NUM;
-  }
-  else
+  if(sentenceLengthIsOk(srcSentIndexVector) && sentenceLengthIsOk(trgSentIndexVector))
   {
     Vector<PositionIndex> bestAlig;
     LgProb lgProb=logaProbIbm1(srcSentIndexVector.size(),
@@ -515,6 +526,11 @@ LgProb IncrIbm1AligModel::obtainBestAlignment(Vector<WordIndex> srcSentIndexVect
     bestWaMatrix.putAligVec(bestAlig);
 
     return lgProb;
+  }
+  else
+  {
+    bestWaMatrix.init(srcSentIndexVector.size(),trgSentIndexVector.size());    
+    return SMALL_LG_NUM;
   }
 }
 
@@ -584,13 +600,13 @@ LgProb IncrIbm1AligModel::calcLgProb(const Vector<WordIndex>& sSent,
                                      const Vector<WordIndex>& tSent,
                                      int verbose)
 {
-  if(sSent.empty() || tSent.empty())
+  if(sentenceLengthIsOk(sSent) && sentenceLengthIsOk(tSent))
   {
-    return SMALL_LG_NUM;
+    return calcSumIBM1LgProb(addNullWordToWidxVec(sSent),tSent,verbose);
   }
   else
   {
-    return calcSumIBM1LgProb(addNullWordToWidxVec(sSent),tSent,verbose);
+    return SMALL_LG_NUM;
   }
 }
 

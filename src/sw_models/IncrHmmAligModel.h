@@ -247,6 +247,8 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    Vector<WordIndex> getTrgSent(unsigned int n);   
        // get n-th target sentence
 
+   bool sentenceLengthIsOk(const Vector<WordIndex> sentence);
+   
    // Auxiliary functions to load and print models
    bool loadLexSmIntFactor(const char* lexSmIntFactorFile);
    bool printLexSmIntFactor(const char* lexSmIntFactorFile);

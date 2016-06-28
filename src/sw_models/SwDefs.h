@@ -48,7 +48,8 @@ using namespace std;
 
 //--------------- Constants ------------------------------------------
 
-#define SW_PROB_SMOOTH         1e-7
-#define SWM_MAX_SENT_LENGTH 2048
+#define SW_PROB_SMOOTH          1e-7
+#define IBM_SWM_MAX_SENT_LENGTH 1024
+#define HMM_SWM_MAX_SENT_LENGTH  200
 
 #endif

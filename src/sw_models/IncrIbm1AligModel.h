@@ -209,7 +209,9 @@ class IncrIbm1AligModel: public _incrSwAligModel<Vector<Prob> >
 
    Vector<WordIndex> getTrgSent(unsigned int n);   
        // get n-th target sentence
-         
+
+   bool sentenceLengthIsOk(const Vector<WordIndex> sentence);
+
    // Functions to handle nloglikelihood
    void set_nloglikelihood(unsigned int n,
                            double d);

@@ -108,7 +108,7 @@ pair<double,double> IncrHmmAligModel::loglikelihoodForPairRange(pair<unsigned in
         // Add log-likelihood
     Vector<WordIndex> nthSrcSent=getSrcSent(n);
     Vector<WordIndex> nthTrgSent=getTrgSent(n);
-    if(!nthSrcSent.empty() && !nthTrgSent.empty())
+    if(sentenceLengthIsOk(nthSrcSent) && sentenceLengthIsOk(nthTrgSent))
     {
       loglikelihood+=(double)calcLgProb(nthSrcSent,nthTrgSent,verbosity);
       ++numSents;
@@ -371,6 +371,15 @@ Vector<WordIndex> IncrHmmAligModel::getTrgSent(unsigned int n)
   return trgs;
 }
 
+//-------------------------
+bool IncrHmmAligModel::sentenceLengthIsOk(const Vector<WordIndex> sentence)
+{
+  if(sentence.empty() || sentence.size()>HMM_SWM_MAX_SENT_LENGTH)
+    return false;
+  else
+    return true;
+}
+
 //-------------------------   
 bool IncrHmmAligModel::loadLexSmIntFactor(const char* lexSmIntFactorFile)
 {
@@ -500,7 +509,7 @@ void IncrHmmAligModel::initCachedLexicalLps(const Vector<WordIndex>& nSrcSentInd
 
 //-------------------------   
 void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sentPairRange,
-                                             int /*verbosity*/)
+                                             int verbosity)
 {
       // Iterate over the training samples
   for(unsigned int n=sentPairRange.first;n<=sentPairRange.second;++n)
@@ -510,8 +519,8 @@ void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sen
     Vector<WordIndex> nsrcSent=extendWithNullWord(srcSent);
     Vector<WordIndex> trgSent=getTrgSent(n);
 
-        // Process sentence pair only if both sentences are not empty
-    if(!srcSent.empty() && !trgSent.empty())
+        // Do not process sentence pair if sentences are empty or exceed the maximum length
+    if(sentenceLengthIsOk(srcSent) && sentenceLengthIsOk(trgSent))
     {
       Count weight;
       sentenceHandler.getCount(n,weight);
@@ -535,11 +544,16 @@ void IncrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sen
           // Clear cached alpha and beta values
       alphaMatrix.clear();
       betaMatrix.clear();
-      // alpha_values.clear();
-      // beta_values.clear();
 
           // Clear cached lexical log prob
       cachedLexLogProbs.clear();
+    }
+    else
+    {
+      if(verbosity)
+      {
+        cerr<<"Warning, training pair "<<n+1<<" discarded due to sentence length (slen: "<<srcSent.size()<<" , tlen: "<<trgSent.size()<<")"<<endl;
+      }
     }
   }
       // Clear cached alignment log prob
@@ -1217,12 +1231,7 @@ LgProb IncrHmmAligModel::obtainBestAlignmentCached(Vector<WordIndex> srcSentInde
                                                    CachedHmmAligLgProb& cached_logap,
                                                    WordAligMatrix& bestWaMatrix)
 {
-  if(srcSentIndexVector.empty() || trgSentIndexVector.empty())
-  {
-    bestWaMatrix.init(srcSentIndexVector.size(),trgSentIndexVector.size());    
-    return SMALL_LG_NUM;
-  }
-  else
+  if(sentenceLengthIsOk(srcSentIndexVector) && sentenceLengthIsOk(trgSentIndexVector))
   {
         // Obtain extended source vector
     Vector<WordIndex> nSrcSentIndexVector=extendWithNullWord(srcSentIndexVector);
@@ -1246,6 +1255,12 @@ LgProb IncrHmmAligModel::obtainBestAlignmentCached(Vector<WordIndex> srcSentInde
 
     return slm_lp+vit_lp;
   }
+  else
+  {
+    bestWaMatrix.init(srcSentIndexVector.size(),trgSentIndexVector.size());    
+    return SMALL_LG_NUM;
+  }
+
 }
 
 //-------------------------
@@ -1389,11 +1404,7 @@ LgProb IncrHmmAligModel::calcLgProb(const Vector<WordIndex>& sSent,
                                     const Vector<WordIndex>& tSent,
                                     int verbose)
 {
-  if(sSent.empty() || tSent.empty())
-  {
-    return SMALL_LG_NUM;
-  }
-  else
+  if(sentenceLengthIsOk(sSent) && sentenceLengthIsOk(tSent))
   {
         // Calculate sentence length model lgprob
     LgProb slp=sentLenLgProb(sSent.size(),tSent.size());
@@ -1411,6 +1422,11 @@ LgProb IncrHmmAligModel::calcLgProb(const Vector<WordIndex>& sSent,
     
     return slp+flp;
   }
+  else
+  {
+    return SMALL_LG_NUM;
+  }
+
 }
 
 //-------------------------
