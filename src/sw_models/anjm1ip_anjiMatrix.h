@@ -66,12 +66,13 @@ class anjm1ip_anjiMatrix
        // Constructor
    anjm1ip_anjiMatrix(void);
 
-       // Function to initialize entries
+       // Functions to initialize entries
    bool init_nth_entry(unsigned int n,
                        PositionIndex nslen,
                        PositionIndex tlen,
                        unsigned int& mapped_n);
-       
+   bool reset_entries(void);
+
        // Functions to handle anjm1ip_anji
    void set_maxnsize(unsigned int _anjm1ip_anji_maxnsize);
    unsigned int get_maxnsize(void);

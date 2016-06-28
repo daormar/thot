@@ -80,6 +80,32 @@ bool anjm1ip_anjiMatrix::init_nth_entry(unsigned int n,
 }
 
 //-------------------------
+bool anjm1ip_anjiMatrix::reset_entries(void)
+{
+  if(anjm1ip_anji_maxnsize>0)
+  {
+        // Reset values
+    for(unsigned int n=0;n<anjm1ip_anji.size();++n)
+    {
+      for(unsigned int j=0;j<anjm1ip_anji[n].size();++j)
+      {
+        for(unsigned int i=0;i<anjm1ip_anji[n][j].size();++i)
+        {
+          for(unsigned int ip=0;ip<anjm1ip_anji[n][j][i].size();++ip)
+          {
+            anjm1ip_anji[n][j][i][ip]=INVALID_ANJM1IP_ANJI_VAL;
+          }
+        }
+      }
+    }
+
+    return OK;
+  }
+  else
+    return ERROR;
+}
+
+//-------------------------
 void anjm1ip_anjiMatrix::set_maxnsize(unsigned int _anjm1ip_anji_maxnsize)
 {
   clear();
