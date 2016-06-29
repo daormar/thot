@@ -55,28 +55,50 @@ bool anjm1ip_anjiMatrix::init_nth_entry(unsigned int n,
 {
   if(anjm1ip_anji_maxnsize>0)
   {
-        // Obtain value of np
+        // Obtain value of mapped_n
     map_n_in_matrix(n,mapped_n);
-
-    if(anjm1ip_anji.size()>mapped_n)
+    
+        // Check if it is required to grow in the dimension of n
+    if(anjm1ip_anji.size()<=mapped_n)
     {
-      return OK;
-    }
-    else
-    {
-          // Grow in the dimension of np if necessary
       anjm1ip_anji.resize(mapped_n+1);
-      
+    }
+    
+        // Check if entry has enough room
+    if(resizeIsRequired(mapped_n,nslen,tlen))
+    {
+      anjm1ip_anji[mapped_n].clear();
+
           // Initialize data structure for entry
       Vector<float> floatVec(nslen+1,INVALID_ANJM1IP_ANJI_VAL);
       Vector<Vector<float> > floatVecVec(nslen+1,floatVec);
       anjm1ip_anji[mapped_n].resize(tlen+1,floatVecVec);
-      
-      return OK;
-    }
+    }  
+
+    return OK;
   }
   else
     return ERROR;
+}
+
+//-------------------------
+bool anjm1ip_anjiMatrix::resizeIsRequired(unsigned int mapped_n,
+                                          PositionIndex nslen,
+                                          PositionIndex tlen)
+{
+  if(anjm1ip_anji.size()<=mapped_n)
+    return true;
+
+  if(anjm1ip_anji[mapped_n].size()<=tlen)
+    return true;
+
+  if(anjm1ip_anji[mapped_n][0].size()<=nslen)
+    return true;
+
+  if(anjm1ip_anji[mapped_n][0][0].size()<=nslen)
+    return true;
+
+  return false;
 }
 
 //-------------------------
@@ -91,10 +113,7 @@ bool anjm1ip_anjiMatrix::reset_entries(void)
       {
         for(unsigned int i=0;i<anjm1ip_anji[n][j].size();++i)
         {
-          for(unsigned int ip=0;ip<anjm1ip_anji[n][j][i].size();++ip)
-          {
-            anjm1ip_anji[n][j][i][ip]=INVALID_ANJM1IP_ANJI_VAL;
-          }
+          std::fill(anjm1ip_anji[n][j][i].begin(),anjm1ip_anji[n][j][i].end(),INVALID_ANJM1IP_ANJI_VAL);
         }
       }
     }

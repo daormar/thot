@@ -142,6 +142,9 @@ class anjm1ip_anjiMatrix
        // corresponding index
 
        // Auxiliary functions
+   bool resizeIsRequired(unsigned int mapped_n,
+                         PositionIndex nslen,
+                         PositionIndex tlen);
    bool n_is_mapped_in_matrix(unsigned int n,
                               unsigned int &np);
    void map_n_in_matrix(unsigned int n,
