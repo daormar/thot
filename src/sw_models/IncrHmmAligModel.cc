@@ -657,14 +657,13 @@ void IncrHmmAligModel::calc_lanji(unsigned int n,
   unsigned int mapped_n_aux;
   lanji_aux.init_nth_entry(n_aux,nsrcSent.size(),trgSent.size(),mapped_n_aux);
 
+  Vector<double> numVec(nsrcSent.size()+1,0);
 
       // Calculate new estimation of lanji
   for(unsigned int j=1;j<=trgSent.size();++j)
   {
         // Obtain sum_lanji_num_forall_s
     double sum_lanji_num_forall_s=INVALID_ANJI_VAL;
-    Vector<double> numVec;
-    numVec.push_back(0);
     for(unsigned int i=1;i<=nsrcSent.size();++i)
     {
           // Obtain numerator
@@ -676,7 +675,7 @@ void IncrHmmAligModel::calc_lanji(unsigned int n,
       else
         sum_lanji_num_forall_s=MathFuncs::lns_sumlog(sum_lanji_num_forall_s,d);
           // Store num in numVec
-      numVec.push_back(d);
+      numVec[i]=d;
     }
         // Set value of lanji_aux
     for(unsigned int i=1;i<=nsrcSent.size();++i)
@@ -769,19 +768,19 @@ void IncrHmmAligModel::calc_lanjm1ip_anji(unsigned int n,
   unsigned int n_aux=1;
   unsigned int mapped_n_aux;
   lanjm1ip_anji_aux.init_nth_entry(n_aux,nsrcSent.size(),trgSent.size(),mapped_n_aux);
+
+  Vector<double> numVec(nsrcSent.size()+1,0);
+  Vector<Vector<double> > numVecVec(nsrcSent.size()+1,numVec);
   
       // Calculate new estimation of lanjm1ip_anji
   for(unsigned int j=1;j<=trgSent.size();++j)
   {
         // Obtain sum_lanjm1ip_anji_num_forall_i_ip
     double sum_lanjm1ip_anji_num_forall_i_ip=INVALID_ANJM1IP_ANJI_VAL;
-    Vector<Vector<double> > numVecVec;
-    Vector<double> numVec;
-    numVecVec.push_back(numVec);
-    numVec.push_back(0);
+
     for(unsigned int i=1;i<=nsrcSent.size();++i)
     {
-      numVecVec.push_back(numVec);
+      numVecVec[i][0]=0;
       if(j==1)
       {
             // Obtain numerator
@@ -827,7 +826,7 @@ void IncrHmmAligModel::calc_lanjm1ip_anji(unsigned int n,
           else
             sum_lanjm1ip_anji_num_forall_i_ip=MathFuncs::lns_sumlog(sum_lanjm1ip_anji_num_forall_i_ip,d);
               // Store num in numVec
-          numVecVec[i].push_back(d);
+          numVecVec[i][ip]=d;
         }
       }
     }
