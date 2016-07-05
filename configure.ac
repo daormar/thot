@@ -540,6 +540,22 @@ else
  AC_MSG_RESULT(no)
 fi
 
+dnl Check whether to enable viterbi training.
+AC_MSG_CHECKING(whether to enable viterbi training for HMM-based alignment models)
+AC_ARG_ENABLE(vit-train,[  --enable-vit-train   enable viterbi training for HMM-based alignment models], enable_vit_train=yes,
+              enable_vit_train=no)
+
+dnl Yes, space efficient lexical data structures are enabled
+if test "$enable_vit_train" = "yes"; then
+   AC_MSG_RESULT(yes)
+else
+   AC_MSG_RESULT(no)
+fi
+
+if test "$enable_vit_train" = "yes"; then
+AC_DEFINE(ENABLE_VITERBI_TRAINING,,[Define if Viterbi training is enabled for HMM-based alignment models])
+fi
+
 # Process options given in shell variables
 
 # Set different types based on previously defined shell variables
