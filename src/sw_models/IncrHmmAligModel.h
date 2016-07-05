@@ -106,6 +106,10 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
        // Returns log-likelihood. The first double contains the
        // loglikelihood for all sentences, and the second one, the same
        // loglikelihood normalized by the number of sentences
+   pair<double,double> vitLoglikelihoodForPairRange(pair<unsigned int,unsigned int> sentPairRange,
+                                                    int verbosity=0);
+       // The same as the previous one, but Viterbi alignments are
+       // computed
    void clearInfoAboutSentRange(void);
        // clear info about the whole sentence range without clearing
        // information about current model parameters
@@ -295,11 +299,18 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
                                Vector<Vector<PositionIndex> >& predMatrix);
        // Cached version of viterbiAlgorithm()
 
+   double bestAligGivenVitMatricesRaw(const Vector<Vector<double> >& vitMatrix,
+                                      const Vector<Vector<PositionIndex> >& predMatrix,
+                                      Vector<PositionIndex>& bestAlig);
+       // Obtain best alignment vector from Viterbi algorithm matrices,
+       // index of null word depends on how the source index vector is
+       // transformed
    double bestAligGivenVitMatrices(PositionIndex slen,
                                    const Vector<Vector<double> >& vitMatrix,
                                    const Vector<Vector<PositionIndex> >& predMatrix,
                                    Vector<PositionIndex>& bestAlig);
-       // Obtain best alignment vector from Viterbi algorithm matrices
+       // Obtain best alignment vector from Viterbi algorithm matrices,
+       // index of null word is zero
    double forwardAlgorithm(const Vector<WordIndex>& nSrcSentIndexVector,
                            const Vector<WordIndex>& trgSentIndexVector,
                            int verbose=0);
@@ -320,6 +331,8 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    // EM-related functions
    void calcNewLocalSuffStats(pair<unsigned int,unsigned int> sentPairRange,
                               int verbosity=0);
+   void calcNewLocalSuffStatsVit(pair<unsigned int,unsigned int> sentPairRange,
+                                 int verbosity=0);
    void calcAlphaMatrix(unsigned int n,
                         const Vector<WordIndex>& nsrcSent,
                         const Vector<WordIndex>& trgSent);
@@ -330,6 +343,11 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
                    const Vector<WordIndex>& nsrcSent,
                    const Vector<WordIndex>& trgSent,
                    const Count& weight);
+   void calc_lanji_vit(unsigned int n,
+                       const Vector<WordIndex>& nsrcSent,
+                       const Vector<WordIndex>& trgSent,
+                       const Vector<PositionIndex>& bestAlig,
+                       const Count& weight);
    void fillEmAuxVarsLex(unsigned int mapped_n,
                          unsigned int mapped_n_aux,
                          PositionIndex i,
@@ -341,6 +359,11 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
                            const Vector<WordIndex>& nsrcSent,
                            const Vector<WordIndex>& trgSent,
                            const Count& weight);
+   void calc_lanjm1ip_anji_vit(unsigned int n,
+                               const Vector<WordIndex>& nsrcSent,
+                               const Vector<WordIndex>& trgSent,
+                               const Vector<PositionIndex>& bestAlig,
+                               const Count& weight);
    bool isFirstNullAligPar(PositionIndex ip,
                            unsigned int slen,
                            PositionIndex i);
@@ -359,6 +382,11 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
                                      PositionIndex j,
                                      const Vector<WordIndex>& nsrcSent,
                                      const Vector<WordIndex>& trgSent);
+   void gatherLexSuffStats(unsigned int mapped_n,
+                           unsigned int mapped_n_aux,
+                           const Vector<WordIndex>& nsrcSent,
+                           const Vector<WordIndex>& trgSent,
+                           const Count& weight);
    void gatherAligSuffStats(unsigned int mapped_n,
                             unsigned int mapped_n_aux,
                             const Vector<WordIndex>& nsrcSent,
