@@ -266,8 +266,8 @@ void printDesc(void)
 void printUsage(void)
 {
   printf("Usage: thot_prune_bin_ilextable  -l <string> -n <int>\n");
-  printf("                            -c <float> [--help]\n\n");
-  printf("-l <string>       File with the sorted binary table of lexical\n");
+  printf("                                 -c <float> [--help]\n\n");
+  printf("-l <string>               File with the sorted binary table of lexical\n");
   printf("                          parameters.\n");
   printf("-n <int>                  Maximum number of translations per word.\n");
   printf("-c <float>                Cut-off probability.\n"); 

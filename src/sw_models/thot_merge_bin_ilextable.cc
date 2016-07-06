@@ -364,7 +364,7 @@ void printDesc(void)
 void printUsage(void)
 {
   printf("Usage: thot_merge_bin_ilextable <sorted_ilextable_1> [<sorted_ilextable_2> ...]\n");
-  printf("                           [--help]\n\n");
+  printf("                                [--help]\n\n");
   printf("--help                     Display this help and exit.\n\n");
 }
 

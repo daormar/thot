@@ -377,7 +377,7 @@ void printDesc(void)
 void printUsage(void)
 {
   printf("Usage: thot_merge_bin_iibm2atable <sorted_iibm2atable_1> [<sorted_iibm2atable_2> ...]\n");
-  printf("                           [--help]\n\n");
+  printf("                                  [--help]\n\n");
   printf("--help                     Display this help and exit.\n\n");
 }
 

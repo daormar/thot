@@ -371,7 +371,7 @@ void printDesc(void)
 void printUsage(void)
 {
   printf("Usage: thot_merge_bin_ihmmatable <sorted_ihmmatable_1> [<sorted_ihmmatable_2> ...]\n");
-  printf("                           [--help]\n\n");
+  printf("                                 [--help]\n\n");
   printf("--help                     Display this help and exit.\n\n");
 }
 
