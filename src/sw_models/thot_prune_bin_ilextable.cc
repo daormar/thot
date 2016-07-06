@@ -102,7 +102,7 @@ int main(int argc,char *argv[])
       bool end=false;
       bool first_entry=true;
       WordIndex firstSrc=0;
-      float lcSrc=-99;
+      float lcSrc=SMALL_LG_NUM;
       Vector<WordIndex> trgWordVec;
       Vector<float> lcSrcTrgVec;
       
@@ -183,7 +183,7 @@ void printCounts(WordIndex firstSrc,
   std::sort(trgWordLogCountVec.begin(),trgWordLogCountVec.end(),SortByLogCount());
       
       // Determine number of counts to print
-  float newLcSrc=-99;
+  float newLcSrc=SMALL_LG_NUM;
   unsigned int numFiltTrgWords=0;
   
   for(unsigned int n=0;n<trgWordLogCountVec.size();++n)

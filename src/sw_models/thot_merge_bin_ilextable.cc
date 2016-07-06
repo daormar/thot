@@ -125,7 +125,7 @@ int main(int argc,char *argv[])
     bool end=false;
     bool first_entry=true;
     WordIndex firstSrc=0;
-    float lcSrc=-99;
+    float lcSrc=SMALL_LG_NUM;
     Vector<WordIndex> trgWordVec;
     Vector<float> lcSrcTrgVec;
     ChunkSet chunkSet;
@@ -161,7 +161,7 @@ int main(int argc,char *argv[])
             lcSrcTrgVec.clear();
             trgWordVec.push_back(entry.t);
             lcSrcTrgVec.push_back(entry.numer);
-            lcSrc=-99;
+            lcSrc=SMALL_LG_NUM;
           }
           else
           {
