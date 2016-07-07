@@ -47,7 +47,7 @@ merge_sorted_counts()
        printf"%s %s %g %g\n",first_src,first_trg,glc_srctrg,lc_src
      }
      BEGIN{
-           lc_src=-99
+           lc_src=-99999
            first_entry=1
           }
           {
@@ -85,7 +85,7 @@ merge_sorted_counts()
                num_trg_params=1
                trgparam[num_trg_params]=trg
                lc_srctrg[num_trg_params]=lc_st
-               lc_src=-99
+               lc_src=-99999
              }
              else
              {

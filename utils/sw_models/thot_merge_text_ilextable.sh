@@ -47,7 +47,7 @@ merge_sorted_counts()
        printf"%s %s %g %g\n",first_src,first_trg,glc_srctrg,lc_src
      }
      BEGIN{
-           lc_src=-99
+           lc_src=-99999
            first_entry=1
           }
           {
@@ -85,7 +85,7 @@ merge_sorted_counts()
                num_trg_words=1
                trgword[num_trg_words]=trg
                lc_srctrg[num_trg_words]=lc_st
-               lc_src=-99
+               lc_src=-99999
              }
              else
              {

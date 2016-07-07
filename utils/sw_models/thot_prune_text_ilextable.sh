@@ -25,7 +25,7 @@ function prune_sorted_table()
      function print_counts()
      {
        # Determine number of counts to print
-       new_lc_src=-99
+       new_lc_src=-99999
        num_filt_trg_words=0
        for(n=1;n<=num_trg_words;++n)
        {
