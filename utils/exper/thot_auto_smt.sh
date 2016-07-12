@@ -509,13 +509,16 @@ if [ ${sdir_given} -eq 1 ]; then
 fi
 
 ## Print parameters
-echo "-s is ${scorpus_pref}" > ${outd}/input_pars.txt
+echo "-pr is ${pr_val}" > ${outd}/input_pars.txt
+echo "-s is ${scorpus_pref}" >> ${outd}/input_pars.txt
 echo "-t is ${tcorpus_pref}" >> ${outd}/input_pars.txt
+echo "-o is ${outd}" >> ${outd}/input_pars.txt
 echo "-n is ${n_val}" >> ${outd}/input_pars.txt
 echo "-nit is ${nitval}" >> ${outd}/input_pars.txt
 echo "--skip-clean is ${skip_clean_given}" >> ${outd}/input_pars.txt
 echo "--tok is ${tok_given}" >> ${outd}/input_pars.txt
 echo "--lower is ${lower_given}" >> ${outd}/input_pars.txt
+echo "--no-lim is ${nolim_given}" >> ${outd}/input_pars.txt
 
 ## Process parameters
 
