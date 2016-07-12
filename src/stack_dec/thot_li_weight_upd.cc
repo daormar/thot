@@ -55,8 +55,8 @@ using namespace std;
 
 struct thot_liwu_pars
 {
-  std::string srcCorpusFile;
-  std::string trgCorpusFile;
+  std::string testCorpusFile;
+  std::string refCorpusFile;
   std::string phrModelFilePrefix;
   int verbosity;
 };
@@ -98,8 +98,8 @@ int main(int argc,char *argv[])
   {
         // Print parameters
     cerr<<"-tm option is "<<pars.phrModelFilePrefix<<endl;
-    cerr<<"-s option is "<<pars.srcCorpusFile<<endl;
-    cerr<<"-t option is "<<pars.trgCorpusFile<<endl;
+    cerr<<"-t option is "<<pars.testCorpusFile<<endl;
+    cerr<<"-r option is "<<pars.refCorpusFile<<endl;
     cerr<<"-v option is "<<pars.verbosity<<endl;
 
         // Initialize weight updater
@@ -158,12 +158,12 @@ int takeParameters(int argc,
     return ERROR;
   
       // Take language model file name
-  err=readSTLstring(argc,argv, "-s", &pars.srcCorpusFile);
+  err=readSTLstring(argc,argv, "-t", &pars.testCorpusFile);
   if(err==ERROR)
     return ERROR;
 
       // Take language model file name
-  err=readSTLstring(argc,argv, "-t", &pars.trgCorpusFile);
+  err=readSTLstring(argc,argv, "-r", &pars.refCorpusFile);
   if(err==ERROR)
     return ERROR;
 
@@ -185,15 +185,15 @@ int checkParameters(thot_liwu_pars& pars)
 
   }
 
-  if(pars.srcCorpusFile.empty())
+  if(pars.testCorpusFile.empty())
   {
-    cerr<<"Error: parameter -s not given!"<<endl;
+    cerr<<"Error: parameter -t not given!"<<endl;
     return ERROR;   
   }
 
-  if(pars.trgCorpusFile.empty())
+  if(pars.refCorpusFile.empty())
   {
-    cerr<<"Error: parameter -t not given!"<<endl;
+    cerr<<"Error: parameter -r not given!"<<endl;
     return ERROR;   
   }
 
@@ -216,7 +216,9 @@ int initPhrModel(void)
     cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
     return ERROR;
   }
-
+  phrModelInfoPtr->phraseModelPars.ptsWeight=1.0;
+  phrModelInfoPtr->phraseModelPars.pstWeight=1.0;
+  
   swModelInfoPtr=new SwModelInfo;
   swModelInfoPtr->swAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
   if(swModelInfoPtr->swAligModelPtr==NULL)
@@ -267,7 +269,7 @@ int update_li_weights(const thot_liwu_pars& pars)
     return ERROR;
   
       // Update weights
-  retVal=phrLocalSwLiTmPtr->updateLinInterpWeights(pars.srcCorpusFile,pars.trgCorpusFile,pars.verbosity);
+  retVal=phrLocalSwLiTmPtr->updateLinInterpWeights(pars.testCorpusFile,pars.refCorpusFile,pars.verbosity);
   if(retVal==ERROR)
     return ERROR;
 
@@ -285,13 +287,13 @@ int update_li_weights(const thot_liwu_pars& pars)
 //--------------------------------
 void printUsage(void)
 {
-  cerr<<"thot_li_weight_upd -tm <string> -s <string> -t <string>"<<endl;
+  cerr<<"thot_li_weight_upd -tm <string> -t <string> -r <string>"<<endl;
   cerr<<"                   [-v] [--help] [--version]"<<endl;
   cerr<<endl;
   cerr<<"-tm <string>       Prefix of translation model files."<<endl;
   cerr<<"                   (Warning: current weights will be overwritten)."<<endl;
-  cerr<<"-s <string>        Source development corpus."<<endl;
-  cerr<<"-t <string>        Target development corpus."<<endl;
+  cerr<<"-t <string>        File with test sentences."<<endl;
+  cerr<<"-r <string>        File with reference sentences."<<endl;
   cerr<<"-v                 Enable verbose mode."<<endl;
   cerr<<"--help             Display this help and exit."<<endl;
   cerr<<"--version          Output version information and exit."<<endl;
