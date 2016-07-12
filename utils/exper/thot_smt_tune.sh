@@ -452,13 +452,12 @@ loglin_upd()
 ########
 linear_interp_upd()
 {
-    ${bindir}/thot_li_weight_upd -tm ${newtmdevfile} -s $scorpus -t $tcorpus -v \
+    ${bindir}/thot_li_weight_upd -tm ${newtmdevfile} -t $scorpus -r $tcorpus -v \
         2> ${outd}/liweights_tune.log || return 1
 }
 
 ########
-create_cfg_file_for_tuned_sys()
-{
+create_cfg_file_for_tuned_sys(){
     # Obtain log-linear weights
     smtweights=`cat ${outd}/llweights_tune.out`
 
