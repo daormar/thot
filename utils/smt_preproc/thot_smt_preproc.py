@@ -2,7 +2,7 @@
 # *- python -*
 
 # import modules
-import sys, nltk, codecs, math, re, Queue
+import sys, codecs, math, re, Queue
 import itertools
 from heapq import heappush, heappop
 
@@ -1330,9 +1330,6 @@ class Tokenizer:
 
 ##################################################
 def tokenize(string):
-#        tokens = nltk.word_tokenize(line)
-    #tokens = nltk.wordpunct_tokenize(str)
-    #return tokens
     tokenizer = Tokenizer()
     skel = annotated_string_to_xml_skeleton(string)
     for idx, (is_tag, txt) in enumerate(skel):

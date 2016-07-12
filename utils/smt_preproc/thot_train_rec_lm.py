@@ -2,7 +2,7 @@
 # *- python -*
 
 # import modules
-import io, sys, getopt, nltk
+import io, sys, getopt
 
 import thot_smt_preproc as smtpr
 
