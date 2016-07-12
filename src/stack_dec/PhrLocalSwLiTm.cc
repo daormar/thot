@@ -80,7 +80,7 @@ bool PhrLocalSwLiTm::printAligModel(std::string printPrefix)
 void PhrLocalSwLiTm::clear(void)
 {
   _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >::clear();
-  vecVecPhPair.clear();
+  vecVecInvPhPair.clear();
   vecSrcSent.clear();
   vecTrgSent.clear();
   stepNum=0;
@@ -111,8 +111,8 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
   }
 
       // Extract phrase pairs from development corpus
-  Vector<Vector<PhrasePair> > phrPairs;
-  int ret=extractPhrPairsFromDevCorpus(srcDevCorpusFileName,trgDevCorpusFileName,phrPairs,verbose);
+  Vector<Vector<PhrasePair> > invPhrPairs;
+  int ret=extractPhrPairsFromDevCorpus(srcDevCorpusFileName,trgDevCorpusFileName,invPhrPairs,verbose);
   if(ret!=OK)
     return ERROR;
   
@@ -138,7 +138,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
         break;
       case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
         double perp;
-        int retEval=new_dhs_eval(phrPairs,tmp_file,x,perp);
+        int retEval=new_dhs_eval(invPhrPairs,tmp_file,x,perp);
         if(retEval==ERROR)
         {
           end=true;
@@ -181,7 +181,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
 //---------------
 int PhrLocalSwLiTm::extractConsistentPhrasePairs(const Vector<std::string>& srcSentStrVec,
                                                  const Vector<std::string>& refSentStrVec,
-                                                 Vector<PhrasePair>& vecPhPair,
+                                                 Vector<PhrasePair>& vecInvPhPair,
                                                  bool verbose/*=0*/)
 {
   _wbaIncrPhraseModel* wbaIncrPhraseModelPtr=dynamic_cast<_wbaIncrPhraseModel* >(phrModelInfoPtr->invPbModelPtr);
@@ -209,7 +209,7 @@ int PhrLocalSwLiTm::extractConsistentPhrasePairs(const Vector<std::string>& srcS
                                                           nrefSentStrVec,
                                                           srcSentStrVec,
                                                           invWaMatrix,
-                                                          vecPhPair,
+                                                          vecInvPhPair,
                                                           verbose);
     return OK;
   }
@@ -223,7 +223,7 @@ int PhrLocalSwLiTm::extractConsistentPhrasePairs(const Vector<std::string>& srcS
 //---------------
 int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileName,
                                                  std::string trgDevCorpusFileName,
-                                                 Vector<Vector<PhrasePair> >& phrPairs,
+                                                 Vector<Vector<PhrasePair> >& invPhrPairs,
                                                  int verbose/*=0*/)
 {
 // NOTE: this function requires the ability to extract new translation
@@ -250,7 +250,7 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
     }  
 
         // Iterate over all sentences
-    phrPairs.clear();
+    invPhrPairs.clear();
     while(srcDevStream.getln())
     {
       if(!trgDevStream.getln())
@@ -273,11 +273,11 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
         refSentStrVec.push_back(trgDevStream.dollar(i));
 
           // Extract consistent phrase pairs
-      Vector<PhrasePair> vecPhPair;
-      extractConsistentPhrasePairs(srcSentStrVec,refSentStrVec,vecPhPair,verbose);
+      Vector<PhrasePair> vecInvPhPair;
+      extractConsistentPhrasePairs(srcSentStrVec,refSentStrVec,vecInvPhPair,verbose);
 
           // Add vector of phrase pairs
-      phrPairs.push_back(vecPhPair);
+      invPhrPairs.push_back(vecInvPhPair);
     }
     
         // Close files
@@ -294,7 +294,7 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
 }
 
 //---------------
-double PhrLocalSwLiTm::phraseModelPerplexity(const Vector<Vector<PhrasePair> >& phrPairs,
+double PhrLocalSwLiTm::phraseModelPerplexity(const Vector<Vector<PhrasePair> >& invPhrPairs,
                                              int /*verbose=0*/)
 {
       // Iterate over all sentences
@@ -302,17 +302,25 @@ double PhrLocalSwLiTm::phraseModelPerplexity(const Vector<Vector<PhrasePair> >& 
   unsigned int numPhrPairs=0;
   
       // Obtain perplexity contribution for consistent phrase pairs
-  for(unsigned int i=0;i<phrPairs.size();++i)
+  for(unsigned int i=0;i<invPhrPairs.size();++i)
   {
-    for(unsigned int j=0;j<phrPairs[i].size();++j)
+    // cerr<<endl;
+    for(unsigned int j=0;j<invPhrPairs[i].size();++j)
     {
-      Vector<WordIndex> srcPhrasePair=strVectorToSrcIndexVector(phrPairs[i][j].s_);
-      Vector<WordIndex> trgPhrasePair=strVectorToTrgIndexVector(phrPairs[i][j].t_);
+      Vector<WordIndex> srcPhrasePair=strVectorToSrcIndexVector(invPhrPairs[i][j].t_);
+      Vector<WordIndex> trgPhrasePair=strVectorToTrgIndexVector(invPhrPairs[i][j].s_);
       loglikelihood+=(double)smoothedPhrScore_s_t_(srcPhrasePair,trgPhrasePair);
       loglikelihood+=(double)smoothedPhrScore_t_s_(srcPhrasePair,trgPhrasePair);
+
+      // for(unsigned int k=0;k<invPhrPairs[i][j].s_.size();++k)
+      //   cerr<<invPhrPairs[i][j].s_[k]<<" ";
+      // cerr<<"|||";
+      // for(unsigned int k=0;k<invPhrPairs[i][j].t_.size();++k)
+      //   cerr<<" "<<invPhrPairs[i][j].t_[k];
+      // cerr<<" ||| "<<(double)smoothedPhrScore_s_t_(srcPhrasePair,trgPhrasePair)<<" "<<(double)smoothedPhrScore_t_s_(srcPhrasePair,trgPhrasePair)<<endl;
     }
         // Update number of phrase pairs
-    numPhrPairs+=phrPairs[i].size();
+    numPhrPairs+=invPhrPairs[i].size();
   }
 
       // Return perplexity
@@ -321,7 +329,7 @@ double PhrLocalSwLiTm::phraseModelPerplexity(const Vector<Vector<PhrasePair> >& 
 
 
 //---------------
-int PhrLocalSwLiTm::new_dhs_eval(const Vector<Vector<PhrasePair> >& phrPairs,
+int PhrLocalSwLiTm::new_dhs_eval(const Vector<Vector<PhrasePair> >& invPhrPairs,
                                  FILE* tmp_file,
                                  double* x,
                                  double& obj_func)
@@ -342,7 +350,7 @@ int PhrLocalSwLiTm::new_dhs_eval(const Vector<Vector<PhrasePair> >& phrPairs,
   if(weightsArePositive && weightsAreBelowOne)
   {
         // Obtain perplexity
-    obj_func=phraseModelPerplexity(phrPairs,obj_func);
+    obj_func=phraseModelPerplexity(invPhrPairs,obj_func);
   }
   else
   {
@@ -648,8 +656,8 @@ int PhrLocalSwLiTm::incrTrainFeatsSentPair(const char *srcSent,
   {
     int mapped_last_n=map_n_am_suff_stats(last_n);
     int idx_to_discard=mapped_last_n;
-    if(idx_to_discard>0 && vecVecPhPair.size()>(unsigned int)idx_to_discard)
-      vecVecPhPair[idx_to_discard].clear();
+    if(idx_to_discard>0 && vecVecInvPhPair.size()>(unsigned int)idx_to_discard)
+      vecVecInvPhPair[idx_to_discard].clear();
   }
 
   return ret;
@@ -1008,42 +1016,42 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
     swModelInfoPtr->swAligModelPtr->nthSentPair(n,srcSentStrVec,refSentStrVec,c);
 
         // Extract consistent phrase pairs
-    Vector<PhrasePair> vecPhPair;
-    extractConsistentPhrasePairs(srcSentStrVec,refSentStrVec,vecPhPair,verbose);
+    Vector<PhrasePair> vecInvPhPair;
+    extractConsistentPhrasePairs(srcSentStrVec,refSentStrVec,vecInvPhPair,verbose);
 
         // Obtain mapped_n
     unsigned int mapped_n=map_n_am_suff_stats(n);
   
-        // Grow vecVecPhPair if necessary
+        // Grow vecVecInvPhPair if necessary
     Vector<PhrasePair> vpp;
-    while(vecVecPhPair.size()<=mapped_n) vecVecPhPair.push_back(vpp);
+    while(vecVecInvPhPair.size()<=mapped_n) vecVecInvPhPair.push_back(vpp);
     
         // Subtract current phrase model sufficient statistics
-    for(unsigned int i=0;i<vecVecPhPair[mapped_n].size();++i)
+    for(unsigned int i=0;i<vecVecInvPhPair[mapped_n].size();++i)
     {
-      wbaIncrPhraseModelPtr->strIncrCountsOfEntry(vecVecPhPair[mapped_n][i].s_,
-                                                  vecVecPhPair[mapped_n][i].t_,
+      wbaIncrPhraseModelPtr->strIncrCountsOfEntry(vecVecInvPhPair[mapped_n][i].s_,
+                                                  vecVecInvPhPair[mapped_n][i].t_,
                                                   -1);
     }
 
         // Add new phrase model current sufficient statistics
     if(verbose) cerr<<"List of extracted consistent phrase pairs:"<<endl;
-    for(unsigned int i=0;i<vecPhPair.size();++i)
+    for(unsigned int i=0;i<vecInvPhPair.size();++i)
     {
-      wbaIncrPhraseModelPtr->strIncrCountsOfEntry(vecPhPair[i].s_,
-                                                  vecPhPair[i].t_,
+      wbaIncrPhraseModelPtr->strIncrCountsOfEntry(vecInvPhPair[i].s_,
+                                                  vecInvPhPair[i].t_,
                                                   1);
       if(verbose)
       {
-        for(unsigned int j=0;j<vecPhPair[i].s_.size();++j) cerr<<vecPhPair[i].s_[j]<<" ";
+        for(unsigned int j=0;j<vecInvPhPair[i].s_.size();++j) cerr<<vecInvPhPair[i].s_[j]<<" ";
         cerr<<"|||";
-        for(unsigned int j=0;j<vecPhPair[i].t_.size();++j) cerr<<" "<<vecPhPair[i].t_[j];
+        for(unsigned int j=0;j<vecInvPhPair[i].t_.size();++j) cerr<<" "<<vecInvPhPair[i].t_[j];
         cerr<<endl;
       }
     }
   
         // Store new phrase model current sufficient statistics
-    vecVecPhPair[mapped_n]=vecPhPair;
+    vecVecInvPhPair[mapped_n]=vecInvPhPair;
 
     return OK;
   }
@@ -1296,6 +1304,7 @@ Score PhrLocalSwLiTm::smoothedPhrScore_s_t_(const Vector<WordIndex>& s_,
 // #endif
       float sum2=log(1.0-swModelInfoPtr->lambda_invswm)+(float)invSwLgProb(s_,t_);
       float interp=MathFuncs::lns_sumlog(sum1,sum2);
+      // cerr<<" ( "<<phrModelInfoPtr->invPbModelPtr->logpt_s_(t_,s_)<<" "<<invSwLgProb(s_,t_)<<" "<<interp<<" ) ";
       return phrModelInfoPtr->phraseModelPars.pstWeight*(double)interp;
     }
   }
@@ -1324,6 +1333,7 @@ Score PhrLocalSwLiTm::smoothedPhrScore_t_s_(const Vector<WordIndex>& s_,
 // #endif
       float sum2=log(1.0-swModelInfoPtr->lambda_swm)+(float)swLgProb(s_,t_);
       float interp=MathFuncs::lns_sumlog(sum1,sum2);
+      // cerr<<" ( "<<phrModelInfoPtr->invPbModelPtr->logps_t_(t_,s_)<<" "<<swLgProb(s_,t_)<<" "<<interp<<" ) ";
 
       return phrModelInfoPtr->phraseModelPars.ptsWeight*(double)interp;
     }

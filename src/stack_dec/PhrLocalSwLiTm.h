@@ -149,17 +149,17 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   Vector<Vector<std::string> > vecSrcSent;
   Vector<Vector<std::string> > vecTrgSent;  
   Vector<Vector<std::string> > vecSysSent;  
-  Vector<Vector<PhrasePair> > vecVecPhPair;
+  Vector<Vector<PhrasePair> > vecVecInvPhPair;
   unsigned int stepNum;
 
       // Functions related to linear interpolation weights updating
   int extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileName,
                                    std::string trgDevCorpusFileName,
-                                   Vector<Vector<PhrasePair> >& phrPairs,
+                                   Vector<Vector<PhrasePair> >& invPhrPairs,
                                    int verbose/*=0*/);
-  double phraseModelPerplexity(const Vector<Vector<PhrasePair> >& phrPairs,
+  double phraseModelPerplexity(const Vector<Vector<PhrasePair> >& invPhrPairs,
                                int verbose=0);
-  int new_dhs_eval(const Vector<Vector<PhrasePair> >& phrPairs,
+  int new_dhs_eval(const Vector<Vector<PhrasePair> >& invPhrPairs,
                    FILE* tmp_file,
                    double* x,
                    double& obj_func);
@@ -206,7 +206,7 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
       // Functions for performing on-line training
   int extractConsistentPhrasePairs(const Vector<std::string>& srcSentStrVec,
                                    const Vector<std::string>& refSentStrVec,
-                                   Vector<PhrasePair>& vecPhPair,
+                                   Vector<PhrasePair>& vecInvPhPair,
                                    bool verbose=0);
   int incrTrainFeatsSentPair(const char *srcSent,
                              const char *refSent,
