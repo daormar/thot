@@ -519,6 +519,8 @@ echo "--skip-clean is ${skip_clean_given}" >> ${outd}/input_pars.txt
 echo "--tok is ${tok_given}" >> ${outd}/input_pars.txt
 echo "--lower is ${lower_given}" >> ${outd}/input_pars.txt
 echo "--no-lim is ${nolim_given}" >> ${outd}/input_pars.txt
+echo "-tdir is ${tdir}" >> ${outd}/input_pars.txt
+echo "-sdir is ${sdir}" >> ${outd}/input_pars.txt
 
 ## Process parameters
 
