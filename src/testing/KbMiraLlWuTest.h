@@ -43,6 +43,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "MiraBleu.h"
 #include "KbMiraLlWu.h"
 #include <cppunit/extensions/HelperMacros.h>
 

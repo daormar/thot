@@ -39,6 +39,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( KbMiraLlWuTest );
 void KbMiraLlWuTest::setUp()
 {
   updater = new KbMiraLlWu(0.1, 0.999, 30);
+  updater->link_scorer(new MiraBleu());
 }
 
 //---------------------------------------
