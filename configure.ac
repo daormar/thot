@@ -426,7 +426,7 @@ AC_PATH_PROG(DOXYGEN,doxygen)
 # Adds an extra argument to configure (enable use of casmacat library)
 AC_MSG_CHECKING(whether to enable combination with casmacat library)
 AC_ARG_WITH([casmacat],
- [AS_HELP_STRING([--with-casmacat],
+ [AS_HELP_STRING([--with-casmacat=DIR],
    [installs thot with the necessary code to combine it with the casmacat library @<:@default=no@:>@])],
  [with_casmacat=$withval],
  [with_casmacat=no])
