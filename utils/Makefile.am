@@ -48,7 +48,8 @@ smt_preproc/thot_detokenize smt_preproc/thot_lowercase			\
 smt_preproc/thot_train_rec_lm smt_preproc/thot_train_rec_lm_mr		\
 smt_preproc/thot_train_rec_tm smt_preproc/thot_rec_translator		\
 smt_preproc/thot_recase smt_preproc/thot_gen_rtfile			\
-smt_preproc/thot_clean_corpus_ln
+smt_preproc/thot_clean_corpus_ln smt_preproc/thot_categorize		\
+smt_preproc/thot_decategorize
 
 error_correction_bin_scripts= error_correction/thot_rescore_nbest	\
 error_correction/thot_obtain_best_trans_from_nbl			\
