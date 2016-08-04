@@ -1411,3 +1411,24 @@ def annotated_string_to_xml_skeleton(annotated):
     return skeleton
 
 ##################################################
+def remove_xml_annotations(annotated):
+    xml_tags = {'<'+src_ann+'>', 
+                '</'+len_ann+'>', 
+                '</'+grp_ann+'>'}
+    skeleton = annotated_string_to_xml_skeleton(annotated)
+    tokens = list()
+    for i in range(len(skeleton)):
+        is_tag, text = skeleton[i]
+        token = text.strip()
+        if not is_tag and token:
+            if i == 0:
+                tokens.append(token)
+            else:
+                ant_is_tag, ant_text = skeleton[i-1]
+                if not ant_is_tag or (ant_is_tag and 
+                                      ant_text.strip() in xml_tags):
+                    tokens.append(token)
+    return u' '.join(tokens)
+
+
+##################################################
