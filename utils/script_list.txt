@@ -10,6 +10,7 @@
 /home/dortiz/smt/software/smt_preproc thot_lowercase
 /home/dortiz/smt/software/smt_preproc thot_recase
 /home/dortiz/smt/software/smt_preproc thot_decategorize
+/home/dortiz/smt/software/smt_preproc thot_remove_xml_annotations
 /home/dortiz/smt/software/incr_models thot_pbs_get_ngram_counts
 /home/dortiz/smt/software/incr_models thot_gen_init_file_with_jmlm_weights
 /home/dortiz/smt/software/incr_models thot_dhs_trgfunc_jmlm
