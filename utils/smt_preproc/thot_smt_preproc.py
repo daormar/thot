@@ -774,6 +774,17 @@ def is_alnum(s):
         return True
 
 ##################################################
+def categorize(sentence):
+    word_array=sentence.split()
+
+    # Categorize words
+    categ_word_array=[]
+    for i in range(len(word_array)):
+        categ_word_array.append(categorize_word(word_array[i]))
+
+    return u' '.join(categ_word_array)
+
+##################################################
 def categorize_word(word):
     if(word.isdigit()==True):
         if(len(word)>1):
@@ -850,6 +861,29 @@ def extract_categ_words_of_segm(word_array,left,right):
 
     # Return result
     return categ_words
+
+##################################################
+def decategorize(sline,tline,iline):
+    src_word_array=sline.split()
+    trg_word_array=tline.split()
+    hyp_word_array=iline.split()
+
+    # Extract alignment information
+    srcsegms,trgcuts=extract_alig_info(hyp_word_array)
+
+    # Iterate over target words
+    output=""
+    for trgpos in range(len(trg_word_array)):
+
+        if(is_categ(trg_word_array[trgpos])):
+            output+=decategorize_word(trgpos,src_word_array,trg_word_array,srcsegms,trgcuts)
+        else:
+            output+=trg_word_array[trgpos]
+            
+        if(trgpos<len(trg_word_array)-1):
+            output+=" "
+            
+    return output
 
 ##################################################
 def decategorize_word(trgpos,src_word_array,trg_word_array,srcsegms,trgcuts):
@@ -1429,6 +1463,5 @@ def remove_xml_annotations(annotated):
                                       ant_text.strip() in xml_tags):
                     tokens.append(token)
     return u' '.join(tokens)
-
 
 ##################################################

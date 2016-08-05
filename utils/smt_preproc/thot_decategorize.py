@@ -82,29 +82,11 @@ def main(argv):
     for sline, tline, iline in itertools.izip(sfile,tfile,ifile):
         # Read source, target and hypothesis information
         sline=sline.strip("\n")
-        src_word_array=sline.split()
         tline=tline.strip("\n")
-        trg_word_array=tline.split()
         iline=iline.strip("\n")
-        hyp_word_array=iline.split()
 
-        # Extract alignment information
-        srcsegms,trgcuts=smtpr.extract_alig_info(hyp_word_array)
-
-        # Iterate over target words
-        output=""
-        for trgpos in range(len(trg_word_array)):
-
-            if(smtpr.is_categ(trg_word_array[trgpos])):
-                output+=smtpr.decategorize_word(trgpos,src_word_array,trg_word_array,srcsegms,trgcuts)
-            else:
-                output+=trg_word_array[trgpos]
-
-            if(trgpos<len(trg_word_array)-1):
-                output+=" "
-        # print srcsegms
-        # print trgcuts
-        print output.encode("utf-8")
+        decateg_line=smtpr.decategorize(sline,tline,iline)
+        print decateg_line.encode("utf-8")
 
 if __name__ == "__main__":
     main(sys.argv)

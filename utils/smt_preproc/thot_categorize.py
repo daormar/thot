@@ -46,19 +46,10 @@ def main(argv):
     # read file line by line
     for line in file:
         line=line.strip("\n")
-        word_array=line.split()
 
-        # Categorize words
-        categ_word_array=[]
-        for i in range(len(word_array)):
-            categ_word_array.append(smtpr.categorize_word(word_array[i]))
+        # Categorize line
+        categ_line=smtpr.categorize(line)
 
-        # Print line with categories
-        categ_line=""
-        for i in range(len(categ_word_array)):
-            categ_line=categ_line+categ_word_array[i]
-            if(i<len(categ_word_array)-1):
-                categ_line=categ_line+" "
         print categ_line.encode("utf-8")
 
 if __name__ == "__main__":
