@@ -24,6 +24,20 @@ _global_a_par=7
 _global_maxniters=100000
 _global_tm_smooth_prob=0.000001
 
+# xml annotation variables
+grp_ann = "phr_pair_annot"
+src_ann = "src_segm"
+trg_ann = "trg_segm"
+dic_patt = u"(<%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<\/%s>)" % (grp_ann,
+                                                                                  src_ann, src_ann,
+                                                                                  trg_ann, trg_ann,
+                                                                                  grp_ann)
+len_ann = "length_limit"
+len_patt = u"(<%s>)[ ]*(\d+)[ ]*(</%s>)" % (len_ann, len_ann)
+
+
+_annotation = re.compile(dic_patt + "|" + len_patt)
+
 ##################################################
 class TransModel:
     def __init__(self):
@@ -744,19 +758,6 @@ def transform_word(word):
     else:
         return word
 
-    # if(word.isdigit()==True):
-    #     if(len(word)>1):
-    #         return _global_number_str
-    #     else:
-    #         return _global_digit_str
-    # elif(word.isalnum()==True):
-    #     if(bool(_global_digits.search(word))==True):
-    #         return _global_alfanum_str
-    #     else:
-    #         return _global_common_word_str
-    # else:
-    #     return word
-
 ##################################################
 def is_number(s):
     try:
@@ -775,12 +776,28 @@ def is_alnum(s):
 
 ##################################################
 def categorize(sentence):
-    word_array=sentence.split()
+    skeleton = annotated_string_to_xml_skeleton(sentence)
 
     # Categorize words
     categ_word_array=[]
-    for i in range(len(word_array)):
-        categ_word_array.append(categorize_word(word_array[i]))
+    len_ann_active=False
+    for i in range(len(skeleton)):
+        is_tag, word = skeleton[i]
+        if(is_tag==True):
+            # Treat xml tag
+            categ_word_array.append(word)
+            if(word=='<'+len_ann+'>'):
+                len_ann_active=True
+            elif(word=='</'+len_ann+'>'):
+                len_ann_active=False
+        else:
+            # Categorize group of words
+            word_array=word.split()
+            for j in range(len(word_array)):
+                if(len_ann_active==False):
+                    categ_word_array.append(categorize_word(word_array[j]))
+                else:
+                    categ_word_array.append(word)
 
     return u' '.join(categ_word_array)
 
@@ -1402,18 +1419,6 @@ def xml_skeleton_to_string(skeleton):
     return u" ".join(txt for _,txt in skeleton)
 
 ##################################################
-grp_ann = "phr_pair_annot"
-src_ann = "src_segm"
-trg_ann = "trg_segm"
-dic_patt = u"(<%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<\/%s>)" % (grp_ann,
-                                                                                  src_ann, src_ann,
-                                                                                  trg_ann, trg_ann,
-                                                                                  grp_ann)
-len_ann = "length_limit"
-len_patt = u"(<%s>)[ ]*(\d+)[ ]*(</%s>)" % (len_ann, len_ann)
-
-
-_annotation = re.compile(dic_patt + "|" + len_patt)
 def annotated_string_to_xml_skeleton(annotated):
     """
     Parses a string looking for XML annotations
