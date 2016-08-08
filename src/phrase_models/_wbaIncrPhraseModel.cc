@@ -129,10 +129,20 @@ void _wbaIncrPhraseModel::extendModelFromPairPlusAlig(PhraseExtractParameters ph
       cerr<<endl;
     }
     if(!BRF)
-    { // RF estimation
+    {
+          // RF estimation
       Vector<PhrasePair> vecPhPair;
       phraseExtract.extractConsistentPhrases(phePars,ns,t,waMatrix,vecPhPair);
-      storePhrasePairs(vecPhPair,numReps,verbose);
+
+          // Filter phrase pairs
+      Vector<PhrasePair> vecFiltPhPair;
+      for(unsigned int i=0;i<vecPhPair.size();++i)
+      {
+        if(phrasePairFilter.phrasePairIsOk(vecPhPair[i].s_,vecPhPair[i].t_))
+          vecFiltPhPair.push_back(vecPhPair[i]);
+      }
+
+      storePhrasePairs(vecFiltPhPair,numReps,verbose);
     }
     else
     { // brf estimation

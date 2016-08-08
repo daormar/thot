@@ -39,6 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "CategPhrasePairFilter.h"
 #include "_incrPhraseModel.h"
 #ifdef USE_OCH_PHRASE_EXTRACT
 #include "PhraseExtractor.h"
@@ -137,7 +138,8 @@ class _wbaIncrPhraseModel: public _incrPhraseModel
     LgProb logLikelihood;
     LgProb logLikelihoodMaxApprox;
 	unsigned int numSent;
-
+    CategPhrasePairFilter phrasePairFilter;
+      
 	bool existRowOfNulls(unsigned int j1,
                          unsigned int j2,
                          Vector<unsigned int> &alig);

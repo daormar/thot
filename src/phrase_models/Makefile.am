@@ -17,4 +17,5 @@ BpSetInfo.h BpSet.h BpSet.cc Bisegm.h BasePhraseTable.h			\
 BasePhraseModel.h BasePhraseModel.cc BaseIncrPhraseModel.h		\
 BaseIncrPhraseModel.cc BaseCountPhraseModel.h AlignmentExtractor.h	\
 AlignmentExtractor.cc AlignmentContainer.h AlignmentContainer.cc	\
-AligInfo.h
+AligInfo.h BasePhrasePairFilter.h CategPhrasePairFilter.h		\
+CategPhrasePairFilter.cc
