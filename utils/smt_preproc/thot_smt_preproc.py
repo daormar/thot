@@ -1451,9 +1451,7 @@ def annotated_string_to_xml_skeleton(annotated):
 
 ##################################################
 def remove_xml_annotations(annotated):
-    xml_tags = {'<'+src_ann+'>', 
-                '</'+len_ann+'>', 
-                '</'+grp_ann+'>'}
+    xml_tags = set(['<'+src_ann+'>', '</'+len_ann+'>', '</'+grp_ann+'>'])
     skeleton = annotated_string_to_xml_skeleton(annotated)
     tokens = list()
     for i in range(len(skeleton)):
