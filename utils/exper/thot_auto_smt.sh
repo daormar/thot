@@ -290,21 +290,6 @@ decateg_output()
 {
     echo "**** Decategorizing output" >&2
 
-    # # Determine uncategorized source data file
-    # if [ ${tok_given} -eq 1 -a ${lower_given} -eq 1 ]; then
-    #     uncateg_src=${outd}/${preproc_dir}/${srcbase}_tok_lc.test
-    # else
-    #     if [ ${tok_given} -eq 1 ]; then
-    #         uncateg_src=${outd}/${preproc_dir}/${srcbase}_tok.test
-    #     else
-    #         if [ ${lower_given} -eq 1 ]; then
-    #             uncateg_src=${outd}/${preproc_dir}/${srcbase}_lc.test
-    #         else
-    #             uncateg_src=${scorpus_pref}.test
-    #         fi
-    #     fi
-    # fi
-
     # Define uncategorized source data file
     uncateg_src=${srctest_corpus_for_decat}
 
