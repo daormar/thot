@@ -23,7 +23,7 @@ version()
 usage()
 {
     echo "thot_trans_test         [-pr <int>] -d <string>"
-    echo "                        -t <string> [--tok] [--lower] [--no-lim]"
+    echo "                        -t <string> [--tok] [--lower] [--categ] [--no-lim]"
     echo "                        [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
@@ -33,6 +33,7 @@ usage()
     echo "-t <string>             File with test corpus to be translated"
     echo "--tok                   Execute tokenization stage"
     echo "--lower                 Execute lowercasing stage"
+    echo "--categ                 Execute categorization stage"
     echo "--no-lim                Do not limit size of files used to train recaser and"
     echo "                        detokenizer (requires more memory)"
     echo "-qs <string>            Specific options to be given to the qsub"
@@ -171,6 +172,45 @@ lowercase_corpus()
     test_corpus=${thot_auto_smt_dir}/${preproc_dir}/${filename}
 }
 
+########
+categ_corpus()
+{
+    # Categorize corpus
+    echo "**** Categorizing corpus" >&2
+    basename=`$BASENAME ${test_corpus}`
+    suff="categ"
+    filename=`add_suffix_to_name $basename $suff`
+
+    ${bindir}/thot_categorize -f ${test_corpus} \
+        > ${thot_auto_smt_dir}/${preproc_dir}/${filename} 2>> ${thot_auto_smt_dir}/${preproc_dir}/thot_categorize.log || exit 1
+    echo "" >&2
+
+    # Redefine corpus variables
+    test_corpus_for_decat=${test_corpus}
+    test_corpus=${thot_auto_smt_dir}/${preproc_dir}/${filename}
+}
+
+########
+decateg_output()
+{
+    echo "**** Decategorizing output" >&2
+      
+    # Define uncategorized source data file
+    uncateg_src=${test_corpus_for_decat}
+
+    # Obtain alignment information
+    alig_info_file=${thot_auto_smt_dir}/output/${transoutd}/hyp_alig_info.txt
+    ${bindir}/thot_extract_hyp_info ${output_file}.dec_err > ${alig_info_file}
+
+    # Decategorize output
+    ${bindir}/thot_decategorize -t ${output_file} -s ${uncateg_src} \
+        -i ${alig_info_file} \
+        > ${output_file}_decateg 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_decategorize.log || exit 1
+    echo "" >&2
+
+    # Redefine output_file variable
+    output_file=${output_file}_decateg
+}
 
 ########
 recase_output()
@@ -243,6 +283,7 @@ d_given=0
 t_given=0
 tok_given=0
 lower_given=0
+categ_given=0
 qs_given=0
 tdir_given=0
 tdir="/tmp"
@@ -280,6 +321,8 @@ while [ $# -ne 0 ]; do
         "--tok") tok_given=1
             ;;
         "--lower") lower_given=1
+            ;;
+        "--categ") categ_given=1
             ;;
         "--no-lim") nolim_given=1
             nolim_opt="--no-lim"
@@ -412,6 +455,11 @@ if [ ${lower_given} -eq 1 ]; then
     lowercase_corpus
 fi
 
+# Categorize corpus if requested
+if [ ${lower_given} -eq 1 ]; then
+    categ_corpus
+fi
+
 # Obtain basename of ${test_corpus} after preprocessing
 base_tc=`$BASENAME ${test_corpus}`
 
@@ -466,6 +514,26 @@ lower_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-lo
 
 # Obtain tok option of thot_auto_smt execution
 tok_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-tok is" | $AWK '{printf"%s",$3}'`
+
+# Obtain tok option of thot_auto_smt execution
+categ_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-categ is" | $AWK '{printf"%s",$3}'`
+
+# Only execute decategorization if text was categorized during
+# thot_auto_smt_execution
+
+if [ ${categ_opt_thot_auto_smt} -eq 1 ]; then
+
+    # Decategorization stage
+    if [ ${categ_given} -eq 1 ]; then
+        # Decategorize
+        decateg_output
+    fi
+
+else
+
+    echo "Warning: decategorization will not be carried out (text was not categorized during thot_auto_smt execution)" >&2
+
+fi
 
 # Only execute recasing and detokenization if text was lowercased and
 # tokenized during thot_auto_smt execution
