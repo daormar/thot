@@ -515,24 +515,13 @@ lower_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-lo
 # Obtain tok option of thot_auto_smt execution
 tok_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-tok is" | $AWK '{printf"%s",$3}'`
 
-# Obtain tok option of thot_auto_smt execution
+# Obtain categ option of thot_auto_smt execution
 categ_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-categ is" | $AWK '{printf"%s",$3}'`
 
-# Only execute decategorization if text was categorized during
-# thot_auto_smt_execution
-
-if [ ${categ_opt_thot_auto_smt} -eq 1 ]; then
-
-    # Decategorization stage
-    if [ ${categ_given} -eq 1 ]; then
-        # Decategorize
-        decateg_output
-    fi
-
-else
-
-    echo "Warning: decategorization will not be carried out (text was not categorized during thot_auto_smt execution)" >&2
-
+# Decategorization stage
+if [ ${categ_given} -eq 1 ]; then
+    # Decategorize
+    decateg_output
 fi
 
 # Only execute recasing and detokenization if text was lowercased and
