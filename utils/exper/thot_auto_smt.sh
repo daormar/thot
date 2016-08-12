@@ -227,6 +227,7 @@ categ_corpus()
     echo "" >&2
 
     # Redefine corpus variables
+    srctest_corpus_for_decat=${scorpus_test}
     scorpus_train=${outd}/${preproc_dir}/${srcbase}_${suff}.train
     scorpus_dev=${outd}/${preproc_dir}/${srcbase}_${suff}.dev
     scorpus_test=${outd}/${preproc_dir}/${srcbase}_${suff}.test
@@ -289,20 +290,23 @@ decateg_output()
 {
     echo "**** Decategorizing output" >&2
 
-    # Determine uncategorized source data file
-    if [ ${tok_given} -eq 1 -a ${lower_given} -eq 1 ]; then
-        uncateg_src=${outd}/${preproc_dir}/${srcbase}_tok_lc.test
-    else
-        if [ ${tok_given} -eq 1 ]; then
-            uncateg_src=${outd}/${preproc_dir}/${srcbase}_tok.test
-        else
-            if [ ${lower_given} -eq 1 ]; then
-                uncateg_src=${outd}/${preproc_dir}/${srcbase}_lc.test
-            else
-                uncateg_src=${scorpus_pref}.test
-            fi
-        fi
-    fi
+    # # Determine uncategorized source data file
+    # if [ ${tok_given} -eq 1 -a ${lower_given} -eq 1 ]; then
+    #     uncateg_src=${outd}/${preproc_dir}/${srcbase}_tok_lc.test
+    # else
+    #     if [ ${tok_given} -eq 1 ]; then
+    #         uncateg_src=${outd}/${preproc_dir}/${srcbase}_tok.test
+    #     else
+    #         if [ ${lower_given} -eq 1 ]; then
+    #             uncateg_src=${outd}/${preproc_dir}/${srcbase}_lc.test
+    #         else
+    #             uncateg_src=${scorpus_pref}.test
+    #         fi
+    #     fi
+    # fi
+
+    # Define uncategorized source data file
+    uncateg_src=${srctest_corpus_for_decat}
 
     # Obtain alignment information
     alig_info_file=${outd}/output/${transoutd}/hyp_alig_info.txt
