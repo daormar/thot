@@ -38,6 +38,7 @@ usage()
     echo "--skip-clean           Skip corpus cleaning stage"
     echo "--tok                  Execute tokenization stage"
     echo "--lower                Execute lowercasing stage"
+    echo "--categ                Execute categorization stage"
     echo "--no-lim               Do not limit size of files used to train recaser and"
     echo "                       detokenizer (requires more memory)"
     echo "--no-trans             Do not generate translations"
