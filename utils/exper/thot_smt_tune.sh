@@ -336,7 +336,7 @@ create_tm_files()
             if [ $file = ${tmfile}.lambda ]; then
                 # Synchronize lambda files for tm and tm_dev
                 basetmfile=`basename $file`
-                $LN ${outd}/tm_dev/main/$basetmfile ${outd}/tm/main || { echo "Error while preparing translation model files" >&2 ; return 1; }
+                $LN -f ${outd}/tm_dev/main/$basetmfile ${outd}/tm/main || { echo "Error while preparing translation model files" >&2 ; return 1; }
             else
                 # Create hard links for each file except for that with lambda values
                 $LN -f $file ${outd}/tm/main || { echo "Error while preparing translation model files" >&2 ; return 1; }
