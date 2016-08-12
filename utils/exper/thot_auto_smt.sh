@@ -24,9 +24,9 @@ usage()
 {
     echo "thot_auto_smt          [-pr <int>]"
     echo "                       -s <string> -t <string> -o <string>"
-    echo "                       [--skip-clean] [--tok] [--lower] [--no-lim] [--no-trans]"
-    echo "                       [-nit <int>] [-n <int>] [-m <int>] [-ao <string>]"
-    echo "                       [-qs <string>] [-tdir <string>]"
+    echo "                       [--skip-clean] [--tok] [--lower] [--categ] [--no-lim]"
+    echo "                       [--no-trans] [-nit <int>] [-n <int>] [-m <int>]"
+    echo "                       [-ao <string>] [-qs <string>] [-tdir <string>]"
     echo "                       [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
     echo "-pr <int>              Number of processors (1 by default)"
@@ -192,6 +192,49 @@ lowercase_corpus()
 }
 
 ########
+categ_corpus()
+{
+    # Obtain basenames
+    srcbase=`$BASENAME ${scorpus_pref}`
+    trgbase=`$BASENAME ${tcorpus_pref}`
+
+    # Categorize corpus
+    echo "**** Categorizing corpus" >&2
+    suff=""
+    if [ ${tok_given} -eq 1 ]; then
+        suff="tok_"
+    fi
+
+    if [ ${lower_given} -eq 1 ]; then
+        suff="${suff}lc_"
+    fi
+
+    suff="${suff}categ"
+
+    ${bindir}/thot_categorize -f ${scorpus_train} \
+        > ${outd}/${preproc_dir}/${srcbase}_${suff}.train 2>${outd}/${preproc_dir}/thot_categorize.log || exit 1
+    ${bindir}/thot_categorize -f ${scorpus_dev} \
+        > ${outd}/${preproc_dir}/${srcbase}_${suff}.dev 2>>${outd}/${preproc_dir}/thot_categorize.log || exit 1
+    ${bindir}/thot_categorize -f ${scorpus_test} \
+        > ${outd}/${preproc_dir}/${srcbase}_${suff}.test 2>>${outd}/${preproc_dir}/thot_categorize.log || exit 1
+    ${bindir}/thot_categorize -f ${tcorpus_train} \
+        > ${outd}/${preproc_dir}/${trgbase}_${suff}.train 2>>${outd}/${preproc_dir}/thot_categorize.log || exit 1
+    ${bindir}/thot_categorize -f ${tcorpus_dev} \
+        > ${outd}/${preproc_dir}/${trgbase}_${suff}.dev 2>>${outd}/${preproc_dir}/thot_categorize.log || exit 1
+    ${bindir}/thot_categorize -f ${tcorpus_test} \
+        > ${outd}/${preproc_dir}/${trgbase}_${suff}.test 2>>${outd}/${preproc_dir}/thot_categorize.log || exit 1
+    echo "" >&2
+
+    # Redefine corpus variables
+    scorpus_train=${outd}/${preproc_dir}/${srcbase}_${suff}.train
+    scorpus_dev=${outd}/${preproc_dir}/${srcbase}_${suff}.dev
+    scorpus_test=${outd}/${preproc_dir}/${srcbase}_${suff}.test
+    tcorpus_train=${outd}/${preproc_dir}/${trgbase}_${suff}.train
+    tcorpus_dev=${outd}/${preproc_dir}/${trgbase}_${suff}.dev
+    tcorpus_test=${outd}/${preproc_dir}/${trgbase}_${suff}.test
+}
+
+########
 clean_corpus()
 {
     # Obtain basenames
@@ -207,6 +250,10 @@ clean_corpus()
 
     if [ ${lower_given} -eq 1 ]; then
         suff="${suff}lc_"
+    fi
+
+    if [ ${categ_given} -eq 1 ]; then
+        suff="${suff}categ_"
     fi
 
     suff="${suff}clean"
@@ -234,6 +281,40 @@ clean_corpus()
     scorpus_dev=${outd}/${preproc_dir}/${srcbase}_${suff}.dev
     tcorpus_train=${outd}/${preproc_dir}/${trgbase}_${suff}.train
     tcorpus_dev=${outd}/${preproc_dir}/${trgbase}_${suff}.dev
+}
+
+########
+decateg_output()
+{
+    echo "**** Decategorizing output" >&2
+
+    # Determine uncategorized source data file
+    if [ ${tok_given} -eq 1 -a ${lower_given} -eq 1 ]; then
+        uncateg_src=${outd}/${preproc_dir}/${srcbase}_tok_lc.test
+    else
+        if [ ${tok_given} -eq 1 ]; then
+            uncateg_src=${outd}/${preproc_dir}/${srcbase}_tok.test
+        else
+            if [ ${lower_given} -eq 1 ]; then
+                uncateg_src=${outd}/${preproc_dir}/${srcbase}_lc.test
+            else
+                uncateg_src=${scorpus_pref}.test
+            fi
+        fi
+    fi
+
+    # Obtain alignment information
+    alig_info_file=${outd}/output/${transoutd}/hyp_alig_info.txt
+    ${bindir}/thot_extract_hyp_info ${output_file}.dec_err > ${alig_info_file}
+
+    # Decategorize output
+    ${bindir}/thot_decategorize -t ${output_file} -s ${uncateg_src} \
+        -i ${alig_info_file} \
+        > ${output_file}_decateg 2> ${outd}/output/${transoutd}/thot_decategorize.log || exit 1
+    echo "" >&2
+
+    # Redefine output_file variable
+    output_file=${output_file}_decateg
 }
 
 ########
@@ -302,6 +383,7 @@ o_given=0
 skip_clean_given=0
 tok_given=0
 lower_given=0
+categ_given=0
 nolim_given=0
 notrans_given=0
 nit_given=0
@@ -356,6 +438,8 @@ while [ $# -ne 0 ]; do
         "--tok") tok_given=1
             ;;
         "--lower") lower_given=1
+            ;;
+        "--categ") categ_given=1
             ;;
         "--no-lim") nolim_given=1
             nolim_opt="--no-lim"
@@ -518,6 +602,7 @@ echo "-nit is ${nitval}" >> ${outd}/input_pars.txt
 echo "--skip-clean is ${skip_clean_given}" >> ${outd}/input_pars.txt
 echo "--tok is ${tok_given}" >> ${outd}/input_pars.txt
 echo "--lower is ${lower_given}" >> ${outd}/input_pars.txt
+echo "--categ is ${categ_given}" >> ${outd}/input_pars.txt
 echo "--no-lim is ${nolim_given}" >> ${outd}/input_pars.txt
 echo "-tdir is ${tdir}" >> ${outd}/input_pars.txt
 echo "-sdir is ${sdir}" >> ${outd}/input_pars.txt
@@ -542,6 +627,11 @@ fi
 # Lowercase corpus if requested
 if [ ${lower_given} -eq 1 ]; then
     lowercase_corpus
+fi
+
+# Categorize corpus if requested
+if [ ${categ_given} -eq 1 ]; then
+    categ_corpus
 fi
 
 # Clean corpus if requested
@@ -640,6 +730,12 @@ if [ ${notrans_given} -eq 0 ]; then
 
     # Define output_file variable
     output_file=$outd/output/${transoutd}/thot_decoder_out
+
+    # Decategorizing stage
+    if [ ${categ_given} -eq 1 ]; then
+        # Decategorize
+        decateg_output
+    fi
 
     # Recasing stage
     if [ ${lower_given} -eq 1 ]; then
