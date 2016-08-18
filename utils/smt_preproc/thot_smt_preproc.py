@@ -840,9 +840,10 @@ def extract_alig_info(hyp_word_array):
         # Obtain target segment cuts
         trgcuts_found=False
         while i>0:
-            trgcuts.append(int(hyp_word_array[i]))
-            i-=1
-            if(hyp_word_array[i]=="|"):
+            if(hyp_word_array[i]!="|"):
+                trgcuts.append(int(hyp_word_array[i]))
+                i-=1
+            else:
                 trgcuts_found=True
                 i-=1
                 break
@@ -852,10 +853,11 @@ def extract_alig_info(hyp_word_array):
             # Obtain source segments
             srcsegms_found=False
             while i>0:
-                if(i>3):
-                    srcsegms.append((int(hyp_word_array[i-3]),int(hyp_word_array[i-1])))
-                i-=5
-                if(hyp_word_array[i]=="|"):
+                if(hyp_word_array[i]!="|"):
+                    if(i>3):
+                        srcsegms.append((int(hyp_word_array[i-3]),int(hyp_word_array[i-1])))
+                    i-=5
+                else:
                     srcsegms_found=True
                     break
             srcsegms.reverse()
@@ -881,8 +883,8 @@ def extract_categ_words_of_segm(word_array,left,right):
 
 ##################################################
 def decategorize(sline,tline,iline):
-    src_word_array=sline.split()
-    trg_word_array=tline.split()
+    src_word_array=remove_xml_annotations(sline).split()
+    trg_word_array=remove_xml_annotations(tline).split()
     hyp_word_array=iline.split()
 
     # Extract alignment information
