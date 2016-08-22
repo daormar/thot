@@ -196,7 +196,8 @@ decateg_output()
     echo "**** Decategorizing output" >&2
       
     # Define uncategorized source data file
-    uncateg_src=${test_corpus_for_decat}
+    uncateg_src=`mktemp $tdir/uncateg_src.XXXXX`
+    ${bindir}/thot_remove_xml_annotations -f ${test_corpus_for_decat} > ${uncateg_src} 2>/dev/null
 
     # Obtain alignment information
     alig_info_file=${thot_auto_smt_dir}/output/${transoutd}/hyp_alig_info.txt
@@ -207,6 +208,9 @@ decateg_output()
         -i ${alig_info_file} \
         > ${output_file}_decateg 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_decategorize.log || exit 1
     echo "" >&2
+
+    # Remove temporary files
+    rm ${uncateg_src}
 
     # Redefine output_file variable
     output_file=${output_file}_decateg
