@@ -883,8 +883,8 @@ def extract_categ_words_of_segm(word_array,left,right):
 
 ##################################################
 def decategorize(sline,tline,iline):
-    src_word_array=remove_xml_annotations(sline).split()
-    trg_word_array=remove_xml_annotations(tline).split()
+    src_word_array=sline.split()
+    trg_word_array=tline.split()
     hyp_word_array=iline.split()
 
     # Extract alignment information
