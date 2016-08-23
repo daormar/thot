@@ -460,7 +460,7 @@ if [ ${lower_given} -eq 1 ]; then
 fi
 
 # Categorize corpus if requested
-if [ ${lower_given} -eq 1 ]; then
+if [ ${categ_given} -eq 1 ]; then
     categ_corpus
 fi
 
