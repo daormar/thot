@@ -126,7 +126,7 @@ generate_outsubdir_name()
         if [ ${success} -eq 0 ]; then
             # Maximum number of models was exceeded
             echo "Error! a maximum of 10 additional models are allowed" >&2
-            exit 1
+            return 1
         fi
     fi
 }
@@ -324,7 +324,7 @@ fi
 
 # Obtain name of the output subdirectory where the language model will
 # be stored
-outsubdir=`generate_outsubdir_name`
+outsubdir=`generate_outsubdir_name` || exit 1
 
 # Create output subdirectory
 mkdir -p ${outd}/${outsubdir} || { echo "Error! cannot create output directory" >&2; exit 1; }
