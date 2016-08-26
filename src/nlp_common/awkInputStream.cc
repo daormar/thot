@@ -29,11 +29,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "awkInputStream.h"
 
-
 //--------------- awkInputStream class functions
 //
-// Functions returning bool values, returns non-zero 
-// if succeeds
 
 awkInputStream::awkInputStream(void)
 {
