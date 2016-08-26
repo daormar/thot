@@ -68,7 +68,7 @@ class awkInputStream
 	unsigned int FNR;
         
 	char FS;
-	char fileName[512];
+    std::string fileName;
 	
 	awkInputStream(void);
 	awkInputStream& operator= (const awkInputStream &awk);
