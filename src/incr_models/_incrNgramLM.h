@@ -146,6 +146,11 @@ class _incrNgramLM: public _incrEncCondProbModel<Vector<std::string>,std::string
 
   unsigned int ngramOrder;
 
+      // Auxiliary functions to load and print the model
+  bool load_ngrams(const char *fileName);
+  std::string absolutizeDescrFileName(std::string descFileName,
+                                      std::string modelFileName);
+  std::string extractDirName(std::string filePath);
 };
 
 // Function definitions ---------------------------------------------
@@ -432,6 +437,120 @@ void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::clearVocab(void)
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
+{
+  awkInputStream awk;
+    
+  if(awk.open(fileName)==ERROR)
+  {
+    cerr<<"Error while loading language model file "<<fileName<<endl;
+    return ERROR;
+  }  
+  else
+  {
+        // Check if model file is a thot lm descriptor
+    if(awk.getln())
+    {
+      if(awk.NF>=3 && awk.dollar(1)=="thot" && awk.dollar(1)=="lm" && awk.dollar(1)=="descriptor")
+      {
+            // Process descriptor (main file will be read)
+        while(awk.getln())
+        {
+          if(awk.NF>=3 && awk.dollar(3)=="main")
+          {
+            awk.close();
+            std::string descFileName=fileName;
+            std::string mainFileName=awk.dollar(2);
+            std::string absolutizedMainFileName=absolutizeDescrFileName(descFileName,mainFileName);
+            return load_ngrams(absolutizedMainFileName.c_str());
+          }
+        }
+        cerr<<"Error while loading language model file "<<fileName<<endl;
+        return ERROR;
+      }
+      else
+      {
+            // Process regular n-gram file
+        awk.close();
+        return load_ngrams(fileName);
+      }
+    }
+    else
+    {
+          // File seems to be empty (empty language models are valid)
+      awk.close();
+      return load_ngrams(fileName);
+    }
+  }
+}
+
+//---------------
+template<class SRC_INFO,class SRCTRG_INFO>
+std::string _incrNgramLM<SRC_INFO,SRCTRG_INFO>::absolutizeDescrFileName(std::string descFileName,
+                                                                        std::string modelFileName)
+{
+  if(modelFileName.empty())
+    return modelFileName;
+  else
+  {
+        // Check if path is already absolute
+    if(modelFileName[0]=='/')
+    {
+          // Path is absolute
+      return modelFileName;
+    }
+    else
+    {
+          // Path is not absolute
+      if(descFileName.empty())
+      {
+        return modelFileName;
+      }
+      else
+      {
+            // Absolutize model file name using directory name contained
+            // in descriptor file path
+        return extractDirName(descFileName)+modelFileName;
+      }
+    }
+  }
+}
+
+//---------------
+template<class SRC_INFO,class SRCTRG_INFO>
+std::string _incrNgramLM<SRC_INFO,SRCTRG_INFO>::extractDirName(std::string filePath)
+{
+  if(filePath.empty())
+  {
+    std::string dirName;
+    return dirName;
+  }
+  else
+  {
+        // Provided file path is not empty
+    int last_slash_pos=-1;
+
+        // Find last position of slash symbol
+    for(int i=0;i<filePath.size();++i)
+      if(filePath[i]=='/')
+        last_slash_pos=i;
+
+        // Check if any slash symbols were found
+    if(last_slash_pos==-1)
+    {
+      std::string dirName;
+      return dirName;
+    }
+    else
+    {
+          // The last slash symbol was found at "last_slash_pos"
+      return filePath.substr(0,last_slash_pos+1);
+    }
+  }
+}
+
+//---------------
+template<class SRC_INFO,class SRCTRG_INFO>
+bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load_ngrams(const char *fileName)
 {
   Vector<std::string> hs;
   std::string ht;
