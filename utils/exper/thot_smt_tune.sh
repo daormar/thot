@@ -122,7 +122,7 @@ process_files_for_individual_lm()
 
     # Create lm directory
     if [ ! -d ${outd}/lm/${_lm_status} ]; then
-        mkdir ${outd}/lm/${_lm_status} || { echo "Error! cannot create directory for translation model" >&2; return 1; }
+        mkdir ${outd}/lm/${_lm_status} || { echo "Error! cannot create directory for language model" >&2; return 1; }
     fi
 
     # Check availability of lm files
