@@ -145,10 +145,10 @@ estimate_ngram_parameters()
     if [ $nl -gt 0 ]; then
         ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
             -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
-            ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+            ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || return 1
     else
         ${bindir}/thot_get_ngram_counts -c $corpus -o $prefix \
-            -n ${n_val} > $prefix
+            -n ${n_val} > $prefix || return 1
     fi
 }
 
@@ -157,7 +157,7 @@ generate_weight_file()
 {
     n_buckets=3
     bsize=10
-    ${bindir}/thot_gen_init_file_with_jmlm_weights ${n_val} ${n_buckets} ${bsize} > $prefix.weights || exit 1
+    ${bindir}/thot_gen_init_file_with_jmlm_weights ${n_val} ${n_buckets} ${bsize} > $prefix.weights || return 1
 }
 
 ########
@@ -165,8 +165,8 @@ generate_word_prediction_file()
 {
     nlines_wp_file=100000
     tmpfile=`${MKTEMP}`
-    ${bindir}/thot_shuffle 31415 $corpus > $tmpfile || exit 1
-    $HEAD -${nlines_wp_file} $tmpfile > $prefix.wp || exit 1
+    ${bindir}/thot_shuffle 31415 $corpus > $tmpfile || return 1
+    $HEAD -${nlines_wp_file} $tmpfile > $prefix.wp || return 1
     rm $tmpfile
 }
 
