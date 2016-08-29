@@ -114,6 +114,49 @@ check_if_file_is_desc()
 }
 
 ########
+process_files_for_individual_lm()
+{
+    # Initialize parameters
+    _lmfile=$1
+    _lm_status=$2
+
+    # Create lm directory
+    if [ ! -d ${outd}/lm/${_lm_status} ]; then
+        mkdir ${outd}/lm/${_lm_status} || { echo "Error! cannot create directory for translation model" >&2; return 1; }
+    fi
+
+    # Check availability of lm files
+    nlines=`ls ${_lmfile}* 2>/dev/null | $WC -l`
+    if [ $nlines -eq 0 ]; then
+        echo "Error! language model files could not be found: ${_lmfile}"
+        return 1
+    fi
+
+    # Create lm files
+    for file in ${_lmfile}*; do
+        if [ $file = ${_lmfile}.weights ]; then
+            # Create regular file for the weights
+            cp ${_lmfile}.weights ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
+        else
+            # Create hard links for the rest of the files
+            $LN -f $file ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
+        fi
+    done
+
+    # Add entry to descriptor file
+    _baselmfile=`basename ${_lmfile}`
+    _relative_newlmfile=${_lm_status}/${_baselmfile}    
+    echo "jm ${_relative_newlmfile} ${_lm_status}" >> ${outd}/lm/lm_desc
+}
+
+########
+list_lm_entry_info()
+{
+    lmdesc=$1
+    $TAIL -n +2 ${lmdesc} | $AWK '{printf"%s,%s,%s\n",$1,$2,$3}'
+}
+
+########
 create_lm_files()
 {
     # Obtain path of lm file
@@ -122,10 +165,8 @@ create_lm_files()
     # Check that lm file could be obtained
     if [ -z "$lmfile" ]; then
         echo "Error! configuration file seems to be wrong"
-        exit 1
+        return 1
     fi
-
-    baselmfile=`basename $lmfile`
 
     # Create directory for lm files
     if [ -d ${outd}/lm ]; then
@@ -138,40 +179,30 @@ create_lm_files()
     is_desc=`check_if_file_is_desc ${lmfile}`
 
     if [ ${is_desc} -eq 1 ]; then
-        # TBD
-        echo TBD
-    else
-        # Create main directory
-        if [ ! -d ${outd}/lm/main ]; then
-            mkdir ${outd}/lm/main || { echo "Error! cannot create directory for translation model" >&2; return 1; }
-        fi
-
-        # Check availability of lm files
-        nlines=`ls ${lmfile}* 2>/dev/null | $WC -l`
-        if [ $nlines -eq 0 ]; then
-            echo "Error! language model files could not be found: ${lmfile}"
-            exit 1
-        fi
-
-        # Create lm files
-        for file in ${lmfile}*; do
-            if [ $file = ${lmfile}.weights ]; then
-                # Create regular file for the weights
-                cp ${lmfile}.weights ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; return 1; }
-            else
-                # Create hard links for the rest of the files
-                $LN -f $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; return 1; }
-            fi
-            #        cp $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; return 1; }
-        done
-        
-        # Obtain new lm file name
-        newlmfile=${outd}/lm/main/${baselmfile}
-        relative_newlmfile=main/${baselmfile}
-
         # Create descriptor
         echo "thot lm descriptor" > ${outd}/lm/lm_desc
-        echo "jm ${relative_newlmfile} main" >> ${outd}/lm/lm_desc
+
+        # Create files for the different language models
+        lmdesc_dirname=`$DIRNAME $lmfile`
+        for lm_entry in `list_lm_entry_info $lmfile`; do
+            curr_lmfile=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$2}'`
+            curr_status=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$3}'`
+            process_files_for_individual_lm ${lmdesc_dirname}/${curr_lmfile} ${curr_status}
+        done
+
+        # Obtain new file name for lm descriptor
+        baselmfile=`basename $lmfile`
+        newlmfile=${outd}/lm/${baselmfile}
+    else
+        # Create descriptor
+        echo "thot lm descriptor" > ${outd}/lm/lm_desc
+
+        # Create files for individual language model
+        process_files_for_individual_lm ${lmfile} "main"
+
+        # Obtain new lm file name
+        baselmfile=`basename $lmfile`
+        newlmfile=${outd}/lm/main/${baselmfile}
     fi
 }
 
@@ -185,21 +216,32 @@ lm_downhill_fast()
 ########
 lm_downhill()
 {
-    # Export required variables
-    export LM=$newlmfile
-    export TEST=$tcorpus
-    export ORDER=`cat $lmfile.weights | $AWK '{printf"%d",$1}'`
-    export NUMBUCK=`cat $lmfile.weights | $AWK '{printf"%d",$2}'`
-    export BUCKSIZE=`cat $lmfile.weights | $AWK '{printf"%d",$3}'`
-    export QS="${qs_par}"
+    # Define boolean variable to check if weight file exists
+    if [ -f ${lmfile}.weights ]; then
+        weight_file_exists=1
+    else
+        weight_file_exists=0
+    fi
 
-    # Generate information for weight initialisation
-    va_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} -0 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
-    iv_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} 0.5 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
+    if [ ${weight_file_exists} -eq 1 ]; then
+        # Export required variables
+        export LM=$newlmfile
+        export TEST=$tcorpus
+        export ORDER=`cat $lmfile.weights | $AWK '{printf"%d",$1}'`
+        export NUMBUCK=`cat $lmfile.weights | $AWK '{printf"%d",$2}'`
+        export BUCKSIZE=`cat $lmfile.weights | $AWK '{printf"%d",$3}'`
+        export QS="${qs_par}"
 
-    # Execute tuning algorithm
-    ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
-        -ftol ${ftol_lm} -o ${outd}/lmweights_tune -u ${bindir}/thot_dhs_trgfunc_jmlm ${debug_opt} || return 1
+        # Generate information for weight initialisation
+        va_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} -0 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
+        iv_opt=`${bindir}/thot_gen_init_file_with_jmlm_weights ${ORDER} ${NUMBUCK} ${BUCKSIZE} 0.5 | $AWK '{for(i=4;i<=NF;++i) printf"%s ",$i}'`
+
+        # Execute tuning algorithm
+        ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
+            -ftol ${ftol_lm} -o ${outd}/lmweights_tune -u ${bindir}/thot_dhs_trgfunc_jmlm ${debug_opt} || return 1
+    else
+        echo "Warning! Language model weights will not be adjusted (unable to find ${lmfile}.weights file)" >&2 
+    fi
 }
 
 ########
@@ -208,22 +250,10 @@ tune_lm()
     # Create initial lm files
     create_lm_files || return 1
 
-    # Define boolean variable to check if weight file exists
-    if [ -f ${lmfile}.weights ]; then
-        weight_file_exists=1
+    if [ $DISABLE_FAST_DHSLM -eq 1 ]; then
+        lm_downhill || return 1
     else
-        weight_file_exists=0
-    fi
-
-    # Tune language model if weight file was found
-    if [ ${weight_file_exists} -eq 1 ]; then
-        if [ $DISABLE_FAST_DHSLM -eq 1 ]; then
-            lm_downhill || return 1
-        else
-            lm_downhill_fast || return 1
-        fi
-    else
-        echo "Warning! Language model weights will not be adjusted (unable to find ${lmfile}.weights file)" >&2 
+        lm_downhill_fast || return 1
     fi
 }
 
@@ -236,7 +266,7 @@ create_tm_dev_files()
     # Check that tm file could be obtained
     if [ -z "$tmfile" ]; then
         echo "Error! configuration file seems to be wrong"
-        exit 1
+        return 1
     fi
 
     basetmfile=`basename $tmfile`
@@ -264,7 +294,7 @@ create_tm_dev_files()
         nlines=`ls ${tmfile}* 2>/dev/null | $WC -l`
         if [ $nlines -eq 0 ]; then
             echo "Error! translation model files could not be found: ${tmfile}"
-            exit 1
+            return 1
         fi
 
         # Create tm files
@@ -300,7 +330,7 @@ create_tm_files()
     # Check that tm file could be obtained
     if [ -z "$tmfile" ]; then
         echo "Error! configuration file seems to be wrong"
-        exit 1
+        return 1
     fi
 
     basetmfile=`basename $tmfile`
@@ -328,7 +358,7 @@ create_tm_files()
         nlines=`ls ${tmfile}* 2>/dev/null | $WC -l`
         if [ $nlines -eq 0 ]; then
             echo "Error! translation model files could not be found: ${tmfile}"
-            exit 1
+            return 1
         fi
 
         # Create tm files
