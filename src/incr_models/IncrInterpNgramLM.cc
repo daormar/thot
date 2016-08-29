@@ -70,8 +70,23 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
     this->release();
 
     cerr<<"Loading model file "<<fileName<<endl;
+
+        // Read first entry
+    if(awk.getln())
+    {
+      if(awk.dollar(1)!="thot" || awk.dollar(2)!="lm" || awk.dollar(3)!="descriptor")
+      {
+        cerr<<"Error while loading model descriptor "<<fileName<<endl;
+        return ERROR;
+      }
+    }
+    else
+    {
+      cerr<<"Error while loading model descriptor "<<fileName<<endl;
+      return ERROR;
+    }
     
-        // Read model entries
+        // Read entries for each language model
     while(awk.getln())
     {
       if(awk.dollar(1)!="#")
@@ -81,8 +96,8 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
               // Read entry
           std::string lmType=awk.dollar(1);
           std::string modelFileName=awk.dollar(2);
-          std::string activeStr=awk.dollar(3);
-          cerr<<"* Reading LM entry: "<<lmType<<" "<<modelFileName<<" "<<activeStr<<endl;
+          std::string statusStr=awk.dollar(3);
+          cerr<<"* Reading LM entry: "<<lmType<<" "<<modelFileName<<" "<<statusStr<<endl;
 
               // Create lm file pointer
           BaseIncrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,Count,Count>* biecmPtr=NULL;
@@ -110,8 +125,8 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
               // Store file name
           this->modelFileNameVec.push_back(modelFileName);
 
-              // Check if model is active
-          if(activeStr=="yes")
+              // Check if model is main
+          if(statusStr=="main")
             this->modelIndex=this->modelPtrVec.size()-1;
         }
       }
