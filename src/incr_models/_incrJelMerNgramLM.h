@@ -180,7 +180,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
   Vector<double> initial_weights=weights;
   int ndim=initial_weights.size();
   double* start=(double*) malloc(ndim*sizeof(double));
-  int nfunk;
+  int nfunk=0;
   double* x=(double*) malloc(ndim*sizeof(double));
   double y;
 
@@ -204,7 +204,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
       start[i]=initial_weights[i];
     
         // Execute step by step simplex
-    double curr_dhs_ftol;
+    double curr_dhs_ftol=DBL_MAX;
     ret=step_by_step_simplex(start,ndim,DHS_LM_FTOL,DHS_LM_SCALE_PAR,NULL,tmp_file,&nfunk,&y,x,&curr_dhs_ftol,false);
 
     switch(ret)
@@ -419,14 +419,25 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
 template<class SRC_INFO,class SRCTRG_INFO>
 bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *prefixOfLmFiles)
 {
-      // Obtain name of file with weights
-  std::string fileName=prefixOfLmFiles;
-  fileName=fileName+".weights";
+        // Obtain name of file with weights
+  std::string weightFileName;
+  std::string mainFileName;
+  if(this->fileIsDescriptor(prefixOfLmFiles,mainFileName))
+  {
+        // File is descriptor
+    std::string descFileName=prefixOfLmFiles;
+    std::string absolutizedMainFileName=this->absolutizeDescrFileName(descFileName,mainFileName);
+    weightFileName=absolutizedMainFileName+".weights";
+  }
+  else
+  {
+        // File is not descriptor
+    weightFileName=prefixOfLmFiles;
+    weightFileName=weightFileName+".weights";
+  }
   
-  FILE *filePtr;
-
       // print weights
-  filePtr=fopen(fileName.c_str(),"w");
+  FILE *filePtr=fopen(weightFileName.c_str(),"w");
   if(filePtr==NULL)
   {
     cerr<<"Error while printing file with lm weights"<<endl;
