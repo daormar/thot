@@ -104,6 +104,44 @@ check_if_file_is_desc()
 }
 
 ########
+process_files_for_individual_lm()
+{
+    # Initialize parameters
+    _lmfile=$1
+    _lm_status=$2
+
+    # Create lm directory
+    if [ ! -d ${outd}/lm/${_lm_status} ]; then
+        mkdir ${outd}/lm/${_lm_status} || { echo "Error! cannot create directory for language model" >&2; return 1; }
+    fi
+    
+    # Check availability of lm files
+    nlines=`ls ${_lmfile}* 2>/dev/null | $WC -l`
+    if [ $nlines -eq 0 ]; then
+        echo "Error! language model files could not be found: ${_lmfile}"
+        exit 1
+    fi
+    
+    # Create lm files
+    for file in `ls ${_lmfile}*`; do
+        # Create hard links for each file
+        $LN -f $file ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
+    done
+
+    # Add entry to descriptor file
+    _baselmfile=`basename ${_lmfile}`
+    _relative_newlmfile=${_lm_status}/${_baselmfile}    
+    echo "jm ${_relative_newlmfile} ${_lm_status}" >> ${outd}/lm/lm_desc
+}
+
+########
+list_lm_entry_info()
+{
+    lmdesc=$1
+    $TAIL -n +2 ${lmdesc} | $AWK '{printf"%s,%s,%s\n",$1,$2,$3}'
+}
+
+########
 create_lm_files()
 {
     # Obtain path of lm file
@@ -121,34 +159,30 @@ create_lm_files()
     is_desc=`check_if_file_is_desc ${lmfile}`
 
     if [ ${is_desc} -eq 1 ]; then
-        # TBD
-        echo TBD
-    else
-        # Create main directory
-        if [ ! -d ${outd}/lm/main ]; then
-            mkdir ${outd}/lm/main || { echo "Error! cannot create directory for translation model" >&2; return 1; }
-        fi
-
-        # Check availability of lm files
-        nlines=`ls ${lmfile}* 2>/dev/null | $WC -l`
-        if [ $nlines -eq 0 ]; then
-            echo "Error! language model files could not be found: ${lmfile}"
-            exit 1
-        fi
-        
-        # Create lm files
-        for file in `ls ${lmfile}*`; do
-            # Create hard links for each file
-            $LN -f $file ${outd}/lm/main || { echo "Error while preparing language model files" >&2 ; return 1; }
-        done
-
-        # Obtain new lm file name
-        newlmfile=${outd}/lm/main/${baselmfile}
-        relative_newlmfile=main/${baselmfile}
-
         # Create descriptor
         echo "thot lm descriptor" > ${outd}/lm/lm_desc
-        echo "jm ${relative_newlmfile} main" >> ${outd}/lm/lm_desc
+
+        # Create files for the different language models
+        lmdesc_dirname=`$DIRNAME $lmfile`
+        for lm_entry in `list_lm_entry_info $lmfile`; do
+            curr_lmfile=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$2}'`
+            curr_status=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$3}'`
+            process_files_for_individual_lm ${lmdesc_dirname}/${curr_lmfile} ${curr_status}
+        done
+
+        # Obtain new file name for lm descriptor
+        baselmfile=`basename $lmfile`
+        newlmfile=${outd}/lm/${baselmfile}
+    else
+        # Create descriptor
+        echo "thot lm descriptor" > ${outd}/lm/lm_desc
+
+        # Create files for individual language model
+        process_files_for_individual_lm ${lmfile} "main"
+
+        # Obtain new lm file name
+        baselmfile=`basename $lmfile`
+        newlmfile=${outd}/lm/main/${baselmfile}
     fi
 }
 
