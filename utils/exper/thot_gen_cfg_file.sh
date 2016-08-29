@@ -50,6 +50,24 @@ obtain_tm_file_path()
 }
 
 ########
+put_lm_string()
+{
+    $SED "s@<lm_file_path>@${lmfile}@"
+}
+
+########
+put_lm_desc_string()
+{
+    $SED "s@<lm_file_path>@${lm_desc}@"
+}
+
+########
+put_tm_string()
+{
+    $SED "s@<tm_file_path>@${tmfile}@"
+}
+
+########
 if [ $# -ne 2 ]; then
     echo "Usage: thot_gen_cfg_file <lm_desc> <tm_desc>"
 else
@@ -80,6 +98,6 @@ else
 
     # Generate configuration file
     cat ${datadir}/cfg_templates/thot_basic.cfg | \
-        $SED "s@<lm_file_path>@${lmfile}@" | \
-        $SED "s@<tm_file_path>@${tmfile}@"
+        put_lm_desc_string | \
+        put_tm_string
 fi
