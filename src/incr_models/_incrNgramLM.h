@@ -151,6 +151,8 @@ class _incrNgramLM: public _incrEncCondProbModel<Vector<std::string>,std::string
   std::string absolutizeDescrFileName(std::string descFileName,
                                       std::string modelFileName);
   std::string extractDirName(std::string filePath);
+  bool fileIsDescriptor(std::string fileName,
+                        std::string& mainFileName);
 };
 
 // Function definitions ---------------------------------------------
@@ -436,51 +438,64 @@ void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::clearVocab(void)
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
+bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::fileIsDescriptor(std::string fileName,
+                                                          std::string& mainFileName)
 {
   awkInputStream awk;
-    
-  if(awk.open(fileName)==ERROR)
-  {
-    cerr<<"Error while loading language model file "<<fileName<<endl;
-    return ERROR;
-  }  
+  if(awk.open(fileName.c_str())==ERROR)
+    return false;
   else
   {
-        // Check if model file is a thot lm descriptor
     if(awk.getln())
     {
-      if(awk.NF>=3 && awk.dollar(1)=="thot" && awk.dollar(1)=="lm" && awk.dollar(1)=="descriptor")
+      if(awk.NF>=3 && awk.dollar(1)=="thot" && awk.dollar(2)=="lm" && awk.dollar(3)=="descriptor")
       {
             // Process descriptor (main file will be read)
         while(awk.getln())
         {
           if(awk.NF>=3 && awk.dollar(3)=="main")
           {
+                // File is a descriptor and main file was found
+            mainFileName=awk.dollar(2);
             awk.close();
-            std::string descFileName=fileName;
-            std::string mainFileName=awk.dollar(2);
-            std::string absolutizedMainFileName=absolutizeDescrFileName(descFileName,mainFileName);
-            return load_ngrams(absolutizedMainFileName.c_str());
+            return true;
           }
         }
-        cerr<<"Error while loading language model file "<<fileName<<endl;
-        return ERROR;
+            // File is not a descriptor since it does not incorporate a
+            // main language model
+        return false;
       }
       else
       {
-            // Process regular n-gram file
+            // File is not a descriptor
         awk.close();
-        return load_ngrams(fileName);
+        return false;
       }
     }
     else
     {
-          // File seems to be empty (empty language models are valid)
+          // File is empty
       awk.close();
-      return load_ngrams(fileName);
+      return false;
     }
   }
+}
+
+//---------------
+template<class SRC_INFO,class SRCTRG_INFO>
+bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
+{
+  std::string mainFileName;
+  if(fileIsDescriptor(fileName,mainFileName))
+  {
+    std::string descFileName=fileName;
+    std::string absolutizedMainFileName=absolutizeDescrFileName(descFileName,mainFileName);
+    return load_ngrams(absolutizedMainFileName.c_str());
+  }
+  else
+  {
+    return load_ngrams(fileName);
+  }  
 }
 
 //---------------
