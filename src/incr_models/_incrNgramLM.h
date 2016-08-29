@@ -626,9 +626,23 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load_ngrams(const char *fileName)
 template<class SRC_INFO,class SRCTRG_INFO>
 bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
 {
+  std::string lmFileName;
+  std::string mainFileName;
+  if(fileIsDescriptor(fileName,mainFileName))
+  {
+        // File is descriptor
+    std::string descFileName=fileName;
+    std::string absolutizedMainFileName=this->absolutizeDescrFileName(descFileName,mainFileName);
+    lmFileName=absolutizedMainFileName;
+  }
+  else
+  {
+        // File is not descriptor
+    lmFileName=fileName;
+  }
+  
   ofstream outF;
-
-  outF.open(fileName,ios::out);
+  outF.open(lmFileName.c_str(),ios::out);
   if(!outF)
   {
     cerr<<"Error while printing model to file."<<endl;
