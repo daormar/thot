@@ -57,88 +57,96 @@ bool IncrInterpNgramLM::load(const char *fileName)
 //---------------
 bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
 {
-  awkInputStream awk;
-  
-  if(awk.open(fileName)==ERROR)
+  std::string mainFileName;
+  if(fileIsDescriptor(fileName,mainFileName))
   {
-    cerr<<"Error while loading model file "<<fileName<<endl;
-    return ERROR;
+    awkInputStream awk;
+    if(awk.open(fileName)==ERROR)
+    {
+      cerr<<"Error while loading descriptor file "<<fileName<<endl;
+      return ERROR;
+    }
+    else
+    {
+          // Release previously stored model
+      this->release();
+
+      cerr<<"Loading model file "<<fileName<<endl;
+
+          // Discard first line (it is used to identify the file as a
+          // descriptor)
+      awk.getln();
+    
+          // Read entries for each language model
+      while(awk.getln())
+      {
+        if(awk.dollar(1)!="#")
+        {
+          if(awk.NF==3)
+          {
+                // Read entry
+            std::string lmType=awk.dollar(1);
+            std::string modelFileName=awk.dollar(2);
+            std::string statusStr=awk.dollar(3);
+            std::string absolutizedModelFileName=this->absolutizeModelFileName(fileName,modelFileName);
+            cerr<<"* Reading LM entry: "<<lmType<<" "<<absolutizedModelFileName<<" "<<statusStr<<endl;
+            loadLmEntry(lmType,absolutizedModelFileName,statusStr);
+          }
+        }
+      }
+          // Check if main model was found
+      if(modelIndex==INVALID_MODEL_INDEX)
+      {
+        cerr<<"Error: one of the models should be marked as main"<<endl;
+        return ERROR;
+      }
+      else
+        return OK;
+    }
   }
   else
   {
-        // Release previously stored model
-    this->release();
-
-    cerr<<"Loading model file "<<fileName<<endl;
-
-        // Read first entry
-    if(awk.getln())
-    {
-      if(awk.dollar(1)!="thot" || awk.dollar(2)!="lm" || awk.dollar(3)!="descriptor")
-      {
-        cerr<<"Error while loading model descriptor "<<fileName<<endl;
-        return ERROR;
-      }
-    }
-    else
-    {
-      cerr<<"Error while loading model descriptor "<<fileName<<endl;
-      return ERROR;
-    }
-    
-        // Read entries for each language model
-    while(awk.getln())
-    {
-      if(awk.dollar(1)!="#")
-      {
-        if(awk.NF==3)
-        {
-              // Read entry
-          std::string lmType=awk.dollar(1);
-          std::string modelFileName=awk.dollar(2);
-          std::string statusStr=awk.dollar(3);
-          cerr<<"* Reading LM entry: "<<lmType<<" "<<modelFileName<<" "<<statusStr<<endl;
-
-              // Create lm file pointer
-          BaseIncrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,Count,Count>* biecmPtr=NULL;
-          if(lmType=="jm") biecmPtr=new IncrJelMerNgramLM;
-          if(lmType=="cjm") biecmPtr=new CacheIncrJelMerNgramLM;
-          if(biecmPtr==NULL) return ERROR;
-
-              // Store file pointer
-          modelPtrVec.push_back(biecmPtr);
-
-              // Add global to local maps
-          GlobalToLocalSrcDataMap gtlSrcDataMap;
-          gtlSrcMapVec.push_back(gtlSrcDataMap);
-
-          GlobalToLocalTrgDataMap gtlTrgDataMap;
-          gtlTrgMapVec.push_back(gtlTrgDataMap);
-
-              // Load model from file
-          int ret=this->modelPtrVec.back()->load(modelFileName.c_str());
-          if(ret==ERROR) return ERROR;
-        
-              // Store lm type
-          lmTypeVec.push_back(lmType);
-
-              // Store file name
-          this->modelFileNameVec.push_back(modelFileName);
-
-              // Check if model is main
-          if(statusStr=="main")
-            this->modelIndex=this->modelPtrVec.size()-1;
-        }
-      }
-    }
-    if(modelIndex==INVALID_MODEL_INDEX)
-    {
-      cerr<<"Error: one of the models should be marked as active"<<endl;
-      return ERROR;
-    }
-    else
-      return OK;
+    cerr<<"Error while loading descriptor file "<<fileName<<endl;
+    return ERROR;
   }
+}
+
+//---------------
+bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
+                                    std::string modelFileName,
+                                    std::string statusStr)
+{
+      // Create lm file pointer
+  BaseIncrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,Count,Count>* biecmPtr=NULL;
+  if(lmType=="jm") biecmPtr=new IncrJelMerNgramLM;
+  if(lmType=="cjm") biecmPtr=new CacheIncrJelMerNgramLM;
+  if(biecmPtr==NULL) return ERROR;
+
+      // Store file pointer
+  modelPtrVec.push_back(biecmPtr);
+
+      // Add global to local maps
+  GlobalToLocalSrcDataMap gtlSrcDataMap;
+  gtlSrcMapVec.push_back(gtlSrcDataMap);
+
+  GlobalToLocalTrgDataMap gtlTrgDataMap;
+  gtlTrgMapVec.push_back(gtlTrgDataMap);
+
+      // Load model from file
+  int ret=this->modelPtrVec.back()->load(modelFileName.c_str());
+  if(ret==ERROR) return ERROR;
+        
+      // Store lm type
+  lmTypeVec.push_back(lmType);
+
+      // Store file name
+  this->modelFileNameVec.push_back(modelFileName);
+
+      // Check if model is main
+  if(statusStr=="main")
+    this->modelIndex=this->modelPtrVec.size()-1;
+
+  return OK;
 }
 
 //---------------
@@ -156,26 +164,28 @@ bool IncrInterpNgramLM::loadWeights(const char *fileName)
     Vector<float> _weights;
 
     cerr<<"Loading weights from "<<fileName<<endl;
-    if(awk.getln())
+        // Read weights for each language model
+    while(awk.getln())
     {
-          // Read weights
-      for(unsigned int i=1;i<=awk.NF;++i)
+      if(awk.NF==1)
       {
-        _weights.push_back((float)atof(awk.dollar(i).c_str()));
+        _weights.push_back((float)atof(awk.dollar(1).c_str()));
       }
-      awk.close();
-
-          // Set weights
-      setWeights(_weights);
-      
-      return OK;
     }
-    else
+    awk.close();
+
+        // Check if each model has its weight
+    unsigned int numModels=modelFileNameVec.size();
+    if(numModels!=_weights.size())
     {
-      cerr<<"Error while loading file with weights: "<<fileName<<endl;
-      awk.close();
+      cerr<<"Error, file "<<fileName<<" contains "<<_weights.size()<<" but "<<numModels<<" models were loaded"<<endl;
       return ERROR;
     }
+    
+        // Set weights
+    setWeights(_weights);
+      
+    return OK;
   }
 }
 

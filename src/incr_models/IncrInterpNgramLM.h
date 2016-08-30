@@ -90,6 +90,9 @@ class IncrInterpNgramLM: public _incrInterpNgramLM<Count,Count>
   Vector<std::string> modelFileNameVec;
 
   bool loadLmEntries(const char *fileName);
+  bool loadLmEntry(std::string lmType,
+                   std::string modelFileName,
+                   std::string statusStr);
   bool loadWeights(const char *fileName);
   bool printLmEntries(const char *fileName);
   bool printWeights(const char *fileName);
