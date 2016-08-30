@@ -66,7 +66,7 @@ class IncrInterpNgramLM: public _incrInterpNgramLM<Count,Count>
   {
   }
 
-        // Functions to load and print the model
+      // Functions to load and print the model
   bool load(const char *fileName);
   bool print(const char *fileName);
       // Prints the interpolated in different files, using "fileName" as
