@@ -190,6 +190,9 @@ create_lm_files()
             process_files_for_individual_lm ${lmdesc_dirname}/${curr_lmfile} ${curr_status}
         done
 
+        # Copy weights for lm descriptor
+        cp ${lmfile}.weights ${outd}/lm/
+
         # Obtain new file name for lm descriptor
         baselmfile=`basename $lmfile`
         newlmfile=${outd}/lm/${baselmfile}
