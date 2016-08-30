@@ -94,15 +94,21 @@ get_absolute_path()
 }
 
 ########
-create_desc_file()
+create_desc_files()
 {
     if [ ${o_given} -eq 1 ]; then
         # -o option was given
         echo "thot lm descriptor # tool: thot_lm_train" > ${outd}/lm_desc
         echo "jm ${relative_prefix} main # corpus file: ${corpus}" >> ${outd}/lm_desc
+
+        # add new weight to descriptor weights file
+        echo "1" > ${outd}/lm_desc.weights
     else
         # -a option was given
         echo "jm ${relative_prefix} ${outsubdir} # corpus file: ${corpus}" >> ${outd}/lm_desc        
+
+        # add new weight to descriptor weights file
+        echo "1" >> ${outd}/lm_desc.weights
     fi
 }
 
@@ -345,5 +351,5 @@ if [ ${o_given} -eq 1 ]; then
 fi
 
 echo "* Generating descriptor file... " >&2
-create_desc_file $outd
+create_desc_files $outd
 echo "" >&2
