@@ -69,13 +69,11 @@ class _incrInterpNgramLM: public _incrInterpEncCondProbModel<Vector<std::string>
       this->encPtr=new lm_ienc;
     }
 
-      // basic vecx_x_incr_interp_ecpm function redefinitions
+      // Basic function redefinitions
   void addTableEntryHigh(const Vector<std::string>& hs,
                          const std::string& ht,
                          im_pair<SRC_INFO,SRCTRG_INFO> inf);
   bool loadEncodingInfo(const char *prefixFileName);
-
-  // BaseIncrNgramLM function definitions
 
       // Functions to access model counts
   Count cHist(const Vector<WordIndex>& vu);
@@ -85,7 +83,7 @@ class _incrInterpNgramLM: public _incrInterpEncCondProbModel<Vector<std::string>
   Count cNgramStr(const std::string& s,
                   const Vector<std::string>& rq);
 
-        // Functions to incrementally extend the model
+      // Functions to incrementally extend the model
   void incrCountsOfNgramStr(const std::string& s,
                             const Vector<std::string>& rq,
                             Count c);
@@ -104,8 +102,8 @@ class _incrInterpNgramLM: public _incrInterpEncCondProbModel<Vector<std::string>
   LgProb getLgProbEndStr(const Vector<string>& rq);
 
       // Probability functions using states
- bool getStateForWordSeq(const Vector<WordIndex>& wordSeq,
-                         Vector<WordIndex>& state); 
+  bool getStateForWordSeq(const Vector<WordIndex>& wordSeq,
+                          Vector<WordIndex>& state); 
   void getStateForBeginOfSentence(Vector<WordIndex> &state);
   LgProb getNgramLgProbGivenState(WordIndex w,Vector<WordIndex> &state);
   LgProb getNgramLgProbGivenStateStr(std::string s,Vector<WordIndex> &state);
@@ -123,6 +121,18 @@ class _incrInterpNgramLM: public _incrInterpEncCondProbModel<Vector<std::string>
       // Prints encoding information
   void clearVocab(void);
       // Clears encoding information
+
+      // Functions to update model weights
+  virtual int updateModelWeights(const char *corpusFileName,
+                                 int verbose=0)=0;
+
+      // Functions to load and print the model (including model weights)
+  bool load(const char *fileName)=0;
+  bool print(const char *fileName)=0;
+
+      // Functions to load and print model weights
+  virtual bool loadWeights(const char *fileName)=0;
+  virtual bool printWeights(const char *fileName)=0;
 
       // size and clear functions
   size_t size(void);
@@ -162,9 +172,6 @@ bool _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::loadEncodingInfo(const char *pref
     return false;
   }
 }
-
-// BaseIncrNgramLM<SRC_INFO,SRCTRG_INFO> function definitions --------------------------------
-
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>

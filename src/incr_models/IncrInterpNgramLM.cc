@@ -95,9 +95,9 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
         }
       }
           // Check if main model was found
-      if(modelIndex==INVALID_MODEL_INDEX)
+      if(modelIndex!=0)
       {
-        cerr<<"Error: one of the models should be marked as main"<<endl;
+        cerr<<"Error: the first model entry should be marked as main"<<endl;
         return ERROR;
       }
       else
@@ -139,9 +139,9 @@ bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
       // Store lm type
   lmTypeVec.push_back(lmType);
 
-      // Store file name
-  this->modelFileNameVec.push_back(modelFileName);
-
+      // Store status
+  modelStatusVec.push_back(statusStr);
+  
       // Check if model is main
   if(statusStr=="main")
     this->modelIndex=this->modelPtrVec.size()-1;
@@ -175,7 +175,7 @@ bool IncrInterpNgramLM::loadWeights(const char *fileName)
     awk.close();
 
         // Check if each model has its weight
-    unsigned int numModels=modelFileNameVec.size();
+    unsigned int numModels=lmTypeVec.size();
     if(numModels!=_weights.size())
     {
       cerr<<"Error, file "<<fileName<<" contains "<<_weights.size()<<" but "<<numModels<<" models were loaded"<<endl;
@@ -213,37 +213,110 @@ bool IncrInterpNgramLM::printLmEntries(const char *fileName)
   }
   else
   {
+        // Print header
+    outF<<"thot lm descriptor"<<endl;
+
+        // Print lm entries
     for(unsigned int i=0;i<lmTypeVec.size();++i)
     {
-          // Print model entry
+          // Print descriptor entry
+      std::string currModelFileName=obtainFileNameForLmEntry(fileName,i);
+      outF<<lmTypeVec[i]<<" "<<currModelFileName<<" "<<modelStatusVec[i]<<endl;
 
-          // Obtain model file name
-      stringstream ss;
-      ss<<i;
-      std::string currFileName=fileName;
-      currFileName=currFileName+"."+ss.str();
-      outF<<lmTypeVec[i]<<" "<<modelFileNameVec[i]<<" ";
-      if(modelIndex==(int) i)
-        outF<<"yes";
-      else
-        outF<<"no";
-      outF<<endl;
-
-          // Print model files
-      int ret=modelPtrVec[i]->print(currFileName.c_str());
-      if(ret==ERROR) return ERROR;
+          // Print language model
+      bool ret=printLm(fileName,i);
+      if(ret==ERROR)
+        return ERROR;
     }
-    outF.close();	
     return OK;
   }
 }
 
 //---------------
+bool IncrInterpNgramLM::printLm(const char* fileDescName,
+                                unsigned int entry_index)
+{
+      // Obtain directory name for model entry
+  std::string currDirName=obtainDirNameForLmEntry(fileDescName,entry_index);
+
+      // Obtain model file name
+  std::string currModelFileName=obtainFileNameForLmEntry(fileDescName,entry_index);
+
+      // Check if directory already exists. Create directory when
+      // necessary
+  struct stat info;
+  if(stat(currDirName.c_str(),&info) != 0)
+  {
+        // No file or directory with given name exists
+        // Create directory
+    int ret = mkdir(currDirName.c_str(), S_IRUSR | S_IWUSR);
+    if(ret!=0)
+    {
+      cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<endl;
+      return ERROR;
+    }
+  }
+  else
+  {
+    if(info.st_mode & S_IFMT)
+    {
+          // A file with the same name existed
+      cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<endl;
+      return ERROR;
+    }
+  }
+      // Print model files
+  return modelPtrVec[entry_index]->print(currModelFileName.c_str());
+}
+
+//---------------
+std::string IncrInterpNgramLM::obtainFileNameForLmEntry(const std::string fileDescName,
+                                                        unsigned int entry_index)
+{
+      // Obtain directory name for model entry
+  std::string currDirName=obtainDirNameForLmEntry(fileDescName,entry_index);
+
+      // Obtain model file name
+  std::string currModelFileName=currDirName+"/trg.lm";
+
+  return currModelFileName;
+}
+
+//---------------
+std::string IncrInterpNgramLM::obtainDirNameForLmEntry(const std::string fileDescName,
+                                                       unsigned int entry_index)
+{
+      // Obtain directory name for model entry
+  std::string fileDescDirName=extractDirName(fileDescName);
+
+      // Obtain directory name
+  std::string currDirName=fileDescDirName+"/"+modelStatusVec[entry_index];
+
+  return currDirName;
+}
+
+//---------------
 bool IncrInterpNgramLM::printWeights(const char *fileName)
+{
+  int ret=printInterModelWeights(fileName);
+  if(ret==ERROR)
+    return ERROR;
+  
+  ret=printIntraModelWeights(fileName);
+  if(ret==ERROR)
+    return ERROR;
+
+  return OK;
+}
+
+//---------------
+bool IncrInterpNgramLM::printInterModelWeights(const char *fileName)
 {
   ofstream outF;
 
-  outF.open(fileName,ios::out);
+  std::string weightsFileName=fileName;
+  weightsFileName=weightsFileName+".weights";
+  outF.open(weightsFileName.c_str(),ios::out);
   if(!outF)
   {
     cerr<<"Error while printing model to file."<<endl;
@@ -253,12 +326,32 @@ bool IncrInterpNgramLM::printWeights(const char *fileName)
   {
     for(unsigned int i=0;i<weights.size();++i)
     {
-      outF<<weights[i];
+      outF<<weights[i]<<endl;
     }
-    outF<<endl;
     return OK;
   }
-}  
+} 
+
+//---------------
+bool IncrInterpNgramLM::printIntraModelWeights(const char *fileName)
+{
+      // Print lm entries
+  for(unsigned int i=0;i<lmTypeVec.size();++i)
+  {
+        // Print descriptor entry
+    std::string currModelFileName=obtainFileNameForLmEntry(fileName,i);
+    
+        // Print language model weights (if appliable)
+    _incrJelMerNgramLM<Count,Count>* incrJelMerLmPtr=dynamic_cast<_incrJelMerNgramLM<Count,Count>* >(modelPtrVec[i]);
+    if(incrJelMerLmPtr)
+    {
+      bool ret=incrJelMerLmPtr->printWeights(currModelFileName.c_str());
+      if(ret==ERROR)
+        return ERROR;
+    }
+  }
+  return OK;
+}
 
 //---------------
 Prob IncrInterpNgramLM::pTrgGivenSrc(const Vector<WordIndex>& s,
@@ -272,6 +365,14 @@ Prob IncrInterpNgramLM::pTrgGivenSrc(const Vector<WordIndex>& s,
                                                                             mapGlobalToLocalTrgData(i,t)));
   }
   return p;
+}
+
+//---------------
+int IncrInterpNgramLM::updateModelWeights(const char *corpusFileName,
+                                          int verbose/*=0*/)
+{
+      // TBD
+  return OK;
 }
 
 //---------------
