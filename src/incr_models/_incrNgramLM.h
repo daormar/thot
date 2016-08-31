@@ -70,12 +70,11 @@ class _incrNgramLM: public _incrEncCondProbModel<Vector<std::string>,std::string
     ngramOrder=3;
   }
 
-      // basic vecx_x_incr_ecpm function redefinitions
+      // Basic function redefinitions
   void addTableEntryHigh(const Vector<std::string>& hs,
                          const std::string& ht,
                          im_pair<SRC_INFO,SRCTRG_INFO> inf);
   bool loadEncodingInfo(const char *prefixFileName);
-  void setNgramOrder(int _ngramOrder);
 
   // _incrNgramLM function definitions
 
@@ -133,6 +132,8 @@ class _incrNgramLM: public _incrEncCondProbModel<Vector<std::string>,std::string
   bool print(const char *fileName);
   ostream& print(ostream &outS);
 
+      // n-gram order related functions
+  void setNgramOrder(int _ngramOrder);
   unsigned int getNgramOrder(void);
 
       // size and clear functions
