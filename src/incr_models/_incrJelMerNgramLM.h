@@ -77,7 +77,7 @@ class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
       sizeOfBucket=0;
     }
 
-      // basic vecx_x_ecpm function redefinitions
+      // Basic function redefinitions
   Prob pTrgGivenSrc(const Vector<WordIndex>& s,const WordIndex& t);
 
       // Functions to update model weights
@@ -440,7 +440,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *prefixOf
   FILE *filePtr=fopen(weightFileName.c_str(),"w");
   if(filePtr==NULL)
   {
-    cerr<<"Error while printing file with lm weights"<<endl;
+    cerr<<"Error while printing file with lm weights ("<<weightFileName<<")"<<endl;
     return ERROR;
   }
 
