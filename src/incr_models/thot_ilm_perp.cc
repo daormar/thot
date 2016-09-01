@@ -36,7 +36,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
   // _FILE_OFFSET_BITS constant. This constant has to be defined
   // before including any STL header files to avoid conflicts.
 
-#include "CacheIncrJelMerNgramLM.h"
 #include "IncrJelMerNgramLM.h"
 #include "IncrInterpNgramLM.h"
 #include "ctimer.h"
@@ -90,8 +89,6 @@ int main(int argc,char *argv[])
       case INTERP_LM: lm=new IncrInterpNgramLM;
         break;
       case JEL_MER_LM: lm=new IncrJelMerNgramLM;
-        break;
-      case CACHE_JEL_MER_LM: lm=new CacheIncrJelMerNgramLM;
         break;
       default: lm=new IncrJelMerNgramLM;
         break;
