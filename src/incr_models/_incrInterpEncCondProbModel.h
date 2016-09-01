@@ -175,7 +175,7 @@ class _incrInterpEncCondProbModel: public BaseIncrEncCondProbModel<HSRCDATA,HTRG
       // Clears encoding information
 
       // specific functions for interpolated ngram language models
-  void setWeights(const Vector<float>& _weights);
+  void setWeights(const Vector<double>& _weights);
 
       // size, clear functions
   size_t size(void);
@@ -194,8 +194,8 @@ class _incrInterpEncCondProbModel: public BaseIncrEncCondProbModel<HSRCDATA,HTRG
   typedef std::map<TRGDATA,TRGDATA> GlobalToLocalTrgDataMap;
   
       // data members
-  Vector<float> weights;
-  Vector<float> normWeights;
+  Vector<double> weights;
+  Vector<double> normWeights;
   Vector<BaseIncrEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>*> modelPtrVec;
   Vector<GlobalToLocalSrcDataMap> gtlSrcMapVec;
   Vector<GlobalToLocalTrgDataMap> gtlTrgMapVec;
@@ -209,7 +209,7 @@ class _incrInterpEncCondProbModel: public BaseIncrEncCondProbModel<HSRCDATA,HTRG
   TRGDATA mapGlobalToLocalTrgData(unsigned int index,const TRGDATA& global_t);
   
       // specific functions for interpolated ngram language models
-  Vector<float> obtainNormWeights(const Vector<float>& unnormWeights);
+  Vector<double> obtainNormWeights(const Vector<double>& unnormWeights);
 };
 
 //--------------- Template function definitions
@@ -889,7 +889,7 @@ TRGDATA _incrInterpEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,S
 
 //---------------
 template<class HSRCDATA,class HTRGDATA,class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
-void _incrInterpEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::setWeights(const Vector<float>& _weights)
+void _incrInterpEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::setWeights(const Vector<double>& _weights)
 {
   weights=_weights;
   normWeights=obtainNormWeights(weights);
@@ -897,16 +897,16 @@ void _incrInterpEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,SRCT
 
 //---------------
 template<class HSRCDATA,class HTRGDATA,class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
-Vector<float>
-_incrInterpEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::obtainNormWeights(const Vector<float>& unnormWeights)
+Vector<double>
+_incrInterpEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::obtainNormWeights(const Vector<double>& unnormWeights)
 {
       // Obtain sum
-  float sum=0;
+  double sum=0;
   for(unsigned int i=0;i<unnormWeights.size();++i)
     sum+=unnormWeights[i];
 
       // Create norm. weights vector
-  Vector<float> result;
+  Vector<double> result;
   for(unsigned int i=0;i<unnormWeights.size();++i)
   {
     result.push_back(unnormWeights[i]/sum);

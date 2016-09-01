@@ -100,6 +100,12 @@ class IncrInterpNgramLM: public _incrInterpNgramLM<Count,Count>
   Vector<std::string> lmTypeVec;
   Vector<std::string> modelStatusVec;
 
+  int updateModelCombinationWeights(const char *corpusFileName,
+                                    int verbose=0);
+  int new_dhs_eval(const char *corpusFileName,
+                   FILE* tmp_file,
+                   double* x,
+                   double& obj_func);
   bool loadLmEntries(const char *fileName);
   bool loadLmEntry(std::string lmType,
                    std::string modelFileName,

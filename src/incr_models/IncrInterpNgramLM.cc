@@ -69,7 +69,7 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
     else
     {
           // Release previously stored model
-      this->release();
+      release();
 
       cerr<<"Loading model file "<<fileName<<endl;
 
@@ -88,7 +88,7 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
             std::string lmType=awk.dollar(1);
             std::string modelFileName=awk.dollar(2);
             std::string statusStr=awk.dollar(3);
-            std::string absolutizedModelFileName=this->absolutizeModelFileName(fileName,modelFileName);
+            std::string absolutizedModelFileName=absolutizeModelFileName(fileName,modelFileName);
             cerr<<"* Reading LM entry: "<<lmType<<" "<<absolutizedModelFileName<<" "<<statusStr<<endl;
             loadLmEntry(lmType,absolutizedModelFileName,statusStr);
           }
@@ -133,7 +133,7 @@ bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
   gtlTrgMapVec.push_back(gtlTrgDataMap);
 
       // Load model from file
-  int ret=this->modelPtrVec.back()->load(modelFileName.c_str());
+  int ret=modelPtrVec.back()->load(modelFileName.c_str());
   if(ret==ERROR) return ERROR;
         
       // Store lm type
@@ -144,7 +144,7 @@ bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
   
       // Check if model is main
   if(statusStr=="main")
-    this->modelIndex=this->modelPtrVec.size()-1;
+    modelIndex=modelPtrVec.size()-1;
 
   return OK;
 }
@@ -161,7 +161,7 @@ bool IncrInterpNgramLM::loadWeights(const char *fileName)
   }  
   else
   {
-    Vector<float> _weights;
+    Vector<double> _weights;
 
     cerr<<"Loading weights from "<<fileName<<endl;
         // Read weights for each language model
@@ -169,7 +169,7 @@ bool IncrInterpNgramLM::loadWeights(const char *fileName)
     {
       if(awk.NF==1)
       {
-        _weights.push_back((float)atof(awk.dollar(1).c_str()));
+        _weights.push_back((double)atof(awk.dollar(1).c_str()));
       }
     }
     awk.close();
@@ -359,10 +359,10 @@ Prob IncrInterpNgramLM::pTrgGivenSrc(const Vector<WordIndex>& s,
 {
   Prob p=0;
       
-  for(unsigned int i=0;i<this->modelPtrVec.size();++i)
+  for(unsigned int i=0;i<modelPtrVec.size();++i)
   {
-    p+=(Prob)this->normWeights[i]*((Prob)this->modelPtrVec[i]->pTrgGivenSrc(mapGlobalToLocalSrcData(i,s),
-                                                                            mapGlobalToLocalTrgData(i,t)));
+    p+=(Prob)normWeights[i]*((Prob)modelPtrVec[i]->pTrgGivenSrc(mapGlobalToLocalSrcData(i,s),
+                                                                mapGlobalToLocalTrgData(i,t)));
   }
   return p;
 }
@@ -370,9 +370,154 @@ Prob IncrInterpNgramLM::pTrgGivenSrc(const Vector<WordIndex>& s,
 //---------------
 int IncrInterpNgramLM::updateModelWeights(const char *corpusFileName,
                                           int verbose/*=0*/)
-{
-      // TBD
+{      
+      // Update weights for each model entry (if any)
+  for(unsigned int i=0;i<modelPtrVec.size();++i)
+  {
+    if(verbose)
+      cerr<<"Updating weights of "<<modelStatusVec[i]<<" language model..."<<endl;
+    _incrJelMerNgramLM<Count,Count>* incrJelMerLmPtr=dynamic_cast<_incrJelMerNgramLM<Count,Count>* >(modelPtrVec[i]);
+    incrJelMerLmPtr->updateModelWeights(corpusFileName,verbose);
+  }
+
+      // Update weights of model combination
+  if(verbose)
+    cerr<<"Updating weights of model combination..."<<endl;
+  int ret=updateModelCombinationWeights(corpusFileName,verbose);
+  if(ret==ERROR)
+    return ERROR;
+  
   return OK;
+}
+
+//---------------
+int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
+                                                     int verbose/*=0*/)
+{
+      // Initialize downhill simplex input parameters
+  Vector<double> initial_weights=weights;
+  int ndim=initial_weights.size();
+  double* start=(double*) malloc(ndim*sizeof(double));
+  int nfunk=0;
+  double* x=(double*) malloc(ndim*sizeof(double));
+  double y;
+
+      // Create temporary file
+  FILE* tmp_file=tmpfile();
+  
+  if(tmp_file==0)
+  {
+    cerr<<"Error updating of Jelinek Mercer's language model weights, tmp file could not be created"<<endl;
+    return ERROR;
+  }
+    
+      // Execute downhill simplex algorithm
+  int ret;
+  bool end=false;
+  while(!end)
+  {
+        // Set initial weights (each call to step_by_step_simplex starts
+        // from the initial weights)
+    for(unsigned int i=0;i<initial_weights.size();++i)
+      start[i]=initial_weights[i];
+    
+        // Execute step by step simplex
+    double curr_dhs_ftol=DBL_MAX;
+    ret=step_by_step_simplex(start,ndim,DHS_LM_FTOL,DHS_LM_SCALE_PAR,NULL,tmp_file,&nfunk,&y,x,&curr_dhs_ftol,false);
+
+    switch(ret)
+    {
+      case OK: end=true;
+        break;
+      case DSO_NMAX_ERROR: cerr<<"Error updating of Jelinek Mercer's language model weights, maximum number of iterations exceeded"<<endl;
+        end=true;
+        break;
+      case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
+        double perp;
+        int retEval=new_dhs_eval(corpusFileName,tmp_file,x,perp);
+        if(retEval==ERROR)
+        {
+          end=true;
+          break;
+        }
+            // Print verbose information
+        if(verbose>=1)
+        {
+          cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<DHS_LM_FTOL<<") ; ";
+          cerr<<"weights=";
+          for(unsigned int i=0;i<weights.size();++i)
+            cerr<<" "<<weights[i];
+          cerr<<" ; perp= "<<perp<<endl; 
+        }
+        break;
+    }
+  }
+  
+      // Set new weights if updating was successful
+  if(ret==OK)
+  {
+    Vector<double> _weights;
+    for(unsigned int i=0;i<weights.size();++i)
+      _weights.push_back(start[i]);
+    setWeights(_weights);
+  }
+  else
+  {
+    Vector<double> _weights=initial_weights;
+    setWeights(_weights);
+  }
+  
+      // Clear variables
+  free(start);
+  free(x);
+  fclose(tmp_file);
+
+  if(ret!=OK)
+    return ERROR;
+  else
+    return OK;
+}
+
+//---------------
+int IncrInterpNgramLM::new_dhs_eval(const char *corpusFileName,
+                                    FILE* tmp_file,
+                                    double* x,
+                                    double& obj_func)
+{
+  unsigned int numOfSentences;
+  unsigned int numWords;
+  LgProb totalLogProb;
+  bool weightsArePositive=true;
+  int retVal;
+  Vector<double> _weights=weights;
+  
+      // Fix weights to be evaluated
+  for(unsigned int i=0;i<_weights.size();++i)
+  {
+    _weights[i]=x[i];
+    if(_weights[i]<0) weightsArePositive=false;
+  }
+  if(weightsArePositive)
+  {
+        // Set weights
+    setWeights(_weights);
+        
+        // Obtain perplexity
+    retVal=this->perplexity(corpusFileName,numOfSentences,numWords,totalLogProb,obj_func);
+  }
+  else
+  {
+    obj_func=DBL_MAX;
+    retVal=OK;
+  }
+      // Print result to tmp file
+  fprintf(tmp_file,"%g\n",obj_func);
+  fflush(tmp_file);
+      // step_by_step_simplex needs that the file position
+      // indicator is set at the start of the stream
+  rewind(tmp_file);
+
+  return retVal;
 }
 
 //---------------
@@ -406,7 +551,7 @@ void IncrInterpNgramLM::setNgramOrder(int _ngramOrder)
 //---------------
 unsigned int IncrInterpNgramLM::getNgramOrder(void)
 {
-  if(this->modelPtrVec.size()>0)
+  if(modelPtrVec.size()>0)
   {
     _incrNgramLM<Count,Count>* _ilmPtr;
     _ilmPtr=dynamic_cast<_incrNgramLM<Count,Count>*>(modelPtrVec[modelIndex]);
