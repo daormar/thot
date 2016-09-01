@@ -38,7 +38,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "_incrInterpNgramLM.h"
 #include "IncrJelMerNgramLM.h"
-#include "CacheIncrJelMerNgramLM.h"
 #include "_incrJelMerNgramLM.h"
 #include <sstream>
 #include <sys/types.h>

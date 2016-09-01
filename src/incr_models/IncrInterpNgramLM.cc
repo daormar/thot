@@ -119,7 +119,6 @@ bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
       // Create lm file pointer
   BaseIncrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,Count,Count>* biecmPtr=NULL;
   if(lmType=="jm") biecmPtr=new IncrJelMerNgramLM;
-  if(lmType=="cjm") biecmPtr=new CacheIncrJelMerNgramLM;
   if(biecmPtr==NULL) return ERROR;
 
       // Store file pointer
