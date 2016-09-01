@@ -3,6 +3,7 @@
 /home/dortiz/smt/software/incr_models thot_ilm_perp
 /home/dortiz/smt/software/incr_models thot_lm_weight_upd
 /home/dortiz/smt/software/incr_models IncrJelMerNgramLMFactory
+/home/dortiz/smt/software/incr_models IncrInterpNgramLMFactory
 /home/dortiz/smt/software/incr_models WordPenaltyModelFactory
 /home/dortiz/smt/software/alig_models/sw_models thot_calc_swm_lgprob
 /home/dortiz/smt/software/alig_models/sw_models thot_gen_sw_model
