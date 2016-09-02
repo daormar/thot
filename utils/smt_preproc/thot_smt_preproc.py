@@ -775,29 +775,102 @@ def is_alnum(s):
         return True
 
 ##################################################
+def areCategsPaired(categ_src_ann_words_array,categ_trg_ann_words_array):
+    # Initialize dictionaries with number of category ocurrences
+    num_categs_src={}
+    num_categs_trg={}
+    for categ in _global_categ_set:
+        num_categs_src[categ]=0
+        num_categs_trg[categ]=0        
+    # Count source categories
+    for i in range(len(categ_src_ann_words_array)):
+        if(categ_src_ann_words_array[i] in _global_categ_set):
+            num_categs_src[categ_src_ann_words_array[i]]+=1
+    # Count target categories
+    for i in range(len(categ_trg_ann_words_array)):
+        if(categ_trg_ann_words_array[i] in _global_categ_set):
+            num_categs_trg[categ_trg_ann_words_array[i]]+=1
+    # Verify category ocurrence number equality
+    for categ in num_categs_src:
+        if(not num_categs_src[categ]==num_categs_trg[categ]):
+            return False
+
+    return True
+
+##################################################
+def categ_src_trg_annotation(src_ann_words,trg_ann_words):
+    # Obtain array with source words (with a without categorization)
+    src_ann_words_array=src_ann_words.split()
+    categ_src_ann_words_array=[]
+    for i in range(len(src_ann_words_array)):
+        categ_src_ann_words_array.append(categorize_word(src_ann_words_array[i]))
+
+    # Obtain array with target words (with a without categorization)
+    trg_ann_words_array=trg_ann_words.split()
+    categ_trg_ann_words_array=[]
+    for i in range(len(trg_ann_words_array)):
+        categ_trg_ann_words_array.append(categorize_word(trg_ann_words_array[i]))
+
+    # Verify that categories are paired
+    if(areCategsPaired(categ_src_ann_words_array,categ_trg_ann_words_array)):
+        return categ_src_ann_words_array,categ_trg_ann_words_array
+    else:
+        return src_ann_words_array,trg_ann_words_array
+
+##################################################
 def categorize(sentence):
     skeleton = annotated_string_to_xml_skeleton(sentence)
 
     # Categorize words
     categ_word_array=[]
-    len_ann_active=False
+    curr_xml_tag=None
     for i in range(len(skeleton)):
         is_tag, word = skeleton[i]
         if(is_tag==True):
             # Treat xml tag
-            categ_word_array.append(word)
             if(word=='<'+len_ann+'>'):
-                len_ann_active=True
+                categ_word_array.append(word)
+                curr_xml_tag="len_ann"
+            elif(word=='<'+grp_ann+'>'):
+                categ_word_array.append(word)
+            elif(word=='<'+src_ann+'>'):
+                curr_xml_tag="src_ann"
+            elif(word=='<'+trg_ann+'>'):
+                curr_xml_tag="trg_ann"
             elif(word=='</'+len_ann+'>'):
-                len_ann_active=False
+                categ_word_array.append(word)
+                curr_xml_tag=None
+            elif(word=='</'+grp_ann+'>'):
+                categ_word_array.append(word)
+            elif(word=='</'+src_ann+'>'):
+                curr_xml_tag=None
+            elif(word=='</'+trg_ann+'>'):
+                curr_xml_tag=None
+                categ_src_words,categ_trg_words=categ_src_trg_annotation(src_ann_words,trg_ann_words)
+                # Add source phrase
+                categ_word_array.append('<'+src_ann+'>')
+                for i in range(len(categ_src_words)):
+                    categ_word_array.append(categ_src_words[i])
+                categ_word_array.append('</'+src_ann+'>')
+                # Add target phrase
+                categ_word_array.append('<'+trg_ann+'>')
+                for i in range(len(categ_trg_words)):
+                    categ_word_array.append(categ_trg_words[i])
+                categ_word_array.append('</'+trg_ann+'>')
         else:
             # Categorize group of words
-            word_array=word.split()
-            for j in range(len(word_array)):
-                if(len_ann_active==False):
+            if(curr_xml_tag==None):
+                word_array=word.split()
+                for j in range(len(word_array)):
                     categ_word_array.append(categorize_word(word_array[j]))
-                else:
+            elif(curr_xml_tag=="len_ann"):
+                word_array=word.split()
+                for j in range(len(word_array)):
                     categ_word_array.append(word)
+            elif(curr_xml_tag=="src_ann"):
+                src_ann_words=word
+            elif(curr_xml_tag=="trg_ann"):
+                trg_ann_words=word
 
     return u' '.join(categ_word_array)
 
