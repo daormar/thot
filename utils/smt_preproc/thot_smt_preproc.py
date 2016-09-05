@@ -1445,7 +1445,7 @@ class Decoder:
                 print ""
 
 ##################################################
-class Tokenizer:
+class TokenizerSimple:
 
     def __init__(self):
         self.RX = re.compile(r'(\w+)|([^\w\s]+)', re.U)
@@ -1453,6 +1453,24 @@ class Tokenizer:
     def tokenize(self, s):
         aux = filter(None, self.RX.split(s))
         return filter(None, [s.strip() for s in aux])
+
+##################################################
+class Tokenizer:
+
+  def __init__(self):
+    digits = r'([\d\.,]+)'
+    hiphen_words = r'([^\W\d_]+\-[^\W\d_]+)'
+    acronyms_short = r'([^\W\d_]{,3}\.)'
+    acronyms_long = r'([^\W\d_]{,3}\.[^\W\d_]{,3}\.)'
+    alfanum = r'(\w+)'
+    non_alpha = r'([^\W\d_]+)'
+    self.RX = re.compile(r'%s|%s|%s|%s|%s|%s' % (digits, hiphen_words, 
+                                                 acronyms_long, acronyms_short, 
+                                                 alfanum, non_alpha), re.U)
+
+  def tokenize(self, s):
+    aux = filter(None, self.RX.split(s))
+    return filter(None, [s.strip() for s in aux])
 
 ##################################################
 def tokenize(string):
