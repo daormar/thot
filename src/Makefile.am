@@ -18,6 +18,7 @@ CASMACAT_LIB= libthot_casmacat.la
 endif
 
 if KENLM_LIB_ENABLED
+KENLM_CXXFLAGS= -I$(KENLM_BUILD_DIR)/include -DKENLM_MAX_ORDER=7
 KENLM_LDADD= -L$(KENLM_BUILD_DIR)/lib -lkenlm
 KENLM_LIB= kenlm_factory.la
 endif
@@ -49,8 +50,7 @@ AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
 -I$(srcdir)/smt_preproc -I$(srcdir)/error_correction				\
 -I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec				\
 -DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\"	\
--I$(CASMACAT_THOT_SERVER_LIB_HOME)/src/include					\
--I$(KENLM_BUILD_DIR)/include
+-I$(CASMACAT_THOT_SERVER_LIB_HOME)/src/include $(KENLM_CXXFLAGS)
 
 AM_CFLAGS= $(AM_CXXFLAGS)
 
