@@ -14,7 +14,12 @@ TESTING_PROGS= thot_test
 endif
 
 if CASMACAT_LIB_ENABLED
-CASMACAT_LIBS= libthot_casmacat.la
+CASMACAT_LIB= libthot_casmacat.la
+endif
+
+if KENLM_LIB_ENABLED
+KENLM_LDADD= -L$(KENLM_BUILD_DIR)/lib -lkenlm
+KENLM_LIB= kenlm_factory.la
 endif
 
 bin_PROGRAMS = thot_lm_perp thot_ilm_perp thot_lm_weight_upd		\
@@ -36,7 +41,7 @@ pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
 wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
 kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
 wg_uncoupled_assisted_trans__swli_factory.la				\
-translation_constraints_factory.la $(CASMACAT_LIBS)
+translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
@@ -44,11 +49,12 @@ AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
 -I$(srcdir)/smt_preproc -I$(srcdir)/error_correction				\
 -I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec				\
 -DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\"	\
--I$(CASMACAT_THOT_SERVER_LIB_HOME)/src/include
+-I$(CASMACAT_THOT_SERVER_LIB_HOME)/src/include					\
+-I$(KENLM_BUILD_DIR)/include
 
 AM_CFLAGS= $(AM_CXXFLAGS)
 
-LDADD = $(LGMP) $(ZLIB) $(CPPUNIT) -ldl
+LDADD = $(LGMP) $(ZLIB) $(CPPUNIT) $(KENLM_LDADD) -ldl
 
 # sources
 common_src_h= thot_config.h
@@ -96,6 +102,14 @@ incr_models/WordPredictor.h
 incr_models_defs= incr_models/lm_ienc.cc incr_models/IncrNgramLM.cc	\
 incr_models/IncrJelMerNgramLM.cc incr_models/IncrInterpNgramLM.cc	\
 incr_models/WordPenaltyModel.cc incr_models/WordPredictor.cc
+
+if KENLM_LIB_ENABLED
+kenlm_h= kenlm/KenLm.h
+kenlm_defs= kenlm/KenLm.cc
+else
+kenlm_h=
+kenlm_defs=
+endif
 
 sw_models_h= sw_models/WeightedIncrNormSlm.h sw_models/SwDefs.h		\
 sw_models/_swAligModel.h sw_models/SmoothedIncrIbm2AligModel.h		\
@@ -286,11 +300,12 @@ testing_h= testing/KbMiraLlWuTest.h
 testing_defs= testing/KbMiraLlWuTest.cc
 
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
-$(incr_models_h) $(incr_models_defs) $(sw_models_h) $(sw_models_defs)	\
-$(phrase_models_h) $(phrase_models_defs) $(smt_preproc_h)		\
-$(smt_preproc_defs) $(error_correction_h) $(error_correction_defs)	\
-$(downhill_simplex_h) $(downhill_simplex_defs) $(stack_dec_h)		\
-$(stack_dec_defs) $(exper_h) $(exper_defs)
+$(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
+$(sw_models_h) $(sw_models_defs) $(phrase_models_h)			\
+$(phrase_models_defs) $(smt_preproc_h) $(smt_preproc_defs)		\
+$(error_correction_h) $(error_correction_defs) $(downhill_simplex_h)	\
+$(downhill_simplex_defs) $(stack_dec_h) $(stack_dec_defs) $(exper_h)	\
+$(exper_defs)
 
 # Class factories
 
@@ -308,6 +323,10 @@ incr_models/IncrJelMerNgramLMFactory.cc
 incr_interp_ngram_lm_factory_h=
 incr_interp_ngram_lm_factory_defs=		\
 incr_models/IncrInterpNgramLMFactory.cc
+
+##########
+kenlm_factory_h=
+kenlm_factory_defs= kenlm/KenLmFactory.cc
 
 ##########
 smoothed_incr_ibm2_alig_model_factory_h= 
@@ -487,7 +506,7 @@ endif
 # include headers
 includedir= $(prefix)/include/$(PACKAGE)
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
-$(sw_models_h) $(phrase_models_h) $(smt_preproc_h)			\
+$(kenlm_h) $(sw_models_h) $(phrase_models_h) $(smt_preproc_h)		\
 $(error_correction_h) $(downhill_simplex_h) $(stack_dec_h) $(exper_h)	\
 $(exper_defs) $(casmacat_engines_h) $(casmacat_aligner_h)		\
 $(casmacat_confid_h)
@@ -516,6 +535,14 @@ incr_interp_ngram_lm_factory_la_SOURCES=				\
 $(incr_interp_ngram_lm_factory_h) $(incr_interp_ngram_lm_factory_defs)
 incr_interp_ngram_lm_factory_la_LIBADD= libthot.la
 incr_interp_ngram_lm_factory_la_LDFLAGS= -module
+
+##########
+if KENLM_LIB_ENABLED
+kenlm_factory_la_SOURCES=				\
+$(kenlm_factory_h) $(kenlm_factory_defs)
+kenlm_factory_la_LIBADD= libthot.la
+kenlm_factory_la_LDFLAGS= -module $(KENLM_LDADD)
+endif
 
 ##########
 smoothed_incr_ibm2_alig_model_factory_la_SOURCES= $(smoothed_incr_ibm2_alig_model_factory_h)	\

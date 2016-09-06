@@ -440,6 +440,23 @@ fi
 AM_CONDITIONAL([CASMACAT_LIB_ENABLED], [test x${enable_casmacat_lib} = xyes])
 AC_SUBST(CASMACAT_THOT_SERVER_LIB_HOME,$with_casmacat)
 
+# Adds an extra argument to configure (enable use of kenlm library)
+AC_MSG_CHECKING(whether to enable kenlm library)
+AC_ARG_WITH([kenlm],
+ [AS_HELP_STRING([--with-kenlm=DIR],
+   [installs thot with the necessary code to combine it with the kenlm library @<:@default=no@:>@])],
+ [with_kenlm=$withval],
+ [with_kenlm=no])
+if test "$with_kenlm" = "no"; then
+ enable_kenlm_lib="no"
+ AC_MSG_RESULT(no)
+else
+ enable_kenlm_lib="yes"
+ AC_MSG_RESULT(yes)
+fi
+AM_CONDITIONAL([KENLM_LIB_ENABLED], [test x${enable_kenlm_lib} = xyes])
+AC_SUBST(KENLM_BUILD_DIR,$with_kenlm)
+
 # Disable pre/post-processing code
 AC_DEFINE(DISABLE_PREPROC_CODE,,[Define if the pre/post-processing code is disabled])
 
@@ -579,4 +596,4 @@ fi
 AC_DEFINE_UNQUOTED(SMTMODEL_H,"${SMTMODEL_H}",[File name with SmtModel type definition])
 
 #AC_CONFIG_FILES([Makefile])
-AC_OUTPUT(Makefile doc/Makefile m4/Makefile src/Makefile src/nlp_common/Makefile src/incr_models/Makefile src/sw_models/Makefile src/phrase_models/Makefile src/smt_preproc/Makefile src/error_correction/Makefile src/downhill_simplex/Makefile src/stack_dec/Makefile src/exper/Makefile src/testing/Makefile utils/Makefile utils/nlp_common/Makefile utils/incr_models/Makefile utils/sw_models/Makefile utils/phrase_models/Makefile utils/smt_preproc/Makefile utils/error_correction/Makefile utils/downhill_simplex/Makefile utils/stack_dec/Makefile utils/exper/Makefile examples/Makefile examples/cfg_templates/Makefile examples/toy_corpus/Makefile examples/ini_files/Makefile)
+AC_OUTPUT(Makefile doc/Makefile m4/Makefile src/Makefile src/nlp_common/Makefile src/incr_models/Makefile src/kenlm/Makefile src/sw_models/Makefile src/phrase_models/Makefile src/smt_preproc/Makefile src/error_correction/Makefile src/downhill_simplex/Makefile src/stack_dec/Makefile src/exper/Makefile src/testing/Makefile utils/Makefile utils/nlp_common/Makefile utils/incr_models/Makefile utils/sw_models/Makefile utils/phrase_models/Makefile utils/smt_preproc/Makefile utils/error_correction/Makefile utils/downhill_simplex/Makefile utils/stack_dec/Makefile utils/exper/Makefile examples/Makefile examples/cfg_templates/Makefile examples/toy_corpus/Makefile examples/ini_files/Makefile)
