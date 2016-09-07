@@ -76,8 +76,8 @@ set_tmp_dir()
 split_input()
 {
     echo "+++ Splitting input: ${srcf} ${trgf}..." >> $TMP/log
-    ${SPLIT} -l ${chunk_size} ${srcf} ${chunks_dir}/src\_chunk\_ || exit 1
-    ${SPLIT} -l ${chunk_size} ${trgf} ${chunks_dir}/trg\_chunk\_ || exit 1
+    ${SPLIT} -a 4 -l ${chunk_size} ${srcf} ${chunks_dir}/src\_chunk\_ || exit 1
+    ${SPLIT} -a 4 -l ${chunk_size} ${trgf} ${chunks_dir}/trg\_chunk\_ || exit 1
 }
 
 estimate_slmodel()

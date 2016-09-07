@@ -194,7 +194,7 @@ echo "Spliting input: ${a3_file}..." >> $TMP/log
 echo "Spliting input: ${a3_file}..." >&2
 
 # Split input into chunks and process them separately
-${SPLIT} -l ${chunk_size} ${a3_file} $TMP/chunk\_ || exit 1
+${SPLIT} -a 4 -l ${chunk_size} ${a3_file} $TMP/chunk\_ || exit 1
 c=1
 for i in `ls $TMP/chunk\_*`; do
     chunk=`${BASENAME} $i`
