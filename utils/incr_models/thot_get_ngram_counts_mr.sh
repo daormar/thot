@@ -186,7 +186,7 @@ else
 fi
 
 # Split corpus into chunks of fixed size
-${SPLIT} -l ${chunk_size} $proc_corpus $TMP/
+${SPLIT} -a 4 -l ${chunk_size} $proc_corpus $TMP/
 
 # Process chunks
 c=1
