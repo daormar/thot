@@ -10,4 +10,5 @@ getline.h getline.c getdelim.h getdelim.c ErrorDefs.h ctimer.h ctimer.c	\
 Count.h ClassDic.h ClassDic.cc Bitset.h BasicSocketUtils.h		\
 BasicSocketUtils.cc BaseNgramLM.h BaseIncrNgramLM.h BackoffNode.h	\
 awkInputStream.h awkInputStream.cc DynClassFileHandler.h		\
-DynClassFileHandler.cc SimpleDynClassLoader.h
+DynClassFileHandler.cc SimpleDynClassLoader.h KenLm.h KenLm.cc		\
+KenLmFactory.cc

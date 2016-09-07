@@ -2,6 +2,7 @@
 
 LGMP=@LGMP@
 ZLIB=@ZLIB@
+BZ2LIB=@BZ2LIB@
 CPPUNIT=@CPPUNIT@
 
 AUTOMAKE_OPTIONS = subdir-objects
@@ -19,7 +20,7 @@ endif
 
 if KENLM_LIB_ENABLED
 KENLM_CXXFLAGS= -I$(KENLM_BUILD_DIR)/include -DKENLM_MAX_ORDER=7
-KENLM_LDADD= -L$(KENLM_BUILD_DIR)/lib -lkenlm
+KENLM_LDADD= -L$(KENLM_BUILD_DIR)/lib -lkenlm -lkenlm_util $(BZ2LIB)
 KENLM_LIB= kenlm_factory.la
 endif
 
@@ -54,7 +55,7 @@ AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
 
 AM_CFLAGS= $(AM_CXXFLAGS)
 
-LDADD = $(LGMP) $(ZLIB) $(CPPUNIT) $(KENLM_LDADD) -ldl
+LDADD = $(KENLM_LDADD) $(LGMP) $(ZLIB) $(CPPUNIT) -ldl
 
 # sources
 common_src_h= thot_config.h
@@ -104,8 +105,8 @@ incr_models/IncrJelMerNgramLM.cc incr_models/IncrInterpNgramLM.cc	\
 incr_models/WordPenaltyModel.cc incr_models/WordPredictor.cc
 
 if KENLM_LIB_ENABLED
-kenlm_h= kenlm/KenLm.h
-kenlm_defs= kenlm/KenLm.cc
+kenlm_h= nlp_common/KenLm.h
+kenlm_defs= nlp_common/KenLm.cc
 else
 kenlm_h=
 kenlm_defs=
@@ -326,7 +327,7 @@ incr_models/IncrInterpNgramLMFactory.cc
 
 ##########
 kenlm_factory_h=
-kenlm_factory_defs= kenlm/KenLmFactory.cc
+kenlm_factory_defs= nlp_common/KenLmFactory.cc
 
 ##########
 smoothed_incr_ibm2_alig_model_factory_h= 

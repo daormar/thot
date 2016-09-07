@@ -368,6 +368,17 @@ fi
 AC_SUBST(ZLIB)
 LIBS=${libaux}
 
+# Checks for libbz2 library
+BZ2LIB=""
+libaux=${LIBS}
+AC_CHECK_LIB([bz2], [BZ2_bzdopen])
+if test $ac_cv_lib_bz2_BZ2_bzdopen = yes; then
+   BZ2LIB="-lbz2"
+   AC_DEFINE(HAVE_ZLIB,,[Define if the bz2 library is present])
+fi
+AC_SUBST(BZ2LIB)
+LIBS=${libaux}
+
 # Checks for cppunit library
 CPPUNIT=""
 libaux=${LIBS}
@@ -596,4 +607,4 @@ fi
 AC_DEFINE_UNQUOTED(SMTMODEL_H,"${SMTMODEL_H}",[File name with SmtModel type definition])
 
 #AC_CONFIG_FILES([Makefile])
-AC_OUTPUT(Makefile doc/Makefile m4/Makefile src/Makefile src/nlp_common/Makefile src/incr_models/Makefile src/kenlm/Makefile src/sw_models/Makefile src/phrase_models/Makefile src/smt_preproc/Makefile src/error_correction/Makefile src/downhill_simplex/Makefile src/stack_dec/Makefile src/exper/Makefile src/testing/Makefile utils/Makefile utils/nlp_common/Makefile utils/incr_models/Makefile utils/sw_models/Makefile utils/phrase_models/Makefile utils/smt_preproc/Makefile utils/error_correction/Makefile utils/downhill_simplex/Makefile utils/stack_dec/Makefile utils/exper/Makefile examples/Makefile examples/cfg_templates/Makefile examples/toy_corpus/Makefile examples/ini_files/Makefile)
+AC_OUTPUT(Makefile doc/Makefile m4/Makefile src/Makefile src/nlp_common/Makefile src/incr_models/Makefile src/sw_models/Makefile src/phrase_models/Makefile src/smt_preproc/Makefile src/error_correction/Makefile src/downhill_simplex/Makefile src/stack_dec/Makefile src/exper/Makefile src/testing/Makefile utils/Makefile utils/nlp_common/Makefile utils/incr_models/Makefile utils/sw_models/Makefile utils/phrase_models/Makefile utils/smt_preproc/Makefile utils/error_correction/Makefile utils/downhill_simplex/Makefile utils/stack_dec/Makefile utils/exper/Makefile examples/Makefile examples/cfg_templates/Makefile examples/toy_corpus/Makefile examples/ini_files/Makefile)
