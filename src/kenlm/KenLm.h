@@ -108,10 +108,11 @@ class KenLm: public BaseNgramLM<Vector<WordIndex> >
   void clear(void);
 
       // Destructor
-  virtual ~KenLm(){}
+  virtual ~KenLm();
    
  protected:
 
+  lm::ngram::Model* modelPtr;
 };
 
 #endif
