@@ -145,8 +145,16 @@ unsigned int KenLm::getVocabSize(void)
 //-------------------------
 WordIndex KenLm::stringToWordIndex(string s)const
 {
-  const lm::ngram::Vocabulary& vocab=modelPtr->GetVocabulary();
-  return vocab.Index(s);  
+  if(modelPtr!=NULL)
+  {
+    const lm::ngram::Vocabulary& vocab=modelPtr->GetVocabulary();
+    return vocab.Index(s);
+  }
+  else
+  {
+    const lm::ngram::Vocabulary emptyVocab;
+    return emptyVocab.NotFound();
+  }
 }
 
 //-------------------------
