@@ -120,6 +120,7 @@ SUFFIXES= .sh .pl .py
 	echo "DISABLE_FAST_DHSLM="$(DISABLE_FAST_DHSLM) >> $@
 	echo "ENABLE_UPDATE_LIWEIGHTS="$(ENABLE_UPDATE_LIWEIGHTS) >> $@
 	echo "ENABLE_DOWNHILL_LLW="$(ENABLE_DOWNHILL_LLW) >> $@
+	echo "KENLM_BUILD_DIR="$(KENLM_BUILD_DIR) >> $@
 	cat $< >> $@
 	chmod ugo+x $@
 
