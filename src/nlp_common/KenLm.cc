@@ -45,7 +45,7 @@ LgProb KenLm::getNgramLgProb(WordIndex w,
                              const Vector<WordIndex>& vu)
 {
   lm::ngram::State out_st;
-  return modelPtr->FullScoreForgotState(&vu[0],&vu.back(),w,out_st).prob;
+  return modelPtr->FullScoreForgotState(&vu[0],&vu.back(),w,out_st).prob*(1/M_LN10);
 }
 
 //-------------------------
