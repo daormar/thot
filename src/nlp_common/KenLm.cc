@@ -242,6 +242,7 @@ bool KenLm::load_kenlm_file(const char *fileName)
   {
     try
     {
+      cerr<<"Loading kenlm model from "<<fileName<<" ..."<<endl;
       modelPtr=new lm::ngram::Model(fileName);
     }
     catch(...)
