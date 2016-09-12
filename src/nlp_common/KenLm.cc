@@ -44,8 +44,12 @@ KenLm::KenLm(void)
 LgProb KenLm::getNgramLgProb(WordIndex w,
                              const Vector<WordIndex>& vu)
 {
+      // Reverse history
+  Vector<WordIndex> rev_vu=vu;
+  std::reverse(rev_vu.begin(),rev_vu.end());
+  
   lm::ngram::State out_st;
-  return modelPtr->FullScoreForgotState(&vu[0],&vu.back(),w,out_st).prob*(1/M_LN10);
+  return modelPtr->FullScoreForgotState(&rev_vu[0],&rev_vu.back(),w,out_st).prob*M_LN10;
 }
 
 //-------------------------
@@ -94,15 +98,24 @@ bool KenLm::getStateForWordSeq(const Vector<WordIndex>& wordSeq,
 void KenLm::getStateForBeginOfSentence(Vector<WordIndex>& state)
 {
   bool found;
+  unsigned int ngramOrder=getNgramOrder();
   state.clear();
-  state.push_back(getEosId(found));
+  
+  if(ngramOrder>0)
+  {
+    for(unsigned int i=0;i<ngramOrder-1;++i)
+      state.push_back(getBosId(found));
+  }
 }
 
 //-------------------------
 LgProb KenLm::getNgramLgProbGivenState(WordIndex w,
                                        Vector<WordIndex>& state)
 {
-  return getNgramLgProb(w,state);
+  LgProb lp=getNgramLgProb(w,state);
+  for(unsigned int i=1;i<state.size();++i) state[i-1]=state[i];
+  if(state.size()>0) state[state.size()-1]=w;
+  return lp;
 }
 
 //-------------------------
