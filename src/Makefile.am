@@ -546,7 +546,11 @@ if KENLM_LIB_ENABLED
 kenlm_factory_la_SOURCES=				\
 $(kenlm_factory_h) $(kenlm_factory_defs)
 kenlm_factory_la_LIBADD= libthot.la $(KENLM_LIBADD)
+<<<<<<< HEAD
 kenlm_factory_la_LDFLAGS= -module
+=======
+kenlm_factory_la_LDFLAGS= -module 
+>>>>>>> 731499a8aff5acc5c64d6cc4c85b4cb89c7c38e0
 endif
 
 ##########
