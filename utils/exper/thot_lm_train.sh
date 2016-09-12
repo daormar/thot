@@ -25,7 +25,11 @@ version()
 usage()
 {
     echo "thot_lm_train      [-pr <int>] -c <string> [-o <string>|-a <string>]"
-    echo "                   -n <int> [-unk]"
+    if [ ${KENLM_BUILD_DIR} = "no" ]; then
+        echo "                   -n <int> [-unk]"
+    else
+        echo "                   -n <int> [-unk] [--kenlm]"
+    fi
     echo "                   [-qs <string>] [-tdir <string>] [-sdir <string>]"
     echo "                   [-debug] [--help] [--version]"
     echo ""
@@ -36,6 +40,9 @@ usage()
     echo "                   The new model will be added to models already generated."
     echo "-n <int>           Order of the n-grams."
     echo "-unk               Reserve probability mass for the unknown word."
+    if [ ! ${KENLM_BUILD_DIR} = "no" ]; then
+        echo "--kenlm            Generate kenlm file in binary format."
+    fi
     echo "-qs <string>       Specific options to be given to the qsub command"
     echo "                   (example: -qs \"-l pmem=1gb\")."
     echo "                   NOTES:"
@@ -96,16 +103,24 @@ get_absolute_path()
 ########
 create_desc_files()
 {
+    # Determine model type
+    if [ ${KENLM_BUILD_DIR} != "no" -a ${kenlm_given} -eq 1 ]; then
+        modeltype="kenlm"
+    else
+        modeltype="jm"
+    fi
+
+    # Create descriptor
     if [ ${o_given} -eq 1 ]; then
         # -o option was given
         echo "thot lm descriptor # tool: thot_lm_train" > ${outd}/lm_desc
-        echo "jm ${relative_prefix} main # corpus file: ${corpus}" >> ${outd}/lm_desc
+        echo "${modeltype} ${relative_prefix} main # corpus file: ${corpus}" >> ${outd}/lm_desc
 
         # add new weight to descriptor weights file
         echo "1" > ${outd}/lm_desc.weights
     else
         # -a option was given
-        echo "jm ${relative_prefix} ${outsubdir} # corpus file: ${corpus}" >> ${outd}/lm_desc        
+        echo "${modeltype} ${relative_prefix} ${outsubdir} # corpus file: ${corpus}" >> ${outd}/lm_desc        
 
         # add new weight to descriptor weights file
         echo "1" >> ${outd}/lm_desc.weights
@@ -148,13 +163,18 @@ estimate_ngram_parameters()
     relative_prefix=${outsubdir}/trg.lm
 
     # Estimate n-gram model parameters
-    if [ $nl -gt 0 ]; then
-        ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
-            -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
-            ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || return 1
+    if [ ${KENLM_BUILD_DIR} != "no" -a ${kenlm_given} -eq 1 ]; then
+        ${KENLM_BUILD_DIR}/bin/lmplz -T $tdir -o ${n_val} --text $corpus > ${prefix}.arpa 2> ${prefix}.arpa.log
+        ${KENLM_BUILD_DIR}/bin/build_binary ${prefix}.arpa ${prefix} 2> ${prefix}.log
     else
-        ${bindir}/thot_get_ngram_counts -c $corpus -o $prefix \
-            -n ${n_val} > $prefix || return 1
+        if [ $nl -gt 0 ]; then
+            ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
+                -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
+                ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || return 1
+        else
+            ${bindir}/thot_get_ngram_counts -c $corpus -o $prefix \
+                -n ${n_val} > $prefix || return 1
+        fi
     fi
 }
 
@@ -191,6 +211,7 @@ a_given=0
 n_given=0
 qs_given=0
 unk_given=0
+kenlm_given=0
 tdir_given=0
 tdir="/tmp"
 sdir_given=0
@@ -246,6 +267,8 @@ while [ $# -ne 0 ]; do
             ;;
         "-unk") unk_given=1
             unk_opt="-unk"
+            ;;
+        "--kenlm") kenlm_given=1
             ;;
         "-tdir") shift
             if [ $# -ne 0 ]; then
