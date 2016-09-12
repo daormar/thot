@@ -44,10 +44,11 @@ KenLm::KenLm(void)
 LgProb KenLm::getNgramLgProb(WordIndex w,
                              const Vector<WordIndex>& vu)
 {
-      // Reverse history
+      // Reverse history (required by kenlm library)
   Vector<WordIndex> rev_vu=vu;
   std::reverse(rev_vu.begin(),rev_vu.end());
-  
+
+      // Obtain log-prob
   lm::ngram::State out_st;
   return modelPtr->FullScoreForgotState(&rev_vu[0],&rev_vu.back(),w,out_st).prob*M_LN10;
 }
@@ -130,7 +131,12 @@ LgProb KenLm::getNgramLgProbGivenStateStr(std::string s,
 //-------------------------
 LgProb KenLm::getLgProbEndGivenState(Vector<WordIndex>& state)
 {
-  return getLgProbEnd(state);
+  bool found;
+
+  LgProb lp=getLgProbEnd(state);
+  for(unsigned int i=1;i<state.size();++i) state[i-1]=state[i];
+  if(state.size()>0) state[state.size()-1]=getEosId(found);
+  return lp;
 }
 
 //-------------------------
