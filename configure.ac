@@ -379,6 +379,17 @@ fi
 AC_SUBST(BZ2LIB)
 LIBS=${libaux}
 
+# Checks for liblzma library
+LZMALIB=""
+libaux=${LIBS}
+AC_CHECK_LIB([lzma], [lzma_code])
+if test $ac_cv_lib_lzma_lzma_code = yes; then
+   LZMALIB="-llzma"
+   AC_DEFINE(HAVE_ZLIB,,[Define if the lzma library is present])
+fi
+AC_SUBST(LZMALIB)
+LIBS=${libaux}
+
 # Checks for cppunit library
 CPPUNIT=""
 libaux=${LIBS}

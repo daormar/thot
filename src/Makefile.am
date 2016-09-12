@@ -3,6 +3,7 @@
 LGMP=@LGMP@
 ZLIB=@ZLIB@
 BZ2LIB=@BZ2LIB@
+LZMALIB=@LZMALIB@
 CPPUNIT=@CPPUNIT@
 
 AUTOMAKE_OPTIONS = subdir-objects
@@ -20,7 +21,10 @@ endif
 
 if KENLM_LIB_ENABLED
 KENLM_CXXFLAGS= -I$(KENLM_BUILD_DIR)/include -DKENLM_MAX_ORDER=7
-KENLM_LDADD= -L$(KENLM_BUILD_DIR)/lib -lkenlm -lkenlm_util $(BZ2LIB)
+KENLM_LIBADD= -L$(KENLM_BUILD_DIR)/lib -lkenlm -lkenlm_util $(BZ2LIB)	\
+$(LZMALIB)
+KENLM_LDADD= -L$(KENLM_BUILD_DIR)/lib -lkenlm -lkenlm_util $(BZ2LIB)	\
+$(LZMALIB)
 KENLM_LIB= kenlm_factory.la
 endif
 
@@ -541,8 +545,8 @@ incr_interp_ngram_lm_factory_la_LDFLAGS= -module
 if KENLM_LIB_ENABLED
 kenlm_factory_la_SOURCES=				\
 $(kenlm_factory_h) $(kenlm_factory_defs)
-kenlm_factory_la_LIBADD= libthot.la
-kenlm_factory_la_LDFLAGS= -module $(KENLM_LDADD)
+kenlm_factory_la_LIBADD= libthot.la $(KENLM_LIBADD)
+kenlm_factory_la_LDFLAGS= -module
 endif
 
 ##########
