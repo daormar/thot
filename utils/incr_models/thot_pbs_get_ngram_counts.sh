@@ -400,8 +400,8 @@ proc_chunk()
     echo "** Processing chunk ${chunk} (started at "`date`")..." > ${counts_per_chunk_dir}/${chunk}_sorted_counts.log
 
     # Extract counts from chunk and sort them
-    $bindir/thot_get_ngram_counts_mr -c ${chunks_dir}/${chunk} -n ${n_val} -tdir $TMP | add_length_col | sort_counts | \
-        add_chunk_id 2>> ${counts_per_chunk_dir}/${chunk}_sorted_counts.log \
+    $bindir/thot_get_ngram_counts_mr -c ${chunks_dir}/${chunk} -n ${n_val} -tdir $TMP ${debug_opt} | add_length_col | \
+        sort_counts | add_chunk_id 2>> ${counts_per_chunk_dir}/${chunk}_sorted_counts.log \
         > ${counts_per_chunk_dir}/${chunk}_sorted_counts ; ${PIPE_FAIL} || \
         { echo "Error while executing proc_chunk for ${chunks_dir}/${chunk}" >> $SDIR/log ; return 1 ; }
 
@@ -570,6 +570,7 @@ while [ $# -ne 0 ]; do
         "-unk") unk_given=1
             ;;
         "-debug") debug=1
+            debug_opt="-debug"
             ;;
         # "--sync-sleep") sync_sleep=1
         #     ;;
