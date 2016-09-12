@@ -114,6 +114,9 @@ class KenLm: public BaseNgramLM<Vector<WordIndex> >
  protected:
 
   lm::ngram::Model* modelPtr;
+
+      // Auxiliary functions
+  bool load_kenlm_file(const char *fileName);
 };
 
 #endif

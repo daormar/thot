@@ -222,6 +222,22 @@ void KenLm::clearVocab(void)
 //-------------------------
 bool KenLm::load(const char *fileName)
 {
+  std::string mainFileName;
+  if(fileIsDescriptor(fileName,mainFileName))
+  {
+    std::string descFileName=fileName;
+    std::string absolutizedMainFileName=absolutizeModelFileName(descFileName,mainFileName);
+    return load_kenlm_file(absolutizedMainFileName.c_str());
+  }
+  else
+  {
+    return load_kenlm_file(fileName);
+  }
+}
+
+//-------------------------
+bool KenLm::load_kenlm_file(const char *fileName)
+{
   if(modelPtr==NULL)
   {
     try
