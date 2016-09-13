@@ -416,14 +416,14 @@ obtain_smtweights_names()
 obtain_loglin_nonneg_const()
 {
     local_smtw_names=`obtain_smtweights_names`
-    echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wp" || $i=="tseglenw") printf"0 "; else printf"1 "}'
+    echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wpw" || $i=="tseglenw") printf"0 "; else printf"1 "}'
 }
 
 ########
 obtain_loglin_dhs_va_opt_values()
 {
     local_smtw_names=`obtain_smtweights_names`
-    echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"-0 "}'
+    echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenliw") printf"0 "; else printf"-0 "}'
 }
 
 ########

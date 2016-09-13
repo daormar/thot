@@ -344,7 +344,7 @@ obtain_catweights_names()
 obtain_loglin_nonneg_const()
 {
     local_smtw_names=`obtain_smtweights_names`
-    smtval=`echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wp" || $i=="tseglenw") printf"0 "; else printf"1 "}'`
+    smtval=`echo "${local_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wpw" || $i=="tseglenw") printf"0 "; else printf"1 "}'`
 
     local_ecmw_names=`obtain_ecmweights_names`
     ecval=`echo "${local_ecmw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'`
