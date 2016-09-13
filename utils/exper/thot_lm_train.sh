@@ -101,6 +101,30 @@ get_absolute_path()
 }
 
 ########
+generate_global_word_prediction_file()
+{
+    # Remove previous word predictor file
+    if [ -f ${outd}/lm_desc.wp ]; then
+        rm ${outd}/lm_desc.wp
+    fi
+
+    # Gather current word predictor files
+    nlines_wp_file=100000
+    tmpfile1=`${MKTEMP}`
+    for file in ${outd}/main/*.wp ${outd}/additional*/*.wp ; do
+        if [ -f $file ]; then
+            cat $file >> $tmpfile1 || return 1
+        fi
+    done
+
+    # Generate global word predictor file
+    tmpfile2=`${MKTEMP}`
+    ${bindir}/thot_shuffle 31415 $tmpfile1 > $tmpfile2 || return 1
+    $HEAD -${nlines_wp_file} $tmpfile2 > ${outd}/lm_desc.wp || return 1
+    rm $tmpfile1 $tmpfile2
+}
+
+########
 create_desc_files()
 {
     # Determine model type
@@ -110,7 +134,7 @@ create_desc_files()
         modeltype="jm"
     fi
 
-    # Create descriptor
+    # Create descriptor file and file with weights
     if [ ${o_given} -eq 1 ]; then
         # -o option was given
         echo "thot lm descriptor # tool: thot_lm_train" > ${outd}/lm_desc
@@ -125,6 +149,9 @@ create_desc_files()
         # add new weight to descriptor weights file
         echo "1" >> ${outd}/lm_desc.weights
     fi
+
+    # Create global word predictor file
+    generate_global_word_prediction_file    
 }
 
 ########
@@ -366,12 +393,10 @@ echo "* Generating weight file... " >&2
 generate_weight_file
 echo "" >&2
 
-# Word prediction file is generated only for the main model
-if [ ${o_given} -eq 1 ]; then
-    echo "* Generating file for word prediction... " >&2
-    generate_word_prediction_file
-    echo "" >&2
-fi
+# Generate word prediction file
+echo "* Generating file for word prediction... " >&2
+generate_word_prediction_file
+echo "" >&2
 
 echo "* Generating descriptor file... " >&2
 create_desc_files $outd
