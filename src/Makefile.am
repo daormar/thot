@@ -20,7 +20,7 @@ CASMACAT_LIB= libthot_casmacat.la
 endif
 
 if KENLM_LIB_ENABLED
-KENLM_CXXFLAGS= -I$(KENLM_BUILD_DIR)/include -DKENLM_MAX_ORDER=7
+KENLM_CXXFLAGS= -I$(KENLM_BUILD_DIR)/include -DKENLM_MAX_ORDER=6
 KENLM_LIBADD= -L$(KENLM_BUILD_DIR)/lib -lkenlm -lkenlm_util $(BZ2LIB)	\
 $(LZMALIB)
 KENLM_LDADD= -L$(KENLM_BUILD_DIR)/lib -lkenlm -lkenlm_util $(BZ2LIB)	\
