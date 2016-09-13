@@ -496,7 +496,7 @@ void PhrLocalSwLiTm::getWeights(Vector<pair<std::string,float> >& compWeights)
   
   pair<std::string,float> compWeight;
 
-  compWeight.first="wp";
+  compWeight.first="wpw";
   compWeight.second=langModelInfoPtr->langModelPars.wpScaleFactor;
   compWeights.push_back(compWeight);
 
@@ -524,7 +524,7 @@ void PhrLocalSwLiTm::getWeights(Vector<pair<std::string,float> >& compWeights)
   compWeight.second=phrModelInfoPtr->phraseModelPars.pstWeight;
   compWeights.push_back(compWeight);
 
-  compWeight.first="swlenli";
+  compWeight.first="swlenliw";
   compWeight.second=swModelInfoPtr->invSwModelPars.lenWeight;
   compWeights.push_back(compWeight);
 }
@@ -532,14 +532,14 @@ void PhrLocalSwLiTm::getWeights(Vector<pair<std::string,float> >& compWeights)
 //---------------------------------
 void PhrLocalSwLiTm::printWeights(ostream &outS)
 {
-  outS<<"wp: "<<langModelInfoPtr->langModelPars.wpScaleFactor<<" , ";
+  outS<<"wpw: "<<langModelInfoPtr->langModelPars.wpScaleFactor<<" , ";
   outS<<"lmw: "<<langModelInfoPtr->langModelPars.lmScaleFactor<<" , ";
   outS<<"tseglenw: "<<phrModelInfoPtr->phraseModelPars.trgSegmLenWeight<<" , ";
   outS<<"sjumpw: "<<phrModelInfoPtr->phraseModelPars.srcJumpWeight <<" , ";
   outS<<"sseglenw: "<<phrModelInfoPtr->phraseModelPars.srcSegmLenWeight<<" , ";
   outS<<"ptsw: "<<phrModelInfoPtr->phraseModelPars.ptsWeight <<" , ";
   outS<<"pstw: "<<phrModelInfoPtr->phraseModelPars.pstWeight <<" , ";
-  outS<<"swlenli: "<<swModelInfoPtr->invSwModelPars.lenWeight;
+  outS<<"swlenliw: "<<swModelInfoPtr->invSwModelPars.lenWeight;
 }
 
 //---------------------------------
