@@ -113,7 +113,10 @@ class KenLm: public BaseNgramLM<Vector<WordIndex> >
    
  protected:
 
-  lm::ngram::Model* modelPtr;
+  typedef lm::ngram::SortedVocabulary KlmVocabulary;
+  typedef lm::ngram::TrieModel KenLangModel;
+
+  KenLangModel* modelPtr;
 
       // Auxiliary functions
   bool load_kenlm_file(const char *fileName);

@@ -142,7 +142,7 @@ LgProb KenLm::getLgProbEndGivenState(Vector<WordIndex>& state)
 //-------------------------
 bool KenLm::existSymbol(string s)const
 {
-  const lm::ngram::Vocabulary& vocab=modelPtr->GetVocabulary();
+  const KlmVocabulary& vocab=modelPtr->GetVocabulary();
   WordIndex w=vocab.Index(s);  
   return (w!=vocab.NotFound());
 }
@@ -166,12 +166,12 @@ WordIndex KenLm::stringToWordIndex(string s)const
 {
   if(modelPtr!=NULL)
   {
-    const lm::ngram::Vocabulary& vocab=modelPtr->GetVocabulary();
+    const KlmVocabulary& vocab=modelPtr->GetVocabulary();
     return vocab.Index(s);
   }
   else
   {
-    const lm::ngram::Vocabulary emptyVocab;
+    const KlmVocabulary emptyVocab;
     return emptyVocab.NotFound();
   }
 }
@@ -187,7 +187,7 @@ string KenLm::wordIndexToString(WordIndex /*w*/)const
 WordIndex KenLm::getBosId(bool &found)const
 {
   found=true;
-  const lm::ngram::Vocabulary& vocab=modelPtr->GetVocabulary();
+  const KlmVocabulary& vocab=modelPtr->GetVocabulary();
   return vocab.BeginSentence();
 }
 
@@ -195,7 +195,7 @@ WordIndex KenLm::getBosId(bool &found)const
 WordIndex KenLm::getEosId(bool &found)const
 {
   found=true;
-  const lm::ngram::Vocabulary& vocab=modelPtr->GetVocabulary();
+  const KlmVocabulary& vocab=modelPtr->GetVocabulary();
   return vocab.EndSentence();  
 }
 
@@ -243,7 +243,7 @@ bool KenLm::load_kenlm_file(const char *fileName)
     try
     {
       cerr<<"Loading kenlm model from "<<fileName<<" ..."<<endl;
-      modelPtr=new lm::ngram::Model(fileName);
+      modelPtr=new KenLangModel(fileName);
     }
     catch(...)
     {
