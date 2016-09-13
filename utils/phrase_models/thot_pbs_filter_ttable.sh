@@ -226,10 +226,14 @@ report_errors()
     num_err=`$GREP "Error while executing thot_filter_ttable_given_corpus" ${outfile}.filter_log | wc -l`
     if [ ${num_err} -gt 0 ]; then
         echo "Error during the execution of thot_pbs_filter_ttable (thot_filter_ttable_given_corpus)" >&2
-        echo "File ${outfile}.filter_err contains information for error diagnosing" >&2
+        if [ -f ${outfile}.filter_err ]; then
+            echo "File ${outfile}.filter_err contains information for error diagnosing" >&2
+        fi
     else
         echo "Synchronization error" >&2
-        echo "File ${outfile}.filter_err contains information for error diagnosing" >&2
+        if [ -f ${outfile}.filter_err ]; then
+            echo "File ${outfile}.filter_err contains information for error diagnosing" >&2
+        fi
     fi
 }
 

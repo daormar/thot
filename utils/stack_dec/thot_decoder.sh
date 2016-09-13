@@ -293,9 +293,9 @@ gen_log_err_files()
     for f in $SDIR/qs_trans_*.err; do
         cat $f >> ${output}.dec_err
     done
-    for f in $SDIR/merge.log; do
-        cat $f >> ${output}.dec_err
-    done
+    if [ -f $SDIR/merge.log ]; then
+        cp $SDIR/merge.log ${output}.dec_err
+    fi
 }
 
 report_errors()
@@ -304,10 +304,14 @@ report_errors()
     if [ ${num_err} -gt 0 ]; then
         prog=`$GREP "Error while executing" ${output}.dec_log | head -1 | $AWK '{printf"%s",$4}'`
         echo "Error during the execution of thot_decoder (${prog})" >&2
-        echo "File ${output}.dec_err contains information for error diagnosing" >&2
+        if [ -f ${output}.dec_err ]; then
+            echo "File ${output}.dec_err contains information for error diagnosing" >&2
+        fi
     else
         echo "Synchronization error" >&2
-        echo "File ${output}.dec_err contains information for error diagnosing" >&2
+        if [ -f ${output}.dec_err ]; then
+            echo "File ${output}.dec_err contains information for error diagnosing" >&2
+        fi
     fi
 }
 

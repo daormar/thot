@@ -302,10 +302,14 @@ report_errors()
     if [ ${num_err} -gt 0 ]; then
         prog=`$GREP "Error while executing" ${output}.genphr_log | head -1 | $AWK '{printf"%s",$4}'`
         echo "Error during the execution of thot_pbs_gen_phr_model (${prog})" >&2
-        echo "File ${output}.genphr_err contains information for error diagnosing" >&2
+        if [ -f ${output}.genphr_err ]; then
+            echo "File ${output}.genphr_err contains information for error diagnosing" >&2
+        fi
     else
         echo "Synchronization error" >&2
-        echo "File ${output}.genphr_err contains information for error diagnosing" >&2
+        if [ -f ${output}.genphr_err ]; then
+            echo "File ${output}.genphr_err contains information for error diagnosing" >&2
+        fi
     fi
 }
 

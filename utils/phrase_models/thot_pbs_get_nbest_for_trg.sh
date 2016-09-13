@@ -228,10 +228,14 @@ report_errors()
     num_err=`$GREP "Error while executing get_nbest_for_trg" ${outfile}.getnb_log | wc -l`
     if [ ${num_err} -gt 0 ]; then
         echo "Error during the execution of thot_pbs_get_nbest_for_trg (get_nbest_for_trg)" >&2
-        echo "File ${outfile}.getnb_err contains information for error diagnosing" >&2
+        if [ -f ${outfile}.getnb_err ]; then
+            echo "File ${outfile}.getnb_err contains information for error diagnosing" >&2
+        fi
     else
         echo "Synchronization error" >&2
-        echo "File ${outfile}.getnb_err contains information for error diagnosing" >&2
+        if [ -f ${outfile}.getnb_err ]; then
+            echo "File ${outfile}.getnb_err contains information for error diagnosing" >&2
+        fi
     fi
 }
 

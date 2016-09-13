@@ -483,10 +483,14 @@ report_errors()
             # Print error messages
             prog=`$GREP "Error while executing" ${output}.getng_log | head -1 | $AWK '{printf"%s",$4}'`
             echo "Error during the execution of thot_get_ngram_counts (${prog})" >&2
-            echo "File ${output}.getng_err contains information for error diagnosing" >&2
+            if [ -f ${output}.getng_err ]; then
+                echo "File ${output}.getng_err contains information for error diagnosing" >&2
+            fi
         else
             echo "Synchronization error" >&2
-            echo "File ${output}.getng_err contains information for error diagnosing" >&2
+            if [ -f ${output}.getng_err ]; then
+                echo "File ${output}.getng_err contains information for error diagnosing" >&2
+            fi
         fi
     fi
 }

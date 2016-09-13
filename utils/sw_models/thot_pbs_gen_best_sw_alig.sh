@@ -424,10 +424,14 @@ report_errors()
             # Print error messages
             prog=`$GREP "Error while executing" ${output}.genb_log | head -1 | $AWK '{printf"%s",$4}'`
             echo "Error during the execution of thot_pbs_gen_best_sw_alig (${prog})" >&2
-            echo "File ${output}.genb_err contains information for error diagnosing" >&2
+            if [ -f ${output}.genb_err ]; then
+                echo "File ${output}.genb_err contains information for error diagnosing" >&2
+            fi
          else
             echo "Synchronization error" >&2
-            echo "File ${output}.genb_err contains information for error diagnosing" >&2
+            if [ -f ${output}.genb_err ]; then
+                echo "File ${output}.genb_err contains information for error diagnosing" >&2
+            fi
        fi
     fi
 }

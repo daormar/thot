@@ -201,10 +201,14 @@ report_errors()
     num_err=`$GREP "Error while executing thot_ilm_perp" ${outfile}.ilmp_log | wc -l`
     if [ ${num_err} -gt 0 ]; then
         echo "Error during the execution of thot_pbs_ilm_perp (thot_ilm_perp)" >&2
-        echo "File ${output}.ilmp_err contains information for error diagnosing" >&2
+        if [ -f ${output}.ilmp_err ]; then
+            echo "File ${output}.ilmp_err contains information for error diagnosing" >&2
+        fi
     else
         echo "Synchronization error" >&2
-        echo "File ${output}.ilmp_err contains information for error diagnosing" >&2
+        if [ -f ${output}.ilmp_err ]; then
+            echo "File ${output}.ilmp_err contains information for error diagnosing" >&2
+        fi
     fi
 }
 

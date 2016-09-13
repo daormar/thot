@@ -887,10 +887,14 @@ report_errors()
             # Print error messages
             prog=`$GREP "Error while executing" ${output}.genswm_log | head -1 | $AWK '{printf"%s",$4}'`
             echo "Error during the execution of thot_pbs_gen_batch_sw_model (${prog})" >&2
-            echo "File ${output}.genswm_err contains information for error diagnosing" >&2
+            if [ -f ${output}.genswm_err ]; then
+                echo "File ${output}.genswm_err contains information for error diagnosing" >&2
+            fi
          else
             echo "Synchronization error" >&2
-            echo "File ${output}.genswm_err contains information for error diagnosing" >&2
+            if [ -f ${output}.genswm_err ]; then
+                echo "File ${output}.genswm_err contains information for error diagnosing" >&2
+            fi
         fi
     fi
 }
