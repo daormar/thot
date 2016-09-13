@@ -192,7 +192,7 @@ estimate_ngram_parameters()
     # Estimate n-gram model parameters
     if [ ${KENLM_BUILD_DIR} != "no" -a ${kenlm_given} -eq 1 ]; then
         ${KENLM_BUILD_DIR}/bin/lmplz -T $tdir -o ${n_val} --text $corpus > ${prefix}.arpa 2> ${prefix}.arpa.log
-        ${KENLM_BUILD_DIR}/bin/build_binary ${prefix}.arpa ${prefix} 2> ${prefix}.log
+        ${KENLM_BUILD_DIR}/bin/build_binary -T $tdir trie ${prefix}.arpa ${prefix} 2> ${prefix}.log
     else
         if [ $nl -gt 0 ]; then
             ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
