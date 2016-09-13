@@ -50,7 +50,7 @@ LgProb KenLm::getNgramLgProb(WordIndex w,
 
       // Obtain log-prob
   lm::ngram::State out_st;
-  return modelPtr->FullScoreForgotState(&rev_vu[0],&rev_vu.back(),w,out_st).prob*M_LN10;
+  return modelPtr->FullScoreForgotState(&*rev_vu.begin(),&*rev_vu.end(),w,out_st).prob*M_LN10;
 }
 
 //-------------------------
