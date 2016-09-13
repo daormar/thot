@@ -144,7 +144,7 @@ bool KenLm::existSymbol(string s)const
 {
   const lm::ngram::Vocabulary& vocab=modelPtr->GetVocabulary();
   WordIndex w=vocab.Index(s);  
-  return (w==vocab.NotFound());
+  return (w!=vocab.NotFound());
 }
 
 //-------------------------
