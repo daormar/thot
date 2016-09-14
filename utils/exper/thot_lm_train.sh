@@ -216,9 +216,10 @@ generate_weight_file()
 ########
 generate_word_prediction_file()
 {
+    head_nlines=1000000
     nlines_wp_file=100000
     tmpfile=`${MKTEMP}`
-    ${bindir}/thot_shuffle 31415 $tdir $corpus > $tmpfile || return 1
+    $HEAD -${head_nlines} $corpus | ${bindir}/thot_shuffle 31415 $tdir > $tmpfile || return 1
     $HEAD -${nlines_wp_file} $tmpfile > $prefix.wp || return 1
     rm $tmpfile
 }
