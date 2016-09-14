@@ -242,8 +242,13 @@ bool KenLm::load_kenlm_file(const char *fileName)
   {
     try
     {
+          // Define loading configuration
+      lm::ngram::Config config;
+      config.load_method=util::LAZY;
+        
+          // Load model
       cerr<<"Loading kenlm model from "<<fileName<<" ..."<<endl;
-      modelPtr=new KenLangModel(fileName);
+      modelPtr=new KenLangModel(fileName,config);
     }
     catch(...)
     {
