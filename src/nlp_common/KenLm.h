@@ -56,7 +56,7 @@ class KenLm: public BaseNgramLM<Vector<WordIndex> >
 {
  public:
 
-  typedef typename BaseNgramLM<Vector<WordIndex> >::LM_State LM_State;
+  typedef BaseNgramLM<Vector<WordIndex> >::LM_State LM_State;
 
       // Constructor
   KenLm();
