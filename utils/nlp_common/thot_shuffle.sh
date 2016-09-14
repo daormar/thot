@@ -6,12 +6,13 @@
 shuffle()
 {
     # Initialize variables
-    local seed=$1
-    local file=$2
+    _seed=$1
+    _tdir=$2
+    _file=$3
 
     # Shuffle file
-    $AWK -v seed=$seed 'BEGIN{srand(seed)}{printf"%f %d %s\n",rand(),NR,$0}' $file \
-        | LC_ALL=C $SORT -k1n -k2n | $AWK '{for(i=3;i<NF;++i) printf"%s ",$i; printf"%s\n",$NF}'
+    $AWK -v seed=${_seed} 'BEGIN{srand(seed)}{printf"%f %d %s\n",rand(),NR,$0}' ${_file} \
+        | LC_ALL=C $SORT -k1n -k2n -T ${_tdir} | $AWK '{for(i=3;i<NF;++i) printf"%s ",$i; printf"%s\n",$NF}'
 }
 
 thot_shuffle_alt()
@@ -59,18 +60,19 @@ thot_shuffle_alt()
        }' $file
 }
 
-if [ $# -ne 1 -a $# -ne 2 ]; then
-    echo "Usage: thot_shuffle <seed> [<file>]"
+if [ $# -ne 2 -a $# -ne 3 ]; then
+    echo "Usage: thot_shuffle <seed> <tmpdir> [<file>]"
 else
 
     # Take parameters
     seed=$1
+    tdir=$2
 
-    if [ $# -eq 2 ]; then
-        file=$2
+    if [ $# -eq 3 ]; then
+        file=$3
     fi
 
     # Invoke shuffling function
-    shuffle $seed $file
+    shuffle $seed $tdir $file
 
 fi
