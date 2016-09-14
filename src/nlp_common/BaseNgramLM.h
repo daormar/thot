@@ -358,7 +358,7 @@ std::string BaseNgramLM<LM_STATE>::extractDirName(std::string filePath)
     int last_slash_pos=-1;
 
         // Find last position of slash symbol
-    for(int i=0;i<filePath.size();++i)
+    for(unsigned int i=0;i<filePath.size();++i)
       if(filePath[i]=='/')
         last_slash_pos=i;
 
