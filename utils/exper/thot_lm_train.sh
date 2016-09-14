@@ -28,7 +28,7 @@ usage()
     if [ ${KENLM_BUILD_DIR} = "no" ]; then
         echo "                   -n <int> [-unk]"
     else
-        echo "                   -n <int> [-unk] [--kenlm]"
+        echo "                   -n <int> [-unk] [-kenlm]"
     fi
     echo "                   [-qs <string>] [-tdir <string>] [-sdir <string>]"
     echo "                   [-debug] [--help] [--version]"
@@ -41,7 +41,7 @@ usage()
     echo "-n <int>           Order of the n-grams."
     echo "-unk               Reserve probability mass for the unknown word."
     if [ ! ${KENLM_BUILD_DIR} = "no" ]; then
-        echo "--kenlm            Generate kenlm file in binary format."
+        echo "-kenlm            Generate kenlm file in binary format."
     fi
     echo "-qs <string>       Specific options to be given to the qsub command"
     echo "                   (example: -qs \"-l pmem=1gb\")."
@@ -295,7 +295,7 @@ while [ $# -ne 0 ]; do
         "-unk") unk_given=1
             unk_opt="-unk"
             ;;
-        "--kenlm") kenlm_given=1
+        "-kenlm") kenlm_given=1
             ;;
         "-tdir") shift
             if [ $# -ne 0 ]; then
