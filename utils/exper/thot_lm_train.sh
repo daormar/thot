@@ -119,7 +119,7 @@ generate_global_word_prediction_file()
 
     # Generate global word predictor file
     tmpfile2=`${MKTEMP}`
-    ${bindir}/thot_shuffle 31415 $tmpfile1 > $tmpfile2 || return 1
+    ${bindir}/thot_shuffle 31415 $tdir $tmpfile1 > $tmpfile2 || return 1
     $HEAD -${nlines_wp_file} $tmpfile2 > ${outd}/lm_desc.wp || return 1
     rm $tmpfile1 $tmpfile2
 }
@@ -218,7 +218,7 @@ generate_word_prediction_file()
 {
     nlines_wp_file=100000
     tmpfile=`${MKTEMP}`
-    ${bindir}/thot_shuffle 31415 $corpus > $tmpfile || return 1
+    ${bindir}/thot_shuffle 31415 $tdir $corpus > $tmpfile || return 1
     $HEAD -${nlines_wp_file} $tmpfile > $prefix.wp || return 1
     rm $tmpfile
 }

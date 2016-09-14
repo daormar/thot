@@ -113,7 +113,7 @@ else
         cat ${tcorpus_train}
     else
         maxfsize=500000
-        ${bindir}/thot_shuffle 31415 ${tcorpus_train} > $TMPDIR/tcorpus_train_shuff
+        ${bindir}/thot_shuffle 31415 ${tdir} ${tcorpus_train} > $TMPDIR/tcorpus_train_shuff
         head -n ${maxfsize} $TMPDIR/tcorpus_train_shuff
     fi
 
@@ -124,7 +124,7 @@ else
             cat ${tcorpus_dev}
         else
             maxfsize=10000
-            ${bindir}/thot_shuffle 31415 ${tcorpus_dev} > $TMPDIR/tcorpus_dev_shuff
+            ${bindir}/thot_shuffle 31415 ${tdir} ${tcorpus_dev} > $TMPDIR/tcorpus_dev_shuff
             head -n ${maxfsize} $TMPDIR/tcorpus_dev_shuff
         fi
     fi
@@ -137,7 +137,7 @@ else
                 cat ${scorpus_test}
             else
                 maxfsize=10000
-                ${bindir}/thot_shuffle 31415 ${scorpus_test} > $TMPDIR/scorpus_test_shuff
+                ${bindir}/thot_shuffle 31415 ${tdir} ${scorpus_test} > $TMPDIR/scorpus_test_shuff
                 head -n ${maxfsize} $TMPDIR/scorpus_test_shuff
             fi
         fi

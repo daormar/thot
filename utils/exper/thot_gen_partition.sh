@@ -136,8 +136,8 @@ fi
 ## Process parameters
 
 # Shuffle corpus
-${bindir}/thot_shuffle 31415 ${srcfile} > ${srcfile}.shuff
-${bindir}/thot_shuffle 31415 ${trgfile} > ${trgfile}.shuff
+${bindir}/thot_shuffle 31415 /tmp ${srcfile} > ${srcfile}.shuff
+${bindir}/thot_shuffle 31415 /tmp ${trgfile} > ${trgfile}.shuff
 
 # Generate training and excluded sentences files
 trsize=`expr $nl - $esize`
