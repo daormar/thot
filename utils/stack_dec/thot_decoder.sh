@@ -305,12 +305,12 @@ report_errors()
         prog=`$GREP "Error while executing" ${output}.dec_log | head -1 | $AWK '{printf"%s",$4}'`
         echo "Error during the execution of thot_decoder (${prog})" >&2
         if [ -f ${output}.dec_err ]; then
-            echo "File ${output}.dec_err contains information for error diagnosing" >&2
+            echo "thot_decoder: File ${output}.dec_err contains information for error diagnosing" >&2
         fi
     else
         echo "Synchronization error" >&2
         if [ -f ${output}.dec_err ]; then
-            echo "File ${output}.dec_err contains information for error diagnosing" >&2
+            echo "thot_decoder: File ${output}.dec_err contains information for error diagnosing" >&2
         fi
     fi
 }
