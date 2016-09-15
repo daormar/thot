@@ -82,7 +82,7 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
       {
         if(awk.dollar(1)!="#")
         {
-          if(awk.NF==3)
+          if(awk.NF>=3)
           {
                 // Read entry
             std::string lmType=awk.dollar(1);
