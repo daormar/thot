@@ -47,13 +47,19 @@ void MiraWer::corpusScore(const Vector<std::string>& candidates,
                           const Vector<std::string>& references,
                           double& score)
 {
-  double aux;
-  score = 0;
+  int nedits = 0, nwords = 0;
   for (unsigned int i=0; i<candidates.size(); i++) {
-    sentScore(candidates[i], references[i], aux);
-    score += aux;
+    Vector<std::string> candidate_tokens, reference_tokens;
+    split(candidates[i], candidate_tokens);
+    split(references[i], reference_tokens);
+
+    nedits += ed(candidate_tokens, reference_tokens);
+    nwords += reference_tokens.size();
   }
-  score /= candidates.size(); 
+  if (nwords == 0)
+    score = 0.0;
+  else
+    score = 1.0 - double(nedits)/nwords; 
 }
 
 //---------------------------------------
@@ -65,20 +71,18 @@ void MiraWer::sentScore(const std::string& candidate,
   split(candidate, candidate_tokens);
   split(reference, reference_tokens);
 
-  score = wer(candidate_tokens, reference_tokens);
+  if (reference_tokens.size() == 0)
+    score = 0.0;
+  else {
+    int nedits = ed(candidate_tokens, reference_tokens);
+    int nwords = reference_tokens.size();
+    score = 1.0 - double(nedits)/nwords;
+  }
 }
 
-//---------------------------------------
-double MiraWer::wer(Vector<std::string>& candidate, Vector<std::string>& reference)
-{
-  if (reference.size() == 0)
-    return 0.0;
-  else
-    return double(levenshtein_distance(s1, s2))/reference.size();
-}
 
 //---------------------------------------
-int MiraWer::levenshtein_distance(Vector<std::string>& s1, Vector<std::string>& s2) 
+int MiraWer::ed(Vector<std::string>& s1, Vector<std::string>& s2) 
 {
   const std::size_t len1 = s1.size(), len2 = s2.size();
   std::vector<unsigned int> col(len2+1), prevCol(len2+1);

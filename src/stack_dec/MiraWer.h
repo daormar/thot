@@ -57,7 +57,7 @@ public:
 
 private:
   void split(const std::string& sentence, Vector<std::string>& tokens);
-  double wer(const std::string& s1, const std::string& s2);
+  int ed(Vector<std::string>& s1, Vector<std::string>& s2);
 };
 
 #endif

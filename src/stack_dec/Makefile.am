@@ -14,7 +14,7 @@ _stackDecoderRec.h _stackDecoder.h SourceSegmentation.h			\
 BaseTranslationConstraints.h TranslationConstraints.h			\
 TranslationConstraints.cc SmtStack.h _smtStack.h SmtMultiStackRec.h	\
 _smtMultiStack.h BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc	\
-BaseScorer.h BaseMiraScorer.h MiraBleu.h MiraBleu.cc			\
+BaseScorer.h BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraWer.h MiraWer.cc			\
 thot_li_weight_upd.cc thot_ll_weight_upd_nblist.cc _smtModel.h		\
 ScoreCompDefs.h _phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc	\
 PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc			\
