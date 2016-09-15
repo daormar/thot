@@ -45,7 +45,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "BaseLogLinWeightUpdater.h"
-#include "MiraBleu.h"
+//#include "MiraBleu.h"
 #include "BaseMiraScorer.h"
 
 #include <cstdlib>
