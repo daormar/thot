@@ -184,6 +184,23 @@ fi
 
 echo ""
 
+# Check thot_scorer
+echo "**** Checking thot_scorer..."
+echo ""
+${bindir}/thot_scorer -r ${tcorpus_test} -t $tmpdir/thot_decoder_out
+if test $? -eq 0 ; then
+    echo "... Done"
+else
+    echo "================================================"
+    echo " Test failed!"
+    echo " See additional information in ${tmpdir}"
+    echo " Please report to "${bugreport}
+    echo "================================================"
+    exit 1
+fi
+
+echo ""
+
 # Remove directories for temporaries
 echo "*** Remove directories used to store temporary files..."
 echo ""
