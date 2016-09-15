@@ -144,7 +144,7 @@ gen_nbest_lists_iter()
         -sdir $sdir ${qs_opt} "${qs_par}" -v || { trap - EXIT ; return 1; }
 
     # Evaluate translation quality
-    $bindir/thot_scorer -r ${reffile} -t ${TDIR_LLWU}/trans/${niter}_thot_decoder_out > ${TDIR_LLWU}/trans/${niter}_thot_decoder_out.bleu || return 1
+    $bindir/thot_scorer -r ${reffile} -t ${TDIR_LLWU}/trans/${niter}_thot_decoder_out > ${TDIR_LLWU}/trans/${niter}_thot_decoder_out.score || return 1
 
     # Obtain n-best lists from word graphs
     for wgfile in ${TDIR_LLWU}/wg/${niter}*.wg; do
