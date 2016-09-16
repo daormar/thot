@@ -117,8 +117,9 @@ check_if_file_is_desc()
 process_files_for_individual_lm()
 {
     # Initialize parameters
-    _lmfile=$1
-    _lm_status=$2
+    _lmtype=$1
+    _lmfile=$2
+    _lm_status=$3
 
     # Create lm directory
     if [ ! -d ${outd}/lm/${_lm_status} ]; then
@@ -146,7 +147,7 @@ process_files_for_individual_lm()
     # Add entry to descriptor file
     _baselmfile=`basename ${_lmfile}`
     _relative_newlmfile=${_lm_status}/${_baselmfile}    
-    echo "jm ${_relative_newlmfile} ${_lm_status}" >> ${outd}/lm/lm_desc
+    echo "${_lmtype} ${_relative_newlmfile} ${_lm_status}" >> ${outd}/lm/lm_desc
 }
 
 ########
@@ -185,9 +186,10 @@ create_lm_files()
         # Create files for the different language models
         lmdesc_dirname=`$DIRNAME $lmfile`
         for lm_entry in `list_lm_entry_info $lmfile`; do
+            curr_lmtype=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$1}'`
             curr_lmfile=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$2}'`
             curr_status=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$3}'`
-            process_files_for_individual_lm ${lmdesc_dirname}/${curr_lmfile} ${curr_status}
+            process_files_for_individual_lm ${curr_lmtype} ${lmdesc_dirname}/${curr_lmfile} ${curr_status}
         done
 
         # Copy weights for lm descriptor
@@ -201,7 +203,7 @@ create_lm_files()
         echo "thot lm descriptor" > ${outd}/lm/lm_desc
 
         # Create files for individual language model
-        process_files_for_individual_lm ${lmfile} "main"
+        process_files_for_individual_lm "jm" ${lmfile} "main"
 
         # Obtain new lm file name
         baselmfile=`basename $lmfile`
