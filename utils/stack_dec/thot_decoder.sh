@@ -294,7 +294,7 @@ gen_log_err_files()
         cat $f >> ${output}.dec_err
     done
     if [ -f $SDIR/merge.log ]; then
-        cp $SDIR/merge.log ${output}.dec_err
+        cat $SDIR/merge.log >> ${output}.dec_err
     fi
 }
 
