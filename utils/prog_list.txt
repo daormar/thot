@@ -1,4 +1,5 @@
 # HOME_OF_PACKAGE PROGRAM_NAME
+/home/dortiz/smt/software/nlp_common KenLmFactory
 /home/dortiz/smt/software/incr_models thot_lm_perp
 /home/dortiz/smt/software/incr_models thot_ilm_perp
 /home/dortiz/smt/software/incr_models thot_lm_weight_upd
