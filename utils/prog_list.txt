@@ -1,5 +1,4 @@
 # HOME_OF_PACKAGE PROGRAM_NAME
-/home/dortiz/smt/software/nlp_common KenLmFactory
 /home/dortiz/smt/software/incr_models thot_lm_perp
 /home/dortiz/smt/software/incr_models thot_ilm_perp
 /home/dortiz/smt/software/incr_models thot_lm_weight_upd
@@ -41,6 +40,7 @@
 /home/dortiz/smt/software/stack_dec test_casmacat_engines
 /home/dortiz/smt/software/stack_dec KbMiraLlWuFactory
 /home/dortiz/smt/software/stack_dec MiraBleuFactory
+/home/dortiz/smt/software/stack_dec MiraWerFactory
 /home/dortiz/smt/software/stack_dec TranslationConstraintsFactory
 /home/dortiz/smt/software/stack_dec WgUncoupledAssistedTransSwLiFactory
 /home/dortiz/smt/software/stack_dec multi_stack_decoder_rec__swli_factory
