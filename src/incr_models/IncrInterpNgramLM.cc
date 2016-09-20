@@ -422,7 +422,7 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
     
         // Execute step by step simplex
     double curr_dhs_ftol=DBL_MAX;
-    ret=step_by_step_simplex(start,ndim,DHS_LM_FTOL,DHS_LM_SCALE_PAR,NULL,tmp_file,&nfunk,&y,x,&curr_dhs_ftol,false);
+    ret=step_by_step_simplex(start,ndim,DHS_INTERP_LM_FTOL,DHS_INTERP_LM_SCALE_PAR,NULL,tmp_file,&nfunk,&y,x,&curr_dhs_ftol,false);
 
     switch(ret)
     {
@@ -442,7 +442,7 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
             // Print verbose information
         if(verbose>=1)
         {
-          cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<DHS_LM_FTOL<<") ; ";
+          cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<DHS_INTERP_LM_FTOL<<") ; ";
           cerr<<"weights=";
           for(unsigned int i=0;i<weights.size();++i)
             cerr<<" "<<weights[i];
@@ -483,9 +483,6 @@ int IncrInterpNgramLM::new_dhs_eval(const char *corpusFileName,
                                     double* x,
                                     double& obj_func)
 {
-  unsigned int numOfSentences;
-  unsigned int numWords;
-  LgProb totalLogProb;
   bool weightsArePositive=true;
   int retVal;
   Vector<double> _weights=weights;
@@ -498,11 +495,7 @@ int IncrInterpNgramLM::new_dhs_eval(const char *corpusFileName,
   }
   if(weightsArePositive)
   {
-        // Set weights
-    setWeights(_weights);
-        
-        // Obtain perplexity
-    retVal=this->perplexity(corpusFileName,numOfSentences,numWords,totalLogProb,obj_func);
+    retVal=evaluate_dhs_obj_func(corpusFileName,_weights,obj_func);
   }
   else
   {
@@ -517,6 +510,48 @@ int IncrInterpNgramLM::new_dhs_eval(const char *corpusFileName,
   rewind(tmp_file);
 
   return retVal;
+}
+
+//---------------
+int IncrInterpNgramLM::evaluate_dhs_obj_func(const char *corpusFileName,
+                                             const Vector<double>& _weights,
+                                             double& obj_func)
+{
+      // Create vector to store perplexities for each model
+  Vector<double> model_perplexities;
+  
+      // Obtain perplexities for each model
+  for(unsigned int i=0;i<_weights.size();++i)
+  {
+        // Create weight vector
+    Vector<double> modelWeightVec(_weights.size(),0);
+    modelWeightVec[i]=1;
+    
+        // Set weights
+    setWeights(modelWeightVec);
+    
+        // Obtain perplexity
+    unsigned int numOfSentences;
+    unsigned int numWords;
+    LgProb totalLogProb;
+    double perp;
+    int retVal=this->perplexity(corpusFileName,numOfSentences,numWords,totalLogProb,perp);
+    if(retVal==ERROR)
+      return ERROR;
+    model_perplexities.push_back(perp);
+  }
+
+      // Set weights
+  setWeights(_weights);
+
+      // Obtain result
+  obj_func=0;
+  for(unsigned int i=0;i<model_perplexities.size();++i)
+  {
+    obj_func+=(normWeights[i]*model_perplexities[i])/(double)modelPtrVec[i]->sizeTrgEnc();
+  }
+  
+  return OK;
 }
 
 //---------------

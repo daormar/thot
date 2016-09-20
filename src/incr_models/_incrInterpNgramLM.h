@@ -43,6 +43,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
+#define DHS_INTERP_LM_FTOL       0.0000001
+#define DHS_INTERP_LM_SCALE_PAR  1
 
 //--------------- typedefs -------------------------------------------
 

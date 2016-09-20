@@ -105,6 +105,9 @@ class IncrInterpNgramLM: public _incrInterpNgramLM<Count,Count>
                    FILE* tmp_file,
                    double* x,
                    double& obj_func);
+  int evaluate_dhs_obj_func(const char *corpusFileName,
+                            const Vector<double>& _weights,
+                            double& obj_func);
   bool loadLmEntries(const char *fileName);
   bool loadLmEntry(std::string lmType,
                    std::string modelFileName,
