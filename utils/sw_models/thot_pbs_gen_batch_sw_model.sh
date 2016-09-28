@@ -306,8 +306,8 @@ proc_chunk()
     # Remove model files for chunk (except the log file)
     if [ ${debug} -eq 0 ]; then
         for file in ${models_per_chunk_dir}/${out_chunk}*; do
-            log_ext=`echo $file | $AWK '{print substr($1,length($1)-3)==".log"}'`
-            if [ ${log_ext} -eq 0 ]; then
+            _ext=`echo $file | $AWK '{printf"%s",substr($1,length($1)-3)}'`
+            if [ ${_ext} != ".log" ]; then
                 rm $file
             fi
         done
