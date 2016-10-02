@@ -285,36 +285,40 @@ Here is a BiBTeX entry:
 Literature
 ----------
 Daniel Ortiz-Martínez,
+"*Online Learning for Statistical Machine Translation*".
+In Computational Linguistics, 2016. Vol. 42 (1), pp. 121-161. [Download] [16]
+
+Daniel Ortiz-Martínez,
 "*Advances in Fully-Automatic and Interactive Phrase-Based Statistical Machine Translation*". 
 PhD Thesis. Universidad Politécnica de Valencia. 2011. 
-Advisors: Ismael García Varea and Francisco Casacuberta. [Download] [16]
+Advisors: Ismael García Varea and Francisco Casacuberta. [Download] [17]
 
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
 "*Online Learning for Interactive Statistical Machine Translation*". 
 In Proc. of the North American Chapter of the Association for Computational Linguistics - 
-Human Language Technologies (NAACL-HLT), pp. 546-554, Los Angeles, US, 2010. [Download] [17]
+Human Language Technologies (NAACL-HLT), pp. 546-554, Los Angeles, US, 2010. [Download] [18]
 
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
 "*Phrase-level alignment generation using a smoothed loglinear phrase-based statistical alignment model*". 
-In Proc. of the European Association for Machine Translation (EAMT), pp. 160-169, Hamburg, Germany, 2008. *Best paper award*. [Download] [18]
+In Proc. of the European Association for Machine Translation (EAMT), pp. 160-169, Hamburg, Germany, 2008. *Best paper award*. [Download] [19]
 
 Daniel Ortiz-Martínez, Ismael García-Varea, Francisco Casacuberta. 
 "*Thot: a toolkit to train phrase-based models for statistical machine translation*".
 In Proc. of the Machine Translation Summit (MT-Summit),
-Phuket, Thailand, September 2005. [Download] [19]
+Phuket, Thailand, September 2005. [Download] [20]
 
 
 Why Thot?
 ---------
 
 The name Thot was chosen because it represents the [Egyptian God of
-knowledge] [20] (he is also referred to as Thoth or Tot), continuing the
+knowledge] [21] (he is also referred to as Thoth or Tot), continuing the
 tradition of using Egyptian names for machine translation tools
 initiated by other developers in the field. Interestingly, Seshat, who
-is the consort of Thot and the [Goddess of writing] [21], is the name of
-[a very exciting machine learning tool] [22] for mathematical expression
+is the consort of Thot and the [Goddess of writing] [22], is the name of
+[a very exciting machine learning tool] [23] for mathematical expression
 recognition developed by my former colleague at PRHLT, [Francisco
-Álvaro] [23].
+Álvaro] [24].
 
 
 Sponsors
@@ -322,7 +326,7 @@ Sponsors
 Thot has been supported by the European Union under the [CasMaCat
 research project] [6]. Thot has also received support from the Spanish
 Government in a number of research projects, such as the [MIPRCV
-project] [24] that belongs to the [CONSOLIDER programme] [25].
+project] [25] that belongs to the [CONSOLIDER programme] [26].
 
 
 [1]: http://daormar.github.io/
@@ -340,13 +344,14 @@ project] [24] that belongs to the [CONSOLIDER programme] [25].
 [13]: https://github.com/daormar/thot/issues
 [14]: mailto:dortiz@prhlt.upv.es
 [15]: http://groups.google.com/group/casmacat-support/boxsubscribe
-[16]: https://www.prhlt.upv.es/aigaion2/attachments/dortiz_thesis_2011.pdf-d12d165f9a2b01b0697000ed7c08c4bc.pdf
-[17]: http://aclweb.org/anthology-new/N/N10/N10-1079.pdf
-[18]: http://mt-archive.info/EAMT-2008-Ortiz-Martinez.pdf
-[19]: http://www.mt-archive.info/MTS-2005-Ortiz-Martinez.pdf
-[20]: https://en.wikipedia.org/wiki/Thoth
-[21]: https://en.wikipedia.org/wiki/Seshat
-[22]: https://github.com/falvaro/seshat
-[23]: http://falvaro.github.io/
-[24]: http://miprcv.iti.upv.es/
-[25]: http://www.ingenio2010.es/
+[16]: http://www.mitpressjournals.org/doi/pdf/10.1162/COLI_a_00244
+[17]: https://www.prhlt.upv.es/aigaion2/attachments/dortiz_thesis_2011.pdf-d12d165f9a2b01b0697000ed7c08c4bc.pdf
+[18]: http://aclweb.org/anthology-new/N/N10/N10-1079.pdf
+[19]: http://mt-archive.info/EAMT-2008-Ortiz-Martinez.pdf
+[20]: http://www.mt-archive.info/MTS-2005-Ortiz-Martinez.pdf
+[21]: https://en.wikipedia.org/wiki/Thoth
+[22]: https://en.wikipedia.org/wiki/Seshat
+[23]: https://github.com/falvaro/seshat
+[24]: http://falvaro.github.io/
+[25]: http://miprcv.iti.upv.es/
+[26]: http://www.ingenio2010.es/
