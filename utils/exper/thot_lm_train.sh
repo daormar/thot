@@ -41,7 +41,7 @@ usage()
     echo "-n <int>           Order of the n-grams."
     echo "-unk               Reserve probability mass for the unknown word."
     if [ ! ${KENLM_BUILD_DIR} = "no" ]; then
-        echo "-kenlm            Generate kenlm file in binary format."
+        echo "-kenlm             Generate kenlm file in binary format."
     fi
     echo "-qs <string>       Specific options to be given to the qsub command"
     echo "                   (example: -qs \"-l pmem=1gb\")."
