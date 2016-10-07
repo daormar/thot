@@ -83,7 +83,7 @@ void version(void);
 
 SimpleDynClassLoader<BaseNgramLM<Vector<WordIndex> > > baseNgramLMDynClassLoader;
 BaseNgramLM<Vector<WordIndex> >* lm;
-_incrInterpNgramLM<Count,Count>* incrInterpNgramLmPtr;
+_incrInterpNgramLM* incrInterpNgramLmPtr;
 _incrJelMerNgramLM<Count,Count>* incrJelMerLmPtr;
 
 //--------------- Function Definitions -------------------------------
@@ -109,7 +109,7 @@ int main(int argc,char *argv[])
 
         // Check if the model has weights to be updated
     incrJelMerLmPtr=dynamic_cast<_incrJelMerNgramLM<Count,Count>* >(lm);
-    incrInterpNgramLmPtr=dynamic_cast<_incrInterpNgramLM<Count,Count>* >(lm);
+    incrInterpNgramLmPtr=dynamic_cast<_incrInterpNgramLM* >(lm);
     if(!incrJelMerLmPtr && !incrInterpNgramLmPtr)
     {
       cerr<<"Current model does not have weights to be updated"<<endl;
