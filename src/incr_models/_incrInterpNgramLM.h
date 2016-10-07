@@ -36,15 +36,17 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "vecx_x_incr_interp_ecpm.h"
-#include <string>
 #include "BaseIncrNgramLM.h"
 #include <lm_ienc.h>
+#include <im_pair.h>
+#include <MathFuncs.h>
+#include <string>
 
 //--------------- Constants ------------------------------------------
 
 #define DHS_INTERP_LM_FTOL       0.0000001
 #define DHS_INTERP_LM_SCALE_PAR  1
+#define INVALID_LMODEL_INDEX    -1
 
 //--------------- typedefs -------------------------------------------
 
@@ -56,26 +58,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- _incrInterpNgramLM class
 
-template<class SRC_INFO,class SRCTRG_INFO>
-class _incrInterpNgramLM: public _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>, public BaseIncrNgramLM<Vector<WordIndex> >
+class _incrInterpNgramLM: public BaseIncrNgramLM<Vector<WordIndex> >
 {
  public:
 
-  typedef typename _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::SrcTableNode SrcTableNode;
-  typedef typename _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::TrgTableNode TrgTableNode;
   typedef typename BaseIncrNgramLM<Vector<WordIndex> >::LM_State LM_State;
 
       // Constructor
-  _incrInterpNgramLM():_incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>()
-    {
-      this->encPtr=new lm_ienc;
-    }
-
-      // Basic function redefinitions
-  void addTableEntryHigh(const Vector<std::string>& hs,
-                         const std::string& ht,
-                         im_pair<SRC_INFO,SRCTRG_INFO> inf);
-  bool loadEncodingInfo(const char *prefixFileName);
+  _incrInterpNgramLM();
 
       // Functions to access model counts
   Count cHist(const Vector<WordIndex>& vu);
@@ -139,262 +129,43 @@ class _incrInterpNgramLM: public _incrInterpEncCondProbModel<Vector<std::string>
       // size and clear functions
   size_t size(void);
   void clear(void);
-  
+
       // Destructor
-  virtual ~_incrInterpNgramLM()
-  {
-    delete this->encPtr;
-  }
+  virtual ~_incrInterpNgramLM();
    
  protected:
+  
+      // typedefs
+  typedef std::map<WordIndex,WordIndex> GlobalToLocalDataMap;
+  
+      // data members
+  Vector<double> weights;
+  Vector<double> normWeights;
+  Vector<BaseNgramLM<Vector<WordIndex> >* > modelPtrVec;
+  Vector<GlobalToLocalDataMap> gtlDataMapVec;
+  lm_ienc* encPtr;
+  int modelIndex;
+      // modelIndex determines to which model are applied the functions
+      // addTableEntry, infSrcTrg and getEntriesForTarget
 
+      // Auxiliary functions to handle vocabularies
+  bool globalStringToWordIndex(const std::string& ht,
+                               WordIndex& t)const;
+  bool globalStrVecToWidxVec(const Vector<std::string>& rq,
+                             Vector<WordIndex>& vu)const;
+
+      // Auxiliary encoding functions
+  Vector<WordIndex> mapGlobalToLocalWidxVec(unsigned int index,
+                                            const Vector<WordIndex>& global_s);
+  WordIndex mapGlobalToLocalWidx(unsigned int index,
+                                 const WordIndex& global_t);
+  
+      // Specific functions for interpolated ngram language models
+  void setWeights(const Vector<double>& _weights);
+  Vector<double> obtainNormWeights(const Vector<double>& unnormWeights);
+
+      // Release data structures
+  void release(void);
 };
-
-//--------------- Template function definitions 
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-void _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::addTableEntryHigh(const Vector<std::string>& hs,
-                                                                 const std::string& ht,
-                                                                 im_pair<SRC_INFO,SRCTRG_INFO> inf)
-{  
-  _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::addTableEntryHigh(hs,ht,inf);
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::loadEncodingInfo(const char *prefixFileName)
-{
-  if(_incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::loadEncodingInfo(prefixFileName))
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-Count _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::cHist(const Vector<WordIndex>& vu)
-{
-  return _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cSrc(vu);
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-Count _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::cNgram(const WordIndex& w,
-                                                       const Vector<WordIndex>& vu)
-{
-  return _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cSrcTrg(vu,w);  
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-Count _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::cHistStr(const Vector<std::string>& rq)
-{
-  return _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cHSrc(rq);
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-Count _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::cNgramStr(const std::string& s,
-                                                          const Vector<std::string>& rq)
-{
-  return _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cHSrcHTrg(rq,s);
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-void _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::incrCountsOfNgramStr(const std::string& s,
-                                                                    const Vector<std::string>& rq,
-                                                                    Count c)
-{  
-  _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::incrCountsOfEntryHigh(rq,s,c);
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-void _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::incrCountsOfNgram(const WordIndex& w,
-                                                                 const Vector<WordIndex>& vu,
-                                                                 Count c)
-{
-  _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::incrCountsOfEntry(vu,w,c);
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProb(WordIndex w,
-                                                                const Vector<WordIndex>& vu)
-{
-  return _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::logpTrgGivenSrc(vu,w);  
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProbStr(string s,
-                                                                   const Vector<string>& rq)
-{
-  return _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::logpHTrgGivenHSrc(rq,s);    
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEnd(const Vector<WordIndex>& vu)
-{
-  bool found;
-  
-  return _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::logpTrgGivenSrc(vu,this->getEosId(found));  
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEndStr(const Vector<string>& rq)
-{
-  return _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::logpHTrgGivenHSrc(rq,"</s>");    
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::getStateForWordSeq(const Vector<WordIndex>& wordSeq,
-                                                                  Vector<WordIndex>& state)
-{
-  state=wordSeq;
-  return true;
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-void _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::getStateForBeginOfSentence(Vector<WordIndex> &state)
-{
-  Vector<WordIndex> keySeq;
-  int i;
-  bool found;
-  
-  for(i=0;i<(int)this->getNgramOrder()-1;++i)
-    state.push_back(this->getBosId(found));  
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProbGivenState(WordIndex w,
-                                                                          Vector<WordIndex> &state)
-{
-  LgProb lp;
-
-  lp=getNgramLgProb(w,state);
-  for(unsigned int i=1;i<state.size();++i) state[i-1]=state[i];
-  if(state.size()>0) state[state.size()-1]=w;
-  return lp;
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProbGivenStateStr(std::string s,
-                                                                             Vector<WordIndex> &state)
-{
- WordIndex w;
-	
- w=stringToWordIndex(s);
- return getNgramLgProbGivenState(w,state);    
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEndGivenState(Vector<WordIndex> &state)
-{
-  LgProb lp;
-  bool found;
-  
-  lp=getLgProbEnd(state);
-  for(unsigned int i=1;i<state.size();++i) state[i-1]=state[i];
-  if(state.size()>0) state[state.size()-1]=this->getEosId(found);
-  return lp;   
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::existSymbol(string s)const
-{
-  WordIndex w;
-  
-  return _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::HighTrg_to_Trg(s,w);  
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-WordIndex _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::addSymbol(std::string s)
-{
-  return _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::addHTrgCode(s);
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-unsigned int _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::getVocabSize(void)
-{
-  return _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::sizeTrgEnc();
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-WordIndex _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::stringToWordIndex(string s)const
-{
-  WordIndex w;
-  
-  bool found=_incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::HighTrg_to_Trg(s,w);
-  if(!found) w=UNK_SYMBOL;
-    
-  return w;
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-string _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::wordIndexToString(WordIndex w)const
-{
-  std::string s;
-  
-  bool found=_incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::Trg_to_HighTrg(w,s);
-  if(!found) s=UNK_SYMBOL_STR;
-  
-  return s;
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::loadVocab(const char *fileName)
-{
-  return _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::loadEncodingInfo(fileName);
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::printVocab(const char *fileName)
-{
-  return _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::printEncodingInfo(fileName);  
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-void _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::clearVocab(void)
-{
-  _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::clearEncodingInfo();
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-size_t _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::size(void)
-{
-  return _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::size();
-}
-
-//---------------
-template<class SRC_INFO,class SRCTRG_INFO>
-void _incrInterpNgramLM<SRC_INFO,SRCTRG_INFO>::clear(void)
-{
-  _incrInterpEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::clear();
-}
-
-//-----------------------------------------------------------------
 
 #endif

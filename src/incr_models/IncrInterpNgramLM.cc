@@ -117,19 +117,21 @@ bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
                                     std::string statusStr)
 {
       // Create lm file pointer
-  BaseIncrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,Count,Count>* biecmPtr=NULL;
-  if(lmType=="jm") biecmPtr=new IncrJelMerNgramLM;
-  if(biecmPtr==NULL) return ERROR;
+  BaseNgramLM<Vector<WordIndex> >* lmPtr=NULL;
+  if(lmType=="jm") lmPtr=new IncrJelMerNgramLM;
+  
+#ifdef THOT_KENLM_LIB_ENABLED
+  if(lmType=="kenlm") lmPtr=new KenLm;
+#endif
+  
+  if(lmPtr==NULL) return ERROR;
 
       // Store file pointer
-  modelPtrVec.push_back(biecmPtr);
+  modelPtrVec.push_back(lmPtr);
 
-      // Add global to local maps
-  GlobalToLocalSrcDataMap gtlSrcDataMap;
-  gtlSrcMapVec.push_back(gtlSrcDataMap);
-
-  GlobalToLocalTrgDataMap gtlTrgDataMap;
-  gtlTrgMapVec.push_back(gtlTrgDataMap);
+      // Add global to local map
+  GlobalToLocalDataMap gtlDataMap;
+  gtlDataMapVec.push_back(gtlDataMap);
 
       // Load model from file
   int ret=modelPtrVec.back()->load(modelFileName.c_str());
@@ -353,20 +355,6 @@ bool IncrInterpNgramLM::printIntraModelWeights(const char *fileName)
 }
 
 //---------------
-Prob IncrInterpNgramLM::pTrgGivenSrc(const Vector<WordIndex>& s,
-                                     const WordIndex& t)
-{
-  Prob p=0;
-      
-  for(unsigned int i=0;i<modelPtrVec.size();++i)
-  {
-    p+=(Prob)normWeights[i]*((Prob)modelPtrVec[i]->pTrgGivenSrc(mapGlobalToLocalSrcData(i,s),
-                                                                mapGlobalToLocalTrgData(i,t)));
-  }
-  return p;
-}
-
-//---------------
 int IncrInterpNgramLM::updateModelWeights(const char *corpusFileName,
                                           int verbose/*=0*/)
 {      
@@ -523,7 +511,7 @@ int IncrInterpNgramLM::new_dhs_eval(const char *corpusFileName,
 WordIndex IncrInterpNgramLM::getBosId(bool &found)const
 {
   WordIndex bosid;
-  found=HighTrg_to_Trg(BOS_STR,bosid);
+  found=globalStringToWordIndex(BOS_STR,bosid);
   return bosid;
 }
 
@@ -531,7 +519,7 @@ WordIndex IncrInterpNgramLM::getBosId(bool &found)const
 WordIndex IncrInterpNgramLM::getEosId(bool &found)const
 {
   WordIndex eosid;
-  found=HighTrg_to_Trg(EOS_STR,eosid);
+  found=globalStringToWordIndex(EOS_STR,eosid);
   return eosid;
 }
 

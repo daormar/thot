@@ -92,13 +92,12 @@ nlp_common/getline.c nlp_common/getdelim.c nlp_common/ctimer.c		\
 nlp_common/ClassDic.cc nlp_common/BasicSocketUtils.cc			\
 nlp_common/awkInputStream.cc nlp_common/DynClassFileHandler.cc
 
-incr_models_h= incr_models/vecx_x_incr_interp_ecpm.h			\
-incr_models/vecx_x_incr_enc.h incr_models/vecx_x_incr_ecpm.h		\
-incr_models/vecx_x_incr_cptable.h incr_models/lm_ienc.h			\
-incr_models/IncrNgramLM.h incr_models/_incrNgramLM.h			\
-incr_models/IncrJelMerNgramLM.h incr_models/_incrJelMerNgramLM.h	\
-incr_models/IncrInterpNgramLM.h incr_models/_incrInterpNgramLM.h	\
-incr_models/_incrInterpEncCondProbModel.h incr_models/IncrEncoder.h	\
+incr_models_h= incr_models/vecx_x_incr_enc.h				\
+incr_models/vecx_x_incr_ecpm.h incr_models/vecx_x_incr_cptable.h	\
+incr_models/lm_ienc.h incr_models/IncrNgramLM.h				\
+incr_models/_incrNgramLM.h incr_models/IncrJelMerNgramLM.h		\
+incr_models/_incrJelMerNgramLM.h incr_models/IncrInterpNgramLM.h	\
+incr_models/_incrInterpNgramLM.h incr_models/IncrEncoder.h		\
 incr_models/_incrEncCondProbModel.h incr_models/IncrCondProbTable.h	\
 incr_models/im_pair.h incr_models/BaseIncrEncoder.h			\
 incr_models/BaseIncrEncCondProbModel.h					\
@@ -106,8 +105,9 @@ incr_models/BaseIncrCondProbTable.h incr_models/BaseIncrCondProbModel.h	\
 incr_models/BaseWordPenaltyModel.h incr_models/WordPenaltyModel.h	\
 incr_models/WordPredictor.h
 incr_models_defs= incr_models/lm_ienc.cc incr_models/IncrNgramLM.cc	\
-incr_models/IncrJelMerNgramLM.cc incr_models/IncrInterpNgramLM.cc	\
-incr_models/WordPenaltyModel.cc incr_models/WordPredictor.cc
+incr_models/IncrJelMerNgramLM.cc incr_models/_incrInterpNgramLM.cc	\
+incr_models/IncrInterpNgramLM.cc incr_models/WordPenaltyModel.cc	\
+incr_models/WordPredictor.cc
 
 if KENLM_LIB_ENABLED
 kenlm_h= nlp_common/KenLm.h

@@ -37,6 +37,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_incrInterpNgramLM.h"
+#ifdef THOT_KENLM_LIB_ENABLED
+#include "KenLm.h"
+#endif
 #include "IncrJelMerNgramLM.h"
 #include "_incrJelMerNgramLM.h"
 #include <sstream>
@@ -56,20 +59,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- IncrInterpNgramLM class
 
-class IncrInterpNgramLM: public _incrInterpNgramLM<Count,Count>
+class IncrInterpNgramLM: public _incrInterpNgramLM
 {
  public:
 
-  typedef _incrInterpNgramLM<Count,Count>::SrcTableNode SrcTableNode;
-  typedef _incrInterpNgramLM<Count,Count>::TrgTableNode TrgTableNode;
-
       // Constructor
-  IncrInterpNgramLM():_incrInterpNgramLM<Count,Count>()
+  IncrInterpNgramLM():_incrInterpNgramLM()
   {
   }
-
-      // Basic function redefinitions
-  Prob pTrgGivenSrc(const Vector<WordIndex>& s,const WordIndex& t);
 
       // Functions to update model weights
   int updateModelWeights(const char *corpusFileName,
@@ -121,6 +118,5 @@ class IncrInterpNgramLM: public _incrInterpNgramLM<Count,Count>
 };
 
 //---------------
-
 
 #endif
