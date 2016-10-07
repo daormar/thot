@@ -195,6 +195,9 @@ create_lm_files()
         # Copy weights for lm descriptor
         cp ${lmfile}.weights ${outd}/lm/
 
+        # Copy wp file for lm descriptor
+        cp ${lmfile}.wp ${outd}/lm/
+
         # Obtain new file name for lm descriptor
         baselmfile=`basename $lmfile`
         newlmfile=${outd}/lm/${baselmfile}
