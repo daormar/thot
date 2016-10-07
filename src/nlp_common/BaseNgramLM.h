@@ -204,9 +204,9 @@ LgProb BaseNgramLM<LM_STATE>::getSentenceLog10Prob(Vector<WordIndex> s,
    
     if(verbose)
     {
-      cout<<"   P( "<<wordIndexToString(s[i])<<" | ";    
-      for(k=0;k<(int)hist.size();++k) cout << wordIndexToString(hist[hist.size()-1-k]) <<" ";    
-      cout<<") = " << exp((double)lp) <<" "<<exp((double)total_lp)<<"\n";	    
+      cerr<<"   P( "<<wordIndexToString(s[i])<<" | ";    
+      for(k=0;k<(int)hist.size();++k) cerr << wordIndexToString(hist[hist.size()-1-k]) <<" ";    
+      cerr<<") = " << exp((double)lp) <<" "<<exp((double)total_lp)<<"\n";	    
     } 
   }
   hist.clear();
@@ -221,9 +221,9 @@ LgProb BaseNgramLM<LM_STATE>::getSentenceLog10Prob(Vector<WordIndex> s,
 	
   if(verbose)
   {
-    cout<<"   P( "<<EOS_STR<<" | ";    
-    for(k=0;k<(int)hist.size();++k) cout << wordIndexToString(hist[hist.size()-1-k]) <<" ";  
-    cout<<") = " << exp((double)lp)  <<" "<<exp((double)total_lp)<< "\n";
+    cerr<<"   P( "<<EOS_STR<<" | ";    
+    for(k=0;k<(int)hist.size();++k) cerr << wordIndexToString(hist[hist.size()-1-k]) <<" ";  
+    cerr<<") = " << exp((double)lp)  <<" "<<exp((double)total_lp)<< "\n";
   }	
  
   return total_lp*((double)1/M_LN10);
