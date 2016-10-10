@@ -475,6 +475,7 @@ if test "$with_kenlm" = "no"; then
 else
  enable_kenlm_lib="yes"
  AC_MSG_RESULT(yes)
+ AC_DEFINE(KENLM_LIB_ENABLED,,[Define if kenlm library is enabled])
 fi
 AM_CONDITIONAL([KENLM_LIB_ENABLED], [test x${enable_kenlm_lib} = xyes])
 AC_SUBST(KENLM_BUILD_DIR,$with_kenlm)
