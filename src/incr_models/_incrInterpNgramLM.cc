@@ -291,14 +291,14 @@ string _incrInterpNgramLM::wordIndexToString(WordIndex w)const
 }
 
 //---------------
-bool _incrInterpNgramLM::loadVocab(const char *fileName)
+bool _incrInterpNgramLM::loadVocab(const char* /*fileName*/)
 {
   cerr<<"Warning: loadVocab() function not implemented!"<<endl;
   return ERROR;
 }
 
 //---------------
-bool _incrInterpNgramLM::printVocab(const char *fileName)
+bool _incrInterpNgramLM::printVocab(const char* /*fileName*/)
 {
   cerr<<"Warning: printVocab() function not implemented!"<<endl;
   return ERROR;
