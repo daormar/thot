@@ -62,7 +62,7 @@ class _incrInterpNgramLM: public BaseIncrNgramLM<Vector<WordIndex> >
 {
  public:
 
-  typedef typename BaseIncrNgramLM<Vector<WordIndex> >::LM_State LM_State;
+  typedef BaseIncrNgramLM<Vector<WordIndex> >::LM_State LM_State;
 
       // Constructor
   _incrInterpNgramLM();
