@@ -543,7 +543,7 @@ incr_jel_mer_ngram_lm_factory_la_LDFLAGS= -module
 ##########
 incr_interp_ngram_lm_factory_la_SOURCES=				\
 $(incr_interp_ngram_lm_factory_h) $(incr_interp_ngram_lm_factory_defs)
-incr_interp_ngram_lm_factory_la_LIBADD= libthot.la
+incr_interp_ngram_lm_factory_la_LIBADD= libthot.la $(KENLM_LIBADD)
 incr_interp_ngram_lm_factory_la_LDFLAGS= -module
 
 ##########
