@@ -533,26 +533,14 @@ WordIndex IncrInterpNgramLM::getEosId(bool &found)const
 void IncrInterpNgramLM::setNgramOrder(int _ngramOrder)
 {
   for(unsigned int i=0;i<modelPtrVec.size();++i)
-  {
-    _incrNgramLM<Count,Count>* _ilmPtr;
-    _ilmPtr=dynamic_cast<_incrNgramLM<Count,Count>*>(modelPtrVec[i]);
-    if(_ilmPtr!=NULL)
-      _ilmPtr->setNgramOrder(_ngramOrder);
-  }
+    modelPtrVec[i]->setNgramOrder(_ngramOrder);
 }
 
 //---------------
 unsigned int IncrInterpNgramLM::getNgramOrder(void)
 {
   if(modelPtrVec.size()>0)
-  {
-    _incrNgramLM<Count,Count>* _ilmPtr;
-    _ilmPtr=dynamic_cast<_incrNgramLM<Count,Count>*>(modelPtrVec[modelIndex]);
-    if(_ilmPtr!=NULL)
-      return _ilmPtr->getNgramOrder();
-    else
-      return 0;
-  }
+    return modelPtrVec[modelIndex]->getNgramOrder();
   else
     return 0;
 }
