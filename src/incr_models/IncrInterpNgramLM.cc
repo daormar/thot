@@ -364,7 +364,13 @@ int IncrInterpNgramLM::updateModelWeights(const char *corpusFileName,
     if(verbose)
       cerr<<"Updating weights of "<<modelStatusVec[i]<<" language model..."<<endl;
     _incrJelMerNgramLM<Count,Count>* incrJelMerLmPtr=dynamic_cast<_incrJelMerNgramLM<Count,Count>* >(modelPtrVec[i]);
-    incrJelMerLmPtr->updateModelWeights(corpusFileName,verbose);
+    if(incrJelMerLmPtr)
+      incrJelMerLmPtr->updateModelWeights(corpusFileName,verbose);
+    else
+    {
+      if(verbose)
+        cerr<<"This model does not have weights to be updated"<<endl;
+    }
   }
 
       // Update weights of model combination
