@@ -443,10 +443,10 @@ void printParameters(thot_server_pars tds_pars)
 void printUsage(void)
 {
   cerr<<"thot_server written by Daniel Ortiz"<<endl;
-  cerr<<"Usage: thot_server    -c <cfg_file>"<<endl;
+  cerr<<"Usage: thot_server    -c <string>"<<endl;
   cerr<<"                      [-p <int>] [ -v ] [--help] [--version]"<<endl;
   cerr<<endl;
-  cerr<<"-c <cfg_file>  Configuration file"<<endl<<endl;  
+  cerr<<"-c <string>    Configuration file"<<endl<<endl;  
   cerr<<"-p <int>       Port used by the server"<<endl<<endl;  
   cerr<<"-v             Verbose mode"<<endl<<endl;
   cerr<<"--help         Print this help and exit"<<endl<<endl;
