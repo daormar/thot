@@ -416,7 +416,7 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
     
         // Execute step by step simplex
     double curr_dhs_ftol=DBL_MAX;
-    ret=step_by_step_simplex(start,ndim,DHS_LM_FTOL,DHS_LM_SCALE_PAR,NULL,tmp_file,&nfunk,&y,x,&curr_dhs_ftol,false);
+    ret=step_by_step_simplex(start,ndim,DHS_INTERP_LM_FTOL,DHS_INTERP_LM_SCALE_PAR,NULL,tmp_file,&nfunk,&y,x,&curr_dhs_ftol,false);
 
     switch(ret)
     {
@@ -436,7 +436,7 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
             // Print verbose information
         if(verbose>=1)
         {
-          cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<DHS_LM_FTOL<<") ; ";
+          cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<DHS_INTERP_LM_FTOL<<") ; ";
           cerr<<"weights=";
           for(unsigned int i=0;i<weights.size();++i)
             cerr<<" "<<weights[i];
