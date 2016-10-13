@@ -94,7 +94,7 @@ bool SimpleDynClassLoader<T>::open_module(std::string module,int verbose/*=1*/)
 
   if(!dll_handle)
   {
-    std::cerr <<endl<<"Failed to open library: " << dlerror() << std::endl;
+    std::cerr <<endl<<"Failed to open library, " << dlerror() << std::endl;
     return false;
   }
 
@@ -105,7 +105,7 @@ bool SimpleDynClassLoader<T>::open_module(std::string module,int verbose/*=1*/)
   const char * err = dlerror();
   if(err)
   {
-    std::cerr <<endl<< "Failed to load create symbol: " << err << std::endl;
+    std::cerr <<endl<< "Failed to load create symbol, " << err << std::endl;
     close_module();
     return false;
   }
@@ -114,7 +114,7 @@ bool SimpleDynClassLoader<T>::open_module(std::string module,int verbose/*=1*/)
   err = dlerror();
   if(err)
   {
-    std::cerr <<endl<< "Failed to load type_id symbol: " << err << std::endl;
+    std::cerr <<endl<< "Failed to load type_id symbol, " << err << std::endl;
     close_module();
     return false;
   }
