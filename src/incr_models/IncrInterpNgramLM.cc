@@ -90,7 +90,9 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
             std::string statusStr=awk.dollar(3);
             std::string absolutizedModelFileName=absolutizeModelFileName(fileName,modelFileName);
             cerr<<"* Reading LM entry: "<<lmType<<" "<<absolutizedModelFileName<<" "<<statusStr<<endl;
-            loadLmEntry(lmType,absolutizedModelFileName,statusStr);
+            int ret=loadLmEntry(lmType,absolutizedModelFileName,statusStr);
+            if(ret==ERROR)
+              return ERROR;
           }
         }
       }
@@ -116,16 +118,27 @@ bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
                                     std::string modelFileName,
                                     std::string statusStr)
 {
-      // Create lm file pointer
-  BaseNgramLM<Vector<WordIndex> >* lmPtr=NULL;
-  if(lmType=="jm") lmPtr=new IncrJelMerNgramLM;
+      // Declare dynamic class loader instance
+  SimpleDynClassLoader<BaseNgramLM<Vector<WordIndex> > > baseNgramLMDynClassLoader;
   
-#ifdef THOT_KENLM_LIB_ENABLED
-  if(lmType=="kenlm") lmPtr=new KenLm;
-#endif
-  
-  if(lmPtr==NULL) return ERROR;
+      // Open module
+  bool verbosity=false;
+  if(!baseNgramLMDynClassLoader.open_module(lmType,verbosity))
+  {
+    cerr<<"Error: so file ("<<lmType<<") could not be opened"<<endl;
+    return ERROR;
+  }
 
+      // Create lm file pointer
+  BaseNgramLM<Vector<WordIndex> >* lmPtr=baseNgramLMDynClassLoader.make_obj("");
+  if(lmPtr==NULL)
+  {
+    cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
+    baseNgramLMDynClassLoader.close_module();
+    
+    return ERROR;
+  }  
+  
       // Store file pointer
   modelPtrVec.push_back(lmPtr);
 

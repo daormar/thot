@@ -37,11 +37,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_incrInterpNgramLM.h"
-#ifdef THOT_KENLM_LIB_ENABLED
-#include "KenLm.h"
-#endif
-#include "IncrJelMerNgramLM.h"
 #include "_incrJelMerNgramLM.h"
+#include "SimpleDynClassLoader.h"
 #include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
