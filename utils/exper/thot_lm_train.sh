@@ -129,9 +129,9 @@ create_desc_files()
 {
     # Determine model type
     if [ ${KENLM_BUILD_DIR} != "no" -a ${kenlm_given} -eq 1 ]; then
-        modeltype="kenlm"
+        modeltype=${libdir}kenlm_factory.so
     else
-        modeltype="jm"
+        modeltype=${libdir}incr_jel_mer_ngram_lm_factory.so
     fi
 
     # Create descriptor file and file with weights
