@@ -152,6 +152,17 @@ gen_nbest_lists_iter()
         sentid=`get_sentid ${basewgfile}`
         ${bindir}/thot_wg_proc -w $wgfile -n ${n_val} -o ${TDIR_LLWU}/nblist/${niter}_${sentid} 2>> ${TDIR_LLWU}/nblist/thot_wg_proc.log || return 1
     done
+
+    # Save disk space
+    if [ "$debug" = "-debug" ]; then
+        # Compress files
+        for file in ${TDIR_LLWU}/wg/${niter}*; do
+            ${GZIP} $file
+        done
+    else
+        # Remove files
+        rm ${TDIR_LLWU}/wg/${niter}*
+    fi
 }
 
 ##################
