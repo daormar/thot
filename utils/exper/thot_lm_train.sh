@@ -391,10 +391,11 @@ estimate_ngram_parameters
 echo "" >&2
 
 echo "* Generating weight file... " >&2
-generate_weight_file
-echo "" >&2
+if [ ${kenlm_given} -eq 0 ]; then
+    generate_weight_file
+    echo "" >&2
+fi
 
-# Generate word prediction file
 echo "* Generating file for word prediction... " >&2
 generate_word_prediction_file
 echo "" >&2
