@@ -6,7 +6,7 @@
 ########
 put_st_lengths()
 {
-    # Puts the source and target phrase counts between the phrase pairs.
+    # Puts the source and target phrase counts between the phrase pairs
     ${AWK}              'BEGIN{ 
                             num_lines=0
                            }
