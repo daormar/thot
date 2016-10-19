@@ -29,9 +29,8 @@ sw_models/thot_gen_wigauss_slen_model					\
 sw_models/thot_gen_batch_sw_model_mr sw_models/thot_format_corpus_csl	\
 sw_models/thot_filter_text_ilextable
 
-phrase_models_bin_scripts= phrase_models/thot_sort_ttable2		\
-phrase_models/thot_remove_st_lengths2					\
-phrase_models/thot_put_st_lengths2 phrase_models/thot_pbs_gen_phr_model	\
+phrase_models_bin_scripts= phrase_models/thot_sort_ttable		\
+phrase_models/thot_pbs_gen_phr_model					\
 phrase_models/thot_pbs_gen_batch_phr_model				\
 phrase_models/thot_pbs_alig_op phrase_models/thot_merge_seglen_counts	\
 phrase_models/thot_merge_counts phrase_models/thot_get_nbest_for_trg	\

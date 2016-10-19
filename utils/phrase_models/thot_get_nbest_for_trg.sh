@@ -112,6 +112,6 @@ else
         echo "Error: value for n not given!"
         exit 1
     fi
-    cat ${ttable_file} | ${bindir}/thot_flip_phr | ${bindir}/thot_sort_ttable2 -T $tmpdir | \
+    cat ${ttable_file} | ${bindir}/thot_flip_phr | ${bindir}/thot_sort_ttable -T $tmpdir | \
         filter_nbest | ${bindir}/thot_flip_phr
 fi
