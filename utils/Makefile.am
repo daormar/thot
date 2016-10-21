@@ -108,6 +108,7 @@ SUFFIXES= .sh .pl .py
 	echo "MKTEMP="$(MKTEMP) >> $@
 	echo "LN="$(LN) >> $@
 	echo "WC="$(WC) >> $@
+	echo "PASTE="$(PASTE) >> $@
 	echo "TOUCH="$(TOUCH) >> $@
 	echo "CUT="$(CUT) >> $@
 	echo "GZIP="$(GZIP) >> $@
