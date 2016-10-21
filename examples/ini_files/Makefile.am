@@ -1,5 +1,5 @@
 inifilesdir = $(datadir)/$(PACKAGE)/ini_files
-inifiles_DATA= standard.ini standard_ibm2.ini
+inifiles_DATA= standard.ini ibm2.ini kenlm.ini interplm.ini
 
 EXTRA_DIST= $(inifiles_DATA)
 
@@ -8,7 +8,7 @@ install-data-hook:
           $(SED) s'|THOT_HOME|${prefix}|' $$file > $(inifilesdir)/$$file; \
 	done
 	if [ "${ENABLE_IBM2_ALIG}" = "yes" ]; then \
-	  cp $(inifilesdir)/standard_ibm2.ini $(inifilesdir)/master.ini; \
+	  cp $(inifilesdir)/ibm2.ini $(inifilesdir)/master.ini; \
 	else \
 	  cp $(inifilesdir)/standard.ini $(inifilesdir)/master.ini; \
 	fi
