@@ -246,7 +246,7 @@ Prob PhraseTable::pSrcGivenTrg(const Vector<WordIndex>& s,
   Count count_s_t_,count_t_;
 
   count_t_=cTrg(t);
-  if((float)count_t_==0) return 0;
+  if((float)count_t_<=0) return PHRASE_PROB_SMOOTH;
   else
   {
     count_s_t_=cSrcTrg(s,t);
