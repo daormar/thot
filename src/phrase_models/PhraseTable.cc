@@ -63,7 +63,7 @@ bool PhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
   nbt.clear();
   
   count_t_=cTrg(t);
-  if((float)count_t_!=0)
+  if((float)count_t_>0)
   {
     //Find the phrase-model entry for phrase f
     ptNode=phraseDict.getTranslationsFor_t_(t);
@@ -220,16 +220,16 @@ Prob PhraseTable::pTrgGivenSrc(const Vector<WordIndex>& s,
   bool found;
   
   count_s_t_=cSrcTrg(s,t);	
-  if((float)count_s_t_!=0)
+  if((float)count_s_t_>0)
   {
     count_s=sourcePhraseCounts.getCount(s,found);
-	if((float)count_s!=0) 
+	if((float)count_s>0)
     {
       return (float) count_s_t_/(float)count_s;
     }
-	else return 0;
+	else return PHRASE_PROB_SMOOTH;
   }
-  else return 0;
+  else return PHRASE_PROB_SMOOTH;
 }
 
 //-------------------------
