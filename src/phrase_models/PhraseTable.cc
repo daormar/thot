@@ -65,7 +65,7 @@ bool PhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
   count_t_=cTrg(t);
   if((float)count_t_>0)
   {
-    //Find the phrase-model entry for phrase f
+    //Find the phrase-model entry for phrase t
     ptNode=phraseDict.getTranslationsFor_t_(t);
     // generate transTableNode
     for(phraseTNodeIter=ptNode->begin();phraseTNodeIter!=ptNode->end();++phraseTNodeIter) 
@@ -96,13 +96,15 @@ bool PhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
 #   endif
     
     while(nbt.size()>(unsigned int)N && N>=0)
-    {// node contains N inverse translations, remove last element
+    {
+          // node contains N inverse translations, remove last element
       nbt.removeLastElement();
     }
     return true;
   }
   else
-  {// phrase f is not stored	  
+  {
+        // phrase t is not stored  
     return false;
   }
 }
@@ -215,14 +217,12 @@ Count PhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
 //-------------------------
 Prob PhraseTable::pTrgGivenSrc(const Vector<WordIndex>& s,
                                const Vector<WordIndex>& t)
-{
-  Count count_s_t_,count_s;
-  bool found;
-  
-  count_s_t_=cSrcTrg(s,t);	
+{  
+  Count count_s_t_=cSrcTrg(s,t);	
   if((float)count_s_t_>0)
   {
-    count_s=sourcePhraseCounts.getCount(s,found);
+    bool found;
+    Count count_s=sourcePhraseCounts.getCount(s,found);
 	if((float)count_s>0)
     {
       return (float) count_s_t_/(float)count_s;
@@ -243,15 +243,17 @@ LgProb PhraseTable::logpTrgGivenSrc(const Vector<WordIndex>& s,
 Prob PhraseTable::pSrcGivenTrg(const Vector<WordIndex>& s,
                                const Vector<WordIndex>& t)
 {
-  Count count_s_t_,count_t_;
-
-  count_t_=cTrg(t);
-  if((float)count_t_<=0) return PHRASE_PROB_SMOOTH;
-  else
+  Count count_s_t_=cSrcTrg(s,t);
+  if((float)count_s_t_>0)
   {
-    count_s_t_=cSrcTrg(s,t);
-    return (float)count_s_t_/(float)count_t_;	  
+    Count count_t_=cTrg(t);
+	if((float)count_t_>0)
+    {
+      return (float) count_s_t_/(float)count_t_;
+    }
+	else return PHRASE_PROB_SMOOTH;
   }
+  else return PHRASE_PROB_SMOOTH;
 }
 
 //-------------------------

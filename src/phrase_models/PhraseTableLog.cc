@@ -67,7 +67,7 @@ bool PhraseTableLog::getNbestForTrg(const Vector<WordIndex>& t,
   lcount_t_=phraseDictLog.getLogCount_t(t);
   if((float)lcount_t_>SMALL_LG_NUM)
   {
-    //Find the phrase-model entry for phrase f
+    //Find the phrase-model entry for phrase t
     ptnodel=phraseDictLog.getTranslationsFor_t_(t);
     // generate transTableNode
     for(ptnlIter=ptnodel->begin();ptnlIter!=ptnodel->end();++ptnlIter) 
@@ -98,13 +98,15 @@ bool PhraseTableLog::getNbestForTrg(const Vector<WordIndex>& t,
 #   endif
     
     while(nbt.size()>(unsigned int)N && N>=0)
-    {// node contains N inverse translations, remove last element
+    {
+          // node contains N inverse translations, remove last element
       nbt.removeLastElement();
     }
     return true;
   }
   else
-  {// phrase f is not stored	  
+  {
+        // phrase t is not stored	  
     return false;
   }
 }
@@ -279,13 +281,11 @@ Prob PhraseTableLog::pTrgGivenSrc(const Vector<WordIndex>& s,
 LgProb PhraseTableLog::logpTrgGivenSrc(const Vector<WordIndex>& s,
                                        const Vector<WordIndex>& t)
 {
-  LogCount lcount_s_t_,lcount_s;
   bool found;
-  
-  lcount_s_t_=getSrcTrgLogCount(s,t,found);	
+  LogCount lcount_s_t_=getSrcTrgLogCount(s,t,found);	
   if((float)lcount_s_t_>SMALL_LG_NUM)
   {
-    lcount_s=s_LogCounts.getLogCount(s,found);
+    LogCount lcount_s=s_LogCounts.getLogCount(s,found);
 	if((float)lcount_s>SMALL_LG_NUM)
     {
       return (float)lcount_s_t_-(float)lcount_s;
@@ -306,16 +306,19 @@ Prob PhraseTableLog::pSrcGivenTrg(const Vector<WordIndex>& s,
 LgProb PhraseTableLog::logpSrcGivenTrg(const Vector<WordIndex>& s,
                                        const Vector<WordIndex>& t)
 {
-  LogCount lcount_s_t_,lcount_t_;
-
-  lcount_t_=phraseDictLog.getLogCount_t(t);
-  if((float)lcount_t_<=SMALL_LG_NUM) return SMALL_LG_NUM;
-  else
+  bool found;
+  LogCount lcount_s_t_=getSrcTrgLogCount(s,t,found);	
+  if((float)lcount_s_t_>SMALL_LG_NUM)
   {
-    bool found;
-    lcount_s_t_=getSrcTrgLogCount(s,t,found);
-    return (float)lcount_s_t_-(float)lcount_t_;
+    LogCount lcount_t_=phraseDictLog.getLogCount_t(t);
+	if((float)lcount_t_>SMALL_LG_NUM)
+    {
+      return (float)lcount_s_t_-(float)lcount_t_;
+    }
+	else return SMALL_LG_NUM;
   }
+  else return SMALL_LG_NUM;
+
 }
 
 //-------------------------
