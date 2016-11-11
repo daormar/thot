@@ -80,12 +80,12 @@ size_t SingleWordVocab::getSrcVocabSize(void)const
 //-------------------------
 WordIndex SingleWordVocab::stringToSrcWordIndex(std::string s)const
 {
- StrToIdxVocab::const_iterator srcVocabIter;
+ StrToIdxVocab::const_iterator strToIdxVocabIter;
 	
- srcVocabIter=stringToSrcWordIndexMap.find(s);
- if(srcVocabIter!=stringToSrcWordIndexMap.end())
+ strToIdxVocabIter=stringToSrcWordIndexMap.find(s);
+ if(strToIdxVocabIter!=stringToSrcWordIndexMap.end())
  {
-   return srcVocabIter->second.first;
+   return strToIdxVocabIter->second.first;
  }
  else return UNK_WORD;
 }
@@ -93,12 +93,12 @@ WordIndex SingleWordVocab::stringToSrcWordIndex(std::string s)const
 //-------------------------
 std::string SingleWordVocab::wordIndexToSrcString(WordIndex w)const
 {
- IdxToStrVocab::const_iterator srcVocabIter;
+ IdxToStrVocab::const_iterator idxToStrVocabIter;
 	
- srcVocabIter=srcWordIndexMapToString.find(w);
- if(srcVocabIter!=srcWordIndexMapToString.end())
+ idxToStrVocabIter=srcWordIndexMapToString.find(w);
+ if(idxToStrVocabIter!=srcWordIndexMapToString.end())
  {
-   return srcVocabIter->second;
+   return idxToStrVocabIter->second;
  }
  else return UNK_WORD_STR;
 }
@@ -106,10 +106,10 @@ std::string SingleWordVocab::wordIndexToSrcString(WordIndex w)const
 //-------------------------
 bool SingleWordVocab::existSrcSymbol(std::string s)const
 {
- StrToIdxVocab::const_iterator srcVocabIter;
+ StrToIdxVocab::const_iterator strToIdxVocabIter;
 	
- srcVocabIter=stringToSrcWordIndexMap.find(s);
- if(srcVocabIter!=stringToSrcWordIndexMap.end())
+ strToIdxVocabIter=stringToSrcWordIndexMap.find(s);
+ if(strToIdxVocabIter!=stringToSrcWordIndexMap.end())
  {
    return 1;
  }
@@ -137,13 +137,13 @@ WordIndex SingleWordVocab::addSrcSymbol(std::string s,
                                         Count numTimes/*=1*/)
 {
  WordIndex wordIndex;	
- StrToIdxVocab::const_iterator srcVocabIter;
+ StrToIdxVocab::const_iterator strToIdxVocabIter;
 	
- srcVocabIter=stringToSrcWordIndexMap.find(s);
- if(srcVocabIter!=stringToSrcWordIndexMap.end()) 
+ strToIdxVocabIter=stringToSrcWordIndexMap.find(s);
+ if(strToIdxVocabIter!=stringToSrcWordIndexMap.end()) 
  {
    stringToSrcWordIndexMap[s].second+=numTimes;
-   return srcVocabIter->second.first;
+   return strToIdxVocabIter->second.first;
  }
  else
  {
