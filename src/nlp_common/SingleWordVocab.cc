@@ -48,16 +48,7 @@ ostream& operator << (ostream &outS,
 //-------------------------
 SingleWordVocab::SingleWordVocab(void)
 {
-      // Add the null word to both the source and the target vocabulary
-  add_null_word();
-  
-      // Add the unknown word to both the source and the target
-      // vocabulary
-  add_unk_word();
-
-      // Add the unused word to both the source and the target
-      // vocabulary
-  add_unused_word();
+  clear();
 }
 
 //-------------------------
@@ -173,6 +164,8 @@ bool SingleWordVocab::loadGIZASrcVocab(const char *srcInputVocabFileName)
  {
    cerr<<"Reading source vocabulary from: "<<srcInputVocabFileName<<endl;
 
+   clearSrcVocab();
+   
    pair<WordIndex,Count> vocEntry;
 
        // Read file
@@ -330,6 +323,8 @@ bool SingleWordVocab::loadGIZATrgVocab(const char *trgInputVocabFileName)
  {
    cerr<<"Reading target vocabulary from: "<<trgInputVocabFileName<<endl;
 
+   clearTrgVocab();
+   
    pair<WordIndex,Count> vocEntry;
 
    while(awk.getln())
@@ -454,25 +449,38 @@ ClassIndex SingleWordVocab::getClassForTrgWord(WordIndex w)
 }
 
 //-------------------------
-void SingleWordVocab::clear(void)
+void SingleWordVocab::clearSrcVocab(void)
 {
-      // Clear data members
- clearDataMembers();
+  stringToSrcWordIndexMap.clear();
+  srcWordIndexMapToString.clear();
+  srcClassDic.clear();
 
-     // Add the null word to both the source and the target vocabulary
- add_null_word();
-
-     // Add the unknown word to both the source and the target
-     // vocabulary
- add_unk_word();
-
-     // Add the unused word to both the source and the target
-     // vocabulary
- add_unused_word();
+  add_null_word_to_srcvoc();
+  add_unk_word_to_srcvoc();
+  add_unused_word_to_srcvoc();
 }
 
 //-------------------------
-void SingleWordVocab::add_null_word(void)
+void SingleWordVocab::clearTrgVocab(void)
+{
+  stringToTrgWordIndexMap.clear();
+  trgWordIndexMapToString.clear();
+  trgClassDic.clear();
+
+  add_null_word_to_trgvoc();
+  add_unk_word_to_trgvoc();
+  add_unused_word_to_trgvoc();
+}
+
+//-------------------------
+void SingleWordVocab::clear(void)
+{
+  clearSrcVocab();
+  clearTrgVocab();
+}
+
+//-------------------------
+void SingleWordVocab::add_null_word_to_srcvoc(void)
 {
   pair<WordIndex,Count> vocEntry;
 
@@ -481,6 +489,12 @@ void SingleWordVocab::add_null_word(void)
   vocEntry.second=0;
   stringToSrcWordIndexMap[NULL_WORD_STR]=vocEntry;
   srcWordIndexMapToString[vocEntry.first]=NULL_WORD_STR;
+}
+
+//-------------------------
+void SingleWordVocab::add_null_word_to_trgvoc(void)
+{
+  pair<WordIndex,Count> vocEntry;
 
       // Add the null word to the target vocabulary
   vocEntry.first=NULL_WORD;
@@ -490,7 +504,7 @@ void SingleWordVocab::add_null_word(void)
 }
 
 //-------------------------
-void SingleWordVocab::add_unk_word(void)
+void SingleWordVocab::add_unk_word_to_srcvoc(void)
 {
   pair<WordIndex,Count> vocEntry;
 
@@ -499,6 +513,12 @@ void SingleWordVocab::add_unk_word(void)
   vocEntry.second=0;
   stringToSrcWordIndexMap[UNK_WORD_STR]=vocEntry;
   srcWordIndexMapToString[vocEntry.first]=UNK_WORD_STR;
+}
+
+//-------------------------
+void SingleWordVocab::add_unk_word_to_trgvoc(void)
+{
+  pair<WordIndex,Count> vocEntry;
 
       // Add the null word to the target vocabulary
   vocEntry.first=UNK_WORD;
@@ -508,7 +528,7 @@ void SingleWordVocab::add_unk_word(void)
 }
 
 //-------------------------
-void SingleWordVocab::add_unused_word(void)
+void SingleWordVocab::add_unused_word_to_srcvoc(void)
 {
   pair<WordIndex,Count> vocEntry;
 
@@ -517,23 +537,18 @@ void SingleWordVocab::add_unused_word(void)
   vocEntry.second=0;
   stringToSrcWordIndexMap[UNUSED_WORD_STR]=vocEntry;
   srcWordIndexMapToString[vocEntry.first]=UNUSED_WORD_STR;
+}
+
+//-------------------------
+void SingleWordVocab::add_unused_word_to_trgvoc(void)
+{
+  pair<WordIndex,Count> vocEntry;
 
       // Add the null word to the target vocabulary
   vocEntry.first=UNUSED_WORD;
   vocEntry.second=0;
   stringToTrgWordIndexMap[UNUSED_WORD_STR]=vocEntry;
   trgWordIndexMapToString[vocEntry.first]=UNUSED_WORD_STR;
-}
-
-//-------------------------
-void SingleWordVocab::clearDataMembers(void)
-{
-  stringToSrcWordIndexMap.clear();
-  stringToTrgWordIndexMap.clear();
-  srcWordIndexMapToString.clear();
-  trgWordIndexMapToString.clear();
-  srcClassDic.clear();
-  trgClassDic.clear();
 }
 
 //-------------------------

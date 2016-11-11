@@ -123,11 +123,14 @@ class SingleWordVocab
    ClassDic srcClassDic;
    ClassDic trgClassDic;
 
-   void add_null_word(void);
-   void add_unk_word(void);
-   void add_unused_word(void);
-   void clearDataMembers(void);
-
+   void clearSrcVocab(void);
+   void clearTrgVocab(void);
+   void add_null_word_to_srcvoc(void);
+   void add_unk_word_to_srcvoc(void);
+   void add_unused_word_to_srcvoc(void);
+   void add_null_word_to_trgvoc(void);
+   void add_unk_word_to_trgvoc(void);
+   void add_unused_word_to_trgvoc(void);
 };
 
 #endif
