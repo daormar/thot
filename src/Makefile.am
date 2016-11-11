@@ -43,7 +43,8 @@ lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la incr_interp_ngram_lm_factory.la	\
 smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la wba_incr_phrase_model_factory.la	\
-pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
+file_pm_factory.la pfsm_ecm_for_wg_factory.la				\
+non_pb_ec_model_for_nb_ucat_factory.la					\
 wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
 mira_wer_factory.la kb_mira_ll_wu_factory.la				\
 multi_stack_decoder_rec__swli_factory.la				\
@@ -188,7 +189,8 @@ phrase_models/BaseIncrPhraseModel.h					\
 phrase_models/BaseCountPhraseModel.h phrase_models/AlignmentExtractor.h	\
 phrase_models/AlignmentContainer.h phrase_models/AligInfo.h		\
 phrase_models/BasePhrasePairFilter.h					\
-phrase_models/CategPhrasePairFilter.h
+phrase_models/CategPhrasePairFilter.h phrase_models/FilePt.h		\
+phrase_models/FilePm.h
 phrase_models_defs= phrase_models/WbaIncrPhraseModel.cc			\
 phrase_models/_wbaIncrPhraseModel.cc phrase_models/TrgSegmLenTable.cc	\
 phrase_models/TrgCutsTable.cc phrase_models/SrfNodeKey.cc		\
@@ -201,7 +203,8 @@ phrase_models/_incrPhraseModel.cc phrase_models/Cache_lct_.cc		\
 phrase_models/Cache_ct_.cc phrase_models/BpSet.cc			\
 phrase_models/BasePhraseModel.cc phrase_models/BaseIncrPhraseModel.cc	\
 phrase_models/AlignmentExtractor.cc phrase_models/AlignmentContainer.cc	\
-phrase_models/CategPhrasePairFilter.cc
+phrase_models/CategPhrasePairFilter.cc phrase_models/FilePt.cc		\
+phrase_models/FilePm.cc
 
 smt_preproc_h= smt_preproc/SmtPreprocDefs.h smt_preproc/BasePrePosProcessor.h
 smt_preproc_defs=
@@ -348,6 +351,10 @@ sw_models/IncrHmmP0AligModelFactory.cc
 wba_incr_phrase_model_factory_h= 
 wba_incr_phrase_model_factory_defs=		\
 phrase_models/WbaIncrPhraseModelFactory.cc
+
+##########
+file_pm_factory_h= 
+file_pm_factory_defs= phrase_models/FilePmFactory.cc
 
 ##########
 pfsm_ecm_for_wg_factory_h= 
@@ -571,6 +578,12 @@ wba_incr_phrase_model_factory_la_SOURCES= $(wba_incr_phrase_model_factory_h)	\
 $(wba_incr_phrase_model_factory_defs)
 wba_incr_phrase_model_factory_la_LIBADD= libthot.la
 wba_incr_phrase_model_factory_la_LDFLAGS= -module
+
+##########
+file_pm_factory_la_SOURCES= $(file_pm_factory_h)	\
+$(file_pm_factory_defs)
+file_pm_factory_la_LIBADD= libthot.la
+file_pm_factory_la_LDFLAGS= -module
 
 ##########
 pfsm_ecm_for_wg_factory_la_SOURCES= $(pfsm_ecm_for_wg_factory_h)	\
