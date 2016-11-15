@@ -1735,7 +1735,7 @@ class Tokenizer:
             if mp != 0:
                 missed = text[p:p+mp]
                 tokens.append(missed)
-                _log.warning(u'Tokenizer missed substring "{}"'.format(missed))
+                #_log.warning(u'Tokenizer missed substring "{}"'.format(missed))
             p = p + mp + len(match)
             tokens.append(match)
 
