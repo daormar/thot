@@ -529,8 +529,12 @@ void FilePt::addTransOptsFromCurrentFilePos(PhrIndex tidx,
                                             FilePt::SrcTableNode& srctn,
                                             Vector<pair<Vector<WordIndex>,off_t> >& offsetOfRecordsVec)
 {
-      // Add translation options
+      // Obtain translation options
   bool end=false;
+  Vector<PhrIndex> spidxVec;
+  Vector<PhrasePairInfo> phpinfoVec;
+  Vector<off_t> offsetVec;
+  
   while(!end)
   {
         // Initialize variables
@@ -542,39 +546,48 @@ void FilePt::addTransOptsFromCurrentFilePos(PhrIndex tidx,
     PhrasePairInfo phpinfo;
     phpinfo.first=trgCount;
     phpinfo.second=jointCount;
-    
+
+        // Obtain entry information
     if(st==0) end=true;
     else
     {
       if(tpidx==tidx)
       {
-            // Insert entry in SrcTableNode
-        Vector<WordIndex> srcVec;
-        Count srcCount;
-        bool found;
-            // Obtain source vector and its count
-        obtainInfoGivenScrPhrIdx(spidx,
-                                 srcVec,
-                                 srcCount,
-                                 found);
-          
-            // Complete phpinfo with joint count
-        pair<Vector<WordIndex>,PhrasePairInfo> pVecPhinfo;
-        pVecPhinfo.first=srcVec;
-        pVecPhinfo.second=phpinfo;
-//        cerr<<"** "<<offset<<" "<<spidx<<" "<<tpidx<<" "<<phpinfo.first<<" "<<phpinfo.second<<endl;
-
-            // Add entry to source table node
-        srctn.insert(pVecPhinfo);
-
-            // Insert offset in offset vector
-        offsetOfRecordsVec.push_back(make_pair(pVecPhinfo.first,offset));
+        spidxVec.push_back(spidx);
+        phpinfoVec.push_back(phpinfo);
+        offsetVec.push_back(offset);
       }
       else
       {
         end=true;
       }
     }
+  }
+
+      // Store translation options
+  for(unsigned int i=0;i<spidxVec.size();++i)
+  {
+        // Insert entry in SrcTableNode
+    Vector<WordIndex> srcVec;
+    Count srcCount;
+    bool found;
+
+        // Obtain source vector and its count
+    obtainInfoGivenScrPhrIdx(spidxVec[i],
+                             srcVec,
+                             srcCount,
+                             found);
+  
+        // Complete phpinfo with joint count
+    pair<Vector<WordIndex>,PhrasePairInfo> pVecPhinfo;
+    pVecPhinfo.first=srcVec;
+    pVecPhinfo.second=phpinfoVec[i];
+  
+        // Add entry to source table node
+    srctn.insert(pVecPhinfo);
+
+        // Insert offset in offset vector
+    offsetOfRecordsVec.push_back(make_pair(pVecPhinfo.first,offsetVec[i]));
   }
 }
 
