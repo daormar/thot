@@ -101,7 +101,6 @@ class FilePt
         // size and clear functions
     size_t size(void);
     void clear(void);
-    void clearTempVars(void);
     
         // Destructor
     virtual ~FilePt();
