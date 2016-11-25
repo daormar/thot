@@ -1045,7 +1045,7 @@ bool ThotDecoder::translateSentence(int user_id,
     result=translateSentenceAux(idx,sentenceToTranslate,verbose);
     if(verbose)
     {
-      cerr<<" - target translation: "<<result<<endl;     
+      cerr<<"- target translation: "<<result<<endl;
     }
   }
 
@@ -1123,6 +1123,11 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
   {
         // Use translator
     SmtModel::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(sentenceToTranslate.c_str());
+    if(verbose)
+    {
+      cerr<<"- best hypothesis: "<<endl;
+      tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,cerr);
+    }
     std::string result=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
     return result;
   }
