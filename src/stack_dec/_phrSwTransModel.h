@@ -311,7 +311,7 @@ Score _phrSwTransModel<HYPOTHESIS>::sentLenScoreForPartialHyp(Bitset<MAX_SENTENC
 {
   if(this->state==MODEL_TRANS_STATE)
   {
-        // The model is being used for translate a sentence
+        // The model is being used to translate a sentence
     uint_pair range=obtainLengthRangeForGaps(key);
     range.first+=curr_tlen;
     range.second+=curr_tlen;
@@ -321,7 +321,7 @@ Score _phrSwTransModel<HYPOTHESIS>::sentLenScoreForPartialHyp(Bitset<MAX_SENTENC
   {
     if(this->state==MODEL_TRANSREF_STATE)
     {
-          // The model is being used for align a pair of sentences
+          // The model is being used to align a pair of sentences
       uint_pair range;
       range.first=this->pbtmInputVars.refSentVec.size();
       range.second=this->pbtmInputVars.refSentVec.size();      
@@ -329,7 +329,7 @@ Score _phrSwTransModel<HYPOTHESIS>::sentLenScoreForPartialHyp(Bitset<MAX_SENTENC
     }
     else
     {
-          // The model is being used for translate a sentence given a
+          // The model is being used to translate a sentence given a
           // prefix
       if(curr_tlen>=this->pbtmInputVars.prefSentVec.size())
       {
@@ -426,6 +426,11 @@ uint_pair _phrSwTransModel<HYPOTHESIS>::obtainLengthRangeForGaps(const Bitset<MA
 template<class HYPOTHESIS>
 void _phrSwTransModel<HYPOTHESIS>::initLenRangeForGapsVec(int maxSrcPhraseLength)
 {
+  if(this->verbosity>=1)
+  {
+    cerr<<"Obtaining table with length range for gaps..."<<endl;
+  }
+  
   unsigned int J,segmRightMostj,segmLeftMostj;
   Vector<uint_pair> row;
   NbestTableNode<PhraseTransTableNodeData> ttNode;
@@ -524,7 +529,6 @@ void _phrSwTransModel<HYPOTHESIS>::initLenRangeForGapsVec(int maxSrcPhraseLength
       // Print verbose mode information
   if(this->verbosity>=1)
   {
-    cerr<<"Table with length range for gaps: "<<endl;
     for(unsigned int y=0;y<J;++y)
     {
       for(unsigned int x=0;x<J;++x)
