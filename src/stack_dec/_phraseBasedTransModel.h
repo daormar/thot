@@ -1336,6 +1336,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
+  if(this->verbosity>0)
+    cerr<<"Initializing information about search heuristic..."<<endl; 
   initHeuristic(this->pbTransModelPars.A);
 }
 
@@ -1385,6 +1387,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ref(std::string srcse
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
+  if(this->verbosity>0)
+    cerr<<"Initializing information about search heuristic..."<<endl; 
   initHeuristic(this->pbTransModelPars.A);
 }
 
@@ -1434,6 +1438,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ver(std::string srcse
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
+  if(this->verbosity>0)
+    cerr<<"Initializing information about search heuristic..."<<endl; 
   initHeuristic(this->pbTransModelPars.A);
 }
 
@@ -1485,6 +1491,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string sr
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
+  if(this->verbosity>0)
+    cerr<<"Initializing information about search heuristic..."<<endl; 
   initHeuristic(this->pbTransModelPars.A);
 }
 

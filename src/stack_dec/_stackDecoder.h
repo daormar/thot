@@ -425,6 +425,8 @@ _stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
         // containing the initial hypothesis "initialHyp"
   
         // Translate sentence
+    if(verbosity>0)
+      cerr<<"Decoding input..."<<endl;
     return decode();
   }
 }
@@ -475,7 +477,9 @@ _stackDecoder<SMT_MODEL>::translateWithRef(std::string s,
         // Insert Null hypothesis
     clear();
     suggestNullHyp(); 
-  
+
+    if(verbosity>0)
+      cerr<<"Decoding input..."<<endl;
     return decodeWithRef();
   }
 }
@@ -526,7 +530,9 @@ _stackDecoder<SMT_MODEL>::verifyCoverageForRef(std::string s,
         // Insert Null hypothesis
     clear();
     suggestNullHyp(); 
-  
+
+    if(verbosity>0)
+      cerr<<"Decoding input..."<<endl;
     return decodeVer();
   }
 }
@@ -578,6 +584,8 @@ _stackDecoder<SMT_MODEL>::translateWithPrefix(std::string s,
     clear();
     suggestNullHyp(); 
 
+    if(verbosity>0)
+      cerr<<"Decoding input..."<<endl;
     return decodeWithPrefix();
   }
 }
