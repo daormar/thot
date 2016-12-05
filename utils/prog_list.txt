@@ -24,6 +24,7 @@
 /home/dortiz/smt/software/alig_models/phrase_models thot_gen_phr_model
 /home/dortiz/smt/software/alig_models/phrase_models WbaIncrPhraseModelFactory
 /home/dortiz/smt/software/alig_models/phrase_models FilePmFactory
+/home/dortiz/smt/software/alig_models/phrase_models BdbPhraseModelFactory
 /home/dortiz/smt/software/error_correction thot_wg_proc
 /home/dortiz/smt/software/error_correction NonPbEcModelForNbUcatFactory
 /home/dortiz/smt/software/error_correction PfsmEcmForWgFactory

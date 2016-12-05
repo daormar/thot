@@ -392,6 +392,18 @@ fi
 AC_SUBST(LZMALIB)
 LIBS=${libaux}
 
+# Checks for db_cxx library
+LDB_CXX=""
+libaux=${LIBS}
+AC_CHECK_LIB([db_cxx], [accept])
+if test $ac_cv_lib_db_cxx_accept = yes; then
+   LDB_CXX="-ldb_cxx"
+   AC_DEFINE(HAVE_DB_CXX_LIB,,[Define if the db_cxx library is present])
+fi
+AC_SUBST(LDB_CXX)
+AM_CONDITIONAL([HAVE_DB_CXX_LIB], [test x$ac_cv_lib_db_cxx_accept = xyes])
+LIBS=${libaux}
+
 # Checks for cppunit library
 CPPUNIT=""
 libaux=${LIBS}

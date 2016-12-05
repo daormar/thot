@@ -4,7 +4,14 @@ LGMP=@LGMP@
 ZLIB=@ZLIB@
 BZ2LIB=@BZ2LIB@
 LZMALIB=@LZMALIB@
+LDB_CXX=@LDB_CXX@
+LDB_STL=@LDB_STL@
 CPPUNIT=@CPPUNIT@
+
+if HAVE_DB_CXX_LIB
+DB_CXX_PROGS=thot_ttable_to_bdb
+DB_CXX_LIBS=bdb_phrase_model_factory.la
+endif
 
 AUTOMAKE_OPTIONS = subdir-objects
 
@@ -49,7 +56,8 @@ wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
 mira_wer_factory.la kb_mira_ll_wu_factory.la				\
 multi_stack_decoder_rec__swli_factory.la				\
 wg_uncoupled_assisted_trans__swli_factory.la				\
-translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)
+translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
+$(DB_CXX_LIBS)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
@@ -61,7 +69,7 @@ AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
 
 AM_CFLAGS= $(AM_CXXFLAGS)
 
-LDADD = $(KENLM_LDADD) $(LGMP) $(ZLIB) $(CPPUNIT) -ldl
+LDADD = $(KENLM_LDADD) $(LGMP) $(ZLIB) $(LDB_CXX) $(CPPUNIT) -ldl
 
 # sources
 common_src_h= thot_config.h
@@ -190,7 +198,8 @@ phrase_models/BaseCountPhraseModel.h phrase_models/AlignmentExtractor.h	\
 phrase_models/AlignmentContainer.h phrase_models/AligInfo.h		\
 phrase_models/BasePhrasePairFilter.h					\
 phrase_models/CategPhrasePairFilter.h phrase_models/FilePt.h		\
-phrase_models/FilePm.h
+phrase_models/FilePm.h phrase_models/BdbPhraseTable.h			\
+phrase_models/BdbPhraseModel.h
 phrase_models_defs= phrase_models/WbaIncrPhraseModel.cc			\
 phrase_models/_wbaIncrPhraseModel.cc phrase_models/TrgSegmLenTable.cc	\
 phrase_models/TrgCutsTable.cc phrase_models/SrfNodeKey.cc		\
@@ -204,7 +213,8 @@ phrase_models/Cache_ct_.cc phrase_models/BpSet.cc			\
 phrase_models/BasePhraseModel.cc phrase_models/BaseIncrPhraseModel.cc	\
 phrase_models/AlignmentExtractor.cc phrase_models/AlignmentContainer.cc	\
 phrase_models/CategPhrasePairFilter.cc phrase_models/FilePt.cc		\
-phrase_models/FilePm.cc
+phrase_models/FilePm.cc phrase_models/BdbPhraseTable.cc			\
+phrase_models/BdbPhraseModel.cc
 
 smt_preproc_h= smt_preproc/SmtPreprocDefs.h smt_preproc/BasePrePosProcessor.h
 smt_preproc_defs=
@@ -355,6 +365,10 @@ phrase_models/WbaIncrPhraseModelFactory.cc
 ##########
 file_pm_factory_h= 
 file_pm_factory_defs= phrase_models/FilePmFactory.cc
+
+##########
+bdb_phrase_model_factory_h= 
+bdb_phrase_model_factory_defs= phrase_models/BdbPhraseModelFactory.cc
 
 ##########
 pfsm_ecm_for_wg_factory_h= 
@@ -584,6 +598,12 @@ file_pm_factory_la_SOURCES= $(file_pm_factory_h)	\
 $(file_pm_factory_defs)
 file_pm_factory_la_LIBADD= libthot.la
 file_pm_factory_la_LDFLAGS= -module
+
+##########
+bdb_phrase_model_factory_la_SOURCES= $(bdb_phrase_model_factory_h)	\
+$(bdb_phrase_model_factory_defs)
+bdb_phrase_model_factory_la_LIBADD= libthot.la
+bdb_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 pfsm_ecm_for_wg_factory_la_SOURCES= $(pfsm_ecm_for_wg_factory_h)	\
