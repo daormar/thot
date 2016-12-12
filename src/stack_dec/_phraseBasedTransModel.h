@@ -118,6 +118,11 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   void pre_trans_actions_prefix(std::string srcsent,
                                 std::string prefix);
 
+      // Function to obtain current source sentence (it may differ from
+      // that provided when calling pre_trans_actions since information
+      // about translation constraints is removed)
+  std::string getCurrentSrcSent(void);
+
       // Word prediction functions
   void addSentenceToWordPred(Vector<std::string> strVec,
                              int verbose=0);
@@ -1494,6 +1499,13 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string sr
   if(this->verbosity>0)
     cerr<<"Initializing information about search heuristic..."<<endl; 
   initHeuristic(this->pbTransModelPars.A);
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+std::string _phraseBasedTransModel<HYPOTHESIS>::getCurrentSrcSent(void)
+{
+  return StrProcUtils::stringVectorToString(pbtmInputVars.srcSentVec);
 }
 
 //---------------------------------
