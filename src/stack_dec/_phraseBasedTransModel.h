@@ -1684,9 +1684,11 @@ void _phraseBasedTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
         {
           unsigned int segmRightMostj=gaps[k].first+y;
           unsigned int segmLeftMostj=gaps[k].first+x;
+          bool srcPhraseIsAffectedByConstraint=this->trConstraintsPtr->srcPhrAffectedByConstraint(make_pair(segmLeftMostj,segmRightMostj));
               // Verify that the source phrase length does not exceed
-              // the limit
-          if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A) 
+              // the limit. The limit can be exceeded when the source
+              // phrase is affected by a translation constraint
+          if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A && !srcPhraseIsAffectedByConstraint)
             break;
               // Obtain hypothesis data vector
           getHypDataVecForGap(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W);
