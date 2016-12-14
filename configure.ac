@@ -410,11 +410,11 @@ LIBS=${libaux}
 # Checks db_cxx header file if db_cxx lib was present
 if test $db_lib_found = yes; then
    AC_CHECK_HEADER([db_cxx.h],db_header_found="yes",db_header_found="no")
-   AM_CONDITIONAL([HAVE_DB_CXX_H], [test x$db_header_found = xyes])
    if test $db_header_found = no; then
       AC_MSG_NOTICE([db_cxx.h file was not found, please provide path to include directory when invoking configure (configure CXXFLAGS="-I/<path_to_header_file>")])
    fi
 fi
+AM_CONDITIONAL([HAVE_DB_CXX_H], [test x$db_header_found = xyes])
 
 # Checks for cppunit library
 CPPUNIT=""
