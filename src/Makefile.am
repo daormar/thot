@@ -198,8 +198,7 @@ phrase_models/BaseCountPhraseModel.h phrase_models/AlignmentExtractor.h	\
 phrase_models/AlignmentContainer.h phrase_models/AligInfo.h		\
 phrase_models/BasePhrasePairFilter.h					\
 phrase_models/CategPhrasePairFilter.h phrase_models/FilePt.h		\
-phrase_models/FilePm.h phrase_models/BdbPhraseTable.h			\
-phrase_models/BdbPhraseModel.h
+phrase_models/FilePm.h
 phrase_models_defs= phrase_models/WbaIncrPhraseModel.cc			\
 phrase_models/_wbaIncrPhraseModel.cc phrase_models/TrgSegmLenTable.cc	\
 phrase_models/TrgCutsTable.cc phrase_models/SrfNodeKey.cc		\
@@ -213,8 +212,16 @@ phrase_models/Cache_ct_.cc phrase_models/BpSet.cc			\
 phrase_models/BasePhraseModel.cc phrase_models/BaseIncrPhraseModel.cc	\
 phrase_models/AlignmentExtractor.cc phrase_models/AlignmentContainer.cc	\
 phrase_models/CategPhrasePairFilter.cc phrase_models/FilePt.cc		\
-phrase_models/FilePm.cc phrase_models/BdbPhraseTable.cc			\
+phrase_models/FilePm.cc
+
+if HAVE_DB_CXX_LIB
+bdb_pm_h= phrase_models/BdbPhraseTable.h phrase_models/BdbPhraseModel.h
+bdb_pm_defs= phrase_models/BdbPhraseTable.cc	\
 phrase_models/BdbPhraseModel.cc
+else
+bdb_pm_h=
+bdb_pm_defs=
+endif
 
 smt_preproc_h= smt_preproc/SmtPreprocDefs.h smt_preproc/BasePrePosProcessor.h
 smt_preproc_defs=
@@ -321,10 +328,10 @@ testing_defs= testing/KbMiraLlWuTest.cc
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
 $(sw_models_h) $(sw_models_defs) $(phrase_models_h)			\
-$(phrase_models_defs) $(smt_preproc_h) $(smt_preproc_defs)		\
-$(error_correction_h) $(error_correction_defs) $(downhill_simplex_h)	\
-$(downhill_simplex_defs) $(stack_dec_h) $(stack_dec_defs) $(exper_h)	\
-$(exper_defs)
+$(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs) $(smt_preproc_h)	\
+$(smt_preproc_defs) $(error_correction_h) $(error_correction_defs)	\
+$(downhill_simplex_h) $(downhill_simplex_defs) $(stack_dec_h)		\
+$(stack_dec_defs) $(exper_h) $(exper_defs)
 
 # Class factories
 
@@ -537,10 +544,10 @@ endif
 # include headers
 includedir= $(prefix)/include/$(PACKAGE)
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
-$(kenlm_h) $(sw_models_h) $(phrase_models_h) $(smt_preproc_h)		\
-$(error_correction_h) $(downhill_simplex_h) $(stack_dec_h) $(exper_h)	\
-$(exper_defs) $(casmacat_engines_h) $(casmacat_aligner_h)		\
-$(casmacat_confid_h)
+$(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h)		\
+$(smt_preproc_h) $(error_correction_h) $(downhill_simplex_h)		\
+$(stack_dec_h) $(exper_h) $(exper_defs) $(casmacat_engines_h)		\
+$(casmacat_aligner_h) $(casmacat_confid_h)
 
 # libraries
 
