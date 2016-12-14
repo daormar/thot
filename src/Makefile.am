@@ -9,8 +9,10 @@ LDB_STL=@LDB_STL@
 CPPUNIT=@CPPUNIT@
 
 if HAVE_DB_CXX_LIB
+if HAVE_DB_CXX_H
 DB_CXX_PROGS=thot_ttable_to_bdb
 DB_CXX_LIBS=bdb_phrase_model_factory.la
+endif
 endif
 
 AUTOMAKE_OPTIONS = subdir-objects
@@ -215,12 +217,11 @@ phrase_models/CategPhrasePairFilter.cc phrase_models/FilePt.cc		\
 phrase_models/FilePm.cc
 
 if HAVE_DB_CXX_LIB
+if HAVE_DB_CXX_H
 bdb_pm_h= phrase_models/BdbPhraseTable.h phrase_models/BdbPhraseModel.h
 bdb_pm_defs= phrase_models/BdbPhraseTable.cc	\
 phrase_models/BdbPhraseModel.cc
-else
-bdb_pm_h=
-bdb_pm_defs=
+endif
 endif
 
 smt_preproc_h= smt_preproc/SmtPreprocDefs.h smt_preproc/BasePrePosProcessor.h
@@ -268,10 +269,11 @@ stack_dec/TranslationConstraints.h stack_dec/SmtStack.h			\
 stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h			\
 stack_dec/_smtMultiStack.h stack_dec/BaseLogLinWeightUpdater.h		\
 stack_dec/KbMiraLlWu.h stack_dec/BaseScorer.h				\
-stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h stack_dec/MiraWer.h stack_dec/_smtModel.h	\
-stack_dec/ScoreCompDefs.h stack_dec/_phrSwTransModel.h			\
-stack_dec/PhrScoreInfo.h stack_dec/PhrNbestTransTableRefKey.h		\
-stack_dec/PhrNbestTransTableRef.h stack_dec/PhrNbestTransTablePrefKey.h	\
+stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h stack_dec/MiraWer.h	\
+stack_dec/_smtModel.h stack_dec/ScoreCompDefs.h				\
+stack_dec/_phrSwTransModel.h stack_dec/PhrScoreInfo.h			\
+stack_dec/PhrNbestTransTableRefKey.h stack_dec/PhrNbestTransTableRef.h	\
+stack_dec/PhrNbestTransTablePrefKey.h					\
 stack_dec/PhrNbestTransTablePref.h stack_dec/PhrNbestTransTable.h	\
 stack_dec/PhrLocalSwLiTmHypRec.h stack_dec/PhrLocalSwLiTm.h		\
 stack_dec/PhrHypState.h stack_dec/PhrHypNumcovJumpsEqClassF.h		\
@@ -296,9 +298,9 @@ stack_dec/BaseHypothesis.h stack_dec/HypDebugData.h			\
 stack_dec/BaseAssistedTrans.h stack_dec/_assistedTrans.h
 stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
 stack_dec/TranslationConstraints.cc stack_dec/KbMiraLlWu.cc		\
-stack_dec/MiraBleu.cc stack_dec/MiraWer.cc stack_dec/ThotDecoderClient.cc			\
-stack_dec/ThotDecoder.cc stack_dec/PhrScoreInfo.cc			\
-stack_dec/PhrNbestTransTableRefKey.cc					\
+stack_dec/MiraBleu.cc stack_dec/MiraWer.cc				\
+stack_dec/ThotDecoderClient.cc stack_dec/ThotDecoder.cc			\
+stack_dec/PhrScoreInfo.cc stack_dec/PhrNbestTransTableRefKey.cc		\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\
