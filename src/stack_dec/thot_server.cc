@@ -233,6 +233,7 @@ int process_request(int s,
   std::string stlStrRef;
   bool retVal=false;
   std::string result;
+  std::string bestHypInfo;
   std::string catResult;
   Vector<float> floatVec;
   RejectedWordsSet emptyRejWordsSet;
@@ -274,8 +275,16 @@ int process_request(int s,
 
     case TRANSLATE_SENT:
       BasicSocketUtils::recvStlStr(s,stlStr);
-      thotDecoderPtr->translateSentence(user_id,stlStr.c_str(),result,verbose);
+      thotDecoderPtr->translateSentence(user_id,stlStr.c_str(),result,bestHypInfo,verbose);
       BasicSocketUtils::writeStr(s,result.c_str());
+      BasicSocketUtils::writeStr(s,bestHypInfo.c_str());
+      break;
+
+    case TRANSLATE_SENT_HYPINFO:
+      BasicSocketUtils::recvStlStr(s,stlStr);
+      thotDecoderPtr->translateSentence(user_id,stlStr.c_str(),result,bestHypInfo,verbose);
+      BasicSocketUtils::writeStr(s,result.c_str());
+      BasicSocketUtils::writeStr(s,bestHypInfo.c_str());
       break;
 
     case VERIFY_COV:

@@ -43,15 +43,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #define VERIFY_COV                1
 #define TRANSLATE_SENT            2
-#define OL_TRAIN_PAIR             3
-#define TRAIN_ECM                 4
-#define START_CAT                 5
-#define ADD_STR_TO_PREF           6
-#define RESET_PREF                7
-#define CLEAR_TRANS               8
-#define PRINT_MODELS              9
-#define END_CLIENT_DIALOG        10
-
-#define END_SERVER               11
+#define TRANSLATE_SENT_HYPINFO    3
+#define OL_TRAIN_PAIR             4
+#define TRAIN_ECM                 5
+#define START_CAT                 6
+#define ADD_STR_TO_PREF           7
+#define RESET_PREF                8
+#define CLEAR_TRANS               9
+#define PRINT_MODELS             10
+#define END_CLIENT_DIALOG        11
+#define END_SERVER               12
 
 #endif

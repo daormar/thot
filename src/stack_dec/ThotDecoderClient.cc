@@ -120,7 +120,8 @@ bool ThotDecoderClient::sendStrPairForTrainEcm(int user_id,
 //--------------------------
 bool ThotDecoderClient::sendSentToTranslate(int user_id,
                                             const char *sentenceToTranslate,
-                                            std::string &translatedSentence)
+                                            std::string &translatedSentence,
+                                            std::string& bestHypInfo)
 {
   if(connected)
   {// Send request
@@ -129,6 +130,7 @@ bool ThotDecoderClient::sendSentToTranslate(int user_id,
     BasicSocketUtils::writeStr(fileDesc,sentenceToTranslate);
 
     int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
+    retVal=BasicSocketUtils::recvStlStr(fileDesc,bestHypInfo);
     return OK;
   }
   else
