@@ -1009,6 +1009,7 @@ bool ThotDecoder::trainEcm(int user_id,
 bool ThotDecoder::translateSentence(int user_id,
                                     const char *sentenceToTranslate,
                                     std::string& result,
+                                    std::string& bestHypInfo,
                                     int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1031,7 +1032,7 @@ bool ThotDecoder::translateSentence(int user_id,
     }
 
         // Obtain translation using precalculated word-graph or translator
-    std::string aux=translateSentenceAux(idx,preprocSrcSent);
+    std::string aux=translateSentenceAux(idx,preprocSrcSent,bestHypInfo);
     
     result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
     if(verbose)
@@ -1042,7 +1043,7 @@ bool ThotDecoder::translateSentence(int user_id,
   }
   else
   {
-    result=translateSentenceAux(idx,sentenceToTranslate,verbose);
+    result=translateSentenceAux(idx,sentenceToTranslate,bestHypInfo,verbose);
     if(verbose)
     {
       cerr<<"- target translation: "<<result<<endl;
@@ -1058,10 +1059,14 @@ bool ThotDecoder::translateSentence(int user_id,
 //--------------------------
 std::string ThotDecoder::translateSentenceAux(size_t idx,
                                               std::string sentenceToTranslate,
+                                              std::string& bestHypInfo,
                                               int verbose/*=0*/)
 {
       // Obtain translation using precalculated word-graph or translator
   bool found;
+
+      // Initialize variables
+  bestHypInfo.clear();
   
   Vector<std::string> sentStrVec=StrProcUtils::stringToStringVector(sentenceToTranslate);
   std::string wgPathStr=tdCommonVars.wgHandlerPtr->pathAssociatedToSentence(sentStrVec,found);
@@ -1131,6 +1136,11 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
       tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,cerr);
     }
     std::string result=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
+    std::ostringstream stream;
+    tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,stream);
+    bestHypInfo=stream.str();
+    bestHypInfo.erase(std::remove(bestHypInfo.begin(), bestHypInfo.end(), '\n'), bestHypInfo.end());
+      
     return result;
   }
 }
