@@ -1125,7 +1125,7 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
     SmtModel::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(sentenceToTranslate.c_str());
     if(verbose)
     {
-      cerr<<"- source sentence without constraint information: "<<endl;
+      cerr<<"- source sentence without constraint information: ";
       cerr<<tdPerUserVarsVec[idx].smtModelPtr->getCurrentSrcSent()<<endl;
       cerr<<"- best hypothesis: "<<endl;
       tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,cerr);
