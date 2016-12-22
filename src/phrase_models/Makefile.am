@@ -18,5 +18,7 @@ BasePhraseModel.h BasePhraseModel.cc BaseIncrPhraseModel.h		\
 BaseIncrPhraseModel.cc BaseCountPhraseModel.h AlignmentExtractor.h	\
 AlignmentExtractor.cc AlignmentContainer.h AlignmentContainer.cc	\
 AligInfo.h BasePhrasePairFilter.h CategPhrasePairFilter.h		\
-CategPhrasePairFilter.cc FilePt.h FilePt.cc FilePm.h FilePm.cc		\
-FilePmFactory.cc
+CategPhrasePairFilter.cc BdbPhraseTable.h BdbPhraseTable.cc		\
+BdbPhraseModel.h BdbPhraseModel.cc BdbPhraseModelFactory.cc		\
+FastBdbPhraseTable.h FastBdbPhraseTable.cc FastBdbPhraseModel.h		\
+FastBdbPhraseModel.cc FastBdbPhraseModelFactory.cc
