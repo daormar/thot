@@ -2,12 +2,13 @@ EXTRA_DIST= WbaIncrPhraseModel.h _wbaIncrPhraseModel.h			\
 WbaIncrPhraseModel.cc _wbaIncrPhraseModel.cc				\
 WbaIncrPhraseModelFactory.cc VecUnsignedIntSortCriterion.h		\
 TrgSegmLenTable.h TrgSegmLenTable.cc TrgCutsTable.h TrgCutsTable.cc	\
-thot_gen_phr_model.cc thot_alig_op.cc SrfNodeKey.h SrfNodeKey.cc	\
-SrfNodeInfoMap.h SrfNodeInfoMap.cc SrfNodeInfo.h SrfBisegm.h		\
-SrcSegmLenTable.h SrcSegmLenTable.cc SentSegmentation.h SegLenTable.h	\
-SegLenTable.cc PhraseTransTableNodeData.h PhraseTableLog.h		\
-PhraseTableLog.cc PhraseTable.h PhraseTable.cc PhraseSortCriterion.h	\
-PhrasePairInfo.h PhrasePair.h PhraseId.h PhraseExtractParameters.h	\
+thot_gen_phr_model.cc thot_ttable_to_fbdb.cc thot_alig_op.cc		\
+SrfNodeKey.h SrfNodeKey.cc SrfNodeInfoMap.h SrfNodeInfoMap.cc		\
+SrfNodeInfo.h SrfBisegm.h SrcSegmLenTable.h SrcSegmLenTable.cc		\
+SentSegmentation.h SegLenTable.h SegLenTable.cc				\
+PhraseTransTableNodeData.h PhraseTableLog.h PhraseTableLog.cc		\
+PhraseTable.h PhraseTable.cc PhraseSortCriterion.h PhrasePairInfo.h	\
+PhrasePair.h PhraseId.h PhraseExtractParameters.h			\
 PhraseExtractionTable.h PhraseExtractionTable.cc PhraseExtractionCell.h	\
 PhraseDictLog.h PhraseDictLog.cc PhraseDict.h PhraseDict.cc		\
 PhraseDefs.h PhraseCountsLog.h PhraseCountsLog.cc PhraseCounts.h	\
