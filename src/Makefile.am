@@ -11,7 +11,7 @@ CPPUNIT=@CPPUNIT@
 if HAVE_DB_CXX_LIB
 if HAVE_DB_CXX_H
 DB_CXX_PROGS=thot_ttable_to_bdb
-DB_CXX_LIBS=bdb_phrase_model_factory.la
+DB_CXX_LIBS=bdb_phrase_model_factory.la fast_bdb_phrase_model_factory.la
 endif
 endif
 
@@ -215,9 +215,11 @@ phrase_models/CategPhrasePairFilter.cc
 
 if HAVE_DB_CXX_LIB
 if HAVE_DB_CXX_H
-bdb_pm_h= phrase_models/BdbPhraseTable.h phrase_models/BdbPhraseModel.h
-bdb_pm_defs= phrase_models/BdbPhraseTable.cc	\
-phrase_models/BdbPhraseModel.cc
+bdb_pm_h= phrase_models/BdbPhraseTable.h phrase_models/BdbPhraseModel.h	\
+phrase_models/FastBdbPhraseTable.h phrase_models/FastBdbPhraseModel.h
+bdb_pm_defs= phrase_models/BdbPhraseTable.cc				\
+phrase_models/BdbPhraseModel.cc phrase_models/FastBdbPhraseTable.cc	\
+phrase_models/FastBdbPhraseModel.cc
 endif
 endif
 
@@ -371,6 +373,10 @@ phrase_models/WbaIncrPhraseModelFactory.cc
 ##########
 bdb_phrase_model_factory_h= 
 bdb_phrase_model_factory_defs= phrase_models/BdbPhraseModelFactory.cc
+
+##########
+fast_bdb_phrase_model_factory_h= 
+fast_bdb_phrase_model_factory_defs= phrase_models/FastBdbPhraseModelFactory.cc
 
 ##########
 pfsm_ecm_for_wg_factory_h= 
@@ -600,6 +606,12 @@ bdb_phrase_model_factory_la_SOURCES= $(bdb_phrase_model_factory_h)	\
 $(bdb_phrase_model_factory_defs)
 bdb_phrase_model_factory_la_LIBADD= libthot.la
 bdb_phrase_model_factory_la_LDFLAGS= -module
+
+##########
+fast_bdb_phrase_model_factory_la_SOURCES= $(fast_bdb_phrase_model_factory_h)	\
+$(fast_bdb_phrase_model_factory_defs)
+fast_bdb_phrase_model_factory_la_LIBADD= libthot.la
+fast_bdb_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 pfsm_ecm_for_wg_factory_la_SOURCES= $(pfsm_ecm_for_wg_factory_h)	\
