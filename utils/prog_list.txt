@@ -22,6 +22,7 @@
 /home/dortiz/smt/software/alig_models/sw_models IncrHmmP0AligModelFactory
 /home/dortiz/smt/software/alig_models/phrase_models thot_alig_op
 /home/dortiz/smt/software/alig_models/phrase_models thot_gen_phr_model
+/home/dortiz/smt/software/alig_models/phrase_models thot_ttable_to_fastbdb
 /home/dortiz/smt/software/alig_models/phrase_models WbaIncrPhraseModelFactory
 /home/dortiz/smt/software/alig_models/phrase_models BdbPhraseModelFactory
 /home/dortiz/smt/software/alig_models/phrase_models FastBdbPhraseModelFactory

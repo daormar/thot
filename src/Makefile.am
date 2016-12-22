@@ -43,10 +43,10 @@ thot_sort_bin_ihmmatable thot_sort_bin_iibm2atable			\
 thot_merge_bin_ilextable thot_merge_bin_ihmmatable			\
 thot_merge_bin_iibm2atable thot_gen_bin_lex_filter_info			\
 thot_filter_bin_ilextable thot_prune_bin_ilextable thot_alig_op		\
-thot_gen_phr_model thot_wg_proc thot_dhs_step_by_step_min thot_ms_dec	\
-thot_ms_alig thot_li_weight_upd thot_ll_weight_upd_nblist thot_client	\
-thot_server thot_get_ll_weights thot_scorer thot_calc_bleu		\
-$(TESTING_PROGS)
+thot_gen_phr_model thot_ttable_to_fastbdb thot_wg_proc			\
+thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig thot_li_weight_upd	\
+thot_ll_weight_upd_nblist thot_client thot_server thot_get_ll_weights	\
+thot_scorer thot_calc_bleu $(TESTING_PROGS)
 
 lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la incr_interp_ngram_lm_factory.la	\
@@ -487,6 +487,10 @@ thot_alig_op_LDFLAGS = libthot.la
 ##########
 thot_gen_phr_model_SOURCES = phrase_models/thot_gen_phr_model.cc
 thot_gen_phr_model_LDFLAGS = libthot.la
+
+##########
+thot_ttable_to_fastbdb_SOURCES = phrase_models/thot_ttable_to_fastbdb.cc
+thot_ttable_to_fastbdb_LDFLAGS = libthot.la
 
 ##########
 thot_wg_proc_SOURCES = error_correction/thot_wg_proc_pars.h	\
