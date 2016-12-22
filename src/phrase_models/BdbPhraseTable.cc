@@ -105,6 +105,8 @@ int phr_dict_cmp_func(Db* db,
 //-------------------------
 bool BdbPhraseTable::init(const char *fileName)
 {
+  cerr<<"Initializing BDB phrase table"<<endl;
+
       // clear object
   clear();
 
@@ -125,7 +127,7 @@ bool BdbPhraseTable::init(const char *fileName)
       // open databases
   u_int32_t o_flags = DB_CREATE; // Open flags
   
-  std::string phrDictDbName=outputFilesPrefix+".phrdict";
+  std::string phrDictDbName=outputFilesPrefix+".bdb_phrdict";
   phrDictDb=new Db(envPtr,0);
       // Set comparison function for phrDictDb
   int ret=phrDictDb->set_bt_compare(phr_dict_cmp_func);
@@ -337,7 +339,7 @@ bool BdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
   Dbt key(&phrDictKey,phrDictKey.getSize());
   Dbt data;
   int ret=cursorPtr->get(&key, &data, DB_SET_RANGE);
-  if(ret==ERROR)
+  if(ret)
   {
     srctn.clear();
     return false;
