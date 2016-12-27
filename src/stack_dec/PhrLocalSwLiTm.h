@@ -57,6 +57,7 @@ extern "C" {
 #include "_phrSwTransModel.h"
 #include "PhrLocalSwLiTmHypRec.h"
 #include <BaseStepwiseAligModel.h>
+#include "WbaIncrPhraseModel.h"
 #include "_wbaIncrPhraseModel.h"
 #include "BaseIncrPhraseModel.h"
 #include <PhrasePair.h>
