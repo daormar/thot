@@ -275,12 +275,12 @@ bool BdbPhraseModel::print(const char *prefix)
   std::string prefixStl=prefix;
   if(prefixOfModelFiles==prefixStl)
   {
-    return true;
+    return OK;
   }
   else
   {
     cerr<<"Warning: print() function not implemented for this model"<<endl;
-    return false;
+    return ERROR;
   }
 }
 

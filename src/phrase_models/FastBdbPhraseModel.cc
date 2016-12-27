@@ -277,12 +277,12 @@ bool FastBdbPhraseModel::print(const char *prefix)
   if(prefixOfModelFiles==prefixStl)
   {
     fastBdbPhraseTable.enableFastSearch();
-    return true;
+    return OK;
   }
   else
   {
     cerr<<"Warning: print() function not implemented for this model"<<endl;
-    return false;
+    return ERROR;
   }
 }
 

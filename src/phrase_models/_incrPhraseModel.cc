@@ -398,7 +398,7 @@ bool _incrPhraseModel::print(const char *prefix)
   
   sprintf(ttableFileName,"%s.ttable",prefix);
   retVal=printTTable(ttableFileName);
-  if(retVal) return false;
+  if(retVal) return ERROR;
 
       // Warning: generation of segmentation length tables is not
       // currently working
@@ -449,13 +449,13 @@ bool _incrPhraseModel::printSegmLengthTable(const char *outputFileName)
  if(!outF)
  {
    cerr<<"Error while printing segmentation length table."<<endl;
-   return 1;
+   return ERROR;
  }
 
  printSegmLengthTable(outF);	
  outF.close();	
 
- return 0;
+ return OK;
 }
 
 # ifdef _GLIBCXX_USE_LFS
