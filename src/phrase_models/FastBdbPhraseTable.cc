@@ -272,44 +272,48 @@ void FastBdbPhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
 //-------------------------
 void FastBdbPhraseTable::enableFastSearch(void)
 {
-      // Define cursor
-  Dbc* cursorPtr;
-  phrDictDb->cursor(NULL,&cursorPtr,0);
-
-      // Iterate over dictionary entries
-  Dbt key;
-  Dbt data;
-  while(cursorPtr->get(&key, &data, DB_NEXT)==0)
+      // Verify if fast search is already enabled
+  if(!getFastSearchAvailableFlag())
   {
-        // Retrieve key and data for entry
-    PhrDictKey phrDictKey;
-    PhrDictValue phrDictValue;
-    bool found;
-    decodeKeyDataForPhrDictDb(phrDictKey,phrDictValue,key,data);
-    Vector<WordIndex> curr_t;
-    Vector<WordIndex> curr_s;
-    phrDictKey.getPhrPair(curr_s,curr_t);
+        // Define cursor
+    Dbc* cursorPtr;
+    phrDictDb->cursor(NULL,&cursorPtr,0);
 
-    if(!curr_s.empty() && !curr_t.empty())
+        // Iterate over dictionary entries
+    Dbt key;
+    Dbt data;
+    while(cursorPtr->get(&key, &data, DB_NEXT)==0)
     {
-          // Obtain count of source phrase
-      Count srcCount=getSrcInfo(curr_s,found);
-      
-      if(found)
+          // Retrieve key and data for entry
+      PhrDictKey phrDictKey;
+      PhrDictValue phrDictValue;
+      bool found;
+      decodeKeyDataForPhrDictDb(phrDictKey,phrDictValue,key,data);
+      Vector<WordIndex> curr_t;
+      Vector<WordIndex> curr_s;
+      phrDictKey.getPhrPair(curr_s,curr_t);
+
+      if(!curr_s.empty() && !curr_t.empty())
       {
-            // Update source phrase count for entry
-        PhrDictValue newPhrDictValue;
-        newPhrDictValue.count=phrDictValue.count;
-        newPhrDictValue.auxCount=srcCount;
-        Dbt updatedData;
-        updatedData.set_data(&newPhrDictValue);
-        updatedData.set_size(sizeof(PhrDictValue));
-        cursorPtr->put(&key, &updatedData, DB_CURRENT);        
+            // Obtain count of source phrase
+        Count srcCount=getSrcInfo(curr_s,found);
+      
+        if(found)
+        {
+              // Update source phrase count for entry
+          PhrDictValue newPhrDictValue;
+          newPhrDictValue.count=phrDictValue.count;
+          newPhrDictValue.auxCount=srcCount;
+          Dbt updatedData;
+          updatedData.set_data(&newPhrDictValue);
+          updatedData.set_size(sizeof(PhrDictValue));
+          cursorPtr->put(&key, &updatedData, DB_CURRENT);        
+        }
       }
     }
+        // After finishing, the database is ready for fast search
+    setFastSearchAvailableFlag();
   }
-      // After finishing, the database is ready for fast search
-  setFastSearchAvailableFlag();
 }
 
 //-------------------------
