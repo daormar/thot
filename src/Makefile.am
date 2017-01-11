@@ -9,7 +9,7 @@ CPPUNIT=@CPPUNIT@
 
 if HAVE_DB_CXX_LIB
 if HAVE_DB_CXX_H
-DB_CXX_PROGS=thot_ttable_to_bdb
+DB_CXX_PROGS=thot_ttable_to_fbdb
 DB_CXX_LIBS=bdb_phrase_model_factory.la fast_bdb_phrase_model_factory.la
 endif
 endif
@@ -42,10 +42,10 @@ thot_sort_bin_ihmmatable thot_sort_bin_iibm2atable			\
 thot_merge_bin_ilextable thot_merge_bin_ihmmatable			\
 thot_merge_bin_iibm2atable thot_gen_bin_lex_filter_info			\
 thot_filter_bin_ilextable thot_prune_bin_ilextable thot_alig_op		\
-thot_query_pm thot_gen_phr_model thot_ttable_to_fbdb thot_wg_proc	\
-thot_dhs_step_by_step_min thot_ms_dec thot_ms_alig thot_li_weight_upd	\
-thot_ll_weight_upd_nblist thot_client thot_server thot_get_ll_weights	\
-thot_scorer thot_calc_bleu $(TESTING_PROGS)
+thot_query_pm thot_gen_phr_model thot_wg_proc thot_dhs_step_by_step_min	\
+thot_ms_dec thot_ms_alig thot_li_weight_upd thot_ll_weight_upd_nblist	\
+thot_client thot_server thot_get_ll_weights thot_scorer thot_calc_bleu	\
+$(DB_CXX_PROGS) $(TESTING_PROGS)
 
 lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la incr_interp_ngram_lm_factory.la	\
