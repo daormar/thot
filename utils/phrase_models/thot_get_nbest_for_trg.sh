@@ -12,22 +12,7 @@
 
 filter_nbest()
 {
-    LC_NUMERIC="C" ${AWK} -v n=${n_val} -v p=$p '
-                         function print_batch_entries(n,num_options,entry_array)
-                         {
-                           # Print entries
-                           for(i=1;i<=num_options;++i) print entry_array[i]
-                         }
-                         function print_batch_entries_alt(n,num_options,entry_array)
-                         {
-                           # Determine number of entries to print
-                           num_entries=n
-                           if(n>num_options) num_entries=num_options
-
-                           # Print entries
-                           for(i=1;i<=num_entries;++i) print entry_array[i]
-                         }
-                         BEGIN{
+    LC_NUMERIC="C" ${AWK} -v n=${n_val} -v p=$p 'BEGIN{
                                 count_option=0
                                 remainder=0
                               }
@@ -45,9 +30,9 @@ filter_nbest()
                                trgToProcess=strn
                                count_option=1
                                # keep the N-best
-                               if(count_option<=n) entry[count_option]=$0
+                               if(count_option<=n) print $0
                                else remainder+=$NF
-                              }
+                               } 
                               else
                               {
                                # handle following entries
@@ -56,28 +41,22 @@ filter_nbest()
                                 # process additional translation option
                                 ++count_option
                                 # keep the N-best
-                                if(count_option<=n) entry[count_option]=$0
+                                if(count_option<=n) print $0
                                 else remainder+=$NF
                                }
                                else
                                {
                                 # process a new block of translation options
                                 if(p && remainder>0)
-                                  entry[count_option]=sprintf("%s ||| <UNUSED_WORD> ||| 0 %.8f\n",trgToProcess,remainder)
+                                  printf "%s ||| <UNUSED_WORD> ||| 0 %.8f\n",trgToProcess,remainder
                                 trgToProcess=strn
-                                # print previous batch of entries
-                                print_batch_entries(n,count_option,entry)
                                 count_option=1
                                 remainder=0
                                 # keep the N-best
-                                if(count_option<=n) entry[count_option]=$0
+                                if(count_option<=n) print $0
                                 else remainder+=$NF
                                }
                               }
-                             }
-                             END{
-                              # print last batch of entries
-                              print_batch_entries(n,count_option,entry)
                              }'
 }
 
