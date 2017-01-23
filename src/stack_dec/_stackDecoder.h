@@ -189,7 +189,7 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
   void addgToHyp(Hypothesis& hyp);
   void subtractgToHyp(Hypothesis& hyp);
   
-  void pre_trans_actions(std::string srcsent);
+  int pre_trans_actions(std::string srcsent);
   void pre_trans_actions_ref(std::string srcsent,
                              std::string refsent);
   void pre_trans_actions_ver(std::string srcsent,
@@ -396,25 +396,18 @@ _stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
     ++_stack_decoder_stats.sentencesTranslated;
 #endif
     
-        // Verify sentence length
-    unsigned int srcSize=StrProcUtils::stringToStringVector(s).size();
-    if(srcSize==0 || srcSize>=MAX_SENTENCE_LENGTH_ALLOWED)
+    Hypothesis initialHyp;
+  
+        // Execute actions previous to the translation process
+    int ret=pre_trans_actions(s);
+    if(ret==ERROR)
     {
-      if(srcSize==0)
-        cerr<<"Warning: the sentence to translate is empty"<<endl;
-      else
-        cerr<<"Error: the sentence to translate is too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
       init_state();
       Hypothesis nullHyp;
       nullHyp=smtm_ptr->nullHypothesis();
       return nullHyp;
     }
-
-    Hypothesis initialHyp;
-  
-        // Execute actions previous to the translation process
-    pre_trans_actions(s);
-
+    
         // Obtain initialHyp
     smtm_ptr->obtainHypFromHypData(sug,initialHyp);
       
@@ -425,6 +418,8 @@ _stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
         // containing the initial hypothesis "initialHyp"
   
         // Translate sentence
+    if(verbosity>0)
+      cerr<<"Decoding input..."<<endl;
     return decode();
   }
 }
@@ -453,7 +448,7 @@ _stackDecoder<SMT_MODEL>::translateWithRef(std::string s,
     unsigned int refSize=StrProcUtils::stringToStringVector(ref).size();
     if(srcSize>=MAX_SENTENCE_LENGTH_ALLOWED || refSize>=MAX_SENTENCE_LENGTH_ALLOWED)
     {
-      cerr<<"Error: input sentences too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
+      cerr<<"Error: input sentences are too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
       init_state();
       Hypothesis nullHyp;
       nullHyp=smtm_ptr->nullHypothesis();
@@ -475,7 +470,9 @@ _stackDecoder<SMT_MODEL>::translateWithRef(std::string s,
         // Insert Null hypothesis
     clear();
     suggestNullHyp(); 
-  
+
+    if(verbosity>0)
+      cerr<<"Decoding input..."<<endl;
     return decodeWithRef();
   }
 }
@@ -504,7 +501,7 @@ _stackDecoder<SMT_MODEL>::verifyCoverageForRef(std::string s,
     unsigned int refSize=StrProcUtils::stringToStringVector(ref).size();
     if(srcSize>=MAX_SENTENCE_LENGTH_ALLOWED || refSize>=MAX_SENTENCE_LENGTH_ALLOWED)
     {
-      cerr<<"Error: input sentences too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
+      cerr<<"Error: input sentences are too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
       init_state();
       Hypothesis nullHyp;
       nullHyp=smtm_ptr->nullHypothesis();
@@ -526,7 +523,9 @@ _stackDecoder<SMT_MODEL>::verifyCoverageForRef(std::string s,
         // Insert Null hypothesis
     clear();
     suggestNullHyp(); 
-  
+
+    if(verbosity>0)
+      cerr<<"Decoding input..."<<endl;
     return decodeVer();
   }
 }
@@ -555,7 +554,7 @@ _stackDecoder<SMT_MODEL>::translateWithPrefix(std::string s,
     unsigned int prefSize=StrProcUtils::stringToStringVector(pref).size();
     if(srcSize>=MAX_SENTENCE_LENGTH_ALLOWED || prefSize>=MAX_SENTENCE_LENGTH_ALLOWED)
     {
-      cerr<<"Error: input sentences too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
+      cerr<<"Error: input sentences are too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
       init_state();
       Hypothesis nullHyp;
       nullHyp=smtm_ptr->nullHypothesis();
@@ -578,6 +577,8 @@ _stackDecoder<SMT_MODEL>::translateWithPrefix(std::string s,
     clear();
     suggestNullHyp(); 
 
+    if(verbosity>0)
+      cerr<<"Decoding input..."<<endl;
     return decodeWithPrefix();
   }
 }
@@ -678,14 +679,30 @@ Score _stackDecoder<SMT_MODEL>::testHeuristic(std::string sentence,
 
 //-------------------------
 template<class SMT_MODEL>
-void _stackDecoder<SMT_MODEL>::pre_trans_actions(std::string srcsent)
+int _stackDecoder<SMT_MODEL>::pre_trans_actions(std::string srcsent)
 {
   state=DEC_TRANS_STATE;
   srcSentence=srcsent;
   smtm_ptr->pre_trans_actions(srcsent);
+
+      // Verify sentence length (it is done after calling
+      // pre_trans_actions for the smt model, since translation
+      // constraints information may affect the length)
+  std::string modelSrcSent=smtm_ptr->getCurrentSrcSent();
+  unsigned int srcSize=StrProcUtils::stringToStringVector(modelSrcSent).size();
+  if(srcSize==0 || srcSize>=MAX_SENTENCE_LENGTH_ALLOWED)
+  {
+    if(srcSize==0)
+      cerr<<"Warning: the sentence to translate is empty"<<endl;
+    else
+      cerr<<"Error: the sentence to translate is too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
+    return ERROR;
+  }
+
   specific_pre_trans_actions(srcsent);
   bestCompleteHypScore=worstScoreAllowed;
   bestCompleteHyp=smtm_ptr->nullHypothesis();
+  return OK;
 }
 
 //-------------------------

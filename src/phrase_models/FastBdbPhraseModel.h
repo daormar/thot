@@ -18,19 +18,19 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: FilePm                                                   */
+/* Module: FastBdbPhraseModel                                       */
 /*                                                                  */
-/* Prototype file: FilePm                                           */
+/* Prototype file: FastBdbPhraseModel                               */
 /*                                                                  */
-/* Description: Defines the FilePm base class.                      */
-/*              FilePm is derived from the abstract class           */
-/*              BasePhraseModel and implements a phrase model       */
-/*              stored and accessed on files.                       */
+/* Description: Defines the FastBdbPhraseModel base class.          */
+/*              FastBdbPhraseModel is derived from the abstract     */
+/*              class BasePhraseModel and implements a phrase model */
+/*              stored and accessed using Berkeley databases.       */
 /*                                                                  */
 /********************************************************************/
 
-#ifndef _FilePm_h
-#define _FilePm_h
+#ifndef _FastBdbPhraseModel_h
+#define _FastBdbPhraseModel_h
 
 //--------------- Include files --------------------------------------
 
@@ -38,7 +38,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "FilePt.h"
+#include "FastBdbPhraseTable.h"
 #include "BaseCountPhraseModel.h"
 #include "NbestTransTable.h"
 #include "SingleWordVocab.h"
@@ -68,9 +68,9 @@ using namespace std;
 //--------------- Classes --------------------------------------------
 
 
-//--------------- FilePm class
+//--------------- FastBdbPhraseModel class
 
-class FilePm: public BaseCountPhraseModel
+class FastBdbPhraseModel: public BaseCountPhraseModel
 {
  public:
 
@@ -78,7 +78,7 @@ class FilePm: public BaseCountPhraseModel
     typedef BaseCountPhraseModel::TrgTableNode TrgTableNode;
 
         // Constructor
-    FilePm(void);
+    FastBdbPhraseModel(void);
 
         // Counts-related functions
     Count cSrcTrg(const Vector<WordIndex>& s,
@@ -192,7 +192,7 @@ class FilePm: public BaseCountPhraseModel
     void clear(void);
 
         // destructor
-    ~FilePm();
+    ~FastBdbPhraseModel();
 	
  protected:
     
@@ -202,7 +202,7 @@ class FilePm: public BaseCountPhraseModel
 
     SingleWordVocab singleWordVocab;
 
-    FilePt filePt;
+    FastBdbPhraseTable fastBdbPhraseTable;
 	
     SegLenTable segLenTable;
 

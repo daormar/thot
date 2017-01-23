@@ -24,6 +24,7 @@
 /home/dortiz/smt/software/alig_models/phrase_models thot_pbs_gen_phr_model
 /home/dortiz/smt/software/alig_models/phrase_models thot_pbs_gen_batch_phr_model
 /home/dortiz/smt/software/alig_models/phrase_models thot_conv_giza_alig_file
+/home/dortiz/smt/software/alig_models/phrase_models thot_gen_fbdb_ttable
 /home/dortiz/smt/software/error_correction thot_export_wordgraph
 /home/dortiz/smt/software/downhill_simplex thot_dhs_min
 /home/dortiz/smt/software/downhill_simplex thot_dhs_trgfunc_example

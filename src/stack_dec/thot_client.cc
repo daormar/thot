@@ -105,6 +105,7 @@ int process_request(const thot_client_pars& tdcPars)
   string s;
   vector<string> v;
   std::string translatedSentence;
+  std::string bestHypInfo;
   ThotDecoderClient thotDecoderClient;
   int retVal=OK;
   double elapsed_ant,elapsed,ucpu,scpu;
@@ -147,8 +148,13 @@ int process_request(const thot_client_pars& tdcPars)
       ctimer(&elapsed,&ucpu,&scpu);
       if(tdcPars.verbose) cerr<<"Client: return value= "<<retVal<<endl;
       break;
-    case TRANSLATE_SENT: retVal=thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence);
+    case TRANSLATE_SENT: retVal=thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence,bestHypInfo);
       if(tdcPars.verbose) cerr<<"Client: return value= "<<retVal<<endl;
+      cout<<translatedSentence<<endl;
+      break;
+    case TRANSLATE_SENT_HYPINFO: retVal=thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence,bestHypInfo);
+      if(tdcPars.verbose) cerr<<"Client: return value= "<<retVal<<endl;
+      cout<<bestHypInfo<<endl;
       cout<<translatedSentence<<endl;
       break;
     case VERIFY_COV: retVal=thotDecoderClient.sendSentPairVerCov(tdcPars.user_id,tdcPars.stlStringSrc.c_str(),tdcPars.stlStringRef.c_str(),translatedSentence);
@@ -276,6 +282,14 @@ int TakeParameters(int argc,
    return OK;
  }
 
+     /* Take the sentence to be translated */
+ err=readSTLstring(argc,argv, "-th", &tdcPars.sentenceToTranslate);
+ if(err==0)
+ {
+   tdcPars.server_request_code=TRANSLATE_SENT_HYPINFO;
+   return OK;
+ }
+
      /* Take the sentence pair for coverage verifying */
  err=readTwoSTLstrings(argc,argv, "-c", &tdcPars.stlStringSrc,&tdcPars.stlStringRef);
  if(err==0)
@@ -350,7 +364,8 @@ void printUsage(void)
   cerr<<"Usage: thot_client           -i <string> [-p <int>] [-uid <int>]\n";
   cerr<<"                             { -tr <srcstring> <refstring> | \n";
   // cerr<<"                          | -tre <srcsent> <refsent> | \n";
-  cerr<<"                             | -t <string> | -c <srcstring> <refstring> |\n";
+  cerr<<"                             | -t <string> | -th <string> |\n";
+  cerr<<"                             | -c <srcstring> <refstring> |\n";
   cerr<<"                             | -sc <string> | -ap <string> | -rp |\n";
   cerr<<"                             | -clear | -o <string> | -e } [ -v ]\n";
   cerr<<"                             [--help] [--version]\n\n";
@@ -360,9 +375,11 @@ void printUsage(void)
   cerr<<"-tr <srcstring> <refstring>  Train server models given a sentence pair.\n";
   // cerr<<"-tre <srcsent> <refsent>  Train error correcting model given a string pair.\n";
   cerr<<"-t <string>                  Translate sentence.\n";
+  cerr<<"-th <string>                 Translate sentence (returns hypothesis\n";
+  cerr<<"                             information).\n";
   cerr<<"-c <srcstring> <refstring>   Verify model coverage for reference sentence.\n";
-  cerr<<"-sc <string>                 Start CAT system for the given sentence, using the\n";
-  cerr<<"                             null string as prefix.\n";
+  cerr<<"-sc <string>                 Start CAT system for the given sentence, using\n";
+  cerr<<"                             the null string as prefix.\n";
   cerr<<"-ap <string>                 Add string to prefix.\n";
   cerr<<"-rp <string>                 Reset prefix.\n";
   cerr<<"-clear                       Clear loaded models.\n";

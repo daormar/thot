@@ -81,7 +81,7 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
 
       // Link translation constraints with model
   void link_trans_constraints(BaseTranslationConstraints* _trConstraintsPtr);
-
+      
       // Actions to be executed before the translation and before using
       // hypotheses-related functions
   virtual void pre_trans_actions(std::string srcsent)=0;
@@ -91,7 +91,12 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
                                      std::string refsent)=0;
   virtual void pre_trans_actions_prefix(std::string srcsent,
                                         std::string prefix)=0;
-      
+
+      // Function to obtain current source sentence (it may differ from
+      // that provided when calling pre_trans_actions since information
+      // about translation constraints is removed)
+  virtual std::string getCurrentSrcSent(void)=0;
+  
   ////// Hypotheses-related functions
 
         // Expansion-related functions

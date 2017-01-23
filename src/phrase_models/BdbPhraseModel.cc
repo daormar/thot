@@ -18,52 +18,52 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: FilePm                                                   */
+/* Module: BdbPhraseModel                                           */
 /*                                                                  */
-/* Definitions file: FilePm.cc                                      */
+/* Definitions file: BdbPhraseModel.cc                              */
 /*                                                                  */
 /********************************************************************/
 
 
 //--------------- Include files --------------------------------------
 
-#include "FilePm.h"
+#include "BdbPhraseModel.h"
 
 //--------------- Global variables -----------------------------------
 
 
-//--------------- FilePm class function definitions
+//--------------- BdbPhraseModel class function definitions
 
 //-------------------------
-FilePm::FilePm(void)
+BdbPhraseModel::BdbPhraseModel(void)
 {
 }
 
 //-------------------------
-Count FilePm::cSrcTrg(const Vector<WordIndex>& s,
+Count BdbPhraseModel::cSrcTrg(const Vector<WordIndex>& s,
                       const Vector<WordIndex>& t)
 {
   bool found;
-  return filePt.getSrcTrgInfo(s,t,found);
+  return bdbPhraseTable.getSrcTrgInfo(s,t,found);
 }
 
 //-------------------------
-Count FilePm::cSrc(const Vector<WordIndex>& s)
+Count BdbPhraseModel::cSrc(const Vector<WordIndex>& s)
 {
   bool found;
-  return filePt.getSrcInfo(s,found);
+  return bdbPhraseTable.getSrcInfo(s,found);
 }
 
 //-------------------------
-Count FilePm::cTrg(const Vector<WordIndex>& t)
+Count BdbPhraseModel::cTrg(const Vector<WordIndex>& t)
 {
   bool found;
-  return filePt.getTrgInfo(t,found);
+  return bdbPhraseTable.getTrgInfo(t,found);
 }
 
 //-------------------------
-Count FilePm::cHSrcHTrg(const Vector<std::string>& hs,
-                        const Vector<std::string>& ht)
+Count BdbPhraseModel::cHSrcHTrg(const Vector<std::string>& hs,
+                                const Vector<std::string>& ht)
 {
   Vector<WordIndex> s;
   Vector<WordIndex> t;
@@ -86,7 +86,7 @@ Count FilePm::cHSrcHTrg(const Vector<std::string>& hs,
 }
 
 //-------------------------
-Count FilePm::cHSrc(const Vector<std::string>& hs)
+Count BdbPhraseModel::cHSrc(const Vector<std::string>& hs)
 {
   Vector<WordIndex> s;
 
@@ -100,7 +100,7 @@ Count FilePm::cHSrc(const Vector<std::string>& hs)
 }
 
 //-------------------------
-Count FilePm::cHTrg(const Vector<std::string>& ht)
+Count BdbPhraseModel::cHTrg(const Vector<std::string>& ht)
 {
   Vector<WordIndex> t;
 
@@ -114,18 +114,19 @@ Count FilePm::cHTrg(const Vector<std::string>& ht)
 }
 
 //-------------------------
-PhrasePairInfo FilePm::infSrcTrg(const Vector<WordIndex>& s,
-                                 const Vector<WordIndex>& t,
-                                 bool& found)
+PhrasePairInfo BdbPhraseModel::infSrcTrg(const Vector<WordIndex>& s,
+                                         const Vector<WordIndex>& t,
+                                         bool& found)
 {
   PhrasePairInfo ppInfo;
-  ppInfo.first=filePt.getSrcInfo(s,found);
-  ppInfo.second=filePt.getSrcTrgInfo(s,t,found);
+  ppInfo.first=bdbPhraseTable.getSrcInfo(s,found);
+  ppInfo.second=bdbPhraseTable.getSrcTrgInfo(s,t,found);
   return ppInfo;
 }
 
 //-------------------------
-Prob FilePm::pk_tlen(unsigned int tlen,unsigned int k)
+Prob BdbPhraseModel::pk_tlen(unsigned int tlen,
+                             unsigned int k)
 {
   Prob p=segLenTable.pk_tlen(tlen,k);
 
@@ -135,33 +136,33 @@ Prob FilePm::pk_tlen(unsigned int tlen,unsigned int k)
 }
 
 //-------------------------
-LgProb FilePm::srcSegmLenLgProb(unsigned int x_k,
-                                unsigned int x_km1,
-                                unsigned int srcLen)
+LgProb BdbPhraseModel::srcSegmLenLgProb(unsigned int x_k,
+                                        unsigned int x_km1,
+                                        unsigned int srcLen)
 {
   return srcSegmLenTable.srcSegmLenLgProb(x_k,x_km1,srcLen);
 }
 
 //-------------------------
-LgProb FilePm::trgCutsLgProb(int offset)
+LgProb BdbPhraseModel::trgCutsLgProb(int offset)
 {
   return trgCutsTable.trgCutsLgProb(offset);
 }
 
 //-------------------------
-LgProb FilePm::trgSegmLenLgProb(unsigned int k,
-                                const SentSegmentation& trgSegm,
-                                unsigned int trgLen,
-                                unsigned int lastSrcSegmLen)
+LgProb BdbPhraseModel::trgSegmLenLgProb(unsigned int k,
+                                        const SentSegmentation& trgSegm,
+                                        unsigned int trgLen,
+                                        unsigned int lastSrcSegmLen)
 {
   return trgSegmLenTable.trgSegmLenLgProb(k,trgSegm,trgLen,lastSrcSegmLen);
 }
 
 //-------------------------
-LgProb FilePm::logpt_s_(const Vector<WordIndex>& s,
-                        const Vector<WordIndex>& t)
+LgProb BdbPhraseModel::logpt_s_(const Vector<WordIndex>& s,
+                                const Vector<WordIndex>& t)
 {
-  LgProb lp=filePt.logpTrgGivenSrc(s,t);
+  LgProb lp=bdbPhraseTable.logpTrgGivenSrc(s,t);
   if((double)lp<LOG_PHRASE_PROB_SMOOTH)
     return LOG_PHRASE_PROB_SMOOTH;
   else
@@ -169,10 +170,10 @@ LgProb FilePm::logpt_s_(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-LgProb FilePm::logps_t_(const Vector<WordIndex>& s,
-                        const Vector<WordIndex>& t)
+LgProb BdbPhraseModel::logps_t_(const Vector<WordIndex>& s,
+                                const Vector<WordIndex>& t)
 {
-  LgProb lp=filePt.logpSrcGivenTrg(s,t);
+  LgProb lp=bdbPhraseTable.logpSrcGivenTrg(s,t);
   if((double)lp<LOG_PHRASE_PROB_SMOOTH)
     return LOG_PHRASE_PROB_SMOOTH;
   else
@@ -180,8 +181,8 @@ LgProb FilePm::logps_t_(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-bool FilePm::getTransFor_s_(const Vector<WordIndex>& s,
-                            FilePm::TrgTableNode& trgtn)
+bool BdbPhraseModel::getTransFor_s_(const Vector<WordIndex>& /*s*/,
+                                    BdbPhraseModel::TrgTableNode& trgtn)
 {
   trgtn.clear();
   cerr<<"Warning: getTransFor_s_() function not implemented for this class"<<endl;
@@ -189,15 +190,15 @@ bool FilePm::getTransFor_s_(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-bool FilePm::getTransFor_t_(const Vector<WordIndex>& t,
-                            FilePm::SrcTableNode& srctn)
+bool BdbPhraseModel::getTransFor_t_(const Vector<WordIndex>& t,
+                                    BdbPhraseModel::SrcTableNode& srctn)
 {
-  return filePt.getEntriesForTarget(t,srctn);
+  return bdbPhraseTable.getEntriesForTarget(t,srctn);
 }
 
 //-------------------------
-bool FilePm::getNbestTransFor_s_(const Vector<WordIndex>& s,
-                                 NbestTableNode<PhraseTransTableNodeData>& nbt)
+bool BdbPhraseModel::getNbestTransFor_s_(const Vector<WordIndex>& /*s*/,
+                                         NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
   nbt.clear();
   cerr<<"Warning: getNbestTransFor_s_() function not implemented for this class"<<endl;
@@ -205,20 +206,20 @@ bool FilePm::getNbestTransFor_s_(const Vector<WordIndex>& s,
 }
 
 //-------------------------	
-bool FilePm::getNbestTransFor_t_(const Vector<WordIndex>& t,
-                                 NbestTableNode<PhraseTransTableNodeData>& nbt,
-                                 int N/*=-1*/) 
+bool BdbPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
+                                         NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                         int N/*=-1*/) 
 {  
-  return filePt.getNbestForTrg(t,nbt,N);
+  return bdbPhraseTable.getNbestForTrg(t,nbt,N);
 }
 
 //-------------------------
-bool FilePm::load(const char *prefix)
+bool BdbPhraseModel::load(const char *prefix)
 {
   bool ret;
 
       // Clear previous tables
-  filePt.clear();
+  bdbPhraseTable.clear();
   segLenTable.clear();
 
       // Load source vocabulary
@@ -234,7 +235,7 @@ bool FilePm::load(const char *prefix)
   if(ret==ERROR) return ERROR;
   
       // Load translation table
-  ret=filePt.init(prefix);
+  ret=bdbPhraseTable.init(prefix);
   if(ret==ERROR) return ERROR;
 
       // Load segmentation length table
@@ -264,64 +265,64 @@ bool FilePm::load(const char *prefix)
 }
 
 //-------------------------
-bool FilePm::load_seglentable(const char *segmLengthTableFileName)
+bool BdbPhraseModel::load_seglentable(const char *segmLengthTableFileName)
 {
   return segLenTable.load_seglentable(segmLengthTableFileName);
 }
 //-------------------------
-bool FilePm::print(const char *prefix)
+bool BdbPhraseModel::print(const char *prefix)
 {
   std::string prefixStl=prefix;
   if(prefixOfModelFiles==prefixStl)
   {
-    return true;
+    return OK;
   }
   else
   {
     cerr<<"Warning: print() function not implemented for this model"<<endl;
-    return false;
+    return ERROR;
   }
 }
 
 //-------------------------
-size_t FilePm::getSrcVocabSize(void)const
+size_t BdbPhraseModel::getSrcVocabSize(void)const
 {
   return singleWordVocab.getSrcVocabSize();	
 }
 
 //-------------------------
-bool FilePm::loadSrcVocab(const char *srcInputVocabFileName)
+bool BdbPhraseModel::loadSrcVocab(const char *srcInputVocabFileName)
 {
   return singleWordVocab.loadSrcVocab(srcInputVocabFileName);
 }
 
 //-------------------------
-bool FilePm::loadTrgVocab(const char *trgInputVocabFileName)
+bool BdbPhraseModel::loadTrgVocab(const char *trgInputVocabFileName)
 {
   return singleWordVocab.loadTrgVocab(trgInputVocabFileName);
 }
 
 //-------------------------
-WordIndex FilePm::stringToSrcWordIndex(string s)const
+WordIndex BdbPhraseModel::stringToSrcWordIndex(string s)const
 {	
  return singleWordVocab.stringToSrcWordIndex(s);
 }
 
 //-------------------------
-string FilePm::wordIndexToSrcString(WordIndex w)const
+string BdbPhraseModel::wordIndexToSrcString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToSrcString(w);
 }
 
 //-------------------------
-bool FilePm::existSrcSymbol(string s)const
+bool BdbPhraseModel::existSrcSymbol(string s)const
 {
  return singleWordVocab.existSrcSymbol(s);
 }
 
 //-------------------------
-Vector<WordIndex> FilePm::strVectorToSrcIndexVector(const Vector<string>& s,
-                                                    Count numTimes/*=1*/)
+Vector<WordIndex> BdbPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s,
+                                                            Count numTimes/*=1*/)
 {
   Vector<WordIndex> swVec;
   
@@ -332,7 +333,7 @@ Vector<WordIndex> FilePm::strVectorToSrcIndexVector(const Vector<string>& s,
 }
 
 //-------------------------
-Vector<string> FilePm::srcIndexVectorToStrVector(const Vector<WordIndex>& s)
+Vector<string> BdbPhraseModel::srcIndexVectorToStrVector(const Vector<WordIndex>& s)
 {
  Vector<string> vStr;
  unsigned int i;
@@ -343,45 +344,45 @@ Vector<string> FilePm::srcIndexVectorToStrVector(const Vector<WordIndex>& s)
  return vStr;
 }
 //-------------------------
-WordIndex FilePm::addSrcSymbol(string s,
+WordIndex BdbPhraseModel::addSrcSymbol(string s,
                                Count numTimes/*=1*/)
 {
  return singleWordVocab.addSrcSymbol(s,numTimes);
 }
 
 //-------------------------
-bool FilePm::printSrcVocab(const char *outputFileName)
+bool BdbPhraseModel::printSrcVocab(const char *outputFileName)
 {
  return singleWordVocab.printSrcVocab(outputFileName);
 }
 
 //-------------------------
-size_t FilePm::getTrgVocabSize(void)const
+size_t BdbPhraseModel::getTrgVocabSize(void)const
 {
  return singleWordVocab.getTrgVocabSize();	
 }
 
 //-------------------------
-WordIndex FilePm::stringToTrgWordIndex(string t)const
+WordIndex BdbPhraseModel::stringToTrgWordIndex(string t)const
 {
  return singleWordVocab.stringToTrgWordIndex(t);
 }
 
 //-------------------------
-string FilePm::wordIndexToTrgString(WordIndex w)const
+string BdbPhraseModel::wordIndexToTrgString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToTrgString(w);
 }
 
 //-------------------------
-bool FilePm::existTrgSymbol(string t)const
+bool BdbPhraseModel::existTrgSymbol(string t)const
 {
  return singleWordVocab.existTrgSymbol(t);
 }
 
 //-------------------------
-Vector<WordIndex> FilePm::strVectorToTrgIndexVector(const Vector<string>& t,
-                                                    Count numTimes/*=1*/)
+Vector<WordIndex> BdbPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t,
+                                                            Count numTimes/*=1*/)
 {
   Vector<WordIndex> twVec;
   
@@ -391,7 +392,7 @@ Vector<WordIndex> FilePm::strVectorToTrgIndexVector(const Vector<string>& t,
   return twVec;
 }
 //-------------------------
-Vector<string> FilePm::trgIndexVectorToStrVector(const Vector<WordIndex>& t)
+Vector<string> BdbPhraseModel::trgIndexVectorToStrVector(const Vector<WordIndex>& t)
 {
  Vector<string> vStr;
  unsigned int i;
@@ -402,19 +403,19 @@ Vector<string> FilePm::trgIndexVectorToStrVector(const Vector<WordIndex>& t)
  return vStr;
 }
 //-------------------------
-WordIndex FilePm::addTrgSymbol(string t,
-                               Count numTimes/*=1*/)
+WordIndex BdbPhraseModel::addTrgSymbol(string t,
+                                       Count numTimes/*=1*/)
 {
  return singleWordVocab.addTrgSymbol(t,numTimes);
 }
 //-------------------------
-bool FilePm::printTrgVocab(const char *outputFileName)
+bool BdbPhraseModel::printTrgVocab(const char *outputFileName)
 {
  return singleWordVocab.printTrgVocab(outputFileName);
 }
 
 //-------------------------
-Vector<string> FilePm::stringToStringVector(string s)
+Vector<string> BdbPhraseModel::stringToStringVector(string s)
 {
  Vector<string> vs;	
  string aux;
@@ -438,7 +439,7 @@ Vector<string> FilePm::stringToStringVector(string s)
 }
 
 //-------------------------
-Vector<string> FilePm::extractCharItemsToVector(char *ch)const
+Vector<string> BdbPhraseModel::extractCharItemsToVector(char *ch)const
 {
  unsigned int i=0;
  string s;	
@@ -460,22 +461,22 @@ Vector<string> FilePm::extractCharItemsToVector(char *ch)const
 }
 
 //-------------------------
-size_t FilePm::size(void)
+size_t BdbPhraseModel::size(void)
 {
-  return filePt.size();
+  return bdbPhraseTable.size();
 }
 
 //-------------------------
-void FilePm::clear(void)
+void BdbPhraseModel::clear(void)
 {
   singleWordVocab.clear();
-  filePt.clear();
+  bdbPhraseTable.clear();
   segLenTable.clear();
   prefixOfModelFiles.clear();
 }
 
 //-------------------------
-FilePm::~FilePm()
+BdbPhraseModel::~BdbPhraseModel()
 {
 }
 

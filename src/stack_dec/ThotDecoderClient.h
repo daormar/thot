@@ -73,7 +73,8 @@ class ThotDecoderClient
                                 const char *stry);
     bool sendSentToTranslate(int user_id,
                              const char *sentenceToTranslate,
-                             std::string &translatedSentence);
+                             std::string& translatedSentence,
+                             std::string& bestHypInfo);
     bool sendSentPairVerCov(int user_id,
                             const char *srcSent,
                             const char *refSent,

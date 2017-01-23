@@ -18,27 +18,27 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: FilePmFactory                                            */
+/* Module: FastBdbPhraseModelFactory                                */
 /*                                                                  */
-/* Definitions file: FilePmFactory.cc                               */
+/* Definitions file: FastBdbPhraseModelFactory.cc                   */
 /*                                                                  */
 /********************************************************************/
 
 
 //--------------- Include files --------------------------------------
 
-#include "FilePm.h"
+#include "FastBdbPhraseModel.h"
 #include <string>
 
 //--------------- Function definitions
 
 extern "C" BasePhraseModel* create(std::string /*str*/)
 {
-  return new FilePm;
+  return new FastBdbPhraseModel;
 }
 
 //---------------
 extern "C" std::string type_id(void)
 {
-  return "FilePm";
+  return "FastBdbPhraseModel";
 }

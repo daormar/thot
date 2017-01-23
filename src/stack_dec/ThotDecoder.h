@@ -56,6 +56,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ThotDecoderUserPars.h"
 #include <options.h>
 #include <pthread.h>
+#include <sstream>
 
 //--------------- Constants ------------------------------------------
 
@@ -115,6 +116,7 @@ class ThotDecoder
   bool translateSentence(int user_id,
                          const char *sentenceToTranslate,
                          std::string& result,
+                         std::string& bestHypInfo,
                          int verbose=0);
   bool translateSentencePrintWg(int user_id,
                                 const char *sentenceToTranslate,
@@ -246,6 +248,7 @@ class ThotDecoder
       // Auxiliary functions for translation
   std::string translateSentenceAux(size_t idx,
                                    std::string sentenceToTranslate,
+                                   std::string& bestHypInfo,
                                    int verbose=0);
 
       // Pre-posprocessing related functions

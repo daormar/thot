@@ -118,6 +118,11 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   void pre_trans_actions_prefix(std::string srcsent,
                                 std::string prefix);
 
+      // Function to obtain current source sentence (it may differ from
+      // that provided when calling pre_trans_actions since information
+      // about translation constraints is removed)
+  std::string getCurrentSrcSent(void);
+
       // Word prediction functions
   void addSentenceToWordPred(Vector<std::string> strVec,
                              int verbose=0);
@@ -1336,6 +1341,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
+  if(this->verbosity>0)
+    cerr<<"Initializing information about search heuristic..."<<endl; 
   initHeuristic(this->pbTransModelPars.A);
 }
 
@@ -1385,6 +1392,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ref(std::string srcse
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
+  if(this->verbosity>0)
+    cerr<<"Initializing information about search heuristic..."<<endl; 
   initHeuristic(this->pbTransModelPars.A);
 }
 
@@ -1434,6 +1443,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_ver(std::string srcse
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
+  if(this->verbosity>0)
+    cerr<<"Initializing information about search heuristic..."<<endl; 
   initHeuristic(this->pbTransModelPars.A);
 }
 
@@ -1485,7 +1496,16 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string sr
 
       // Initialize heuristic (the source sentence must be previously
       // stored)
+  if(this->verbosity>0)
+    cerr<<"Initializing information about search heuristic..."<<endl; 
   initHeuristic(this->pbTransModelPars.A);
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+std::string _phraseBasedTransModel<HYPOTHESIS>::getCurrentSrcSent(void)
+{
+  return StrProcUtils::stringVectorToString(pbtmInputVars.srcSentVec);
 }
 
 //---------------------------------
@@ -1664,9 +1684,11 @@ void _phraseBasedTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
         {
           unsigned int segmRightMostj=gaps[k].first+y;
           unsigned int segmLeftMostj=gaps[k].first+x;
+          bool srcPhraseIsAffectedByConstraint=this->trConstraintsPtr->srcPhrAffectedByConstraint(make_pair(segmLeftMostj,segmRightMostj));
               // Verify that the source phrase length does not exceed
-              // the limit
-          if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A) 
+              // the limit. The limit can be exceeded when the source
+              // phrase is affected by a translation constraint
+          if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A && !srcPhraseIsAffectedByConstraint)
             break;
               // Obtain hypothesis data vector
           getHypDataVecForGap(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W);
