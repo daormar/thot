@@ -41,7 +41,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //---------------
 bool IncrInterpNgramLM::load(const char *fileName)
 {
-      // Load weights
+      // Load language model entries
   int retval=loadLmEntries(fileName);
   if(retval==ERROR) return ERROR;
 
