@@ -19,8 +19,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "MiraGtm.h"
 
-#include <map>
-#include <set>
 #include <sstream>
 #include <algorithm>    // std::sort
 
@@ -46,7 +44,7 @@ double MiraGtm::scoreFromStats(Vector<unsigned int>& stats){
   pre = double(stats[0])/stats[1];
   rec = double(stats[0])/stats[2];
 
-  f1 = ((1+beta*beta) * prec*rec) / (beta*beta*precision + recall);
+  f1 = ((1+beta*beta) * pre*rec) / (beta*beta*pre + rec);
   return f1;
 }
 
@@ -71,7 +69,7 @@ void MiraGtm::positional_ngrams(const Vector<std::string>& s,
 }
 
 //---------------------------------------
-void revCompFunction(std::pair<int, std::pair<std::set<int>, std::set<int> > > a,
+bool revCompFunction(std::pair<int, std::pair<std::set<int>, std::set<int> > > a,
                      std::pair<int, std::pair<std::set<int>, std::set<int> > > b) {
   return a.first > b.first;
 }
@@ -80,9 +78,9 @@ bool doIntersect(std::set<int> a, std::set<int> b) {
   std::set<int>::const_iterator it;
   for (it=a.begin(); it!=a.end(); ++it) {
     if (b.find(*it) != b.end())
-      return false;
+      return true;
   }
-  return true;
+  return false;
 }
 
 //---------------------------------------
@@ -96,32 +94,34 @@ void MiraGtm::statsForSentence(const Vector<std::string>& candidate_tokens,
   }
 
   // compute mms, candidate_len and ref_len
-  int clen += candidate_tokens.size();
-  int rlen += reference_tokens.size();
+  int clen = candidate_tokens.size();
+  int rlen = reference_tokens.size();
 
   std::map<Vector<std::string>,std::set<int> > cng, rng;
-  positional_ngrams(candidate_tokens, cng)
-  positional_ngrams(reference_tokens, rng)
+  positional_ngrams(candidate_tokens, cng);
+  positional_ngrams(reference_tokens, rng);
 
   Vector<std::pair<int, std::pair<std::set<int>, std::set<int> > > > ngs;
-  std::map<Vector<std::string>,std::set<int> >::iterator cit = cng.begin();
-  while(cit != cng.end()) {
-    std::map<Vector<std::string>,std::set<int> >::iterator rit = rng.find(it.first); 
+  std::map<Vector<std::string>,std::set<int> >::iterator cit;
+  for (cit=cng.begin(); cit != cng.end(); ++cit) {
+    std::map<Vector<std::string>,std::set<int> >::iterator rit = rng.find(cit->first); 
     if ( rit != rng.end() ) {
-      std::pair<int, std::pair<std::set<int>, std::set<int> > > entry (cit.first.size(), (cit.second, rit.second));
+      std::pair<std::set<int>, std::set<int> > info (cit->second, rit->second);
+      std::pair<int, std::pair<std::set<int>, std::set<int> > > entry (cit->first.size(), info);
       ngs.push_back(entry);
     }
   }
+
   std::sort(ngs.begin(), ngs.end(), revCompFunction); 
 
   std::set<int> ccover, rcover;
   int matches = 0;
   Vector<std::pair<int, std::pair<std::set<int>, std::set<int> > > >::const_iterator it;
   for (it=ngs.begin(); it!=ngs.end(); ++it) {
-    if (!doIntersect(it.second.first, ccover) and !doIntersect(it.second.second, rcover) ) {
-      matches += it.first;
-      ccover.insert(it.second.first.begin(), it.second.first.end());
-      rcover.insert(it.second.second.begin(), it.second.second.end());
+    if (!doIntersect(it->second.first, ccover) and !doIntersect(it->second.second, rcover) ) {
+      matches += it->first;
+      ccover.insert(it->second.first.begin(), it->second.first.end());
+      rcover.insert(it->second.second.begin(), it->second.second.end());
     }
   }
 
@@ -152,9 +152,8 @@ void MiraGtm::corpusScore(const Vector<std::string>& candidates,
 
     Vector<unsigned int> stats;
     statsForSentence(candidate_tokens, reference_tokens, stats);
-
-    for (unsigned int i=0; i<N_STATS; i++)
-      corpusStats[i] += stats[i];
+    for (unsigned int j=0; j<N_STATS; j++)
+      corpusStats[j] += stats[j];
   }
   // cerr << "CS: [";
   // for(unsigned int k=0; k<N_STATS; k++)

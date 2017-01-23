@@ -27,7 +27,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
-#include "MiraGrm.h"
+#include "MiraGtm.h"
 #include <string>
 
 //--------------- Function definitions

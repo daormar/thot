@@ -150,7 +150,7 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
 
   // //##########################################################################
   // // evaluate bleu of currWeightsVec
-  // cerr << "CW: ";
+  // cerr << "CW: [ ";
   // for (unsigned int k=0; k<currWeightsVec.size(); k++)
   //   cerr << currWeightsVec[k] << " ";
   // cerr << "]" << endl;
@@ -291,7 +291,7 @@ void KbMiraLlWu::HopeFear(const std::string& reference,
     // for (unsigned int k=0; k<qStats.size(); k++)
     //   cerr << qStats[k] << " ";
     // cerr << "] " << score << " " << quality;
-    // cerr << "( " << hope_scale*score + quality << " " << hope_total_score;
+    // cerr << " ( " << hope_scale*score + quality << " , " << hope_total_score;
     // cerr << " , " << score-quality << " " << fear_total_score << " )" << endl;
 
     // Hope

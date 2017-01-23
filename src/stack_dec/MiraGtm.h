@@ -25,6 +25,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "BaseMiraScorer.h"
+
+#include <map>
+#include <set>
 #include <cassert>
 #include <iostream>
 
@@ -60,7 +63,7 @@ public:
 
 private:
   double beta;
-  int N_STATS;
+  unsigned int N_STATS;
 
   double scoreFromStats(Vector<unsigned int>& stats);
   void positional_ngrams(const Vector<std::string>& s,
