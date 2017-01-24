@@ -1679,7 +1679,7 @@ default_atoms = [
 
 
 _default_word_chars =                           \
-        u"-.&"                                  \
+        u"-&"                                  \
         u"0123456789"                           \
         u"ABCDEFGHIJKLMNOPQRSTUVWXYZ"           \
         u"abcdefghijklmnopqrstuvwxyz"           \
@@ -1707,11 +1707,11 @@ class Tokenizer:
         word_chars = re.escape(word_chars)
 
         self.re = re.compile("(?:" + "|".join(
-            atoms + [
-                "\\b[0-9]+,[0-9]+[a-zA-Z]+\\b",
-                "\\b[0-9]+,[0-9]+\\b",
-                "[%s]+(?:'[sS])?" % (word_chars),
-                "\s+"
+            [a+"\\b" for a in atoms] +
+            ["\\b[0-9]+[,\.][0-9]+[a-zA-Z]+\\b",
+             "\\b[0-9]+[,\.][0-9]+\\b",
+             "[%s]+(?:'[sS])?" % (word_chars),
+             "\s+"
             ]) + ")", flags=re.I)
 
     def tokenize(self, text):
@@ -1731,9 +1731,11 @@ class Tokenizer:
         tokens = []
         p = 0
         for match in matches:
+            #print "M ->", match
             mp = text[p:].find(match)
             if mp != 0:
                 missed = text[p:p+mp]
+                #print "m ->", missed
                 tokens.append(missed)
                 #_log.warning(u'Tokenizer missed substring "{}"'.format(missed))
             p = p + mp + len(match)
@@ -1741,6 +1743,7 @@ class Tokenizer:
 
         if p < len(text):
             tokens.append(text[p:])
+
         return filter(lambda s: s.strip(), tokens)
 
 
