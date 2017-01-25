@@ -250,6 +250,22 @@ bool _incrPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
 //-------------------------
 bool _incrPhraseModel::load(const char *prefix)
 {
+  std::string mainFileName;
+  if(fileIsDescriptor(prefix,mainFileName))
+  {
+    std::string descFileName=prefix;
+    std::string absolutizedMainFileName=absolutizeModelFileName(descFileName,mainFileName);
+    return load_given_prefix(absolutizedMainFileName.c_str());
+  }
+  else
+  {
+    return load_given_prefix(prefix);
+  }
+}
+
+//-------------------------
+bool _incrPhraseModel::load_given_prefix(const char *prefix)
+{
   std::string ttablefile;
   std::string seglenfile;
   bool ret;
