@@ -40,6 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BasePhraseTable.h"
 #include "PhraseDefs.h"
 #include "ErrorDefs.h"
+#include "awkInputStream.h"
 #include <string>
 #include "myVector.h"
 
@@ -176,6 +177,15 @@ class BasePhraseModel
     virtual void clearTempVars(void){}
 	
     virtual ~BasePhraseModel(){};
+
+  protected:
+  
+    std::string absolutizeModelFileName(std::string descFileName,
+                                        std::string modelFileName);
+    std::string extractDirName(std::string filePath);
+    bool fileIsDescriptor(std::string fileName,
+                          std::string& mainFileName);
+
 };
 
 #endif

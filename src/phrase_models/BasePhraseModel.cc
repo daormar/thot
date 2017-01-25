@@ -160,4 +160,122 @@ int BasePhraseModel::trainBilPhrases(const Vector<Vector<std::string> >& /*srcPh
   return ERROR;
 }
 
+//---------------
+std::string BasePhraseModel::absolutizeModelFileName(std::string descFileName,
+                                                     std::string modelFileName)
+{
+  if(modelFileName.empty())
+    return modelFileName;
+  else
+  {
+        // Check if path is already absolute
+    if(modelFileName[0]=='/')
+    {
+          // Path is absolute
+      return modelFileName;
+    }
+    else
+    {
+          // Path is not absolute
+      if(descFileName.empty())
+      {
+        return modelFileName;
+      }
+      else
+      {
+            // Absolutize model file name using directory name contained
+            // in descriptor file path
+        return extractDirName(descFileName)+modelFileName;
+      }
+    }
+  }
+}
+
+//---------------
+std::string BasePhraseModel::extractDirName(std::string filePath)
+{
+  if(filePath.empty())
+  {
+    std::string dirName;
+    return dirName;
+  }
+  else
+  {
+        // Provided file path is not empty
+    int last_slash_pos=-1;
+
+        // Find last position of slash symbol
+    for(unsigned int i=0;i<filePath.size();++i)
+      if(filePath[i]=='/')
+        last_slash_pos=i;
+
+        // Check if any slash symbols were found
+    if(last_slash_pos==-1)
+    {
+      std::string dirName;
+      return dirName;
+    }
+    else
+    {
+          // The last slash symbol was found at "last_slash_pos"
+      return filePath.substr(0,last_slash_pos+1);
+    }
+  }
+}
+
+//---------------
+bool BasePhraseModel::fileIsDescriptor(std::string fileName,
+                                       std::string& mainFileName)
+{
+  awkInputStream awk;
+  if(awk.open(fileName.c_str())==ERROR)
+    return false;
+  else
+  {
+    if(awk.getln())
+    {
+      if(awk.NF>=3 && awk.dollar(1)=="thot" && awk.dollar(2)=="tm" && awk.dollar(3)=="descriptor")
+      {
+            // Process descriptor (main file will be read)
+        while(awk.getln())
+        {
+          if(awk.NF>=3 && awk.dollar(3)=="main")
+          {
+                // File is a descriptor and main file was found
+            mainFileName=awk.dollar(2);
+            awk.close();
+            return true;
+          }
+          else
+          {
+                // Check if old descriptor file is being processed
+            if(awk.NF>=3 && awk.dollar(2)=="main")
+            {
+                  // File is an old descriptor and main file was found
+              mainFileName=awk.dollar(1);
+              awk.close();
+              return true;
+            }
+          }
+        }
+            // File is not a descriptor since it does not incorporate a
+            // main language model
+        return false;
+      }
+      else
+      {
+            // File is not a descriptor
+        awk.close();
+        return false;
+      }
+    }
+    else
+    {
+          // File is empty
+      awk.close();
+      return false;
+    }
+  }
+}
+
 //-------------------------
