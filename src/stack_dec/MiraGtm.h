@@ -37,6 +37,7 @@ public:
     // Constructor
   MiraGtm() { 
     beta = 1.0;
+    d = 1.0;
     N_STATS = 3;
   }
 
@@ -62,16 +63,16 @@ public:
                  double& score);
 
 private:
-  double beta;
+  double beta, d;
   unsigned int N_STATS;
 
   double scoreFromStats(Vector<unsigned int>& stats);
-  void positional_ngrams(const Vector<std::string>& s,
-                         std::map<Vector<std::string>,std::set<int> >& ngs);
+  void sorted_common_ngrams(const Vector<std::string>& s1,
+                            const Vector<std::string>& s2,
+                                   Vector<std::pair<int, std::pair<std::pair<int, int>, std::pair<int, int> > > >& ngs);
   void statsForSentence(const Vector<std::string>& candidate_tokens,
                         const Vector<std::string>& reference_tokens,
                         Vector<unsigned int>& stats);
-  void split(const std::string& sentence, Vector<std::string>& tokens);
 };
 
 #endif
