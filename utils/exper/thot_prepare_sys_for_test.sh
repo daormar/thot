@@ -120,7 +120,7 @@ process_files_for_individual_lm()
     nlines=`ls ${_lmfile}* 2>/dev/null | $WC -l`
     if [ $nlines -eq 0 ]; then
         echo "Error! language model files could not be found: ${_lmfile}"
-        exit 1
+        return 1
     fi
     
     # Create lm files
@@ -175,7 +175,7 @@ create_lm_files()
         # Copy weights for lm descriptor
         cp ${lmfile}.weights ${outd}/lm/
 
-        # Copy wp file lm descriptor
+        # Copy wp file for lm descriptor
         cp ${lmfile}.wp ${outd}/lm/
 
         # Obtain new file name for lm descriptor
@@ -186,7 +186,7 @@ create_lm_files()
         echo "thot lm descriptor" > ${outd}/lm/lm_desc
 
         # Create files for individual language model
-        process_files_for_individual_lm ${libdir}incr_jel_mer_ngram_lm_factory ${lmfile} "main"
+        process_files_for_individual_lm ${libdir}incr_jel_mer_ngram_lm_factory.so ${lmfile} "main"
 
         # Obtain new lm file name
         baselmfile=`basename $lmfile`
@@ -195,8 +195,60 @@ create_lm_files()
 }
 
 ########
+list_tm_entry_info()
+{
+    tmdesc=$1
+    $TAIL -n +2 ${tmdesc} | $AWK '{printf"%s,%s,%s\n",$1,$2,$3}'
+}
+
+########
+process_files_for_individual_tm()
+{
+    # Initialize parameters
+    _tmtype=$1
+    _tmfile=$2
+    _tm_status=$3
+
+    # Create tm directory
+    if [ ! -d ${outd}/tm/${_tm_status} ]; then
+        mkdir ${outd}/tm/${_tm_status} || { echo "Error! cannot create directory for translation model" >&2; return 1; }
+    fi
+
+    # Check availability of tm files
+    nlines=`ls ${_tmfile}* 2>/dev/null | $WC -l`
+    if [ $nlines -eq 0 ]; then
+        echo "Error! translation model files could not be found: ${_tmfile}"
+        return 1
+    fi
+
+    # Create tm files
+    for file in ${_tmfile}*; do
+        if [ $file != ${_tmfile}.ttable ]; then
+            # Create hard links for each file
+            $LN -f $file ${outd}/tm/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
+        fi
+    done
+
+    # Add entry to descriptor file
+    _basetmfile=`basename ${_tmfile}`
+    _relative_newtmfile=${_tm_status}/${_basetmfile}    
+    echo "${_tmtype} ${_relative_newtmfile} ${_tm_status}" >> ${outd}/tm/tm_desc    
+}
+
+########
 create_tm_files()
 {
+    # Obtain path of tm file
+    tmfile=`$GREP "\-tm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
+
+    # Check that tm file could be obtained
+    if [ -z "$tmfile" ]; then
+        echo "Error! configuration file seems to be wrong"
+        return 1
+    fi
+
+    basetmfile=`basename $tmfile`
+
     # Create directory for tm files
     if [ -d ${outd}/tm ]; then
         echo "Warning! directory for translation model does exist" >&2 
@@ -204,54 +256,70 @@ create_tm_files()
         mkdir -p ${outd}/tm || { echo "Error! cannot create directory for translation model" >&2; return 1; }
     fi
 
-    # Obtain path of tm file
-    tmfile=`$GREP "\-tm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
-    basetmfile=`basename $tmfile`
-
     # Check if tm file is a descriptor
     is_desc=`check_if_file_is_desc ${tmfile}`
 
     if [ ${is_desc} -eq 1 ]; then
-        # TBD
-        echo TBD
-    else
-        # Create main directory
-        if [ ! -d ${outd}/tm/main ]; then
-            mkdir ${outd}/tm/main || { echo "Error! cannot create directory for translation model" >&2; return 1; }
-        fi
-
-        # Check availability of tm files
-        nlines=`ls ${tmfile}* 2>/dev/null | $WC -l`
-        if [ $nlines -eq 0 ]; then
-            echo "Error! translation model files could not be found: ${tmfile}"
-            exit 1
-        fi
-
-        # Create tm files
-        for file in `ls ${tmfile}*`; do
-            if [ $file != ${tmfile}.ttable ]; then
-                # Create hard links for all of the files except the phrase table
-                $LN -f $file ${outd}/tm/main || { echo "Error while preparing translation model files" >&2 ; return 1; }
-            fi
-        done
-
-        # Obtain new tm file name
-        newtmfile=${outd}/tm/main/${basetmfile}
-        relative_newtmfile=main/${basetmfile}
-
         # Create descriptor
         echo "thot tm descriptor" > ${outd}/tm/tm_desc
-        echo "${relative_newtmfile} main" >> ${outd}/tm/tm_desc
+
+        # Create files for the different translation models
+        tmdesc_dirname=`$DIRNAME $tmfile`
+        for tm_entry in `list_tm_entry_info $tmfile`; do
+            curr_tmtype=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$1}'`
+            curr_tmfile=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$2}'`
+            curr_status=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$3}'`
+            process_files_for_individual_tm ${curr_tmtype} ${tmdesc_dirname}/${curr_tmfile} ${curr_status}
+        done
+
+        # Copy weights for tm descriptor
+        cp ${tmfile}.weights ${outd}/tm/
+
+        # Obtain new file name for tm descriptor
+        basetmfile=`basename $tmfile`
+        newtmfile=${outd}/tm/${basetmfile}
+    else
+        # Create descriptor
+        echo "thot tm descriptor" > ${outd}/tm/tm_desc
+
+        # Create files for individual translation model
+        process_files_for_individual_tm "" ${tmfile} "main"
+
+        # Obtain new tm file name
+        basetmfile=`basename $tmfile`
+        newtmfile=${outd}/tm/main/${basetmfile}
     fi
 }
 
 ########
 filter_ttable()
 {
-    # ${bindir}/thot_filter_ttable -t ${tmfile}.ttable \
-    #     -c $tcorpus -n 20 -T $tdir > ${outd}/tm/${basetmfile}.ttable 2> ${outd}/tm/main/${basetmfile}.ttable.log
-    ${bindir}/thot_pbs_filter_ttable -t ${tmfile}.ttable \
-        -c $tcorpus -n 20 ${qs_opt} "${qs_par}" -T $tdir -o ${outd}/tm/main/${basetmfile}.ttable
+    _tmfile=$1
+    _basetmfile=`basename ${_tmfile}`
+    _outd=$2
+    ${bindir}/thot_pbs_filter_ttable -t ${_tmfile}.ttable \
+        -c $tcorpus -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${_outd}/${_basetmfile}.ttable
+}
+
+########
+filter_ttables()
+{
+    # Check if tm file is a descriptor
+    is_desc=`check_if_file_is_desc ${tmfile}`
+
+    if [ ${is_desc} -eq 1 ]; then
+        # Filter tables for the different translation models
+        tmdesc_dirname=`$DIRNAME ${tmfile}`
+        for tm_entry in `list_tm_entry_info ${tmfile}`; do
+            curr_tmtype=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$1}'`
+            curr_tmfile=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$2}'`
+            curr_status=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$3}'`
+            curr_tmfile_dirname=`$DIRNAME $curr_tmfile`
+            filter_ttable ${tmdesc_dirname}/${curr_tmfile} ${outd}/tm/${curr_tmfile_dirname}
+        done
+    else
+        filter_ttable ${tmfile} ${outd}/tm/main
+    fi
 }
 
 ########
@@ -403,7 +471,7 @@ create_lm_files || exit 1
 create_tm_files || exit 1
 
 # Filter tm model
-filter_ttable || exit 1
+filter_ttables || exit 1
 
 # Generate cfg file
 generate_cfg_file > ${outd}/test_specific.cfg
