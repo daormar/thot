@@ -28,7 +28,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 
 //---------------------------------------
-void split(const std::string& sentence,
+void MiraGtm::split(const std::string& sentence,
            Vector<std::string>& tokens)
 {
   std::string item;
@@ -39,12 +39,12 @@ void split(const std::string& sentence,
 }
 
 //---------------------------------------
-bool revCompFunction(std::pair<int, std::pair<std::pair<int,int>, std::pair<int,int> > > a,
-                     std::pair<int, std::pair<std::pair<int,int>, std::pair<int,int> > > b) {
+bool MiraGtm::revCompFunction(std::pair<int, std::pair<std::pair<int,int>, std::pair<int,int> > > a,
+                              std::pair<int, std::pair<std::pair<int,int>, std::pair<int,int> > > b) {
   return a.first > b.first;
 }
 
-bool doIntersect(std::pair<int,int> a, std::set<int> b) {
+bool MiraGtm::doIntersect(std::pair<int,int> a, std::set<int> b) {
   for (int it=a.first; it<=a.second; ++it) {
     if (b.find(it) != b.end())
       return true;
@@ -177,7 +177,15 @@ void MiraGtm::sentBackgroundScore(const std::string& candidate,
                                   double& score,
                                   Vector<unsigned int>& sentStats)
 {
-  return sentScore(candidate, reference, score);
+  Vector<std::string> candidate_tokens, reference_tokens;
+  split(candidate, candidate_tokens);
+  split(reference, reference_tokens);
+
+  Vector<unsigned int> stats;
+  statsForSentence(candidate_tokens, reference_tokens, stats);
+
+  // scale score for Mira
+  score = scoreFromStats(stats)*stats[2];
 }
 
 //---------------------------------------

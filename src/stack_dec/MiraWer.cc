@@ -39,7 +39,18 @@ void MiraWer::sentBackgroundScore(const std::string& candidate,
                                   double& score,
                                   Vector<unsigned int>& sentStats)
 {
-  sentScore(candidate, reference, score);
+  Vector<std::string> candidate_tokens, reference_tokens;
+  split(candidate, candidate_tokens);
+  split(reference, reference_tokens);
+
+  if (reference_tokens.size() == 0)
+    score = 0.0;
+  else {
+    int nedits = ed(candidate_tokens, reference_tokens);
+    int nwords = reference_tokens.size();
+    // Scale score for mira
+    score = (1.0 - double(nedits)/nwords) * nwords;
+  }
 }
 
 //---------------------------------------
