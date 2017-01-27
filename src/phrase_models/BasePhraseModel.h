@@ -175,17 +175,18 @@ class BasePhraseModel
     virtual size_t size(void)=0;
     virtual void clear(void)=0;
     virtual void clearTempVars(void){}
-	
-    virtual ~BasePhraseModel(){};
 
-  protected:
-  
+        // Helper functions to work with model descriptors
     std::string absolutizeModelFileName(std::string descFileName,
                                         std::string modelFileName);
     std::string extractDirName(std::string filePath);
     bool fileIsDescriptor(std::string fileName,
                           std::string& mainFileName);
 
+    virtual ~BasePhraseModel(){};
+
+  protected:
+  
 };
 
 #endif
