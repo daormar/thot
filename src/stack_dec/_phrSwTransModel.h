@@ -169,13 +169,24 @@ template<class HYPOTHESIS>
 bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
 {
   unsigned int ret;
-  
-  // Phrase Model
+
+  // Obtain prefix of main model
+  std::string mainPrefixFileName;
+  std::string relativeMainPrefixFileName;
+  if(this->phrModelInfoPtr->invPbModelPtr->fileIsDescriptor(prefixFileName,relativeMainPrefixFileName))
+  {
+    std::string descFileName=prefixFileName;
+    mainPrefixFileName=this->phrModelInfoPtr->invPbModelPtr->absolutizeModelFileName(descFileName,relativeMainPrefixFileName);
+  }
+  else
+  {
+    mainPrefixFileName=prefixFileName;    
+  }
 
   // Load phrase model vocabularies 
-  this->phrModelInfoPtr->phraseModelPars.srcTrainVocabFileName=prefixFileName;
+  this->phrModelInfoPtr->phraseModelPars.srcTrainVocabFileName=mainPrefixFileName;
   this->phrModelInfoPtr->phraseModelPars.srcTrainVocabFileName+="_swm.svcb";
-  this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName=prefixFileName;
+  this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName=mainPrefixFileName;
   this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName+="_swm.tvcb";
 
   ret=this->phrModelInfoPtr->invPbModelPtr->loadSrcVocab(this->phrModelInfoPtr->phraseModelPars.srcTrainVocabFileName.c_str());
@@ -185,21 +196,21 @@ bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
   if(ret==ERROR) return ERROR;
 
   // Load phrase model
-  this->phrModelInfoPtr->phraseModelPars.readTablePrefix=prefixFileName;
-  if(this->phrModelInfoPtr->invPbModelPtr->load(prefixFileName)!=0)
+  this->phrModelInfoPtr->phraseModelPars.readTablePrefix=mainPrefixFileName;
+  if(this->phrModelInfoPtr->invPbModelPtr->load(mainPrefixFileName.c_str())!=0)
   {
     cerr<<"Error while reading phrase model file\n";
     return ERROR;
-  }  
+  }
   
   // sw model (The direct model is the one with the prefix _invswm)
-  swModelInfoPtr->swModelPars.readTablePrefix=prefixFileName;
+  swModelInfoPtr->swModelPars.readTablePrefix=mainPrefixFileName;
   swModelInfoPtr->swModelPars.readTablePrefix=swModelInfoPtr->swModelPars.readTablePrefix+"_invswm";
   ret=swModelInfoPtr->swAligModelPtr->load(swModelInfoPtr->swModelPars.readTablePrefix.c_str());
   if(ret==ERROR) return ERROR;
   
   // Inverse sw model
-  swModelInfoPtr->invSwModelPars.readTablePrefix=prefixFileName;
+  swModelInfoPtr->invSwModelPars.readTablePrefix=mainPrefixFileName;
   swModelInfoPtr->invSwModelPars.readTablePrefix=swModelInfoPtr->invSwModelPars.readTablePrefix+"_swm";
   ret=swModelInfoPtr->invSwAligModelPtr->load(swModelInfoPtr->invSwModelPars.readTablePrefix.c_str());
   if(ret==ERROR) return ERROR;
