@@ -185,7 +185,7 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
         HopeFearData hfd;
         HopeFear(references[i], nblists[i], scoreCompsVecs[i], wt, &hfd);
 
-        //cerr << i << " " << hfd.hopeQuality << " " << hfd.fearQuality << endl;
+        // cerr << i << " " << hfd.hopeQuality << " " << hfd.fearQuality << endl;
 
         if (hfd.hopeQuality > hfd.fearQuality) {
           Vector<double> diff(hfd.hopeFeatures.size());
@@ -196,6 +196,7 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
           for (unsigned int k=0; k<diff.size(); k++)
             diffScore += wt[k]*diff[k];
           double loss = delta - diffScore;
+          
           // cerr << " - " << loss << endl;
 
           if (loss > 0) {
@@ -205,9 +206,9 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
               diffNorm += diff[k]*diff[k];
             double eta = min(c, loss/diffNorm);
             for (unsigned int k=0; k<diff.size(); k++) {
-              // cerr << "WU: " << k << " : " << wt[k];
+              //cerr << "WU: " << k << " : " << wt[k];
               wt[k] += eta*diff[k];
-              // cerr << " ( " << eta << " " << diff[k] << " ) " << wt[k] << endl;
+              //cerr << " ( " << eta << " " << diff[k] << " ) " << wt[k] << endl;
               wTotals[k] += wt[k];
             }
             nUpdates++;
@@ -243,8 +244,8 @@ void KbMiraLlWu::updateClosedCorpus(const Vector<std::string>& references,
         }
       }
 
-      // cerr << nReStarts << " " << j << " " << iter_max_j << " " << quality << " " << max_quality << endl;
-      // exit(0);
+      //cerr << nReStarts << " " << j << " " << iter_max_j << " " << quality << " " << max_quality << endl;
+      //exit(0);
       // restart weights if no improvement in X epochs;
       if (j-iter_max_j > epochsToRestart)
         break;

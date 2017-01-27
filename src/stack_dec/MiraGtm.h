@@ -66,6 +66,12 @@ private:
   double beta, d;
   unsigned int N_STATS;
 
+  void split(const std::string& sentence,
+             Vector<std::string>& tokens);
+  static bool revCompFunction(std::pair<int, std::pair<std::pair<int,int>, std::pair<int,int> > > a,
+                              std::pair<int, std::pair<std::pair<int,int>, std::pair<int,int> > > b);
+  bool doIntersect(std::pair<int,int> a, std::set<int> b);
+
   double scoreFromStats(Vector<unsigned int>& stats);
   void sorted_common_ngrams(const Vector<std::string>& s1,
                             const Vector<std::string>& s2,

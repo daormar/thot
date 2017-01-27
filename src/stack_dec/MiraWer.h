@@ -56,7 +56,8 @@ public:
                  double& score);
 
 private:
-  void split(const std::string& sentence, Vector<std::string>& tokens);
+  void split(const std::string& sentence,
+             Vector<std::string>& tokens);
   int ed(Vector<std::string>& s1, Vector<std::string>& s2);
 };
 
