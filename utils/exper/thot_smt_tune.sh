@@ -206,7 +206,7 @@ create_lm_files()
         echo "thot lm descriptor" > ${outd}/lm/lm_desc
 
         # Create files for individual language model
-        process_files_for_individual_lm "jm" ${lmfile} "main"
+        process_files_for_individual_lm ${libdir}incr_jel_mer_ngram_lm_factory.so ${lmfile} "main"
 
         # Obtain new lm file name
         baselmfile=`basename $lmfile`
@@ -464,25 +464,23 @@ create_tm_files()
 ########
 filter_ttable()
 {
-    __tmfile=$1
-    _basetmfile=`basename ${__tmfile}`
+    _tmfile=$1
+    _basetmfile=`basename ${_tmfile}`
     _filt_outd=$2
-    ${bindir}/thot_pbs_filter_ttable -t ${__tmfile}.ttable \
+    ${bindir}/thot_pbs_filter_ttable -t ${_tmfile}.ttable \
         -c $scorpus -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${_filt_outd}/${_basetmfile}.ttable
 }
 
 ########
 filter_ttables()
 {
-    _tmfile=$1
-
     # Check if tm file is a descriptor
-    is_desc=`check_if_file_is_desc ${_tmfile}`
+    is_desc=`check_if_file_is_desc ${tmfile}`
 
     if [ ${is_desc} -eq 1 ]; then
         # Filter tables for the different translation models
-        tmdesc_dirname=`$DIRNAME ${_tmfile}`
-        for tm_entry in `list_tm_entry_info ${_tmfile}`; do
+        tmdesc_dirname=`$DIRNAME ${tmfile}`
+        for tm_entry in `list_tm_entry_info ${tmfile}`; do
             curr_tmtype=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$1}'`
             curr_tmfile=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$2}'`
             curr_status=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$3}'`
@@ -490,7 +488,7 @@ filter_ttables()
             filter_ttable ${tmdesc_dirname}/${curr_tmfile} ${outd}/tm_dev/${curr_tmfile_dirname}
         done
     else
-        filter_ttable ${_tmfile} ${outd}/tm_dev/main
+        filter_ttable ${tmfile} ${outd}/tm_dev/main
     fi
 }
 
