@@ -390,8 +390,8 @@ echo "* Estimating n-gram model parameters... " >&2
 estimate_ngram_parameters
 echo "" >&2
 
-echo "* Generating weight file... " >&2
 if [ ${kenlm_given} -eq 0 ]; then
+    echo "* Generating weight file... " >&2
     generate_weight_file
     echo "" >&2
 fi
