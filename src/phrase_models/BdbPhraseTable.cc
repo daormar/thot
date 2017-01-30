@@ -372,7 +372,11 @@ bool BdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
     else
       break;
   } while(cursorPtr->get(&key, &data, DB_NEXT)==0);
-  
+
+      // Close cursor
+  if(cursorPtr!=NULL)
+    cursorPtr->close();
+
   if(srctn.empty())
     return false;
   else
