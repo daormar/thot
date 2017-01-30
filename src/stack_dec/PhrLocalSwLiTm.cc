@@ -52,8 +52,11 @@ bool PhrLocalSwLiTm::loadAligModel(const char* prefixFileName)
   bool ret=_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >::loadAligModel(prefixFileName);
   if(ret==ERROR) return ERROR;
 
+      // Obtain prefix of main model
+  std::string mainPrefixFileName=this->obtainMainModelAbsoluteNameFromPrefix(prefixFileName);
+
       // Load lambda file
-  std::string lambdaFile=prefixFileName;
+  std::string lambdaFile=mainPrefixFileName;
   lambdaFile=lambdaFile+".lambda";
   ret=load_lambdas(lambdaFile.c_str());
   if(ret==ERROR) return ERROR;
@@ -1070,7 +1073,7 @@ bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
   
   if(awk.open(lambdaFileName)==ERROR)
   {
-    cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist. Current values-> lambda_swm="<<swModelInfoPtr->lambda_swm<<" , lambda_invswm"<<swModelInfoPtr->lambda_invswm<<endl;
+    cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist. Current values-> lambda_swm="<<swModelInfoPtr->lambda_swm<<" , lambda_invswm="<<swModelInfoPtr->lambda_invswm<<endl;
     return OK;
   }
   else
