@@ -126,9 +126,8 @@ class _incrInterpNgramLM: public BaseIncrNgramLM<Vector<WordIndex> >
   virtual bool loadWeights(const char *fileName)=0;
   virtual bool printWeights(const char *fileName)=0;
 
-      // size and clear functions
+      // size function
   size_t size(void);
-  void clear(void);
 
       // Destructor
   virtual ~_incrInterpNgramLM();
@@ -163,9 +162,6 @@ class _incrInterpNgramLM: public BaseIncrNgramLM<Vector<WordIndex> >
       // Specific functions for interpolated ngram language models
   void setWeights(const Vector<double>& _weights);
   Vector<double> obtainNormWeights(const Vector<double>& unnormWeights);
-
-      // Release data structures
-  void release(void);
 };
 
 #endif

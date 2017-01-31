@@ -323,37 +323,8 @@ size_t _incrInterpNgramLM::size(void)
 }
 
 //---------------
-void _incrInterpNgramLM::clear(void)
-{
-  for(unsigned int i=0;i<modelPtrVec.size();++i)
-  {
-    modelPtrVec[i]->clear();
-  }
-  weights.clear();
-  normWeights.clear();
-  gtlDataMapVec.clear();
-  modelIndex=INVALID_LMODEL_INDEX;
-  encPtr->clear();
-}
-
-//---------------
-void _incrInterpNgramLM::release(void)
-{
-  for(unsigned int i=0;i<modelPtrVec.size();++i)
-  {
-    delete modelPtrVec[i];
-  }
-  modelPtrVec.clear();
-  weights.clear();
-  normWeights.clear();
-  gtlDataMapVec.clear();
-  modelIndex=INVALID_LMODEL_INDEX;
-}
-
-//---------------
 _incrInterpNgramLM::~_incrInterpNgramLM()
 {
-  release();
   delete encPtr;
 }
 
