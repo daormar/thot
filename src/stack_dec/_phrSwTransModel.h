@@ -148,6 +148,9 @@ class _phrSwTransModel: public _phraseBasedTransModel<HYPOTHESIS>
   WordIndex addTrgSymbolToAligModels(std::string t);
   void updateAligModelsSrcVoc(const Vector<std::string>& sStrVec);
   void updateAligModelsTrgVoc(const Vector<std::string>& tStrVec);
+
+      // Helper functions to deal with model descriptors
+  std::string obtainMainModelAbsoluteNameFromPrefix(std::string prefixFileName);
 };
 
 //--------------- _phrSwTransModel class functions
@@ -169,13 +172,14 @@ template<class HYPOTHESIS>
 bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
 {
   unsigned int ret;
-  
-  // Phrase Model
 
-  // Load phrase model vocabularies 
-  this->phrModelInfoPtr->phraseModelPars.srcTrainVocabFileName=prefixFileName;
+      // Obtain prefix of main model
+  std::string mainPrefixFileName=this->obtainMainModelAbsoluteNameFromPrefix(prefixFileName);
+
+      // Load phrase model vocabularies 
+  this->phrModelInfoPtr->phraseModelPars.srcTrainVocabFileName=mainPrefixFileName;
   this->phrModelInfoPtr->phraseModelPars.srcTrainVocabFileName+="_swm.svcb";
-  this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName=prefixFileName;
+  this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName=mainPrefixFileName;
   this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName+="_swm.tvcb";
 
   ret=this->phrModelInfoPtr->invPbModelPtr->loadSrcVocab(this->phrModelInfoPtr->phraseModelPars.srcTrainVocabFileName.c_str());
@@ -184,22 +188,22 @@ bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
   ret=this->phrModelInfoPtr->invPbModelPtr->loadTrgVocab(this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName.c_str());
   if(ret==ERROR) return ERROR;
 
-  // Load phrase model
-  this->phrModelInfoPtr->phraseModelPars.readTablePrefix=prefixFileName;
-  if(this->phrModelInfoPtr->invPbModelPtr->load(prefixFileName)!=0)
+      // Load phrase model
+  this->phrModelInfoPtr->phraseModelPars.readTablePrefix=mainPrefixFileName;
+  if(this->phrModelInfoPtr->invPbModelPtr->load(mainPrefixFileName.c_str())!=0)
   {
     cerr<<"Error while reading phrase model file\n";
     return ERROR;
-  }  
+  }
   
-  // sw model (The direct model is the one with the prefix _invswm)
-  swModelInfoPtr->swModelPars.readTablePrefix=prefixFileName;
+      // sw model (The direct model is the one with the prefix _invswm)
+  swModelInfoPtr->swModelPars.readTablePrefix=mainPrefixFileName;
   swModelInfoPtr->swModelPars.readTablePrefix=swModelInfoPtr->swModelPars.readTablePrefix+"_invswm";
   ret=swModelInfoPtr->swAligModelPtr->load(swModelInfoPtr->swModelPars.readTablePrefix.c_str());
   if(ret==ERROR) return ERROR;
   
-  // Inverse sw model
-  swModelInfoPtr->invSwModelPars.readTablePrefix=prefixFileName;
+      // Inverse sw model
+  swModelInfoPtr->invSwModelPars.readTablePrefix=mainPrefixFileName;
   swModelInfoPtr->invSwModelPars.readTablePrefix=swModelInfoPtr->invSwModelPars.readTablePrefix+"_swm";
   ret=swModelInfoPtr->invSwAligModelPtr->load(swModelInfoPtr->invSwModelPars.readTablePrefix.c_str());
   if(ret==ERROR) return ERROR;
@@ -634,6 +638,24 @@ void _phrSwTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string srcsent,
 {
   _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions_prefix(srcsent,prefix);
   initLenRangeForGapsVec(this->pbTransModelPars.A);
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+std::string _phrSwTransModel<HYPOTHESIS>::obtainMainModelAbsoluteNameFromPrefix(std::string prefixFileName)
+{
+      // Obtain prefix of main model
+  std::string mainPrefixFileName;
+  std::string relativeMainPrefixFileName;
+  if(this->phrModelInfoPtr->invPbModelPtr->fileIsDescriptor(prefixFileName,relativeMainPrefixFileName))
+  {
+    std::string descFileName=prefixFileName;
+    return this->phrModelInfoPtr->invPbModelPtr->absolutizeModelFileName(descFileName,relativeMainPrefixFileName);
+  }
+  else
+  {
+    return prefixFileName;    
+  }
 }
 
 //---------------------------------

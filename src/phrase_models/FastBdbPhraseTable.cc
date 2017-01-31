@@ -311,6 +311,10 @@ void FastBdbPhraseTable::enableFastSearch(void)
         }
       }
     }
+        // Close cursor
+    if(cursorPtr!=NULL)
+      cursorPtr->close();
+
         // After finishing, the database is ready for fast search
     setFastSearchAvailableFlag();
   }
@@ -397,6 +401,9 @@ bool FastBdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
   int ret=cursorPtr->get(&key, &data, DB_SET_RANGE);
   if(ret)
   {
+        // Close cursor
+    if(cursorPtr!=NULL)
+      cursorPtr->close();
     srctn.clear();
     return false;
   }
@@ -428,7 +435,11 @@ bool FastBdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
     else
       break;
   } while(cursorPtr->get(&key, &data, DB_NEXT)==0);
-  
+
+      // Close cursor
+  if(cursorPtr!=NULL)
+    cursorPtr->close();
+
   if(srctn.empty())
     return false;
   else

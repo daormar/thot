@@ -68,6 +68,12 @@ put_tm_string()
 }
 
 ########
+put_tm_desc_string()
+{
+    $SED "s@<tm_file_path>@${tm_desc}@"
+}
+
+########
 if [ $# -ne 2 ]; then
     echo "Usage: thot_gen_cfg_file <lm_desc> <tm_desc>"
 else
@@ -99,5 +105,5 @@ else
     # Generate configuration file
     cat ${datadir}/cfg_templates/thot_basic.cfg | \
         put_lm_desc_string | \
-        put_tm_string
+        put_tm_desc_string
 fi

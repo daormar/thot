@@ -41,7 +41,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //---------------
 bool IncrInterpNgramLM::load(const char *fileName)
 {
-      // Load weights
+      // Load language model entries
   int retval=loadLmEntries(fileName);
   if(retval==ERROR) return ERROR;
 
@@ -68,8 +68,8 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
     }
     else
     {
-          // Release previously stored model
-      release();
+          // Clear previously stored model
+      clear();
 
       cerr<<"Loading model file "<<fileName<<endl;
 
@@ -103,7 +103,9 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
         return ERROR;
       }
       else
+      {
         return OK;
+      }
     }
   }
   else
@@ -118,26 +120,10 @@ bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
                                     std::string modelFileName,
                                     std::string statusStr)
 {
-      // Declare dynamic class loader instance
-  SimpleDynClassLoader<BaseNgramLM<Vector<WordIndex> > > baseNgramLMDynClassLoader;
-  
-      // Open module
-  bool verbosity=false;
-  if(!baseNgramLMDynClassLoader.open_module(lmType,verbosity))
-  {
-    cerr<<"Error: so file ("<<lmType<<") could not be opened"<<endl;
-    return ERROR;
-  }
-
-      // Create lm file pointer
-  BaseNgramLM<Vector<WordIndex> >* lmPtr=baseNgramLMDynClassLoader.make_obj("");
+      // Create pointer to model
+  BaseNgramLM<Vector<WordIndex> >* lmPtr=createLmPtr(lmType);
   if(lmPtr==NULL)
-  {
-    cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
-    baseNgramLMDynClassLoader.close_module();
-    
     return ERROR;
-  }  
   
       // Store file pointer
   modelPtrVec.push_back(lmPtr);
@@ -558,9 +544,76 @@ unsigned int IncrInterpNgramLM::getNgramOrder(void)
     return 0;
 }
 
+//-------------------------
+BaseNgramLM<Vector<WordIndex> >* IncrInterpNgramLM::createLmPtr(std::string tmType)
+{
+  SimpleDynClassLoaderMap::iterator iter=simpleDynClassLoaderMap.find(tmType);
+  if(iter!=simpleDynClassLoaderMap.end())
+  {
+    return iter->second.make_obj("");
+  }
+  else
+  {
+        // Declare dynamic class loader instance
+    SimpleDynClassLoader<BaseNgramLM<Vector<WordIndex> > > simpleDynClassLoader;
+  
+        // Open module
+    bool verbosity=false;
+    if(!simpleDynClassLoader.open_module(tmType,verbosity))
+    {
+      cerr<<"Error: so file ("<<tmType<<") could not be opened"<<endl;
+      return NULL;
+    }
+
+        // Create tm file pointer
+    BaseNgramLM<Vector<WordIndex> >* tmPtr=simpleDynClassLoader.make_obj("");
+    if(tmPtr==NULL)
+    {
+      cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
+      simpleDynClassLoader.close_module();
+    
+      return NULL;
+    }
+        // Store class loader in map
+    simpleDynClassLoaderMap.insert(std::make_pair(tmType,simpleDynClassLoader));
+    
+    return tmPtr;
+  }
+}
+
+//-------------------------
+void IncrInterpNgramLM::deleteModelPointers(void)
+{
+  for(unsigned int i=0;i<modelPtrVec.size();++i)
+  {
+    delete modelPtrVec[i];
+  }
+  modelPtrVec.clear();
+}
+
+//-------------------------
+void IncrInterpNgramLM::closeDynamicModules(void)
+{
+  SimpleDynClassLoaderMap::iterator iter;
+  for(iter=simpleDynClassLoaderMap.begin();iter!=simpleDynClassLoaderMap.end();++iter)
+    iter->second.close_module(false);
+  simpleDynClassLoaderMap.clear();
+}
+
+//---------------
+void IncrInterpNgramLM::clear(void)
+{
+  weights.clear();
+  normWeights.clear();
+  gtlDataMapVec.clear();
+  modelIndex=INVALID_LMODEL_INDEX;
+  encPtr->clear();
+  deleteModelPointers();
+  closeDynamicModules();
+}
+
 //---------------
 IncrInterpNgramLM::~IncrInterpNgramLM()
 {
+  clear();
 }
-
-//------------------------------

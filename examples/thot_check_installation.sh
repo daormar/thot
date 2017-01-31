@@ -46,6 +46,29 @@ else
     qs_par=""
 fi
 
+# Basic installation checking
+echo "**** Check static and dynamic tool configuration (thot_get_ll_weights)..."
+echo ""
+${bindir}/thot_get_ll_weights -v
+if test $? -eq 0 ; then
+    echo "... Done"
+else
+    echo "================================================"
+    echo " Test failed!"
+    echo " See additional information in ${tmpdir}"
+    echo " Please report to "${bugreport}
+    echo "================================================"
+    echo ""
+    echo "IMPORTANT NOTE: if you got an error message telling that 'libthot.so' is not"
+    echo "found, then you need to execute the 'ldconfig' command as root immediately"
+    echo "after 'make install'. This is a generic software installation problem caused"
+    echo "by autotools that cannot be solved in Thot in a portable manner."
+    echo ""
+    exit 1
+fi
+
+echo "" 
+
 # Check thot_lm_train
 echo "**** Checking thot_lm_train..."
 echo ""
