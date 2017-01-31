@@ -1679,7 +1679,7 @@ default_atoms = [
 
 
 _default_word_chars =                           \
-        u"-&"                                  \
+        u"-&"                                   \
         u"0123456789"                           \
         u"ABCDEFGHIJKLMNOPQRSTUVWXYZ"           \
         u"abcdefghijklmnopqrstuvwxyz"           \
@@ -1719,6 +1719,12 @@ class Tokenizer:
 
         Concatenation of returned tokens should yields.
         """
+
+        # Preprocessing step to avoid special case of all words concatenared with hyphens
+        # adidas-climalite-mens-l-white-black-tank-top-nwt-msrp-basketball
+        if len(text.split()) == 1 and text.count('-') > 1:
+            text = text.replace('-', ' ')
+
 
         # Following is a safeguard that guarantees that concatenating resultant
         # tokens yield original text.  It fills gaps between matches returned
