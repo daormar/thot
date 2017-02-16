@@ -271,28 +271,22 @@ void printDesc(void)
 //--------------------------------
 void printUsage(void)
 {
- cerr<<"Usage: thot_gen_phr_model {-g <string> [-p]}\n";
- cerr<<"                [-s <string> -t <string>]\n";
- cerr<<"                [-m <int>]\n";
- cerr<<"                {-o <string>} [-v | -v1]\n";
- cerr<<"                [--help] [--version]\n\n";
- cerr<<"-g <string>                     Name of the alignment file in GIZA format for\n";
- cerr<<"                                generating a phrase model.\n\n"; 
- cerr<<"                                format of the files is the one obtained\n";
- cerr<<"                                with -pc option.\n\n";
- cerr<<"-brf                            Obtain bisegmentation-based RF model (RF by\n";
- cerr<<"                                default).\n\n";
- // cerr<<"-pc                             Print output in Thot native format, which\n";
- // cerr<<"                                includes source and joint counts.\n\n";
- cerr<<"-p                              Print vocabularies.\n\n";
- cerr<<"-m <int>                        Set maximum target phrase length (target is the\n";
- cerr<<"                                target language of the GIZA alignment file).\n\n";
- cerr<<"-s <string>\n";
- cerr<<"-t <string>                     Source and target input vocabulary files.\n\n";	
- cerr<<"-o <string>                     Set output files prefix name.\n\n";
- cerr<<"-v | -v1                        Verbose mode | more verbosity\n\n";
- cerr<<"--help                          Display this help and exit\n\n";
- cerr<<"--version                       Output version information and exit\n\n";
+ cerr<<"Usage: thot_gen_phr_model -g <string> [-s <string> -t <string>]\n";
+ cerr<<"                          [-m <int>] [-brf] -o <string> [-p]\n";
+ cerr<<"                          [-v | -v1] [--help] [--version]\n\n";
+ cerr<<"-g <string>               Name of the alignment file in GIZA format for\n";
+ cerr<<"                          generating a phrase model.\n\n"; 
+ cerr<<"-m <int>                  Set maximum target phrase length (target is the\n";
+ cerr<<"                          target language of the GIZA alignment file).\n\n";
+ cerr<<"-s <string>               Source vocabulary file.\n\n";	
+ cerr<<"-t <string>               Target vocabulary file.\n\n";	
+ cerr<<"-brf                      Obtain bisegmentation-based RF model (RF by\n";
+ cerr<<"                          default).\n\n";
+ cerr<<"-o <string>               Set output files prefix name.\n\n";
+ cerr<<"-p                        Print vocabularies.\n\n";
+ cerr<<"-v | -v1                  Verbose mode | more verbosity\n\n";
+ cerr<<"--help                    Display this help and exit\n\n";
+ cerr<<"--version                 Output version information and exit\n\n";
  
 }
 
