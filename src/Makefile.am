@@ -51,9 +51,10 @@ lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la incr_interp_ngram_lm_factory.la	\
 smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la wba_incr_phrase_model_factory.la	\
-pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
+incr_mux_phrase_model_factory.la pfsm_ecm_for_wg_factory.la		\
+non_pb_ec_model_for_nb_ucat_factory.la					\
 wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
-mira_wer_factory.la mira_gtm_factory.la kb_mira_ll_wu_factory.la				\
+mira_wer_factory.la mira_gtm_factory.la kb_mira_ll_wu_factory.la	\
 multi_stack_decoder_rec__swli_factory.la				\
 wg_uncoupled_assisted_trans__swli_factory.la				\
 translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
@@ -173,7 +174,8 @@ casmacat_confid_defs=
 endif
 
 phrase_models_h= phrase_models/WbaIncrPhraseModel.h			\
-phrase_models/_wbaIncrPhraseModel.h					\
+phrase_models/_wbaIncrPhraseModel.h phrase_models/_incrMuxPhraseModel.h	\
+phrase_models/IncrMuxPhraseModel.h					\
 phrase_models/VecUnsignedIntSortCriterion.h				\
 phrase_models/TrgSegmLenTable.h phrase_models/TrgCutsTable.h		\
 phrase_models/SrfNodeKey.h phrase_models/SrfNodeInfoMap.h		\
@@ -199,16 +201,20 @@ phrase_models/AlignmentContainer.h phrase_models/AligInfo.h		\
 phrase_models/BasePhrasePairFilter.h					\
 phrase_models/CategPhrasePairFilter.h
 phrase_models_defs= phrase_models/WbaIncrPhraseModel.cc			\
-phrase_models/_wbaIncrPhraseModel.cc phrase_models/TrgSegmLenTable.cc	\
-phrase_models/TrgCutsTable.cc phrase_models/SrfNodeKey.cc		\
-phrase_models/SrfNodeInfoMap.cc phrase_models/SrcSegmLenTable.cc	\
-phrase_models/SegLenTable.cc phrase_models/PhraseTableLog.cc		\
-phrase_models/PhraseTable.cc phrase_models/PhraseExtractionTable.cc	\
-phrase_models/PhraseDictLog.cc phrase_models/PhraseDict.cc		\
-phrase_models/PhraseCountsLog.cc phrase_models/PhraseCounts.cc		\
-phrase_models/_incrPhraseModel.cc phrase_models/Cache_lct_.cc		\
-phrase_models/Cache_ct_.cc phrase_models/BpSet.cc			\
-phrase_models/BasePhraseModel.cc phrase_models/BaseIncrPhraseModel.cc	\
+phrase_models/_wbaIncrPhraseModel.cc					\
+phrase_models/_incrMuxPhraseModel.cc					\
+phrase_models/IncrMuxPhraseModel.cc					\
+phrase_models/IncrMuxPhraseModelFactory.cc				\
+phrase_models/TrgSegmLenTable.cc phrase_models/TrgCutsTable.cc		\
+phrase_models/SrfNodeKey.cc phrase_models/SrfNodeInfoMap.cc		\
+phrase_models/SrcSegmLenTable.cc phrase_models/SegLenTable.cc		\
+phrase_models/PhraseTableLog.cc phrase_models/PhraseTable.cc		\
+phrase_models/PhraseExtractionTable.cc phrase_models/PhraseDictLog.cc	\
+phrase_models/PhraseDict.cc phrase_models/PhraseCountsLog.cc		\
+phrase_models/PhraseCounts.cc phrase_models/_incrPhraseModel.cc		\
+phrase_models/Cache_lct_.cc phrase_models/Cache_ct_.cc			\
+phrase_models/BpSet.cc phrase_models/BasePhraseModel.cc			\
+phrase_models/BaseIncrPhraseModel.cc					\
 phrase_models/AlignmentExtractor.cc phrase_models/AlignmentContainer.cc	\
 phrase_models/CategPhrasePairFilter.cc
 
@@ -296,7 +302,7 @@ stack_dec/BaseHypothesis.h stack_dec/HypDebugData.h			\
 stack_dec/BaseAssistedTrans.h stack_dec/_assistedTrans.h
 stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
 stack_dec/TranslationConstraints.cc stack_dec/KbMiraLlWu.cc		\
-stack_dec/MiraBleu.cc stack_dec/MiraWer.cc stack_dec/MiraGtm.cc 				\
+stack_dec/MiraBleu.cc stack_dec/MiraWer.cc stack_dec/MiraGtm.cc		\
 stack_dec/ThotDecoderClient.cc stack_dec/ThotDecoder.cc			\
 stack_dec/PhrScoreInfo.cc stack_dec/PhrNbestTransTableRefKey.cc		\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
@@ -375,7 +381,13 @@ bdb_phrase_model_factory_defs= phrase_models/BdbPhraseModelFactory.cc
 
 ##########
 fast_bdb_phrase_model_factory_h= 
-fast_bdb_phrase_model_factory_defs= phrase_models/FastBdbPhraseModelFactory.cc
+fast_bdb_phrase_model_factory_defs=		\
+phrase_models/FastBdbPhraseModelFactory.cc
+
+##########
+incr_mux_phrase_model_factory_h= 
+incr_mux_phrase_model_factory_defs=		\
+phrase_models/IncrMuxPhraseModelFactory.cc
 
 ##########
 pfsm_ecm_for_wg_factory_h= 
@@ -595,19 +607,22 @@ kenlm_factory_la_LDFLAGS= -module
 endif
 
 ##########
-smoothed_incr_ibm2_alig_model_factory_la_SOURCES= $(smoothed_incr_ibm2_alig_model_factory_h)	\
+smoothed_incr_ibm2_alig_model_factory_la_SOURCES=	\
+$(smoothed_incr_ibm2_alig_model_factory_h)		\
 $(smoothed_incr_ibm2_alig_model_factory_defs)
 smoothed_incr_ibm2_alig_model_factory_la_LIBADD= libthot.la
 smoothed_incr_ibm2_alig_model_factory_la_LDFLAGS= -module
 
 ##########
-incr_hmm_p0_alig_model_factory_la_SOURCES= $(incr_hmm_p0_alig_model_factory_h)	\
+incr_hmm_p0_alig_model_factory_la_SOURCES=	\
+$(incr_hmm_p0_alig_model_factory_h)		\
 $(incr_hmm_p0_alig_model_factory_defs)
 incr_hmm_p0_alig_model_factory_la_LIBADD= libthot.la
 incr_hmm_p0_alig_model_factory_la_LDFLAGS= -module
 
 ##########
-wba_incr_phrase_model_factory_la_SOURCES= $(wba_incr_phrase_model_factory_h)	\
+wba_incr_phrase_model_factory_la_SOURCES=	\
+$(wba_incr_phrase_model_factory_h)		\
 $(wba_incr_phrase_model_factory_defs)
 wba_incr_phrase_model_factory_la_LIBADD= libthot.la
 wba_incr_phrase_model_factory_la_LDFLAGS= -module
@@ -619,10 +634,18 @@ bdb_phrase_model_factory_la_LIBADD= libthot.la
 bdb_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
-fast_bdb_phrase_model_factory_la_SOURCES= $(fast_bdb_phrase_model_factory_h)	\
+fast_bdb_phrase_model_factory_la_SOURCES=	\
+$(fast_bdb_phrase_model_factory_h)		\
 $(fast_bdb_phrase_model_factory_defs)
 fast_bdb_phrase_model_factory_la_LIBADD= libthot.la
 fast_bdb_phrase_model_factory_la_LDFLAGS= -module
+
+##########
+incr_mux_phrase_model_factory_la_SOURCES=	\
+$(incr_mux_phrase_model_factory_h)	\
+$(incr_mux_phrase_model_factory_defs)
+incr_mux_phrase_model_factory_la_LIBADD= libthot.la
+incr_mux_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 pfsm_ecm_for_wg_factory_la_SOURCES= $(pfsm_ecm_for_wg_factory_h)	\
@@ -676,7 +699,8 @@ translation_constraints_factory_la_LIBADD= libthot.la
 translation_constraints_factory_la_LDFLAGS= -module
 
 ##########
-multi_stack_decoder_rec__swli_factory_la_SOURCES= $(multi_stack_decoder_rec__swli_factory_h)	\
+multi_stack_decoder_rec__swli_factory_la_SOURCES=	\
+$(multi_stack_decoder_rec__swli_factory_h)		\
 $(multi_stack_decoder_rec__swli_factory_defs)
 multi_stack_decoder_rec__swli_factory_la_LIBADD= libthot.la
 multi_stack_decoder_rec__swli_factory_la_LDFLAGS= -module

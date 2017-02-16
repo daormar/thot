@@ -27,6 +27,7 @@
 /home/dortiz/smt/software/alig_models/phrase_models WbaIncrPhraseModelFactory
 /home/dortiz/smt/software/alig_models/phrase_models BdbPhraseModelFactory
 /home/dortiz/smt/software/alig_models/phrase_models FastBdbPhraseModelFactory
+/home/dortiz/smt/software/alig_models/phrase_models IncrMuxPhraseModelFactory
 /home/dortiz/smt/software/error_correction thot_wg_proc
 /home/dortiz/smt/software/error_correction NonPbEcModelForNbUcatFactory
 /home/dortiz/smt/software/error_correction PfsmEcmForWgFactory
@@ -45,6 +46,7 @@
 /home/dortiz/smt/software/stack_dec KbMiraLlWuFactory
 /home/dortiz/smt/software/stack_dec MiraBleuFactory
 /home/dortiz/smt/software/stack_dec MiraWerFactory
+/home/dortiz/smt/software/stack_dec MiraGtmFactory
 /home/dortiz/smt/software/stack_dec TranslationConstraintsFactory
 /home/dortiz/smt/software/stack_dec WgUncoupledAssistedTransSwLiFactory
 /home/dortiz/smt/software/stack_dec multi_stack_decoder_rec__swli_factory
