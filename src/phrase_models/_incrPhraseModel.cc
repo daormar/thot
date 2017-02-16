@@ -242,9 +242,7 @@ bool _incrPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
                                            NbestTableNode<PhraseTransTableNodeData>& nbt,
                                            int N/*=-1*/) 
 {  
-  bool b=basePhraseTablePtr->getNbestForTrg(t,nbt,N);
-    
-  return b;
+  return basePhraseTablePtr->getNbestForTrg(t,nbt,N);
 }
 
 //-------------------------
