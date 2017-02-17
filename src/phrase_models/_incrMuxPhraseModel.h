@@ -182,13 +182,16 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
         // size function
     size_t size(void);
 
-        // model index related functions
+        // Get model information
     int getNumModels(void);
+    BasePhraseModel* getModelPtr(int idx);
+    virtual std::string getModelPrefixFileName(int idx)=0;
+    virtual std::string getModelStatus(int idx)=0;
+    
+        // Model index related functions
     int getModelIndex(void);
     void setModelIndex(int idx);
     void resetModelIndex(void);
-    virtual std::string getModelPrefixFileName(int idx)=0;
-    virtual std::string getModelStatus(int idx)=0;
     
         // destructor
     ~_incrMuxPhraseModel();

@@ -678,6 +678,15 @@ size_t _incrMuxPhraseModel::size(void)
 }
 
 //-------------------------
+BasePhraseModel* _incrMuxPhraseModel::getModelPtr(int idx)
+{
+  if(idx>=(int)modelPtrVec.size())
+    return NULL;
+  else
+    return modelPtrVec[idx];
+}
+
+//-------------------------
 int _incrMuxPhraseModel::getNumModels(void)
 {
   return modelPtrVec.size();
