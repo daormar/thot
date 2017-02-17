@@ -184,7 +184,6 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
 
         // Get model information
     int getNumModels(void);
-    BasePhraseModel* getModelPtr(int idx);
     virtual std::string getModelPrefixFileName(int idx)=0;
     virtual std::string getModelStatus(int idx)=0;
     
