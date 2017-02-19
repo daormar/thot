@@ -4,7 +4,7 @@
 # import modules
 import io, sys, getopt
 
-import thot_smt_preproc as smtpr
+from thot_smt_preproc import tokenize
 
 ##################################################
 def print_help():
@@ -46,7 +46,7 @@ def main(argv):
     # read file line by line
     for line in file:
         line=line.strip("\n")
-        tokens = smtpr.tokenize(line)
+        tokens = tokenize(line)
         tok_sent = u' '.join(tokens)
         print tok_sent.encode("utf-8")
     file.close()

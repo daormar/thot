@@ -59,16 +59,23 @@ int TakeParameters(int argc,char *argv[]);
 
 //--------------- Global variables -----------------------------------
 
-char phraseModelFileName[256];
-char phrasePairsFileName[256];
-char phrase[256];
 bool obtInvTrans;
+bool p_given;
+bool q_given;
+bool f_given;
+std::string phraseModelFileName;
+std::string phrasePairsFileName;
+std::string phraseFileName;
+std::string phrase;
 
 //--------------- Function Definitions -------------------------------
 
-int p_option(BasePhraseModel* pbModelPtr);
+void process_phrase(BasePhraseModel* pbModelPtr,
+                    Vector<std::string> phraseVec);
 void print_trans_for_phrase(BasePhraseModel* pbModelPtr,
                             Vector<string> phraseVec);
+int p_option(BasePhraseModel* pbModelPtr);
+int q_option(BasePhraseModel* pbModelPtr);
 int f_option(BasePhraseModel* pbModelPtr);
 void printUsage(void);
 int TakeParameters(int argc,char *argv[]);
@@ -116,15 +123,14 @@ int main(int argc,char *argv[])
       return ERROR;
     }
 
+        // Process options
     int ret;
-    if(phrase[0]!=0)
-    {
+    if(p_given)
       ret=p_option(pbModelPtr);
-    }
-    else
-    {
+    if(q_given)
+      ret=q_option(pbModelPtr);
+    if(f_given)
       ret=f_option(pbModelPtr);
-    }
 
         // Release objects and close modules
     delete pbModelPtr;
@@ -139,51 +145,25 @@ int main(int argc,char *argv[])
 }
 
 //---------------
-int p_option(BasePhraseModel* pbModelPtr)
+void process_phrase(BasePhraseModel* pbModelPtr,
+                    Vector<std::string> phraseVec)
 {
-  if(pbModelPtr->load(phraseModelFileName)==0)
+  for(unsigned int i=0;i<phraseVec.size();++i)
   {
-    Vector<string> phraseVec;
-    double total_time=0,elapsed_ant,elapsed,ucpu,scpu;
-    ctimer(&elapsed_ant,&ucpu,&scpu);
-    
-        // Print parameters
-    cerr<<"Phrase: "<<phrase<<endl;
-    cerr<<"Inverse-translation flag: "<<obtInvTrans<<endl;
-
-    phraseVec=StrProcUtils::stringToStringVector(phrase);
-
-        // Generate all subphrases and obtain translation options for
-        // each of them
-    for(unsigned int i=0;i<phraseVec.size();++i)
+    for(unsigned int j=i;j<phraseVec.size();++j)
     {
-      for(unsigned int j=i;j<phraseVec.size();++j)
+      Vector<string> subPhraseVec;
+      cout<<"* Translations for: \"";
+      for(unsigned int k=i;k<=j;++k)
       {
-        Vector<string> subPhraseVec;
-        cout<<"* Translations for: \"";
-        for(unsigned int k=i;k<=j;++k)
-        {
-          subPhraseVec.push_back(phraseVec[k]);
-          if(k!=i) cout<<" ";
-          cout<<phraseVec[k];
-        }
-        cout<<"\""<<endl;
-    
-        print_trans_for_phrase(pbModelPtr,subPhraseVec);
+        subPhraseVec.push_back(phraseVec[k]);
+        if(k!=i) cout<<" ";
+        cout<<phraseVec[k];
       }
+      cout<<"\""<<endl;
+      
+      print_trans_for_phrase(pbModelPtr,subPhraseVec);
     }
-
-        // Obtain total time spent
-    ctimer(&elapsed,&ucpu,&scpu);  
-    total_time+=elapsed-elapsed_ant;
-
-    cerr<<"Total retrieving time in secs: "<<total_time<<endl;
-    
-    return OK;
-  }
-  else
-  {
-    return ERROR;
   }
 }
 
@@ -222,22 +202,95 @@ void print_trans_for_phrase(BasePhraseModel* pbModelPtr,
 }
 
 //---------------
+int p_option(BasePhraseModel* pbModelPtr)
+{
+  if(pbModelPtr->load(phraseModelFileName.c_str())==0)
+  {
+    double total_time=0,elapsed_ant,elapsed,ucpu,scpu;
+    ctimer(&elapsed_ant,&ucpu,&scpu);
+    
+        // Print parameters
+    cerr<<"Phrase: "<<phrase<<endl;
+    cerr<<"Inverse-translation flag: "<<obtInvTrans<<endl;
+
+        // Generate all subphrases and obtain translation options for
+        // each of them
+    Vector<std::string> phraseVec=StrProcUtils::stringToStringVector(phrase);
+    process_phrase(pbModelPtr,phraseVec);
+    
+        // Obtain total time spent
+    ctimer(&elapsed,&ucpu,&scpu);  
+    total_time+=elapsed-elapsed_ant;
+
+    cerr<<"Total retrieving time in secs: "<<total_time<<endl;
+    
+    return OK;
+  }
+  else
+  {
+    return ERROR;
+  }
+}
+
+//---------------
+int q_option(BasePhraseModel* pbModelPtr)
+{
+  awkInputStream awk;
+
+      // Open input file
+  if(awk.open(phraseFileName.c_str())==ERROR)
+  {
+    cerr<<"Error in file with phrases, file "<<phraseFileName<<" does not exist.\n";
+    return ERROR;
+  }
+
+      // Load model
+  if(pbModelPtr->load(phraseModelFileName.c_str())==0)
+  {
+    Vector<std::string> wordVec;
+    LgProb lp;
+
+        // Read input
+    while(awk.getln())
+    {
+      if(awk.NF>=1)
+      {
+        wordVec.clear();
+        for(unsigned int i=1;i<=awk.NF;++i)
+          wordVec.push_back(awk.dollar(i)); 
+
+        cout<<"***** Processing line "<<awk.FNR<<endl;
+        
+            // Generate all subphrases and obtain translation options for
+            // each of them
+        process_phrase(pbModelPtr,wordVec);
+      }
+    }
+    return OK;
+  }
+  else
+  {
+    return ERROR;
+  }
+}
+
+//---------------
 int f_option(BasePhraseModel* pbModelPtr)
 {
   awkInputStream awk;
 
       // Open input file
-  if(awk.open(phrasePairsFileName)==ERROR)
+  if(awk.open(phrasePairsFileName.c_str())==ERROR)
   {
     cerr<<"Error in file with phrase pairs, file "<<phrasePairsFileName<<" does not exist.\n";
     return ERROR;
   }
 
       // Load model
-  if(pbModelPtr->load(phraseModelFileName)==0)
+  if(pbModelPtr->load(phraseModelFileName.c_str())==0)
   {
-    Vector<std::string> fileSrcSentVec;
-    Vector<std::string> fileTrgSentVec;
+    Vector<std::string> srcWordVec;
+    Vector<std::string> trgWordVec;
     LgProb lp;
 
         // Read input
@@ -246,27 +299,27 @@ int f_option(BasePhraseModel* pbModelPtr)
       if(awk.NF>=3)
       {
         unsigned int i=1; 
-        fileSrcSentVec.clear();
+        srcWordVec.clear();
         while(i<=awk.NF && strcmp("|||",awk.dollar(i).c_str())!=0)	
         {
-          fileSrcSentVec.push_back(awk.dollar(i)); 
+          srcWordVec.push_back(awk.dollar(i)); 
           ++i;
         }
         ++i;
-        fileTrgSentVec.clear();
+        trgWordVec.clear();
         while(i<=awk.NF && strcmp("|||",awk.dollar(i).c_str())!=0)	
         {
-          fileTrgSentVec.push_back(awk.dollar(i));			   
+          trgWordVec.push_back(awk.dollar(i));			   
           ++i; 
         }
             // Process sentence pair
         if(obtInvTrans)
         {
-          lp=pbModelPtr->strLogps_t_(fileSrcSentVec,fileTrgSentVec);
+          lp=pbModelPtr->strLogps_t_(srcWordVec,trgWordVec);
         }
         else
         {
-          lp=pbModelPtr->strLogpt_s_(fileSrcSentVec,fileTrgSentVec);     
+          lp=pbModelPtr->strLogpt_s_(srcWordVec,trgWordVec);     
         }
         cout<<awk.dollar(0)<<" ||| "<<lp<<endl;
         cerr<<awk.dollar(0)<<" ||| "<<lp.get_p()<<endl;
@@ -292,25 +345,45 @@ int TakeParameters(int argc,char *argv[])
  }
  
  /* Takes the model file name */
- err=readString(argc,argv, "-l", phraseModelFileName);
+ err=readSTLstring(argc,argv, "-l", &phraseModelFileName);
  if(err==-1)
  {
    printUsage();
    return 1;
  }
    
- /* Takes -p or -f option */
- phrase[0]=0;
- phrasePairsFileName[0]=0;
- err=readString(argc,argv, "-p", phrase);
+ /* Takes -p, -q or -f option */
+ p_given=true;
+ err=readSTLstring(argc,argv, "-p", &phrase);
  if(err==-1)
  {
-   err=readString(argc,argv, "-f", phrasePairsFileName);
-   if(err==-1)
-   {
-     printUsage();
-     return 1;
-   }
+   p_given=false;
+ }
+ 
+ q_given=true;
+ err=readSTLstring(argc,argv, "-q", &phraseFileName);
+ if(err==-1)
+ {
+   q_given=false;
+ }
+
+ f_given=true;
+ err=readSTLstring(argc,argv, "-f", &phrasePairsFileName);
+ if(err==-1)
+ {
+   f_given=false;
+ }
+
+ if(!p_given && !q_given && !f_given)
+ {
+   printUsage();
+   return 1;
+ }
+
+ if(p_given+q_given+f_given > 1)
+ {
+   printUsage();
+   return 1;
  }
  
  /* Verify inverse translation option */
@@ -327,11 +400,13 @@ int TakeParameters(int argc,char *argv[])
 //--------------------------------
 void printUsage(void)
 {
- cerr<<"Usage: thot_query_pm    -l <string> {-p <string> |\n";
+ cerr<<"Usage: thot_query_pm    -l <string> {-p <string> | -q <string> |\n";
  cerr<<"                        -f <string>} [-i]\n\n";
  cerr<<"-l <string>             Phrase model file name for load.\n";
  cerr<<"-p <string>             Obtain translations stored in the model for\n";
  cerr<<"                        \"string\" and all its sub-phrases.\n";
+ cerr<<"-q <string>             The same as -p option, but the strings are given\n";
+ cerr<<"                        in a text file.\n"; 
  cerr<<"-f <string>             Return log-prob for each phrase pair given in\n";
  cerr<<"                        the file \"string\".\n";
  cerr<<"                        File format: <src_phrase> ||| <trg_phrase>\n";

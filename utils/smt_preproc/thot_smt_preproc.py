@@ -1755,7 +1755,10 @@ class Tokenizer:
 
 ##################################################
 def tokenize(string):
-    tokenizer = Tokenizer()
+    if 'tokenizer' not in globals():
+        global tokenizer
+        tokenizer = Tokenizer()
+
     skel = annotated_string_to_xml_skeleton(string)
     for idx, (is_tag, txt) in enumerate(skel):
         if is_tag:
