@@ -76,6 +76,9 @@ int step_by_step_simplex(double start[],
 	
   double fsum,favg,cent;
 
+      // Initialize nfunk
+  *nfunk=0;
+  
       // Initialize curr_ftol
   *curr_ftol=DBL_MAX;
   
