@@ -216,8 +216,6 @@ int initPhrModel(void)
     cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
     return ERROR;
   }
-  phrModelInfoPtr->phraseModelPars.ptsWeight=1.0;
-  phrModelInfoPtr->phraseModelPars.pstWeight=1.0;
   
   swModelInfoPtr=new SwModelInfo;
   swModelInfoPtr->swAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
