@@ -92,7 +92,7 @@ bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
         }
       }
           // Check if main model was found
-      if(modelIndex!=0)
+      if(modelIndex!=MAIN_MUX_PMODEL_INDEX)
       {
         cerr<<"Error: the first model entry should be marked as main"<<endl;
         return ERROR;
@@ -337,7 +337,7 @@ void IncrMuxPhraseModel::clear(void)
 {
   srcGtlDataMapVec.clear();
   trgGtlDataMapVec.clear();
-  modelIndex=INVALID_PMODEL_INDEX;
+  modelIndex=INVALID_MUX_PMODEL_INDEX;
   swVocPtr->clear();
   tmTypeVec.clear();
   modelFileNameVec.clear();
