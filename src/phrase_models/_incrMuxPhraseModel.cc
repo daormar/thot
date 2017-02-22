@@ -37,7 +37,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 _incrMuxPhraseModel::_incrMuxPhraseModel(void)
 {
-  modelIndex=INVALID_PMODEL_INDEX;
+  modelIndex=INVALID_MUX_PMODEL_INDEX;
   swVocPtr=new SingleWordVocab;
 }
 
@@ -201,9 +201,25 @@ LgProb _incrMuxPhraseModel::srcSegmLenLgProb(unsigned int x_k,
 }
 
 //-------------------------
+LgProb _incrMuxPhraseModel::idxSrcSegmLenLgProb(int idx,
+                                                unsigned int x_k,
+                                                unsigned int x_km1,
+                                                unsigned int srcLen)
+{
+  return modelPtrVec[idx]->srcSegmLenLgProb(x_k,x_km1,srcLen);
+}
+
+//-------------------------
 LgProb _incrMuxPhraseModel::trgCutsLgProb(int offset)
 {
   return modelPtrVec[modelIndex]->trgCutsLgProb(offset);
+}
+
+//-------------------------
+LgProb _incrMuxPhraseModel::idxTrgCutsLgProb(int idx,
+                                             int offset)
+{
+  return modelPtrVec[idx]->trgCutsLgProb(offset);
 }
 
 //-------------------------
@@ -216,11 +232,30 @@ LgProb _incrMuxPhraseModel::trgSegmLenLgProb(unsigned int k,
 }
 
 //-------------------------
+LgProb _incrMuxPhraseModel::idxTrgSegmLenLgProb(int idx,
+                                                unsigned int k,
+                                                const SentSegmentation& trgSegm,
+                                                unsigned int trgLen,
+                                                unsigned int lastSrcSegmLen)
+{
+  return modelPtrVec[idx]->trgSegmLenLgProb(k,trgSegm,trgLen,lastSrcSegmLen);
+}
+
+//-------------------------
 LgProb _incrMuxPhraseModel::logpt_s_(const Vector<WordIndex>& s,
                                      const Vector<WordIndex>& t)
 {
   return modelPtrVec[modelIndex]->logpt_s_(srcMapGlobalToLocalWidxVec(modelIndex,s),
                                            trgMapGlobalToLocalWidxVec(modelIndex,t));
+}
+
+//-------------------------
+LgProb _incrMuxPhraseModel::idxLogpt_s_(int idx,
+                                        const Vector<WordIndex>& s,
+                                        const Vector<WordIndex>& t)
+{
+  return modelPtrVec[idx]->logpt_s_(srcMapGlobalToLocalWidxVec(idx,s),
+                                    trgMapGlobalToLocalWidxVec(idx,t));
 }
 
 //-------------------------
@@ -232,27 +267,88 @@ LgProb _incrMuxPhraseModel::logps_t_(const Vector<WordIndex>& s,
 }
 
 //-------------------------
+LgProb _incrMuxPhraseModel::idxLogps_t_(int idx,
+                                        const Vector<WordIndex>& s,
+                                        const Vector<WordIndex>& t)
+{
+  return modelPtrVec[idx]->logps_t_(srcMapGlobalToLocalWidxVec(idx,s),
+                                    trgMapGlobalToLocalWidxVec(idx,t));
+}
+
+//-------------------------
 bool _incrMuxPhraseModel::getTransFor_s_(const Vector<WordIndex>& s,
                                          _incrMuxPhraseModel::TrgTableNode& trgtn)
 {
-  return modelPtrVec[modelIndex]->getTransFor_s_(srcMapGlobalToLocalWidxVec(modelIndex,s),
-                                                 trgtn);
+      // Obtain translations for local model
+  _incrMuxPhraseModel::TrgTableNode localTrgtn;
+  bool ret=modelPtrVec[modelIndex]->getTransFor_s_(srcMapGlobalToLocalWidxVec(modelIndex,s),
+                                                   localTrgtn);
+      // Map local word indices to global vocabulary
+  trgtn.clear();
+  _incrMuxPhraseModel::TrgTableNode::iterator iter;
+  for(iter=localTrgtn.begin();iter!=localTrgtn.end();++iter)
+  {
+    Vector<WordIndex> widxVec=trgMapLocalToGlobalWidxVec(modelIndex,iter->first);
+    trgtn.insert(std::make_pair(widxVec,iter->second));
+  }
+  return ret;
 }
 
 //-------------------------
 bool _incrMuxPhraseModel::getTransFor_t_(const Vector<WordIndex>& t,
                                          _incrMuxPhraseModel::SrcTableNode& srctn)
 {
-  return modelPtrVec[modelIndex]->getTransFor_t_(trgMapGlobalToLocalWidxVec(modelIndex,t),
-                                                 srctn);
+      // Obtain translations for local model
+  _incrMuxPhraseModel::SrcTableNode localSrctn;
+  bool ret=modelPtrVec[modelIndex]->getTransFor_t_(trgMapGlobalToLocalWidxVec(modelIndex,t),
+                                                   localSrctn);
+      // Map local word indices to global vocabulary
+  srctn.clear();
+  _incrMuxPhraseModel::SrcTableNode::iterator iter;
+  for(iter=localSrctn.begin();iter!=localSrctn.end();++iter)
+  {
+    Vector<WordIndex> widxVec=srcMapLocalToGlobalWidxVec(modelIndex,iter->first);
+    srctn.insert(std::make_pair(widxVec,iter->second));
+  }
+  return ret;
+}
+
+//-------------------------
+bool _incrMuxPhraseModel::getTransVecFor_t_(const Vector<WordIndex>& t,
+                                            Vector<SrcTableNode>& srctnVec)
+{
+  bool ret=true;
+  srctnVec.clear();
+  SrcTableNode srctn;
+  for(unsigned int i=0;i<modelPtrVec.size();++i)
+  {
+    srctnVec.push_back(srctn);
+    bool localRet=modelPtrVec[i]->getTransFor_t_(trgMapGlobalToLocalWidxVec(i,t),
+                                                 srctnVec.back());
+    if(!localRet)
+      ret=false;
+  }
+  return ret;
 }
 
 //-------------------------
 bool _incrMuxPhraseModel::getNbestTransFor_s_(const Vector<WordIndex>& s,
                                               NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
-  return modelPtrVec[modelIndex]->getNbestTransFor_s_(srcMapGlobalToLocalWidxVec(modelIndex,s),
-                                                      nbt);
+      // Obtain translations for local model
+  NbestTableNode<PhraseTransTableNodeData> localNbt;
+  bool ret=modelPtrVec[modelIndex]->getNbestTransFor_s_(srcMapGlobalToLocalWidxVec(modelIndex,s),
+                                                        localNbt);
+      // Map local word indices to global vocabulary
+  nbt.clear();
+  NbestTableNode<PhraseTransTableNodeData>::iterator iter;
+  for(iter=localNbt.begin();iter!=localNbt.end();++iter)
+  { 
+    Vector<WordIndex> widxVec=trgMapLocalToGlobalWidxVec(modelIndex,iter->second);
+    nbt.insert(iter->first,widxVec);
+  }
+  
+  return ret;
 }
 
 //-------------------------	
@@ -260,8 +356,39 @@ bool _incrMuxPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
                                               NbestTableNode<PhraseTransTableNodeData>& nbt,
                                               int N/*=-1*/) 
 {  
-  return modelPtrVec[modelIndex]->getNbestTransFor_t_(trgMapGlobalToLocalWidxVec(modelIndex,t),
-                                                      nbt);
+      // Obtain translations for local model
+  NbestTableNode<PhraseTransTableNodeData> localNbt;
+  bool ret=modelPtrVec[modelIndex]->getNbestTransFor_t_(trgMapGlobalToLocalWidxVec(modelIndex,t),
+                                                        localNbt);
+      // Map local word indices to global vocabulary
+  nbt.clear();
+  NbestTableNode<PhraseTransTableNodeData>::iterator iter;
+  for(iter=localNbt.begin();iter!=localNbt.end();++iter)
+  { 
+    Vector<WordIndex> widxVec=srcMapLocalToGlobalWidxVec(modelIndex,iter->second);
+    nbt.insert(iter->first,widxVec);
+  }
+  
+  return ret;
+}
+
+//-------------------------	
+bool _incrMuxPhraseModel::getNbestTransVecFor_t_(const Vector<WordIndex>& t,
+                                                 Vector<NbestTableNode<PhraseTransTableNodeData> >& nbtVec,
+                                                 int N/*=-1*/) 
+{  
+  bool ret=true;
+  nbtVec.clear();
+  NbestTableNode<PhraseTransTableNodeData> nbt;
+  for(unsigned int i=0;i<modelPtrVec.size();++i)
+  {
+    nbtVec.push_back(nbt);
+    bool localRet=modelPtrVec[i]->getNbestTransFor_t_(trgMapGlobalToLocalWidxVec(i,t),
+                                                      nbtVec.back());
+    if(!localRet)
+      ret=false;
+  }
+  return ret;
 }
 
 //-------------------------
@@ -585,6 +712,23 @@ WordIndex _incrMuxPhraseModel::srcMapGlobalToLocalWidx(unsigned int index,
 }
 
 //-------------------------
+Vector<WordIndex> _incrMuxPhraseModel::srcMapLocalToGlobalWidxVec(unsigned int index,
+                                                                  const Vector<WordIndex>& widxVec)
+{
+      // Obtain string vector
+  Vector<std::string> strVec;
+  for(unsigned int i=0;i<widxVec.size();++i)
+  {
+    strVec.push_back(modelPtrVec[modelIndex]->wordIndexToSrcString(widxVec[i]));
+  }
+
+      // Obtain global word index vector
+  Vector<WordIndex> localWidxVec;
+  srcGlobalStrVecToWidxVec(strVec,localWidxVec);
+  return localWidxVec;
+}
+
+//-------------------------
 Vector<WordIndex> _incrMuxPhraseModel::trgMapGlobalToLocalWidxVec(unsigned int index,
                                                                   const Vector<WordIndex>& widxVec)
 {
@@ -617,6 +761,23 @@ WordIndex _incrMuxPhraseModel::trgMapGlobalToLocalWidx(unsigned int index,
     }
     return w;
   }
+}
+
+//-------------------------
+Vector<WordIndex> _incrMuxPhraseModel::trgMapLocalToGlobalWidxVec(unsigned int index,
+                                                                  const Vector<WordIndex>& widxVec)
+{
+      // Obtain string vector
+  Vector<std::string> strVec;
+  for(unsigned int i=0;i<widxVec.size();++i)
+  {
+    strVec.push_back(modelPtrVec[modelIndex]->wordIndexToTrgString(widxVec[i]));
+  }
+
+      // Obtain global word index vector
+  Vector<WordIndex> localWidxVec;
+  trgGlobalStrVecToWidxVec(strVec,localWidxVec);
+  return localWidxVec;
 }
 
 //-------------------------
@@ -699,7 +860,7 @@ void _incrMuxPhraseModel::setModelIndex(int idx)
 //-------------------------
 void _incrMuxPhraseModel::resetModelIndex(void)
 {
-  if(modelIndex!=INVALID_PMODEL_INDEX && modelPtrVec.size()>=1)
+  if(modelIndex!=INVALID_MUX_PMODEL_INDEX && modelPtrVec.size()>=1)
     modelIndex=0;
 }
 

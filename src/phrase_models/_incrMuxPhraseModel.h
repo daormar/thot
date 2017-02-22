@@ -52,7 +52,8 @@ using namespace std;
 
 //--------------- Constants ------------------------------------------
 
-#define INVALID_PMODEL_INDEX    -1
+#define INVALID_MUX_PMODEL_INDEX  -1
+#define MAIN_MUX_PMODEL_INDEX      0
 
 //--------------- typedefs -------------------------------------------
 
@@ -108,40 +109,64 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
                             unsigned int srcLen);
         // obtains the log-probability for the length of a source
         // segment log(p(x_k|x_{k-1},srcLen))
+    LgProb idxSrcSegmLenLgProb(int idx,
+                               unsigned int x_k,
+                               unsigned int x_km1,
+                               unsigned int srcLen);
+        // access model with idx index
 
     LgProb trgCutsLgProb(int offset);
         // Returns phrase alignment log-probability given the offset
         // between the last target phrase and the new one
         // log(p(y_k|y_{k-1}))
-
+    LgProb idxTrgCutsLgProb(int idx,
+                            int offset);
+        // access model with idx index
+    
     LgProb trgSegmLenLgProb(unsigned int k,
                             const SentSegmentation& trgSegm,
                             unsigned int trgLen,
                             unsigned int lastSrcSegmLen);
         // obtains the log-probability for the length of a target
         // segment log(p(z_k|y_k,x_k-x_{k-1},trgLen))
-
+    LgProb idxTrgSegmLenLgProb(int idx,
+                               unsigned int k,
+                               const SentSegmentation& trgSegm,
+                               unsigned int trgLen,
+                               unsigned int lastSrcSegmLen);
+        // access model with idx index
+    
     PhrasePairInfo infSrcTrg(const Vector<WordIndex>& s,
                              const Vector<WordIndex>& t,
                              bool& found);
 
 	LgProb logpt_s_(const Vector<WordIndex>& s,
                     const Vector<WordIndex>& t);
+	LgProb idxLogpt_s_(int idx,
+                       const Vector<WordIndex>& s,
+                       const Vector<WordIndex>& t);
 	
 	LgProb logps_t_(const Vector<WordIndex>& s,
                     const Vector<WordIndex>& t);
-
+	LgProb idxLogps_t_(int idx,
+                       const Vector<WordIndex>& s,
+                       const Vector<WordIndex>& t);
 
         // Functions to obtain translations for source or target phrases
     bool getTransFor_s_(const Vector<WordIndex>& s,
                         TrgTableNode& trgtn);
     bool getTransFor_t_(const Vector<WordIndex>& t,
                         SrcTableNode& srctn);
+    bool getTransVecFor_t_(const Vector<WordIndex>& t,
+                           Vector<SrcTableNode>& srctnVec);
 	bool getNbestTransFor_s_(const Vector<WordIndex>& s,
                              NbestTableNode<PhraseTransTableNodeData>& nbt);
 	bool getNbestTransFor_t_(const Vector<WordIndex>& t,
                              NbestTableNode<PhraseTransTableNodeData>& nbt,
                              int N=-1);
+	bool getNbestTransVecFor_t_(const Vector<WordIndex>& t,
+                                Vector<NbestTableNode<PhraseTransTableNodeData> >& nbtVec,
+                                int N=-1);
         
         // Source vocabulary functions
 	size_t getSrcVocabSize(void)const;
@@ -225,11 +250,15 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
                                                  const Vector<WordIndex>& widxVec);
     WordIndex srcMapGlobalToLocalWidx(unsigned int index,
                                       const WordIndex& widx);
+    Vector<WordIndex> srcMapLocalToGlobalWidxVec(unsigned int index,
+                                                 const Vector<WordIndex>& widxVec);
     bool existTrgGlobalString(const std::string& str)const;
     Vector<WordIndex> trgMapGlobalToLocalWidxVec(unsigned int index,
                                                  const Vector<WordIndex>& widxVec);
     WordIndex trgMapGlobalToLocalWidx(unsigned int index,
                                       const WordIndex& widx);
+    Vector<WordIndex> trgMapLocalToGlobalWidxVec(unsigned int index,
+                                                 const Vector<WordIndex>& widxVec);
   
         // Auxiliary functions to handle strings
     Vector<string> stringToStringVector(string s);
