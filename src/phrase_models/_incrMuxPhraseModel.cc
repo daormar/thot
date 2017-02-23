@@ -304,8 +304,7 @@ bool _incrMuxPhraseModel::getTransFor_t_(const Vector<WordIndex>& t,
                                                    localSrctn);
       // Map local word indices to global vocabulary
   srctn.clear();
-  _incrMuxPhraseModel::SrcTableNode::iterator iter;
-  for(iter=localSrctn.begin();iter!=localSrctn.end();++iter)
+  for(_incrMuxPhraseModel::SrcTableNode::iterator iter=localSrctn.begin();iter!=localSrctn.end();++iter)
   {
     Vector<WordIndex> widxVec=srcMapLocalToGlobalWidxVec(modelIndex,iter->first);
     srctn.insert(std::make_pair(widxVec,iter->second));
@@ -319,12 +318,21 @@ bool _incrMuxPhraseModel::getTransVecFor_t_(const Vector<WordIndex>& t,
 {
   bool ret=true;
   srctnVec.clear();
-  SrcTableNode srctn;
   for(unsigned int i=0;i<modelPtrVec.size();++i)
   {
-    srctnVec.push_back(srctn);
+        // Obtain translations for local model
+    _incrMuxPhraseModel::SrcTableNode localSrctn;
     bool localRet=modelPtrVec[i]->getTransFor_t_(trgMapGlobalToLocalWidxVec(i,t),
-                                                 srctnVec.back());
+                                                 localSrctn);
+        // Map local word indices to global vocabulary
+    SrcTableNode srctn;
+    for(_incrMuxPhraseModel::SrcTableNode::iterator iter=localSrctn.begin();iter!=localSrctn.end();++iter)
+    {
+      Vector<WordIndex> widxVec=srcMapLocalToGlobalWidxVec(modelIndex,iter->first);
+      srctn.insert(std::make_pair(widxVec,iter->second));
+    }
+    srctnVec.push_back(srctn);
+
     if(!localRet)
       ret=false;
   }
@@ -369,25 +377,6 @@ bool _incrMuxPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
     nbt.insert(iter->first,widxVec);
   }
   
-  return ret;
-}
-
-//-------------------------	
-bool _incrMuxPhraseModel::getNbestTransVecFor_t_(const Vector<WordIndex>& t,
-                                                 Vector<NbestTableNode<PhraseTransTableNodeData> >& nbtVec,
-                                                 int N/*=-1*/) 
-{  
-  bool ret=true;
-  nbtVec.clear();
-  NbestTableNode<PhraseTransTableNodeData> nbt;
-  for(unsigned int i=0;i<modelPtrVec.size();++i)
-  {
-    nbtVec.push_back(nbt);
-    bool localRet=modelPtrVec[i]->getNbestTransFor_t_(trgMapGlobalToLocalWidxVec(i,t),
-                                                      nbtVec.back());
-    if(!localRet)
-      ret=false;
-  }
   return ret;
 }
 

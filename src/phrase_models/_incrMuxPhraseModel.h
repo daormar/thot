@@ -164,9 +164,6 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
 	bool getNbestTransFor_t_(const Vector<WordIndex>& t,
                              NbestTableNode<PhraseTransTableNodeData>& nbt,
                              int N=-1);
-	bool getNbestTransVecFor_t_(const Vector<WordIndex>& t,
-                                Vector<NbestTableNode<PhraseTransTableNodeData> >& nbtVec,
-                                int N=-1);
         
         // Source vocabulary functions
 	size_t getSrcVocabSize(void)const;
