@@ -1,5 +1,5 @@
 /*
-incr_models package for statistical machine translation
+thot package for statistical machine translation
 Copyright (C) 2013 Daniel Ortiz-Mart\'inez
  
 This library is free software; you can redistribute it and/or
