@@ -151,10 +151,6 @@ bool IncrMuxPhraseModel::print(const char* prefix)
 {
   int ret=printTmEntries(prefix);
   if(ret==ERROR) return ERROR;
-
-  ret=printWeights(prefix);
-  if(ret==ERROR) return ERROR;  
-  return OK; 
 }
 
 //-------------------------
@@ -180,7 +176,7 @@ bool IncrMuxPhraseModel::printTmEntries(const char *fileName)
       std::string currModelFileName=obtainFileNameForTmEntry(fileName,i);
       outF<<tmTypeVec[i]<<" "<<currModelFileName<<" "<<modelStatusVec[i]<<endl;
 
-          // Print language model
+          // Print translation model
       bool ret=printTm(fileName,i);
       if(ret==ERROR)
         return ERROR;
@@ -250,30 +246,6 @@ std::string IncrMuxPhraseModel::obtainDirNameForTmEntry(const std::string fileDe
   std::string currDirName=fileDescDirName+"/"+modelStatusVec[entry_index];
 
   return currDirName;
-}
-
-//-------------------------
-bool IncrMuxPhraseModel::printWeights(const char *fileName)
-{  
-  int ret=printIntraModelWeights(fileName);
-  if(ret==ERROR)
-    return ERROR;
-
-  return OK;  
-}
-
-//---------------
-bool IncrMuxPhraseModel::printIntraModelWeights(const char *fileName)
-{
-      // Print tm entries
-  for(unsigned int i=0;i<tmTypeVec.size();++i)
-  {
-        // Print descriptor entry
-    std::string currModelFileName=obtainFileNameForTmEntry(fileName,i);
-
-        // TBD
-  }
-  return OK;
 }
 
 //-------------------------

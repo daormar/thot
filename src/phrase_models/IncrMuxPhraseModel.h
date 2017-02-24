@@ -71,10 +71,6 @@ class IncrMuxPhraseModel: public _incrMuxPhraseModel
         // Printing functions
     bool print(const char* prefix);
 
-        // Functions to load and print model weights
-    bool loadWeights(const char *fileName);
-    bool printWeights(const char *fileName);
-
         // clear function
     void clear(void);
 
