@@ -64,11 +64,11 @@ using namespace std;
 //--------------- Function Declarations -------------------------------
 
 int process_request(int s,
-                    const thot_server_pars& tds_pars,
+                    const thot_server_pars& ts_pars,
                     const ThotDecoderUserPars& tdu_pars,
                     bool &end);
-int processParameters(thot_server_pars tds_pars);
-int start_server(thot_server_pars tds_pars,
+int processParameters(thot_server_pars ts_pars);
+int start_server(thot_server_pars ts_pars,
                  ThotDecoderUserPars tdu_pars);
 void sigchld_handler(int s);
 int handleParameters(int argc,
@@ -76,9 +76,9 @@ int handleParameters(int argc,
                      thot_server_pars& pars);
 int takeParameters(int argc,
                    const Vector<std::string>& argv_stl,
-                   thot_server_pars& tds_pars);
-int checkParameters(thot_server_pars& tds_pars);
-void printParameters(thot_server_pars tds_pars);
+                   thot_server_pars& ts_pars);
+int checkParameters(thot_server_pars& ts_pars);
+void printParameters(thot_server_pars ts_pars);
 void printUsage(void);
 void version(void);
 
@@ -98,39 +98,51 @@ ThotDecoder* thotDecoderPtr;
 //--------------- main function
 int main(int argc,char *argv[])
 {
-  thot_server_pars tds_pars;
+  thot_server_pars ts_pars;
     
-  if(handleParameters(argc,argv,tds_pars)==ERROR)
+  if(handleParameters(argc,argv,ts_pars)==ERROR)
   {
     return ERROR;
   }
   else
   {
-    return processParameters(tds_pars);
+    return processParameters(ts_pars);
   }
 }
 
 //--------------- processParameters function
-int processParameters(thot_server_pars tds_pars)
+int processParameters(thot_server_pars ts_pars)
 {
       // Process configuration file
   ThotDecoderUserPars tdu_pars;
   thotDecoderPtr=new ThotDecoder;
-  int ret=thotDecoderPtr->initUsingCfgFile(tds_pars.c_str,tdu_pars,tds_pars.v_given);
+  int ret=thotDecoderPtr->initUsingCfgFile(ts_pars.c_str,tdu_pars,ts_pars.v_given);
   if(ret==ERROR)
   {
     delete thotDecoderPtr;
     return ERROR;
   }
 
-      // Parameters ok, start server...
-  int retCode=start_server(tds_pars,tdu_pars);
-  delete thotDecoderPtr;
-  return retCode;
+      // Parameters ok
+  if(ts_pars.w_given)
+  {
+        // Print weights
+    thotDecoderPtr->printModelWeights();
+    thotDecoderPtr->clearTrans();
+    delete thotDecoderPtr;
+    return OK;
+  }
+  else
+  {
+        // Start server
+    int retCode=start_server(ts_pars,tdu_pars);
+    delete thotDecoderPtr;
+    return retCode;
+  }
 }
 
 //--------------- start_server function
-int start_server(thot_server_pars tds_pars,
+int start_server(thot_server_pars ts_pars,
                  ThotDecoderUserPars tdu_pars)
 {
   int sockfd, new_fd;  // Use sockfd to listen to new connections
@@ -154,7 +166,7 @@ int start_server(thot_server_pars tds_pars,
     exit(1);
   }
   my_addr.sin_family = AF_INET;          // byte ordering used by the machine
-  my_addr.sin_port = htons(tds_pars.server_port); // byte ordering used by the network
+  my_addr.sin_port = htons(ts_pars.server_port); // byte ordering used by the network
   my_addr.sin_addr.s_addr = INADDR_ANY;  // fill with IP address
   memset(&(my_addr.sin_zero), '\0', 8);  // reset the rest of the data structure
 
@@ -179,7 +191,7 @@ int start_server(thot_server_pars tds_pars,
     exit(1);
   }
 
-  cerr<<"Listening to port "<< tds_pars.server_port <<"..."<<endl;
+  cerr<<"Listening to port "<< ts_pars.server_port <<"..."<<endl;
   
       // main accept() loop
   
@@ -191,13 +203,13 @@ int start_server(thot_server_pars tds_pars,
       perror("accept");
       continue;
     }
-    if(tds_pars.v_given)
+    if(ts_pars.v_given)
     {
       cerr<<"----------------------------------------------------"<<endl;
       cerr<<"Server: got connection from "<<inet_ntoa(their_addr.sin_addr)<<endl;
     }
 
-    process_request(new_fd,tds_pars,tdu_pars,end); 
+    process_request(new_fd,ts_pars,tdu_pars,end); 
   
 //    if (!fork())
 //    { // this is the child process
@@ -221,7 +233,7 @@ void sigchld_handler(int /*s*/)
 
 //--------------- process_requests function
 int process_request(int s,
-                    const thot_server_pars& tds_pars,
+                    const thot_server_pars& ts_pars,
                     const ThotDecoderUserPars& tdu_pars,
                     bool &end)
 {
@@ -237,7 +249,7 @@ int process_request(int s,
   std::string catResult;
   Vector<float> floatVec;
   RejectedWordsSet emptyRejWordsSet;
-  int verbose=tds_pars.v_given;
+  int verbose=ts_pars.v_given;
 
       // Get request code
   int server_request_code=BasicSocketUtils::recvInt(s);
@@ -333,7 +345,7 @@ int process_request(int s,
 //--------------- handleParameters function
 int handleParameters(int argc,
                      char *argv[],
-                     thot_server_pars& tds_pars)
+                     thot_server_pars& ts_pars)
 {
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
@@ -347,15 +359,15 @@ int handleParameters(int argc,
   }
   
   Vector<std::string> argv_stl=argv2argv_stl(argc,argv);
-  if(takeParameters(argc,argv_stl,tds_pars)==ERROR)
+  if(takeParameters(argc,argv_stl,ts_pars)==ERROR)
   {
     return ERROR;
   }
   else
   {
-    if(checkParameters(tds_pars)==OK)
+    if(checkParameters(ts_pars)==OK)
     {
-      printParameters(tds_pars);
+      printParameters(ts_pars);
       return OK;
     }
     else
@@ -368,7 +380,7 @@ int handleParameters(int argc,
 //--------------- takeparameters function
 int takeParameters(int argc,
                    const Vector<std::string>& argv_stl,
-                   thot_server_pars& tds_pars)
+                   thot_server_pars& ts_pars)
 {
   int i=1;
   unsigned int matched;
@@ -380,7 +392,7 @@ int takeParameters(int argc,
         // -c parameter
     if(argv_stl[i]=="-c" && !matched)
     {
-      tds_pars.c_given=true;
+      ts_pars.c_given=true;
       if(i==argc-1)
       {
         cerr<<"Error: no value for -c parameter."<<endl;
@@ -388,7 +400,7 @@ int takeParameters(int argc,
       }
       else
       {
-        tds_pars.c_str=argv_stl[i+1];
+        ts_pars.c_str=argv_stl[i+1];
         ++matched;
         ++i;
       }
@@ -397,7 +409,7 @@ int takeParameters(int argc,
         // -p parameter
     if(argv_stl[i]=="-p" && !matched)
     {
-      tds_pars.p_given=true;
+      ts_pars.p_given=true;
       if(i==argc-1)
       {
         cerr<<"Error: no value for -h parameter."<<endl;
@@ -405,16 +417,23 @@ int takeParameters(int argc,
       }
       else
       {
-        tds_pars.server_port=atoi(argv_stl[i+1].c_str());
+        ts_pars.server_port=atoi(argv_stl[i+1].c_str());
         ++matched;
         ++i;
       }
     }
 
+        // -w parameter
+    if(argv_stl[i]=="-w" && !matched)
+    {
+      ts_pars.w_given=true;
+      ++matched;
+    }
+
         // -v parameter
     if(argv_stl[i]=="-v" && !matched)
     {
-      tds_pars.v_given=true;
+      ts_pars.v_given=true;
       ++matched;
     }
 
@@ -430,9 +449,9 @@ int takeParameters(int argc,
 }
 
 //--------------- checkParameters function
-int checkParameters(thot_server_pars& tds_pars)
+int checkParameters(thot_server_pars& ts_pars)
 {
-  if(!tds_pars.c_given)
+  if(!ts_pars.c_given)
   {
     cerr<<"Error: -c parameter not given!"<<endl;
     return ERROR;
@@ -442,10 +461,11 @@ int checkParameters(thot_server_pars& tds_pars)
 }
 
 //--------------- printParameters function
-void printParameters(thot_server_pars tds_pars)
+void printParameters(thot_server_pars ts_pars)
 {
-  cerr<<"Server port: "<<tds_pars.server_port<<endl;
-  cerr<<"-v: "<<tds_pars.v_given<<endl;
+  cerr<<"Server port: "<<ts_pars.server_port<<endl;
+  cerr<<"-w: "<<ts_pars.w_given<<endl;
+  cerr<<"-v: "<<ts_pars.v_given<<endl;
 }
 
 //--------------- printUsage function
@@ -453,10 +473,11 @@ void printUsage(void)
 {
   cerr<<"thot_server written by Daniel Ortiz"<<endl;
   cerr<<"Usage: thot_server    -c <string>"<<endl;
-  cerr<<"                      [-p <int>] [ -v ] [--help] [--version]"<<endl;
+  cerr<<"                      [-p <int>] [ -w ] [ -v ] [--help] [--version]"<<endl;
   cerr<<endl;
   cerr<<"-c <string>    Configuration file"<<endl<<endl;  
   cerr<<"-p <int>       Port used by the server"<<endl<<endl;  
+  cerr<<"-w             Print model weights and exit"<<endl<<endl;  
   cerr<<"-v             Verbose mode"<<endl<<endl;
   cerr<<"--help         Print this help and exit"<<endl<<endl;
   cerr<<"--version      Output version information and exit"<<endl<<endl;
