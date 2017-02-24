@@ -584,24 +584,8 @@ loglin_upd()
 ########
 linear_interp_upd()
 {
-    # Check if tm file is a descriptor
-    is_desc=`check_if_file_is_desc ${newtmdevfile}`
-
-    if [ ${is_desc} -eq 1 ]; then
-        # Filter tables for the different translation models
-        tmdesc_dirname=`$DIRNAME ${newtmdevfile}`
-        for tm_entry in `list_tm_entry_info ${newtmdevfile}`; do
-            curr_tmtype=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$1}'`
-            curr_tmfile=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$2}'`
-            curr_status=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$3}'`
-            curr_tmfile_dirname=`$DIRNAME $curr_tmfile`
-            ${bindir}/thot_li_weight_upd -tm ${tmdesc_dirname}/${curr_tmfile} -t $scorpus -r $tcorpus -v \
-                2> ${outd}/liweights_tune.log || return 1
-        done
-    else
-        ${bindir}/thot_li_weight_upd -tm ${newtmdevfile} -t $scorpus -r $tcorpus -v \
-            2> ${outd}/liweights_tune.log || return 1
-    fi
+    ${bindir}/thot_li_weight_upd -tm ${newtmdevfile} -t $scorpus -r $tcorpus -v \
+        2> ${outd}/liweights_tune.log || return 1
 }
 
 ########
