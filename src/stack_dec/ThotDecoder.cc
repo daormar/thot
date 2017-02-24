@@ -1969,6 +1969,61 @@ bool ThotDecoder::printModels(int verbose/*=0*/)
 }
 
 //--------------------------
+int ThotDecoder::printModelWeights(void)
+{
+  pthread_mutex_lock(&atomic_op_mut);
+  /////////// begin of mutex 
+
+      // Print smt model weights
+  cout<<"- SMT model weights= ";
+  tdCommonVars.smtModelPtr->printWeights(cout);
+  cout<<endl;
+
+      // Print assisted translator weights
+  BaseAssistedTrans<SmtModel>* assistedTransPtr=tdCommonVars.dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseAssistedTransInitPars);
+  if(assistedTransPtr==NULL)
+  {
+    cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+
+  WgUncoupledAssistedTrans<SmtModel>* wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<SmtModel>*>(assistedTransPtr);
+  if(!wgUncoupledAssistedTransPtr)
+  {
+    cout<<"- Assisted translator weights= ";
+    assistedTransPtr->printWeights(cout);
+    cout << endl;
+  }
+  else
+  {
+    if(tdCommonVars.curr_ecm_valid_for_wg)
+    {
+      cout<<"- Assisted translator weights= ";
+      assistedTransPtr->printWeights(cout);
+      cout << endl;
+    }
+    else
+    {
+      cout<<"Warning: current error correcting model cannot be combined with word-graph based assisted translators"<<endl;
+    }
+  }
+
+      // Release memory
+  delete assistedTransPtr;
+  
+      // Print error correction model weights
+  cout<<"- Error correction model weights= ";
+  tdCommonVars.ecModelPtr->printWeights(cout);
+  cout<<endl;
+
+  
+  /////////// end of mutex 
+  pthread_mutex_unlock(&atomic_op_mut);
+
+  return OK;
+}
+
+//--------------------------
 int ThotDecoder::init_idx_data(size_t idx)
 {    
       // Create a translator instance

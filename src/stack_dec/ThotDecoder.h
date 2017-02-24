@@ -162,6 +162,9 @@ class ThotDecoder
       // Function to print the models
   bool printModels(int verbose=0);
 
+      // Model weights related functions
+  int printModelWeights(void);
+  
       // Destructor
   ~ThotDecoder();
 
