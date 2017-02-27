@@ -202,7 +202,7 @@ bool IncrMuxPhraseModel::printTm(const char* fileDescName,
   {
         // No file or directory with given name exists
         // Create directory
-    int ret = mkdir(currDirName.c_str(), S_IRUSR | S_IWUSR);
+    int ret = mkdir(currDirName.c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
     if(ret!=0)
     {
       cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<endl;
@@ -211,7 +211,7 @@ bool IncrMuxPhraseModel::printTm(const char* fileDescName,
   }
   else
   {
-    if(info.st_mode & S_IFMT)
+    if(info.st_mode & S_IFREG)
     {
           // A file with the same name existed
       cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<endl;
