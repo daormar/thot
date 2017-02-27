@@ -403,21 +403,37 @@ bool _incrPhraseModel::load_seglentable(const char *segmLengthTableFileName)
   if(logFileOpen()) logF<<"Loading segmentation length table from file "<<segmLengthTableFileName<<endl;
   return segLenTable.load_seglentable(segmLengthTableFileName);
 }
+
 //-------------------------
 bool _incrPhraseModel::print(const char *prefix)
 {
-  char ttableFileName[1024];
-  char segLenTableFileName[1024];
-  bool retVal;
-  
-  sprintf(ttableFileName,"%s.ttable",prefix);
-  retVal=printTTable(ttableFileName);
+      // Obtain file prefix
+  std::string mainFileName;
+  std::string absolutizedMainFileName;
+  if(fileIsDescriptor(prefix,mainFileName))
+  {
+    std::string descFileName=prefix;
+    absolutizedMainFileName=absolutizeModelFileName(descFileName,mainFileName);
+  }
+  else
+  {
+    absolutizedMainFileName=prefix;
+  }
+
+      // Print translation table
+  std::string ttableFileName=absolutizedMainFileName;
+  ttableFileName+=".ttable";
+  bool retVal=printTTable(ttableFileName.c_str());
   if(retVal) return ERROR;
 
       // Warning: generation of segmentation length tables is not
       // currently working
-  sprintf(segLenTableFileName,"%s.seglentable",prefix);
-  return printSegmLengthTable(segLenTableFileName);
+  std::string segLenTableFileName=absolutizedMainFileName;
+  segLenTableFileName+=".seglentable";
+  retVal=printSegmLengthTable(segLenTableFileName.c_str());
+  if(retVal) return ERROR;
+  
+  return OK;
 }
 
 //-------------------------
