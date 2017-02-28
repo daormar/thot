@@ -1229,25 +1229,6 @@ Score _phraseBasedTransModel<HYPOTHESIS>::heuristicLocaltd(const Hypothesis& hyp
       result+=srcJumpScore(jumps[k]);
 
     return result;
-
-    /* pair<PositionIndex,PositionIndex> leftGap; */
-    /* pair<PositionIndex,PositionIndex> rightGap; */
-    /* leftGap.first=0; */
-    /* leftGap.second=0; */
-    /* rightGap.first=MAX_SENTENCE_LENGTH_ALLOWED+1; */
-    /* rightGap.second=MAX_SENTENCE_LENGTH_ALLOWED+1; */
-    /* for(unsigned int i=0;i<gaps.size();++i) */
-    /* { */
-    /*   if(gaps[i].second<lastSrcPosCovered && leftGap.second<gaps[i].second) */
-    /*     leftGap=gaps[i]; */
-    /*   if(gaps[i].first>lastSrcPosCovered && rightGap.first>gaps[i].first) */
-    /*     rightGap=gaps[i]; */
-    /* } */
-    /* if(leftGap.first!=0) */
-    /*   result+=srcJumpScore(abs((int)leftGap.first-((int)lastSrcPosCovered+1))); */
-    /* if(rightGap.first!=MAX_SENTENCE_LENGTH_ALLOWED+1) */
-    /*   result+=srcJumpScore(abs((int)rightGap.first-((int)lastSrcPosCovered+1))); */
-    /* return result; */
   }
   else
   {
