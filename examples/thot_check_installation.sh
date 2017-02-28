@@ -225,7 +225,7 @@ fi
 echo ""
 
 # Remove directories for temporaries
-echo "*** Remove directories used to store temporary files..."
+echo "**** Remove directories used to store temporary files..."
 echo ""
 rm -rf $tmpdir
 
