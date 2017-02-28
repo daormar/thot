@@ -19,6 +19,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef _PhraseModelPars_h
 #define _PhraseModelPars_h
 
+//--------------- Constants ------------------------------------------
+
+#define DEFAULT_PTS_WEIGHT 1.0
+#define DEFAULT_PST_WEIGHT 0.000001
+
 //--------------- PhraseModelPars struct
 
 struct PhraseModelPars
@@ -26,8 +31,8 @@ struct PhraseModelPars
   string srcTrainVocabFileName;
   string trgTrainVocabFileName;
   string readTablePrefix;
-  double ptsWeight;
-  double pstWeight;
+  Vector<double> ptsWeightVec;
+  Vector<double> pstWeightVec;
   double trgSegmLenWeight;
   double srcJumpWeight;
   double srcSegmLenWeight;
@@ -35,8 +40,6 @@ struct PhraseModelPars
       // Constructor
   PhraseModelPars(void)
     {
-      ptsWeight=1.0;
-      pstWeight=0.000001;
       trgSegmLenWeight=1.0;
       srcJumpWeight=0.01;
       srcSegmLenWeight=1.0;

@@ -153,6 +153,11 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   Vector<Vector<PhrasePair> > vecVecInvPhPair;
   unsigned int stepNum;
 
+      // Weight auxiliary functions
+  void setPmWeights(Vector<float> wVec);
+  void getPmWeights(Vector<pair<std::string,float> >& compWeights);
+  void printPmWeights(ostream &outS);
+
       // Functions related to linear interpolation weights updating
   int extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileName,
                                    std::string trgDevCorpusFileName,
@@ -182,8 +187,29 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
       // Phrase model scoring functions
   Score smoothedPhrScore_s_t_(const Vector<WordIndex>& s_,
                               const Vector<WordIndex>& t_);
+  Score muxPmSmoothedPhrScore_s_t_(int idx,
+                                   const Vector<WordIndex>& s_,
+                                   const Vector<WordIndex>& t_);
+  Score regularSmoothedPhrScore_s_t_(const Vector<WordIndex>& s_,
+                                     const Vector<WordIndex>& t_);
+  Vector<Score> smoothedPhrScoreVec_s_t_(const Vector<WordIndex>& s_,
+                                         const Vector<WordIndex>& t_);
+
   Score smoothedPhrScore_t_s_(const Vector<WordIndex>& s_,
                               const Vector<WordIndex>& t_);
+  Score muxPmSmoothedPhrScore_t_s_(int idx,
+                                   const Vector<WordIndex>& s_,
+                                   const Vector<WordIndex>& t_);
+  Score regularSmoothedPhrScore_t_s_(const Vector<WordIndex>& s_,
+                                     const Vector<WordIndex>& t_);
+  Vector<Score> smoothedPhrScoreVec_t_s_(const Vector<WordIndex>& s_,
+                                         const Vector<WordIndex>& t_);
+
+      // Vocabulary related functions
+  void obtainSrcSwVocWordIdxVec(const Vector<WordIndex>& s_,
+                                Vector<WordIndex>& swVoc_s_);
+  void obtainTrgSwVocWordIdxVec(const Vector<WordIndex>& t_,
+                                Vector<WordIndex>& swVoc_t_);
 
       // Functions to score n-best translations lists
   Score nbestTransScore(const Vector<WordIndex>& s_,
@@ -224,6 +250,9 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   unsigned int map_n_am_suff_stats(unsigned int n);
   int addNewTransOpts(unsigned int n,
                       int verbose=0);
+
+      // Helper functions
+  _wbaIncrPhraseModel* getWbaIncrPhraseModelPtr(void);
 };
 
 #endif

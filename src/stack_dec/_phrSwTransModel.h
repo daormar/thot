@@ -189,13 +189,16 @@ bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
   if(ret==ERROR) return ERROR;
 
       // Load phrase model
-  this->phrModelInfoPtr->phraseModelPars.readTablePrefix=mainPrefixFileName;
-  if(this->phrModelInfoPtr->invPbModelPtr->load(mainPrefixFileName.c_str())!=0)
+  this->phrModelInfoPtr->phraseModelPars.readTablePrefix=prefixFileName;
+  if(this->phrModelInfoPtr->invPbModelPtr->load(prefixFileName)!=0)
   {
     cerr<<"Error while reading phrase model file\n";
     return ERROR;
   }
-  
+
+      // Instantiate weight vectors for phrase model
+  this->instantiateWeightVectors();
+
       // sw model (The direct model is the one with the prefix _invswm)
   swModelInfoPtr->swModelPars.readTablePrefix=mainPrefixFileName;
   swModelInfoPtr->swModelPars.readTablePrefix=swModelInfoPtr->swModelPars.readTablePrefix+"_invswm";
@@ -218,14 +221,17 @@ bool _phrSwTransModel<HYPOTHESIS>::printAligModel(std::string printPrefix)
       // Print phrase model
   bool ret=_phraseBasedTransModel<HYPOTHESIS>::printAligModel(printPrefix);
   if(ret==ERROR) return ERROR;
-  
+
+      // Obtain prefix of main model
+  std::string mainPrintPrefix=this->obtainMainModelAbsoluteNameFromPrefix(printPrefix);
+
       // Print inverse sw model
-  std::string invSwModelPrefix=printPrefix+"_swm";
+  std::string invSwModelPrefix=mainPrintPrefix+"_swm";
   ret=swModelInfoPtr->invSwAligModelPtr->print(invSwModelPrefix.c_str());
   if(ret==ERROR) return ERROR;
 
       // Print direct sw model
-  std::string swModelPrefix=printPrefix+"_invswm";
+  std::string swModelPrefix=mainPrintPrefix+"_invswm";
   ret=swModelInfoPtr->swAligModelPtr->print(swModelPrefix.c_str());
   if(ret==ERROR) return ERROR;
 
@@ -263,6 +269,7 @@ template<class HYPOTHESIS>
 LgProb _phrSwTransModel<HYPOTHESIS>::swLgProb(const Vector<WordIndex>& s_,
                                               const Vector<WordIndex>& t_)
 {
+      // TBD
   PhrasePairCacheTable::iterator ppctIter;
   ppctIter=cSwmScore.find(make_pair(s_,t_));
   if(ppctIter!=cSwmScore.end())
@@ -284,6 +291,7 @@ template<class HYPOTHESIS>
 LgProb _phrSwTransModel<HYPOTHESIS>::invSwLgProb(const Vector<WordIndex>& s_,
                                                  const Vector<WordIndex>& t_)
 {
+      // TBD
   PhrasePairCacheTable::iterator ppctIter;
   ppctIter=cInvSwmScore.find(make_pair(s_,t_));
   if(ppctIter!=cInvSwmScore.end())
