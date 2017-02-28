@@ -617,7 +617,7 @@ void PhrLocalSwLiTm::printPmWeights(ostream &outS)
     {
       for(unsigned int i=0;i<phrModelInfoPtr->phraseModelPars.ptsWeightVec.size();++i)
       {
-        outS<<"ptsw"<<incrInvMuxPmPtr->getModelStatus(i)<<": "<<phrModelInfoPtr->phraseModelPars.ptsWeightVec[i]<<" , ";
+        outS<<"ptsw_"<<incrInvMuxPmPtr->getModelStatus(i)<<": "<<phrModelInfoPtr->phraseModelPars.ptsWeightVec[i]<<" , ";
       }
     }
 
@@ -629,7 +629,7 @@ void PhrLocalSwLiTm::printPmWeights(ostream &outS)
     {
       for(unsigned int i=0;i<phrModelInfoPtr->phraseModelPars.pstWeightVec.size();++i)
       {
-        outS<<"pstw"<<incrInvMuxPmPtr->getModelStatus(i)<<": "<<phrModelInfoPtr->phraseModelPars.pstWeightVec[i];
+        outS<<"pstw_"<<incrInvMuxPmPtr->getModelStatus(i)<<": "<<phrModelInfoPtr->phraseModelPars.pstWeightVec[i];
         if(i<phrModelInfoPtr->phraseModelPars.pstWeightVec.size()-1)
           outS<<" , ";
       }
