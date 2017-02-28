@@ -319,7 +319,8 @@ create_cfg_file_for_tuning()
 ##################
 obtain_smtweights_names()
 {
-    local_line=`${bindir}/thot_get_ll_weights | $GREP "\- SMT model weights="`
+    # local_line=`${bindir}/thot_get_ll_weights | $GREP "\- SMT model weights="`
+    local_line=`${bindir}/thot_server -c ${outd}/tune_loglin.cfg -w 2> /dev/null | $GREP "\- SMT model weights="`
     local_smtw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
     echo ${local_smtw_names}
 }
@@ -327,7 +328,8 @@ obtain_smtweights_names()
 ##################
 obtain_ecmweights_names()
 {
-    local_line=`${bindir}/thot_get_ll_weights | $GREP "\- Error correction model weights="`
+    # local_line=`${bindir}/thot_get_ll_weights | $GREP "\- Error correction model weights="`
+    local_line=`${bindir}/thot_server -c ${outd}/tune_loglin.cfg -w 2> /dev/null | $GREP "\- Error correction model weights="`
     local_ecmw_names=`echo ${local_line} | $AWK '{for(i=6;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
     echo ${local_ecmw_names}
 }
@@ -335,7 +337,8 @@ obtain_ecmweights_names()
 ##################
 obtain_catweights_names()
 {
-    local_line=`${bindir}/thot_get_ll_weights | $GREP "\- Assisted translator weights="`
+    # local_line=`${bindir}/thot_get_ll_weights | $GREP "\- Assisted translator weights="`
+    local_line=`${bindir}/thot_server -c ${outd}/tune_loglin.cfg -w 2> /dev/null | $GREP "\- Assisted translator weights="`
     local_catw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
     echo ${local_catw_names}
 }
