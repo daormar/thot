@@ -376,7 +376,13 @@ bool _incrMuxPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
     Vector<WordIndex> widxVec=srcMapLocalToGlobalWidxVec(modelIndex,iter->second);
     nbt.insert(iter->first,widxVec);
   }
-  
+
+  while(nbt.size()>(unsigned int)N && N>=0)
+  {
+        // node contains more than N elements, remove last one
+    nbt.removeLastElement();
+  }
+
   return ret;
 }
 
@@ -453,7 +459,7 @@ WordIndex _incrMuxPhraseModel::addSrcSymbol(string s,
 }
 
 //-------------------------
-bool _incrMuxPhraseModel::printSrcVocab(const char *outputFileName)
+bool _incrMuxPhraseModel::printSrcVocab(const char* /*outputFileName*/)
 {
   cerr<<"Warning: printSrcVocab() function not implemented!"<<endl;
   return ERROR;
@@ -520,7 +526,7 @@ WordIndex _incrMuxPhraseModel::addTrgSymbol(string t,
 }
 
 //-------------------------
-bool _incrMuxPhraseModel::printTrgVocab(const char *outputFileName)
+bool _incrMuxPhraseModel::printTrgVocab(const char* /*outputFileName*/)
 {
   cerr<<"Warning: printTrgVocab() function not implemented!"<<endl;
   return ERROR;
@@ -701,7 +707,7 @@ WordIndex _incrMuxPhraseModel::srcMapGlobalToLocalWidx(unsigned int index,
 }
 
 //-------------------------
-Vector<WordIndex> _incrMuxPhraseModel::srcMapLocalToGlobalWidxVec(unsigned int index,
+Vector<WordIndex> _incrMuxPhraseModel::srcMapLocalToGlobalWidxVec(unsigned int /*index*/,
                                                                   const Vector<WordIndex>& widxVec)
 {
       // Obtain string vector
@@ -753,7 +759,7 @@ WordIndex _incrMuxPhraseModel::trgMapGlobalToLocalWidx(unsigned int index,
 }
 
 //-------------------------
-Vector<WordIndex> _incrMuxPhraseModel::trgMapLocalToGlobalWidxVec(unsigned int index,
+Vector<WordIndex> _incrMuxPhraseModel::trgMapLocalToGlobalWidxVec(unsigned int /*index*/,
                                                                   const Vector<WordIndex>& widxVec)
 {
       // Obtain string vector

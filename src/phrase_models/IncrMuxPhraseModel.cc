@@ -151,6 +151,7 @@ bool IncrMuxPhraseModel::print(const char* prefix)
 {
   int ret=printTmEntries(prefix);
   if(ret==ERROR) return ERROR;
+  return OK;
 }
 
 //-------------------------
