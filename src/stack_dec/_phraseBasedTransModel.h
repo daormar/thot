@@ -726,7 +726,8 @@ Vector<Score> _phraseBasedTransModel<HYPOTHESIS>::phrScoreVec_s_t_(const Vector<
     if(incrInvMuxPmPtr)
     {
       Vector<Score> scoreVec;
-      for(unsigned int i=0;i<incrInvMuxPmPtr->getNumModels();++i)
+      unsigned int nmodels=incrInvMuxPmPtr->getNumModels();
+      for(unsigned int i=0;i<nmodels;++i)
       {
         Score score=this->phrModelInfoPtr->phraseModelPars.pstWeightVec[i] * (double)incrInvMuxPmPtr->idxLogpt_s_(i,t_,s_);
         scoreVec.push_back(score);
@@ -772,7 +773,8 @@ Vector<Score> _phraseBasedTransModel<HYPOTHESIS>::phrScoreVec_t_s_(const Vector<
     if(incrInvMuxPmPtr)
     {
       Vector<Score> scoreVec;
-      for(unsigned int i=0;i<incrInvMuxPmPtr->getNumModels();++i)
+      unsigned int nmodels=incrInvMuxPmPtr->getNumModels();
+      for(unsigned int i=0;i<nmodels;++i)
       {
         Score score=this->phrModelInfoPtr->phraseModelPars.ptsWeightVec[i] * (double)incrInvMuxPmPtr->idxLogps_t_(i,t_,s_);
         scoreVec.push_back(score);
