@@ -17,7 +17,7 @@ endif
 AUTOMAKE_OPTIONS = subdir-objects
 
 SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
-error_correction downhill_simplex stack_dec exper
+error_correction downhill_simplex stack_dec exper testing
 
 if CODE_TESTING
 TESTING_PROGS= thot_test
