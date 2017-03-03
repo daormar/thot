@@ -20,23 +20,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "MiraGtm.h"
 
 #include <cmath>
-#include <sstream>
 #include <algorithm>    // std::sort
 
 
 //--------------- KbMiraLlWu class functions
 
-
-//---------------------------------------
-void MiraGtm::split(const std::string& sentence,
-           Vector<std::string>& tokens)
-{
-  std::string item;
-  std::stringstream ss(sentence);
-  tokens.clear();
-  while (std::getline(ss, item, ' '))
-    tokens.push_back(item);
-}
 
 //---------------------------------------
 bool MiraGtm::revCompFunction(std::pair<int, std::pair<std::pair<int,int>, std::pair<int,int> > > a,
@@ -189,6 +177,21 @@ void MiraGtm::sentBackgroundScore(const std::string& candidate,
 }
 
 //---------------------------------------
+void MiraGtm::sentScore(const std::string& candidate,
+                        const std::string& reference,
+                        double& score)
+{
+  Vector<std::string> candidate_tokens, reference_tokens;
+  split(candidate, candidate_tokens);
+  split(reference, reference_tokens);
+
+  Vector<unsigned int> stats;
+  statsForSentence(candidate_tokens, reference_tokens, stats);
+
+  score = scoreFromStats(stats);
+}
+
+//---------------------------------------
 void MiraGtm::corpusScore(const Vector<std::string>& candidates,
                           const Vector<std::string>& references,
                           double& score)
@@ -211,17 +214,3 @@ void MiraGtm::corpusScore(const Vector<std::string>& candidates,
   score = scoreFromStats(corpusStats);
 }
 
-//---------------------------------------
-void MiraGtm::sentScore(const std::string& candidate,
-                        const std::string& reference,
-                        double& score)
-{
-  Vector<std::string> candidate_tokens, reference_tokens;
-  split(candidate, candidate_tokens);
-  split(reference, reference_tokens);
-
-  Vector<unsigned int> stats;
-  statsForSentence(candidate_tokens, reference_tokens, stats);
-
-  score = scoreFromStats(stats);
-}

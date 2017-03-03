@@ -20,7 +20,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "MiraBleu.h"
 #include "bleu.h"
 
-#include <sstream>
 
 //--------------- KbMiraLlWu class functions
 
@@ -60,16 +59,6 @@ void MiraBleu::statsForSentence(const Vector<std::string>& candidate_tokens,
 }
 
 //---------------------------------------
-void MiraBleu::split(const std::string& sentence,
-                     Vector<std::string>& tokens)
-{
-  std::string item;
-  std::stringstream ss(sentence);
-  while (std::getline(ss, item, ' '))
-    tokens.push_back(item);
-}
-
-//---------------------------------------
 void MiraBleu::sentBackgroundScore(const std::string& candidate,
                                    const std::string& reference,
                                    double& bleu,
@@ -96,6 +85,24 @@ void MiraBleu::sentBackgroundScore(const std::string& candidate,
 }
 
 //---------------------------------------
+void MiraBleu::sentScore(const std::string& candidate,
+                         const std::string& reference,
+                         double& bleu)
+{
+  Vector<std::string> candidate_tokens, reference_tokens;
+  split(candidate, candidate_tokens);
+  split(reference, reference_tokens);
+
+  Vector<unsigned int> stats;
+  statsForSentence(candidate_tokens, reference_tokens, stats);
+
+  for (unsigned int i=0; i<N_STATS; i++)
+    stats[i] += 1;
+
+  bleu = scoreFromStats(stats);
+}
+
+//---------------------------------------
 void MiraBleu::corpusScore(const Vector<std::string>& candidates,
                            const Vector<std::string>& references,
                            double& bleu)
@@ -119,20 +126,3 @@ void MiraBleu::corpusScore(const Vector<std::string>& candidates,
   bleu = scoreFromStats(corpusStats);
 }
 
-//---------------------------------------
-void MiraBleu::sentScore(const std::string& candidate,
-                         const std::string& reference,
-                         double& bleu)
-{
-  Vector<std::string> candidate_tokens, reference_tokens;
-  split(candidate, candidate_tokens);
-  split(reference, reference_tokens);
-
-  Vector<unsigned int> stats;
-  statsForSentence(candidate_tokens, reference_tokens, stats);
-
-  for (unsigned int i=0; i<N_STATS; i++)
-    stats[i] += 1;
-
-  bleu = scoreFromStats(stats);
-}

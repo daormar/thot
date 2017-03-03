@@ -45,19 +45,17 @@ public:
                            double& score,
                            Vector<unsigned int>& stats);
 
-    // Score for corpus
-  void corpusScore(const Vector<std::string>& candidates,
-                   const Vector<std::string>& references,
-                   double& score);
-
     // Score for sentence
   void sentScore(const std::string& candidate,
                  const std::string& reference,
                  double& score);
 
+    // Score for corpus
+  void corpusScore(const Vector<std::string>& candidates,
+                   const Vector<std::string>& references,
+                   double& score);
+
 private:
-  void split(const std::string& sentence,
-             Vector<std::string>& tokens);
   int ed(Vector<std::string>& s1, Vector<std::string>& s2);
 };
 

@@ -52,22 +52,20 @@ public:
                            double& score,
                            Vector<unsigned int>& stats);
 
-    // Score for corpus
-  void corpusScore(const Vector<std::string>& candidates,
-                   const Vector<std::string>& references,
-                   double& score);
-
     // Score for sentence
   void sentScore(const std::string& candidate,
                  const std::string& reference,
                  double& score);
 
+    // Score for corpus
+  void corpusScore(const Vector<std::string>& candidates,
+                   const Vector<std::string>& references,
+                   double& score);
+
 private:
   double beta, d;
   unsigned int N_STATS;
 
-  void split(const std::string& sentence,
-             Vector<std::string>& tokens);
   static bool revCompFunction(std::pair<int, std::pair<std::pair<int,int>, std::pair<int,int> > > a,
                               std::pair<int, std::pair<std::pair<int,int>, std::pair<int,int> > > b);
   bool doIntersect(std::pair<int,int> a, std::set<int> b);
