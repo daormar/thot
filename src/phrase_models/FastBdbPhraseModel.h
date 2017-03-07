@@ -139,6 +139,7 @@ class FastBdbPhraseModel: public BaseCountPhraseModel
     
         // Loading functions
     bool load(const char *prefix);
+    bool load_given_prefix(const char *prefix);
     bool load_seglentable(const char *segmLengthTableFileName);
         // Load a table with segmentation length information
 

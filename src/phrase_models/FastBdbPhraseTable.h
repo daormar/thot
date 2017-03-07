@@ -225,14 +225,6 @@ class FastBdbPhraseTable
                           PhrDictKey& phrDictKey);
     void initDbtData(Dbt& data,
                      PhrDictValue& phrDictValue);
-    /* void encodeKeyDataForPhrDictDb(PhrDictKey& phrDictKey, */
-    /*                                PhrDictValue& phrDictValue, */
-    /*                                Dbt& key, */
-    /*                                Dbt& data); */
-    /* void decodeKeyDataForPhrDictDb(PhrDictKey& phrDictKey, */
-    /*                                PhrDictValue& phrDictValue, */
-    /*                                const Dbt& key, */
-    /*                                const Dbt& data); */
     int retrieveDataForPhrDict(const Vector<WordIndex>& s,
                                const Vector<WordIndex>& t,
                               PhrDictValue& phrDictValue);

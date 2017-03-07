@@ -216,6 +216,22 @@ bool FastBdbPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
 //-------------------------
 bool FastBdbPhraseModel::load(const char *prefix)
 {
+  std::string mainFileName;
+  if(fileIsDescriptor(prefix,mainFileName))
+  {
+    std::string descFileName=prefix;
+    std::string absolutizedMainFileName=absolutizeModelFileName(descFileName,mainFileName);
+    return load_given_prefix(absolutizedMainFileName.c_str());
+  }
+  else
+  {
+    return load_given_prefix(prefix);
+  }
+}
+
+//-------------------------
+bool FastBdbPhraseModel::load_given_prefix(const char *prefix)
+{
   bool ret;
 
       // Clear previous tables
