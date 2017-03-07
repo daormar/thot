@@ -18,6 +18,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files --------------------------------------
 
 #include "MiraGtm.h"
+#include "StrProcUtils.h"
 
 #include <cmath>
 #include <algorithm>    // std::sort
@@ -166,8 +167,8 @@ void MiraGtm::sentBackgroundScore(const std::string& candidate,
                                   Vector<unsigned int>& sentStats)
 {
   Vector<std::string> candidate_tokens, reference_tokens;
-  split(candidate, candidate_tokens);
-  split(reference, reference_tokens);
+  candidate_tokens = StrProcUtils::stringToStringVector(candidate);
+  reference_tokens = StrProcUtils::stringToStringVector(reference);
 
   Vector<unsigned int> stats;
   statsForSentence(candidate_tokens, reference_tokens, stats);
@@ -182,8 +183,8 @@ void MiraGtm::sentScore(const std::string& candidate,
                         double& score)
 {
   Vector<std::string> candidate_tokens, reference_tokens;
-  split(candidate, candidate_tokens);
-  split(reference, reference_tokens);
+  candidate_tokens = StrProcUtils::stringToStringVector(candidate);
+  reference_tokens = StrProcUtils::stringToStringVector(reference);
 
   Vector<unsigned int> stats;
   statsForSentence(candidate_tokens, reference_tokens, stats);
@@ -200,8 +201,8 @@ void MiraGtm::corpusScore(const Vector<std::string>& candidates,
   Vector<std::string> candidate_tokens, reference_tokens;
   Vector<unsigned int> stats;
   for (unsigned int i=0; i<candidates.size(); i++) {
-    split(candidates[i], candidate_tokens);
-    split(references[i], reference_tokens);
+    candidate_tokens = StrProcUtils::stringToStringVector(candidates[i]);
+    reference_tokens = StrProcUtils::stringToStringVector(references[i]);
 
     statsForSentence(candidate_tokens, reference_tokens, stats);
     for (unsigned int j=0; j<N_STATS; j++)

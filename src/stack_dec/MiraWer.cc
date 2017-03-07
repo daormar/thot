@@ -18,6 +18,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files --------------------------------------
 
 #include "MiraWer.h"
+#include "StrProcUtils.h"
 
 //--------------- MiraWer class functions
 
@@ -28,8 +29,8 @@ void MiraWer::sentBackgroundScore(const std::string& candidate,
                                   Vector<unsigned int>& sentStats)
 {
   Vector<std::string> candidate_tokens, reference_tokens;
-  split(candidate, candidate_tokens);
-  split(reference, reference_tokens);
+  candidate_tokens = StrProcUtils::stringToStringVector(candidate);
+  reference_tokens = StrProcUtils::stringToStringVector(reference);
 
   if (reference_tokens.size() == 0)
     score = 0.0;
@@ -47,8 +48,8 @@ void MiraWer::sentScore(const std::string& candidate,
                         double& score)
 {
   Vector<std::string> candidate_tokens, reference_tokens;
-  split(candidate, candidate_tokens);
-  split(reference, reference_tokens);
+  candidate_tokens = StrProcUtils::stringToStringVector(candidate);
+  reference_tokens = StrProcUtils::stringToStringVector(reference);
 
   if (reference_tokens.size() == 0)
     score = 0.0;
@@ -67,8 +68,8 @@ void MiraWer::corpusScore(const Vector<std::string>& candidates,
   int nedits = 0, nwords = 0;
   for (unsigned int i=0; i<candidates.size(); i++) {
     Vector<std::string> candidate_tokens, reference_tokens;
-    split(candidates[i], candidate_tokens);
-    split(references[i], reference_tokens);
+    candidate_tokens = StrProcUtils::stringToStringVector(candidates[i]);
+    reference_tokens = StrProcUtils::stringToStringVector(references[i]);
 
     nedits += ed(candidate_tokens, reference_tokens);
     nwords += reference_tokens.size();

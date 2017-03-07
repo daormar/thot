@@ -17,8 +17,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
-#include "MiraBleu.h"
 #include "bleu.h"
+#include "MiraBleu.h"
+#include "StrProcUtils.h"
 
 
 //--------------- KbMiraLlWu class functions
@@ -65,8 +66,8 @@ void MiraBleu::sentBackgroundScore(const std::string& candidate,
                                    Vector<unsigned int>& sentStats)
 {
   Vector<std::string> candidate_tokens, reference_tokens;
-  split(candidate, candidate_tokens);
-  split(reference, reference_tokens);
+  candidate_tokens = StrProcUtils::stringToStringVector(candidate);
+  reference_tokens = StrProcUtils::stringToStringVector(reference);
 
   statsForSentence(candidate_tokens, reference_tokens, sentStats);
 
@@ -90,8 +91,8 @@ void MiraBleu::sentScore(const std::string& candidate,
                          double& bleu)
 {
   Vector<std::string> candidate_tokens, reference_tokens;
-  split(candidate, candidate_tokens);
-  split(reference, reference_tokens);
+  candidate_tokens = StrProcUtils::stringToStringVector(candidate);
+  reference_tokens = StrProcUtils::stringToStringVector(reference);
 
   Vector<unsigned int> stats;
   statsForSentence(candidate_tokens, reference_tokens, stats);
@@ -110,8 +111,8 @@ void MiraBleu::corpusScore(const Vector<std::string>& candidates,
   Vector<unsigned int> corpusStats(N_STATS, 0);
   for (unsigned int i=0; i<candidates.size(); i++) {
     Vector<std::string> candidate_tokens, reference_tokens;
-    split(candidates[i], candidate_tokens);
-    split(references[i], reference_tokens);
+    candidate_tokens = StrProcUtils::stringToStringVector(candidates[i]);
+    reference_tokens = StrProcUtils::stringToStringVector(references[i]);
 
     Vector<unsigned int> stats;
     statsForSentence(candidate_tokens, reference_tokens, stats);
