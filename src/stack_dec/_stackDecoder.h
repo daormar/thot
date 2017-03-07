@@ -412,7 +412,6 @@ _stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
     smtm_ptr->obtainHypFromHypData(sug,initialHyp);
       
         // Insert null hypothesis
-    clear();
     suggest(initialHyp);
         // Initializes the multi-stack decoder algorithm with a stack
         // containing the initial hypothesis "initialHyp"
@@ -468,7 +467,6 @@ _stackDecoder<SMT_MODEL>::translateWithRef(std::string s,
     pre_trans_actions_ref(s,ref);
   	    
         // Insert Null hypothesis
-    clear();
     suggestNullHyp(); 
 
     if(verbosity>0)
@@ -521,7 +519,6 @@ _stackDecoder<SMT_MODEL>::verifyCoverageForRef(std::string s,
     pre_trans_actions_ver(s,ref);
   	    
         // Insert Null hypothesis
-    clear();
     suggestNullHyp(); 
 
     if(verbosity>0)
@@ -574,7 +571,6 @@ _stackDecoder<SMT_MODEL>::translateWithPrefix(std::string s,
     pre_trans_actions_prefix(s,pref);
 
         // Insert Null hypothesis
-    clear();
     suggestNullHyp(); 
 
     if(verbosity>0)
@@ -633,9 +629,6 @@ void _stackDecoder<SMT_MODEL>::clear(void)
   stack_ptr->clear();
 }
 
-//--------------- _stackDecoder template class functions
-//
-
 //---------------------------------------
 template<class SMT_MODEL>
 void _stackDecoder<SMT_MODEL>::init_state(void)
@@ -681,6 +674,7 @@ Score _stackDecoder<SMT_MODEL>::testHeuristic(std::string sentence,
 template<class SMT_MODEL>
 int _stackDecoder<SMT_MODEL>::pre_trans_actions(std::string srcsent)
 {
+  clear();
   state=DEC_TRANS_STATE;
   srcSentence=srcsent;
   smtm_ptr->pre_trans_actions(srcsent);
@@ -710,6 +704,7 @@ template<class SMT_MODEL>
 void _stackDecoder<SMT_MODEL>::pre_trans_actions_ref(std::string srcsent,
                                                      std::string refsent)
 {
+  clear();
   state=DEC_TRANSREF_STATE;
   srcSentence=srcsent;
   refSentence=refsent;
@@ -724,6 +719,7 @@ template<class SMT_MODEL>
 void _stackDecoder<SMT_MODEL>::pre_trans_actions_ver(std::string srcsent,
                                                      std::string refsent)
 {
+  clear();
   state=DEC_VER_STATE;
   srcSentence=srcsent;
   refSentence=refsent;
@@ -738,6 +734,7 @@ template<class SMT_MODEL>
 void _stackDecoder<SMT_MODEL>::pre_trans_actions_prefix(std::string srcsent,
                                                         std::string prefix)
 {
+  clear();
   state=DEC_TRANSPREFIX_STATE;
   srcSentence=srcsent;
   prefixSentence=prefix;
