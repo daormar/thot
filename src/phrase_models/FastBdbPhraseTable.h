@@ -43,10 +43,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "MathDefs.h"
 #include <stdio.h>
 #include <db_cxx.h>
+#include <db.h>
 #include <map>
 #include <algorithm>
 #include <myVector.h>
 #include <awkInputStream.h>
+#include <string.h>
 
 //--------------- Constants ------------------------------------------
 
@@ -59,6 +61,10 @@ struct PhrDictKey
 {
   WordIndex words[MAX_PHR_DICT_KEY_SIZE_SBDB];
 
+  PhrDictKey(void)
+    {
+      clear();
+    }
   unsigned int getSize(void)
     {
       unsigned int nw=0;
@@ -213,14 +219,20 @@ class FastBdbPhraseTable
     bool fastSearchAvailableFlagIsDefined(void);
     
         // Auxiliary functions
-    void encodeKeyDataForPhrDictDb(PhrDictKey& phrDictKey,
-                                   PhrDictValue& phrDictValue,
-                                   Dbt& key,
-                                   Dbt& data);
-    void decodeKeyDataForPhrDictDb(PhrDictKey& phrDictKey,
-                                   PhrDictValue& phrDictValue,
-                                   const Dbt& key,
-                                   const Dbt& data);
+    void initDbtKey(Dbt& key,
+                    PhrDictKey& phrDictKey);
+    void initDbtKeyCursor(Dbt& key,
+                          PhrDictKey& phrDictKey);
+    void initDbtData(Dbt& data,
+                     PhrDictValue& phrDictValue);
+    /* void encodeKeyDataForPhrDictDb(PhrDictKey& phrDictKey, */
+    /*                                PhrDictValue& phrDictValue, */
+    /*                                Dbt& key, */
+    /*                                Dbt& data); */
+    /* void decodeKeyDataForPhrDictDb(PhrDictKey& phrDictKey, */
+    /*                                PhrDictValue& phrDictValue, */
+    /*                                const Dbt& key, */
+    /*                                const Dbt& data); */
     int retrieveDataForPhrDict(const Vector<WordIndex>& s,
                                const Vector<WordIndex>& t,
                               PhrDictValue& phrDictValue);

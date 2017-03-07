@@ -117,7 +117,7 @@ bool FastBdbPhraseTable::init(const char *fileName)
   envPtr=new DbEnv(0);
   std::string envName=extractDirName(outputFilesPrefix);
   u_int32_t env_o_flags = DB_CREATE|DB_INIT_MPOOL;
-  u_int32_t env_cachesize=256 *1024;
+  u_int32_t env_cachesize=8*1024;
   envPtr->open(envName.c_str(),env_o_flags,0);
   envPtr->set_cachesize(0,env_cachesize,1);
 #else
@@ -133,6 +133,7 @@ bool FastBdbPhraseTable::init(const char *fileName)
   int ret=phrDictDb->set_bt_compare(static_phr_dict_cmp_func);
   if(ret)
     return ERROR;
+  
   ret=phrDictDb->open(NULL,phrDictDbName.c_str(),NULL,DB_BTREE,o_flags,0);
   if(ret)
     return ERROR;
@@ -146,58 +147,67 @@ bool FastBdbPhraseTable::init(const char *fileName)
 }
 
 //-------------------------
-void FastBdbPhraseTable::encodeKeyDataForPhrDictDb(PhrDictKey& phrDictKey,
-                                                   PhrDictValue& phrDictValue,
-                                                   Dbt& key,
-                                                   Dbt& data)
-{  
-  key.set_data(&phrDictKey);
-  key.set_size(phrDictKey.getSize());
-  data.set_data(&phrDictValue);
-  data.set_size(sizeof(PhrDictValue));
+void FastBdbPhraseTable::initDbtKey(Dbt& key,
+                                    PhrDictKey& phrDictKey)
+{
+  DBT* dbtStructPtr=key.get_DBT();
+  memset(dbtStructPtr,0,sizeof(DBT));
+  dbtStructPtr->data=phrDictKey.words;
+  dbtStructPtr->size=phrDictKey.getSize();
+  dbtStructPtr->ulen=phrDictKey.getSize();
+  dbtStructPtr->flags=DB_DBT_USERMEM;
 }
 
 //-------------------------
-void FastBdbPhraseTable::decodeKeyDataForPhrDictDb(PhrDictKey& phrDictKey,
-                                                   PhrDictValue& phrDictValue,
-                                                   const Dbt& key,
-                                                   const Dbt& data)
+void FastBdbPhraseTable::initDbtKeyCursor(Dbt& key,
+                                          PhrDictKey& phrDictKey)
 {
-      // Decode key
-  PhrDictKey* keyPtr=(PhrDictKey*) key.get_data();
-  u_int32_t keySize=key.get_size();
-  unsigned int numWords=keySize/sizeof(WordIndex);
-  phrDictKey.clear();
-  for(unsigned int i=0;i<numWords;++i)
-    phrDictKey.words[i]=keyPtr->words[i];
+  DBT* dbtStructPtr=key.get_DBT();
+  memset(dbtStructPtr,0,sizeof(DBT));
+  dbtStructPtr->data=phrDictKey.words;
+  size_t keysize=sizeof(PhrDictKey);
+  dbtStructPtr->size=keysize;
+  dbtStructPtr->ulen=keysize;
+  dbtStructPtr->flags=DB_DBT_USERMEM;
+}
 
-      // Decode data
-  PhrDictValue* valPtr=(PhrDictValue*) data.get_data();
-  phrDictValue.count=valPtr->count;
-  phrDictValue.auxCount=valPtr->auxCount;
+//-------------------------
+void FastBdbPhraseTable::initDbtData(Dbt& data,
+                                     PhrDictValue& phrDictValue)
+{
+  DBT* dbtStructPtr=data.get_DBT();
+  memset(dbtStructPtr,0,sizeof(DBT));
+  dbtStructPtr->data=&phrDictValue;
+  size_t datasize=sizeof(phrDictValue);
+  dbtStructPtr->size=datasize;
+  dbtStructPtr->ulen=datasize;
+  dbtStructPtr->flags=DB_DBT_USERMEM;
 }
 
 //-------------------------
 int FastBdbPhraseTable::retrieveDataForPhrDict(const Vector<WordIndex>& s,
                                                const Vector<WordIndex>& t,
                                                PhrDictValue& phrDictValue)
-{
-      // Obtain source phrase index
+{  
+      // Initialize key/data pair
   PhrDictKey phrDictKey;
   int ret=phrDictKey.setPhrPair(s,t);
   if(ret==ERROR)
     return ERROR;
   Dbt key;
-  Dbt data;
-  encodeKeyDataForPhrDictDb(phrDictKey,phrDictValue,key,data);
+  initDbtKey(key,phrDictKey);
   
+  Dbt data;
+  initDbtData(data,phrDictValue);
+    
       // Retrieve key/data pair from database
   ret=phrDictDb->get(NULL,&key,&data,0);
   if(ret)
+  {
     return ERROR;
+  }
   else
   {
-    decodeKeyDataForPhrDictDb(phrDictKey,phrDictValue,key,data);
     return OK;
   }
 }
@@ -207,17 +217,19 @@ int FastBdbPhraseTable::putDataForPhrDict(const Vector<WordIndex>& s,
                                           const Vector<WordIndex>& t,
                                           Count c)
 {
-      // Encode key/value pair
+      // Initialize key/data pair
   PhrDictKey phrDictKey;
   int ret=phrDictKey.setPhrPair(s,t);
   if(ret==ERROR)
     return ERROR;
+  Dbt key;
+  initDbtKey(key,phrDictKey);
+
   PhrDictValue phrDictValue;
   phrDictValue.count=c;
-  Dbt key;
   Dbt data;
-  encodeKeyDataForPhrDictDb(phrDictKey,phrDictValue,key,data);
-  
+  initDbtData(data,phrDictValue);
+
       // Put record
   ret=phrDictDb->put(NULL,&key,&data,0);
   if(ret)
@@ -236,7 +248,6 @@ int FastBdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
   if(ret==ERROR)
   {
         // Entry was not found
-
     ret=putDataForPhrDict(s,t,c);
     if(ret)
       return ERROR;
@@ -246,7 +257,6 @@ int FastBdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
   else
   {
         // Entry was found
-
     ret=putDataForPhrDict(s,t,phrDictValue.count+c);
     if(ret)
       return ERROR;
@@ -279,37 +289,46 @@ void FastBdbPhraseTable::enableFastSearch(void)
     Dbc* cursorPtr;
     phrDictDb->cursor(NULL,&cursorPtr,0);
 
-        // Iterate over dictionary entries
+        // Initialize key/data pair
+    PhrDictKey phrDictKey;
     Dbt key;
+    initDbtKeyCursor(key,phrDictKey);
+    
+    PhrDictValue phrDictValue;
     Dbt data;
+    initDbtData(data,phrDictValue);
+
+        // Iterate over dictionary entries
     while(cursorPtr->get(&key, &data, DB_NEXT)==0)
     {
           // Retrieve key and data for entry
-      PhrDictKey phrDictKey;
-      PhrDictValue phrDictValue;
-      bool found;
-      decodeKeyDataForPhrDictDb(phrDictKey,phrDictValue,key,data);
-      Vector<WordIndex> curr_t;
       Vector<WordIndex> curr_s;
+      Vector<WordIndex> curr_t;
       phrDictKey.getPhrPair(curr_s,curr_t);
-
+      
       if(!curr_s.empty() && !curr_t.empty())
       {
             // Obtain count of source phrase
+        bool found;
         Count srcCount=getSrcInfo(curr_s,found);
       
         if(found)
         {
               // Update source phrase count for entry
+          Dbt keyToBeUpdated;
+          initDbtKey(keyToBeUpdated,phrDictKey);
+          
           PhrDictValue newPhrDictValue;
           newPhrDictValue.count=phrDictValue.count;
           newPhrDictValue.auxCount=srcCount;
           Dbt updatedData;
-          updatedData.set_data(&newPhrDictValue);
-          updatedData.set_size(sizeof(PhrDictValue));
-          cursorPtr->put(&key, &updatedData, DB_CURRENT);        
+          initDbtData(updatedData,newPhrDictValue);
+          
+          cursorPtr->put(&keyToBeUpdated, &updatedData, DB_CURRENT);        
         }
       }
+          // Reset key
+      phrDictKey.clear();
     }
         // Close cursor
     if(cursorPtr!=NULL)
@@ -384,8 +403,6 @@ Count FastBdbPhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
 bool FastBdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
                                              SrcTableNode& srctn)
 {
-      // Find translations for t
-  
       // Define cursor
   Dbc* cursorPtr;
   phrDictDb->cursor(NULL,&cursorPtr,0);
@@ -393,11 +410,18 @@ bool FastBdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
       // Position the cursor in the first ocurrence of t in the
       // phrase dictionary
   srctn.clear();
+
+      // Initialize key/data pair
   PhrDictKey phrDictKey;
   Vector<WordIndex> emptyPhrase;
   phrDictKey.setPhrPair(emptyPhrase,t);
-  Dbt key(&phrDictKey,phrDictKey.getSize());
+  Dbt key;
+  initDbtKeyCursor(key,phrDictKey);
+
+  PhrDictValue phrDictValue;
   Dbt data;
+  initDbtData(data,phrDictValue);
+  
   int ret=cursorPtr->get(&key, &data, DB_SET_RANGE);
   if(ret)
   {
@@ -409,14 +433,11 @@ bool FastBdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
   }
 
       // Store count for t
-  PhrDictValue* phrDictValuePtr=(PhrDictValue*) data.get_data();
-  Count trgPhrCount=phrDictValuePtr->count;
+  Count trgPhrCount=phrDictValue.count;
   
       // Use the cursor to iterate over translations for t
   do
   {
-    PhrDictValue phrDictValue;
-    decodeKeyDataForPhrDictDb(phrDictKey,phrDictValue,key,data);
     Vector<WordIndex> curr_t;
     Vector<WordIndex> curr_s;
     phrDictKey.getPhrPair(curr_s,curr_t);
@@ -425,7 +446,7 @@ bool FastBdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
       if(!curr_s.empty())
       {
             // Store translation option
-        pair<Vector<WordIndex>,PhrasePairInfo> pVecPhinfo;
+        std::pair<Vector<WordIndex>,PhrasePairInfo> pVecPhinfo;
         pVecPhinfo.first=curr_s;
         pVecPhinfo.second.first=trgPhrCount;
         pVecPhinfo.second.second=phrDictValue.count;
@@ -434,7 +455,10 @@ bool FastBdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
     }
     else
       break;
+        // Reset key data
+    phrDictKey.clear();
   } while(cursorPtr->get(&key, &data, DB_NEXT)==0);
+
 
       // Close cursor
   if(cursorPtr!=NULL)
