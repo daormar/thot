@@ -28,7 +28,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BaseScorer.h"
 #include "myVector.h"
 #include <string>
-#include <sstream>
 
 //--------------- Classes --------------------------------------------
 
@@ -64,18 +63,6 @@ class BaseMiraScorer: public BaseScorer
 
     // Destructor
   virtual ~BaseMiraScorer(){};
-
- protected:
-    // auxiliary function to split a sentence into a vector of tokens
-    // used by all scores inheriting from this class
-  void split(const std::string& sentence,
-             Vector<std::string>& tokens)
-  {
-    std::string item;
-    std::stringstream ss(sentence);
-    while (std::getline(ss, item, ' '))
-      tokens.push_back(item);
-  }
 };
 
 #endif
