@@ -113,7 +113,7 @@ class _phrSwTransModel: public _phraseBasedTransModel<HYPOTHESIS>
       // Precalculated lgProbs
   Vector<Vector<Prob> > sumSentLenProbVec;
       // sumSentLenProbVec[slen][tlen] stores p(sl=slen|tl<=tlen)
-  Vector<Vector<uint_pair> > lenRangeForGaps; 
+  Vector<Vector<uint_pair> > lenRangeForGaps;
 
       // Cached scores
   PhrasePairCacheTable cSwmScore;
@@ -246,6 +246,7 @@ void _phrSwTransModel<HYPOTHESIS>::clear(void)
   swModelInfoPtr->swAligModelPtr->clear();
   swModelInfoPtr->invSwAligModelPtr->clear();
   sumSentLenProbVec.clear();
+  lenRangeForGaps.clear();
 }
 
 //---------------------------------
@@ -559,6 +560,8 @@ void _phrSwTransModel<HYPOTHESIS>::clearTempVars(void)
   _phraseBasedTransModel<HYPOTHESIS>::clearTempVars();
   swModelInfoPtr->swAligModelPtr->clearTempVars();
   swModelInfoPtr->invSwAligModelPtr->clearTempVars();
+  sumSentLenProbVec.clear();
+  lenRangeForGaps.clear();
   cSwmScore.clear();
   cInvSwmScore.clear();
 }
