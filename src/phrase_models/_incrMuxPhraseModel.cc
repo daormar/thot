@@ -316,7 +316,7 @@ bool _incrMuxPhraseModel::getTransFor_t_(const Vector<WordIndex>& t,
 bool _incrMuxPhraseModel::getTransVecFor_t_(const Vector<WordIndex>& t,
                                             Vector<SrcTableNode>& srctnVec)
 {
-  bool ret=true;
+  bool ret=false;
   srctnVec.clear();
   for(unsigned int i=0;i<modelPtrVec.size();++i)
   {
@@ -324,6 +324,7 @@ bool _incrMuxPhraseModel::getTransVecFor_t_(const Vector<WordIndex>& t,
     _incrMuxPhraseModel::SrcTableNode localSrctn;
     bool localRet=modelPtrVec[i]->getTransFor_t_(trgMapGlobalToLocalWidxVec(i,t),
                                                  localSrctn);
+    
         // Map local word indices to global vocabulary
     SrcTableNode srctn;
     for(_incrMuxPhraseModel::SrcTableNode::iterator iter=localSrctn.begin();iter!=localSrctn.end();++iter)
@@ -333,8 +334,8 @@ bool _incrMuxPhraseModel::getTransVecFor_t_(const Vector<WordIndex>& t,
     }
     srctnVec.push_back(srctn);
 
-    if(!localRet)
-      ret=false;
+    if(localRet)
+      ret=true;
   }
   return ret;
 }
