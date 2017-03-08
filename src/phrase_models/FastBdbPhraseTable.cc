@@ -123,9 +123,8 @@ bool FastBdbPhraseTable::init(const char *fileName)
 #else
   envPtr=NULL;
 #endif
-  
       // open databases
-  u_int32_t o_flags = DB_CREATE; // Open flags
+  u_int32_t o_flags = DB_CREATE|DB_NOMMAP; // Open flags
   
   std::string phrDictDbName=outputFilesPrefix+".fbdb_phrdict";
   phrDictDb=new Db(envPtr,0);
