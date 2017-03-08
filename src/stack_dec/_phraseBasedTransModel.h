@@ -2582,12 +2582,8 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForInvPbModel(const Vector<Word
     {
       for(BasePhraseModel::SrcTableNode::iterator iter=srctnVec[i].begin(); iter!=srctnVec[i].end(); ++iter)
       {
-        std::set<Vector<WordIndex> >::iterator transIter=transSet.find(iter->first);
-        if(transIter==transSet.end())
-        {
-              // Add new entry
-          transSet.insert(iter->first);
-        }
+            // Add new entry
+        transSet.insert(iter->first);
       }
     }
     return ret;
@@ -2602,12 +2598,8 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForInvPbModel(const Vector<Word
     transSet.clear();
     for(BasePhraseModel::SrcTableNode::iterator iter=srctn.begin(); iter!=srctn.end(); ++iter)
     {
-      std::set<Vector<WordIndex> >::iterator transIter=transSet.find(iter->first);
-      if(transIter==transSet.end())
-      {
-            // Add new entry
-        transSet.insert(iter->first);
-      }
+          // Add new entry
+      transSet.insert(iter->first);
     }
     return ret;
   }
