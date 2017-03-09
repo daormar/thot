@@ -10,42 +10,6 @@
 # of "thot_server".
 
 ########
-obtain_smtweights_names()
-{
-    local_line=`$bindir/thot_get_ll_weights | $GREP "\- SMT model weights="`
-    local_smtw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
-    echo ${local_smtw_names}
-}
-
-########
-obtain_ecmweights_names()
-{
-    local_line=`$bindir/thot_get_ll_weights | $GREP "\- Error correction model weights="`
-    local_ecmw_names=`echo ${local_line} | $AWK '{for(i=6;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
-    echo ${local_ecmw_names}
-}
-
-########
-obtain_catweights_names()
-{
-    local_line=`$bindir/thot_get_ll_weights | $GREP "\- Assisted translator weights="`
-    local_catw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
-    echo ${local_catw_names}
-}
-
-########
-num_smtw()
-{
-    obtain_smtweights_names | $AWK '{printf"%d",NF}'
-}
-
-########
-num_catw()
-{
-    obtain_catweights_names | $AWK '{printf"%d",NF}'
-}
-
-########
 calc_nnc_pen()
 {
     we="$1"
@@ -71,10 +35,8 @@ calc_nnc_pen()
 ########
 separate_weights()
 {
-    # Obtain number of weights for each model
-    NSMTW=`num_smtw`
-    NCATW=`num_catw`
-    NECW=`expr $NUMW - $NSMTW - $NCATW`
+    # NOTE: number of weights for each model were provided externally
+    # (variables NSMTW, NCATW and NECW)
 
     # Separate weights in groups
     SMTW=`echo "$weights" | ${AWK} -v ntmw=$NSMTW '{for(i=1;i<=ntmw;++i) printf"%s ",$i;}'`
@@ -147,6 +109,18 @@ else
     if [ "${SERVER}" = "" ]; then SERVER=${bindir}/thot_server; fi
     if [ "${SERVER_IP}" = "" ]; then SERVER_IP="127.0.0.1" ; fi
     if [ "${CFGFILE}" = "" ]; then CFGFILE="server.cfg" ; fi
+    if [ "${NSMTW}" = "" ]; then
+        echo "Error: NSMTW variable not provided!" >&2
+        exit 1
+    fi
+    if [ "${NCATW}" = "" ]; then
+        echo "Error: NCATW variable not provided!" >&2
+        exit 1
+    fi
+    if [ "${NECW}" = "" ]; then
+        echo "Error: NECW variable not provided!" >&2
+        exit 1
+    fi
     if [ "${PORT}" != "" ]; then PORT_OPT="-p ${PORT}" ; fi
     if [ "${UID}" != "" ]; then UID_OPT="-uid ${UID}" ; fi
     if [ "${TEST}" = "" ]; then TEST=${BASEDIR}/raw/DATA/Es-dev ; fi
