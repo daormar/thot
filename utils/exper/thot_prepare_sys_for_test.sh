@@ -272,9 +272,6 @@ create_tm_files()
             process_files_for_individual_tm ${curr_tmtype} ${tmdesc_dirname}/${curr_tmfile} ${curr_status}
         done
 
-        # Copy weights for tm descriptor
-        cp ${tmfile}.weights ${outd}/tm/
-
         # Obtain new file name for tm descriptor
         basetmfile=`basename $tmfile`
         newtmfile=${outd}/tm/${basetmfile}
