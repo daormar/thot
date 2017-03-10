@@ -165,7 +165,7 @@ bool extractModelEntryInfo(const char *fileName,
           {
                 // Read entry
             ModelDescriptorEntry modelDescEntry;
-            modelDescEntry.tmType=awk.dollar(1);
+            modelDescEntry.modelType=awk.dollar(1);
             modelDescEntry.modelFileName=awk.dollar(2);
             modelDescEntry.statusStr=awk.dollar(3);
             modelDescEntry.absolutizedModelFileName=absolutizeModelFileName(fileName,modelDescEntry.modelFileName);
