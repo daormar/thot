@@ -57,7 +57,8 @@ bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
   {
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-      int ret=loadTmEntry(modelDescEntryVec[i].tmType,
+      cerr<<"* Reading TM entry: "<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<" "<<modelDescEntryVec[i].statusStr<<endl;
+      int ret=loadTmEntry(modelDescEntryVec[i].modelType,
                           modelDescEntryVec[i].absolutizedModelFileName,
                           modelDescEntryVec[i].statusStr);
       if(ret==ERROR)
