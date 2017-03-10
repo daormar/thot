@@ -352,11 +352,11 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *prefixOfL
       // Obtain name of file with weights
   std::string weightFileName;
   std::string mainFileName;
-  if(this->fileIsDescriptor(prefixOfLmFiles,mainFileName))
+  if(fileIsDescriptor(prefixOfLmFiles,mainFileName))
   {
         // File is descriptor
     std::string descFileName=prefixOfLmFiles;
-    std::string absolutizedMainFileName=this->absolutizeModelFileName(descFileName,mainFileName);
+    std::string absolutizedMainFileName=absolutizeModelFileName(descFileName,mainFileName);
     weightFileName=absolutizedMainFileName+".weights";
   }
   else
@@ -422,11 +422,11 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *prefixOf
         // Obtain name of file with weights
   std::string weightFileName;
   std::string mainFileName;
-  if(this->fileIsDescriptor(prefixOfLmFiles,mainFileName))
+  if(fileIsDescriptor(prefixOfLmFiles,mainFileName))
   {
         // File is descriptor
     std::string descFileName=prefixOfLmFiles;
-    std::string absolutizedMainFileName=this->absolutizeModelFileName(descFileName,mainFileName);
+    std::string absolutizedMainFileName=absolutizeModelFileName(descFileName,mainFileName);
     weightFileName=absolutizedMainFileName+".weights";
   }
   else

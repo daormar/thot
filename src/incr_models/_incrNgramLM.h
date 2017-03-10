@@ -38,6 +38,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "vecx_x_incr_ecpm.h"
 #include <lm_ienc.h>
+#include "ModelDescriptorUtils.h"
 #include <string>
 #include "BaseIncrNgramLM.h"
 
@@ -518,7 +519,7 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
   {
         // File is descriptor
     std::string descFileName=fileName;
-    std::string absolutizedMainFileName=this->absolutizeModelFileName(descFileName,mainFileName);
+    std::string absolutizedMainFileName=absolutizeModelFileName(descFileName,mainFileName);
     lmFileName=absolutizedMainFileName;
   }
   else
@@ -541,6 +542,7 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
     return OK;
   }
 }
+
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 ostream& _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(ostream &outS)
