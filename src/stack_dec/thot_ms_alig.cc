@@ -46,7 +46,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "LangModelInfo.h"
 #include "BaseTranslationConstraints.h"
 #include "BaseLogLinWeightUpdater.h"
-
+#include "ModelDescriptorUtils.h"
 #include "DynClassFactoryHandler.h"
 #include "ctimer.h"
 #include "options.h"
@@ -197,6 +197,18 @@ int init_translator(const thot_ms_alig_pars& tap)
   cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
   cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
 
+      // Obtain info about translation model entries
+  unsigned int numTransModelEntries;
+  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  if(extractModelEntryInfo(tap.transModelPref.c_str(),modelDescEntryVec)==OK)
+  {
+    numTransModelEntries=modelDescEntryVec.size();
+  }
+  else
+  {
+    numTransModelEntries=1;
+  }
+
       // Initialize class factories
   err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
   if(err==ERROR)
@@ -224,20 +236,28 @@ int init_translator(const thot_ms_alig_pars& tap)
     cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
     return ERROR;
   }
-
+  
+      // Add one swm pointer per each translation model entry
   swModelInfoPtr=new SwModelInfo;
-  swModelInfoPtr->swAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
-  if(swModelInfoPtr->swAligModelPtr==NULL)
+  for(unsigned int i=0;i<numTransModelEntries;++i)
   {
-    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    return ERROR;
+    swModelInfoPtr->swAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
+    if(swModelInfoPtr->swAligModelPtrVec[0]==NULL)
+    {
+      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      return ERROR;
+    }
   }
 
-  swModelInfoPtr->invSwAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
-  if(swModelInfoPtr->invSwAligModelPtr==NULL)
+      // Add one inverse swm pointer per each translation model entry
+  for(unsigned int i=0;i<numTransModelEntries;++i)
   {
-    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    return ERROR;
+    swModelInfoPtr->invSwAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
+    if(swModelInfoPtr->invSwAligModelPtrVec[0]==NULL)
+    {
+      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      return ERROR;
+    }
   }
 
   llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
@@ -353,8 +373,10 @@ void release_translator(void)
   delete langModelInfoPtr;
   delete phrModelInfoPtr->invPbModelPtr;
   delete phrModelInfoPtr;
-  delete swModelInfoPtr->swAligModelPtr;
-  delete swModelInfoPtr->invSwAligModelPtr;
+  for(unsigned int i=0;i<swModelInfoPtr->swAligModelPtrVec.size();++i)
+    delete swModelInfoPtr->swAligModelPtrVec[i];
+  for(unsigned int i=0;i<swModelInfoPtr->invSwAligModelPtrVec.size();++i)
+    delete swModelInfoPtr->invSwAligModelPtrVec[i];
   delete swModelInfoPtr;
   delete stackDecoderPtr;
   delete llWeightUpdaterPtr;

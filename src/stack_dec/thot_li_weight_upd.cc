@@ -42,6 +42,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "PhrLocalSwLiTm.h"
+#include "ModelDescriptorUtils.h"
 #include "DynClassFactoryHandler.h"
 #include "ErrorDefs.h"
 #include "options.h"
@@ -70,7 +71,7 @@ int takeParameters(int argc,
                    char *argv[],
                    thot_liwu_pars& pars);
 int checkParameters(thot_liwu_pars& pars);
-int initPhrModel(void);
+int initPhrModel(std::string phrModelFilePrefix);
 void releasePhrModel(void);
 int update_li_weights(const thot_liwu_pars& pars);
 void printUsage(void);
@@ -201,13 +202,25 @@ int checkParameters(thot_liwu_pars& pars)
 }
 
 //--------------------------------
-int initPhrModel(void)
+int initPhrModel(std::string phrModelFilePrefix)
 {
       // Initialize class factories
   int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
   if(err==ERROR)
     return ERROR;
 
+      // Obtain info about translation model entries
+  unsigned int numTransModelEntries;
+  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  if(extractModelEntryInfo(phrModelFilePrefix.c_str(),modelDescEntryVec)==OK)
+  {
+    numTransModelEntries=modelDescEntryVec.size();
+  }
+  else
+  {
+    numTransModelEntries=1;
+  }
+  
       // Instantiate pointers
   phrModelInfoPtr=new PhraseModelInfo;
   phrModelInfoPtr->invPbModelPtr=dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(dynClassFactoryHandler.basePhraseModelInitPars);
@@ -216,20 +229,28 @@ int initPhrModel(void)
     cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
     return ERROR;
   }
-  
+
+      // Add one swm pointer per each translation model entry
   swModelInfoPtr=new SwModelInfo;
-  swModelInfoPtr->swAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
-  if(swModelInfoPtr->swAligModelPtr==NULL)
+  for(unsigned int i=0;i<numTransModelEntries;++i)
   {
-    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    return ERROR;
+    swModelInfoPtr->swAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
+    if(swModelInfoPtr->swAligModelPtrVec[0]==NULL)
+    {
+      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      return ERROR;
+    }
   }
 
-  swModelInfoPtr->invSwAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
-  if(swModelInfoPtr->invSwAligModelPtr==NULL)
+      // Add one inverse swm pointer per each translation model entry
+  for(unsigned int i=0;i<numTransModelEntries;++i)
   {
-    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    return ERROR;
+    swModelInfoPtr->invSwAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
+    if(swModelInfoPtr->invSwAligModelPtrVec[0]==NULL)
+    {
+      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      return ERROR;
+    }
   }
 
       // Link pointers
@@ -244,8 +265,10 @@ void releasePhrModel(void)
 {
   delete phrModelInfoPtr->invPbModelPtr;
   delete phrModelInfoPtr;
-  delete swModelInfoPtr->swAligModelPtr;
-  delete swModelInfoPtr->invSwAligModelPtr;
+  for(unsigned int i=0;i<swModelInfoPtr->swAligModelPtrVec.size();++i)
+    delete swModelInfoPtr->swAligModelPtrVec[i];
+  for(unsigned int i=0;i<swModelInfoPtr->swAligModelPtrVec.size();++i)
+    delete swModelInfoPtr->invSwAligModelPtrVec[i];
   delete swModelInfoPtr;
 
   dynClassFactoryHandler.release_smt();
@@ -257,7 +280,7 @@ int update_li_weights(const thot_liwu_pars& pars)
   int retVal;
 
       // Initialize phrase model
-  retVal=initPhrModel();
+  retVal=initPhrModel(pars.phrModelFilePrefix);
   if(retVal==ERROR)
     return ERROR;
   
@@ -288,7 +311,7 @@ void printUsage(void)
   cerr<<"thot_li_weight_upd -tm <string> -t <string> -r <string>"<<endl;
   cerr<<"                   [-v] [--help] [--version]"<<endl;
   cerr<<endl;
-  cerr<<"-tm <string>       Prefix of translation model files."<<endl;
+  cerr<<"-tm <string>       Prefix or descriptor of translation model files."<<endl;
   cerr<<"                   (Warning: current weights will be overwritten)."<<endl;
   cerr<<"-t <string>        File with test sentences."<<endl;
   cerr<<"-r <string>        File with reference sentences."<<endl;

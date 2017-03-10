@@ -49,11 +49,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "_phrSwTransModel.h"
 #include "BaseSmtModel.h"
 #include "BaseErrorCorrectionModel.h"
-
 #include "ThotDecoderCommonVars.h"
 #include "ThotDecoderPerUserVars.h"
 #include "ThotDecoderState.h"
 #include "ThotDecoderUserPars.h"
+#include "ModelDescriptorUtils.h"
 #include <options.h>
 #include <pthread.h>
 #include <sstream>

@@ -53,7 +53,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BaseLogLinWeightUpdater.h"
 #include "BaseScorer.h"
 #include "BaseErrorCorrectionModel.h"
-
+#include "ModelDescriptorUtils.h"
 #include "DynClassFactoryHandler.h"
 #include "options.h"
 #include "ErrorDefs.h"
@@ -172,15 +172,15 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   }
 
   swModelInfoPtr=new SwModelInfo;
-  swModelInfoPtr->swAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
-  if(swModelInfoPtr->swAligModelPtr==NULL)
+  swModelInfoPtr->swAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
+  if(swModelInfoPtr->swAligModelPtrVec[0]==NULL)
   {
     cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
     return ERROR;
   }
 
-  swModelInfoPtr->invSwAligModelPtr=dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars);
-  if(swModelInfoPtr->invSwAligModelPtr==NULL)
+  swModelInfoPtr->invSwAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
+  if(swModelInfoPtr->invSwAligModelPtrVec[0]==NULL)
   {
     cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
     return ERROR;
@@ -303,8 +303,10 @@ int get_ll_weights(const thot_get_ll_weights_pars& pars)
   delete langModelInfoPtr;
   delete phrModelInfoPtr->invPbModelPtr;
   delete phrModelInfoPtr;
-  delete swModelInfoPtr->swAligModelPtr;
-  delete swModelInfoPtr->invSwAligModelPtr;
+  for(unsigned int i=0;i<swModelInfoPtr->swAligModelPtrVec.size();++i)
+    delete swModelInfoPtr->swAligModelPtrVec[i];
+  for(unsigned int i=0;i<swModelInfoPtr->swAligModelPtrVec.size();++i)
+    delete swModelInfoPtr->invSwAligModelPtrVec[i];
   delete swModelInfoPtr;
   delete smtModelPtr;
   delete scorerPtr;

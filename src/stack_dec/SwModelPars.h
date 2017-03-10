@@ -27,7 +27,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 struct SwModelPars
 {
-  std::string readTablePrefix;
+  Vector<std::string> readTablePrefixVec;
 
       // sw model without len weight and sentence length model weight
   float swNoLenWeight;
