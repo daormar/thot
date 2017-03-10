@@ -93,7 +93,7 @@ bool fileIsDescriptor(std::string fileName,
   {
     if(awk.getln())
     {
-      if(awk.NF>=3 && awk.dollar(1)=="thot" && awk.dollar(2)=="tm" && awk.dollar(3)=="descriptor")
+      if(awk.NF>=3 && awk.dollar(1)=="thot" && (awk.dollar(2)=="tm" || awk.dollar(2)=="lm") && awk.dollar(3)=="descriptor")
       {
             // Process descriptor (main file will be read)
         while(awk.getln())
@@ -118,7 +118,7 @@ bool fileIsDescriptor(std::string fileName,
           }
         }
             // File is not a descriptor since it does not incorporate a
-            // main language model
+            // main model
         return false;
       }
       else
