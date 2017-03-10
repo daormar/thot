@@ -49,6 +49,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "TrgCutsTable.h"
 #include "TrgSegmLenTable.h"
 #include "AlignmentExtractor.h"
+#include "ModelDescriptorUtils.h"
 #include "Bitset.h"
 #include "awkInputStream.h"
 #include <stdlib.h>

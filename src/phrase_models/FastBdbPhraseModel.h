@@ -48,6 +48,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "TrgCutsTable.h"
 #include "TrgSegmLenTable.h"
 #include "Bitset.h"
+#include "ModelDescriptorUtils.h"
 #include "awkInputStream.h"
 #include <stdlib.h>
 #include <float.h>
