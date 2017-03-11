@@ -71,15 +71,15 @@ ThotDecoder::ThotDecoder()
   }
 
   tdCommonVars.swModelInfoPtr=new SwModelInfo;
-  tdCommonVars.swModelInfoPtr->swAligModelPtr=tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars);
-  if(tdCommonVars.swModelInfoPtr->swAligModelPtr==NULL)
+  tdCommonVars.swModelInfoPtr->swAligModelPtrVec.push_back(tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars));
+  if(tdCommonVars.swModelInfoPtr->swAligModelPtrVec[0]==NULL)
   {
     cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
     exit(ERROR);
   }
 
-  tdCommonVars.swModelInfoPtr->invSwAligModelPtr=tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars);
-  if(tdCommonVars.swModelInfoPtr->invSwAligModelPtr==NULL)
+  tdCommonVars.swModelInfoPtr->invSwAligModelPtrVec.push_back(tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars));
+  if(tdCommonVars.swModelInfoPtr->invSwAligModelPtrVec[0]==NULL)
   {
     cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
     exit(ERROR);
@@ -2556,8 +2556,10 @@ ThotDecoder::~ThotDecoder()
   delete tdCommonVars.langModelInfoPtr;
   delete tdCommonVars.phrModelInfoPtr->invPbModelPtr;
   delete tdCommonVars.phrModelInfoPtr;
-  delete tdCommonVars.swModelInfoPtr->swAligModelPtr;
-  delete tdCommonVars.swModelInfoPtr->invSwAligModelPtr;
+  for(unsigned int i=0;i<tdCommonVars.swModelInfoPtr->swAligModelPtrVec.size();++i)
+    delete tdCommonVars.swModelInfoPtr->swAligModelPtrVec[i];
+  for(unsigned int i=0;i<tdCommonVars.swModelInfoPtr->invSwAligModelPtrVec.size();++i)
+    delete tdCommonVars.swModelInfoPtr->invSwAligModelPtrVec[i];
   delete tdCommonVars.swModelInfoPtr;
   delete tdCommonVars.wgHandlerPtr;
   delete tdCommonVars.smtModelPtr;

@@ -48,11 +48,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 struct SwModelInfo
 {
       // sw model members
-  BaseSwAligModel<PpInfo>* swAligModelPtr;
+  Vector<BaseSwAligModel<PpInfo>*> swAligModelPtrVec;
   SwModelPars swModelPars;
 
       // Inverse sw model members
-  BaseSwAligModel<PpInfo>* invSwAligModelPtr;
+  Vector<BaseSwAligModel<PpInfo>*> invSwAligModelPtrVec;
   SwModelPars invSwModelPars;
 
       // Confidence interval for length model

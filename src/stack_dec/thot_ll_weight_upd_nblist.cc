@@ -240,7 +240,13 @@ int checkParameters(thot_llwu_nblist_pars& pars)
     cerr<<"Error: parameter -r not given!"<<endl;
     return ERROR;   
   }
-  
+
+  if(pars.includeVarStr.size()!=pars.llWeightVec.size())
+  {
+    cerr<<"Error: number of weights provided by -w and -va options are not equal!"<<endl;
+    return ERROR;       
+  }
+
   return OK;
 }
 

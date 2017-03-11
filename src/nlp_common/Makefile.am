@@ -1,6 +1,7 @@
 EXTRA_DIST= WordIndex.h WordAligMatrix.h WordAligMatrix.cc uiPairHashF.h	\
 uiHashF.h TrieVecs.h TrieOfWords.h Trie.h TrieBidOfWords.h TrieBid.h	\
-StrProcUtils.h StrProcUtils.cc StatModelDefs.h SingleWordVocab.h	\
+StrProcUtils.h StrProcUtils.cc ModelDescriptorUtils.h			\
+ModelDescriptorUtils.cc StatModelDefs.h SingleWordVocab.h		\
 SingleWordVocab.cc SimpleTrie.h _simpleTrie.h Score.h Prob.h Prob.cc	\
 printAligFuncs.h printAligFuncs.cc PositionIndex.h OrderedVector.h	\
 options.h options.cc NbestTransTable.h NbestTableNode.h myVector.h	\

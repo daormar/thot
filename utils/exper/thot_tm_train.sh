@@ -115,20 +115,14 @@ create_desc_file()
     # Determine model type
     modeltype=${libdir}wba_incr_phrase_model_factory.so
 
-    # Create descriptor file and file with weights
+    # Create descriptor file
     if [ ${o_given} -eq 1 ]; then
         # -o option was given
         echo "thot tm descriptor # tool: thot_tm_train" > ${outd}/tm_desc
         echo "${modeltype} ${relative_prefix} main # source file: ${scorpus} ; target file: ${tcorpus}" >> ${outd}/tm_desc
-
-        # add new weight to descriptor weights file
-        echo "1" > ${outd}/tm_desc.weights
     else
         # -a option was given
         echo "${modeltype} ${relative_prefix} ${outsubdir} # source file: ${scorpus} ; target file: ${tcorpus}" >> ${outd}/tm_desc
-
-        # add new weight to descriptor weights file
-        echo "1" >> ${outd}/tm_desc.weights
     fi
 }
 

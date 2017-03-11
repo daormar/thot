@@ -116,6 +116,12 @@ int processParameters(thot_server_pars ts_pars)
       // Process configuration file
   ThotDecoderUserPars tdu_pars;
   thotDecoderPtr=new ThotDecoder;
+  if(ts_pars.i_given)
+  {
+    delete thotDecoderPtr;
+    return OK;
+  }
+  
   int ret=thotDecoderPtr->initUsingCfgFile(ts_pars.c_str,tdu_pars,ts_pars.v_given);
   if(ret==ERROR)
   {
@@ -389,6 +395,13 @@ int takeParameters(int argc,
   {
     matched=0;   
 
+        // -i parameter
+    if(argv_stl[i]=="-i" && !matched)
+    {
+      ts_pars.i_given=true;
+      ++matched;
+    }
+
         // -c parameter
     if(argv_stl[i]=="-c" && !matched)
     {
@@ -451,12 +464,18 @@ int takeParameters(int argc,
 //--------------- checkParameters function
 int checkParameters(thot_server_pars& ts_pars)
 {
-  if(!ts_pars.c_given)
+  if(!ts_pars.i_given && !ts_pars.c_given)
   {
-    cerr<<"Error: -c parameter not given!"<<endl;
+    cerr<<"Error: either -c or -i parameter should be given!"<<endl;
     return ERROR;
   }
 
+  if(ts_pars.i_given && ts_pars.w_given)
+  {
+    cerr<<"Error: -i and -w parameters cannot be given simultaneously!"<<endl;
+    return ERROR;
+  }
+  
   return OK;
 }
 
@@ -472,9 +491,10 @@ void printParameters(thot_server_pars ts_pars)
 void printUsage(void)
 {
   cerr<<"thot_server written by Daniel Ortiz"<<endl;
-  cerr<<"Usage: thot_server    -c <string>"<<endl;
+  cerr<<"Usage: thot_server    -i | -c <string>"<<endl;
   cerr<<"                      [-p <int>] [ -w ] [ -v ] [--help] [--version]"<<endl;
-  cerr<<endl;
+  cerr<<endl;  
+  cerr<<"-i <string>    Test server initialization and exit"<<endl<<endl;  
   cerr<<"-c <string>    Configuration file"<<endl<<endl;  
   cerr<<"-p <int>       Port used by the server"<<endl<<endl;  
   cerr<<"-w             Print model weights and exit"<<endl<<endl;  

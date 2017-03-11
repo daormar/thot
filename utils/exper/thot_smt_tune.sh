@@ -348,9 +348,6 @@ create_tm_dev_files()
             process_files_for_individual_tm_dev ${curr_tmtype} ${tmdesc_dirname}/${curr_tmfile} ${curr_status}
         done
 
-        # Copy weights for tm descriptor
-        cp ${tmfile}.weights ${outd}/tm_dev/
-
         # Obtain new file name for tm descriptor
         basetmdevfile=`basename $tmfile`
         newtmdevfile=${outd}/tm_dev/${basetmfile}
@@ -441,9 +438,6 @@ create_tm_files()
             curr_status=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$3}'`
             process_files_for_individual_tm ${curr_tmtype} ${tmdesc_dirname}/${curr_tmfile} ${curr_status}
         done
-
-        # Copy weights for tm descriptor
-        cp ${tmfile}.weights ${outd}/tm/
 
         # Obtain new file name for tm descriptor
         basetmfile=`basename $tmfile`

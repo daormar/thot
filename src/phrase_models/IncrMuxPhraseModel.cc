@@ -52,60 +52,31 @@ bool IncrMuxPhraseModel::load(const char *prefix)
 //-------------------------
 bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
 {
-  std::string mainFileName;
-  if(fileIsDescriptor(fileName,mainFileName))
+  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  if(extractModelEntryInfo(fileName,modelDescEntryVec)==OK)
   {
-    awkInputStream awk;
-    if(awk.open(fileName)==ERROR)
+    for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-      cerr<<"Error while loading descriptor file "<<fileName<<endl;
+      cerr<<"* Reading TM entry: "<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<" "<<modelDescEntryVec[i].statusStr<<endl;
+      int ret=loadTmEntry(modelDescEntryVec[i].modelType,
+                          modelDescEntryVec[i].absolutizedModelFileName,
+                          modelDescEntryVec[i].statusStr);
+      if(ret==ERROR)
+        return ERROR;
+    }
+        // Check if main model was found
+    if(modelIndex!=MAIN_MUX_PMODEL_INDEX)
+    {
+      cerr<<"Error: the first model entry should be marked as main"<<endl;
       return ERROR;
     }
     else
-    {
-          // Clear previously stored model
-      clear();
+      return OK;
 
-      cerr<<"Loading model file "<<fileName<<endl;
-
-          // Discard first line (it is used to identify the file as a
-          // descriptor)
-      awk.getln();
-    
-          // Read entries for each language model
-      while(awk.getln())
-      {
-        if(awk.dollar(1)!="#")
-        {
-          if(awk.NF>=3)
-          {
-                // Read entry
-            std::string tmType=awk.dollar(1);
-            std::string modelFileName=awk.dollar(2);
-            std::string statusStr=awk.dollar(3);
-            std::string absolutizedModelFileName=absolutizeModelFileName(fileName,modelFileName);
-            cerr<<"* Reading translation model entry: "<<tmType<<" "<<absolutizedModelFileName<<" "<<statusStr<<endl;
-            int ret=loadTmEntry(tmType,absolutizedModelFileName,statusStr);
-            if(ret==ERROR)
-              return ERROR;
-          }
-        }
-      }
-          // Check if main model was found
-      if(modelIndex!=MAIN_MUX_PMODEL_INDEX)
-      {
-        cerr<<"Error: the first model entry should be marked as main"<<endl;
-        return ERROR;
-      }
-      else
-        return OK;
-    }
+    return OK;
   }
   else
-  {
-    cerr<<"Error while loading descriptor file "<<fileName<<endl;
-    return ERROR;
-  }
+    return ERROR;     
 }
 
 //-------------------------

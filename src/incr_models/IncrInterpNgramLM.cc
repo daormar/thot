@@ -57,62 +57,22 @@ bool IncrInterpNgramLM::load(const char *fileName)
 //---------------
 bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
 {
-  std::string mainFileName;
-  if(fileIsDescriptor(fileName,mainFileName))
+  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  if(extractModelEntryInfo(fileName,modelDescEntryVec)==OK)
   {
-    awkInputStream awk;
-    if(awk.open(fileName)==ERROR)
+    for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-      cerr<<"Error while loading descriptor file "<<fileName<<endl;
-      return ERROR;
-    }
-    else
-    {
-          // Clear previously stored model
-      clear();
-
-      cerr<<"Loading model file "<<fileName<<endl;
-
-          // Discard first line (it is used to identify the file as a
-          // descriptor)
-      awk.getln();
-    
-          // Read entries for each language model
-      while(awk.getln())
-      {
-        if(awk.dollar(1)!="#")
-        {
-          if(awk.NF>=3)
-          {
-                // Read entry
-            std::string lmType=awk.dollar(1);
-            std::string modelFileName=awk.dollar(2);
-            std::string statusStr=awk.dollar(3);
-            std::string absolutizedModelFileName=absolutizeModelFileName(fileName,modelFileName);
-            cerr<<"* Reading LM entry: "<<lmType<<" "<<absolutizedModelFileName<<" "<<statusStr<<endl;
-            int ret=loadLmEntry(lmType,absolutizedModelFileName,statusStr);
-            if(ret==ERROR)
-              return ERROR;
-          }
-        }
-      }
-          // Check if main model was found
-      if(modelIndex!=0)
-      {
-        cerr<<"Error: the first model entry should be marked as main"<<endl;
+      cerr<<"* Reading LM entry: "<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<" "<<modelDescEntryVec[i].statusStr<<endl;
+      int ret=loadLmEntry(modelDescEntryVec[i].modelType,
+                          modelDescEntryVec[i].absolutizedModelFileName,
+                          modelDescEntryVec[i].statusStr);
+      if(ret==ERROR)
         return ERROR;
-      }
-      else
-      {
-        return OK;
-      }
     }
+    return OK;
   }
   else
-  {
-    cerr<<"Error while loading descriptor file "<<fileName<<endl;
-    return ERROR;
-  }
+    return ERROR;     
 }
 
 //---------------
