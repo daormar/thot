@@ -16,6 +16,7 @@ SUFFIXES= .sh .pl
 	echo "bugreport="$(PACKAGE_BUGREPORT) >> $@
 	echo "bindir="$(prefix)/bin/ >> $@
 	echo "datadir="$(prefix)/share/$(PACKAGE_NAME) >> $@
+	echo "PYTHON_VERSION=\""$(PYTHON_VERSION)"\"" >> $@
 	echo "AWK="$(AWK) >> $@
 	echo "SORT="$(SORT) >> $@
 	echo "sortpars=\""$(sortpars)"\"" >> $@

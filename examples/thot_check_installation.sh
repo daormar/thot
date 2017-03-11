@@ -47,9 +47,9 @@ else
 fi
 
 # Basic installation checking
-echo "**** Check static and dynamic tool configuration (thot_get_ll_weights)..."
+echo "**** Check static and dynamic tool configuration (thot_server)..."
 echo ""
-${bindir}/thot_get_ll_weights -v
+${bindir}/thot_server -i
 if test $? -eq 0 ; then
     echo "... Done"
 else
@@ -68,6 +68,33 @@ else
 fi
 
 echo "" 
+
+# Check python tools
+echo "**** Checking python tools (thot_tokenize)..."
+echo ""
+echo "test" | ${bindir}/thot_tokenize > /dev/null
+if test $? -eq 0 ; then
+    echo "... Done"
+    python_test_ok="yes"
+else
+    echo "================================================"
+    echo " Test failed!"
+    echo "================================================"
+    
+    if [ ${PYTHON_VERSION:0:1} -ne 2 ]; then
+        echo "IMPORTANT NOTE: Thot requires python version 2.x for some of its tools."
+        echo "However, version ${PYTHON_VERSION} was detected."
+        echo "A proper version can be used when executing configure. Here is an"
+        echo "example assuming version 2.7 is available:"
+        echo "make clean"
+        echo "./configure PYTHON=/usr/bin/python2.7"
+        echo "make"
+        echo "make install"
+    fi
+    python_test_ok="no"
+fi
+
+echo ""
 
 # Check thot_lm_train
 echo "**** Checking thot_lm_train..."
@@ -226,10 +253,16 @@ echo ""
 
 # Remove directories for temporaries
 echo "**** Remove directories used to store temporary files..."
-echo ""
 rm -rf $tmpdir
 
-echo ""
-echo "================"
-echo "All tests passed"
-echo "================"
+if [ ${python_test_ok} = "yes" ]; then
+    echo ""
+    echo "================"
+    echo "All tests passed"
+    echo "================"
+else
+    echo ""
+    echo "================================================="
+    echo "Python tools test not passed, see more info above"
+    echo "================================================="
+fi
