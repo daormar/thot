@@ -242,7 +242,7 @@ int init_translator(const thot_ms_alig_pars& tap)
   for(unsigned int i=0;i<numTransModelEntries;++i)
   {
     swModelInfoPtr->swAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
-    if(swModelInfoPtr->swAligModelPtrVec[0]==NULL)
+    if(swModelInfoPtr->swAligModelPtrVec[i]==NULL)
     {
       cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
       return ERROR;
@@ -253,7 +253,7 @@ int init_translator(const thot_ms_alig_pars& tap)
   for(unsigned int i=0;i<numTransModelEntries;++i)
   {
     swModelInfoPtr->invSwAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
-    if(swModelInfoPtr->invSwAligModelPtrVec[0]==NULL)
+    if(swModelInfoPtr->invSwAligModelPtrVec[i]==NULL)
     {
       cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
       return ERROR;
