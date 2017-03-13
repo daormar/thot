@@ -91,6 +91,7 @@ SUFFIXES= .sh .pl .py
 	echo "bindir="$(prefix)/bin/ >> $@
 	echo "libdir="$(prefix)/lib/ >> $@
 	echo "datadir="$(prefix)/share/$(PACKAGE_NAME) >> $@
+	echo "PYTHON_VERSION=\""$(PYTHON_VERSION)"\"" >> $@
 	echo "AWK="$(AWK) >> $@
 	echo "SORT="$(SORT) >> $@
 	echo "sortpars=\""$(sortpars)"\"" >> $@
@@ -124,6 +125,7 @@ SUFFIXES= .sh .pl .py
 	echo "ENABLE_UPDATE_LIWEIGHTS="$(ENABLE_UPDATE_LIWEIGHTS) >> $@
 	echo "ENABLE_DOWNHILL_LLW="$(ENABLE_DOWNHILL_LLW) >> $@
 	echo "KENLM_BUILD_DIR="$(KENLM_BUILD_DIR) >> $@
+	echo "LDB_CXX="$(LDB_CXX) >> $@
 	cat $< >> $@
 	chmod ugo+x $@
 
