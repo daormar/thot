@@ -275,5 +275,9 @@ class ThotDecoder
   std::string getWordCompletion(std::string uncompleteWord,
                                 std::string completeWord);
 
+      // Memory handling related functions
+  bool instantiate_swm_info(const char* tmFilesPrefix,
+                            int verbose=0);
+  void deleteSwModelPtrs(void);
 };
 #endif
