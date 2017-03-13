@@ -27,8 +27,12 @@ usage()
     echo "thot_tm_train           [-pr <int>]"
     echo "                        -s <string> -t <string> {-o <string>|-a <string>}"
     echo "                        [-nit <int>] [-af <float>] [-np <float>]"
-    echo "                        [-m <int>] [-ao <string>] [-to <int>]"
-    echo "                        [-unk] [-qs <string>] [-tdir <string>]"
+    echo "                        [-m <int>] [-ao <string>] [-to <int>] [-unk]"
+    if [ ! -z "${LDB_CXX}" ]; then
+        echo "                        [-bdb] [-qs <string>] [-tdir <string>]"
+    else
+        echo "                        [-qs <string>] [-tdir <string>]"
+    fi
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
     echo "-pr <int>               Number of processors (1 by default)"
@@ -52,6 +56,9 @@ usage()
     echo "                        (20 by default)" >&2
     echo "-unk                    Introduce special unknown word symbol during"
     echo "                        estimation"
+    if [ ! -z "${LDB_CXX}" ]; then
+        echo "-bdb                    Generate on-disk phrase table in BDB format"
+    fi
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTES:"
@@ -174,8 +181,9 @@ ao_opt="-ao sym1"
 #ao_opt="-ao grd"
 to_given=0
 to_val=20
-qs_given=0
 unk_given=0
+qs_given=0
+bdb_given=0
 tdir_given=0
 tdir="/tmp"
 sdir_given=0
@@ -271,6 +279,8 @@ while [ $# -ne 0 ]; do
             ;;
         "-unk") unk_given=1
             unk_opt="-unk"
+            ;;
+        "-bdb") bdb_given=1
             ;;
         "-tdir") shift
             if [ $# -ne 0 ]; then
@@ -382,6 +392,13 @@ ${bindir}/thot_pbs_gen_batch_phr_model -pr ${pr_val} \
     -s $tcorpus -t $scorpus -o $prefix -nit $niters ${af_opt} ${np_opt} \
     -m ${m_val} ${ao_opt} -to ${to_val} ${unk_opt}  ${qs_opt} "${qs_par}" \
     -T $tdir -sdir $sdir ${debug_opt} || exit 1
+
+# Process -bdb option if given
+if [ ! -z "${LDB_CXX}" -a ${bdb_given} -eq 1 ]; then
+    echo "* Generating on-disk phrase table in BDB format..." >&2
+    echo "" >&2
+    ${bindir}/thot_gen_fbdb_ttable -p $prefix -o $prefix 2> ${prefix}.fbdb_err || exit 1 
+fi
 
 # Create descriptor file
 echo "* Generating descriptor file... " >&2
