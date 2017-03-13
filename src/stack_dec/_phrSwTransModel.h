@@ -156,6 +156,10 @@ class _phrSwTransModel: public _phraseBasedTransModel<HYPOTHESIS>
 
       // Helper functions to deal with model descriptors
   std::string obtainMainModelAbsoluteNameFromPrefix(std::string prefixFileName);
+
+      // Helper functions to load models
+  bool loadMultipleSwModelsPrefix(const char* prefixFileName);
+  bool loadMultipleSwModelsDescriptor(Vector<ModelDescriptorEntry>& modelDescEntryVec);
 };
 
 //--------------- _phrSwTransModel class functions
@@ -174,14 +178,73 @@ void _phrSwTransModel<HYPOTHESIS>::link_swm_info(SwModelInfo* _swModelInfoPtr)
 
 //---------------------------------
 template<class HYPOTHESIS>
+bool _phrSwTransModel<HYPOTHESIS>::loadMultipleSwModelsPrefix(const char* prefixFileName)
+{
+  swModelInfoPtr->swModelPars.readTablePrefixVec.clear();
+  swModelInfoPtr->invSwModelPars.readTablePrefixVec.clear();
+  cSwmScoreVec.clear();
+  cInvSwmScoreVec.clear();
+
+      // sw model (The direct model is the one with the prefix _invswm)
+  std::string readTablePrefix=prefixFileName;
+  swModelInfoPtr->swModelPars.readTablePrefixVec.push_back(readTablePrefix+"_invswm");
+  bool ret=swModelInfoPtr->swAligModelPtrVec[0]->load(readTablePrefix.c_str());
+  if(ret==ERROR) return ERROR;
+  
+      // Inverse sw model
+  swModelInfoPtr->invSwModelPars.readTablePrefixVec.push_back(readTablePrefix+"_swm");
+  ret=swModelInfoPtr->invSwAligModelPtrVec[0]->load(readTablePrefix.c_str());
+  if(ret==ERROR) return ERROR;
+
+      // Grow caching data structures for swms
+  PhrasePairCacheTable phrasePairCacheTable;
+  cSwmScoreVec.push_back(phrasePairCacheTable);
+  cInvSwmScoreVec.push_back(phrasePairCacheTable);
+
+  return OK;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+bool _phrSwTransModel<HYPOTHESIS>::loadMultipleSwModelsDescriptor(Vector<ModelDescriptorEntry>& modelDescEntryVec)
+{
+  swModelInfoPtr->swModelPars.readTablePrefixVec.clear();
+  swModelInfoPtr->invSwModelPars.readTablePrefixVec.clear();
+  cSwmScoreVec.clear();
+  cInvSwmScoreVec.clear();
+
+  for(unsigned int i=0;i<modelDescEntryVec.size();++i)
+  {
+    cerr<<"* Loading single word models for "<<modelDescEntryVec[i].statusStr<<" tm model"<<endl;
+        // sw model (The direct model is the one with the prefix _invswm)
+    std::string readTablePrefix=modelDescEntryVec[i].absolutizedModelFileName+"_invswm";
+    swModelInfoPtr->swModelPars.readTablePrefixVec.push_back(readTablePrefix);
+    bool ret=swModelInfoPtr->swAligModelPtrVec[i]->load(readTablePrefix.c_str());
+    if(ret==ERROR) return ERROR;
+    
+        // Inverse sw model
+    readTablePrefix=modelDescEntryVec[i].absolutizedModelFileName+"_swm";
+    swModelInfoPtr->invSwModelPars.readTablePrefixVec.push_back(readTablePrefix);
+    ret=swModelInfoPtr->invSwAligModelPtrVec[i]->load(readTablePrefix.c_str());
+    if(ret==ERROR) return ERROR;
+    
+        // Grow caching data structures for swms
+    PhrasePairCacheTable phrasePairCacheTable;
+    cSwmScoreVec.push_back(phrasePairCacheTable);
+    cInvSwmScoreVec.push_back(phrasePairCacheTable);
+  }
+  return OK;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
 bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
 {
   unsigned int ret;
 
       // Obtain info about translation model entries
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(prefixFileName,modelDescEntryVec)==ERROR)
-    return ERROR;
+  extractModelEntryInfo(prefixFileName,modelDescEntryVec);
 
       // Obtain prefix of main model
   std::string mainPrefixFileName=this->obtainMainModelAbsoluteNameFromPrefix(prefixFileName);
@@ -210,27 +273,17 @@ bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
   this->instantiateWeightVectors();
 
       // Load multiple sw models
-  cSwmScoreVec.clear();
-  cInvSwmScoreVec.clear();
-  for(unsigned int i=0;i<modelDescEntryVec.size();++i)
+  if(modelDescEntryVec.empty())
   {
-    cerr<<"* Loading single word models for "<<modelDescEntryVec[i].statusStr<<" tm model"<<endl;
-        // sw model (The direct model is the one with the prefix _invswm)
-    std::string readTablePrefix=modelDescEntryVec[i].absolutizedModelFileName+"_invswm";
-    swModelInfoPtr->swModelPars.readTablePrefixVec.push_back(readTablePrefix);
-    ret=swModelInfoPtr->swAligModelPtrVec[i]->load(readTablePrefix.c_str());
+        // prefixFileName did not point to a file descriptor
+    ret=loadMultipleSwModelsPrefix(prefixFileName);
     if(ret==ERROR) return ERROR;
-  
-        // Inverse sw model
-    readTablePrefix=modelDescEntryVec[i].absolutizedModelFileName+"_swm";
-    swModelInfoPtr->invSwModelPars.readTablePrefixVec.push_back(readTablePrefix);
-    ret=swModelInfoPtr->invSwAligModelPtrVec[i]->load(readTablePrefix.c_str());
+  }
+  else
+  {
+        // prefixFileName did point to a file descriptor
+    ret=loadMultipleSwModelsDescriptor(modelDescEntryVec);
     if(ret==ERROR) return ERROR;
-
-        // Grow caching data structures for swms
-    PhrasePairCacheTable phrasePairCacheTable;
-    cSwmScoreVec.push_back(phrasePairCacheTable);
-    cInvSwmScoreVec.push_back(phrasePairCacheTable);
   }
   
   return OK;
