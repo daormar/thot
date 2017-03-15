@@ -2,7 +2,7 @@
 # *- bash -*
 
 if [ $# -lt 1 ]; then
-    echo "Use: thot_handle_ini_files [-s|-w <string>|-r|-p<int>]"
+    echo "Use: thot_handle_ini_files [-s|-w <string>|-r|-p <int>]"
     echo ""
     echo "-s          : Show content of master.ini file"
     echo "-w <string> : Overwrite master.ini with the file provided as argument."
