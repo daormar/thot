@@ -147,7 +147,6 @@ bool extractModelEntryInfo(const char *fileName,
     awkInputStream awk;
     if(awk.open(fileName)==ERROR)
     {
-      cerr<<"Error while loading descriptor file "<<fileName<<endl;
       return ERROR;
     }
     else
@@ -177,8 +176,5 @@ bool extractModelEntryInfo(const char *fileName,
     }
   }
   else
-  {
-    cerr<<"Error while loading descriptor file "<<fileName<<endl;
     return ERROR;
-  }
 }
