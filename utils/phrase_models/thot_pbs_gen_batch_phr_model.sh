@@ -86,7 +86,7 @@ standard_train()
         ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
     echo "" >&2
 
-    if [ ${dict_given} -eq 0 ]; then
+    if [ ${dict_given} -eq 1 ]; then
         # Generate exhaustive alignments so as to introduce sentence
         # pairs as phrase table entries
         echo "* Generating exhaustive word alignments... " >&2
