@@ -26,8 +26,8 @@ usage()
 {
     echo "thot_tm_train           [-pr <int>]"
     echo "                        -s <string> -t <string> {-o <string>|-a <string>}"
-    echo "                        [-nit <int>] [-af <float>] [-np <float>]"
-    echo "                        [-m <int>] [-ao <string>] [-to <int>] [-unk]"
+    echo "                        [-nit <int>] [-af <float>] [-np <float>] [-m <int>]"
+    echo "                        [-ao <string>] [-to <int>] [-dict] [-unk]"
     if [ ! -z "${LDB_CXX}" ]; then
         echo "                        [-bdb] [-qs <string>] [-tdir <string>]"
     else
@@ -54,6 +54,8 @@ usage()
     echo "-to <int>               Maximum number of translation options for each target" >&2
     echo "                        phrase that are considered during a translation process" >&2
     echo "                        (20 by default)" >&2
+    echo "-dict                   Input data is considered as a dictionary, so the" >&2
+    echo "                        sentence pairs are introduced as phrase table entries" >&2
     echo "-unk                    Introduce special unknown word symbol during"
     echo "                        estimation"
     if [ ! -z "${LDB_CXX}" ]; then
@@ -181,6 +183,7 @@ ao_opt="-ao sym1"
 #ao_opt="-ao grd"
 to_given=0
 to_val=20
+dict_given=0
 unk_given=0
 qs_given=0
 bdb_given=0
@@ -276,6 +279,9 @@ while [ $# -ne 0 ]; do
             else
                 qs_given=0
             fi
+            ;;
+        "-unk") dict_given=1
+            dict_opt="-dict"
             ;;
         "-unk") unk_given=1
             unk_opt="-unk"
@@ -390,8 +396,8 @@ prefix=${outd}/${outsubdir}/src_trg
 relative_prefix=${outsubdir}/src_trg
 ${bindir}/thot_pbs_gen_batch_phr_model -pr ${pr_val} \
     -s $tcorpus -t $scorpus -o $prefix -nit $niters ${af_opt} ${np_opt} \
-    -m ${m_val} ${ao_opt} -to ${to_val} ${unk_opt}  ${qs_opt} "${qs_par}" \
-    -T $tdir -sdir $sdir ${debug_opt} || exit 1
+    -m ${m_val} ${ao_opt} -to ${to_val} ${dict_opt} ${unk_opt} \
+    ${qs_opt} "${qs_par}" -T $tdir -sdir $sdir ${debug_opt} || exit 1
 
 # Process -bdb option if given
 if [ ! -z "${LDB_CXX}" -a ${bdb_given} -eq 1 ]; then

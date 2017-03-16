@@ -33,8 +33,6 @@ empty_train()
     echo "0" > ${outp}_swm.msinfo
     echo "" >&2
 
-
-
     # Generate inverse single word model
     echo "* Generating target-to-source single word alignment model... " >&2
     ${bindir}/thot_gen_sw_model -s $tcorpus -t $scorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
@@ -88,11 +86,19 @@ standard_train()
         ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
     echo "" >&2
 
-    # Operate word alignments generated with the sw_models package
-    echo "* Operating word alignments... " >&2
-    $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal ${ao_opt} ${outp}_invswm.bestal -o ${outp} \
-        ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
-    echo "" >&2
+    if [ ${dict_given} -eq 0 ]; then
+        # Generate exhaustive alignments so as to introduce sentence
+        # pairs as phrase table entries
+        echo "* Generating exhaustive word alignments... " >&2
+        $bindir/thot_gen_exhaustive_giza_alig -s $scorpus -t $tcorpus > ${outp}.A3.final
+        echo "" >&2
+    else
+        # Operate word alignments generated with the sw_models package
+        echo "* Operating word alignments... " >&2
+        $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal ${ao_opt} ${outp}_invswm.bestal -o ${outp} \
+            ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
+        echo "" >&2
+    fi
 
     # Generate phrase model
     echo "* Generating phrase model... " >&2
@@ -124,8 +130,8 @@ if [ $# -lt 1 ]; then
     echo "                                    [-n <int>] [-np <float>] [-lf <float>]"
     echo "                                    [-af <float>] [-cpr <float>]"
     echo "                                    [-m <int>] [-ao <string>] [-to <int>]"
-    echo "                                    [-unk] [-nsh] [-qs <string>] [-T <string>]"
-    echo "                                    [-sdir <string>] [-debug]"
+    echo "                                    [-dict] [-unk] [-nsh] [-qs <string>]"
+    echo "                                    [-T <string>] [-sdir <string>] [-debug]"
     echo ""
     echo "-pr <int>               Number of processors"
     echo "-s <string>             File with source sentences (give absolute path when"
@@ -151,6 +157,8 @@ if [ $# -lt 1 ]; then
     echo "-to <int>               Maximum number of translation options for each target"
     echo "                        phrase that are considered during a translation process"
     echo "                        (20 by default)"
+    echo "-dict                   Input data is considered as a dictionary, so the"
+    echo "                        sentence pairs are introduced as phrase table entries"
     echo "-unk                    Introduce special unknown word symbol during"
     echo "                        estimation."
     echo "-nsh                    Do not shuffle load during training (shuffling is"
@@ -187,6 +195,7 @@ else
     to_given=0
     to_val=20
     qs_given=0
+    dict_given=0
     unk_given=0
     nsh_given=0
     shuff_opt="-shu"
@@ -288,6 +297,8 @@ else
                 else
                     qs_given=0
                 fi
+                ;;
+            "-dict") dict_given=1
                 ;;
             "-unk") unk_given=1
                 ;;
