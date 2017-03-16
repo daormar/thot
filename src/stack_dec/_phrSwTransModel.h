@@ -186,13 +186,16 @@ bool _phrSwTransModel<HYPOTHESIS>::loadMultipleSwModelsPrefix(const char* prefix
   cInvSwmScoreVec.clear();
 
       // sw model (The direct model is the one with the prefix _invswm)
-  std::string readTablePrefix=prefixFileName;
-  swModelInfoPtr->swModelPars.readTablePrefixVec.push_back(readTablePrefix+"_invswm");
-  bool ret=swModelInfoPtr->swAligModelPtrVec[0]->load(readTablePrefix.c_str());
+  std::string invReadTablePrefix=prefixFileName;
+  invReadTablePrefix+="_invswm";
+  swModelInfoPtr->swModelPars.readTablePrefixVec.push_back(invReadTablePrefix);
+  bool ret=swModelInfoPtr->swAligModelPtrVec[0]->load(invReadTablePrefix.c_str());
   if(ret==ERROR) return ERROR;
   
       // Inverse sw model
-  swModelInfoPtr->invSwModelPars.readTablePrefixVec.push_back(readTablePrefix+"_swm");
+  std::string readTablePrefix=prefixFileName;
+  readTablePrefix+="_swm";
+  swModelInfoPtr->invSwModelPars.readTablePrefixVec.push_back(readTablePrefix);
   ret=swModelInfoPtr->invSwAligModelPtrVec[0]->load(readTablePrefix.c_str());
   if(ret==ERROR) return ERROR;
 
@@ -244,7 +247,7 @@ bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
 
       // Obtain info about translation model entries
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  extractModelEntryInfo(prefixFileName,modelDescEntryVec);
+  ret=extractModelEntryInfo(prefixFileName,modelDescEntryVec);
 
       // Obtain prefix of main model
   std::string mainPrefixFileName=this->obtainMainModelAbsoluteNameFromPrefix(prefixFileName);
