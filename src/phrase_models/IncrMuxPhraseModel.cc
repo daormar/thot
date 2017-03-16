@@ -76,7 +76,10 @@ bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
     return OK;
   }
   else
-    return ERROR;     
+  {
+    cerr<<"Error while loading descriptor file"<<endl;
+    return ERROR;
+  }
 }
 
 //-------------------------
