@@ -1,8 +1,6 @@
 # Author: Daniel Ortiz Mart\'inez
 # *- bash -*
 
-# minimize_trg_func
-
 ##################
 print_desc()
 {
