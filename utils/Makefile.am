@@ -10,7 +10,7 @@ $(exper_bin_scripts)
 nlp_common_bin_scripts= nlp_common/thot_shuffle				\
 nlp_common/thot_obtain_info_from_verbose_ppl				\
 nlp_common/thot_extract_sents_by_ln nlp_common/thot_corpus_length	\
-nlp_common/thot_handle_ini_files
+nlp_common/thot_handle_ini_files nlp_common/thot_replace_oov_with_unk
 
 incr_models_bin_scripts= incr_models/thot_pbs_get_ngram_counts		\
 incr_models/thot_merge_ngram_counts incr_models/thot_get_ngram_counts	\
@@ -55,7 +55,9 @@ smt_preproc/thot_decategorize smt_preproc/thot_remove_xml_annotations
 error_correction_bin_scripts= error_correction/thot_rescore_nbest	\
 error_correction/thot_obtain_best_trans_from_nbl			\
 error_correction/thot_merge_nbest_list					\
-error_correction/thot_export_wordgraph
+error_correction/thot_export_wordgraph					\
+error_correction/thot_extract_sents_from_nbl				\
+error_correction/thot_augment_nblist
 
 downhill_simplex_bin_scripts= downhill_simplex/thot_dhs_min	\
 downhill_simplex/thot_dhs_trgfunc_example
@@ -65,7 +67,9 @@ stack_dec/thot_dhs_smt_trgfunc stack_dec/thot_dhs_cat_trgfunc		\
 stack_dec/thot_conf_interv_smt stack_dec/thot_conf_interv_cat		\
 stack_dec/thot_smt_using_client stack_dec/thot_cat_using_client		\
 stack_dec/thot_calc_wer stack_dec/thot_get_sys_trans			\
-stack_dec/thot_extract_hyp_info stack_dec/thot_ll_weight_upd
+stack_dec/thot_extract_hyp_info stack_dec/thot_ll_weight_upd		\
+stack_dec/thot_gen_nblists stack_dec/thot_rnnlm_rescore			\
+stack_dec/thot_dhs_nbl_rescore
 
 exper_bin_scripts= exper/thot_gen_partition exper/thot_tm_train		\
 exper/thot_smt_tune exper/thot_cat_tune exper/thot_prepare_sys_for_test	\
@@ -82,7 +86,7 @@ python_PYTHON= smt_preproc/thot_smt_preproc.py
 # $(bin_SCRIPTS): Makefile
 
 # Build using suffix rules (portable)
-SUFFIXES= .sh .pl .py
+SUFFIXES= .sh .pl .py .awk
 
 .sh :
 	rm -f $@
@@ -126,6 +130,7 @@ SUFFIXES= .sh .pl .py
 	echo "ENABLE_UPDATE_LIWEIGHTS="$(ENABLE_UPDATE_LIWEIGHTS) >> $@
 	echo "ENABLE_DOWNHILL_LLW="$(ENABLE_DOWNHILL_LLW) >> $@
 	echo "KENLM_BUILD_DIR="$(KENLM_BUILD_DIR) >> $@
+	echo "FASTER_RNNLM_BUILD_DIR="$(FASTER_RNNLM_BUILD_DIR) >> $@
 	echo "LDB_CXX="$(LDB_CXX) >> $@
 	cat $< >> $@
 	chmod ugo+x $@
@@ -142,5 +147,11 @@ SUFFIXES= .sh .pl .py
 	echo "#! " $(PYTHON) > $@
 	echo "import sys" >> $@
 	echo "sys.path.append(\"$(pythondir)\")" >> $@	
+	cat $< >> $@
+	chmod ugo+x $@
+
+.awk :
+	rm -f $@
+	echo "#! $(AWK) -f"> $@
 	cat $< >> $@
 	chmod ugo+x $@
