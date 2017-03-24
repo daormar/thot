@@ -506,6 +506,24 @@ fi
 AM_CONDITIONAL([KENLM_LIB_ENABLED], [test x${enable_kenlm_lib} = xyes])
 AC_SUBST(KENLM_BUILD_DIR,$with_kenlm)
 
+# Adds an extra argument to configure (enable use of faster-rnnlm library)
+AC_MSG_CHECKING(whether to enable faster-rnnlm library)
+AC_ARG_WITH([faster-rnnlm],
+ [AS_HELP_STRING([--with-faster-rnnlm=DIR],
+   [installs thot with the necessary code to combine it with the faster-rnnlm library @<:@default=no@:>@])],
+ [with_faster_rnnlm=$withval],
+ [with_faster_rnnlm=no])
+if test "$with_faster_rnnlm" = "no"; then
+ enable_faster_rnnlm_lib="no"
+ AC_MSG_RESULT(no)
+else
+ enable_faster_rnnlm_lib="yes"
+ AC_MSG_RESULT(yes)
+ AC_DEFINE(FASTER_RNNLM_LIB_ENABLED,,[Define if faster-rnnlm library is enabled])
+fi
+AM_CONDITIONAL([FASTER_RNNLM_LIB_ENABLED], [test x${enable_faster_rnnlm_lib} = xyes])
+AC_SUBST(FASTER_RNNLM_BUILD_DIR,$with_faster_rnnlm)
+
 # Disable pre/post-processing code
 AC_DEFINE(DISABLE_PREPROC_CODE,,[Define if the pre/post-processing code is disabled])
 
