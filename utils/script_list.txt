@@ -39,6 +39,8 @@
 /home/dortiz/smt/software/stack_dec thot_get_sys_trans
 /home/dortiz/smt/software/stack_dec thot_extract_hyp_info
 /home/dortiz/smt/software/stack_dec thot_ll_weight_upd
+/home/dortiz/smt/software/stack_dec thot_gen_nblists
+/home/dortiz/smt/software/stack_dec thot_rnnlm_rescore
 /home/dortiz/smt/software/exper thot_gen_partition
 /home/dortiz/smt/software/exper thot_tm_train
 /home/dortiz/smt/software/exper thot_lm_train
