@@ -78,6 +78,44 @@ compute_rnnlm_scores_for_nblists()
 }
 
 ########
+fast_compute_rnnlm_scores_for_nblists()
+{
+    # Process n-best lists
+    for nblfile in ${nblistdir}/*.nbl; do
+        # Extract translations from n-best list
+        nblfile_base=`${BASENAME} $nblfile`
+        ${bindir}/thot_extract_sents_from_nbl < $nblfile > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
+
+        # Handle -voc option
+        if [ ${voc_given} -eq 0 ]; then
+            mv ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans
+        else
+            ${bindir}/thot_replace_oov_with_unk -v ${vocab} < ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux \
+                > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans
+            rm ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
+        fi
+
+        # Add translations to all translations file
+        cat ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans >> ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans
+    done
+
+    # Score all translations file
+    ${FASTER_RNNLM_BUILD_DIR}/rnnlm -rnnlm ${rnnlm} \
+                             -test ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans \
+                             > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.rnnlm_scores 2> ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.log
+
+    # Create score files for each n-best list
+    offset=0
+    scrfile=${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.rnnlm_scores
+    for nblfile in ${nblistdir}/*.nbl; do
+        nblfile_base=`${BASENAME} $nblfile`
+        numtrans=`$WC -l ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans | $AWK '{printf"%s",$1}'`
+        offset=`expr $offset + $numtrans`
+        $HEAD -${offset} $scrfile | $TAIL -${numtrans} > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.rnnlm_scores
+    done
+}
+
+########
 create_aug_nblists()
 {
     # Process n-best lists
@@ -277,7 +315,7 @@ mkdir ${TDIR_RNNLM_RESCORE}/augmented_nblists
 
 # Compute rnnlm scores
 echo "* Computing rnn-lm scores for n-best lists" >&2
-compute_rnnlm_scores_for_nblists || exit 1
+fast_compute_rnnlm_scores_for_nblists || exit 1
 echo "" >&2
 
 # Create augmented n-best lists
