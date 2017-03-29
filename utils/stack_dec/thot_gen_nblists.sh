@@ -90,16 +90,10 @@ obtain_nblists()
             -o ${outd}/nblist/inputsent_${sentid} 2>> ${outd}/nblist/thot_wg_proc.log || return 1
     done
 
-    # Save disk space
-    if [ "$debug_opt" = "-debug" ]; then
-        # Compress files
-        for file in ${outd}/wg/${niter}*; do
-            ${GZIP} $file
-        done
-    else
-        # Remove files
-        rm ${outd}/wg/${niter}*
-    fi
+    # Save disk space (compress files)
+    for file in ${outd}/wg/${niter}*; do
+        ${GZIP} $file
+    done
 }
 
 ##################
