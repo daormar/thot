@@ -27,7 +27,7 @@ usage()
 ########
 augment_nblist()
 {
-    $AWK -F " \|\|\| " -v wname=$wname -v scrfile=$scrfile 'BEGIN{
+    $AWK -F " [|][|][|] " -v wname=$wname -v scrfile=$scrfile 'BEGIN{
         nline=1
         while((getline < scrfile) > 0)
         {
