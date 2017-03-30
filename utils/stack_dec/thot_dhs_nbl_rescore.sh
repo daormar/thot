@@ -52,6 +52,13 @@ evaluate()
     echo "${SCORE} ${nnc_pen}" | $AWK '{printf"%f\n",$1+$2}'
 }
 
+
+########
+remove_tmp_files()
+{
+    rm ${SDIR}/smt_trgf.trans ${SDIR}/smt_trgf.score
+}
+
 ########
 
 if [ $# -lt 2 ]; then
@@ -99,4 +106,7 @@ else
 
     # Evaluate results
     evaluate
+
+    # Remove temporary files
+    remove_tmp_files
 fi
