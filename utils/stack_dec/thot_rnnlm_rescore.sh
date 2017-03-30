@@ -143,6 +143,16 @@ obtain_smtweights_names()
     done
 }
 
+##################
+obtain_smtweights_values()
+{
+    # Process n-best lists
+    for nblfile in ${TDIR_RNNLM_RESCORE}/augmented_nblists/*.nbl; do
+        head -1 $nblfile | $AWK -F " , " '{for(i=1;i<=NF;++i){nf=split($i,winfo," "); printf"%s ",winfo[nf]}}'
+        break
+    done
+}
+
 ########
 obtain_loglin_dhs_va_opt_values()
 {
@@ -174,6 +184,37 @@ loglin_downhill()
     tdir=/tmp
     ${bindir}/thot_dhs_min -tdir $tdir -va ${va_opt} -iv ${iv_opt} \
         -ftol ${ftol_loglin} -o ${outd}/llweights_tune -u ${bindir}/thot_dhs_nbl_rescore ${debug_opt} || return 1
+}
+
+########
+obtain_loglin_upd_va_opt_values()
+{
+    _smtw_names=`obtain_smtweights_names`
+    echo "${_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'
+}
+
+########
+loglin_upd()
+{
+    # Obtain file with n-best lists file names
+    for nblfile in ${TDIR_RNNLM_RESCORE}/augmented_nblists/*.nbl; do
+        echo $nblfile >> ${TDIR_RNNLM_RESCORE}/augmented_nblists/nbl_filenames.txt
+    done
+
+    # Obtain weight related information
+    llweights="`obtain_smtweights_values`"
+    va_opt="`obtain_loglin_upd_va_opt_values`"
+    
+    # Update weights given n-best lists
+    $bindir/thot_ll_weight_upd_nblist -w ${llweights} -va ${va_opt} \
+                                      -nb ${TDIR_RNNLM_RESCORE}/augmented_nblists/nbl_filenames.txt \
+                                      -r ${tcorpus} > ${outd}/llweights_tune.out 2>${outd}/llweights_tune.log || return 1
+
+    # Obtain score with optimized weights
+    export NBL_DIR=${TDIR_RNNLM_RESCORE}/augmented_nblists
+    export REF=$tcorpus
+    upd_weights="`cat ${outd}/llweights_tune.out | $AWK -F ": " '{print $2}'`"
+    ${bindir}/thot_dhs_nbl_rescore ${TDIR_RNNLM_RESCORE} ${upd_weights} > ${outd}/llweights_tune.scr
 }
 
 ##################
@@ -325,5 +366,6 @@ echo "" >&2
 
 # Update log-linear weights
 echo "* Updating log-linear weights for augmented n-best lists" >&2
-loglin_downhill || exit 1
+#loglin_downhill || exit 1
+loglin_upd || exit 1
 echo "" >&2
