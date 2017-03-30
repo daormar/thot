@@ -162,7 +162,7 @@ obtain_loglin_iv_opt_values()
 loglin_downhill()
 {
     # Export required variables
-    export AUG_NBL_DIR=${TDIR_RNNLM_RESCORE}/augmented_nblists
+    export NBL_DIR=${TDIR_RNNLM_RESCORE}/augmented_nblists
     export REF=$tcorpus
 
     # Generate information for weight initialisation

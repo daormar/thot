@@ -58,13 +58,13 @@ if [ $# -lt 2 ]; then
     echo "Usage: thot_dhs_nbl_rescore <sdir> <w1> ... <wn>"
 else
     # Initialize variables
-    if [ "${AUG_NBL_DIR}" = "" ]; then AUG_NBL_DIR=nbl/; fi
+    if [ "${NBL_DIR}" = "" ]; then NBL_DIR=nbl/; fi
     if [ "${REF}" = "" ]; then REF="server.cfg" ; fi
     if [ "${NNC_PEN_FACTOR}" = "" ]; then NNC_PEN_FACTOR=1000; fi
 
     # Check variables
-    if [ ! -d ${AUG_NBL_DIR} ]; then
-        echo "ERROR: directory ${AUG_NBL_DIR} does not exist" >&2
+    if [ ! -d ${NBL_DIR} ]; then
+        echo "ERROR: directory ${NBL_DIR} does not exist" >&2
         exit 1
     fi
 
