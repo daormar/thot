@@ -137,7 +137,7 @@ obtain_loglin_nonneg_const()
 obtain_smtweights_names()
 {
     # Process n-best lists
-    for nblfile in ${nblistdir}/*.nbl; do
+    for nblfile in ${TDIR_RNNLM_RESCORE}/augmented_nblists/*.nbl; do
         head -1 $nblfile | $AWK -F " , " '{for(i=1;i<=NF;++i){nf=split($i,winfo," "); printf"%s ",winfo[nf-1]}}'
         break
     done
