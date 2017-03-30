@@ -37,7 +37,7 @@ gen_trans()
     fi
 
     # Extract translations from n-best lists
-    for nblist in ${AUG_NBL_DIR}/*.nbl; do
+    for nblist in ${NBL_DIR}/*.nbl; do
         # Obtain best translation from n-best list
         ${bindir}/thot_obtain_best_trans_from_nbl $nblist "$weights" >> ${SDIR}/smt_trgf.trans
     done
