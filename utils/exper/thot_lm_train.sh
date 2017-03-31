@@ -191,8 +191,8 @@ estimate_ngram_parameters()
 
     # Estimate n-gram model parameters
     if [ ${KENLM_BUILD_DIR} != "no" -a ${kenlm_given} -eq 1 ]; then
-        ${KENLM_BUILD_DIR}/bin/lmplz -T $tdir -o ${n_val} --text $corpus > ${prefix}.arpa 2> ${prefix}.arpa.log
-        ${KENLM_BUILD_DIR}/bin/build_binary -T $tdir trie ${prefix}.arpa ${prefix} 2> ${prefix}.log
+        ${KENLM_BUILD_DIR}/bin/lmplz -T $tdir -o ${n_val} --text $corpus > ${prefix}.arpa 2> ${prefix}.arpa.log || return 1
+        ${KENLM_BUILD_DIR}/bin/build_binary -T $tdir trie ${prefix}.arpa ${prefix} 2> ${prefix}.log || return 1
     else
         if [ $nl -gt 0 ]; then
             ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
@@ -387,19 +387,19 @@ outsubdir=`generate_outsubdir_name` || exit 1
 mkdir -p ${outd}/${outsubdir} || { echo "Error! cannot create output directory" >&2; exit 1; }
 
 echo "* Estimating n-gram model parameters... " >&2
-estimate_ngram_parameters
+estimate_ngram_parameters || exit 1
 echo "" >&2
 
 if [ ${kenlm_given} -eq 0 ]; then
     echo "* Generating weight file... " >&2
-    generate_weight_file
+    generate_weight_file || exit 1
     echo "" >&2
 fi
 
 echo "* Generating file for word prediction... " >&2
-generate_word_prediction_file
+generate_word_prediction_file || exit 1
 echo "" >&2
 
 echo "* Generating descriptor file... " >&2
-create_desc_files $outd
+create_desc_files $outd || exit 1
 echo "" >&2
