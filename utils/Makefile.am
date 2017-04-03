@@ -57,7 +57,8 @@ error_correction/thot_obtain_best_trans_from_nbl			\
 error_correction/thot_merge_nbest_list					\
 error_correction/thot_export_wordgraph					\
 error_correction/thot_extract_sents_from_nbl				\
-error_correction/thot_augment_nblist
+error_correction/thot_augment_nblist					\
+error_correction/thot_remove_nbl_component
 
 downhill_simplex_bin_scripts= downhill_simplex/thot_dhs_min	\
 downhill_simplex/thot_dhs_trgfunc_example
