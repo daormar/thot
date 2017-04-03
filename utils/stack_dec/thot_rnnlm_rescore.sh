@@ -25,7 +25,7 @@ version()
 usage()
 {
     echo "thot_rnnlm_rescore      -t <string> -n <string> -r <string>"
-    echo "                        -o <string> [-voc <string>]"
+    echo "                        -o <string> [-voc <string>] [-removelm]"
     echo "                        [-tdir <string>] [-debug] [--help] [--version]"
     echo ""
     echo "-t <string>             File with target sentences."
@@ -35,6 +35,8 @@ usage()
     echo "-voc <string>           File with training vocabulary. Words occuring in"
     echo "                        the n-best lists outside vocabulary are replaced by"
     echo "                        <unk>."
+    echo "--removelm              Remove previous language model component (lm) from"
+    echo "                        n-best lists."
     echo "-tdir <string>          Directory for temporary files (/tmp by default)."
     echo "                        NOTES:"
     echo "                         a) give absolute paths when using pbs clusters"
@@ -53,6 +55,35 @@ get_sentid()
 }
 
 ########
+nblist_voc_filter()
+{
+    # Handle -voc option
+    if [ ${voc_given} -eq 0 ]; then
+        cat
+    else
+        ${bindir}/thot_replace_oov_with_unk -v ${vocab}
+    fi    
+}
+
+########
+nblist_removelm_filter()
+{
+    # Handle -removelm option
+    if [ ${removelm_given} -eq 0 ]; then
+        cat
+    else
+        ${bindir}/thot_remove_nbl_component -c lm
+    fi    
+}
+
+########
+process_nblist()
+{
+    local_nblist=$1
+    cat ${local_nblist} | nblist_voc_filter | nblist_removelm_filter
+}
+
+########
 compute_rnnlm_scores_for_nblists()
 {
     # Process n-best lists
@@ -61,14 +92,11 @@ compute_rnnlm_scores_for_nblists()
         nblfile_base=`${BASENAME} $nblfile`
         ${bindir}/thot_extract_sents_from_nbl < $nblfile > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
 
-        # Handle -voc option
-        if [ ${voc_given} -eq 0 ]; then
-            mv ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans
-        else
-            ${bindir}/thot_replace_oov_with_unk -v ${vocab} < ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux \
-                > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans
-            rm ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
-        fi
+        # Process n-best list
+        process_nblist ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans
+
+        # Remove temporary files
+        rm ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
 
         # Score translations
         ${FASTER_RNNLM_BUILD_DIR}/rnnlm -rnnlm ${rnnlm} \
@@ -86,14 +114,11 @@ fast_compute_rnnlm_scores_for_nblists()
         nblfile_base=`${BASENAME} $nblfile`
         ${bindir}/thot_extract_sents_from_nbl < $nblfile > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
 
-        # Handle -voc option
-        if [ ${voc_given} -eq 0 ]; then
-            mv ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans
-        else
-            ${bindir}/thot_replace_oov_with_unk -v ${vocab} < ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux \
-                > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans
-            rm ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
-        fi
+        # Process n-best list
+        process_nblist ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans
+
+        # Remove temporary files
+        rm ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
 
         # Add translations to all translations file
         cat ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans >> ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans
@@ -230,6 +255,7 @@ n_given=0
 r_given=0
 o_given=0
 voc_given=0
+removelm_given=0
 tdir_given=0
 tdir="/tmp"
 debug=0
@@ -271,6 +297,8 @@ while [ $# -ne 0 ]; do
                 vocab=$1
                 voc_given=1
             fi
+            ;;
+        "-removelm") removelm=1
             ;;
         "-tdir") shift
             if [ $# -ne 0 ]; then
