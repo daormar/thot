@@ -91,7 +91,7 @@ obtain_nblists()
     done
 
     # Save disk space (compress files)
-    for file in ${outd}/wg/${niter}*; do
+    for file in ${outd}/wg/devtrans*; do
         ${GZIP} $file
     done
 }
