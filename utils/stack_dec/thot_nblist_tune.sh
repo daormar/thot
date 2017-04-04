@@ -248,7 +248,7 @@ if [ "$debug_opt" != "-debug" ]; then
 fi
 
 # Update log-linear weights
-echo "* Updating log-linear weights for augmented n-best lists" >&2
+echo "* Updating log-linear weights for n-best lists" >&2
 if [ ${dhs_given} -eq 1 ]; then
     loglin_downhill || exit 1
 else
