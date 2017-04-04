@@ -90,6 +90,13 @@ process_trans()
 }
 
 ########
+log10_to_ln()
+{
+    local_log10scr=$1
+    $AWK '{printf"%f\n",$1*log(10)}' ${local_log10scr}
+}
+
+########
 fast_compute_rnnlm_scores_for_nblists()
 {
     # Process n-best lists
@@ -111,8 +118,11 @@ fast_compute_rnnlm_scores_for_nblists()
     # Score all translations file
     ${FASTER_RNNLM_BUILD_DIR}/rnnlm -rnnlm ${rnnlm} \
                              -test ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans \
-                             > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.rnnlm_scores 2> ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.log
+                             > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.rnnlm_scores_log10 2> ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.log
 
+    # Obtain ln scores
+    log10_to_ln ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.rnnlm_scores_log10 > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.rnnlm_scores
+    
     # Create score files for each n-best list
     offset=0
     scrfile=${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.rnnlm_scores
