@@ -34,7 +34,7 @@ usage()
     echo "-voc <string>           File with training vocabulary. Words occuring in"
     echo "                        the n-best lists outside vocabulary are replaced by"
     echo "                        <unk>."
-    echo "-removelm              Remove previous language model component (lm) from"
+    echo "-removelm               Remove previous language model component (lm) from"
     echo "                        n-best lists."
     echo "-tdir <string>          Directory for temporary files (/tmp by default)."
     echo "                        NOTES:"
@@ -87,28 +87,6 @@ process_trans()
 {
     local_nblist=$1
     cat ${local_nblist} | trans_voc_filter
-}
-
-########
-compute_rnnlm_scores_for_nblists()
-{
-    # Process n-best lists
-    for nblfile in ${nblistdir}/*.nbl; do
-        # Extract translations from n-best list
-        nblfile_base=`${BASENAME} $nblfile`
-        ${bindir}/thot_extract_sents_from_nbl < $nblfile > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
-
-        # Process n-best list
-        process_trans ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans
-
-        # Remove temporary files
-        rm ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
-
-        # Score translations
-        ${FASTER_RNNLM_BUILD_DIR}/rnnlm -rnnlm ${rnnlm} \
-            -test ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans \
-            > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.rnnlm_scores 2> ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.log
-    done || return 1
 }
 
 ########
