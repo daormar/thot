@@ -8,7 +8,7 @@ obtain_statistics()
     # Get parameters
     file=$1
 
-    # Calculate number of distinct n-grams for n=1...4
+    # Calculate total number of n-grams for n=1...4
     total1=`cat $file | $AWK '{if(NF==3) num=num+$NF}END{printf"%d\n",num}'`
     total2=`cat $file | $AWK '{if(NF==4) num=num+$NF}END{printf"%d\n",num}'`
     total3=`cat $file | $AWK '{if(NF==5) num=num+$NF}END{printf"%d\n",num}'`
@@ -27,10 +27,10 @@ obtain_statistics()
     sing4=`cat $file | $AWK '{if(NF==6 && $NF==1) ++num}END{printf"%d\n",num}'`
 
     # Calculate rates for n=1...4
-    rate1=`echo "" | $AWK -v dist=$dist1 -v sing=$sing1 '{if(dist==0) printf"0\n"; else printf "%f\n",100*(dist-sing)/dist }'`
-    rate2=`echo "" | $AWK -v dist=$dist2 -v sing=$sing2 '{if(dist==0) printf"0\n"; else printf "%f\n",100*(dist-sing)/dist }'`
-    rate3=`echo "" | $AWK -v dist=$dist3 -v sing=$sing3 '{if(dist==0) printf"0\n"; else printf "%f\n",100*(dist-sing)/dist }'`
-    rate4=`echo "" | $AWK -v dist=$dist4 -v sing=$sing4 '{if(dist==0) printf"0\n"; else printf "%f\n",100*(dist-sing)/dist }'`
+    rate1=`echo "" | $AWK -v dist=$dist1 -v sing=$sing1 '{if(dist==0) printf"0\n"; else printf "%f\n",(dist-sing)/dist }'`
+    rate2=`echo "" | $AWK -v dist=$dist2 -v sing=$sing2 '{if(dist==0) printf"0\n"; else printf "%f\n",(dist-sing)/dist }'`
+    rate3=`echo "" | $AWK -v dist=$dist3 -v sing=$sing3 '{if(dist==0) printf"0\n"; else printf "%f\n",(dist-sing)/dist }'`
+    rate4=`echo "" | $AWK -v dist=$dist4 -v sing=$sing4 '{if(dist==0) printf"0\n"; else printf "%f\n",(dist-sing)/dist }'`
 }
 
 print_statistics()
@@ -41,7 +41,7 @@ print_statistics()
 
 compute_rr()
 {
-    echo "$rate1 $rate2 $rate3 $rate4" | $AWK '{zero_present=0; for(i=1;i<=NF;++i) if($i==0) zero_present=1; if(zero_present) rr=0; else {prod=$1*$2*$3*$4; rr=exp((1/4)*log(prod));} printf"%.1f\n",rr}'
+    echo "$rate1 $rate2 $rate3 $rate4" | $AWK '{zero_present=0; for(i=1;i<=NF;++i) if($i==0) zero_present=1; if(zero_present) rr=0; else {prod=$1*$2*$3*$4; rr=exp((1/4)*log(prod));} printf"%.3f\n",rr}'
 }
 
 transform_count_file()
@@ -65,23 +65,23 @@ obtain_ngc_of_corpus_not_present_in_train()
 
 compute_unf_for_n()
 {
-    ifrac1=`echo "$cdist1 $diff_dist1" | $AWK '{printf "%f\n",100*$2/$1 }'`
-    ifrac2=`echo "$cdist2 $diff_dist2" | $AWK '{printf "%f\n",100*$2/$1 }'`
-    ifrac3=`echo "$cdist3 $diff_dist3" | $AWK '{printf "%f\n",100*$2/$1 }'`
-    ifrac4=`echo "$cdist4 $diff_dist4" | $AWK '{printf "%f\n",100*$2/$1 }'`
+    ifrac1=`echo "$cdist1 $diff_dist1" | $AWK '{printf "%f\n",$2/$1 }'`
+    ifrac2=`echo "$cdist2 $diff_dist2" | $AWK '{printf "%f\n",$2/$1 }'`
+    ifrac3=`echo "$cdist3 $diff_dist3" | $AWK '{printf "%f\n",$2/$1 }'`
+    ifrac4=`echo "$cdist4 $diff_dist4" | $AWK '{printf "%f\n",$2/$1 }'`
 }
 
 compute_unf_for_n_totals()
 {
-    ifrac1=`echo "$ctotal1 $diff_total1" | $AWK '{printf "%f\n",100*$2/$1 }'`
-    ifrac2=`echo "$ctotal2 $diff_total2" | $AWK '{printf "%f\n",100*$2/$1 }'`
-    ifrac3=`echo "$ctotal3 $diff_total3" | $AWK '{printf "%f\n",100*$2/$1 }'`
-    ifrac4=`echo "$ctotal4 $diff_total4" | $AWK '{printf "%f\n",100*$2/$1 }'`
+    ifrac1=`echo "$ctotal1 $diff_total1" | $AWK '{printf "%f\n",$2/$1 }'`
+    ifrac2=`echo "$ctotal2 $diff_total2" | $AWK '{printf "%f\n",$2/$1 }'`
+    ifrac3=`echo "$ctotal3 $diff_total3" | $AWK '{printf "%f\n",$2/$1 }'`
+    ifrac4=`echo "$ctotal4 $diff_total4" | $AWK '{printf "%f\n",$2/$1 }'`
 }
 
 compute_unf()
 {
-    echo "$ifrac1 $ifrac2 $ifrac3 $ifrac4" | $AWK '{zero_present=0; for(i=1;i<=NF;++i) if($i==0) zero_present=1; if(zero_present) rr=0; else {prod=$1*$2*$3*$4; rr=exp((1/4)*log(prod))} printf"%.1f\n",rr}'
+    echo "$ifrac1 $ifrac2 $ifrac3 $ifrac4" | $AWK '{zero_present=0; for(i=1;i<=NF;++i) if($i==0) zero_present=1; if(zero_present) rr=0; else {prod=$1*$2*$3*$4; rr=exp((1/4)*log(prod))} printf"%.3f\n",rr}'
 }
 
 print_desc()
