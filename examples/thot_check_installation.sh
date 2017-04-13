@@ -286,8 +286,8 @@ fi
 
 echo ""
 
-# Launch thot_server
-echo "**** Launching thot_server..."
+# Check thot_server initialization
+echo "**** Checking thot_server initialization..."
 echo ""
 PORT=10000
 ${bindir}/thot_server -c $tmpdir/smt_tune/tuned_for_dev.cfg -p $PORT 2>$tmpdir/thot_server.log &
