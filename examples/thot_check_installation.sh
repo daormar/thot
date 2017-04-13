@@ -1,5 +1,40 @@
 # *- bash -*
 
+########
+wait_until_server_is_listening()
+{
+    log_file=$1
+    end=0
+    num_retries=0
+    max_num_retries=3
+    while [ $end -eq 0 ]; do
+        # Ensure server is being executed
+        line=`${PS} aux | ${GREP} "thot_server" | ${GREP} ${PORT}`
+
+        if [ -z "${line}" ]; then
+            num_retries=`expr ${num_retries} + 1`
+            if [ ${num_retries} -eq ${max_num_retries} ]; then
+                echo "Error: server has terminated unexpectedly before start listening to port ${PORT}" >&2
+                return 1
+            fi
+        fi
+
+        # Check if server is listening
+        line=`${NETSTAT} -ln | ${GREP} ":${PORT} "`
+        if [ ! -z "${line}" ]; then
+            end=1
+        fi
+        sleep 5
+    done
+}
+
+########
+end_thot_server()
+{
+    ${bindir}/thot_client -i 127.0.0.1 -p $PORT -e 2>$tmpdir/thot_client_end.log &
+}
+
+########
 # Check the Thot package
 
 # Create directory for temporary files
@@ -248,6 +283,28 @@ else
     echo "================================================"
     exit 1
 fi
+
+echo ""
+
+# Launch thot_server
+echo "**** Launching thot_server..."
+echo ""
+PORT=10000
+${bindir}/thot_server -c $tmpdir/smt_tune/tuned_for_dev.cfg -p $PORT 2>$tmpdir/thot_server.log &
+wait_until_server_is_listening
+if test $? -eq 0 ; then
+    echo "... Done"
+else
+    echo "================================================"
+    echo " Test failed!"
+    echo " See additional information in ${tmpdir}"
+    echo " Please report to "${bugreport}
+    echo "================================================"
+    exit 1
+fi
+
+# End thot server
+end_thot_server
 
 echo ""
 
