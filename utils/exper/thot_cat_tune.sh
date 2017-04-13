@@ -325,7 +325,6 @@ print_weight_info()
 ##################
 obtain_smtweights_names()
 {
-    # local_line=`${bindir}/thot_get_ll_weights | $GREP "\- SMT model weights="`
     if [ ! -f $outd/server_weights ]; then
         print_weight_info > $outd/server_weights
     fi
@@ -337,7 +336,6 @@ obtain_smtweights_names()
 ##################
 obtain_ecmweights_names()
 {
-    # local_line=`${bindir}/thot_get_ll_weights | $GREP "\- Error correction model weights="`
     if [ ! -f $outd/server_weights ]; then
         print_weight_info > $outd/server_weights
     fi
@@ -349,7 +347,6 @@ obtain_ecmweights_names()
 ##################
 obtain_catweights_names()
 {
-    # local_line=`${bindir}/thot_get_ll_weights | $GREP "\- Assisted translator weights="`
     if [ ! -f $outd/server_weights ]; then
         print_weight_info > $outd/server_weights
     fi

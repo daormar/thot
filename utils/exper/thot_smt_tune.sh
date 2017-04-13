@@ -500,7 +500,6 @@ create_cfg_file_for_tuning()
 ##################
 obtain_smtweights_names()
 {
-#    _line=`${bindir}/thot_get_ll_weights | $HEAD -1`
     _line=`${bindir}/thot_server -c ${outd}/tune_loglin.cfg -w 2> /dev/null | $HEAD -1`
     _smtw_names=`echo ${_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
     echo ${_smtw_names}
