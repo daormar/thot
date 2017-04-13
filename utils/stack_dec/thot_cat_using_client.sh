@@ -202,7 +202,7 @@ get_hyp_with_prompt()
     echo "${hyp_with_prompt}" | sed -e s'/<BSLASH>/\\/g' | sed -e s"/<SLASH>/\//g" | sed -e s"/<OSBRACKET>/\[/g" | sed -e s"/<CSBRACKET>/\]/g"
 }
 
-####################### main
+########
 
 # Print command line to the error output
 echo "Cmd. line: $0 $*" >&2

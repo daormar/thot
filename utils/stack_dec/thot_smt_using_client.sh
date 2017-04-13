@@ -42,7 +42,7 @@ usage()
     echo "         set the value of the LC_ALL environment variable."
 }
 
-####################### main
+########
 
 # Print command line to the error output
 echo "Cmd. line: $0 $*" >&2
