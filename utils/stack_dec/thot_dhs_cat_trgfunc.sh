@@ -84,8 +84,7 @@ wait_until_server_is_listening()
     done
 }
 
-####################### main
-
+########
 if [ $# -lt 2 ]; then
     echo "Usage: thot_dhs_cat_trgfunc <sdir> <w1> ... <wn>"
 else
