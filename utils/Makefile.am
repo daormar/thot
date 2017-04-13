@@ -120,6 +120,7 @@ SUFFIXES= .sh .pl .py .awk
 	echo "TOUCH="$(TOUCH) >> $@
 	echo "CUT="$(CUT) >> $@
 	echo "GZIP="$(GZIP) >> $@
+	echo "NETSTAT="$(NETSTAT) >> $@
 	echo "PIPE_FAIL="$(PIPE_FAIL) >> $@
 	echo "QSUB="$(QSUB) >> $@
 	echo "QSUB_WORKS=\""$(QSUB_WORKS)"\"" >> $@
