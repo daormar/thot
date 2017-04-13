@@ -65,7 +65,7 @@ wait_until_server_is_listening()
     max_num_retries=3
     while [ $end -eq 0 ]; do
         # Ensure server is being executed
-        line=`ps aux | ${GREP} "thot_server" | ${GREP} ${PORT}`
+        line=`${PS} aux | ${GREP} "thot_server" | ${GREP} ${PORT}`
 
         if [ -z "${line}" ]; then
             num_retries=`expr ${num_retries} + 1`
@@ -76,20 +76,12 @@ wait_until_server_is_listening()
         fi
 
         # Check if server is listening
-        line=`netstat -an | ${GREP} "LISTEN" | ${GREP} ":${PORT} "`
+        line=`${NETSTAT} -an | ${GREP} "LISTEN" | ${GREP} ":${PORT} "`
         if [ ! -z "${line}" ]; then
             end=1
         fi
         sleep 5
     done
-
-## Alternative implementation (unelegant and error prone)
-#     while [ $end -eq 0 ]; do
-#         if [ "`tail -1 ${log_file} | $AWK '{printf"%s\n",$1}'`" = "Listening" ]; then
-#             end=1
-#         fi
-#         sleep 5
-#     done
 }
 
 ####################### main
