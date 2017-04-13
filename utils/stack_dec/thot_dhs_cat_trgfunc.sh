@@ -76,7 +76,7 @@ wait_until_server_is_listening()
         fi
 
         # Check if server is listening
-        line=`${NETSTAT} -an | ${GREP} "LISTEN" | ${GREP} ":${PORT} "`
+        line=`${NETSTAT} -nl | ${GREP} ":${PORT} "`
         if [ ! -z "${line}" ]; then
             end=1
         fi
