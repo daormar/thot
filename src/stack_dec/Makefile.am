@@ -8,16 +8,16 @@ thot_server_pars.h thot_server.cc ThotDecoderUserPars.h			\
 ThotDecoderState.h ThotDecoderPerUserVars.h ThotDecoder.h		\
 ThotDecoderCommonVars.h ThotDecoderClient.h ThotDecoderClient.cc	\
 ThotDecoder.cc thot_ms_dec.cc thot_client_pars.h thot_client.cc		\
-thot_get_ll_weights.cc thot_scorer.cc thot_calc_bleu.cc thot_ms_alig.cc	\
-SwModelPars.h SwModelInfo.h _stack_decoder_statistics.h			\
-_stackDecoderRec.h _stackDecoder.h SourceSegmentation.h			\
-BaseTranslationConstraints.h TranslationConstraints.h			\
-TranslationConstraints.cc SmtStack.h _smtStack.h SmtMultiStackRec.h	\
-_smtMultiStack.h BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc	\
-BaseScorer.h BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraGtm.h MiraGtm.cc MiraWer.h MiraWer.cc			\
-thot_li_weight_upd.cc thot_ll_weight_upd_nblist.cc _smtModel.h		\
-ScoreCompDefs.h _phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc	\
-PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc			\
+thot_scorer.cc thot_calc_bleu.cc thot_ms_alig.cc SwModelPars.h		\
+SwModelInfo.h _stack_decoder_statistics.h _stackDecoderRec.h		\
+_stackDecoder.h SourceSegmentation.h BaseTranslationConstraints.h	\
+TranslationConstraints.h TranslationConstraints.cc SmtStack.h		\
+_smtStack.h SmtMultiStackRec.h _smtMultiStack.h				\
+BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc BaseScorer.h	\
+BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraGtm.h MiraGtm.cc MiraWer.h	\
+MiraWer.cc thot_li_weight_upd.cc thot_ll_weight_upd_nblist.cc		\
+_smtModel.h ScoreCompDefs.h _phrSwTransModel.h PhrScoreInfo.h		\
+PhrScoreInfo.cc PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc	\
 PhrNbestTransTableRef.h PhrNbestTransTablePrefKey.h			\
 PhrNbestTransTablePrefKey.cc PhrNbestTransTablePref.h			\
 PhrNbestTransTable.h PhrLocalSwLiTmHypRec.h PhrLocalSwLiTm.h		\
@@ -38,5 +38,5 @@ BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
 BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h HypDebugData.h	\
 BaseAssistedTrans.h _assistedTrans.h KbMiraLlWuFactory.cc		\
 multi_stack_decoder_rec__swli_factory.cc				\
-WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc MiraGtmFactory.cc MiraWerFactory.cc		\
-TranslationConstraintsFactory.cc
+WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc		\
+MiraGtmFactory.cc MiraWerFactory.cc TranslationConstraintsFactory.cc

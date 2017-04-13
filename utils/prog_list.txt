@@ -38,7 +38,6 @@
 /home/dortiz/smt/software/stack_dec thot_ms_alig
 /home/dortiz/smt/software/stack_dec thot_client
 /home/dortiz/smt/software/stack_dec thot_server
-/home/dortiz/smt/software/stack_dec thot_get_ll_weights
 /home/dortiz/smt/software/stack_dec thot_scorer
 /home/dortiz/smt/software/stack_dec thot_li_weight_upd
 /home/dortiz/smt/software/stack_dec thot_ll_weight_upd_nblist
