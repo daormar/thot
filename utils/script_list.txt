@@ -30,6 +30,7 @@
 /home/dortiz/smt/software/downhill_simplex thot_dhs_trgfunc_example
 /home/dortiz/smt/software/stack_dec thot_conf_interv_cat
 /home/dortiz/smt/software/stack_dec thot_conf_interv_smt
+/home/dortiz/smt/software/stack_dec thot_smt_samplesize
 /home/dortiz/smt/software/stack_dec thot_decoder
 /home/dortiz/smt/software/stack_dec thot_aligner
 /home/dortiz/smt/software/stack_dec thot_dhs_smt_trgfunc

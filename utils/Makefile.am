@@ -66,11 +66,12 @@ downhill_simplex/thot_dhs_trgfunc_example
 stack_dec_bin_scripts= stack_dec/thot_decoder stack_dec/thot_aligner	\
 stack_dec/thot_dhs_smt_trgfunc stack_dec/thot_dhs_cat_trgfunc		\
 stack_dec/thot_conf_interv_smt stack_dec/thot_conf_interv_cat		\
-stack_dec/thot_smt_using_client stack_dec/thot_cat_using_client		\
-stack_dec/thot_calc_wer stack_dec/thot_get_sys_trans			\
-stack_dec/thot_extract_hyp_info stack_dec/thot_ll_weight_upd		\
-stack_dec/thot_gen_nblists stack_dec/thot_rnnlm_rescore			\
-stack_dec/thot_nblist_tune stack_dec/thot_dhs_nbl_rescore
+stack_dec/thot_smt_samplesize stack_dec/thot_smt_using_client		\
+stack_dec/thot_cat_using_client stack_dec/thot_calc_wer			\
+stack_dec/thot_get_sys_trans stack_dec/thot_extract_hyp_info		\
+stack_dec/thot_ll_weight_upd stack_dec/thot_gen_nblists			\
+stack_dec/thot_rnnlm_rescore stack_dec/thot_nblist_tune			\
+stack_dec/thot_dhs_nbl_rescore
 
 exper_bin_scripts= exper/thot_gen_partition exper/thot_tm_train		\
 exper/thot_smt_tune exper/thot_cat_tune exper/thot_prepare_sys_for_test	\
