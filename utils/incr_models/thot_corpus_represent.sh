@@ -181,8 +181,9 @@ $TAIL -n +`expr ${sample_lnum} + 1` ${shuff_tmpfile} > ${population_tmpfile}
 
 # Handle unrelated file if given
 if [ ${u_given} -eq 1 ]; then
-    unrel_lnum=`calc_ln_pop_sample $sample ${unrelated}`
-    ${bindir}/thot_shuffle 31415 $tmpdir ${unrelated} | $HEAD -${unrel_lnum} > ${unrelated_tmpfile}
+    ${bindir}/thot_shuffle 31415 $tmpdir ${unrelated} > ${shuff_tmpfile}
+    unrel_lnum=`calc_ln_pop_sample $sample ${shuff_tmpfile}`
+    $HEAD -${unrel_lnum} ${shuff_tmpfile} > ${unrelated_tmpfile}
 fi
 
 # Compute repetition rates
