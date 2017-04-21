@@ -15,12 +15,12 @@ print_desc()
 #############
 usage()
 {
-    echo "thot_corpus_represent -p <string> -s <string> [-u <string>] [-w]"
+    echo "thot_corpus_represent -p <string> -s <string> [-a <string>] [-w]"
     echo "                      [--help] [--version]"
     echo ""
     echo "-p <string>        : Population file."
     echo "-s <string>        : Sample file."
-    echo "-u <string>        : File with unrelated text (size will be adjusted)."
+    echo "-a <string>        : Additional sample file (size will be adjusted)."
     echo "-w                 : Use words instead of lines to calculate sample size."
     echo "--help             : Display this help and exit."
     echo "--version          : Output version information and exit."
@@ -85,7 +85,7 @@ calc_ln_pop_sample()
 
 p_given=0
 s_given=0
-u_given=0
+a_given=0
 w_given=0
 
 if [ $# -eq 0 ]; then
@@ -117,12 +117,12 @@ while [ $# -ne 0 ]; do
                 s_given=0
             fi
             ;;
-        "-u") shift
+        "-a") shift
             if [ $# -ne 0 ]; then
-                unrelated=$1
-                u_given=1
+                additional=$1
+                a_given=1
             else
-                u_given=0
+                a_given=0
             fi
             ;;
         "-w") w_given=1
@@ -152,8 +152,8 @@ else
     fi
 fi
 
-if [ ${u_given} -eq 1 -a ! -f  "${unrelated}" ]; then
-    echo "Error: file ${unrelated} does not exist"
+if [ ${a_given} -eq 1 -a ! -f  "${additional}" ]; then
+    echo "Error: file ${additional} does not exist"
     exit 1
 fi
 
@@ -165,9 +165,9 @@ tmpdir=/tmp
 shuff_tmpfile=`${MKTEMP} $tmpdir/shuff_tmpfile.XXXXXX`
 population_tmpfile=`${MKTEMP} $tmpdir/population_tmpfile.XXXXXX`
 popsample_tmpfile=`${MKTEMP} $tmpdir/popsample_tmpfile.XXXXXX`
-unrelated_tmpfile=`${MKTEMP} $tmpdir/unrelated_tmpfile.XXXXXX`
+additional_tmpfile=`${MKTEMP} $tmpdir/additional_tmpfile.XXXXXX`
 
-trap "rm $shuff_tmpfile $population_tmpfile $popsample_tmpfile $unrelated_tmpfile" EXIT
+trap "rm $shuff_tmpfile $population_tmpfile $popsample_tmpfile $additional_tmpfile" EXIT
 
 # Shuffle population
 ${bindir}/thot_shuffle 31415 $tmpdir ${population} > ${shuff_tmpfile}
@@ -179,18 +179,18 @@ sample_lnum=`calc_ln_pop_sample $sample ${shuff_tmpfile}`
 $HEAD -${sample_lnum} ${shuff_tmpfile} > ${popsample_tmpfile}
 $TAIL -n +`expr ${sample_lnum} + 1` ${shuff_tmpfile} > ${population_tmpfile}
 
-# Handle unrelated file if given
-if [ ${u_given} -eq 1 ]; then
-    ${bindir}/thot_shuffle 31415 $tmpdir ${unrelated} > ${shuff_tmpfile}
-    unrel_lnum=`calc_ln_pop_sample $sample ${shuff_tmpfile}`
-    $HEAD -${unrel_lnum} ${shuff_tmpfile} > ${unrelated_tmpfile}
+# Handle additional file if given
+if [ ${a_given} -eq 1 ]; then
+    ${bindir}/thot_shuffle 31415 $tmpdir ${additional} > ${shuff_tmpfile}
+    additional_lnum=`calc_ln_pop_sample $sample ${shuff_tmpfile}`
+    $HEAD -${additional_lnum} ${shuff_tmpfile} > ${additional_tmpfile}
 fi
 
 # Compute repetition rates
 unf_popsample=`${bindir}/thot_repetition_rate -c ${popsample_tmpfile} -t ${population_tmpfile} | $GREP UNF | $AWK '{printf"%s",$3}'`
 unf_sample=`${bindir}/thot_repetition_rate -c ${sample} -t ${population_tmpfile} | $GREP UNF | $AWK '{printf"%s",$3}'`
-if [ ${u_given} -eq 1 ]; then
-    unf_unrel=`${bindir}/thot_repetition_rate -c ${unrelated_tmpfile} -t ${population_tmpfile} | $GREP UNF | $AWK '{printf"%s",$3}'`
+if [ ${a_given} -eq 1 ]; then
+    unf_additional=`${bindir}/thot_repetition_rate -c ${additional_tmpfile} -t ${population_tmpfile} | $GREP UNF | $AWK '{printf"%s",$3}'`
 fi
 
 # Print results
@@ -206,10 +206,10 @@ echo " - Length in words        : ${popsample_numw}"
 echo " - Unseen n-gram fraction : ${unf_popsample}"
 echo ""
 
-if [ ${u_given} -eq 1 ]; then
-    unrel_numw=`$WC ${unrelated_tmpfile} | $AWK '{printf"%s",$2}'`
-    echo "* Unrelated Text"
-    echo " - Length in words        : ${unrel_numw}"
-    echo " - Unseen n-gram fraction : ${unf_unrel}"
+if [ ${a_given} -eq 1 ]; then
+    additional_numw=`$WC ${additional_tmpfile} | $AWK '{printf"%s",$2}'`
+    echo "* Additional Sample"
+    echo " - Length in words        : ${additional_numw}"
+    echo " - Unseen n-gram fraction : ${unf_additional}"
     echo ""
 fi
