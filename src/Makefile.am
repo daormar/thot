@@ -16,8 +16,8 @@ endif
 
 AUTOMAKE_OPTIONS = subdir-objects
 
-SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
-error_correction downhill_simplex stack_dec exper testing
+SUBDIRS= datrie nlp_common incr_models sw_models phrase_models		\
+smt_preproc error_correction downhill_simplex stack_dec exper testing
 
 if CODE_TESTING
 TESTING_PROGS= thot_test
@@ -47,7 +47,7 @@ thot_ms_dec thot_ms_alig thot_li_weight_upd thot_ll_weight_upd_nblist	\
 thot_client thot_server thot_scorer thot_calc_bleu $(DB_CXX_PROGS)	\
 $(TESTING_PROGS)
 
-lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
+lib_LTLIBRARIES = libdatrie.la libthot.la word_penalty_model_factory.la	\
 incr_jel_mer_ngram_lm_factory.la incr_interp_ngram_lm_factory.la	\
 smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la wba_incr_phrase_model_factory.la	\
@@ -74,6 +74,13 @@ LDADD = $(KENLM_LDADD) $(LGMP) $(ZLIB) $(LDB_CXX) $(CPPUNIT) -ldl
 
 # sources
 common_src_h= thot_config.h
+
+datrie_h= datrie/typedefs.h datrie/triedefs.h datrie/trie-private.h	\
+datrie/dstring.h datrie/dstring-private.h datrie/trie-string.h		\
+datrie/fileutils.h datrie/darray.h datrie/tail.h datrie/trie.h		\
+datrie/alpha-map.h datrie/alpha-map-private.h
+datrie_defs= datrie/dstring.c datrie/trie-string.c datrie/fileutils.c	\
+datrie/darray.c datrie/tail.c datrie/trie.c datrie/alpha-map.c
 
 nlp_common_h= nlp_common/WordIndex.h nlp_common/WordAligMatrix.h	\
 nlp_common/uiPairHashF.h nlp_common/uiHashF.h nlp_common/TrieVecs.h	\
@@ -564,13 +571,17 @@ endif
 
 # include headers
 includedir= $(prefix)/include/$(PACKAGE)
-include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
-$(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h)		\
-$(smt_preproc_h) $(error_correction_h) $(downhill_simplex_h)		\
-$(stack_dec_h) $(exper_h) $(exper_defs) $(casmacat_engines_h)		\
-$(casmacat_aligner_h) $(casmacat_confid_h)
+include_HEADERS = $(common_src_h) ${datrie_h} $(nlp_common_h)		\
+$(incr_models_h) $(kenlm_h) $(sw_models_h) $(phrase_models_h)		\
+$(bdb_pm_h) $(smt_preproc_h) $(error_correction_h)			\
+$(downhill_simplex_h) $(stack_dec_h) $(exper_h) $(exper_defs)		\
+$(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
 
 # libraries
+
+##########
+libdatrie_la_SOURCES= $(datrie_h) $(datrie_defs)
+libdatrie_la_LIBADD=
 
 ##########
 libthot_la_SOURCES= $(thot_sources)
