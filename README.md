@@ -1,3 +1,1 @@
-Please refer to [http://daormar.github.io/thot/] [1] to see project information.
-
-[1]: http://daormar.github.io/thot/
+Please refer to [http://daormar.github.io/thot/](http://daormar.github.io/thot/) to see project information.
