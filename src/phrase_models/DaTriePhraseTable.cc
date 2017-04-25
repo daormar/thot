@@ -107,6 +107,7 @@ Prob DaTriePhraseTable::pTrgGivenSrc(const Vector<WordIndex>& s,
                                      const Vector<WordIndex>& t)
 {  
       // TO-BE-DONE (HIGH PRIORITY)
+      // p(t|s)=count(s,t)/count(s)
 }
 
 //-------------------------
@@ -121,6 +122,7 @@ Prob DaTriePhraseTable::pSrcGivenTrg(const Vector<WordIndex>& s,
                                      const Vector<WordIndex>& t)
 {
       // TO-BE-DONE (HIGH PRIORITY)
+      // p(s|t)=count(s,t)/count(t)
 }
 
 //-------------------------
