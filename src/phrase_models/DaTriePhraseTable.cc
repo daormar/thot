@@ -34,6 +34,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 DaTriePhraseTable::DaTriePhraseTable(void)
 {
 }
+
 //-------------------------
 bool DaTriePhraseTable::getNbestForSrc(const Vector<WordIndex>& s,
                                        NbestTableNode<PhraseTransTableNodeData>& nbt)
@@ -77,6 +78,9 @@ void DaTriePhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
                                           Count c) 
 {
       // TO-BE-DONE (MEDIUM PRIORITY)
+      // increase_counts(s,t,c);
+      // increase_counts(s,c);
+      // increase_counts(t,c);
 }
 
 //-------------------------
