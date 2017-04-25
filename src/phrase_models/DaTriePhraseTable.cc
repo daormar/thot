@@ -77,10 +77,30 @@ void DaTriePhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
                                           const Vector<WordIndex>& t,
                                           Count c) 
 {
-      // TO-BE-DONE (MEDIUM PRIORITY)
-      // increase_counts(s,t,c);
-      // increase_counts(s,c);
-      // increase_counts(t,c);
+      // TO-BE-DONE (STARTING POINT)
+      //
+      // NOTES: It is important to store the counts for (s,t), s and t
+      // separatedly. Therefore, this function could be implemented by
+      // means of three new functions:
+      // 
+      // increaseJointCount(s,t,c);
+      // increaseSrcCount(s,c);
+      // increaseTrgCount(t,c);
+      // 
+      // It is possible to use only one trie for the three types of
+      // counts. The keys are sequences of word indices and the values
+      // are integers.
+      // 
+      // Let's suppose that s is [1,2,3] and t is [4,5], the proposed
+      // key representation is as follows:
+      // 
+      // - (s,t): [1,2,3,UNUSED_WORD,4,5]
+      // - s: [1,2,3]
+      // - t: [UNUSED_WORD,4,5]
+      // 
+      // Here, UNUSED_WORD is a constant representing a word index that
+      // is never used. The constant is defined in
+      // src/nlp_common/StatModelDefs.h
 }
 
 //-------------------------
