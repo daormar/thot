@@ -18,31 +18,31 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: _incrPhraseModel                                         */
+/* Module: IncrPhraseModel                                          */
 /*                                                                  */
-/* Definitions file: _incrPhraseModel.cc                            */
+/* Definitions file: IncrPhraseModel.cc                             */
 /*                                                                  */
 /********************************************************************/
 
 
 //--------------- Include files --------------------------------------
 
-#include "_incrPhraseModel.h"
+#include "IncrPhraseModel.h"
 
 //--------------- Global variables -----------------------------------
 
 
-//--------------- _incrPhraseModel class method definitions
+//--------------- IncrPhraseModel class method definitions
 
-_incrPhraseModel::_incrPhraseModel(void)
+IncrPhraseModel::IncrPhraseModel(void)
 {
  logFileName="";
 }
 
 //-------------------------
-void _incrPhraseModel::strAddTableEntry(const Vector<string>& s,
-                                        const Vector<string>& t,
-                                        PhrasePairInfo inf)
+void IncrPhraseModel::strAddTableEntry(const Vector<string>& s,
+                                       const Vector<string>& t,
+                                       PhrasePairInfo inf)
 {
   Vector<WordIndex> wordIndex_t,wordIndex_s;
  
@@ -52,18 +52,18 @@ void _incrPhraseModel::strAddTableEntry(const Vector<string>& s,
   addTableEntry(wordIndex_s,wordIndex_t,inf);	
 }
 //-------------------------
-void _incrPhraseModel::addTableEntry(const Vector<WordIndex>& s,
-                                     const Vector<WordIndex>& t,
-                                     PhrasePairInfo inf)
+void IncrPhraseModel::addTableEntry(const Vector<WordIndex>& s,
+                                    const Vector<WordIndex>& t,
+                                    PhrasePairInfo inf)
 {
       // Revise phrase translation model
   basePhraseTablePtr->addTableEntry(s,t,inf);
 }
 
 //-------------------------
-void _incrPhraseModel::strIncrCountsOfEntry(const Vector<string>& s,
-                                            const Vector<string>& t,
-                                            Count count)
+void IncrPhraseModel::strIncrCountsOfEntry(const Vector<string>& s,
+                                           const Vector<string>& t,
+                                           Count count)
 {
  Vector<WordIndex> wordIndex_t,wordIndex_s;
  
@@ -74,36 +74,36 @@ void _incrPhraseModel::strIncrCountsOfEntry(const Vector<string>& s,
 }
 
 //-------------------------
-void _incrPhraseModel::incrCountsOfEntry(const Vector<WordIndex>& s,
-                                         const Vector<WordIndex>& t,
-                                         Count count)
+void IncrPhraseModel::incrCountsOfEntry(const Vector<WordIndex>& s,
+                                        const Vector<WordIndex>& t,
+                                        Count count)
 {
  // Revise phrase translation model	
  basePhraseTablePtr->incrCountsOfEntry(s,t,count);	 
 }
 
 //-------------------------
-Count _incrPhraseModel::cSrcTrg(const Vector<WordIndex>& s,
+Count IncrPhraseModel::cSrcTrg(const Vector<WordIndex>& s,
                                 const Vector<WordIndex>& t)
 {
   return basePhraseTablePtr->cSrcTrg(s,t);
 }
 
 //-------------------------
-Count _incrPhraseModel::cSrc(const Vector<WordIndex>& s)
+Count IncrPhraseModel::cSrc(const Vector<WordIndex>& s)
 {
   return basePhraseTablePtr->cSrc(s);
 }
 
 //-------------------------
-Count _incrPhraseModel::cTrg(const Vector<WordIndex>& t)
+Count IncrPhraseModel::cTrg(const Vector<WordIndex>& t)
 {
   return basePhraseTablePtr->cTrg(t);
 }
 
 //-------------------------
-Count _incrPhraseModel::cHSrcHTrg(const Vector<std::string>& hs,
-                                  const Vector<std::string>& ht)
+Count IncrPhraseModel::cHSrcHTrg(const Vector<std::string>& hs,
+                                 const Vector<std::string>& ht)
 {
   Vector<WordIndex> s;
   Vector<WordIndex> t;
@@ -126,7 +126,7 @@ Count _incrPhraseModel::cHSrcHTrg(const Vector<std::string>& hs,
 }
 
 //-------------------------
-Count _incrPhraseModel::cHSrc(const Vector<std::string>& hs)
+Count IncrPhraseModel::cHSrc(const Vector<std::string>& hs)
 {
   Vector<WordIndex> s;
 
@@ -140,7 +140,7 @@ Count _incrPhraseModel::cHSrc(const Vector<std::string>& hs)
 }
 
 //-------------------------
-Count _incrPhraseModel::cHTrg(const Vector<std::string>& ht)
+Count IncrPhraseModel::cHTrg(const Vector<std::string>& ht)
 {
   Vector<WordIndex> t;
 
@@ -154,15 +154,15 @@ Count _incrPhraseModel::cHTrg(const Vector<std::string>& ht)
 }
 
 //-------------------------
-PhrasePairInfo _incrPhraseModel::infSrcTrg(const Vector<WordIndex>& s,
-                                           const Vector<WordIndex>& t,
-                                           bool& found)
+PhrasePairInfo IncrPhraseModel::infSrcTrg(const Vector<WordIndex>& s,
+                                          const Vector<WordIndex>& t,
+                                          bool& found)
 {
   return basePhraseTablePtr->infSrcTrg(s,t,found);
 }
 
 //-------------------------
-Prob _incrPhraseModel::pk_tlen(unsigned int tlen,unsigned int k)
+Prob IncrPhraseModel::pk_tlen(unsigned int tlen,unsigned int k)
 {
   Prob p=segLenTable.pk_tlen(tlen,k);
 
@@ -172,7 +172,7 @@ Prob _incrPhraseModel::pk_tlen(unsigned int tlen,unsigned int k)
 }
 
 //-------------------------
-LgProb _incrPhraseModel::srcSegmLenLgProb(unsigned int x_k,
+LgProb IncrPhraseModel::srcSegmLenLgProb(unsigned int x_k,
                                           unsigned int x_km1,
                                           unsigned int srcLen)
 {
@@ -180,13 +180,13 @@ LgProb _incrPhraseModel::srcSegmLenLgProb(unsigned int x_k,
 }
 
 //-------------------------
-LgProb _incrPhraseModel::trgCutsLgProb(int offset)
+LgProb IncrPhraseModel::trgCutsLgProb(int offset)
 {
   return trgCutsTable.trgCutsLgProb(offset);
 }
 
 //-------------------------
-LgProb _incrPhraseModel::trgSegmLenLgProb(unsigned int k,
+LgProb IncrPhraseModel::trgSegmLenLgProb(unsigned int k,
                                           const SentSegmentation& trgSegm,
                                           unsigned int trgLen,
                                           unsigned int lastSrcSegmLen)
@@ -195,8 +195,8 @@ LgProb _incrPhraseModel::trgSegmLenLgProb(unsigned int k,
 }
 
 //-------------------------
-LgProb _incrPhraseModel::logpt_s_(const Vector<WordIndex>& s,
-                                  const Vector<WordIndex>& t)
+LgProb IncrPhraseModel::logpt_s_(const Vector<WordIndex>& s,
+                                 const Vector<WordIndex>& t)
 {
   LgProb lp=basePhraseTablePtr->logpTrgGivenSrc(s,t);
   if((double)lp<LOG_PHRASE_PROB_SMOOTH)
@@ -206,8 +206,8 @@ LgProb _incrPhraseModel::logpt_s_(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-LgProb _incrPhraseModel::logps_t_(const Vector<WordIndex>& s,
-                                  const Vector<WordIndex>& t)
+LgProb IncrPhraseModel::logps_t_(const Vector<WordIndex>& s,
+                                 const Vector<WordIndex>& t)
 {
   LgProb lp=basePhraseTablePtr->logpSrcGivenTrg(s,t);
   if((double)lp<LOG_PHRASE_PROB_SMOOTH)
@@ -217,36 +217,36 @@ LgProb _incrPhraseModel::logps_t_(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-bool _incrPhraseModel::getTransFor_s_(const Vector<WordIndex>& s,
-                                      _incrPhraseModel::TrgTableNode& trgtn)
+bool IncrPhraseModel::getTransFor_s_(const Vector<WordIndex>& s,
+                                     IncrPhraseModel::TrgTableNode& trgtn)
 {
   return basePhraseTablePtr->getEntriesForSource(s,trgtn);  
 }
 
 //-------------------------
-bool _incrPhraseModel::getTransFor_t_(const Vector<WordIndex>& t,
-                                      _incrPhraseModel::SrcTableNode& srctn)
+bool IncrPhraseModel::getTransFor_t_(const Vector<WordIndex>& t,
+                                     IncrPhraseModel::SrcTableNode& srctn)
 {
   return basePhraseTablePtr->getEntriesForTarget(t,srctn);
 }
 
 //-------------------------
-bool _incrPhraseModel::getNbestTransFor_s_(const Vector<WordIndex>& s,
-                                           NbestTableNode<PhraseTransTableNodeData>& nbt)
+bool IncrPhraseModel::getNbestTransFor_s_(const Vector<WordIndex>& s,
+                                          NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
  return basePhraseTablePtr->getNbestForSrc(s,nbt);
 }
 
 //-------------------------	
-bool _incrPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
-                                           NbestTableNode<PhraseTransTableNodeData>& nbt,
-                                           int N/*=-1*/) 
+bool IncrPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
+                                          NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                          int N/*=-1*/) 
 {  
   return basePhraseTablePtr->getNbestForTrg(t,nbt,N);
 }
 
 //-------------------------
-bool _incrPhraseModel::load(const char *prefix)
+bool IncrPhraseModel::load(const char *prefix)
 {
   std::string mainFileName;
   if(fileIsDescriptor(prefix,mainFileName))
@@ -262,7 +262,7 @@ bool _incrPhraseModel::load(const char *prefix)
 }
 
 //-------------------------
-bool _incrPhraseModel::load_given_prefix(const char *prefix)
+bool IncrPhraseModel::load_given_prefix(const char *prefix)
 {
   std::string ttablefile;
   std::string seglenfile;
@@ -302,13 +302,13 @@ bool _incrPhraseModel::load_given_prefix(const char *prefix)
 }
 
 //-------------------------
-bool _incrPhraseModel::load_ttable(const char *_incrPhraseModelFileName)
+bool IncrPhraseModel::load_ttable(const char *IncrPhraseModelFileName)
 {
   awkInputStream awk;
   
-  if(awk.open(_incrPhraseModelFileName)==ERROR)
+  if(awk.open(IncrPhraseModelFileName)==ERROR)
   {
-    cerr<<"Error in ttable file: "<<_incrPhraseModelFileName<<"\n";
+    cerr<<"Error in ttable file: "<<IncrPhraseModelFileName<<"\n";
     return ERROR;
   }
   else
@@ -318,25 +318,25 @@ bool _incrPhraseModel::load_ttable(const char *_incrPhraseModelFileName)
       if(awk.NF==4 && strcmp("****",awk.dollar(1).c_str())==0 &&
          strcmp("cache",awk.dollar(2).c_str())==0 && strcmp("ttable",awk.dollar(3).c_str())==0)
       {
-        cerr<<"Error in ttable file: "<<_incrPhraseModelFileName<<"\n";
+        cerr<<"Error in ttable file: "<<IncrPhraseModelFileName<<"\n";
         return ERROR;
       }
       else
       {
         awk.close();
-        return loadPlainTextTTable(_incrPhraseModelFileName);
+        return loadPlainTextTTable(IncrPhraseModelFileName);
       }
     }
     else
     {
       awk.close();
-      return loadPlainTextTTable(_incrPhraseModelFileName);
+      return loadPlainTextTTable(IncrPhraseModelFileName);
     }
   }
 }
 
 //-------------------------
-bool _incrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
+bool IncrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
 {
  unsigned int i;
  Vector<string> s,t;
@@ -398,14 +398,14 @@ bool _incrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
 }
 
 //-------------------------
-bool _incrPhraseModel::load_seglentable(const char *segmLengthTableFileName)
+bool IncrPhraseModel::load_seglentable(const char *segmLengthTableFileName)
 {
   if(logFileOpen()) logF<<"Loading segmentation length table from file "<<segmLengthTableFileName<<endl;
   return segLenTable.load_seglentable(segmLengthTableFileName);
 }
 
 //-------------------------
-bool _incrPhraseModel::print(const char *prefix)
+bool IncrPhraseModel::print(const char *prefix)
 {
       // Obtain file prefix
   std::string mainFileName;
@@ -437,7 +437,7 @@ bool _incrPhraseModel::print(const char *prefix)
 }
 
 //-------------------------
-bool _incrPhraseModel::printTTable(const char *outputFileName)
+bool IncrPhraseModel::printTTable(const char *outputFileName)
 {
 # ifdef _GLIBCXX_USE_LFS
   ofstream outF;
@@ -471,7 +471,7 @@ bool _incrPhraseModel::printTTable(const char *outputFileName)
 }
 
 //-------------------------
-bool _incrPhraseModel::printSegmLengthTable(const char *outputFileName)
+bool IncrPhraseModel::printSegmLengthTable(const char *outputFileName)
 {
  ofstream outF;
 
@@ -490,7 +490,7 @@ bool _incrPhraseModel::printSegmLengthTable(const char *outputFileName)
 
 # ifdef _GLIBCXX_USE_LFS
 //-------------------------
-void _incrPhraseModel::printTTable(ostream &outS)
+void IncrPhraseModel::printTTable(ostream &outS)
 {
   PhraseTable* ptPtr=0;
 
@@ -525,7 +525,7 @@ void _incrPhraseModel::printTTable(ostream &outS)
 
 #endif
 //-------------------------
-void _incrPhraseModel::printTTable(FILE* file)
+void IncrPhraseModel::printTTable(FILE* file)
 {
   PhraseTable* ptPtr=0;
 
@@ -556,8 +556,8 @@ void _incrPhraseModel::printTTable(FILE* file)
 }
 
 //-------------------------
-void _incrPhraseModel::printNbestTransTableNode(NbestTableNode<PhraseTransTableNodeData> tTableNode,
-                                                ostream &outS)
+void IncrPhraseModel::printNbestTransTableNode(NbestTableNode<PhraseTransTableNodeData> tTableNode,
+                                               ostream &outS)
 {
  NbestTableNode<PhraseTransTableNodeData>::iterator transTableNodeIter;
  Vector<WordIndex>::iterator VectorWordIndexIter;
@@ -571,50 +571,50 @@ void _incrPhraseModel::printNbestTransTableNode(NbestTableNode<PhraseTransTableN
 }
 
 //-------------------------
-void _incrPhraseModel::printSegmLengthTable(ostream &outS)
+void IncrPhraseModel::printSegmLengthTable(ostream &outS)
 {
   return segLenTable.printSegmLengthTable(outS);
 }
 
 //-------------------------
-size_t _incrPhraseModel::getSrcVocabSize(void)const
+size_t IncrPhraseModel::getSrcVocabSize(void)const
 {
   return singleWordVocab.getSrcVocabSize();	
 }
 
 //-------------------------
-bool _incrPhraseModel::loadSrcVocab(const char *srcInputVocabFileName)
+bool IncrPhraseModel::loadSrcVocab(const char *srcInputVocabFileName)
 {
   return singleWordVocab.loadSrcVocab(srcInputVocabFileName);
 }
 
 //-------------------------
-bool _incrPhraseModel::loadTrgVocab(const char *trgInputVocabFileName)
+bool IncrPhraseModel::loadTrgVocab(const char *trgInputVocabFileName)
 {
   return singleWordVocab.loadTrgVocab(trgInputVocabFileName);
 }
 
 //-------------------------
-WordIndex _incrPhraseModel::stringToSrcWordIndex(string s)const
+WordIndex IncrPhraseModel::stringToSrcWordIndex(string s)const
 {	
  return singleWordVocab.stringToSrcWordIndex(s);
 }
 
 //-------------------------
-string _incrPhraseModel::wordIndexToSrcString(WordIndex w)const
+string IncrPhraseModel::wordIndexToSrcString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToSrcString(w);
 }
 
 //-------------------------
-bool _incrPhraseModel::existSrcSymbol(string s)const
+bool IncrPhraseModel::existSrcSymbol(string s)const
 {
  return singleWordVocab.existSrcSymbol(s);
 }
 
 //-------------------------
-Vector<WordIndex> _incrPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s,
-                                                              Count numTimes/*=1*/)
+Vector<WordIndex> IncrPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s,
+                                                             Count numTimes/*=1*/)
 {
   Vector<WordIndex> swVec;
   
@@ -625,7 +625,7 @@ Vector<WordIndex> _incrPhraseModel::strVectorToSrcIndexVector(const Vector<strin
 }
 
 //-------------------------
-Vector<string> _incrPhraseModel::srcIndexVectorToStrVector(const Vector<WordIndex>& s)
+Vector<string> IncrPhraseModel::srcIndexVectorToStrVector(const Vector<WordIndex>& s)
 {
  Vector<string> vStr;
  unsigned int i;
@@ -636,45 +636,45 @@ Vector<string> _incrPhraseModel::srcIndexVectorToStrVector(const Vector<WordInde
  return vStr;
 }
 //-------------------------
-WordIndex _incrPhraseModel::addSrcSymbol(string s,
+WordIndex IncrPhraseModel::addSrcSymbol(string s,
                                          Count numTimes/*=1*/)
 {
  return singleWordVocab.addSrcSymbol(s,numTimes);
 }
 
 //-------------------------
-bool _incrPhraseModel::printSrcVocab(const char *outputFileName)
+bool IncrPhraseModel::printSrcVocab(const char *outputFileName)
 {
  return singleWordVocab.printSrcVocab(outputFileName);
 }
 
 //-------------------------
-size_t _incrPhraseModel::getTrgVocabSize(void)const
+size_t IncrPhraseModel::getTrgVocabSize(void)const
 {
  return singleWordVocab.getTrgVocabSize();	
 }
 
 //-------------------------
-WordIndex _incrPhraseModel::stringToTrgWordIndex(string t)const
+WordIndex IncrPhraseModel::stringToTrgWordIndex(string t)const
 {
  return singleWordVocab.stringToTrgWordIndex(t);
 }
 
 //-------------------------
-string _incrPhraseModel::wordIndexToTrgString(WordIndex w)const
+string IncrPhraseModel::wordIndexToTrgString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToTrgString(w);
 }
 
 //-------------------------
-bool _incrPhraseModel::existTrgSymbol(string t)const
+bool IncrPhraseModel::existTrgSymbol(string t)const
 {
  return singleWordVocab.existTrgSymbol(t);
 }
 
 //-------------------------
-Vector<WordIndex> _incrPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t,
-                                                              Count numTimes/*=1*/)
+Vector<WordIndex> IncrPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t,
+                                                             Count numTimes/*=1*/)
 {
   Vector<WordIndex> twVec;
   
@@ -684,7 +684,7 @@ Vector<WordIndex> _incrPhraseModel::strVectorToTrgIndexVector(const Vector<strin
   return twVec;
 }
 //-------------------------
-Vector<string> _incrPhraseModel::trgIndexVectorToStrVector(const Vector<WordIndex>& t)
+Vector<string> IncrPhraseModel::trgIndexVectorToStrVector(const Vector<WordIndex>& t)
 {
  Vector<string> vStr;
  unsigned int i;
@@ -695,19 +695,19 @@ Vector<string> _incrPhraseModel::trgIndexVectorToStrVector(const Vector<WordInde
  return vStr;
 }
 //-------------------------
-WordIndex _incrPhraseModel::addTrgSymbol(string t,
+WordIndex IncrPhraseModel::addTrgSymbol(string t,
                                          Count numTimes/*=1*/)
 {
  return singleWordVocab.addTrgSymbol(t,numTimes);
 }
 //-------------------------
-bool _incrPhraseModel::printTrgVocab(const char *outputFileName)
+bool IncrPhraseModel::printTrgVocab(const char *outputFileName)
 {
  return singleWordVocab.printTrgVocab(outputFileName);
 }
 
 //-------------------------
-bool _incrPhraseModel::createLogFile(char *_logFileName)
+bool IncrPhraseModel::createLogFile(char *_logFileName)
 {
  logF.open(_logFileName,ios::out);
  
@@ -724,7 +724,7 @@ bool _incrPhraseModel::createLogFile(char *_logFileName)
 }
 
 //-------------------------
-bool _incrPhraseModel::addToLogFile(char *s)
+bool IncrPhraseModel::addToLogFile(char *s)
 {
  if(!logFileOpen()) return 0;
  else
@@ -735,21 +735,21 @@ bool _incrPhraseModel::addToLogFile(char *s)
 }
 
 //-------------------------
-bool _incrPhraseModel::logFileOpen(void)
+bool IncrPhraseModel::logFileOpen(void)
 {
  if(logFileName=="") return 0;
  else return 1;	 
 }
 
 //-------------------------
-void _incrPhraseModel::closeLogFile(void)
+void IncrPhraseModel::closeLogFile(void)
 {
  logFileName="";	
  logF.close();	
 }
 
 //-------------------------
-Vector<string> _incrPhraseModel::stringToStringVector(string s)
+Vector<string> IncrPhraseModel::stringToStringVector(string s)
 {
  Vector<string> vs;	
  string aux;
@@ -773,7 +773,7 @@ Vector<string> _incrPhraseModel::stringToStringVector(string s)
 }
 
 //-------------------------
-Vector<string> _incrPhraseModel::extractCharItemsToVector(char *ch)const
+Vector<string> IncrPhraseModel::extractCharItemsToVector(char *ch)const
 {
  unsigned int i=0;
  string s;	
@@ -795,13 +795,13 @@ Vector<string> _incrPhraseModel::extractCharItemsToVector(char *ch)const
 }
 
 //-------------------------
-size_t _incrPhraseModel::size(void)
+size_t IncrPhraseModel::size(void)
 {
   return basePhraseTablePtr->size();
 }
 
 //-------------------------
-void _incrPhraseModel::clear(void)
+void IncrPhraseModel::clear(void)
 {
   singleWordVocab.clear();
   basePhraseTablePtr->clear();
@@ -809,12 +809,12 @@ void _incrPhraseModel::clear(void)
   segLenTable.clear();
 }
 //-------------------------
-void _incrPhraseModel::clearTempVars(void)
+void IncrPhraseModel::clearTempVars(void)
 {
 }
 
 //-------------------------
-_incrPhraseModel::~_incrPhraseModel()
+IncrPhraseModel::~IncrPhraseModel()
 {
   if(logFileOpen()) closeLogFile();
 }

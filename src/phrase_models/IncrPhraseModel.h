@@ -18,18 +18,18 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: _incrPhraseModel                                         */
+/* Module: IncrPhraseModel                                          */
 /*                                                                  */
-/* Prototype file: _incrPhraseModel                                 */
+/* Prototype file: IncrPhraseModel                                  */
 /*                                                                  */
-/* Description: Defines the _incrPhraseModel base class.            */
-/*              _incrPhraseModel is derived from the abstract       */
+/* Description: Defines the IncrPhraseModel base class.             */
+/*              IncrPhraseModel is derived from the abstract        */
 /*              class BasePhraseModel.                              */
 /*                                                                  */
 /********************************************************************/
 
-#ifndef __incrPhraseModel_h
-#define __incrPhraseModel_h
+#ifndef _IncrPhraseModel_h
+#define _IncrPhraseModel_h
 
 //--------------- Include files --------------------------------------
 
@@ -73,9 +73,9 @@ typedef NbestTransTable<Vector<WordIndex>,PhraseTransTableNodeData> PhraseNbestT
 //--------------- Classes --------------------------------------------
 
 
-//--------------- _incrPhraseModel class
+//--------------- IncrPhraseModel class
 
-class _incrPhraseModel: public BaseIncrPhraseModel
+class IncrPhraseModel: public BaseIncrPhraseModel
 {
  public:
 
@@ -83,7 +83,7 @@ class _incrPhraseModel: public BaseIncrPhraseModel
     typedef BaseIncrPhraseModel::TrgTableNode TrgTableNode;
 
         // Constructor
-    _incrPhraseModel(void);
+    IncrPhraseModel(void);
 
         // Functions to extend or modify the model
     void strAddTableEntry(const Vector<string>& s,
@@ -227,7 +227,7 @@ class _incrPhraseModel: public BaseIncrPhraseModel
     void closeLogFile(void);
 
         // destructor
-    ~_incrPhraseModel();
+    ~IncrPhraseModel();
 	
  protected:
     

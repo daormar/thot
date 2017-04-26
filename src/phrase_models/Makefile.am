@@ -14,7 +14,7 @@ PhrasePair.h PhraseId.h PhraseExtractParameters.h			\
 PhraseExtractionTable.h PhraseExtractionTable.cc PhraseExtractionCell.h	\
 PhraseDictLog.h PhraseDictLog.cc PhraseDict.h PhraseDict.cc		\
 PhraseDefs.h PhraseCountsLog.h PhraseCountsLog.cc PhraseCounts.h	\
-PhraseCounts.cc _incrPhraseModel.h _incrPhraseModel.cc CellID.h		\
+PhraseCounts.cc IncrPhraseModel.h IncrPhraseModel.cc CellID.h		\
 CellAlignment.h Cache_lct_.h Cache_lct_.cc Cache_ct_.h Cache_ct_.cc	\
 BpSetInfo.h BpSet.h BpSet.cc Bisegm.h BasePhraseTable.h			\
 BasePhraseModel.h BasePhraseModel.cc BaseIncrPhraseModel.h		\

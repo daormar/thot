@@ -40,7 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "CategPhrasePairFilter.h"
-#include "_incrPhraseModel.h"
+#include "IncrPhraseModel.h"
 #ifdef USE_OCH_PHRASE_EXTRACT
 #include "PhraseExtractor.h"
 #else
@@ -60,14 +60,14 @@ using namespace std;
 
 //--------------- _wbaIncrPhraseModel class
 
-class _wbaIncrPhraseModel: public _incrPhraseModel
+class _wbaIncrPhraseModel: public IncrPhraseModel
 {
  public:
 
-    typedef _incrPhraseModel::SrcTableNode SrcTableNode;
-    typedef _incrPhraseModel::TrgTableNode TrgTableNode;
+    typedef IncrPhraseModel::SrcTableNode SrcTableNode;
+    typedef IncrPhraseModel::TrgTableNode TrgTableNode;
   	
-    _wbaIncrPhraseModel(void):_incrPhraseModel()
+    _wbaIncrPhraseModel(void):IncrPhraseModel()
       {
         numSent=0;
       }

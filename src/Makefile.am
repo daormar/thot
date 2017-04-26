@@ -191,7 +191,7 @@ phrase_models/PhraseExtractionTable.h					\
 phrase_models/PhraseExtractionCell.h phrase_models/PhraseDictLog.h	\
 phrase_models/PhraseDict.h phrase_models/PhraseDefs.h			\
 phrase_models/PhraseCountsLog.h phrase_models/PhraseCounts.h		\
-phrase_models/_incrPhraseModel.h phrase_models/CellID.h			\
+phrase_models/IncrPhraseModel.h phrase_models/CellID.h			\
 phrase_models/CellAlignment.h phrase_models/Cache_lct_.h		\
 phrase_models/Cache_ct_.h phrase_models/BpSetInfo.h			\
 phrase_models/BpSet.h phrase_models/Bisegm.h				\
@@ -212,7 +212,7 @@ phrase_models/SrcSegmLenTable.cc phrase_models/SegLenTable.cc		\
 phrase_models/PhraseTableLog.cc phrase_models/PhraseTable.cc		\
 phrase_models/PhraseExtractionTable.cc phrase_models/PhraseDictLog.cc	\
 phrase_models/PhraseDict.cc phrase_models/PhraseCountsLog.cc		\
-phrase_models/PhraseCounts.cc phrase_models/_incrPhraseModel.cc		\
+phrase_models/PhraseCounts.cc phrase_models/IncrPhraseModel.cc		\
 phrase_models/Cache_lct_.cc phrase_models/Cache_ct_.cc			\
 phrase_models/BpSet.cc phrase_models/BasePhraseModel.cc			\
 phrase_models/BaseIncrPhraseModel.cc					\
