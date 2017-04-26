@@ -79,13 +79,8 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
   typedef typename _smtModel<HYPOTHESIS>::HypScoreInfo HypScoreInfo;
   typedef typename _smtModel<HYPOTHESIS>::HypDataType HypDataType;
 
-  // class functions
-
       // Constructor
-  BasePbTransModel(void);
-  
-  
-  // class methods
+  BasePbTransModel(void);  
 
       // Init language and alignment models
   virtual bool loadLangModel(const char* prefixFileName)=0;
@@ -94,7 +89,7 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
       // Print models
   virtual bool printLangModel(std::string printPrefix)=0;
   virtual bool printAligModel(std::string printPrefix)=0;
-
+  
   virtual void clear(void)=0;
 
       // Heuristic-related functions
@@ -324,9 +319,6 @@ template<class HYPOTHESIS>
 BasePbTransModel<HYPOTHESIS>::~BasePbTransModel()
 {
 }
-
-//--------------- BasePbTransModel class methods
-//
 
 //---------------------------------
 template<class HYPOTHESIS>

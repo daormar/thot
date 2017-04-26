@@ -87,9 +87,7 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   typedef typename BasePbTransModel<HYPOTHESIS>::HypScoreInfo HypScoreInfo;
   typedef typename BasePbTransModel<HYPOTHESIS>::HypDataType HypDataType;
 
-  // class functions
-
-  // Constructor
+      // Constructor
   _phraseBasedTransModel();
 
       // Link language model information
@@ -97,8 +95,6 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   
       // Link phrase model information
   void link_pm_info(PhraseModelInfo* _phrModelInfoPtr);
-
-  // class methods
 
       // Init language and alignment models
   bool loadLangModel(const char* prefixFileName);
@@ -1403,9 +1399,6 @@ void _phraseBasedTransModel<HYPOTHESIS>::initTmToLmVocabMap(void)
   tmToLmVocMap.clear();
   tmToLmVocMap[UNK_WORD]=langModelInfoPtr->lModelPtr->stringToWordIndex(UNK_SYMBOL_STR);
 }
-
-//--------------- _phraseBasedTransModel class methods
-//
 
 //---------------------------------
 template<class HYPOTHESIS>
