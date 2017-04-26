@@ -50,9 +50,9 @@ $(TESTING_PROGS)
 lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la incr_interp_ngram_lm_factory.la	\
 smoothed_incr_ibm2_alig_model_factory.la				\
-incr_hmm_p0_alig_model_factory.la wba_incr_phrase_model_factory.la	\
-incr_mux_phrase_model_factory.la pfsm_ecm_for_wg_factory.la		\
-non_pb_ec_model_for_nb_ucat_factory.la					\
+incr_hmm_p0_alig_model_factory.la incr_phrase_model_factory.la		\
+wba_incr_phrase_model_factory.la incr_mux_phrase_model_factory.la	\
+pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
 wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
 mira_wer_factory.la mira_gtm_factory.la kb_mira_ll_wu_factory.la	\
 multi_stack_decoder_rec__swli_factory.la				\
@@ -372,6 +372,10 @@ incr_hmm_p0_alig_model_factory_defs=		\
 sw_models/IncrHmmP0AligModelFactory.cc
 
 ##########
+incr_phrase_model_factory_h= 
+incr_phrase_model_factory_defs= phrase_models/IncrPhraseModelFactory.cc
+
+##########
 wba_incr_phrase_model_factory_h= 
 wba_incr_phrase_model_factory_defs=		\
 phrase_models/WbaIncrPhraseModelFactory.cc
@@ -616,6 +620,13 @@ $(incr_hmm_p0_alig_model_factory_h)		\
 $(incr_hmm_p0_alig_model_factory_defs)
 incr_hmm_p0_alig_model_factory_la_LIBADD= libthot.la
 incr_hmm_p0_alig_model_factory_la_LDFLAGS= -module
+
+##########
+incr_phrase_model_factory_la_SOURCES=	\
+$(incr_phrase_model_factory_h)		\
+$(incr_phrase_model_factory_defs)
+incr_phrase_model_factory_la_LIBADD= libthot.la
+incr_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 wba_incr_phrase_model_factory_la_SOURCES=	\
