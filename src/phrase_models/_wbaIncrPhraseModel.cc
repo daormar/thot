@@ -246,7 +246,7 @@ ostream& _wbaIncrPhraseModel::printPars(ostream &outS,
 
 void _wbaIncrPhraseModel::clear(void)
 {
-  IncrPhraseModel::clear();
+  _incrPhraseModel::clear();
   numSent=0;
 }
 
