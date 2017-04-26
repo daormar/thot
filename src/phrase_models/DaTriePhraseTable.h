@@ -54,6 +54,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 class DaTriePhraseTable: public BasePhraseTable
 {
+	AlphaMap *alphabet_map;
+	Trie *trie;
  public:
 
     typedef std::map<Vector<WordIndex>,PhrasePairInfo> SrcTableNode;

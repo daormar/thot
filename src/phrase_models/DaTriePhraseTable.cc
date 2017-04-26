@@ -33,6 +33,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //-------------------------
 DaTriePhraseTable::DaTriePhraseTable(void)
 {
+	alphabet_map = alpha_map_new ();
+	// TODO: Add checking if setting range was successful
+	alpha_map_add_range (alphabet_map, 0x0000, 0x007f);  // All ASCII characters
+	trie = trie_new(alphabet_map);
+	// TODO: Check if the object can be destroyed now
+	//alpha_map_free(alphabet_map);
 }
 
 //-------------------------
@@ -206,7 +212,8 @@ void DaTriePhraseTable::clear(void)
 //-------------------------
 DaTriePhraseTable::~DaTriePhraseTable(void)
 {
-
+	alpha_map_free(alphabet_map);
+	// TODO: free trie
 }
 
 //-------------------------
