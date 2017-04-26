@@ -450,125 +450,125 @@ stack_dec/WgUncoupledAssistedTransSwLiFactory.cc
 
 ##########
 thot_lm_perp_SOURCES = incr_models/thot_lm_perp.cc
-thot_lm_perp_LDFLAGS = libthot.la
+thot_lm_perp_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_ilm_perp_SOURCES = incr_models/thot_ilm_perp.cc
-thot_ilm_perp_LDFLAGS = libthot.la
+thot_ilm_perp_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_lm_weight_upd_SOURCES = incr_models/thot_lm_weight_upd.cc
-thot_lm_weight_upd_LDFLAGS = libthot.la
+thot_lm_weight_upd_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_calc_swm_lgprob_SOURCES = sw_models/thot_calc_swm_lgprob.cc
-thot_calc_swm_lgprob_LDFLAGS = libthot.la
+thot_calc_swm_lgprob_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_gen_sw_model_SOURCES = sw_models/thot_gen_sw_model_pars.h	\
 sw_models/thot_gen_sw_model.cc
-thot_gen_sw_model_LDFLAGS = libthot.la
+thot_gen_sw_model_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_sort_bin_ilextable_SOURCES = sw_models/thot_sort_bin_ilextable.cc
-thot_sort_bin_ilextable_LDFLAGS = libthot.la
+thot_sort_bin_ilextable_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_sort_bin_ihmmatable_SOURCES = sw_models/thot_sort_bin_ihmmatable.cc
-thot_sort_bin_ihmmatable_LDFLAGS = libthot.la
+thot_sort_bin_ihmmatable_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_sort_bin_iibm2atable_SOURCES = sw_models/thot_sort_bin_iibm2atable.cc
-thot_sort_bin_iibm2atable_LDFLAGS = libthot.la
+thot_sort_bin_iibm2atable_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_merge_bin_ilextable_SOURCES = sw_models/thot_merge_bin_ilextable.cc
-thot_merge_bin_ilextable_LDFLAGS = libthot.la
+thot_merge_bin_ilextable_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_merge_bin_ihmmatable_SOURCES = sw_models/thot_merge_bin_ihmmatable.cc
-thot_merge_bin_ihmmatable_LDFLAGS = libthot.la
+thot_merge_bin_ihmmatable_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_merge_bin_iibm2atable_SOURCES = sw_models/thot_merge_bin_iibm2atable.cc
-thot_merge_bin_iibm2atable_LDFLAGS = libthot.la
+thot_merge_bin_iibm2atable_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_gen_bin_lex_filter_info_SOURCES = sw_models/thot_gen_bin_lex_filter_info.cc
-thot_gen_bin_lex_filter_info_LDFLAGS = libthot.la
+thot_gen_bin_lex_filter_info_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_filter_bin_ilextable_SOURCES = sw_models/thot_filter_bin_ilextable.cc
-thot_filter_bin_ilextable_LDFLAGS = libthot.la
+thot_filter_bin_ilextable_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_prune_bin_ilextable_SOURCES = sw_models/thot_prune_bin_ilextable.cc
-thot_prune_bin_ilextable_LDFLAGS = libthot.la
+thot_prune_bin_ilextable_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_alig_op_SOURCES = phrase_models/thot_alig_op.cc
-thot_alig_op_LDFLAGS = libthot.la
+thot_alig_op_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_query_pm_SOURCES = phrase_models/thot_query_pm.cc
-thot_query_pm_LDFLAGS = libthot.la
+thot_query_pm_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_gen_phr_model_SOURCES = phrase_models/thot_gen_phr_model.cc
-thot_gen_phr_model_LDFLAGS = libthot.la
+thot_gen_phr_model_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_ttable_to_fbdb_SOURCES = phrase_models/thot_ttable_to_fbdb.cc
-thot_ttable_to_fbdb_LDFLAGS = libthot.la
+thot_ttable_to_fbdb_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_wg_proc_SOURCES = error_correction/thot_wg_proc_pars.h	\
 error_correction/thot_wg_proc.cc
-thot_wg_proc_LDFLAGS = libthot.la
+thot_wg_proc_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_dhs_step_by_step_min_SOURCES = downhill_simplex/thot_dhs_step_by_step_min.cc
-thot_dhs_step_by_step_min_LDFLAGS = libthot.la
+thot_dhs_step_by_step_min_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_ms_dec_SOURCES = stack_dec/thot_ms_dec.cc
-thot_ms_dec_LDFLAGS = libthot.la
+thot_ms_dec_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_ms_alig_SOURCES = stack_dec/thot_ms_alig.cc
-thot_ms_alig_LDFLAGS = libthot.la
+thot_ms_alig_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_li_weight_upd_SOURCES = stack_dec/thot_li_weight_upd.cc
-thot_li_weight_upd_LDFLAGS = libthot.la
+thot_li_weight_upd_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_ll_weight_upd_nblist_SOURCES =		\
 stack_dec/thot_ll_weight_upd_nblist.cc
-thot_ll_weight_upd_nblist_LDFLAGS = libthot.la
+thot_ll_weight_upd_nblist_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_client_SOURCES = stack_dec/thot_client_pars.h	\
 stack_dec/thot_client.cc
-thot_client_LDFLAGS = libthot.la
+thot_client_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_server_SOURCES = stack_dec/thot_server_pars.h	\
 stack_dec/thot_server.cc
-thot_server_LDFLAGS = libthot.la
+thot_server_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_scorer_SOURCES = stack_dec/thot_scorer.cc
-thot_scorer_LDFLAGS = libthot.la
+thot_scorer_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_calc_bleu_SOURCES = stack_dec/thot_calc_bleu.cc
-thot_calc_bleu_LDFLAGS = libthot.la
+thot_calc_bleu_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 if CODE_TESTING
 thot_test_SOURCES = testing/thot_test.cc $(testing_h) $(testing_defs)
-thot_test_LDFLAGS = libdatrie.la libthot.la
+thot_test_LDFLAGS = libthot.la libdatrie.la
 endif
 
 # include headers
@@ -592,20 +592,20 @@ libthot_la_LIBADD= $(ZLIB) $(LGMP)
 ##########
 word_penalty_model_factory_la_SOURCES= $(word_penalty_model_factory_h)	\
 $(word_penalty_model_factory_defs)
-word_penalty_model_factory_la_LIBADD= libthot.la
+word_penalty_model_factory_la_LIBADD= libthot.la libdatrie.la
 word_penalty_model_factory_la_LDFLAGS= -module
 
 ##########
 incr_jel_mer_ngram_lm_factory_la_SOURCES=	\
 $(incr_jel_mer_ngram_lm_factory_h)		\
 $(incr_jel_mer_ngram_lm_factory_defs)
-incr_jel_mer_ngram_lm_factory_la_LIBADD= libthot.la
+incr_jel_mer_ngram_lm_factory_la_LIBADD= libthot.la libdatrie.la
 incr_jel_mer_ngram_lm_factory_la_LDFLAGS= -module
 
 ##########
 incr_interp_ngram_lm_factory_la_SOURCES=				\
 $(incr_interp_ngram_lm_factory_h) $(incr_interp_ngram_lm_factory_defs)
-incr_interp_ngram_lm_factory_la_LIBADD= libthot.la $(KENLM_LIBADD)
+incr_interp_ngram_lm_factory_la_LIBADD= libthot.la libdatrie.la $(KENLM_LIBADD)
 incr_interp_ngram_lm_factory_la_LDFLAGS= -module
 
 ##########
@@ -620,110 +620,110 @@ endif
 smoothed_incr_ibm2_alig_model_factory_la_SOURCES=	\
 $(smoothed_incr_ibm2_alig_model_factory_h)		\
 $(smoothed_incr_ibm2_alig_model_factory_defs)
-smoothed_incr_ibm2_alig_model_factory_la_LIBADD= libthot.la
+smoothed_incr_ibm2_alig_model_factory_la_LIBADD= libthot.la libdatrie.la
 smoothed_incr_ibm2_alig_model_factory_la_LDFLAGS= -module
 
 ##########
 incr_hmm_p0_alig_model_factory_la_SOURCES=	\
 $(incr_hmm_p0_alig_model_factory_h)		\
 $(incr_hmm_p0_alig_model_factory_defs)
-incr_hmm_p0_alig_model_factory_la_LIBADD= libthot.la
+incr_hmm_p0_alig_model_factory_la_LIBADD= libthot.la libdatrie.la
 incr_hmm_p0_alig_model_factory_la_LDFLAGS= -module
 
 ##########
 wba_incr_phrase_model_factory_la_SOURCES=	\
 $(wba_incr_phrase_model_factory_h)		\
 $(wba_incr_phrase_model_factory_defs)
-wba_incr_phrase_model_factory_la_LIBADD= libthot.la
+wba_incr_phrase_model_factory_la_LIBADD= libthot.la libdatrie.la
 wba_incr_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 bdb_phrase_model_factory_la_SOURCES= $(bdb_phrase_model_factory_h)	\
 $(bdb_phrase_model_factory_defs)
-bdb_phrase_model_factory_la_LIBADD= libthot.la
+bdb_phrase_model_factory_la_LIBADD= libthot.la libdatrie.la
 bdb_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 fast_bdb_phrase_model_factory_la_SOURCES=	\
 $(fast_bdb_phrase_model_factory_h)		\
 $(fast_bdb_phrase_model_factory_defs)
-fast_bdb_phrase_model_factory_la_LIBADD= libthot.la
+fast_bdb_phrase_model_factory_la_LIBADD= libthot.la libdatrie.la
 fast_bdb_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 incr_mux_phrase_model_factory_la_SOURCES=	\
 $(incr_mux_phrase_model_factory_h)	\
 $(incr_mux_phrase_model_factory_defs)
-incr_mux_phrase_model_factory_la_LIBADD= libthot.la
+incr_mux_phrase_model_factory_la_LIBADD= libthot.la libdatrie.la
 incr_mux_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 pfsm_ecm_for_wg_factory_la_SOURCES= $(pfsm_ecm_for_wg_factory_h)	\
 $(pfsm_ecm_for_wg_factory_defs)
-pfsm_ecm_for_wg_factory_la_LIBADD= libthot.la
+pfsm_ecm_for_wg_factory_la_LIBADD= libthot.la libdatrie.la
 pfsm_ecm_for_wg_factory_la_LDFLAGS= -module
 
 ##########
 non_pb_ec_model_for_nb_ucat_factory_la_SOURCES=	\
 $(non_pb_ec_model_for_nb_ucat_factory_h)	\
 $(non_pb_ec_model_for_nb_ucat_factory_defs)
-non_pb_ec_model_for_nb_ucat_factory_la_LIBADD= libthot.la
+non_pb_ec_model_for_nb_ucat_factory_la_LIBADD= libthot.la libdatrie.la
 non_pb_ec_model_for_nb_ucat_factory_la_LDFLAGS= -module
 
 ##########
 wg_processor_for_anlp__pfsm_factory_la_SOURCES=	\
 $(wg_processor_for_anlp__pfsm_factory_h)	\
 $(wg_processor_for_anlp__pfsm_factory_defs)
-wg_processor_for_anlp__pfsm_factory_la_LIBADD= libthot.la
+wg_processor_for_anlp__pfsm_factory_la_LIBADD= libthot.la libdatrie.la
 wg_processor_for_anlp__pfsm_factory_la_LDFLAGS= -module
 
 ##########
 mira_bleu_factory_la_SOURCES= $(mira_bleu_factory_h)	\
 $(mira_bleu_factory_defs)
-mira_bleu_factory_la_LIBADD= libthot.la
+mira_bleu_factory_la_LIBADD= libthot.la libdatrie.la
 mira_bleu_factory_la_LDFLAGS= -module
 
 ##########
 mira_gtm_factory_la_SOURCES= $(mira_gtm_factory_h)  \
 $(mira_gtm_factory_defs)
-mira_gtm_factory_la_LIBADD= libthot.la
+mira_gtm_factory_la_LIBADD= libthot.la libdatrie.la
 mira_gtm_factory_la_LDFLAGS= -module
 
 ##########
 mira_wer_factory_la_SOURCES= $(mira_wer_factory_h)  \
 $(mira_wer_factory_defs)
-mira_wer_factory_la_LIBADD= libthot.la
+mira_wer_factory_la_LIBADD= libthot.la libdatrie.la
 mira_wer_factory_la_LDFLAGS= -module
 
 ##########
 kb_mira_ll_wu_factory_la_SOURCES= $(kb_mira_ll_wu_factory_h)	\
 $(kb_mira_ll_wu_factory_defs)
-kb_mira_ll_wu_factory_la_LIBADD= libthot.la
+kb_mira_ll_wu_factory_la_LIBADD= libthot.la libdatrie.la
 kb_mira_ll_wu_factory_la_LDFLAGS= -module
 
 ##########
 translation_constraints_factory_la_SOURCES=	\
 $(translation_constraints_factory_h)		\
 $(translation_constraints_factory_defs)
-translation_constraints_factory_la_LIBADD= libthot.la
+translation_constraints_factory_la_LIBADD= libthot.la libdatrie.la
 translation_constraints_factory_la_LDFLAGS= -module
 
 ##########
 multi_stack_decoder_rec__swli_factory_la_SOURCES=	\
 $(multi_stack_decoder_rec__swli_factory_h)		\
 $(multi_stack_decoder_rec__swli_factory_defs)
-multi_stack_decoder_rec__swli_factory_la_LIBADD= libthot.la
+multi_stack_decoder_rec__swli_factory_la_LIBADD= libthot.la libdatrie.la
 multi_stack_decoder_rec__swli_factory_la_LDFLAGS= -module
 
 ##########
 wg_uncoupled_assisted_trans__swli_factory_la_SOURCES=	\
 $(wg_uncoupled_assisted_trans__swli_factory_h)		\
 $(wg_uncoupled_assisted_trans__swli_factory_defs)
-wg_uncoupled_assisted_trans__swli_factory_la_LIBADD= libthot.la
+wg_uncoupled_assisted_trans__swli_factory_la_LIBADD= libthot.la libdatrie.la
 wg_uncoupled_assisted_trans__swli_factory_la_LDFLAGS= -module
 
 ##########
 libthot_casmacat_la_SOURCES= $(casmacat_engines_h)			\
 $(casmacat_engines_defs) $(casmacat_aligner_h) $(casmacat_aligner_defs)	\
 $(casmacat_confid_h) $(casmacat_confid_defs)
-libthot_casmacat_la_LIBADD= libthot.la
+libthot_casmacat_la_LIBADD= libthot.la libdatrie.la
