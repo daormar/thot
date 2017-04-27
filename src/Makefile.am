@@ -274,8 +274,8 @@ stack_dec/TranslationConstraints.h stack_dec/SmtStack.h			\
 stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h			\
 stack_dec/_smtMultiStack.h stack_dec/BaseLogLinWeightUpdater.h		\
 stack_dec/KbMiraLlWu.h stack_dec/BaseScorer.h				\
-stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h stack_dec/MiraWer.h stack_dec/MiraGtm.h	\
-stack_dec/_smtModel.h stack_dec/ScoreCompDefs.h				\
+stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h stack_dec/MiraWer.h	\
+stack_dec/MiraGtm.h stack_dec/_smtModel.h stack_dec/ScoreCompDefs.h	\
 stack_dec/_phrSwTransModel.h stack_dec/PhrScoreInfo.h			\
 stack_dec/PhrNbestTransTableRefKey.h stack_dec/PhrNbestTransTableRef.h	\
 stack_dec/PhrNbestTransTablePrefKey.h					\
@@ -288,8 +288,9 @@ stack_dec/PbTransModelPars.h stack_dec/PbTransModelInputVars.h		\
 stack_dec/NbestTransCacheData.h stack_dec/PhraseModelPars.h		\
 stack_dec/PhraseModelInfo.h stack_dec/_phraseHypothesisRec.h		\
 stack_dec/_phraseHypothesis.h stack_dec/PhraseCacheTable.h		\
-stack_dec/_phraseBasedTransModel.h stack_dec/OnlineTrainingPars.h	\
-stack_dec/NgramCacheTable.h stack_dec/_nbUncoupledAssistedTrans.h	\
+stack_dec/_phraseBasedTransModel.h stack_dec/PbTransModel.h		\
+stack_dec/OnlineTrainingPars.h stack_dec/NgramCacheTable.h		\
+stack_dec/_nbUncoupledAssistedTrans.h					\
 stack_dec/multi_stack_decoder_rec.h stack_dec/LangModelPars.h		\
 stack_dec/LangModelInfo.h stack_dec/HypStateDict.h			\
 stack_dec/HypStateDictData.h stack_dec/HypSortCriterion.h		\
