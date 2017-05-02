@@ -76,16 +76,49 @@ class BaseSmtModelFeature
       // Feature information
   void setFeatName(std::string fname);
   std::string getFeatName(void);
-  virtual int getFeatType(void)=0;
+  virtual std::string getFeatType(void)=0;
 
       // Scoring functions
   Score extensionScore(const Hypothesis& pred_hyp,
                        const HypDataType& new_hypd)=0;
+
+      // Destructor
+  virtual ~BaseSmtModel(){};
 
  protected:
 
   float weight;
   std::string name;
 };
+
+//--------------- BaseSmtModelFeature class functions
+//
+
+template<class HYPOTHESIS>
+void BaseSmtModelFeature<HYPOTHESIS>::setWeight(float w)
+{
+  weight=w;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+float BaseSmtModelFeature<HYPOTHESIS>::getWeight(float w)
+{
+  return weight;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void BaseSmtModelFeature<HYPOTHESIS>::setFeatName(std::string fname)
+{
+  name=fname;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+std::string BaseSmtModelFeature<HYPOTHESIS>::getFeatName(void)
+{
+  return name;
+}
 
 #endif
