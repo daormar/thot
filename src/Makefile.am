@@ -262,14 +262,14 @@ downhill_simplex_h= downhill_simplex/step_by_step_dhs.h
 downhill_simplex_defs= downhill_simplex/step_by_step_dhs.c
 
 stack_dec_h= stack_dec/LM_State.h stack_dec/PpInfo.h			\
-stack_dec/SmtModel.h stack_dec/DynClassFactoryHandler.h			\
-stack_dec/WgUncoupledAssistedTrans.h stack_dec/ThotDecoderUserPars.h	\
-stack_dec/ThotDecoderState.h stack_dec/ThotDecoderPerUserVars.h		\
-stack_dec/ThotDecoder.h stack_dec/ThotDecoderCommonVars.h		\
-stack_dec/ThotDecoderClient.h stack_dec/SwModelPars.h			\
-stack_dec/_stack_decoder_statistics.h stack_dec/_stackDecoderRec.h	\
-stack_dec/_stackDecoder.h stack_dec/SourceSegmentation.h		\
-stack_dec/BaseTranslationConstraints.h					\
+stack_dec/SmtModel.h stack_dec/SmtModelRefact.h				\
+stack_dec/DynClassFactoryHandler.h stack_dec/WgUncoupledAssistedTrans.h	\
+stack_dec/ThotDecoderUserPars.h stack_dec/ThotDecoderState.h		\
+stack_dec/ThotDecoderPerUserVars.h stack_dec/ThotDecoder.h		\
+stack_dec/ThotDecoderCommonVars.h stack_dec/ThotDecoderClient.h		\
+stack_dec/SwModelPars.h stack_dec/_stack_decoder_statistics.h		\
+stack_dec/_stackDecoderRec.h stack_dec/_stackDecoder.h			\
+stack_dec/SourceSegmentation.h stack_dec/BaseTranslationConstraints.h	\
 stack_dec/TranslationConstraints.h stack_dec/SmtStack.h			\
 stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h			\
 stack_dec/_smtMultiStack.h stack_dec/BaseLogLinWeightUpdater.h		\
@@ -280,6 +280,7 @@ stack_dec/_phrSwTransModel.h stack_dec/PhrScoreInfo.h			\
 stack_dec/PhrNbestTransTableRefKey.h stack_dec/PhrNbestTransTableRef.h	\
 stack_dec/PhrNbestTransTablePrefKey.h					\
 stack_dec/PhrNbestTransTablePref.h stack_dec/PhrNbestTransTable.h	\
+stack_dec/PhraseBasedTmHyp.h stack_dec/PhraseBasedTmHypRec.h		\
 stack_dec/PhrLocalSwLiTmHypRec.h stack_dec/PhrLocalSwLiTm.h		\
 stack_dec/PhrHypState.h stack_dec/PhrHypNumcovJumpsEqClassF.h		\
 stack_dec/PhrHypNumcovJumps01EqClassF.h stack_dec/PhrHypEqClassF.h	\
@@ -297,6 +298,7 @@ stack_dec/HypStateDictData.h stack_dec/HypSortCriterion.h		\
 stack_dec/client_server_defs.h stack_dec/CatDefs.h stack_dec/bleu.h	\
 stack_dec/BaseStackDecoder.h stack_dec/BaseSmtStack.h			\
 stack_dec/BaseSmtMultiStack.h stack_dec/BaseSmtModelFeature.h		\
+stack_dec/WordPenaltyFeat.h stack_dec/DirectPhraseModelFeat.h		\
 stack_dec/BaseSmtModel.h stack_dec/BasePhraseHypothesisRec.h		\
 stack_dec/BasePhraseHypothesis.h stack_dec/BasePbTransModelStats.h	\
 stack_dec/BasePbTransModel.h stack_dec/BaseHypState.h			\
