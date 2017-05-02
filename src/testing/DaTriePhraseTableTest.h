@@ -64,15 +64,22 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class DaTriePhraseTableTest: public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( DaTriePhraseTableTest );
+  CPPUNIT_TEST( testIncCountsOfEntry );
+  CPPUNIT_TEST( testStoreAndRestore );
   CPPUNIT_TEST( testMock );
   CPPUNIT_TEST_SUITE_END();
 
  private:
   DaTriePhraseTable *tab;
+  
+  Vector<WordIndex> getVector(string phrase);
 
  public:
   void setUp();
   void tearDown();
+
+  void testIncCountsOfEntry();
+  void testStoreAndRestore();
 
   void testMock();
 };
