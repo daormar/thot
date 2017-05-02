@@ -84,7 +84,7 @@ class PbTransModel: public BasePbTransModel<HYPOTHESIS>
   PbTransModel();
 
       // Virtual object copy
-  BaseSmtModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >* clone(void);
+  BaseSmtModel<HYPOTHESIS>* clone(void);
 
       // Init language and alignment models
   bool loadLangModel(const char* prefixFileName);
@@ -174,6 +174,21 @@ class PbTransModel: public BasePbTransModel<HYPOTHESIS>
 
  protected:
 
+      // Variable to store state of the translation model
+  unsigned int state;
+
+      // Heuristic function to be used
+  unsigned int heuristicId;
+
+      // Scoring functions
+  Score incrScore(const Hypothesis& prev_hyp,
+                  const HypDataType& new_hypd,
+                  Hypothesis& new_hyp,
+                  Vector<Score>& scoreComponents);
+
+      // Misc. operations with hypothesis
+  unsigned int numberOfUncoveredSrcWordsHypData(const HypDataType& hypd)const;
+
 };
 
 //--------------- PbTransModel class functions
@@ -187,6 +202,13 @@ PbTransModel<HYPOTHESIS>::PbTransModel(void):BasePbTransModel<HYPOTHESIS>()
 
       // Initially, no heuristic is used
   heuristicId=NO_HEURISTIC;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+BaseSmtModel<HYPOTHESIS>* PbTransModel<HYPOTHESIS>::clone(void)
+{
+  return new PbTransModel<HYPOTHESIS>(*this);
 }
 
 //---------------------------------
@@ -266,7 +288,8 @@ void PbTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string srcsent,
 template<class HYPOTHESIS>
 std::string PbTransModel<HYPOTHESIS>::getCurrentSrcSent(void)
 {
-  return StrProcUtils::stringVectorToString(pbtmInputVars.srcSentVec);
+      // TO-BE-DONE
+  /* return StrProcUtils::stringVectorToString(pbtmInputVars.srcSentVec); */
 }
 
 //---------------------------------
@@ -539,14 +562,16 @@ void PbTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
 
 //---------------------------------
 template<class HYPOTHESIS>
-Hypothesis PbTransModel<HYPOTHESIS>::nullHypothesis(void)
+typename PbTransModel<HYPOTHESIS>::Hypothesis
+PbTransModel<HYPOTHESIS>::nullHypothesis(void)
 {
   
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
-HypDataType PbTransModel<HYPOTHESIS>::nullHypothesisHypData(void)
+typename PbTransModel<HYPOTHESIS>::HypDataType
+PbTransModel<HYPOTHESIS>::nullHypothesisHypData(void)
 {
   
 }
@@ -569,14 +594,14 @@ bool PbTransModel<HYPOTHESIS>::isCompleteHypData(const HypDataType& hypd)const
 template<class HYPOTHESIS>
 void PbTransModel<HYPOTHESIS>::addHeuristicToHyp(Hypothesis& hyp)
 {
-  hyp.addHeuristic(calcHeuristicScore(hyp));
+//  hyp.addHeuristic(calcHeuristicScore(hyp));
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
 void PbTransModel<HYPOTHESIS>::subtractHeuristicToHyp(Hypothesis& hyp)
 {
-  hyp.subtractHeuristic(calcHeuristicScore(hyp));
+//  hyp.subtractHeuristic(calcHeuristicScore(hyp));
 }
 
 //---------------------------------
@@ -592,84 +617,84 @@ void PbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
                                         ostream &outS,
                                         int verbose)
 {
-  Vector<std::string> trgStrVec;
-  Vector<WordIndex> trans=hyp.getPartialTrans();
-  SourceSegmentation sourceSegmentation;
-  Vector<PositionIndex> targetSegmentCuts;
-  Vector<pair<PositionIndex,PositionIndex> > amatrix;
-  HypDataType hypDataType;
-  Hypothesis auxHyp;
-  Vector<Score> scoreComponents;
+/*   Vector<std::string> trgStrVec; */
+/*   Vector<WordIndex> trans=hyp.getPartialTrans(); */
+/*   SourceSegmentation sourceSegmentation; */
+/*   Vector<PositionIndex> targetSegmentCuts; */
+/*   Vector<pair<PositionIndex,PositionIndex> > amatrix; */
+/*   HypDataType hypDataType; */
+/*   Hypothesis auxHyp; */
+/*   Vector<Score> scoreComponents; */
   
-      // Obtain target string vector
-  trgStrVec=trgIndexVectorToStrVector(hyp.getPartialTrans());
+/*       // Obtain target string vector */
+/*   trgStrVec=trgIndexVectorToStrVector(hyp.getPartialTrans()); */
 
-      // Print score
-  outS <<"Score: "<<hyp.getScore()<<" ; ";
-      // Print weights
-  this->printWeights(outS);
-  outS <<" ; ";
-      // Obtain score components
-  hypDataType=hyp.getData();
-  this->incrScore(this->nullHypothesis(),hypDataType,auxHyp,scoreComponents);
-      // Print score components
-  for(unsigned int i=0;i<scoreComponents.size();++i)
-    outS<<scoreComponents[i]<<" ";
+/*       // Print score */
+/*   outS <<"Score: "<<hyp.getScore()<<" ; "; */
+/*       // Print weights */
+/*   this->printWeights(outS); */
+/*   outS <<" ; "; */
+/*       // Obtain score components */
+/*   hypDataType=hyp.getData(); */
+/*   this->incrScore(this->nullHypothesis(),hypDataType,auxHyp,scoreComponents); */
+/*       // Print score components */
+/*   for(unsigned int i=0;i<scoreComponents.size();++i) */
+/*     outS<<scoreComponents[i]<<" "; */
 
-      // Print score + heuristic
-  addHeuristicToHyp(auxHyp);
-  outS <<"; Score+heur: "<<auxHyp.getScore()<<" ";
+/*       // Print score + heuristic */
+/*   addHeuristicToHyp(auxHyp); */
+/*   outS <<"; Score+heur: "<<auxHyp.getScore()<<" "; */
     
-      // Print warning if the alignment is not complete
-  if(!this->isComplete(hyp)) outS<< "; Incomplete_alignment!";
+/*       // Print warning if the alignment is not complete */
+/*   if(!this->isComplete(hyp)) outS<< "; Incomplete_alignment!"; */
 
-      // Obtain phrase alignment
-  this->aligMatrix(hyp,amatrix);
-  this->getPhraseAlignment(amatrix,sourceSegmentation,targetSegmentCuts);
+/*       // Obtain phrase alignment */
+/*   this->aligMatrix(hyp,amatrix); */
+/*   this->getPhraseAlignment(amatrix,sourceSegmentation,targetSegmentCuts); */
 
-      // Print alignment information
-  outS<<" | ";
-  for(unsigned int i=1;i<trgStrVec.size();++i)
-    outS<<trgStrVec[i]<<" ";
-  outS << "| ";
-  for(unsigned int k=0;k<sourceSegmentation.size();k++)
- 	outS<<"( "<<sourceSegmentation[k].first<<" , "<<sourceSegmentation[k].second<<" ) "; 
-  outS<< "| "; 
-  for (unsigned int j=0; j<targetSegmentCuts.size(); j++)
-    outS << targetSegmentCuts[j] << " ";
+/*       // Print alignment information */
+/*   outS<<" | "; */
+/*   for(unsigned int i=1;i<trgStrVec.size();++i) */
+/*     outS<<trgStrVec[i]<<" "; */
+/*   outS << "| "; */
+/*   for(unsigned int k=0;k<sourceSegmentation.size();k++) */
+/*  	outS<<"( "<<sourceSegmentation[k].first<<" , "<<sourceSegmentation[k].second<<" ) ";  */
+/*   outS<< "| ";  */
+/*   for (unsigned int j=0; j<targetSegmentCuts.size(); j++) */
+/*     outS << targetSegmentCuts[j] << " "; */
   
-      // Print hypothesis key
-  outS<<"| hypkey: "<<hyp.getKey()<<" ";
+/*       // Print hypothesis key */
+/*   outS<<"| hypkey: "<<hyp.getKey()<<" "; */
 
-      // Print hypothesis equivalence class
-  outS<<"| hypEqClass: "<<hyp.getEqClass()<<endl;
+/*       // Print hypothesis equivalence class */
+/*   outS<<"| hypEqClass: "<<hyp.getEqClass()<<endl; */
 
-  if(verbose)
-  {
-    unsigned int numSteps=sourceSegmentation.size()-1;
-    outS<<"----------------------------------------------"<<endl;
-    outS<<"Score components for previous expansion steps:"<<endl;
-    auxHyp=hyp;
-    while(this->obtainPredecessor(auxHyp))
-    {
-      scoreComponents=scoreCompsForHyp(auxHyp);
-      outS<<"Step "<<numSteps<<" : ";
-      for(unsigned int i=0;i<scoreComponents.size();++i)
-      {
-        outS<<scoreComponents[i]<<" ";
-      }
-      outS<<endl;
-      --numSteps;
-    }
-    outS<<"----------------------------------------------"<<endl;
-  }
-#ifdef THOT_DEBUG
-      // Print debug information
-  for(unsigned int i=0;i<hyp.hDebug.size();++i)
-  {
-    hyp.hDebug[i].print(outS);
-  }
-#endif 
+/*   if(verbose) */
+/*   { */
+/*     unsigned int numSteps=sourceSegmentation.size()-1; */
+/*     outS<<"----------------------------------------------"<<endl; */
+/*     outS<<"Score components for previous expansion steps:"<<endl; */
+/*     auxHyp=hyp; */
+/*     while(this->obtainPredecessor(auxHyp)) */
+/*     { */
+/*       scoreComponents=scoreCompsForHyp(auxHyp); */
+/*       outS<<"Step "<<numSteps<<" : "; */
+/*       for(unsigned int i=0;i<scoreComponents.size();++i) */
+/*       { */
+/*         outS<<scoreComponents[i]<<" "; */
+/*       } */
+/*       outS<<endl; */
+/*       --numSteps; */
+/*     } */
+/*     outS<<"----------------------------------------------"<<endl; */
+/*   } */
+/* #ifdef THOT_DEBUG */
+/*       // Print debug information */
+/*   for(unsigned int i=0;i<hyp.hDebug.size();++i) */
+/*   { */
+/*     hyp.hDebug[i].print(outS); */
+/*   } */
+/* #endif  */
 }
 
 //---------------------------------
@@ -681,7 +706,7 @@ Vector<std::string> PbTransModel<HYPOTHESIS>::getTransInPlainTextVec(const PbTra
 
 //---------------------------------
 template<class HYPOTHESIS>
-void setWeights(Vector<float> wVec)
+void PbTransModel<HYPOTHESIS>::setWeights(Vector<float> wVec)
 {
       // TO-BE-DONE
 }
@@ -733,6 +758,23 @@ int PbTransModel<HYPOTHESIS>::onlineTrainSentPair(const char *srcSent,
                                                   int verbose/*=0*/)
 {
       // TO-BE-DONE  
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score PbTransModel<HYPOTHESIS>::incrScore(const Hypothesis& prev_hyp,
+                                          const HypDataType& new_hypd,
+                                          Hypothesis& new_hyp,
+                                          Vector<Score>& scoreComponents)
+{
+  
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+unsigned int PbTransModel<HYPOTHESIS>::numberOfUncoveredSrcWordsHypData(const HypDataType& hypd)const
+{
+  
 }
 
 //---------------------------------
