@@ -289,9 +289,9 @@ stack_dec/PbTransModelPars.h stack_dec/PbTransModelInputVars.h		\
 stack_dec/NbestTransCacheData.h stack_dec/PhraseModelPars.h		\
 stack_dec/PhraseModelInfo.h stack_dec/_phraseHypothesisRec.h		\
 stack_dec/_phraseHypothesis.h stack_dec/PhraseCacheTable.h		\
-stack_dec/_phraseBasedTransModel.h stack_dec/PbTransModel.h		\
-stack_dec/OnlineTrainingPars.h stack_dec/NgramCacheTable.h		\
-stack_dec/_nbUncoupledAssistedTrans.h					\
+stack_dec/_phraseBasedTransModel.h stack_dec/_pbTransModel.h		\
+stack_dec/PbTransModel.h stack_dec/OnlineTrainingPars.h			\
+stack_dec/NgramCacheTable.h stack_dec/_nbUncoupledAssistedTrans.h	\
 stack_dec/multi_stack_decoder_rec.h stack_dec/LangModelPars.h		\
 stack_dec/LangModelInfo.h stack_dec/HypStateDict.h			\
 stack_dec/HypStateDictData.h stack_dec/HypSortCriterion.h		\

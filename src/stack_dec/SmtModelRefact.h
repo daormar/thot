@@ -39,6 +39,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- User defined types ---------------------------------
 
-typedef PbTransModel<PhraseBasedTmHypRec<PhrHypNumcovJumps01EqClassF> > SmtModel;
+typedef PbTransModel<PhrHypNumcovJumps01EqClassF> SmtModel;
 
 #endif

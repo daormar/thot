@@ -29,7 +29,7 @@ PhrHypEqClassF.h PhrHypEqClassF.cc PhrHypData.h PhrasePairCacheTable.h	\
 PhraseModelPars.h PhraseModelInfo.h _phraseHypothesisRec.h		\
 _phraseHypothesis.h PbTransModelPars.h PbTransModelInputVars.h		\
 PhraseCacheTable.h NbestTransCacheData.h _phraseBasedTransModel.h	\
-PbTransModel.h OnlineTrainingPars.h NgramCacheTable.h			\
+_pbTransModel.h PbTransModel.h OnlineTrainingPars.h NgramCacheTable.h	\
 _nbUncoupledAssistedTrans.h multi_stack_decoder_rec.h LangModelPars.h	\
 LangModelInfo.h HypStateDict.h HypStateDictData.h HypSortCriterion.h	\
 client_server_defs.h CatDefs.h bleu.h bleu.cc BaseStackDecoder.h	\
