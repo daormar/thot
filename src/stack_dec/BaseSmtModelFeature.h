@@ -46,7 +46,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "Score.h"
 #include <string>
 
 //--------------- Constants ------------------------------------------
@@ -69,6 +68,10 @@ class BaseSmtModelFeature
 
       // TO-BE-DONE
 
+  typedef HYPOTHESIS Hypothesis;
+  typedef typename HYPOTHESIS::ScoreInfo HypScoreInfo;
+  typedef typename HYPOTHESIS::DataType HypDataType;
+
       // Weight related functions
   void setWeight(float w);
   float getWeight(float w);
@@ -79,11 +82,11 @@ class BaseSmtModelFeature
   virtual std::string getFeatType(void)=0;
 
       // Scoring functions
-  Score extensionScore(const Hypothesis& pred_hyp,
-                       const HypDataType& new_hypd)=0;
+  virtual HypScoreInfo extensionScore(const Hypothesis& pred_hyp,
+                                      const HypDataType& new_hypd)=0;
 
       // Destructor
-  virtual ~BaseSmtModel(){};
+  virtual ~BaseSmtModelFeature(){};
 
  protected:
 

@@ -44,6 +44,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "DirectPhraseModelFeat.h"
+#include "WordPenaltyFeat.h"
+#include "BaseSmtModelFeature.h"
 #include "BasePbTransModel.h"
 #include "SourceSegmentation.h"
 #include "PbTransModelInputVars.h"
@@ -180,6 +183,9 @@ class PbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Heuristic function to be used
   unsigned int heuristicId;
 
+      // Feature vector
+  Vector<BaseSmtModelFeature<HYPOTHESIS>* > featVec;
+  
       // Scoring functions
   Score incrScore(const Hypothesis& prev_hyp,
                   const HypDataType& new_hypd,
@@ -781,6 +787,7 @@ unsigned int PbTransModel<HYPOTHESIS>::numberOfUncoveredSrcWordsHypData(const Hy
 template<class HYPOTHESIS>
 PbTransModel<HYPOTHESIS>::~PbTransModel()
 {
+  
 }
 
 //-------------------------

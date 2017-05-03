@@ -59,18 +59,21 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  */
 
 template<class HYPOTHESIS>
-class WordPenaltyFeat
+class WordPenaltyFeat: public BaseSmtModelFeature<HYPOTHESIS>
 {
  public:
 
       // TO-BE-DONE
+  typedef typename BaseSmtModelFeature<HYPOTHESIS>::Hypothesis Hypothesis;
+  typedef typename BaseSmtModelFeature<HYPOTHESIS>::HypScoreInfo HypScoreInfo;
+  typedef typename BaseSmtModelFeature<HYPOTHESIS>::HypDataType HypDataType;
 
       // Feature information
-  int getFeatType(void);
+  std::string getFeatType(void);
 
       // Scoring functions
-  Score extensionScore(const Hypothesis& pred_hyp,
-                       const HypDataType& new_hypd);
+  HypScoreInfo extensionScore(const Hypothesis& pred_hyp,
+                              const HypDataType& new_hypd);
 
  protected:
 
@@ -82,13 +85,14 @@ class WordPenaltyFeat
 template<class HYPOTHESIS>
 std::string WordPenaltyFeat<HYPOTHESIS>::getFeatType(void)
 {
-  return "WordPenaltyFeat"
+  return "WordPenaltyFeat";
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
-Score WordPenaltyFeat<HYPOTHESIS>::extensionScore(const Hypothesis& pred_hyp,
-                                                  const HypDataType& new_hypd)
+typename WordPenaltyFeat<HYPOTHESIS>::HypScoreInfo
+WordPenaltyFeat<HYPOTHESIS>::extensionScore(const Hypothesis& pred_hyp,
+                                            const HypDataType& new_hypd)
 {
   
 }

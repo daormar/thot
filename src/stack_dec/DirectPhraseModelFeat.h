@@ -59,18 +59,21 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  */
 
 template<class HYPOTHESIS>
-class DirectPhraseModelFeat
+class DirectPhraseModelFeat: public BaseSmtModelFeature<HYPOTHESIS>
 {
  public:
 
       // TO-BE-DONE
+  typedef typename BaseSmtModelFeature<HYPOTHESIS>::Hypothesis Hypothesis;
+  typedef typename BaseSmtModelFeature<HYPOTHESIS>::HypScoreInfo HypScoreInfo;
+  typedef typename BaseSmtModelFeature<HYPOTHESIS>::HypDataType HypDataType;
 
       // Feature information
-  int getFeatType(void);
+  std::string getFeatType(void);
 
       // Scoring functions
-  Score extensionScore(const Hypothesis& pred_hyp,
-                       const HypDataType& new_hypd);
+  HypScoreInfo extensionScore(const Hypothesis& pred_hyp,
+                              const HypDataType& new_hypd);
 
  protected:
 
@@ -82,13 +85,14 @@ class DirectPhraseModelFeat
 template<class HYPOTHESIS>
 std::string DirectPhraseModelFeat<HYPOTHESIS>::getFeatType(void)
 {
-  return "DirectPhraseModelFeat"
+  return "DirectPhraseModelFeat";
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
-Score DirectPhraseModelFeat<HYPOTHESIS>::extensionScore(const Hypothesis& pred_hyp,
-                                                        const HypDataType& new_hypd)
+typename DirectPhraseModelFeat<HYPOTHESIS>::HypScoreInfo
+DirectPhraseModelFeat<HYPOTHESIS>::extensionScore(const Hypothesis& pred_hyp,
+                                                  const HypDataType& new_hypd)
 {
   
 }
