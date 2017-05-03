@@ -48,6 +48,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BasePbTransModel.h"
 #include "SourceSegmentation.h"
 #include "PbTransModelInputVars.h"
+#include "StatModelDefs.h"
 #include "Prob.h"
 #include <math.h>
 #include <set>
@@ -148,7 +149,13 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   void printWeights(ostream &outS);
   unsigned int getNumWeights(void);
   Vector<Score> scoreCompsForHyp(const Hypothesis& hyp);
-  
+
+      // Specific phrase-based functions
+  void extendHypData(PositionIndex srcLeft,
+                     PositionIndex srcRight,
+                     const Vector<std::string>& trgPhrase,
+                     HypDataType& hypd);
+
       // Functions for performing on-line training
   int onlineTrainSentPair(const char *srcSent,
                           const char *refSent,
@@ -160,6 +167,9 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
 
  protected:
 
+      // Data structure to store input variables
+  PbTransModelInputVars pbtmInputVars;
+
       // Variable to store state of the translation model
   unsigned int state;
 
@@ -168,7 +178,19 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
 
       // Feature vector
   Vector<BaseSmtModelFeature<HYPOTHESIS>* > featVec;
-  
+
+      // Specific phrase-based functions
+  virtual void extendHypDataIdx(PositionIndex srcLeft,
+                                PositionIndex srcRight,
+                                const Vector<WordIndex>& trgPhraseIdx,
+                                HypDataType& hypd)=0;
+
+      // Vocabulary functions
+  WordIndex stringToSrcWordIndex(std::string s)const;
+  std::string wordIndexToSrcString(WordIndex w)const;
+  WordIndex stringToTrgWordIndex(std::string s)const;
+  std::string wordIndexToTrgString(WordIndex w)const;
+
 };
 
 //--------------- _pbTransModel class functions
@@ -677,6 +699,20 @@ unsigned int _pbTransModel<HYPOTHESIS>::getNumWeights(void)
 
 //---------------------------------
 template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::extendHypData(PositionIndex srcLeft,
+                                              PositionIndex srcRight,
+                                              const Vector<std::string>& trgPhrase,
+                                              HypDataType& hypd)
+{
+  Vector<WordIndex> trgPhraseIdx;
+  
+  for(unsigned int i=0;i<trgPhrase.size();++i)
+    trgPhraseIdx.push_back(stringToTrgWordIndex(trgPhrase[i]));
+  extendHypDataIdx(srcLeft,srcRight,trgPhraseIdx,hypd);
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
 Vector<Score>
 _pbTransModel<HYPOTHESIS>::scoreCompsForHyp(const _pbTransModel::Hypothesis& hyp)
 {
@@ -686,9 +722,37 @@ _pbTransModel<HYPOTHESIS>::scoreCompsForHyp(const _pbTransModel::Hypothesis& hyp
 //---------------------------------
 template<class HYPOTHESIS>
 int _pbTransModel<HYPOTHESIS>::onlineTrainSentPair(const char *srcSent,
-                                                  const char *refSent,
-                                                  const char *sysSent,
-                                                  int verbose/*=0*/)
+                                                   const char *refSent,
+                                                   const char *sysSent,
+                                                   int verbose/*=0*/)
+{
+      // TO-BE-DONE  
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+WordIndex _pbTransModel<HYPOTHESIS>::stringToSrcWordIndex(std::string s)const
+{
+      // TO-BE-DONE  
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+std::string _pbTransModel<HYPOTHESIS>::wordIndexToSrcString(WordIndex w)const
+{
+      // TO-BE-DONE  
+}
+
+//--------------------------------- 
+template<class HYPOTHESIS>
+WordIndex _pbTransModel<HYPOTHESIS>::stringToTrgWordIndex(std::string s)const
+{
+      // TO-BE-DONE  
+}
+
+//--------------------------------- 
+template<class HYPOTHESIS>
+std::string _pbTransModel<HYPOTHESIS>::wordIndexToTrgString(WordIndex w)const
 {
       // TO-BE-DONE  
 }
