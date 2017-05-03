@@ -31,7 +31,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /**
  * @file PbTransModel.h
  * 
-* @brief Declares the PbTransModel class.  This class is a
+ * @brief Declares the PbTransModel class.  This class is a
  * succesor of the _pbTransModel class.
  */
 
