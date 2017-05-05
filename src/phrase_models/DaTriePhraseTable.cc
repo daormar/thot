@@ -54,13 +54,16 @@ DaTriePhraseTable::DaTriePhraseTable(void)
     printf("Cannot create trie\n");
     exit(3);
   }
+  // Prepare iterator and root node state
+  trie_root_node = trie_root (trie);
+  trie_iter = trie_iterator_new(trie_root_node);
 }
 
 //-------------------------
 wstring DaTriePhraseTable::vectorToWstring(const Vector<WordIndex>& s)
 {
   wstring str(s.begin(), s.end());
-  return(str);
+  return str;
 }
 
 //-------------------------
@@ -73,7 +76,7 @@ Vector<WordIndex> DaTriePhraseTable::alphaCharToVector(AlphaChar *a)
     vec.push_back((int) *ptr);
   }
 
-  return(vec);
+  return vec;
 }
 
 //-------------------------
@@ -86,7 +89,7 @@ void DaTriePhraseTable::trieStore(const Vector<WordIndex>& key, int value)
 bool DaTriePhraseTable::trieRetrieve(const Vector<WordIndex>& key, TrieData &state)
 {
   bool found = trie_retrieve(trie, (AlphaChar *) vectorToWstring(key).c_str(), &state);
-  return(found);
+  return found;
 }
 
 //-------------------------
@@ -97,7 +100,7 @@ Vector<WordIndex> DaTriePhraseTable::getSrc(const Vector<WordIndex>& s)
   uw_s_vec.push_back(UNUSED_WORD);
   uw_s_vec.insert(uw_s_vec.end(), s.begin(), s.end());
 
-  return(uw_s_vec);
+  return uw_s_vec;
 }
 
 //-------------------------
@@ -109,7 +112,7 @@ Vector<WordIndex> DaTriePhraseTable::getSrcTrg(const Vector<WordIndex>& s,
   uw_s_uw_t_vec.push_back(UNUSED_WORD);
   uw_s_uw_t_vec.insert(uw_s_uw_t_vec.end(), t.begin(), t.end());
 
-  return(uw_s_uw_t_vec);
+  return uw_s_uw_t_vec;
 }
 
 //-------------------------
@@ -121,7 +124,7 @@ Vector<WordIndex> DaTriePhraseTable::getTrgSrc(const Vector<WordIndex>& s,
   t_uw_s_vec.push_back(UNUSED_WORD);
   t_uw_s_vec.insert(t_uw_s_vec.end(), s.begin(), s.end());
 
-  return(t_uw_s_vec);
+  return t_uw_s_vec;
 }
 
 //-------------------------
@@ -176,7 +179,7 @@ bool DaTriePhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
   else
   {
     // Cannot find the target phrase
-    return(false);
+    return false;
   }
 }
 
@@ -200,7 +203,8 @@ void DaTriePhraseTable::addSrcTrgInfo(const Vector<WordIndex>& s,
                                       const Vector<WordIndex>& t,
                                       Count st_inf)
 {
-      // TO-BE-DONE (LOW PRIORITY)
+  trieStore(getSrcTrg(s, t), (int) st_inf.get_c_st());  // (USUSED_WORD, s, UNUSED_WORD, t)
+  trieStore(getTrgSrc(s, t), (int) st_inf.get_c_st());  // (t, UNUSED_WORD, s)
 }
 
 //-------------------------
@@ -208,23 +212,15 @@ void DaTriePhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
                                           const Vector<WordIndex>& t,
                                           Count c) 
 {
-  // Prepare vectors
-  Vector<WordIndex> src_trg_vec = getSrcTrg(s, t);
-  Vector<WordIndex> trg_src_vec = getTrgSrc(s, t);
-
   // Retrieve previous states
-  bool found;
-  Count s_count = getSrcInfo(s, found);
-  Count t_count = getTrgInfo(t, found);
-  Count src_trg_count = getInfo(src_trg_vec, found);
+  Count s_count = cSrc(s);
+  Count t_count = cTrg(t);
+  Count src_trg_count = cSrcTrg(s, t);
 
   // Update counts
   addSrcInfo(s, s_count + c);  // (USUSED_WORD, s, UNUSED_WORD)
   trieStore(t, (int) (t_count + c).get_c_s());  // (t)
-  trieStore(src_trg_vec, (int) (src_trg_count + c).get_c_st());  // (USUSED_WORD, s, UNUSED_WORD, t)
-  // Reusing Count object as (s, t) and (t, s) should have the same count value
-  trieStore(trg_src_vec, (int) (src_trg_count + c).get_c_st());  // (t, UNUSED_WORD, s)
-
+  addSrcTrgInfo(s, t, (int) (src_trg_count + c).get_c_st());
 
   //std::stringstream result;
   //std::copy(s_uw_t_uw_vec.begin(), s_uw_t_uw_vec.end(), std::ostream_iterator<uint>(result, " "));
@@ -262,14 +258,14 @@ Count DaTriePhraseTable::getInfo(const Vector<WordIndex>& key,
 
   Count result = (found) ? Count((float) state) : Count();
   
-  return(result);
+  return result;
 }
 
 //-------------------------
 Count DaTriePhraseTable::getSrcInfo(const Vector<WordIndex>& s,
                                     bool &found)
 {
-  return(getInfo(getSrc(s), found));
+  return getInfo(getSrc(s), found);
 }
 
 //-------------------------
@@ -277,7 +273,7 @@ Count DaTriePhraseTable::getTrgInfo(const Vector<WordIndex>& t,
                                     bool &found)
 {
   // Retrieve counter state
-  return(getInfo(t, found));
+  return getInfo(t, found);
 }
 
 //-------------------------
@@ -286,7 +282,7 @@ Count DaTriePhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
                                        bool &found)
 {
   // Retrieve counter state
-  return(getInfo(getSrcTrg(s, t), found));
+  return getInfo(getSrcTrg(s, t), found);
 }
 
 //-------------------------
@@ -353,7 +349,7 @@ bool DaTriePhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
 
   for (int i = 0; i < t_uw_vec.size(); i++) {
     if (!trie_state_walk(state, (AlphaChar) t_uw_vec[i])) {
-      return(false);
+      return false;
     }
   }
 
@@ -381,7 +377,7 @@ bool DaTriePhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
   trie_iterator_free(iter);
   trie_state_free(state);
 
-  return(true);
+  return true;
 }
 
 //-------------------------
@@ -423,6 +419,8 @@ size_t DaTriePhraseTable::size(void)
 void DaTriePhraseTable::clear(void)
 {
   AlphaMap *map = alpha_map_clone(alphabet_map);
+  trie_iterator_free(trie_iter);
+  trie_state_free(trie_root_node);
   trie_free(trie);
   alphabet_map = map;
   // Create empty trie
@@ -431,17 +429,26 @@ void DaTriePhraseTable::clear(void)
     printf("Cannot recreate trie\n");
     exit(3);
   }
+  // Recreate root node indicator and trie iterator
+  trie_root_node = trie_root (trie);
+  trie_iter = trie_iterator_new(trie_root_node);
 }
 
 //-------------------------
 DaTriePhraseTable::~DaTriePhraseTable(void)
 {
+  trie_iterator_free(trie_iter);
+  trie_state_free(trie_root_node);
   trie_free(trie);
 }
 
 //-------------------------
 DaTriePhraseTable::const_iterator DaTriePhraseTable::begin(void)const
 {
+  /*trie_iterator_free(trie_iter);
+  trie_iter = trie_iterator_new(trie_root_node);
+
+  return trie_iter;*/
   // DaTriePhraseTable::const_iterator iter(this,phraseDict.begin());
   // return iter;
 }
@@ -457,16 +464,14 @@ DaTriePhraseTable::const_iterator DaTriePhraseTable::end(void)const
 //--------------------------
 bool DaTriePhraseTable::const_iterator::operator++(void) //prefix
 {
-  // if(ptPtr!=NULL)
-  // {
-  //   ++pdIter;
-  //   if(pdIter==ptPtr->phraseDict.end()) return false;
-  //   else
-  //   {
-  //     return true;
-  //   }
-  // }
-  // else return false;
+  /*if(trie_iter != NULL)
+  {
+    return trie_iterator_next(trie_iter);
+  }
+  else
+  {
+    return false;
+  }*/
 }
 
 //--------------------------

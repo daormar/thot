@@ -249,3 +249,26 @@ void DaTriePhraseTableTest::testGetNbestForTrg()
   iter++;
   CPPUNIT_ASSERT( iter->second == s3 );
 }
+
+//---------------------------------------
+void DaTriePhraseTableTest::testAddSrcTrgInfo()
+{
+  /* TEST:
+  /* Check if two keys were added (for (s, t) and (t, s) vectors)
+  /* and if their values are the same
+  */
+  bool found;
+
+  Vector<WordIndex> s = getVector("jezioro Skiertag");
+  Vector<WordIndex> t = getVector("Skiertag lake");
+  
+  tab->clear();
+  tab->addSrcTrgInfo(s, t, Count(1));
+
+  Count src_trg_count = tab->cSrcTrg(s, t);
+  Count trg_src_count = tab->getInfo(tab->getTrgSrc(s, t), found);
+
+  CPPUNIT_ASSERT( found );
+  CPPUNIT_ASSERT( (int) src_trg_count.get_c_s() == 1 );
+  CPPUNIT_ASSERT( (int) src_trg_count.get_c_s() == (int) trg_src_count.get_c_s() );
+}
