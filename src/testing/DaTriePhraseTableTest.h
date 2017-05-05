@@ -66,7 +66,11 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE( DaTriePhraseTableTest );
   CPPUNIT_TEST( testIncCountsOfEntry );
   CPPUNIT_TEST( testStoreAndRestore );
-  CPPUNIT_TEST( testMock );
+  CPPUNIT_TEST( testGetEntriesForTarget );
+  CPPUNIT_TEST( testRetrievingSubphrase );
+  CPPUNIT_TEST( testRetrieveNonLeafPhrase );
+  CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );
+  CPPUNIT_TEST( testGetNbestForTrg );
   CPPUNIT_TEST_SUITE_END();
 
  private:
@@ -80,8 +84,11 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
 
   void testIncCountsOfEntry();
   void testStoreAndRestore();
-
-  void testMock();
+  void testGetEntriesForTarget();
+  void testRetrievingSubphrase();
+  void testRetrieveNonLeafPhrase();
+  void testRetrievingEntriesWithCountEqualZero();
+  void testGetNbestForTrg();
 };
 
 #endif
