@@ -71,12 +71,12 @@ class DaTriePhraseTable: public BasePhraseTable
     virtual void trieStore(const Vector<WordIndex>& key, int value);
         // Get element from the trie
     virtual bool trieRetrieve(const Vector<WordIndex>& key, TrieData &state);
-        // Returns t as (UNUSED_WORD, t)
-    virtual Vector<WordIndex> getTrg(const Vector<WordIndex>& t);
-        // Returns concatenated s and t as (s, UNUSED_WORD, t)
+        // Returns s as (UNUSED_WORD, s)
+    virtual Vector<WordIndex> getSrc(const Vector<WordIndex>& s);
+        // Returns concatenated s and t as (UNUSED_WORD, s, UNUSED_WORD, t)
     virtual Vector<WordIndex> getSrcTrg(const Vector<WordIndex>& s,
                                         const Vector<WordIndex>& t);
-        // Returns concatenated t and s as (UNUSED_WORD, t, UNUSED_WORD, s)
+        // Returns concatenated t and s as (t, UNUSED_WORD, s)
     virtual Vector<WordIndex> getTrgSrc(const Vector<WordIndex>& s,
                                         const Vector<WordIndex>& t);
         // Abstract function definitions
@@ -95,6 +95,8 @@ class DaTriePhraseTable: public BasePhraseTable
     virtual PhrasePairInfo infSrcTrg(const Vector<WordIndex>& s,
                                      const Vector<WordIndex>& t,
                                      bool& found);
+        // Returns information related to a given key.
+    virtual Count getInfo(const Vector<WordIndex>& key,bool &found);
         // Returns information related to a given s.
     virtual Count getSrcInfo(const Vector<WordIndex>& s,bool &found);
         // Returns information related to a given t.

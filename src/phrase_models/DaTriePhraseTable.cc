@@ -90,38 +90,38 @@ bool DaTriePhraseTable::trieRetrieve(const Vector<WordIndex>& key, TrieData &sta
 }
 
 //-------------------------
-Vector<WordIndex> DaTriePhraseTable::getTrg(const Vector<WordIndex>& t)
+Vector<WordIndex> DaTriePhraseTable::getSrc(const Vector<WordIndex>& s)
 {
-  // Prepare t vector as (UNUSED_WORD, t)
-  Vector<WordIndex> uw_t_uw_vec;
-  uw_t_uw_vec.push_back(UNUSED_WORD);
-  uw_t_uw_vec.insert(uw_t_uw_vec.end(), t.begin(), t.end());
+  // Prepare s vector as (UNUSED_WORD, s)
+  Vector<WordIndex> uw_s_vec;
+  uw_s_vec.push_back(UNUSED_WORD);
+  uw_s_vec.insert(uw_s_vec.end(), s.begin(), s.end());
 
-  return(uw_t_uw_vec);
+  return(uw_s_vec);
 }
 
 //-------------------------
 Vector<WordIndex> DaTriePhraseTable::getSrcTrg(const Vector<WordIndex>& s,
                                                const Vector<WordIndex>& t)
 {
-  // Prepare (s,t) vector as (s, UNUSED_WORD, t)
-  Vector<WordIndex> s_uw_t_uw_vec = s;
-  s_uw_t_uw_vec.push_back(UNUSED_WORD);
-  s_uw_t_uw_vec.insert(s_uw_t_uw_vec.end(), t.begin(), t.end());
+  // Prepare (s,t) vector as (UNUSED_WORD, s, UNUSED_WORD, t)
+  Vector<WordIndex> uw_s_uw_t_vec = getSrc(s);
+  uw_s_uw_t_vec.push_back(UNUSED_WORD);
+  uw_s_uw_t_vec.insert(uw_s_uw_t_vec.end(), t.begin(), t.end());
 
-  return(s_uw_t_uw_vec);
+  return(uw_s_uw_t_vec);
 }
 
 //-------------------------
 Vector<WordIndex> DaTriePhraseTable::getTrgSrc(const Vector<WordIndex>& s,
                                                const Vector<WordIndex>& t)
 {
-  // Prepare (t,s) vector as (UNUSED_WORD, t, UNUSED_WORD, s)
-  Vector<WordIndex> uw_t_uw_s_vec = getTrg(t);
-  uw_t_uw_s_vec.push_back(UNUSED_WORD);
-  uw_t_uw_s_vec.insert(uw_t_uw_s_vec.end(), s.begin(), s.end());
+  // Prepare (t,s) vector as (t, UNUSED_WORD, s)
+  Vector<WordIndex> t_uw_s_vec = t;
+  t_uw_s_vec.push_back(UNUSED_WORD);
+  t_uw_s_vec.insert(t_uw_s_vec.end(), s.begin(), s.end());
 
-  return(uw_t_uw_s_vec);
+  return(t_uw_s_vec);
 }
 
 //-------------------------
@@ -154,7 +154,7 @@ bool DaTriePhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
       Vector<WordIndex> s = iter->first;
       PhrasePairInfo ppi = (PhrasePairInfo) iter->second;
       lgProb = log((float) ppi.second.get_c_st() / (float) t_count);
-      nbt.insert(lgProb, s); // insert pair <log probability, source phrase>
+      nbt.insert(lgProb, s); // Insert pair <log probability, source phrase>
     }
     
 #   ifdef DO_STABLE_SORT_ON_NBEST_TABLE
@@ -192,7 +192,7 @@ void DaTriePhraseTable::addTableEntry(const Vector<WordIndex>& s,
 void DaTriePhraseTable::addSrcInfo(const Vector<WordIndex>& s,
                                    Count s_inf)
 {
-  trieStore(s, (int) s_inf.get_c_s());
+  trieStore(getSrc(s), (int) s_inf.get_c_s());
 }
 
 //-------------------------
@@ -209,22 +209,21 @@ void DaTriePhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
                                           Count c) 
 {
   // Prepare vectors
-  Vector<WordIndex> uw_t_uw_vec = getTrg(t);
-  Vector<WordIndex> s_uw_t_uw_vec = getSrcTrg(s, t);
-  Vector<WordIndex> uw_t_uw_s_vec = getTrgSrc(s, t);
+  Vector<WordIndex> src_trg_vec = getSrcTrg(s, t);
+  Vector<WordIndex> trg_src_vec = getTrgSrc(s, t);
 
   // Retrieve previous states
   bool found;
   Count s_count = getSrcInfo(s, found);
-  Count uw_t_count = getSrcInfo(uw_t_uw_vec, found);
-  Count s_uw_t_count = getSrcInfo(s_uw_t_uw_vec, found);
+  Count t_count = getTrgInfo(t, found);
+  Count src_trg_count = getInfo(src_trg_vec, found);
 
   // Update counts
-  addSrcInfo(s, s_count + c);
-  trieStore(uw_t_uw_vec, (int) (uw_t_count + c).get_c_s());
-  trieStore(s_uw_t_uw_vec, (int) (s_uw_t_count + c).get_c_st());
+  addSrcInfo(s, s_count + c);  // (USUSED_WORD, s, UNUSED_WORD)
+  trieStore(t, (int) (t_count + c).get_c_s());  // (t)
+  trieStore(src_trg_vec, (int) (src_trg_count + c).get_c_st());  // (USUSED_WORD, s, UNUSED_WORD, t)
   // Reusing Count object as (s, t) and (t, s) should have the same count value
-  trieStore(uw_t_uw_s_vec, (int) (s_uw_t_count + c).get_c_st());
+  trieStore(trg_src_vec, (int) (src_trg_count + c).get_c_st());  // (t, UNUSED_WORD, s)
 
 
   //std::stringstream result;
@@ -255,11 +254,11 @@ PhrasePairInfo DaTriePhraseTable::infSrcTrg(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Count DaTriePhraseTable::getSrcInfo(const Vector<WordIndex>& s,
+Count DaTriePhraseTable::getInfo(const Vector<WordIndex>& key,
                                     bool &found)
 {
   TrieData state;
-  found = trieRetrieve(s, state);
+  found = trieRetrieve(key, state);
 
   Count result = (found) ? Count((float) state) : Count();
   
@@ -267,11 +266,18 @@ Count DaTriePhraseTable::getSrcInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
+Count DaTriePhraseTable::getSrcInfo(const Vector<WordIndex>& s,
+                                    bool &found)
+{
+  return(getInfo(getSrc(s), found));
+}
+
+//-------------------------
 Count DaTriePhraseTable::getTrgInfo(const Vector<WordIndex>& t,
                                     bool &found)
 {
   // Retrieve counter state
-  return(getSrcInfo(getTrg(t), found));
+  return(getInfo(t, found));
 }
 
 //-------------------------
@@ -280,7 +286,7 @@ Count DaTriePhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
                                        bool &found)
 {
   // Retrieve counter state
-  return(getSrcInfo(getSrcTrg(s, t), found));
+  return(getInfo(getSrcTrg(s, t), found));
 }
 
 //-------------------------
@@ -340,13 +346,13 @@ bool DaTriePhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
   TrieState *state;
   TrieIterator *iter;
 
-  // Find node which starts from (UNUSED_WORD, t, UNUSED_WORD) to find possible translations
-  Vector<WordIndex> uw_t_uw_vec = getTrg(t);
-  uw_t_uw_vec.push_back(UNUSED_WORD);
+  // Find node which starts from (t, UNUSED_WORD) to find possible translations
+  Vector<WordIndex> t_uw_vec = t;
+  t_uw_vec.push_back(UNUSED_WORD);
   state = trie_root (trie);
 
-  for (int i = 0; i < uw_t_uw_vec.size(); i++) {
-    if (!trie_state_walk(state, (AlphaChar) uw_t_uw_vec[i])) {
+  for (int i = 0; i < t_uw_vec.size(); i++) {
+    if (!trie_state_walk(state, (AlphaChar) t_uw_vec[i])) {
       return(false);
     }
   }
