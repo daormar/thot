@@ -25,17 +25,18 @@ PhrNbestTransTable.h PhraseBasedTmHyp.h PhraseBasedTmHypRec.h		\
 PhrLocalSwLiTmHypRec.h PhrLocalSwLiTm.h PhrLocalSwLiTm.cc PhrHypState.h	\
 PhrHypState.cc PhrHypNumcovJumpsEqClassF.h PhrHypNumcovJumpsEqClassF.cc	\
 PhrHypNumcovJumps01EqClassF.h PhrHypNumcovJumps01EqClassF.cc		\
-PhrHypEqClassF.h PhrHypEqClassF.cc PhrHypData.h PhrasePairCacheTable.h	\
-PhraseModelPars.h PhraseModelInfo.h _phraseHypothesisRec.h		\
-_phraseHypothesis.h PbTransModelPars.h PbTransModelInputVars.h		\
-PhraseCacheTable.h NbestTransCacheData.h _phraseBasedTransModel.h	\
-_pbTransModel.h PbTransModel.h OnlineTrainingPars.h NgramCacheTable.h	\
+PhrHypEqClassF.h PhrHypEqClassF.cc PhrHypData.h PhrHypDataStr.h		\
+PhrasePairCacheTable.h PhraseModelPars.h PhraseModelInfo.h		\
+PhraseModelsInfo.h _phraseHypothesisRec.h _phraseHypothesis.h		\
+PbTransModelPars.h PbTransModelInputVars.h PhraseCacheTable.h		\
+NbestTransCacheData.h _phraseBasedTransModel.h _pbTransModel.h		\
+PbTransModel.h OnlineTrainingPars.h NgramCacheTable.h			\
 _nbUncoupledAssistedTrans.h multi_stack_decoder_rec.h LangModelPars.h	\
-LangModelInfo.h HypStateDict.h HypStateDictData.h HypSortCriterion.h	\
-client_server_defs.h CatDefs.h bleu.h bleu.cc BaseStackDecoder.h	\
-BaseSmtStack.h BaseSmtMultiStack.h BaseSmtModelFeature.h		\
-WordPenaltyFeat.h DirectPhraseModelFeat.h BaseSmtModel.h		\
-BasePhraseHypothesisRec.h BasePhraseHypothesis.h			\
+LangModelInfo.h LangModelsInfo.h HypStateDict.h HypStateDictData.h	\
+HypSortCriterion.h client_server_defs.h CatDefs.h bleu.h bleu.cc	\
+BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h			\
+BasePbTransModelFeature.h WordPenaltyFeat.h DirectPhraseModelFeat.h	\
+BaseSmtModel.h BasePhraseHypothesisRec.h BasePhraseHypothesis.h		\
 BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
 BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h HypDebugData.h	\
 BaseAssistedTrans.h _assistedTrans.h KbMiraLlWuFactory.cc		\

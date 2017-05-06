@@ -44,7 +44,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "BaseSmtModelFeature.h"
+#include "SingleWordVocab.h"
+#include "PhraseModelsInfo.h"
+#include "LangModelsInfo.h"
+#include "BasePbTransModelFeature.h"
 #include "BasePbTransModel.h"
 #include "SourceSegmentation.h"
 #include "PbTransModelInputVars.h"
@@ -166,10 +169,10 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   ~_pbTransModel();
 
  protected:
-
-      // Data structure to store input variables
-  PbTransModelInputVars pbtmInputVars;
-
+  
+      // Flag to store whether the object was cloned
+  bool isClone;
+  
       // Variable to store state of the translation model
   unsigned int state;
 
@@ -177,7 +180,14 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   unsigned int heuristicId;
 
       // Feature vector
-  Vector<BaseSmtModelFeature<HYPOTHESIS>* > featVec;
+  Vector<BasePbTransModelFeature<HypScoreInfo>* > featVec;
+
+      // Model information
+  PhraseModelsInfo phraseModelsInfo;
+  LangModelsInfo langModelsInfo;
+
+      // Vocabulary handler
+  SingleWordVocab singleWordVocab;
 
       // Specific phrase-based functions
   virtual void extendHypDataIdx(PositionIndex srcLeft,
@@ -185,12 +195,17 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
                                 const Vector<WordIndex>& trgPhraseIdx,
                                 HypDataType& hypd)=0;
 
+      // Data structure to store input variables
+  PbTransModelInputVars pbtmInputVars;
+
       // Vocabulary functions
   WordIndex stringToSrcWordIndex(std::string s)const;
   std::string wordIndexToSrcString(WordIndex w)const;
   WordIndex stringToTrgWordIndex(std::string s)const;
   std::string wordIndexToTrgString(WordIndex w)const;
 
+      // Memory handling functions
+  void releaseMem(void);
 };
 
 //--------------- _pbTransModel class functions
@@ -199,9 +214,12 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
 template<class HYPOTHESIS>
 _pbTransModel<HYPOTHESIS>::_pbTransModel(void):BasePbTransModel<HYPOTHESIS>()
 {
+      // By default the object is not a clone
+  isClone=false;
+
       // Set state info
   state=MODEL_IDLE_STATE;
-
+       
       // Initially, no heuristic is used
   heuristicId=NO_HEURISTIC;
 }
@@ -759,9 +777,28 @@ std::string _pbTransModel<HYPOTHESIS>::wordIndexToTrgString(WordIndex w)const
 
 //---------------------------------
 template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::releaseMem(void)
+{
+      // Release memory if the object was not created as a clone
+  if(!isClone)
+  {
+    for(unsigned int i=0; i<phraseModelsInfo.invPbModelPtrVec.size(); ++i)
+    {
+      delete phraseModelsInfo.invPbModelPtrVec[i];
+    }
+
+    for(unsigned int i=0; i<langModelsInfo.lModelPtrVec.size(); ++i)
+    {
+      delete langModelsInfo.lModelPtrVec[i];
+    }
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
 _pbTransModel<HYPOTHESIS>::~_pbTransModel()
 {
-  
+  releaseMem();
 }
 
 //-------------------------

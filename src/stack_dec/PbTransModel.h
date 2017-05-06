@@ -109,14 +109,19 @@ class PbTransModel: public _pbTransModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >
 template<class EQCLASS_FUNC>
 PbTransModel<EQCLASS_FUNC>::PbTransModel(void):_pbTransModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >()
 {
-  this->featVec.push_back(new WordPenaltyFeat<EQCLASS_FUNC>);
+  this->featVec.push_back(new WordPenaltyFeat<HypScoreInfo>);
 }
 
 //---------------------------------
 template<class EQCLASS_FUNC>
 BaseSmtModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >* PbTransModel<EQCLASS_FUNC>::clone(void)
 {
-  return new PbTransModel<EQCLASS_FUNC>(*this);
+      // Create clone
+  PbTransModel<EQCLASS_FUNC>* clonePtr=new PbTransModel<EQCLASS_FUNC>(*this);
+      // Set flag
+  clonePtr->isClone=true;
+  
+  return clonePtr;
 }
 
 //---------------------------------

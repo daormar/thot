@@ -18,27 +18,27 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: BaseSmtModelFeature                                      */
+/* Module: BasePbTransModelFeature                                  */
 /*                                                                  */
-/* Prototypes file: BaseSmtModelFeature.h                           */
+/* Prototypes file: BasePbTransModelFeature.h                       */
 /*                                                                  */
-/* Description: Declares the BaseSmtModelFeature abstract template  */
-/*              class this class is a base class for implementing   */
-/*              different kinds of features to be used              */
+/* Description: Declares the BasePbTransModelFeature abstract       */
+/*              template class this class is a base class for       */
+/*              implementing different kinds of features to be used */
 /*              in SMT models.                                      */
 /*                                                                  */
 /********************************************************************/
 
 /**
- * @file BaseSmtModelFeature.h
+ * @file BasePbTransModelFeature.h
  * 
- * @brief Declares the BaseSmtModelFeature abstract template class, this
- * class is a base class for implementing different kinds of features
- * to be used in SMT models.
+ * @brief Declares the BasePbTransModelFeature abstract template class,
+ * this class is a base class for implementing different kinds of
+ * features to be used in phrase based translation models.
  */
 
-#ifndef _BaseSmtModelFeature_h
-#define _BaseSmtModelFeature_h
+#ifndef _BasePbTransModelFeature_h
+#define _BasePbTransModelFeature_h
 
 //--------------- Include files --------------------------------------
 
@@ -46,6 +46,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "PhrHypDataStr.h"
 #include <string>
 
 //--------------- Constants ------------------------------------------
@@ -53,24 +54,22 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- BaseSmtModelFeature class
+//--------------- BasePbTransModelFeature class
 
 /**
- * @brief The BaseSmtModelFeature abstract template class is a base
- * class for implementing different kinds of features to be used in SMT
- * models.
+ * @brief The BasePbTransModelFeature abstract template class is a base
+ * class for implementing different kinds of features to be used in
+ * phrase based translation models.
  */
 
-template<class HYPOTHESIS>
-class BaseSmtModelFeature
+template<class SCORE_INFO>
+class BasePbTransModelFeature
 {
  public:
 
       // TO-BE-DONE
 
-  typedef HYPOTHESIS Hypothesis;
-  typedef typename HYPOTHESIS::ScoreInfo HypScoreInfo;
-  typedef typename HYPOTHESIS::DataType HypDataType;
+  typedef SCORE_INFO HypScoreInfo;
 
       // Weight related functions
   void setWeight(float w);
@@ -82,11 +81,12 @@ class BaseSmtModelFeature
   virtual std::string getFeatType(void)=0;
 
       // Scoring functions
-  virtual HypScoreInfo extensionScore(const Hypothesis& pred_hyp,
-                                      const HypDataType& new_hypd)=0;
+  virtual HypScoreInfo extensionScore(const HypScoreInfo& predHypScrInf,
+                                      const PhrHypDataStr& predHypDataStr,
+                                      const PhrHypDataStr& newHypDataStr)=0;
 
       // Destructor
-  virtual ~BaseSmtModelFeature(){};
+  virtual ~BasePbTransModelFeature(){};
 
  protected:
 
@@ -94,32 +94,32 @@ class BaseSmtModelFeature
   std::string name;
 };
 
-//--------------- BaseSmtModelFeature class functions
+//--------------- BasePbTransModelFeature class functions
 //
 
-template<class HYPOTHESIS>
-void BaseSmtModelFeature<HYPOTHESIS>::setWeight(float w)
+template<class SCORE_INFO>
+void BasePbTransModelFeature<SCORE_INFO>::setWeight(float w)
 {
   weight=w;
 }
 
 //---------------------------------
-template<class HYPOTHESIS>
-float BaseSmtModelFeature<HYPOTHESIS>::getWeight(float w)
+template<class SCORE_INFO>
+float BasePbTransModelFeature<SCORE_INFO>::getWeight(float w)
 {
   return weight;
 }
 
 //---------------------------------
-template<class HYPOTHESIS>
-void BaseSmtModelFeature<HYPOTHESIS>::setFeatName(std::string fname)
+template<class SCORE_INFO>
+void BasePbTransModelFeature<SCORE_INFO>::setFeatName(std::string fname)
 {
   name=fname;
 }
 
 //---------------------------------
-template<class HYPOTHESIS>
-std::string BaseSmtModelFeature<HYPOTHESIS>::getFeatName(void)
+template<class SCORE_INFO>
+std::string BasePbTransModelFeature<SCORE_INFO>::getFeatName(void)
 {
   return name;
 }

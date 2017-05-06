@@ -45,7 +45,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "PhraseBasedTmHypRec.h"
-#include "BaseSmtModelFeature.h"
+#include "BasePbTransModelFeature.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -59,22 +59,21 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  * implementing a direct phrase model feature.
  */
 
-template<class EQCLASS_FUNC>
-class DirectPhraseModelFeat: public BaseSmtModelFeature<PhraseBasedTmHypRec<EQCLASS_FUNC> >
+template<class SCORE_INFO>
+class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 {
  public:
 
       // TO-BE-DONE
-  typedef typename BaseSmtModelFeature<PhraseBasedTmHypRec<EQCLASS_FUNC> >::Hypothesis Hypothesis;
-  typedef typename BaseSmtModelFeature<PhraseBasedTmHypRec<EQCLASS_FUNC> >::HypScoreInfo HypScoreInfo;
-  typedef typename BaseSmtModelFeature<PhraseBasedTmHypRec<EQCLASS_FUNC> >::HypDataType HypDataType;
+  typedef typename BasePbTransModelFeature<SCORE_INFO>::HypScoreInfo HypScoreInfo;
 
       // Feature information
   std::string getFeatType(void);
 
       // Scoring functions
-  HypScoreInfo extensionScore(const Hypothesis& pred_hyp,
-                              const HypDataType& new_hypd);
+  HypScoreInfo extensionScore(const HypScoreInfo& predHypScrInf,
+                              const PhrHypDataStr& predHypDataStr,
+                              const PhrHypDataStr& newHypDataStr);
 
  protected:
 
@@ -83,17 +82,18 @@ class DirectPhraseModelFeat: public BaseSmtModelFeature<PhraseBasedTmHypRec<EQCL
 //--------------- DirectPhraseModelFeat class functions
 //
 
-template<class EQCLASS_FUNC>
-std::string DirectPhraseModelFeat<EQCLASS_FUNC>::getFeatType(void)
+template<class SCORE_INFO>
+std::string DirectPhraseModelFeat<SCORE_INFO>::getFeatType(void)
 {
   return "DirectPhraseModelFeat";
 }
 
 //---------------------------------
-template<class EQCLASS_FUNC>
-typename DirectPhraseModelFeat<EQCLASS_FUNC>::HypScoreInfo
-DirectPhraseModelFeat<EQCLASS_FUNC>::extensionScore(const Hypothesis& pred_hyp,
-                                                    const HypDataType& new_hypd)
+template<class SCORE_INFO>
+typename DirectPhraseModelFeat<SCORE_INFO>::HypScoreInfo
+DirectPhraseModelFeat<SCORE_INFO>::extensionScore(const HypScoreInfo& predHypScrInf,
+                                                  const PhrHypDataStr& predHypDataStr,
+                                                  const PhrHypDataStr& newHypDataStr)
 {
   
 }
