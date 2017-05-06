@@ -73,7 +73,8 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
       // Scoring functions
   HypScoreInfo extensionScore(const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
-                              const PhrHypDataStr& newHypDataStr);
+                              const PhrHypDataStr& newHypDataStr,
+                              Score& unweightedScore);
 
  protected:
 
@@ -93,7 +94,8 @@ template<class SCORE_INFO>
 typename DirectPhraseModelFeat<SCORE_INFO>::HypScoreInfo
 DirectPhraseModelFeat<SCORE_INFO>::extensionScore(const HypScoreInfo& predHypScrInf,
                                                   const PhrHypDataStr& predHypDataStr,
-                                                  const PhrHypDataStr& newHypDataStr)
+                                                  const PhrHypDataStr& newHypDataStr,
+                                                  Score& unweightedScore)
 {
   
 }

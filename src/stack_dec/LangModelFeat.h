@@ -18,25 +18,25 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: WordPenaltyFeat                                          */
+/* Module: LangModelFeat                                            */
 /*                                                                  */
-/* Prototypes file: WordPenaltyFeat.h                               */
+/* Prototypes file: LangModelFeat.h                                 */
 /*                                                                  */
-/* Description: Declares the WordPenaltyFeat template               */
-/*              class. This class implements a word penalty         */
+/* Description: Declares the LangModelFeat template                 */
+/*              class. This class implements a language model       */
 /*              feature.                                            */
 /*                                                                  */
 /********************************************************************/
 
 /**
- * @file WordPenaltyFeat.h
+ * @file LangModelFeat.h
  * 
- * @brief Declares the WordPenaltyFeat template class. This class
- * implements a word penalty feature.
+ * @brief Declares the LangModelFeat template class. This class
+ * implements a language model feature.
  */
 
-#ifndef _WordPenaltyFeat_h
-#define _WordPenaltyFeat_h
+#ifndef _LangModelFeat_h
+#define _LangModelFeat_h
 
 //--------------- Include files --------------------------------------
 
@@ -52,15 +52,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- WordPenaltyFeat class
+//--------------- LangModelFeat class
 
 /**
- * @brief The WordPenaltyFeat template class is a base class for
- * implementing a word penalty feature.
+ * @brief The LangModelFeat template class is a base class for
+ * implementing a language model feature.
  */
 
 template<class SCORE_INFO>
-class WordPenaltyFeat: public BasePbTransModelFeature<SCORE_INFO>
+class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 {
  public:
 
@@ -80,22 +80,22 @@ class WordPenaltyFeat: public BasePbTransModelFeature<SCORE_INFO>
 
 };
 
-//--------------- WordPenaltyFeat class functions
+//--------------- LangModelFeat class functions
 //
 
 template<class SCORE_INFO>
-std::string WordPenaltyFeat<SCORE_INFO>::getFeatType(void)
+std::string LangModelFeat<SCORE_INFO>::getFeatType(void)
 {
-  return "WordPenaltyFeat";
+  return "LangModelFeat";
 }
 
 //---------------------------------
 template<class SCORE_INFO>
-typename WordPenaltyFeat<SCORE_INFO>::HypScoreInfo
-WordPenaltyFeat<SCORE_INFO>::extensionScore(const HypScoreInfo& predHypScrInf,
-                                            const PhrHypDataStr& predHypDataStr,
-                                            const PhrHypDataStr& newHypDataStr,
-                                            Score& unweightedScore)
+typename LangModelFeat<SCORE_INFO>::HypScoreInfo
+LangModelFeat<SCORE_INFO>::extensionScore(const HypScoreInfo& predHypScrInf,
+                                          const PhrHypDataStr& predHypDataStr,
+                                          const PhrHypDataStr& newHypDataStr,
+                                          Score& unweightedScore)
 {
   
 }

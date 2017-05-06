@@ -83,7 +83,8 @@ class BasePbTransModelFeature
       // Scoring functions
   virtual HypScoreInfo extensionScore(const HypScoreInfo& predHypScrInf,
                                       const PhrHypDataStr& predHypDataStr,
-                                      const PhrHypDataStr& newHypDataStr)=0;
+                                      const PhrHypDataStr& newHypDataStr,
+                                      Score& unweightedScore)=0;
 
       // Destructor
   virtual ~BasePbTransModelFeature(){};

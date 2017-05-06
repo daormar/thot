@@ -44,11 +44,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "SingleWordVocab.h"
+#include "DirectPhraseModelFeat.h"
+#include "LangModelFeat.h"
+#include "WordPenaltyFeat.h"
+#include "BasePbTransModelFeature.h"
 #include "PhraseModelsInfo.h"
 #include "LangModelsInfo.h"
-#include "BasePbTransModelFeature.h"
 #include "BasePbTransModel.h"
+#include "SingleWordVocab.h"
 #include "SourceSegmentation.h"
 #include "PbTransModelInputVars.h"
 #include "StatModelDefs.h"
@@ -203,6 +206,7 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   std::string wordIndexToSrcString(WordIndex w)const;
   WordIndex stringToTrgWordIndex(std::string s)const;
   std::string wordIndexToTrgString(WordIndex w)const;
+  Vector<std::string> trgIndexVectorToStrVector(Vector<WordIndex> trgidxVec)const;
 
       // Memory handling functions
   void releaseMem(void);
@@ -773,6 +777,13 @@ template<class HYPOTHESIS>
 std::string _pbTransModel<HYPOTHESIS>::wordIndexToTrgString(WordIndex w)const
 {
       // TO-BE-DONE  
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Vector<std::string> _pbTransModel<HYPOTHESIS>::trgIndexVectorToStrVector(Vector<WordIndex> trgidxVec)const
+{
+      // TO-BE-DONE
 }
 
 //---------------------------------

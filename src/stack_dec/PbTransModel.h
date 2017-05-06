@@ -44,8 +44,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "DirectPhraseModelFeat.h"
-#include "WordPenaltyFeat.h"
+#include "PhrHypDataStr.h"
 #include "_pbTransModel.h"
 
 //--------------- Constants ------------------------------------------
@@ -90,7 +89,7 @@ class PbTransModel: public _pbTransModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >
   unsigned int numberOfUncoveredSrcWordsHypData(const HypDataType& hypd)const;
 
       // Scoring functions
-  Score incrScore(const Hypothesis& prev_hyp,
+  Score incrScore(const Hypothesis& pred_hyp,
                   const HypDataType& new_hypd,
                   Hypothesis& new_hyp,
                   Vector<Score>& scoreComponents);
@@ -101,6 +100,9 @@ class PbTransModel: public _pbTransModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >
                         const Vector<WordIndex>& trgPhraseIdx,
                         HypDataType& hypd);
 
+      // Auxiliary functions
+  PhrHypDataStr phypd_to_phypdstr(const PhrHypData phypd);
+  
 };
 
 //--------------- PbTransModel class functions
@@ -203,12 +205,42 @@ bool PbTransModel<EQCLASS_FUNC>::isCompleteHypData(const HypDataType& hypd)const
 
 //---------------------------------
 template<class EQCLASS_FUNC>
-Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& prev_hyp,
+PhrHypDataStr PbTransModel<EQCLASS_FUNC>::phypd_to_phypdstr(const PhrHypData phypd)
+{
+  PhrHypDataStr phypdstr;
+  phypdstr.ntarget=this->trgIndexVectorToStrVector(phypd.ntarget);
+  phypdstr.sourceSegmentation=phypd.sourceSegmentation;
+  phypdstr.targetSegmentCuts=phypd.targetSegmentCuts;
+}
+
+//---------------------------------
+template<class EQCLASS_FUNC>
+Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
                                             const HypDataType& new_hypd,
                                             Hypothesis& new_hyp,
                                             Vector<Score>& scoreComponents)
 {
+      // Initialize variables
+  HypScoreInfo hypScoreInfo=pred_hyp.getScoreInfo();
+  HypDataType pred_hypd=pred_hyp.getData();
+  PhrHypDataStr pred_hypd_str=phypd_to_phypdstr(pred_hypd);
+  PhrHypDataStr new_hypd_str=phypd_to_phypdstr(new_hypd);
   
+      // Init scoreComponents
+  scoreComponents.clear();
+
+      // Obtain score for components
+  for(unsigned int i=0;i<this->featVec.size();++i)
+  {
+    Score unweightedScore;
+    hypScoreInfo=this->featVec[i]->extensionScore(hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
+    scoreComponents.push_back(unweightedScore);
+  }
+    
+  new_hyp.setScoreInfo(hypScoreInfo);
+  new_hyp.setData(new_hypd);
+  
+  return hypScoreInfo.score;
 }
 
 //---------------------------------

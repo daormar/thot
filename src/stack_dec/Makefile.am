@@ -35,11 +35,11 @@ _nbUncoupledAssistedTrans.h multi_stack_decoder_rec.h LangModelPars.h	\
 LangModelInfo.h LangModelsInfo.h HypStateDict.h HypStateDictData.h	\
 HypSortCriterion.h client_server_defs.h CatDefs.h bleu.h bleu.cc	\
 BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h			\
-BasePbTransModelFeature.h WordPenaltyFeat.h DirectPhraseModelFeat.h	\
-BaseSmtModel.h BasePhraseHypothesisRec.h BasePhraseHypothesis.h		\
-BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
-BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h HypDebugData.h	\
-BaseAssistedTrans.h _assistedTrans.h KbMiraLlWuFactory.cc		\
-multi_stack_decoder_rec__swli_factory.cc				\
+BasePbTransModelFeature.h WordPenaltyFeat.h LangModelFeat.h		\
+DirectPhraseModelFeat.h BaseSmtModel.h BasePhraseHypothesisRec.h	\
+BasePhraseHypothesis.h BasePbTransModelStats.h BasePbTransModel.h	\
+BaseHypState.h BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h	\
+HypDebugData.h BaseAssistedTrans.h _assistedTrans.h			\
+KbMiraLlWuFactory.cc multi_stack_decoder_rec__swli_factory.cc		\
 WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc		\
 MiraGtmFactory.cc MiraWerFactory.cc TranslationConstraintsFactory.cc
