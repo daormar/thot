@@ -81,7 +81,8 @@ class BasePbTransModelFeature
   virtual std::string getFeatType(void)=0;
 
       // Scoring functions
-  virtual HypScoreInfo extensionScore(const HypScoreInfo& predHypScrInf,
+  virtual HypScoreInfo extensionScore(unsigned int srcSentLen,
+                                      const HypScoreInfo& predHypScrInf,
                                       const PhrHypDataStr& predHypDataStr,
                                       const PhrHypDataStr& newHypDataStr,
                                       Score& unweightedScore)=0;
@@ -93,6 +94,9 @@ class BasePbTransModelFeature
 
   float weight;
   std::string name;
+
+      // Auxiliary functions
+  unsigned int numberOfSrcWordsCovered(const PhrHypDataStr& hypdStr)const;
 };
 
 //--------------- BasePbTransModelFeature class functions
@@ -123,6 +127,16 @@ template<class SCORE_INFO>
 std::string BasePbTransModelFeature<SCORE_INFO>::getFeatName(void)
 {
   return name;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+unsigned int BasePbTransModelFeature<SCORE_INFO>::numberOfSrcWordsCovered(const PhrHypDataStr& hypdStr)const
+{
+  unsigned int n=0;
+  for(unsigned int k=0;k<hypdStr.sourceSegmentation.size();k++)
+	n+=hypdStr.sourceSegmentation[k].second-hypdStr.sourceSegmentation[k].first+1;
+  return n;
 }
 
 #endif

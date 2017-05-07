@@ -71,7 +71,8 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
   std::string getFeatType(void);
 
       // Scoring functions
-  HypScoreInfo extensionScore(const HypScoreInfo& predHypScrInf,
+  HypScoreInfo extensionScore(unsigned int srcSentLen,
+                              const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
@@ -80,24 +81,13 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 
 };
 
-//--------------- DirectPhraseModelFeat class functions
+//--------------- WordPenaltyFeat class functions
 //
 
 template<class SCORE_INFO>
 std::string DirectPhraseModelFeat<SCORE_INFO>::getFeatType(void)
 {
   return "DirectPhraseModelFeat";
-}
-
-//---------------------------------
-template<class SCORE_INFO>
-typename DirectPhraseModelFeat<SCORE_INFO>::HypScoreInfo
-DirectPhraseModelFeat<SCORE_INFO>::extensionScore(const HypScoreInfo& predHypScrInf,
-                                                  const PhrHypDataStr& predHypDataStr,
-                                                  const PhrHypDataStr& newHypDataStr,
-                                                  Score& unweightedScore)
-{
-  
 }
 
 #endif

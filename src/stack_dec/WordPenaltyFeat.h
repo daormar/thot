@@ -44,7 +44,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "PhraseBasedTmHypRec.h"
+#include "BaseWordPenaltyModel.h"
+#include "PhrScoreInfo.h"
 #include "BasePbTransModelFeature.h"
 
 //--------------- Constants ------------------------------------------
@@ -71,13 +72,18 @@ class WordPenaltyFeat: public BasePbTransModelFeature<SCORE_INFO>
   std::string getFeatType(void);
 
       // Scoring functions
-  HypScoreInfo extensionScore(const HypScoreInfo& predHypScrInf,
+  HypScoreInfo extensionScore(unsigned int srcSentLen,
+                              const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
 
+      // Link pointer
+  void link_wpm(BaseWordPenaltyModel* _wpModelPtr);
+  
  protected:
 
+  BaseWordPenaltyModel* wpModelPtr;
 };
 
 //--------------- WordPenaltyFeat class functions
@@ -86,18 +92,14 @@ class WordPenaltyFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 std::string WordPenaltyFeat<SCORE_INFO>::getFeatType(void)
 {
-  return "WordPenaltyFeat";
+  return "DirectPhraseModelFeat";
 }
 
 //---------------------------------
 template<class SCORE_INFO>
-typename WordPenaltyFeat<SCORE_INFO>::HypScoreInfo
-WordPenaltyFeat<SCORE_INFO>::extensionScore(const HypScoreInfo& predHypScrInf,
-                                            const PhrHypDataStr& predHypDataStr,
-                                            const PhrHypDataStr& newHypDataStr,
-                                            Score& unweightedScore)
+void WordPenaltyFeat<SCORE_INFO>::link_wpm(BaseWordPenaltyModel* _wpModelPtr)
 {
-  
+  wpModelPtr=_wpModelPtr;
 }
 
 #endif

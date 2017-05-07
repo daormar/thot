@@ -311,7 +311,9 @@ stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
 stack_dec/TranslationConstraints.cc stack_dec/KbMiraLlWu.cc		\
 stack_dec/MiraBleu.cc stack_dec/MiraWer.cc stack_dec/MiraGtm.cc		\
 stack_dec/ThotDecoderClient.cc stack_dec/ThotDecoder.cc			\
-stack_dec/PhrScoreInfo.cc stack_dec/PhrNbestTransTableRefKey.cc		\
+stack_dec/WordPenaltyFeat.cc stack_dec/LangModelFeat.cc			\
+stack_dec/DirectPhraseModelFeat.cc stack_dec/PhrScoreInfo.cc		\
+stack_dec/PhrNbestTransTableRefKey.cc					\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\

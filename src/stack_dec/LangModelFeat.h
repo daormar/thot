@@ -71,7 +71,8 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
   std::string getFeatType(void);
 
       // Scoring functions
-  HypScoreInfo extensionScore(const HypScoreInfo& predHypScrInf,
+  HypScoreInfo extensionScore(unsigned int srcSentLen,
+                              const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
@@ -80,24 +81,13 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 
 };
 
-//--------------- LangModelFeat class functions
+//--------------- WordPenaltyFeat class functions
 //
 
 template<class SCORE_INFO>
 std::string LangModelFeat<SCORE_INFO>::getFeatType(void)
 {
   return "LangModelFeat";
-}
-
-//---------------------------------
-template<class SCORE_INFO>
-typename LangModelFeat<SCORE_INFO>::HypScoreInfo
-LangModelFeat<SCORE_INFO>::extensionScore(const HypScoreInfo& predHypScrInf,
-                                          const PhrHypDataStr& predHypDataStr,
-                                          const PhrHypDataStr& newHypDataStr,
-                                          Score& unweightedScore)
-{
-  
 }
 
 #endif

@@ -75,7 +75,6 @@ class PbTransModel: public _pbTransModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >
   BaseSmtModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >* clone(void);
 
       // Misc. operations with hypotheses
-  Hypothesis nullHypothesis(void);
   HypDataType nullHypothesisHypData(void);
   bool obtainPredecessorHypData(HypDataType& hypd);
   bool isCompleteHypData(const HypDataType& hypd)const;
@@ -86,6 +85,8 @@ class PbTransModel: public _pbTransModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >
  protected:
 
       // Misc. operations with hypothesis
+  Score nullHypothesisScrComps(Hypothesis& nullHyp,
+                               Vector<Score>& scoreComponents);
   unsigned int numberOfUncoveredSrcWordsHypData(const HypDataType& hypd)const;
 
       // Scoring functions
@@ -111,7 +112,6 @@ class PbTransModel: public _pbTransModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >
 template<class EQCLASS_FUNC>
 PbTransModel<EQCLASS_FUNC>::PbTransModel(void):_pbTransModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >()
 {
-  this->featVec.push_back(new WordPenaltyFeat<HypScoreInfo>);
 }
 
 //---------------------------------
@@ -119,19 +119,40 @@ template<class EQCLASS_FUNC>
 BaseSmtModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >* PbTransModel<EQCLASS_FUNC>::clone(void)
 {
       // Create clone
-  PbTransModel<EQCLASS_FUNC>* clonePtr=new PbTransModel<EQCLASS_FUNC>(*this);
-      // Set flag
-  clonePtr->isClone=true;
-  
-  return clonePtr;
+  return new PbTransModel<EQCLASS_FUNC>(*this);
 }
 
 //---------------------------------
 template<class EQCLASS_FUNC>
-typename PbTransModel<EQCLASS_FUNC>::Hypothesis
-PbTransModel<EQCLASS_FUNC>::nullHypothesis(void)
+Score PbTransModel<EQCLASS_FUNC>::nullHypothesisScrComps(Hypothesis& nullHyp,
+                                                         Vector<Score>& scoreComponents)
 {
-  
+      // TO-BE-REVISED
+       
+      // Initialize variables
+  HypScoreInfo hypScoreInfo;
+  HypDataType dataType=nullHypothesisHypData();
+  PhrHypDataStr dataTypeStr=phypd_to_phypdstr(dataType);
+  unsigned int srcLen=this->pbtmInputVars.srcSentVec.size();
+
+      // Init scoreInfo
+  hypScoreInfo.score=0;
+
+      // Init scoreComponents
+  scoreComponents.clear();
+
+      // Obtain score for components
+  for(unsigned int i=0;i<this->featVec.size();++i)
+  {
+    Score unweightedScore;
+    hypScoreInfo=this->featVec[i]->extensionScore(srcLen,hypScoreInfo,dataTypeStr,dataTypeStr,unweightedScore);
+    scoreComponents.push_back(unweightedScore);
+  }
+    
+  nullHyp.setScoreInfo(hypScoreInfo);
+  nullHyp.setData(dataType);
+
+  return hypScoreInfo.score;
 }
 
 //---------------------------------
@@ -220,11 +241,14 @@ Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
                                             Hypothesis& new_hyp,
                                             Vector<Score>& scoreComponents)
 {
+      // TO-BE-REVISED
+       
       // Initialize variables
   HypScoreInfo hypScoreInfo=pred_hyp.getScoreInfo();
   HypDataType pred_hypd=pred_hyp.getData();
   PhrHypDataStr pred_hypd_str=phypd_to_phypdstr(pred_hypd);
   PhrHypDataStr new_hypd_str=phypd_to_phypdstr(new_hypd);
+  unsigned int srcLen=this->pbtmInputVars.srcSentVec.size();
   
       // Init scoreComponents
   scoreComponents.clear();
@@ -233,7 +257,7 @@ Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
   for(unsigned int i=0;i<this->featVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->featVec[i]->extensionScore(hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
+    hypScoreInfo=this->featVec[i]->extensionScore(srcLen,hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
     
