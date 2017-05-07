@@ -770,10 +770,14 @@ bool ThotDecoder::load_tm(const char* tmFilesPrefix,
     if(ret==OK)
     {
         // Load alignment model
-      ret=tdCommonVars.smtModelPtr->loadAligModel(tmFilesPrefix);
-      if(ret==OK)
+      _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
+      if(base_pbtm_ptr)
       {
-        tdState.tmFilesPrefixGiven=tmFilesPrefix;
+        ret=base_pbtm_ptr->loadAligModel(tmFilesPrefix);
+        if(ret==OK)
+        {
+          tdState.tmFilesPrefixGiven=tmFilesPrefix;
+        }
       }
     }
   }
@@ -805,10 +809,14 @@ bool ThotDecoder::load_lm(const char* lmFileName,
     {
       cerr<<"Loading language model from file: "<<lmFileName<<endl;
     }
-    ret=tdCommonVars.smtModelPtr->loadLangModel(lmFileName);
-    if(ret==OK)
+    _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
+    if(base_pbtm_ptr)
     {
-      tdState.lmfileLoaded=lmFileName;
+      ret=base_pbtm_ptr->loadLangModel(lmFileName);
+      if(ret==OK)
+      {
+        tdState.lmfileLoaded=lmFileName;
+      }
     }
   }
   
@@ -1987,20 +1995,25 @@ bool ThotDecoder::printModels(int verbose/*=0*/)
   {
     cerr<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<endl;
   }
-    
-      // Print alignment model parameters
-  int ret=tdCommonVars.smtModelPtr->printAligModel(tdState.tmFilesPrefixGiven);
-  if(ret==OK)
+
+  int ret;
+  _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
+  if(base_pbtm_ptr)
   {
-        // Print language model parameters
-    int ret=tdCommonVars.smtModelPtr->printLangModel(tdState.lmfileLoaded);
+        // Print alignment model parameters
+    ret=base_pbtm_ptr->printAligModel(tdState.tmFilesPrefixGiven);
     if(ret==OK)
     {
-          // Print error correcting model parameters
-      ret=tdCommonVars.ecModelPtr->print(tdState.ecmFilesPrefixGiven.c_str()); 
+          // Print language model parameters
+      ret=base_pbtm_ptr->printLangModel(tdState.lmfileLoaded);
+      if(ret==OK)
+      {
+            // Print error correcting model parameters
+        ret=tdCommonVars.ecModelPtr->print(tdState.ecmFilesPrefixGiven.c_str()); 
+      }
     }
   }
-
+  
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
