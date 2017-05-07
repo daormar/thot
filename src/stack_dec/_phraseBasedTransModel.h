@@ -97,12 +97,12 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   void link_pm_info(PhraseModelInfo* _phrModelInfoPtr);
 
       // Init language and alignment models
-  bool loadLangModel(const char* prefixFileName);
-  bool loadAligModel(const char* prefixFileName);
+  virtual bool loadLangModel(const char* prefixFileName);
+  virtual bool loadAligModel(const char* prefixFileName);
 
       // Print models
-  bool printLangModel(std::string printPrefix);
-  bool printAligModel(std::string printPrefix);
+  virtual bool printLangModel(std::string printPrefix);
+  virtual bool printAligModel(std::string printPrefix);
   
   void clear(void);
 
