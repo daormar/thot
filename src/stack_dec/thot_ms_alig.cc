@@ -291,18 +291,21 @@ int init_translator(const thot_ms_alig_pars& tap)
     base_pbswtm_ptr->link_swm_info(swModelInfoPtr);
   }
 
-  err=smtModelPtr->loadLangModel(tap.languageModelFileName.c_str());
-  if(err==ERROR)
+  if(base_pbtm_ptr)
   {
-    release_translator();
-    return ERROR;
-  }
-
-  err=smtModelPtr->loadAligModel(tap.transModelPref.c_str());
-  if(err==ERROR)
-  {
-    release_translator();
-    return ERROR;
+    err=base_pbtm_ptr->loadLangModel(tap.languageModelFileName.c_str());
+    if(err==ERROR)
+    {
+      release_translator();
+      return ERROR;
+    }
+    
+    err=base_pbtm_ptr->loadAligModel(tap.transModelPref.c_str());
+    if(err==ERROR)
+    {
+      release_translator();
+      return ERROR;
+    }
   }
 
       // Set heuristic
