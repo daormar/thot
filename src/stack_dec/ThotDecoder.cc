@@ -44,8 +44,10 @@ ThotDecoder::ThotDecoder()
   int err=tdCommonVars.dynClassFactoryHandler.init_smt_and_imt(THOT_MASTER_INI_PATH);
   if(err==ERROR)
     exit(ERROR);
-
+  
       // Create server variables
+  tdCommonVars.featuresInfoPtr=new FeaturesInfo<SmtModel::HypScoreInfo>;
+  
   tdCommonVars.langModelInfoPtr=new LangModelInfo;
 
   tdCommonVars.langModelInfoPtr->wpModelPtr=tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelInitPars);
@@ -129,18 +131,29 @@ ThotDecoder::ThotDecoder()
 
       // Instantiate smt model
   tdCommonVars.smtModelPtr=new SmtModel();
-      // Link pointers
+
+      // Link log-linear weight updater and translation constraints
   tdCommonVars.smtModelPtr->link_ll_weight_upd(tdCommonVars.llWeightUpdaterPtr);
   tdCommonVars.smtModelPtr->link_trans_constraints(tdCommonVars.trConstraintsPtr);
-  _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
-  if(base_pbtm_ptr)
+  
+      // Link language model, phrase model and single word model if
+      // appliable
+  _phraseBasedTransModel<SmtModel::Hypothesis>* phrbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
+  if(phrbtm_ptr)
   {
-    base_pbtm_ptr->link_lm_info(tdCommonVars.langModelInfoPtr);
-    base_pbtm_ptr->link_pm_info(tdCommonVars.phrModelInfoPtr);
+    phrbtm_ptr->link_lm_info(tdCommonVars.langModelInfoPtr);
+    phrbtm_ptr->link_pm_info(tdCommonVars.phrModelInfoPtr);
   }
   _phrSwTransModel<SmtModel::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
   if(base_pbswtm_ptr)
     base_pbswtm_ptr->link_swm_info(tdCommonVars.swModelInfoPtr);
+
+      // Link features information if appliable 
+  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
+  if(pbtm_ptr)
+  {
+    pbtm_ptr->link_feats_info(tdCommonVars.featuresInfoPtr);
+  }
   
       // Initialize mutexes and conditions
   pthread_mutex_init(&user_id_to_idx_mut,NULL);
@@ -770,10 +783,10 @@ bool ThotDecoder::load_tm(const char* tmFilesPrefix,
     if(ret==OK)
     {
         // Load alignment model
-      _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
-      if(base_pbtm_ptr)
+      _phraseBasedTransModel<SmtModel::Hypothesis>* phrbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
+      if(phrbtm_ptr)
       {
-        ret=base_pbtm_ptr->loadAligModel(tmFilesPrefix);
+        ret=phrbtm_ptr->loadAligModel(tmFilesPrefix);
         if(ret==OK)
         {
           tdState.tmFilesPrefixGiven=tmFilesPrefix;
@@ -809,10 +822,10 @@ bool ThotDecoder::load_lm(const char* lmFileName,
     {
       cerr<<"Loading language model from file: "<<lmFileName<<endl;
     }
-    _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
-    if(base_pbtm_ptr)
+    _phraseBasedTransModel<SmtModel::Hypothesis>* phrbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
+    if(phrbtm_ptr)
     {
-      ret=base_pbtm_ptr->loadLangModel(lmFileName);
+      ret=phrbtm_ptr->loadLangModel(lmFileName);
       if(ret==OK)
       {
         tdState.lmfileLoaded=lmFileName;
@@ -1997,15 +2010,15 @@ bool ThotDecoder::printModels(int verbose/*=0*/)
   }
 
   int ret;
-  _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
-  if(base_pbtm_ptr)
+  _phraseBasedTransModel<SmtModel::Hypothesis>* phrbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
+  if(phrbtm_ptr)
   {
         // Print alignment model parameters
-    ret=base_pbtm_ptr->printAligModel(tdState.tmFilesPrefixGiven);
+    ret=phrbtm_ptr->printAligModel(tdState.tmFilesPrefixGiven);
     if(ret==OK)
     {
           // Print language model parameters
-      ret=base_pbtm_ptr->printLangModel(tdState.lmfileLoaded);
+      ret=phrbtm_ptr->printLangModel(tdState.lmfileLoaded);
       if(ret==OK)
       {
             // Print error correcting model parameters
@@ -2626,6 +2639,21 @@ ThotDecoder::~ThotDecoder()
   delete tdCommonVars.trConstraintsPtr;
   delete tdCommonVars.scorerPtr;
 
+      // Delete features information
+
+      // Release phrase models
+  for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.invPbModelPtrVec.size();++i)
+    delete tdCommonVars.phraseModelsInfo.invPbModelPtrVec[i];
+
+      // Release language models
+  for(unsigned int i=0;i<tdCommonVars.langModelsInfo.lModelPtrVec.size();++i)
+    delete tdCommonVars.langModelsInfo.lModelPtrVec[i];
+
+      // Release feature pointers
+  for(unsigned int i=0;i<tdCommonVars.featuresInfoPtr->featPtrVec.size();++i)
+    delete tdCommonVars.featuresInfoPtr->featPtrVec[i];
+  delete tdCommonVars.featuresInfoPtr;
+  
       // Release class factory handler
   tdCommonVars.dynClassFactoryHandler.release_smt_and_imt();
   

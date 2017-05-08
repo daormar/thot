@@ -39,10 +39,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include THOT_SMTMODEL_H // Define SmtModel type. It is set in
                               // configure by checking SMTMODEL_H
                               // variable (default value: SmtModel.h)
+#include "FeaturesInfo.h"
 #include "BasePbTransModel.h"
 #include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
 #include "SwModelInfo.h"
+#include "PhraseModelsInfo.h"
+#include "LangModelsInfo.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
 #include "BaseTranslationConstraints.h"
@@ -143,6 +146,11 @@ BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
 BaseStackDecoder<SmtModel>* stackDecoderPtr;
 _stackDecoderRec<SmtModel>* stackDecoderRecPtr;
 
+    // Variables related to feature-based implementation
+PhraseModelsInfo phraseModelsInfo;
+LangModelsInfo langModelsInfo;
+FeaturesInfo<SmtModel::HypScoreInfo>* featuresInfoPtr;
+
 //--------------- Function Definitions -------------------------------
 
 //--------------- main function
@@ -201,6 +209,9 @@ int init_translator(const thot_ms_dec_pars& tdp)
   err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
   if(err==ERROR)
     return ERROR;
+
+      // Create decoder variables
+  featuresInfoPtr=new FeaturesInfo<SmtModel::HypScoreInfo>;
 
   langModelInfoPtr=new LangModelInfo;
   langModelInfoPtr->wpModelPtr=dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(dynClassFactoryHandler.baseWordPenaltyModelInitPars);
@@ -264,14 +275,18 @@ int init_translator(const thot_ms_dec_pars& tdp)
 
       // Instantiate smt model
   smtModelPtr=new SmtModel();
-      // Link pointers
+  
+      // Link log-linear weight updater and translation constraints
   smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
   smtModelPtr->link_trans_constraints(trConstraintsPtr);
-  _phraseBasedTransModel<SmtModel::Hypothesis>* base_pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
-  if(base_pbtm_ptr)
+
+      // Link language model, phrase model and single word model if
+      // appliable
+  _phraseBasedTransModel<SmtModel::Hypothesis>* phrbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
+  if(phrbtm_ptr)
   {
-    base_pbtm_ptr->link_lm_info(langModelInfoPtr);
-    base_pbtm_ptr->link_pm_info(phrModelInfoPtr);
+    phrbtm_ptr->link_lm_info(langModelInfoPtr);
+    phrbtm_ptr->link_pm_info(phrModelInfoPtr);
   }
   _phrSwTransModel<SmtModel::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
   if(base_pbswtm_ptr)
@@ -279,21 +294,28 @@ int init_translator(const thot_ms_dec_pars& tdp)
     base_pbswtm_ptr->link_swm_info(swModelInfoPtr);
   }
 
-  if(base_pbtm_ptr)
+  if(phrbtm_ptr)
   {
-    err=base_pbtm_ptr->loadLangModel(tdp.languageModelFileName.c_str());
+    err=phrbtm_ptr->loadLangModel(tdp.languageModelFileName.c_str());
     if(err==ERROR)
     {
       release_translator();
       return ERROR;
     }
     
-    err=base_pbtm_ptr->loadAligModel(tdp.transModelPref.c_str());
+    err=phrbtm_ptr->loadAligModel(tdp.transModelPref.c_str());
     if(err==ERROR)
     {
       release_translator();
       return ERROR;
     }
+  }
+
+      // Link features information if appliable 
+  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
+  if(pbtm_ptr)
+  {
+    pbtm_ptr->link_feats_info(featuresInfoPtr);
   }
 
       // Set heuristic
@@ -372,6 +394,22 @@ void release_translator(void)
   delete trConstraintsPtr;
   delete smtModelPtr;
 
+      // Delete features information
+
+      // Release phrase models
+  for(unsigned int i=0;i<phraseModelsInfo.invPbModelPtrVec.size();++i)
+    delete phraseModelsInfo.invPbModelPtrVec[i];
+
+      // Release language models
+  for(unsigned int i=0;i<langModelsInfo.lModelPtrVec.size();++i)
+    delete langModelsInfo.lModelPtrVec[i];
+
+      // Release feature pointers
+  for(unsigned int i=0;i<featuresInfoPtr->featPtrVec.size();++i)
+    delete featuresInfoPtr->featPtrVec[i];
+  delete featuresInfoPtr;
+
+      // Release class factory handler
   dynClassFactoryHandler.release_smt();
 }
 

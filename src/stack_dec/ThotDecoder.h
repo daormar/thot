@@ -45,6 +45,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 // Types defining decoder architecture
+#include "_pbTransModel.h"
 #include "_phraseBasedTransModel.h"
 #include "_phrSwTransModel.h"
 #include "BaseSmtModel.h"
