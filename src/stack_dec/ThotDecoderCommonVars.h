@@ -26,14 +26,17 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include THOT_SMTMODEL_H // Define SmtModel type. It is set in
-                              // configure by checking SMTMODEL_H
-                              // variable (default value: SmtModel.h)
+                         // configure by checking SMTMODEL_H
+                         // variable (default value: SmtModel.h)
+#include "FeaturesInfo.h"
 #include "BaseTranslationConstraints.h"
 #include "BaseLogLinWeightUpdater.h"
 #include "BaseScorer.h"
 #include "BasePbTransModel.h"
 #include "BaseErrorCorrectionModel.h"
 #include "SwModelInfo.h"
+#include "PhraseModelsInfo.h"
+#include "LangModelsInfo.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
 #include <WgHandler.h>
@@ -46,6 +49,7 @@ using namespace std;
 class ThotDecoderCommonVars
 {
  public:
+  
   SwModelInfo* swModelInfoPtr;
   PhraseModelInfo* phrModelInfoPtr;
   LangModelInfo* langModelInfoPtr;
@@ -56,6 +60,11 @@ class ThotDecoderCommonVars
   BaseScorer* scorerPtr;
   BaseLogLinWeightUpdater* llWeightUpdaterPtr;
   BaseTranslationConstraints* trConstraintsPtr;
+
+      // Variables related to feature-based implementation
+  PhraseModelsInfo phraseModelsInfo;
+  LangModelsInfo langModelsInfo;
+  FeaturesInfo<SmtModel::HypScoreInfo>* featuresInfoPtr;
   
   DynClassFactoryHandler dynClassFactoryHandler;
 };
