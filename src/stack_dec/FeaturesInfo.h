@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-#ifndef _LangModelsInfo_h
-#define _LangModelsInfo_h
+#ifndef _FeaturesInfo_h
+#define _FeaturesInfo_h
 
 //--------------- Include files --------------------------------------
 
@@ -25,20 +25,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include THOT_LM_STATE_H // Define LM_State type. It is set in
-                         // configure by checking LM_STATE_H
-                         // variable (default value: LM_State.h)
-#include "BaseNgramLM.h"
-#include "BaseWordPenaltyModel.h"
-#include "WordIndex.h"
+#include "BasePbTransModelFeature.h"
 #include "myVector.h"
 
-//--------------- LangModelsInfo struct
+//--------------- FeaturesInfo struct
 
-struct LangModelsInfo
+template<class SCORE_INFO>
+struct FeaturesInfo
 {
-  Vector<BaseNgramLM<LM_State>*> lModelPtrVec;
-  BaseWordPenaltyModel* wpModelPtr;
+   Vector<BasePbTransModelFeature<SCORE_INFO>* > featPtrVec;
 };
 
 #endif

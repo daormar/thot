@@ -32,9 +32,9 @@ PbTransModelPars.h PbTransModelInputVars.h PhraseCacheTable.h		\
 NbestTransCacheData.h _phraseBasedTransModel.h _pbTransModel.h		\
 PbTransModel.h OnlineTrainingPars.h NgramCacheTable.h			\
 _nbUncoupledAssistedTrans.h multi_stack_decoder_rec.h LangModelPars.h	\
-LangModelInfo.h LangModelsInfo.h HypStateDict.h HypStateDictData.h	\
-HypSortCriterion.h client_server_defs.h CatDefs.h bleu.h bleu.cc	\
-BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h			\
+LangModelInfo.h LangModelsInfo.h FeaturesInfo.h HypStateDict.h		\
+HypStateDictData.h HypSortCriterion.h client_server_defs.h CatDefs.h	\
+bleu.h bleu.cc BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h	\
 BasePbTransModelFeature.h WordPenaltyFeat.h WordPenaltyFeat.cc		\
 LangModelFeat.h LangModelFeat.cc DirectPhraseModelFeat.h		\
 DirectPhraseModelFeat.cc BaseSmtModel.h BasePhraseHypothesisRec.h	\

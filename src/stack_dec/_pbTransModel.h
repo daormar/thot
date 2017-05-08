@@ -23,7 +23,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /* Prototypes file: _pbTransModel.h                                 */
 /*                                                                  */
 /* Description: Declares the _pbTransModel class.                   */
-/*              This class is a succesor of the Base_pbTransModel   */
+/*              This class is a succesor of the BasePbTransModel    */
 /*              class.                                              */
 /*                                                                  */
 /********************************************************************/
@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  * @file _pbTransModel.h
  *
  * @brief Declares the _pbTransModel class.  This class is a
- * succesor of the Base_pbTransModel class.
+ * succesor of the BasePbTransModel class.
  */
 
 #ifndef __pbTransModel_h
@@ -45,12 +45,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "DirectPhraseModelFeat.h"
-#include "BasePbTransModelFeature.h"
-#include "PhraseModelsInfo.h"
-#include "LangModelsInfo.h"
+#include "FeaturesInfo.h"
 #include "BasePbTransModel.h"
+#include "PhraseTransTableNodeData.h"
+#include "NbestTransTable.h"
 #include "SingleWordVocab.h"
 #include "SourceSegmentation.h"
+#include "WordPredictor.h"
 #include "PbTransModelInputVars.h"
 #include "StatModelDefs.h"
 #include "Prob.h"
@@ -88,7 +89,10 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
 
       // Constructor
   _pbTransModel();
-  
+
+      // Link features information
+  void link_feats_info(FeaturesInfo<HypScoreInfo>* _featuresInfoPtr);
+
   void clear(void);
 
       // Actions to be executed before the translation
@@ -172,15 +176,14 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Heuristic function to be used
   unsigned int heuristicId;
 
-      // Feature vector
-  Vector<BasePbTransModelFeature<HypScoreInfo>* > featVec;
-
-      // Model information
-  PhraseModelsInfo phraseModelsInfo;
-  LangModelsInfo langModelsInfo;
+      // Feature vector information
+  FeaturesInfo<HypScoreInfo>* featuresInfoPtr;
 
       // Vocabulary handler
   SingleWordVocab singleWordVocab;
+
+      // Word predictor
+  WordPredictor wordPredictor;
 
       // Data structure to store input variables
   PbTransModelInputVars pbtmInputVars;
@@ -237,9 +240,19 @@ _pbTransModel<HYPOTHESIS>::_pbTransModel(void):BasePbTransModel<HYPOTHESIS>()
 {
       // Set state info
   state=MODEL_IDLE_STATE;
-       
+
+      // Initialize feature information pointer
+  featuresInfoPtr=NULL;
+  
       // Initially, no heuristic is used
   heuristicId=NO_HEURISTIC;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::link_feats_info(FeaturesInfo<HypScoreInfo>* _featuresInfoPtr)
+{
+  featuresInfoPtr=_featuresInfoPtr;
 }
 
 //---------------------------------
@@ -247,9 +260,15 @@ template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::clear(void)
 {
       // TO-BE-DONE
-      
+
       // Set state info
   state=MODEL_IDLE_STATE;
+
+      // Initialize feature information pointer
+  featuresInfoPtr=NULL;
+
+      // Initially, no heuristic is used
+  heuristicId=NO_HEURISTIC;
 }
 
 //---------------------------------

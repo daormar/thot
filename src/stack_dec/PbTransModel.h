@@ -142,10 +142,10 @@ Score PbTransModel<EQCLASS_FUNC>::nullHypothesisScrComps(Hypothesis& nullHyp,
   scoreComponents.clear();
 
       // Obtain score for components
-  for(unsigned int i=0;i<this->featVec.size();++i)
+  for(unsigned int i=0;i<this->featuresInfoPtr->featPtrVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->featVec[i]->extensionScore(srcLen,hypScoreInfo,dataTypeStr,dataTypeStr,unweightedScore);
+    hypScoreInfo=this->featuresInfoPtr->featPtrVec[i]->extensionScore(srcLen,hypScoreInfo,dataTypeStr,dataTypeStr,unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
     
@@ -254,10 +254,10 @@ Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
   scoreComponents.clear();
 
       // Obtain score for components
-  for(unsigned int i=0;i<this->featVec.size();++i)
+  for(unsigned int i=0;i<this->featuresInfoPtr->featPtrVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->featVec[i]->extensionScore(srcLen,hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
+    hypScoreInfo=this->featuresInfoPtr->featPtrVec[i]->extensionScore(srcLen,hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
     
@@ -305,8 +305,6 @@ void PbTransModel<EQCLASS_FUNC>::extendHypDataIdx(PositionIndex srcLeft,
 template<class EQCLASS_FUNC>
 PbTransModel<EQCLASS_FUNC>::~PbTransModel()
 {
-  for(unsigned int i=0;i<this->featVec.size();++i)
-    delete this->featVec[i];
 }
 
 //-------------------------
