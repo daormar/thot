@@ -202,7 +202,7 @@ void DaTriePhraseTable::addSrcTrgInfo(const Vector<WordIndex>& s,
                                       const Vector<WordIndex>& t,
                                       Count st_inf)
 {
-  trieStore(getSrcTrg(s, t), (int) st_inf.get_c_st());  // (USUSED_WORD, s, UNUSED_WORD, t)
+  //trieStore(getSrcTrg(s, t), (int) st_inf.get_c_st());  // (USUSED_WORD, s, UNUSED_WORD, t)
   trieStore(getTrgSrc(s, t), (int) st_inf.get_c_st());  // (t, UNUSED_WORD, s)
 }
 
@@ -220,12 +220,6 @@ void DaTriePhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
   addSrcInfo(s, s_count + c);  // (USUSED_WORD, s, UNUSED_WORD)
   trieStore(t, (int) (t_count + c).get_c_s());  // (t)
   addSrcTrgInfo(s, t, (int) (src_trg_count + c).get_c_st());
-
-  //std::stringstream result;
-  //std::copy(s_uw_t_uw_vec.begin(), s_uw_t_uw_vec.end(), std::ostream_iterator<uint>(result, " "));
-
-  //printf("%s\n", result.str().c_str());
-  //cout << result.str().c_str() << endl;
 }
 
 //-------------------------
@@ -281,7 +275,7 @@ Count DaTriePhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
                                        bool &found)
 {
   // Retrieve counter state
-  return getInfo(getSrcTrg(s, t), found);
+  return getInfo(getTrgSrc(s, t), found);
 }
 
 //-------------------------
@@ -383,7 +377,12 @@ bool DaTriePhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
 bool DaTriePhraseTable::getEntriesForSource(const Vector<WordIndex>& s,
                                             DaTriePhraseTable::TrgTableNode& trgtn) 
 {
-      // TO-BE-DONE (LOW PRIORITY)
+  /*DaTriePhraseTable::SrcTableNode srctn;
+  Vector<WordIndex> uw_s_vec = getSrc(s);
+  bool found = getEntriesForTarget(uw_s_vec, srctn);
+  trgtn = (DaTriePhraseTable::TrgTableNode) srctn;
+
+  return found;*/
 }
 
 //-------------------------
@@ -486,6 +485,7 @@ bool DaTriePhraseTable::const_iterator::operator++(void) //prefix
       }
       else
       {
+        cout << "Final state: " << internalTrieIter << endl;
         return false;  // We have not found any more elements in the trie
       }
     }
