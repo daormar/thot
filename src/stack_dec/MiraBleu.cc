@@ -22,7 +22,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "StrProcUtils.h"
 
 
-//--------------- KbMiraLlWu class functions
+//--------------- MiraBleu class functions
 
 //---------------------------------------
 double MiraBleu::scoreFromStats(Vector<unsigned int>& stats){
