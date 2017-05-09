@@ -454,17 +454,13 @@ DaTriePhraseTable::const_iterator DaTriePhraseTable::begin(void)const
   DaTriePhraseTable::const_iterator iter(this, trie_iter);
 
   return iter;
-  // DaTriePhraseTable::const_iterator iter(this,phraseDict.begin());
-  // return iter;
 }
 
 //-------------------------
 DaTriePhraseTable::const_iterator DaTriePhraseTable::end(void)const
 {
-  //DaTriePhraseTable::const_iterator iter(this, NULL); // TODO: How to detect end?
-  //return iter;
-  // DaTriePhraseTable::const_iterator iter(this,phraseDict.end());
-  // return iter;
+  DaTriePhraseTable::const_iterator iter(this, NULL);
+  return iter;
 }
 
 // const_iterator function definitions
@@ -483,12 +479,10 @@ bool DaTriePhraseTable::const_iterator::operator++(void) //prefix
           return true;
         }
       }
-      else
-      {
-        cout << "Final state: " << internalTrieIter << endl;
-        return false;  // We have not found any more elements in the trie
-      }
     }
+
+    internalTrieIter = NULL;
+    return false;  // We have not found any more elements in the trie
   }
   else
   {
@@ -505,7 +499,7 @@ bool DaTriePhraseTable::const_iterator::operator++(int)  //postfix
 //--------------------------
 int DaTriePhraseTable::const_iterator::operator==(const const_iterator& right)
 {
-  return (ptPtr == right.ptPtr && internalTrieIter == right.internalTrieIter);	
+  return (ptPtr == right.ptPtr && internalTrieIter == right.internalTrieIter);
 }
 
 //--------------------------

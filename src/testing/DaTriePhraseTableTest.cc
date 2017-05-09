@@ -330,7 +330,10 @@ void DaTriePhraseTableTest::testIteratorsLoop()
   Vector<WordIndex> t = getVector("Skiertag lake");
   
   tab->clear();
-  tab->addSrcTrgInfo(s, t, Count(1));
+  tab->incrCountsOfEntry(s, t, Count(1));
+
+  CPPUNIT_ASSERT(tab->begin() != tab->end());
+  CPPUNIT_ASSERT(tab->begin() != tab->begin());
 
   int i = 0;
   const int MAX_ITER = 10;
@@ -338,16 +341,17 @@ void DaTriePhraseTableTest::testIteratorsLoop()
   for(DaTriePhraseTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
   {
     pair<Vector<WordIndex>, int> x = *iter;
-    wcout << endl << tab->vectorToWstring(x.first);
-    cout << " " << x.second << endl;
     if (i == 0)
-      CPPUNIT_ASSERT( x.first == tab->getSrcTrg(s, t) );
+      CPPUNIT_ASSERT( x.first == tab->getSrc(s) );
     else if (i == 1)
+      CPPUNIT_ASSERT( x.first == t );
+    else if (i == 2)
       CPPUNIT_ASSERT( x.first == tab->getTrgSrc(s, t) );
+    
     CPPUNIT_ASSERT( x.second == 1);   
   }
 
-  CPPUNIT_ASSERT( i == 2 );
+  CPPUNIT_ASSERT( i == 3 );
 }
 
 //---------------------------------------
