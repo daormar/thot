@@ -323,8 +323,8 @@ void DaTriePhraseTableTest::testAddSrcTrgInfo()
 void DaTriePhraseTableTest::testIteratorsLoop()
 {
   /* TEST:
-  /* Check basic implementation of iterators - function
-  /* begin() and operators (++ prefix, *).
+  /* Check basic implementation of iterators - functions
+  /* begin(), end() and operators (++ postfix, *).
   */
   Vector<WordIndex> s = getVector("jezioro Skiertag");
   Vector<WordIndex> t = getVector("Skiertag lake");
@@ -359,7 +359,7 @@ void DaTriePhraseTableTest::testIteratorsOperatorsPlusPlusStar()
 {
   /* TEST:
   /* Check basic implementation of iterators - function
-  /* begin() and operators (++ prefix, ++ postfix, *).
+  /* begin() and operators (++ prefix, ++ postfix, *, ->).
   */
   bool found;
 
@@ -385,9 +385,9 @@ void DaTriePhraseTableTest::testIteratorsOperatorsPlusPlusStar()
   // Third element (t) - should be found
   found = (iter++);
   CPPUNIT_ASSERT( found );
-  x = *iter;
-  CPPUNIT_ASSERT( x.first == t );
-  CPPUNIT_ASSERT( x.second == 2);
+  //x = *iter;
+  CPPUNIT_ASSERT( iter->first == t );
+  CPPUNIT_ASSERT( iter->second == 2);
   
   // Fourth element (t, s) - should be found
   found = ++iter;

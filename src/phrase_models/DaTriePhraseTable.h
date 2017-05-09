@@ -157,6 +157,7 @@ class DaTriePhraseTable: public BasePhraseTable
       protected:
         const DaTriePhraseTable* ptPtr;
         TrieIterator* internalTrieIter;
+        pair<Vector<WordIndex>, int> trieItem;
         /* PhraseDict::const_iterator pdIter; */
            
       public:
@@ -174,6 +175,7 @@ class DaTriePhraseTable: public BasePhraseTable
         int operator==(const const_iterator& right); 
         int operator!=(const const_iterator& right);
         pair<Vector<WordIndex>, int> operator*(void);
+        const pair<Vector<WordIndex>, int>* operator->(void);
         /* const PhraseDict::const_iterator& operator->(void)const; */
         ~const_iterator()
         {

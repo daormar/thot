@@ -511,19 +511,21 @@ int DaTriePhraseTable::const_iterator::operator!=(const const_iterator& right)
 //--------------------------
 pair<Vector<WordIndex>, int> DaTriePhraseTable::const_iterator::operator*(void)
 {
+  return *operator->();
+}
+
+//--------------------------
+const pair<Vector<WordIndex>, int>*
+DaTriePhraseTable::const_iterator::operator->(void)
+{
   AlphaChar *key;
   key = trie_iterator_get_key(internalTrieIter);
   Vector<WordIndex> key_vec = ptPtr->alphaCharToVector(key);
   int status = (int) trie_iterator_get_data(internalTrieIter);
 
-  return pair<Vector<WordIndex>, int>(key_vec, status);
-}
+  trieItem = make_pair(key_vec, status);
 
-//--------------------------
-// const PhraseDict::const_iterator&
-// DaTriePhraseTable::const_iterator::operator->(void)const
-// {
-//   return pdIter;
-// }
+  return &trieItem;
+}
 
 //-------------------------
