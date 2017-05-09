@@ -337,13 +337,13 @@ void DaTriePhraseTableTest::testIteratorsLoop()
 
   for(DaTriePhraseTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
   {
-    pair<wstring, int> x = *iter;
-    wcout << endl << x.first;
+    pair<Vector<WordIndex>, int> x = *iter;
+    wcout << endl << tab->vectorToWstring(x.first);
     cout << " " << x.second << endl;
     if (i == 0)
-      CPPUNIT_ASSERT( x.first == tab->vectorToWstring(tab->getSrcTrg(s, t)) );
+      CPPUNIT_ASSERT( x.first == tab->getSrcTrg(s, t) );
     else if (i == 1)
-      CPPUNIT_ASSERT( x.first == tab->vectorToWstring(tab->getTrgSrc(s, t)) );
+      CPPUNIT_ASSERT( x.first == tab->getTrgSrc(s, t) );
     CPPUNIT_ASSERT( x.second == 1);   
   }
 
@@ -367,29 +367,29 @@ void DaTriePhraseTableTest::testIteratorsOperatorsPlusPlusStar()
 
   // First element s - should be found
   DaTriePhraseTable::const_iterator iter = tab->begin();
-  pair<wstring, int> x = *iter;
-  CPPUNIT_ASSERT( x.first == tab->vectorToWstring(tab->getSrc(s)) );
+  pair<Vector<WordIndex>, int> x = *iter;
+  CPPUNIT_ASSERT( x.first == tab->getSrc(s) );
   CPPUNIT_ASSERT( x.second == 2);
   
   // Second element (s, t) - should be found
   //found = ++iter;
   //CPPUNIT_ASSERT( found );
   //x = *iter;
-  //CPPUNIT_ASSERT( x.first == tab->vectorToWstring(tab->getSrcTrg(s, t)) );
+  //CPPUNIT_ASSERT( x.first == tab->getSrcTrg(s, t) );
   //CPPUNIT_ASSERT( x.second == 2);
 
   // Third element (t) - should be found
   found = (iter++);
   CPPUNIT_ASSERT( found );
   x = *iter;
-  CPPUNIT_ASSERT( x.first == tab->vectorToWstring(t) );
+  CPPUNIT_ASSERT( x.first == t );
   CPPUNIT_ASSERT( x.second == 2);
   
   // Fourth element (t, s) - should be found
   found = ++iter;
   CPPUNIT_ASSERT( found );
   x = *iter;
-  CPPUNIT_ASSERT( x.first == tab->vectorToWstring(tab->getTrgSrc(s, t)) );
+  CPPUNIT_ASSERT( x.first == tab->getTrgSrc(s, t) );
   CPPUNIT_ASSERT( x.second == 2);
 
   // Fifth element - should not be found

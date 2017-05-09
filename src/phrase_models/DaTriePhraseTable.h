@@ -173,8 +173,7 @@ class DaTriePhraseTable: public BasePhraseTable
         bool operator++(int);  //postfix
         int operator==(const const_iterator& right); 
         int operator!=(const const_iterator& right);
-        pair<wstring, int> operator*(void);
-        //TrieIterator operator*(void);
+        pair<Vector<WordIndex>, int> operator*(void);
         /* const PhraseDict::const_iterator& operator->(void)const; */
         ~const_iterator()
         {
