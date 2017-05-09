@@ -36,7 +36,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 DaTriePhraseTable::DaTriePhraseTable(void)
 {
   // Create AlphaMap
-  alphabet_map = alpha_map_new ();
+  alphabet_map = alpha_map_new();
   if(!alphabet_map)
   {
     printf("Cannot create AlphaMap\n");
@@ -56,18 +56,17 @@ DaTriePhraseTable::DaTriePhraseTable(void)
   }
   // Prepare iterator and root node state
   trie_root_node = trie_root (trie);
-  trie_iter = trie_iterator_new(trie_root_node);
 }
 
 //-------------------------
-wstring DaTriePhraseTable::vectorToWstring(const Vector<WordIndex>& s)
+wstring DaTriePhraseTable::vectorToWstring(const Vector<WordIndex>& s) const
 {
   wstring str(s.begin(), s.end());
   return str;
 }
 
 //-------------------------
-Vector<WordIndex> DaTriePhraseTable::alphaCharToVector(AlphaChar *a)
+Vector<WordIndex> DaTriePhraseTable::alphaCharToVector(AlphaChar *a) const
 {
   Vector<WordIndex> vec;
 
@@ -361,7 +360,7 @@ bool DaTriePhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
   {
     AlphaChar *key;
 
-    key = trie_iterator_get_key (iter);
+    key = trie_iterator_get_key(iter);
     if (!key)
       continue;
 
@@ -419,7 +418,7 @@ size_t DaTriePhraseTable::size(void)
 void DaTriePhraseTable::clear(void)
 {
   AlphaMap *map = alpha_map_clone(alphabet_map);
-  trie_iterator_free(trie_iter);
+  alpha_map_free(alphabet_map);
   trie_state_free(trie_root_node);
   trie_free(trie);
   alphabet_map = map;
@@ -431,24 +430,31 @@ void DaTriePhraseTable::clear(void)
   }
   // Recreate root node indicator and trie iterator
   trie_root_node = trie_root (trie);
-  trie_iter = trie_iterator_new(trie_root_node);
 }
 
 //-------------------------
 DaTriePhraseTable::~DaTriePhraseTable(void)
 {
-  trie_iterator_free(trie_iter);
   trie_state_free(trie_root_node);
+  alpha_map_free(alphabet_map);
   trie_free(trie);
 }
 
 //-------------------------
 DaTriePhraseTable::const_iterator DaTriePhraseTable::begin(void)const
 {
-  /*trie_iterator_free(trie_iter);
-  trie_iter = trie_iterator_new(trie_root_node);
+  AlphaChar *key;
+  TrieIterator *trie_iter;
 
-  return trie_iter;*/
+  trie_iter = trie_iterator_new(trie_root_node);
+  while(!trie_iterator_get_key(trie_iter) && trie_iterator_next(trie_iter))
+  {
+    // Do nothing - only moving iterator to the first valid key
+  }
+
+  DaTriePhraseTable::const_iterator iter(this, trie_iter);
+
+  return iter;
   // DaTriePhraseTable::const_iterator iter(this,phraseDict.begin());
   // return iter;
 }
@@ -456,6 +462,8 @@ DaTriePhraseTable::const_iterator DaTriePhraseTable::begin(void)const
 //-------------------------
 DaTriePhraseTable::const_iterator DaTriePhraseTable::end(void)const
 {
+  //DaTriePhraseTable::const_iterator iter(this, NULL); // TODO: How to detect end?
+  //return iter;
   // DaTriePhraseTable::const_iterator iter(this,phraseDict.end());
   // return iter;
 }
@@ -464,14 +472,28 @@ DaTriePhraseTable::const_iterator DaTriePhraseTable::end(void)const
 //--------------------------
 bool DaTriePhraseTable::const_iterator::operator++(void) //prefix
 {
-  /*if(trie_iter != NULL)
+  if(internalTrieIter != NULL)
   {
-    return trie_iterator_next(trie_iter);
+    bool found;
+    AlphaChar *key;
+
+    while(found = trie_iterator_next(internalTrieIter)) {
+      if (found) {
+        key = trie_iterator_get_key(internalTrieIter);
+        if (key) {
+          return true;
+        }
+      }
+      else
+      {
+        return false;  // We have not found any more elements in the trie
+      }
+    }
   }
   else
   {
-    return false;
-  }*/
+    return false;  // Iterator does not exist
+  }
 }
 
 //--------------------------
@@ -483,14 +505,32 @@ bool DaTriePhraseTable::const_iterator::operator++(int)  //postfix
 //--------------------------
 int DaTriePhraseTable::const_iterator::operator==(const const_iterator& right)
 {
-  // return (ptPtr==right.ptPtr && pdIter==right.pdIter);	
+  return (ptPtr == right.ptPtr && internalTrieIter == right.internalTrieIter);	
 }
 
 //--------------------------
 int DaTriePhraseTable::const_iterator::operator!=(const const_iterator& right)
 {
-  return !((*this)==right);
+  return !((*this) == right);
 }
+
+//--------------------------
+pair<wstring, int> DaTriePhraseTable::const_iterator::operator*(void)
+{
+  AlphaChar *key;
+  key = trie_iterator_get_key(internalTrieIter);
+  Vector<WordIndex> wi = ptPtr->alphaCharToVector(key);
+  wstring key_wstr = ptPtr->vectorToWstring(wi);
+  int status = (int) trie_iterator_get_data(internalTrieIter);
+
+  return pair<wstring, int>(key_wstr, status);
+}
+
+//--------------------------
+/*TrieIterator DaTriePhraseTable::const_iterator::operator*(void)
+{
+  return *internalTrieIter;
+}*/
 
 //--------------------------
 // const PhraseDict::const_iterator&

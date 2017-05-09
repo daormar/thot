@@ -272,3 +272,105 @@ void DaTriePhraseTableTest::testAddSrcTrgInfo()
   CPPUNIT_ASSERT( (int) src_trg_count.get_c_s() == 1 );
   CPPUNIT_ASSERT( (int) src_trg_count.get_c_s() == (int) trg_src_count.get_c_s() );
 }
+
+//---------------------------------------
+void DaTriePhraseTableTest::testIteratorsLoop()
+{
+  /* TEST:
+  /* Check basic implementation of iterators - function
+  /* begin() and operators (++ prefix, *).
+  */
+  Vector<WordIndex> s = getVector("jezioro Skiertag");
+  Vector<WordIndex> t = getVector("Skiertag lake");
+  
+  tab->clear();
+  tab->addSrcTrgInfo(s, t, Count(1));
+
+  int i = 0;
+  const int MAX_ITER = 10;
+
+  for(DaTriePhraseTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
+  {
+    pair<wstring, int> x = *iter;
+    wcout << endl << x.first;
+    cout << " " << x.second << endl;
+    if (i == 0)
+      CPPUNIT_ASSERT( x.first == tab->vectorToWstring(tab->getSrcTrg(s, t)) );
+    else if (i == 1)
+      CPPUNIT_ASSERT( x.first == tab->vectorToWstring(tab->getTrgSrc(s, t)) );
+    CPPUNIT_ASSERT( x.second == 1);   
+  }
+
+  CPPUNIT_ASSERT( i == 2 );
+}
+
+//---------------------------------------
+void DaTriePhraseTableTest::testIteratorsOperatorsPlusPlusStar()
+{
+  /* TEST:
+  /* Check basic implementation of iterators - function
+  /* begin() and operators (++ prefix, ++ postfix, *).
+  */
+  bool found;
+
+  Vector<WordIndex> s = getVector("zamek krzyzacki w Malborku");
+  Vector<WordIndex> t = getVector("teutonic castle in Malbork");
+  
+  tab->clear();
+  tab->incrCountsOfEntry(s, t, Count(2));
+
+  // First element s - should be found
+  DaTriePhraseTable::const_iterator iter = tab->begin();
+  pair<wstring, int> x = *iter;
+  CPPUNIT_ASSERT( x.first == tab->vectorToWstring(tab->getSrc(s)) );
+  CPPUNIT_ASSERT( x.second == 2);
+  
+  // Second element (s, t) - should be found
+  found = ++iter;
+  CPPUNIT_ASSERT( found );
+  x = *iter;
+  CPPUNIT_ASSERT( x.first == tab->vectorToWstring(tab->getSrcTrg(s, t)) );
+  CPPUNIT_ASSERT( x.second == 2);
+
+  // Third element (t) - should be found
+  found = (iter++);
+  CPPUNIT_ASSERT( found );
+  x = *iter;
+  CPPUNIT_ASSERT( x.first == tab->vectorToWstring(t) );
+  CPPUNIT_ASSERT( x.second == 2);
+  
+  // Fourth element (t, s) - should be found
+  found = ++iter;
+  CPPUNIT_ASSERT( found );
+  x = *iter;
+  CPPUNIT_ASSERT( x.first == tab->vectorToWstring(tab->getTrgSrc(s, t)) );
+  CPPUNIT_ASSERT( x.second == 2);
+
+  // Fifth element - should not be found
+  found = (iter++);
+  CPPUNIT_ASSERT( !found );
+}
+
+//---------------------------------------
+void DaTriePhraseTableTest::testIteratorsOperatorsEqualNotEqual()
+{
+  /* TEST:
+  /* Check basic implementation of iterators - operators == and !=
+  */
+  bool found;
+
+  Vector<WordIndex> s = getVector("kemping w Kretowinach");
+  Vector<WordIndex> t = getVector("camping Kretowiny");
+  
+  tab->clear();
+  tab->incrCountsOfEntry(s, t, Count(1));
+
+  DaTriePhraseTable::const_iterator iter1 = tab->begin();
+  iter1++;
+  DaTriePhraseTable::const_iterator iter2 = tab->begin();
+  
+  CPPUNIT_ASSERT( iter1 == iter1 );
+  CPPUNIT_ASSERT( !(iter1 != iter1) );
+  CPPUNIT_ASSERT( !(iter1 == iter2) );
+  CPPUNIT_ASSERT( iter1 != iter2 );
+}

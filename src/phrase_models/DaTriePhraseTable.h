@@ -59,7 +59,6 @@ class DaTriePhraseTable: public BasePhraseTable
   
   protected:
     TrieState *trie_root_node;
-    TrieIterator *trie_iter;
   
   public:
 
@@ -70,8 +69,8 @@ class DaTriePhraseTable: public BasePhraseTable
     DaTriePhraseTable(void);
 
         // Converters
-    virtual wstring vectorToWstring(const Vector<WordIndex>& s);
-    virtual Vector<WordIndex> alphaCharToVector(AlphaChar *a);
+    virtual wstring vectorToWstring(const Vector<WordIndex>& s) const;
+    virtual Vector<WordIndex> alphaCharToVector(AlphaChar *a) const;
         // Set element in the trie
     virtual void trieStore(const Vector<WordIndex>& key, int value);
         // Get element from the trie
@@ -154,29 +153,40 @@ class DaTriePhraseTable: public BasePhraseTable
     class const_iterator;
     friend class const_iterator;
     class const_iterator
-      {
-        protected:
-           const DaTriePhraseTable* ptPtr;
-           /* PhraseDict::const_iterator pdIter; */
+    {
+      protected:
+        const DaTriePhraseTable* ptPtr;
+        TrieIterator* internalTrieIter;
+        /* PhraseDict::const_iterator pdIter; */
            
-        public:
-           const_iterator(void){ptPtr=NULL;}
-           /* const_iterator(const DaTriePhraseTable* _ptPtr, */
-           /*                PhraseDict::const_iterator iter):ptPtr(_ptPtr),pdIter(iter) */
-           /*   { */
-           /*   } */
-           bool operator++(void); //prefix
-           bool operator++(int);  //postfix
-           int operator==(const const_iterator& right); 
-           int operator!=(const const_iterator& right); 
-           /* const PhraseDict::const_iterator& operator->(void)const; */
-      };
+      public:
+        const_iterator(void)
+        {
+          ptPtr=NULL;
+          internalTrieIter=NULL;
+        }
+        const_iterator(const DaTriePhraseTable* _ptPtr,
+                       TrieIterator* iter):ptPtr(_ptPtr),internalTrieIter(iter)
+        {
+        }
+        bool operator++(void); //prefix
+        bool operator++(int);  //postfix
+        int operator==(const const_iterator& right); 
+        int operator!=(const const_iterator& right);
+        pair<wstring, int> operator*(void);
+        //TrieIterator operator*(void);
+        /* const PhraseDict::const_iterator& operator->(void)const; */
+        ~const_iterator()
+        {
+          if(internalTrieIter != NULL) {
+            trie_iterator_free(internalTrieIter);
+          }
+        }
+    };
 
         // const_iterator related functions
     DaTriePhraseTable::const_iterator begin(void)const;
     DaTriePhraseTable::const_iterator end(void)const;
-	
- protected:
 
 };
 

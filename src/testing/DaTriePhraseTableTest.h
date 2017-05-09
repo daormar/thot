@@ -72,6 +72,9 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );
   CPPUNIT_TEST( testGetNbestForTrg );
   CPPUNIT_TEST( testAddSrcTrgInfo );
+  //CPPUNIT_TEST( testIteratorsLoop );
+  CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
+  CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
   CPPUNIT_TEST_SUITE_END();
 
  private:
@@ -91,6 +94,9 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   void testRetrievingEntriesWithCountEqualZero();
   void testGetNbestForTrg();
   void testAddSrcTrgInfo();
+  void testIteratorsLoop();
+  void testIteratorsOperatorsPlusPlusStar();
+  void testIteratorsOperatorsEqualNotEqual();
 };
 
 #endif
