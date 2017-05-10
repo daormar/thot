@@ -187,7 +187,9 @@ void DaTriePhraseTable::addTableEntry(const Vector<WordIndex>& s,
                                       const Vector<WordIndex>& t,
                                       PhrasePairInfo inf) 
 {
-      // TO-BE-DONE (LOW PRIORITY)
+  addSrcInfo(s, inf.first.get_c_s());  // (USUSED_WORD, s)
+  trieStore(t, (int) inf.second.get_c_s());  // (t)
+  addSrcTrgInfo(s, t, (int) inf.second.get_c_st()); // (t, UNUSED_WORD, s)
 }
 
 //-------------------------
@@ -217,9 +219,9 @@ void DaTriePhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
   Count src_trg_count = cSrcTrg(s, t);
 
   // Update counts
-  addSrcInfo(s, s_count + c);  // (USUSED_WORD, s, UNUSED_WORD)
+  addSrcInfo(s, s_count + c);  // (USUSED_WORD, s)
   trieStore(t, (int) (t_count + c).get_c_s());  // (t)
-  addSrcTrgInfo(s, t, (int) (src_trg_count + c).get_c_st());
+  addSrcTrgInfo(s, t, (src_trg_count + c).get_c_st());
 }
 
 //-------------------------

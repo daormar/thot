@@ -64,6 +64,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class DaTriePhraseTableTest: public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( DaTriePhraseTableTest );
+  CPPUNIT_TEST( testAddTableEntry );
   CPPUNIT_TEST( testIncCountsOfEntry );
   CPPUNIT_TEST( testStoreAndRestore );
   CPPUNIT_TEST( testGetEntriesForTarget );
@@ -87,6 +88,7 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   void setUp();
   void tearDown();
 
+  void testAddTableEntry();
   void testIncCountsOfEntry();
   void testStoreAndRestore();
   void testGetEntriesForTarget();

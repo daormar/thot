@@ -78,6 +78,23 @@ void DaTriePhraseTableTest::testStoreAndRestore()
 }
 
 //---------------------------------------
+void DaTriePhraseTableTest::testAddTableEntry()
+{
+  Vector<WordIndex> s = getVector("Narie lake");
+  Vector<WordIndex> t = getVector("jezioro Narie");
+  Count s_count = Count(3);
+  Count t_count = Count(2);
+  PhrasePairInfo ppi(s_count, t_count);
+
+  tab->clear();
+  tab->addTableEntry(s, t, ppi);
+
+  CPPUNIT_ASSERT( (int) tab->cSrc(s).get_c_s() == 3 );
+  CPPUNIT_ASSERT( (int) tab->cTrg(t).get_c_s() == 2 );
+  CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t).get_c_st() == 2 );
+}
+
+//---------------------------------------
 void DaTriePhraseTableTest::testIncCountsOfEntry()
 {
   Vector<WordIndex> s = getVector("Narie lake");
@@ -385,7 +402,6 @@ void DaTriePhraseTableTest::testIteratorsOperatorsPlusPlusStar()
   // Third element (t) - should be found
   found = (iter++);
   CPPUNIT_ASSERT( found );
-  //x = *iter;
   CPPUNIT_ASSERT( iter->first == t );
   CPPUNIT_ASSERT( iter->second == 2);
   
