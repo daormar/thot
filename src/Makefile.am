@@ -330,8 +330,8 @@ endif
 exper_h=
 exper_defs=
 
-testing_h= testing/KbMiraLlWuTest.h
-testing_defs= testing/KbMiraLlWuTest.cc
+testing_h= testing/KbMiraLlWuTest.h testing/MiraChfrTest.h
+testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChfrTest.cc
 
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
