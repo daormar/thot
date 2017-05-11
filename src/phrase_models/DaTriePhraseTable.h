@@ -75,6 +75,10 @@ class DaTriePhraseTable: public BasePhraseTable
     virtual void trieStore(const Vector<WordIndex>& key, int value);
         // Get element from the trie
     virtual bool trieRetrieve(const Vector<WordIndex>& key, TrieData &state);
+        // Save trie structure  to file
+    virtual bool trieSaveToFile(const char *path);
+        // Load trie structure from file
+    virtual bool trieLoadFromFile(const char *path);
         // Returns s as (UNUSED_WORD, s)
     virtual Vector<WordIndex> getSrc(const Vector<WordIndex>& s);
         // Returns concatenated s and t as (UNUSED_WORD, s, UNUSED_WORD, t)

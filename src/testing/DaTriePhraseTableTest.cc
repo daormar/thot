@@ -117,21 +117,28 @@ void DaTriePhraseTableTest::testGetEntriesForTarget()
   DaTriePhraseTable::SrcTableNode node;
   Vector<WordIndex> s1_1 = getVector("Pasleka river");
   Vector<WordIndex> s1_2 = getVector("Pasleka");
-  Vector<WordIndex> t1 = getVector("rzeka Pasleka");
+  Vector<WordIndex> t1_1 = getVector("rzeka Pasleka");
+  Vector<WordIndex> t1_2 = getVector("Pasleka");
   Vector<WordIndex> s2 = getVector("river");
   Vector<WordIndex> t2 = getVector("rzeka");
   Count c = Count(1);
 
   tab->clear();
-  tab->incrCountsOfEntry(s1_1, t1, c);
-  tab->incrCountsOfEntry(s1_2, t1, c);
+  tab->incrCountsOfEntry(s1_1, t1_1, c);
+  tab->incrCountsOfEntry(s1_2, t1_1, c);
+  tab->incrCountsOfEntry(s1_1, t1_2, c);
   tab->incrCountsOfEntry(s2, t2, c);
 
   bool result;
   // Looking for phrases for which 'rzeka Pasleka' is translation
-  result = tab->getEntriesForTarget(t1, node);
+  result = tab->getEntriesForTarget(t1_1, node);
   CPPUNIT_ASSERT( result );
   CPPUNIT_ASSERT( node.size() == 2 );
+
+  // Looking for phrases for which 'Pasleka' is translation
+  result = tab->getEntriesForTarget(t1_2, node);
+  CPPUNIT_ASSERT( result );
+  CPPUNIT_ASSERT( node.size() == 1 );
 
   // Looking for phrases for which 'rzeka' is translation
   result = tab->getEntriesForTarget(t2, node);
@@ -439,4 +446,59 @@ void DaTriePhraseTableTest::testIteratorsOperatorsEqualNotEqual()
   CPPUNIT_ASSERT( !(iter1 != iter1) );
   CPPUNIT_ASSERT( !(iter1 == iter2) );
   CPPUNIT_ASSERT( iter1 != iter2 );
+}
+
+//---------------------------------------
+void DaTriePhraseTableTest::testSavingAndRestoringTrie()
+{
+  /* TEST:
+  /* Check saving and restoring trie structure on disk
+  */
+  bool result;
+  int i;
+  const int MAX_ITER = 100;
+  
+  // Fill trie structure with data
+  tab->clear();
+  tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping Kretowiny"), Count(1));
+  tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping in Kretowiny"), Count(2));
+
+  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Car"), Count(1));
+  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Pan Samochodzik"), Count(4));
+  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mister Automobile"), Count(20));
+  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Automobile"), Count(24));
+
+  tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
+                         getVector("First Adventure of Mister Automobile"), Count(5));
+  tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
+                         getVector("First Adventure of Pan Samochodzik"), Count(7));
+
+  // Save structue on disk
+  const char file_name[] = "/home/adam/tmp/trie.obj";
+
+  // Save structure
+  result = tab->trieSaveToFile(file_name);
+  CPPUNIT_ASSERT( result );
+
+  tab->clear();  // Remove structure to make sure that loading trie was performed
+
+  i = 0;
+  for(DaTriePhraseTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
+  {
+    // Do nothing; iterate only over the elements in trie
+  }
+
+  CPPUNIT_ASSERT( i == 0 );  // Collection after cleaning should be empty
+  
+  // Load structure
+  result = tab->trieLoadFromFile(file_name);
+  CPPUNIT_ASSERT( result );
+
+  i = 0;
+  for(DaTriePhraseTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
+  {
+    // Do nothing; iterate only over the elements in trie
+  }
+
+  CPPUNIT_ASSERT( i == 19 );
 }

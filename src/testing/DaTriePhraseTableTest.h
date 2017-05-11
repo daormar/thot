@@ -77,6 +77,7 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   CPPUNIT_TEST( testIteratorsLoop );
   CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
   CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
+  CPPUNIT_TEST( testSavingAndRestoringTrie );
   CPPUNIT_TEST_SUITE_END();
 
  private:
@@ -101,6 +102,7 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   void testIteratorsLoop();
   void testIteratorsOperatorsPlusPlusStar();
   void testIteratorsOperatorsEqualNotEqual();
+  void testSavingAndRestoringTrie();
 };
 
 #endif

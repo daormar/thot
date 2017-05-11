@@ -92,6 +92,33 @@ bool DaTriePhraseTable::trieRetrieve(const Vector<WordIndex>& key, TrieData &sta
 }
 
 //-------------------------
+bool DaTriePhraseTable::trieSaveToFile(const char *path)
+{
+  int result = trie_save(trie, path);
+  if (result == 0)
+    return true;  // Trie saved successuflly
+  return false;  // Trie could not be saved properly
+}
+
+//-------------------------
+bool DaTriePhraseTable::trieLoadFromFile(const char *path)
+{
+  Trie* loaded_trie = trie_new_from_file(path);
+  if (loaded_trie == NULL)
+    return false;  // Cannot load trie
+
+  // Release old resources
+  trie_state_free(trie_root_node);
+  trie_free(trie);
+  // Assign loaded trie
+  trie = loaded_trie;
+  // Recreate root node indicator and trie iterator
+  trie_root_node = trie_root (trie);
+  
+  return true;
+}
+
+//-------------------------
 Vector<WordIndex> DaTriePhraseTable::getSrc(const Vector<WordIndex>& s)
 {
   // Prepare s vector as (UNUSED_WORD, s)
@@ -418,11 +445,8 @@ size_t DaTriePhraseTable::size(void)
 //-------------------------
 void DaTriePhraseTable::clear(void)
 {
-  AlphaMap *map = alpha_map_clone(alphabet_map);
-  alpha_map_free(alphabet_map);
   trie_state_free(trie_root_node);
   trie_free(trie);
-  alphabet_map = map;
   // Create empty trie
   trie = trie_new(alphabet_map);
   if(!trie) {
@@ -448,11 +472,13 @@ DaTriePhraseTable::const_iterator DaTriePhraseTable::begin(void)const
   TrieIterator *trie_iter;
 
   trie_iter = trie_iterator_new(trie_root_node);
-  while(!trie_iterator_get_key(trie_iter) && trie_iterator_next(trie_iter))
+  /*while(!trie_iterator_get_key(trie_iter) && trie_iterator_next(trie_iter))
   {
     // Do nothing - only moving iterator to the first valid key
-  }
-
+  }*/
+  if (!trie_iterator_next(trie_iter))
+    trie_iter = NULL;
+    
   DaTriePhraseTable::const_iterator iter(this, trie_iter);
 
   return iter;
