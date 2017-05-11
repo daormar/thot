@@ -449,14 +449,48 @@ void DaTriePhraseTableTest::testIteratorsOperatorsEqualNotEqual()
 }
 
 //---------------------------------------
+void DaTriePhraseTableTest::testSize()
+{
+  /* TEST:
+  /* Check if number of elements in trie is returned correctly
+  */
+
+  tab->clear();
+  CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
+  
+  // Fill trie structure with data
+  tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping Kretowiny"), Count(1));
+  tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping in Kretowiny"), Count(2));
+
+  CPPUNIT_ASSERT( tab->size() == 5 );
+
+  tab->clear();
+  CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
+
+  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Car"), Count(1));
+  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Pan Samochodzik"), Count(4));
+  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mister Automobile"), Count(20));
+  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Automobile"), Count(24));
+
+  CPPUNIT_ASSERT( tab->size() == 9 );
+
+  tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
+                         getVector("First Adventure of Mister Automobile"), Count(5));
+  tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
+                         getVector("First Adventure of Pan Samochodzik"), Count(7));
+
+
+  CPPUNIT_ASSERT( tab->size() == 9 + 5 );
+
+}
+
+//---------------------------------------
 void DaTriePhraseTableTest::testSavingAndRestoringTrie()
 {
   /* TEST:
   /* Check saving and restoring trie structure on disk
   */
   bool result;
-  int i;
-  const int MAX_ITER = 100;
   
   // Fill trie structure with data
   tab->clear();
@@ -473,6 +507,7 @@ void DaTriePhraseTableTest::testSavingAndRestoringTrie()
   tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
                          getVector("First Adventure of Pan Samochodzik"), Count(7));
 
+  int original_size = tab->size();
   // Save structue on disk
   const char file_name[] = "/home/adam/tmp/trie.obj";
 
@@ -482,23 +517,10 @@ void DaTriePhraseTableTest::testSavingAndRestoringTrie()
 
   tab->clear();  // Remove structure to make sure that loading trie was performed
 
-  i = 0;
-  for(DaTriePhraseTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
-  {
-    // Do nothing; iterate only over the elements in trie
-  }
-
-  CPPUNIT_ASSERT( i == 0 );  // Collection after cleaning should be empty
+  CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
   
   // Load structure
   result = tab->trieLoadFromFile(file_name);
   CPPUNIT_ASSERT( result );
-
-  i = 0;
-  for(DaTriePhraseTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
-  {
-    // Do nothing; iterate only over the elements in trie
-  }
-
-  CPPUNIT_ASSERT( i == 19 );
+  CPPUNIT_ASSERT( tab->size() == original_size );
 }

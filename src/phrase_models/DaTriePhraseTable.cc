@@ -439,7 +439,14 @@ Count DaTriePhraseTable::cTrg(const Vector<WordIndex>& t)
 //-------------------------
 size_t DaTriePhraseTable::size(void)
 {
-      // TO-BE-DONE (LOW PRIORITY)
+  size_t len = 0;
+
+  for(DaTriePhraseTable::const_iterator iter = begin(); iter != end(); iter++, len++)
+  {
+    // Do nothing; iterates only over the elements in trie
+  }
+
+  return len;
 }
 
 //-------------------------
