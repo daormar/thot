@@ -80,6 +80,23 @@ namespace StrProcUtils
     }
   }
 
+  //--------------- stringVectorToStringWithoutSpaces function
+  std::string stringVectorToStringWithoutSpaces(Vector<std::string> svec)
+  {
+    if(svec.size()==0) return "";
+    else
+    {
+      std::string result;
+
+      result=svec[0];
+      for(unsigned int i=1;i<svec.size();++i)
+      {
+        result=result+svec[i];
+      }
+      return result;
+    }
+  }
+
   //--------------- isPrefix function
   bool isPrefix(std::string str1,
                 std::string str2)

@@ -37,6 +37,7 @@ namespace StrProcUtils
   Vector<string> charItemsToVector(const char *ch);
   Vector<std::string> stringToStringVector(std::string s);
   std::string stringVectorToString(Vector<std::string> svec);
+  std::string stringVectorToStringWithoutSpaces(Vector<std::string> svec);
   bool isPrefix(std::string str1,std::string str2);
       // returns true if string str1 is a prefix of string str2
   bool isPrefixStrVec(Vector<std::string> strVec1,

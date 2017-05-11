@@ -15,8 +15,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _MiraChfr_h
-#define _MiraChfr_h
+#ifndef _MiraChrF_h
+#define _MiraChrF_h
 
 //--------------- Include files --------------------------------------
 
@@ -28,35 +28,39 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <cassert>
 #include <iostream>
 
-class MiraChfr : public BaseMiraScorer
+class MiraChrF : public BaseMiraScorer
 {
 public:
     // Constructor
-  MiraChfr() { }
+    MiraChrF() {
+        N_STATS = 3; // cand_len, ref_len, chrf
+        resetBackgroundCorpus();
+    }
 
-  void resetBackgroundCorpus() { }
+    void resetBackgroundCorpus() {  }
 
-  void updateBackgroundCorpus(const Vector<unsigned int>& stats,
-                              double decay) { }
+    void updateBackgroundCorpus(const Vector<unsigned int>& stats,
+                                double decay) {  }
 
     // Score for sentence with background corpus stats
-  void sentBackgroundScore(const std::string& candidate,
-                           const std::string& reference,
-                           double& score,
-                           Vector<unsigned int>& stats);
+    void sentBackgroundScore(const std::string& candidate,
+                             const std::string& reference,
+                             double& score,
+                             Vector<unsigned int>& stats);
 
     // Score for sentence
-  void sentScore(const std::string& candidate,
-                 const std::string& reference,
-                 double& score);
-
-    // Score for corpus
-  void corpusScore(const Vector<std::string>& candidates,
-                   const Vector<std::string>& references,
+    void sentScore(const std::string& candidate,
+                   const std::string& reference,
                    double& score);
 
+    // Score for corpus
+    void corpusScore(const Vector<std::string>& candidates,
+                     const Vector<std::string>& references,
+                     double& score);
+
 private:
-  int ed(Vector<std::string>& s1, Vector<std::string>& s2);
+    unsigned int N_STATS;
 };
 
 #endif
+

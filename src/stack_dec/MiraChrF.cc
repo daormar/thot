@@ -17,36 +17,35 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
-#include "MiraChfr.h"
-#include "StrProcUtils.h"
+#include "chrf.h"
+#include "MiraChrF.h"
 
-//--------------- MiraChfr class functions
 
-//---------------------------------------
-void MiraChfr::sentBackgroundScore(const std::string& candidate,
+void MiraChrF::sentBackgroundScore(const std::string& candidate,
                                    const std::string& reference,
-                                   double& score,
-                                   Vector<unsigned int>& /*sentStats*/)
+                                   double& bleu,
+                                   Vector<unsigned int>& sentStats)
 {
-  Vector<std::string> reference_tokens = StrProcUtils::stringToStringVector(reference);
-  int nwords = reference_tokens.size();
-  double sentenceScore;
-  sentScore(candidate, reference, sentenceScore);
-  score=sentenceScore * nwords;
 }
 
-//---------------------------------------
-void MiraChfr::sentScore(const std::string& candidate,
+void MiraChrF::sentScore(const std::string& candidate,
                          const std::string& reference,
                          double& score)
 {
-      // TO-BE-DONE
+    calculate_chrf(reference, candidate, (float&)score);
 }
 
-//---------------------------------------
-void MiraChfr::corpusScore(const Vector<std::string>& candidates,
+void MiraChrF::corpusScore(const Vector<std::string>& candidates,
                            const Vector<std::string>& references,
                            double& score)
 {
-      // TO-BE-DONE
+    score = 0;
+    for (unsigned int i=0; i<candidates.size(); i++) {
+        double sentenceScore;
+        sentScore(candidates[i], references[i], sentenceScore);
+        score += sentenceScore;
+    }
+
+    score /= candidates.size();
 }
+
