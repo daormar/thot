@@ -54,8 +54,8 @@ int calculate_chrf_file_name(const char* ref,
 //---------------
 int calculate_chrf_file(FILE *reff,
                         FILE *sysf,
-                        float& chrf,
-                        Vector<float>& chrf_n,
+                        double& chrf,
+                        Vector<double>& chrf_n,
                         int verbosity)
 {
     awkInputStream refStream;
@@ -102,7 +102,7 @@ int calculate_chrf_file(FILE *reff,
 
         if(verbosity) cerr<<endl;
 
-        float chrf_i;
+        double chrf_i;
         calculate_chrf(refSentence, sysSentence, chrf_i);
         chrf_n.push_back(chrf_i);
         chrf+=chrf_i;
@@ -126,7 +126,7 @@ int calculate_chrf_file(FILE *reff,
 
 void calculate_chrf(const std::string& refSentence,
                     const std::string& sysSentence,
-                    float& chrf)
+                    double& chrf)
 {
     float totalPrecision = 0;
     float totalRecall = 0;

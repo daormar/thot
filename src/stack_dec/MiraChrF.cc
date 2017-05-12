@@ -32,7 +32,7 @@ void MiraChrF::sentScore(const std::string& candidate,
                          const std::string& reference,
                          double& score)
 {
-    calculate_chrf(reference, candidate, (float&)score);
+    calculate_chrf(reference, candidate, score);
 }
 
 void MiraChrF::corpusScore(const Vector<std::string>& candidates,

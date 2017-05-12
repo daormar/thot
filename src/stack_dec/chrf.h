@@ -31,7 +31,7 @@ int calculate_chrf_file(FILE *refFile,
 
 void calculate_chrf(const std::string& refSentence,
                     const std::string& sysSentence,
-                    float& chrf);
+                    double& chrf);
 
 void count_ngrams(const std::string& refSentence,
                   const std::string& sysSentence,
