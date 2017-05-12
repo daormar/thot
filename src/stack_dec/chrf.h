@@ -19,14 +19,14 @@ using namespace std;
 
 int calculate_chrf_file_name(const char* ref,
                              const char* sys,
-                             float& chrf,
-                             Vector<float>& chrf_n,
+                             double& chrf,
+                             Vector<double>& chrf_n,
                              int verbosity);
 
 int calculate_chrf_file(FILE *refFile,
                         FILE *sysFile,
-                        float& chrf,
-                        Vector<float>& chrf_n,
+                        double& chrf,
+                        Vector<double>& chrf_n,
                         int verbosity);
 
 void calculate_chrf(const std::string& refSentence,

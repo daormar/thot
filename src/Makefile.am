@@ -300,7 +300,7 @@ stack_dec/BasePhraseHypothesisRec.h stack_dec/BasePhraseHypothesis.h	\
 stack_dec/BasePbTransModelStats.h stack_dec/BasePbTransModel.h		\
 stack_dec/BaseHypState.h stack_dec/BaseHypothesisRec.h			\
 stack_dec/BaseHypothesis.h stack_dec/HypDebugData.h			\
-stack_dec/BaseAssistedTrans.h stack_dec/_assistedTrans.h
+stack_dec/BaseAssistedTrans.h stack_dec/_assistedTrans.h stack_dec/chrf.h
 stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
 stack_dec/TranslationConstraints.cc stack_dec/KbMiraLlWu.cc		\
 stack_dec/MiraBleu.cc stack_dec/MiraWer.cc stack_dec/MiraGtm.cc		\

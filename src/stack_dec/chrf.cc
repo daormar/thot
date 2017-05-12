@@ -21,8 +21,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //---------------
 int calculate_chrf_file_name(const char* ref,
                              const char* sys,
-                             float& chrf,
-                             Vector<float>& chrf_n,
+                             double& chrf,
+                             Vector<double>& chrf_n,
                              int verbosity)
 {
     FILE *refFile;
