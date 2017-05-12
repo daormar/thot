@@ -17,37 +17,37 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: MiraChfrTest                                             */
+/* Module: MiraChrFTest                                             */
 /*                                                                  */
-/* Definitions file: MiraChfrTest.cc                                */
+/* Definitions file: MiraChrFTest.cc                                */
 /*                                                                  */
 /********************************************************************/
 
 
 //--------------- Include files --------------------------------------
 
-#include "MiraChfrTest.h"
+#include "MiraChrFTest.h"
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION( MiraChfrTest );
+CPPUNIT_TEST_SUITE_REGISTRATION( MiraChrFTest );
 
-//--------------- MiraChfrTest class functions
+//--------------- MiraChrFTest class functions
 //
 
 //---------------------------------------
-void MiraChfrTest::setUp()
+void MiraChrFTest::setUp()
 {
       // TO-BE-DONE
 }
 
 //---------------------------------------
-void MiraChfrTest::tearDown()
+void MiraChrFTest::tearDown()
 {
       // TO-BE-DONE
 }
 
 //---------------------------------------
-// void MiraChfrTest::testOnlineUpdate()
+// void MiraChrFTest::testOnlineUpdate()
 // {
 //   std::string ref = "those documents are reunidas in the following file :";
 //   Vector<std::string> nbest;

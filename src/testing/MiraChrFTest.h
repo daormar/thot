@@ -18,24 +18,24 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: MiraChfrTest                                             */
+/* Module: MiraChrFTest                                             */
 /*                                                                  */
-/* Prototypes file: MiraChfrTest.h                                  */
+/* Prototypes file: MiraChrFTest.h                                  */
 /*                                                                  */
-/* Description: Declares the MiraChfrTest class implementing        */
+/* Description: Declares the MiraChrFTest class implementing        */
 /*              unit tests for the MiraChfr class.                  */
 /*                                                                  */
 /********************************************************************/
 
 /**
- * @file MiraChfrTest.h
+ * @file MiraChrFTest.h
  *
- * @brief Declares the MiraChfrTest class implementing unit tests
+ * @brief Declares the MiraChrFTest class implementing unit tests
  * for the KbMiraLlWu class.
  */
 
-#ifndef _MiraChfrTest_h
-#define _MiraChfrTest_h
+#ifndef _MiraChrFTest_h
+#define _MiraChrFTest_h
 
 //--------------- Include files --------------------------------------
 
@@ -43,7 +43,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "MiraChfr.h"
+#include "MiraChrF.h"
 #include <cppunit/extensions/HelperMacros.h>
 
 //--------------- Constants ------------------------------------------
@@ -54,15 +54,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- MiraChfrTest template class
+//--------------- MiraChrFTest template class
 
 /**
  * @brief Class implementing tests for KbMiraLlWu.
  */
 
-class MiraChfrTest: public CppUnit::TestFixture
+class MiraChrFTest: public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE( MiraChfrTest );
+  CPPUNIT_TEST_SUITE( MiraChrFTest );
   /* CPPUNIT_TEST( testOnlineUpdate ); */
   CPPUNIT_TEST_SUITE_END();
 

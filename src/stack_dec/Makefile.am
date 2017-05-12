@@ -15,7 +15,7 @@ TranslationConstraints.h TranslationConstraints.cc SmtStack.h		\
 _smtStack.h SmtMultiStackRec.h _smtMultiStack.h				\
 BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc BaseScorer.h	\
 BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraGtm.h MiraGtm.cc MiraWer.h	\
-MiraWer.cc MiraChfr.h MiraChfr.cc thot_li_weight_upd.cc			\
+MiraWer.cc MiraChrF.h MiraChrF.cc thot_li_weight_upd.cc			\
 thot_ll_weight_upd_nblist.cc _smtModel.h ScoreCompDefs.h		\
 _phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc			\
 PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc			\
@@ -32,8 +32,8 @@ PhraseCacheTable.h NbestTransCacheData.h _phraseBasedTransModel.h	\
 OnlineTrainingPars.h NgramCacheTable.h _nbUncoupledAssistedTrans.h	\
 multi_stack_decoder_rec.h LangModelPars.h LangModelInfo.h		\
 HypStateDict.h HypStateDictData.h HypSortCriterion.h			\
-client_server_defs.h CatDefs.h bleu.h bleu.cc chrf.h chrf.cc BaseStackDecoder.h	\
-BaseSmtStack.h BaseSmtMultiStack.h BaseSmtModel.h			\
+client_server_defs.h CatDefs.h bleu.h bleu.cc chrf.h chrf.cc		\
+BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h BaseSmtModel.h	\
 BasePhraseHypothesisRec.h BasePhraseHypothesis.h			\
 BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
 BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h HypDebugData.h	\
