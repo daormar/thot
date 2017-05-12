@@ -136,25 +136,25 @@ void calculate_chrf(const std::string& refSentence,
 
     if (CONSIDER_WHITESPACE) {
         refSentenceTokenized = StrProcUtils::stringVectorToString(StrProcUtils::stringToStringVector(refSentence));
-        sysSentenceTokenized = StrProcUtils::stringVectorToString(StrProcUtils::stringToStringVector(refSentence));
+        sysSentenceTokenized = StrProcUtils::stringVectorToString(StrProcUtils::stringToStringVector(sysSentence));
     } else {
         refSentenceTokenized = StrProcUtils::stringVectorToStringWithoutSpaces(StrProcUtils::stringToStringVector(refSentence));
-        sysSentenceTokenized = StrProcUtils::stringVectorToStringWithoutSpaces(StrProcUtils::stringToStringVector(refSentence));
+        sysSentenceTokenized = StrProcUtils::stringVectorToStringWithoutSpaces(StrProcUtils::stringToStringVector(sysSentence));
     }
 
-    for(unsigned int i=1;i<=std::min((unsigned long)MAX_NGRAM_LENGTH,refSentence.size());++i)
+    for(unsigned int i=1;i<=std::min((unsigned long)MAX_NGRAM_LENGTH,refSentenceTokenized.size());++i)
     {
         unsigned int count;
         float precision;
         float recall;
 
-        count_ngrams(refSentence,sysSentence,i,precision,recall,count);
+        count_ngrams(refSentenceTokenized,sysSentenceTokenized,i,precision,recall,count);
         totalPrecision += precision;
         totalRecall += recall;
     }
 
-    totalPrecision /= std::min((unsigned long)MAX_NGRAM_LENGTH,refSentence.size());
-    totalRecall /= std::min((unsigned long)MAX_NGRAM_LENGTH,refSentence.size());
+    totalPrecision /= std::min((unsigned long)MAX_NGRAM_LENGTH,sysSentenceTokenized.size());
+    totalRecall /= std::min((unsigned long)MAX_NGRAM_LENGTH,refSentenceTokenized.size());
 
     if (totalPrecision==0 || totalRecall==0) chrf=0;
     else chrf = (1 + BETA*BETA)*(totalPrecision*totalRecall/(BETA*BETA*totalPrecision + totalRecall));
