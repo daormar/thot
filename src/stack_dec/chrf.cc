@@ -240,16 +240,3 @@ void count_ngrams(const std::string& refSentence,
     precision = systotal == 0 ? 1 : (float)count/systotal;
     recall = reftotal == 0 ? 1 : (float)count/reftotal;
 }
-
-
-int main()
-{
-    float chrf;
-    Vector<float> chrf_n;
-    calculate_chrf_file_name("/Users/MarinaFomicheva/workspace/temp/ref.txt",
-                             "/Users/MarinaFomicheva/workspace/temp/tgt.txt",
-                             chrf,
-                             chrf_n,
-                             1);
-    return 0;
-}
