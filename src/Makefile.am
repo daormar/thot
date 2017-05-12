@@ -54,8 +54,8 @@ incr_hmm_p0_alig_model_factory.la incr_phrase_model_factory.la		\
 wba_incr_phrase_model_factory.la incr_mux_phrase_model_factory.la	\
 pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
 wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
-mira_wer_factory.la mira_gtm_factory.la kb_mira_ll_wu_factory.la	\
-multi_stack_decoder_rec__swli_factory.la				\
+mira_wer_factory.la mira_gtm_factory.la mira_chrf_factory.la		\
+kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
 wg_uncoupled_assisted_trans__swli_factory.la				\
 translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
 $(DB_CXX_LIBS)
@@ -423,6 +423,10 @@ mira_wer_factory_h=
 mira_wer_factory_defs= stack_dec/MiraWerFactory.cc
 
 ##########
+mira_chrf_factory_h= 
+mira_chrf_factory_defs= stack_dec/MiraChrFFactory.cc
+
+##########
 kb_mira_ll_wu_factory_h= 
 kb_mira_ll_wu_factory_defs=		\
 stack_dec/KbMiraLlWuFactory.cc
@@ -693,6 +697,12 @@ mira_wer_factory_la_SOURCES= $(mira_wer_factory_h)  \
 $(mira_wer_factory_defs)
 mira_wer_factory_la_LIBADD= libthot.la
 mira_wer_factory_la_LDFLAGS= -module
+
+##########
+mira_chrf_factory_la_SOURCES= $(mira_chrf_factory_h)  \
+$(mira_chrf_factory_defs)
+mira_chrf_factory_la_LIBADD= libthot.la
+mira_chrf_factory_la_LDFLAGS= -module
 
 ##########
 kb_mira_ll_wu_factory_la_SOURCES= $(kb_mira_ll_wu_factory_h)	\
