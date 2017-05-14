@@ -27,10 +27,10 @@ PhrHypState.cc PhrHypNumcovJumpsEqClassF.h PhrHypNumcovJumpsEqClassF.cc	\
 PhrHypNumcovJumps01EqClassF.h PhrHypNumcovJumps01EqClassF.cc		\
 PhrHypEqClassF.h PhrHypEqClassF.cc PhrHypData.h PhrHypDataStr.h		\
 PhrasePairCacheTable.h PhraseModelPars.h PhraseModelInfo.h		\
-PhraseModelsInfo.h _phraseHypothesisRec.h _phraseHypothesis.h		\
-PbTransModelPars.h PbTransModelInputVars.h PhraseCacheTable.h		\
-NbestTransCacheData.h _phraseBasedTransModel.h _pbTransModel.h		\
-PbTransModel.h OnlineTrainingPars.h NgramCacheTable.h			\
+PhraseModelsInfo.h SwModelsInfo.h _phraseHypothesisRec.h		\
+_phraseHypothesis.h PbTransModelPars.h PbTransModelInputVars.h		\
+PhraseCacheTable.h NbestTransCacheData.h _phraseBasedTransModel.h	\
+_pbTransModel.h PbTransModel.h OnlineTrainingPars.h NgramCacheTable.h	\
 _nbUncoupledAssistedTrans.h multi_stack_decoder_rec.h LangModelPars.h	\
 LangModelInfo.h LangModelsInfo.h FeaturesInfo.h HypStateDict.h		\
 HypStateDictData.h HypSortCriterion.h client_server_defs.h CatDefs.h	\

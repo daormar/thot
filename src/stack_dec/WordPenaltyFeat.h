@@ -68,6 +68,9 @@ class WordPenaltyFeat: public BasePbTransModelFeature<SCORE_INFO>
       // TO-BE-DONE
   typedef typename BasePbTransModelFeature<SCORE_INFO>::HypScoreInfo HypScoreInfo;
 
+      // Constructor
+  WordPenaltyFeat();
+  
       // Feature information
   std::string getFeatType(void);
 
@@ -89,6 +92,13 @@ class WordPenaltyFeat: public BasePbTransModelFeature<SCORE_INFO>
 //--------------- WordPenaltyFeat class functions
 //
 
+template<class SCORE_INFO>
+WordPenaltyFeat<SCORE_INFO>::WordPenaltyFeat()
+{
+  this->weight=0.000001;
+}
+
+//---------------------------------
 template<class SCORE_INFO>
 std::string WordPenaltyFeat<SCORE_INFO>::getFeatType(void)
 {

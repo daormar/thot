@@ -34,12 +34,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BaseScorer.h"
 #include "BasePbTransModel.h"
 #include "BaseErrorCorrectionModel.h"
+#include "SwModelsInfo.h"
 #include "SwModelInfo.h"
 #include "PhraseModelsInfo.h"
 #include "LangModelsInfo.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
-#include <WgHandler.h>
+#include "BaseWordPenaltyModel.h"
+#include "WgHandler.h"
 #include "DynClassFactoryHandler.h"
 
 using namespace std;
@@ -53,6 +55,7 @@ class ThotDecoderCommonVars
   SwModelInfo* swModelInfoPtr;
   PhraseModelInfo* phrModelInfoPtr;
   LangModelInfo* langModelInfoPtr;
+  BaseWordPenaltyModel* wpModelPtr;
   WgHandler* wgHandlerPtr;
   BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
   BaseErrorCorrectionModel* ecModelPtr;
@@ -62,6 +65,8 @@ class ThotDecoderCommonVars
   BaseTranslationConstraints* trConstraintsPtr;
 
       // Variables related to feature-based implementation
+  bool featureBasedImplEnabled;
+  SwModelsInfo swModelsInfo;
   PhraseModelsInfo phraseModelsInfo;
   LangModelsInfo langModelsInfo;
   FeaturesInfo<SmtModel::HypScoreInfo>* featuresInfoPtr;

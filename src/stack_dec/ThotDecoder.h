@@ -45,6 +45,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 // Types defining decoder architecture
+#include "DirectPhraseModelFeat.h"
+#include "LangModelFeat.h"
+#include "WordPenaltyFeat.h"
 #include "_pbTransModel.h"
 #include "_phraseBasedTransModel.h"
 #include "_phrSwTransModel.h"
@@ -194,8 +197,12 @@ class ThotDecoder
   void decrease_non_atomic_ops_running(void);
 
       // Functions to load models
+  bool process_tm_descriptor(const char* tmFilesPrefix,
+                             int verbose/*=0*/);
   bool load_tm(const char* tmFilesPrefix,
                int verbose=0);
+  bool load_tm_feat_impl(const char* tmFilesPrefix,
+                         int verbose=0);
   bool load_lm(const char* lmFileName,
                int verbose=0);
   bool load_ecm(const char* ecmFilesPrefix,
@@ -279,6 +286,10 @@ class ThotDecoder
       // Memory handling related functions
   bool instantiate_swm_info(const char* tmFilesPrefix,
                             int verbose=0);
+  bool instantiate_swm_info_feat_impl(const char* tmFilesPrefix,
+                                      int verbose=0);
   void deleteSwModelPtrs(void);
+  void deleteSwModelPtrsFeatImpl(void);
+
 };
 #endif

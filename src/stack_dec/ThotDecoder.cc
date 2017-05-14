@@ -50,13 +50,14 @@ ThotDecoder::ThotDecoder()
   
   tdCommonVars.langModelInfoPtr=new LangModelInfo;
 
-  tdCommonVars.langModelInfoPtr->wpModelPtr=tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelInitPars);
-  if(tdCommonVars.langModelInfoPtr->wpModelPtr==NULL)
+  tdCommonVars.wpModelPtr=tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelInitPars);
+  if(tdCommonVars.wpModelPtr==NULL)
   {
     cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
     exit(ERROR);
   }
-
+  tdCommonVars.langModelInfoPtr->wpModelPtr=tdCommonVars.wpModelPtr;
+  
   tdCommonVars.langModelInfoPtr->lModelPtr=tdCommonVars.dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseNgramLMInitPars);
   if(tdCommonVars.langModelInfoPtr->lModelPtr==NULL)
   {
@@ -153,7 +154,18 @@ ThotDecoder::ThotDecoder()
   if(pbtm_ptr)
   {
     pbtm_ptr->link_feats_info(tdCommonVars.featuresInfoPtr);
+    tdCommonVars.featureBasedImplEnabled=true;
   }
+  else
+  {
+    tdCommonVars.featureBasedImplEnabled=false;
+  }
+  
+      // Add word penalty model feature
+  WordPenaltyFeat<SmtModel::HypScoreInfo>* wordPenaltyFeatPtr=new WordPenaltyFeat<SmtModel::HypScoreInfo>;
+  wordPenaltyFeatPtr->setFeatName("wpm");
+  wordPenaltyFeatPtr->link_wpm(tdCommonVars.wpModelPtr);
+  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(wordPenaltyFeatPtr);
   
       // Initialize mutexes and conditions
   pthread_mutex_init(&user_id_to_idx_mut,NULL);
@@ -756,6 +768,13 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
 }
 
 //--------------------------
+bool ThotDecoder::instantiate_swm_info_feat_impl(const char* tmFilesPrefix,
+                                                 int /*verbose=0*/)
+{
+      // TO-BE-DONE
+}
+
+//--------------------------
 bool ThotDecoder::load_tm(const char* tmFilesPrefix,
                           int verbose/*=0*/)
 {
@@ -794,6 +813,56 @@ bool ThotDecoder::load_tm(const char* tmFilesPrefix,
       }
     }
   }
+      // Unlock non_atomic_op_cond mutex
+  unlock_non_atomic_op_mut();
+  
+  /////////// end of mutex 
+  pthread_mutex_unlock(&atomic_op_mut);
+
+  return ret;
+}
+
+//--------------------------
+bool ThotDecoder::process_tm_descriptor(const char* tmFilesPrefix,
+                                        int verbose/*=0*/)
+{
+  if(verbose)
+  {
+    cerr<<"Processing translation model descriptor: "<<tmFilesPrefix<<endl;
+  }
+
+      // Instantiate single word model information
+  int ret=instantiate_swm_info_feat_impl(tmFilesPrefix,verbose);
+  
+  if(ret==OK)
+  {
+        // TO-BE-DONE
+  }
+
+  return ret;
+}
+
+//--------------------------
+bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
+                                    int verbose/*=0*/)
+{
+  int ret;
+  pthread_mutex_lock(&atomic_op_mut);
+  /////////// begin of mutex 
+
+      // Wait until all non-atomic operations have finished
+  wait_on_non_atomic_op_cond();
+    
+  if(strcmp(tdState.tmFilesPrefixGiven.c_str(),tmFilesPrefix)==0)
+  {
+    if(verbose) cerr<<"Translation model already loaded"<<endl;
+    ret=OK;
+  }
+  else
+  {
+    ret=process_tm_descriptor(tmFilesPrefix,verbose);
+  }
+  
       // Unlock non_atomic_op_cond mutex
   unlock_non_atomic_op_mut();
   
@@ -2619,14 +2688,23 @@ void ThotDecoder::deleteSwModelPtrs(void)
 }
 
 //--------------------------
+void ThotDecoder::deleteSwModelPtrsFeatImpl(void)
+{
+  for(unsigned int i=0;i<tdCommonVars.swModelsInfo.swAligModelPtrVec.size();++i)
+    delete tdCommonVars.swModelsInfo.swAligModelPtrVec[i];
+  for(unsigned int i=0;i<tdCommonVars.swModelsInfo.invSwAligModelPtrVec.size();++i)
+    delete tdCommonVars.swModelsInfo.invSwAligModelPtrVec[i];
+}
+
+//--------------------------
 ThotDecoder::~ThotDecoder()
 {
       // Release server variables
   release();
 
       // Delete pointers
+  delete tdCommonVars.wpModelPtr;
   delete tdCommonVars.langModelInfoPtr->lModelPtr;
-  delete tdCommonVars.langModelInfoPtr->wpModelPtr;
   delete tdCommonVars.langModelInfoPtr;
   delete tdCommonVars.phrModelInfoPtr->invPbModelPtr;
   delete tdCommonVars.phrModelInfoPtr;
@@ -2648,6 +2726,9 @@ ThotDecoder::~ThotDecoder()
       // Release language models
   for(unsigned int i=0;i<tdCommonVars.langModelsInfo.lModelPtrVec.size();++i)
     delete tdCommonVars.langModelsInfo.lModelPtrVec[i];
+
+      // Release single-word models
+  deleteSwModelPtrsFeatImpl();
 
       // Release feature pointers
   for(unsigned int i=0;i<tdCommonVars.featuresInfoPtr->featPtrVec.size();++i)

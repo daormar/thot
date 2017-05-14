@@ -44,6 +44,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include THOT_PPINFO_H // Define PpInfo type. It is set in
+                       // configure by checking PPINFO_H variable
+                       // (default value: PpInfo.h)
+#include "BaseSwAligModel.h"
+#include "BasePhraseModel.h"
 #include "PhraseBasedTmHypRec.h"
 #include "BasePbTransModelFeature.h"
 
@@ -67,6 +72,9 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
       // TO-BE-DONE
   typedef typename BasePbTransModelFeature<SCORE_INFO>::HypScoreInfo HypScoreInfo;
 
+      // Constructor
+  DirectPhraseModelFeat();
+
       // Feature information
   std::string getFeatType(void);
 
@@ -77,7 +85,14 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
 
+      // Link pointer
+  void link_pm(BasePhraseModel* _pbModelPtr);
+  void link_swm(BaseSwAligModel<PpInfo>* _swAligModelPtr);
+
  protected:
+
+  BasePhraseModel* pbModelPtr;
+  BaseSwAligModel<PpInfo>* swAligModelPtr;
 
 };
 
@@ -85,9 +100,30 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 //
 
 template<class SCORE_INFO>
+DirectPhraseModelFeat<SCORE_INFO>::DirectPhraseModelFeat()
+{
+  this->weight=1.0;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
 std::string DirectPhraseModelFeat<SCORE_INFO>::getFeatType(void)
 {
   return "DirectPhraseModelFeat";
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void DirectPhraseModelFeat<SCORE_INFO>::link_pm(BasePhraseModel* _pbModelPtr)
+{
+  pbModelPtr=_pbModelPtr;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void DirectPhraseModelFeat<SCORE_INFO>::link_swm(BaseSwAligModel<PpInfo>* _swAligModelPtr)
+{
+  swAligModelPtr=_swAligModelPtr;
 }
 
 #endif

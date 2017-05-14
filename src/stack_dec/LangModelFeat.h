@@ -44,6 +44,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include THOT_LM_STATE_H // Define LM_State type. It is set in
+                         // configure by checking LM_STATE_H
+                         // variable (default value: LM_State.h)
+#include "BaseNgramLM.h"
 #include "PhraseBasedTmHypRec.h"
 #include "BasePbTransModelFeature.h"
 
@@ -67,6 +71,9 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
       // TO-BE-DONE
   typedef typename BasePbTransModelFeature<SCORE_INFO>::HypScoreInfo HypScoreInfo;
 
+      // Constructor
+  LangModelFeat();
+  
       // Feature information
   std::string getFeatType(void);
 
@@ -77,7 +84,12 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
 
+      // Link pointer
+  void link_lm(BaseNgramLM<LM_State>* _lModelPtr);
+
  protected:
+
+  BaseNgramLM<LM_State>* lModelPtr;
 
 };
 
@@ -85,9 +97,23 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 //
 
 template<class SCORE_INFO>
+LangModelFeat<SCORE_INFO>::LangModelFeat()
+{
+  this->weight=1.0;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
 std::string LangModelFeat<SCORE_INFO>::getFeatType(void)
 {
   return "LangModelFeat";
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void LangModelFeat<SCORE_INFO>::link_lm(BaseNgramLM<LM_State>* _lModelPtr)
+{
+  lModelPtr=_lModelPtr;
 }
 
 #endif
