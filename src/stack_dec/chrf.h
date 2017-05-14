@@ -5,6 +5,7 @@
 #include <math.h>
 #include "myVector.h"
 #include <string>
+#include <algorithm>
 #include <utility>
 #include "awkInputStream.h"
 #include "ErrorDefs.h"
@@ -13,7 +14,7 @@
 
 #define MAX_NGRAM_LENGTH 4
 #define BETA 3
-#define CONSIDER_WHITESPACE false
+#define CONSIDER_WHITESPACE true
 
 using namespace std;
 
