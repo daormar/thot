@@ -43,36 +43,28 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "MiraChrF.h"
+#include <math.h>
+#include "stack_dec/MiraChrF.h"
 #include <cppunit/extensions/HelperMacros.h>
-
-//--------------- Constants ------------------------------------------
-
-
-//--------------- typedefs -------------------------------------------
-
-
-//--------------- Classes --------------------------------------------
-
-//--------------- MiraChrFTest template class
-
-/**
- * @brief Class implementing tests for KbMiraLlWu.
- */
 
 class MiraChrFTest: public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE( MiraChrFTest );
-  /* CPPUNIT_TEST( testOnlineUpdate ); */
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE( MiraChrFTest );
+    CPPUNIT_TEST( testSentenceLevel );
+    CPPUNIT_TEST( testCorpusLevel );
+    CPPUNIT_TEST_SUITE_END();
 
- private:
+    private:
+        MiraChrF *chrf_metric;
+        Vector<std::string> system_sentences;
+        Vector<std::string> reference_sentences;
 
- public:
-  void setUp();
-  void tearDown();
+    public:
+        void setUp();
+        void tearDown();
 
-  /* void testOnlineUpdate(); */
+        void testSentenceLevel();
+        void testCorpusLevel();
 };
 
 #endif

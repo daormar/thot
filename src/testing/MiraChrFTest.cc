@@ -15,62 +15,91 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: MiraChrFTest                                             */
-/*                                                                  */
-/* Definitions file: MiraChrFTest.cc                                */
-/*                                                                  */
-/********************************************************************/
-
-
-//--------------- Include files --------------------------------------
-
 #include "MiraChrFTest.h"
 
-// Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( MiraChrFTest );
 
-//--------------- MiraChrFTest class functions
-//
-
-//---------------------------------------
 void MiraChrFTest::setUp()
 {
-      // TO-BE-DONE
+    chrf_metric = new MiraChrF();
+
+    system_sentences.push_back("colourless green ideas sleep furiously");
+    system_sentences.push_back("");
+    system_sentences.push_back("colourless green ideas sleep furiously");
+    system_sentences.push_back("");
+    system_sentences.push_back(".");
+    system_sentences.push_back("colourless GREEN ideas sleep furiously");
+    system_sentences.push_back("colourless green ideas sleep furiously");
+    system_sentences.push_back("colorless greeny idea sleeps furious");
+    system_sentences.push_back("áéíóúûüмариночкалучшевсех");
+
+    reference_sentences.push_back("colourless green ideas sleep furiously");
+    reference_sentences.push_back("colourless green ideas sleep furiously");
+    reference_sentences.push_back("");
+    reference_sentences.push_back("");
+    reference_sentences.push_back(".");
+    reference_sentences.push_back("Colourless green ideas sleep furiously");
+    reference_sentences.push_back("colourless green ideas sleepfuriously");
+    reference_sentences.push_back("colourless green ideas sleep furiously");
+    reference_sentences.push_back("áéíóúûüмариночкалучшевсех");
+
 }
 
 //---------------------------------------
 void MiraChrFTest::tearDown()
 {
-      // TO-BE-DONE
+    delete chrf_metric;
 }
 
-//---------------------------------------
-// void MiraChrFTest::testOnlineUpdate()
-// {
-//   std::string ref = "those documents are reunidas in the following file :";
-//   Vector<std::string> nbest;
-//   nbest.push_back("these documents are reunidas in the following file :");
-//   nbest.push_back("these sheets are reunidas in the following file :");
-//   nbest.push_back("those files are reunidas in the following file :");
+// This test works with the following metric parameters defined in chrf.h:
+// MAX_NGRAM_LENGTH 4
+// BETA 3
+// CONSIDER_WHITESPACE true
 
-//   Vector<Vector<double> >nscores;
-//   Vector<double> x;
-//   x.push_back(0.1); x.push_back(0.4);
-//   nscores.push_back(x);
-//   x.clear();
-//   x.push_back(0.5); x.push_back(0.1);
-//   nscores.push_back(x);
-//   x.clear();
-//   x.push_back(0.1); x.push_back(0.4);
-//   nscores.push_back(x);
+void MiraChrFTest::testSentenceLevel()
+{
+    double score;
+    // Candidate and reference are exactly the same
+    chrf_metric->sentScore(system_sentences[0], reference_sentences[0], score);
+    CPPUNIT_ASSERT(score == 1.0);
 
-//   Vector<double> wv(2, 1.);
-//   Vector<double> nwv;
+    // Reference is empty, candidate is not
+    chrf_metric->sentScore(system_sentences[1], reference_sentences[1], score);
+    CPPUNIT_ASSERT(score == 0.0);
 
-//   updater->update(ref, nbest, nscores, wv, nwv);
+    // Candidate is empty, reference is not
+    chrf_metric->sentScore(system_sentences[2], reference_sentences[2], score);
+    CPPUNIT_ASSERT(score == 0.0);
 
-//   CPPUNIT_ASSERT( wv[0] > nwv[0] );
-//   CPPUNIT_ASSERT( wv[1] < nwv[1] );
-// }
+    // Both candidate and reference are empty
+    chrf_metric->sentScore(system_sentences[3], reference_sentences[3], score);
+    CPPUNIT_ASSERT(score == 1.0);
+
+    // Candidate and reference contain only one exactly matching character
+    chrf_metric->sentScore(system_sentences[4], reference_sentences[4], score);
+    CPPUNIT_ASSERT(score == 1.0);
+
+    // Candidate and reference differ only in casing
+    chrf_metric->sentScore(system_sentences[5], reference_sentences[5], score);
+    CPPUNIT_ASSERT(score == 1.0);
+
+    // Candidate and reference differ only in white space
+    chrf_metric->sentScore(system_sentences[6], reference_sentences[6], score);
+    CPPUNIT_ASSERT(floor(score*100)/100 == 0.95);
+
+    // Candidate and reference differ in word forms
+    chrf_metric->sentScore(system_sentences[7], reference_sentences[7], score);
+    CPPUNIT_ASSERT(floor(score*100)/100 == 0.74);
+
+    // Candidate and reference contain non-latin characters and characters with diacritics
+    chrf_metric->sentScore(system_sentences[8], reference_sentences[8], score);
+    CPPUNIT_ASSERT(score == 1.0);
+
+}
+
+void MiraChrFTest::testCorpusLevel()
+{
+    double score;
+    chrf_metric->corpusScore(system_sentences, reference_sentences, score);
+    CPPUNIT_ASSERT(floor(score*100)/100 == 0.74);
+}
