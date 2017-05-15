@@ -78,10 +78,10 @@ common_src_h= thot_config.h
 
 datrie_h= datrie/typedefs.h datrie/triedefs.h datrie/trie-private.h	\
 datrie/dstring.h datrie/dstring-private.h datrie/trie-string.h		\
-datrie/fileutils.h datrie/darray.h datrie/tail.h datrie/trie.h		\
+datrie/thot_fileutils.h datrie/thot_darray.h datrie/tail.h datrie/thot_trie.h		\
 datrie/alpha-map.h datrie/alpha-map-private.h
-datrie_defs= datrie/dstring.c datrie/trie-string.c datrie/fileutils.c	\
-datrie/darray.c datrie/tail.c datrie/trie.c datrie/alpha-map.c
+datrie_defs= datrie/dstring.c datrie/trie-string.c datrie/thot_fileutils.c	\
+datrie/thot_darray.c datrie/tail.c datrie/thot_trie.c datrie/alpha-map.c
 
 nlp_common_h= nlp_common/WordIndex.h nlp_common/WordAligMatrix.h	\
 nlp_common/uiPairHashF.h nlp_common/uiHashF.h nlp_common/TrieVecs.h	\

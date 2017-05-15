@@ -35,7 +35,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "trie.h"
+#include "thot_trie.h"
 #include "BasePhraseTable.h"
 
 //--------------- Constants ------------------------------------------
@@ -148,6 +148,7 @@ class DaTriePhraseTable: public BasePhraseTable
     
         // size and clear functions
     virtual size_t size(void);
+    virtual void print(void);
     virtual void clear(void);   
 
         // Destructor
