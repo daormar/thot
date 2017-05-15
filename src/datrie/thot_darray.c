@@ -24,16 +24,12 @@
  * Author:  Theppitak Karoonboonyanan <theppitak@gmail.com>
  */
 
-#include <errno.h>
 #include <string.h>
 #include <stdlib.h>
 #ifndef _MSC_VER /* for SIZE_MAX */
 # include <stdint.h>
 #endif
 #include <stdio.h>
-#include <sys/mman.h>
-#include <unistd.h>
-#include <sys/types.h>
 
 #include "trie-private.h"
 #include "thot_darray.h"
@@ -161,8 +157,7 @@ typedef struct {
 
 struct _DArray {
     TrieIndex   num_cells;
-    void*       mapped_file_content;
-    int         mapped_file_size;  // -1 if mapping is not used; otherwise, the file size
+    Bool        is_mapped;
     DACell     *cells;
 };
 
@@ -195,7 +190,7 @@ da_new ()
         return NULL;
 
     d->num_cells = DA_POOL_BEGIN;
-    d->mapped_file_size = -1;
+    d->is_mapped = FALSE;
     d->cells     = (DACell *) malloc (d->num_cells * sizeof (DACell));
     if (UNLIKELY (!d->cells))
         goto exit_da_created;
@@ -225,7 +220,7 @@ exit_da_created:
  * file pointer is left at the position after the read block.
  */
 DArray *
-da_fread (FILE *file)
+da_fread (FILE *file, void *mapped_file_content)
 {
     long        save_pos;
     DArray     *d = NULL;
@@ -245,14 +240,9 @@ da_fread (FILE *file)
         goto exit_da_created;
     if (d->num_cells > SIZE_MAX / sizeof (DACell))
         goto exit_da_created;
-    d->mapped_file_size = d->num_cells * sizeof (DACell) + save_pos;
-    fseek(file, 0, SEEK_SET);
-    d->mapped_file_content = mmap (NULL, d->mapped_file_size, PROT_READ, MAP_SHARED | MAP_FILE, fileno(file), 0);
-    d->cells = (DACell *) (((int*) d->mapped_file_content) + save_pos / sizeof(int));  // Skip alpha map space
-    if ((int) d->cells == -1) {  // Mapping failed
-        printf("mmap failed: %s\n", strerror(errno));
-        goto exit_da_created;
-    }
+
+    d->is_mapped = TRUE;
+    d->cells = (DACell *) (((int*) mapped_file_content) + save_pos / sizeof(int));  // Skip alpha map space
     fseek(file, save_pos + d->num_cells * sizeof (DACell), SEEK_SET);
 
     return d;
@@ -276,11 +266,8 @@ exit_file_read:
 void
 da_free (DArray *d)
 {
-    if (d->mapped_file_size != -1) {
-        munmap(d->mapped_file_content, d->mapped_file_size);
-    } else {
+    if (!d->is_mapped)
         free (d->cells);
-    }
     free (d);
 }
 

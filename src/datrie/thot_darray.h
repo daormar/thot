@@ -52,7 +52,7 @@ typedef struct _DArray  DArray;
 
 DArray * da_new ();
 
-DArray * da_fread (FILE *file);
+DArray * da_fread (FILE *file, void *mapped_file_content);
 
 void     da_free (DArray *d);
 

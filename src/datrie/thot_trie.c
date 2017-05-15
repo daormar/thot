@@ -24,8 +24,12 @@
  * Author:  Theppitak Karoonboonyanan <theppitak@gmail.com>
  */
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "thot_trie.h"
 #include "trie-private.h"
@@ -45,6 +49,10 @@ struct _Trie {
     Tail       *tail;
 
     Bool        is_dirty;
+
+    Bool        is_mapped;
+    void*       mapped_file_content;
+    int         mapped_file_size;
 };
 
 /**
@@ -121,6 +129,11 @@ trie_new (const AlphaMap *alpha_map)
     if (UNLIKELY (!trie))
         return NULL;
 
+    // Add information about mapping disk content to memory
+    trie->is_mapped = FALSE;
+    trie->mapped_file_size = -1;
+    trie->mapped_file_content = NULL;
+
     trie->alpha_map = alpha_map_clone (alpha_map);
     if (UNLIKELY (!trie->alpha_map))
         goto exit_trie_created;
@@ -196,9 +209,21 @@ trie_fread (FILE *file)
     if (UNLIKELY (!trie))
         return NULL;
 
+    // Map file content to memory with mmap
+    trie->is_mapped = TRUE;
+    fseek(file, 0, SEEK_END);
+    trie->mapped_file_size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    trie->mapped_file_content = mmap (NULL, trie->mapped_file_size, PROT_READ, MAP_SHARED | MAP_FILE, fileno(file), 0);
+    if ((int) trie->mapped_file_content == -1) {  // Mapping failed
+        printf("mmap failed: %s\n", strerror(errno));
+        goto exit_trie_created;
+    }
+    fseek(file, 0, SEEK_SET);
+
     if (NULL == (trie->alpha_map = alpha_map_fread_bin (file)))
         goto exit_trie_created;
-    if (NULL == (trie->da   = da_fread (file)))
+    if (NULL == (trie->da   = da_fread (file, trie->mapped_file_content)))
         goto exit_alpha_map_created;
     if (NULL == (trie->tail = tail_fread (file)))
         goto exit_da_created;
@@ -225,6 +250,9 @@ exit_trie_created:
 void
 trie_free (Trie *trie)
 {
+    if (trie->is_mapped) {  // Unmap file if mapped
+        munmap(trie->mapped_file_content, trie->mapped_file_size);
+    }
     alpha_map_free (trie->alpha_map);
     da_free (trie->da);
     tail_free (trie->tail);

@@ -523,4 +523,6 @@ void DaTriePhraseTableTest::testSavingAndRestoringTrie()
   result = tab->trieLoadFromFile(file_name);
   CPPUNIT_ASSERT( result );
   CPPUNIT_ASSERT( tab->size() == original_size );
+
+  tab->clear();  // Unmap loaded file
 }
