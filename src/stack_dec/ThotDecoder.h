@@ -65,11 +65,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Constants ------------------------------------------
 
 // Default parameter values
-#define TDEC_W_DEFAULT          0.4
-#define TDEC_A_DEFAULT         10
-#define TDEC_E_DEFAULT          2
-#define TDEC_HEUR_DEFAULT       LOCAL_TD_HEURISTIC
-#define TDEC_NOMON_DEFAULT      0
+#define TDEC_W_DEFAULT                0.4
+#define TDEC_A_DEFAULT               10
+#define TDEC_E_DEFAULT                2
+#define TDEC_HEUR_DEFAULT             LOCAL_TD_HEURISTIC
+#define TDEC_NOMON_DEFAULT            0
 
 #define MINIMUM_WORD_LENGTH_TO_EXPAND 1    // Define the minimum
                                            // length in characters that
@@ -286,8 +286,11 @@ class ThotDecoder
       // Memory handling related functions
   bool instantiate_swm_info(const char* tmFilesPrefix,
                             int verbose=0);
-  bool instantiate_swm_info_feat_impl(const char* tmFilesPrefix,
+  bool instantiate_swm_info_feat_impl(DirectPhraseModelFeat<SmtModel::HypScoreInfo>* directPhraseModelFeatPtr,
+                                      const char* tmFilesPrefix,
                                       int verbose=0);
+  void deleteLangModelPtrsFeatImpl(void);
+  void deletePhrModelPtrsFeatImpl(void);
   void deleteSwModelPtrs(void);
   void deleteSwModelPtrsFeatImpl(void);
 

@@ -768,10 +768,27 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
 }
 
 //--------------------------
-bool ThotDecoder::instantiate_swm_info_feat_impl(const char* tmFilesPrefix,
+bool ThotDecoder::instantiate_swm_info_feat_impl(DirectPhraseModelFeat<SmtModel::HypScoreInfo>* directPhraseModelFeatPtr,
+                                                 const char* tmFilesPrefix,
                                                  int /*verbose=0*/)
 {
-      // TO-BE-DONE
+      // Add direct swm pointer
+  tdCommonVars.swModelsInfo.swAligModelPtrVec.push_back(tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars));
+  if(tdCommonVars.swModelsInfo.swAligModelPtrVec.back()==NULL)
+  {
+    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+
+      // Add inverse swm pointer
+  tdCommonVars.swModelsInfo.invSwAligModelPtrVec.push_back(tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars));
+  if(tdCommonVars.swModelsInfo.invSwAligModelPtrVec.back()==NULL)
+  {
+    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+
+  return OK;
 }
 
 //--------------------------
@@ -831,15 +848,48 @@ bool ThotDecoder::process_tm_descriptor(const char* tmFilesPrefix,
     cerr<<"Processing translation model descriptor: "<<tmFilesPrefix<<endl;
   }
 
-      // Instantiate single word model information
-  int ret=instantiate_swm_info_feat_impl(tmFilesPrefix,verbose);
-  
-  if(ret==OK)
+      // Delete previous instantiation
+  deletePhrModelPtrsFeatImpl();
+  deleteSwModelPtrsFeatImpl();
+
+      // Obtain info about translation model entries
+  unsigned int numTransModelEntries;
+  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  if(extractModelEntryInfo(tmFilesPrefix,modelDescEntryVec)==OK)
   {
-        // TO-BE-DONE
+    numTransModelEntries=modelDescEntryVec.size();
+  }
+  else
+  {
+    numTransModelEntries=1;
   }
 
-  return ret;
+      // Process model entries
+  for(unsigned int i=0;i<numTransModelEntries;++i)
+  {
+        // TO-BE-DONE
+
+        // Add direct phrase model feature
+        // Create new feature entry
+    DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=new DirectPhraseModelFeat<SmtModel::HypScoreInfo>;
+    std::string featName;
+    if(modelDescEntryVec.empty())
+      featName="pts_"+modelDescEntryVec[i].statusStr;
+    else
+      featName="pts";
+    dirPmFeatPtr->setFeatName(featName);
+    tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
+
+        // Instantiate phrase model
+
+        // Instantiate single word model
+    // if(modelDescEntryVec.empty())
+    //   instantiate_direct_swm_info_feat_impl(dirPmFeatPtr,tmFilesPrefix,verbose);
+    // else
+    //   instantiate_direct_swm_info_feat_impl(dirPmFeatPtr,modelDescEntryVec[i].absolutizedModelFileName.c_str(),verbose);
+  }
+
+  return OK;
 }
 
 //--------------------------
@@ -2679,6 +2729,20 @@ std::string ThotDecoder::getWordCompletion(std::string uncompleteWord,
 }
 
 //--------------------------
+void ThotDecoder::deleteLangModelPtrsFeatImpl(void)
+{
+  for(unsigned int i=0;i<tdCommonVars.langModelsInfo.lModelPtrVec.size();++i)
+    delete tdCommonVars.langModelsInfo.lModelPtrVec[i];
+}
+
+//--------------------------
+void ThotDecoder::deletePhrModelPtrsFeatImpl(void)
+{
+  for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.invPbModelPtrVec.size();++i)
+    delete tdCommonVars.phraseModelsInfo.invPbModelPtrVec[i];
+}
+
+//--------------------------
 void ThotDecoder::deleteSwModelPtrs(void)
 {
   for(unsigned int i=0;i<tdCommonVars.swModelInfoPtr->swAligModelPtrVec.size();++i)
@@ -2720,12 +2784,10 @@ ThotDecoder::~ThotDecoder()
       // Delete features information
 
       // Release phrase models
-  for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.invPbModelPtrVec.size();++i)
-    delete tdCommonVars.phraseModelsInfo.invPbModelPtrVec[i];
+  deletePhrModelPtrsFeatImpl();
 
       // Release language models
-  for(unsigned int i=0;i<tdCommonVars.langModelsInfo.lModelPtrVec.size();++i)
-    delete tdCommonVars.langModelsInfo.lModelPtrVec[i];
+  deleteLangModelPtrsFeatImpl();
 
       // Release single-word models
   deleteSwModelPtrsFeatImpl();
