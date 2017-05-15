@@ -28,7 +28,6 @@ void MiraChrFTest::setUp()
     system_sentences.push_back("colourless green ideas sleep furiously");
     system_sentences.push_back("");
     system_sentences.push_back(".");
-    system_sentences.push_back("colourless GREEN ideas sleep furiously");
     system_sentences.push_back("colourless green ideas sleep furiously");
     system_sentences.push_back("colorless greeny idea sleeps furious");
     system_sentences.push_back("áéíóúûüмариночкалучшевсех");
@@ -38,7 +37,6 @@ void MiraChrFTest::setUp()
     reference_sentences.push_back("");
     reference_sentences.push_back("");
     reference_sentences.push_back(".");
-    reference_sentences.push_back("Colourless green ideas sleep furiously");
     reference_sentences.push_back("colourless green ideas sleepfuriously");
     reference_sentences.push_back("colourless green ideas sleep furiously");
     reference_sentences.push_back("áéíóúûüмариночкалучшевсех");
@@ -79,20 +77,16 @@ void MiraChrFTest::testSentenceLevel()
     chrf_metric->sentScore(system_sentences[4], reference_sentences[4], score);
     CPPUNIT_ASSERT(score == 1.0);
 
-    // Candidate and reference differ only in casing
-    chrf_metric->sentScore(system_sentences[5], reference_sentences[5], score);
-    CPPUNIT_ASSERT(score == 1.0);
-
     // Candidate and reference differ only in white space
-    chrf_metric->sentScore(system_sentences[6], reference_sentences[6], score);
+    chrf_metric->sentScore(system_sentences[5], reference_sentences[5], score);
     CPPUNIT_ASSERT(floor(score*100)/100 == 0.95);
 
     // Candidate and reference differ in word forms
-    chrf_metric->sentScore(system_sentences[7], reference_sentences[7], score);
+    chrf_metric->sentScore(system_sentences[6], reference_sentences[6], score);
     CPPUNIT_ASSERT(floor(score*100)/100 == 0.74);
 
     // Candidate and reference contain non-latin characters and characters with diacritics
-    chrf_metric->sentScore(system_sentences[8], reference_sentences[8], score);
+    chrf_metric->sentScore(system_sentences[7], reference_sentences[7], score);
     CPPUNIT_ASSERT(score == 1.0);
 
 }
@@ -101,5 +95,5 @@ void MiraChrFTest::testCorpusLevel()
 {
     double score;
     chrf_metric->corpusScore(system_sentences, reference_sentences, score);
-    CPPUNIT_ASSERT(floor(score*100)/100 == 0.74);
+    CPPUNIT_ASSERT(floor(score*100)/100 == 0.71);
 }
