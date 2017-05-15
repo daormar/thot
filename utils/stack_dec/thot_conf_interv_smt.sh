@@ -9,11 +9,7 @@
 #####################################################################
 standard_eval()
 {
-    if [ $measure = "WER" ]; then
-        $bindir/thot_calc_wer -r $ref -t $test
-    else
-        $bindir/thot_calc_bleu -r $ref -t $test
-    fi
+    $bindir/thot_scorer -r $ref -t $test
 }
 
 #####################################################################
@@ -44,11 +40,7 @@ bootstrap_exper()
               }'
 
     # Compute measure for test corpus
-    if [ $measure = "WER" ]; then
-        a=`$bindir/thot_calc_wer -r $TMP/ref -t $TMP/test | head -1 | cut -d " " -f 2`
-    else
-        a=`$bindir/thot_calc_bleu -r $TMP/ref -t $TMP/test | head -1 | cut -d " " -f 2`
-    fi
+    a=`$bindir/thot_scorer -r $TMP/ref -t $TMP/test | head -1 | cut -d " " -f 2`
 
     # Output measure
     echo $a
@@ -95,15 +87,14 @@ bootstrap_eval()
 }
 
 #####################################################################
-if [ $# -ne 6 ]; then 
-    echo "thot_conf_interv_smt <seed> <ref_file> <test_file> <S> <N> <measure>"; 
+if [ $# -ne 5 ]; then 
+    echo "thot_conf_interv_smt <seed> <ref_file> <test_file> <S> <N>"; 
     echo ""
     echo "<seed>               Random seed"
     echo "<ref_file>           File with references"
     echo "<test_file>          File with system translations"
     echo "<S>                  Size of the randomly generated subsets"
     echo "<N>                  Number of subsets"
-    echo "<measure>            Translation quality measure: BLEU | WER"
     exit 1; 
 fi
 
@@ -115,7 +106,6 @@ ref=$2;    # File with references
 test=$3;   # File with results of system 1
 S=$4       # Size of the randomly generated subsets
 N=$5;      # Number of subsets
-measure=$6;# Translation quality measure
 
 # Check existence of files
 if [ ! -f $ref ]; then
