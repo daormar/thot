@@ -161,6 +161,8 @@ typedef struct {
 
 struct _DArray {
     TrieIndex   num_cells;
+    void*       mapped_file_content;
+    int         mapped_file_size;  // -1 if mapping is not used; otherwise, the file size
     DACell     *cells;
 };
 
@@ -193,6 +195,7 @@ da_new ()
         return NULL;
 
     d->num_cells = DA_POOL_BEGIN;
+    d->mapped_file_size = -1;
     d->cells     = (DACell *) malloc (d->num_cells * sizeof (DACell));
     if (UNLIKELY (!d->cells))
         goto exit_da_created;
@@ -242,11 +245,11 @@ da_fread (FILE *file)
         goto exit_da_created;
     if (d->num_cells > SIZE_MAX / sizeof (DACell))
         goto exit_da_created;
+    d->mapped_file_size = d->num_cells * sizeof (DACell) + save_pos;
     fseek(file, 0, SEEK_SET);
-    int *trie_file_content = (int*) mmap (0, d->num_cells * sizeof (DACell) + save_pos, PROT_READ, MAP_SHARED | MAP_FILE, fileno(file), 0);
-    d->cells = (DACell *) (trie_file_content + save_pos / sizeof(int));  // Skip alpha map space
-    if ((int) d->cells == -1)  // Mapping failed
-    {
+    d->mapped_file_content = mmap (NULL, d->mapped_file_size, PROT_READ, MAP_SHARED | MAP_FILE, fileno(file), 0);
+    d->cells = (DACell *) (((int*) d->mapped_file_content) + save_pos / sizeof(int));  // Skip alpha map space
+    if ((int) d->cells == -1) {  // Mapping failed
         printf("mmap failed: %s\n", strerror(errno));
         goto exit_da_created;
     }
@@ -273,8 +276,11 @@ exit_file_read:
 void
 da_free (DArray *d)
 {
-    //free (d->cells);
-    //munmap(void *addr, d->num_cells * sizeof (DACell));
+    if (d->mapped_file_size != -1) {
+        munmap(d->mapped_file_content, d->mapped_file_size);
+    } else {
+        free (d->cells);
+    }
     free (d);
 }
 
