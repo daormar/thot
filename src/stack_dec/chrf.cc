@@ -142,9 +142,6 @@ void calculate_chrf(const std::string& refSentence,
         sysSentenceTokenized = StrProcUtils::stringVectorToStringWithoutSpaces(StrProcUtils::stringToStringVector(sysSentence));
     }
 
-    std::transform(refSentenceTokenized.begin(), refSentenceTokenized.end(), refSentenceTokenized.begin(), ::tolower);
-    std::transform(sysSentenceTokenized.begin(), sysSentenceTokenized.end(), sysSentenceTokenized.begin(), ::tolower);
-
     if (refSentenceTokenized.size() == 0 && sysSentenceTokenized.size() == 0) {
         chrf = 1;
         return;
