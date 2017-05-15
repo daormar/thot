@@ -40,9 +40,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                               // configure by checking SMTMODEL_H
                               // variable (default value: SmtModel.h)
 #include "FeaturesInfo.h"
-#include "BasePbTransModel.h"
+#include "_pbTransModel.h"
 #include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
+#include "BasePbTransModel.h"
 #include "SwModelInfo.h"
 #include "PhraseModelsInfo.h"
 #include "LangModelsInfo.h"
