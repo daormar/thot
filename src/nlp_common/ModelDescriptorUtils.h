@@ -51,7 +51,7 @@ std::string absolutizeModelFileName(std::string descFileName,
 std::string extractDirName(std::string filePath);
 bool fileIsDescriptor(std::string fileName,
                       std::string& mainFileName);
-bool extractModelEntryInfo(const char *fileName,
+bool extractModelEntryInfo(std::string fileName,
                            Vector<ModelDescriptorEntry>& modelDescEntryVec);
 
 #endif

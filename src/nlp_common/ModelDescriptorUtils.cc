@@ -138,14 +138,14 @@ bool fileIsDescriptor(std::string fileName,
 }
 
 //---------------
-bool extractModelEntryInfo(const char *fileName,
+bool extractModelEntryInfo(std::string fileName,
                            Vector<ModelDescriptorEntry>& modelDescEntryVec)
 {
   std::string mainFileName;
   if(fileIsDescriptor(fileName,mainFileName))
   {
     awkInputStream awk;
-    if(awk.open(fileName)==ERROR)
+    if(awk.open(fileName.c_str())==ERROR)
     {
       return ERROR;
     }
