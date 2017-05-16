@@ -509,7 +509,7 @@ void DaTriePhraseTableTest::testSavingAndRestoringTrie()
 
   int original_size = tab->size();
   // Save structue on disk
-  const char file_name[] = "/home/adam/tmp/trie.obj";
+  const char* file_name = tmpnam(NULL);
 
   // Save structure
   result = tab->trieSaveToFile(file_name);
@@ -568,7 +568,7 @@ void DaTriePhraseTableTest::testMmap()
 
   int original_size = tab->size();
   // Save structue on disk
-  const char file_name[] = "/home/adam/tmp/trie.obj";
+  const char* file_name = tmpnam(NULL);
 
   // Save structure
   result = tab->trieSaveToFile(file_name);
