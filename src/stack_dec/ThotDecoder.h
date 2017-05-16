@@ -197,8 +197,11 @@ class ThotDecoder
   void decrease_non_atomic_ops_running(void);
 
       // Functions to load models
-  bool process_tm_descriptor(const char* tmFilesPrefix,
+  BasePhraseModel* createPmPtr(std::string modelType);
+  bool process_tm_descriptor(std::string tmFilesPrefix,
                              int verbose/*=0*/);
+  bool process_tm_files_prefix(std::string tmFilesPrefix,
+                               int verbose/*=0*/);
   bool load_tm(const char* tmFilesPrefix,
                int verbose=0);
   bool load_tm_feat_impl(const char* tmFilesPrefix,
@@ -208,6 +211,12 @@ class ThotDecoder
   bool load_ecm(const char* ecmFilesPrefix,
                 int verbose=0);
 
+      // Feature-related functions
+  int createDirectPhrModelFeat(std::string featName,
+                               std::string modelType,
+                               std::string modelFileName,
+                               DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr);
+  
       // Training-related functions
   void setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
                           int verbose=0);
@@ -286,9 +295,6 @@ class ThotDecoder
       // Memory handling related functions
   bool instantiate_swm_info(const char* tmFilesPrefix,
                             int verbose=0);
-  bool instantiate_swm_info_feat_impl(DirectPhraseModelFeat<SmtModel::HypScoreInfo>* directPhraseModelFeatPtr,
-                                      const char* tmFilesPrefix,
-                                      int verbose=0);
   void deleteLangModelPtrsFeatImpl(void);
   void deletePhrModelPtrsFeatImpl(void);
   void deleteSwModelPtrs(void);

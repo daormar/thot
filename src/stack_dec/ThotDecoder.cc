@@ -645,8 +645,16 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
   // Initialize server
 
       // Load translation model
-  ret=load_tm(tm_str.c_str(),verbose);
-  if(ret==ERROR) return ERROR;
+  if(tdCommonVars.featureBasedImplEnabled)
+  {
+    ret=load_tm_feat_impl(tm_str.c_str(),verbose);
+    if(ret==ERROR) return ERROR;
+  }
+  else
+  {
+    ret=load_tm(tm_str.c_str(),verbose);
+    if(ret==ERROR) return ERROR;
+  }
 
       // Load language model
   ret=load_lm(lm_str.c_str(),verbose);
@@ -768,30 +776,6 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
 }
 
 //--------------------------
-bool ThotDecoder::instantiate_swm_info_feat_impl(DirectPhraseModelFeat<SmtModel::HypScoreInfo>* directPhraseModelFeatPtr,
-                                                 const char* tmFilesPrefix,
-                                                 int /*verbose=0*/)
-{
-      // Add direct swm pointer
-  tdCommonVars.swModelsInfo.swAligModelPtrVec.push_back(tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars));
-  if(tdCommonVars.swModelsInfo.swAligModelPtrVec.back()==NULL)
-  {
-    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    return ERROR;
-  }
-
-      // Add inverse swm pointer
-  tdCommonVars.swModelsInfo.invSwAligModelPtrVec.push_back(tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars));
-  if(tdCommonVars.swModelsInfo.invSwAligModelPtrVec.back()==NULL)
-  {
-    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    return ERROR;
-  }
-
-  return OK;
-}
-
-//--------------------------
 bool ThotDecoder::load_tm(const char* tmFilesPrefix,
                           int verbose/*=0*/)
 {
@@ -840,55 +824,143 @@ bool ThotDecoder::load_tm(const char* tmFilesPrefix,
 }
 
 //--------------------------
-bool ThotDecoder::process_tm_descriptor(const char* tmFilesPrefix,
+BasePhraseModel* ThotDecoder::createPmPtr(std::string modelType)
+{
+  if(modelType.empty())
+  {
+    BasePhraseModel* basePhrModelPtr=tdCommonVars.dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.basePhraseModelInitPars);
+    return basePhrModelPtr;
+  }
+  else
+  {
+        // Declare dynamic class loader instance
+    SimpleDynClassLoader<BasePhraseModel> simpleDynClassLoader;
+  
+        // Open module
+    bool verbosity=false;
+    if(!simpleDynClassLoader.open_module(modelType,verbosity))
+    {
+      cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
+      return NULL;
+    }
+
+        // Create tm file pointer
+    BasePhraseModel* tmPtr=simpleDynClassLoader.make_obj("");
+
+        // Close module
+    simpleDynClassLoader.close_module();
+
+    if(tmPtr==NULL)
+    {
+      cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;    
+      return NULL;
+    }
+    
+    return tmPtr;
+  }
+}
+
+//--------------------------
+int ThotDecoder::createDirectPhrModelFeat(std::string featName,
+                                          std::string modelType,
+                                          std::string modelFileName,
+                                          DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr)
+{
+      // TO-BE-DONE
+  
+  cerr<<"* Creating direct phrase model feature ("<<featName<<" "<<modelType<<" "<<modelFileName<<")"<<endl;
+
+      // Create feature pointer and set name
+  dirPmFeatPtr=new DirectPhraseModelFeat<SmtModel::HypScoreInfo>;
+  dirPmFeatPtr->setFeatName(featName);
+
+      // Add phrase model pointer
+  BasePhraseModel* basePhraseModelPtr=createPmPtr(modelType);
+  if(basePhraseModelPtr==NULL)
+    return ERROR;
+  tdCommonVars.phraseModelsInfo.invPbModelPtrVec.push_back(basePhraseModelPtr);
+  
+      // Load phrase model
+  if(basePhraseModelPtr->load(modelFileName.c_str())!=0)
+  {
+    cerr<<"Error while reading phrase model file\n";
+    return ERROR;
+  }  
+  
+      // Link pointer to feature
+  dirPmFeatPtr->link_pm(basePhraseModelPtr);  
+  
+      // Add direct swm pointer
+  BaseSwAligModel<PpInfo>* baseSwAligModelPtr=tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars);
+  if(baseSwAligModelPtr==NULL)
+  {
+    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+  tdCommonVars.swModelsInfo.swAligModelPtrVec.push_back(baseSwAligModelPtr);
+
+      // Load single word model
+  
+  
+      // Link pointer to feature
+  dirPmFeatPtr->link_swm(baseSwAligModelPtr);
+  
+  return OK;
+}
+
+//--------------------------
+bool ThotDecoder::process_tm_descriptor(std::string tmDescFile,
                                         int verbose/*=0*/)
 {
   if(verbose)
   {
-    cerr<<"Processing translation model descriptor: "<<tmFilesPrefix<<endl;
+    cerr<<"Processing translation model descriptor: "<<tmDescFile<<endl;
   }
 
-      // Delete previous instantiation
-  deletePhrModelPtrsFeatImpl();
-  deleteSwModelPtrsFeatImpl();
-
       // Obtain info about translation model entries
-  unsigned int numTransModelEntries;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(tmFilesPrefix,modelDescEntryVec)==OK)
+  if(extractModelEntryInfo(tmDescFile,modelDescEntryVec)==OK)
   {
-    numTransModelEntries=modelDescEntryVec.size();
+        // Process descriptor entries
+    for(unsigned int i=0;i<modelDescEntryVec.size();++i)
+    {
+          // Create direct phrase model feature
+      std::string featName="pts_"+modelDescEntryVec[i].statusStr;
+      DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr;
+      int ret=createDirectPhrModelFeat(featName,modelDescEntryVec[i].modelType,modelDescEntryVec[i].modelFileName,dirPmFeatPtr);
+      if(ret==ERROR)
+        return ERROR;
+      tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
+    }
+    
+    return OK;
   }
   else
   {
-    numTransModelEntries=1;
+    return ERROR;
   }
+}
 
-      // Process model entries
-  for(unsigned int i=0;i<numTransModelEntries;++i)
+//--------------------------
+bool ThotDecoder::process_tm_files_prefix(std::string tmFilesPrefix,
+                                          int verbose/*=0*/)
+{
+  if(verbose)
   {
-        // TO-BE-DONE
-
-        // Add direct phrase model feature
-        // Create new feature entry
-    DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=new DirectPhraseModelFeat<SmtModel::HypScoreInfo>;
-    std::string featName;
-    if(modelDescEntryVec.empty())
-      featName="pts_"+modelDescEntryVec[i].statusStr;
-    else
-      featName="pts";
-    dirPmFeatPtr->setFeatName(featName);
-    tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
-
-        // Instantiate phrase model
-
-        // Instantiate single word model
-    // if(modelDescEntryVec.empty())
-    //   instantiate_direct_swm_info_feat_impl(dirPmFeatPtr,tmFilesPrefix,verbose);
-    // else
-    //   instantiate_direct_swm_info_feat_impl(dirPmFeatPtr,modelDescEntryVec[i].absolutizedModelFileName.c_str(),verbose);
+    cerr<<"Processing translation model files prefix: "<<tmFilesPrefix<<endl;
   }
 
+  std::string modelType="";
+  std::string modelFileName=tmFilesPrefix;
+
+      // Create direct phrase model feature
+  std::string featName="pts";
+  DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr;
+  int ret=createDirectPhrModelFeat(featName,modelType,modelFileName,dirPmFeatPtr);
+  if(ret==ERROR)
+    return ERROR;
+  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
+  
   return OK;
 }
 
@@ -910,7 +982,15 @@ bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
   }
   else
   {
-    ret=process_tm_descriptor(tmFilesPrefix,verbose);
+        // Delete previous instantiation
+    deletePhrModelPtrsFeatImpl();
+    deleteSwModelPtrsFeatImpl();
+
+    std::string mainFileName;
+    if(fileIsDescriptor(tmFilesPrefix,mainFileName))
+      ret=process_tm_descriptor(tmFilesPrefix,verbose);
+    else
+      ret=process_tm_files_prefix(tmFilesPrefix,verbose);
   }
   
       // Unlock non_atomic_op_cond mutex
