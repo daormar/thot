@@ -469,13 +469,15 @@ mkdir ${TDIR_LLWU}/nblist
 mkdir ${TDIR_LLWU}/curr_nblist
 
 # Obtain translation model weights information
-# echo "*** Obtaining model weight information..." >&2
 raw_llweights=`obtain_cfg_llweights`
 llweights_names=`extract_weight_names "${raw_llweights}"`
 llweights_values=`extract_weight_values "${raw_llweights}"`
 
-#echo "* Weight names: ${llweights_names}" >&2
-#echo "" >&2
+# Verify that weight info was successfully obtained
+if [ -z "${raw_llweights}" ]; then
+    echo "Weight info could not be obtained, check that $cfgfile is correct">&2
+    return 1
+fi
 
 # Obtain first iteration weights
 llweights=`obtain_first_iter_llweights "${llweights_values}"`

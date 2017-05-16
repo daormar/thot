@@ -544,6 +544,12 @@ loglin_downhill()
     va_opt="`obtain_loglin_dhs_va_opt_values`"
     iv_opt="`obtain_loglin_iv_opt_values`"
 
+    # Verify that weight info was successfully obtained
+    if [ -z "${va_opt}" ]; then
+        echo "Weight info could not be obtained, check that ${outd}/tune_loglin.cfg is correct">&2
+        return 1
+    fi
+
     # Execute tuning algorithm
     ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
         -ftol ${ftol_loglin} -o ${outd}/llweights_tune -u ${bindir}/thot_dhs_smt_trgfunc ${debug_opt} || return 1
@@ -563,6 +569,12 @@ loglin_upd()
     # Generate information for weight initialisation
     va_opt="`obtain_loglin_upd_va_opt_values`"
 
+    # Verify that weight info was successfully obtained
+    if [ -z "${va_opt}" ]; then
+        echo "Weight info could not be obtained, check that ${outd}/tune_loglin.cfg is correct">&2
+        return 1
+    fi
+    
     # Default parameters
     ll_wu_niters=10
 
