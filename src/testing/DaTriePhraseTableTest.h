@@ -79,6 +79,7 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
   CPPUNIT_TEST( testSize );
   CPPUNIT_TEST( testSavingAndRestoringTrie );
+  CPPUNIT_TEST( testMmap );
   CPPUNIT_TEST_SUITE_END();
 
  private:
@@ -105,6 +106,7 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   void testIteratorsOperatorsEqualNotEqual();
   void testSize();
   void testSavingAndRestoringTrie();
+  void testMmap();
 };
 
 #endif

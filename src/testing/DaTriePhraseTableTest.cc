@@ -526,3 +526,86 @@ void DaTriePhraseTableTest::testSavingAndRestoringTrie()
 
   tab->clear();  // Unmap loaded file
 }
+
+//---------------------------------------
+void DaTriePhraseTableTest::testMmap()
+{
+  /* TEST:
+  /* Check if the trie restored from disk with mmap
+  /* contains all stored items and correct counts
+  */
+  bool result;
+  
+  // Fill trie structure with data
+  tab->clear();
+
+  // Define vectors
+  Vector<WordIndex> s1 = getVector("Pan Samochodzik");
+  Vector<WordIndex> t1_1 = getVector("Mr Car");
+  Vector<WordIndex> t1_2 = getVector("Pan Samochodzik");
+  Vector<WordIndex> t1_3 = getVector("Mister Automobile");
+  Vector<WordIndex> t1_4 = getVector("Mr Automobile");
+
+  Vector<WordIndex> s2 = getVector("Pan Samochodzik i templariusze");
+  Vector<WordIndex> t2_1 = getVector("Mister Automobile and the Knights Templar");
+  Vector<WordIndex> t2_2 = getVector("Pan Samochodzik and the Knights Templar");
+
+  Vector<WordIndex> s3 = getVector("Pan Samochodzik i niesamowity dwor");
+  Vector<WordIndex> t3_1 = getVector("Mister Automobile and the Unearthly Mansion");
+  Vector<WordIndex> t3_2 = getVector("Pan Samochodzik and the Unearthly Mansion");
+
+  // Insert data to trie
+  tab->incrCountsOfEntry(s1, t1_1, Count(1));
+  tab->incrCountsOfEntry(s1, t1_2, Count(2));
+  tab->incrCountsOfEntry(s1, t1_3, Count(4));
+  tab->incrCountsOfEntry(s1, t1_4, Count(8));
+
+  tab->incrCountsOfEntry(s2, t2_1, Count(16));
+  tab->incrCountsOfEntry(s2, t2_2, Count(32));
+
+  tab->incrCountsOfEntry(s3, t3_1, Count(64));
+  tab->incrCountsOfEntry(s3, t3_2, Count(128));
+
+  int original_size = tab->size();
+  // Save structue on disk
+  const char file_name[] = "/home/adam/tmp/trie.obj";
+
+  // Save structure
+  result = tab->trieSaveToFile(file_name);
+  CPPUNIT_ASSERT( result );
+
+  tab->clear();  // Remove structure to make sure that loading trie was performed
+
+  CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
+  
+  // Load structure
+  result = tab->trieLoadFromFile(file_name);
+  CPPUNIT_ASSERT( result );
+  CPPUNIT_ASSERT( tab->size() == original_size );
+
+  // Check count values
+  CPPUNIT_ASSERT( tab->cSrc(s1).get_c_s() == 1 + 2 + 4 + 8 );
+  CPPUNIT_ASSERT( tab->cTrg(t1_1).get_c_s() == 1 );
+  CPPUNIT_ASSERT( tab->cTrg(t1_2).get_c_s() == 2 );
+  CPPUNIT_ASSERT( tab->cTrg(t1_3).get_c_s() == 4 );
+  CPPUNIT_ASSERT( tab->cTrg(t1_4).get_c_s() == 8 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_1).get_c_st() == 1 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_2).get_c_st() == 2 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_3).get_c_st() == 4 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_4).get_c_st() == 8 );
+
+  CPPUNIT_ASSERT( tab->cSrc(s2).get_c_s() == 16 + 32 );
+  CPPUNIT_ASSERT( tab->cTrg(t2_1).get_c_s() == 16 );
+  CPPUNIT_ASSERT( tab->cTrg(t2_2).get_c_s() == 32 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_1).get_c_st() == 16 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_2).get_c_st() == 32 );
+
+  CPPUNIT_ASSERT( tab->cSrc(s3).get_c_s() == 64 + 128 );
+  CPPUNIT_ASSERT( tab->cTrg(t3_1).get_c_s() == 64 );
+  CPPUNIT_ASSERT( tab->cTrg(t3_2).get_c_s() == 128 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s3, t3_1).get_c_st() == 64 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s3, t3_2).get_c_st() == 128 );
+
+  tab->clear();  // Unmap loaded file
+  CPPUNIT_ASSERT( tab->size() == 0 );
+}
