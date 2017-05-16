@@ -475,7 +475,7 @@ llweights_values=`extract_weight_values "${raw_llweights}"`
 
 # Verify that weight info was successfully obtained
 if [ -z "${raw_llweights}" ]; then
-    echo "Weight info could not be obtained, check that $cfgfile is correct">&2
+    echo "Weight info could not be obtained, check that $cfgfile is correct (use thot_server tool with -w option)">&2
     return 1
 fi
 

@@ -546,7 +546,7 @@ loglin_downhill()
 
     # Verify that weight info was successfully obtained
     if [ -z "${va_opt}" ]; then
-        echo "Weight info could not be obtained, check that ${outd}/tune_loglin.cfg is correct">&2
+        echo "Weight info could not be obtained, check that ${outd}/tune_loglin.cfg is correct (use thot_server tool with -w option)">&2
         return 1
     fi
 
@@ -571,7 +571,7 @@ loglin_upd()
 
     # Verify that weight info was successfully obtained
     if [ -z "${va_opt}" ]; then
-        echo "Weight info could not be obtained, check that ${outd}/tune_loglin.cfg is correct">&2
+        echo "Weight info could not be obtained, check that ${outd}/tune_loglin.cfg is correct (use thot_server tool with -w option)">&2
         return 1
     fi
     
