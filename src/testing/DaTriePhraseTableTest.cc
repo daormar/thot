@@ -609,3 +609,50 @@ void DaTriePhraseTableTest::testMmap()
   tab->clear();  // Unmap loaded file
   CPPUNIT_ASSERT( tab->size() == 0 );
 }
+
+//---------------------------------------
+void DaTriePhraseTableTest::testSubkeys()
+{
+  /* TEST:
+  /* Check if subkeys are stored correctly
+  */
+ 
+  // Fill trie structure with data
+  tab->clear();
+
+  // Define vectors
+  Vector<WordIndex> s1 = getVector("Pan Samochodzik");
+  Vector<WordIndex> t1_1 = getVector("Mr Car");
+  Vector<WordIndex> t1_2 = getVector("Pan");
+  Vector<WordIndex> t1_3 = getVector("Mr");
+
+  Vector<WordIndex> s2 = getVector("Pan");
+  Vector<WordIndex> t2_1 = getVector("Mister");
+  Vector<WordIndex> t2_2 = getVector("Mr");
+
+  // Insert data to trie
+  tab->incrCountsOfEntry(s1, t1_1, Count(1));
+  tab->incrCountsOfEntry(s1, t1_2, Count(2));
+  tab->incrCountsOfEntry(s1, t1_3, Count(4));
+
+  tab->incrCountsOfEntry(s2, t2_1, Count(8));
+  tab->incrCountsOfEntry(s2, t2_2, Count(16));
+  
+
+  CPPUNIT_ASSERT( tab->size() == 11 );
+
+  // Check count values
+  CPPUNIT_ASSERT( tab->cSrc(s1).get_c_s() == 1 + 2 + 4 );
+  CPPUNIT_ASSERT( tab->cTrg(t1_1).get_c_s() == 1 );
+  CPPUNIT_ASSERT( tab->cTrg(t1_2).get_c_s() == 2 );
+  CPPUNIT_ASSERT( tab->cTrg(t1_3).get_c_s() == 4 + 16 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_1).get_c_st() == 1 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_2).get_c_st() == 2 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_3).get_c_st() == 4 );
+
+  CPPUNIT_ASSERT( tab->cSrc(s2).get_c_s() == 8 + 16 );
+  CPPUNIT_ASSERT( tab->cTrg(t2_1).get_c_s() == 8 );
+  CPPUNIT_ASSERT( tab->cTrg(t2_2).get_c_s() == 4 + 16 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_1).get_c_st() == 8 );
+  CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_2).get_c_st() == 16 );
+}

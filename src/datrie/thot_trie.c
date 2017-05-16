@@ -62,7 +62,6 @@ struct _TrieState {
     const Trie *trie;       /**< the corresponding trie */
     TrieIndex   index;      /**< index in double-array/tail structures */
     short       suffix_idx; /**< suffix character offset, if in suffix */
-    short       is_suffix;  /**< whether it is currently in suffix part */
 };
 
 /**
@@ -85,8 +84,7 @@ struct _TrieIterator {
 
 static TrieState * trie_state_new (const Trie *trie,
                                    TrieIndex   index,
-                                   short       suffix_idx,
-                                   short       is_suffix);
+                                   short       suffix_idx);
 
 static Bool        trie_store_conditionally (Trie            *trie,
                                              const AlphaChar *key,
@@ -596,7 +594,7 @@ exit_root_created:
 TrieState *
 trie_root (const Trie *trie)
 {
-    return trie_state_new (trie, da_get_root (trie->da), 0, FALSE);
+    return trie_state_new (trie, da_get_root (trie->da), 0);
 }
 
 /*----------------*
@@ -606,8 +604,7 @@ trie_root (const Trie *trie)
 static TrieState *
 trie_state_new (const Trie *trie,
                 TrieIndex   index,
-                short       suffix_idx,
-                short       is_suffix)
+                short       suffix_idx)
 {
     TrieState *s;
 
@@ -618,7 +615,6 @@ trie_state_new (const Trie *trie,
     s->trie       = trie;
     s->index      = index;
     s->suffix_idx = suffix_idx;
-    s->is_suffix  = is_suffix;
 
     return s;
 }
@@ -653,7 +649,7 @@ trie_state_copy (TrieState *dst, const TrieState *src)
 TrieState *
 trie_state_clone (const TrieState *s)
 {
-    return trie_state_new (s->trie, s->index, s->suffix_idx, s->is_suffix);
+    return trie_state_new (s->trie, s->index, s->suffix_idx);
 }
 
 /**
@@ -680,7 +676,6 @@ void
 trie_state_rewind (TrieState *s)
 {
     s->index      = da_get_root (s->trie->da);
-    s->is_suffix  = FALSE;
 }
 
 /**
@@ -701,21 +696,7 @@ trie_state_walk (TrieState *s, AlphaChar c)
     if (UNLIKELY (TRIE_INDEX_MAX == tc))
         return FALSE;
 
-    if (!s->is_suffix) {
-        Bool ret;
-
-        ret = da_walk (s->trie->da, &s->index, (TrieChar) tc);
-
-        if (ret && trie_da_is_separate (s->trie->da, s->index)) {
-            s->index = trie_da_get_tail_index (s->trie->da, s->index);
-            s->suffix_idx = 0;
-            s->is_suffix = TRUE;
-        }
-
-        return ret;
-    }
-    
-    return FALSE;
+    return da_walk (s->trie->da, &s->index, (TrieChar) tc);
 }
 
 /**
@@ -735,11 +716,7 @@ trie_state_is_walkable (const TrieState *s, AlphaChar c)
     if (UNLIKELY (TRIE_INDEX_MAX == tc))
         return FALSE;
 
-    if (!s->is_suffix)
-        return da_is_walkable (s->trie->da, s->index, (TrieChar) tc);
-    else
-        return tail_is_walkable_char (s->trie->tail, s->index, s->suffix_idx,
-                                      (TrieChar) tc);
+    return da_is_walkable (s->trie->da, s->index, (TrieChar) tc);
 }
 
 /**
@@ -767,58 +744,18 @@ trie_state_walkable_chars (const TrieState  *s,
 {
     int syms_num = 0;
 
-    if (!s->is_suffix) {
-        Symbols *syms = da_output_symbols (s->trie->da, s->index);
-        int i;
+    Symbols *syms = da_output_symbols (s->trie->da, s->index);
+    int i;
 
-        syms_num = symbols_num (syms);
-        for (i = 0; i < syms_num && i < chars_nelm; i++) {
-            TrieChar tc = symbols_get (syms, i);
-            chars[i] = alpha_map_trie_to_char (s->trie->alpha_map, tc);
-        }
-
-        symbols_free (syms);
-    } else {
-        chars[0] = alpha_map_trie_to_char (s->trie->alpha_map,
-                                           '\0');
-        syms_num = 1;
+    syms_num = symbols_num (syms);
+    for (i = 0; i < syms_num && i < chars_nelm; i++) {
+        TrieChar tc = symbols_get (syms, i);
+        chars[i] = alpha_map_trie_to_char (s->trie->alpha_map, tc);
     }
 
+    symbols_free (syms);
+
     return syms_num;
-}
-
-/**
- * @brief Check for single path
- *
- * @param s    : the state to check
- *
- * @return boolean value indicating whether it is in a single path
- *
- * Check if the given state is in a single path, that is, there is no other
- * branch from it to leaf.
- */
-Bool
-trie_state_is_single (const TrieState *s)
-{
-    return s->is_suffix;
-}
-
-/**
- * @brief Get data from leaf state
- *
- * @param s    : a leaf state
- *
- * @return the data associated with the leaf state @a s,
- *         or TRIE_DATA_ERROR if @a s is not a leaf state
- *
- * Get value from a leaf state of trie. Getting value from a non-leaf state
- * will result in TRIE_DATA_ERROR.
- */
-TrieData
-trie_state_get_data (const TrieState *s)
-{
-    return trie_state_is_leaf (s) ? tail_get_data (s->trie->tail, s->index)
-                                  : TRIE_DATA_ERROR;
 }
 
 
@@ -902,10 +839,6 @@ trie_iterator_next (TrieIterator *iter)
     if (!s) {
         s = iter->state = trie_state_clone (iter->root);
 
-        /* for tail state, we are already at the only entry */
-        if (s->is_suffix)
-            return TRUE;
-
         iter->key = trie_string_new (20);
         sep = da_first_separate (s->trie->da, s->index, iter->key);
         if (TRIE_INDEX_ERROR == sep)
@@ -914,10 +847,6 @@ trie_iterator_next (TrieIterator *iter)
         s->index = sep;
         return TRUE;
     }
-
-    /* no next entry for tail state */
-    if (s->is_suffix)
-        return FALSE;
 
     /* iter->state is a separate node */
     sep = da_next_separate (s->trie->da, iter->root->index, s->index,
@@ -954,21 +883,16 @@ trie_iterator_get_key (const TrieIterator *iter)
         return NULL;
 
     /* if s is in tail, root == s */
-    if (!s->is_suffix) {
-        TrieIndex  tail_idx;
-        int        i, key_len;
-        const TrieChar  *key_p;
+    TrieIndex  tail_idx;
+    int        i, key_len;
+    const TrieChar  *key_p;
 
-        key_len = trie_string_length (iter->key);
-        key_p = trie_string_get_val (iter->key);
-        alpha_key = (AlphaChar *) malloc (
-                        sizeof (AlphaChar)
-                        * (key_len + 1)
-                    );
-        alpha_p = alpha_key;
-        for (i = key_len; i > 0; i--) {
-            *alpha_p++ = alpha_map_trie_to_char (s->trie->alpha_map, *key_p++);
-        }
+    key_len = trie_string_length (iter->key);
+    key_p = trie_string_get_val (iter->key);
+    alpha_key = (AlphaChar *) malloc (sizeof (AlphaChar) * (key_len + 1));
+    alpha_p = alpha_key;
+    for (i = key_len; i > 0; i--) {
+        *alpha_p++ = alpha_map_trie_to_char (s->trie->alpha_map, *key_p++);
     }
 
     *alpha_p = 0;
@@ -999,14 +923,10 @@ trie_iterator_get_data (const TrieIterator *iter)
     if (!s)
         return TRIE_DATA_ERROR;
 
-    if (!s->is_suffix) {
-        if (!trie_da_is_separate (s->trie->da, s->index))
-            return TRIE_DATA_ERROR;
+    if (!trie_da_is_separate (s->trie->da, s->index))
+        return TRIE_DATA_ERROR;
 
-        tail_index = trie_da_get_tail_index (s->trie->da, s->index);
-    } else {
-        tail_index = s->index;
-    }
+    tail_index = trie_da_get_tail_index (s->trie->da, s->index);
 
     return tail_get_data (s->trie->tail, tail_index);
 }
@@ -1030,19 +950,15 @@ trie_state_get_terminal_data (const TrieState *s)
     if (!s)
         return TRIE_DATA_ERROR;
 
-    if (!s->is_suffix){
-        if (!trie_da_is_separate(s->trie->da, index)) {
-            /* walk to a terminal char to get the data */
-            Bool ret = da_walk (s->trie->da, &index, TRIE_CHAR_TERM);
-            if (!ret) {
-                return TRIE_DATA_ERROR;
-            }
+    if (!trie_da_is_separate(s->trie->da, index)) {
+        /* walk to a terminal char to get the data */
+        Bool ret = da_walk (s->trie->da, &index, TRIE_CHAR_TERM);
+        if (!ret) {
+            return TRIE_DATA_ERROR;
         }
-        tail_index = trie_da_get_tail_index (s->trie->da, index);
     }
-    else {
-        tail_index = s->index;
-    }
+
+    tail_index = trie_da_get_tail_index (s->trie->da, index);
 
     return tail_get_data (s->trie->tail, tail_index);
 }

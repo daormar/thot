@@ -80,6 +80,7 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   CPPUNIT_TEST( testSize );
   CPPUNIT_TEST( testSavingAndRestoringTrie );
   CPPUNIT_TEST( testMmap );
+  CPPUNIT_TEST( testSubkeys );
   CPPUNIT_TEST_SUITE_END();
 
  private:
@@ -107,6 +108,7 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   void testSize();
   void testSavingAndRestoringTrie();
   void testMmap();
+  void testSubkeys();
 };
 
 #endif

@@ -72,8 +72,7 @@ extern "C" {
  * - Walk through trie stepwise with TrieState and its functions
  *   (trie_root(), trie_state_walk(), trie_state_rewind(),
  *   trie_state_clone(), trie_state_copy(),
- *   trie_state_is_walkable(), trie_state_walkable_chars(),
- *   trie_state_is_single(), trie_state_get_data().
+ *   trie_state_is_walkable(), trie_state_walkable_chars().
  *   And do not forget to free TrieState objects with trie_state_free()
  *   after use.)
  * - Enumerate all keys using trie_enumerate()
@@ -189,23 +188,6 @@ int       trie_state_walkable_chars (const TrieState  *s,
  * state that terminates a key, and stores a value associated with it.
  */
 #define   trie_state_is_terminal(s) trie_state_is_walkable((s),TRIE_CHAR_TERM)
-
-Bool      trie_state_is_single (const TrieState *s);
-
-/**
- * @brief Check for leaf state
- *
- * @param s    : the state to check
- *
- * @return boolean value indicating whether it is a leaf state
- *
- * Check if the given state is a leaf state. A leaf state is a terminal state
- * that has no other branch.
- */
-#define   trie_state_is_leaf(s) \
-    (trie_state_is_single(s) && trie_state_is_terminal(s))
-
-TrieData trie_state_get_data (const TrieState *s);
 
 
 /*----------------------*

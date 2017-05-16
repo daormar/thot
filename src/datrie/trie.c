@@ -857,24 +857,6 @@ trie_state_is_single (const TrieState *s)
     return s->is_suffix;
 }
 
-/**
- * @brief Get data from leaf state
- *
- * @param s    : a leaf state
- *
- * @return the data associated with the leaf state @a s,
- *         or TRIE_DATA_ERROR if @a s is not a leaf state
- *
- * Get value from a leaf state of trie. Getting value from a non-leaf state
- * will result in TRIE_DATA_ERROR.
- */
-TrieData
-trie_state_get_data (const TrieState *s)
-{
-    return trie_state_is_leaf (s) ? tail_get_data (s->trie->tail, s->index)
-                                  : TRIE_DATA_ERROR;
-}
-
 
 /*---------------------*
  *   ENTRY ITERATION   *
