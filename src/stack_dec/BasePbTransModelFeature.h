@@ -73,7 +73,7 @@ class BasePbTransModelFeature
 
       // Weight related functions
   void setWeight(float w);
-  float getWeight(float w);
+  float getWeight(void);
 
       // Feature information
   void setFeatName(std::string fname);
@@ -110,7 +110,7 @@ void BasePbTransModelFeature<SCORE_INFO>::setWeight(float w)
 
 //---------------------------------
 template<class SCORE_INFO>
-float BasePbTransModelFeature<SCORE_INFO>::getWeight(float w)
+float BasePbTransModelFeature<SCORE_INFO>::getWeight(void)
 {
   return weight;
 }
