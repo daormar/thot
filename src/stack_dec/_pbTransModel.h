@@ -790,14 +790,28 @@ void _pbTransModel<HYPOTHESIS>::setWeights(Vector<float> wVec)
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::getWeights(Vector<pair<std::string,float> >& compWeights)
 {
-      // TO-BE-DONE
+  compWeights.clear();
+  for(unsigned int i=0;i<featuresInfoPtr->featPtrVec.size();++i)
+  {
+    pair<std::string,float> str_float;
+    str_float.first=featuresInfoPtr->featPtrVec[i]->getFeatName();
+    str_float.second=featuresInfoPtr->featPtrVec[i]->getWeight();
+    compWeights.push_back(str_float);
+  }
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::printWeights(ostream &outS)
 {
-      // TO-BE-DONE
+  Vector<pair<std::string,float> > compWeights;
+  getWeights(compWeights);
+  for(unsigned int i=0;i<compWeights.size();++i)
+  {
+    cerr<<compWeights[i].first<<": "<<compWeights[i].second;
+    if(i!=compWeights.size()-1)
+      cerr<<" , ";
+  }
 }
 
 //---------------------------------
