@@ -197,6 +197,10 @@ class ThotDecoder
   void decrease_non_atomic_ops_running(void);
 
       // Functions to load models
+  int loadPhrModel(BasePhraseModel* basePhraseModelPtr,
+                   std::string modelFileName);
+  int loadDirectSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
+                        std::string modelFileName);
   BasePhraseModel* createPmPtr(std::string modelType);
   bool process_tm_descriptor(std::string tmFilesPrefix,
                              int verbose/*=0*/);
@@ -215,7 +219,7 @@ class ThotDecoder
   int createDirectPhrModelFeat(std::string featName,
                                std::string modelType,
                                std::string modelFileName,
-                               DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr);
+                               DirectPhraseModelFeat<SmtModel::HypScoreInfo>** dirPmFeatPtrRef);
   
       // Training-related functions
   void setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,

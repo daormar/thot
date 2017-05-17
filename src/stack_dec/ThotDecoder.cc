@@ -848,7 +848,7 @@ BasePhraseModel* ThotDecoder::createPmPtr(std::string modelType)
     BasePhraseModel* tmPtr=simpleDynClassLoader.make_obj("");
 
         // Close module
-    simpleDynClassLoader.close_module();
+    simpleDynClassLoader.close_module(verbosity);
 
     if(tmPtr==NULL)
     {
@@ -861,17 +861,56 @@ BasePhraseModel* ThotDecoder::createPmPtr(std::string modelType)
 }
 
 //--------------------------
+int ThotDecoder::loadPhrModel(BasePhraseModel* basePhraseModelPtr,
+                              std::string modelFileName)
+{
+      // Load phrase model vocabularies 
+  std::string srcTrainVocabFileName=modelFileName;
+  srcTrainVocabFileName+="_swm.svcb";
+  std::string trgTrainVocabFileName=modelFileName;
+  trgTrainVocabFileName+="_swm.tvcb";
+
+  int ret=basePhraseModelPtr->loadSrcVocab(srcTrainVocabFileName.c_str());
+  if(ret==ERROR) return ERROR;
+
+  ret=basePhraseModelPtr->loadTrgVocab(trgTrainVocabFileName.c_str());
+  if(ret==ERROR) return ERROR;
+
+      // load phrase model
+  if(basePhraseModelPtr->load(modelFileName.c_str())!=0)
+  {
+    cerr<<"Error while reading phrase model file\n";
+    return ERROR;
+  }  
+
+  return OK;
+}
+
+//--------------------------
+int ThotDecoder::loadDirectSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
+                                   std::string modelFileName)
+{
+      // load sw model (The direct model is the one with the prefix
+      // _invswm)
+  std::string invReadTablePrefix=modelFileName;
+  invReadTablePrefix+="_invswm";
+  bool ret=baseSwAligModelPtr->load(invReadTablePrefix.c_str());
+  if(ret==ERROR) return ERROR;
+
+  return OK;
+}
+
+//--------------------------
 int ThotDecoder::createDirectPhrModelFeat(std::string featName,
                                           std::string modelType,
                                           std::string modelFileName,
-                                          DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr)
+                                          DirectPhraseModelFeat<SmtModel::HypScoreInfo>** dirPmFeatPtrRef)
 {
-      // TO-BE-DONE
-  
-  cerr<<"* Creating direct phrase model feature ("<<featName<<" "<<modelType<<" "<<modelFileName<<")"<<endl;
+  cerr<<"** Creating direct phrase model feature ("<<featName<<" "<<modelType<<" "<<modelFileName<<")"<<endl;
 
       // Create feature pointer and set name
-  dirPmFeatPtr=new DirectPhraseModelFeat<SmtModel::HypScoreInfo>;
+  (*dirPmFeatPtrRef)=new DirectPhraseModelFeat<SmtModel::HypScoreInfo>;
+  DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=*dirPmFeatPtrRef;
   dirPmFeatPtr->setFeatName(featName);
 
       // Add phrase model pointer
@@ -881,11 +920,10 @@ int ThotDecoder::createDirectPhrModelFeat(std::string featName,
   tdCommonVars.phraseModelsInfo.invPbModelPtrVec.push_back(basePhraseModelPtr);
   
       // Load phrase model
-  if(basePhraseModelPtr->load(modelFileName.c_str())!=0)
-  {
-    cerr<<"Error while reading phrase model file\n";
+  cerr<<"* Loading phrase model..."<<endl;
+  int ret=loadPhrModel(basePhraseModelPtr,modelFileName);
+  if(ret==ERROR)
     return ERROR;
-  }  
   
       // Link pointer to feature
   dirPmFeatPtr->link_pm(basePhraseModelPtr);  
@@ -899,8 +937,11 @@ int ThotDecoder::createDirectPhrModelFeat(std::string featName,
   }
   tdCommonVars.swModelsInfo.swAligModelPtrVec.push_back(baseSwAligModelPtr);
 
-      // Load single word model
-  
+      // Load direct single word model
+  cerr<<"* Loading direct single word model..."<<endl;
+  ret=loadDirectSwModel(baseSwAligModelPtr,modelFileName);
+  if(ret==ERROR)
+    return ERROR;
   
       // Link pointer to feature
   dirPmFeatPtr->link_swm(baseSwAligModelPtr);
@@ -927,7 +968,7 @@ bool ThotDecoder::process_tm_descriptor(std::string tmDescFile,
           // Create direct phrase model feature
       std::string featName="pts_"+modelDescEntryVec[i].statusStr;
       DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr;
-      int ret=createDirectPhrModelFeat(featName,modelDescEntryVec[i].modelType,modelDescEntryVec[i].modelFileName,dirPmFeatPtr);
+      int ret=createDirectPhrModelFeat(featName,modelDescEntryVec[i].modelType,modelDescEntryVec[i].absolutizedModelFileName,&dirPmFeatPtr);
       if(ret==ERROR)
         return ERROR;
       tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
@@ -956,7 +997,7 @@ bool ThotDecoder::process_tm_files_prefix(std::string tmFilesPrefix,
       // Create direct phrase model feature
   std::string featName="pts";
   DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr;
-  int ret=createDirectPhrModelFeat(featName,modelType,modelFileName,dirPmFeatPtr);
+  int ret=createDirectPhrModelFeat(featName,modelType,modelFileName,&dirPmFeatPtr);
   if(ret==ERROR)
     return ERROR;
   tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
