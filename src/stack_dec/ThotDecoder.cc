@@ -657,8 +657,16 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
   }
 
       // Load language model
-  ret=load_lm(lm_str.c_str(),verbose);
-  if(ret==ERROR) return ERROR;
+  if(tdCommonVars.featureBasedImplEnabled)
+  {
+    ret=load_lm_feat_impl(lm_str.c_str(),verbose);
+    if(ret==ERROR) return ERROR;
+  }
+  else
+  {
+    ret=load_lm(lm_str.c_str(),verbose);
+    if(ret==ERROR) return ERROR;
+  }
 
       // Set non-monotonicity level
   setNonMonotonicity(nomon,verbose);
@@ -1078,7 +1086,179 @@ bool ThotDecoder::load_lm(const char* lmFileName,
 
   return ret;
 }
+
+//--------------------------
+int ThotDecoder::loadLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
+                               std::string modelFileName)
+{
+  if(baseNgLmPtr->load(modelFileName.c_str())==ERROR)
+    return ERROR;
+  else
+    return OK;
+}
+
+//--------------------------
+BaseNgramLM<LM_State>* ThotDecoder::createLmPtr(std::string modelType)
+{
+  if(modelType.empty())
+  {
+    BaseNgramLM<LM_State>* langModelPtr=tdCommonVars.dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseNgramLMInitPars);
+    return langModelPtr;
+  }
+  else
+  {
+        // Declare dynamic class loader instance
+    SimpleDynClassLoader<BaseNgramLM<LM_State> > simpleDynClassLoader;
   
+        // Open module
+    bool verbosity=false;
+    if(!simpleDynClassLoader.open_module(modelType,verbosity))
+    {
+      cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
+      return NULL;
+    }
+
+        // Create lm file pointer
+    BaseNgramLM<LM_State>* lmPtr=simpleDynClassLoader.make_obj("");
+
+        // Close module
+    simpleDynClassLoader.close_module(verbosity);
+
+    if(lmPtr==NULL)
+    {
+      cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;    
+      return NULL;
+    }
+    
+    return lmPtr;
+  }
+}
+
+//--------------------------
+int ThotDecoder::createLangModelFeat(std::string featName,
+                                     std::string modelType,
+                                     std::string modelFileName,
+                                     LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef)
+{
+  cerr<<"** Creating language model feature ("<<featName<<" "<<modelType<<" "<<modelFileName<<")"<<endl;
+
+      // Create feature pointer and set name
+  (*langModelFeatPtrRef)=new LangModelFeat<SmtModel::HypScoreInfo>;
+  LangModelFeat<SmtModel::HypScoreInfo>* langModelFeatPtr=*langModelFeatPtrRef;
+  langModelFeatPtr->setFeatName(featName);
+
+      // Add language model pointer
+  BaseNgramLM<LM_State>* baseNgLmPtr=createLmPtr(modelType);
+  if(baseNgLmPtr==NULL)
+    return ERROR;
+  tdCommonVars.langModelsInfo.lModelPtrVec.push_back(baseNgLmPtr);
+  
+      // Load language model
+  cerr<<"* Loading language model..."<<endl;
+  int ret=loadLangModel(baseNgLmPtr,modelFileName);
+  if(ret==ERROR)
+    return ERROR;
+  
+      // Link pointer to feature
+  langModelFeatPtr->link_lm(baseNgLmPtr);  
+  
+  return OK;
+}
+
+//--------------------------
+bool ThotDecoder::process_lm_descriptor(std::string lmDescFile,
+                                        int verbose/*=0*/)
+{
+  if(verbose)
+  {
+    cerr<<"Processing language model descriptor: "<<lmDescFile<<endl;
+  }
+
+      // Obtain info about translation model entries
+  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  if(extractModelEntryInfo(lmDescFile,modelDescEntryVec)==OK)
+  {
+        // Process descriptor entries
+    for(unsigned int i=0;i<modelDescEntryVec.size();++i)
+    {
+          // Create direct phrase model feature
+      std::string featName="lm_"+modelDescEntryVec[i].statusStr;
+      LangModelFeat<SmtModel::HypScoreInfo>* lmFeatPtr;
+      int ret=createLangModelFeat(featName,modelDescEntryVec[i].modelType,modelDescEntryVec[i].absolutizedModelFileName,&lmFeatPtr);
+      if(ret==ERROR)
+        return ERROR;
+      tdCommonVars.featuresInfoPtr->featPtrVec.push_back(lmFeatPtr);
+    }
+    
+    return OK;
+  }
+  else
+  {
+    return ERROR;
+  }
+}
+
+//--------------------------
+bool ThotDecoder::process_lm_files_prefix(std::string lmFilesPrefix,
+                                          int verbose/*=0*/)
+{
+  if(verbose)
+  {
+    cerr<<"Processing language model files prefix: "<<lmFilesPrefix<<endl;
+  }
+
+  std::string modelType="";
+  std::string modelFileName=lmFilesPrefix;
+
+      // Create direct phrase model feature
+  std::string featName="pts";
+  
+  LangModelFeat<SmtModel::HypScoreInfo>* lmFeatPtr;
+  int ret=createLangModelFeat(featName,modelType,modelFileName,&lmFeatPtr);
+  if(ret==ERROR)
+    return ERROR;
+  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(lmFeatPtr);
+  
+  return OK;
+}
+
+//--------------------------
+bool ThotDecoder::load_lm_feat_impl(const char* lmFileName,
+                                    int verbose/*=0*/)
+{
+  int ret;
+  pthread_mutex_lock(&atomic_op_mut);
+  /////////// begin of mutex 
+
+      // Wait until all non-atomic operations have finished
+  wait_on_non_atomic_op_cond();
+
+  if(strcmp(tdState.lmfileLoaded.c_str(),lmFileName)==0)
+  {
+    if(verbose) cerr<<"Language model already loaded"<<endl;
+    ret=OK;
+  }
+  else
+  {
+        // Delete previous instantiation
+    deleteLangModelPtrsFeatImpl();
+    
+    std::string mainFileName;
+    if(fileIsDescriptor(lmFileName,mainFileName))
+      ret=process_lm_descriptor(lmFileName,verbose);
+    else
+      ret=process_lm_files_prefix(lmFileName,verbose);
+  }
+  
+      // Unlock non_atomic_op_cond mutex
+  unlock_non_atomic_op_mut();
+  
+  /////////// end of mutex 
+  pthread_mutex_unlock(&atomic_op_mut);
+
+  return ret;  
+}
+
 //--------------------------
 bool ThotDecoder::load_ecm(const char* ecmFilesPrefix,
                            int verbose/*=0*/)

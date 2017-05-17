@@ -202,7 +202,7 @@ class ThotDecoder
   int loadDirectSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
                         std::string modelFileName);
   BasePhraseModel* createPmPtr(std::string modelType);
-  bool process_tm_descriptor(std::string tmFilesPrefix,
+  bool process_tm_descriptor(std::string tmDescFile,
                              int verbose/*=0*/);
   bool process_tm_files_prefix(std::string tmFilesPrefix,
                                int verbose/*=0*/);
@@ -210,8 +210,21 @@ class ThotDecoder
                int verbose=0);
   bool load_tm_feat_impl(const char* tmFilesPrefix,
                          int verbose=0);
+  int loadLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
+                    std::string modelFileName);
+  BaseNgramLM<LM_State>* createLmPtr(std::string modelType);
+  int createLangModelFeat(std::string featName,
+                          std::string modelType,
+                          std::string modelFileName,
+                          LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef);
+  bool process_lm_descriptor(std::string lmDescFile,
+                             int verbose/*=0*/);
+  bool process_lm_files_prefix(std::string lmFilesPrefix,
+                               int verbose/*=0*/);
   bool load_lm(const char* lmFileName,
                int verbose=0);
+  bool load_lm_feat_impl(const char* lmFileName,
+                         int verbose=0);
   bool load_ecm(const char* ecmFilesPrefix,
                 int verbose=0);
 
