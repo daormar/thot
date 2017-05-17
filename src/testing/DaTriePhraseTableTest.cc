@@ -51,7 +51,7 @@ void DaTriePhraseTableTest::tearDown()
 Vector<WordIndex> DaTriePhraseTableTest::getVector(string phrase) {
   Vector<WordIndex> v;
 
-  for(int i = 0; i < phrase.size(); i++) {
+  for(unsigned int i = 0; i < phrase.size(); i++) {
     v.push_back(phrase[i]);
   }
 
@@ -154,7 +154,7 @@ void DaTriePhraseTableTest::testGetEntriesForTarget()
 void DaTriePhraseTableTest::testRetrievingSubphrase()
 {
   /* TEST:
-  /* Accessing element with the subphrase should return count 0
+     Accessing element with the subphrase should return count 0
   */
   bool found;
   Vector<WordIndex> s = getVector("Hello");
@@ -175,8 +175,8 @@ void DaTriePhraseTableTest::testRetrievingSubphrase()
 void DaTriePhraseTableTest::testRetrieveNonLeafPhrase()
 {
   /* TEST:
-  /* Phrases with count > 0 and not stored in the leaves
-  /* should be also retrieved
+     Phrases with count > 0 and not stored in the leaves
+     should be also retrieved
   */
   bool found;
   DaTriePhraseTable::SrcTableNode node;
@@ -212,7 +212,7 @@ void DaTriePhraseTableTest::testRetrieveNonLeafPhrase()
 void DaTriePhraseTableTest::testGetEntriesForSource()
 {
   /* TEST:
-  /* Find translations for the source phrase
+     Find translations for the source phrase
   */
   bool found;
   DaTriePhraseTable::TrgTableNode node;
@@ -258,8 +258,8 @@ void DaTriePhraseTableTest::testGetEntriesForSource()
 void DaTriePhraseTableTest::testRetrievingEntriesWithCountEqualZero()
 {
   /* TEST:
-  /* Function getEntriesForTarget for retrieving entries should skip
-  /* elements with count equals 0
+     Function getEntriesForTarget for retrieving entries should skip
+     elements with count equals 0
   */
   bool found;
   DaTriePhraseTable::SrcTableNode node;
@@ -281,7 +281,7 @@ void DaTriePhraseTableTest::testRetrievingEntriesWithCountEqualZero()
 void DaTriePhraseTableTest::testGetNbestForTrg()
 {
   /* TEST:
-  /* Check if method getNbestForTrg returns correct elements
+     Check if method getNbestForTrg returns correct elements
   */
   bool found;
   NbestTableNode<PhraseTransTableNodeData> node;
@@ -324,8 +324,8 @@ void DaTriePhraseTableTest::testGetNbestForTrg()
 void DaTriePhraseTableTest::testAddSrcTrgInfo()
 {
   /* TEST:
-  /* Check if two keys were added (for (s, t) and (t, s) vectors)
-  /* and if their values are the same
+     Check if two keys were added (for (s, t) and (t, s) vectors)
+     and if their values are the same
   */
   bool found;
 
@@ -347,8 +347,8 @@ void DaTriePhraseTableTest::testAddSrcTrgInfo()
 void DaTriePhraseTableTest::testIteratorsLoop()
 {
   /* TEST:
-  /* Check basic implementation of iterators - functions
-  /* begin(), end() and operators (++ postfix, *).
+     Check basic implementation of iterators - functions
+     begin(), end() and operators (++ postfix, *).
   */
   Vector<WordIndex> s = getVector("jezioro Skiertag");
   Vector<WordIndex> t = getVector("Skiertag lake");
@@ -382,8 +382,8 @@ void DaTriePhraseTableTest::testIteratorsLoop()
 void DaTriePhraseTableTest::testIteratorsOperatorsPlusPlusStar()
 {
   /* TEST:
-  /* Check basic implementation of iterators - function
-  /* begin() and operators (++ prefix, ++ postfix, *, ->).
+     Check basic implementation of iterators - function
+     begin() and operators (++ prefix, ++ postfix, *, ->).
   */
   bool found;
 
@@ -428,10 +428,8 @@ void DaTriePhraseTableTest::testIteratorsOperatorsPlusPlusStar()
 void DaTriePhraseTableTest::testIteratorsOperatorsEqualNotEqual()
 {
   /* TEST:
-  /* Check basic implementation of iterators - operators == and !=
+     Check basic implementation of iterators - operators == and !=
   */
-  bool found;
-
   Vector<WordIndex> s = getVector("kemping w Kretowinach");
   Vector<WordIndex> t = getVector("camping Kretowiny");
   
@@ -452,9 +450,8 @@ void DaTriePhraseTableTest::testIteratorsOperatorsEqualNotEqual()
 void DaTriePhraseTableTest::testSize()
 {
   /* TEST:
-  /* Check if number of elements in trie is returned correctly
+     Check if number of elements in trie is returned correctly
   */
-
   tab->clear();
   CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
   
@@ -488,7 +485,7 @@ void DaTriePhraseTableTest::testSize()
 void DaTriePhraseTableTest::testSavingAndRestoringTrie()
 {
   /* TEST:
-  /* Check saving and restoring trie structure on disk
+     Check saving and restoring trie structure on disk
   */
   bool result;
   
@@ -507,7 +504,7 @@ void DaTriePhraseTableTest::testSavingAndRestoringTrie()
   tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
                          getVector("First Adventure of Pan Samochodzik"), Count(7));
 
-  int original_size = tab->size();
+  unsigned int original_size = tab->size();
   // Save structue on disk
   const char* file_name = tmpnam(NULL);
 
@@ -531,8 +528,8 @@ void DaTriePhraseTableTest::testSavingAndRestoringTrie()
 void DaTriePhraseTableTest::testMmap()
 {
   /* TEST:
-  /* Check if the trie restored from disk with mmap
-  /* contains all stored items and correct counts
+     Check if the trie restored from disk with mmap
+     contains all stored items and correct counts
   */
   bool result;
   
@@ -566,7 +563,7 @@ void DaTriePhraseTableTest::testMmap()
   tab->incrCountsOfEntry(s3, t3_1, Count(64));
   tab->incrCountsOfEntry(s3, t3_2, Count(128));
 
-  int original_size = tab->size();
+  unsigned int original_size = tab->size();
   // Save structue on disk
   const char* file_name = tmpnam(NULL);
 
@@ -614,7 +611,7 @@ void DaTriePhraseTableTest::testMmap()
 void DaTriePhraseTableTest::testSubkeys()
 {
   /* TEST:
-  /* Check if subkeys are stored correctly
+     Check if subkeys are stored correctly
   */
  
   // Fill trie structure with data

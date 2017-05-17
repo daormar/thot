@@ -369,7 +369,7 @@ bool DaTriePhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
   t_uw_vec.push_back(UNUSED_WORD);
   state = trie_root (trie);
 
-  for (int i = 0; i < t_uw_vec.size(); i++) {
+  for (unsigned int i = 0; i < t_uw_vec.size(); i++) {
     if (!trie_state_walk(state, (AlphaChar) t_uw_vec[i])) {
       return false;
     }
@@ -487,7 +487,6 @@ DaTriePhraseTable::~DaTriePhraseTable(void)
 //-------------------------
 DaTriePhraseTable::const_iterator DaTriePhraseTable::begin(void)const
 {
-  AlphaChar *key;
   TrieIterator *trie_iter;
 
   trie_iter = trie_iterator_new(trie_root_node);
@@ -516,15 +515,12 @@ bool DaTriePhraseTable::const_iterator::operator++(void) //prefix
 {
   if(internalTrieIter != NULL)
   {
-    bool found;
     AlphaChar *key;
 
-    while(found = trie_iterator_next(internalTrieIter)) {
-      if (found) {
-        key = trie_iterator_get_key(internalTrieIter);
-        if (key) {
-          return true;
-        }
+    while(trie_iterator_next(internalTrieIter)) {
+      key = trie_iterator_get_key(internalTrieIter);
+      if (key) {
+        return true;
       }
     }
 
