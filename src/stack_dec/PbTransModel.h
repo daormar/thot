@@ -133,7 +133,6 @@ Score PbTransModel<EQCLASS_FUNC>::nullHypothesisScrComps(Hypothesis& nullHyp,
   HypScoreInfo hypScoreInfo;
   HypDataType dataType=nullHypothesisHypData();
   PhrHypDataStr dataTypeStr=phypd_to_phypdstr(dataType);
-  unsigned int srcLen=this->pbtmInputVars.srcSentVec.size();
 
       // Init scoreInfo
   hypScoreInfo.score=0;
@@ -145,7 +144,7 @@ Score PbTransModel<EQCLASS_FUNC>::nullHypothesisScrComps(Hypothesis& nullHyp,
   for(unsigned int i=0;i<this->featuresInfoPtr->featPtrVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->featuresInfoPtr->featPtrVec[i]->extensionScore(srcLen,hypScoreInfo,dataTypeStr,dataTypeStr,unweightedScore);
+    hypScoreInfo=this->featuresInfoPtr->featPtrVec[i]->extensionScore(this->pbtmInputVars.srcSentVec,hypScoreInfo,dataTypeStr,dataTypeStr,unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
     
@@ -248,8 +247,7 @@ Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
   HypDataType pred_hypd=pred_hyp.getData();
   PhrHypDataStr pred_hypd_str=phypd_to_phypdstr(pred_hypd);
   PhrHypDataStr new_hypd_str=phypd_to_phypdstr(new_hypd);
-  unsigned int srcLen=this->pbtmInputVars.srcSentVec.size();
-  
+
       // Init scoreComponents
   scoreComponents.clear();
 
@@ -257,7 +255,7 @@ Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
   for(unsigned int i=0;i<this->featuresInfoPtr->featPtrVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->featuresInfoPtr->featPtrVec[i]->extensionScore(srcLen,hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
+    hypScoreInfo=this->featuresInfoPtr->featPtrVec[i]->extensionScore(this->pbtmInputVars.srcSentVec,hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
     

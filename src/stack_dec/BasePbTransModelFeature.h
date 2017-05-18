@@ -81,7 +81,7 @@ class BasePbTransModelFeature
   virtual std::string getFeatType(void)=0;
 
       // Scoring functions
-  virtual HypScoreInfo extensionScore(unsigned int srcSentLen,
+  virtual HypScoreInfo extensionScore(const Vector<std::string>& srcSent,
                                       const HypScoreInfo& predHypScrInf,
                                       const PhrHypDataStr& predHypDataStr,
                                       const PhrHypDataStr& newHypDataStr,

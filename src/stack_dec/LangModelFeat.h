@@ -78,7 +78,7 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
   std::string getFeatType(void);
 
       // Scoring functions
-  HypScoreInfo extensionScore(unsigned int srcSentLen,
+  HypScoreInfo extensionScore(const Vector<std::string>& srcSent,
                               const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
@@ -90,6 +90,10 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
  protected:
 
   BaseNgramLM<LM_State>* lModelPtr;
+
+  Score getEosScoreGivenState(LM_State& lmHist);
+  Score getNgramScoreGivenState(Vector<std::string> trgphrase,
+                                LM_State& lmHist);
 
 };
 
@@ -114,6 +118,46 @@ template<class SCORE_INFO>
 void LangModelFeat<SCORE_INFO>::link_lm(BaseNgramLM<LM_State>* _lModelPtr)
 {
   lModelPtr=_lModelPtr;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+Score LangModelFeat<SCORE_INFO>::getEosScoreGivenState(LM_State& lmHist)
+{
+#ifdef WORK_WITH_ZERO_GRAM_PROB
+  return this->lModelPtr->getZeroGramProb());
+#else
+  return this->lModelPtr->getLgProbEndGivenState(lmHist);
+#endif
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+Score LangModelFeat<SCORE_INFO>::getNgramScoreGivenState(Vector<std::string> trgphrase,
+                                                         LM_State& lmHist)
+{
+        // Score not present in cache table
+  Vector<WordIndex> trgPhraseIdx;
+  Score result=0;
+
+      // trgPhraseIdx stores the target sentence using indices of the language model
+  for(unsigned int i=0;i<trgphrase.size();++i)
+  {
+    trgPhraseIdx.push_back(this->lModelPtr->stringToWordIndex(trgphrase[i]));
+  }
+      
+  for(unsigned int i=0;i<trgPhraseIdx.size();++i)
+  {
+#ifdef WORK_WITH_ZERO_GRAM_PROB
+      Score scr=this->lModelPtr->getZeroGramProb();
+#else
+      Score scr=this->lModelPtr->getNgramLgProbGivenState(trgPhraseIdx[i],lmHist);
+#endif
+          // Increase score
+      result+=scr;
+  }
+      // Return result
+  return result;
 }
 
 #endif

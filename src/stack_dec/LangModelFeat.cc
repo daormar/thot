@@ -33,11 +33,57 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 template<>
 typename LangModelFeat<PhrScoreInfo>::HypScoreInfo
-LangModelFeat<PhrScoreInfo>::extensionScore(unsigned int srcSentLen,
+LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
                                             const HypScoreInfo& predHypScrInf,
                                             const PhrHypDataStr& predHypDataStr,
                                             const PhrHypDataStr& newHypDataStr,
                                             Score& unweightedScore)
 {
-  
+      // Check if function was called to score the null hypothesis
+  if(predHypDataStr.sourceSegmentation.empty() && newHypDataStr.sourceSegmentation.empty())
+  {
+        // Obtain language model state for null hypothesis
+    HypScoreInfo hypScrInf=predHypScrInf;
+    lModelPtr->getStateForBeginOfSentence(hypScrInf.lmHist);
+    return hypScrInf;
+  }
+  else
+  {
+        // Obtain score for hypothesis extension
+    unsigned int trglen=predHypDataStr.ntarget.size()-1;
+    HypScoreInfo hypScrInf=predHypScrInf;
+    unweightedScore=0;
+    
+    for(unsigned int i=predHypDataStr.sourceSegmentation.size();i<newHypDataStr.sourceSegmentation.size();++i)
+    {
+          // Initialize variables
+      unsigned int trgLeft;
+      unsigned int trgRight=newHypDataStr.targetSegmentCuts[i];
+      if(i==0)
+        trgLeft=1;
+      else
+        trgLeft=newHypDataStr.targetSegmentCuts[i-1]+1;
+      Vector<std::string> trgphrase;
+      for(unsigned int k=trgLeft;k<=trgRight;++k)
+      {
+        trgphrase.push_back(newHypDataStr.ntarget[k]);
+      }
+
+          // Update score
+      Score iterScore=getNgramScoreGivenState(trgphrase,hypScrInf.lmHist);
+      unweightedScore+= iterScore;
+      hypScrInf.score+= weight*iterScore;
+    }
+
+        // Check if new hypothesis is complete
+    if(numberOfSrcWordsCovered(newHypDataStr)==srcSent.size())
+    {
+        // Obtain score contribution for complete hypothesis
+      Score scrCompl=getEosScoreGivenState(hypScrInf.lmHist);
+      unweightedScore+= scrCompl;
+      hypScrInf.score+= weight*scrCompl;
+    }
+    
+    return hypScrInf;
+  }
 }
