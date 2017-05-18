@@ -85,15 +85,16 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
 
-      // Link pointer
+      // Functions related to model pointers
   void link_pm(BasePhraseModel* _pbModelPtr);
+  BasePhraseModel* get_pmptr(void);
   void link_swm(BaseSwAligModel<PpInfo>* _swAligModelPtr);
+  BaseSwAligModel<PpInfo>* get_swmptr(void);
 
  protected:
 
   BasePhraseModel* pbModelPtr;
   BaseSwAligModel<PpInfo>* swAligModelPtr;
-
 };
 
 //--------------- WordPenaltyFeat class functions
@@ -121,9 +122,23 @@ void DirectPhraseModelFeat<SCORE_INFO>::link_pm(BasePhraseModel* _pbModelPtr)
 
 //---------------------------------
 template<class SCORE_INFO>
+BasePhraseModel* DirectPhraseModelFeat<SCORE_INFO>::get_pmptr(void)
+{
+  return pbModelPtr;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
 void DirectPhraseModelFeat<SCORE_INFO>::link_swm(BaseSwAligModel<PpInfo>* _swAligModelPtr)
 {
   swAligModelPtr=_swAligModelPtr;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+BaseSwAligModel<PpInfo>* DirectPhraseModelFeat<SCORE_INFO>::get_swmptr(void)
+{
+  return swAligModelPtr;
 }
 
 #endif
