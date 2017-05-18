@@ -28,12 +28,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BasePhraseModel.h"
 #include "PhraseModelPars.h"
 #include "myVector.h"
+#include "SimpleDynClassLoader.h"
 
 //--------------- PhraseModelsInfo struct
 
 struct PhraseModelsInfo
 {
   Vector<BasePhraseModel*> invPbModelPtrVec;
+  Vector<SimpleDynClassLoader<BasePhraseModel> > simpleDynClassLoaderVec;
 };
 
 #endif

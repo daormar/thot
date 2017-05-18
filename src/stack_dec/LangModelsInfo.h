@@ -32,12 +32,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BaseWordPenaltyModel.h"
 #include "WordIndex.h"
 #include "myVector.h"
+#include "SimpleDynClassLoader.h"
 
 //--------------- LangModelsInfo struct
 
 struct LangModelsInfo
 {
   Vector<BaseNgramLM<LM_State>*> lModelPtrVec;
+  Vector<SimpleDynClassLoader<BaseNgramLM<LM_State> > > simpleDynClassLoaderVec;
   BaseWordPenaltyModel* wpModelPtr;
 };
 

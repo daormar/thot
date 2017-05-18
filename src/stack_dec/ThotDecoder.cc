@@ -644,6 +644,18 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
 
   // Initialize server
 
+        // Load language model
+  if(tdCommonVars.featureBasedImplEnabled)
+  {
+    ret=load_lm_feat_impl(lm_str.c_str(),verbose);
+    if(ret==ERROR) return ERROR;
+  }
+  else
+  {
+    ret=load_lm(lm_str.c_str(),verbose);
+    if(ret==ERROR) return ERROR;
+  }
+
       // Load translation model
   if(tdCommonVars.featureBasedImplEnabled)
   {
@@ -653,18 +665,6 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
   else
   {
     ret=load_tm(tm_str.c_str(),verbose);
-    if(ret==ERROR) return ERROR;
-  }
-
-      // Load language model
-  if(tdCommonVars.featureBasedImplEnabled)
-  {
-    ret=load_lm_feat_impl(lm_str.c_str(),verbose);
-    if(ret==ERROR) return ERROR;
-  }
-  else
-  {
-    ret=load_lm(lm_str.c_str(),verbose);
     if(ret==ERROR) return ERROR;
   }
 
@@ -855,9 +855,9 @@ BasePhraseModel* ThotDecoder::createPmPtr(std::string modelType)
         // Create tm file pointer
     BasePhraseModel* tmPtr=simpleDynClassLoader.make_obj("");
 
-        // Close module
-    simpleDynClassLoader.close_module(verbosity);
-
+        // Store loader
+    tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec.push_back(simpleDynClassLoader);
+    
     if(tmPtr==NULL)
     {
       cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;    
@@ -1121,8 +1121,8 @@ BaseNgramLM<LM_State>* ThotDecoder::createLmPtr(std::string modelType)
         // Create lm file pointer
     BaseNgramLM<LM_State>* lmPtr=simpleDynClassLoader.make_obj("");
 
-        // Close module
-    simpleDynClassLoader.close_module(verbosity);
+        // Store dynamic class loader
+    tdCommonVars.langModelsInfo.simpleDynClassLoaderVec.push_back(simpleDynClassLoader);
 
     if(lmPtr==NULL)
     {
@@ -3032,15 +3032,34 @@ std::string ThotDecoder::getWordCompletion(std::string uncompleteWord,
 //--------------------------
 void ThotDecoder::deleteLangModelPtrsFeatImpl(void)
 {
+      // Release pointers
   for(unsigned int i=0;i<tdCommonVars.langModelsInfo.lModelPtrVec.size();++i)
     delete tdCommonVars.langModelsInfo.lModelPtrVec[i];
+
+      // Close modules
+  int verbosity=false;
+  for(unsigned int i=0;i<tdCommonVars.langModelsInfo.simpleDynClassLoaderVec.size();++i)
+    tdCommonVars.langModelsInfo.simpleDynClassLoaderVec[i].close_module(verbosity);
+
+      // Clear dynamic class loader vector
+  tdCommonVars.langModelsInfo.simpleDynClassLoaderVec.clear();
+
 }
 
 //--------------------------
 void ThotDecoder::deletePhrModelPtrsFeatImpl(void)
 {
+      // Release pointers
   for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.invPbModelPtrVec.size();++i)
     delete tdCommonVars.phraseModelsInfo.invPbModelPtrVec[i];
+
+      // Close modules
+  int verbosity=false;
+  for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec.size();++i)
+    tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec[i].close_module(verbosity);
+
+      // Clear dynamic class loader vector
+  tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec.clear();
 }
 
 //--------------------------
