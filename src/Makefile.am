@@ -307,7 +307,8 @@ stack_dec/BasePhraseHypothesisRec.h stack_dec/BasePhraseHypothesis.h	\
 stack_dec/BasePbTransModelStats.h stack_dec/BasePbTransModel.h		\
 stack_dec/BaseHypState.h stack_dec/BaseHypothesisRec.h			\
 stack_dec/BaseHypothesis.h stack_dec/HypDebugData.h			\
-stack_dec/BaseAssistedTrans.h stack_dec/_assistedTrans.h
+stack_dec/BaseAssistedTrans.h stack_dec/_assistedTrans.h		\
+stack_dec/SmtModelUtils.h
 stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
 stack_dec/TranslationConstraints.cc stack_dec/KbMiraLlWu.cc		\
 stack_dec/MiraBleu.cc stack_dec/MiraWer.cc stack_dec/MiraGtm.cc		\
@@ -318,7 +319,7 @@ stack_dec/PhrNbestTransTableRefKey.cc					\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\
-stack_dec/bleu.cc stack_dec/BaseHypState.cc
+stack_dec/bleu.cc stack_dec/BaseHypState.cc stack_dec/SmtModelUtils.cc
 
 if CASMACAT_LIB_ENABLED
 casmacat_engines_h= stack_dec/UserNameToUserIdMap.h		\
