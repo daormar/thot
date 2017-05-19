@@ -54,7 +54,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
-
 //--------------- Classes --------------------------------------------
 
 //--------------- DirectPhraseModelFeat class
@@ -86,15 +85,27 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                               Score& unweightedScore);
 
       // Functions related to model pointers
-  void link_pm(BasePhraseModel* _pbModelPtr);
+  void link_pm(BasePhraseModel* _invPbModelPtr);
   BasePhraseModel* get_pmptr(void);
   void link_swm(BaseSwAligModel<PpInfo>* _swAligModelPtr);
   BaseSwAligModel<PpInfo>* get_swmptr(void);
 
+      // Functions related to lambda parameter
+  void set_lambda(float _lambda);
+  float get_lambda(void);
+  
  protected:
 
-  BasePhraseModel* pbModelPtr;
+  BasePhraseModel* invPbModelPtr;
   BaseSwAligModel<PpInfo>* swAligModelPtr;
+  float lambda;
+  
+  Score directPhraseTransScore(const Vector<WordIndex>& srcPhrase,
+                               const Vector<WordIndex>& trgPhrase);
+  Score swLgProb(const Vector<WordIndex>& srcPhraseWidx,
+                 const Vector<WordIndex>& trgPhraseWidx);
+  WordIndex stringToSrcWordindex(std::string word);
+  WordIndex stringToTrgWordindex(std::string word);
 };
 
 //--------------- WordPenaltyFeat class functions
@@ -115,16 +126,16 @@ std::string DirectPhraseModelFeat<SCORE_INFO>::getFeatType(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-void DirectPhraseModelFeat<SCORE_INFO>::link_pm(BasePhraseModel* _pbModelPtr)
+void DirectPhraseModelFeat<SCORE_INFO>::link_pm(BasePhraseModel* _invPbModelPtr)
 {
-  pbModelPtr=_pbModelPtr;
+  invPbModelPtr=_invPbModelPtr;
 }
 
 //---------------------------------
 template<class SCORE_INFO>
 BasePhraseModel* DirectPhraseModelFeat<SCORE_INFO>::get_pmptr(void)
 {
-  return pbModelPtr;
+  return invPbModelPtr;
 }
 
 //---------------------------------
@@ -139,6 +150,62 @@ template<class SCORE_INFO>
 BaseSwAligModel<PpInfo>* DirectPhraseModelFeat<SCORE_INFO>::get_swmptr(void)
 {
   return swAligModelPtr;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void DirectPhraseModelFeat<SCORE_INFO>::set_lambda(float _lambda)
+{
+  lambda=_lambda;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+float DirectPhraseModelFeat<SCORE_INFO>::get_lambda(void)
+{
+  return lambda;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+Score DirectPhraseModelFeat<SCORE_INFO>::directPhraseTransScore(const Vector<WordIndex>& srcPhrase,
+                                                                const Vector<WordIndex>& trgPhrase)
+{
+  if(lambda==1.0)
+  {
+    return (double)invPbModelPtr->logps_t_(trgPhrase,srcPhrase);
+  }
+  else
+  {
+    float sum1=log(lambda)+(float)invPbModelPtr->logps_t_(trgPhrase,srcPhrase);
+    if(sum1<=log(PHRASE_PROB_SMOOTH))
+      sum1=FEAT_LGPROB_SMOOTH;
+    float sum2=log(1.0-lambda)+(float)swLgProb(srcPhrase,trgPhrase);
+    float interp=MathFuncs::lns_sumlog(sum1,sum2);
+    return (double)interp;
+  }
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+Score DirectPhraseModelFeat<SCORE_INFO>::swLgProb(const Vector<WordIndex>& srcPhrase,
+                                                  const Vector<WordIndex>& trgPhrase)
+{
+  return swAligModelPtr->calcLgProbPhr(srcPhrase,trgPhrase);
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+WordIndex DirectPhraseModelFeat<SCORE_INFO>::stringToSrcWordindex(std::string word)
+{
+  return invPbModelPtr->stringToTrgWordIndex(word);
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+WordIndex DirectPhraseModelFeat<SCORE_INFO>::stringToTrgWordindex(std::string word)
+{
+  return invPbModelPtr->stringToSrcWordIndex(word);  
 }
 
 #endif

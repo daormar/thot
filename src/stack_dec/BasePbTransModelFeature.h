@@ -51,6 +51,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
+#define FEAT_LGPROB_SMOOTH         -9999999
 
 //--------------- Classes --------------------------------------------
 
