@@ -54,6 +54,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
+#define DIRECT_PM_FEAT_DEFAULT_LAMBDA 0.01
+
 //--------------- Classes --------------------------------------------
 
 //--------------- DirectPhraseModelFeat class
@@ -115,6 +117,7 @@ template<class SCORE_INFO>
 DirectPhraseModelFeat<SCORE_INFO>::DirectPhraseModelFeat()
 {
   this->weight=1.0;
+  this->lambda=DIRECT_PM_FEAT_DEFAULT_LAMBDA;
 }
 
 //---------------------------------
