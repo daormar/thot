@@ -45,6 +45,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 // Types defining decoder architecture
+#include "SmtModelUtils.h"
 #include "DirectPhraseModelFeat.h"
 #include "LangModelFeat.h"
 #include "WordPenaltyFeat.h"
@@ -197,10 +198,6 @@ class ThotDecoder
   void decrease_non_atomic_ops_running(void);
 
       // Functions to load models
-  int loadPhrModel(BasePhraseModel* basePhraseModelPtr,
-                   std::string modelFileName);
-  int loadDirectSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
-                        std::string modelFileName);
   BasePhraseModel* createPmPtr(std::string modelType);
   bool process_tm_descriptor(std::string tmDescFile,
                              int verbose/*=0*/);
@@ -210,8 +207,6 @@ class ThotDecoder
                int verbose=0);
   bool load_tm_feat_impl(const char* tmFilesPrefix,
                          int verbose=0);
-  int loadLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
-                    std::string modelFileName);
   BaseNgramLM<LM_State>* createLmPtr(std::string modelType);
   int createLangModelFeat(std::string featName,
                           std::string modelType,

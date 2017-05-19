@@ -869,46 +869,6 @@ BasePhraseModel* ThotDecoder::createPmPtr(std::string modelType)
 }
 
 //--------------------------
-int ThotDecoder::loadPhrModel(BasePhraseModel* basePhraseModelPtr,
-                              std::string modelFileName)
-{
-      // Load phrase model vocabularies 
-  std::string srcTrainVocabFileName=modelFileName;
-  srcTrainVocabFileName+="_swm.svcb";
-  std::string trgTrainVocabFileName=modelFileName;
-  trgTrainVocabFileName+="_swm.tvcb";
-
-  int ret=basePhraseModelPtr->loadSrcVocab(srcTrainVocabFileName.c_str());
-  if(ret==ERROR) return ERROR;
-
-  ret=basePhraseModelPtr->loadTrgVocab(trgTrainVocabFileName.c_str());
-  if(ret==ERROR) return ERROR;
-
-      // load phrase model
-  if(basePhraseModelPtr->load(modelFileName.c_str())!=0)
-  {
-    cerr<<"Error while reading phrase model file\n";
-    return ERROR;
-  }  
-
-  return OK;
-}
-
-//--------------------------
-int ThotDecoder::loadDirectSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
-                                   std::string modelFileName)
-{
-      // load sw model (The direct model is the one with the prefix
-      // _invswm)
-  std::string invReadTablePrefix=modelFileName;
-  invReadTablePrefix+="_invswm";
-  bool ret=baseSwAligModelPtr->load(invReadTablePrefix.c_str());
-  if(ret==ERROR) return ERROR;
-
-  return OK;
-}
-
-//--------------------------
 int ThotDecoder::createDirectPhrModelFeat(std::string featName,
                                           std::string modelType,
                                           std::string modelFileName,
@@ -929,7 +889,7 @@ int ThotDecoder::createDirectPhrModelFeat(std::string featName,
   
       // Load phrase model
   cerr<<"* Loading phrase model..."<<endl;
-  int ret=loadPhrModel(basePhraseModelPtr,modelFileName);
+  int ret=SmtModelUtils::loadPhrModel(basePhraseModelPtr,modelFileName);
   if(ret==ERROR)
     return ERROR;
   
@@ -947,7 +907,7 @@ int ThotDecoder::createDirectPhrModelFeat(std::string featName,
 
       // Load direct single word model
   cerr<<"* Loading direct single word model..."<<endl;
-  ret=loadDirectSwModel(baseSwAligModelPtr,modelFileName);
+  ret=SmtModelUtils::loadDirectSwModel(baseSwAligModelPtr,modelFileName);
   if(ret==ERROR)
     return ERROR;
   
@@ -1088,16 +1048,6 @@ bool ThotDecoder::load_lm(const char* lmFileName,
 }
 
 //--------------------------
-int ThotDecoder::loadLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
-                               std::string modelFileName)
-{
-  if(baseNgLmPtr->load(modelFileName.c_str())==ERROR)
-    return ERROR;
-  else
-    return OK;
-}
-
-//--------------------------
 BaseNgramLM<LM_State>* ThotDecoder::createLmPtr(std::string modelType)
 {
   if(modelType.empty())
@@ -1155,7 +1105,7 @@ int ThotDecoder::createLangModelFeat(std::string featName,
   
       // Load language model
   cerr<<"* Loading language model..."<<endl;
-  int ret=loadLangModel(baseNgLmPtr,modelFileName);
+  int ret=SmtModelUtils::loadLangModel(baseNgLmPtr,modelFileName);
   if(ret==ERROR)
     return ERROR;
   
