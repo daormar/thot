@@ -50,7 +50,6 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
   else
   {
         // Obtain score for hypothesis extension
-    unsigned int trglen=predHypDataStr.ntarget.size()-1;
     HypScoreInfo hypScrInf=predHypScrInf;
     unweightedScore=0;
     
@@ -63,14 +62,14 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
         trgLeft=1;
       else
         trgLeft=newHypDataStr.targetSegmentCuts[i-1]+1;
-      Vector<std::string> trgphrase;
+      Vector<std::string> trgPhrase;
       for(unsigned int k=trgLeft;k<=trgRight;++k)
       {
-        trgphrase.push_back(newHypDataStr.ntarget[k]);
+        trgPhrase.push_back(newHypDataStr.ntarget[k]);
       }
 
           // Update score
-      Score iterScore=getNgramScoreGivenState(trgphrase,hypScrInf.lmHist);
+      Score iterScore=getNgramScoreGivenState(trgPhrase,hypScrInf.lmHist);
       unweightedScore+= iterScore;
       hypScrInf.score+= weight*iterScore;
     }
