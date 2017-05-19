@@ -913,6 +913,19 @@ int ThotDecoder::createDirectPhrModelFeat(std::string featName,
   
       // Link pointer to feature
   dirPmFeatPtr->link_swm(baseSwAligModelPtr);
+
+      // Obtain lambda value
+  cerr<<"* Reading lambda interpolation value..."<<endl;
+  float lambda_swm;
+  float lambda_invswm;
+  std::string lambdaFileName=modelFileName+".lambda";
+  ret=SmtModelUtils::loadSwmLambdas(lambdaFileName,lambda_swm,lambda_invswm);
+  if(ret==ERROR)
+    return ERROR;
+  cerr<<"lambda= "<<lambda_swm<<endl;
+  
+      // Set lambda value for feature
+  dirPmFeatPtr->set_lambda(lambda_swm);
   
   return OK;
 }

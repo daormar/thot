@@ -72,4 +72,71 @@ namespace SmtModelUtils
       return OK;
   }
 
+  //---------------------------------
+  bool loadSwmLambdas(std::string lambdaFileName,
+                      float& lambda_swm,
+                      float& lambda_invswm)
+  {
+    awkInputStream awk;
+  
+    if(awk.open(lambdaFileName.c_str())==ERROR)
+    {
+      cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist."<<endl;
+      return ERROR;
+    }
+    else
+    {
+      if(awk.getln())
+      {
+        if(awk.NF==1)
+        {
+          lambda_swm=atof(awk.dollar(1).c_str());
+          lambda_invswm=atof(awk.dollar(1).c_str());
+          return OK;
+        }
+        else
+        {
+          if(awk.NF==2)
+          {
+            lambda_swm=atof(awk.dollar(1).c_str());
+            lambda_invswm=atof(awk.dollar(2).c_str());
+            return OK;
+          }
+          else
+          {
+            cerr<<"Anomalous file with lambda values."<<endl;
+            return ERROR;
+          }
+        }
+      }
+      else
+      {
+        cerr<<"Anomalous file with lambda values."<<endl;
+        return ERROR;
+      }
+    }  
+    return OK;
+  }
+
+  //---------------------------------
+  bool printSwmLambdas(const char* lambdaFileName,
+                       float lambda_swm,
+                       float lambda_invswm)
+  {
+    ofstream outF;
+
+    outF.open(lambdaFileName,ios::out);
+    if(!outF)
+    {
+      cerr<<"Error while printing file with lambda values."<<endl;
+      return ERROR;
+    }
+    else
+    {
+      outF<<lambda_swm<<" "<<lambda_invswm<<endl;
+      outF.close();	
+      return OK;
+    }
+  }
+
 }

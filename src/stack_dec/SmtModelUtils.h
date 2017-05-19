@@ -49,6 +49,9 @@ namespace SmtModelUtils
                         std::string modelFileName);
   int loadLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
                     std::string modelFileName);
+  bool loadSwmLambdas(std::string lambdaFileName,
+                      float& lambda_swm,
+                      float& lambda_invswm);
 }
 
 #endif
