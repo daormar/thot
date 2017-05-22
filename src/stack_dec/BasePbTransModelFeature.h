@@ -47,6 +47,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "PhrHypDataStr.h"
+#include <set>
 #include <string>
 
 //--------------- Constants ------------------------------------------
@@ -88,6 +89,10 @@ class BasePbTransModelFeature
                                       const PhrHypDataStr& newHypDataStr,
                                       Score& unweightedScore)=0;
 
+      // Functions to obtain translation options
+  virtual void obtainTransOptions(const Vector<std::string>& wordVec,
+                                  Vector<Vector<std::string> >& transOptVec);
+       
       // Destructor
   virtual ~BasePbTransModelFeature(){};
 
@@ -128,6 +133,15 @@ template<class SCORE_INFO>
 std::string BasePbTransModelFeature<SCORE_INFO>::getFeatName(void)
 {
   return name;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void BasePbTransModelFeature<SCORE_INFO>::obtainTransOptions(const Vector<std::string>& wordVec,
+                                                             Vector<Vector<std::string> >& transOptVec)
+{
+      // Standard features do not provide translation options
+  transOptVec.clear();
 }
 
 //---------------------------------

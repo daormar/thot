@@ -86,6 +86,10 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
 
+      // Functions to obtain translation options
+  void obtainTransOptions(const Vector<std::string>& wordVec,
+                          Vector<Vector<std::string> >& transOptVec);
+
       // Functions related to model pointers
   void link_pm(BasePhraseModel* _invPbModelPtr);
   BasePhraseModel* get_pmptr(void);
@@ -125,6 +129,14 @@ template<class SCORE_INFO>
 std::string DirectPhraseModelFeat<SCORE_INFO>::getFeatType(void)
 {
   return "DirectPhraseModelFeat";
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void DirectPhraseModelFeat<SCORE_INFO>::obtainTransOptions(const Vector<std::string>& wordVec,
+                                                           Vector<Vector<std::string> >& transOptVec)
+{
+      // TO-BE-DONE
 }
 
 //---------------------------------
