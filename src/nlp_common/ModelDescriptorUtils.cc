@@ -178,3 +178,27 @@ bool extractModelEntryInfo(std::string fileName,
   else
     return ERROR;
 }
+
+//---------------
+bool printModelDescriptor(const Vector<ModelDescriptorEntry>& modelDescEntryVec,
+                          std::string fileName)
+{
+  ofstream outF;
+
+  outF.open(fileName.c_str(),ios::out);
+  if(!outF)
+  {
+    cerr<<"Error while printing file containing model descriptor."<<endl;
+    return ERROR;
+  }
+  else
+  {
+    outF<<"thot tm descriptor"<<endl;
+    for(unsigned int i=0;i<modelDescEntryVec.size();++i)
+    {
+      outF<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].modelFileName<<" "<<modelDescEntryVec[i].statusStr<<endl;
+    }
+    outF.close();	
+    return OK;
+  }
+}

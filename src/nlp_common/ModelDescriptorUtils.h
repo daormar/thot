@@ -53,5 +53,6 @@ bool fileIsDescriptor(std::string fileName,
                       std::string& mainFileName);
 bool extractModelEntryInfo(std::string fileName,
                            Vector<ModelDescriptorEntry>& modelDescEntryVec);
-
+bool printModelDescriptor(const Vector<ModelDescriptorEntry>& modelDescEntryVec,
+                          std::string fileName);
 #endif
