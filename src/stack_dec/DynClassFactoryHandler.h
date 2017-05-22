@@ -68,12 +68,14 @@ struct DynClassFactoryHandler
   std::string baseWordPenaltyModelInitPars;
 
   SimpleDynClassLoader<BaseNgramLM<LM_State> > baseNgramLMDynClassLoader;
+  std::string baseNgramLMSoFileName;
   std::string baseNgramLMInitPars;
 
   SimpleDynClassLoader<BaseSwAligModel<PpInfo> > baseSwAligModelDynClassLoader;
   std::string baseSwAligModelInitPars;
 
   SimpleDynClassLoader<BasePhraseModel> basePhraseModelDynClassLoader;
+  std::string basePhraseModelSoFileName;
   std::string basePhraseModelInitPars;
 
   SimpleDynClassLoader<BaseErrorCorrectionModel> baseErrorCorrectionModelDynClassLoader;
