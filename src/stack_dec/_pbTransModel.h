@@ -182,9 +182,6 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Vocabulary handler
   SingleWordVocab singleWordVocab;
 
-      // Word predictor
-  WordPredictor wordPredictor;
-
       // Data structure to store input variables
   PbTransModelInputVars pbtmInputVars;
 
@@ -217,7 +214,7 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   virtual bool getTransForHypUncovGap(const Hypothesis& hyp,
                                       PositionIndex srcLeft,
                                       PositionIndex srcRight,
-                                      NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                      std::set<Vector<WordIndex> >& transSet,
                                       float N);
       // Get N-best translations for a subphrase of the source sentence
       // to be translated .  If N is between 0 and 1 then N represents a
@@ -269,6 +266,8 @@ void _pbTransModel<HYPOTHESIS>::clear(void)
 
       // Initially, no heuristic is used
   heuristicId=NO_HEURISTIC;
+
+  singleWordVocab.clear();
 }
 
 //---------------------------------
@@ -315,7 +314,7 @@ template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::addSentenceToWordPred(Vector<std::string> strVec,
                                                       int verbose/*=0*/)
 {
-      // TO-BE-DONE
+  cerr<<"Warning, addSentenceToWordPred function intentionally not implemented for this class"<<endl;
 }
 
 //---------------------------------
@@ -323,7 +322,10 @@ template<class HYPOTHESIS>
 pair<Count,std::string>
 _pbTransModel<HYPOTHESIS>::getBestSuffix(std::string input)
 {
-      // TO-BE-DONE
+  cerr<<"Warning, getBestSuffix function intentionally not implemented for this class"<<endl;
+  pair<Count,std::string> result;
+  return result;
+
 }
 
 //---------------------------------
@@ -332,7 +334,9 @@ pair<Count,std::string>
 _pbTransModel<HYPOTHESIS>::getBestSuffixGivenHist(Vector<std::string> hist,
                                                   std::string input)
 {
-      // TO-BE-DONE
+  cerr<<"Warning, getBestSuffixGivenHist function intentionally not implemented for this class"<<endl;
+  pair<Count,std::string> result;
+  return result;
 }
 
 //---------------------------------
@@ -836,37 +840,37 @@ bool _pbTransModel<HYPOTHESIS>::getHypDataVecForGap(const Hypothesis& hyp,
                                                     Vector<HypDataType>& hypDataTypeVec,
                                                     float N)
 {
-  NbestTableNode<PhraseTransTableNodeData> ttNode;
-  NbestTableNode<PhraseTransTableNodeData>::iterator ttNodeIter;
   HypDataType hypData=hyp.getData();
   HypDataType newHypData;
 
   hypDataTypeVec.clear();
 
       // Obtain translations for gap
-  getTransForHypUncovGap(hyp,srcLeft,srcRight,ttNode,N);
+  std::set<Vector<WordIndex> > transSet;
+  getTransForHypUncovGap(hyp,srcLeft,srcRight,transSet,N);
 
   if(this->verbosity>=2)
   {
     cerr<<"  trying to cover from src. pos. "<<srcLeft<<" to "<<srcRight<<"; ";
-    cerr<<"Filtered "<<ttNode.size()<<" translations"<<endl;
+    cerr<<"Filtered "<<transSet.size()<<" translations"<<endl;
   }
 
       // Generate hypothesis data for translations
-  for(ttNodeIter=ttNode.begin();ttNodeIter!=ttNode.end();++ttNodeIter)
+  std::set<Vector<WordIndex> >::iterator transSetIter;
+  for(transSetIter=transSet.begin();transSetIter!=transSet.end();++transSetIter)
   {
     if(this->verbosity>=3)
     {
       cerr<<"   ";
       for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->pbtmInputVars.srcSentVec[i-1]<<" ";
       cerr<<"||| ";
-      for(unsigned int i=0;i<ttNodeIter->second.size();++i)
-        cerr<<this->wordIndexToTrgString(ttNodeIter->second[i])<<" ";
-      cerr<<"||| "<<ttNodeIter->first<<endl;
+      for(unsigned int i=0;i<(*transSetIter).size();++i)
+        cerr<<this->wordIndexToTrgString((*transSetIter)[i])<<" ";
+      cerr<<endl;
     }
 
     newHypData=hypData;
-    extendHypDataIdx(srcLeft,srcRight,ttNodeIter->second,newHypData);
+    extendHypDataIdx(srcLeft,srcRight,*transSetIter,newHypData);
     hypDataTypeVec.push_back(newHypData);
   }
 
@@ -880,7 +884,7 @@ template<class HYPOTHESIS>
 bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis& hyp,
                                                        PositionIndex srcLeft,
                                                        PositionIndex srcRight,
-                                                       NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                                       std::set<Vector<WordIndex> >& transSet,
                                                        float N)
 {
       // TO-BE-DONE  
