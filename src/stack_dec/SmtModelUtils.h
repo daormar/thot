@@ -45,10 +45,16 @@ namespace SmtModelUtils
 {
   int loadPhrModel(BasePhraseModel* basePhraseModelPtr,
                    std::string modelFileName);
+  int printPhrModel(BasePhraseModel* basePhraseModelPtr,
+                    std::string modelFileName);
   int loadDirectSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
                         std::string modelFileName);
+  int printDirectSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
+                         std::string modelFileName);
   int loadLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
                     std::string modelFileName);
+  int printLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
+                     std::string modelFileName);
   bool loadSwmLambdas(std::string lambdaFileName,
                       float& lambda_swm,
                       float& lambda_invswm);

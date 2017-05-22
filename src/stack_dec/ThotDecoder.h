@@ -209,8 +209,7 @@ class ThotDecoder
                          int verbose=0);
   BaseNgramLM<LM_State>* createLmPtr(std::string modelType);
   int createLangModelFeat(std::string featName,
-                          std::string modelType,
-                          std::string modelFileName,
+                          const ModelDescriptorEntry& modelDescEntry,
                           LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef);
   bool process_lm_descriptor(std::string lmDescFile,
                              int verbose/*=0*/);
@@ -223,10 +222,13 @@ class ThotDecoder
   bool load_ecm(const char* ecmFilesPrefix,
                 int verbose=0);
 
+      // Functions to print models
+  bool printModelsLegacyImpl(int verbose=0);
+  bool printModelsFeatImpl(int verbose=0);
+
       // Feature-related functions
   int createDirectPhrModelFeat(std::string featName,
-                               std::string modelType,
-                               std::string modelFileName,
+                               const ModelDescriptorEntry& modelDescEntry,
                                DirectPhraseModelFeat<SmtModel::HypScoreInfo>** dirPmFeatPtrRef);
   
       // Training-related functions

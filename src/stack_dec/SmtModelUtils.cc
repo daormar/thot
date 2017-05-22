@@ -47,6 +47,16 @@ namespace SmtModelUtils
     
     return OK;
   }
+
+  //--------------------------
+  int printPhrModel(BasePhraseModel* basePhraseModelPtr,
+                    std::string modelFileName)
+  {
+    bool ret=basePhraseModelPtr->print(modelFileName.c_str());
+    if(ret==ERROR) return ERROR;
+
+    return OK;
+  }
   
   //--------------------------
   int loadDirectSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
@@ -63,6 +73,17 @@ namespace SmtModelUtils
   }
 
   //--------------------------
+  int printDirectSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
+                         std::string modelFileName)
+  {
+    std::string invSwModelPrefix=modelFileName+"_swm";
+    int ret=baseSwAligModelPtr->print(invSwModelPrefix.c_str());
+    if(ret==ERROR) return ERROR;
+
+    return OK;
+  }
+  
+  //--------------------------
   int loadLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
                     std::string modelFileName)
   {
@@ -70,6 +91,16 @@ namespace SmtModelUtils
       return ERROR;
     else
       return OK;
+  }
+
+  //---------------------------------
+  int printLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
+                     std::string modelFileName)
+  {
+    bool ret=baseNgLmPtr->print(modelFileName.c_str());
+    if(ret==ERROR) return ERROR;
+    
+    return OK;
   }
 
   //---------------------------------

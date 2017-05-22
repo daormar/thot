@@ -870,11 +870,10 @@ BasePhraseModel* ThotDecoder::createPmPtr(std::string modelType)
 
 //--------------------------
 int ThotDecoder::createDirectPhrModelFeat(std::string featName,
-                                          std::string modelType,
-                                          std::string modelFileName,
+                                          const ModelDescriptorEntry& modelDescEntry,
                                           DirectPhraseModelFeat<SmtModel::HypScoreInfo>** dirPmFeatPtrRef)
 {
-  cerr<<"** Creating direct phrase model feature ("<<featName<<" "<<modelType<<" "<<modelFileName<<")"<<endl;
+  cerr<<"** Creating direct phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<endl;
 
       // Create feature pointer and set name
   (*dirPmFeatPtrRef)=new DirectPhraseModelFeat<SmtModel::HypScoreInfo>;
@@ -882,14 +881,17 @@ int ThotDecoder::createDirectPhrModelFeat(std::string featName,
   dirPmFeatPtr->setFeatName(featName);
 
       // Add phrase model pointer
-  BasePhraseModel* basePhraseModelPtr=createPmPtr(modelType);
+  BasePhraseModel* basePhraseModelPtr=createPmPtr(modelDescEntry.modelType);
   if(basePhraseModelPtr==NULL)
     return ERROR;
   tdCommonVars.phraseModelsInfo.invPbModelPtrVec.push_back(basePhraseModelPtr);
-  
+
+      // Add entry information
+  tdCommonVars.phraseModelsInfo.modelDescEntryVec.push_back(modelDescEntry);
+
       // Load phrase model
   cerr<<"* Loading phrase model..."<<endl;
-  int ret=SmtModelUtils::loadPhrModel(basePhraseModelPtr,modelFileName);
+  int ret=SmtModelUtils::loadPhrModel(basePhraseModelPtr,modelDescEntry.absolutizedModelFileName);
   if(ret==ERROR)
     return ERROR;
   
@@ -907,7 +909,7 @@ int ThotDecoder::createDirectPhrModelFeat(std::string featName,
 
       // Load direct single word model
   cerr<<"* Loading direct single word model..."<<endl;
-  ret=SmtModelUtils::loadDirectSwModel(baseSwAligModelPtr,modelFileName);
+  ret=SmtModelUtils::loadDirectSwModel(baseSwAligModelPtr,modelDescEntry.absolutizedModelFileName);
   if(ret==ERROR)
     return ERROR;
   
@@ -918,7 +920,7 @@ int ThotDecoder::createDirectPhrModelFeat(std::string featName,
   cerr<<"* Reading lambda interpolation value..."<<endl;
   float lambda_swm;
   float lambda_invswm;
-  std::string lambdaFileName=modelFileName+".lambda";
+  std::string lambdaFileName=modelDescEntry.absolutizedModelFileName+".lambda";
   ret=SmtModelUtils::loadSwmLambdas(lambdaFileName,lambda_swm,lambda_invswm);
   if(ret==ERROR)
     return ERROR;
@@ -949,12 +951,13 @@ bool ThotDecoder::process_tm_descriptor(std::string tmDescFile,
           // Create direct phrase model feature
       std::string featName="pts_"+modelDescEntryVec[i].statusStr;
       DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr;
-      int ret=createDirectPhrModelFeat(featName,modelDescEntryVec[i].modelType,modelDescEntryVec[i].absolutizedModelFileName,&dirPmFeatPtr);
+      // int ret=createDirectPhrModelFeat(featName,modelDescEntryVec[i].modelType,modelDescEntryVec[i].absolutizedModelFileName,&dirPmFeatPtr);
+      int ret=createDirectPhrModelFeat(featName,modelDescEntryVec[i],&dirPmFeatPtr);
       if(ret==ERROR)
         return ERROR;
       tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
     }
-    
+
     return OK;
   }
   else
@@ -972,13 +975,17 @@ bool ThotDecoder::process_tm_files_prefix(std::string tmFilesPrefix,
     cerr<<"Processing translation model files prefix: "<<tmFilesPrefix<<endl;
   }
 
-  std::string modelType="";
-  std::string modelFileName=tmFilesPrefix;
+      // Create model descriptor entry
+  ModelDescriptorEntry modelDescEntry;
+  modelDescEntry.statusStr="main";
+  modelDescEntry.modelType=tdCommonVars.dynClassFactoryHandler.basePhraseModelSoFileName;
+  modelDescEntry.modelFileName=tmFilesPrefix;
+  modelDescEntry.absolutizedModelFileName=tmFilesPrefix;
 
       // Create direct phrase model feature
   std::string featName="pts";
   DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr;
-  int ret=createDirectPhrModelFeat(featName,modelType,modelFileName,&dirPmFeatPtr);
+  int ret=createDirectPhrModelFeat(featName,modelDescEntry,&dirPmFeatPtr);
   if(ret==ERROR)
     return ERROR;
   tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
@@ -1013,6 +1020,10 @@ bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
       ret=process_tm_descriptor(tmFilesPrefix,verbose);
     else
       ret=process_tm_files_prefix(tmFilesPrefix,verbose);
+
+        // Store tm information
+    if(ret==OK)
+      tdState.tmFilesPrefixGiven=tmFilesPrefix;
   }
   
       // Unlock non_atomic_op_cond mutex
@@ -1099,11 +1110,10 @@ BaseNgramLM<LM_State>* ThotDecoder::createLmPtr(std::string modelType)
 
 //--------------------------
 int ThotDecoder::createLangModelFeat(std::string featName,
-                                     std::string modelType,
-                                     std::string modelFileName,
+                                     const ModelDescriptorEntry& modelDescEntry,
                                      LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef)
 {
-  cerr<<"** Creating language model feature ("<<featName<<" "<<modelType<<" "<<modelFileName<<")"<<endl;
+  cerr<<"** Creating language model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<endl;
 
       // Create feature pointer and set name
   (*langModelFeatPtrRef)=new LangModelFeat<SmtModel::HypScoreInfo>;
@@ -1111,19 +1121,22 @@ int ThotDecoder::createLangModelFeat(std::string featName,
   langModelFeatPtr->setFeatName(featName);
 
       // Add language model pointer
-  BaseNgramLM<LM_State>* baseNgLmPtr=createLmPtr(modelType);
+  BaseNgramLM<LM_State>* baseNgLmPtr=createLmPtr(modelDescEntry.modelType);
   if(baseNgLmPtr==NULL)
     return ERROR;
   tdCommonVars.langModelsInfo.lModelPtrVec.push_back(baseNgLmPtr);
-  
+
+      // Add entry information
+  tdCommonVars.langModelsInfo.modelDescEntryVec.push_back(modelDescEntry);
+    
       // Load language model
   cerr<<"* Loading language model..."<<endl;
-  int ret=SmtModelUtils::loadLangModel(baseNgLmPtr,modelFileName);
+  int ret=SmtModelUtils::loadLangModel(baseNgLmPtr,modelDescEntry.absolutizedModelFileName);
   if(ret==ERROR)
     return ERROR;
   
       // Link pointer to feature
-  langModelFeatPtr->link_lm(baseNgLmPtr);  
+  langModelFeatPtr->link_lm(baseNgLmPtr);
   
   return OK;
 }
@@ -1147,7 +1160,7 @@ bool ThotDecoder::process_lm_descriptor(std::string lmDescFile,
           // Create direct phrase model feature
       std::string featName="lm_"+modelDescEntryVec[i].statusStr;
       LangModelFeat<SmtModel::HypScoreInfo>* lmFeatPtr;
-      int ret=createLangModelFeat(featName,modelDescEntryVec[i].modelType,modelDescEntryVec[i].absolutizedModelFileName,&lmFeatPtr);
+      int ret=createLangModelFeat(featName,modelDescEntryVec[i],&lmFeatPtr);
       if(ret==ERROR)
         return ERROR;
       tdCommonVars.featuresInfoPtr->featPtrVec.push_back(lmFeatPtr);
@@ -1170,14 +1183,18 @@ bool ThotDecoder::process_lm_files_prefix(std::string lmFilesPrefix,
     cerr<<"Processing language model files prefix: "<<lmFilesPrefix<<endl;
   }
 
-  std::string modelType="";
-  std::string modelFileName=lmFilesPrefix;
+        // Create model descriptor entry
+  ModelDescriptorEntry modelDescEntry;
+  modelDescEntry.statusStr="main";
+  modelDescEntry.modelType=tdCommonVars.dynClassFactoryHandler.baseNgramLMSoFileName;
+  modelDescEntry.modelFileName=lmFilesPrefix;
+  modelDescEntry.absolutizedModelFileName=lmFilesPrefix;
 
       // Create direct phrase model feature
   std::string featName="pts";
   
   LangModelFeat<SmtModel::HypScoreInfo>* lmFeatPtr;
-  int ret=createLangModelFeat(featName,modelType,modelFileName,&lmFeatPtr);
+  int ret=createLangModelFeat(featName,modelDescEntry,&lmFeatPtr);
   if(ret==ERROR)
     return ERROR;
   tdCommonVars.featuresInfoPtr->featPtrVec.push_back(lmFeatPtr);
@@ -1211,6 +1228,9 @@ bool ThotDecoder::load_lm_feat_impl(const char* lmFileName,
       ret=process_lm_descriptor(lmFileName,verbose);
     else
       ret=process_lm_files_prefix(lmFileName,verbose);
+
+    if(ret==OK)
+      tdState.lmfileLoaded=lmFileName;
   }
   
       // Unlock non_atomic_op_cond mutex
@@ -2384,6 +2404,41 @@ void ThotDecoder::clearTrans(int /*verbose*//*=0*/)
 //--------------------------
 bool ThotDecoder::printModels(int verbose/*=0*/)
 {
+  if(tdCommonVars.featureBasedImplEnabled)
+    return printModelsFeatImpl(verbose);
+  else
+    return printModelsLegacyImpl(verbose);
+}
+
+//--------------------------
+bool ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
+{
+  pthread_mutex_lock(&atomic_op_mut);
+  /////////// begin of mutex 
+
+  if(verbose)
+  {
+    cerr<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<endl;
+  }
+
+      // TO-BE-DONE
+  int ret;
+
+  if(ret==OK)
+  {
+        // Print error correcting model parameters
+    ret=tdCommonVars.ecModelPtr->print(tdState.ecmFilesPrefixGiven.c_str());
+  }
+
+  /////////// end of mutex 
+  pthread_mutex_unlock(&atomic_op_mut);
+
+  return ret;
+}
+
+//--------------------------
+bool ThotDecoder::printModelsLegacyImpl(int verbose/*=0*/)
+{
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
@@ -3004,6 +3059,9 @@ void ThotDecoder::deleteLangModelPtrsFeatImpl(void)
   for(unsigned int i=0;i<tdCommonVars.langModelsInfo.simpleDynClassLoaderVec.size();++i)
     tdCommonVars.langModelsInfo.simpleDynClassLoaderVec[i].close_module(verbosity);
 
+      // Clear model descriptor entries
+  tdCommonVars.langModelsInfo.modelDescEntryVec.clear();
+  
       // Clear dynamic class loader vector
   tdCommonVars.langModelsInfo.simpleDynClassLoaderVec.clear();
 
@@ -3020,6 +3078,9 @@ void ThotDecoder::deletePhrModelPtrsFeatImpl(void)
   int verbosity=false;
   for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec.size();++i)
     tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec[i].close_module(verbosity);
+
+      // Clear model descriptor entries
+  tdCommonVars.langModelsInfo.modelDescEntryVec.clear();
 
       // Clear dynamic class loader vector
   tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec.clear();

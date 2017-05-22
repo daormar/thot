@@ -28,6 +28,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include THOT_LM_STATE_H // Define LM_State type. It is set in
                          // configure by checking LM_STATE_H
                          // variable (default value: LM_State.h)
+#include "ModelDescriptorUtils.h"
 #include "BaseNgramLM.h"
 #include "BaseWordPenaltyModel.h"
 #include "WordIndex.h"
@@ -39,6 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 struct LangModelsInfo
 {
   Vector<BaseNgramLM<LM_State>*> lModelPtrVec;
+  Vector<ModelDescriptorEntry> modelDescEntryVec;
   Vector<SimpleDynClassLoader<BaseNgramLM<LM_State> > > simpleDynClassLoaderVec;
   BaseWordPenaltyModel* wpModelPtr;
 };
