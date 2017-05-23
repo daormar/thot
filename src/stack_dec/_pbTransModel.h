@@ -221,6 +221,12 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // threshold.  The result of the search is cached in the data
       // member cPhrNbestTransTable
 
+      // Functions related to getTransInPlainTextVec
+  Vector<std::string> getTransInPlainTextVecTs(const Hypothesis& hyp)const;
+
+      // Heuristic related functions
+  virtual Score calcHeuristicScore(const _pbTransModel::Hypothesis& hyp);
+
       // Vocabulary functions
   WordIndex stringToSrcWordIndex(std::string s)const;
   std::string wordIndexToSrcString(WordIndex w)const;
@@ -256,8 +262,6 @@ void _pbTransModel<HYPOTHESIS>::link_feats_info(FeaturesInfo<HypScoreInfo>* _fea
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::clear(void)
 {
-      // TO-BE-DONE
-
       // Set state info
   state=MODEL_IDLE_STATE;
 
@@ -268,6 +272,9 @@ void _pbTransModel<HYPOTHESIS>::clear(void)
   heuristicId=NO_HEURISTIC;
 
   singleWordVocab.clear();
+
+      // Clear input variables
+  pbtmInputVars.clear();
 }
 
 //---------------------------------
@@ -275,6 +282,43 @@ template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
 {
       // TO-BE-DONE
+
+  /*     // Clear temporary variables */
+  /* this->clearTempVars(); */
+
+  /*     // Set state info */
+  /* state=MODEL_TRANS_STATE; */
+  
+  /*     // Store source sentence to be translated */
+  /* this->trConstraintsPtr->obtainTransConstraints(srcsent,this->verbosity); */
+  /* pbtmInputVars.srcSentVec=this->trConstraintsPtr->getSrcSentVec(); */
+  
+  /*     // Verify coverage for source */
+  /* if(this->verbosity>0) */
+  /*   cerr<<"Verify model coverage for source sentence..."<<endl;  */
+  /* verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->pbTransModelPars.A); */
+
+  /*     // Store source sentence as an array of WordIndex. */
+  /*     // Note: this must be done after verifying the coverage for the */
+  /*     // source sentence since it may contain unknown words */
+
+  /*     // Init source sentence index vector after the coverage has been */
+  /*     // verified */
+  /* pbtmInputVars.srcSentIdVec.clear(); */
+  /* pbtmInputVars.nsrcSentIdVec.clear(); */
+  /* pbtmInputVars.nsrcSentIdVec.push_back(NULL_WORD); */
+  /* for(unsigned int i=0;i<pbtmInputVars.srcSentVec.size();++i) */
+  /* { */
+  /*   WordIndex w=stringToSrcWordIndex(pbtmInputVars.srcSentVec[i]); */
+  /*   pbtmInputVars.srcSentIdVec.push_back(w); */
+  /*   pbtmInputVars.nsrcSentIdVec.push_back(w); */
+  /* } */
+
+  /*     // Initialize heuristic (the source sentence must be previously */
+  /*     // stored) */
+  /* if(this->verbosity>0) */
+  /*   cerr<<"Initializing information about search heuristic..."<<endl;  */
+  /* initHeuristic(this->pbTransModelPars.A); */
 }
 
 //---------------------------------
@@ -305,8 +349,7 @@ void _pbTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string srcsent,
 template<class HYPOTHESIS>
 std::string _pbTransModel<HYPOTHESIS>::getCurrentSrcSent(void)
 {
-      // TO-BE-DONE
-  /* return StrProcUtils::stringVectorToString(pbtmInputVars.srcSentVec); */
+  return StrProcUtils::stringVectorToString(pbtmInputVars.srcSentVec);
 }
 
 //---------------------------------
@@ -504,6 +547,8 @@ void _pbTransModel<HYPOTHESIS>::expand_ref(const Hypothesis& hyp,
                                            Vector<Hypothesis>& hypVec,
                                            Vector<Vector<Score> >& scrCompVec)
 {
+      // TO-BE-DONE
+  
 /*   Vector<pair<PositionIndex,PositionIndex> > gaps; */
 /*   Vector<WordIndex> s_; */
 /*   Hypothesis extHyp; */
@@ -561,6 +606,8 @@ void _pbTransModel<HYPOTHESIS>::expand_ver(const Hypothesis& hyp,
                                            Vector<Hypothesis>& hypVec,
                                            Vector<Vector<Score> >& scrCompVec)
 {
+      // TO-BE-DONE
+  
 /*   Vector<pair<PositionIndex,PositionIndex> > gaps; */
 /*   Vector<WordIndex> s_; */
 /*   Hypothesis extHyp; */
@@ -618,6 +665,8 @@ void _pbTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
                                               Vector<Hypothesis>& hypVec,
                                               Vector<Vector<Score> >& scrCompVec)
 {
+      // TO-BE-DONE
+
 /*   Vector<pair<PositionIndex,PositionIndex> > gaps; */
 /*   Vector<WordIndex> s_; */
 /*   Hypothesis extHyp; */
@@ -673,14 +722,14 @@ void _pbTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::addHeuristicToHyp(Hypothesis& hyp)
 {
-//  hyp.addHeuristic(calcHeuristicScore(hyp));
+  hyp.addHeuristic(calcHeuristicScore(hyp));
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::subtractHeuristicToHyp(Hypothesis& hyp)
 {
-//  hyp.subtractHeuristic(calcHeuristicScore(hyp));
+  hyp.subtractHeuristic(calcHeuristicScore(hyp));
 }
 
 //---------------------------------
@@ -692,81 +741,90 @@ void _pbTransModel<HYPOTHESIS>::setHeuristic(unsigned int _heuristicId)
 
 //---------------------------------
 template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::calcHeuristicScore(const _pbTransModel::Hypothesis& hyp)
+{
+      // TO-BE-DONE
+  Score score=0;
+  return score;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
                                         ostream &outS,
                                         int verbose)
 {
-/*   Vector<std::string> trgStrVec; */
-/*   Vector<WordIndex> trans=hyp.getPartialTrans(); */
-/*   SourceSegmentation sourceSegmentation; */
-/*   Vector<PositionIndex> targetSegmentCuts; */
-/*   Vector<pair<PositionIndex,PositionIndex> > amatrix; */
-/*   HypDataType hypDataType; */
-/*   Hypothesis auxHyp; */
-/*   Vector<Score> scoreComponents; */
+  Vector<std::string> trgStrVec;
+  Vector<WordIndex> trans=hyp.getPartialTrans();
+  SourceSegmentation sourceSegmentation;
+  Vector<PositionIndex> targetSegmentCuts;
+  Vector<pair<PositionIndex,PositionIndex> > amatrix;
+  HypDataType hypDataType;
+  Hypothesis auxHyp;
+  Vector<Score> scoreComponents;
   
-/*       // Obtain target string vector */
-/*   trgStrVec=trgIndexVectorToStrVector(hyp.getPartialTrans()); */
+      // Obtain target string vector
+  trgStrVec=trgIndexVectorToStrVector(hyp.getPartialTrans());
 
-/*       // Print score */
-/*   outS <<"Score: "<<hyp.getScore()<<" ; "; */
-/*       // Print weights */
-/*   this->printWeights(outS); */
-/*   outS <<" ; "; */
-/*       // Obtain score components */
-/*   hypDataType=hyp.getData(); */
-/*   this->incrScore(this->nullHypothesis(),hypDataType,auxHyp,scoreComponents); */
-/*       // Print score components */
-/*   for(unsigned int i=0;i<scoreComponents.size();++i) */
-/*     outS<<scoreComponents[i]<<" "; */
+      // Print score
+  outS <<"Score: "<<hyp.getScore()<<" ; ";
+      // Print weights
+  this->printWeights(outS);
+  outS <<" ; ";
+      // Obtain score components
+  hypDataType=hyp.getData();
+  this->incrScore(this->nullHypothesis(),hypDataType,auxHyp,scoreComponents);
+      // Print score components
+  for(unsigned int i=0;i<scoreComponents.size();++i)
+    outS<<scoreComponents[i]<<" ";
 
-/*       // Print score + heuristic */
-/*   addHeuristicToHyp(auxHyp); */
-/*   outS <<"; Score+heur: "<<auxHyp.getScore()<<" "; */
+      // Print score + heuristic
+  addHeuristicToHyp(auxHyp);
+  outS <<"; Score+heur: "<<auxHyp.getScore()<<" ";
     
-/*       // Print warning if the alignment is not complete */
-/*   if(!this->isComplete(hyp)) outS<< "; Incomplete_alignment!"; */
+      // Print warning if the alignment is not complete
+  if(!this->isComplete(hyp)) outS<< "; Incomplete_alignment!";
 
-/*       // Obtain phrase alignment */
-/*   this->aligMatrix(hyp,amatrix); */
-/*   this->getPhraseAlignment(amatrix,sourceSegmentation,targetSegmentCuts); */
+      // Obtain phrase alignment
+  this->aligMatrix(hyp,amatrix);
+  this->getPhraseAlignment(amatrix,sourceSegmentation,targetSegmentCuts);
 
-/*       // Print alignment information */
-/*   outS<<" | "; */
-/*   for(unsigned int i=1;i<trgStrVec.size();++i) */
-/*     outS<<trgStrVec[i]<<" "; */
-/*   outS << "| "; */
-/*   for(unsigned int k=0;k<sourceSegmentation.size();k++) */
-/*  	outS<<"( "<<sourceSegmentation[k].first<<" , "<<sourceSegmentation[k].second<<" ) ";  */
-/*   outS<< "| ";  */
-/*   for (unsigned int j=0; j<targetSegmentCuts.size(); j++) */
-/*     outS << targetSegmentCuts[j] << " "; */
+      // Print alignment information
+  outS<<" | ";
+  for(unsigned int i=1;i<trgStrVec.size();++i)
+    outS<<trgStrVec[i]<<" ";
+  outS << "| ";
+  for(unsigned int k=0;k<sourceSegmentation.size();k++)
+ 	outS<<"( "<<sourceSegmentation[k].first<<" , "<<sourceSegmentation[k].second<<" ) ";
+  outS<< "| ";
+  for (unsigned int j=0; j<targetSegmentCuts.size(); j++)
+    outS << targetSegmentCuts[j] << " ";
   
-/*       // Print hypothesis key */
-/*   outS<<"| hypkey: "<<hyp.getKey()<<" "; */
+      // Print hypothesis key
+  outS<<"| hypkey: "<<hyp.getKey()<<" ";
 
-/*       // Print hypothesis equivalence class */
-/*   outS<<"| hypEqClass: "<<hyp.getEqClass()<<endl; */
+      // Print hypothesis equivalence class
+  outS<<"| hypEqClass: "<<hyp.getEqClass()<<endl;
 
-/*   if(verbose) */
-/*   { */
-/*     unsigned int numSteps=sourceSegmentation.size()-1; */
-/*     outS<<"----------------------------------------------"<<endl; */
-/*     outS<<"Score components for previous expansion steps:"<<endl; */
-/*     auxHyp=hyp; */
-/*     while(this->obtainPredecessor(auxHyp)) */
-/*     { */
-/*       scoreComponents=scoreCompsForHyp(auxHyp); */
-/*       outS<<"Step "<<numSteps<<" : "; */
-/*       for(unsigned int i=0;i<scoreComponents.size();++i) */
-/*       { */
-/*         outS<<scoreComponents[i]<<" "; */
-/*       } */
-/*       outS<<endl; */
-/*       --numSteps; */
-/*     } */
-/*     outS<<"----------------------------------------------"<<endl; */
-/*   } */
+  if(verbose)
+  {
+    unsigned int numSteps=sourceSegmentation.size()-1;
+    outS<<"----------------------------------------------"<<endl;
+    outS<<"Score components for previous expansion steps:"<<endl;
+    auxHyp=hyp;
+    while(this->obtainPredecessor(auxHyp))
+    {
+      scoreComponents=scoreCompsForHyp(auxHyp);
+      outS<<"Step "<<numSteps<<" : ";
+      for(unsigned int i=0;i<scoreComponents.size();++i)
+      {
+        outS<<scoreComponents[i]<<" ";
+      }
+      outS<<endl;
+      --numSteps;
+    }
+    outS<<"----------------------------------------------"<<endl;
+  }
 }
 
 //---------------------------------
@@ -774,13 +832,90 @@ template<class HYPOTHESIS>
 Vector<std::string> _pbTransModel<HYPOTHESIS>::getTransInPlainTextVec(const _pbTransModel::Hypothesis& hyp)const
 {
       // TO-BE-DONE
+  switch(state)
+  {
+    case MODEL_TRANS_STATE: return getTransInPlainTextVecTs(hyp);
+    /* case MODEL_TRANSPREFIX_STATE: return getTransInPlainTextVecTps(hyp); */
+    /* case MODEL_TRANSREF_STATE: return getTransInPlainTextVecTrs(hyp); */
+    /* case MODEL_TRANSVER_STATE: return getTransInPlainTextVecTvs(hyp); */
+    default: Vector<std::string> strVec;
+      return strVec;
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Vector<std::string> _pbTransModel<HYPOTHESIS>::getTransInPlainTextVecTs(const _pbTransModel<HYPOTHESIS>::Hypothesis& hyp)const
+{
+  Vector<WordIndex> nvwi;
+  Vector<WordIndex> vwi;
+
+      // Obtain vector of WordIndex
+  nvwi=hyp.getPartialTrans();
+  for(unsigned int i=1;i<nvwi.size();++i)
+  {
+    vwi.push_back(nvwi[i]);
+  }
+      // Obtain vector of strings
+  Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
+
+      // Treat unknown words contained in trgVecStr. Model is being used
+      // to translate a sentence
+    
+      // Replace unknown words affected by constraints
+
+      // Iterate over constraints
+  std::set<pair<PositionIndex,PositionIndex> > srcPhrSet=this->trConstraintsPtr->getConstrainedSrcPhrases();
+  std::set<pair<PositionIndex,PositionIndex> >::const_iterator const_iter;
+  for(const_iter=srcPhrSet.begin();const_iter!=srcPhrSet.end();++const_iter)
+  {
+        // Obtain target translation for constraint
+    Vector<std::string> trgPhr=this->trConstraintsPtr->getTransForSrcPhr(*const_iter);
+    
+        // Find first aligned target word
+    for(unsigned int i=0;i<trgVecStr.size();++i)
+    {
+      if(hyp.areAligned(const_iter->first,i+1))
+      {
+        for(unsigned int k=0;k<trgPhr.size();++k)
+        {
+          if(trgVecStr[i+k]==UNK_WORD_STR)
+            trgVecStr[i+k]=trgPhr[k];                      
+        }
+            // Replace unknown words and finish
+        break;
+      }
+    }
+  }
+  
+      // Replace unknown words not affected by constraints
+  for(unsigned int i=0;i<trgVecStr.size();++i)
+  {
+    if(trgVecStr[i]==UNK_WORD_STR)
+    {
+          // Find source word aligned with unknown word
+      for(unsigned int j=0;j<pbtmInputVars.srcSentVec.size();++j)
+      {
+        if(hyp.areAligned(j+1,i+1))
+        {
+          trgVecStr[i]=pbtmInputVars.srcSentVec[j];
+          break;
+        }
+      }
+    }
+  }
+  return trgVecStr;
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::setWeights(Vector<float> wVec)
 {
-      // TO-BE-DONE
+  for(unsigned int i=0;i<featuresInfoPtr->featPtrVec.size();++i)
+  {
+    if(i<wVec.size())
+      featuresInfoPtr->featPtrVec[i]->setWeight(wVec[i]);
+  }
 }
 
 //---------------------------------
@@ -815,7 +950,7 @@ void _pbTransModel<HYPOTHESIS>::printWeights(ostream &outS)
 template<class HYPOTHESIS>
 unsigned int _pbTransModel<HYPOTHESIS>::getNumWeights(void)
 {
-      // TO-BE-DONE
+  return featuresInfoPtr->featPtrVec.size();
 }
 
 //---------------------------------
