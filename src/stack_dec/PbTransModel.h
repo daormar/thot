@@ -127,8 +127,6 @@ template<class EQCLASS_FUNC>
 Score PbTransModel<EQCLASS_FUNC>::nullHypothesisScrComps(Hypothesis& nullHyp,
                                                          Vector<Score>& scoreComponents)
 {
-      // TO-BE-REVISED
-       
       // Initialize variables
   HypScoreInfo hypScoreInfo;
   HypDataType dataType=nullHypothesisHypData();
@@ -240,8 +238,6 @@ Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
                                             Hypothesis& new_hyp,
                                             Vector<Score>& scoreComponents)
 {
-      // TO-BE-REVISED
-       
       // Initialize variables
   HypScoreInfo hypScoreInfo=pred_hyp.getScoreInfo();
   HypDataType pred_hypd=pred_hyp.getData();
