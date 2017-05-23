@@ -4,7 +4,7 @@ WbaIncrPhraseModelFactory.cc _incrMuxPhraseModel.h IncrMuxPhraseModel.h	\
 _incrMuxPhraseModel.cc IncrMuxPhraseModel.cc				\
 IncrMuxPhraseModelFactory.cc VecUnsignedIntSortCriterion.h		\
 TrgSegmLenTable.h TrgSegmLenTable.cc TrgCutsTable.h TrgCutsTable.cc	\
-thot_gen_phr_model.cc thot_ttable_to_fbdb.cc thot_alig_op.cc		\
+thot_gen_phr_model.cc thot_ttable_to_fbdb.cc thot_ttable_to_datrie.cc thot_alig_op.cc   \
 thot_query_pm.cc SrfNodeKey.h SrfNodeKey.cc SrfNodeInfoMap.h		\
 SrfNodeInfoMap.cc SrfNodeInfo.h SrfBisegm.h SrcSegmLenTable.h		\
 SrcSegmLenTable.cc SentSegmentation.h SegLenTable.h SegLenTable.cc	\

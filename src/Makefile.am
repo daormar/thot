@@ -45,7 +45,7 @@ thot_filter_bin_ilextable thot_prune_bin_ilextable thot_alig_op		\
 thot_query_pm thot_gen_phr_model thot_wg_proc thot_dhs_step_by_step_min	\
 thot_ms_dec thot_ms_alig thot_li_weight_upd thot_ll_weight_upd_nblist	\
 thot_client thot_server thot_scorer thot_calc_bleu $(DB_CXX_PROGS)	\
-$(TESTING_PROGS)
+thot_ttable_to_datrie $(TESTING_PROGS)
 
 lib_LTLIBRARIES = libdatrie.la libthot.la word_penalty_model_factory.la	\
 incr_jel_mer_ngram_lm_factory.la incr_interp_ngram_lm_factory.la	\
@@ -520,6 +520,10 @@ thot_gen_phr_model_LDFLAGS = libthot.la libdatrie.la
 ##########
 thot_ttable_to_fbdb_SOURCES = phrase_models/thot_ttable_to_fbdb.cc
 thot_ttable_to_fbdb_LDFLAGS = libthot.la libdatrie.la
+
+##########
+thot_ttable_to_datrie_SOURCES = phrase_models/thot_ttable_to_datrie.cc
+thot_ttable_to_datrie_LDFLAGS = libthot.la libdatrie.la
 
 ##########
 thot_wg_proc_SOURCES = error_correction/thot_wg_proc_pars.h	\
