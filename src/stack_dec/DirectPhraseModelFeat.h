@@ -70,7 +70,6 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 {
  public:
 
-      // TO-BE-DONE
   typedef typename BasePbTransModelFeature<SCORE_INFO>::HypScoreInfo HypScoreInfo;
 
       // Constructor
@@ -111,7 +110,9 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
   Score swLgProb(const Vector<WordIndex>& srcPhraseWidx,
                  const Vector<WordIndex>& trgPhraseWidx);
   WordIndex stringToSrcWordindex(std::string word);
+  std::string wordindexToSrcString(WordIndex wordIdx);
   WordIndex stringToTrgWordindex(std::string word);
+  std::string wordindexToTrgString(WordIndex wordIdx);
 };
 
 //--------------- WordPenaltyFeat class functions
@@ -136,7 +137,27 @@ template<class SCORE_INFO>
 void DirectPhraseModelFeat<SCORE_INFO>::obtainTransOptions(const Vector<std::string>& wordVec,
                                                            Vector<Vector<std::string> >& transOptVec)
 {
-      // TO-BE-DONE
+      // Obtain vector of word indices
+  Vector<WordIndex> wordIdxVec;
+  for(unsigned int i=0;i<wordVec.size();++i)
+    wordIdxVec.push_back(this->stringToSrcWordindex(wordVec[i]));
+
+      // Obtain translation options
+  BasePhraseModel::SrcTableNode srctn;
+  this->invPbModelPtr->getTransFor_t_(wordIdxVec,srctn);
+
+      // Put options in vector
+  transOptVec.clear();
+  for(BasePhraseModel::SrcTableNode::iterator iter=srctn.begin(); iter!=srctn.end(); ++iter)
+  {
+        // Convert option to string vector
+    Vector<std::string> transOpt;
+    for(unsigned int i=0;i<iter->first.size();++i)
+      transOpt.push_back(this->wordindexToTrgString(iter->first[i]));
+    
+        // Add new entry
+    transOptVec.push_back(transOpt);
+  }
 }
 
 //---------------------------------
@@ -218,9 +239,23 @@ WordIndex DirectPhraseModelFeat<SCORE_INFO>::stringToSrcWordindex(std::string wo
 
 //---------------------------------
 template<class SCORE_INFO>
+std::string DirectPhraseModelFeat<SCORE_INFO>::wordindexToSrcString(WordIndex wordIdx)
+{
+  return invPbModelPtr->wordIndexToTrgString(wordIdx);
+}
+
+//---------------------------------
+template<class SCORE_INFO>
 WordIndex DirectPhraseModelFeat<SCORE_INFO>::stringToTrgWordindex(std::string word)
 {
   return invPbModelPtr->stringToSrcWordIndex(word);  
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+std::string DirectPhraseModelFeat<SCORE_INFO>::wordindexToTrgString(WordIndex wordIdx)
+{
+  return invPbModelPtr->wordIndexToSrcString(wordIdx);  
 }
 
 #endif

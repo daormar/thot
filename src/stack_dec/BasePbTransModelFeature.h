@@ -69,8 +69,6 @@ class BasePbTransModelFeature
 {
  public:
 
-      // TO-BE-DONE
-
   typedef SCORE_INFO HypScoreInfo;
 
       // Weight related functions
@@ -137,7 +135,7 @@ std::string BasePbTransModelFeature<SCORE_INFO>::getFeatName(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-void BasePbTransModelFeature<SCORE_INFO>::obtainTransOptions(const Vector<std::string>& wordVec,
+void BasePbTransModelFeature<SCORE_INFO>::obtainTransOptions(const Vector<std::string>& /*wordVec*/,
                                                              Vector<Vector<std::string> >& transOptVec)
 {
       // Standard features do not provide translation options
