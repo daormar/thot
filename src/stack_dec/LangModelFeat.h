@@ -68,7 +68,6 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 {
  public:
 
-      // TO-BE-DONE
   typedef typename BasePbTransModelFeature<SCORE_INFO>::HypScoreInfo HypScoreInfo;
 
       // Constructor
