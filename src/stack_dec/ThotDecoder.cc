@@ -2421,13 +2421,46 @@ bool ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
     cerr<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<endl;
   }
 
-      // TO-BE-DONE
   int ret;
 
+      // Print alignment model parameters
+  std::string mainFileName;
+  if(fileIsDescriptor(tdState.tmFilesPrefixGiven,mainFileName))
+  {
+    for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.invPbModelPtrVec.size();++i)
+    {
+      ret=SmtModelUtils::printPhrModel(tdCommonVars.phraseModelsInfo.invPbModelPtrVec[i],tdCommonVars.phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName);
+      if(ret==ERROR)
+        break;
+    }
+  }
+  else
+  {
+    ret=SmtModelUtils::printPhrModel(tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],tdState.tmFilesPrefixGiven);
+  }
+  
   if(ret==OK)
   {
-        // Print error correcting model parameters
-    ret=tdCommonVars.ecModelPtr->print(tdState.ecmFilesPrefixGiven.c_str());
+        // Print language model parameters
+    if(fileIsDescriptor(tdState.lmfileLoaded,mainFileName))
+    {
+      for(unsigned int i=0;i<tdCommonVars.langModelsInfo.lModelPtrVec.size();++i)
+      {
+        ret=SmtModelUtils::printLangModel(tdCommonVars.langModelsInfo.lModelPtrVec[i],tdCommonVars.langModelsInfo.modelDescEntryVec[i].absolutizedModelFileName);
+        if(ret==ERROR)
+          break;
+      }
+    }
+    else
+    {
+      ret=SmtModelUtils::printLangModel(tdCommonVars.langModelsInfo.lModelPtrVec[0],tdState.lmfileLoaded);
+    }
+    
+    if(ret==OK)
+    {
+          // Print error correcting model parameters
+      ret=tdCommonVars.ecModelPtr->print(tdState.ecmFilesPrefixGiven.c_str());
+    }
   }
 
   /////////// end of mutex 
