@@ -119,6 +119,18 @@ bool DaTriePhraseTable::trieLoadFromFile(const char *path)
 }
 
 //-------------------------
+bool DaTriePhraseTable::save(const char *path)
+{
+  return trieSaveToFile(path);
+}
+
+//-------------------------
+bool DaTriePhraseTable::load(const char *path)
+{
+  return trieLoadFromFile(path);
+}
+
+//-------------------------
 Vector<WordIndex> DaTriePhraseTable::getSrc(const Vector<WordIndex>& s)
 {
   // Prepare s vector as (UNUSED_WORD, s)

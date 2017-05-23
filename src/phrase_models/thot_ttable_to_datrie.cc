@@ -141,7 +141,7 @@ int process_ttable(void)
     }
 
       // Store data structure for further usage
-    datriePt.trieSaveToFile(outputFile.c_str());
+    datriePt.save(outputFile.c_str());
     
     return OK;
   }
