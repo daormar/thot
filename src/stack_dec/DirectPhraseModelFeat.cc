@@ -78,7 +78,7 @@ DirectPhraseModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& s
       }
 
           // Update score
-      Score iterScore=directPhraseTransScore(srcPhrase,trgPhrase);
+      Score iterScore=directPhrTransUnweightedScore(srcPhrase,trgPhrase);
       unweightedScore+= iterScore;
       hypScrInf.score+= weight*iterScore;
     }

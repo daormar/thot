@@ -86,11 +86,15 @@ class BasePbTransModelFeature
                                       const PhrHypDataStr& predHypDataStr,
                                       const PhrHypDataStr& newHypDataStr,
                                       Score& unweightedScore)=0;
+  virtual Score scorePhrasePair(const Vector<std::string>& srcPhrase,
+                                const Vector<std::string>& trgPhrase)=0;
 
       // Functions to obtain translation options
   virtual void obtainTransOptions(const Vector<std::string>& wordVec,
                                   Vector<Vector<std::string> >& transOptVec);
-       
+
+      
+
       // Destructor
   virtual ~BasePbTransModelFeature(){};
 

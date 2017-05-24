@@ -82,6 +82,8 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
+  Score scorePhrasePair(const Vector<std::string>& srcPhrase,
+                        const Vector<std::string>& trgPhrase);
 
       // Link pointer
   void link_lm(BaseNgramLM<LM_State>* _lModelPtr);
@@ -110,6 +112,17 @@ template<class SCORE_INFO>
 std::string LangModelFeat<SCORE_INFO>::getFeatType(void)
 {
   return "LangModelFeat";
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+Score LangModelFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::string>& /*srcPhrase*/,
+                                                 const Vector<std::string>& trgPhrase)
+{
+  Vector<WordIndex> hist;
+  LM_State state;    
+  lModelPtr->getStateForWordSeq(hist,state);
+  return this->weight*getNgramScoreGivenState(trgPhrase,state);
 }
 
 //---------------------------------

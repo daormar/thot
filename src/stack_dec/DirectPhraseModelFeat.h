@@ -84,6 +84,8 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
+  Score scorePhrasePair(const Vector<std::string>& srcPhrase,
+                        const Vector<std::string>& trgPhrase);
 
       // Functions to obtain translation options
   void obtainTransOptions(const Vector<std::string>& wordVec,
@@ -105,8 +107,8 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
   BaseSwAligModel<PpInfo>* swAligModelPtr;
   float lambda;
   
-  Score directPhraseTransScore(const Vector<WordIndex>& srcPhrase,
-                               const Vector<WordIndex>& trgPhrase);
+  Score directPhrTransUnweightedScore(const Vector<WordIndex>& srcPhrase,
+                                      const Vector<WordIndex>& trgPhrase);
   Score swLgProb(const Vector<WordIndex>& srcPhraseWidx,
                  const Vector<WordIndex>& trgPhraseWidx);
   WordIndex stringToSrcWordindex(std::string word);
@@ -130,6 +132,23 @@ template<class SCORE_INFO>
 std::string DirectPhraseModelFeat<SCORE_INFO>::getFeatType(void)
 {
   return "DirectPhraseModelFeat";
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+Score DirectPhraseModelFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::string>& srcPhrase,
+                                                         const Vector<std::string>& trgPhrase)
+{
+      // Obtain WordIndex vectors
+  Vector<WordIndex> srcPhraseIdx;
+  for(unsigned int i=0;i<srcPhrase.size();++i)
+    srcPhraseIdx.push_back(this->stringToSrcWordindex(srcPhrase[i]));
+
+  Vector<WordIndex> trgPhraseIdx;
+  for(unsigned int i=0;i<trgPhrase.size();++i)
+    trgPhraseIdx.push_back(this->stringToTrgWordindex(trgPhrase[i]));
+
+  return this->weight*directPhrTransUnweightedScore(srcPhraseIdx,trgPhraseIdx);
 }
 
 //---------------------------------
@@ -204,8 +223,8 @@ float DirectPhraseModelFeat<SCORE_INFO>::get_lambda(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-Score DirectPhraseModelFeat<SCORE_INFO>::directPhraseTransScore(const Vector<WordIndex>& srcPhrase,
-                                                                const Vector<WordIndex>& trgPhrase)
+Score DirectPhraseModelFeat<SCORE_INFO>::directPhrTransUnweightedScore(const Vector<WordIndex>& srcPhrase,
+                                                                       const Vector<WordIndex>& trgPhrase)
 {
   if(lambda==1.0)
   {
