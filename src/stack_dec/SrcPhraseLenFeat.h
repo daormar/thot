@@ -23,8 +23,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /* Prototypes file: SrcPhraseLenFeat.h                              */
 /*                                                                  */
 /* Description: Declares the SrcPhraseLenFeat template              */
-/*              class. This class implements a word penalty         */
-/*              feature.                                            */
+/*              class. This class implements a source phrase        */
+/*              length feature.                                     */
 /*                                                                  */
 /********************************************************************/
 
@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  * @file SrcPhraseLenFeat.h
  * 
  * @brief Declares the SrcPhraseLenFeat template class. This class
- * implements a word penalty feature.
+ * implements a source phrase length feature.
  */
 
 #ifndef _SrcPhraseLenFeat_h
