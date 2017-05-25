@@ -92,10 +92,19 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 
   BaseNgramLM<LM_State>* lModelPtr;
 
+      // Functions to access language model parameters
   Score getEosScoreGivenState(LM_State& lmHist);
   Score getNgramScoreGivenState(Vector<std::string> trgphrase,
                                 LM_State& lmHist);
+  void getStateForWordSeqStr(const Vector<std::string>& wordSeq,
+                             LM_State& state);
 
+      // Auxiliary functions
+  void obtainCurrPartialTrans(const PhrHypDataStr& predHypDataStr,
+                              Vector<std::string>& currPartialTrans);
+  void updateCurrPartialTranslation(const Vector<std::string>& trgPhrase,
+                                    Vector<std::string>& currPartialTrans);
+  WordIndex stringToWordIndex(std::string str);
 };
 
 //--------------- WordPenaltyFeat class functions
@@ -155,7 +164,7 @@ Score LangModelFeat<SCORE_INFO>::getNgramScoreGivenState(Vector<std::string> trg
       // trgPhraseIdx stores the target sentence using indices of the language model
   for(unsigned int i=0;i<trgphrase.size();++i)
   {
-    trgPhraseIdx.push_back(this->lModelPtr->stringToWordIndex(trgphrase[i]));
+    trgPhraseIdx.push_back(this->stringToWordIndex(trgphrase[i]));
   }
       
   for(unsigned int i=0;i<trgPhraseIdx.size();++i)
@@ -170,6 +179,47 @@ Score LangModelFeat<SCORE_INFO>::getNgramScoreGivenState(Vector<std::string> trg
   }
       // Return result
   return result;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void LangModelFeat<SCORE_INFO>::obtainCurrPartialTrans(const PhrHypDataStr& predHypDataStr,
+                                                       Vector<std::string>& currPartialTrans)
+{
+  currPartialTrans.push_back(BOS_STR);
+  for(unsigned int i=1;i<predHypDataStr.ntarget.size();++i)
+    currPartialTrans.push_back(predHypDataStr.ntarget[i]);
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void LangModelFeat<SCORE_INFO>::updateCurrPartialTranslation(const Vector<std::string>& trgPhrase,
+                                                             Vector<std::string>& currPartialTrans)
+{
+  for(unsigned int i=0;i<trgPhrase.size();++i)
+    currPartialTrans.push_back(trgPhrase[i]);
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void LangModelFeat<SCORE_INFO>::getStateForWordSeqStr(const Vector<std::string>& wordSeq,
+                                                      LM_State& state)
+{
+  Vector<WordIndex> wordSeqIdx;
+  for(unsigned int i=0;i<wordSeq.size();++i)
+    wordSeqIdx.push_back(this->stringToWordIndex(wordSeq[i]));
+  
+  lModelPtr->getStateForWordSeq(wordSeqIdx,state);
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+WordIndex LangModelFeat<SCORE_INFO>::stringToWordIndex(std::string str)
+{
+  if(this->lModelPtr->existSymbol(str))
+    return this->lModelPtr->stringToWordIndex(str);
+  else
+    return UNK_SYMBOL;
 }
 
 #endif

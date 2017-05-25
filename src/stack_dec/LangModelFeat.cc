@@ -52,6 +52,10 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
         // Obtain score for hypothesis extension
     HypScoreInfo hypScrInf=predHypScrInf;
     unweightedScore=0;
+
+        // Obtain current partial translation
+    Vector<std::string> currPartialTrans;
+    obtainCurrPartialTrans(predHypDataStr,currPartialTrans);
     
     for(unsigned int i=predHypDataStr.sourceSegmentation.size();i<newHypDataStr.sourceSegmentation.size();++i)
     {
@@ -64,21 +68,32 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
         trgLeft=newHypDataStr.targetSegmentCuts[i-1]+1;
       Vector<std::string> trgPhrase;
       for(unsigned int k=trgLeft;k<=trgRight;++k)
-      {
         trgPhrase.push_back(newHypDataStr.ntarget[k]);
-      }
 
+          // Obtain state info
+      LM_State state;    
+      getStateForWordSeqStr(currPartialTrans,state);
+      
           // Update score
-      Score iterScore=getNgramScoreGivenState(trgPhrase,hypScrInf.lmHist);
+//      Score iterScore=getNgramScoreGivenState(trgPhrase,hypScrInf.lmHist);
+      Score iterScore=getNgramScoreGivenState(trgPhrase,state);
       unweightedScore+= iterScore;
       hypScrInf.score+= weight*iterScore;
+
+          // Update current partial translation
+      updateCurrPartialTranslation(trgPhrase,currPartialTrans);
     }
 
         // Check if new hypothesis is complete
     if(numberOfSrcWordsCovered(newHypDataStr)==srcSent.size())
     {
+          // Obtain state info
+      LM_State state;    
+      getStateForWordSeqStr(currPartialTrans,state);
+
         // Obtain score contribution for complete hypothesis
-      Score scrCompl=getEosScoreGivenState(hypScrInf.lmHist);
+//      Score scrCompl=getEosScoreGivenState(hypScrInf.lmHist);
+      Score scrCompl=getEosScoreGivenState(state);
       unweightedScore+= scrCompl;
       hypScrInf.score+= weight*scrCompl;
     }
