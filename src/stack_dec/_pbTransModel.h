@@ -254,14 +254,14 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   void initHeuristic(unsigned int maxSrcPhraseLength);
 
       // Vocabulary functions
-  WordIndex stringToSrcWordIndex(std::string s)const;
+  WordIndex stringToSrcWordIndex(std::string s);
   std::string wordIndexToSrcString(WordIndex w)const;
   Vector<std::string> srcIndexVectorToStrVector(Vector<WordIndex> srcidxVec)const;
-  Vector<WordIndex> strVectorToSrcIndexVector(Vector<std::string> srcStrVec)const;
-  WordIndex stringToTrgWordIndex(std::string s)const;
+  Vector<WordIndex> strVectorToSrcIndexVector(Vector<std::string> srcStrVec);
+  WordIndex stringToTrgWordIndex(std::string s);
   std::string wordIndexToTrgString(WordIndex w)const;
   Vector<std::string> trgIndexVectorToStrVector(Vector<WordIndex> trgidxVec)const;
-  Vector<WordIndex> strVectorToTrgIndexVector(Vector<std::string> trgStrVec)const;
+  Vector<WordIndex> strVectorToTrgIndexVector(Vector<std::string> trgStrVec);
 };
 
 //--------------- _pbTransModel class functions
@@ -1257,7 +1257,7 @@ bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis& hyp,
     }
     else
     {
-          // search translations for s in translation table
+          // search translations for source phrase in translation table
       NbestTableNode<PhraseTransTableNodeData> *transTableNodePtr;
       Vector<WordIndex> srcPhrase;
     
@@ -1311,10 +1311,12 @@ int _pbTransModel<HYPOTHESIS>::onlineTrainSentPair(const char *srcSent,
 
 //---------------------------------
 template<class HYPOTHESIS>
-WordIndex _pbTransModel<HYPOTHESIS>::stringToSrcWordIndex(std::string s)const
+WordIndex _pbTransModel<HYPOTHESIS>::stringToSrcWordIndex(std::string s)
 {
-      // TO-BE-REVISED
-  return singleWordVocab.stringToSrcWordIndex(s);
+  if(singleWordVocab.existSrcSymbol(s))
+    return singleWordVocab.stringToSrcWordIndex(s);
+  else
+    return singleWordVocab.addSrcSymbol(s);
 }
 
 //---------------------------------
@@ -1338,7 +1340,7 @@ Vector<std::string> _pbTransModel<HYPOTHESIS>::srcIndexVectorToStrVector(Vector<
 
 //--------------------------------- 
 template<class HYPOTHESIS>
-Vector<WordIndex> _pbTransModel<HYPOTHESIS>::strVectorToSrcIndexVector(Vector<std::string> srcStrVec)const
+Vector<WordIndex> _pbTransModel<HYPOTHESIS>::strVectorToSrcIndexVector(Vector<std::string> srcStrVec)
 {
   Vector<WordIndex> srcidxVec;
   for(unsigned int i=0;i<srcStrVec.size();++i)
@@ -1350,10 +1352,12 @@ Vector<WordIndex> _pbTransModel<HYPOTHESIS>::strVectorToSrcIndexVector(Vector<st
 
 //--------------------------------- 
 template<class HYPOTHESIS>
-WordIndex _pbTransModel<HYPOTHESIS>::stringToTrgWordIndex(std::string s)const
+WordIndex _pbTransModel<HYPOTHESIS>::stringToTrgWordIndex(std::string s)
 {
-      // TO-BE-REVISED
-  return singleWordVocab.stringToTrgWordIndex(s);
+  if(singleWordVocab.existTrgSymbol(s))
+    return singleWordVocab.stringToTrgWordIndex(s);
+  else
+    return singleWordVocab.addTrgSymbol(s);
 }
 
 //--------------------------------- 
@@ -1377,7 +1381,7 @@ Vector<std::string> _pbTransModel<HYPOTHESIS>::trgIndexVectorToStrVector(Vector<
 
 //--------------------------------- 
 template<class HYPOTHESIS>
-Vector<WordIndex> _pbTransModel<HYPOTHESIS>::strVectorToTrgIndexVector(Vector<std::string> trgStrVec)const
+Vector<WordIndex> _pbTransModel<HYPOTHESIS>::strVectorToTrgIndexVector(Vector<std::string> trgStrVec)
 {
   Vector<WordIndex> trgidxVec;
   for(unsigned int i=0;i<trgStrVec.size();++i)
