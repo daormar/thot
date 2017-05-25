@@ -37,7 +37,8 @@ HypStateDictData.h HypSortCriterion.h client_server_defs.h CatDefs.h	\
 bleu.h bleu.cc BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h	\
 BasePbTransModelFeature.h WordPenaltyFeat.h WordPenaltyFeat.cc		\
 LangModelFeat.h LangModelFeat.cc DirectPhraseModelFeat.h		\
-DirectPhraseModelFeat.cc BaseSmtModel.h BasePhraseHypothesisRec.h	\
+DirectPhraseModelFeat.cc InversePhraseModelFeat.h			\
+InversePhraseModelFeat.cc BaseSmtModel.h BasePhraseHypothesisRec.h	\
 BasePhraseHypothesis.h BasePbTransModelStats.h BasePbTransModel.h	\
 BaseHypState.h BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h	\
 HypDebugData.h BaseAssistedTrans.h _assistedTrans.h			\
