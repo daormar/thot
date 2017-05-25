@@ -81,6 +81,7 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   CPPUNIT_TEST( testSavingAndRestoringTrie );
   CPPUNIT_TEST( testMmap );
   CPPUNIT_TEST( testSubkeys );
+  CPPUNIT_TEST( test32bitRange );
   CPPUNIT_TEST_SUITE_END();
 
  private:
@@ -109,6 +110,7 @@ class DaTriePhraseTableTest: public CppUnit::TestFixture
   void testSavingAndRestoringTrie();
   void testMmap();
   void testSubkeys();
+  void test32bitRange();
 };
 
 #endif

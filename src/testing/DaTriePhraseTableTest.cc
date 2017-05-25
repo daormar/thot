@@ -653,3 +653,23 @@ void DaTriePhraseTableTest::testSubkeys()
   CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_1).get_c_st() == 8 );
   CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_2).get_c_st() == 16 );
 }
+
+//---------------------------------------
+void DaTriePhraseTableTest::test32bitRange()
+{
+  /* TEST:
+     Check if datrie supports codes from 32bit range
+     (except 0xFFFFFFFF as it is reserved for internal usage)
+  */
+  tab->clear();
+
+  Vector<WordIndex> minVector, maxVector;
+
+  minVector.push_back(0);
+  maxVector.push_back(0xFFFFFFFE);
+
+  // Insert data to trie and check their correctness
+  tab->incrCountsOfEntry(minVector, maxVector, Count(20));
+  CPPUNIT_ASSERT( tab->size() == 3 );
+  CPPUNIT_ASSERT( (int) tab->cSrcTrg(minVector, maxVector).get_c_st() == 20 );
+}

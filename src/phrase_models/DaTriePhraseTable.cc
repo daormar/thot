@@ -42,8 +42,8 @@ DaTriePhraseTable::DaTriePhraseTable(void)
     printf("Cannot create AlphaMap\n");
     exit(1);
   }
-  // Set AlphaMap's range to all ASCII characters
-  if(alpha_map_add_range(alphabet_map, 0x0000, 0x007f) != 0)
+  // Set AlphaMap's range to 32-bit (0xFFFFFFFF value is reserved for internal usage)
+  if(alpha_map_add_range(alphabet_map, 0x0000, 0xFFFFFFFE) != 0)
   {
     printf("Cannot set AlphaMap range\n");
     exit(2);
@@ -469,7 +469,7 @@ void DaTriePhraseTable::print(void)
   {
     pair<Vector<WordIndex>, int> x = *iter;
     wcout << vectorToWstring(x.first);
-    cout << " " << x.second << endl;
+    cout << "\t" << x.second << endl;
   }
 }
 
