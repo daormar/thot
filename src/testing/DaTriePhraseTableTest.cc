@@ -673,3 +673,22 @@ void DaTriePhraseTableTest::test32bitRange()
   CPPUNIT_ASSERT( tab->size() == 3 );
   CPPUNIT_ASSERT( (int) tab->cSrcTrg(minVector, maxVector).get_c_st() == 20 );
 }
+
+//---------------------------------------
+void DaTriePhraseTableTest::testTail()
+{
+  /* TEST:
+     Check if items are correctly added to the tail
+  */
+  tab->clear();
+
+  Vector<WordIndex> s, t;
+  s.push_back(201);
+  s.push_back(8);
+  t.push_back(255);
+
+  // Insert data to trie and check their correctness
+  tab->incrCountsOfEntry(s, t, Count(1));
+  CPPUNIT_ASSERT( tab->size() == 3 );
+  CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t).get_c_st() == 1 );
+}
