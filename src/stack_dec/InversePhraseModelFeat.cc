@@ -42,7 +42,6 @@ InversePhraseModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& 
       // Check if function was called to score the null hypothesis
   if(predHypDataStr.sourceSegmentation.empty() && newHypDataStr.sourceSegmentation.empty())
   {
-        // Obtain language model state for null hypothesis
     return predHypScrInf;
   }
   else
