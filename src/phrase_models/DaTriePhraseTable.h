@@ -153,7 +153,7 @@ class DaTriePhraseTable: public BasePhraseTable
     
         // size and clear functions
     virtual size_t size(void);
-    virtual void print(void);
+    virtual void print(bool printString = TRUE);
     virtual void clear(void);   
 
         // Destructor

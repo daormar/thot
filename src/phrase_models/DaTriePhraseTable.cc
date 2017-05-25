@@ -462,13 +462,20 @@ size_t DaTriePhraseTable::size(void)
 }
 
 //-------------------------
-void DaTriePhraseTable::print(void)
+void DaTriePhraseTable::print(bool printString)
 {
   cout << "Trie structure:" << endl;
   for(DaTriePhraseTable::const_iterator iter = begin(); iter != end(); iter++)
   {
     pair<Vector<WordIndex>, int> x = *iter;
-    wcout << vectorToWstring(x.first);
+    if (printString) {
+      wcout << vectorToWstring(x.first);
+    } else {
+      for(int i = 0; i < x.first.size(); i++) {
+        cout << x.first[i] << " ";
+      }
+    }
+    
     cout << "\t" << x.second << endl;
   }
 }
