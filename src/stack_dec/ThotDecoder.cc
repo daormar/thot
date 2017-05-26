@@ -1003,6 +1003,24 @@ int ThotDecoder::createInversePhrModelFeat(std::string featName,
 }
 
 //--------------------------
+int ThotDecoder::createSrcPhraseLenFeat(std::string featName,
+                                        BasePhraseModel* basePhraseModelPtr,
+                                        SrcPhraseLenFeat<SmtModel::HypScoreInfo>** srcPhraseLenFeatRef)
+{
+  cerr<<"** Creating source phrase length feature ("<<featName<<")"<<endl;
+
+      // Create feature pointer and set name
+  (*srcPhraseLenFeatRef)=new SrcPhraseLenFeat<SmtModel::HypScoreInfo>;
+  SrcPhraseLenFeat<SmtModel::HypScoreInfo>* srcPhraseLenFeatPtr=*srcPhraseLenFeatRef;
+  srcPhraseLenFeatPtr->setFeatName(featName);
+
+      // Link pointer to feature
+  srcPhraseLenFeatPtr->link_pm(basePhraseModelPtr);  
+    
+  return OK;
+}
+
+//--------------------------
 bool ThotDecoder::process_tm_descriptor(std::string tmDescFile,
                                         int verbose/*=0*/)
 {
@@ -1034,6 +1052,14 @@ bool ThotDecoder::process_tm_descriptor(std::string tmDescFile,
         return ERROR;
       tdCommonVars.featuresInfoPtr->featPtrVec.push_back(invPmFeatPtr);
     }
+
+        // Create source phrase length feature
+    std::string featName="src_phr_len";
+    SrcPhraseLenFeat<SmtModel::HypScoreInfo>* srcPhrLenFeatPtr;
+    int ret=createSrcPhraseLenFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&srcPhrLenFeatPtr);
+    if(ret==ERROR)
+      return ERROR;
+    tdCommonVars.featuresInfoPtr->featPtrVec.push_back(srcPhrLenFeatPtr);
 
     return OK;
   }

@@ -245,6 +245,9 @@ class ThotDecoder
                                 const ModelDescriptorEntry& modelDescEntry,
                                 BasePhraseModel* invPbModelPtr,
                                 InversePhraseModelFeat<SmtModel::HypScoreInfo>** invPmFeatPtrRef);
+  int createSrcPhraseLenFeat(std::string featName,
+                             BasePhraseModel* basePhraseModelPtr,
+                             SrcPhraseLenFeat<SmtModel::HypScoreInfo>** srcPhraseLenFeatRef);
   
       // Training-related functions
   void setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
