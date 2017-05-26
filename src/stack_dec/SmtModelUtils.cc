@@ -76,13 +76,38 @@ namespace SmtModelUtils
   int printDirectSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
                          std::string modelFileName)
   {
+    std::string invSwModelPrefix=modelFileName+"_invswm";
+    int ret=baseSwAligModelPtr->print(invSwModelPrefix.c_str());
+    if(ret==ERROR) return ERROR;
+
+    return OK;
+  }
+
+  //--------------------------
+  int loadInverseSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
+                         std::string modelFileName)
+  {
+        // load inverse sw model (The inverse model is the one with the prefix
+        // _swm)
+    std::string invReadTablePrefix=modelFileName;
+    invReadTablePrefix+="_swm";
+    bool ret=baseSwAligModelPtr->load(invReadTablePrefix.c_str());
+    if(ret==ERROR) return ERROR;
+    
+    return OK;
+  }
+
+  //--------------------------
+  int printInverseSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
+                          std::string modelFileName)
+  {
     std::string invSwModelPrefix=modelFileName+"_swm";
     int ret=baseSwAligModelPtr->print(invSwModelPrefix.c_str());
     if(ret==ERROR) return ERROR;
 
     return OK;
   }
-  
+
   //--------------------------
   int loadLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
                     std::string modelFileName)

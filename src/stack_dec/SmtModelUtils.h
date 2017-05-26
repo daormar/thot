@@ -51,6 +51,10 @@ namespace SmtModelUtils
                         std::string modelFileName);
   int printDirectSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
                          std::string modelFileName);
+  int loadInverseSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
+                         std::string modelFileName);
+  int printInverseSwModel(BaseSwAligModel<PpInfo>* baseSwAligModelPtr,
+                          std::string modelFileName);
   int loadLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
                     std::string modelFileName);
   int printLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
@@ -58,6 +62,9 @@ namespace SmtModelUtils
   bool loadSwmLambdas(std::string lambdaFileName,
                       float& lambda_swm,
                       float& lambda_invswm);
+  bool printSwmLambdas(const char* lambdaFileName,
+                       float lambda_swm,
+                       float lambda_invswm);
 }
 
 #endif
