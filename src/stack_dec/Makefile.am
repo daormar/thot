@@ -38,7 +38,9 @@ bleu.h bleu.cc BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h	\
 BasePbTransModelFeature.h WordPenaltyFeat.h WordPenaltyFeat.cc		\
 LangModelFeat.h LangModelFeat.cc DirectPhraseModelFeat.h		\
 DirectPhraseModelFeat.cc InversePhraseModelFeat.h			\
-InversePhraseModelFeat.cc BaseSmtModel.h BasePhraseHypothesisRec.h	\
+InversePhraseModelFeat.cc SrcPhraseLenFeat.h SrcPhraseLenFeat.cc	\
+TrgPhraseLenFeat.h TrgPhraseLenFeat.cc SrcPosJumpFeat.h			\
+SrcPosJumpFeat.cc BaseSmtModel.h BasePhraseHypothesisRec.h		\
 BasePhraseHypothesis.h BasePbTransModelStats.h BasePbTransModel.h	\
 BaseHypState.h BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h	\
 HypDebugData.h BaseAssistedTrans.h _assistedTrans.h			\
