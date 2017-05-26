@@ -42,6 +42,7 @@ struct LangModelsInfo
   Vector<BaseNgramLM<LM_State>*> lModelPtrVec;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
   Vector<SimpleDynClassLoader<BaseNgramLM<LM_State> > > simpleDynClassLoaderVec;
+  Vector<std::string> featNameVec;
   BaseWordPenaltyModel* wpModelPtr;
 };
 

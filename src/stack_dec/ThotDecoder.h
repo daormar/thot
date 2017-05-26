@@ -46,6 +46,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 // Types defining decoder architecture
 #include "SmtModelUtils.h"
+#include "SrcPosJumpFeat.h"
+#include "TrgPhraseLenFeat.h"
+#include "SrcPhraseLenFeat.h"
+#include "InversePhraseModelFeat.h"
 #include "DirectPhraseModelFeat.h"
 #include "LangModelFeat.h"
 #include "WordPenaltyFeat.h"
@@ -223,13 +227,24 @@ class ThotDecoder
                 int verbose=0);
 
       // Functions to print models
+  bool printLambdasFeatImpl(std::string modelFileName,
+                            std::string featName,
+                            std::string invFeatName,
+                            int verbose=0);
   bool printModelsLegacyImpl(int verbose=0);
   bool printModelsFeatImpl(int verbose=0);
+  bool printAligModelsFeatImpl(int verbose=0);
+  bool printLangModelsFeatImpl(int verbose=0);
 
       // Feature-related functions
+  unsigned int getFeatureIdx(std::string featName);
   int createDirectPhrModelFeat(std::string featName,
                                const ModelDescriptorEntry& modelDescEntry,
                                DirectPhraseModelFeat<SmtModel::HypScoreInfo>** dirPmFeatPtrRef);
+  int createInversePhrModelFeat(std::string featName,
+                                const ModelDescriptorEntry& modelDescEntry,
+                                BasePhraseModel* invPbModelPtr,
+                                InversePhraseModelFeat<SmtModel::HypScoreInfo>** invPmFeatPtrRef);
   
       // Training-related functions
   void setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,

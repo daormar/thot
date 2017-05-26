@@ -43,13 +43,11 @@ struct SwModelsInfo
 {
       // sw model members
   Vector<BaseSwAligModel<PpInfo>*> swAligModelPtrVec;
+  Vector<std::string> featNameVec;
 
       // Inverse sw model members
   Vector<BaseSwAligModel<PpInfo>*> invSwAligModelPtrVec;
-
-      // Linear interpolation weights
-  float lambda_swm;
-  float lambda_invswm;
+  Vector<std::string> invFeatNameVec;
 };
 
 #endif

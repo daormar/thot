@@ -869,6 +869,16 @@ BasePhraseModel* ThotDecoder::createPmPtr(std::string modelType)
 }
 
 //--------------------------
+unsigned int ThotDecoder::getFeatureIdx(std::string featName)
+{
+  for(unsigned int i=0;i<tdCommonVars.featuresInfoPtr->featPtrVec.size();++i)
+  {
+    if(featName==tdCommonVars.featuresInfoPtr->featPtrVec[i]->getFeatName())
+      return i;
+  }
+}
+
+//--------------------------
 int ThotDecoder::createDirectPhrModelFeat(std::string featName,
                                           const ModelDescriptorEntry& modelDescEntry,
                                           DirectPhraseModelFeat<SmtModel::HypScoreInfo>** dirPmFeatPtrRef)
@@ -889,6 +899,9 @@ int ThotDecoder::createDirectPhrModelFeat(std::string featName,
       // Add entry information
   tdCommonVars.phraseModelsInfo.modelDescEntryVec.push_back(modelDescEntry);
 
+      // Add feature name
+  tdCommonVars.phraseModelsInfo.featNameVec.push_back(featName);
+  
       // Load phrase model
   cerr<<"* Loading phrase model..."<<endl;
   int ret=SmtModelUtils::loadPhrModel(basePhraseModelPtr,modelDescEntry.absolutizedModelFileName);
@@ -906,6 +919,9 @@ int ThotDecoder::createDirectPhrModelFeat(std::string featName,
     return ERROR;
   }
   tdCommonVars.swModelsInfo.swAligModelPtrVec.push_back(baseSwAligModelPtr);
+
+      // Add feature name
+  tdCommonVars.swModelsInfo.featNameVec.push_back(featName);
 
       // Load direct single word model
   cerr<<"* Loading direct single word model..."<<endl;
@@ -933,6 +949,60 @@ int ThotDecoder::createDirectPhrModelFeat(std::string featName,
 }
 
 //--------------------------
+int ThotDecoder::createInversePhrModelFeat(std::string featName,
+                                           const ModelDescriptorEntry& modelDescEntry,
+                                           BasePhraseModel* invPbModelPtr,
+                                           InversePhraseModelFeat<SmtModel::HypScoreInfo>** invPmFeatPtrRef)
+{
+  cerr<<"** Creating inverse phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<endl;
+
+      // Create feature pointer and set name
+  (*invPmFeatPtrRef)=new InversePhraseModelFeat<SmtModel::HypScoreInfo>;
+  InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr=*invPmFeatPtrRef;
+  invPmFeatPtr->setFeatName(featName);
+
+      // Link pointer to feature
+  cerr<<"* Linking phrase model previously loaded..."<<endl;
+  invPmFeatPtr->link_pm(invPbModelPtr);
+
+      // Add direct swm pointer
+  BaseSwAligModel<PpInfo>* baseSwAligModelPtr=tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars);
+  if(baseSwAligModelPtr==NULL)
+  {
+    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+  tdCommonVars.swModelsInfo.invSwAligModelPtrVec.push_back(baseSwAligModelPtr);
+
+      // Add feature name
+  tdCommonVars.swModelsInfo.invFeatNameVec.push_back(featName);
+
+      // Load inverse single word model
+  cerr<<"* Loading inverse single word model..."<<endl;
+  int ret=SmtModelUtils::loadInverseSwModel(baseSwAligModelPtr,modelDescEntry.absolutizedModelFileName);
+  if(ret==ERROR)
+    return ERROR;
+  
+      // Link pointer to feature
+  invPmFeatPtr->link_swm(baseSwAligModelPtr);
+
+        // Obtain lambda value
+  cerr<<"* Reading lambda interpolation value..."<<endl;
+  float lambda_swm;
+  float lambda_invswm;
+  std::string lambdaFileName=modelDescEntry.absolutizedModelFileName+".lambda";
+  ret=SmtModelUtils::loadSwmLambdas(lambdaFileName,lambda_swm,lambda_invswm);
+  if(ret==ERROR)
+    return ERROR;
+  cerr<<"lambda= "<<lambda_invswm<<endl;
+  
+      // Set lambda value for feature
+  invPmFeatPtr->set_lambda(lambda_invswm);
+
+  return OK;
+}
+
+//--------------------------
 bool ThotDecoder::process_tm_descriptor(std::string tmDescFile,
                                         int verbose/*=0*/)
 {
@@ -951,11 +1021,18 @@ bool ThotDecoder::process_tm_descriptor(std::string tmDescFile,
           // Create direct phrase model feature
       std::string featName="pts_"+modelDescEntryVec[i].statusStr;
       DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr;
-      // int ret=createDirectPhrModelFeat(featName,modelDescEntryVec[i].modelType,modelDescEntryVec[i].absolutizedModelFileName,&dirPmFeatPtr);
       int ret=createDirectPhrModelFeat(featName,modelDescEntryVec[i],&dirPmFeatPtr);
       if(ret==ERROR)
         return ERROR;
       tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
+
+          // Create inverse phrase model feature
+      featName="pst_"+modelDescEntryVec[i].statusStr;
+      InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr;
+      ret=createInversePhrModelFeat(featName,modelDescEntryVec[i],dirPmFeatPtr->get_pmptr(),&invPmFeatPtr);
+      if(ret==ERROR)
+        return ERROR;
+      tdCommonVars.featuresInfoPtr->featPtrVec.push_back(invPmFeatPtr);
     }
 
     return OK;
@@ -989,6 +1066,14 @@ bool ThotDecoder::process_tm_files_prefix(std::string tmFilesPrefix,
   if(ret==ERROR)
     return ERROR;
   tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
+
+        // Create direct phrase model feature
+  featName="pst";
+  InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr;
+  ret=createInversePhrModelFeat(featName,modelDescEntry,dirPmFeatPtr->get_pmptr(),&invPmFeatPtr);
+  if(ret==ERROR)
+    return ERROR;
+  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(invPmFeatPtr);
   
   return OK;
 }
@@ -1128,7 +1213,10 @@ int ThotDecoder::createLangModelFeat(std::string featName,
 
       // Add entry information
   tdCommonVars.langModelsInfo.modelDescEntryVec.push_back(modelDescEntry);
-    
+
+      // Add feature name
+  tdCommonVars.langModelsInfo.featNameVec.push_back(featName);
+
       // Load language model
   cerr<<"* Loading language model..."<<endl;
   int ret=SmtModelUtils::loadLangModel(baseNgLmPtr,modelDescEntry.absolutizedModelFileName);
@@ -2411,6 +2499,106 @@ bool ThotDecoder::printModels(int verbose/*=0*/)
 }
 
 //--------------------------
+bool ThotDecoder::printLambdasFeatImpl(std::string modelFileName,
+                                       std::string featName,
+                                       std::string invFeatName,
+                                       int /*verbose=0*/)
+{
+  std::string lambdaFileName=modelFileName+".lambda";
+
+      // Obtain lambda for direct model
+  unsigned int swmIdx=getFeatureIdx(featName);
+  DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=dynamic_cast<DirectPhraseModelFeat<SmtModel::HypScoreInfo>* >(tdCommonVars.featuresInfoPtr->featPtrVec[swmIdx]);
+  float lambda_swm=dirPmFeatPtr->get_lambda();
+
+      // Obtain lambda for inverse model
+  unsigned int invSwmIdx=getFeatureIdx(invFeatName);
+  InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr=dynamic_cast<InversePhraseModelFeat<SmtModel::HypScoreInfo>* >(tdCommonVars.featuresInfoPtr->featPtrVec[invSwmIdx]);
+  float lambda_invswm=invPmFeatPtr->get_lambda();
+
+  return SmtModelUtils::printSwmLambdas(lambdaFileName.c_str(),lambda_swm,lambda_invswm);
+}
+
+//--------------------------
+bool ThotDecoder::printAligModelsFeatImpl(int verbose/*=0*/)
+{
+  std::string mainFileName;
+  if(fileIsDescriptor(tdState.tmFilesPrefixGiven,mainFileName))
+  {
+    for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.invPbModelPtrVec.size();++i)
+    {
+      int ret=SmtModelUtils::printPhrModel(tdCommonVars.phraseModelsInfo.invPbModelPtrVec[i],tdCommonVars.phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName);
+      if(ret==ERROR)
+        return ERROR;
+    }
+
+    for(unsigned int i=0;i<tdCommonVars.swModelsInfo.swAligModelPtrVec.size();++i)
+    {
+      int ret=SmtModelUtils::printDirectSwModel(tdCommonVars.swModelsInfo.swAligModelPtrVec[i],tdState.tmFilesPrefixGiven);
+      if(ret==ERROR)
+        return ERROR;      
+    }
+
+    for(unsigned int i=0;i<tdCommonVars.swModelsInfo.invSwAligModelPtrVec.size();++i)
+    {
+      int ret=SmtModelUtils::printDirectSwModel(tdCommonVars.swModelsInfo.invSwAligModelPtrVec[i],tdState.tmFilesPrefixGiven);
+      if(ret==ERROR)
+        return ERROR;      
+    }
+
+    for(unsigned int i=0;i<tdCommonVars.swModelsInfo.featNameVec.size();++i)
+    {
+      std::string featName=tdCommonVars.swModelsInfo.featNameVec[i];
+      std::string invFeatName=tdCommonVars.swModelsInfo.invFeatNameVec[i];
+      std::string modelFileName=tdCommonVars.phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName;
+      int ret=printLambdasFeatImpl(modelFileName,featName,invFeatName,verbose);
+      if(ret==ERROR)
+        return ERROR;      
+    }
+        
+    return OK;
+  }
+  else
+  {
+    int ret=SmtModelUtils::printPhrModel(tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],tdState.tmFilesPrefixGiven);
+    if(ret==ERROR)
+      return ERROR;
+    
+    ret=SmtModelUtils::printDirectSwModel(tdCommonVars.swModelsInfo.swAligModelPtrVec[0],tdState.tmFilesPrefixGiven);
+    if(ret==ERROR)
+      return ERROR;
+        
+    ret=SmtModelUtils::printInverseSwModel(tdCommonVars.swModelsInfo.invSwAligModelPtrVec[0],tdState.tmFilesPrefixGiven);
+    if(ret==ERROR)
+      return ERROR;
+
+    std::string featName=tdCommonVars.swModelsInfo.featNameVec[0];
+    std::string invFeatName=tdCommonVars.swModelsInfo.invFeatNameVec[0];    
+    return printLambdasFeatImpl(tdState.tmFilesPrefixGiven,featName,invFeatName,verbose);
+  }
+}
+
+//--------------------------
+bool ThotDecoder::printLangModelsFeatImpl(int verbose/*=0*/)
+{
+  std::string mainFileName;
+  if(fileIsDescriptor(tdState.lmfileLoaded,mainFileName))
+  {
+    for(unsigned int i=0;i<tdCommonVars.langModelsInfo.lModelPtrVec.size();++i)
+    {
+      int ret=SmtModelUtils::printLangModel(tdCommonVars.langModelsInfo.lModelPtrVec[i],tdCommonVars.langModelsInfo.modelDescEntryVec[i].absolutizedModelFileName);
+      if(ret==ERROR)
+        return ERROR;
+    }
+    return OK;
+  }
+  else
+  {
+    return SmtModelUtils::printLangModel(tdCommonVars.langModelsInfo.lModelPtrVec[0],tdState.lmfileLoaded);
+  }
+}
+
+//--------------------------
 bool ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -2424,37 +2612,12 @@ bool ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
   int ret;
 
       // Print alignment model parameters
-  std::string mainFileName;
-  if(fileIsDescriptor(tdState.tmFilesPrefixGiven,mainFileName))
-  {
-    for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.invPbModelPtrVec.size();++i)
-    {
-      ret=SmtModelUtils::printPhrModel(tdCommonVars.phraseModelsInfo.invPbModelPtrVec[i],tdCommonVars.phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName);
-      if(ret==ERROR)
-        break;
-    }
-  }
-  else
-  {
-    ret=SmtModelUtils::printPhrModel(tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],tdState.tmFilesPrefixGiven);
-  }
+  ret=printAligModelsFeatImpl(verbose);
   
   if(ret==OK)
   {
         // Print language model parameters
-    if(fileIsDescriptor(tdState.lmfileLoaded,mainFileName))
-    {
-      for(unsigned int i=0;i<tdCommonVars.langModelsInfo.lModelPtrVec.size();++i)
-      {
-        ret=SmtModelUtils::printLangModel(tdCommonVars.langModelsInfo.lModelPtrVec[i],tdCommonVars.langModelsInfo.modelDescEntryVec[i].absolutizedModelFileName);
-        if(ret==ERROR)
-          break;
-      }
-    }
-    else
-    {
-      ret=SmtModelUtils::printLangModel(tdCommonVars.langModelsInfo.lModelPtrVec[0],tdState.lmfileLoaded);
-    }
+    ret=printLangModelsFeatImpl(verbose);
     
     if(ret==OK)
     {
@@ -3094,10 +3257,12 @@ void ThotDecoder::deleteLangModelPtrsFeatImpl(void)
 
       // Clear model descriptor entries
   tdCommonVars.langModelsInfo.modelDescEntryVec.clear();
-  
+
+      // Clear feature names
+  tdCommonVars.langModelsInfo.featNameVec.clear();
+
       // Clear dynamic class loader vector
   tdCommonVars.langModelsInfo.simpleDynClassLoaderVec.clear();
-
 }
 
 //--------------------------
@@ -3113,8 +3278,11 @@ void ThotDecoder::deletePhrModelPtrsFeatImpl(void)
     tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec[i].close_module(verbosity);
 
       // Clear model descriptor entries
-  tdCommonVars.langModelsInfo.modelDescEntryVec.clear();
+  tdCommonVars.phraseModelsInfo.modelDescEntryVec.clear();
 
+      // Clear feature names
+  tdCommonVars.phraseModelsInfo.featNameVec.clear();
+  
       // Clear dynamic class loader vector
   tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec.clear();
 }
@@ -3135,6 +3303,9 @@ void ThotDecoder::deleteSwModelPtrsFeatImpl(void)
     delete tdCommonVars.swModelsInfo.swAligModelPtrVec[i];
   for(unsigned int i=0;i<tdCommonVars.swModelsInfo.invSwAligModelPtrVec.size();++i)
     delete tdCommonVars.swModelsInfo.invSwAligModelPtrVec[i];
+
+  tdCommonVars.swModelsInfo.featNameVec.clear();
+  tdCommonVars.swModelsInfo.invFeatNameVec.clear();
 }
 
 //--------------------------
