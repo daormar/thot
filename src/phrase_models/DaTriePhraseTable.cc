@@ -42,8 +42,8 @@ DaTriePhraseTable::DaTriePhraseTable(void)
     printf("Cannot create AlphaMap\n");
     exit(1);
   }
-  // Set AlphaMap's range to 32-bit (0xFFFFFFFF value is reserved for internal usage)
-  if(alpha_map_add_range(alphabet_map, 0x0000, 0xFFFFFFFE) != 0)
+  // Set AlphaMap's range to 32-bit (0x7FFFFFFF value is reserved for internal usage)
+  if(alpha_map_add_range(alphabet_map, 0x0000, 0x7FFFFFFE) != 0)
   {
     printf("Cannot set AlphaMap range\n");
     exit(2);

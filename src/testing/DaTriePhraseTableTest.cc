@@ -658,15 +658,15 @@ void DaTriePhraseTableTest::testSubkeys()
 void DaTriePhraseTableTest::test32bitRange()
 {
   /* TEST:
-     Check if datrie supports codes from 32bit range
-     (except 0xFFFFFFFF as it is reserved for internal usage)
+     Check if datrie supports codes from integer range
+     (negative values are reserved for datrie internal usage)
   */
   tab->clear();
 
   Vector<WordIndex> minVector, maxVector;
 
   minVector.push_back(0);
-  maxVector.push_back(0xFFFFFFFE);
+  maxVector.push_back(0x7FFFFFFF);
 
   // Insert data to trie and check their correctness
   tab->incrCountsOfEntry(minVector, maxVector, Count(20));
