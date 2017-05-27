@@ -61,8 +61,17 @@ DaTriePhraseTable::DaTriePhraseTable(void)
 //-------------------------
 wstring DaTriePhraseTable::vectorToWstring(const Vector<WordIndex>& s) const
 {
-  wstring str(s.begin(), s.end());
-  return str;
+  int bit_mask = 0x0000007F;  // Mask for last 7 bits
+  Vector<WordIndex> str;
+  for(int i = 0; i < s.size(); i++) {
+    for(int j = 35 - 7; j >= 0; j -= 7) {  // Encode integer as 5 bytes
+      str.push_back(1 + ((s[i] >> j) & bit_mask));
+    }
+  }
+
+  wstring wstr(str.begin(), str.end());
+
+  return wstr;
 }
 
 //-------------------------
@@ -70,9 +79,14 @@ Vector<WordIndex> DaTriePhraseTable::alphaCharToVector(AlphaChar *a) const
 {
   Vector<WordIndex> vec;
 
-  for(AlphaChar *ptr = a; *ptr; ptr++)
+  for(AlphaChar *ptr = a; *ptr;)  // a string length is 5n+1
   {
-    vec.push_back((int) *ptr);
+    int wi = 0;
+    for(int j = 35 - 7; j >= 0; j -= 7, ptr++) {  // Convert 5 bytes to integer
+      wi += (((int) *ptr) - 1) << j;
+    }
+
+    vec.push_back(wi);
   }
 
   return vec;
@@ -379,10 +393,11 @@ bool DaTriePhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
   // Find node which starts from (t, UNUSED_WORD) to find possible translations
   Vector<WordIndex> t_uw_vec = t;
   t_uw_vec.push_back(UNUSED_WORD);
+  wstring t_uw_wstr = vectorToWstring(t_uw_vec);
   state = trie_root (trie);
 
-  for (unsigned int i = 0; i < t_uw_vec.size(); i++) {
-    if (!trie_state_walk(state, (AlphaChar) t_uw_vec[i])) {
+  for (unsigned int i = 0; i < t_uw_wstr.size(); i++) {
+    if (!trie_state_walk(state, (AlphaChar) t_uw_wstr[i])) {
       return false;
     }
   }
