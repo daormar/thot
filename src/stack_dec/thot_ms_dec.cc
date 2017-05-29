@@ -44,9 +44,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
 #include "BasePbTransModel.h"
-#include "SwModelInfo.h"
+#include "SwModelsInfo.h"
 #include "PhraseModelsInfo.h"
 #include "LangModelsInfo.h"
+#include "SwModelInfo.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
 #include "BaseTranslationConstraints.h"
@@ -148,6 +149,8 @@ BaseStackDecoder<SmtModel>* stackDecoderPtr;
 _stackDecoderRec<SmtModel>* stackDecoderRecPtr;
 
     // Variables related to feature-based implementation
+bool featureBasedImplEnabled;
+SwModelsInfo swModelsInfo;
 PhraseModelsInfo phraseModelsInfo;
 LangModelsInfo langModelsInfo;
 FeaturesInfo<SmtModel::HypScoreInfo>* featuresInfoPtr;
@@ -317,6 +320,11 @@ int init_translator(const thot_ms_dec_pars& tdp)
   if(pbtm_ptr)
   {
     pbtm_ptr->link_feats_info(featuresInfoPtr);
+    featureBasedImplEnabled=true;
+  }
+  else
+  {
+    featureBasedImplEnabled=false;
   }
 
       // Set heuristic
@@ -400,6 +408,12 @@ void release_translator(void)
       // Release phrase models
   for(unsigned int i=0;i<phraseModelsInfo.invPbModelPtrVec.size();++i)
     delete phraseModelsInfo.invPbModelPtrVec[i];
+
+      // Release single word models
+  for(unsigned int i=0;i<swModelsInfo.swAligModelPtrVec.size();++i)
+    delete swModelsInfo.swAligModelPtrVec[i];
+  for(unsigned int i=0;i<swModelsInfo.invSwAligModelPtrVec.size();++i)
+    delete swModelsInfo.invSwAligModelPtrVec[i];
 
       // Release language models
   for(unsigned int i=0;i<langModelsInfo.lModelPtrVec.size();++i)
