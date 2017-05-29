@@ -42,7 +42,7 @@ DaTriePhraseTable::DaTriePhraseTable(void)
     printf("Cannot create AlphaMap\n");
     exit(1);
   }
-  // Set AlphaMap's range to 32-bit (0x7FFFFFFF value is reserved for internal usage)
+  // Set AlphaMap's range to positive part of int32 (0x7FFFFFFF value is reserved for internal usage)
   if(alpha_map_add_range(alphabet_map, 0x0000, 0x7FFFFFFE) != 0)
   {
     printf("Cannot set AlphaMap range\n");
@@ -64,7 +64,7 @@ wstring DaTriePhraseTable::vectorToWstring(const Vector<WordIndex>& s) const
   int bit_mask = 0x0000007F;  // Mask for last 7 bits
   Vector<WordIndex> str;
   for(int i = 0; i < s.size(); i++) {
-    for(int j = 35 - 7; j >= 0; j -= 7) {  // Encode integer as 5 bytes
+    for(int j = 28 - 7; j >= 0; j -= 7) {  // Encode integer as 4 bytes (drop leading 4 bits as they are zeroes)
       str.push_back(1 + ((s[i] >> j) & bit_mask));
     }
   }
@@ -82,7 +82,7 @@ Vector<WordIndex> DaTriePhraseTable::alphaCharToVector(AlphaChar *a) const
   for(AlphaChar *ptr = a; *ptr;)  // a string length is 5n+1
   {
     int wi = 0;
-    for(int j = 35 - 7; j >= 0; j -= 7, ptr++) {  // Convert 5 bytes to integer
+    for(int j = 28 - 7; j >= 0; j -= 7, ptr++) {  // Convert 4 bytes to integer
       wi += (((int) *ptr) - 1) << j;
     }
 
