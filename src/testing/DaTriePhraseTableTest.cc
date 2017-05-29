@@ -666,7 +666,7 @@ void DaTriePhraseTableTest::test32bitRange()
   Vector<WordIndex> minVector, maxVector;
 
   minVector.push_back(0);
-  maxVector.push_back(0x7FFFFFFF);
+  maxVector.push_back(0x7FFFFFFE);
 
   // Insert data to trie and check their correctness
   tab->incrCountsOfEntry(minVector, maxVector, Count(20));

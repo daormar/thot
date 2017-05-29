@@ -29,7 +29,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef _DaTriePhraseTable
 #define _DaTriePhraseTable
 
+#define WORD_INDEX_MODULO_BASE 254
+#define WORD_INDEX_MODULO_BYTES 3
+
 //--------------- Include files --------------------------------------
+
+#include <math.h>
 
 #if HAVE_CONFIG_H
 #  include <thot_config.h>

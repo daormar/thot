@@ -61,11 +61,11 @@ DaTriePhraseTable::DaTriePhraseTable(void)
 //-------------------------
 wstring DaTriePhraseTable::vectorToWstring(const Vector<WordIndex>& s) const
 {
-  int bit_mask = 0x0000007F;  // Mask for last 7 bits
   Vector<WordIndex> str;
   for(int i = 0; i < s.size(); i++) {
-    for(int j = 28 - 7; j >= 0; j -= 7) {  // Encode integer as 4 bytes (drop leading 4 bits as they are zeroes)
-      str.push_back(1 + ((s[i] >> j) & bit_mask));
+    // Use WORD_INDEX_MODULO_BYTES bytes to encode index
+    for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--) {
+      str.push_back(1 + (s[i] / (int) pow(WORD_INDEX_MODULO_BASE, j) % WORD_INDEX_MODULO_BASE));
     }
   }
 
@@ -79,11 +79,11 @@ Vector<WordIndex> DaTriePhraseTable::alphaCharToVector(AlphaChar *a) const
 {
   Vector<WordIndex> vec;
 
-  for(AlphaChar *ptr = a; *ptr;)  // a string length is 5n+1
+  for(AlphaChar *ptr = a; *ptr;)  // A string length is WORD_INDEX_MODULO_BYTES * n + 1
   {
     int wi = 0;
-    for(int j = 28 - 7; j >= 0; j -= 7, ptr++) {  // Convert 4 bytes to integer
-      wi += (((int) *ptr) - 1) << j;
+    for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--, ptr++) {
+      wi += (((int) *ptr) - 1) * (int) pow(WORD_INDEX_MODULO_BASE, j);
     }
 
     vec.push_back(wi);
