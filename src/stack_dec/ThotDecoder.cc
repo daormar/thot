@@ -163,7 +163,7 @@ ThotDecoder::ThotDecoder()
   
       // Add word penalty model feature
   WordPenaltyFeat<SmtModel::HypScoreInfo>* wordPenaltyFeatPtr=new WordPenaltyFeat<SmtModel::HypScoreInfo>;
-  wordPenaltyFeatPtr->setFeatName("wpm");
+  wordPenaltyFeatPtr->setFeatName("wp");
   wordPenaltyFeatPtr->link_wpm(tdCommonVars.wpModelPtr);
   tdCommonVars.featuresInfoPtr->featPtrVec.push_back(wordPenaltyFeatPtr);
   

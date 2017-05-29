@@ -1029,7 +1029,9 @@ void _pbTransModel<HYPOTHESIS>::getWeights(Vector<pair<std::string,float> >& com
   for(unsigned int i=0;i<featuresInfoPtr->featPtrVec.size();++i)
   {
     pair<std::string,float> str_float;
-    str_float.first=featuresInfoPtr->featPtrVec[i]->getFeatName();
+    std::string weightName=featuresInfoPtr->featPtrVec[i]->getFeatName();
+    weightName+="w";
+    str_float.first=weightName;
     str_float.second=featuresInfoPtr->featPtrVec[i]->getWeight();
     compWeights.push_back(str_float);
   }
