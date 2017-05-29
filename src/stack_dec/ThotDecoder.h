@@ -248,7 +248,13 @@ class ThotDecoder
   int createSrcPhraseLenFeat(std::string featName,
                              BasePhraseModel* basePhraseModelPtr,
                              SrcPhraseLenFeat<SmtModel::HypScoreInfo>** srcPhraseLenFeatRef);
-  
+  int createTrgPhraseLenFeat(std::string featName,
+                             BasePhraseModel* basePhraseModelPtr,
+                             TrgPhraseLenFeat<SmtModel::HypScoreInfo>** trgPhraseLenFeatRef);
+  int createSrcPosJumpFeat(std::string featName,
+                           BasePhraseModel* basePhraseModelPtr,
+                           SrcPosJumpFeat<SmtModel::HypScoreInfo>** srcPosJumpFeatRef);
+
       // Training-related functions
   void setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
                           int verbose=0);

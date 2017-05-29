@@ -1021,6 +1021,42 @@ int ThotDecoder::createSrcPhraseLenFeat(std::string featName,
 }
 
 //--------------------------
+int ThotDecoder::createTrgPhraseLenFeat(std::string featName,
+                                        BasePhraseModel* basePhraseModelPtr,
+                                        TrgPhraseLenFeat<SmtModel::HypScoreInfo>** trgPhraseLenFeatRef)
+{
+  cerr<<"** Creating target phrase length feature ("<<featName<<")"<<endl;
+
+      // Create feature pointer and set name
+  (*trgPhraseLenFeatRef)=new TrgPhraseLenFeat<SmtModel::HypScoreInfo>;
+  TrgPhraseLenFeat<SmtModel::HypScoreInfo>* trgPhraseLenFeatPtr=*trgPhraseLenFeatRef;
+  trgPhraseLenFeatPtr->setFeatName(featName);
+
+      // Link pointer to feature
+  trgPhraseLenFeatPtr->link_pm(basePhraseModelPtr);  
+    
+  return OK;
+}
+
+//--------------------------
+int ThotDecoder::createSrcPosJumpFeat(std::string featName,
+                                      BasePhraseModel* basePhraseModelPtr,
+                                      SrcPosJumpFeat<SmtModel::HypScoreInfo>** srcPosJumpFeatRef)
+{
+  cerr<<"** Creating source position jump feature ("<<featName<<")"<<endl;
+
+      // Create feature pointer and set name
+  (*srcPosJumpFeatRef)=new SrcPosJumpFeat<SmtModel::HypScoreInfo>;
+  SrcPosJumpFeat<SmtModel::HypScoreInfo>* srcPosJumpFeatPtr=*srcPosJumpFeatRef;
+  srcPosJumpFeatPtr->setFeatName(featName);
+
+      // Link pointer to feature
+  srcPosJumpFeatPtr->link_pm(basePhraseModelPtr);  
+    
+  return OK;
+}
+
+//--------------------------
 bool ThotDecoder::process_tm_descriptor(std::string tmDescFile,
                                         int verbose/*=0*/)
 {
@@ -1061,6 +1097,22 @@ bool ThotDecoder::process_tm_descriptor(std::string tmDescFile,
       return ERROR;
     tdCommonVars.featuresInfoPtr->featPtrVec.push_back(srcPhrLenFeatPtr);
 
+        // Create target phrase length feature
+    featName="trg_phr_len";
+    TrgPhraseLenFeat<SmtModel::HypScoreInfo>* trgPhrLenFeatPtr;
+    ret=createTrgPhraseLenFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&trgPhrLenFeatPtr);
+    if(ret==ERROR)
+      return ERROR;
+    tdCommonVars.featuresInfoPtr->featPtrVec.push_back(trgPhrLenFeatPtr);
+
+        // Create source position jump feature
+    featName="src_pos_jump";
+    SrcPosJumpFeat<SmtModel::HypScoreInfo>* srcPosJumpFeatPtr;
+    ret=createSrcPosJumpFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&srcPosJumpFeatPtr);
+    if(ret==ERROR)
+      return ERROR;
+    tdCommonVars.featuresInfoPtr->featPtrVec.push_back(srcPosJumpFeatPtr);
+
     return OK;
   }
   else
@@ -1093,13 +1145,37 @@ bool ThotDecoder::process_tm_files_prefix(std::string tmFilesPrefix,
     return ERROR;
   tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
 
-        // Create direct phrase model feature
+      // Create inverse phrase model feature
   featName="pst";
   InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr;
   ret=createInversePhrModelFeat(featName,modelDescEntry,dirPmFeatPtr->get_pmptr(),&invPmFeatPtr);
   if(ret==ERROR)
     return ERROR;
   tdCommonVars.featuresInfoPtr->featPtrVec.push_back(invPmFeatPtr);
+
+      // Create source phrase length feature
+  featName="src_phr_len";
+  SrcPhraseLenFeat<SmtModel::HypScoreInfo>* srcPhrLenFeatPtr;
+  ret=createSrcPhraseLenFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&srcPhrLenFeatPtr);
+  if(ret==ERROR)
+    return ERROR;
+  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(srcPhrLenFeatPtr);
+
+      // Create target phrase length feature
+  featName="trg_phr_len";
+  TrgPhraseLenFeat<SmtModel::HypScoreInfo>* trgPhrLenFeatPtr;
+  ret=createTrgPhraseLenFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&trgPhrLenFeatPtr);
+  if(ret==ERROR)
+    return ERROR;
+  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(trgPhrLenFeatPtr);
+
+      // Create source position jump feature
+  featName="src_pos_jump";
+  SrcPosJumpFeat<SmtModel::HypScoreInfo>* srcPosJumpFeatPtr;
+  ret=createSrcPosJumpFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&srcPosJumpFeatPtr);
+  if(ret==ERROR)
+    return ERROR;
+  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(srcPosJumpFeatPtr);
   
   return OK;
 }
