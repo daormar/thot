@@ -192,9 +192,10 @@ phrase_models/SrfNodeInfo.h phrase_models/SrfBisegm.h			\
 phrase_models/SrcSegmLenTable.h phrase_models/SentSegmentation.h	\
 phrase_models/SegLenTable.h phrase_models/PhraseTransTableNodeData.h	\
 phrase_models/PhraseTableLog.h phrase_models/PhraseTable.h		\
-phrase_models/DaTriePhraseTable.h phrase_models/PhraseSortCriterion.h	\
-phrase_models/PhrasePairInfo.h phrase_models/PhrasePair.h		\
-phrase_models/PhraseId.h phrase_models/PhraseExtractParameters.h	\
+phrase_models/DaTriePhraseTable.h phrase_models/DaTriePhraseModel.h	\
+phrase_models/PhraseSortCriterion.h phrase_models/PhrasePairInfo.h	\
+phrase_models/PhrasePair.h phrase_models/PhraseId.h			\
+phrase_models/PhraseExtractParameters.h					\
 phrase_models/PhraseExtractionTable.h					\
 phrase_models/PhraseExtractionCell.h phrase_models/PhraseDictLog.h	\
 phrase_models/PhraseDict.h phrase_models/PhraseDefs.h			\
@@ -218,7 +219,7 @@ phrase_models/TrgSegmLenTable.cc phrase_models/TrgCutsTable.cc		\
 phrase_models/SrfNodeKey.cc phrase_models/SrfNodeInfoMap.cc		\
 phrase_models/SrcSegmLenTable.cc phrase_models/SegLenTable.cc		\
 phrase_models/PhraseTableLog.cc phrase_models/PhraseTable.cc		\
-phrase_models/DaTriePhraseTable.cc					\
+phrase_models/DaTriePhraseTable.cc phrase_models/DaTriePhraseModel.cc	\
 phrase_models/PhraseExtractionTable.cc phrase_models/PhraseDictLog.cc	\
 phrase_models/PhraseDict.cc phrase_models/PhraseCountsLog.cc		\
 phrase_models/PhraseCounts.cc phrase_models/_incrPhraseModel.cc		\
