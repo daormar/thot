@@ -182,11 +182,6 @@ class DaTriePhraseModel: public BaseCountPhraseModel
         // loads target vocabulary, returns non-zero if error
     bool printTrgVocab(const char *outputFileName);
 	
-	Vector<string> stringToStringVector(string s);
-	Vector<string> extractCharItemsToVector(char *ch)const;
-        // Extracts the words in the string 'ch' with the form "w1
-        // ... wn" to a string Vector
-
         // size and clear functions
     size_t size(void);
     void clear(void);

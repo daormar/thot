@@ -41,7 +41,7 @@ DaTriePhraseModel::DaTriePhraseModel(void)
 
 //-------------------------
 Count DaTriePhraseModel::cSrcTrg(const Vector<WordIndex>& s,
-                      const Vector<WordIndex>& t)
+                                 const Vector<WordIndex>& t)
 {
   bool found;
   return daTriePhraseTable.getSrcTrgInfo(s,t,found);
@@ -63,7 +63,7 @@ Count DaTriePhraseModel::cTrg(const Vector<WordIndex>& t)
 
 //-------------------------
 Count DaTriePhraseModel::cHSrcHTrg(const Vector<std::string>& hs,
-                                const Vector<std::string>& ht)
+                                   const Vector<std::string>& ht)
 {
   Vector<WordIndex> s;
   Vector<WordIndex> t;
@@ -115,8 +115,8 @@ Count DaTriePhraseModel::cHTrg(const Vector<std::string>& ht)
 
 //-------------------------
 PhrasePairInfo DaTriePhraseModel::infSrcTrg(const Vector<WordIndex>& s,
-                                         const Vector<WordIndex>& t,
-                                         bool& found)
+                                            const Vector<WordIndex>& t,
+                                            bool& found)
 {
   PhrasePairInfo ppInfo;
   ppInfo.first=daTriePhraseTable.getSrcInfo(s,found);
@@ -137,8 +137,8 @@ Prob DaTriePhraseModel::pk_tlen(unsigned int tlen,
 
 //-------------------------
 LgProb DaTriePhraseModel::srcSegmLenLgProb(unsigned int x_k,
-                                        unsigned int x_km1,
-                                        unsigned int srcLen)
+                                           unsigned int x_km1,
+                                           unsigned int srcLen)
 {
   return srcSegmLenTable.srcSegmLenLgProb(x_k,x_km1,srcLen);
 }
@@ -151,16 +151,16 @@ LgProb DaTriePhraseModel::trgCutsLgProb(int offset)
 
 //-------------------------
 LgProb DaTriePhraseModel::trgSegmLenLgProb(unsigned int k,
-                                        const SentSegmentation& trgSegm,
-                                        unsigned int trgLen,
-                                        unsigned int lastSrcSegmLen)
+                                           const SentSegmentation& trgSegm,
+                                           unsigned int trgLen,
+                                           unsigned int lastSrcSegmLen)
 {
   return trgSegmLenTable.trgSegmLenLgProb(k,trgSegm,trgLen,lastSrcSegmLen);
 }
 
 //-------------------------
 LgProb DaTriePhraseModel::logpt_s_(const Vector<WordIndex>& s,
-                                const Vector<WordIndex>& t)
+                                   const Vector<WordIndex>& t)
 {
   LgProb lp=daTriePhraseTable.logpTrgGivenSrc(s,t);
   if((double)lp<LOG_PHRASE_PROB_SMOOTH)
@@ -171,7 +171,7 @@ LgProb DaTriePhraseModel::logpt_s_(const Vector<WordIndex>& s,
 
 //-------------------------
 LgProb DaTriePhraseModel::logps_t_(const Vector<WordIndex>& s,
-                                const Vector<WordIndex>& t)
+                                   const Vector<WordIndex>& t)
 {
   LgProb lp=daTriePhraseTable.logpSrcGivenTrg(s,t);
   if((double)lp<LOG_PHRASE_PROB_SMOOTH)
@@ -182,7 +182,7 @@ LgProb DaTriePhraseModel::logps_t_(const Vector<WordIndex>& s,
 
 //-------------------------
 bool DaTriePhraseModel::getTransFor_s_(const Vector<WordIndex>& /*s*/,
-                                    DaTriePhraseModel::TrgTableNode& trgtn)
+                                       DaTriePhraseModel::TrgTableNode& trgtn)
 {
   trgtn.clear();
   cerr<<"Warning: getTransFor_s_() function not implemented for this class"<<endl;
@@ -191,14 +191,14 @@ bool DaTriePhraseModel::getTransFor_s_(const Vector<WordIndex>& /*s*/,
 
 //-------------------------
 bool DaTriePhraseModel::getTransFor_t_(const Vector<WordIndex>& t,
-                                    DaTriePhraseModel::SrcTableNode& srctn)
+                                       DaTriePhraseModel::SrcTableNode& srctn)
 {
   return daTriePhraseTable.getEntriesForTarget(t,srctn);
 }
 
 //-------------------------
 bool DaTriePhraseModel::getNbestTransFor_s_(const Vector<WordIndex>& /*s*/,
-                                         NbestTableNode<PhraseTransTableNodeData>& nbt)
+                                            NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
   nbt.clear();
   cerr<<"Warning: getNbestTransFor_s_() function not implemented for this class"<<endl;
@@ -207,8 +207,8 @@ bool DaTriePhraseModel::getNbestTransFor_s_(const Vector<WordIndex>& /*s*/,
 
 //-------------------------	
 bool DaTriePhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
-                                         NbestTableNode<PhraseTransTableNodeData>& nbt,
-                                         int N/*=-1*/) 
+                                            NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                            int N/*=-1*/) 
 {  
   return daTriePhraseTable.getNbestForTrg(t,nbt,N);
 }
@@ -322,7 +322,7 @@ bool DaTriePhraseModel::existSrcSymbol(string s)const
 
 //-------------------------
 Vector<WordIndex> DaTriePhraseModel::strVectorToSrcIndexVector(const Vector<string>& s,
-                                                            Count numTimes/*=1*/)
+                                                               Count numTimes/*=1*/)
 {
   Vector<WordIndex> swVec;
   
@@ -345,7 +345,7 @@ Vector<string> DaTriePhraseModel::srcIndexVectorToStrVector(const Vector<WordInd
 }
 //-------------------------
 WordIndex DaTriePhraseModel::addSrcSymbol(string s,
-                               Count numTimes/*=1*/)
+                                          Count numTimes/*=1*/)
 {
  return singleWordVocab.addSrcSymbol(s,numTimes);
 }
@@ -382,7 +382,7 @@ bool DaTriePhraseModel::existTrgSymbol(string t)const
 
 //-------------------------
 Vector<WordIndex> DaTriePhraseModel::strVectorToTrgIndexVector(const Vector<string>& t,
-                                                            Count numTimes/*=1*/)
+                                                               Count numTimes/*=1*/)
 {
   Vector<WordIndex> twVec;
   
@@ -412,52 +412,6 @@ WordIndex DaTriePhraseModel::addTrgSymbol(string t,
 bool DaTriePhraseModel::printTrgVocab(const char *outputFileName)
 {
  return singleWordVocab.printTrgVocab(outputFileName);
-}
-
-//-------------------------
-Vector<string> DaTriePhraseModel::stringToStringVector(string s)
-{
- Vector<string> vs;	
- string aux;
- unsigned int i=0;	
- bool end=false;
-	
- while(!end)
- {
-  aux="";	 
-  while(s[i]!=' ' && s[i]!='	' && i<s.size()) 
-  {
-    aux+=s[i];
-    ++i;		   
-  }
-  if(aux!="") vs.push_back(aux);	   
-  while((s[i]==' ' || s[i]=='	') && i<s.size()) ++i;	 
-  if(i>=s.size()) end=true;	  
- }
- 
- return vs;	
-}
-
-//-------------------------
-Vector<string> DaTriePhraseModel::extractCharItemsToVector(char *ch)const
-{
- unsigned int i=0;
- string s;	
- Vector<string> v,u;
-
- while(ch[i]!=0)
- {
-   s=""; 
-   while(ch[i]==' ' && ch[i]!=0) {++i;}	  
-   while(ch[i]!=' ' && ch[i]!=0) {s=s+ch[i]; ++i;}
-   if(s!="") v.push_back(s);  
- }	  
-	 
- for(i=0;i<v.size();++i)
- {
-   u.push_back(v[v.size()-1-i]);
- }
- return u;
 }
 
 //-------------------------
