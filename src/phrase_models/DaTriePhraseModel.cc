@@ -235,7 +235,7 @@ bool DaTriePhraseModel::load(const char *prefix)
   if(ret==ERROR) return ERROR;
   
       // Load translation table
-  ret=daTriePhraseTable.init(prefix);
+  ret=daTriePhraseTable.load(prefix);
   if(ret==ERROR) return ERROR;
 
       // Load segmentation length table
