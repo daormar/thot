@@ -1,5 +1,5 @@
 inifilesdir = $(datadir)/$(PACKAGE)/ini_files
-inifiles_DATA= standard.ini ibm2.ini kenlm.ini interplm.ini
+inifiles_DATA= standard.ini ibm2.ini kenlm.ini interplm.ini datrie.ini
 
 EXTRA_DIST= $(inifiles_DATA)
 

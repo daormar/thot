@@ -57,8 +57,8 @@ wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
 mira_wer_factory.la mira_gtm_factory.la kb_mira_ll_wu_factory.la	\
 multi_stack_decoder_rec__swli_factory.la				\
 wg_uncoupled_assisted_trans__swli_factory.la				\
-translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
-$(DB_CXX_LIBS)
+translation_constraints_factory.la datrie_phrase_model_factory.la  \
+$(CASMACAT_LIB) $(KENLM_LIB) $(DB_CXX_LIBS)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/datrie				\
@@ -391,6 +391,10 @@ bdb_phrase_model_factory_h=
 bdb_phrase_model_factory_defs= phrase_models/BdbPhraseModelFactory.cc
 
 ##########
+datrie_phrase_model_factory_h= 
+datrie_phrase_model_factory_defs= phrase_models/DaTriePhraseModelFactory.cc
+
+##########
 fast_bdb_phrase_model_factory_h= 
 fast_bdb_phrase_model_factory_defs=		\
 phrase_models/FastBdbPhraseModelFactory.cc
@@ -647,6 +651,12 @@ bdb_phrase_model_factory_la_SOURCES= $(bdb_phrase_model_factory_h)	\
 $(bdb_phrase_model_factory_defs)
 bdb_phrase_model_factory_la_LIBADD= libthot.la libdatrie.la
 bdb_phrase_model_factory_la_LDFLAGS= -module
+
+##########
+datrie_phrase_model_factory_la_SOURCES= $(datrie_phrase_model_factory_h)	\
+$(datrie_phrase_model_factory_defs)
+datrie_phrase_model_factory_la_LIBADD= libthot.la libdatrie.la
+datrie_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 fast_bdb_phrase_model_factory_la_SOURCES=	\
