@@ -431,52 +431,6 @@ bool BdbPhraseModel::printTrgVocab(const char *outputFileName)
 }
 
 //-------------------------
-Vector<string> BdbPhraseModel::stringToStringVector(string s)
-{
- Vector<string> vs;	
- string aux;
- unsigned int i=0;	
- bool end=false;
-	
- while(!end)
- {
-  aux="";	 
-  while(s[i]!=' ' && s[i]!='	' && i<s.size()) 
-  {
-    aux+=s[i];
-    ++i;		   
-  }
-  if(aux!="") vs.push_back(aux);	   
-  while((s[i]==' ' || s[i]=='	') && i<s.size()) ++i;	 
-  if(i>=s.size()) end=true;	  
- }
- 
- return vs;	
-}
-
-//-------------------------
-Vector<string> BdbPhraseModel::extractCharItemsToVector(char *ch)const
-{
- unsigned int i=0;
- string s;	
- Vector<string> v,u;
-
- while(ch[i]!=0)
- {
-   s=""; 
-   while(ch[i]==' ' && ch[i]!=0) {++i;}	  
-   while(ch[i]!=' ' && ch[i]!=0) {s=s+ch[i]; ++i;}
-   if(s!="") v.push_back(s);  
- }	  
-	 
- for(i=0;i<v.size();++i)
- {
-   u.push_back(v[v.size()-1-i]);
- }
- return u;
-}
-
-//-------------------------
 size_t BdbPhraseModel::size(void)
 {
   return bdbPhraseTable.size();
