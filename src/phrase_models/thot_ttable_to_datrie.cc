@@ -127,6 +127,7 @@ int process_ttable(void)
     DaTriePhraseTable datriePt;
     
         // Process translation table
+    int i = 0;
     while(awk.getln())
     {
       // if(awk.FNR % 1000 ==0)
@@ -138,7 +139,12 @@ int process_ttable(void)
       int ret=extractEntryInfo(awk,srcPhr,trgPhr,jointCount);
       if(ret==OK)
         datriePt.incrCountsOfEntry(srcPhr,trgPhr,jointCount);
+      i++;
+      if (i % 5000 == 0)
+        cout << "Processed " << i << " lines" << endl;
     }
+
+    cout << "Trie size: " << datriePt.size() << endl;
 
       // Store data structure for further usage
     datriePt.save(outputFile.c_str());
