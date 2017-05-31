@@ -162,7 +162,7 @@ gen_datrie_files()
         plain_ttable_to_id $srcv $trgv $table > $out.idttable
     fi
 
-    plain_ttable_to_id $srcv $trgv $table | ${bindir}/thot_ttable_to_datrie -o $out
+    plain_ttable_to_id $srcv $trgv $table | ${bindir}/thot_ttable_to_datrie -o $out.datrie_phrdict
 }
 
 ########

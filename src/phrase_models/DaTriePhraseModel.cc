@@ -267,7 +267,9 @@ bool DaTriePhraseModel::load_given_prefix(const char *prefix)
   if(ret==ERROR) return ERROR;
   
       // Load translation table
-  ret=daTriePhraseTable.load(prefix);
+  std::string datriePhraseTable=prefix;
+  datriePhraseTable=datriePhraseTable+".datrie_phrdict";
+  ret=daTriePhraseTable.load(datriePhraseTable.c_str());
   if(ret==ERROR) return ERROR;
 
       // Load segmentation length table
