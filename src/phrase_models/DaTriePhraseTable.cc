@@ -110,8 +110,8 @@ bool DaTriePhraseTable::trieSaveToFile(const char *path)
 {
   int result = trie_save(trie, path);
   if (result == 0)
-    return true;  // Trie saved successuflly
-  return false;  // Trie could not be saved properly
+    return OK;  // Trie saved successuflly
+  return ERROR;  // Trie could not be saved properly
 }
 
 //-------------------------
@@ -119,7 +119,7 @@ bool DaTriePhraseTable::trieLoadFromFile(const char *path)
 {
   Trie* loaded_trie = trie_new_from_file(path);
   if (loaded_trie == NULL)
-    return false;  // Cannot load trie
+    return ERROR;  // Cannot load trie
 
   // Release old resources
   trie_state_free(trie_root_node);
@@ -129,7 +129,7 @@ bool DaTriePhraseTable::trieLoadFromFile(const char *path)
   // Recreate root node indicator and trie iterator
   trie_root_node = trie_root (trie);
   
-  return true;
+  return OK;
 }
 
 //-------------------------

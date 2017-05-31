@@ -40,6 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "ErrorDefs.h"
 #include "thot_trie.h"
 #include "BasePhraseTable.h"
 
