@@ -55,7 +55,6 @@ class ThotDecoderCommonVars
   SwModelInfo* swModelInfoPtr;
   PhraseModelInfo* phrModelInfoPtr;
   LangModelInfo* langModelInfoPtr;
-  BaseWordPenaltyModel* wpModelPtr;
   WgHandler* wgHandlerPtr;
   BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
   BaseErrorCorrectionModel* ecModelPtr;
@@ -69,6 +68,7 @@ class ThotDecoderCommonVars
   SwModelsInfo swModelsInfo;
   PhraseModelsInfo phraseModelsInfo;
   LangModelsInfo langModelsInfo;
+  BaseWordPenaltyModel* wpModelPtr;
   FeaturesInfo<SmtModel::HypScoreInfo>* featuresInfoPtr;
   
   DynClassFactoryHandler dynClassFactoryHandler;
