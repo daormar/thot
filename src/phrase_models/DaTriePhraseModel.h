@@ -47,7 +47,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SrcSegmLenTable.h"
 #include "TrgCutsTable.h"
 #include "TrgSegmLenTable.h"
-#include "Bitset.h"
+#include "ModelDescriptorUtils.h"
 #include "awkInputStream.h"
 #include <stdlib.h>
 #include <float.h>
@@ -204,8 +204,11 @@ class DaTriePhraseModel: public BaseCountPhraseModel
     SrcSegmLenTable srcSegmLenTable;
 
     TrgCutsTable trgCutsTable;
-    
+
     TrgSegmLenTable trgSegmLenTable;
+
+        // Auxiliary functions
+    bool load_given_prefix(const char *prefix);
 };
 
 #endif
