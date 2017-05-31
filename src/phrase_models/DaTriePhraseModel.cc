@@ -216,16 +216,32 @@ bool DaTriePhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
 //-------------------------
 bool DaTriePhraseModel::load(const char *prefix)
 {
+  cerr<<"Loading phrase model (input: "<<prefix<<")"<<endl;
+
   std::string mainFileName;
   if(fileIsDescriptor(prefix,mainFileName))
   {
     std::string descFileName=prefix;
     std::string absolutizedMainFileName=absolutizeModelFileName(descFileName,mainFileName);
-    return load_given_prefix(absolutizedMainFileName.c_str());
+    int ret=load_given_prefix(absolutizedMainFileName.c_str());
+    if(ret==ERROR)
+    {
+      cerr<<"Error while loading phrase model"<<endl;
+      return ERROR;
+    }
+
+    return OK;
   }
   else
   {
-    return load_given_prefix(prefix);
+    int ret=load_given_prefix(prefix);
+    if(ret==ERROR)
+    {
+      cerr<<"Error while loading phrase model"<<endl;
+      return ERROR;
+    }
+
+    return OK;
   }
 }
 
@@ -285,9 +301,12 @@ bool DaTriePhraseModel::load_seglentable(const char *segmLengthTableFileName)
 {
   return segLenTable.load_seglentable(segmLengthTableFileName);
 }
+
 //-------------------------
 bool DaTriePhraseModel::print(const char *prefix)
 {
+      // TO-BE-DONE
+  
   std::string prefixStl=prefix;
   if(prefixOfModelFiles==prefixStl)
   {
