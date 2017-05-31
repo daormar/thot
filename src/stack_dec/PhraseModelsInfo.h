@@ -38,6 +38,7 @@ struct PhraseModelsInfo
   Vector<BasePhraseModel*> invPbModelPtrVec;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
   Vector<SimpleDynClassLoader<BasePhraseModel> > simpleDynClassLoaderVec;
+  SimpleDynClassLoader<BasePhraseModel> defaultClassLoader;
   Vector<std::string> featNameVec;
 };
 

@@ -30,6 +30,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                        // (default value: PpInfo.h)
 #include "BaseSwAligModel.h"
 #include "myVector.h"
+#include "SimpleDynClassLoader.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -48,6 +49,8 @@ struct SwModelsInfo
       // Inverse sw model members
   Vector<BaseSwAligModel<PpInfo>*> invSwAligModelPtrVec;
   Vector<std::string> invFeatNameVec;
+
+  SimpleDynClassLoader<BaseSwAligModel<PpInfo> > defaultClassLoader;
 };
 
 #endif

@@ -42,6 +42,7 @@ struct LangModelsInfo
   Vector<BaseNgramLM<LM_State>*> lModelPtrVec;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
   Vector<SimpleDynClassLoader<BaseNgramLM<LM_State> > > simpleDynClassLoaderVec;
+  SimpleDynClassLoader<BaseNgramLM<LM_State> > defaultClassLoader;
   Vector<std::string> featNameVec;
 };
 
