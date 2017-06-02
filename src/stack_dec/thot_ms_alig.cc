@@ -210,13 +210,9 @@ int init_translator(const thot_ms_alig_pars& tap)
   unsigned int numTransModelEntries;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(tap.transModelPref.c_str(),modelDescEntryVec)==OK)
-  {
     numTransModelEntries=modelDescEntryVec.size();
-  }
   else
-  {
     numTransModelEntries=1;
-  }
 
       // Initialize class factories
   err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
