@@ -510,7 +510,7 @@ void DaTriePhraseTableTest::testSavingAndRestoringTrie()
 
   // Save structure
   result = tab->save(file_name);
-  CPPUNIT_ASSERT( result );
+  CPPUNIT_ASSERT( result == OK);
 
   tab->clear();  // Remove structure to make sure that loading trie was performed
 
@@ -518,7 +518,7 @@ void DaTriePhraseTableTest::testSavingAndRestoringTrie()
   
   // Load structure
   result = tab->load(file_name);
-  CPPUNIT_ASSERT( result );
+  CPPUNIT_ASSERT( result == OK);
   CPPUNIT_ASSERT( tab->size() == original_size );
 
   tab->clear();  // Unmap loaded file
@@ -569,7 +569,7 @@ void DaTriePhraseTableTest::testMmap()
 
   // Save structure
   result = tab->save(file_name);
-  CPPUNIT_ASSERT( result );
+  CPPUNIT_ASSERT( result == OK );
 
   tab->clear();  // Remove structure to make sure that loading trie was performed
 
@@ -577,7 +577,7 @@ void DaTriePhraseTableTest::testMmap()
   
   // Load structure
   result = tab->load(file_name);
-  CPPUNIT_ASSERT( result );
+  CPPUNIT_ASSERT( result == OK );
   CPPUNIT_ASSERT( tab->size() == original_size );
 
   // Check count values
