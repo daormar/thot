@@ -135,6 +135,8 @@ Bool    trie_is_dirty (const Trie *trie);
  *   GENERAL QUERY OPERATIONS   *
  *------------------------------*/
 
+TrieIndex trie_find_key (const Trie *trie, const AlphaChar *key);
+
 Bool    trie_retrieve (const Trie      *trie,
                        const AlphaChar *key,
                        TrieData        *o_data);

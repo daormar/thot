@@ -333,6 +333,36 @@ trie_is_dirty (const Trie *trie)
  *------------------------------*/
 
 /**
+ * @brief Retrieve trie index of requested key
+ *
+ * @param trie   : the trie
+ * @param key    : the key for the entry to retrieve
+ *
+ * @return TrieIndex value indicating the key position in trie
+ *         (-1 if key could not be located).
+ */
+TrieIndex
+trie_find_key (const Trie *trie, const AlphaChar *key)
+{
+    TrieIndex        s;
+    const AlphaChar *p;
+
+    /* walk through branches */
+    s = da_get_root (trie->da);
+    for (p = key; !trie_da_is_separate (trie->da, s); p++) {
+        TrieIndex tc = alpha_map_char_to_trie (trie->alpha_map, *p);
+        if (TRIE_INDEX_MAX == tc)
+            return -1;
+        if (!da_walk (trie->da, &s, (TrieChar) tc))
+            return -1;
+        if (0 == *p)
+            break;
+    }
+
+    return s;
+}
+
+/**
  * @brief Retrieve an entry from trie
  *
  * @param trie   : the trie
@@ -348,21 +378,13 @@ trie_is_dirty (const Trie *trie)
 Bool
 trie_retrieve (const Trie *trie, const AlphaChar *key, TrieData *o_data)
 {
-    TrieIndex        s;
-    short            suffix_idx;
-    const AlphaChar *p;
+    TrieIndex s;
 
     /* walk through branches */
-    s = da_get_root (trie->da);
-    for (p = key; !trie_da_is_separate (trie->da, s); p++) {
-        TrieIndex tc = alpha_map_char_to_trie (trie->alpha_map, *p);
-        if (TRIE_INDEX_MAX == tc)
-            return FALSE;
-        if (!da_walk (trie->da, &s, (TrieChar) tc))
-            return FALSE;
-        if (0 == *p)
-            break;
-    }
+    s = trie_find_key(trie, key);
+
+    if (s == -1)
+        return FALSE;  // Trie index could not be found
 
     /* walk through tail */
     s = trie_da_get_tail_index (trie->da, s);
