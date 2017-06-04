@@ -105,7 +105,11 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
   {
     cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
     return ERROR;
-  }     
+  }
+
+      // Store so file name
+  baseSwAligModelSoFileName=soFileName;
+
       // Store init parameters for BaseSwAligModel
   baseSwAligModelInitPars=initPars;
 

@@ -72,6 +72,7 @@ struct DynClassFactoryHandler
   std::string baseNgramLMInitPars;
 
   SimpleDynClassLoader<BaseSwAligModel<PpInfo> > baseSwAligModelDynClassLoader;
+  std::string baseSwAligModelSoFileName;
   std::string baseSwAligModelInitPars;
 
   SimpleDynClassLoader<BasePhraseModel> basePhraseModelDynClassLoader;
