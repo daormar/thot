@@ -114,6 +114,7 @@ struct thot_ms_dec_pars
 //--------------- Function Declarations ------------------------------
 
 int init_translator_legacy_impl(const thot_ms_dec_pars& tdp);
+void set_default_models(void);
 int add_model_features(const thot_ms_dec_pars& tdp);
 int init_translator_feat_impl(const thot_ms_dec_pars& tdp);
 int init_translator(const thot_ms_dec_pars& tdp);
@@ -384,20 +385,28 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
 }
 
 //---------------
+void set_default_models(void)
+{
+  featureHandler.setDefaultLangModelType(dynClassFactoryHandler.baseNgramLMSoFileName);
+  featureHandler.setDefaultTransModelType(dynClassFactoryHandler.basePhraseModelSoFileName);
+  featureHandler.setDefaultSingleWordModelType(dynClassFactoryHandler.baseSwAligModelSoFileName);
+}
+
+//---------------
 int add_model_features(const thot_ms_dec_pars& tdp)
 {
       // Add word penalty model feature
-  int ret=add_wp_feat(tdp.verbosity);
+  int ret=featureHandler.addWpmFeat(tdp.verbosity);
   if(ret==ERROR)
     return ERROR;
 
       // Add language model features
-  int ret=add_lm_feats(tdp.languageModelFileName,tdp.verbosity);
+  ret=featureHandler.addLmFeats(tdp.languageModelFileName,tdp.verbosity);
   if(ret==ERROR)
     return ERROR;
 
       // Add translation model features
-  ret=add_tm_feats(tdp.languageModelFileName,tdp.verbosity);
+  ret=featureHandler.addTmFeats(tdp.languageModelFileName,tdp.verbosity);
   if(ret==ERROR)
     return ERROR;
 
@@ -424,16 +433,6 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
     return ERROR;
 
       // Create decoder variables
-  featuresInfoPtr=new FeaturesInfo<SmtModel::HypScoreInfo>;
-
-  langModelInfoPtr=new LangModelInfo;
-  langModelInfoPtr->wpModelPtr=dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(dynClassFactoryHandler.baseWordPenaltyModelInitPars);
-  if(langModelInfoPtr->wpModelPtr==NULL)
-  {
-    cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
-    return ERROR;
-  }
-
   llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(llWeightUpdaterPtr==NULL)
   {
@@ -455,11 +454,14 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
   smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
   smtModelPtr->link_trans_constraints(trConstraintsPtr);
 
-      // Link features information if appliable 
+      // Link features information
   _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
   if(pbtm_ptr)
-    pbtm_ptr->link_feats_info(featuresInfoPtr);
+    pbtm_ptr->link_feats_info(featureHandler.getFeatureInfoPtr());
 
+      // Set default models for feature handler
+  set_default_models();
+  
       // Add model features
   add_model_features(tdp);
   
@@ -561,26 +563,8 @@ void release_translator_feat_impl(void)
   delete smtModelPtr;
 
       // Delete features information
-
-      // Release phrase models
-  for(unsigned int i=0;i<phraseModelsInfo.invPbModelPtrVec.size();++i)
-    delete phraseModelsInfo.invPbModelPtrVec[i];
-
-      // Release single word models
-  for(unsigned int i=0;i<swModelsInfo.swAligModelPtrVec.size();++i)
-    delete swModelsInfo.swAligModelPtrVec[i];
-  for(unsigned int i=0;i<swModelsInfo.invSwAligModelPtrVec.size();++i)
-    delete swModelsInfo.invSwAligModelPtrVec[i];
-
-      // Release language models
-  for(unsigned int i=0;i<langModelsInfo.lModelPtrVec.size();++i)
-    delete langModelsInfo.lModelPtrVec[i];
-
-      // Release feature pointers
-  for(unsigned int i=0;i<featuresInfoPtr->featPtrVec.size();++i)
-    delete featuresInfoPtr->featPtrVec[i];
-  delete featuresInfoPtr;
-
+  featureHandler.clear();
+  
       // Release class factory handler
   dynClassFactoryHandler.release_smt();
 }

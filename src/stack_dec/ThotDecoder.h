@@ -46,13 +46,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 // Types defining decoder architecture
 #include "SmtModelUtils.h"
-#include "SrcPosJumpFeat.h"
-#include "TrgPhraseLenFeat.h"
-#include "SrcPhraseLenFeat.h"
-#include "InversePhraseModelFeat.h"
-#include "DirectPhraseModelFeat.h"
-#include "LangModelFeat.h"
-#include "WordPenaltyFeat.h"
 #include "_pbTransModel.h"
 #include "_phraseBasedTransModel.h"
 #include "_phrSwTransModel.h"
@@ -201,6 +194,10 @@ class ThotDecoder
   void increase_non_atomic_ops_running(void);
   void decrease_non_atomic_ops_running(void);
 
+      // Functions to initialize translator
+  void init_translator_legacy_impl(void);
+  void init_translator_feat_impl(void);
+  
       // Functions to load models
   BasePhraseModel* createPmPtr(std::string modelType);
   bool process_tm_descriptor(std::string tmDescFile,
@@ -215,10 +212,6 @@ class ThotDecoder
   int createLangModelFeat(std::string featName,
                           const ModelDescriptorEntry& modelDescEntry,
                           LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef);
-  bool process_lm_descriptor(std::string lmDescFile,
-                             int verbose/*=0*/);
-  bool process_lm_files_prefix(std::string lmFilesPrefix,
-                               int verbose/*=0*/);
   bool load_lm(const char* lmFileName,
                int verbose=0);
   bool load_lm_feat_impl(const char* lmFileName,
@@ -227,33 +220,8 @@ class ThotDecoder
                 int verbose=0);
 
       // Functions to print models
-  bool printLambdasFeatImpl(std::string modelFileName,
-                            std::string featName,
-                            std::string invFeatName,
-                            int verbose=0);
   bool printModelsLegacyImpl(int verbose=0);
   bool printModelsFeatImpl(int verbose=0);
-  bool printAligModelsFeatImpl(int verbose=0);
-  bool printLangModelsFeatImpl(int verbose=0);
-
-      // Feature-related functions
-  unsigned int getFeatureIdx(std::string featName);
-  int createDirectPhrModelFeat(std::string featName,
-                               const ModelDescriptorEntry& modelDescEntry,
-                               DirectPhraseModelFeat<SmtModel::HypScoreInfo>** dirPmFeatPtrRef);
-  int createInversePhrModelFeat(std::string featName,
-                                const ModelDescriptorEntry& modelDescEntry,
-                                BasePhraseModel* invPbModelPtr,
-                                InversePhraseModelFeat<SmtModel::HypScoreInfo>** invPmFeatPtrRef);
-  int createSrcPhraseLenFeat(std::string featName,
-                             BasePhraseModel* basePhraseModelPtr,
-                             SrcPhraseLenFeat<SmtModel::HypScoreInfo>** srcPhraseLenFeatRef);
-  int createTrgPhraseLenFeat(std::string featName,
-                             BasePhraseModel* basePhraseModelPtr,
-                             TrgPhraseLenFeat<SmtModel::HypScoreInfo>** trgPhraseLenFeatRef);
-  int createSrcPosJumpFeat(std::string featName,
-                           BasePhraseModel* basePhraseModelPtr,
-                           SrcPosJumpFeat<SmtModel::HypScoreInfo>** srcPosJumpFeatRef);
 
       // Training-related functions
   void setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
@@ -333,10 +301,7 @@ class ThotDecoder
       // Memory handling related functions
   bool instantiate_swm_info(const char* tmFilesPrefix,
                             int verbose=0);
-  void deleteLangModelPtrsFeatImpl(void);
-  void deletePhrModelPtrsFeatImpl(void);
   void deleteSwModelPtrs(void);
-  void deleteSwModelPtrsFeatImpl(void);
 
 };
 #endif

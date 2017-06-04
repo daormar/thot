@@ -34,6 +34,23 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------------------
 ThotDecoder::ThotDecoder()
 {
+      // Determine which implementation is being used
+  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
+  if(pbtm_ptr)
+    tdCommonVars.featureBasedImplEnabled=true;
+  else
+    tdCommonVars.featureBasedImplEnabled=false;
+
+      // Call the appropriate initialization for current implementation
+  if(tdCommonVars.featureBasedImplEnabled)
+    init_translator_feat_impl();
+  else
+    init_translator_legacy_impl();
+}
+
+//--------------------------
+void ThotDecoder::init_translator_legacy_impl(void)
+{
       // Show static types
   cerr<<"Static types:"<<endl;
   cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
@@ -45,18 +62,15 @@ ThotDecoder::ThotDecoder()
   if(err==ERROR)
     exit(ERROR);
   
-      // Create server variables
-  tdCommonVars.featuresInfoPtr=new FeaturesInfo<SmtModel::HypScoreInfo>;
-  
+      // Create server variables  
   tdCommonVars.langModelInfoPtr=new LangModelInfo;
 
-  tdCommonVars.wpModelPtr=tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelInitPars);
-  if(tdCommonVars.wpModelPtr==NULL)
+  tdCommonVars.langModelInfoPtr->wpModelPtr=tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelInitPars);
+  if(tdCommonVars.langModelInfoPtr->wpModelPtr==NULL)
   {
     cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
     exit(ERROR);
   }
-  tdCommonVars.langModelInfoPtr->wpModelPtr=tdCommonVars.wpModelPtr;
   
   tdCommonVars.langModelInfoPtr->lModelPtr=tdCommonVars.dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseNgramLMInitPars);
   if(tdCommonVars.langModelInfoPtr->lModelPtr==NULL)
@@ -148,24 +162,101 @@ ThotDecoder::ThotDecoder()
   _phrSwTransModel<SmtModel::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
   if(base_pbswtm_ptr)
     base_pbswtm_ptr->link_swm_info(tdCommonVars.swModelInfoPtr);
+    
+      // Initialize mutexes and conditions
+  pthread_mutex_init(&user_id_to_idx_mut,NULL);
+  pthread_mutex_init(&atomic_op_mut,NULL);
+  pthread_mutex_init(&non_atomic_op_mut,NULL);
+  pthread_mutex_init(&preproc_mut,NULL);
+  pthread_cond_init(&non_atomic_op_cond,NULL);
+  non_atomic_ops_running=0;
+}
 
-      // Link features information if appliable 
-  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
-  if(pbtm_ptr)
+//--------------------------
+void ThotDecoder::init_translator_feat_impl(void)
+{
+      // Show static types
+  cerr<<"Static types:"<<endl;
+  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
+  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
+  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+
+      // Initialize class factories
+  int err=tdCommonVars.dynClassFactoryHandler.init_smt_and_imt(THOT_MASTER_INI_PATH);
+  if(err==ERROR)
+    exit(ERROR);
+  
+      // Create server variables
+  tdCommonVars.wgHandlerPtr=new WgHandler;
+
+  tdCommonVars.ecModelPtr=tdCommonVars.dynClassFactoryHandler.baseErrorCorrectionModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseErrorCorrectionModelInitPars);
+  if(tdCommonVars.ecModelPtr==NULL)
   {
-    pbtm_ptr->link_feats_info(tdCommonVars.featuresInfoPtr);
-    tdCommonVars.featureBasedImplEnabled=true;
+    cerr<<"Error: BaseErrorCorrectionModel pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
+      // Check if error correction model is valid for word graphs
+  BaseWgProcessorForAnlp* wgpPtr;
+  wgpPtr=tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpInitPars);
+  if(wgpPtr==NULL)
+  {
+    cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<endl;
+    exit(ERROR);
   }
   else
   {
-    tdCommonVars.featureBasedImplEnabled=false;
+    if(!wgpPtr->link_ecm_wg(tdCommonVars.ecModelPtr))
+      tdCommonVars.curr_ecm_valid_for_wg=false;
+    else
+      tdCommonVars.curr_ecm_valid_for_wg=true;
+        // Delete temporary pointer
+    delete wgpPtr;
   }
+
+  tdCommonVars.scorerPtr=tdCommonVars.dynClassFactoryHandler.baseScorerDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseScorerInitPars);
+  if(tdCommonVars.scorerPtr==NULL)
+  {
+    cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
+  tdCommonVars.llWeightUpdaterPtr=tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
+  if(tdCommonVars.llWeightUpdaterPtr==NULL)
+  {
+    cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
+      // Link scorer to weight updater
+  if(!tdCommonVars.llWeightUpdaterPtr->link_scorer(tdCommonVars.scorerPtr))
+  {
+    cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<endl;
+    exit(ERROR);
+  }
+
+  tdCommonVars.trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
+  if(tdCommonVars.trConstraintsPtr==NULL)
+  {
+    cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
+    exit(ERROR);
+  }
+
+      // Instantiate smt model
+  tdCommonVars.smtModelPtr=new SmtModel();
+
+      // Link log-linear weight updater and translation constraints
+  tdCommonVars.smtModelPtr->link_ll_weight_upd(tdCommonVars.llWeightUpdaterPtr);
+  tdCommonVars.smtModelPtr->link_trans_constraints(tdCommonVars.trConstraintsPtr);
+  
+      // Link features information if appliable 
+  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
+  if(pbtm_ptr)
+    pbtm_ptr->link_feats_info(tdCommonVars.featureHandler.getFeatureInfoPtr());
   
       // Add word penalty model feature
-  WordPenaltyFeat<SmtModel::HypScoreInfo>* wordPenaltyFeatPtr=new WordPenaltyFeat<SmtModel::HypScoreInfo>;
-  wordPenaltyFeatPtr->setFeatName("wp");
-  wordPenaltyFeatPtr->link_wpm(tdCommonVars.wpModelPtr);
-  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(wordPenaltyFeatPtr);
+  int verbosity=true;
+  tdCommonVars.featureHandler.addWpmFeat(verbosity);
   
       // Initialize mutexes and conditions
   pthread_mutex_init(&user_id_to_idx_mut,NULL);
@@ -227,6 +318,7 @@ void ThotDecoder::release(void)
   tdCommonVars.wgHandlerPtr->clear();
   tdCommonVars.smtModelPtr->clear();
   tdCommonVars.ecModelPtr->clear();
+  tdCommonVars.featureHandler.clear();
   for(size_t i=0;i<tdPerUserVarsVec.size();++i)
   {
     release_idx_data(i);
@@ -832,355 +924,6 @@ bool ThotDecoder::load_tm(const char* tmFilesPrefix,
 }
 
 //--------------------------
-BasePhraseModel* ThotDecoder::createPmPtr(std::string modelType)
-{
-  if(modelType.empty())
-  {
-    BasePhraseModel* basePhrModelPtr=tdCommonVars.dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.basePhraseModelInitPars);
-    return basePhrModelPtr;
-  }
-  else
-  {
-        // Declare dynamic class loader instance
-    SimpleDynClassLoader<BasePhraseModel> simpleDynClassLoader;
-  
-        // Open module
-    bool verbosity=false;
-    if(!simpleDynClassLoader.open_module(modelType,verbosity))
-    {
-      cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
-      return NULL;
-    }
-
-        // Create tm file pointer
-    BasePhraseModel* tmPtr=simpleDynClassLoader.make_obj("");
-
-        // Store loader
-    tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec.push_back(simpleDynClassLoader);
-    
-    if(tmPtr==NULL)
-    {
-      cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;    
-      return NULL;
-    }
-    
-    return tmPtr;
-  }
-}
-
-//--------------------------
-unsigned int ThotDecoder::getFeatureIdx(std::string featName)
-{
-  for(unsigned int i=0;i<tdCommonVars.featuresInfoPtr->featPtrVec.size();++i)
-  {
-    if(featName==tdCommonVars.featuresInfoPtr->featPtrVec[i]->getFeatName())
-      return i;
-  }
-}
-
-//--------------------------
-int ThotDecoder::createDirectPhrModelFeat(std::string featName,
-                                          const ModelDescriptorEntry& modelDescEntry,
-                                          DirectPhraseModelFeat<SmtModel::HypScoreInfo>** dirPmFeatPtrRef)
-{
-  cerr<<"** Creating direct phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<endl;
-
-      // Create feature pointer and set name
-  (*dirPmFeatPtrRef)=new DirectPhraseModelFeat<SmtModel::HypScoreInfo>;
-  DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=*dirPmFeatPtrRef;
-  dirPmFeatPtr->setFeatName(featName);
-
-      // Add phrase model pointer
-  BasePhraseModel* basePhraseModelPtr=createPmPtr(modelDescEntry.modelType);
-  if(basePhraseModelPtr==NULL)
-    return ERROR;
-  tdCommonVars.phraseModelsInfo.invPbModelPtrVec.push_back(basePhraseModelPtr);
-
-      // Add entry information
-  tdCommonVars.phraseModelsInfo.modelDescEntryVec.push_back(modelDescEntry);
-
-      // Add feature name
-  tdCommonVars.phraseModelsInfo.featNameVec.push_back(featName);
-  
-      // Load phrase model
-  cerr<<"* Loading phrase model..."<<endl;
-  int ret=SmtModelUtils::loadPhrModel(basePhraseModelPtr,modelDescEntry.absolutizedModelFileName);
-  if(ret==ERROR)
-    return ERROR;
-  
-      // Link pointer to feature
-  dirPmFeatPtr->link_pm(basePhraseModelPtr);  
-  
-      // Add direct swm pointer
-  BaseSwAligModel<PpInfo>* baseSwAligModelPtr=tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars);
-  if(baseSwAligModelPtr==NULL)
-  {
-    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    return ERROR;
-  }
-  tdCommonVars.swModelsInfo.swAligModelPtrVec.push_back(baseSwAligModelPtr);
-
-      // Add feature name
-  tdCommonVars.swModelsInfo.featNameVec.push_back(featName);
-
-      // Load direct single word model
-  cerr<<"* Loading direct single word model..."<<endl;
-  ret=SmtModelUtils::loadDirectSwModel(baseSwAligModelPtr,modelDescEntry.absolutizedModelFileName);
-  if(ret==ERROR)
-    return ERROR;
-  
-      // Link pointer to feature
-  dirPmFeatPtr->link_swm(baseSwAligModelPtr);
-
-      // Obtain lambda value
-  cerr<<"* Reading lambda interpolation value..."<<endl;
-  float lambda_swm;
-  float lambda_invswm;
-  std::string lambdaFileName=modelDescEntry.absolutizedModelFileName+".lambda";
-  ret=SmtModelUtils::loadSwmLambdas(lambdaFileName,lambda_swm,lambda_invswm);
-  if(ret==ERROR)
-    return ERROR;
-  cerr<<"lambda= "<<lambda_swm<<endl;
-  
-      // Set lambda value for feature
-  dirPmFeatPtr->set_lambda(lambda_swm);
-  
-  return OK;
-}
-
-//--------------------------
-int ThotDecoder::createInversePhrModelFeat(std::string featName,
-                                           const ModelDescriptorEntry& modelDescEntry,
-                                           BasePhraseModel* invPbModelPtr,
-                                           InversePhraseModelFeat<SmtModel::HypScoreInfo>** invPmFeatPtrRef)
-{
-  cerr<<"** Creating inverse phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<endl;
-
-      // Create feature pointer and set name
-  (*invPmFeatPtrRef)=new InversePhraseModelFeat<SmtModel::HypScoreInfo>;
-  InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr=*invPmFeatPtrRef;
-  invPmFeatPtr->setFeatName(featName);
-
-      // Link pointer to feature
-  cerr<<"* Linking phrase model previously loaded..."<<endl;
-  invPmFeatPtr->link_pm(invPbModelPtr);
-
-      // Add direct swm pointer
-  BaseSwAligModel<PpInfo>* baseSwAligModelPtr=tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars);
-  if(baseSwAligModelPtr==NULL)
-  {
-    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-    return ERROR;
-  }
-  tdCommonVars.swModelsInfo.invSwAligModelPtrVec.push_back(baseSwAligModelPtr);
-
-      // Add feature name
-  tdCommonVars.swModelsInfo.invFeatNameVec.push_back(featName);
-
-      // Load inverse single word model
-  cerr<<"* Loading inverse single word model..."<<endl;
-  int ret=SmtModelUtils::loadInverseSwModel(baseSwAligModelPtr,modelDescEntry.absolutizedModelFileName);
-  if(ret==ERROR)
-    return ERROR;
-  
-      // Link pointer to feature
-  invPmFeatPtr->link_swm(baseSwAligModelPtr);
-
-        // Obtain lambda value
-  cerr<<"* Reading lambda interpolation value..."<<endl;
-  float lambda_swm;
-  float lambda_invswm;
-  std::string lambdaFileName=modelDescEntry.absolutizedModelFileName+".lambda";
-  ret=SmtModelUtils::loadSwmLambdas(lambdaFileName,lambda_swm,lambda_invswm);
-  if(ret==ERROR)
-    return ERROR;
-  cerr<<"lambda= "<<lambda_invswm<<endl;
-  
-      // Set lambda value for feature
-  invPmFeatPtr->set_lambda(lambda_invswm);
-
-  return OK;
-}
-
-//--------------------------
-int ThotDecoder::createSrcPhraseLenFeat(std::string featName,
-                                        BasePhraseModel* basePhraseModelPtr,
-                                        SrcPhraseLenFeat<SmtModel::HypScoreInfo>** srcPhraseLenFeatRef)
-{
-  cerr<<"** Creating source phrase length feature ("<<featName<<")"<<endl;
-
-      // Create feature pointer and set name
-  (*srcPhraseLenFeatRef)=new SrcPhraseLenFeat<SmtModel::HypScoreInfo>;
-  SrcPhraseLenFeat<SmtModel::HypScoreInfo>* srcPhraseLenFeatPtr=*srcPhraseLenFeatRef;
-  srcPhraseLenFeatPtr->setFeatName(featName);
-
-      // Link pointer to feature
-  srcPhraseLenFeatPtr->link_pm(basePhraseModelPtr);  
-    
-  return OK;
-}
-
-//--------------------------
-int ThotDecoder::createTrgPhraseLenFeat(std::string featName,
-                                        BasePhraseModel* basePhraseModelPtr,
-                                        TrgPhraseLenFeat<SmtModel::HypScoreInfo>** trgPhraseLenFeatRef)
-{
-  cerr<<"** Creating target phrase length feature ("<<featName<<")"<<endl;
-
-      // Create feature pointer and set name
-  (*trgPhraseLenFeatRef)=new TrgPhraseLenFeat<SmtModel::HypScoreInfo>;
-  TrgPhraseLenFeat<SmtModel::HypScoreInfo>* trgPhraseLenFeatPtr=*trgPhraseLenFeatRef;
-  trgPhraseLenFeatPtr->setFeatName(featName);
-
-      // Link pointer to feature
-  trgPhraseLenFeatPtr->link_pm(basePhraseModelPtr);  
-    
-  return OK;
-}
-
-//--------------------------
-int ThotDecoder::createSrcPosJumpFeat(std::string featName,
-                                      BasePhraseModel* basePhraseModelPtr,
-                                      SrcPosJumpFeat<SmtModel::HypScoreInfo>** srcPosJumpFeatRef)
-{
-  cerr<<"** Creating source position jump feature ("<<featName<<")"<<endl;
-
-      // Create feature pointer and set name
-  (*srcPosJumpFeatRef)=new SrcPosJumpFeat<SmtModel::HypScoreInfo>;
-  SrcPosJumpFeat<SmtModel::HypScoreInfo>* srcPosJumpFeatPtr=*srcPosJumpFeatRef;
-  srcPosJumpFeatPtr->setFeatName(featName);
-
-      // Link pointer to feature
-  srcPosJumpFeatPtr->link_pm(basePhraseModelPtr);  
-    
-  return OK;
-}
-
-//--------------------------
-bool ThotDecoder::process_tm_descriptor(std::string tmDescFile,
-                                        int verbose/*=0*/)
-{
-  if(verbose)
-  {
-    cerr<<"Processing translation model descriptor: "<<tmDescFile<<endl;
-  }
-
-      // Obtain info about translation model entries
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(tmDescFile,modelDescEntryVec)==OK)
-  {
-        // Process descriptor entries
-    for(unsigned int i=0;i<modelDescEntryVec.size();++i)
-    {
-          // Create direct phrase model feature
-      std::string featName="pts_"+modelDescEntryVec[i].statusStr;
-      DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr;
-      int ret=createDirectPhrModelFeat(featName,modelDescEntryVec[i],&dirPmFeatPtr);
-      if(ret==ERROR)
-        return ERROR;
-      tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
-
-          // Create inverse phrase model feature
-      featName="pst_"+modelDescEntryVec[i].statusStr;
-      InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr;
-      ret=createInversePhrModelFeat(featName,modelDescEntryVec[i],dirPmFeatPtr->get_pmptr(),&invPmFeatPtr);
-      if(ret==ERROR)
-        return ERROR;
-      tdCommonVars.featuresInfoPtr->featPtrVec.push_back(invPmFeatPtr);
-    }
-
-        // Create source phrase length feature
-    std::string featName="src_phr_len";
-    SrcPhraseLenFeat<SmtModel::HypScoreInfo>* srcPhrLenFeatPtr;
-    int ret=createSrcPhraseLenFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&srcPhrLenFeatPtr);
-    if(ret==ERROR)
-      return ERROR;
-    tdCommonVars.featuresInfoPtr->featPtrVec.push_back(srcPhrLenFeatPtr);
-
-        // Create target phrase length feature
-    featName="trg_phr_len";
-    TrgPhraseLenFeat<SmtModel::HypScoreInfo>* trgPhrLenFeatPtr;
-    ret=createTrgPhraseLenFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&trgPhrLenFeatPtr);
-    if(ret==ERROR)
-      return ERROR;
-    tdCommonVars.featuresInfoPtr->featPtrVec.push_back(trgPhrLenFeatPtr);
-
-        // Create source position jump feature
-    featName="src_pos_jump";
-    SrcPosJumpFeat<SmtModel::HypScoreInfo>* srcPosJumpFeatPtr;
-    ret=createSrcPosJumpFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&srcPosJumpFeatPtr);
-    if(ret==ERROR)
-      return ERROR;
-    tdCommonVars.featuresInfoPtr->featPtrVec.push_back(srcPosJumpFeatPtr);
-
-    return OK;
-  }
-  else
-  {
-    return ERROR;
-  }
-}
-
-//--------------------------
-bool ThotDecoder::process_tm_files_prefix(std::string tmFilesPrefix,
-                                          int verbose/*=0*/)
-{
-  if(verbose)
-  {
-    cerr<<"Processing translation model files prefix: "<<tmFilesPrefix<<endl;
-  }
-
-      // Create model descriptor entry
-  ModelDescriptorEntry modelDescEntry;
-  modelDescEntry.statusStr="main";
-  modelDescEntry.modelType=tdCommonVars.dynClassFactoryHandler.basePhraseModelSoFileName;
-  modelDescEntry.modelFileName=tmFilesPrefix;
-  modelDescEntry.absolutizedModelFileName=tmFilesPrefix;
-
-      // Create direct phrase model feature
-  std::string featName="pts";
-  DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr;
-  int ret=createDirectPhrModelFeat(featName,modelDescEntry,&dirPmFeatPtr);
-  if(ret==ERROR)
-    return ERROR;
-  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
-
-      // Create inverse phrase model feature
-  featName="pst";
-  InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr;
-  ret=createInversePhrModelFeat(featName,modelDescEntry,dirPmFeatPtr->get_pmptr(),&invPmFeatPtr);
-  if(ret==ERROR)
-    return ERROR;
-  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(invPmFeatPtr);
-
-      // Create source phrase length feature
-  featName="src_phr_len";
-  SrcPhraseLenFeat<SmtModel::HypScoreInfo>* srcPhrLenFeatPtr;
-  ret=createSrcPhraseLenFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&srcPhrLenFeatPtr);
-  if(ret==ERROR)
-    return ERROR;
-  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(srcPhrLenFeatPtr);
-
-      // Create target phrase length feature
-  featName="trg_phr_len";
-  TrgPhraseLenFeat<SmtModel::HypScoreInfo>* trgPhrLenFeatPtr;
-  ret=createTrgPhraseLenFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&trgPhrLenFeatPtr);
-  if(ret==ERROR)
-    return ERROR;
-  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(trgPhrLenFeatPtr);
-
-      // Create source position jump feature
-  featName="src_pos_jump";
-  SrcPosJumpFeat<SmtModel::HypScoreInfo>* srcPosJumpFeatPtr;
-  ret=createSrcPosJumpFeat(featName,tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],&srcPosJumpFeatPtr);
-  if(ret==ERROR)
-    return ERROR;
-  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(srcPosJumpFeatPtr);
-  
-  return OK;
-}
-
-//--------------------------
 bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
                                     int verbose/*=0*/)
 {
@@ -1198,16 +941,7 @@ bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
   }
   else
   {
-        // Delete previous instantiation
-    deletePhrModelPtrsFeatImpl();
-    deleteSwModelPtrsFeatImpl();
-
-    std::string mainFileName;
-    if(fileIsDescriptor(tmFilesPrefix,mainFileName))
-      ret=process_tm_descriptor(tmFilesPrefix,verbose);
-    else
-      ret=process_tm_files_prefix(tmFilesPrefix,verbose);
-
+    ret=tdCommonVars.featureHandler.addTmFeats(tmFilesPrefix,verbose);
         // Store tm information
     if(ret==OK)
       tdState.tmFilesPrefixGiven=tmFilesPrefix;
@@ -1259,140 +993,6 @@ bool ThotDecoder::load_lm(const char* lmFileName,
 }
 
 //--------------------------
-BaseNgramLM<LM_State>* ThotDecoder::createLmPtr(std::string modelType)
-{
-  if(modelType.empty())
-  {
-    BaseNgramLM<LM_State>* langModelPtr=tdCommonVars.dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseNgramLMInitPars);
-    return langModelPtr;
-  }
-  else
-  {
-        // Declare dynamic class loader instance
-    SimpleDynClassLoader<BaseNgramLM<LM_State> > simpleDynClassLoader;
-  
-        // Open module
-    bool verbosity=false;
-    if(!simpleDynClassLoader.open_module(modelType,verbosity))
-    {
-      cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
-      return NULL;
-    }
-
-        // Create lm file pointer
-    BaseNgramLM<LM_State>* lmPtr=simpleDynClassLoader.make_obj("");
-
-        // Store dynamic class loader
-    tdCommonVars.langModelsInfo.simpleDynClassLoaderVec.push_back(simpleDynClassLoader);
-
-    if(lmPtr==NULL)
-    {
-      cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;    
-      return NULL;
-    }
-    
-    return lmPtr;
-  }
-}
-
-//--------------------------
-int ThotDecoder::createLangModelFeat(std::string featName,
-                                     const ModelDescriptorEntry& modelDescEntry,
-                                     LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef)
-{
-  cerr<<"** Creating language model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<endl;
-
-      // Create feature pointer and set name
-  (*langModelFeatPtrRef)=new LangModelFeat<SmtModel::HypScoreInfo>;
-  LangModelFeat<SmtModel::HypScoreInfo>* langModelFeatPtr=*langModelFeatPtrRef;
-  langModelFeatPtr->setFeatName(featName);
-
-      // Add language model pointer
-  BaseNgramLM<LM_State>* baseNgLmPtr=createLmPtr(modelDescEntry.modelType);
-  if(baseNgLmPtr==NULL)
-    return ERROR;
-  tdCommonVars.langModelsInfo.lModelPtrVec.push_back(baseNgLmPtr);
-
-      // Add entry information
-  tdCommonVars.langModelsInfo.modelDescEntryVec.push_back(modelDescEntry);
-
-      // Add feature name
-  tdCommonVars.langModelsInfo.featNameVec.push_back(featName);
-
-      // Load language model
-  cerr<<"* Loading language model..."<<endl;
-  int ret=SmtModelUtils::loadLangModel(baseNgLmPtr,modelDescEntry.absolutizedModelFileName);
-  if(ret==ERROR)
-    return ERROR;
-  
-      // Link pointer to feature
-  langModelFeatPtr->link_lm(baseNgLmPtr);
-  
-  return OK;
-}
-
-//--------------------------
-bool ThotDecoder::process_lm_descriptor(std::string lmDescFile,
-                                        int verbose/*=0*/)
-{
-  if(verbose)
-  {
-    cerr<<"Processing language model descriptor: "<<lmDescFile<<endl;
-  }
-
-      // Obtain info about translation model entries
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(lmDescFile,modelDescEntryVec)==OK)
-  {
-        // Process descriptor entries
-    for(unsigned int i=0;i<modelDescEntryVec.size();++i)
-    {
-          // Create direct phrase model feature
-      std::string featName="lm_"+modelDescEntryVec[i].statusStr;
-      LangModelFeat<SmtModel::HypScoreInfo>* lmFeatPtr;
-      int ret=createLangModelFeat(featName,modelDescEntryVec[i],&lmFeatPtr);
-      if(ret==ERROR)
-        return ERROR;
-      tdCommonVars.featuresInfoPtr->featPtrVec.push_back(lmFeatPtr);
-    }
-    
-    return OK;
-  }
-  else
-  {
-    return ERROR;
-  }
-}
-
-//--------------------------
-bool ThotDecoder::process_lm_files_prefix(std::string lmFilesPrefix,
-                                          int verbose/*=0*/)
-{
-  if(verbose)
-  {
-    cerr<<"Processing language model files prefix: "<<lmFilesPrefix<<endl;
-  }
-
-        // Create model descriptor entry
-  ModelDescriptorEntry modelDescEntry;
-  modelDescEntry.statusStr="main";
-  modelDescEntry.modelType=tdCommonVars.dynClassFactoryHandler.baseNgramLMSoFileName;
-  modelDescEntry.modelFileName=lmFilesPrefix;
-  modelDescEntry.absolutizedModelFileName=lmFilesPrefix;
-
-      // Create direct phrase model feature
-  std::string featName="pts";
-  
-  LangModelFeat<SmtModel::HypScoreInfo>* lmFeatPtr;
-  int ret=createLangModelFeat(featName,modelDescEntry,&lmFeatPtr);
-  if(ret==ERROR)
-    return ERROR;
-  tdCommonVars.featuresInfoPtr->featPtrVec.push_back(lmFeatPtr);
-  
-  return OK;
-}
-
-//--------------------------
 bool ThotDecoder::load_lm_feat_impl(const char* lmFileName,
                                     int verbose/*=0*/)
 {
@@ -1410,15 +1010,7 @@ bool ThotDecoder::load_lm_feat_impl(const char* lmFileName,
   }
   else
   {
-        // Delete previous instantiation
-    deleteLangModelPtrsFeatImpl();
-    
-    std::string mainFileName;
-    if(fileIsDescriptor(lmFileName,mainFileName))
-      ret=process_lm_descriptor(lmFileName,verbose);
-    else
-      ret=process_lm_files_prefix(lmFileName,verbose);
-
+    ret=tdCommonVars.featureHandler.addLmFeats(lmFileName,verbose);
     if(ret==OK)
       tdState.lmfileLoaded=lmFileName;
   }
@@ -2601,106 +2193,6 @@ bool ThotDecoder::printModels(int verbose/*=0*/)
 }
 
 //--------------------------
-bool ThotDecoder::printLambdasFeatImpl(std::string modelFileName,
-                                       std::string featName,
-                                       std::string invFeatName,
-                                       int /*verbose=0*/)
-{
-  std::string lambdaFileName=modelFileName+".lambda";
-
-      // Obtain lambda for direct model
-  unsigned int swmIdx=getFeatureIdx(featName);
-  DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=dynamic_cast<DirectPhraseModelFeat<SmtModel::HypScoreInfo>* >(tdCommonVars.featuresInfoPtr->featPtrVec[swmIdx]);
-  float lambda_swm=dirPmFeatPtr->get_lambda();
-
-      // Obtain lambda for inverse model
-  unsigned int invSwmIdx=getFeatureIdx(invFeatName);
-  InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr=dynamic_cast<InversePhraseModelFeat<SmtModel::HypScoreInfo>* >(tdCommonVars.featuresInfoPtr->featPtrVec[invSwmIdx]);
-  float lambda_invswm=invPmFeatPtr->get_lambda();
-
-  return SmtModelUtils::printSwmLambdas(lambdaFileName.c_str(),lambda_swm,lambda_invswm);
-}
-
-//--------------------------
-bool ThotDecoder::printAligModelsFeatImpl(int verbose/*=0*/)
-{
-  std::string mainFileName;
-  if(fileIsDescriptor(tdState.tmFilesPrefixGiven,mainFileName))
-  {
-    for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.invPbModelPtrVec.size();++i)
-    {
-      int ret=SmtModelUtils::printPhrModel(tdCommonVars.phraseModelsInfo.invPbModelPtrVec[i],tdCommonVars.phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName);
-      if(ret==ERROR)
-        return ERROR;
-    }
-
-    for(unsigned int i=0;i<tdCommonVars.swModelsInfo.swAligModelPtrVec.size();++i)
-    {
-      int ret=SmtModelUtils::printDirectSwModel(tdCommonVars.swModelsInfo.swAligModelPtrVec[i],tdState.tmFilesPrefixGiven);
-      if(ret==ERROR)
-        return ERROR;      
-    }
-
-    for(unsigned int i=0;i<tdCommonVars.swModelsInfo.invSwAligModelPtrVec.size();++i)
-    {
-      int ret=SmtModelUtils::printDirectSwModel(tdCommonVars.swModelsInfo.invSwAligModelPtrVec[i],tdState.tmFilesPrefixGiven);
-      if(ret==ERROR)
-        return ERROR;      
-    }
-
-    for(unsigned int i=0;i<tdCommonVars.swModelsInfo.featNameVec.size();++i)
-    {
-      std::string featName=tdCommonVars.swModelsInfo.featNameVec[i];
-      std::string invFeatName=tdCommonVars.swModelsInfo.invFeatNameVec[i];
-      std::string modelFileName=tdCommonVars.phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName;
-      int ret=printLambdasFeatImpl(modelFileName,featName,invFeatName,verbose);
-      if(ret==ERROR)
-        return ERROR;      
-    }
-        
-    return OK;
-  }
-  else
-  {
-    int ret=SmtModelUtils::printPhrModel(tdCommonVars.phraseModelsInfo.invPbModelPtrVec[0],tdState.tmFilesPrefixGiven);
-    if(ret==ERROR)
-      return ERROR;
-    
-    ret=SmtModelUtils::printDirectSwModel(tdCommonVars.swModelsInfo.swAligModelPtrVec[0],tdState.tmFilesPrefixGiven);
-    if(ret==ERROR)
-      return ERROR;
-        
-    ret=SmtModelUtils::printInverseSwModel(tdCommonVars.swModelsInfo.invSwAligModelPtrVec[0],tdState.tmFilesPrefixGiven);
-    if(ret==ERROR)
-      return ERROR;
-
-    std::string featName=tdCommonVars.swModelsInfo.featNameVec[0];
-    std::string invFeatName=tdCommonVars.swModelsInfo.invFeatNameVec[0];    
-    return printLambdasFeatImpl(tdState.tmFilesPrefixGiven,featName,invFeatName,verbose);
-  }
-}
-
-//--------------------------
-bool ThotDecoder::printLangModelsFeatImpl(int verbose/*=0*/)
-{
-  std::string mainFileName;
-  if(fileIsDescriptor(tdState.lmfileLoaded,mainFileName))
-  {
-    for(unsigned int i=0;i<tdCommonVars.langModelsInfo.lModelPtrVec.size();++i)
-    {
-      int ret=SmtModelUtils::printLangModel(tdCommonVars.langModelsInfo.lModelPtrVec[i],tdCommonVars.langModelsInfo.modelDescEntryVec[i].absolutizedModelFileName);
-      if(ret==ERROR)
-        return ERROR;
-    }
-    return OK;
-  }
-  else
-  {
-    return SmtModelUtils::printLangModel(tdCommonVars.langModelsInfo.lModelPtrVec[0],tdState.lmfileLoaded);
-  }
-}
-
-//--------------------------
 bool ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -2714,18 +2206,12 @@ bool ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
   int ret;
 
       // Print alignment model parameters
-  ret=printAligModelsFeatImpl(verbose);
+  ret=tdCommonVars.featureHandler.print(tdState.tmFilesPrefixGiven,tdState.lmfileLoaded);
   
   if(ret==OK)
   {
-        // Print language model parameters
-    ret=printLangModelsFeatImpl(verbose);
-    
-    if(ret==OK)
-    {
-          // Print error correcting model parameters
-      ret=tdCommonVars.ecModelPtr->print(tdState.ecmFilesPrefixGiven.c_str());
-    }
+        // Print error correcting model parameters
+    ret=tdCommonVars.ecModelPtr->print(tdState.ecmFilesPrefixGiven.c_str());
   }
 
   /////////// end of mutex 
@@ -3346,50 +2832,6 @@ std::string ThotDecoder::getWordCompletion(std::string uncompleteWord,
 }
 
 //--------------------------
-void ThotDecoder::deleteLangModelPtrsFeatImpl(void)
-{
-      // Release pointers
-  for(unsigned int i=0;i<tdCommonVars.langModelsInfo.lModelPtrVec.size();++i)
-    delete tdCommonVars.langModelsInfo.lModelPtrVec[i];
-
-      // Close modules
-  int verbosity=false;
-  for(unsigned int i=0;i<tdCommonVars.langModelsInfo.simpleDynClassLoaderVec.size();++i)
-    tdCommonVars.langModelsInfo.simpleDynClassLoaderVec[i].close_module(verbosity);
-
-      // Clear model descriptor entries
-  tdCommonVars.langModelsInfo.modelDescEntryVec.clear();
-
-      // Clear feature names
-  tdCommonVars.langModelsInfo.featNameVec.clear();
-
-      // Clear dynamic class loader vector
-  tdCommonVars.langModelsInfo.simpleDynClassLoaderVec.clear();
-}
-
-//--------------------------
-void ThotDecoder::deletePhrModelPtrsFeatImpl(void)
-{
-      // Release pointers
-  for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.invPbModelPtrVec.size();++i)
-    delete tdCommonVars.phraseModelsInfo.invPbModelPtrVec[i];
-
-      // Close modules
-  int verbosity=false;
-  for(unsigned int i=0;i<tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec.size();++i)
-    tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec[i].close_module(verbosity);
-
-      // Clear model descriptor entries
-  tdCommonVars.phraseModelsInfo.modelDescEntryVec.clear();
-
-      // Clear feature names
-  tdCommonVars.phraseModelsInfo.featNameVec.clear();
-  
-      // Clear dynamic class loader vector
-  tdCommonVars.phraseModelsInfo.simpleDynClassLoaderVec.clear();
-}
-
-//--------------------------
 void ThotDecoder::deleteSwModelPtrs(void)
 {
   for(unsigned int i=0;i<tdCommonVars.swModelInfoPtr->swAligModelPtrVec.size();++i)
@@ -3399,25 +2841,12 @@ void ThotDecoder::deleteSwModelPtrs(void)
 }
 
 //--------------------------
-void ThotDecoder::deleteSwModelPtrsFeatImpl(void)
-{
-  for(unsigned int i=0;i<tdCommonVars.swModelsInfo.swAligModelPtrVec.size();++i)
-    delete tdCommonVars.swModelsInfo.swAligModelPtrVec[i];
-  for(unsigned int i=0;i<tdCommonVars.swModelsInfo.invSwAligModelPtrVec.size();++i)
-    delete tdCommonVars.swModelsInfo.invSwAligModelPtrVec[i];
-
-  tdCommonVars.swModelsInfo.featNameVec.clear();
-  tdCommonVars.swModelsInfo.invFeatNameVec.clear();
-}
-
-//--------------------------
 ThotDecoder::~ThotDecoder()
 {
       // Release server variables
   release();
 
       // Delete pointers
-  delete tdCommonVars.wpModelPtr;
   delete tdCommonVars.langModelInfoPtr->lModelPtr;
   delete tdCommonVars.langModelInfoPtr;
   delete tdCommonVars.phrModelInfoPtr->invPbModelPtr;
@@ -3430,22 +2859,6 @@ ThotDecoder::~ThotDecoder()
   delete tdCommonVars.llWeightUpdaterPtr;
   delete tdCommonVars.trConstraintsPtr;
   delete tdCommonVars.scorerPtr;
-
-      // Delete features information
-
-      // Release phrase models
-  deletePhrModelPtrsFeatImpl();
-
-      // Release language models
-  deleteLangModelPtrsFeatImpl();
-
-      // Release single-word models
-  deleteSwModelPtrsFeatImpl();
-
-      // Release feature pointers
-  for(unsigned int i=0;i<tdCommonVars.featuresInfoPtr->featPtrVec.size();++i)
-    delete tdCommonVars.featuresInfoPtr->featPtrVec[i];
-  delete tdCommonVars.featuresInfoPtr;
   
       // Release class factory handler
   tdCommonVars.dynClassFactoryHandler.release_smt_and_imt();

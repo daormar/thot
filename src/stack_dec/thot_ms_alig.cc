@@ -36,16 +36,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "_stackDecoderRec.h"
 #include "BaseStackDecoder.h"
 #include THOT_SMTMODEL_H // Define SmtModel type. It is set in
-                              // configure by checking SMTMODEL_H
-                              // variable (default value: SmtModel.h)
-#include "FeaturesInfo.h"
+                         // configure by checking SMTMODEL_H
+                         // variable (default value: SmtModel.h)
+#include "FeatureHandler.h"
 #include "_pbTransModel.h"
 #include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
 #include "BasePbTransModel.h"
 #include "SwModelInfo.h"
-#include "PhraseModelsInfo.h"
-#include "LangModelsInfo.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
 #include "BaseTranslationConstraints.h"
@@ -120,7 +118,13 @@ struct thot_ms_alig_pars
 
 //--------------- Function Declarations ------------------------------
 
+int init_translator_legacy_impl(const thot_ms_alig_pars& tap);
+void set_default_models(void);
+int add_model_features(const thot_ms_alig_pars& tap);
+int init_translator_feat_impl(const thot_ms_alig_pars& tap);
 int init_translator(const thot_ms_alig_pars& tap);
+void release_translator_legacy_impl(void);
+void release_translator_feat_impl(void);
 void release_translator(void);
 int align_corpus(const thot_ms_alig_pars& tap);
 Vector<string> stringToStringVector(string s);
@@ -158,9 +162,8 @@ BaseStackDecoder<SmtModel>* stackDecoderPtr;
 _stackDecoderRec<SmtModel>* stackDecoderRecPtr;
 
     // Variables related to feature-based implementation
-PhraseModelsInfo phraseModelsInfo;
-LangModelsInfo langModelsInfo;
-FeaturesInfo<SmtModel::HypScoreInfo>* featuresInfoPtr;
+FeatureHandler featureHandler;
+bool featureBasedImplEnabled;
 
 //--------------- Function Definitions -------------------------------
 
@@ -196,9 +199,26 @@ int main(int argc, char *argv[])
 //---------------
 int init_translator(const thot_ms_alig_pars& tap)
 {
+      // Determine which implementation is being used
+  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
+  if(pbtm_ptr)
+    featureBasedImplEnabled=true;
+  else
+    featureBasedImplEnabled=false;
+
+      // Call the appropriate initialization for current implementation
+  if(featureBasedImplEnabled)
+    init_translator_feat_impl(tap);
+  else
+    init_translator_legacy_impl(tap);
+}
+
+//---------------
+int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
+{
   int err;
   
-  cerr<<"\n- Initializing aligner...\n\n";
+  cerr<<"\n- Initializing translator...\n\n";
 
       // Show static types
   cerr<<"Static types:"<<endl;
@@ -206,7 +226,7 @@ int init_translator(const thot_ms_alig_pars& tap)
   cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
   cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
 
-      // Obtain info about translation model entries
+        // Obtain info about translation model entries
   unsigned int numTransModelEntries;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(tap.transModelPref.c_str(),modelDescEntryVec)==OK)
@@ -219,9 +239,7 @@ int init_translator(const thot_ms_alig_pars& tap)
   if(err==ERROR)
     return ERROR;
 
-      // Create aligner variables
-  featuresInfoPtr=new FeaturesInfo<SmtModel::HypScoreInfo>;
-
+      // Create decoder variables
   langModelInfoPtr=new LangModelInfo;
   langModelInfoPtr->wpModelPtr=dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(dynClassFactoryHandler.baseWordPenaltyModelInitPars);
   if(langModelInfoPtr->wpModelPtr==NULL)
@@ -244,7 +262,7 @@ int init_translator(const thot_ms_alig_pars& tap)
     cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
     return ERROR;
   }
-  
+
       // Add one swm pointer per each translation model entry
   swModelInfoPtr=new SwModelInfo;
   for(unsigned int i=0;i<numTransModelEntries;++i)
@@ -320,13 +338,6 @@ int init_translator(const thot_ms_alig_pars& tap)
     }
   }
 
-      // Link features information if appliable 
-  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
-  if(pbtm_ptr)
-  {
-    pbtm_ptr->link_feats_info(featuresInfoPtr);
-  }
-
       // Set heuristic
   smtModelPtr->setHeuristic(tap.heuristic);
 
@@ -338,12 +349,11 @@ int init_translator(const thot_ms_alig_pars& tap)
       // Set model parameters
   smtModelPtr->set_W_par(tap.W);
   smtModelPtr->set_A_par(tap.A);
-  smtModelPtr->set_E_par(tap.E);
   smtModelPtr->set_U_par(tap.nomon);
 
       // Set verbosity
   smtModelPtr->setVerbosity(tap.verbosity);
-
+    
       // Create a translator instance
   stackDecoderPtr=dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(dynClassFactoryHandler.baseStackDecoderInitPars);
   if(stackDecoderPtr==NULL)
@@ -362,6 +372,7 @@ int init_translator(const thot_ms_alig_pars& tap)
   stackDecoderPtr->set_S_par(tap.S);
   stackDecoderPtr->set_I_par(tap.I);
   stackDecoderPtr->set_G_par(tap.G);
+
       // Enable best score pruning if the decoder is not going to obtain
       // n-best translations or word-graphs
   if(tap.wgPruningThreshold==DISABLE_WORDGRAPH)
@@ -375,12 +386,149 @@ int init_translator(const thot_ms_alig_pars& tap)
         // Enable word graph according to wgPruningThreshold
     if(tap.wordGraphFileName!="")
     {
-      
       if(tap.wgPruningThreshold!=DISABLE_WORDGRAPH)
-        stackDecoderRecPtr->enableWordGraph();    
+        stackDecoderRecPtr->enableWordGraph();
     }
   }
+      // Set translator verbosity
+  stackDecoderPtr->setVerbosity(tap.verbosity);
+
+  return OK;
+}
+
+//---------------
+void set_default_models(void)
+{
+  featureHandler.setDefaultLangModelType(dynClassFactoryHandler.baseNgramLMSoFileName);
+  featureHandler.setDefaultTransModelType(dynClassFactoryHandler.basePhraseModelSoFileName);
+  featureHandler.setDefaultSingleWordModelType(dynClassFactoryHandler.baseSwAligModelSoFileName);
+}
+
+//---------------
+int add_model_features(const thot_ms_alig_pars& tap)
+{
+      // Add word penalty model feature
+  int ret=featureHandler.addWpmFeat(tap.verbosity);
+  if(ret==ERROR)
+    return ERROR;
+
+      // Add language model features
+  ret=featureHandler.addLmFeats(tap.languageModelFileName,tap.verbosity);
+  if(ret==ERROR)
+    return ERROR;
+
+      // Add translation model features
+  ret=featureHandler.addTmFeats(tap.languageModelFileName,tap.verbosity);
+  if(ret==ERROR)
+    return ERROR;
+
+      // Add alignment model features
+  return OK;
+}
+
+//---------------
+int init_translator_feat_impl(const thot_ms_alig_pars& tap)
+{
+  int err;
   
+  cerr<<"\n- Initializing translator...\n\n";
+
+      // Show static types
+  cerr<<"Static types:"<<endl;
+  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
+  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
+  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+
+      // Initialize class factories
+  err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
+  if(err==ERROR)
+    return ERROR;
+
+      // Create decoder variables
+  llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
+  if(llWeightUpdaterPtr==NULL)
+  {
+    cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+
+  trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
+  if(trConstraintsPtr==NULL)
+  {
+    cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+
+      // Instantiate smt model
+  smtModelPtr=new SmtModel();
+  
+      // Link log-linear weight updater and translation constraints
+  smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
+  smtModelPtr->link_trans_constraints(trConstraintsPtr);
+
+      // Link features information
+  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
+  if(pbtm_ptr)
+    pbtm_ptr->link_feats_info(featureHandler.getFeatureInfoPtr());
+
+      // Set default models for feature handler
+  set_default_models();
+  
+      // Add model features
+  add_model_features(tap);
+  
+      // Set heuristic
+  smtModelPtr->setHeuristic(tap.heuristic);
+
+      // Set weights
+  smtModelPtr->setWeights(tap.weightVec);
+  smtModelPtr->printWeights(cerr);
+  cerr<<endl;
+
+      // Set model parameters
+  smtModelPtr->set_W_par(tap.W);
+  smtModelPtr->set_A_par(tap.A);
+  smtModelPtr->set_U_par(tap.nomon);
+
+      // Set verbosity
+  smtModelPtr->setVerbosity(tap.verbosity);
+    
+      // Create a translator instance
+  stackDecoderPtr=dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(dynClassFactoryHandler.baseStackDecoderInitPars);
+  if(stackDecoderPtr==NULL)
+  {
+    cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<endl;
+    return ERROR;
+  }
+
+      // Determine if the translator incorporates hypotheses recombination
+  stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<SmtModel>*>(stackDecoderPtr);
+
+      // Link translation model
+  stackDecoderPtr->link_smt_model(smtModelPtr);
+    
+      // Set translator parameters
+  stackDecoderPtr->set_S_par(tap.S);
+  stackDecoderPtr->set_I_par(tap.I);
+  stackDecoderPtr->set_G_par(tap.G);
+
+      // Enable best score pruning if the decoder is not going to obtain
+      // n-best translations or word-graphs
+  if(tap.wgPruningThreshold==DISABLE_WORDGRAPH)
+    stackDecoderPtr->useBestScorePruning(true);
+
+      // Set breadthFirst flag
+  stackDecoderPtr->set_breadthFirst(!tap.be);
+
+  if(stackDecoderRecPtr)
+  {
+        // Enable word graph according to wgPruningThreshold
+    if(tap.wordGraphFileName!="")
+    {
+      if(tap.wgPruningThreshold!=DISABLE_WORDGRAPH)
+        stackDecoderRecPtr->enableWordGraph();
+    }
+  }
       // Set translator verbosity
   stackDecoderPtr->setVerbosity(tap.verbosity);
 
@@ -389,6 +537,15 @@ int init_translator(const thot_ms_alig_pars& tap)
 
 //---------------
 void release_translator(void)
+{
+  if(featureBasedImplEnabled)
+    release_translator_feat_impl();
+  else
+    release_translator_legacy_impl();
+}
+
+//---------------
+void release_translator_legacy_impl(void)
 {
   delete langModelInfoPtr->lModelPtr;
   delete langModelInfoPtr->wpModelPtr;
@@ -405,21 +562,21 @@ void release_translator(void)
   delete trConstraintsPtr;
   delete smtModelPtr;
 
+      // Release class factory handler
+  dynClassFactoryHandler.release_smt();
+}
+
+//---------------
+void release_translator_feat_impl(void)
+{
+  delete stackDecoderPtr;
+  delete llWeightUpdaterPtr;
+  delete trConstraintsPtr;
+  delete smtModelPtr;
+
       // Delete features information
-
-      // Release phrase models
-  for(unsigned int i=0;i<phraseModelsInfo.invPbModelPtrVec.size();++i)
-    delete phraseModelsInfo.invPbModelPtrVec[i];
-
-      // Release language models
-  for(unsigned int i=0;i<langModelsInfo.lModelPtrVec.size();++i)
-    delete langModelsInfo.lModelPtrVec[i];
-
-      // Release feature pointers
-  for(unsigned int i=0;i<featuresInfoPtr->featPtrVec.size();++i)
-    delete featuresInfoPtr->featPtrVec[i];
-  delete featuresInfoPtr;
-
+  featureHandler.clear();
+  
       // Release class factory handler
   dynClassFactoryHandler.release_smt();
 }
