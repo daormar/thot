@@ -49,9 +49,9 @@ class FeatureHandler
 
       // Functions to incorporate new features
   int addWpmFeat(int verbose);
-  int loadLmFeats(std::string lmFileName,
+  int addLmFeats(std::string lmFileName,
                   int verbose);
-  int loadTmFeats(std::string tmFilesPrefix,
+  int addTmFeats(std::string tmFilesPrefix,
                   int verbose);
 
       // Functions to print features
@@ -66,7 +66,10 @@ class FeatureHandler
 
       // Function to get pointer to feature information
   FeaturesInfo<SmtModel::HypScoreInfo>* getFeatureInfoPtr(void);
-    
+
+      // Clear function
+  void clear(void);
+  
  private:
 
   std::string defaultLangModelType;

@@ -40,8 +40,8 @@ int FeatureHandler::addWpmFeat(int verbose)
 }
 
 //---------------
-int FeatureHandler::loadLmFeats(std::string lmFileName,
-                                 int verbose)
+int FeatureHandler::addLmFeats(std::string lmFileName,
+                               int verbose)
 {
   std::string mainFileName;
   if(fileIsDescriptor(lmFileName,mainFileName))
@@ -51,8 +51,8 @@ int FeatureHandler::loadLmFeats(std::string lmFileName,
 }
 
 //---------------
-int FeatureHandler::loadTmFeats(std::string tmFilesPrefix,
-                                int verbose)
+int FeatureHandler::addTmFeats(std::string tmFilesPrefix,
+                               int verbose)
 {
   std::string mainFileName;
   if(fileIsDescriptor(tmFilesPrefix,mainFileName))
@@ -720,6 +720,14 @@ bool FeatureHandler::printLangModels(std::string lmFileName,
   {
     return SmtModelUtils::printLangModel(langModelsInfo.lModelPtrVec[0],lmFileName);
   }
+}
+
+//--------------------------
+void FeatureHandler::clear(void)
+{
+  deleteLangModelPtrs();
+  deletePhrModelPtrs();
+  deleteSwModelPtrs();
 }
 
 //--------------------------
