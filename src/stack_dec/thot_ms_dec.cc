@@ -387,6 +387,7 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
 //---------------
 void set_default_models(void)
 {
+  featureHandler.setWordPenModelType(dynClassFactoryHandler.baseWordPenaltyModelSoFileName);
   featureHandler.setDefaultLangModelType(dynClassFactoryHandler.baseNgramLMSoFileName);
   featureHandler.setDefaultTransModelType(dynClassFactoryHandler.basePhraseModelSoFileName);
   featureHandler.setDefaultSingleWordModelType(dynClassFactoryHandler.baseSwAligModelSoFileName);
@@ -396,7 +397,7 @@ void set_default_models(void)
 int add_model_features(const thot_ms_dec_pars& tdp)
 {
       // Add word penalty model feature
-  int ret=featureHandler.addWpmFeat(tdp.verbosity);
+  int ret=featureHandler.addWpFeat(tdp.verbosity);
   if(ret==ERROR)
     return ERROR;
 
