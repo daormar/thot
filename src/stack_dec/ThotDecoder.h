@@ -90,9 +90,6 @@ class ThotDecoder
   bool user_id_new(int user_id);
   void release_user_data(int user_id);
   
-      // Main functions
-  void release(void);
-
       // Functions to initialize the decoder
   int initUsingCfgFile(std::string cfgFile,
                        ThotDecoderUserPars& tdup,
@@ -195,6 +192,7 @@ class ThotDecoder
   void decrease_non_atomic_ops_running(void);
 
       // Functions to initialize translator
+  bool featureBasedImplIsEnabled(void);
   void init_translator_legacy_impl(void);
   void init_translator_feat_impl(void);
   
@@ -302,6 +300,8 @@ class ThotDecoder
   bool instantiate_swm_info(const char* tmFilesPrefix,
                             int verbose=0);
   void deleteSwModelPtrs(void);
-
+  void destroy_feat_impl(void);
+  void destroy_legacy_impl(void);
+    
 };
 #endif

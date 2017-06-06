@@ -35,17 +35,30 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 ThotDecoder::ThotDecoder()
 {
       // Determine which implementation is being used
-  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
-  if(pbtm_ptr)
-    tdCommonVars.featureBasedImplEnabled=true;
-  else
-    tdCommonVars.featureBasedImplEnabled=false;
+  tdCommonVars.featureBasedImplEnabled=featureBasedImplIsEnabled();
 
       // Call the appropriate initialization for current implementation
   if(tdCommonVars.featureBasedImplEnabled)
     init_translator_feat_impl();
   else
     init_translator_legacy_impl();
+}
+
+//--------------------------
+bool ThotDecoder::featureBasedImplIsEnabled(void)
+{
+  BasePbTransModel<SmtModel::Hypothesis>* tmpSmtModelPtr=new SmtModel();
+  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(tmpSmtModelPtr);
+  if(pbtm_ptr)
+  {
+    delete tmpSmtModelPtr;
+    return true;
+  }
+  else
+  {
+    delete tmpSmtModelPtr;
+    return false;
+  }
 }
 
 //--------------------------
@@ -253,11 +266,13 @@ void ThotDecoder::init_translator_feat_impl(void)
   _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
   if(pbtm_ptr)
     pbtm_ptr->link_feats_info(tdCommonVars.featureHandler.getFeatureInfoPtr());
-  
-      // Add word penalty model feature
-  int verbosity=true;
-  tdCommonVars.featureHandler.addWpmFeat(verbosity);
-  
+
+      // Define feature handler class loaders
+  tdCommonVars.featureHandler.setWordPenModelType(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelSoFileName);
+  tdCommonVars.featureHandler.setDefaultLangModelType(tdCommonVars.dynClassFactoryHandler.baseNgramLMSoFileName);
+  tdCommonVars.featureHandler.setDefaultTransModelType(tdCommonVars.dynClassFactoryHandler.basePhraseModelSoFileName);
+  tdCommonVars.featureHandler.setDefaultSingleWordModelType(tdCommonVars.dynClassFactoryHandler.baseSwAligModelSoFileName);
+    
       // Initialize mutexes and conditions
   pthread_mutex_init(&user_id_to_idx_mut,NULL);
   pthread_mutex_init(&atomic_op_mut,NULL);
@@ -307,30 +322,6 @@ void ThotDecoder::release_user_data(int user_id)
   }
   /////////// end of mutex 
   pthread_mutex_unlock(&user_id_to_idx_mut);  
-}
-
-//--------------------------
-void ThotDecoder::release(void)
-{
-  pthread_mutex_lock(&atomic_op_mut);
-  /////////// begin of mutex 
-
-  tdCommonVars.wgHandlerPtr->clear();
-  tdCommonVars.smtModelPtr->clear();
-  tdCommonVars.ecModelPtr->clear();
-  tdCommonVars.featureHandler.clear();
-  for(size_t i=0;i<tdPerUserVarsVec.size();++i)
-  {
-    release_idx_data(i);
-  }
-  tdPerUserVarsVec.clear();
-  tdState.default_values();
-  totalPrefixVec.clear();
-  userIdToIdx.clear();
-  idxDataReleased.clear();
-  
-  /////////// end of mutex 
-  pthread_mutex_unlock(&atomic_op_mut);
 }
 
 //--------------------------
@@ -736,7 +727,15 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
 
   // Initialize server
 
-        // Load language model
+      // Add word penalty model feature
+  if(tdCommonVars.featureBasedImplEnabled)
+  {
+    ret=tdCommonVars.featureHandler.addWpFeat(verbose);
+    if(ret==ERROR)
+      return ERROR;
+  }
+
+      // Load language model
   if(tdCommonVars.featureBasedImplEnabled)
   {
     ret=load_lm_feat_impl(lm_str.c_str(),verbose);
@@ -2180,7 +2179,25 @@ std::string ThotDecoder::postprocStr(int user_id,
 //--------------------------
 void ThotDecoder::clearTrans(int /*verbose*//*=0*/)
 {
-  release();
+  pthread_mutex_lock(&atomic_op_mut);
+  /////////// begin of mutex 
+
+  tdCommonVars.wgHandlerPtr->clear();
+  tdCommonVars.smtModelPtr->clear();
+  tdCommonVars.ecModelPtr->clear();
+  tdCommonVars.featureHandler.clear();
+  for(size_t i=0;i<tdPerUserVarsVec.size();++i)
+  {
+    release_idx_data(i);
+  }
+  tdPerUserVarsVec.clear();
+  tdState.default_values();
+  totalPrefixVec.clear();
+  userIdToIdx.clear();
+  idxDataReleased.clear();
+  
+  /////////// end of mutex 
+  pthread_mutex_unlock(&atomic_op_mut);
 }
 
 //--------------------------
@@ -2841,18 +2858,12 @@ void ThotDecoder::deleteSwModelPtrs(void)
 }
 
 //--------------------------
-ThotDecoder::~ThotDecoder()
+void ThotDecoder::destroy_feat_impl(void)
 {
-      // Release server variables
-  release();
+        // Release server variables
+  clearTrans();
 
       // Delete pointers
-  delete tdCommonVars.langModelInfoPtr->lModelPtr;
-  delete tdCommonVars.langModelInfoPtr;
-  delete tdCommonVars.phrModelInfoPtr->invPbModelPtr;
-  delete tdCommonVars.phrModelInfoPtr;
-  deleteSwModelPtrs();
-  delete tdCommonVars.swModelInfoPtr;
   delete tdCommonVars.wgHandlerPtr;
   delete tdCommonVars.smtModelPtr;
   delete tdCommonVars.ecModelPtr;
@@ -2869,4 +2880,43 @@ ThotDecoder::~ThotDecoder()
   pthread_mutex_destroy(&non_atomic_op_mut);
   pthread_mutex_destroy(&preproc_mut);
   pthread_cond_destroy(&non_atomic_op_cond);
+
+}
+
+//--------------------------
+void ThotDecoder::destroy_legacy_impl(void)
+{
+      // Release server variables
+  clearTrans();
+
+      // Delete pointers
+  delete tdCommonVars.langModelInfoPtr->wpModelPtr;
+  delete tdCommonVars.langModelInfoPtr->lModelPtr;
+  delete tdCommonVars.langModelInfoPtr;
+  delete tdCommonVars.phrModelInfoPtr->invPbModelPtr;
+  delete tdCommonVars.phrModelInfoPtr;
+  deleteSwModelPtrs();
+  delete tdCommonVars.swModelInfoPtr;
+  delete tdCommonVars.wgHandlerPtr;
+  delete tdCommonVars.smtModelPtr;
+  delete tdCommonVars.ecModelPtr;
+  delete tdCommonVars.llWeightUpdaterPtr;
+  delete tdCommonVars.trConstraintsPtr;
+  delete tdCommonVars.scorerPtr;
+    
+      // Destroy mutexes and conditions
+  pthread_mutex_destroy(&user_id_to_idx_mut);
+  pthread_mutex_destroy(&atomic_op_mut);
+  pthread_mutex_destroy(&non_atomic_op_mut);
+  pthread_mutex_destroy(&preproc_mut);
+  pthread_cond_destroy(&non_atomic_op_cond);
+}
+
+//--------------------------
+ThotDecoder::~ThotDecoder()
+{
+  if(tdCommonVars.featureBasedImplEnabled)
+    destroy_feat_impl();
+  else
+    destroy_legacy_impl();
 }
