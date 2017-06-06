@@ -65,6 +65,7 @@ struct DynClassFactoryHandler
   
       // Loaders for the different classes
   SimpleDynClassLoader<BaseWordPenaltyModel> baseWordPenaltyModelDynClassLoader;
+  std::string baseWordPenaltyModelSoFileName;
   std::string baseWordPenaltyModelInitPars;
 
   SimpleDynClassLoader<BaseNgramLM<LM_State> > baseNgramLMDynClassLoader;

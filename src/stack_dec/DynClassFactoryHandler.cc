@@ -62,13 +62,16 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
     cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
     cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
     return ERROR;
-  }   
+  }
       // Load class derived from BaseWordPenaltyModel dynamically
   if(!baseWordPenaltyModelDynClassLoader.open_module(soFileName,verbose))
   {
     cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
     return ERROR;
-  }     
+  }
+      // Store so file name
+  baseWordPenaltyModelSoFileName=soFileName;
+    
       // Store init parameters for BaseWordPenaltyModel
   baseWordPenaltyModelInitPars=initPars;
 
