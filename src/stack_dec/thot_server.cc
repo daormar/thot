@@ -134,7 +134,6 @@ int processParameters(thot_server_pars ts_pars)
   {
         // Print weights
     thotDecoderPtr->printModelWeights();
-    thotDecoderPtr->clearTrans();
     delete thotDecoderPtr;
     return OK;
   }
