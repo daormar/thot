@@ -30,7 +30,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                          // variable (default value: LM_State.h)
 #include "ModelDescriptorUtils.h"
 #include "BaseNgramLM.h"
-#include "BaseWordPenaltyModel.h"
 #include "WordIndex.h"
 #include "myVector.h"
 #include "SimpleDynClassLoader.h"
