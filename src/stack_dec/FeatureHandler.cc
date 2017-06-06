@@ -31,12 +31,36 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- FeatureHandler class functions
 
-int FeatureHandler::addWpmFeat(int verbose)
+FeatureHandler::FeatureHandler()
 {
+  
+}
+
+//---------------
+int FeatureHandler::addWpFeat(int verbose)
+{
+  std::string featName="wp";
+  cerr<<"** Creating word penalty feature ("<<featName<<" "<<wpModelType<<")"<<endl;
+
+      // Create model pointer if necessary
+  if(wpModelInfo.wpModelPtr==NULL)
+  {
+    std::string initPars;
+    wpModelInfo.wpModelPtr=wpModelInfo.classLoader.make_obj(initPars);
+    if(wpModelInfo.wpModelPtr==NULL)
+    {
+      cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;    
+      return ERROR;
+    }
+  }
+  
+      // Add feature
   WordPenaltyFeat<SmtModel::HypScoreInfo>* wordPenaltyFeatPtr=new WordPenaltyFeat<SmtModel::HypScoreInfo>;
-  wordPenaltyFeatPtr->setFeatName("wp");
-  wordPenaltyFeatPtr->link_wpm(wpModelPtr);
-  featuresInfoPtr->featPtrVec.push_back(wordPenaltyFeatPtr);
+  wordPenaltyFeatPtr->setFeatName(featName);
+  wordPenaltyFeatPtr->link_wpm(wpModelInfo.wpModelPtr);
+  featuresInfo.featPtrVec.push_back(wordPenaltyFeatPtr);
+
+  return OK;
 }
 
 //---------------
@@ -64,7 +88,23 @@ int FeatureHandler::addTmFeats(std::string tmFilesPrefix,
 //---------------
 FeaturesInfo<SmtModel::HypScoreInfo>* FeatureHandler::getFeatureInfoPtr(void)
 {
-  return featuresInfoPtr;
+  return &featuresInfo;
+}
+
+//---------------
+int FeatureHandler::setWordPenModelType(std::string modelType)
+{
+  int verbosity=false;
+  if(!wpModelInfo.classLoader.open_module(modelType,verbosity))
+  {
+    cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
+    return ERROR;
+  }
+  else
+  {
+    wpModelType=modelType;
+    return OK;
+  }  
 }
 
 //---------------
@@ -140,15 +180,15 @@ BasePhraseModel* FeatureHandler::createPmPtr(std::string modelType)
         // Create tm file pointer
     BasePhraseModel* tmPtr=simpleDynClassLoader.make_obj("");
 
-        // Store loader
-    phraseModelsInfo.simpleDynClassLoaderVec.push_back(simpleDynClassLoader);
-    
     if(tmPtr==NULL)
     {
       cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;    
       return NULL;
     }
-    
+
+        // Store loader
+    phraseModelsInfo.simpleDynClassLoaderVec.push_back(simpleDynClassLoader);
+        
     return tmPtr;
   }
 }
@@ -156,9 +196,9 @@ BasePhraseModel* FeatureHandler::createPmPtr(std::string modelType)
 //--------------------------
 unsigned int FeatureHandler::getFeatureIdx(std::string featName)
 {
-  for(unsigned int i=0;i<featuresInfoPtr->featPtrVec.size();++i)
+  for(unsigned int i=0;i<featuresInfo.featPtrVec.size();++i)
   {
-    if(featName==featuresInfoPtr->featPtrVec[i]->getFeatName())
+    if(featName==featuresInfo.featPtrVec[i]->getFeatName())
       return i;
   }
 }
@@ -365,7 +405,7 @@ bool FeatureHandler::process_tm_descriptor(std::string tmDescFile,
       int ret=createDirectPhrModelFeat(featName,modelDescEntryVec[i],&dirPmFeatPtr);
       if(ret==ERROR)
         return ERROR;
-      featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
+      featuresInfo.featPtrVec.push_back(dirPmFeatPtr);
 
           // Create inverse phrase model feature
       featName="pst_"+modelDescEntryVec[i].statusStr;
@@ -373,7 +413,7 @@ bool FeatureHandler::process_tm_descriptor(std::string tmDescFile,
       ret=createInversePhrModelFeat(featName,modelDescEntryVec[i],dirPmFeatPtr->get_pmptr(),&invPmFeatPtr);
       if(ret==ERROR)
         return ERROR;
-      featuresInfoPtr->featPtrVec.push_back(invPmFeatPtr);
+      featuresInfo.featPtrVec.push_back(invPmFeatPtr);
     }
 
         // Create source phrase length feature
@@ -382,7 +422,7 @@ bool FeatureHandler::process_tm_descriptor(std::string tmDescFile,
     int ret=createSrcPhraseLenFeat(featName,phraseModelsInfo.invPbModelPtrVec[0],&srcPhrLenFeatPtr);
     if(ret==ERROR)
       return ERROR;
-    featuresInfoPtr->featPtrVec.push_back(srcPhrLenFeatPtr);
+    featuresInfo.featPtrVec.push_back(srcPhrLenFeatPtr);
 
         // Create target phrase length feature
     featName="trg_phr_len";
@@ -390,7 +430,7 @@ bool FeatureHandler::process_tm_descriptor(std::string tmDescFile,
     ret=createTrgPhraseLenFeat(featName,phraseModelsInfo.invPbModelPtrVec[0],&trgPhrLenFeatPtr);
     if(ret==ERROR)
       return ERROR;
-    featuresInfoPtr->featPtrVec.push_back(trgPhrLenFeatPtr);
+    featuresInfo.featPtrVec.push_back(trgPhrLenFeatPtr);
 
         // Create source position jump feature
     featName="src_pos_jump";
@@ -398,7 +438,7 @@ bool FeatureHandler::process_tm_descriptor(std::string tmDescFile,
     ret=createSrcPosJumpFeat(featName,phraseModelsInfo.invPbModelPtrVec[0],&srcPosJumpFeatPtr);
     if(ret==ERROR)
       return ERROR;
-    featuresInfoPtr->featPtrVec.push_back(srcPosJumpFeatPtr);
+    featuresInfo.featPtrVec.push_back(srcPosJumpFeatPtr);
 
     return OK;
   }
@@ -430,7 +470,7 @@ bool FeatureHandler::process_tm_files_prefix(std::string tmFilesPrefix,
   int ret=createDirectPhrModelFeat(featName,modelDescEntry,&dirPmFeatPtr);
   if(ret==ERROR)
     return ERROR;
-  featuresInfoPtr->featPtrVec.push_back(dirPmFeatPtr);
+  featuresInfo.featPtrVec.push_back(dirPmFeatPtr);
 
       // Create inverse phrase model feature
   featName="pst";
@@ -438,7 +478,7 @@ bool FeatureHandler::process_tm_files_prefix(std::string tmFilesPrefix,
   ret=createInversePhrModelFeat(featName,modelDescEntry,dirPmFeatPtr->get_pmptr(),&invPmFeatPtr);
   if(ret==ERROR)
     return ERROR;
-  featuresInfoPtr->featPtrVec.push_back(invPmFeatPtr);
+  featuresInfo.featPtrVec.push_back(invPmFeatPtr);
 
       // Create source phrase length feature
   featName="src_phr_len";
@@ -446,7 +486,7 @@ bool FeatureHandler::process_tm_files_prefix(std::string tmFilesPrefix,
   ret=createSrcPhraseLenFeat(featName,phraseModelsInfo.invPbModelPtrVec[0],&srcPhrLenFeatPtr);
   if(ret==ERROR)
     return ERROR;
-  featuresInfoPtr->featPtrVec.push_back(srcPhrLenFeatPtr);
+  featuresInfo.featPtrVec.push_back(srcPhrLenFeatPtr);
 
       // Create target phrase length feature
   featName="trg_phr_len";
@@ -454,7 +494,7 @@ bool FeatureHandler::process_tm_files_prefix(std::string tmFilesPrefix,
   ret=createTrgPhraseLenFeat(featName,phraseModelsInfo.invPbModelPtrVec[0],&trgPhrLenFeatPtr);
   if(ret==ERROR)
     return ERROR;
-  featuresInfoPtr->featPtrVec.push_back(trgPhrLenFeatPtr);
+  featuresInfo.featPtrVec.push_back(trgPhrLenFeatPtr);
 
       // Create source position jump feature
   featName="src_pos_jump";
@@ -462,7 +502,7 @@ bool FeatureHandler::process_tm_files_prefix(std::string tmFilesPrefix,
   ret=createSrcPosJumpFeat(featName,phraseModelsInfo.invPbModelPtrVec[0],&srcPosJumpFeatPtr);
   if(ret==ERROR)
     return ERROR;
-  featuresInfoPtr->featPtrVec.push_back(srcPosJumpFeatPtr);
+  featuresInfo.featPtrVec.push_back(srcPosJumpFeatPtr);
   
   return OK;
 }
@@ -563,7 +603,7 @@ bool FeatureHandler::process_lm_descriptor(std::string lmDescFile,
       int ret=createLangModelFeat(featName,modelDescEntryVec[i],&lmFeatPtr);
       if(ret==ERROR)
         return ERROR;
-      featuresInfoPtr->featPtrVec.push_back(lmFeatPtr);
+      featuresInfo.featPtrVec.push_back(lmFeatPtr);
     }
     
     return OK;
@@ -597,7 +637,7 @@ bool FeatureHandler::process_lm_files_prefix(std::string lmFilesPrefix,
   int ret=createLangModelFeat(featName,modelDescEntry,&lmFeatPtr);
   if(ret==ERROR)
     return ERROR;
-  featuresInfoPtr->featPtrVec.push_back(lmFeatPtr);
+  featuresInfo.featPtrVec.push_back(lmFeatPtr);
   
   return OK;
 }
@@ -630,12 +670,12 @@ bool FeatureHandler::printLambdas(std::string modelFileName,
 
       // Obtain lambda for direct model
   unsigned int swmIdx=getFeatureIdx(featName);
-  DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=dynamic_cast<DirectPhraseModelFeat<SmtModel::HypScoreInfo>* >(featuresInfoPtr->featPtrVec[swmIdx]);
+  DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=dynamic_cast<DirectPhraseModelFeat<SmtModel::HypScoreInfo>* >(featuresInfo.featPtrVec[swmIdx]);
   float lambda_swm=dirPmFeatPtr->get_lambda();
 
       // Obtain lambda for inverse model
   unsigned int invSwmIdx=getFeatureIdx(invFeatName);
-  InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr=dynamic_cast<InversePhraseModelFeat<SmtModel::HypScoreInfo>* >(featuresInfoPtr->featPtrVec[invSwmIdx]);
+  InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr=dynamic_cast<InversePhraseModelFeat<SmtModel::HypScoreInfo>* >(featuresInfo.featPtrVec[invSwmIdx]);
   float lambda_invswm=invPmFeatPtr->get_lambda();
 
   return SmtModelUtils::printSwmLambdas(lambdaFileName.c_str(),lambda_swm,lambda_invswm);
@@ -725,9 +765,33 @@ bool FeatureHandler::printLangModels(std::string lmFileName,
 //--------------------------
 void FeatureHandler::clear(void)
 {
+      // Delete model pointers
+  deleteWpModelPtr();
   deleteLangModelPtrs();
   deletePhrModelPtrs();
   deleteSwModelPtrs();
+
+      // Delete feature pointers
+  for(unsigned int i=0;i<featuresInfo.featPtrVec.size();++i)
+  {
+    delete featuresInfo.featPtrVec[i];
+  }
+  featuresInfo.featPtrVec.clear();
+}
+
+//--------------------------
+void FeatureHandler::deleteWpModelPtr(void)
+{
+      // Release pointer
+  if(wpModelInfo.wpModelPtr!=NULL)
+  {
+    delete wpModelInfo.wpModelPtr;
+    wpModelInfo.wpModelPtr=NULL;
+  }
+
+      // Close modules
+  int verbosity=false;
+  wpModelInfo.classLoader.close_module(verbosity);
 }
 
 //--------------------------
@@ -736,12 +800,14 @@ void FeatureHandler::deleteLangModelPtrs(void)
       // Release pointers
   for(unsigned int i=0;i<langModelsInfo.lModelPtrVec.size();++i)
     delete langModelsInfo.lModelPtrVec[i];
-
+  langModelsInfo.lModelPtrVec.clear();
+  
       // Close modules
   int verbosity=false;
   for(unsigned int i=0;i<langModelsInfo.simpleDynClassLoaderVec.size();++i)
     langModelsInfo.simpleDynClassLoaderVec[i].close_module(verbosity);
-
+  langModelsInfo.simpleDynClassLoaderVec.clear();
+  
   langModelsInfo.defaultClassLoader.close_module(verbosity);
 
       // Clear model descriptor entries
@@ -760,12 +826,14 @@ void FeatureHandler::deletePhrModelPtrs(void)
       // Release pointers
   for(unsigned int i=0;i<phraseModelsInfo.invPbModelPtrVec.size();++i)
     delete phraseModelsInfo.invPbModelPtrVec[i];
-
+  phraseModelsInfo.invPbModelPtrVec.clear();
+  
       // Close modules
   int verbosity=false;
   for(unsigned int i=0;i<phraseModelsInfo.simpleDynClassLoaderVec.size();++i)
     phraseModelsInfo.simpleDynClassLoaderVec[i].close_module(verbosity);
-
+  phraseModelsInfo.simpleDynClassLoaderVec.clear();
+  
   phraseModelsInfo.defaultClassLoader.close_module(verbosity);
   
       // Clear model descriptor entries
@@ -783,12 +851,21 @@ void FeatureHandler::deleteSwModelPtrs(void)
 {
   for(unsigned int i=0;i<swModelsInfo.swAligModelPtrVec.size();++i)
     delete swModelsInfo.swAligModelPtrVec[i];
+  swModelsInfo.swAligModelPtrVec.clear();
+  
   for(unsigned int i=0;i<swModelsInfo.invSwAligModelPtrVec.size();++i)
     delete swModelsInfo.invSwAligModelPtrVec[i];
-
+  swModelsInfo.invSwAligModelPtrVec.clear();
+  
   swModelsInfo.featNameVec.clear();
   swModelsInfo.invFeatNameVec.clear();
 
   int verbosity=false;
   swModelsInfo.defaultClassLoader.close_module(verbosity);
+}
+
+//--------------------------
+FeatureHandler::~FeatureHandler()
+{
+  clear();
 }

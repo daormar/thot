@@ -40,6 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SwModelsInfo.h"
 #include "PhraseModelsInfo.h"
 #include "LangModelsInfo.h"
+#include "WpModelInfo.h"
 
 //--------------- FeatureHandler class
 
@@ -47,8 +48,11 @@ class FeatureHandler
 {
  public:
 
+      // Constructor
+  FeatureHandler();
+  
       // Functions to incorporate new features
-  int addWpmFeat(int verbose);
+  int addWpFeat(int verbose);
   int addLmFeats(std::string lmFileName,
                   int verbose);
   int addTmFeats(std::string tmFilesPrefix,
@@ -60,6 +64,7 @@ class FeatureHandler
              int verbose=0);
 
       // Functions to specify default model types
+  int setWordPenModelType(std::string modelType);
   int setDefaultLangModelType(std::string modelType);
   int setDefaultTransModelType(std::string modelType);
   int setDefaultSingleWordModelType(std::string modelType);
@@ -69,9 +74,13 @@ class FeatureHandler
 
       // Clear function
   void clear(void);
+
+      // Destructor
+  ~FeatureHandler();
   
  private:
 
+  std::string wpModelType;
   std::string defaultLangModelType;
   std::string defaultTransModelType;
   std::string defaultSingleWordModelType;
@@ -79,8 +88,8 @@ class FeatureHandler
   SwModelsInfo swModelsInfo;
   PhraseModelsInfo phraseModelsInfo;
   LangModelsInfo langModelsInfo;
-  BaseWordPenaltyModel* wpModelPtr;
-  FeaturesInfo<SmtModel::HypScoreInfo>* featuresInfoPtr;
+  WpModelInfo wpModelInfo;
+  FeaturesInfo<SmtModel::HypScoreInfo> featuresInfo;
 
       // Auxiliary functions
 
@@ -129,6 +138,7 @@ class FeatureHandler
                        int verbose=0);
        
       // Memory management functions
+  void deleteWpModelPtr(void);
   void deleteLangModelPtrs(void);
   void deletePhrModelPtrs(void);
   void deleteSwModelPtrs(void);
