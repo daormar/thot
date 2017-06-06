@@ -174,7 +174,13 @@ Vector<WordIndex> DaTriePhraseTable::getTrgSrc(const Vector<WordIndex>& s,
   // Prepare (t,s) vector as (t, UNUSED_WORD, s)
   Vector<WordIndex> t_uw_s_vec = t;
   t_uw_s_vec.push_back(UNUSED_WORD);
-  t_uw_s_vec.insert(t_uw_s_vec.end(), s.begin(), s.end());
+  wstring src = vectorToWstring(getSrc(s));
+  TrieIndex src_idx = trie_find_key(trie, (AlphaChar *) src.c_str());
+  if (src_idx == -1)
+    wcerr << L"Cannot find source phrase: " << src << endl;
+    // TODO return something special
+  //t_uw_s_vec.insert(t_uw_s_vec.end(), s.begin(), s.end());
+  t_uw_s_vec.push_back(src_idx);
 
   return t_uw_s_vec;
 }
@@ -269,11 +275,13 @@ void DaTriePhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
   // Retrieve previous states
   Count s_count = cSrc(s);
   Count t_count = cTrg(t);
-  Count src_trg_count = cSrcTrg(s, t);
 
-  // Update counts
+  // Update counts for src and trg
   addSrcInfo(s, s_count + c);  // (USUSED_WORD, s)
   trieStore(t, (int) (t_count + c).get_c_s());  // (t)
+
+  // Add data about translation - src and trg phrases have to already present
+  Count src_trg_count = cSrcTrg(s, t);
   addSrcTrgInfo(s, t, (src_trg_count + c).get_c_st());
 }
 
@@ -409,12 +417,29 @@ bool DaTriePhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
   while(trie_iterator_next(iter))
   {
     AlphaChar *key;
+    TrieState *state_src;
+    TrieIterator *iter_src;
 
     key = trie_iterator_get_key(iter);
     if (!key)
       continue;
 
-    Vector<WordIndex> src = alphaCharToVector(key);
+    Vector<WordIndex> src_vec = alphaCharToVector(key);
+    free(key);
+
+    state_src = trie_state_new(trie, src_vec[0], (short) -1);
+    iter_src = trie_iterator_new(state_src);
+    int key_len = 0;
+    key = trie_state_get_key(state_src, &key_len);
+    if (!key)
+      continue;
+    
+    Vector<WordIndex> src = alphaCharToVector(key + WORD_INDEX_MODULO_BYTES);  // Skip UNUSED_WORD character
+    
+    free(key);
+    trie_iterator_free(iter_src);
+    trie_state_free(state_src);
+
     PhrasePairInfo ppi = infSrcTrg(src, t, found);
     if (!found || (int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
       continue;

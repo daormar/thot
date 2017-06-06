@@ -163,6 +163,8 @@ TrieState * trie_root (const Trie *trie);
  *   TRIE STATE   *
  *----------------*/
 
+TrieState * trie_state_new (const Trie *trie, TrieIndex index, short suffix_idx);
+
 TrieState * trie_state_clone (const TrieState *s);
 
 void        trie_state_copy (TrieState *dst, const TrieState *src);
@@ -207,6 +209,8 @@ AlphaChar *     trie_iterator_get_key (const TrieIterator *iter);
 TrieData        trie_iterator_get_data (const TrieIterator *iter);
 
 TrieData        trie_state_get_terminal_data (const TrieState *s);
+
+AlphaChar *     trie_state_get_key (const TrieState *state, int *key_len);
 
 #ifdef __cplusplus
 }

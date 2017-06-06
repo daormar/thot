@@ -82,10 +82,6 @@ struct _TrieIterator {
 #define trie_da_get_tail_index(da,s)   (-da_get_base ((da), (s)))
 #define trie_da_set_tail_index(da,s,v) (da_set_base ((da), (s), -(v)))
 
-static TrieState * trie_state_new (const Trie *trie,
-                                   TrieIndex   index,
-                                   short       suffix_idx);
-
 static Bool        trie_store_conditionally (Trie            *trie,
                                              const AlphaChar *key,
                                              TrieData         data,
@@ -623,7 +619,7 @@ trie_root (const Trie *trie)
  *   TRIE STATE   *
  *----------------*/
 
-static TrieState *
+TrieState *
 trie_state_new (const Trie *trie,
                 TrieIndex   index,
                 short       suffix_idx)
@@ -983,6 +979,56 @@ trie_state_get_terminal_data (const TrieState *s)
     tail_index = trie_da_get_tail_index (s->trie->da, index);
 
     return tail_get_data (s->trie->tail, tail_index);
+}
+
+/**
+ * @brief Get key for a state
+ *
+ * @param  state      : trie state
+ *
+ * @return the allocated key string; NULL on failure
+ *
+ * Get key for the current @a state.
+ *
+ * The return string must be freed with free().
+ *
+ * Available since: 0.2.6
+ */
+AlphaChar *
+trie_state_get_key (const TrieState *state, int* key_len)
+{
+    AlphaChar *alpha_key;
+    TrieIndex prev_index = state->index;
+    TrieState *prev = trie_state_clone(state);
+
+    TrieState *current = trie_state_clone(prev);
+    current->index = da_get_check(prev->trie->da, prev->index);
+
+    TrieChar tc = (TrieChar) (prev->index - da_get_base(prev->trie->da, current->index));
+    AlphaChar c = alpha_map_trie_to_char(state->trie->alpha_map, tc);
+
+    if (da_get_check(prev->trie->da, current->index) == 0) {  // Root node
+        alpha_key = (AlphaChar *) malloc (sizeof (AlphaChar));
+        *alpha_key = c;
+        *key_len = 1;
+    } else {
+        AlphaChar *prefix = trie_state_get_key(current, key_len);
+        int prefix_len = *key_len;//alpha_char_strlen(prefix);
+
+        alpha_key = (AlphaChar *) malloc (sizeof (AlphaChar) * (prefix_len + 1));
+
+        for (int i = 0; i < prefix_len; i++) {
+            alpha_key[i] = prefix[i];
+        }
+
+        alpha_key[prefix_len] = c;
+
+        free(prefix);
+
+        (*key_len)++;
+    }
+
+    return alpha_key;
 }
 
 /*
