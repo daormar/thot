@@ -268,9 +268,9 @@ bool _stackDecoder<SMT_MODEL>::link_smt_model(BaseSmtModel<Hypothesis>* _smtm_pt
       // Link smt model
   smtm_ptr=dynamic_cast<SMT_MODEL*>(_smtm_ptr);
   if(smtm_ptr)
-    return true;
+    return OK;
   else
-    return false;
+    return ERROR;
 }
 
 //---------------------------------------
