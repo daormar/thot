@@ -2380,7 +2380,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   }
   
       // Link translator with the assisted translator
-  tdPerUserVarsVec[idx].assistedTransPtr->link_stack_trans(tdPerUserVarsVec[idx].stackDecoderPtr);
+  ret=tdPerUserVarsVec[idx].assistedTransPtr->link_stack_trans(tdPerUserVarsVec[idx].stackDecoderPtr);
 
       // Check if assistedTransPtr points to an uncoupled assisted
       // translator
