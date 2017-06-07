@@ -124,6 +124,14 @@ gen_src_vocab()
         cat ${p_val}_swm.svcb | $AWK '{printf"%.8d %s %s\n",$1,$2,$3}' > $srcv
     else
         cat $table | extract_src_phrases $tmpdir | obtain_vocab "NULL UNKNOWN_WORD <UNUSED_WORD>" > $srcv
+        # Reorder vocabulary to assign lower codes to the most frequent words
+        # (codes from 0-2 are reserved for special usage)
+        temp_file=$(mktemp)
+        cat $srcv | tee >(sort -k3rn | 
+                            awk '!/\ NULL\ / && !/\ UNKNOWN_WORD\ / && !/\ <UNUSED_WORD>\ /' | 
+                            awk '{printf("%.8d %s %s\n", NR+2, $2, $3)}') \
+                        >(awk '/\ NULL\ / || /\ UNKNOWN_WORD\ / || /\ <UNUSED_WORD>\ /') > /dev/null | cat > ${temp_file}
+        mv ${temp_file} $srcv
     fi
 }
 
@@ -138,6 +146,14 @@ gen_trg_vocab()
         cat ${p_val}_swm.tvcb | $AWK '{printf"%.8d %s %s\n",$1,$2,$3}' > $trgv
     else
         cat $table | extract_trg_phrases $tmpdir | obtain_vocab "NULL UNKNOWN_WORD <UNUSED_WORD>" > $trgv
+        # Reorder vocabulary to assign lower codes to the most frequent words
+        # (codes from 0-2 are reserved for special usage)
+        temp_file=$(mktemp)
+        cat $trgv | tee >(sort -k3rn | 
+                            awk '!/\ NULL\ / && !/\ UNKNOWN_WORD\ / && !/\ <UNUSED_WORD>\ /' | 
+                            awk '{printf("%.8d %s %s\n", NR+2, $2, $3)}') \
+                        >(awk '/\ NULL\ / || /\ UNKNOWN_WORD\ / || /\ <UNUSED_WORD>\ /') > /dev/null | cat > ${temp_file}
+        mv ${temp_file} $trgv
     fi
 }
 ########
