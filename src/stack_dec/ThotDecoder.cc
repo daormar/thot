@@ -2347,7 +2347,12 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].smtModelPtr=dynamic_cast<BasePbTransModel<SmtModel::Hypothesis>* >(baseSmtModelPtr);
   
       // Link statistical machine translation model
-  tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
+  int ret=tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
+  if(ret==ERROR)
+  {
+    cerr<<"Error while linking smt model to decoder, revise master.ini file"<<endl;
+    return ERROR;
+  }
 
       // Enable best score pruning
   tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);

@@ -117,6 +117,7 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp);
 void set_default_models(void);
 int add_model_features(const thot_ms_dec_pars& tdp);
 int init_translator_feat_impl(const thot_ms_dec_pars& tdp);
+bool featureBasedImplIsEnabled(void);
 int init_translator(const thot_ms_dec_pars& tdp);
 void release_translator_legacy_impl(void);
 void release_translator_feat_impl(void);
@@ -188,11 +189,7 @@ int main(int argc, char *argv[])
 int init_translator(const thot_ms_dec_pars& tdp)
 {
       // Determine which implementation is being used
-  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
-  if(pbtm_ptr)
-    featureBasedImplEnabled=true;
-  else
-    featureBasedImplEnabled=false;
+  featureBasedImplEnabled=featureBasedImplIsEnabled();
 
       // Call the appropriate initialization for current implementation
   if(featureBasedImplEnabled)
@@ -201,10 +198,27 @@ int init_translator(const thot_ms_dec_pars& tdp)
     init_translator_legacy_impl(tdp);
 }
 
+//--------------------------
+bool featureBasedImplIsEnabled(void)
+{
+  BasePbTransModel<SmtModel::Hypothesis>* tmpSmtModelPtr=new SmtModel();
+  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(tmpSmtModelPtr);
+  if(pbtm_ptr)
+  {
+    delete tmpSmtModelPtr;
+    return true;
+  }
+  else
+  {
+    delete tmpSmtModelPtr;
+    return false;
+  }
+}
+
 //---------------
 int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
 {
-  int err;
+  int ret;
   
   cerr<<"\n- Initializing translator...\n\n";
 
@@ -223,8 +237,8 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
     numTransModelEntries=1;
 
       // Initialize class factories
-  err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
-  if(err==ERROR)
+  ret=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
+  if(ret==ERROR)
     return ERROR;
 
       // Create decoder variables
@@ -311,15 +325,15 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
 
   if(phrbtm_ptr)
   {
-    err=phrbtm_ptr->loadLangModel(tdp.languageModelFileName.c_str());
-    if(err==ERROR)
+    ret=phrbtm_ptr->loadLangModel(tdp.languageModelFileName.c_str());
+    if(ret==ERROR)
     {
       release_translator();
       return ERROR;
     }
     
-    err=phrbtm_ptr->loadAligModel(tdp.transModelPref.c_str());
-    if(err==ERROR)
+    ret=phrbtm_ptr->loadAligModel(tdp.transModelPref.c_str());
+    if(ret==ERROR)
     {
       release_translator();
       return ERROR;
@@ -354,8 +368,13 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
   stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<SmtModel>*>(stackDecoderPtr);
 
       // Link translation model
-  stackDecoderPtr->link_smt_model(smtModelPtr);
-    
+  ret=stackDecoderPtr->link_smt_model(smtModelPtr);
+  if(ret==ERROR)
+  {
+    cerr<<"Error while linking smt model to decoder, revise master.ini file"<<endl;
+    return ERROR;
+  }
+  
       // Set translator parameters
   stackDecoderPtr->set_S_par(tdp.S);
   stackDecoderPtr->set_I_par(tdp.I);
@@ -407,7 +426,7 @@ int add_model_features(const thot_ms_dec_pars& tdp)
     return ERROR;
 
       // Add translation model features
-  ret=featureHandler.addTmFeats(tdp.languageModelFileName,tdp.verbosity);
+  ret=featureHandler.addTmFeats(tdp.transModelPref,tdp.verbosity);
   if(ret==ERROR)
     return ERROR;
 
@@ -418,7 +437,7 @@ int add_model_features(const thot_ms_dec_pars& tdp)
 //---------------
 int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
 {
-  int err;
+  int ret;
   
   cerr<<"\n- Initializing translator...\n\n";
 
@@ -429,8 +448,8 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
   cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
 
       // Initialize class factories
-  err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
-  if(err==ERROR)
+  ret=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
+  if(ret==ERROR)
     return ERROR;
 
       // Create decoder variables
@@ -494,8 +513,13 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
   stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<SmtModel>*>(stackDecoderPtr);
 
       // Link translation model
-  stackDecoderPtr->link_smt_model(smtModelPtr);
-    
+  ret=stackDecoderPtr->link_smt_model(smtModelPtr);
+  if(ret==ERROR)
+  {
+    cerr<<"Error while linking smt model to decoder, revise master.ini file"<<endl;
+    return ERROR;
+  }
+
       // Set translator parameters
   stackDecoderPtr->set_S_par(tdp.S);
   stackDecoderPtr->set_I_par(tdp.I);
@@ -520,7 +544,7 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
   }
       // Set translator verbosity
   stackDecoderPtr->setVerbosity(tdp.verbosity);
-
+  
   return OK;
 }
 
