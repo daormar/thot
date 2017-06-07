@@ -70,7 +70,7 @@ class _nbUncoupledAssistedTrans: public _assistedTrans<SMT_MODEL>
  public:
   
       // Link statistical translation model with the decoder
-  virtual void link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr)=0;
+  virtual int link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr)=0;
 
       // Link cat error correcting model with the decoder
   virtual void link_cat_ec_model(BaseEcModelForNbUcat* _ecm_ucat_ptr)=0;

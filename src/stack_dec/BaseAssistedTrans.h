@@ -75,7 +75,7 @@ class BaseAssistedTrans
   typedef std::string type_id_t(void);
 
       // Link stack decoder with the assisted translator
-  virtual void link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr)=0;
+  virtual int link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr)=0;
 
       // Basic services
   virtual std::string translateWithPrefix(std::string s,

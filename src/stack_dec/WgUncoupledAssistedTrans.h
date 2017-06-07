@@ -58,8 +58,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Classes --------------------------------------------
 
 
-//--------------- WgUncoupledAssistedTrans template class: interface for
-//--------------- uncoupled assisted translators
+//--------------- WgUncoupledAssistedTrans template class
 
 /**
  * @brief The WgUncoupledAssistedTrans template class implements
@@ -77,7 +76,7 @@ class WgUncoupledAssistedTrans: public _assistedTrans<SMT_MODEL>
       // Constructor
   
       // Link statistical translation model with the decoder
-  void link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr);
+  int link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr);
 
       // Link word-graph processor
   void link_wgp(BaseWgProcessorForAnlp* _wgp_ptr);
@@ -172,12 +171,15 @@ WgUncoupledAssistedTrans<SMT_MODEL>::WgUncoupledAssistedTrans(void):_assistedTra
 
 //---------------------------------
 template<class SMT_MODEL>
-void WgUncoupledAssistedTrans<SMT_MODEL>::link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr)
+int WgUncoupledAssistedTrans<SMT_MODEL>::link_stack_trans(BaseStackDecoder<SMT_MODEL>* _sd_ptr)
 {
   sdr_ptr=dynamic_cast<_stackDecoderRec<SMT_MODEL>*>(_sd_ptr);
-  if(!sdr_ptr)
+  if(sdr_ptr)
+    return OK;
+  else
   {
-    cerr<<"Error: WgUncoupledAssistedTrans class requires a stack decoder with recombination"<<endl;
+    cerr<<"Error while linking translator to assisted translator class, revise master.ini"<<endl;
+    return ERROR;
   }
 }
 
