@@ -114,6 +114,20 @@ extract_trg_phrases()
 }
 
 ########
+reorder_vocab()
+{
+    voc=$1
+    # Reorder vocabulary to assign lower codes to the most frequent words
+    # (codes from 0-2 are reserved for special usage)
+    temp_file=`${MKTEMP}`
+    cat ${voc} | $TEE >($SORT -k3rn | 
+                        $AWK '!/\ NULL\ / && !/\ UNKNOWN_WORD\ / && !/\ <UNUSED_WORD>\ /' | 
+                        $AWK '{printf("%.8d %s %s\n", NR+2, $2, $3)}') \
+                    >($AWK '/\ NULL\ / || /\ UNKNOWN_WORD\ / || /\ <UNUSED_WORD>\ /') > /dev/null | cat > ${temp_file}
+    mv ${temp_file} ${voc}
+}
+
+########
 gen_src_vocab()
 {
     # Generate source vocabulary
@@ -124,14 +138,6 @@ gen_src_vocab()
         cat ${p_val}_swm.svcb | $AWK '{printf"%.8d %s %s\n",$1,$2,$3}' > $srcv
     else
         cat $table | extract_src_phrases $tmpdir | obtain_vocab "NULL UNKNOWN_WORD <UNUSED_WORD>" > $srcv
-        # Reorder vocabulary to assign lower codes to the most frequent words
-        # (codes from 0-2 are reserved for special usage)
-        temp_file=$(mktemp)
-        cat $srcv | tee >(sort -k3rn | 
-                            awk '!/\ NULL\ / && !/\ UNKNOWN_WORD\ / && !/\ <UNUSED_WORD>\ /' | 
-                            awk '{printf("%.8d %s %s\n", NR+2, $2, $3)}') \
-                        >(awk '/\ NULL\ / || /\ UNKNOWN_WORD\ / || /\ <UNUSED_WORD>\ /') > /dev/null | cat > ${temp_file}
-        mv ${temp_file} $srcv
     fi
 }
 
@@ -146,14 +152,6 @@ gen_trg_vocab()
         cat ${p_val}_swm.tvcb | $AWK '{printf"%.8d %s %s\n",$1,$2,$3}' > $trgv
     else
         cat $table | extract_trg_phrases $tmpdir | obtain_vocab "NULL UNKNOWN_WORD <UNUSED_WORD>" > $trgv
-        # Reorder vocabulary to assign lower codes to the most frequent words
-        # (codes from 0-2 are reserved for special usage)
-        temp_file=$(mktemp)
-        cat $trgv | tee >(sort -k3rn | 
-                            awk '!/\ NULL\ / && !/\ UNKNOWN_WORD\ / && !/\ <UNUSED_WORD>\ /' | 
-                            awk '{printf("%.8d %s %s\n", NR+2, $2, $3)}') \
-                        >(awk '/\ NULL\ / || /\ UNKNOWN_WORD\ / || /\ <UNUSED_WORD>\ /') > /dev/null | cat > ${temp_file}
-        mv ${temp_file} $trgv
     fi
 }
 ########
@@ -162,6 +160,11 @@ gen_vocab_files()
     gen_src_vocab
 
     gen_trg_vocab
+
+    if [ $reorder -eq 1 ]; then
+        reorder_vocab $srcv
+        reorder_vocab $trgv
+    fi
 }
 
 ########
@@ -183,12 +186,13 @@ gen_datrie_files()
 
 ########
 if [ $# -lt 4 ]; then
-    echo "thot_gen_datrie_ttable -p <string> -o <string> [-T <string>] [-debug]"
+    echo "thot_gen_datrie_ttable -p <string> -o <string> [-T <string>] [-debug] [-reorder]"
     echo ""
     echo "-p <string>         prefix of translation model files"
     echo "-o <string>         output prefix"
     echo "-T <string>         directory for temporary files"
     echo "-debug              generates files in text format for"
+    echo "-reorder            assigns lower codes to more frequent words"
     echo "                    debugging purposes"
     echo ""
 else
@@ -198,6 +202,7 @@ else
     T_given=0
     tmpdir="/tmp"
     debug=0
+    reorder=0
     while [ $# -ne 0 ]; do
         case $1 in
             "-p") shift
@@ -222,6 +227,9 @@ else
                 ;;
             "-debug") shift
                 debug=1
+                ;;
+            "-reorder") shift
+                reorder=1
                 ;;
         esac
         shift
