@@ -177,10 +177,7 @@ int WgUncoupledAssistedTrans<SMT_MODEL>::link_stack_trans(BaseStackDecoder<SMT_M
   if(sdr_ptr)
     return OK;
   else
-  {
-    cerr<<"Error while linking translator to assisted translator class, revise master.ini"<<endl;
     return ERROR;
-  }
 }
 
 //---------------------------------
