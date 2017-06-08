@@ -58,6 +58,8 @@ mira_wer_factory.la mira_gtm_factory.la kb_mira_ll_wu_factory.la	\
 multi_stack_decoder_rec__swli_factory.la				\
 wg_uncoupled_assisted_trans__swli_factory.la				\
 multi_stack_decoder_rec__pbtm_factory.la				\
+wg_uncoupled_assisted_trans__pbtm_factory.la				\
+									\
 translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
 $(DB_CXX_LIBS)
 
@@ -462,6 +464,11 @@ multi_stack_decoder_rec__pbtm_factory_h=
 multi_stack_decoder_rec__pbtm_factory_defs=		\
 stack_dec/multi_stack_decoder_rec__pbtm_factory.cc
 
+##########
+wg_uncoupled_assisted_trans__pbtm_factory_h= 
+wg_uncoupled_assisted_trans__pbtm_factory_defs=		\
+stack_dec/WgUncoupledAssistedTransPbTmFactory.cc
+
 # programs
 
 ##########
@@ -747,6 +754,13 @@ $(multi_stack_decoder_rec__pbtm_factory_h)		\
 $(multi_stack_decoder_rec__pbtm_factory_defs)
 multi_stack_decoder_rec__pbtm_factory_la_LIBADD= libthot.la
 multi_stack_decoder_rec__pbtm_factory_la_LDFLAGS= -module
+
+##########
+wg_uncoupled_assisted_trans__pbtm_factory_la_SOURCES=	\
+$(wg_uncoupled_assisted_trans__pbtm_factory_h)		\
+$(wg_uncoupled_assisted_trans__pbtm_factory_defs)
+wg_uncoupled_assisted_trans__pbtm_factory_la_LIBADD= libthot.la
+wg_uncoupled_assisted_trans__pbtm_factory_la_LDFLAGS= -module
 
 ##########
 libthot_casmacat_la_SOURCES= $(casmacat_engines_h)			\

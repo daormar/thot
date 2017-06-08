@@ -47,6 +47,7 @@ BaseHypState.h BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h	\
 HypDebugData.h BaseAssistedTrans.h _assistedTrans.h			\
 KbMiraLlWuFactory.cc multi_stack_decoder_rec__ptbm_factory.cc		\
 multi_stack_decoder_rec__swli_factory.cc				\
+WgUncoupledAssistedTransPbTmFactory.cc					\
 WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc		\
 MiraGtmFactory.cc MiraWerFactory.cc TranslationConstraintsFactory.cc	\
 SmtModelUtils.h SmtModelUtils.cc
