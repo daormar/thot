@@ -229,6 +229,7 @@ PhrHypDataStr PbTransModel<EQCLASS_FUNC>::phypd_to_phypdstr(const PhrHypData phy
   phypdstr.ntarget=this->trgIndexVectorToStrVector(phypd.ntarget);
   phypdstr.sourceSegmentation=phypd.sourceSegmentation;
   phypdstr.targetSegmentCuts=phypd.targetSegmentCuts;
+  return phypdstr;
 }
 
 //---------------------------------
