@@ -160,12 +160,6 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
                      const Vector<std::string>& trgPhrase,
                      HypDataType& hypd);
 
-      // Functions for performing on-line training
-  int onlineTrainSentPair(const char *srcSent,
-                          const char *refSent,
-                          const char *sysSent,
-                          int verbose=0);
-
       // Destructor
   ~_pbTransModel();
 
@@ -828,6 +822,7 @@ template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::unkWordScoreHeur(void)
 {
       // TO-BE-DONE
+  return 0;
 }
 
 //---------------------------------
@@ -1299,16 +1294,6 @@ _pbTransModel<HYPOTHESIS>::scoreCompsForHyp(const _pbTransModel::Hypothesis& hyp
   }
   
   return result;
-}
-
-//---------------------------------
-template<class HYPOTHESIS>
-int _pbTransModel<HYPOTHESIS>::onlineTrainSentPair(const char *srcSent,
-                                                   const char *refSent,
-                                                   const char *sysSent,
-                                                   int verbose/*=0*/)
-{
-      // TO-BE-DONE  
 }
 
 //---------------------------------
