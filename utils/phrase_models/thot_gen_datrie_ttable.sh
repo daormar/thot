@@ -192,8 +192,8 @@ if [ $# -lt 4 ]; then
     echo "-o <string>         output prefix"
     echo "-T <string>         directory for temporary files"
     echo "-debug              generates files in text format for"
-    echo "-reorder            assigns lower codes to more frequent words"
     echo "                    debugging purposes"
+    echo "-reorder            assigns lower codes to more frequent words"
     echo ""
 else
     # Read parameters
