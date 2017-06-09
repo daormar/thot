@@ -42,6 +42,7 @@ SrcPhraseLenFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSen
       // Check if function was called to score the null hypothesis
   if(predHypDataStr.sourceSegmentation.empty() && newHypDataStr.sourceSegmentation.empty())
   {
+    unweightedScore=0;
     return predHypScrInf;
   }
   else
