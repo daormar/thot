@@ -42,9 +42,10 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
       // Check if function was called to score the null hypothesis
   if(predHypDataStr.sourceSegmentation.empty() && newHypDataStr.sourceSegmentation.empty())
   {
+    unweightedScore=0;
         // Obtain language model state for null hypothesis
     HypScoreInfo hypScrInf=predHypScrInf;
-    lModelPtr->getStateForBeginOfSentence(hypScrInf.lmHist);
+        // lModelPtr->getStateForBeginOfSentence(hypScrInf.lmHist);
     return hypScrInf;
   }
   else
@@ -79,7 +80,6 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
       Score iterScore=getNgramScoreGivenState(trgPhrase,state);
       unweightedScore+= iterScore;
       hypScrInf.score+= weight*iterScore;
-
           // Update current partial translation
       updateCurrPartialTranslation(trgPhrase,currPartialTrans);
     }
@@ -91,7 +91,7 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
       LM_State state;    
       getStateForWordSeqStr(currPartialTrans,state);
 
-        // Obtain score contribution for complete hypothesis
+          // Obtain score contribution for complete hypothesis
 //      Score scrCompl=getEosScoreGivenState(hypScrInf.lmHist);
       Score scrCompl=getEosScoreGivenState(state);
       unweightedScore+= scrCompl;

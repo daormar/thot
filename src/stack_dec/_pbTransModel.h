@@ -1081,17 +1081,16 @@ bool _pbTransModel<HYPOTHESIS>::getHypDataVecForGap(const Hypothesis& hyp,
   hypDataTypeVec.clear();
 
       // Obtain translations for gap
-  NbestTableNode<PhraseTransTableNodeData> nbt;
-  getTransForHypUncovGap(hyp,srcLeft,srcRight,nbt,N);
+  NbestTableNode<PhraseTransTableNodeData> ttNode;
+  getTransForHypUncovGap(hyp,srcLeft,srcRight,ttNode,N);
 
   if(this->verbosity>=2)
   {
     cerr<<"  trying to cover from src. pos. "<<srcLeft<<" to "<<srcRight<<"; ";
-    cerr<<"Filtered "<<nbt.size()<<" translations"<<endl;
+    cerr<<"Filtered "<<ttNode.size()<<" translations"<<endl;
   }
 
       // Generate hypothesis data for translations
-  NbestTableNode<PhraseTransTableNodeData> ttNode;
   NbestTableNode<PhraseTransTableNodeData>::iterator ttNodeIter;
   for(ttNodeIter=ttNode.begin();ttNodeIter!=ttNode.end();++ttNodeIter)
   {

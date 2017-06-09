@@ -186,7 +186,10 @@ template<class SCORE_INFO>
 void LangModelFeat<SCORE_INFO>::obtainCurrPartialTrans(const PhrHypDataStr& predHypDataStr,
                                                        Vector<std::string>& currPartialTrans)
 {
-  currPartialTrans.push_back(BOS_STR);
+  unsigned int n=this->lModelPtr->getNgramOrder();
+  currPartialTrans.clear();
+  for(unsigned int i=0;i<n;++i)
+    currPartialTrans.push_back(BOS_STR);
   for(unsigned int i=1;i<predHypDataStr.ntarget.size();++i)
     currPartialTrans.push_back(predHypDataStr.ntarget[i]);
 }
