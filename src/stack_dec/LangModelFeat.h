@@ -188,8 +188,11 @@ void LangModelFeat<SCORE_INFO>::obtainCurrPartialTrans(const PhrHypDataStr& pred
 {
   unsigned int n=this->lModelPtr->getNgramOrder();
   currPartialTrans.clear();
-  for(unsigned int i=0;i<n;++i)
-    currPartialTrans.push_back(BOS_STR);
+  if(n>0)
+  {
+    for(unsigned int i=0;i<n-1;++i)
+      currPartialTrans.push_back(BOS_STR);
+  }
   for(unsigned int i=1;i<predHypDataStr.ntarget.size();++i)
     currPartialTrans.push_back(predHypDataStr.ntarget[i]);
 }
