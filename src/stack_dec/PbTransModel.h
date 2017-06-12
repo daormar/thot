@@ -142,7 +142,7 @@ Score PbTransModel<EQCLASS_FUNC>::nullHypothesisScrComps(Hypothesis& nullHyp,
   for(unsigned int i=0;i<this->featuresInfoPtr->featPtrVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->featuresInfoPtr->featPtrVec[i]->extensionScore(this->pbtmInputVars.srcSentVec,hypScoreInfo,dataTypeStr,dataTypeStr,unweightedScore);
+    hypScoreInfo=this->featuresInfoPtr->featPtrVec[i]->nullHypScore(hypScoreInfo,unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
     
