@@ -39,42 +39,33 @@ TrgPhraseLenFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSen
                                                const PhrHypDataStr& newHypDataStr,
                                                Score& unweightedScore)
 {
-      // Check if function was called to score the null hypothesis
-  if(predHypDataStr.sourceSegmentation.empty() && newHypDataStr.sourceSegmentation.empty())
-  {
-    unweightedScore=0;
-    return predHypScrInf;
-  }
-  else
-  {
-        // Obtain score for hypothesis extension
-    unsigned int trglen=predHypDataStr.ntarget.size()-1;
-    HypScoreInfo hypScrInf=predHypScrInf;
-    unweightedScore=0;
+      // Obtain score for hypothesis extension
+  unsigned int trglen=predHypDataStr.ntarget.size()-1;
+  HypScoreInfo hypScrInf=predHypScrInf;
+  unweightedScore=0;
     
-    for(unsigned int i=predHypDataStr.sourceSegmentation.size();i<newHypDataStr.sourceSegmentation.size();++i)
-    {
-          // Initialize variables
-      unsigned int trgLeft;
-      unsigned int trgRight=newHypDataStr.targetSegmentCuts[i];
-      if(i==0)
-        trgLeft=1;
-      else
-        trgLeft=newHypDataStr.targetSegmentCuts[i-1]+1;
-      unsigned int nextTrgPhraseLen=trgRight-trgLeft+1;
+  for(unsigned int i=predHypDataStr.sourceSegmentation.size();i<newHypDataStr.sourceSegmentation.size();++i)
+  {
+        // Initialize variables
+    unsigned int trgLeft;
+    unsigned int trgRight=newHypDataStr.targetSegmentCuts[i];
+    if(i==0)
+      trgLeft=1;
+    else
+      trgLeft=newHypDataStr.targetSegmentCuts[i-1]+1;
+    unsigned int nextTrgPhraseLen=trgRight-trgLeft+1;
 
-          // Update score
-      Score iterScore=trgSegmLenScore(trglen+nextTrgPhraseLen,trglen,0);
-      unweightedScore+= iterScore;
-      hypScrInf.score+= weight*iterScore;
+        // Update score
+    Score iterScore=trgSegmLenScore(trglen+nextTrgPhraseLen,trglen,0);
+    unweightedScore+= iterScore;
+    hypScrInf.score+= weight*iterScore;
       
-          // Increase trglen
-      trglen+=nextTrgPhraseLen;
-    }
-
-        // NOTE: There are no additional score contributions when the
-        // hypothesis is complete
-    
-    return hypScrInf;
+        // Increase trglen
+    trglen+=nextTrgPhraseLen;
   }
+
+      // NOTE: There are no additional score contributions when the
+      // hypothesis is complete
+    
+  return hypScrInf;
 }

@@ -33,71 +33,72 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 template<>
 typename LangModelFeat<PhrScoreInfo>::HypScoreInfo
+LangModelFeat<PhrScoreInfo>::nullHypScore(const HypScoreInfo& predHypScrInf,
+                                          Score& unweightedScore)
+{
+  unweightedScore=0;
+      // Obtain language model state for null hypothesis
+  HypScoreInfo hypScrInf=predHypScrInf;
+      // lModelPtr->getStateForBeginOfSentence(hypScrInf.lmHist);
+  return hypScrInf;
+}
+
+//---------------
+template<>
+typename LangModelFeat<PhrScoreInfo>::HypScoreInfo
 LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
                                             const HypScoreInfo& predHypScrInf,
                                             const PhrHypDataStr& predHypDataStr,
                                             const PhrHypDataStr& newHypDataStr,
                                             Score& unweightedScore)
 {
-      // Check if function was called to score the null hypothesis
-  if(predHypDataStr.sourceSegmentation.empty() && newHypDataStr.sourceSegmentation.empty())
-  {
-    unweightedScore=0;
-        // Obtain language model state for null hypothesis
-    HypScoreInfo hypScrInf=predHypScrInf;
-        // lModelPtr->getStateForBeginOfSentence(hypScrInf.lmHist);
-    return hypScrInf;
-  }
-  else
-  {
-        // Obtain score for hypothesis extension
-    HypScoreInfo hypScrInf=predHypScrInf;
-    unweightedScore=0;
+      // Obtain score for hypothesis extension
+  HypScoreInfo hypScrInf=predHypScrInf;
+  unweightedScore=0;
 
-        // Obtain current partial translation
-    Vector<std::string> currPartialTrans;
-    obtainCurrPartialTrans(predHypDataStr,currPartialTrans);
+      // Obtain current partial translation
+  Vector<std::string> currPartialTrans;
+  obtainCurrPartialTrans(predHypDataStr,currPartialTrans);
     
-    for(unsigned int i=predHypDataStr.sourceSegmentation.size();i<newHypDataStr.sourceSegmentation.size();++i)
-    {
-          // Initialize variables
-      unsigned int trgLeft;
-      unsigned int trgRight=newHypDataStr.targetSegmentCuts[i];
-      if(i==0)
-        trgLeft=1;
-      else
-        trgLeft=newHypDataStr.targetSegmentCuts[i-1]+1;
-      Vector<std::string> trgPhrase;
-      for(unsigned int k=trgLeft;k<=trgRight;++k)
-        trgPhrase.push_back(newHypDataStr.ntarget[k]);
+  for(unsigned int i=predHypDataStr.sourceSegmentation.size();i<newHypDataStr.sourceSegmentation.size();++i)
+  {
+        // Initialize variables
+    unsigned int trgLeft;
+    unsigned int trgRight=newHypDataStr.targetSegmentCuts[i];
+    if(i==0)
+      trgLeft=1;
+    else
+      trgLeft=newHypDataStr.targetSegmentCuts[i-1]+1;
+    Vector<std::string> trgPhrase;
+    for(unsigned int k=trgLeft;k<=trgRight;++k)
+      trgPhrase.push_back(newHypDataStr.ntarget[k]);
 
-          // Obtain state info
-      LM_State state;    
-      getStateForWordSeqStr(currPartialTrans,state);
+        // Obtain state info
+    LM_State state;    
+    getStateForWordSeqStr(currPartialTrans,state);
       
-          // Update score
+        // Update score
 //      Score iterScore=getNgramScoreGivenState(trgPhrase,hypScrInf.lmHist);
-      Score iterScore=getNgramScoreGivenState(trgPhrase,state);
-      unweightedScore+= iterScore;
-      hypScrInf.score+= weight*iterScore;
-          // Update current partial translation
-      updateCurrPartialTranslation(trgPhrase,currPartialTrans);
-    }
-
-        // Check if new hypothesis is complete
-    if(numberOfSrcWordsCovered(newHypDataStr)==srcSent.size())
-    {
-          // Obtain state info
-      LM_State state;    
-      getStateForWordSeqStr(currPartialTrans,state);
-
-          // Obtain score contribution for complete hypothesis
-//      Score scrCompl=getEosScoreGivenState(hypScrInf.lmHist);
-      Score scrCompl=getEosScoreGivenState(state);
-      unweightedScore+= scrCompl;
-      hypScrInf.score+= weight*scrCompl;
-    }
-    
-    return hypScrInf;
+    Score iterScore=getNgramScoreGivenState(trgPhrase,state);
+    unweightedScore+= iterScore;
+    hypScrInf.score+= weight*iterScore;
+        // Update current partial translation
+    updateCurrPartialTranslation(trgPhrase,currPartialTrans);
   }
+
+      // Check if new hypothesis is complete
+  if(numberOfSrcWordsCovered(newHypDataStr)==srcSent.size())
+  {
+        // Obtain state info
+    LM_State state;    
+    getStateForWordSeqStr(currPartialTrans,state);
+
+        // Obtain score contribution for complete hypothesis
+//      Score scrCompl=getEosScoreGivenState(hypScrInf.lmHist);
+    Score scrCompl=getEosScoreGivenState(state);
+    unweightedScore+= scrCompl;
+    hypScrInf.score+= weight*scrCompl;
+  }
+    
+  return hypScrInf;
 }

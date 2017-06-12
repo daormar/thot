@@ -39,53 +39,44 @@ InversePhraseModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& 
                                                     const PhrHypDataStr& newHypDataStr,
                                                     Score& unweightedScore)
 {
-      // Check if function was called to score the null hypothesis
-  if(predHypDataStr.sourceSegmentation.empty() && newHypDataStr.sourceSegmentation.empty())
-  {
-    unweightedScore=0;
-    return predHypScrInf;
-  }
-  else
-  {
-        // Obtain score for hypothesis extension
-    HypScoreInfo hypScrInf=predHypScrInf;
-    unweightedScore=0;
+      // Obtain score for hypothesis extension
+  HypScoreInfo hypScrInf=predHypScrInf;
+  unweightedScore=0;
     
-    for(unsigned int i=predHypDataStr.sourceSegmentation.size();i<newHypDataStr.sourceSegmentation.size();++i)
+  for(unsigned int i=predHypDataStr.sourceSegmentation.size();i<newHypDataStr.sourceSegmentation.size();++i)
+  {
+        // Obtain source phrase boundaries
+    unsigned int srcLeft=newHypDataStr.sourceSegmentation[i].first;
+    unsigned int srcRight=newHypDataStr.sourceSegmentation[i].second;
+
+        // Obtain source phrase
+    Vector<WordIndex> srcPhrase;
+    for(unsigned int k=srcLeft;k<=srcRight;++k)
+      srcPhrase.push_back(stringToSrcWordindex(srcSent[k-1]));
+
+        // Obtain target phrase boundaries
+    unsigned int trgLeft;
+    unsigned int trgRight=newHypDataStr.targetSegmentCuts[i];
+    if(i==0)
+      trgLeft=1;
+    else
+      trgLeft=newHypDataStr.targetSegmentCuts[i-1]+1;
+
+        // Obtain target phrase
+    Vector<WordIndex> trgPhrase;
+    for(unsigned int k=trgLeft;k<=trgRight;++k)
     {
-          // Obtain source phrase boundaries
-      unsigned int srcLeft=newHypDataStr.sourceSegmentation[i].first;
-      unsigned int srcRight=newHypDataStr.sourceSegmentation[i].second;
-
-          // Obtain source phrase
-      Vector<WordIndex> srcPhrase;
-      for(unsigned int k=srcLeft;k<=srcRight;++k)
-        srcPhrase.push_back(stringToSrcWordindex(srcSent[k-1]));
-
-          // Obtain target phrase boundaries
-      unsigned int trgLeft;
-      unsigned int trgRight=newHypDataStr.targetSegmentCuts[i];
-      if(i==0)
-        trgLeft=1;
-      else
-        trgLeft=newHypDataStr.targetSegmentCuts[i-1]+1;
-
-          // Obtain target phrase
-      Vector<WordIndex> trgPhrase;
-      for(unsigned int k=trgLeft;k<=trgRight;++k)
-      {
-        trgPhrase.push_back(stringToTrgWordindex(newHypDataStr.ntarget[k]));
-      }
-
-          // Update score
-      Score iterScore=inversePhrTransUnweightedScore(srcPhrase,trgPhrase);
-      unweightedScore+= iterScore;
-      hypScrInf.score+= weight*iterScore;
+      trgPhrase.push_back(stringToTrgWordindex(newHypDataStr.ntarget[k]));
     }
 
-        // NOTE: There are no additional score contributions when the
-        // hypothesis is complete
+        // Update score
+    Score iterScore=inversePhrTransUnweightedScore(srcPhrase,trgPhrase);
+    unweightedScore+= iterScore;
+    hypScrInf.score+= weight*iterScore;
+  }
+
+      // NOTE: There are no additional score contributions when the
+      // hypothesis is complete
     
-    return hypScrInf;
-  }  
+  return hypScrInf;
 }

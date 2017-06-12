@@ -74,6 +74,8 @@ class WordPenaltyFeat: public BasePbTransModelFeature<SCORE_INFO>
   std::string getFeatType(void);
 
       // Scoring functions
+  HypScoreInfo nullHypScore(const HypScoreInfo& predHypScrInf,
+                            Score& unweightedScore);
   HypScoreInfo extensionScore(const Vector<std::string>& srcSent,
                               const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,

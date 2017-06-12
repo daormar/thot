@@ -81,6 +81,8 @@ class BasePbTransModelFeature
   virtual std::string getFeatType(void)=0;
 
       // Scoring functions
+  virtual HypScoreInfo nullHypScore(const HypScoreInfo& predHypScrInf,
+                                    Score& unweightedScore);
   virtual HypScoreInfo extensionScore(const Vector<std::string>& srcSent,
                                       const HypScoreInfo& predHypScrInf,
                                       const PhrHypDataStr& predHypDataStr,
@@ -135,6 +137,17 @@ template<class SCORE_INFO>
 std::string BasePbTransModelFeature<SCORE_INFO>::getFeatName(void)
 {
   return name;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+typename BasePbTransModelFeature<SCORE_INFO>::HypScoreInfo
+BasePbTransModelFeature<SCORE_INFO>::nullHypScore(const HypScoreInfo& predHypScrInf,
+                                                  Score& unweightedScore)
+{
+  unweightedScore=0;
+  HypScoreInfo hypScrInf=predHypScrInf;
+  return hypScrInf;
 }
 
 //---------------------------------

@@ -39,36 +39,27 @@ SrcPosJumpFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
                                              const PhrHypDataStr& newHypDataStr,
                                              Score& unweightedScore)
 {
-      // Check if function was called to score the null hypothesis
-  if(predHypDataStr.sourceSegmentation.empty() && newHypDataStr.sourceSegmentation.empty())
-  {
-    unweightedScore=0;
-    return predHypScrInf;
-  }
-  else
-  {
-        // Obtain score for hypothesis extension
-    HypScoreInfo hypScrInf=predHypScrInf;
-    unweightedScore=0;
+      // Obtain score for hypothesis extension
+  HypScoreInfo hypScrInf=predHypScrInf;
+  unweightedScore=0;
     
-    for(unsigned int i=predHypDataStr.sourceSegmentation.size();i<newHypDataStr.sourceSegmentation.size();++i)
-    {
-          // Initialize variables
-      unsigned int srcLeft=newHypDataStr.sourceSegmentation[i].first;
-      int lastSrcPosStart=srcLeft;
-      int prevSrcPosEnd;
-      if(i>0) prevSrcPosEnd=newHypDataStr.sourceSegmentation[i-1].second;
-      else prevSrcPosEnd=0;
+  for(unsigned int i=predHypDataStr.sourceSegmentation.size();i<newHypDataStr.sourceSegmentation.size();++i)
+  {
+        // Initialize variables
+    unsigned int srcLeft=newHypDataStr.sourceSegmentation[i].first;
+    int lastSrcPosStart=srcLeft;
+    int prevSrcPosEnd;
+    if(i>0) prevSrcPosEnd=newHypDataStr.sourceSegmentation[i-1].second;
+    else prevSrcPosEnd=0;
 
-          // Update score
-      Score iterScore=srcJumpScore(abs(lastSrcPosStart-(prevSrcPosEnd+1)));
-      unweightedScore+= iterScore;
-      hypScrInf.score+= weight*iterScore;
-    }
-
-        // NOTE: There are no additional score contributions when the
-        // hypothesis is complete
-    
-    return hypScrInf;
+        // Update score
+    Score iterScore=srcJumpScore(abs(lastSrcPosStart-(prevSrcPosEnd+1)));
+    unweightedScore+= iterScore;
+    hypScrInf.score+= weight*iterScore;
   }
+
+      // NOTE: There are no additional score contributions when the
+      // hypothesis is complete
+    
+  return hypScrInf;
 }
