@@ -863,15 +863,23 @@ void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
   this->printWeights(outS);
   outS <<" ; ";
 
-      // Obtain score components
+      // Obtain null hypothesis score components
+  Hypothesis nullHyp;
+  Vector<Score> nullHypScoreComponents;
+  this->nullHypothesisScrComps(nullHyp,nullHypScoreComponents);
+  
+      // Obtain extension score components
   Hypothesis auxHyp;
-  Vector<Score> scoreComponents;
+  Vector<Score> extScoreComponents;
   HypDataType hypDataType=hyp.getData();
-  this->incrScore(this->nullHypothesis(),hypDataType,auxHyp,scoreComponents);
+  this->incrScore(nullHyp,hypDataType,auxHyp,extScoreComponents);
 
       // Print score components
-  for(unsigned int i=0;i<scoreComponents.size();++i)
-    outS<<scoreComponents[i]<<" ";
+  for(unsigned int i=0;i<extScoreComponents.size();++i)
+  {
+    outS<<nullHypScoreComponents[i]+extScoreComponents[i]<<" ";
+//    outS<<extScoreComponents[i]<<" ";
+  }
 
       // Print score + heuristic
   addHeuristicToHyp(auxHyp);
@@ -912,7 +920,7 @@ void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
     auxHyp=hyp;
     while(this->obtainPredecessor(auxHyp))
     {
-      scoreComponents=scoreCompsForHyp(auxHyp);
+      Vector<Score> scoreComponents=scoreCompsForHyp(auxHyp);
       outS<<"Step "<<numSteps<<" : ";
       for(unsigned int i=0;i<scoreComponents.size();++i)
       {
