@@ -98,14 +98,14 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
   Score getEosScoreGivenState(LM_State& lmHist);
   Score getNgramScoreGivenState(Vector<std::string> trgphrase,
                                 LM_State& lmHist);
-  void getStateForWordSeqStr(const Vector<std::string>& wordSeq,
+  void addWordSeqToStateStr(const Vector<std::string>& trgPhrase,
+                            LM_State& state);
+  void addNextWordToStateStr(std::string word,
                              LM_State& state);
 
       // Auxiliary functions
   void obtainCurrPartialTrans(const PhrHypDataStr& predHypDataStr,
                               Vector<std::string>& currPartialTrans);
-  void updateCurrPartialTranslation(const Vector<std::string>& trgPhrase,
-                                    Vector<std::string>& currPartialTrans);
   WordIndex stringToWordIndex(std::string str);
 };
 
@@ -188,36 +188,28 @@ template<class SCORE_INFO>
 void LangModelFeat<SCORE_INFO>::obtainCurrPartialTrans(const PhrHypDataStr& predHypDataStr,
                                                        Vector<std::string>& currPartialTrans)
 {
-  unsigned int n=this->lModelPtr->getNgramOrder();
+      // Add current partial translation words
   currPartialTrans.clear();
-  if(n>0)
-  {
-    for(unsigned int i=0;i<n-1;++i)
-      currPartialTrans.push_back(BOS_STR);
-  }
   for(unsigned int i=1;i<predHypDataStr.ntarget.size();++i)
     currPartialTrans.push_back(predHypDataStr.ntarget[i]);
 }
 
 //---------------------------------
 template<class SCORE_INFO>
-void LangModelFeat<SCORE_INFO>::updateCurrPartialTranslation(const Vector<std::string>& trgPhrase,
-                                                             Vector<std::string>& currPartialTrans)
+void LangModelFeat<SCORE_INFO>::addWordSeqToStateStr(const Vector<std::string>& trgPhrase,
+                                                     LM_State& state)
 {
   for(unsigned int i=0;i<trgPhrase.size();++i)
-    currPartialTrans.push_back(trgPhrase[i]);
+    addNextWordToStateStr(trgPhrase[i],state);
 }
 
 //---------------------------------
 template<class SCORE_INFO>
-void LangModelFeat<SCORE_INFO>::getStateForWordSeqStr(const Vector<std::string>& wordSeq,
+void LangModelFeat<SCORE_INFO>::addNextWordToStateStr(std::string word,
                                                       LM_State& state)
 {
-  Vector<WordIndex> wordSeqIdx;
-  for(unsigned int i=0;i<wordSeq.size();++i)
-    wordSeqIdx.push_back(this->stringToWordIndex(wordSeq[i]));
-  
-  lModelPtr->getStateForWordSeq(wordSeqIdx,state);
+  WordIndex wordIdx=this->stringToWordIndex(word);
+  this->lModelPtr->getNgramLgProbGivenState(wordIdx,state);
 }
 
 //---------------------------------

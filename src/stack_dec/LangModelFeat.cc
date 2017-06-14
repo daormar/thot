@@ -37,9 +37,11 @@ LangModelFeat<PhrScoreInfo>::nullHypScore(const HypScoreInfo& predHypScrInf,
                                           Score& unweightedScore)
 {
   unweightedScore=0;
+
       // Obtain language model state for null hypothesis
   HypScoreInfo hypScrInf=predHypScrInf;
-      // lModelPtr->getStateForBeginOfSentence(hypScrInf.lmHist);
+  lModelPtr->getStateForBeginOfSentence(hypScrInf.lmHist);
+  
   return hypScrInf;
 }
 
@@ -59,7 +61,12 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
       // Obtain current partial translation
   Vector<std::string> currPartialTrans;
   obtainCurrPartialTrans(predHypDataStr,currPartialTrans);
-    
+
+      // Initialize state
+  LM_State state;
+  lModelPtr->getStateForBeginOfSentence(state);
+  addWordSeqToStateStr(currPartialTrans,state);
+  
   for(unsigned int i=predHypDataStr.sourceSegmentation.size();i<newHypDataStr.sourceSegmentation.size();++i)
   {
         // Initialize variables
@@ -72,33 +79,27 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
     Vector<std::string> trgPhrase;
     for(unsigned int k=trgLeft;k<=trgRight;++k)
       trgPhrase.push_back(newHypDataStr.ntarget[k]);
-
-        // Obtain state info
-    LM_State state;    
-    getStateForWordSeqStr(currPartialTrans,state);
       
         // Update score
-//      Score iterScore=getNgramScoreGivenState(trgPhrase,hypScrInf.lmHist);
     Score iterScore=getNgramScoreGivenState(trgPhrase,state);
     unweightedScore+= iterScore;
     hypScrInf.score+= weight*iterScore;
-        // Update current partial translation
-    updateCurrPartialTranslation(trgPhrase,currPartialTrans);
   }
 
       // Check if new hypothesis is complete
   if(numberOfSrcWordsCovered(newHypDataStr)==srcSent.size())
   {
-        // Obtain state info
-    LM_State state;    
-    getStateForWordSeqStr(currPartialTrans,state);
-
         // Obtain score contribution for complete hypothesis
-//      Score scrCompl=getEosScoreGivenState(hypScrInf.lmHist);
     Score scrCompl=getEosScoreGivenState(state);
     unweightedScore+= scrCompl;
     hypScrInf.score+= weight*scrCompl;
+
+        // Add end of sentence to current translation
+    currPartialTrans.push_back(EOS_STR);
   }
-    
+
+      // Set language model history for hypothesis
+  hypScrInf.lmHist=state;
+  
   return hypScrInf;
 }
