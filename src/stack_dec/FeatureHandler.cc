@@ -537,7 +537,7 @@ BaseNgramLM<LM_State>* FeatureHandler::createLmPtr(std::string modelType)
 
     if(lmPtr==NULL)
     {
-      cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;    
+      cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;    
       return NULL;
     }
     
