@@ -96,6 +96,7 @@ SUFFIXES= .sh .pl .py .awk
 	echo "#! " $(BASH) > $@
 	echo "pkgname=\""$(PACKAGE_NAME)"\"" >> $@
 	echo "version=\""$(PACKAGE_VERSION)"\"" >> $@
+	echo "bugreport=\""$(PACKAGE_BUGREPORT)"\"" >> $@
 	echo "bindir="$(prefix)/bin/ >> $@
 	echo "libdir="$(prefix)/lib/ >> $@
 	echo "datadir="$(prefix)/share/$(PACKAGE_NAME) >> $@
