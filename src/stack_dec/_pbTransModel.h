@@ -152,6 +152,8 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   void getWeights(Vector<pair<std::string,float> >& compWeights);
   void printWeights(ostream &outS);
   unsigned int getNumWeights(void);
+  void getUnweightedComps(const Vector<Score>& scrComps,
+                          Vector<Score>& unweightedScrComps);
   Vector<Score> scoreCompsForHyp(const Hypothesis& hyp);
 
       // Specific phrase-based functions
@@ -1048,9 +1050,9 @@ void _pbTransModel<HYPOTHESIS>::printWeights(ostream &outS)
   getWeights(compWeights);
   for(unsigned int i=0;i<compWeights.size();++i)
   {
-    cerr<<compWeights[i].first<<": "<<compWeights[i].second;
+    outS<<compWeights[i].first<<": "<<compWeights[i].second;
     if(i!=compWeights.size()-1)
-      cerr<<" , ";
+      outS<<" , ";
   }
 }
 
@@ -1059,6 +1061,14 @@ template<class HYPOTHESIS>
 unsigned int _pbTransModel<HYPOTHESIS>::getNumWeights(void)
 {
   return featuresInfoPtr->featPtrVec.size();
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::getUnweightedComps(const Vector<Score>& scrComps,
+                                                   Vector<Score>& unweightedScrComps)
+{
+  unweightedScrComps=scrComps;
 }
 
 //---------------------------------

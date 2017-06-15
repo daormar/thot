@@ -160,6 +160,8 @@ class BaseSmtModel
   virtual void diffScoreCompsForHyps(const Hypothesis& pred_hyp,
                                      const Hypothesis& succ_hyp,
                                      Vector<Score>& scoreComponents)=0;
+  virtual void getUnweightedComps(const Vector<Score>& scrComps,
+                                  Vector<Score>& unweightedScrComps)=0;
 
       // Functions for performing on-line training
   virtual void setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPars,

@@ -155,6 +155,8 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   Vector<std::string> getTransInPlainTextVec(const Hypothesis& hyp)const;
       
       // Model weights functions
+  void getUnweightedComps(const Vector<Score>& scrComps,
+                          Vector<Score>& unweightedScrComps);
   Vector<Score> scoreCompsForHyp(const Hypothesis& hyp);
   
         // Specific phrase-based functions
@@ -3085,6 +3087,26 @@ Vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainTextVecTv
       trgVecStr[i]=pbtmInputVars.refSentVec[i];
   }
   return trgVecStr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _phraseBasedTransModel<HYPOTHESIS>::getUnweightedComps(const Vector<Score>& scrComps,
+                                                            Vector<Score>& unweightedScrComps)
+{
+      // Obtain weights
+  Vector<pair<std::string,float> > compWeights;
+  this->getWeights(compWeights);
+
+      // Generate unweighted component vector
+  unweightedScrComps.clear();
+  for(unsigned int i=0;i<compWeights.size();++i)
+  {
+    if(compWeights[i].second!=0)
+      unweightedScrComps.push_back(scrComps[i]/compWeights[i].second);
+    else
+      unweightedScrComps.push_back(0);
+  }
 }
 
 //---------------------------------
