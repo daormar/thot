@@ -47,7 +47,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BasePbTransModel.h"
 #include "_incrMuxPhraseModel.h"
 #include "PhraseModelInfo.h"
-#include "NgramCacheTable.h"
 #include "LangModelInfo.h"
 #include "SourceSegmentation.h"
 #include "NbestTransCacheData.h"
@@ -177,7 +176,6 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
 
       // Language model members
   LangModelInfo* langModelInfoPtr;
-  NgramCacheTable cachedNgramScores;
   
       // Phrase model members
   PhraseModelInfo* phrModelInfoPtr;
@@ -624,7 +622,7 @@ template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::getNgramScoreGivenState(const Vector<WordIndex>& target,
                                                                   LM_State &state)
 {
-      // Score not present in cache table
+        // Score not present in cache table
   Vector<WordIndex> target_lm;
   Score unweighted_result=0;
 
@@ -636,24 +634,13 @@ Score _phraseBasedTransModel<HYPOTHESIS>::getNgramScoreGivenState(const Vector<W
       
   for(unsigned int i=0;i<target_lm.size();++i)
   {
-        // Try to find score in cache table
-    NgramCacheTable::iterator nctIter=cachedNgramScores.find(make_pair(target_lm[i],state));
-    if(nctIter!=cachedNgramScores.end())
-    {
-      unweighted_result+=nctIter->second;
-    }
-    else
-    {
 #ifdef WORK_WITH_ZERO_GRAM_PROB
-      Score scr=log((double)langModelInfoPtr->lModelPtr->getZeroGramProb());
+    Score scr=log((double)langModelInfoPtr->lModelPtr->getZeroGramProb());
 #else
-      Score scr=(double)langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(target_lm[i],state);
+    Score scr=(double)langModelInfoPtr->lModelPtr->getNgramLgProbGivenState(target_lm[i],state);
 #endif
-          // Increase score
-      unweighted_result+=scr;
-          // Update cache table
-      cachedNgramScores[make_pair(target_lm[i],state)]=scr;
-    }
+        // Increase score
+    unweighted_result+=scr;
   }
       // Return result
   return langModelInfoPtr->langModelPars.lmScaleFactor*unweighted_result;
@@ -663,22 +650,11 @@ Score _phraseBasedTransModel<HYPOTHESIS>::getNgramScoreGivenState(const Vector<W
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::getScoreEndGivenState(LM_State &state)
 {
-      // Try to find score in cache table
-  NgramCacheTable::iterator nctIter=cachedNgramScores.find(make_pair(S_END,state));
-  if(nctIter!=cachedNgramScores.end())
-  {
-    return nctIter->second;
-  }
-  else
-  {
 #ifdef WORK_WITH_ZERO_GRAM_PROB
-    Score result=langModelInfoPtr->langModelPars.lmScaleFactor*log((double)langModelInfoPtr->lModelPtr->getZeroGramProb());
+  return langModelInfoPtr->langModelPars.lmScaleFactor*log((double)langModelInfoPtr->lModelPtr->getZeroGramProb());
 #else
-    Score result=langModelInfoPtr->langModelPars.lmScaleFactor*(double)langModelInfoPtr->lModelPtr->getLgProbEndGivenState(state);	
+  return langModelInfoPtr->langModelPars.lmScaleFactor*(double)langModelInfoPtr->lModelPtr->getLgProbEndGivenState(state);	
 #endif
-    cachedNgramScores[make_pair(S_END,state)]=result;
-    return result;
-  }
 }
 
 //---------------------------------------
@@ -847,9 +823,6 @@ void _phraseBasedTransModel<HYPOTHESIS>::clearTempVars(void)
   
   // Clear data structures that are used 
   // for fast access.
-
-      // Clear language models data members
-  cachedNgramScores.clear();
   
       // Clear phrase model caching data members
   cachedDirectPhrScoreVecs.clear();

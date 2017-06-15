@@ -54,8 +54,8 @@ incr_hmm_p0_alig_model_factory.la incr_phrase_model_factory.la		\
 wba_incr_phrase_model_factory.la incr_mux_phrase_model_factory.la	\
 pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
 wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
-mira_wer_factory.la mira_gtm_factory.la kb_mira_ll_wu_factory.la	\
-multi_stack_decoder_rec__swli_factory.la				\
+mira_wer_factory.la mira_gtm_factory.la mira_chrf_factory.la		\
+kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
 wg_uncoupled_assisted_trans__swli_factory.la				\
 multi_stack_decoder_rec__pbtm_factory.la				\
 wg_uncoupled_assisted_trans__pbtm_factory.la				\
@@ -278,10 +278,10 @@ stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h			\
 stack_dec/_smtMultiStack.h stack_dec/BaseLogLinWeightUpdater.h		\
 stack_dec/KbMiraLlWu.h stack_dec/BaseScorer.h				\
 stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h stack_dec/MiraWer.h	\
-stack_dec/MiraGtm.h stack_dec/_smtModel.h stack_dec/ScoreCompDefs.h	\
-stack_dec/_phrSwTransModel.h stack_dec/PhrScoreInfo.h			\
-stack_dec/PhrNbestTransTableRefKey.h stack_dec/PhrNbestTransTableRef.h	\
-stack_dec/PhrNbestTransTablePrefKey.h					\
+stack_dec/MiraGtm.h stack_dec/MiraChrF.h stack_dec/_smtModel.h		\
+stack_dec/ScoreCompDefs.h stack_dec/_phrSwTransModel.h			\
+stack_dec/PhrScoreInfo.h stack_dec/PhrNbestTransTableRefKey.h		\
+stack_dec/PhrNbestTransTableRef.h stack_dec/PhrNbestTransTablePrefKey.h	\
 stack_dec/PhrNbestTransTablePref.h stack_dec/PhrNbestTransTable.h	\
 stack_dec/PhraseBasedTmHyp.h stack_dec/PhraseBasedTmHypRec.h		\
 stack_dec/PhrLocalSwLiTmHypRec.h stack_dec/PhrLocalSwLiTm.h		\
@@ -303,7 +303,7 @@ stack_dec/LangModelsInfo.h stack_dec/FeaturesInfo.h			\
 stack_dec/FeatureHandler.h stack_dec/HypStateDict.h			\
 stack_dec/HypStateDictData.h stack_dec/HypSortCriterion.h		\
 stack_dec/client_server_defs.h stack_dec/CatDefs.h stack_dec/bleu.h	\
-stack_dec/BaseStackDecoder.h stack_dec/BaseSmtStack.h			\
+stack_dec/chrf.h stack_dec/BaseStackDecoder.h stack_dec/BaseSmtStack.h	\
 stack_dec/BaseSmtMultiStack.h stack_dec/BasePbTransModelFeature.h	\
 stack_dec/WordPenaltyFeat.h stack_dec/LangModelFeat.h			\
 stack_dec/DirectPhraseModelFeat.h stack_dec/InversePhraseModelFeat.h	\
@@ -318,16 +318,18 @@ stack_dec/SmtModelUtils.h
 stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
 stack_dec/TranslationConstraints.cc stack_dec/KbMiraLlWu.cc		\
 stack_dec/MiraBleu.cc stack_dec/MiraWer.cc stack_dec/MiraGtm.cc		\
-stack_dec/ThotDecoderClient.cc stack_dec/ThotDecoder.cc			\
-stack_dec/FeatureHandler.cc stack_dec/WordPenaltyFeat.cc		\
-stack_dec/LangModelFeat.cc stack_dec/DirectPhraseModelFeat.cc		\
-stack_dec/InversePhraseModelFeat.cc stack_dec/SrcPhraseLenFeat.cc	\
-stack_dec/TrgPhraseLenFeat.cc stack_dec/SrcPosJumpFeat.cc		\
-stack_dec/PhrScoreInfo.cc stack_dec/PhrNbestTransTableRefKey.cc		\
+stack_dec/MiraChrF.cc stack_dec/ThotDecoderClient.cc			\
+stack_dec/ThotDecoder.cc stack_dec/FeatureHandler.cc			\
+stack_dec/WordPenaltyFeat.cc stack_dec/LangModelFeat.cc			\
+stack_dec/DirectPhraseModelFeat.cc stack_dec/InversePhraseModelFeat.cc	\
+stack_dec/SrcPhraseLenFeat.cc stack_dec/TrgPhraseLenFeat.cc		\
+stack_dec/SrcPosJumpFeat.cc stack_dec/PhrScoreInfo.cc			\
+stack_dec/PhrNbestTransTableRefKey.cc					\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\
-stack_dec/bleu.cc stack_dec/BaseHypState.cc stack_dec/SmtModelUtils.cc
+stack_dec/bleu.cc stack_dec/chrf.cc stack_dec/BaseHypState.cc		\
+stack_dec/SmtModelUtils.cc
 
 if CASMACAT_LIB_ENABLED
 casmacat_engines_h= stack_dec/UserNameToUserIdMap.h		\
@@ -347,8 +349,8 @@ endif
 exper_h=
 exper_defs=
 
-testing_h= testing/KbMiraLlWuTest.h
-testing_defs= testing/KbMiraLlWuTest.cc
+testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h
+testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc
 
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
@@ -438,6 +440,10 @@ mira_gtm_factory_defs= stack_dec/MiraGtmFactory.cc
 ##########
 mira_wer_factory_h= 
 mira_wer_factory_defs= stack_dec/MiraWerFactory.cc
+
+##########
+mira_chrf_factory_h= 
+mira_chrf_factory_defs= stack_dec/MiraChrFFactory.cc
 
 ##########
 kb_mira_ll_wu_factory_h= 
@@ -720,6 +726,12 @@ mira_wer_factory_la_SOURCES= $(mira_wer_factory_h)  \
 $(mira_wer_factory_defs)
 mira_wer_factory_la_LIBADD= libthot.la
 mira_wer_factory_la_LDFLAGS= -module
+
+##########
+mira_chrf_factory_la_SOURCES= $(mira_chrf_factory_h)  \
+$(mira_chrf_factory_defs)
+mira_chrf_factory_la_LIBADD= libthot.la
+mira_chrf_factory_la_LDFLAGS= -module
 
 ##########
 kb_mira_ll_wu_factory_la_SOURCES= $(kb_mira_ll_wu_factory_h)	\

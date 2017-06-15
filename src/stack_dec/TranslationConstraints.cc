@@ -57,85 +57,94 @@ TranslationConstraints::TranslationConstraints(void)
 //---------------------------------------
 void TranslationConstraints::obtainTransConstraints(std::string rawSrcSent,int verbosity/*=0*/)
 {
-      // Initialize data members
-  srcSentVec.clear();
-  srcPhrTransMap.clear();
-  
-      // Tokenize raw source sentence
-  std::string tokRawSrcSent=tokenizeSrcSentence(rawSrcSent);
-  
-      // Convert raw source sentence into a string vector
-  Vector<std::string> tokRawSrcSentVec=StrProcUtils::stringToStringVector(tokRawSrcSent);
-
-      // Scan string vector
-  bool end=false;
-  unsigned int i=0;
-  Vector<std::string> srcPhrase;
-  Vector<std::string> trgPhrase;
-  unsigned int finalPos;
-  
-  while(!end)
+  if(rawSrcSent.empty())
   {
-    if(constraintFound(tokRawSrcSentVec,i,srcPhrase,trgPhrase,finalPos))
-    {
-          // A constraint was found
-
-          // Obtain start and end source position
-          // 
-          // NOTE: index of first source word is 1 (0 is used to refer
-          // to the NULL word)
-      unsigned int startSrcPos=srcSentVec.size()+1;
-      unsigned int endSrcPos=startSrcPos+srcPhrase.size()-1;
-      
-          // Update source sentence vector
-      for(unsigned int j=0;j<srcPhrase.size();++j)
-        srcSentVec.push_back(srcPhrase[j]);
-
-          // Update source to target constraint map
-      srcPhrTransMap[make_pair(startSrcPos,endSrcPos)]=trgPhrase;
-
-          // Set new value for i
-      i=finalPos+1;
-    }
-    else
-    {
-          // Constraint not found, add source word to srcSentVec
-      srcSentVec.push_back(tokRawSrcSentVec[i]);
-      
-          // Increase i
-      i+=1;
-    }
-        // Check ending condition
-    if(i>=tokRawSrcSentVec.size())
-      end=true;
+        // Initialize data members
+    srcSentVec.clear();
+    srcPhrTransMap.clear();
   }
-
-      // Print verbose information if requested
-  if(verbosity>0)
+  else
   {
-    if(srcPhrTransMap.size()>0)
+        // Initialize data members
+    srcSentVec.clear();
+    srcPhrTransMap.clear();
+
+        // Tokenize raw source sentence
+    std::string tokRawSrcSent=tokenizeSrcSentence(rawSrcSent);
+  
+        // Convert raw source sentence into a string vector
+    Vector<std::string> tokRawSrcSentVec=StrProcUtils::stringToStringVector(tokRawSrcSent);
+
+        // Scan string vector
+    bool end=false;
+    unsigned int i=0;
+    Vector<std::string> srcPhrase;
+    Vector<std::string> trgPhrase;
+    unsigned int finalPos;
+  
+    while(!end)
     {
-          // Print source sentence without xml tags
-      cerr<<"Source sentence without xml tags:";
-      for(unsigned int i=0;i<srcSentVec.size();++i)
+      if(constraintFound(tokRawSrcSentVec,i,srcPhrase,trgPhrase,finalPos))
       {
-        cerr<<" "<<srcSentVec[i];
-      }
-      cerr<<endl;
+            // A constraint was found
+
+            // Obtain start and end source position
+            // 
+            // NOTE: index of first source word is 1 (0 is used to refer
+            // to the NULL word)
+        unsigned int startSrcPos=srcSentVec.size()+1;
+        unsigned int endSrcPos=startSrcPos+srcPhrase.size()-1;
       
-          // Print translations constraints
-      cerr<<"Translation constraints:";
-      std::map<pair<PositionIndex,PositionIndex>,Vector<std::string> >::const_iterator const_iter;
-      for(const_iter=srcPhrTransMap.begin();const_iter!=srcPhrTransMap.end();++const_iter)
-      {
-        cerr<<" "<<const_iter->first.first<<","<<const_iter->first.second<<" ->";
-        for(unsigned int i=0;i<const_iter->second.size();++i)
-        {
-          cerr<<" "<<const_iter->second[i];
-        } 
-        cerr<<" ;";
+            // Update source sentence vector
+        for(unsigned int j=0;j<srcPhrase.size();++j)
+          srcSentVec.push_back(srcPhrase[j]);
+
+            // Update source to target constraint map
+        srcPhrTransMap[make_pair(startSrcPos,endSrcPos)]=trgPhrase;
+
+            // Set new value for i
+        i=finalPos+1;
       }
-      cerr<<endl;
+      else
+      {
+            // Constraint not found, add source word to srcSentVec
+        srcSentVec.push_back(tokRawSrcSentVec[i]);
+      
+            // Increase i
+        i+=1;
+      }
+          // Check ending condition
+      if(i>=tokRawSrcSentVec.size())
+        end=true;
+    }
+
+        // Print verbose information if requested
+    if(verbosity>0)
+    {
+      if(srcPhrTransMap.size()>0)
+      {
+            // Print source sentence without xml tags
+        cerr<<"Source sentence without xml tags:";
+        for(unsigned int i=0;i<srcSentVec.size();++i)
+        {
+          cerr<<" "<<srcSentVec[i];
+        }
+        cerr<<endl;
+      
+            // Print translations constraints
+        cerr<<"Translation constraints:";
+        std::map<pair<PositionIndex,PositionIndex>,Vector<std::string> >::const_iterator const_iter;
+        for(const_iter=srcPhrTransMap.begin();const_iter!=srcPhrTransMap.end();++const_iter)
+        {
+          cerr<<" "<<const_iter->first.first<<","<<const_iter->first.second<<" ->";
+          for(unsigned int i=0;i<const_iter->second.size();++i)
+          {
+            cerr<<" "<<const_iter->second[i];
+          } 
+          cerr<<" ;";
+        }
+        cerr<<endl;
+      }
     }
   }
 }

@@ -422,6 +422,12 @@ loglin_downhill()
     va_opt=`obtain_loglin_va_opt_values`
     iv_opt=`obtain_loglin_iv_opt_values`
 
+    # Verify that weight info was successfully obtained
+    if [ -z "${va_opt}" ]; then
+        echo "Weight info could not be obtained, check that ${outd}/tune_loglin.cfg is correct (use thot_server tool with -w option)">&2
+        return 1
+    fi
+    
     # Execute tuning algorithm
     ${bindir}/thot_dhs_min -tdir $sdir -va ${va_opt} -iv ${iv_opt} \
         -ftol ${ftol_loglin} -o ${outd}/cat_adjw -u ${bindir}/thot_dhs_cat_trgfunc ${debug_opt} || exit 1

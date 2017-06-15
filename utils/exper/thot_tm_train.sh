@@ -26,8 +26,8 @@ usage()
 {
     echo "thot_tm_train           [-pr <int>]"
     echo "                        -s <string> -t <string> {-o <string>|-a <string>}"
-    echo "                        [-nit <int>] [-af <float>] [-np <float>] [-m <int>]"
-    echo "                        [-ao <string>] [-to <int>] [-dict] [-unk]"
+    echo "                        [-nit <int>] [-af <float>] [-cpr <float>] [-np <float>]"
+    echo "                        [-m <int>] [-ao <string>] [-to <int>] [-dict] [-unk]"
     if [ ! -z "${LDB_CXX}" ]; then
         echo "                        [-bdb] [-qs <string>] [-tdir <string>]"
     else
@@ -45,6 +45,8 @@ usage()
     echo "                        the thot_gen_sw_model tool (5 by default)"
     echo "-af <float>             Alignment smoothing interpolation factor for"
     echo "                        single-word models"
+    echo "-cpr <float>            Pruning parameter used during the estimation of single"
+    echo "                        word alignment models (0.00001 by default)"
     echo "-np <float>             Probability assigned to the alignment with the NULL"
     echo "                        word for single-word models"
     echo "-m <int>                Maximum target phrase length during phrase model"
@@ -173,9 +175,11 @@ s_given=0
 t_given=0
 o_given=0
 a_given=0
-n_given=0
+nit_given=0
 niters=5
 af_given=0
+cpr_given=0
+cpr_val=0.00001
 np_given=0
 m_val=10
 ao_given=0
@@ -237,10 +241,10 @@ while [ $# -ne 0 ]; do
                 to_given=1
             fi
             ;;
-        "-n") shift
+        "-nit") shift
             if [ $# -ne 0 ]; then
                 niters=$1
-                n_given=1
+                nit_given=1
             fi
             ;;
         "-af") shift
@@ -249,6 +253,12 @@ while [ $# -ne 0 ]; do
                 af_given=1
             else
                 af_given=0
+            fi
+            ;;
+        "-cpr") shift
+            if [ $# -ne 0 ]; then
+                 cpr_opt="-cpr $1"
+                 cpr_given=1
             fi
             ;;
         "-np") shift
@@ -280,7 +290,7 @@ while [ $# -ne 0 ]; do
                 qs_given=0
             fi
             ;;
-        "-unk") dict_given=1
+        "-dict") dict_given=1
             dict_opt="-dict"
             ;;
         "-unk") unk_given=1
@@ -395,8 +405,8 @@ mkdir -p ${outd}/${outsubdir} || { echo "Error! cannot create output directory" 
 prefix=${outd}/${outsubdir}/src_trg
 relative_prefix=${outsubdir}/src_trg
 ${bindir}/thot_pbs_gen_batch_phr_model -pr ${pr_val} \
-    -s $tcorpus -t $scorpus -o $prefix -nit $niters ${af_opt} ${np_opt} \
-    -m ${m_val} ${ao_opt} -to ${to_val} ${dict_opt} ${unk_opt} \
+    -s $tcorpus -t $scorpus -o $prefix -nit $niters ${af_opt} ${cpr_opt} \
+    ${np_opt} -m ${m_val} ${ao_opt} -to ${to_val} ${dict_opt} ${unk_opt} \
     ${qs_opt} "${qs_par}" -T $tdir -sdir $sdir ${debug_opt} || exit 1
 
 # Process -bdb option if given

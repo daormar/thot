@@ -182,7 +182,7 @@ else
     s_given=0
     t_given=0
     o_given=0
-    n_given=0
+    nit_given=0
     lf_given=0
     af_given=0
     np_given=0
@@ -235,7 +235,7 @@ else
                     o_given=1
                 fi
                 ;;
-            "-n") shift
+            "-nit") shift
                 if [ $# -ne 0 ]; then
                     niters=$1
                     n_given=1

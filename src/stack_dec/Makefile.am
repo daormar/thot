@@ -15,9 +15,9 @@ BaseTranslationConstraints.h TranslationConstraints.h			\
 TranslationConstraints.cc SmtStack.h _smtStack.h SmtMultiStackRec.h	\
 _smtMultiStack.h BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc	\
 BaseScorer.h BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraGtm.h		\
-MiraGtm.cc MiraWer.h MiraWer.cc thot_li_weight_upd.cc			\
-thot_ll_weight_upd_nblist.cc _smtModel.h ScoreCompDefs.h		\
-_phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc			\
+MiraGtm.cc MiraWer.h MiraWer.cc MiraChrF.h MiraChrF.cc			\
+thot_li_weight_upd.cc thot_ll_weight_upd_nblist.cc _smtModel.h		\
+ScoreCompDefs.h _phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc	\
 PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc			\
 PhrNbestTransTableRef.h PhrNbestTransTablePrefKey.h			\
 PhrNbestTransTablePrefKey.cc PhrNbestTransTablePref.h			\
@@ -34,8 +34,8 @@ _pbTransModel.h PbTransModel.h OnlineTrainingPars.h NgramCacheTable.h	\
 _nbUncoupledAssistedTrans.h multi_stack_decoder_rec.h WpModelInfo.h	\
 LangModelPars.h LangModelInfo.h LangModelsInfo.h FeaturesInfo.h		\
 FeatureHandler.h FeatureHandler.cc HypStateDict.h HypStateDictData.h	\
-HypSortCriterion.h client_server_defs.h CatDefs.h bleu.h bleu.cc	\
-BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h			\
+HypSortCriterion.h client_server_defs.h CatDefs.h bleu.h bleu.cc chrf.h	\
+chrf.cc BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h		\
 BasePbTransModelFeature.h WordPenaltyFeat.h WordPenaltyFeat.cc		\
 LangModelFeat.h LangModelFeat.cc DirectPhraseModelFeat.h		\
 DirectPhraseModelFeat.cc InversePhraseModelFeat.h			\
@@ -49,5 +49,5 @@ KbMiraLlWuFactory.cc multi_stack_decoder_rec__ptbm_factory.cc		\
 multi_stack_decoder_rec__swli_factory.cc				\
 WgUncoupledAssistedTransPbTmFactory.cc					\
 WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc		\
-MiraGtmFactory.cc MiraWerFactory.cc TranslationConstraintsFactory.cc	\
-SmtModelUtils.h SmtModelUtils.cc
+MiraGtmFactory.cc MiraWerFactory.cc MiraChrFFactory.cc			\
+TranslationConstraintsFactory.cc SmtModelUtils.h SmtModelUtils.cc

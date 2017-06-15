@@ -152,7 +152,7 @@ while [ $end -eq 0 ]; do
     $HEAD -${curr_size} ${TDIR_SMT_SAMPLESIZE}/tcorpus_shuffled > $sys
     
     # Evaluate subset
-    ${bindir}/thot_conf_interv_smt 31415 $ref $sys ${curr_size} 10000 BLEU > ${TDIR_SMT_SAMPLESIZE}/conf_int_${curr_size}
+    ${bindir}/thot_conf_interv_smt 31415 $ref $sys ${curr_size} 10000 > ${TDIR_SMT_SAMPLESIZE}/conf_int_${curr_size}
     
     # Print interval
     conf_int=`$GREP 'conf.int.95' ${TDIR_SMT_SAMPLESIZE}/conf_int_${curr_size}`
