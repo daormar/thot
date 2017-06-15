@@ -293,27 +293,12 @@ void _stackDecoderRec<SMT_MODEL>::addArcToWordGraph(Hypothesis pred_hyp,
         words.push_back(succPartialTrans[i]);
       }
 
-          // Include unweighted score components if requested
-          // KNOWN BUG: the unweighted score components cannot be
-          //            correctly calculated for those weights
-          //            equal to zero, since the expand functions
-          //            return weighted components
       if(scoreCompsInWgIncluded)
       {
-            // Obtain weights
-        Vector<pair<std::string,float> > compWeights;
-        this->smtm_ptr->getWeights(compWeights);
-
             // Obtain components using unitary weights
         Vector<Score> scrCompsUnitary;
-        for(unsigned int i=0;i<compWeights.size();++i)
-        {
-          if(compWeights[i].second!=0)
-            scrCompsUnitary.push_back(scrComps[i]/compWeights[i].second);
-          else
-            scrCompsUnitary.push_back(0);
-        }
-                
+        this->smtm_ptr->getUnweightedComps(scrComps,scrCompsUnitary);
+
             // Add arc with score components
         wordGraphPtr->addArcWithScrComps(predStateIndex,
                                          succStateIndex,
