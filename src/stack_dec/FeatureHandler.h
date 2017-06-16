@@ -62,6 +62,10 @@ class FeatureHandler
   bool print(std::string tmFileName,
              std::string lmFileName,
              int verbose=0);
+  bool printAligModels(std::string tmFileName,
+                       int verbose=0);
+  bool printLangModels(std::string lmFileName,
+                       int verbose=0);
 
       // Functions to specify default model types
   int setWordPenModelType(std::string modelType);
@@ -132,10 +136,6 @@ class FeatureHandler
                     std::string featName,
                     std::string invFeatName,
                     int verbose=0);
-  bool printAligModels(std::string tmFileName,
-                       int verbose=0);
-  bool printLangModels(std::string lmFileName,
-                       int verbose=0);
        
       // Memory management functions
   void deleteWpModelPtr(void);
