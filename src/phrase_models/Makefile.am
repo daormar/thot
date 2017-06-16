@@ -25,4 +25,5 @@ AligInfo.h BasePhrasePairFilter.h CategPhrasePairFilter.h		\
 CategPhrasePairFilter.cc BdbPhraseTable.h BdbPhraseTable.cc		\
 BdbPhraseModel.h BdbPhraseModel.cc BdbPhraseModelFactory.cc		\
 FastBdbPhraseTable.h FastBdbPhraseTable.cc FastBdbPhraseModel.h		\
-FastBdbPhraseModel.cc FastBdbPhraseModelFactory.cc
+FastBdbPhraseModel.cc FastBdbPhraseModelFactory.cc PhraseExtractUtils.h	\
+PhraseExtractUtils.cc
