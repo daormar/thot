@@ -13,11 +13,12 @@ SwModelPars.h SwModelInfo.h _stack_decoder_statistics.h			\
 _stackDecoderRec.h _stackDecoder.h SourceSegmentation.h			\
 BaseTranslationConstraints.h TranslationConstraints.h			\
 TranslationConstraints.cc SmtStack.h _smtStack.h SmtMultiStackRec.h	\
-_smtMultiStack.h BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc	\
-BaseScorer.h BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraGtm.h		\
-MiraGtm.cc MiraWer.h MiraWer.cc MiraChrF.h MiraChrF.cc			\
-thot_li_weight_upd.cc thot_ll_weight_upd_nblist.cc _smtModel.h		\
-ScoreCompDefs.h _phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc	\
+_smtMultiStack.h WeightUpdateUtils.h WeightUpdateUtils.cc		\
+BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc BaseScorer.h	\
+BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraGtm.h MiraGtm.cc MiraWer.h	\
+MiraWer.cc MiraChrF.h MiraChrF.cc thot_li_weight_upd.cc			\
+thot_ll_weight_upd_nblist.cc _smtModel.h ScoreCompDefs.h		\
+_phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc			\
 PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc			\
 PhrNbestTransTableRef.h PhrNbestTransTablePrefKey.h			\
 PhrNbestTransTablePrefKey.cc PhrNbestTransTablePref.h			\
