@@ -41,6 +41,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include THOT_SMTMODEL_H // Define SmtModel type. It is set in
+                         // configure by checking SMTMODEL_H
+                         // variable (default value: SmtModel.h)
+#include "FeatureHandler.h"
+#include "_pbTransModel.h"
 #include "PhrLocalSwLiTm.h"
 #include "ModelDescriptorUtils.h"
 #include "DynClassFactoryHandler.h"
@@ -71,9 +76,15 @@ int takeParameters(int argc,
                    char *argv[],
                    thot_liwu_pars& pars);
 int checkParameters(thot_liwu_pars& pars);
-int initPhrModel(std::string phrModelFilePrefix);
-void releasePhrModel(void);
-int update_li_weights(const thot_liwu_pars& pars);
+bool featureBasedImplIsEnabled(void);
+int initPhrModelLegacyImpl(std::string phrModelFilePrefix);
+int initPhrModelFeatImpl(std::string phrModelFilePrefix);
+void set_default_models(void);
+int add_model_features(std::string phrModelFilePrefix);
+void releaseMemLegacyImpl(void);
+void releaseMemFeatImpl(void);
+int update_li_weights_legacy_impl(const thot_liwu_pars& pars);
+int update_li_weights_feat_impl(const thot_liwu_pars& pars);
 void printUsage(void);
 void version(void);
 
@@ -83,6 +94,10 @@ DynClassFactoryHandler dynClassFactoryHandler;
 PhraseModelInfo* phrModelInfoPtr;
 SwModelInfo* swModelInfoPtr;
 PhrLocalSwLiTm* phrLocalSwLiTmPtr;
+
+    // Variables related to feature-based implementation
+BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
+FeatureHandler featureHandler;
 
 //--------------- Function Definitions -------------------------------
 
@@ -102,17 +117,12 @@ int main(int argc,char *argv[])
     cerr<<"-t option is "<<pars.testCorpusFile<<endl;
     cerr<<"-r option is "<<pars.refCorpusFile<<endl;
     cerr<<"-v option is "<<pars.verbosity<<endl;
-
-        // Initialize weight updater
-    phrLocalSwLiTmPtr=new PhrLocalSwLiTm;
     
         // Update language model weights
-    int retVal=update_li_weights(pars);
-
-        // Release weight updater
-    delete phrLocalSwLiTmPtr;
-    
-    return retVal;
+    if(featureBasedImplIsEnabled())
+      return update_li_weights_feat_impl(pars);
+    else
+      return update_li_weights_legacy_impl(pars);
   }
 }
 
@@ -201,9 +211,29 @@ int checkParameters(thot_liwu_pars& pars)
   return OK;
 }
 
-//--------------------------------
-int initPhrModel(std::string phrModelFilePrefix)
+//--------------------------
+bool featureBasedImplIsEnabled(void)
 {
+  BasePbTransModel<SmtModel::Hypothesis>* tmpSmtModelPtr=new SmtModel();
+  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(tmpSmtModelPtr);
+  if(pbtm_ptr)
+  {
+    delete tmpSmtModelPtr;
+    return true;
+  }
+  else
+  {
+    delete tmpSmtModelPtr;
+    return false;
+  }
+}
+
+//--------------------------------
+int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
+{
+      // Initialize weight updater
+  phrLocalSwLiTmPtr=new PhrLocalSwLiTm;
+
       // Initialize class factories
   int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
   if(err==ERROR)
@@ -261,7 +291,50 @@ int initPhrModel(std::string phrModelFilePrefix)
 }
 
 //--------------------------------
-void releasePhrModel(void)
+int initPhrModelFeatImpl(std::string phrModelFilePrefix)
+{
+      // Initialize class factories
+  int ret=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
+  if(ret==ERROR)
+    return ERROR;
+
+      // Instantiate smt model
+  smtModelPtr=new SmtModel();
+  
+      // Link features information
+  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
+  if(pbtm_ptr)
+    pbtm_ptr->link_feats_info(featureHandler.getFeatureInfoPtr());
+
+      // Set default models for feature handler
+  set_default_models();
+  
+      // Add model features
+  add_model_features(phrModelFilePrefix);
+    
+  return OK;
+}
+
+//---------------
+void set_default_models(void)
+{
+  featureHandler.setDefaultTransModelType(dynClassFactoryHandler.basePhraseModelSoFileName);
+}
+
+//---------------
+int add_model_features(std::string phrModelFilePrefix)
+{
+      // Add translation model features
+  int verbosity;
+  int ret=featureHandler.addTmFeats(phrModelFilePrefix,verbosity);
+  if(ret==ERROR)
+    return ERROR;
+
+  return OK;
+}
+
+//--------------------------------
+void releaseMemLegacyImpl(void)
 {
   delete phrModelInfoPtr->invPbModelPtr;
   delete phrModelInfoPtr;
@@ -270,17 +343,30 @@ void releasePhrModel(void)
   for(unsigned int i=0;i<swModelInfoPtr->swAligModelPtrVec.size();++i)
     delete swModelInfoPtr->invSwAligModelPtrVec[i];
   delete swModelInfoPtr;
+  delete phrLocalSwLiTmPtr;
 
   dynClassFactoryHandler.release_smt();
 }
 
 //--------------------------------
-int update_li_weights(const thot_liwu_pars& pars)
+void releaseMemFeatImpl(void)
+{
+  delete smtModelPtr;
+
+      // Delete features information
+  featureHandler.clear();
+  
+      // Release class factory handler
+  dynClassFactoryHandler.release_smt();
+}
+
+//--------------------------------
+int update_li_weights_legacy_impl(const thot_liwu_pars& pars)
 {
   int retVal;
 
       // Initialize phrase model
-  retVal=initPhrModel(pars.phrModelFilePrefix);
+  retVal=initPhrModelLegacyImpl(pars.phrModelFilePrefix);
   if(retVal==ERROR)
     return ERROR;
   
@@ -300,8 +386,28 @@ int update_li_weights(const thot_liwu_pars& pars)
     return ERROR;
 
       // Release phrase model
-  releasePhrModel();
+  releaseMemLegacyImpl();
+
+  return OK;
+}
+
+//--------------------------------
+int update_li_weights_feat_impl(const thot_liwu_pars& pars)
+{
+      // Initialize phrase model
+  int retVal=initPhrModelFeatImpl(pars.phrModelFilePrefix);
+  if(retVal==ERROR)
+    return ERROR;
+
+      // Update weights
+      // TO-BE-DONE
   
+      // Print updated weights
+      // TO-BE-DONE  
+  
+      // Release phrase model
+  releaseMemFeatImpl();
+
   return OK;
 }
 
