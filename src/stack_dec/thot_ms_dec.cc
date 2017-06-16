@@ -430,7 +430,6 @@ int add_model_features(const thot_ms_dec_pars& tdp)
   if(ret==ERROR)
     return ERROR;
 
-      // Add alignment model features
   return OK;
 }
 
