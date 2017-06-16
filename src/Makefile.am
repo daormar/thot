@@ -203,7 +203,8 @@ phrase_models/BaseIncrPhraseModel.h					\
 phrase_models/BaseCountPhraseModel.h phrase_models/AlignmentExtractor.h	\
 phrase_models/AlignmentContainer.h phrase_models/AligInfo.h		\
 phrase_models/BasePhrasePairFilter.h					\
-phrase_models/CategPhrasePairFilter.h
+phrase_models/CategPhrasePairFilter.h					\
+phrase_models/PhraseExtractUtils.h
 phrase_models_defs= phrase_models/WbaIncrPhraseModel.cc			\
 phrase_models/_wbaIncrPhraseModel.cc					\
 phrase_models/_incrMuxPhraseModel.cc					\
@@ -220,7 +221,8 @@ phrase_models/IncrPhraseModel.cc phrase_models/Cache_lct_.cc		\
 phrase_models/Cache_ct_.cc phrase_models/BpSet.cc			\
 phrase_models/BasePhraseModel.cc phrase_models/BaseIncrPhraseModel.cc	\
 phrase_models/AlignmentExtractor.cc phrase_models/AlignmentContainer.cc	\
-phrase_models/CategPhrasePairFilter.cc
+phrase_models/CategPhrasePairFilter.cc					\
+phrase_models/PhraseExtractUtils.cc
 
 if HAVE_DB_CXX_LIB
 if HAVE_DB_CXX_H
