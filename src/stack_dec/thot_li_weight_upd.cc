@@ -96,7 +96,6 @@ SwModelInfo* swModelInfoPtr;
 PhrLocalSwLiTm* phrLocalSwLiTmPtr;
 
     // Variables related to feature-based implementation
-BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
 FeatureHandler featureHandler;
 
 //--------------- Function Definitions -------------------------------
@@ -297,15 +296,7 @@ int initPhrModelFeatImpl(std::string phrModelFilePrefix)
   int ret=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
   if(ret==ERROR)
     return ERROR;
-
-      // Instantiate smt model
-  smtModelPtr=new SmtModel();
   
-      // Link features information
-  _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
-  if(pbtm_ptr)
-    pbtm_ptr->link_feats_info(featureHandler.getFeatureInfoPtr());
-
       // Set default models for feature handler
   set_default_models();
   
@@ -325,7 +316,7 @@ void set_default_models(void)
 int add_model_features(std::string phrModelFilePrefix)
 {
       // Add translation model features
-  int verbosity;
+  int verbosity=false;
   int ret=featureHandler.addTmFeats(phrModelFilePrefix,verbosity);
   if(ret==ERROR)
     return ERROR;
@@ -351,8 +342,6 @@ void releaseMemLegacyImpl(void)
 //--------------------------------
 void releaseMemFeatImpl(void)
 {
-  delete smtModelPtr;
-
       // Delete features information
   featureHandler.clear();
   
@@ -400,10 +389,10 @@ int update_li_weights_feat_impl(const thot_liwu_pars& pars)
     return ERROR;
 
       // Update weights
-      // TO-BE-DONE
+  featureHandler.updateLinInterpWeights(pars.testCorpusFile,pars.refCorpusFile,pars.verbosity);
   
       // Print updated weights
-      // TO-BE-DONE  
+  featureHandler.printAligModels(pars.phrModelFilePrefix);
   
       // Release phrase model
   releaseMemFeatImpl();
