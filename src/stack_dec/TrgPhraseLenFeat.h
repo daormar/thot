@@ -113,7 +113,7 @@ std::string TrgPhraseLenFeat<SCORE_INFO>::getFeatType(void)
 //---------------------------------
 template<class SCORE_INFO>
 Score TrgPhraseLenFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::string>& /*srcPhrase*/,
-                                                    const Vector<std::string>& trgPhrase)
+                                                    const Vector<std::string>& /*trgPhrase*/)
 {
   return 0;
 }
