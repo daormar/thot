@@ -23,24 +23,87 @@ namespace WeightUpdateUtils
 {
       // Non-public function declarations
 
-  //---------------------------------
-  int linInterpWeightDhsEval(const Vector<Vector<PhrasePair> >& invPhrPairs,
-                             FILE* tmp_file,
-                             double* x,
-                             double& obj_func);
+  int linInterpWeightsDhsEval(const Vector<Vector<PhrasePair> >& invPhrPairs,
+                              DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
+                              InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
+                              FILE* tmp_file,
+                              double* x,
+                              double& obj_func);
+  double phraseModelPerplexity(const Vector<Vector<PhrasePair> >& invPhrPairs,
+                               DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
+                               InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
+                               int verbose=0);
 
       // Function definitions
+
+  //---------------------------------
+  void updateLogLinearWeights(std::string refSent,
+                              WordGraph* wgPtr,
+                              BaseLogLinWeightUpdater* llWeightUpdaterPtr,
+                              const Vector<pair<std::string,float> >& compWeights,
+                              Vector<double>& newWeights,
+                              int verbose/*=0*/)
+  {
+        // Obtain n-best list
+    unsigned int len=NBLIST_SIZE_FOR_LLWEIGHT_UPDATE;
+    Vector<pair<Score,std::string> > nblist;
+    Vector<Vector<double> > scoreCompsVec;
+    wgPtr->obtainNbestList(len,nblist,scoreCompsVec);
+
+        // Obtain current weights
+    vector<double> currentWeights;
+    for(unsigned int i=0;i<compWeights.size();++i)
+      currentWeights.push_back(compWeights[i].second);
+  
+        // Print verbose information
+    if(verbose)
+    {
+      cerr<<"Training log linear combination weights (n-best list size= "<<nblist.size()<<")..."<<endl;
+    }
+  
+        // Obtain new weights
+    newWeights.clear();
+    
+        // Check if n-best list is empty 
+    if(nblist.empty())
+      newWeights=currentWeights;
+    else
+    {    
+          // Invoke weight update engine
+      std::string reference=refSent;
+      vector<string> nblistWithNoScr;
+      for(unsigned int i=0;i<nblist.size();++i) nblistWithNoScr.push_back(nblist[i].second);
+      llWeightUpdaterPtr->update(reference,
+                                 nblistWithNoScr,
+                                 scoreCompsVec,
+                                 currentWeights,
+                                 newWeights);
+    }
+  
+    if(verbose)
+    {
+      cerr<<"The weights of the loglinear combination have been trained:"<<endl;
+      cerr<<" - Previous weights:";
+      for(unsigned int i=0;i<currentWeights.size();++i) cerr<<" "<<currentWeights[i];
+      cerr<<endl;
+      cerr<<" - New weights     :";
+      for(unsigned int i=0;i<newWeights.size();++i) cerr<<" "<<newWeights[i];
+      cerr<<endl;
+    }
+  }
   
   //---------------------------------
-  int updateLinInterpWeights(std::string srcDevCorpusFileName,
-                             std::string trgDevCorpusFileName,
+  int updateLinInterpWeights(std::string srcCorpusFileName,
+                             std::string trgCorpusFileName,
+                             DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
+                             InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
                              int verbose/*=0*/)
   {
         // Initialize downhill simplex input parameters
     Vector<double> initial_weights;
-        // Obtain weights (TO-BE-DONE)
-        // initial_weights.push_back(swModelInfoPtr->lambda_swm);
-        // initial_weights.push_back(swModelInfoPtr->lambda_invswm);
+        // Obtain weights
+    initial_weights.push_back(dirPhrModelFeatPtr->get_lambda());
+    initial_weights.push_back(invPhrModelFeatPtr->get_lambda());
     int ndim=initial_weights.size();
     double* start=(double*) malloc(ndim*sizeof(double));
     int nfunk;
@@ -58,9 +121,12 @@ namespace WeightUpdateUtils
 
         // Extract phrase pairs from development corpus
     Vector<Vector<PhrasePair> > invPhrPairs;
-        // TO-BE-DONE
-    int ret;
-//  ret=extractPhrPairsFromDevCorpus(srcDevCorpusFileName,trgDevCorpusFileName,invPhrPairs,verbose);
+    int ret=PhraseExtractUtils::extractPhrPairsFromCorpusFiles(srcCorpusFileName,
+                                                               trgCorpusFileName,
+                                                               dirPhrModelFeatPtr->get_swmptr(),
+                                                               invPhrModelFeatPtr->get_swmptr(),
+                                                               invPhrPairs,
+                                                               verbose);
     if(ret!=OK)
       return ERROR;
   
@@ -85,7 +151,7 @@ namespace WeightUpdateUtils
           break;
         case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
           double perp;
-          int retEval=linInterpWeightDhsEval(invPhrPairs,tmp_file,x,perp);
+          int retEval=linInterpWeightsDhsEval(invPhrPairs,dirPhrModelFeatPtr,invPhrModelFeatPtr,tmp_file,x,perp);
           if(retEval==ERROR)
           {
             end=true;
@@ -95,7 +161,7 @@ namespace WeightUpdateUtils
           if(verbose>=1)
           {
             cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<PHRSWLITM_DHS_FTOL<<") ; ";
-            // cerr<<"weights= "<<swModelInfoPtr->lambda_swm<<" "<<swModelInfoPtr->lambda_invswm;
+            cerr<<"weights= "<<dirPhrModelFeatPtr->get_lambda()<<" "<<invPhrModelFeatPtr->get_lambda();
             cerr<<" ; perp= "<<perp<<endl; 
           }
           break;
@@ -103,18 +169,17 @@ namespace WeightUpdateUtils
     }
   
         // Set new weights if updating was successful
-        // TO-BE-DONE
-        // if(ret==OK)
-        // {
-        //   swModelInfoPtr->lambda_swm=start[0];
-        //   swModelInfoPtr->lambda_invswm=start[1];
-        // }
-        // else
-        // {
-        //   swModelInfoPtr->lambda_swm=initial_weights[0];
-        //   swModelInfoPtr->lambda_invswm=initial_weights[1];
-        // }
-  
+    if(ret==OK)
+    {
+      dirPhrModelFeatPtr->set_lambda(start[0]);
+      invPhrModelFeatPtr->set_lambda(start[1]);
+    }
+    else
+    {
+      dirPhrModelFeatPtr->set_lambda(initial_weights[0]);
+      invPhrModelFeatPtr->set_lambda(initial_weights[1]);
+    }
+
         // Clear variables
     free(start);
     free(x);
@@ -126,12 +191,85 @@ namespace WeightUpdateUtils
       return OK; 
   }
   
-  //---------------
-  int linInterpWeightDhsEval(const Vector<Vector<PhrasePair> >& invPhrPairs,
-                             FILE* tmp_file,
-                             double* x,
-                             double& obj_func)
+  //---------------------------------
+  int linInterpWeightsDhsEval(const Vector<Vector<PhrasePair> >& invPhrPairs,
+                              DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
+                              InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
+                              FILE* tmp_file,
+                              double* x,
+                              double& obj_func)
   {
-        // TO-BE-DONE
+    LgProb totalLogProb;
+    bool weightsArePositive=true;
+    bool weightsAreBelowOne=true;
+  
+        // Fix weights to be evaluated
+    dirPhrModelFeatPtr->set_lambda(x[0]);
+    invPhrModelFeatPtr->set_lambda(x[1]);
+    for(unsigned int i=0;i<2;++i)
+    {
+      if(x[i]<0) weightsArePositive=false;
+      if(x[i]>=1) weightsAreBelowOne=false;
+    }
+  
+    if(weightsArePositive && weightsAreBelowOne)
+    {
+          // Obtain perplexity
+      obj_func=phraseModelPerplexity(invPhrPairs,
+                                     dirPhrModelFeatPtr,
+                                     invPhrModelFeatPtr,
+                                     obj_func);
+    }
+    else
+    {
+      obj_func=DBL_MAX;
+    }
+  
+        // Print result to tmp file
+    fprintf(tmp_file,"%g\n",obj_func);
+    fflush(tmp_file);
+        // step_by_step_simplex needs that the file position
+        // indicator is set at the start of the stream
+    rewind(tmp_file);
+
+    return OK;
   }
+
+  //---------------------------------
+  double phraseModelPerplexity(const Vector<Vector<PhrasePair> >& invPhrPairs,
+                               DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
+                               InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
+                               int /*verbose=0*/)
+  {
+        // Iterate over all sentences
+    double loglikelihood=0;
+    unsigned int numPhrPairs=0;
+  
+        // Obtain perplexity contribution for consistent phrase pairs
+    for(unsigned int i=0;i<invPhrPairs.size();++i)
+    {
+      for(unsigned int j=0;j<invPhrPairs[i].size();++j)
+      {
+        Vector<std::string> srcPhrasePair=invPhrPairs[i][j].t_;
+        Vector<std::string> trgPhrasePair=invPhrPairs[i][j].s_;
+
+            // Obtain unweighted score for target given source
+        Score ptsScr=dirPhrModelFeatPtr->scorePhrasePair(srcPhrasePair,trgPhrasePair);
+        Score unweightedPtsScr=ptsScr/dirPhrModelFeatPtr->getWeight();
+              
+            // Obtain unweighted score for source given target
+        Score pstScr=invPhrModelFeatPtr->scorePhrasePair(srcPhrasePair,trgPhrasePair);
+        Score unweightedPstScr=pstScr/invPhrModelFeatPtr->getWeight();
+        
+            // Update loglikelihood
+        loglikelihood+=unweightedPtsScr+unweightedPstScr;
+      }
+          // Update number of phrase pairs
+      numPhrPairs+=invPhrPairs[i].size();
+    }
+
+        // Return perplexity
+    return -1*(loglikelihood/(double)numPhrPairs);
+  }
+
 }

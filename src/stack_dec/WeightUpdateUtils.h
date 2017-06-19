@@ -32,6 +32,13 @@ extern "C" {
 #include "step_by_step_dhs.h"
 }
 
+#include "InversePhraseModelFeat.h"
+#include "DirectPhraseModelFeat.h"
+#include "PhraseExtractUtils.h"
+#include "WordGraph.h"
+#include THOT_SMTMODEL_H // Define SmtModel type. It is set in
+                         // configure by checking SMTMODEL_H
+                         // variable (default value: SmtModel.h)
 #include THOT_PPINFO_H // Define PpInfo type. It is set in
                        // configure by checking PPINFO_H variable
                        // (default value: PpInfo.h)
@@ -42,19 +49,29 @@ extern "C" {
 #include "BasePhraseModel.h"
 #include "BaseNgramLM.h"
 #include "PhrasePair.h"
+#include "BaseLogLinWeightUpdater.h"
 #include <stdio.h>
 #include "myVector.h"
 #include <string>
 
 //--------------- Constants ------------------------------------------
 
-#define PHRSWLITM_DHS_FTOL              0.001
-#define PHRSWLITM_DHS_SCALE_PAR         1
+#define NBLIST_SIZE_FOR_LLWEIGHT_UPDATE 1000
+#define PHRSWLITM_DHS_FTOL                 0.001
+#define PHRSWLITM_DHS_SCALE_PAR            1
 
 namespace WeightUpdateUtils
 {
-  int updateLinInterpWeights(std::string srcDevCorpusFileName,
-                             std::string trgDevCorpusFileName,
+  void updateLogLinearWeights(std::string refSent,
+                              WordGraph* wgPtr,
+                              BaseLogLinWeightUpdater* llWeightUpdaterPtr,
+                              const Vector<pair<std::string,float> >& compWeights,
+                              Vector<double>& newWeights,
+                              int verbose=0);
+  int updateLinInterpWeights(std::string srcCorpusFileName,
+                             std::string trgCorpusFileName,
+                             DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
+                             InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
                              int verbose=0);  
 }
 
