@@ -18,11 +18,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: SrcPosJumpFeat                                         */
+/* Module: SrcPosJumpFeat                                           */
 /*                                                                  */
-/* Prototypes file: SrcPosJumpFeat.h                              */
+/* Prototypes file: SrcPosJumpFeat.h                                */
 /*                                                                  */
-/* Description: Declares the SrcPosJumpFeat template              */
+/* Description: Declares the SrcPosJumpFeat template                */
 /*              class. This class implements a source phrase        */
 /*              length feature.                                     */
 /*                                                                  */
@@ -111,7 +111,7 @@ std::string SrcPosJumpFeat<SCORE_INFO>::getFeatType(void)
 //---------------------------------
 template<class SCORE_INFO>
 Score SrcPosJumpFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::string>& /*srcPhrase*/,
-                                                  const Vector<std::string>& trgPhrase)
+                                                  const Vector<std::string>& /*trgPhrase*/)
 {
   return 0;
 }

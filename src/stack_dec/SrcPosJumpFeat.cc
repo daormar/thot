@@ -33,7 +33,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 template<>
 typename SrcPosJumpFeat<PhrScoreInfo>::HypScoreInfo
-SrcPosJumpFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
+SrcPosJumpFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& /*srcSent*/,
                                              const HypScoreInfo& predHypScrInf,
                                              const PhrHypDataStr& predHypDataStr,
                                              const PhrHypDataStr& newHypDataStr,
