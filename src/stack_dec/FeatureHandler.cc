@@ -37,7 +37,7 @@ FeatureHandler::FeatureHandler()
 }
 
 //---------------
-int FeatureHandler::addWpFeat(int verbose)
+int FeatureHandler::addWpFeat(int /*verbose*/)
 {
   std::string featName="wp";
   cerr<<"** Creating word penalty feature ("<<featName<<" "<<wpModelType<<")"<<endl;
@@ -89,6 +89,39 @@ int FeatureHandler::addTmFeats(std::string tmFilesPrefix,
 FeaturesInfo<SmtModel::HypScoreInfo>* FeatureHandler::getFeatureInfoPtr(void)
 {
   return &featuresInfo;
+}
+
+//---------------
+int FeatureHandler::updateLinInterpWeights(std::string srcCorpusFileName,
+                                           std::string trgCorpusFileName,
+                                           int verbose/*=0*/)
+{
+      // Update linear interpolation weights for all direct and inverse
+      // phrase model feature pairs
+  for(unsigned int i=0;i<swModelsInfo.swAligModelPtrVec.size();++i)
+  {
+    if(verbose)
+      cerr<<"Updating linear interpolation weights for features "<<swModelsInfo.featNameVec[i]<<" and "<<swModelsInfo.invFeatNameVec[i]<<endl;
+
+        // Obtain indices for features
+    unsigned int dirPhrModelFeatIdx=getFeatureIdx(swModelsInfo.featNameVec[i]);
+    unsigned int invPhrModelFeatIdx=getFeatureIdx(swModelsInfo.invFeatNameVec[i]);
+
+        // Obtain specialized pointers
+    DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=dynamic_cast<DirectPhraseModelFeat<SmtModel::HypScoreInfo>* >(featuresInfo.featPtrVec[dirPhrModelFeatIdx]);
+    InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr=dynamic_cast<InversePhraseModelFeat<SmtModel::HypScoreInfo>* >(featuresInfo.featPtrVec[invPhrModelFeatIdx]);
+    
+        // Update weights
+    int ret=WeightUpdateUtils::updateLinInterpWeights(srcCorpusFileName,
+                                                      trgCorpusFileName,
+                                                      dirPmFeatPtr,
+                                                      invPmFeatPtr,
+                                                      verbose);
+    if(ret==ERROR)
+      return ERROR;
+  }
+
+  return OK;
 }
 
 //---------------
@@ -201,6 +234,7 @@ unsigned int FeatureHandler::getFeatureIdx(std::string featName)
     if(featName==featuresInfo.featPtrVec[i]->getFeatName())
       return i;
   }
+  return featuresInfo.featPtrVec.size();
 }
 
 //--------------------------
@@ -743,7 +777,7 @@ bool FeatureHandler::printAligModels(std::string tmFileName,
 
 //--------------------------
 bool FeatureHandler::printLangModels(std::string lmFileName,
-                                     int verbose/*=0*/)
+                                     int /*verbose=0*/)
 {
   std::string mainFileName;
   if(fileIsDescriptor(lmFileName,mainFileName))

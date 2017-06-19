@@ -25,6 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "WeightUpdateUtils.h"
 #include THOT_SMTMODEL_H // Define SmtModel type. It is set in
                          // configure by checking SMTMODEL_H
                          // variable (default value: SmtModel.h)
@@ -76,6 +77,11 @@ class FeatureHandler
       // Function to get pointer to feature information
   FeaturesInfo<SmtModel::HypScoreInfo>* getFeatureInfoPtr(void);
 
+      // Functions to adjust weights
+  int updateLinInterpWeights(std::string srcCorpusFileName,
+                             std::string trgCorpusFileName,
+                             int verbose=0);
+  
       // Clear function
   void clear(void);
 
