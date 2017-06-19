@@ -28,16 +28,38 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "PhraseExtractionTable.h"
+#include "WordAligMatrix.h"
+#include THOT_PPINFO_H // Define PpInfo type. It is set in
+                       // configure by checking PPINFO_H variable
+                       // (default value: PpInfo.h)
 #include "BaseSwAligModel.h"
-#include "BasePhraseModel.h"
 #include "PhrasePair.h"
+#include "PhraseDefs.h"
 #include <stdio.h>
 #include "myVector.h"
 #include <string>
 
 namespace PhraseExtractUtils
 {
-  
+  int extractPhrPairsFromCorpusFiles(std::string srcCorpusFileName,
+                                     std::string trgCorpusFileName,
+                                     BaseSwAligModel<PpInfo>* swAligModelPtr,
+                                     BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                     Vector<Vector<PhrasePair> >& invPhrPairs,
+                                     int verbose=0);
+  int extractConsistentPhrasePairs(const Vector<std::string>& srcSentStrVec,
+                                   const Vector<std::string>& refSentStrVec,
+                                   BaseSwAligModel<PpInfo>* swAligModelPtr,
+                                   BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                   Vector<PhrasePair>& vecInvPhPair,
+                                   bool verbose=0);
+  void extractPhrasesFromPairPlusAlig(PhraseExtractParameters phePars,
+                                      Vector<string> ns,
+                                      Vector<string> t,
+                                      WordAligMatrix waMatrix,
+                                      Vector<PhrasePair>& vecPhPair,
+                                      int verbose=0);
 }
 
 #endif
