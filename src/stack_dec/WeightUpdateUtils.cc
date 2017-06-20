@@ -41,7 +41,7 @@ namespace WeightUpdateUtils
                               WordGraph* wgPtr,
                               BaseLogLinWeightUpdater* llWeightUpdaterPtr,
                               const Vector<pair<std::string,float> >& compWeights,
-                              Vector<double>& newWeights,
+                              Vector<float>& newWeights,
                               int verbose/*=0*/)
   {
         // Obtain n-best list
@@ -66,10 +66,15 @@ namespace WeightUpdateUtils
     
         // Check if n-best list is empty 
     if(nblist.empty())
-      newWeights=currentWeights;
+    {
+      newWeights.clear();
+      for(unsigned int i=0;i<currentWeights.size();++i)
+        newWeights.push_back(currentWeights[i]);
+    }
     else
     {    
           // Invoke weight update engine
+      Vector<double> newWeightsDouble;
       std::string reference=refSent;
       vector<string> nblistWithNoScr;
       for(unsigned int i=0;i<nblist.size();++i) nblistWithNoScr.push_back(nblist[i].second);
@@ -77,7 +82,12 @@ namespace WeightUpdateUtils
                                  nblistWithNoScr,
                                  scoreCompsVec,
                                  currentWeights,
-                                 newWeights);
+                                 newWeightsDouble);
+
+          // Create float vector with new weights
+      newWeights.clear();
+      for(unsigned int i=0;i<newWeightsDouble.size();++i)
+        newWeights.push_back(newWeightsDouble[i]);
     }
   
     if(verbose)
