@@ -31,7 +31,7 @@ wait_until_server_is_listening()
 ########
 end_thot_server()
 {
-    ${bindir}/thot_client -i 127.0.0.1 -p $PORT -e 2>$tmpdir/thot_client_end.log &
+    ${bindir}/thot_client -i 127.0.0.1 -p $PORT -e 2>/dev/null &
 }
 
 ########
@@ -305,6 +305,9 @@ fi
 
 echo ""
 
+# Use trap command to ensure that server is ended on exit
+trap "end_thot_server" EXIT
+
 # Check translation using thot_server
 echo "**** Checking translation using thot_server..."
 echo ""
@@ -337,18 +340,6 @@ else
     echo " Please report to "${bugreport}
     echo "================================================"
     exit 1
-fi
-
-echo ""
-
-# End thot server
-echo "**** Ending Thot server..."
-echo ""
-end_thot_server
-if test $? -eq 0 ; then
-    echo "... Done"
-else
-    echo "Error: server could not be terminated"
 fi
 
 echo ""
