@@ -325,7 +325,7 @@ int FeatureHandler::createInversePhrModelFeat(std::string featName,
   cerr<<"* Linking phrase model previously loaded..."<<endl;
   invPmFeatPtr->link_pm(invPbModelPtr);
 
-      // Add direct swm pointer
+      // Add inverse swm pointer
   std::string initPars;
   BaseSwAligModel<PpInfo>* baseSwAligModelPtr=swModelsInfo.defaultClassLoader.make_obj(initPars);
   if(baseSwAligModelPtr==NULL)
