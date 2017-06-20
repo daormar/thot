@@ -513,6 +513,28 @@ size_t DaTriePhraseTable::size(void)
 }
 
 //-------------------------
+void DaTriePhraseTable::printTrieSizes(void)
+{
+  size_t len = 0;
+  size_t len_prev = 0;
+  short trieId = -1;
+
+  for(DaTriePhraseTable::const_iterator iter = begin(); iter != end(); iter++, len++)
+  {
+    if (trieId == -1)
+      trieId = iter.getTrieId();
+    if (trieId != iter.getTrieId())
+    {
+      printf("Trie %d: %d\n", trieId, len - len_prev - 1);
+      len_prev = len;
+      trieId = iter.getTrieId();
+    }
+  }
+
+  printf("Trie %d: %d\n", trieId, len - len_prev - 1);
+}
+
+//-------------------------
 void DaTriePhraseTable::print(bool printString)
 {
   cout << "Trie structure:" << endl;
@@ -683,6 +705,12 @@ DaTriePhraseTable::const_iterator::operator->(void)
   trieItem = make_pair(key_vec, status);
 
   return &trieItem;
+}
+
+//-------------------------
+short DaTriePhraseTable::const_iterator::getTrieId(void)
+{
+  return trieId;
 }
 
 //-------------------------

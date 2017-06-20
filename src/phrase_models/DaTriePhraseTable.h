@@ -168,6 +168,7 @@ class DaTriePhraseTable: public BasePhraseTable
         // size and clear functions
     virtual size_t size(void);
     virtual void print(bool printString = TRUE);
+    virtual void printTrieSizes(void);
     virtual void clear(void);   
 
         // Destructor
@@ -204,6 +205,7 @@ class DaTriePhraseTable: public BasePhraseTable
         int operator!=(const const_iterator& right);
         pair<Vector<WordIndex>, int> operator*(void);
         const pair<Vector<WordIndex>, int>* operator->(void);
+        short getTrieId(void);
         /* const PhraseDict::const_iterator& operator->(void)const; */
         ~const_iterator()
         {

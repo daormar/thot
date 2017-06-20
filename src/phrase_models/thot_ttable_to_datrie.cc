@@ -142,9 +142,12 @@ int process_ttable(void)
       i++;
       if (i % 5000 == 0)
         cout << "Processed " << i << " lines" << endl;
+      if (i % 50000 == 0)
+        datriePt.printTrieSizes();
     }
 
     cout << "Trie size: " << datriePt.size() << endl;
+    datriePt.printTrieSizes();
 
       // Store data structure for further usage
     datriePt.save(outputFile.c_str());
