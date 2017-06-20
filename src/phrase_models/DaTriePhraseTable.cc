@@ -95,7 +95,13 @@ Vector<WordIndex> DaTriePhraseTable::alphaCharToVector(AlphaChar *a) const
 
 //-------------------------
 short DaTriePhraseTable::getTrieId(const Vector<WordIndex>& key) {
-  WordIndex wi = (key[0] == UNUSED_WORD) ? key[1] : key[0];
+  WordIndex wi;
+  short base = (key[0] == UNUSED_WORD) ? 1 : 0;
+  
+  wi = key[base];
+  if(key.size() > 3 && key[base + 1] != UNUSED_WORD)
+    wi += key[base + 1];
+
   short trieId = wi % TRIE_NUM;
   return trieId;
 }
