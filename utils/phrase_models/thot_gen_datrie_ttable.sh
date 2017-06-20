@@ -120,10 +120,9 @@ reorder_vocab()
     # Reorder vocabulary to assign lower codes to the most frequent words
     # (codes from 0-2 are reserved for special usage)
     temp_file=`${MKTEMP}`
-    cat ${voc} | $TEE >($SORT -k3rn | 
-                        $AWK '!/\ NULL\ / && !/\ UNKNOWN_WORD\ / && !/\ <UNUSED_WORD>\ /' | 
-                        $AWK '{printf("%.8d %s %s\n", NR+2, $2, $3)}') \
-                    >($AWK '/\ NULL\ / || /\ UNKNOWN_WORD\ / || /\ <UNUSED_WORD>\ /') > /dev/null | cat > ${temp_file}
+    cat ${voc} | $AWK '/\ NULL\ / || /\ UNKNOWN_WORD\ / || /\ <UNUSED_WORD>\ /' > ${temp_file}
+    cat ${voc} | $SORT -k3rn | $AWK '!/\ NULL\ / && !/\ UNKNOWN_WORD\ / && !/\ <UNUSED_WORD>\ /' | \
+        $AWK '{printf("%.8d %s %s\n", NR+2, $2, $3)}' >> ${temp_file}
     mv ${temp_file} ${voc}
 }
 
