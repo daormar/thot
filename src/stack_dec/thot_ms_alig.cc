@@ -317,8 +317,7 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
       // Instantiate smt model
   smtModelPtr=new SmtModel();
   
-      // Link log-linear weight updater and translation constraints
-  smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
+      // Link translation constraints
   smtModelPtr->link_trans_constraints(trConstraintsPtr);
 
       // Link language model, phrase model and single word model if
@@ -481,8 +480,7 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
       // Instantiate smt model
   smtModelPtr=new SmtModel();
   
-      // Link log-linear weight updater and translation constraints
-  smtModelPtr->link_ll_weight_upd(llWeightUpdaterPtr);
+      // Link translation constraints
   smtModelPtr->link_trans_constraints(trConstraintsPtr);
 
       // Link features information

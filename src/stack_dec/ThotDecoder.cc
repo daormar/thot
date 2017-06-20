@@ -160,8 +160,7 @@ void ThotDecoder::init_translator_legacy_impl(void)
       // Instantiate smt model
   tdCommonVars.smtModelPtr=new SmtModel();
 
-      // Link log-linear weight updater and translation constraints
-  tdCommonVars.smtModelPtr->link_ll_weight_upd(tdCommonVars.llWeightUpdaterPtr);
+      // Link translation constraints
   tdCommonVars.smtModelPtr->link_trans_constraints(tdCommonVars.trConstraintsPtr);
   
       // Link language model, phrase model and single word model if
@@ -258,8 +257,7 @@ void ThotDecoder::init_translator_feat_impl(void)
       // Instantiate smt model
   tdCommonVars.smtModelPtr=new SmtModel();
 
-      // Link log-linear weight updater and translation constraints
-  tdCommonVars.smtModelPtr->link_ll_weight_upd(tdCommonVars.llWeightUpdaterPtr);
+      // Link translation constraints
   tdCommonVars.smtModelPtr->link_trans_constraints(tdCommonVars.trConstraintsPtr);
   
       // Link features information if appliable 
@@ -1155,14 +1153,36 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
       std::string wgPathStr=tdCommonVars.wgHandlerPtr->pathAssociatedToSentence(sentStrVec,found);
       if(found)
       {
+            // Obtain new weights
         WordGraph wg;
         wg.load(wgPathStr.c_str());
-        tdCommonVars.smtModelPtr->updateLogLinearWeights(refSent,&wg,verbose);
+        Vector<pair<std::string,float> > compWeights;
+        tdCommonVars.smtModelPtr->getWeights(compWeights);
+        Vector<float> newWeights;
+        WeightUpdateUtils::updateLogLinearWeights(refSent,
+                                                  &wg,
+                                                  tdCommonVars.llWeightUpdaterPtr,
+                                                  compWeights,
+                                                  newWeights,
+                                                  verbose);
+            // Set new weights
+        tdCommonVars.smtModelPtr->setWeights(newWeights);        
       }
       else
       {
+            // Obtain new weights
+        Vector<pair<std::string,float> > compWeights;
+        tdCommonVars.smtModelPtr->getWeights(compWeights);
+        Vector<float> newWeights;
         WordGraph* wgPtr=tdPerUserVarsVec[idx].stackDecoderRecPtr->getWordGraphPtr();
-        tdCommonVars.smtModelPtr->updateLogLinearWeights(refSent,wgPtr,verbose);
+        WeightUpdateUtils::updateLogLinearWeights(refSent,
+                                                  wgPtr,
+                                                  tdCommonVars.llWeightUpdaterPtr,
+                                                  compWeights,
+                                                  newWeights,
+                                                  verbose);
+            // Set new weights
+        tdCommonVars.smtModelPtr->setWeights(newWeights);
       }    
       tdPerUserVarsVec[idx].stackDecoderRecPtr->disableWordGraph();
     }

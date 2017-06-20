@@ -44,6 +44,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "EU_PrePosProcessor2.h"
 #endif
 
+#include "WeightUpdateUtils.h"
+
 // Types defining decoder architecture
 #include "SmtModelUtils.h"
 #include "_pbTransModel.h"
@@ -56,6 +58,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ThotDecoderState.h"
 #include "ThotDecoderUserPars.h"
 #include "ModelDescriptorUtils.h"
+
 #include <options.h>
 #include <pthread.h>
 #include <sstream>
