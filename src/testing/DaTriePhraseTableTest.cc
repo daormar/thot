@@ -362,18 +362,25 @@ void DaTriePhraseTableTest::testIteratorsLoop()
   int i = 0;
   const int MAX_ITER = 10;
 
+  map<Vector<WordIndex>, pair<int, int>> d = {{tab->getSrc(s), {0, 0}},
+                                              {t, {0, 0}},
+                                              {tab->getTrgSrc(s, t), {0, 0}}};
+
   for(DaTriePhraseTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
   {
     pair<Vector<WordIndex>, int> x = *iter;
-    if (i == 0)
-      CPPUNIT_ASSERT( x.first == tab->getSrc(s) );
-    else if (i == 1)
-      CPPUNIT_ASSERT( x.first == t );
-    else if (i == 2)
-      CPPUNIT_ASSERT( x.first == tab->getTrgSrc(s, t) );
-    
-    CPPUNIT_ASSERT( x.second == 1);   
+    d[x.first].first += x.second;
+    d[x.first].second++;  
   }
+
+  // Check if trie element returned by iterator are correct
+  CPPUNIT_ASSERT(d.size() == 3);
+  CPPUNIT_ASSERT(d[tab->getSrc(s)].first == 1);
+  CPPUNIT_ASSERT(d[tab->getSrc(s)].second == 1);
+  CPPUNIT_ASSERT(d[t].first == 1);
+  CPPUNIT_ASSERT(d[t].second == 1);
+  CPPUNIT_ASSERT(d[tab->getTrgSrc(s, t)].first == 1);
+  CPPUNIT_ASSERT(d[tab->getTrgSrc(s, t)].second == 1);
 
   CPPUNIT_ASSERT( i == 3 );
 }
@@ -385,7 +392,7 @@ void DaTriePhraseTableTest::testIteratorsOperatorsPlusPlusStar()
      Check basic implementation of iterators - function
      begin() and operators (++ prefix, ++ postfix, *, ->).
   */
-  bool found;
+  bool found = TRUE;
 
   Vector<WordIndex> s = getVector("zamek krzyzacki w Malborku");
   Vector<WordIndex> t = getVector("teutonic castle in Malbork");
@@ -393,35 +400,31 @@ void DaTriePhraseTableTest::testIteratorsOperatorsPlusPlusStar()
   tab->clear();
   tab->incrCountsOfEntry(s, t, Count(2));
 
-  // First element s - should be found
-  DaTriePhraseTable::const_iterator iter = tab->begin();
-  pair<Vector<WordIndex>, int> x = *iter;
-  CPPUNIT_ASSERT( x.first == tab->getSrc(s) );
-  CPPUNIT_ASSERT( x.second == 2);
-  
-  // Second element (s, t) - should be found
-  //found = ++iter;
-  //CPPUNIT_ASSERT( found );
-  //x = *iter;
-  //CPPUNIT_ASSERT( x.first == tab->getSrcTrg(s, t) );
-  //CPPUNIT_ASSERT( x.second == 2);
+  // Construct dictionary to record results returned by iterator
+  // Dictionary structure: (key, (total count value, number of occurences))
+  map<Vector<WordIndex>, pair<int, int>> d = {{tab->getSrc(s), {0, 0}},
+                                              {t, {0, 0}},
+                                              {tab->getTrgSrc(s, t), {0, 0}}};
+ 
+  for(DaTriePhraseTable::const_iterator iter = tab->begin(); iter != tab->end(); found = (iter++))
+  {
+    CPPUNIT_ASSERT( found );
+    pair<Vector<WordIndex>, int> x = *iter;
+    d[x.first].first += x.second;
+    d[x.first].second++;
+  }
 
-  // Third element (t) - should be found
-  found = (iter++);
-  CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( iter->first == t );
-  CPPUNIT_ASSERT( iter->second == 2);
-  
-  // Fourth element (t, s) - should be found
-  found = ++iter;
-  CPPUNIT_ASSERT( found );
-  x = *iter;
-  CPPUNIT_ASSERT( x.first == tab->getTrgSrc(s, t) );
-  CPPUNIT_ASSERT( x.second == 2);
-
-  // Fifth element - should not be found
-  found = (iter++);
+  // Iterating beyond the last element should return FALSE value
   CPPUNIT_ASSERT( !found );
+
+  // Check if trie element returned by iterator are correct
+  CPPUNIT_ASSERT(d.size() == 3);
+  CPPUNIT_ASSERT(d[tab->getSrc(s)].first == 2);
+  CPPUNIT_ASSERT(d[tab->getSrc(s)].second == 1);
+  CPPUNIT_ASSERT(d[t].first == 2);
+  CPPUNIT_ASSERT(d[t].second == 1);
+  CPPUNIT_ASSERT(d[tab->getTrgSrc(s, t)].first == 2);
+  CPPUNIT_ASSERT(d[tab->getTrgSrc(s, t)].second == 1);
 }
 
 //---------------------------------------

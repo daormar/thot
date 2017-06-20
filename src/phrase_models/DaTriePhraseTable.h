@@ -31,6 +31,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #define WORD_INDEX_MODULO_BASE 254
 #define WORD_INDEX_MODULO_BYTES 3
+#define TRIE_NUM 10
 
 //--------------- Include files --------------------------------------
 
@@ -61,22 +62,28 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class DaTriePhraseTable: public BasePhraseTable
 {
     AlphaMap *alphabet_map;
-    Trie *trie;
+    Trie* trie[TRIE_NUM];
 
         // Converters
     virtual wstring vectorToWstring(const Vector<WordIndex>& s) const;
     virtual Vector<WordIndex> alphaCharToVector(AlphaChar *a) const;
+        // Get id of trie in which vector should be stored
+    virtual short getTrieId(const Vector<WordIndex>& key);
         // Set element in the trie
     virtual void trieStore(const Vector<WordIndex>& key, int value);
         // Get element from the trie
     virtual bool trieRetrieve(const Vector<WordIndex>& key, TrieData &state);
+        // Generate file name for the single trie
+    virtual string getTrieFilePath(const char *path, short trieId);
         // Save trie structure to file
     virtual bool trieSaveToFile(const char *path);
         // Load trie structure from file
     virtual bool trieLoadFromFile(const char *path);
+        // Helper function for iterator
+    virtual TrieIterator* getTrieIterator(short trieId)const;
   
   protected:
-    TrieState *trie_root_node;
+    TrieState* trie_root_node[TRIE_NUM];
   
   public:
 
@@ -173,17 +180,21 @@ class DaTriePhraseTable: public BasePhraseTable
       protected:
         const DaTriePhraseTable* ptPtr;
         TrieIterator* internalTrieIter;
+        short trieId;
         pair<Vector<WordIndex>, int> trieItem;
         /* PhraseDict::const_iterator pdIter; */
            
       public:
         const_iterator(void)
         {
-          ptPtr=NULL;
-          internalTrieIter=NULL;
+          ptPtr = NULL;
+          internalTrieIter = NULL;
+          trieId = 0;
         }
         const_iterator(const DaTriePhraseTable* _ptPtr,
-                       TrieIterator* iter):ptPtr(_ptPtr),internalTrieIter(iter)
+                       TrieIterator* iter,
+                       short _trieId
+                       ):ptPtr(_ptPtr),internalTrieIter(iter),trieId(_trieId)
         {
         }
         bool operator++(void); //prefix

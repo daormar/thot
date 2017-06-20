@@ -48,14 +48,17 @@ DaTriePhraseTable::DaTriePhraseTable(void)
     printf("Cannot set AlphaMap range\n");
     exit(2);
   }
-  // Create Trie object
-  trie = trie_new(alphabet_map);
-  if(!trie) {
-    printf("Cannot create trie\n");
-    exit(3);
+  for(short i = 0; i < TRIE_NUM; i++)
+  {
+    // Create Trie object
+    trie[i] = trie_new(alphabet_map);
+    if(!trie[i]) {
+      printf("Cannot create trie\n");
+      exit(3);
+    }
+    // Prepare root node state
+    trie_root_node[i] = trie_root(trie[i]);
   }
-  // Prepare iterator and root node state
-  trie_root_node = trie_root (trie);
 }
 
 //-------------------------
@@ -93,42 +96,72 @@ Vector<WordIndex> DaTriePhraseTable::alphaCharToVector(AlphaChar *a) const
 }
 
 //-------------------------
+short DaTriePhraseTable::getTrieId(const Vector<WordIndex>& key) {
+  WordIndex wi = (key[0] == UNUSED_WORD) ? key[1] : key[0];
+  short trieId = wi % TRIE_NUM;
+  return trieId;
+}
+
+//-------------------------
 void DaTriePhraseTable::trieStore(const Vector<WordIndex>& key, int value)
 {
-  trie_store(trie, (AlphaChar *) vectorToWstring(key).c_str(), value);
+  short trieId = getTrieId(key);
+  trie_store(trie[trieId], (AlphaChar *) vectorToWstring(key).c_str(), value);
 }
 
 //-------------------------
 bool DaTriePhraseTable::trieRetrieve(const Vector<WordIndex>& key, TrieData &state)
 {
-  bool found = trie_retrieve(trie, (AlphaChar *) vectorToWstring(key).c_str(), &state);
+  short trieId = getTrieId(key);
+  bool found = trie_retrieve(trie[trieId], (AlphaChar *) vectorToWstring(key).c_str(), &state);
   return found;
+}
+
+//-------------------------
+string DaTriePhraseTable::getTrieFilePath(const char *path, short trieId)
+{
+  string pathStr(path);
+  return pathStr + "_" + std::to_string(trieId);
 }
 
 //-------------------------
 bool DaTriePhraseTable::trieSaveToFile(const char *path)
 {
-  int result = trie_save(trie, path);
-  if (result == 0)
-    return OK;  // Trie saved successuflly
-  return ERROR;  // Trie could not be saved properly
+  int result;
+  string triePathStr;
+  
+  for(short i = 0; i < TRIE_NUM; i++)
+  {
+    triePathStr = getTrieFilePath(path, i);
+    result = trie_save(trie[i], triePathStr.c_str());
+    if (result != 0)
+      return ERROR;  // Trie could not be saved properly
+      // TODO add removing already saved files
+  }
+
+  return OK;  // Trie files saved successuflly
 }
 
 //-------------------------
 bool DaTriePhraseTable::trieLoadFromFile(const char *path)
 {
-  Trie* loaded_trie = trie_new_from_file(path);
-  if (loaded_trie == NULL)
-    return ERROR;  // Cannot load trie
+  string triePathStr;
 
-  // Release old resources
-  trie_state_free(trie_root_node);
-  trie_free(trie);
-  // Assign loaded trie
-  trie = loaded_trie;
-  // Recreate root node indicator and trie iterator
-  trie_root_node = trie_root (trie);
-  
+  for(short i = 0; i < TRIE_NUM; i++) {
+    triePathStr = getTrieFilePath(path, i);
+    Trie* loaded_trie = trie_new_from_file(triePathStr.c_str());
+    if (loaded_trie == NULL)
+      return ERROR;  // Cannot load trie
+
+    // Release old resources
+    trie_state_free(trie_root_node[i]);
+    trie_free(trie[i]);
+    // Assign loaded trie
+    trie[i] = loaded_trie;
+    // Recreate root node indicator and trie iterator
+    trie_root_node[i] = trie_root(trie[i]);
+  }
+
   return OK;
 }
 
@@ -390,11 +423,14 @@ bool DaTriePhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
   TrieState *state;
   TrieIterator *iter;
 
+  // Find in which trie (t) is stored
+  short trieId = getTrieId(t);
+
   // Find node which starts from (t, UNUSED_WORD) to find possible translations
   Vector<WordIndex> t_uw_vec = t;
   t_uw_vec.push_back(UNUSED_WORD);
   wstring t_uw_wstr = vectorToWstring(t_uw_vec);
-  state = trie_root (trie);
+  state = trie_root(trie[trieId]);  // Using trie_root method instead cached trie_root_node[i] as the state will be modified
 
   for (unsigned int i = 0; i < t_uw_wstr.size(); i++) {
     if (!trie_state_walk(state, (AlphaChar) t_uw_wstr[i])) {
@@ -498,40 +534,76 @@ void DaTriePhraseTable::print(bool printString)
 //-------------------------
 void DaTriePhraseTable::clear(void)
 {
-  trie_state_free(trie_root_node);
-  trie_free(trie);
-  // Create empty trie
-  trie = trie_new(alphabet_map);
-  if(!trie) {
-    printf("Cannot recreate trie\n");
-    exit(3);
+  for (short i = 0; i < TRIE_NUM; i++)
+  {
+    trie_state_free(trie_root_node[i]);
+    trie_free(trie[i]);
+    // Create empty trie
+    trie[i] = trie_new(alphabet_map);
+    if(!trie[i]) {
+      printf("Cannot recreate trie\n");
+      exit(3);
+    }
+    // Recreate root node indicator and trie iterator
+    trie_root_node[i] = trie_root (trie[i]);
   }
-  // Recreate root node indicator and trie iterator
-  trie_root_node = trie_root (trie);
 }
 
 //-------------------------
 DaTriePhraseTable::~DaTriePhraseTable(void)
 {
-  trie_state_free(trie_root_node);
+  for (short i = 0; i < TRIE_NUM; i++)
+  {
+    trie_state_free(trie_root_node[i]);
+    trie_free(trie[i]);
+  }
+
   alpha_map_free(alphabet_map);
-  trie_free(trie);
+}
+
+//-------------------------
+TrieIterator* DaTriePhraseTable::getTrieIterator(short trieId)const
+{
+  if(trieId < TRIE_NUM)
+  {
+    TrieIterator *trie_iter;
+
+    trie_iter = trie_iterator_new(trie_root_node[trieId]);
+
+    if (!trie_iterator_next(trie_iter))
+      trie_iter = NULL;
+      
+    return trie_iter;
+  }
+  else
+  {
+    return NULL;
+  }
 }
 
 //-------------------------
 DaTriePhraseTable::const_iterator DaTriePhraseTable::begin(void)const
 {
   TrieIterator *trie_iter;
+  short trieId;
 
-  trie_iter = trie_iterator_new(trie_root_node);
-  /*while(!trie_iterator_get_key(trie_iter) && trie_iterator_next(trie_iter))
+  for(trieId = 0; trieId < TRIE_NUM; trieId++)
   {
-    // Do nothing - only moving iterator to the first valid key
-  }*/
-  if (!trie_iterator_next(trie_iter))
-    trie_iter = NULL;
+    trie_iter = trie_iterator_new(trie_root_node[trieId]);
+
+    if (!trie_iterator_next(trie_iter))
+    {
+      trie_iterator_free(trie_iter);
+      trie_iter = NULL;
+    }
+    else
+    {
+      break;  // Correct iterator found
+    }
+  }
+  
     
-  DaTriePhraseTable::const_iterator iter(this, trie_iter);
+  DaTriePhraseTable::const_iterator iter(this, trie_iter, trieId);
 
   return iter;
 }
@@ -539,7 +611,7 @@ DaTriePhraseTable::const_iterator DaTriePhraseTable::begin(void)const
 //-------------------------
 DaTriePhraseTable::const_iterator DaTriePhraseTable::end(void)const
 {
-  DaTriePhraseTable::const_iterator iter(this, NULL);
+  DaTriePhraseTable::const_iterator iter(this, NULL, TRIE_NUM);
   return iter;
 }
 
@@ -551,11 +623,19 @@ bool DaTriePhraseTable::const_iterator::operator++(void) //prefix
   {
     AlphaChar *key;
 
-    while(trie_iterator_next(internalTrieIter)) {
-      key = trie_iterator_get_key(internalTrieIter);
-      if (key) {
-        return true;
+    while(trieId < TRIE_NUM)
+    {
+      while(trie_iterator_next(internalTrieIter)) {
+        key = trie_iterator_get_key(internalTrieIter);
+        if (key) {
+          return true;
+        }
       }
+
+      // Move to next trie structure
+      trie_iterator_free(internalTrieIter);
+      trieId++;
+      internalTrieIter = (trieId < TRIE_NUM) ? trie_iterator_new(ptPtr->trie_root_node[trieId]) : NULL;
     }
 
     internalTrieIter = NULL;
@@ -576,7 +656,7 @@ bool DaTriePhraseTable::const_iterator::operator++(int)  //postfix
 //--------------------------
 int DaTriePhraseTable::const_iterator::operator==(const const_iterator& right)
 {
-  return (ptPtr == right.ptPtr && internalTrieIter == right.internalTrieIter);
+  return (ptPtr == right.ptPtr && internalTrieIter == right.internalTrieIter && trieId == right.trieId);
 }
 
 //--------------------------
