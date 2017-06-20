@@ -166,9 +166,6 @@ class BaseSmtModel
       // Functions for performing on-line training
   virtual void setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPars,
                                      int verbose=0);
-  virtual void updateLogLinearWeights(std::string refSent,
-                                      WordGraph* wgPtr,
-                                      int verbose=0);
   virtual int onlineTrainFeatsSentPair(const char *srcSent,
                                        const char *refSent,
                                        const char *sysSent,
@@ -248,15 +245,6 @@ void BaseSmtModel<HYPOTHESIS>::setOnlineTrainingPars(OnlineTrainingPars /*online
 
 {
   cerr<<"Warning: setting of online training parameters was requested, but such functionality is not provided!"<<endl;
-}
-
-//---------------------------------
-template<class HYPOTHESIS>
-void BaseSmtModel<HYPOTHESIS>::updateLogLinearWeights(std::string /*refSent*/,
-                                                      WordGraph* /*wgPtr*/,
-                                                      int /*verbose*/)
-{
-  cerr<<"Warning: log-linear weight updating was requested, but such functionality is not provided!"<<endl;
 }
 
 //---------------------------------

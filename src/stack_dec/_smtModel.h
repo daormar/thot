@@ -76,9 +76,6 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
       // Constructor
   _smtModel(void);
 
-      // Link log-linear weight updater with model
-  void link_ll_weight_upd(BaseLogLinWeightUpdater* _llWeightUpdaterPtr);
-
       // Link translation constraints with model
   void link_trans_constraints(BaseTranslationConstraints* _trConstraintsPtr);
       
@@ -116,9 +113,6 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
       // Functions for performing on-line training
   void setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPars,
                              int verbose);
-  void updateLogLinearWeights(std::string refSent,
-                              WordGraph* wgPtr,
-                              int verbose=0);
 
       // Misc. operations with hypothesis
   virtual void obtainHypFromHypData(const HypDataType& hypDataType,
@@ -148,7 +142,6 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
 
   OnlineTrainingPars onlineTrainingPars;
 
-  BaseLogLinWeightUpdater* llWeightUpdaterPtr;
   BaseTranslationConstraints* trConstraintsPtr;
     
       // Scoring functions
@@ -169,13 +162,6 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
 template<class HYPOTHESIS>
 _smtModel<HYPOTHESIS>::_smtModel(void)
 {
-}
-
-//---------------------------------
-template<class HYPOTHESIS>
-void _smtModel<HYPOTHESIS>::link_ll_weight_upd(BaseLogLinWeightUpdater* _llWeightUpdaterPtr)
-{
-  llWeightUpdaterPtr=_llWeightUpdaterPtr;
 }
 
 //---------------------------------
@@ -230,65 +216,6 @@ void _smtModel<HYPOTHESIS>::diffScoreCompsForHyps(const Hypothesis& pred_hyp,
   typename Hypothesis::DataType succ_hypd=succ_hyp.getData();
   Hypothesis aux;
   incrScore(pred_hyp,succ_hypd,aux,scoreComponents);
-}
-
-//--------------------------
-template<class HYPOTHESIS>
-void _smtModel<HYPOTHESIS>::updateLogLinearWeights(std::string refSent,
-                                                   WordGraph* wgPtr,
-                                                   int verbose/*=0*/)
-{
-      // Obtain n-best list
-  unsigned int len=NBEST_LIST_SIZE_FOR_LLWEIGHT_UPDATE;
-  Vector<pair<Score,std::string> > nblist;
-  Vector<Vector<double> > scoreCompsVec;
-  wgPtr->obtainNbestList(len,nblist,scoreCompsVec);
-
-      // Obtain current weights
-  Vector<pair<std::string,float> > compWeights;
-  this->getWeights(compWeights);
-  vector<double> currentWeights;
-  for(unsigned int i=0;i<compWeights.size();++i)
-    currentWeights.push_back(compWeights[i].second);
-  
-      // Print verbose information
-  if(verbose)
-  {
-    cerr<<"Training log linear combination weights (n-best list size= "<<nblist.size()<<")..."<<endl;
-  }
-  
-      // Obtain new weights
-  vector<double> newWeights;
-      // Check if n-best list is empty 
-  if(nblist.empty())
-    newWeights=currentWeights;
-  else
-  {    
-        // Invoke weight update engine
-    std::string reference=refSent;
-    vector<string> nblistWithNoScr;
-    for(unsigned int i=0;i<nblist.size();++i) nblistWithNoScr.push_back(nblist[i].second);
-    llWeightUpdaterPtr->update(reference,
-                               nblistWithNoScr,
-                               scoreCompsVec,
-                               currentWeights,
-                               newWeights);
-  }
-      // Set new weights
-  Vector<float> tmwVec;
-  for(unsigned int i=0;i<newWeights.size();++i) tmwVec.push_back(newWeights[i]);
-  this->setWeights(tmwVec);
-  
-  if(verbose)
-  {
-    cerr<<"The weights of the loglinear combination have been trained:"<<endl;
-    cerr<<" - Previous weights:";
-    for(unsigned int i=0;i<currentWeights.size();++i) cerr<<" "<<currentWeights[i];
-    cerr<<endl;
-    cerr<<" - New weights     :";
-    for(unsigned int i=0;i<newWeights.size();++i) cerr<<" "<<newWeights[i];
-    cerr<<endl;
-  }
 }
 
 //--------------------------
