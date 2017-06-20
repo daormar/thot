@@ -28,8 +28,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "DaTriePhraseTable.h"
 
-//#include <iterator>
-
 //--------------- Function definitions
 
 //-------------------------
@@ -120,8 +118,10 @@ bool DaTriePhraseTable::trieRetrieve(const Vector<WordIndex>& key, TrieData &sta
 //-------------------------
 string DaTriePhraseTable::getTrieFilePath(const char *path, short trieId)
 {
+  std::ostringstream trieIdStr;
   string pathStr(path);
-  return pathStr + "_" + std::to_string(trieId);
+  trieIdStr << trieId;
+  return pathStr + "_" + trieIdStr.str();
 }
 
 //-------------------------
