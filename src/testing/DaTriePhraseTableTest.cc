@@ -362,9 +362,12 @@ void DaTriePhraseTableTest::testIteratorsLoop()
   int i = 0;
   const int MAX_ITER = 10;
 
-  map<Vector<WordIndex>, pair<int, int>> d = {{tab->getSrc(s), {0, 0}},
-                                              {t, {0, 0}},
-                                              {tab->getTrgSrc(s, t), {0, 0}}};
+  // Construct dictionary to record results returned by iterator
+  // Dictionary structure: (key, (total count value, number of occurences))
+  map<Vector<WordIndex>, pair<int, int> > d;
+  d[tab->getSrc(s)] = make_pair(0, 0);
+  d[t] = make_pair(0, 0);
+  d[tab->getTrgSrc(s, t)] = make_pair(0, 0);
 
   for(DaTriePhraseTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
   {
@@ -402,9 +405,10 @@ void DaTriePhraseTableTest::testIteratorsOperatorsPlusPlusStar()
 
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
-  map<Vector<WordIndex>, pair<int, int>> d = {{tab->getSrc(s), {0, 0}},
-                                              {t, {0, 0}},
-                                              {tab->getTrgSrc(s, t), {0, 0}}};
+  map<Vector<WordIndex>, pair<int, int> > d;
+  d[tab->getSrc(s)] = make_pair(0, 0);
+  d[t] = make_pair(0, 0);
+  d[tab->getTrgSrc(s, t)] = make_pair(0, 0);
  
   for(DaTriePhraseTable::const_iterator iter = tab->begin(); iter != tab->end(); found = (iter++))
   {
