@@ -131,10 +131,10 @@ namespace WeightUpdateUtils
 
         // Extract phrase pairs from development corpus
     Vector<Vector<PhrasePair> > invPhrPairs;
-    int ret=PhraseExtractUtils::extractPhrPairsFromCorpusFiles(srcCorpusFileName,
-                                                               trgCorpusFileName,
-                                                               dirPhrModelFeatPtr->get_swmptr(),
+    int ret=PhraseExtractUtils::extractPhrPairsFromCorpusFiles(dirPhrModelFeatPtr->get_swmptr(),
                                                                invPhrModelFeatPtr->get_swmptr(),
+                                                               srcCorpusFileName,
+                                                               trgCorpusFileName,
                                                                invPhrPairs,
                                                                verbose);
     if(ret!=OK)
