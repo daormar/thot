@@ -22,10 +22,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 namespace PhraseExtractUtils
 {
   //---------------
-  int extractPhrPairsFromCorpusFiles(std::string srcCorpusFileName,
-                                     std::string trgCorpusFileName,
-                                     BaseSwAligModel<PpInfo>* swAligModelPtr,
+  int extractPhrPairsFromCorpusFiles(BaseSwAligModel<PpInfo>* swAligModelPtr,
                                      BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                     std::string srcCorpusFileName,
+                                     std::string trgCorpusFileName,
                                      Vector<Vector<PhrasePair> >& invPhrPairs,
                                      int verbose/*=0*/)
   {
@@ -73,7 +73,7 @@ namespace PhraseExtractUtils
 
           // Extract consistent phrase pairs
       Vector<PhrasePair> vecInvPhPair;
-      int ret=extractConsistentPhrasePairs(srcSentStrVec,refSentStrVec,swAligModelPtr,invSwAligModelPtr,vecInvPhPair,verbose);
+      int ret=extractConsistentPhrasePairs(swAligModelPtr,invSwAligModelPtr,srcSentStrVec,refSentStrVec,vecInvPhPair,verbose);
       if(ret==ERROR)
         return ERROR;
       
@@ -89,10 +89,10 @@ namespace PhraseExtractUtils
   }
   
   //---------------------------------
-  int extractConsistentPhrasePairs(const Vector<std::string>& srcSentStrVec,
-                                   const Vector<std::string>& refSentStrVec,
-                                   BaseSwAligModel<PpInfo>* swAligModelPtr,
+  int extractConsistentPhrasePairs(BaseSwAligModel<PpInfo>* swAligModelPtr,
                                    BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                   const Vector<std::string>& srcSentStrVec,
+                                   const Vector<std::string>& refSentStrVec,
                                    Vector<PhrasePair>& vecInvPhPair,
                                    bool verbose/*=0*/)
   {

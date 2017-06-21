@@ -34,6 +34,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                        // configure by checking PPINFO_H variable
                        // (default value: PpInfo.h)
 #include "BaseSwAligModel.h"
+#include "BaseIncrPhraseModel.h"
 #include "PhrasePair.h"
 #include "PhraseDefs.h"
 #include <stdio.h>
@@ -42,16 +43,16 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 namespace PhraseExtractUtils
 {
-  int extractPhrPairsFromCorpusFiles(std::string srcCorpusFileName,
-                                     std::string trgCorpusFileName,
-                                     BaseSwAligModel<PpInfo>* swAligModelPtr,
+  int extractPhrPairsFromCorpusFiles(BaseSwAligModel<PpInfo>* swAligModelPtr,
                                      BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                     std::string srcCorpusFileName,
+                                     std::string trgCorpusFileName,
                                      Vector<Vector<PhrasePair> >& invPhrPairs,
                                      int verbose=0);
-  int extractConsistentPhrasePairs(const Vector<std::string>& srcSentStrVec,
-                                   const Vector<std::string>& refSentStrVec,
-                                   BaseSwAligModel<PpInfo>* swAligModelPtr,
+  int extractConsistentPhrasePairs(BaseSwAligModel<PpInfo>* swAligModelPtr,
                                    BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                   const Vector<std::string>& srcSentStrVec,
+                                   const Vector<std::string>& refSentStrVec,
                                    Vector<PhrasePair>& vecInvPhPair,
                                    bool verbose=0);
   void extractPhrasesFromPairPlusAlig(PhraseExtractParameters phePars,
