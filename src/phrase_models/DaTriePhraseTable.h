@@ -205,7 +205,6 @@ class DaTriePhraseTable: public BasePhraseTable
         int operator!=(const const_iterator& right);
         pair<Vector<WordIndex>, int> operator*(void);
         const pair<Vector<WordIndex>, int>* operator->(void);
-        short getTrieId(void);
         /* const PhraseDict::const_iterator& operator->(void)const; */
         ~const_iterator()
         {

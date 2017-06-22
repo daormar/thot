@@ -590,26 +590,6 @@ DaTriePhraseTable::~DaTriePhraseTable(void)
 }
 
 //-------------------------
-TrieIterator* DaTriePhraseTable::getTrieIterator(short trieId)const
-{
-  if(trieId < TRIE_NUM)
-  {
-    TrieIterator *trie_iter;
-
-    trie_iter = trie_iterator_new(trie_root_node[trieId]);
-
-    if (!trie_iterator_next(trie_iter))
-      trie_iter = NULL;
-      
-    return trie_iter;
-  }
-  else
-  {
-    return NULL;
-  }
-}
-
-//-------------------------
 DaTriePhraseTable::const_iterator DaTriePhraseTable::begin(void)const
 {
   TrieIterator *trie_iter;
