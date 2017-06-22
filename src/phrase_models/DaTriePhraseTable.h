@@ -80,8 +80,6 @@ class DaTriePhraseTable: public BasePhraseTable
     virtual bool trieSaveToFile(const char *path);
         // Load trie structure from file
     virtual bool trieLoadFromFile(const char *path);
-        // Helper function for iterator
-    virtual TrieIterator* getTrieIterator(short trieId)const;
   
   protected:
     TrieState* trie_root_node[TRIE_NUM];
@@ -205,6 +203,7 @@ class DaTriePhraseTable: public BasePhraseTable
         int operator!=(const const_iterator& right);
         pair<Vector<WordIndex>, int> operator*(void);
         const pair<Vector<WordIndex>, int>* operator->(void);
+        short getTrieId(void);
         /* const PhraseDict::const_iterator& operator->(void)const; */
         ~const_iterator()
         {
