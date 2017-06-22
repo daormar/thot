@@ -646,6 +646,10 @@ bool DaTriePhraseTable::const_iterator::operator++(void) //prefix
       internalTrieIter = (trieId < TRIE_NUM) ? trie_iterator_new(ptPtr->trie_root_node[trieId]) : NULL;
     }
 
+    // Release memory
+    if(internalTrieIter != NULL)
+      trie_iterator_free(internalTrieIter);
+
     internalTrieIter = NULL;
     return false;  // We have not found any more elements in the trie
   }
