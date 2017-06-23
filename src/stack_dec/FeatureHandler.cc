@@ -125,6 +125,296 @@ int FeatureHandler::updateLinInterpWeights(std::string srcCorpusFileName,
 }
 
 //---------------
+int FeatureHandler::onlineTrainFeats(OnlineTrainingPars onlineTrainingPars,
+                                     std::string srcSent,
+                                     std::string refSent,
+                                     std::string /*sysSent*/,
+                                     int verbose/*=0*/)
+{
+       // Check if input sentences are empty
+  if(srcSent.size()==0 || refSent.size()==0)
+  {
+    cerr<<"Error: cannot process empty input sentences"<<endl;
+    return ERROR;
+  }
+
+      // Train pair according to chosen algorithm
+  switch(onlineTrainingPars.onlineLearningAlgorithm)
+  {
+    case BASIC_INCR_TRAINING:
+      return incrTrainFeatsSentPair(onlineTrainingPars,srcSent,refSent,verbose);
+      break;
+    // case MINIBATCH_TRAINING:
+    //   return minibatchTrainFeatsSentPair(srcSent,refSent,sysSent,verbose);
+    //   break;
+    // case BATCH_RETRAINING:
+    //   return batchRetrainFeatsSentPair(srcSent,refSent,verbose);
+    //   break;
+    default:
+      cerr<<"Warning: requested online learning algoritm with id="<<onlineTrainingPars.onlineLearningAlgorithm<<" is not implemented."<<endl;
+      return ERROR;
+      break;
+  } 
+}
+
+//---------------------------------
+int FeatureHandler::incrTrainFeatsSentPair(OnlineTrainingPars onlineTrainingPars,
+                                           std::string srcSent,
+                                           std::string refSent,
+                                           int verbose/*=0*/)
+{
+      // Break input strings into word vectors
+  Vector<std::string> srcSentStrVec=StrProcUtils::stringToStringVector(srcSent);
+  Vector<std::string> refSentStrVec=StrProcUtils::stringToStringVector(refSent);
+
+      // Train language model
+  int ret=trainLangModel(langModelsInfo.lModelPtrVec[0],onlineTrainingPars.learnStepSize,refSentStrVec,verbose);
+  if(ret==ERROR)
+    return ERROR;
+  
+      // Train alignment model
+  DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=getDirectPhraseModelFeatPtr(swModelsInfo.featNameVec[0]);
+  InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr=getInversePhraseModelFeatPtr(swModelsInfo.invFeatNameVec[0]);
+  ret=trainAligModel(dirPmFeatPtr->get_pmptr(),
+                     dirPmFeatPtr->get_swmptr(),
+                     invPmFeatPtr->get_swmptr(),
+                     onlineTrainingPars,
+                     srcSentStrVec,
+                     refSentStrVec,
+                     verbose);
+  if(ret==ERROR)
+    return ERROR;
+
+  return OK;
+}
+
+//---------------
+DirectPhraseModelFeat<SmtModel::HypScoreInfo>*
+FeatureHandler::getDirectPhraseModelFeatPtr(std::string directPhrModelFeatName)
+{
+      // Obtain index for feature
+  unsigned int dirPhrModelFeatIdx=getFeatureIdx(directPhrModelFeatName);
+
+      // Obtain specialized pointer
+  DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=dynamic_cast<DirectPhraseModelFeat<SmtModel::HypScoreInfo>* >(featuresInfo.featPtrVec[dirPhrModelFeatIdx]);
+
+  return dirPmFeatPtr;
+}
+
+//---------------
+InversePhraseModelFeat<SmtModel::HypScoreInfo>*
+FeatureHandler::getInversePhraseModelFeatPtr(std::string invPhrModelFeatName)
+{
+      // Obtain indices for features
+  unsigned int invPhrModelFeatIdx=getFeatureIdx(invPhrModelFeatName);
+
+      // Obtain specialized pointers
+  InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr=dynamic_cast<InversePhraseModelFeat<SmtModel::HypScoreInfo>* >(featuresInfo.featPtrVec[invPhrModelFeatIdx]);
+
+  return invPmFeatPtr;
+}
+
+//---------------
+int FeatureHandler::trainLangModel(BaseNgramLM<LM_State>* lModelPtr,
+                                   float learnStepSize,
+                                   Vector<std::string> refSentStrVec,
+                                   int verbose/*=0*/)
+{
+      // Train language model
+  if(verbose) cerr<<"Training language model..."<<endl;
+  int ret=lModelPtr->trainSentence(refSentStrVec,learnStepSize,0,verbose);
+  if(ret==ERROR) return ERROR;
+
+  return OK;
+}
+
+//---------------
+int FeatureHandler::trainAligModel(BasePhraseModel* invPbModelPtr,
+                                   BaseSwAligModel<PpInfo>* swAligModelPtr,
+                                   BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                   OnlineTrainingPars onlineTrainingPars,
+                                   Vector<std::string> srcSentStrVec,
+                                   Vector<std::string> refSentStrVec,
+                                   int verbose/*=0*/)
+{
+      // Revise vocabularies of the alignment models
+  updateAligModelsSrcVoc(invPbModelPtr,swAligModelPtr,invSwAligModelPtr,srcSentStrVec);
+  updateAligModelsTrgVoc(invPbModelPtr,swAligModelPtr,invSwAligModelPtr,refSentStrVec);
+
+      // Add sentence pair to the single word models
+  pair<unsigned int,unsigned int> sentRange;
+  swAligModelPtr->addSentPair(srcSentStrVec,refSentStrVec,onlineTrainingPars.learnStepSize,sentRange);
+  invSwAligModelPtr->addSentPair(refSentStrVec,srcSentStrVec,onlineTrainingPars.learnStepSize,sentRange);
+
+      // Iterate over E_par interlaced samples
+  int ret;
+  unsigned int curr_sample=sentRange.second;
+  unsigned int oldest_sample=curr_sample-onlineTrainingPars.R_par;
+  for(unsigned int i=1;i<=onlineTrainingPars.E_par;++i)
+  {
+    int n=oldest_sample+(i*(onlineTrainingPars.R_par/onlineTrainingPars.E_par));
+    if(n>=0)
+    {
+      if(verbose)
+        cerr<<"Alig. model training iteration over sample "<<n<<" ..."<<endl;
+
+          // Train sw model
+      if(verbose) cerr<<"Training single-word model..."<<endl;
+      swAligModelPtr->trainSentPairRange(make_pair(n,n),verbose);
+
+          // Train inverse sw model
+      if(verbose) cerr<<"Training inverse single-word model..."<<endl;
+      invSwAligModelPtr->trainSentPairRange(make_pair(n,n),verbose);
+
+          // Add new translation options
+      if(verbose) cerr<<"Adding new translation options..."<<endl;
+      ret=addNewTransOpts(invPbModelPtr,swAligModelPtr,invSwAligModelPtr,n,verbose);
+    }
+  }
+
+      // Discard unnecessary phrase-based model sufficient statistics
+  int last_n=curr_sample-((onlineTrainingPars.E_par-1)*(onlineTrainingPars.R_par/onlineTrainingPars.E_par));
+  if(last_n>=0)
+  {
+    int mapped_last_n=map_n_am_suff_stats(last_n);
+    int idx_to_discard=mapped_last_n;
+    if(idx_to_discard>0 && vecVecInvPhPair.size()>(unsigned int)idx_to_discard)
+      vecVecInvPhPair[idx_to_discard].clear();
+  }
+
+  return ret;
+}
+
+//---------------
+void FeatureHandler::updateAligModelsSrcVoc(BasePhraseModel* invPbModelPtr,
+                                            BaseSwAligModel<PpInfo>* swAligModelPtr,
+                                            BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                            Vector<std::string> srcSentStrVec)
+{
+  for(unsigned int i=0;i<srcSentStrVec.size();++i)
+  {
+    addSrcSymbolToAligModels(invPbModelPtr,swAligModelPtr,invSwAligModelPtr,srcSentStrVec[i]);
+  }
+}
+
+//---------------
+void FeatureHandler::updateAligModelsTrgVoc(BasePhraseModel* invPbModelPtr,
+                                            BaseSwAligModel<PpInfo>* swAligModelPtr,
+                                            BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                            Vector<std::string> trgSentStrVec)
+{
+  for(unsigned int i=0;i<trgSentStrVec.size();++i)
+  {
+    addTrgSymbolToAligModels(invPbModelPtr,swAligModelPtr,invSwAligModelPtr,trgSentStrVec[i]);
+  }
+}
+
+//---------------
+WordIndex FeatureHandler::addSrcSymbolToAligModels(BasePhraseModel* invPbModelPtr,
+                                                   BaseSwAligModel<PpInfo>* swAligModelPtr,
+                                                   BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                                   std::string s)
+{
+  WordIndex windex_ipbm=invPbModelPtr->addTrgSymbol(s,0);
+  WordIndex windex_lex=swAligModelPtr->addSrcSymbol(s,0);
+  WordIndex windex_ilex=invSwAligModelPtr->addTrgSymbol(s,0);
+  if(windex_ipbm!=windex_lex || windex_ipbm!=windex_ilex)
+  {
+    cerr<<"Warning! phrase-based model vocabularies are now different from lexical model vocabularies."<<endl;
+  }
+  
+  return windex_ipbm;
+}
+
+//---------------
+WordIndex FeatureHandler::addTrgSymbolToAligModels(BasePhraseModel* invPbModelPtr,
+                                                   BaseSwAligModel<PpInfo>* swAligModelPtr,
+                                                   BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                                   std::string t)
+{
+  WordIndex windex_ipbm=invPbModelPtr->addSrcSymbol(t,0);
+  WordIndex windex_lex=swAligModelPtr->addTrgSymbol(t,0);
+  WordIndex windex_ilex=invSwAligModelPtr->addSrcSymbol(t,0);
+  if(windex_ipbm!=windex_lex || windex_ipbm!=windex_ilex)
+  {
+    cerr<<"Warning! phrase-based model vocabularies are now different from lexical model vocabularies."<<endl;
+  }
+  
+  return windex_ipbm;
+}
+
+//---------------
+int FeatureHandler::addNewTransOpts(BasePhraseModel* invPbModelPtr,
+                                    BaseSwAligModel<PpInfo>* swAligModelPtr,
+                                    BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                    int n,
+                                    int verbose/*=0*/)
+{
+      // Check if the phrase model is incremental (otherwise, it is not
+      // possible to add new translation options)
+  BaseIncrPhraseModel* baseIncrPhraseModelPtr=dynamic_cast<BaseIncrPhraseModel* >(invPbModelPtr);
+  if(baseIncrPhraseModelPtr)
+  {
+        // Obtain sentence pair
+    Vector<std::string> srcSentStrVec;
+    Vector<std::string> refSentStrVec;
+    Count c;
+    swAligModelPtr->nthSentPair(n,srcSentStrVec,refSentStrVec,c);
+
+        // Extract consistent phrase pairs
+    Vector<PhrasePair> vecInvPhPair;
+    PhraseExtractUtils::extractConsistentPhrasePairs(swAligModelPtr,invSwAligModelPtr,srcSentStrVec,refSentStrVec,vecInvPhPair,verbose);
+
+        // Obtain mapped_n
+    unsigned int mapped_n=map_n_am_suff_stats(n);
+  
+        // Grow vecVecInvPhPair if necessary
+    Vector<PhrasePair> vpp;
+    while(vecVecInvPhPair.size()<=mapped_n) vecVecInvPhPair.push_back(vpp);
+    
+        // Subtract current phrase model sufficient statistics
+    for(unsigned int i=0;i<vecVecInvPhPair[mapped_n].size();++i)
+    {
+      baseIncrPhraseModelPtr->strIncrCountsOfEntry(vecVecInvPhPair[mapped_n][i].s_,
+                                                   vecVecInvPhPair[mapped_n][i].t_,
+                                                   -1);
+    }
+
+        // Add new phrase model current sufficient statistics
+    if(verbose) cerr<<"List of extracted consistent phrase pairs:"<<endl;
+    for(unsigned int i=0;i<vecInvPhPair.size();++i)
+    {
+      baseIncrPhraseModelPtr->strIncrCountsOfEntry(vecInvPhPair[i].s_,
+                                                   vecInvPhPair[i].t_,
+                                                   1);
+      if(verbose)
+      {
+        for(unsigned int j=0;j<vecInvPhPair[i].s_.size();++j) cerr<<vecInvPhPair[i].s_[j]<<" ";
+        cerr<<"|||";
+        for(unsigned int j=0;j<vecInvPhPair[i].t_.size();++j) cerr<<" "<<vecInvPhPair[i].t_[j];
+        cerr<<endl;
+      }
+    }
+  
+        // Store new phrase model current sufficient statistics
+    vecVecInvPhPair[mapped_n]=vecInvPhPair;
+
+    return OK;
+  }
+  else
+  {
+    cerr<<"Warning: addition of new translation options not supported in this configuration!"<<endl;
+    return ERROR;
+  }
+}
+
+//---------------
+unsigned int FeatureHandler::map_n_am_suff_stats(unsigned int n)
+{
+  return n;
+}
+
+//---------------
 int FeatureHandler::setWordPenModelType(std::string modelType)
 {
   int verbosity=false;
@@ -799,6 +1089,9 @@ bool FeatureHandler::printLangModels(std::string lmFileName,
 //--------------------------
 void FeatureHandler::clear(void)
 {
+      // Clear training related data
+  vecVecInvPhPair.clear();
+  
       // Delete model pointers
   deleteWpModelPtr();
   deleteLangModelPtrs();

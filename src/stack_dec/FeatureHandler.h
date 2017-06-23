@@ -25,6 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "OnlineTrainingPars.h"
 #include "WeightUpdateUtils.h"
 #include THOT_SMTMODEL_H // Define SmtModel type. It is set in
                          // configure by checking SMTMODEL_H
@@ -42,6 +43,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "PhraseModelsInfo.h"
 #include "LangModelsInfo.h"
 #include "WpModelInfo.h"
+#include "StrProcUtils.h"
 
 //--------------- FeatureHandler class
 
@@ -81,7 +83,14 @@ class FeatureHandler
   int updateLinInterpWeights(std::string srcCorpusFileName,
                              std::string trgCorpusFileName,
                              int verbose=0);
-  
+
+      // Functions for online training of features
+  int onlineTrainFeats(OnlineTrainingPars onlineTrainingPars,
+                       std::string srcSent,
+                       std::string refSent,
+                       std::string sysSent,
+                       int verbose=0);
+
       // Clear function
   void clear(void);
 
@@ -90,16 +99,21 @@ class FeatureHandler
   
  private:
 
+      // Default model types
   std::string wpModelType;
   std::string defaultLangModelType;
   std::string defaultTransModelType;
   std::string defaultSingleWordModelType;
 
+      // Model information
   SwModelsInfo swModelsInfo;
   PhraseModelsInfo phraseModelsInfo;
   LangModelsInfo langModelsInfo;
   WpModelInfo wpModelInfo;
   FeaturesInfo<SmtModel::HypScoreInfo> featuresInfo;
+
+      // Training-related data members
+  Vector<Vector<PhrasePair> > vecVecInvPhPair;
 
       // Auxiliary functions
 
@@ -116,6 +130,8 @@ class FeatureHandler
       // Phrase model-related functions
   BasePhraseModel* createPmPtr(std::string modelType);
   unsigned int getFeatureIdx(std::string featName);
+  DirectPhraseModelFeat<SmtModel::HypScoreInfo>* getDirectPhraseModelFeatPtr(std::string directPhrModelFeatName);
+  InversePhraseModelFeat<SmtModel::HypScoreInfo>* getInversePhraseModelFeatPtr(std::string invPhrModelFeatName);
   int createDirectPhrModelFeat(std::string featName,
                                const ModelDescriptorEntry& modelDescEntry,
                                DirectPhraseModelFeat<SmtModel::HypScoreInfo>** dirPmFeatPtrRef);
@@ -136,6 +152,45 @@ class FeatureHandler
                              int verbose=0);
   bool process_tm_files_prefix(std::string tmFilesPrefix,
                                int verbose=0);
+
+      // Functions for performing on-line training
+  int incrTrainFeatsSentPair(OnlineTrainingPars onlineTraininingPars,
+                             std::string srcSent,
+                             std::string refSent,
+                             int verbose=0);
+  int trainLangModel(BaseNgramLM<LM_State>* lModelPtr,
+                     float learnStepSize,
+                     Vector<std::string> refSentStrVec,
+                     int verbose=0);
+  int trainAligModel(BasePhraseModel* invPbModelPtr,
+                     BaseSwAligModel<PpInfo>* swAligModelPtr,
+                     BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                     OnlineTrainingPars onlineTrainingPars,
+                     Vector<std::string> srcSentStrVec,
+                     Vector<std::string> refSentStrVec,
+                     int verbose=0);
+  void updateAligModelsSrcVoc(BasePhraseModel* invPbModelPtr,
+                              BaseSwAligModel<PpInfo>* swAligModelPtr,
+                              BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                              Vector<std::string> srcSentStrVec);
+  void updateAligModelsTrgVoc(BasePhraseModel* invPbModelPtr,
+                              BaseSwAligModel<PpInfo>* swAligModelPtr,
+                              BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                              Vector<std::string> trgSentStrVec);
+  WordIndex addSrcSymbolToAligModels(BasePhraseModel* invPbModelPtr,
+                                     BaseSwAligModel<PpInfo>* swAligModelPtr,
+                                     BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                     std::string s);
+  WordIndex addTrgSymbolToAligModels(BasePhraseModel* invPbModelPtr,
+                                     BaseSwAligModel<PpInfo>* swAligModelPtr,
+                                     BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                                     std::string t);
+  int addNewTransOpts(BasePhraseModel* invPbModelPtr,
+                      BaseSwAligModel<PpInfo>* swAligModelPtr,
+                      BaseSwAligModel<PpInfo>* invSwAligModelPtr,
+                      int n,
+                      int verbose=0);
+  unsigned int map_n_am_suff_stats(unsigned int n);
 
       // Auxiliary functions to print models
   bool printLambdas(std::string modelFileName,
