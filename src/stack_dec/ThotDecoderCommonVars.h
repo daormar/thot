@@ -28,6 +28,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include THOT_SMTMODEL_H // Define SmtModel type. It is set in
                          // configure by checking SMTMODEL_H
                          // variable (default value: SmtModel.h)
+#include "OnlineTrainingPars.h"
 #include "FeatureHandler.h"
 #include "BaseTranslationConstraints.h"
 #include "BaseLogLinWeightUpdater.h"
@@ -65,6 +66,8 @@ class ThotDecoderCommonVars
   FeatureHandler featureHandler;
   
   DynClassFactoryHandler dynClassFactoryHandler;
+
+  OnlineTrainingPars onlineTrainingPars;
 };
 
 #endif

@@ -1110,10 +1110,8 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     ctimer(&prevElapsedTime,&ucpu,&scpu);
     
         // Train generative models
-    ret=tdCommonVars.smtModelPtr->onlineTrainFeatsSentPair(preprocSrcSent.c_str(),
-                                                           preprocRefSent.c_str(),
-                                                           preprocSysSent.c_str(),
-                                                           verbose);
+    ret=onlineTrainFeats(preprocSrcSent,preprocRefSent,preprocSysSent,verbose);
+
     ctimer(&elapsedTime,&ucpu,&scpu);
     if(verbose)
     {
@@ -1142,54 +1140,13 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     ctimer(&prevElapsedTime,&ucpu,&scpu);
 
 #ifdef THOT_ENABLE_UPDATE_LLWEIGHTS
-    if(tdPerUserVarsVec[idx].stackDecoderRecPtr)
-    {
-          // Train log-linear weights
-      
-          // Retrieve pointer to wordgraph (use word-graph provided by the
-          // word-graph handler if available)
-      Vector<std::string> sentStrVec=StrProcUtils::stringToStringVector(srcSent);
-      bool found;
-      std::string wgPathStr=tdCommonVars.wgHandlerPtr->pathAssociatedToSentence(sentStrVec,found);
-      if(found)
-      {
-            // Obtain new weights
-        WordGraph wg;
-        wg.load(wgPathStr.c_str());
-        Vector<pair<std::string,float> > compWeights;
-        tdCommonVars.smtModelPtr->getWeights(compWeights);
-        Vector<float> newWeights;
-        WeightUpdateUtils::updateLogLinearWeights(refSent,
-                                                  &wg,
-                                                  tdCommonVars.llWeightUpdaterPtr,
-                                                  compWeights,
-                                                  newWeights,
-                                                  verbose);
-            // Set new weights
-        tdCommonVars.smtModelPtr->setWeights(newWeights);        
-      }
-      else
-      {
-            // Obtain new weights
-        Vector<pair<std::string,float> > compWeights;
-        tdCommonVars.smtModelPtr->getWeights(compWeights);
-        Vector<float> newWeights;
-        WordGraph* wgPtr=tdPerUserVarsVec[idx].stackDecoderRecPtr->getWordGraphPtr();
-        WeightUpdateUtils::updateLogLinearWeights(refSent,
-                                                  wgPtr,
-                                                  tdCommonVars.llWeightUpdaterPtr,
-                                                  compWeights,
-                                                  newWeights,
-                                                  verbose);
-            // Set new weights
-        tdCommonVars.smtModelPtr->setWeights(newWeights);
-      }    
-      tdPerUserVarsVec[idx].stackDecoderRecPtr->disableWordGraph();
-    }
+
+    onlineTrainLogLinWeights(srcSent,refSent,verbose);
+  
 #endif
 
         // Train generative models
-    ret=tdCommonVars.smtModelPtr->onlineTrainFeatsSentPair(srcSent,refSent,sysSent.c_str(),verbose);    
+    ret=onlineTrainFeats(srcSent,refSent,sysSent,verbose);
    
     ctimer(&elapsedTime,&ucpu,&scpu);
     if(verbose) cerr<<"Training time: "<<elapsedTime-prevElapsedTime<<endl;
@@ -1199,6 +1156,76 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
   pthread_mutex_unlock(&atomic_op_mut);
 
   return ret;
+}
+
+//--------------------------
+int ThotDecoder::onlineTrainFeats(std::string srcSent,
+                                  std::string refSent,
+                                  std::string sysSent,
+                                  int verbose/*=0*/)
+{
+  if(tdCommonVars.featureBasedImplEnabled)
+  {
+    return tdCommonVars.featureHandler.onlineTrainFeats(tdCommonVars.onlineTrainingPars,
+                                                        srcSent,
+                                                        refSent,
+                                                        sysSent,
+                                                        verbose);
+  }
+  else
+  {
+    return tdCommonVars.smtModelPtr->onlineTrainFeatsSentPair(srcSent.c_str(),refSent.c_str(),sysSent.c_str(),verbose);    
+  }  
+}
+
+//--------------------------
+void ThotDecoder::onlineTrainLogLinWeights(size_t idx,
+                                           const char *srcSent,
+                                           const char *refSent,
+                                           int verbose/*=0*/)
+{
+  if(tdPerUserVarsVec[idx].stackDecoderRecPtr)
+  {
+        // Retrieve pointer to wordgraph (use word-graph provided by the
+        // word-graph handler if available)
+    Vector<std::string> sentStrVec=StrProcUtils::stringToStringVector(srcSent);
+    bool found;
+    std::string wgPathStr=tdCommonVars.wgHandlerPtr->pathAssociatedToSentence(sentStrVec,found);
+    if(found)
+    {
+          // Obtain new weights
+      WordGraph wg;
+      wg.load(wgPathStr.c_str());
+      Vector<pair<std::string,float> > compWeights;
+      tdCommonVars.smtModelPtr->getWeights(compWeights);
+      Vector<float> newWeights;
+      WeightUpdateUtils::updateLogLinearWeights(refSent,
+                                                &wg,
+                                                tdCommonVars.llWeightUpdaterPtr,
+                                                compWeights,
+                                                newWeights,
+                                                verbose);
+          // Set new weights
+      tdCommonVars.smtModelPtr->setWeights(newWeights);        
+    }
+    else
+    {
+          // Obtain new weights
+      Vector<pair<std::string,float> > compWeights;
+      tdCommonVars.smtModelPtr->getWeights(compWeights);
+      Vector<float> newWeights;
+      WordGraph* wgPtr=tdPerUserVarsVec[idx].stackDecoderRecPtr->getWordGraphPtr();
+      WeightUpdateUtils::updateLogLinearWeights(refSent,
+                                                wgPtr,
+                                                tdCommonVars.llWeightUpdaterPtr,
+                                                compWeights,
+                                                newWeights,
+                                                verbose);
+          // Set new weights
+      tdCommonVars.smtModelPtr->setWeights(newWeights);
+    }    
+    tdPerUserVarsVec[idx].stackDecoderRecPtr->disableWordGraph();
+  }
 }
 
 //--------------------------
@@ -1219,7 +1246,13 @@ void ThotDecoder::setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
     cerr<<"E_par= "<<onlineTrainingPars.E_par<<" ; ";
     cerr<<"R_par= "<<onlineTrainingPars.R_par<<endl;
   }
-  tdCommonVars.smtModelPtr->setOnlineTrainingPars(onlineTrainingPars,verbose);
+
+  tdCommonVars.onlineTrainingPars=onlineTrainingPars;
+
+      // Handle online training parameters in legacy implementation
+  _phraseBasedTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
+  if(pbtm_ptr)
+    pbtm_ptr->setOnlineTrainingPars(onlineTrainingPars,verbose);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);

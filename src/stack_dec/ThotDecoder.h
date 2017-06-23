@@ -278,6 +278,16 @@ class ThotDecoder
                                    std::string& bestHypInfo,
                                    int verbose=0);
 
+      // Auxiliary functions for online training
+  int onlineTrainFeats(std::string srcSent,
+                       std::string refSent,
+                       std::string sysSent,
+                       int verbose=0);
+  void onlineTrainLogLinWeights(size_t idx,
+                                const char *srcSent,
+                                const char *refSent,
+                                int verbose=0);
+  
       // Pre-posprocessing related functions
   std::string robustObtainFinalOutput(BasePrePosProcessor* prePosProcessorPtr,
                                       std::string unpreprocPref,
