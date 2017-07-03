@@ -54,10 +54,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SourceSegmentation.h"
 #include "WordPredictor.h"
 #include "PbTransModelInputVars.h"
+#include "NbestTransCacheData.h"
 #include "StatModelDefs.h"
 #include "Prob.h"
 #include <math.h>
 #include <set>
+#include "StrProcUtils.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -185,6 +187,9 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Set of unseen words
   std::set<std::string> unseenWordsSet;
 
+      // Data used to cache n-best translation scores
+  NbestTransCacheData nbTransCacheData;
+
   ////// Hypotheses-related functions
 
       // Expansion-related functions
@@ -211,6 +216,30 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Get N-best translations for a subphrase of the source sentence
       // to be translated .  If N is between 0 and 1 then N represents a
       // threshold. 
+  virtual bool getHypDataVecForGapRef(const Hypothesis& hyp,
+                                      PositionIndex srcLeft,
+                                      PositionIndex srcRight,
+                                      Vector<HypDataType>& hypDataTypeVec,
+                                      float N);
+      // This function is identical to the previous function but is to
+      // be used when the translation process is conducted by a given
+      // reference sentence
+  virtual bool getHypDataVecForGapVer(const Hypothesis& hyp,
+                                      PositionIndex srcLeft,
+                                      PositionIndex srcRight,
+                                      Vector<HypDataType>& hypDataTypeVec,
+                                      float N);
+      // This function is identical to the previous function but is to
+      // be used when the translation process is performed to verify the
+      // coverage of the model given a reference sentence
+  virtual bool getHypDataVecForGapPref(const Hypothesis& hyp,
+                                       PositionIndex srcLeft,
+                                       PositionIndex srcRight,
+                                       Vector<HypDataType>& hypDataTypeVec,
+                                       float N);
+      // This function is identical to the previous function but is to
+      // be used when the translation process is conducted by a given
+      // prefix
   virtual bool getTransForHypUncovGap(const Hypothesis& hyp,
                                       PositionIndex srcLeft,
                                       PositionIndex srcRight,
@@ -220,10 +249,53 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // to be translated .  If N is between 0 and 1 then N represents a
       // threshold.  The result of the search is cached in the data
       // member cPhrNbestTransTable
+  virtual bool getTransForHypUncovGapRef(const Hypothesis& hyp,
+                                         PositionIndex srcLeft,
+                                         PositionIndex srcRight,
+                                         NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                         float N);
+      // This function is identical to the previous function but is to
+      // be used when the translation process is conducted by a given
+      // reference sentence
+  virtual bool getTransForHypUncovGapVer(const Hypothesis& hyp,
+                                         PositionIndex srcLeft,
+                                         PositionIndex srcRight,
+                                         NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                         float N);
+      // This function is identical to the previous function but is to
+      // be used when the translation process is performed to verify the
+      // coverage of the model given a reference sentence
+  virtual bool getTransForHypUncovGapPref(const Hypothesis& hyp,
+                                          PositionIndex srcLeft,
+                                          PositionIndex srcRight,
+                                          NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                          float N);
+      // This function is identical to the previous function but is to
+      // be used when the translation process is conducted by a given
+      // prefix
+
+      // Functions for translating with references or prefixes
+  virtual bool hypDataTransIsPrefixOfTargetRef(const HypDataType& hypd,
+                                               bool& equal)const=0;
+  void transUncovGapPrefNoGen(const Hypothesis& hyp,
+                              PositionIndex srcLeft,
+                              PositionIndex srcRight,
+                              NbestTableNode<PhraseTransTableNodeData>& nbt);
+  void genListOfTransLongerThanPref(Vector<WordIndex> srcPhrase,
+                                    unsigned int ntrgSize,
+                                    NbestTableNode<PhraseTransTableNodeData>& nbt);
+  bool trgWordVecIsPrefix(const Vector<WordIndex>& wiVec1,
+                          bool lastWiVec1WordIsComplete,
+                          const std::string& lastWiVec1Word,
+                          const Vector<WordIndex>& wiVec2,
+                          bool& equal);
+      // returns true if target word vector wiVec1 is a prefix of wiVec2
+
+      // Functions to generate translation lists
   virtual bool getNbestTransForSrcPhrase(Vector<WordIndex> srcPhrase,
                                          NbestTableNode<PhraseTransTableNodeData>& nbt,
                                          float N);
-      // Get N-best translations for a given source phrase s_.
+      // Get N-best translations for a given source phrase srcPhrase.
       // If N is between 0 and 1 then N represents a threshold
       // Functions to generate translation lists
   bool getTransForSrcPhrase(const Vector<WordIndex>& srcPhrase,
@@ -232,9 +304,19 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Functions to score n-best translations lists
   Score nbestTransScore(const Vector<WordIndex>& srcPhrase,
                         const Vector<WordIndex>& trgPhrase);
+  Score nbestTransScoreLast(const Vector<WordIndex>& srcPhrase,
+                            const Vector<WordIndex>& t_);
+      // Cached functions to score n-best translations lists
+  Score nbestTransScoreCached(const Vector<WordIndex>& srcPhrase,
+                              const Vector<WordIndex>& t_);
+  Score nbestTransScoreLastCached(const Vector<WordIndex>& srcPhrase,
+                                  const Vector<WordIndex>& t_);
 
       // Functions related to getTransInPlainTextVec
   Vector<std::string> getTransInPlainTextVecTs(const Hypothesis& hyp)const;
+  Vector<std::string> getTransInPlainTextVecTps(const Hypothesis& hyp)const;
+  Vector<std::string> getTransInPlainTextVecTrs(const Hypothesis& hyp)const;
+  Vector<std::string> getTransInPlainTextVecTvs(const Hypothesis& hyp)const;
 
       // Heuristic related functions
   virtual Score calcHeuristicScore(const _pbTransModel::Hypothesis& hyp);
@@ -349,7 +431,50 @@ template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::pre_trans_actions_ref(std::string srcsent,
                                                       std::string refsent)
 {
-      // TO-BE-DONE
+       // Clear temporary variables
+  clearTempVars();
+
+      // Set state info
+  state=MODEL_TRANSREF_STATE;
+
+      // Store source sentence to be translated
+  pbtmInputVars.srcSentVec=StrProcUtils::stringToStringVector(srcsent);
+
+      // Verify coverage for source
+  if(this->verbosity>0)
+    cerr<<"Verify model coverage for source sentence..."<<endl; 
+  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->pbTransModelPars.A);
+
+      // Init source sentence index vector after the coverage has been
+      // verified
+  pbtmInputVars.srcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.srcSentVec.size();++i)
+  {
+    WordIndex w=stringToSrcWordIndex(pbtmInputVars.srcSentVec[i]);
+    pbtmInputVars.srcSentIdVec.push_back(w);
+    pbtmInputVars.nsrcSentIdVec.push_back(w);
+  }
+
+      // Store reference sentence
+  pbtmInputVars.refSentVec=StrProcUtils::stringToStringVector(refsent);
+
+  pbtmInputVars.nrefSentIdVec.clear();
+  pbtmInputVars.nrefSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.refSentVec.size();++i)
+  {
+    WordIndex w=stringToTrgWordIndex(pbtmInputVars.refSentVec[i]);
+    if(w==UNK_WORD && this->verbosity>0)
+      cerr<<"Warning: word "<<pbtmInputVars.refSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
+    pbtmInputVars.nrefSentIdVec.push_back(w);
+  }
+
+      // Initialize heuristic (the source sentence must be previously
+      // stored)
+  if(this->verbosity>0)
+    cerr<<"Initializing information about search heuristic..."<<endl; 
+  initHeuristic(this->pbTransModelPars.A);
 }
 
 //---------------------------------
@@ -357,7 +482,50 @@ template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::pre_trans_actions_ver(std::string srcsent,
                                                       std::string refsent)
 {
-      // TO-BE-DONE
+      // Clear temporary variables
+  clearTempVars();
+
+      // Set state info
+  state=MODEL_TRANSVER_STATE;
+
+      // Store source sentence to be translated
+  pbtmInputVars.srcSentVec=StrProcUtils::stringToStringVector(srcsent);
+
+      // Verify coverage for source
+  if(this->verbosity>0)
+    cerr<<"Verify model coverage for source sentence..."<<endl; 
+  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->pbTransModelPars.A);
+
+      // Init source sentence index vector after the coverage has been
+      // verified
+  pbtmInputVars.srcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.srcSentVec.size();++i)
+  {
+    WordIndex w=stringToSrcWordIndex(pbtmInputVars.srcSentVec[i]);
+    pbtmInputVars.srcSentIdVec.push_back(w);
+    pbtmInputVars.nsrcSentIdVec.push_back(w);
+  }
+
+      // Store reference sentence
+  pbtmInputVars.refSentVec=StrProcUtils::stringToStringVector(refsent);
+
+  pbtmInputVars.nrefSentIdVec.clear();
+  pbtmInputVars.nrefSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.refSentVec.size();++i)
+  {
+    WordIndex w=stringToTrgWordIndex(pbtmInputVars.refSentVec[i]);
+    if(w==UNK_WORD && this->verbosity>0)
+      cerr<<"Warning: word "<<pbtmInputVars.refSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
+    pbtmInputVars.nrefSentIdVec.push_back(w);
+  }
+
+      // Initialize heuristic (the source sentence must be previously
+      // stored)
+  if(this->verbosity>0)
+    cerr<<"Initializing information about search heuristic..."<<endl; 
+  initHeuristic(this->pbTransModelPars.A);
 }
 
 //---------------------------------
@@ -365,7 +533,52 @@ template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::pre_trans_actions_prefix(std::string srcsent,
                                                          std::string prefix)
 {
-      // TO-BE-DONE
+      // Clear temporary variables
+  clearTempVars();
+
+      // Set state info
+  state=MODEL_TRANSPREFIX_STATE;
+
+      // Store source sentence to be translated
+  pbtmInputVars.srcSentVec=StrProcUtils::stringToStringVector(srcsent);
+
+      // Verify coverage for source
+  if(this->verbosity>0)
+    cerr<<"Verify model coverage for source sentence..."<<endl; 
+  verifyDictCoverageForSentence(pbtmInputVars.srcSentVec,this->pbTransModelPars.A);
+
+      // Init source sentence index vector after the coverage has been
+      // verified
+  pbtmInputVars.srcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.clear();
+  pbtmInputVars.nsrcSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.srcSentVec.size();++i)
+  {
+    WordIndex w=stringToSrcWordIndex(pbtmInputVars.srcSentVec[i]);
+    pbtmInputVars.srcSentIdVec.push_back(w);
+    pbtmInputVars.nsrcSentIdVec.push_back(w);
+  }
+
+      // Store prefix sentence
+  if(StrProcUtils::lastCharIsBlank(prefix)) pbtmInputVars.lastCharOfPrefIsBlank=true;
+  else pbtmInputVars.lastCharOfPrefIsBlank=false;
+  pbtmInputVars.prefSentVec=StrProcUtils::stringToStringVector(prefix);
+
+  pbtmInputVars.nprefSentIdVec.clear();
+  pbtmInputVars.nprefSentIdVec.push_back(NULL_WORD);
+  for(unsigned int i=0;i<pbtmInputVars.prefSentVec.size();++i)
+  {
+    WordIndex w=stringToTrgWordIndex(pbtmInputVars.prefSentVec[i]);
+    if(w==UNK_WORD && this->verbosity>0)
+      cerr<<"Warning: word "<<pbtmInputVars.prefSentVec[i]<<" is not contained in the phrase model vocabulary, ensure that your language model contains the unknown-word token."<<endl;
+    pbtmInputVars.nprefSentIdVec.push_back(w);
+  }
+
+      // Initialize heuristic (the source sentence must be previously
+      // stored)
+  if(this->verbosity>0)
+    cerr<<"Initializing information about search heuristic..."<<endl; 
+  initHeuristic(this->pbTransModelPars.A);
 }
 
 //---------------------------------
@@ -502,7 +715,7 @@ void _pbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
                                        Vector<Vector<Score> >& scrCompVec)
 {
   Vector<pair<PositionIndex,PositionIndex> > gaps;
-  Vector<WordIndex> s_;
+  Vector<WordIndex> srcPhrase;
   Hypothesis extHyp;
   Vector<HypDataType> hypDataVec;
   Vector<Score> scoreComponents;
@@ -523,7 +736,7 @@ void _pbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
     unsigned int gap_length=gaps[k].second-gaps[k].first+1;
     for(unsigned int x=0;x<gap_length;++x)
     {
-      s_.clear();
+      srcPhrase.clear();
       if(x<=this->pbTransModelPars.U) // x should be lower than U, which is the maximum
                // number of words that can be jUmped
       {
@@ -569,57 +782,51 @@ void _pbTransModel<HYPOTHESIS>::expand_ref(const Hypothesis& hyp,
                                            Vector<Hypothesis>& hypVec,
                                            Vector<Vector<Score> >& scrCompVec)
 {
-      // TO-BE-DONE
-  
-/*   Vector<pair<PositionIndex,PositionIndex> > gaps; */
-/*   Vector<WordIndex> s_; */
-/*   Hypothesis extHyp; */
-/*   Vector<HypDataType> hypDataVec; */
-/*   Vector<Score> scoreComponents; */
+  Vector<pair<PositionIndex,PositionIndex> > gaps;
+  Vector<WordIndex> srcPhrase;
+  Hypothesis extHyp;
+  Vector<HypDataType> hypDataVec;
+  Vector<Score> scoreComponents;
 
-/*   hypVec.clear(); */
-/*   scrCompVec.clear(); */
+  hypVec.clear();
+  scrCompVec.clear();
   
-/*       // Extract gaps	 */
-/*   extract_gaps(hyp,gaps); */
+      // Extract gaps
+  extract_gaps(hyp,gaps);
    
-/*       // Generate new hypotheses completing the gaps */
-/*   for(unsigned int k=0;k<gaps.size();++k) */
-/*   { */
-/*     unsigned int gap_length=gaps[k].second-gaps[k].first+1; */
-/*     for(unsigned int x=0;x<gap_length;++x) */
-/*     { */
-/*       s_.clear(); */
-/*       if(x<=this->pbTransModelPars.U) // x should be lower than U, which is the maximum */
-/*                      // number of words that can be jUmped */
-/*       { */
-/*         for(unsigned int y=x;y<gap_length;++y) */
-/*         { */
-/*           unsigned int segmRightMostj=gaps[k].first+y; */
-/*           unsigned int segmLeftMostj=gaps[k].first+x; */
-/*               // Verify that the source phrase length does not exceed */
-/*               // the limit */
-/*           if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A)  */
-/*             break; */
-/*               // Obtain hypothesis data vector */
-/*           getHypDataVecForGapRef(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W); */
-/*           if(hypDataVec.size()!=0) */
-/*           { */
-/*             for(unsigned int i=0;i<hypDataVec.size();++i) */
-/*             { */
-/*               this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents); */
-/*               hypVec.push_back(extHyp); */
-/*               scrCompVec.push_back(scoreComponents); */
-/*             } */
-/* #           ifdef THOT_STATS     */
-/*             ++this->basePbTmStats.getTransCalls; */
-/*             this->basePbTmStats.transOptions+=hypDataVec.size(); */
-/* #           endif     */
-/*           } */
-/*         } */
-/*       } */
-/*     } */
-/*   }      */
+      // Generate new hypotheses completing the gaps
+  for(unsigned int k=0;k<gaps.size();++k)
+  {
+    unsigned int gap_length=gaps[k].second-gaps[k].first+1;
+    for(unsigned int x=0;x<gap_length;++x)
+    {
+      srcPhrase.clear();
+      if(x<=this->pbTransModelPars.U) // x should be lower than U, which is the maximum
+                     // number of words that can be jUmped
+      {
+        for(unsigned int y=x;y<gap_length;++y)
+        {
+          unsigned int segmRightMostj=gaps[k].first+y;
+          unsigned int segmLeftMostj=gaps[k].first+x;
+              // Verify that the source phrase length does not exceed
+              // the limit
+          if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A)
+            break;
+              // Obtain hypothesis data vector
+          getHypDataVecForGapRef(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W);
+          if(hypDataVec.size()!=0)
+          {
+            for(unsigned int i=0;i<hypDataVec.size();++i)
+            {
+              this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
+              hypVec.push_back(extHyp);
+              scrCompVec.push_back(scoreComponents);
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 //---------------------------------
@@ -628,57 +835,51 @@ void _pbTransModel<HYPOTHESIS>::expand_ver(const Hypothesis& hyp,
                                            Vector<Hypothesis>& hypVec,
                                            Vector<Vector<Score> >& scrCompVec)
 {
-      // TO-BE-DONE
-  
-/*   Vector<pair<PositionIndex,PositionIndex> > gaps; */
-/*   Vector<WordIndex> s_; */
-/*   Hypothesis extHyp; */
-/*   Vector<HypDataType> hypDataVec; */
-/*   Vector<Score> scoreComponents; */
+  Vector<pair<PositionIndex,PositionIndex> > gaps;
+  Vector<WordIndex> srcPhrase;
+  Hypothesis extHyp;
+  Vector<HypDataType> hypDataVec;
+  Vector<Score> scoreComponents;
 
-/*   hypVec.clear(); */
-/*   scrCompVec.clear(); */
+  hypVec.clear();
+  scrCompVec.clear();
   
-/*       // Extract gaps	 */
-/*   extract_gaps(hyp,gaps); */
+      // Extract gaps
+  extract_gaps(hyp,gaps);
    
-/*       // Generate new hypotheses completing the gaps */
-/*   for(unsigned int k=0;k<gaps.size();++k) */
-/*   { */
-/*     unsigned int gap_length=gaps[k].second-gaps[k].first+1; */
-/*     for(unsigned int x=0;x<gap_length;++x) */
-/*     { */
-/*       s_.clear(); */
-/*       if(x<=this->pbTransModelPars.U) // x should be lower than U, which is the maximum */
-/*                // number of words that can be jUmped */
-/*       { */
-/*         for(unsigned int y=x;y<gap_length;++y) */
-/*         { */
-/*           unsigned int segmRightMostj=gaps[k].first+y; */
-/*           unsigned int segmLeftMostj=gaps[k].first+x; */
-/*               // Verify that the source phrase length does not exceed */
-/*               // the limit */
-/*           if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A)  */
-/*             break; */
-/*               // Obtain hypothesis data vector */
-/*           getHypDataVecForGapVer(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W); */
-/*           if(hypDataVec.size()!=0) */
-/*           { */
-/*             for(unsigned int i=0;i<hypDataVec.size();++i) */
-/*             { */
-/*               this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents); */
-/*               hypVec.push_back(extHyp); */
-/*               scrCompVec.push_back(scoreComponents); */
-/*             } */
-/* #           ifdef THOT_STATS     */
-/*             ++this->basePbTmStats.getTransCalls; */
-/*             this->basePbTmStats.transOptions+=hypDataVec.size(); */
-/* #           endif     */
-/*           } */
-/*         } */
-/*       } */
-/*     } */
-/*   }        */
+      // Generate new hypotheses completing the gaps
+  for(unsigned int k=0;k<gaps.size();++k)
+  {
+    unsigned int gap_length=gaps[k].second-gaps[k].first+1;
+    for(unsigned int x=0;x<gap_length;++x)
+    {
+      srcPhrase.clear();
+      if(x<=this->pbTransModelPars.U) // x should be lower than U, which is the maximum
+               // number of words that can be jUmped
+      {
+        for(unsigned int y=x;y<gap_length;++y)
+        {
+          unsigned int segmRightMostj=gaps[k].first+y;
+          unsigned int segmLeftMostj=gaps[k].first+x;
+              // Verify that the source phrase length does not exceed
+              // the limit
+          if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A)
+            break;
+              // Obtain hypothesis data vector
+          getHypDataVecForGapVer(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W);
+          if(hypDataVec.size()!=0)
+          {
+            for(unsigned int i=0;i<hypDataVec.size();++i)
+            {
+              this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
+              hypVec.push_back(extHyp);
+              scrCompVec.push_back(scoreComponents);
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 //---------------------------------
@@ -687,57 +888,51 @@ void _pbTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
                                               Vector<Hypothesis>& hypVec,
                                               Vector<Vector<Score> >& scrCompVec)
 {
-      // TO-BE-DONE
+  Vector<pair<PositionIndex,PositionIndex> > gaps;
+  Vector<WordIndex> srcPhrase;
+  Hypothesis extHyp;
+  Vector<HypDataType> hypDataVec;
+  Vector<Score> scoreComponents;
 
-/*   Vector<pair<PositionIndex,PositionIndex> > gaps; */
-/*   Vector<WordIndex> s_; */
-/*   Hypothesis extHyp; */
-/*   Vector<HypDataType> hypDataVec; */
-/*   Vector<Score> scoreComponents; */
+  hypVec.clear();
+  scrCompVec.clear();
 
-/*   hypVec.clear(); */
-/*   scrCompVec.clear(); */
-
-/*       // Extract gaps	 */
-/*   extract_gaps(hyp,gaps); */
+      // Extract gaps
+  extract_gaps(hyp,gaps);
    
-/*       // Generate new hypotheses completing the gaps */
-/*   for(unsigned int k=0;k<gaps.size();++k) */
-/*   { */
-/*     unsigned int gap_length=gaps[k].second-gaps[k].first+1; */
-/*     for(unsigned int x=0;x<gap_length;++x) */
-/*     { */
-/*       s_.clear(); */
-/*       if(x<=this->pbTransModelPars.U) // x should be lower than U, which is the maximum */
-/*                // number of words that can be jUmped */
-/*       { */
-/*         for(unsigned int y=x;y<gap_length;++y) */
-/*         { */
-/*           unsigned int segmRightMostj=gaps[k].first+y; */
-/*           unsigned int segmLeftMostj=gaps[k].first+x; */
-/*               // Verify that the source phrase length does not exceed */
-/*               // the limit */
-/*           if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A)  */
-/*             break; */
-/*               // Obtain hypothesis data vector */
-/*           getHypDataVecForGapPref(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W); */
-/*           if(hypDataVec.size()!=0) */
-/*           { */
-/*             for(unsigned int i=0;i<hypDataVec.size();++i) */
-/*             { */
-/*               this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents); */
-/*               hypVec.push_back(extHyp); */
-/*               scrCompVec.push_back(scoreComponents); */
-/*             } */
-/* #           ifdef THOT_STATS     */
-/*             ++this->basePbTmStats.getTransCalls; */
-/*             this->basePbTmStats.transOptions+=hypDataVec.size(); */
-/* #           endif     */
-/*           } */
-/*         } */
-/*       } */
-/*     } */
-/*   }        */
+      // Generate new hypotheses completing the gaps
+  for(unsigned int k=0;k<gaps.size();++k)
+  {
+    unsigned int gap_length=gaps[k].second-gaps[k].first+1;
+    for(unsigned int x=0;x<gap_length;++x)
+    {
+      srcPhrase.clear();
+      if(x<=this->pbTransModelPars.U) // x should be lower than U, which is the maximum
+               // number of words that can be jUmped
+      {
+        for(unsigned int y=x;y<gap_length;++y)
+        {
+          unsigned int segmRightMostj=gaps[k].first+y;
+          unsigned int segmLeftMostj=gaps[k].first+x;
+              // Verify that the source phrase length does not exceed
+              // the limit
+          if((segmRightMostj-segmLeftMostj)+1 > this->pbTransModelPars.A)
+            break;
+              // Obtain hypothesis data vector
+          getHypDataVecForGapPref(hyp,segmLeftMostj,segmRightMostj,hypDataVec,this->pbTransModelPars.W);
+          if(hypDataVec.size()!=0)
+          {
+            for(unsigned int i=0;i<hypDataVec.size();++i)
+            {
+              this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
+              hypVec.push_back(extHyp);
+              scrCompVec.push_back(scoreComponents);
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 //---------------------------------
@@ -939,13 +1134,12 @@ void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
 template<class HYPOTHESIS>
 Vector<std::string> _pbTransModel<HYPOTHESIS>::getTransInPlainTextVec(const _pbTransModel::Hypothesis& hyp)const
 {
-      // TO-BE-DONE
   switch(state)
   {
     case MODEL_TRANS_STATE: return getTransInPlainTextVecTs(hyp);
-    /* case MODEL_TRANSPREFIX_STATE: return getTransInPlainTextVecTps(hyp); */
-    /* case MODEL_TRANSREF_STATE: return getTransInPlainTextVecTrs(hyp); */
-    /* case MODEL_TRANSVER_STATE: return getTransInPlainTextVecTvs(hyp); */
+    case MODEL_TRANSPREFIX_STATE: return getTransInPlainTextVecTps(hyp);
+    case MODEL_TRANSREF_STATE: return getTransInPlainTextVecTrs(hyp);
+    case MODEL_TRANSVER_STATE: return getTransInPlainTextVecTvs(hyp);
     default: Vector<std::string> strVec;
       return strVec;
   }
@@ -1011,6 +1205,104 @@ Vector<std::string> _pbTransModel<HYPOTHESIS>::getTransInPlainTextVecTs(const _p
         }
       }
     }
+  }
+  return trgVecStr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Vector<std::string> _pbTransModel<HYPOTHESIS>::getTransInPlainTextVecTps(const _pbTransModel::Hypothesis& hyp)const
+{
+  Vector<WordIndex> nvwi;
+  Vector<WordIndex> vwi;
+
+      // Obtain vector of WordIndex
+  nvwi=hyp.getPartialTrans();
+  for(unsigned int i=1;i<nvwi.size();++i)
+  {
+    vwi.push_back(nvwi[i]);
+  }
+      // Obtain vector of strings
+  Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
+
+      // Treat unknown words contained in trgVecStr. Model is being used
+      // to translate a sentence given a prefix
+        
+      // Replace unknown words from trgVecStr
+  for(unsigned int i=0;i<trgVecStr.size();++i)
+  {
+    if(trgVecStr[i]==UNK_WORD_STR)
+    {
+      if(i<pbtmInputVars.prefSentVec.size())
+      {
+            // Unknown word must be replaced by a prefix word
+        trgVecStr[i]=pbtmInputVars.prefSentVec[i];
+      }
+      else
+      {
+            // Find source word aligned with unknown word
+        for(unsigned int j=0;j<pbtmInputVars.srcSentVec.size();++j)
+        {
+          if(hyp.areAligned(j+1,i+1))
+          {
+            trgVecStr[i]=pbtmInputVars.srcSentVec[j];
+            break;
+          }
+        }
+      }
+    }
+  }
+  return trgVecStr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Vector<std::string> _pbTransModel<HYPOTHESIS>::getTransInPlainTextVecTrs(const _pbTransModel::Hypothesis& hyp)const
+{
+    Vector<WordIndex> nvwi;
+  Vector<WordIndex> vwi;
+
+      // Obtain vector of WordIndex
+  nvwi=hyp.getPartialTrans();
+  for(unsigned int i=1;i<nvwi.size();++i)
+  {
+    vwi.push_back(nvwi[i]);
+  }
+      // Obtain vector of strings
+  Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
+
+      // Treat unknown words contained in trgVecStr. Model is being used
+      // to generate a reference.
+  for(unsigned int i=0;i<trgVecStr.size();++i)
+  {
+    if(i<pbtmInputVars.refSentVec.size())
+      trgVecStr[i]=pbtmInputVars.refSentVec[i];
+  }
+  return trgVecStr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Vector<std::string> _pbTransModel<HYPOTHESIS>::getTransInPlainTextVecTvs(const _pbTransModel::Hypothesis& hyp)const
+{
+  Vector<WordIndex> nvwi;
+  Vector<WordIndex> vwi;
+
+      // Obtain vector of WordIndex
+  nvwi=hyp.getPartialTrans();
+  for(unsigned int i=1;i<nvwi.size();++i)
+  {
+    vwi.push_back(nvwi[i]);
+  }
+      // Obtain vector of strings
+  Vector<std::string> trgVecStr=trgIndexVectorToStrVector(vwi);
+
+      // Treat unknown words contained in trgVecStr. Model is being used
+      // to verify model coverage
+  for(unsigned int i=0;i<trgVecStr.size();++i)
+  {
+    if(i<pbtmInputVars.refSentVec.size())
+      trgVecStr[i]=pbtmInputVars.refSentVec[i];
   }
   return trgVecStr;
 }
@@ -1134,6 +1426,157 @@ bool _pbTransModel<HYPOTHESIS>::getHypDataVecForGap(const Hypothesis& hyp,
 
 //---------------------------------
 template<class HYPOTHESIS>
+bool _pbTransModel<HYPOTHESIS>::getHypDataVecForGapRef(const Hypothesis& hyp,
+                                                       PositionIndex srcLeft,
+                                                       PositionIndex srcRight,
+                                                       Vector<HypDataType>& hypDataTypeVec,
+                                                       float N)
+{
+  HypDataType hypData=hyp.getData();
+  HypDataType newHypData;
+
+  hypDataTypeVec.clear();
+
+      // Obtain translation for gap
+  NbestTableNode<PhraseTransTableNodeData> ttNode;
+  getTransForHypUncovGapRef(hyp,srcLeft,srcRight,ttNode,N);
+
+  if(this->verbosity>=2)
+  {
+    cerr<<"  trying to cover from src. pos. "<<srcLeft<<" to "<<srcRight<<"; ";
+    cerr<<"Filtered "<<ttNode.size()<<" translations"<<endl;
+  }
+
+      // Generate hypothesis data for translations
+  NbestTableNode<PhraseTransTableNodeData>::iterator ttNodeIter;
+  for(ttNodeIter=ttNode.begin();ttNodeIter!=ttNode.end();++ttNodeIter)
+  {
+    if(this->verbosity>=3)
+    {
+      cerr<<"   ";
+      for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->pbtmInputVars.srcSentVec[i-1]<<" ";
+      cerr<<"||| ";
+      for(unsigned int i=0;i<ttNodeIter->second.size();++i)
+        cerr<<this->wordIndexToTrgString(ttNodeIter->second[i])<<" ";
+      cerr<<"||| "<<ttNodeIter->first<<endl;
+    }
+
+    newHypData=hypData;
+    extendHypDataIdx(srcLeft,srcRight,ttNodeIter->second,newHypData);
+    bool equal;
+    if(hypDataTransIsPrefixOfTargetRef(newHypData,equal))
+    {
+      if((this->isCompleteHypData(newHypData) && equal) || !this->isCompleteHypData(newHypData))
+        hypDataTypeVec.push_back(newHypData);
+    }
+  }
+
+      // Return boolean value
+  if(hypDataTypeVec.empty()) return false;
+  else return true;  
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+bool _pbTransModel<HYPOTHESIS>::getHypDataVecForGapVer(const Hypothesis& hyp,
+                                                       PositionIndex srcLeft,
+                                                       PositionIndex srcRight,
+                                                       Vector<HypDataType>& hypDataTypeVec,
+                                                       float N)
+{
+  HypDataType hypData=hyp.getData();
+  HypDataType newHypData;
+
+  hypDataTypeVec.clear();
+  
+      // Obtain translation for gap
+  NbestTableNode<PhraseTransTableNodeData> ttNode;
+  getTransForHypUncovGapVer(hyp,srcLeft,srcRight,ttNode,N);
+
+  if(this->verbosity>=2)
+  {
+    cerr<<"  trying to cover from src. pos. "<<srcLeft<<" to "<<srcRight<<"; ";
+    cerr<<"Filtered "<<ttNode.size()<<" translations"<<endl;
+  }
+
+      // Generate hypothesis data for translations
+  NbestTableNode<PhraseTransTableNodeData>::iterator ttNodeIter;
+  for(ttNodeIter=ttNode.begin();ttNodeIter!=ttNode.end();++ttNodeIter)
+  {
+    if(this->verbosity>=3)
+    {
+      cerr<<"   ";
+      for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->pbtmInputVars.srcSentVec[i-1]<<" ";
+      cerr<<"||| ";
+      for(unsigned int i=0;i<ttNodeIter->second.size();++i)
+        cerr<<this->wordIndexToTrgString(ttNodeIter->second[i])<<" ";
+      cerr<<"||| "<<ttNodeIter->first<<endl;
+    }
+
+    newHypData=hypData;
+    extendHypDataIdx(srcLeft,srcRight,ttNodeIter->second,newHypData);
+    bool equal;
+    if(hypDataTransIsPrefixOfTargetRef(newHypData,equal))
+    {
+      if((this->isCompleteHypData(newHypData) && equal) || !this->isCompleteHypData(newHypData))
+        hypDataTypeVec.push_back(newHypData);
+    }
+  }
+
+      // Return boolean value
+  if(hypDataTypeVec.empty()) return false;
+  else return true;  
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+bool _pbTransModel<HYPOTHESIS>::getHypDataVecForGapPref(const Hypothesis& hyp,
+                                                        PositionIndex srcLeft,
+                                                        PositionIndex srcRight,
+                                                        Vector<HypDataType>& hypDataTypeVec,
+                                                        float N)
+{
+  HypDataType hypData=hyp.getData();
+  HypDataType newHypData;
+
+  hypDataTypeVec.clear();
+  
+      // Obtain translation for gap
+  NbestTableNode<PhraseTransTableNodeData> ttNode;
+  getTransForHypUncovGapPref(hyp,srcLeft,srcRight,ttNode,N);
+
+  if(this->verbosity>=2)
+  {
+    cerr<<"  trying to cover from src. pos. "<<srcLeft<<" to "<<srcRight<<"; ";
+    cerr<<"Filtered "<<ttNode.size()<<" translations"<<endl;
+  }
+
+      // Generate hypothesis data for translations
+  NbestTableNode<PhraseTransTableNodeData>::iterator ttNodeIter;
+  for(ttNodeIter=ttNode.begin();ttNodeIter!=ttNode.end();++ttNodeIter)
+  {
+    if(this->verbosity>=3)
+    {
+      cerr<<"   ";
+      for(unsigned int i=srcLeft;i<=srcRight;++i) cerr<<this->pbtmInputVars.srcSentVec[i-1]<<" ";
+      cerr<<"||| ";
+      for(unsigned int i=0;i<ttNodeIter->second.size();++i)
+        cerr<<this->wordIndexToTrgString(ttNodeIter->second[i])<<" ";
+      cerr<<"||| "<<ttNodeIter->first<<endl;
+    }
+
+    newHypData=hypData;
+    extendHypDataIdx(srcLeft,srcRight,ttNodeIter->second,newHypData);
+    hypDataTypeVec.push_back(newHypData);
+  }
+
+      // Return boolean value
+  if(hypDataTypeVec.empty()) return false;
+  else return true;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
 bool _pbTransModel<HYPOTHESIS>::getTransForSrcPhrase(const Vector<WordIndex>& srcPhrase,
                                                      std::set<Vector<WordIndex> >& transSet)
 {
@@ -1181,6 +1624,14 @@ Score _pbTransModel<HYPOTHESIS>::nbestTransScore(const Vector<WordIndex>& srcPhr
   return result;
 }
 
+//---------------------------------------
+template<class EQCLASS_FUNC>
+Score _pbTransModel<EQCLASS_FUNC>::nbestTransScoreLast(const Vector<WordIndex>& srcPhrase,
+                                                       const Vector<WordIndex>& trgPhrase)
+{
+  return nbestTransScore(srcPhrase,trgPhrase);
+}
+
 //---------------------------------
 template<class HYPOTHESIS>
 bool _pbTransModel<HYPOTHESIS>::getNbestTransForSrcPhrase(Vector<WordIndex> srcPhrase,
@@ -1222,7 +1673,7 @@ bool _pbTransModel<HYPOTHESIS>::getNbestTransForSrcPhrase(Vector<WordIndex> srcP
 
 //---------------------------------
 template<class HYPOTHESIS>
-bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis& hyp,
+bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis& /*hyp*/,
                                                        PositionIndex srcLeft,
                                                        PositionIndex srcRight,
                                                        NbestTableNode<PhraseTransTableNodeData>& nbt,
@@ -1272,7 +1723,6 @@ bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis& hyp,
     else
     {
           // search translations for source phrase in translation table
-      NbestTableNode<PhraseTransTableNodeData> *transTableNodePtr;
       Vector<WordIndex> srcPhrase;
     
       for(unsigned int i=srcLeft;i<=srcRight;++i)
@@ -1284,6 +1734,352 @@ bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis& hyp,
       if(nbt.size()==0) return false;
       else return true;
     }
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGapRef(const Hypothesis& hyp,
+                                                          PositionIndex srcLeft,
+                                                          PositionIndex srcRight,
+                                                          NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                                          float N)
+{
+  Vector<WordIndex> srcPhrase;
+  Vector<WordIndex> trgPhrase;
+  Vector<WordIndex> ntarget;
+
+      // Obtain source phrase
+  for(unsigned int i=srcLeft;i<=srcRight;++i)
+  {
+    srcPhrase.push_back(pbtmInputVars.nsrcSentIdVec[i]);
+  }
+
+      // Obtain length limits for target phrase
+  unsigned int minTrgSize=0;
+  if(srcPhrase.size()>this->pbTransModelPars.E) minTrgSize=srcPhrase.size()-this->pbTransModelPars.E;
+  unsigned int maxTrgSize=srcPhrase.size()+this->pbTransModelPars.E;
+
+  ntarget=hyp.getPartialTrans();	
+
+  nbt.clear();
+  if(ntarget.size()>pbtmInputVars.nrefSentIdVec.size()) return false;
+  if(this->numberOfUncoveredSrcWords(hyp)-(srcRight-srcLeft+1)>0)
+  {
+        // This is not the last gap to be covered
+    NbestTableNode<PhraseTransTableNodeData> *transTableNodePtr;
+    PhrNbestTransTableRefKey pNbtRefKey;
+
+    pNbtRefKey.srcLeft=srcLeft;
+    pNbtRefKey.srcRight=srcRight;
+    pNbtRefKey.ntrgSize=ntarget.size();
+        // The number of gaps to be covered AFTER covering
+        // srcPhrase{srcLeft}...srcPhrase{srcRight} is obtained to ensure that the
+        // resulting hypotheses have at least as many gaps as reference
+        // words to add
+    if(this->pbTransModelPars.U==0)
+      pNbtRefKey.numGaps=1;
+    else
+    {
+      Bitset<MAX_SENTENCE_LENGTH_ALLOWED> key=hyp.getKey();
+      for(unsigned int i=srcLeft;i<=srcRight;++i) key.set(i);
+      pNbtRefKey.numGaps=this->get_num_gaps(key);
+    }
+     
+        // Search the required translations in the cache translation
+        // table
+    
+    transTableNodePtr=nbTransCacheData.cPhrNbestTransTableRef.getTranslationsForKey(pNbtRefKey);
+    if(transTableNodePtr!=NULL)
+    {// translations present in the cache translation table
+      nbt=*transTableNodePtr;
+    }
+    else
+    {// translations not present in the cache translation table
+      for(PositionIndex i=ntarget.size();i<pbtmInputVars.nrefSentIdVec.size()-pNbtRefKey.numGaps;++i)
+      {
+        trgPhrase.push_back(pbtmInputVars.nrefSentIdVec[i]);
+        if(trgPhrase.size()>=minTrgSize && trgPhrase.size()<=maxTrgSize)
+        {
+          Score scr=nbestTransScoreCached(srcPhrase,trgPhrase);
+          nbt.insert(scr,trgPhrase);
+        }
+      }
+          // Prune the list
+      if(N>=1)
+        while(nbt.size()>(unsigned int) N) nbt.removeLastElement();
+      else
+      {
+        Score bscr=nbt.getScoreOfBestElem();
+        nbt.pruneGivenThreshold(bscr+(double)log(N));
+      }
+          // Store the list in cPhrNbestTransTableRef
+      nbTransCacheData.cPhrNbestTransTableRef.insertEntry(pNbtRefKey,nbt);
+    }
+  }
+  else
+  {
+        // The last gap will be covered
+    for(PositionIndex i=ntarget.size();i<pbtmInputVars.nrefSentIdVec.size();++i)
+      trgPhrase.push_back(pbtmInputVars.nrefSentIdVec[i]);
+    if(trgPhrase.size()>=minTrgSize && trgPhrase.size()<=maxTrgSize)
+    {
+      Score scr=nbestTransScoreCached(srcPhrase,trgPhrase);
+      nbt.insert(scr,trgPhrase);
+    }
+  }
+  if(nbt.size()==0) return false;
+  else return true;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGapVer(const Hypothesis& hyp,
+                                                          PositionIndex srcLeft,
+                                                          PositionIndex srcRight,
+                                                          NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                                          float N)
+{
+  return getTransForHypUncovGap(hyp,srcLeft,srcRight,nbt,N);
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGapPref(const Hypothesis& hyp,
+                                                           PositionIndex srcLeft,
+                                                           PositionIndex srcRight,
+                                                           NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                                           float N)
+{
+  unsigned int ntrgSize=hyp.getPartialTrans().size();
+      // Check if the prefix has been generated
+  if(ntrgSize<pbtmInputVars.nprefSentIdVec.size())
+  {
+        // The prefix has not been generated
+    NbestTableNode<PhraseTransTableNodeData> *transTableNodePtr;
+    PhrNbestTransTablePrefKey pNbtPrefKey;
+
+    pNbtPrefKey.srcLeft=srcLeft;
+    pNbtPrefKey.srcRight=srcRight;
+    pNbtPrefKey.ntrgSize=ntrgSize;
+    if(this->numberOfUncoveredSrcWords(hyp)-(srcRight-srcLeft+1)>0)
+      pNbtPrefKey.lastGap=false;
+    else pNbtPrefKey.lastGap=true;
+    
+        // Search the required translations in the cache translation
+        // table
+    transTableNodePtr=nbTransCacheData.cPhrNbestTransTablePref.getTranslationsForKey(pNbtPrefKey);
+    if(transTableNodePtr!=NULL)
+    {// translations present in the cache translation table
+      nbt=*transTableNodePtr;
+    }
+    else
+    {
+          // Obtain list
+      transUncovGapPrefNoGen(hyp,srcLeft,srcRight,nbt);
+      
+          // Prune the list
+      if(N>=1)
+        while(nbt.size()>(unsigned int) N) nbt.removeLastElement();
+      else
+      {
+        Score bscr=nbt.getScoreOfBestElem();
+        nbt.pruneGivenThreshold(bscr+(double)log(N));
+      }
+          // Store the list in cPhrNbestTransTablePref
+      nbTransCacheData.cPhrNbestTransTablePref.insertEntry(pNbtPrefKey,nbt);
+    }
+    if(nbt.size()==0) return false;
+    else return true;
+  }
+  else
+  {
+        // The prefix has been completely generated, the nbest list
+        // is obtained as if no prefix was given
+    return getTransForHypUncovGap(hyp,srcLeft,srcRight,nbt,N);
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::transUncovGapPrefNoGen(const Hypothesis& hyp,
+                                                       PositionIndex srcLeft,
+                                                       PositionIndex srcRight,
+                                                       NbestTableNode<PhraseTransTableNodeData>& nbt)
+{
+  Vector<WordIndex> srcPhrase;
+    
+      // Obtain source phrase
+  nbt.clear();
+  for(unsigned int i=srcLeft;i<=srcRight;++i)
+  {
+    srcPhrase.push_back(pbtmInputVars.nsrcSentIdVec[i]);
+  }
+      // Obtain length limits for target phrase
+  unsigned int minTrgSize=0;
+  if(srcPhrase.size()>this->pbTransModelPars.E) minTrgSize=srcPhrase.size()-this->pbTransModelPars.E;
+  unsigned int maxTrgSize=srcPhrase.size()+this->pbTransModelPars.E;
+    
+  unsigned int ntrgSize=hyp.getPartialTrans().size();
+
+      // Check if we are covering the last gap of the hypothesis
+  if(this->numberOfUncoveredSrcWords(hyp)-(srcRight-srcLeft+1)>0)
+  {
+        // This is not the last gap to be covered.
+
+        // Add translations with length in characters greater than the
+        // prefix length.
+    genListOfTransLongerThanPref(srcPhrase,ntrgSize,nbt);
+
+        // Add translations with length lower than the prefix length.
+    Vector<WordIndex> trgPhrase;
+    if(pbtmInputVars.nprefSentIdVec.size()>1)
+    {
+      for(PositionIndex i=ntrgSize;i<pbtmInputVars.nprefSentIdVec.size()-1;++i)
+      {
+        trgPhrase.push_back(pbtmInputVars.nprefSentIdVec[i]);
+        if(trgPhrase.size()>=minTrgSize && trgPhrase.size()<=maxTrgSize)
+        {
+          Score scr=nbestTransScoreCached(srcPhrase,trgPhrase);
+          nbt.insert(scr,trgPhrase);
+        }
+      }
+    }
+  }
+  else
+  {
+        // This is the last gap to be covered.
+
+        // Add translations with length in characters greater than the
+        // prefix length.
+    genListOfTransLongerThanPref(srcPhrase,ntrgSize,nbt);
+  }
+  
+      // Insert the remaining prefix itself in nbt
+  Vector<WordIndex> remainingPref;
+  for(unsigned int i=ntrgSize;i<pbtmInputVars.nprefSentIdVec.size();++i)
+    remainingPref.push_back(pbtmInputVars.nprefSentIdVec[i]);
+  nbt.insert(nbestTransScoreLastCached(srcPhrase,remainingPref),remainingPref);
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::genListOfTransLongerThanPref(Vector<WordIndex> srcPhrase,
+                                                             unsigned int ntrgSize,
+                                                             NbestTableNode<PhraseTransTableNodeData>& nbt)
+{
+  Vector<WordIndex> remainingPref;
+
+      // clear nbt
+  nbt.clear();
+  
+      // Store the remaining prefix to be generated in remainingPref
+  for(unsigned int i=ntrgSize;i<pbtmInputVars.nprefSentIdVec.size();++i)
+    remainingPref.push_back(pbtmInputVars.nprefSentIdVec[i]);
+
+      // Obtain translations for source segment srcPhrase
+  std::set<Vector<WordIndex> > transSet;
+  getTransForSrcPhrase(srcPhrase,transSet);
+  for(std::set<Vector<WordIndex> >::iterator transSetIter=transSet.begin();transSetIter!=transSet.end();++transSetIter)
+  {
+        // Filter those translations whose length in words is
+        // greater or equal than the remaining prefix length
+    if(transSetIter->size()>=remainingPref.size())
+    {
+          // Filter those translations having "remainingPref"
+          // as prefix
+      bool equal;
+      if(trgWordVecIsPrefix(remainingPref,
+                            pbtmInputVars.lastCharOfPrefIsBlank,
+                            pbtmInputVars.prefSentVec.back(),
+                            *transSetIter,
+                            equal))
+      {
+            // Filter translations not exactly equal to "remainingPref"
+        if(!equal)
+        {
+          Score scr=nbestTransScoreLastCached(srcPhrase,*transSetIter);
+          nbt.insert(scr,*transSetIter);
+        }
+      }
+    }
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+bool _pbTransModel<HYPOTHESIS>::trgWordVecIsPrefix(const Vector<WordIndex>& wiVec1,
+                                                   bool lastWiVec1WordIsComplete,
+                                                   const std::string& lastWiVec1Word,
+                                                   const Vector<WordIndex>& wiVec2,
+                                                   bool& equal)
+{
+  equal=false;
+  
+      // returns true if target word vector wiVec1 is a prefix of wiVec2
+  if(wiVec1.size()>wiVec2.size()) return false;
+
+  for(unsigned int i=0;i<wiVec1.size();++i)
+  {
+    if(wiVec1[i]!=wiVec2[i])
+    {
+      if(i==wiVec1.size()-1 && !lastWiVec1WordIsComplete)
+      {
+        if(!StrProcUtils::isPrefix(lastWiVec1Word,wordIndexToTrgString(wiVec2[i])))
+          return false;
+      }
+      else return false;
+    }
+  }
+
+  if(wiVec1.size()==wiVec2.size() &&
+     lastWiVec1Word==wordIndexToTrgString(wiVec2.back()))
+  {
+    equal=true;
+  }
+  
+  return true;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::nbestTransScoreCached(const Vector<WordIndex>& srcPhrase,
+                                                       const Vector<WordIndex>& trgPhrase)
+{
+  PhrasePairCacheTable::iterator ppctIter;
+  ppctIter=nbTransCacheData.cnbestTransScore.find(make_pair(srcPhrase,trgPhrase));
+  if(ppctIter!=nbTransCacheData.cnbestTransScore.end())
+  {
+        // Score was previously stored in the cache table
+    return ppctIter->second;
+  }
+  else
+  {
+        // Score is not stored in the cache table
+    Score scr=nbestTransScore(srcPhrase,trgPhrase);
+    nbTransCacheData.cnbestTransScore[make_pair(srcPhrase,trgPhrase)]=scr;
+    return scr;
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::nbestTransScoreLastCached(const Vector<WordIndex>& srcPhrase,
+                                                           const Vector<WordIndex>& trgPhrase)
+{
+  PhrasePairCacheTable::iterator ppctIter;
+  ppctIter=nbTransCacheData.cnbestTransScoreLast.find(make_pair(srcPhrase,trgPhrase));
+  if(ppctIter!=nbTransCacheData.cnbestTransScoreLast.end())
+  {
+        // Score was previously stored in the cache table
+    return ppctIter->second;
+  }
+  else
+  {
+        // Score is not stored in the cache table
+    Score scr=nbestTransScoreLast(srcPhrase,trgPhrase);
+    nbTransCacheData.cnbestTransScoreLast[make_pair(srcPhrase,trgPhrase)]=scr;
+    return scr;
   }
 }
 
