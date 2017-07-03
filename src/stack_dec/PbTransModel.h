@@ -101,6 +101,10 @@ class PbTransModel: public _pbTransModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >
                         const Vector<WordIndex>& trgPhraseIdx,
                         HypDataType& hypd);
 
+      // Functions for translating with references or prefixes
+  bool hypDataTransIsPrefixOfTargetRef(const HypDataType& hypd,
+                                       bool& equal)const;
+
       // Auxiliary functions
   PhrHypDataStr phypd_to_phypdstr(const PhrHypData phypd);
   
@@ -294,6 +298,25 @@ void PbTransModel<EQCLASS_FUNC>::extendHypDataIdx(PositionIndex srcLeft,
   hypd.sourceSegmentation.push_back(sourceSegm);
   
   hypd.targetSegmentCuts.push_back(hypd.ntarget.size()-1);  
+}
+
+//---------------------------------
+template<class EQCLASS_FUNC>
+bool PbTransModel<EQCLASS_FUNC>::hypDataTransIsPrefixOfTargetRef(const HypDataType& hypd,
+                                                                          bool& equal)const
+{
+  PositionIndex ntrgSize=hypd.ntarget.size();
+  PositionIndex nrefSentSize=this->pbtmInputVars.nrefSentIdVec.size();	
+	
+  if(ntrgSize>nrefSentSize) return false;
+  for(PositionIndex i=1;i<ntrgSize;++i)
+  {
+    if(this->pbtmInputVars.nrefSentIdVec[i]!=hypd.ntarget[i]) return false;
+  }
+  if(ntrgSize==nrefSentSize) equal=true;
+  else equal=false;
+  
+  return true;
 }
 
 //---------------------------------
