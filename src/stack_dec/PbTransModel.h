@@ -105,6 +105,9 @@ class PbTransModel: public _pbTransModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >
   bool hypDataTransIsPrefixOfTargetRef(const HypDataType& hypd,
                                        bool& equal)const;
 
+      // Heuristic related functions
+  PositionIndex getLastSrcPosCoveredHypData(const HypDataType& hypd);
+
       // Auxiliary functions
   PhrHypDataStr phypd_to_phypdstr(const PhrHypData phypd);
   
@@ -317,6 +320,18 @@ bool PbTransModel<EQCLASS_FUNC>::hypDataTransIsPrefixOfTargetRef(const HypDataTy
   else equal=false;
   
   return true;
+}
+
+//---------------------------------
+template<class EQCLASS_FUNC>
+PositionIndex PbTransModel<EQCLASS_FUNC>::getLastSrcPosCoveredHypData(const HypDataType& hypd)
+{
+  SourceSegmentation sourceSegmentation;
+
+  sourceSegmentation=hypd.sourceSegmentation;
+  if(sourceSegmentation.size()>0)
+    return sourceSegmentation.back().second;
+  else return 0;
 }
 
 //---------------------------------

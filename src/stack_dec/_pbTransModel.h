@@ -172,14 +172,17 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Variable to store state of the translation model
   unsigned int state;
 
-      // Heuristic function to be used
-  unsigned int heuristicId;
-
       // Feature vector information
   FeaturesInfo<HypScoreInfo>* featuresInfoPtr;
 
       // Vocabulary handler
   SingleWordVocab singleWordVocab;
+
+      // Heuristic function to be used
+  unsigned int heuristicId;
+
+      // Heuristic probability vector
+  Vector<Vector<Score> > heuristicScoreVec; 
 
       // Data structure to store input variables
   PbTransModelInputVars pbtmInputVars;
@@ -319,7 +322,19 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   Vector<std::string> getTransInPlainTextVecTvs(const Hypothesis& hyp)const;
 
       // Heuristic related functions
+  void initHeuristic(unsigned int maxSrcPhraseLength);
   virtual Score calcHeuristicScore(const _pbTransModel::Hypothesis& hyp);
+  Score calcRefLmHeurScore(const _pbTransModel::Hypothesis& hyp);
+  Score calcPrefLmHeurScore(const _pbTransModel::Hypothesis& hyp);
+  Score heuristicLocalt(const Hypothesis& hyp);
+  Score heuristicLocaltd(const Hypothesis& hyp);
+  Score getLocalTmHeurScore(const Hypothesis& hyp);
+  Score getDistortionHeurScore(const Hypothesis& hyp);
+  PositionIndex getLastSrcPosCovered(const Hypothesis& hyp);
+      // Get the index of last source position which was covered
+  virtual PositionIndex getLastSrcPosCoveredHypData(const HypDataType& hypd)=0;
+      // The same as the previous function, but given an object of
+      // HypDataType
 
       // Functions related to pre_trans_actions
   virtual void clearTempVars(void);
@@ -329,7 +344,6 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   bool unseenSrcWord(std::string srcw);
   bool unseenSrcWordGivenPosition(unsigned int srcPos);
   Score unkWordScoreHeur(void);
-  void initHeuristic(unsigned int maxSrcPhraseLength);
 
       // Vocabulary functions
   WordIndex stringToSrcWordIndex(std::string s);
@@ -953,11 +967,14 @@ void _pbTransModel<HYPOTHESIS>::subtractHeuristicToHyp(Hypothesis& hyp)
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::clearTempVars(void)
 {
-  // Clear input information
+      // Clear input information
   pbtmInputVars.clear();
 
-  // Clear set of unseen words
-  unseenWordsSet.clear();  
+      // Clear set of unseen words
+  unseenWordsSet.clear();
+
+      // Clear information of the heuristic used in the translation
+  heuristicScoreVec.clear();
 }
 
 //---------------------------------------
@@ -1018,8 +1035,13 @@ bool _pbTransModel<HYPOTHESIS>::unseenSrcWordGivenPosition(unsigned int srcPos)
 template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::unkWordScoreHeur(void)
 {
-      // TO-BE-DONE
-  return 0;
+      // Init srcPhrase and trgPhrase
+  Vector<WordIndex> srcPhrase;
+  Vector<WordIndex> trgPhrase;
+  srcPhrase.push_back(UNK_WORD);
+  trgPhrase.push_back(UNK_WORD);
+
+  return nbestTransScore(srcPhrase,trgPhrase);
 }
 
 //---------------------------------
@@ -1040,9 +1062,121 @@ void _pbTransModel<HYPOTHESIS>::setHeuristic(unsigned int _heuristicId)
 template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::calcHeuristicScore(const _pbTransModel::Hypothesis& hyp)
 {
-      // TO-BE-DONE
   Score score=0;
+
+  if(state==MODEL_TRANSREF_STATE)
+  {
+        // translation with reference
+    score+=calcRefLmHeurScore(hyp);
+  }
+  if(state==MODEL_TRANSPREFIX_STATE)
+  {
+        // translation with prefix
+    score+=calcPrefLmHeurScore(hyp);
+  }
+
+  switch(heuristicId)
+  {
+    case NO_HEURISTIC:
+      break;
+    case LOCAL_T_HEURISTIC:
+      score+=heuristicLocalt(hyp);
+      break;
+    case LOCAL_TD_HEURISTIC:
+      score+=heuristicLocaltd(hyp);
+      break;
+  }
   return score;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::calcRefLmHeurScore(const _pbTransModel::Hypothesis& hyp)
+{
+      // TO-BE-DONE  
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::calcPrefLmHeurScore(const _pbTransModel::Hypothesis& hyp)
+{
+      // TO-BE-DONE
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::heuristicLocalt(const Hypothesis& hyp)
+{
+  if(state==MODEL_TRANS_STATE)
+  {
+    return getLocalTmHeurScore(hyp);
+  }
+  else
+  {
+        // TO-DO
+    return 0;
+  }  
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::heuristicLocaltd(const Hypothesis& hyp)
+{
+  if(state==MODEL_TRANS_STATE)
+  {
+    Score result=getLocalTmHeurScore(hyp);
+    result+=getDistortionHeurScore(hyp);
+    
+    return result;
+  }
+  else
+  {
+        // TO-DO
+    return 0;
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::getLocalTmHeurScore(const Hypothesis& hyp)
+{
+  Score result=0;  
+  unsigned int J=pbtmInputVars.srcSentVec.size();
+  Vector<pair<PositionIndex,PositionIndex> > gaps;
+  this->extract_gaps(hyp,gaps);
+  for(unsigned int i=0;i<gaps.size();++i)
+  {
+    result+=heuristicScoreVec[gaps[i].second-1][J-gaps[i].first];	
+  }
+  
+  return result;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::getDistortionHeurScore(const Hypothesis& hyp)
+{
+      // Initialize variables
+  Score result=0;  
+  Vector<pair<PositionIndex,PositionIndex> > gaps;
+  this->extract_gaps(hyp,gaps);
+  PositionIndex lastSrcPosCovered=getLastSrcPosCovered(hyp);
+
+      // Obtain score
+  Vector<SrcPosJumpFeat<HypScoreInfo>* > srcPosJumpFeatPtrs=featuresInfoPtr->getSrcPosJumpFeatPtrs();
+  for(unsigned int i=0;i<srcPosJumpFeatPtrs.size();++i)
+  {
+    result+=srcPosJumpFeatPtrs[i]->calcHeurScore(gaps,lastSrcPosCovered);
+  }
+
+  return result;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+PositionIndex _pbTransModel<HYPOTHESIS>::getLastSrcPosCovered(const Hypothesis& hyp)
+{
+  return getLastSrcPosCoveredHypData(hyp.getData());
 }
 
 //---------------------------------
