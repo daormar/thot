@@ -25,6 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "SrcPosJumpFeat.h"
 #include "InversePhraseModelFeat.h"
 #include "DirectPhraseModelFeat.h"
 #include "LangModelFeat.h"
@@ -42,6 +43,7 @@ struct FeaturesInfo
   Vector<LangModelFeat<SCORE_INFO>* > getLangModelFeatPtrs(void);
   Vector<DirectPhraseModelFeat<SCORE_INFO>* > getDirectPhraseModelFeatPtrs(void);
   Vector<InversePhraseModelFeat<SCORE_INFO>* > getInversePhraseModelFeatPtrs(void);
+  Vector<SrcPosJumpFeat<SCORE_INFO>* > getSrcPosJumpFeatPtrs(void);
 };
 
 //---------------
@@ -84,6 +86,20 @@ Vector<InversePhraseModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getInvers
       inversePhraseModelFeatPtrVec.push_back(inversePhraseModelFeatPtr);
   }
   return inversePhraseModelFeatPtrVec;
+}
+
+//---------------
+template<class SCORE_INFO>
+Vector<SrcPosJumpFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getSrcPosJumpFeatPtrs(void)
+{
+  Vector<SrcPosJumpFeat<SCORE_INFO>* > srcPosJumpFeatPtrVec;
+  for(unsigned int i=0;i<featPtrVec.size();++i)
+  {
+    SrcPosJumpFeat<SCORE_INFO>* srcPosJumpFeatPtr=dynamic_cast<SrcPosJumpFeat<SCORE_INFO>* >(featPtrVec[i]);
+    if(srcPosJumpFeatPtr)
+      srcPosJumpFeatPtrVec.push_back(srcPosJumpFeatPtr);
+  }
+  return srcPosJumpFeatPtrVec;  
 }
 
 #endif
