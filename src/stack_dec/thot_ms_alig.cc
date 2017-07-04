@@ -205,9 +205,9 @@ int init_translator(const thot_ms_alig_pars& tap)
 
       // Call the appropriate initialization for current implementation
   if(featureBasedImplEnabled)
-    init_translator_feat_impl(tap);
+    return init_translator_feat_impl(tap);
   else
-    init_translator_legacy_impl(tap);
+    return init_translator_legacy_impl(tap);
 }
 
 //--------------------------

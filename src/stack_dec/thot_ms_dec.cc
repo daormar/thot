@@ -193,9 +193,9 @@ int init_translator(const thot_ms_dec_pars& tdp)
 
       // Call the appropriate initialization for current implementation
   if(featureBasedImplEnabled)
-    init_translator_feat_impl(tdp);
+    return init_translator_feat_impl(tdp);
   else
-    init_translator_legacy_impl(tdp);
+    return init_translator_legacy_impl(tdp);
 }
 
 //--------------------------
