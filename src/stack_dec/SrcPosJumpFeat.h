@@ -82,6 +82,10 @@ class SrcPosJumpFeat: public BasePbTransModelFeature<SCORE_INFO>
   Score scorePhrasePair(const Vector<std::string>& srcPhrase,
                         const Vector<std::string>& trgPhrase);
 
+      // Heuristic related functions
+  Score calcHeurScore(const Vector<pair<PositionIndex,PositionIndex> >& gaps,
+                      PositionIndex lastSrcPosCovered)const;
+  
       // Functions related to model pointers
   void link_pm(BasePhraseModel* _invPbModelPtr);
 
@@ -89,7 +93,9 @@ class SrcPosJumpFeat: public BasePbTransModelFeature<SCORE_INFO>
 
   BasePhraseModel* invPbModelPtr;
 
-  Score srcJumpScore(unsigned int offset);
+  Score srcJumpScore(unsigned int offset)const;
+  Vector<unsigned int> min_jumps(const Vector<pair<PositionIndex,PositionIndex> >& gaps,
+                                 PositionIndex lastSrcPosCovered)const;
 };
 
 //--------------- SrcPosJumpFeat class functions
@@ -118,6 +124,18 @@ Score SrcPosJumpFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::string>& /*s
 
 //---------------------------------
 template<class SCORE_INFO>
+Score SrcPosJumpFeat<SCORE_INFO>::calcHeurScore(const Vector<pair<PositionIndex,PositionIndex> >& gaps,
+                                                PositionIndex lastSrcPosCovered)const
+{
+  Score result=0;
+  Vector<unsigned int> jumps=min_jumps(gaps,lastSrcPosCovered);
+  for(unsigned int k=0;k<jumps.size();++k)
+    result+=srcJumpScore(jumps[k]);
+  return result;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
 void SrcPosJumpFeat<SCORE_INFO>::link_pm(BasePhraseModel* _invPbModelPtr)
 {
   invPbModelPtr=_invPbModelPtr;
@@ -125,9 +143,29 @@ void SrcPosJumpFeat<SCORE_INFO>::link_pm(BasePhraseModel* _invPbModelPtr)
 
 //---------------------------------------
 template<class SCORE_INFO>
-Score SrcPosJumpFeat<SCORE_INFO>::srcJumpScore(unsigned int offset)
+Score SrcPosJumpFeat<SCORE_INFO>::srcJumpScore(unsigned int offset)const
 {
   return (double)this->invPbModelPtr->trgCutsLgProb(offset);
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+Vector<unsigned int> SrcPosJumpFeat<SCORE_INFO>::min_jumps(const Vector<pair<PositionIndex,PositionIndex> >& gaps,
+                                                           PositionIndex lastSrcPosCovered)const
+{
+  Vector<unsigned int> result;
+  PositionIndex j=lastSrcPosCovered;
+  for(unsigned int k=0;k<gaps.size();++k)
+  {
+    if(j>gaps[k].first)
+      result.push_back(j-gaps[k].first);
+    else
+      result.push_back(gaps[k].first-j);
+
+    j=gaps[k].second;
+  }
+  
+  return result;
 }
 
 #endif
