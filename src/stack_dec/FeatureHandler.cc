@@ -92,45 +92,6 @@ FeaturesInfo<SmtModel::HypScoreInfo>* FeatureHandler::getFeatureInfoPtr(void)
 }
 
 //---------------
-Vector<LangModelFeat<SmtModel::HypScoreInfo>* > FeatureHandler::getLangModelFeatPtrs(void)
-{
-  Vector<LangModelFeat<SmtModel::HypScoreInfo>* > lmFeatPtrVec;
-  for(unsigned int i=0;i<featuresInfo.featPtrVec.size();++i)
-  {
-    LangModelFeat<SmtModel::HypScoreInfo>* lmFeatPtr=dynamic_cast<LangModelFeat<SmtModel::HypScoreInfo>* >(featuresInfo.featPtrVec[i]);
-    if(lmFeatPtr)
-      lmFeatPtrVec.push_back(lmFeatPtr);
-  }
-  return lmFeatPtrVec;
-}
-
-//---------------
-Vector<DirectPhraseModelFeat<SmtModel::HypScoreInfo>* > FeatureHandler::getDirectPhraseModelFeatPtrs(void)
-{
-  Vector<DirectPhraseModelFeat<SmtModel::HypScoreInfo>* > directPhraseModelFeatPtrVec;
-  for(unsigned int i=0;i<featuresInfo.featPtrVec.size();++i)
-  {
-    DirectPhraseModelFeat<SmtModel::HypScoreInfo>* directPhraseModelFeatPtr=dynamic_cast<DirectPhraseModelFeat<SmtModel::HypScoreInfo>* >(featuresInfo.featPtrVec[i]);
-    if(directPhraseModelFeatPtr)
-      directPhraseModelFeatPtrVec.push_back(directPhraseModelFeatPtr);
-  }
-  return directPhraseModelFeatPtrVec;
-}
-
-//---------------
-Vector<InversePhraseModelFeat<SmtModel::HypScoreInfo>* > FeatureHandler::getInversePhraseModelFeatPtrs(void)
-{
-  Vector<InversePhraseModelFeat<SmtModel::HypScoreInfo>* > inversePhraseModelFeatPtrVec;
-  for(unsigned int i=0;i<featuresInfo.featPtrVec.size();++i)
-  {
-    InversePhraseModelFeat<SmtModel::HypScoreInfo>* inversePhraseModelFeatPtr=dynamic_cast<InversePhraseModelFeat<SmtModel::HypScoreInfo>* >(featuresInfo.featPtrVec[i]);
-    if(inversePhraseModelFeatPtr)
-      inversePhraseModelFeatPtrVec.push_back(inversePhraseModelFeatPtr);
-  }
-  return inversePhraseModelFeatPtrVec;
-}
-
-//---------------
 int FeatureHandler::updateLinInterpWeights(std::string srcCorpusFileName,
                                            std::string trgCorpusFileName,
                                            int verbose/*=0*/)

@@ -78,9 +78,6 @@ class FeatureHandler
 
       // Function to get pointers to features
   FeaturesInfo<SmtModel::HypScoreInfo>* getFeatureInfoPtr(void);
-  Vector<LangModelFeat<SmtModel::HypScoreInfo>* > getLangModelFeatPtrs(void);
-  Vector<DirectPhraseModelFeat<SmtModel::HypScoreInfo>* > getDirectPhraseModelFeatPtrs(void);
-  Vector<InversePhraseModelFeat<SmtModel::HypScoreInfo>* > getInversePhraseModelFeatPtrs(void);
   
       // Functions to adjust weights
   int updateLinInterpWeights(std::string srcCorpusFileName,

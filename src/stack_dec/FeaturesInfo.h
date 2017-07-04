@@ -25,6 +25,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "InversePhraseModelFeat.h"
+#include "DirectPhraseModelFeat.h"
+#include "LangModelFeat.h"
 #include "BasePbTransModelFeature.h"
 #include "myVector.h"
 
@@ -33,7 +36,54 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 template<class SCORE_INFO>
 struct FeaturesInfo
 {
-   Vector<BasePbTransModelFeature<SCORE_INFO>* > featPtrVec;
+  Vector<BasePbTransModelFeature<SCORE_INFO>* > featPtrVec;
+
+      // Functions to get pointers to features
+  Vector<LangModelFeat<SCORE_INFO>* > getLangModelFeatPtrs(void);
+  Vector<DirectPhraseModelFeat<SCORE_INFO>* > getDirectPhraseModelFeatPtrs(void);
+  Vector<InversePhraseModelFeat<SCORE_INFO>* > getInversePhraseModelFeatPtrs(void);
 };
+
+//---------------
+template<class SCORE_INFO>
+Vector<LangModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getLangModelFeatPtrs(void)
+{
+  Vector<LangModelFeat<SCORE_INFO>* > lmFeatPtrVec;
+  for(unsigned int i=0;i<featPtrVec.size();++i)
+  {
+    LangModelFeat<SCORE_INFO>* lmFeatPtr=dynamic_cast<LangModelFeat<SCORE_INFO>* >(featPtrVec[i]);
+    if(lmFeatPtr)
+      lmFeatPtrVec.push_back(lmFeatPtr);
+  }
+  return lmFeatPtrVec;
+}
+
+//---------------
+template<class SCORE_INFO>
+Vector<DirectPhraseModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getDirectPhraseModelFeatPtrs(void)
+{
+  Vector<DirectPhraseModelFeat<SCORE_INFO>* > directPhraseModelFeatPtrVec;
+  for(unsigned int i=0;i<featPtrVec.size();++i)
+  {
+    DirectPhraseModelFeat<SCORE_INFO>* directPhraseModelFeatPtr=dynamic_cast<DirectPhraseModelFeat<SCORE_INFO>* >(featPtrVec[i]);
+    if(directPhraseModelFeatPtr)
+      directPhraseModelFeatPtrVec.push_back(directPhraseModelFeatPtr);
+  }
+  return directPhraseModelFeatPtrVec;
+}
+
+//---------------
+template<class SCORE_INFO>
+Vector<InversePhraseModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getInversePhraseModelFeatPtrs(void)
+{
+  Vector<InversePhraseModelFeat<SCORE_INFO>* > inversePhraseModelFeatPtrVec;
+  for(unsigned int i=0;i<featPtrVec.size();++i)
+  {
+    InversePhraseModelFeat<SCORE_INFO>* inversePhraseModelFeatPtr=dynamic_cast<InversePhraseModelFeat<SCORE_INFO>* >(featPtrVec[i]);
+    if(inversePhraseModelFeatPtr)
+      inversePhraseModelFeatPtrVec.push_back(inversePhraseModelFeatPtr);
+  }
+  return inversePhraseModelFeatPtrVec;
+}
 
 #endif
