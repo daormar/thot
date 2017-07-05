@@ -86,7 +86,9 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                               Score& unweightedScore);
   Score scorePhrasePair(const Vector<std::string>& srcPhrase,
                         const Vector<std::string>& trgPhrase);
-
+  Score scoreTrgSentence(const Vector<std::string>& trgSent,
+                         Vector<Score>& cumulativeScoreVec);
+  
       // Link pointer
   void link_lm(BaseNgramLM<LM_State>* _lModelPtr);
 
@@ -134,6 +136,35 @@ Score LangModelFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::string>& /*sr
   LM_State state;    
   lModelPtr->getStateForWordSeq(hist,state);
   return this->weight*getNgramScoreGivenState(trgPhrase,state);
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+Score LangModelFeat<SCORE_INFO>::scoreTrgSentence(const Vector<std::string>& trgSent,
+                                                  Vector<Score>& cumulativeScoreVec)
+{
+      // Initialize state
+  LM_State state;
+  lModelPtr->getStateForBeginOfSentence(state);
+
+      // Obtain scores for words
+  Score finalScr=0;
+  cumulativeScoreVec.clear();
+  for(unsigned int i=0;i<trgSent.size();++i)
+  {
+    Vector<std::string> wordVec;
+    wordVec.push_back(trgSent[i]);
+    Score scr=this->weight*getNgramScoreGivenState(wordVec,state);
+    finalScr+=scr;
+    cumulativeScoreVec.push_back(finalScr);
+  }
+
+      // Obtain score for end of sentence
+  Score scr=getEosScoreGivenState(state);
+  finalScr+=scr;
+  cumulativeScoreVec.push_back(finalScr);
+  
+  return finalScr;
 }
 
 //---------------------------------
