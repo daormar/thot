@@ -30,6 +30,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                          // variable (default value: LM_State.h)
 #include "ModelDescriptorUtils.h"
 #include "BaseNgramLM.h"
+#include "WordPredictor.h"
 #include "WordIndex.h"
 #include "myVector.h"
 #include "SimpleDynClassLoader.h"
@@ -38,6 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 struct LangModelsInfo
 {
+  WordPredictor wordPredictor;
   Vector<BaseNgramLM<LM_State>*> lModelPtrVec;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
   Vector<SimpleDynClassLoader<BaseNgramLM<LM_State> > > simpleDynClassLoaderVec;
