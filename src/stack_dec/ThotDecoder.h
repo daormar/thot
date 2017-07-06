@@ -306,6 +306,10 @@ class ThotDecoder
   std::string robustMergePostProcTransWithUserPref(std::string postproctrans,
                                                    std::string totalPrefix);
   std::string expandLastWord(std::string& partialSent);
+  pair<Count,std::string> getBestSuffixGivenHist(Vector<std::string> hist,
+                                                 std::string input);
+  pair<Count,std::string> getBestSuffixGivenHistFeatImpl(Vector<std::string> hist,
+                                                         std::string input);
   std::string getWordCompletion(std::string uncompleteWord,
                                 std::string completeWord);
 

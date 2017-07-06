@@ -2869,7 +2869,7 @@ std::string ThotDecoder::expandLastWord(std::string& partialSent)
 
       if(strVec.size()>=3) hist.push_back(strVec[strVec.size()-3]);
       if(strVec.size()>=2) hist.push_back(strVec[strVec.size()-2]);
-      pcs=tdCommonVars.smtModelPtr->getBestSuffixGivenHist(hist,lastWord);
+      pcs=getBestSuffixGivenHist(hist,lastWord);
       if(pcs.second.size()>0) partialSent=partialSent+pcs.second+" ";
       else partialSent=partialSent+pcs.second;
       return lastWord+pcs.second;
@@ -2879,6 +2879,41 @@ std::string ThotDecoder::expandLastWord(std::string& partialSent)
   {
     return lastWord;
   }
+}
+
+//--------------------------
+pair<Count,std::string> ThotDecoder::getBestSuffixGivenHist(Vector<std::string> hist,
+                                                            std::string input)
+{
+  if(tdCommonVars.featureBasedImplEnabled)
+  {
+    return getBestSuffixGivenHistFeatImpl(hist,input);
+  }
+  else
+  {
+    return tdCommonVars.smtModelPtr->getBestSuffixGivenHist(hist,input);
+  }
+}
+
+//--------------------------
+pair<Count,std::string> ThotDecoder::getBestSuffixGivenHistFeatImpl(Vector<std::string> hist,
+                                                                    std::string input)
+{
+      // Obtain pointer to features info
+  FeaturesInfo<SmtModel::HypScoreInfo>* featsInfoPtr=tdCommonVars.featureHandler.getFeatureInfoPtr();
+
+      // Obtain pointers to language model features
+  Vector<LangModelFeat<SmtModel::HypScoreInfo>* > langModelFeatsVec=featsInfoPtr->getLangModelFeatPtrs();
+  
+      // Obtain best suffix using first available language model feature
+  if(langModelFeatsVec.empty())
+  {
+    pair<Count,std::string> pcs;
+    pcs.first=0;
+    return pcs;
+  }
+  else
+    return langModelFeatsVec[0]->getBestSuffixGivenHist(hist,input);
 }
 
 //--------------------------
