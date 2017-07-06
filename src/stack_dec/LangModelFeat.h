@@ -48,6 +48,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                          // configure by checking LM_STATE_H
                          // variable (default value: LM_State.h)
 #include "BaseNgramLM.h"
+#include "WordPredictor.h"
 #include "PhraseBasedTmHypRec.h"
 #include "BasePbTransModelFeature.h"
 
@@ -88,14 +89,21 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                         const Vector<std::string>& trgPhrase);
   Score scoreTrgSentence(const Vector<std::string>& trgSent,
                          Vector<Score>& cumulativeScoreVec);
+
+      // Word predictor related functions
+  pair<Count,std::string> getBestSuffix(std::string input);
+  pair<Count,std::string> getBestSuffixGivenHist(Vector<std::string> hist,
+                                                 std::string input);
   
-      // Link pointer
+      // Link pointers
   void link_lm(BaseNgramLM<LM_State>* _lModelPtr);
+  void link_wp(WordPredictor* _wordPredPtr);
 
  protected:
 
   BaseNgramLM<LM_State>* lModelPtr;
-
+  WordPredictor* wordPredPtr;
+  
       // Functions to access language model parameters
   Score getEosScoreGivenState(LM_State& lmHist);
   Score getNgramScoreGivenState(Vector<std::string> trgphrase,
@@ -169,9 +177,76 @@ Score LangModelFeat<SCORE_INFO>::scoreTrgSentence(const Vector<std::string>& trg
 
 //---------------------------------
 template<class SCORE_INFO>
+pair<Count,std::string>
+LangModelFeat<SCORE_INFO>::getBestSuffix(std::string input)
+{
+  return wordPredPtr->getBestSuffix(input);
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+pair<Count,std::string>
+LangModelFeat<SCORE_INFO>::getBestSuffixGivenHist(Vector<std::string> hist,
+                                                  std::string input)
+{
+  WordPredictor::SuffixList suffixList;
+  WordPredictor::SuffixList::iterator suffixListIter;
+  LgProb lp;
+  LgProb maxlp=-FLT_MAX;
+  pair<Count,std::string> bestCountSuffix;
+
+      // Get suffix list for input
+  wordPredPtr->getSuffixList(input,suffixList);
+  if(suffixList.size()==0)
+  {
+        // There are not any suffix
+    return make_pair(0,"");
+  }
+  else
+  {
+        // There are one or more suffixes
+    LM_State lmState;
+    LM_State aux;
+
+        // Initialize language model state given history
+    lModelPtr->getStateForBeginOfSentence(lmState);
+    for(unsigned int i=0;i<hist.size();++i)
+    {
+      lModelPtr->getNgramLgProbGivenState(lModelPtr->stringToWordIndex(hist[i]),lmState);
+    }
+
+        // Obtain probability for each suffix given history
+    for(suffixListIter=suffixList.begin();suffixListIter!=suffixList.end();++suffixListIter)
+    {
+      std::string lastw;
+      
+      aux=lmState;
+      lastw=input+suffixListIter->second;
+      lp=lModelPtr->getNgramLgProbGivenState(lModelPtr->stringToWordIndex(lastw),aux);
+      if(maxlp<lp)
+      {
+        bestCountSuffix.first=suffixListIter->first;
+        bestCountSuffix.second=suffixListIter->second;
+        maxlp=lp;
+      }
+    }
+        // Return best suffix
+    return bestCountSuffix;
+  }
+}
+
+//---------------------------------
+template<class SCORE_INFO>
 void LangModelFeat<SCORE_INFO>::link_lm(BaseNgramLM<LM_State>* _lModelPtr)
 {
   lModelPtr=_lModelPtr;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void LangModelFeat<SCORE_INFO>::link_wp(WordPredictor* _wordPredPtr)
+{
+  wordPredPtr=_wordPredPtr;
 }
 
 //---------------------------------
