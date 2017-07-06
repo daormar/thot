@@ -184,6 +184,10 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Heuristic probability vector
   Vector<Vector<Score> > heuristicScoreVec; 
 
+      // Additional data structures to store information about heuristics
+  Vector<LgProb> refHeurLmLgProb;
+  Vector<LgProb> prefHeurLmLgProb;
+
       // Data structure to store input variables
   PbTransModelInputVars pbtmInputVars;
 
@@ -323,6 +327,13 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
 
       // Heuristic related functions
   void initHeuristic(unsigned int maxSrcPhraseLength);
+  Score heurDirectPmScoreLt(Vector<WordIndex>& srcPhrase,
+                            Vector<WordIndex>& trgPhrase);
+  Score heurInversePmScoreLt(Vector<WordIndex>& srcPhrase,
+                             Vector<WordIndex>& trgPhrase);
+  Score heurLmScoreLtNoAdmiss(Vector<WordIndex>& trgPhrase);
+  void initHeuristicLocalt(int maxSrcPhraseLength);
+  void initHeuristicLocaltd(int maxSrcPhraseLength);
   virtual Score calcHeuristicScore(const _pbTransModel::Hypothesis& hyp);
   Score calcRefLmHeurScore(const _pbTransModel::Hypothesis& hyp);
   Score calcPrefLmHeurScore(const _pbTransModel::Hypothesis& hyp);
@@ -975,6 +986,10 @@ void _pbTransModel<HYPOTHESIS>::clearTempVars(void)
 
       // Clear information of the heuristic used in the translation
   heuristicScoreVec.clear();
+
+      // Clear additional heuristic information
+  refHeurLmLgProb.clear();
+  prefHeurLmLgProb.clear();
 }
 
 //---------------------------------------
@@ -1048,7 +1063,171 @@ Score _pbTransModel<HYPOTHESIS>::unkWordScoreHeur(void)
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::initHeuristic(unsigned int maxSrcPhraseLength)
 {
-      // TO-BE-DONE
+  switch(heuristicId)
+  {
+    case LOCAL_T_HEURISTIC:
+      initHeuristicLocalt(maxSrcPhraseLength);
+      break;
+    case LOCAL_TD_HEURISTIC:
+      initHeuristicLocaltd(maxSrcPhraseLength);
+      break;
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::initHeuristicLocalt(int maxSrcPhraseLength)
+{
+  Vector<Score> row;
+  NbestTableNode<PhraseTransTableNodeData> ttNode;
+  NbestTableNode<PhraseTransTableNodeData>::iterator ttNodeIter;
+  Score compositionProduct;
+  Score bestScore_ts=0;
+  Score score_ts;
+  Vector<WordIndex> srcPhrase;
+    
+  unsigned int J=pbtmInputVars.nsrcSentIdVec.size()-1;
+  heuristicScoreVec.clear();
+      // Initialize row vector    
+  for(unsigned int j=0;j<J;++j) row.push_back(-FLT_MAX);
+      // Insert rows into t-heuristic table     
+  for(unsigned int j=0;j<J;++j) heuristicScoreVec.push_back(row);
+     
+      // Fill the t-heuristic table
+  for(unsigned int y=0;y<J;++y)
+  {
+    for(unsigned int x=J-y-1;x<J;++x)
+    {
+          // obtain source phrase
+      unsigned int segmRightMostj=y;
+      unsigned int segmLeftMostj=J-x-1; 
+      srcPhrase.clear();
+
+          // obtain score for best translation
+      if((segmRightMostj-segmLeftMostj)+1>(unsigned int)maxSrcPhraseLength)
+      {
+        ttNode.clear();
+      }
+      else
+      {
+        for(unsigned int j=segmLeftMostj;j<=segmRightMostj;++j)
+          srcPhrase.push_back(pbtmInputVars.nsrcSentIdVec[j+1]);
+  
+            // Obtain translations for srcPhrase
+        getNbestTransForSrcPhrase(srcPhrase,ttNode,this->pbTransModelPars.W);
+        if(ttNode.size()!=0) // Obtain best p(srcPhrase|t_)
+        {
+          bestScore_ts=-FLT_MAX;
+          for(ttNodeIter=ttNode.begin();ttNodeIter!=ttNode.end();++ttNodeIter)
+          {
+                // Obtain phrase to phrase translation probability
+            score_ts=heurDirectPmScoreLt(srcPhrase,ttNodeIter->second)+heurInversePmScoreLt(srcPhrase,ttNodeIter->second);
+                // Obtain language model heuristic estimation
+            score_ts+=heurLmScoreLtNoAdmiss(ttNodeIter->second);
+            
+            if(bestScore_ts<score_ts) bestScore_ts=score_ts;
+          }
+        }
+      }
+      
+          // Check source phrase length     
+      if(x==J-y-1)
+      {
+            // source phrase has only one word
+        if(ttNode.size()!=0)
+        {
+          heuristicScoreVec[y][x]=bestScore_ts;
+        }
+        else
+        {
+          heuristicScoreVec[y][x]=unkWordScoreHeur();
+        }
+      }
+      else
+      {
+            // source phrase has more than one word
+        if(ttNode.size()!=0)
+        {
+          heuristicScoreVec[y][x]=bestScore_ts;
+        }
+        else
+        {
+          heuristicScoreVec[y][x]=-FLT_MAX;
+        }
+        for(unsigned int z=J-x-1;z<y;++z) 
+        {
+          compositionProduct=heuristicScoreVec[z][x]+heuristicScoreVec[y][J-2-z];
+          if(heuristicScoreVec[y][x]<compositionProduct)
+          {
+            heuristicScoreVec[y][x]=compositionProduct; 
+          }
+        }   
+      }       
+    } 
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::heurDirectPmScoreLt(Vector<WordIndex>& srcPhrase,
+                                                     Vector<WordIndex>& trgPhrase)
+{
+      // Obtain string vector
+  Vector<std::string> srcPhraseStr=srcIndexVectorToStrVector(srcPhrase);
+  Vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
+
+      // Obtain direct phrase model feature pointers 
+  Score scr=0;
+  Vector<DirectPhraseModelFeat<HypScoreInfo>* > directPhraseModelFeatPtrs=featuresInfoPtr->getDirectPhraseModelFeatPtrs();
+  for(unsigned int i=0;i<directPhraseModelFeatPtrs.size();++i)
+  {
+    scr+=directPhraseModelFeatPtrs[i]->scorePhrasePair(srcPhraseStr,trgPhraseStr);
+  }
+  return scr;  
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::heurInversePmScoreLt(Vector<WordIndex>& srcPhrase,
+                                                      Vector<WordIndex>& trgPhrase)
+{
+      // Obtain string vector
+  Vector<std::string> srcPhraseStr=srcIndexVectorToStrVector(srcPhrase);
+  Vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
+
+      // Obtain inverse phrase model feature pointers 
+  Score scr=0;
+  Vector<InversePhraseModelFeat<HypScoreInfo>* > inversePhraseModelFeatPtrs=featuresInfoPtr->getInversePhraseModelFeatPtrs();
+  for(unsigned int i=0;i<inversePhraseModelFeatPtrs.size();++i)
+  {
+    scr+=inversePhraseModelFeatPtrs[i]->scorePhrasePair(srcPhraseStr,trgPhraseStr);
+  }
+  return scr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+Score _pbTransModel<HYPOTHESIS>::heurLmScoreLtNoAdmiss(Vector<WordIndex>& trgPhrase)
+{
+      // Obtain string vector
+  Vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
+
+      // Obtain language model feature pointers 
+  Score scr=0;
+  Vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=featuresInfoPtr->getLangModelFeatPtrs();
+  for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
+  {
+    Vector<std::string> emptyPhraseStr;
+    scr+=langModelFeatPtrs[i]->scorePhrasePair(emptyPhraseStr,trgPhraseStr);
+  }
+  return scr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::initHeuristicLocaltd(int maxSrcPhraseLength)
+{
+  initHeuristicLocalt(maxSrcPhraseLength);
 }
 
 //---------------------------------
@@ -1093,14 +1272,61 @@ Score _pbTransModel<HYPOTHESIS>::calcHeuristicScore(const _pbTransModel::Hypothe
 template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::calcRefLmHeurScore(const _pbTransModel::Hypothesis& hyp)
 {
-      // TO-BE-DONE  
+  if(refHeurLmLgProb.empty())
+  {
+    Vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=featuresInfoPtr->getLangModelFeatPtrs();
+    for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
+    {
+          // Obtain scores
+      Vector<Score> cumulativeScoreVec;
+      langModelFeatPtrs[i]->scoreTrgSentence(pbtmInputVars.refSentVec,cumulativeScoreVec);
+          // Update refHeurLmLgProb
+      for(unsigned int j=0;j<cumulativeScoreVec.size();++j)
+      {
+        if(j==refHeurLmLgProb.size())
+          refHeurLmLgProb.push_back(cumulativeScoreVec[j]);
+        else
+          refHeurLmLgProb[j]+=cumulativeScoreVec[j];
+      }
+    }
+  }
+      // Return heuristic value
+  unsigned int len=hyp.partialTransLength();
+  LgProb lp=refHeurLmLgProb.back()-refHeurLmLgProb[len-1];
+  return lp;
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::calcPrefLmHeurScore(const _pbTransModel::Hypothesis& hyp)
 {
-      // TO-BE-DONE
+  if(prefHeurLmLgProb.empty())
+  {
+    Vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=featuresInfoPtr->getLangModelFeatPtrs();
+    for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
+    {
+          // Obtain scores
+      Vector<Score> cumulativeScoreVec;
+      langModelFeatPtrs[i]->scoreTrgSentence(pbtmInputVars.prefSentVec,cumulativeScoreVec);
+          // Update prefHeurLmLgProb
+      for(unsigned int j=0;j<cumulativeScoreVec.size();++j)
+      {
+        if(j==refHeurLmLgProb.size())
+          prefHeurLmLgProb.push_back(cumulativeScoreVec[j]);
+        else
+          prefHeurLmLgProb[j]+=cumulativeScoreVec[j];
+      }
+    }
+  }
+      // Return heuristic value
+  LgProb lp;
+  unsigned int len=hyp.partialTransLength();
+  if(len>=pbtmInputVars.nprefSentIdVec.size()-1)
+    lp=0;
+  else
+    lp=prefHeurLmLgProb.back()-prefHeurLmLgProb[len-1];
+
+  return lp;
 }
 
 //---------------------------------
