@@ -121,11 +121,13 @@ class FeatureHandler
   BaseNgramLM<LM_State>* createLmPtr(std::string modelType);
   int createLangModelFeat(std::string featName,
                           const ModelDescriptorEntry& modelDescEntry,
+                          WordPredictor* wordPredPtr,
                           LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef);
   bool process_lm_descriptor(std::string lmDescFile,
                              int verbose=0);
   bool process_lm_files_prefix(std::string lmFilesPrefix,
                                int verbose=0);
+  bool loadWordPredInfo(std::string lmFilesPrefix);
 
       // Phrase model-related functions
   BasePhraseModel* createPmPtr(std::string modelType);

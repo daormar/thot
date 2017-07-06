@@ -32,8 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- FeatureHandler class functions
 
 FeatureHandler::FeatureHandler()
-{
-  
+{  
 }
 
 //---------------
@@ -872,6 +871,7 @@ BaseNgramLM<LM_State>* FeatureHandler::createLmPtr(std::string modelType)
 //---------------
 int FeatureHandler::createLangModelFeat(std::string featName,
                                         const ModelDescriptorEntry& modelDescEntry,
+                                        WordPredictor* wordPredPtr,
                                         LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef)
 {
   cerr<<"** Creating language model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<endl;
@@ -901,6 +901,9 @@ int FeatureHandler::createLangModelFeat(std::string featName,
   
       // Link pointer to feature
   langModelFeatPtr->link_lm(baseNgLmPtr);
+
+      // Link word predictor to feature
+  langModelFeatPtr->link_wp(wordPredPtr);
   
   return OK;
 }
@@ -921,15 +924,21 @@ bool FeatureHandler::process_lm_descriptor(std::string lmDescFile,
         // Process descriptor entries
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-          // Create direct phrase model feature
+          // Create language model feature
       std::string featName="lm_"+modelDescEntryVec[i].statusStr;
       LangModelFeat<SmtModel::HypScoreInfo>* lmFeatPtr;
-      int ret=createLangModelFeat(featName,modelDescEntryVec[i],&lmFeatPtr);
+      int ret=createLangModelFeat(featName,modelDescEntryVec[i],&langModelsInfo.wordPredictor,&lmFeatPtr);
       if(ret==ERROR)
         return ERROR;
       featuresInfo.featPtrVec.push_back(lmFeatPtr);
     }
-    
+
+        // Load word predictor information
+    cerr<<"** Loading word predictor information..."<<endl;
+    int ret=loadWordPredInfo(lmDescFile);
+    if(ret==ERROR)
+      return ERROR;
+
     return OK;
   }
   else
@@ -946,7 +955,7 @@ bool FeatureHandler::process_lm_files_prefix(std::string lmFilesPrefix,
   {
     cerr<<"Processing language model files prefix: "<<lmFilesPrefix<<endl;
   }
-
+  
         // Create model descriptor entry
   ModelDescriptorEntry modelDescEntry;
   modelDescEntry.statusStr="main";
@@ -958,11 +967,30 @@ bool FeatureHandler::process_lm_files_prefix(std::string lmFilesPrefix,
   std::string featName="pts";
   
   LangModelFeat<SmtModel::HypScoreInfo>* lmFeatPtr;
-  int ret=createLangModelFeat(featName,modelDescEntry,&lmFeatPtr);
+  int ret=createLangModelFeat(featName,modelDescEntry,&langModelsInfo.wordPredictor,&lmFeatPtr);
   if(ret==ERROR)
     return ERROR;
   featuresInfo.featPtrVec.push_back(lmFeatPtr);
-  
+
+      // Load word predictor information
+  cerr<<"** Loading word predictor information..."<<endl;
+  ret=loadWordPredInfo(lmFilesPrefix);
+  if(ret==ERROR)
+    return ERROR;
+
+  return OK;
+}
+
+//--------------------------
+bool FeatureHandler::loadWordPredInfo(std::string lmFilesPrefix)
+{
+  std::string predFile=lmFilesPrefix;
+  predFile=predFile+".wp";
+  int err=langModelsInfo.wordPredictor.load(predFile.c_str());
+  if(err==ERROR)
+  {
+    cerr<<"Warning: File for initializing the word predictor not provided!"<<endl;
+  }
   return OK;
 }
 
@@ -1124,6 +1152,9 @@ void FeatureHandler::deleteWpModelPtr(void)
 //--------------------------
 void FeatureHandler::deleteLangModelPtrs(void)
 {
+      // Clear word predictor
+  langModelsInfo.wordPredictor.clear();
+  
       // Release pointers
   for(unsigned int i=0;i<langModelsInfo.lModelPtrVec.size();++i)
     delete langModelsInfo.lModelPtrVec[i];
