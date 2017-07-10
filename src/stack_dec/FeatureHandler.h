@@ -91,6 +91,9 @@ class FeatureHandler
                        std::string sysSent,
                        int verbose=0);
 
+      // Functions to train word predictor
+  void trainWordPred(Vector<std::string> strVec);
+       
       // Clear function
   void clear(void);
 

@@ -414,6 +414,13 @@ unsigned int FeatureHandler::map_n_am_suff_stats(unsigned int n)
 }
 
 //---------------
+void FeatureHandler::trainWordPred(Vector<std::string> strVec)
+{
+  langModelsInfo.wordPredictor.addSentence(strVec);
+}
+
+
+//---------------
 int FeatureHandler::setWordPenModelType(std::string modelType)
 {
   int verbosity=false;
