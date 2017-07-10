@@ -1101,7 +1101,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
       cerr<<" - preproc. sys translation: "<<preprocSysSent<<endl;
     }
         // Add sentence to word-predictor
-    tdCommonVars.smtModelPtr->addSentenceToWordPred(StrProcUtils::stringToStringVector(preprocRefSent),verbose);
+    addSentenceToWordPred(preprocRefSent,verbose);
 
     if(verbose) cerr<<"Training models..."<<endl;
 
@@ -1131,7 +1131,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     std::string sysSent=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
 
         // Add sentence to word-predictor
-    tdCommonVars.smtModelPtr->addSentenceToWordPred(StrProcUtils::stringToStringVector(refSent),verbose);
+    addSentenceToWordPred(refSent,verbose);
 
     if(verbose) cerr<<"Training models..."<<endl;
 
@@ -1156,6 +1156,20 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
   pthread_mutex_unlock(&atomic_op_mut);
 
   return ret;
+}
+
+//--------------------------
+void ThotDecoder::addSentenceToWordPred(std::string sentence,
+                                        int verbose/*=0*/)
+{
+  if(tdCommonVars.featureBasedImplEnabled)
+  {
+    tdCommonVars.featureHandler.trainWordPred(StrProcUtils::stringToStringVector(sentence));
+  }
+  else
+  {
+    tdCommonVars.smtModelPtr->addSentenceToWordPred(StrProcUtils::stringToStringVector(sentence),verbose);
+  }
 }
 
 //--------------------------

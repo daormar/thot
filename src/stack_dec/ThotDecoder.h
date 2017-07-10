@@ -279,6 +279,8 @@ class ThotDecoder
                                    int verbose=0);
 
       // Auxiliary functions for online training
+  void addSentenceToWordPred(std::string sentence,
+                             int verbose=0);
   int onlineTrainFeats(std::string srcSent,
                        std::string refSent,
                        std::string sysSent,
