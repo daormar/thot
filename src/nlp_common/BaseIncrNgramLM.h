@@ -184,7 +184,7 @@ int BaseIncrNgramLM<LM_STATE>::trainSentence(Vector<std::string> strVec,
                                              int verbose)
 {
   unsigned int ngram_order=getNgramOrder();
-  if(ngram_order==0) return ERROR;
+  if(ngram_order==0) return THOT_ERROR;
   else
   {
         // Collect n-gram counts
@@ -318,7 +318,7 @@ int BaseIncrNgramLM<LM_STATE>::trainSentenceVec(Vector<Vector<std::string> > vec
   for(unsigned int i=0;i<vecOfStrVec.size();++i)
   {
     int ret=trainSentence(vecOfStrVec[i],c,lowerBound,verbose);
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
   }
   return THOT_OK;
 }

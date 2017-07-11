@@ -190,14 +190,14 @@ bool _phrSwTransModel<HYPOTHESIS>::loadMultipleSwModelsPrefix(const char* prefix
   invReadTablePrefix+="_invswm";
   swModelInfoPtr->swModelPars.readTablePrefixVec.push_back(invReadTablePrefix);
   bool ret=swModelInfoPtr->swAligModelPtrVec[0]->load(invReadTablePrefix.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
   
       // Inverse sw model
   std::string readTablePrefix=prefixFileName;
   readTablePrefix+="_swm";
   swModelInfoPtr->invSwModelPars.readTablePrefixVec.push_back(readTablePrefix);
   ret=swModelInfoPtr->invSwAligModelPtrVec[0]->load(readTablePrefix.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Grow caching data structures for swms
   PhrasePairCacheTable phrasePairCacheTable;
@@ -223,13 +223,13 @@ bool _phrSwTransModel<HYPOTHESIS>::loadMultipleSwModelsDescriptor(Vector<ModelDe
     std::string readTablePrefix=modelDescEntryVec[i].absolutizedModelFileName+"_invswm";
     swModelInfoPtr->swModelPars.readTablePrefixVec.push_back(readTablePrefix);
     bool ret=swModelInfoPtr->swAligModelPtrVec[i]->load(readTablePrefix.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
     
         // Inverse sw model
     readTablePrefix=modelDescEntryVec[i].absolutizedModelFileName+"_swm";
     swModelInfoPtr->invSwModelPars.readTablePrefixVec.push_back(readTablePrefix);
     ret=swModelInfoPtr->invSwAligModelPtrVec[i]->load(readTablePrefix.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
     
         // Grow caching data structures for swms
     PhrasePairCacheTable phrasePairCacheTable;
@@ -259,17 +259,17 @@ bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
   this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName+="_swm.tvcb";
 
   ret=this->phrModelInfoPtr->invPbModelPtr->loadSrcVocab(this->phrModelInfoPtr->phraseModelPars.srcTrainVocabFileName.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
   ret=this->phrModelInfoPtr->invPbModelPtr->loadTrgVocab(this->phrModelInfoPtr->phraseModelPars.trgTrainVocabFileName.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Load phrase model
   this->phrModelInfoPtr->phraseModelPars.readTablePrefix=prefixFileName;
   if(this->phrModelInfoPtr->invPbModelPtr->load(prefixFileName)!=0)
   {
     cerr<<"Error while reading phrase model file\n";
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Instantiate weight vectors for phrase model
@@ -280,13 +280,13 @@ bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
   {
         // prefixFileName did not point to a file descriptor
     ret=loadMultipleSwModelsPrefix(prefixFileName);
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
   }
   else
   {
         // prefixFileName did point to a file descriptor
     ret=loadMultipleSwModelsDescriptor(modelDescEntryVec);
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
   }
   
   return THOT_OK;
@@ -298,7 +298,7 @@ bool _phrSwTransModel<HYPOTHESIS>::printAligModel(std::string printPrefix)
 {
       // Print phrase model
   bool ret=_phraseBasedTransModel<HYPOTHESIS>::printAligModel(printPrefix);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Obtain prefix of main model
   std::string mainPrintPrefix=this->obtainMainModelAbsoluteNameFromPrefix(printPrefix);
@@ -307,12 +307,12 @@ bool _phrSwTransModel<HYPOTHESIS>::printAligModel(std::string printPrefix)
       // Print inverse sw model
   std::string invSwModelPrefix=mainPrintPrefix+"_swm";
   ret=swModelInfoPtr->invSwAligModelPtrVec[0]->print(invSwModelPrefix.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Print direct sw model
   std::string swModelPrefix=mainPrintPrefix+"_invswm";
   ret=swModelInfoPtr->swAligModelPtrVec[0]->print(swModelPrefix.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
   return THOT_OK;
 }

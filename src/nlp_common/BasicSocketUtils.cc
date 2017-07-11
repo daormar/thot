@@ -29,7 +29,7 @@ namespace BasicSocketUtils
     if (WSAStartup(MAKEWORD(1,1), &wsadata) == SOCKET_ERROR)
     {
       fprintf(stderr,"Error initializing sockets!");
-      return ERROR;
+      return THOT_ERROR;
     }
     else return THOT_OK;
 #else
@@ -164,14 +164,14 @@ namespace BasicSocketUtils
      {       
            /* gethostbyname() call */
        cerr<<"gethostbyname() error\n";
-       return ERROR;
+       return THOT_ERROR;
      }
 
      if ((fileDesc=socket(AF_INET, SOCK_STREAM, 0))==-1)
      {  
            /* socket() call */
        cerr<<"socket() error\n";
-       return ERROR;
+       return THOT_ERROR;
      }
 
      server.sin_family = AF_INET;
@@ -187,7 +187,7 @@ namespace BasicSocketUtils
      { 
            // connect() call 
        cerr<<"connect() error\n";
-       return ERROR;
+       return THOT_ERROR;
      }
 
      return THOT_OK;

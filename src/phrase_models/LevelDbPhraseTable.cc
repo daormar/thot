@@ -119,7 +119,7 @@ bool LevelDbPhraseTable::init(string levelDbPath)
         delete db;
 
     if(load(levelDbPath) != THOT_OK)
-        return ERROR;
+        return THOT_ERROR;
 
     clear();
 
@@ -134,7 +134,7 @@ bool LevelDbPhraseTable::drop()
 
     leveldb::Status status = leveldb::DestroyDB(dbName, options);
 
-    return (status.ok()) ? THOT_OK : ERROR;
+    return (status.ok()) ? THOT_OK : THOT_ERROR;
 }
 
 //-------------------------
@@ -146,7 +146,7 @@ bool LevelDbPhraseTable::load(string levelDbPath)
     dbName = levelDbPath;
     leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
 
-    return (status.ok()) ? THOT_OK : ERROR;
+    return (status.ok()) ? THOT_OK : THOT_ERROR;
 }
 
 //-------------------------

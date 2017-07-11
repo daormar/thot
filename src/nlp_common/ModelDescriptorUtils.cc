@@ -87,7 +87,7 @@ bool fileIsDescriptor(std::string fileName,
                       std::string& mainFileName)
 {
   awkInputStream awk;
-  if(awk.open(fileName.c_str())==ERROR)
+  if(awk.open(fileName.c_str())==THOT_ERROR)
     return false;
   else
   {
@@ -145,9 +145,9 @@ bool extractModelEntryInfo(const char *fileName,
   if(fileIsDescriptor(fileName,mainFileName))
   {
     awkInputStream awk;
-    if(awk.open(fileName)==ERROR)
+    if(awk.open(fileName)==THOT_ERROR)
     {
-      return ERROR;
+      return THOT_ERROR;
     }
     else
     {
@@ -176,5 +176,5 @@ bool extractModelEntryInfo(const char *fileName,
     }
   }
   else
-    return ERROR;
+    return THOT_ERROR;
 }

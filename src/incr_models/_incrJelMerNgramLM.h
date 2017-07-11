@@ -190,7 +190,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
   if(tmp_file==0)
   {
     cerr<<"Error updating of Jelinek Mercer's language model weights, tmp file could not be created"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
     
       // Execute downhill simplex algorithm
@@ -217,7 +217,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
       case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
         double perp;
         int retEval=new_dhs_eval(corpusFileName,tmp_file,x,perp);
-        if(retEval==ERROR)
+        if(retEval==THOT_ERROR)
         {
           end=true;
           break;
@@ -252,7 +252,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
   fclose(tmp_file);
 
   if(ret!=THOT_OK)
-    return ERROR;
+    return THOT_ERROR;
   else
     return THOT_OK;
 }
@@ -336,11 +336,11 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
 
       // load weights
   retval=loadWeights(fileName);
-  if(retval==ERROR) return ERROR;
+  if(retval==THOT_ERROR) return THOT_ERROR;
 
       // load n-grams
   retval=_incrNgramLM<SRC_INFO,SRCTRG_INFO>::load(fileName);
-  if(retval==ERROR) return ERROR;
+  if(retval==THOT_ERROR) return THOT_ERROR;
 
   return THOT_OK;
 }
@@ -369,10 +369,10 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *prefixOfL
       // load weights
   awkInputStream awk;
   weights.clear();
-  if(awk.open(weightFileName.c_str())==ERROR)
+  if(awk.open(weightFileName.c_str())==THOT_ERROR)
   {
     cerr<<"Error, file with weights "<<weightFileName<<" cannot be read"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
   else
   {
@@ -393,7 +393,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *prefixOfL
     {
       cerr<<"Error while loading file with weights: "<<weightFileName<<endl;
       awk.close();
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -406,11 +406,11 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
   
       // Print weights
   retval=printWeights(fileName);
-  if(retval==ERROR) return ERROR;
+  if(retval==THOT_ERROR) return THOT_ERROR;
 
       // print n-grams
   retval=_incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(fileName);
-  if(retval==ERROR) return ERROR;
+  if(retval==THOT_ERROR) return THOT_ERROR;
 
   return THOT_OK;
 }
@@ -441,7 +441,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *prefixOf
   if(filePtr==NULL)
   {
     cerr<<"Error while printing file with lm weights ("<<weightFileName<<")"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   fprintf(filePtr,"%d ",this->getNgramOrder());  

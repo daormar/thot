@@ -500,14 +500,14 @@ bool _phraseBasedTransModel<HYPOTHESIS>::loadLangModel(const char* prefixFileNam
   langModelInfoPtr->langModelPars.languageModelFileName=prefixFileName;
   
       // Initializes language model
-  if(langModelInfoPtr->lModelPtr->load(prefixFileName)==ERROR)
-    return ERROR;
+  if(langModelInfoPtr->lModelPtr->load(prefixFileName)==THOT_ERROR)
+    return THOT_ERROR;
     
       // load WordPredictor info
   predFile=prefixFileName;
   predFile=predFile+".wp";
   err=langModelInfoPtr->wordPredictor.load(predFile.c_str());
-  if(err==ERROR)
+  if(err==THOT_ERROR)
   {
     cerr<<"Warning: File for initializing the word predictor not provided!"<<endl;
   }
@@ -527,7 +527,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileNam
   if(this->phrModelInfoPtr->invPbModelPtr->load(prefixFileName)!=0)
   {
     cerr<<"Error while reading phrase model file\n";
-    return ERROR;
+    return THOT_ERROR;
   }  
 
       // Instantiate weight vectors for phrase model
@@ -541,7 +541,7 @@ template<class HYPOTHESIS>
 bool _phraseBasedTransModel<HYPOTHESIS>::printLangModel(std::string printPrefix)
 {
   bool retVal=langModelInfoPtr->lModelPtr->print(printPrefix.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
   return THOT_OK;
 }
@@ -551,7 +551,7 @@ template<class HYPOTHESIS>
 bool _phraseBasedTransModel<HYPOTHESIS>::printAligModel(std::string printPrefix)
 {
   bool retVal=this->phrModelInfoPtr->invPbModelPtr->print(printPrefix.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
   return THOT_OK;
 }

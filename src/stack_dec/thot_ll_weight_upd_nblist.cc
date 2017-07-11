@@ -101,9 +101,9 @@ int main(int argc,char *argv[])
 {
   thot_llwu_nblist_pars pars;
 
-  if(handleParameters(argc,argv,pars)==ERROR)
+  if(handleParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -121,28 +121,28 @@ int main(int argc,char *argv[])
 
         // Initialize pointers
     int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH,false);
-    if(err==ERROR)
-      return ERROR;
+    if(err==THOT_ERROR)
+      return THOT_ERROR;
 
     baseScorerPtr=dynClassFactoryHandler.baseScorerDynClassLoader.make_obj(dynClassFactoryHandler.baseScorerInitPars);
     if(baseScorerPtr==NULL)
     {
       cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
 
     llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
     if(llWeightUpdaterPtr==NULL)
     {
       cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
 
         // Link scorer to weight updater
     if(!llWeightUpdaterPtr->link_scorer(baseScorerPtr))
     {
       cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     
         // Update log-linear weights
@@ -167,16 +167,16 @@ int handleParameters(int argc,
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
     version();
-    return ERROR;
+    return THOT_ERROR;
   }
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
+    return THOT_ERROR;   
   }
-  if(takeParameters(argc,argv,pars)==ERROR)
+  if(takeParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -186,7 +186,7 @@ int handleParameters(int argc,
     }
     else
     {
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -198,18 +198,18 @@ int takeParameters(int argc,
 {
       // Take -nb parameter
   int err=readSTLstring(argc,argv, "-nb", &pars.fileWithNbestLists);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
   
       // Take -r parameter
   err=readSTLstring(argc,argv, "-r", &pars.fileWithReferences);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
       // Obtain included variables
   err=readStringSeq(argc,argv, "-va", pars.includeVarStr);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
   else
   {
     for(unsigned int i=0;i<pars.includeVarStr.size();++i)
@@ -220,8 +220,8 @@ int takeParameters(int argc,
 
       // Obtain weight vector used to generate the n-best lists
   err=readFloatSeq(argc,argv, "-w", pars.llWeightVec);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
   return THOT_OK;
 }
@@ -232,19 +232,19 @@ int checkParameters(thot_llwu_nblist_pars& pars)
   if(pars.fileWithNbestLists.empty())
   {
     cerr<<"Error: parameter -nb not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
   if(pars.fileWithReferences.empty())
   {
     cerr<<"Error: parameter -r not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
   if(pars.includeVarStr.size()!=pars.llWeightVec.size())
   {
     cerr<<"Error: number of weights provided by -w and -va options are not equal!"<<endl;
-    return ERROR;       
+    return THOT_ERROR;       
   }
 
   return THOT_OK;
@@ -260,10 +260,10 @@ int obtain_references(const thot_llwu_nblist_pars& pars,
       // Fill output variable
   awkInputStream awk;
 
-  if(awk.open(pars.fileWithReferences.c_str())==ERROR)
+  if(awk.open(pars.fileWithReferences.c_str())==THOT_ERROR)
   {
     cerr<<"Error while opening file "<<pars.fileWithReferences<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
   
   while(awk.getln())
@@ -287,10 +287,10 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
         // Fill output variables
   awkInputStream awk;
 
-  if(awk.open(nbfile.c_str())==ERROR)
+  if(awk.open(nbfile.c_str())==THOT_ERROR)
   {
     cerr<<"Error while opening file "<<nbfile<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   // cerr<<"**** Processing file"<<nbfile<<endl;
@@ -359,10 +359,10 @@ int obtain_nblists_and_scr_comps(const thot_llwu_nblist_pars& pars,
       // Fill output variables
   awkInputStream awk;
 
-  if(awk.open(pars.fileWithNbestLists.c_str())==ERROR)
+  if(awk.open(pars.fileWithNbestLists.c_str())==THOT_ERROR)
   {
     cerr<<"Error while opening file "<<pars.fileWithNbestLists<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   
   while(awk.getln())
@@ -378,9 +378,9 @@ int obtain_nblists_and_scr_comps(const thot_llwu_nblist_pars& pars,
                                                  nbfile,
                                                  nblist,
                                                  scoreComps);
-    if(ret==ERROR)
+    if(ret==THOT_ERROR)
     {
-      return ERROR;
+      return THOT_ERROR;
     }
     
         // Add n-best list and score components to output variables
@@ -401,13 +401,13 @@ int update_ll_weights(const thot_llwu_nblist_pars& pars)
   
       // Obtain references
   retVal=obtain_references(pars,referenceVec);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
   
       // Obtain n-best lists with their vectors of score components
   retVal=obtain_nblists_and_scr_comps(pars,nblistVec,scoreCompsVec);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
 
       // Generate vector with current weights
   Vector<double> currWeightsVec;

@@ -33,14 +33,14 @@ int calculate_chrf_file_name(const char* ref,
     if(refFile==NULL)
     {
         cerr<<"Error while opening file with references: "<<ref<<endl;
-        return ERROR;
+        return THOT_ERROR;
     }
 
     sysFile=fopen(sys,"r");
     if(sysFile==NULL)
     {
         cerr<<"Error while opening file with translations: "<<sys<<endl;
-        return ERROR;
+        return THOT_ERROR;
     }
 
     ret=calculate_chrf_file(refFile,sysFile,chrf,chrf_n,verbosity);
@@ -68,15 +68,15 @@ int calculate_chrf_file(FILE *reff,
     chrf_n.clear();
 
     // Open files
-    if(refStream.open_stream(reff)==ERROR)
+    if(refStream.open_stream(reff)==THOT_ERROR)
     {
         cerr<<"Invalid file pointer to file with references."<<endl;
-        return ERROR;
+        return THOT_ERROR;
     }
-    if(sysStream.open_stream(sysf)==ERROR)
+    if(sysStream.open_stream(sysf)==THOT_ERROR)
     {
         cerr<<"Invalid file pointer to file with system translations."<<endl;
-        return ERROR;
+        return THOT_ERROR;
     }
 
     while(refStream.getln())
@@ -85,7 +85,7 @@ int calculate_chrf_file(FILE *reff,
         if(!ok)
         {
             cerr<<"Unexpected end of system file."<<endl;
-            return ERROR;
+            return THOT_ERROR;
         }
 
         ++numSents;

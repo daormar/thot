@@ -238,10 +238,10 @@ bool LevelDbPhraseModel::load(const char *prefix)
     std::string descFileName = prefix;
     std::string absolutizedMainFileName = absolutizeModelFileName(descFileName, mainFileName);
     int ret = load_given_prefix(absolutizedMainFileName.c_str());
-    if(ret == ERROR)
+    if(ret == THOT_ERROR)
     {
       cerr << "Error while loading phrase model" << endl;
-      return ERROR;
+      return THOT_ERROR;
     }
 
     return THOT_OK;
@@ -249,10 +249,10 @@ bool LevelDbPhraseModel::load(const char *prefix)
   else
   {
     int ret = load_given_prefix(prefix);
-    if(ret == ERROR)
+    if(ret == THOT_ERROR)
     {
       cerr << "Error while loading phrase model" << endl;
-      return ERROR;
+      return THOT_ERROR;
     }
 
     return THOT_OK;
@@ -272,19 +272,19 @@ bool LevelDbPhraseModel::load_given_prefix(const char *prefix)
   std::string srcvocabfile = prefix;
   srcvocabfile = srcvocabfile + ".srcvoc";
   ret = loadSrcVocab(srcvocabfile.c_str());
-  if(ret == ERROR) return ERROR;
+  if(ret == THOT_ERROR) return THOT_ERROR;
   
       // Load target vocabulary
   std::string trgvocabfile = prefix;
   trgvocabfile = trgvocabfile + ".trgvoc";
   ret = loadTrgVocab(trgvocabfile.c_str());
-  if(ret == ERROR) return ERROR;
+  if(ret == THOT_ERROR) return THOT_ERROR;
   
       // Load translation table
   std::string levelPt = prefix;
   levelPt = levelPt + "_LevelDb_phrdict";
   ret = levelDbPhraseTable.load(levelPt);
-  if(ret == ERROR) return ERROR;
+  if(ret == THOT_ERROR) return THOT_ERROR;
 
       // Load segmentation length table
   std::string seglenfile = prefix;
@@ -331,7 +331,7 @@ bool LevelDbPhraseModel::print(const char *prefix)
   else
   {
     cerr << "Warning: print() function not implemented for this model" << endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 

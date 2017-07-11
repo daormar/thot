@@ -461,10 +461,10 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load_ngrams(const char *fileName)
   unsigned int i;
   unsigned int ngramOrderAux=ngramOrder;
     
-  if(awk.open(fileName)==ERROR)
+  if(awk.open(fileName)==THOT_ERROR)
   {
     cerr<<"Error while loading language model file "<<fileName<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
   else
   {
@@ -533,7 +533,7 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
   if(!outF)
   {
     cerr<<"Error while printing model to file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {

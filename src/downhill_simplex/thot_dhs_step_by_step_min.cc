@@ -111,7 +111,7 @@ int main(int argc,char *argv[])
     if(images_file==NULL)
     {
       cerr<<"Error while opening file with images: "<<imagesFileName<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
 
     cerr<<"*** Executing step by step minimization..."<<endl;
@@ -166,7 +166,7 @@ int main(int argc,char *argv[])
     
     return THOT_OK;
   }
-  return ERROR;
+  return THOT_ERROR;
 }
 
 //--------------- genFixedVarsBoolVector function
@@ -238,7 +238,7 @@ FILE* gen_temp_file(void)
   else
   {
     cerr<<"Error: temporary file cannot be created!"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 }
 
@@ -300,14 +300,14 @@ int TakeParameters(int argc,char *argv[])
   if(argc==1)
  {
    printDesc();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
  err=readOption(argc,argv,"--help");
  if(err!=-1)
  {
    printUsage();
-   return ERROR;   
+   return THOT_ERROR;   
  }      
 
      /* Verify --version option */
@@ -315,7 +315,7 @@ int TakeParameters(int argc,char *argv[])
  if(err!=-1)
  {
    version();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Take fixed and non-fixed variables */
@@ -323,7 +323,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    version();
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -341,7 +341,7 @@ int TakeParameters(int argc,char *argv[])
    if(fixNonFixVars.size()!=initVals.size())
    {
      cerr<<"Error: The number of values given by -va and -iv options are not equal."<<endl;
-     return ERROR;
+     return THOT_ERROR;
    }
  }
 
@@ -351,7 +351,7 @@ int TakeParameters(int argc,char *argv[])
  {
    cerr<<"Error: parameter -i not given!"<<endl;
    printUsage();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
      /* Take the vocabulary file name */

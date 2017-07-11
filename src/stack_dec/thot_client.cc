@@ -95,7 +95,7 @@ int main(int argc,char *argv[])
    }
    return retVal;
  } 
- else return ERROR;  
+ else return THOT_ERROR;  
 }
 
 
@@ -121,7 +121,7 @@ int process_request(const thot_client_pars& tdcPars)
 
   retVal=thotDecoderClient.connectToTransServer(tdcPars.serverIP.c_str(),
                                                 tdcPars.server_port);
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print connection latency information
   if(tdcPars.verbose)
@@ -213,14 +213,14 @@ int TakeParameters(int argc,
  if(argc==1)
  {
    printDesc();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
  err=readOption(argc,argv,"--help");
  if(err!=-1)
  {
    printUsage();
-   return ERROR;   
+   return THOT_ERROR;   
  }      
 
      /* Verify --version option */
@@ -228,7 +228,7 @@ int TakeParameters(int argc,
  if(err!=-1)
  {
    version();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Take the server IP*/
@@ -236,7 +236,7 @@ int TakeParameters(int argc,
  if(err==-1)
  {
    printUsage();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
      /* Take the -p parameter */
@@ -347,7 +347,7 @@ int TakeParameters(int argc,
    return THOT_OK;
  }
 
- return ERROR;
+ return THOT_ERROR;
 }
 
 //--------------- printDesc() function

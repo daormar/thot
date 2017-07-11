@@ -418,7 +418,7 @@ bool IncrHmmAligModel::loadLexSmIntFactor(const char* lexSmIntFactorFile)
   
   awkInputStream awk;
     
-  if(awk.open(lexSmIntFactorFile)==ERROR)
+  if(awk.open(lexSmIntFactorFile)==THOT_ERROR)
   {
     cerr<<"Error in file with lexical smoothing interpolation factor, file "<<lexSmIntFactorFile<<" does not exist. Assuming default value."<<"\n";
     setLexSmIntFactor(DEFAULT_LEX_SMOOTH_INTERP_FACTOR); 
@@ -436,13 +436,13 @@ bool IncrHmmAligModel::loadLexSmIntFactor(const char* lexSmIntFactorFile)
       else
       {
         cerr<<"Error: anomalous .lsifactor file, "<<lexSmIntFactorFile<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
     }
     else
     {
       cerr<<"Error: anomalous .lsifactor file, "<<lexSmIntFactorFile<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }  
 }
@@ -455,7 +455,7 @@ bool IncrHmmAligModel::printLexSmIntFactor(const char* lexSmIntFactorFile)
   if(!outF)
   {
     cerr<<"Error while printing file with lexical smoothing interpolation factor."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -471,7 +471,7 @@ bool IncrHmmAligModel::loadAlSmIntFactor(const char* alSmIntFactorFile)
   
   awkInputStream awk;
     
-  if(awk.open(alSmIntFactorFile)==ERROR)
+  if(awk.open(alSmIntFactorFile)==THOT_ERROR)
   {
     cerr<<"Error in file with alignment smoothing interpolation factor, file "<<alSmIntFactorFile<<" does not exist. Assuming default value."<<"\n";
     setAlSmIntFactor(DEFAULT_ALIG_SMOOTH_INTERP_FACTOR); 
@@ -489,13 +489,13 @@ bool IncrHmmAligModel::loadAlSmIntFactor(const char* alSmIntFactorFile)
       else
       {
         cerr<<"Error: anomalous .asifactor file, "<<alSmIntFactorFile<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
     }
     else
     {
       cerr<<"Error: anomalous .asifactor file, "<<alSmIntFactorFile<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }  
 }
@@ -508,7 +508,7 @@ bool IncrHmmAligModel::printAlSmIntFactor(const char* alSmIntFactorFile)
   if(!outF)
   {
     cerr<<"Error while printing file with alignment smoothing interpolation factor."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -1894,49 +1894,49 @@ bool IncrHmmAligModel::load(const char* prefFileName)
     srctrgcFile=srctrgcFile+".srctrgc";
     pair<unsigned int,unsigned int> pui;
     retVal=readSentencePairs(srcsFile.c_str(),trgsFile.c_str(),srctrgcFile.c_str(),pui);
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load file with lanji values
     retVal=lanji.load(prefFileName);
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load file with lanjm1ip_anji values
     retVal=lanjm1ip_anji.load(prefFileName);
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load file with lexical nd values
     std::string lexNumDenFile=prefFileName;
     lexNumDenFile=lexNumDenFile+".hmm_lexnd";
     retVal=incrLexTable.load(lexNumDenFile.c_str());
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load file with alignment nd values
     std::string aligNumDenFile=prefFileName;
     aligNumDenFile=aligNumDenFile+".hmm_alignd";
     retVal=incrHmmAligTable.load(aligNumDenFile.c_str());
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load file with with lexical smoothing interpolation factor
     std::string lsifFile=prefFileName;
     lsifFile=lsifFile+".lsifactor";
     retVal=loadLexSmIntFactor(lsifFile.c_str());
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load file with with alignment smoothing interpolation factor
     std::string asifFile=prefFileName;
     asifFile=asifFile+".asifactor";
     retVal=loadAlSmIntFactor(asifFile.c_str());
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load average sentence lengths
     std::string slmodelFile=prefFileName;
     slmodelFile=slmodelFile+".slmodel";
     retVal=sentLengthModel.load(slmodelFile.c_str());
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
     return THOT_OK;
   }
-  else return ERROR;
+  else return THOT_ERROR;
 }
    
 //-------------------------
@@ -1961,45 +1961,45 @@ bool IncrHmmAligModel::print(const char* prefFileName)
   std::string srctrgcFile=prefFileName;
   srctrgcFile=srctrgcFile+".srctrgc";
   retVal=printSentPairs(srcsFile.c_str(),trgsFile.c_str(),srctrgcFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with lanji values
   retVal=lanji.print(prefFileName);
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with lanjm1ip_anji values
   retVal=lanjm1ip_anji.print(prefFileName);
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with lexical nd values
   std::string lexNumDenFile=prefFileName;
   lexNumDenFile=lexNumDenFile+".hmm_lexnd";
   retVal=incrLexTable.print(lexNumDenFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with alignment nd values
   std::string aligNumDenFile=prefFileName;
   aligNumDenFile=aligNumDenFile+".hmm_alignd";
   retVal=incrHmmAligTable.print(aligNumDenFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with with lexical smoothing interpolation factor
   std::string lsifFile=prefFileName;
   lsifFile=lsifFile+".lsifactor";
   retVal=printLexSmIntFactor(lsifFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with with alignment smoothing interpolation factor
   std::string asifFile=prefFileName;
   asifFile=asifFile+".asifactor";
   retVal=printAlSmIntFactor(asifFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with sentence length model
   std::string slmodelFile=prefFileName;
   slmodelFile=slmodelFile+".slmodel";
   retVal=sentLengthModel.print(slmodelFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
   return THOT_OK;
 }

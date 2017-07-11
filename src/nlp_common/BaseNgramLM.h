@@ -238,10 +238,10 @@ int BaseNgramLM<LM_STATE>::perplexity(const char *corpusFileName,
   numOfSentences=0;
   
       // Open corpus file
-  if(awk.open(corpusFileName)==ERROR)
+  if(awk.open(corpusFileName)==THOT_ERROR)
   {
     cerr<<"Error while opening corpus file "<<corpusFileName<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
 
   while(awk.getln())
@@ -289,7 +289,7 @@ int BaseNgramLM<LM_STATE>::trainSentence(Vector<std::string> /*strVec*/,
                                          int /*verbose=0*/)
 {
   cerr<<"Warning: lm training of a sentence was requested, but such functionality is not provided!"<<endl;
-  return ERROR;
+  return THOT_ERROR;
 }
 
 //---------------
@@ -300,7 +300,7 @@ int BaseNgramLM<LM_STATE>::trainSentenceVec(Vector<Vector<std::string> > /*vecOf
                                             int /*verbose=0*/)
 {
   cerr<<"Warning: lm training of a sentence vector was requested, but such functionality is not provided!"<<endl;
-  return ERROR;
+  return THOT_ERROR;
 }
 
 #endif

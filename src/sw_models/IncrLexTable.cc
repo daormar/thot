@@ -173,7 +173,7 @@ bool IncrLexTable::loadBin(const char* lexNumDenFile)
   if (!inF)
   {
     cerr<<"Error in lexical nd file, file "<<lexNumDenFile<<" does not exist.\n";
-    return ERROR;    
+    return THOT_ERROR;    
   }
   else
   {
@@ -207,10 +207,10 @@ bool IncrLexTable::loadPlainText(const char* lexNumDenFile)
   cerr<<"Loading lexnd file in plain text format from "<<lexNumDenFile<<endl;
 
   awkInputStream awk;
-  if(awk.open(lexNumDenFile)==ERROR)
+  if(awk.open(lexNumDenFile)==THOT_ERROR)
   {
     cerr<<"Error in file with lexical parameters, file "<<lexNumDenFile<<" does not exist.\n";
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   { 
@@ -248,7 +248,7 @@ bool IncrLexTable::printBin(const char* lexNumDenFile)
   if(!outF)
   {
     cerr<<"Error while printing lexical nd file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -278,7 +278,7 @@ bool IncrLexTable::printPlainText(const char* lexNumDenFile)
   if(!outF)
   {
     cerr<<"Error while printing lexical nd file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {

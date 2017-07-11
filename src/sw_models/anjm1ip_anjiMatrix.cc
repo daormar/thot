@@ -78,7 +78,7 @@ bool anjm1ip_anjiMatrix::init_nth_entry(unsigned int n,
     return THOT_OK;
   }
   else
-    return ERROR;
+    return THOT_ERROR;
 }
 
 //-------------------------
@@ -121,7 +121,7 @@ bool anjm1ip_anjiMatrix::reset_entries(void)
     return THOT_OK;
   }
   else
-    return ERROR;
+    return THOT_ERROR;
 }
 
 //-------------------------
@@ -416,12 +416,12 @@ bool anjm1ip_anjiMatrix::load(const char* prefFileName)
   std::string matrixFile=prefFileName;
   matrixFile=matrixFile+".anjm1ip_anji";
   retVal=load_matrix_values(matrixFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
   std::string maxnsizeDataFile=prefFileName;
   maxnsizeDataFile=maxnsizeDataFile+".msinfo";
   retVal=load_maxnsize_data(maxnsizeDataFile.c_str());
-  if(retVal==ERROR)
+  if(retVal==THOT_ERROR)
   {
     cerr<<"Maximum size for matrix is set to "<<UNRESTRICTED_ANJM1IP_ANJI_SIZE<<" (unrestricted size)."<<endl;
     anjm1ip_anji_maxnsize=UNRESTRICTED_ANJM1IP_ANJI_SIZE;
@@ -438,7 +438,7 @@ bool anjm1ip_anjiMatrix::load_matrix_values(const char* matrixFile)
   if (!inF)
   {
     cerr<<"File with anjm1ip_anji values "<<matrixFile<<" does not exist.\n";
-    return ERROR;    
+    return THOT_ERROR;    
   }
   else
   {
@@ -471,10 +471,10 @@ bool anjm1ip_anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
   awkInputStream awk;
 
       // Try to open file  
-  if(awk.open(maxnsizeDataFile)==ERROR)
+  if(awk.open(maxnsizeDataFile)==THOT_ERROR)
   {
     cerr<<"Error in file with anji maximum size data, file "<<maxnsizeDataFile<<" does not exist.\n";
-    return ERROR;
+    return THOT_ERROR;
   }  
   else
   {
@@ -507,14 +507,14 @@ bool anjm1ip_anjiMatrix::print(const char* prefFileName)
   std::string matrixFile=prefFileName;
   matrixFile=matrixFile+".anjm1ip_anji";
   retVal=print_matrix_values(matrixFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
   if(anjm1ip_anji_maxnsize!=UNRESTRICTED_ANJM1IP_ANJI_SIZE)
   {
     std::string maxnsizeDataFile=prefFileName;
     maxnsizeDataFile=maxnsizeDataFile+".msinfo";
     retVal=print_maxnsize_data(maxnsizeDataFile.c_str());
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
   }
   
   return THOT_OK;
@@ -528,7 +528,7 @@ bool anjm1ip_anjiMatrix::print_matrix_values(const char* matrixFile)
   if(!outF)
   {
     cerr<<"Error while printing anji file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {    
@@ -562,7 +562,7 @@ bool anjm1ip_anjiMatrix::print_maxnsize_data(const char* maxnsizeDataFile)
   if(!outF)
   {
     cerr<<"Error while printing file with anji maximum size data."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {

@@ -57,7 +57,7 @@ bool XRCE_PrePosProcessor2::loadCapitInfo(const char* filename)
   }
   else
   {
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 
@@ -200,10 +200,10 @@ bool XRCE_PrePosProcessor2::loadCapitOptions(const char* filename)
   awkInputStream capitInfoStream;
 
       // Open file
-  if(capitInfoStream.open(filename)==ERROR)
+  if(capitInfoStream.open(filename)==THOT_ERROR)
   {
     cerr<<"Error while loading file with capitalization options: "<<filename<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -240,8 +240,8 @@ bool XRCE_PrePosProcessor2::loadLangModelForSmtPreproc(const char* prefixFileNam
 {
   languageModelFileName=prefixFileName;
   languageModelFileName=languageModelFileName+".lm";
-  if(lmodel.load(languageModelFileName.c_str())==ERROR)
-    return ERROR;
+  if(lmodel.load(languageModelFileName.c_str())==THOT_ERROR)
+    return THOT_ERROR;
   else return THOT_OK;
 }
 

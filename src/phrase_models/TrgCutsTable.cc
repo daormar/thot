@@ -53,12 +53,12 @@ bool TrgCutsTable::load(const char *trgCutsTableFileName)
  awkInputStream awk;
 	
  cerr<<"Loading model for target sentence cuts from file "<<trgCutsTableFileName<<endl;
- if(awk.open(trgCutsTableFileName)==ERROR)
+ if(awk.open(trgCutsTableFileName)==THOT_ERROR)
  {
    jumpOnePar=JUMP_ONE_POS_DEFAULT_PAR;
    stopJumps=STOP_JUMPS_DEFAULT_PAR;
    cerr<<"Warning: file with model for target sentence cuts does not exist, assuming default parameters, jumpOnePar="<<jumpOnePar<<" ; stopJumps="<<stopJumps<<".\n";
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {

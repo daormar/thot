@@ -50,7 +50,7 @@ BaseSmtModel<PhrLocalSwLiTmHypRec<HypEqClassF> >* PhrLocalSwLiTm::clone(void)
 bool PhrLocalSwLiTm::loadAligModel(const char* prefixFileName)
 {
   bool ret=_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >::loadAligModel(prefixFileName);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Obtain prefix of main model
   std::string mainPrefixFileName=this->obtainMainModelAbsoluteNameFromPrefix(prefixFileName);
@@ -59,7 +59,7 @@ bool PhrLocalSwLiTm::loadAligModel(const char* prefixFileName)
   std::string lambdaFile=mainPrefixFileName;
   lambdaFile=lambdaFile+".lambda";
   ret=load_lambdas(lambdaFile.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
     
   return THOT_OK;
 }
@@ -68,7 +68,7 @@ bool PhrLocalSwLiTm::loadAligModel(const char* prefixFileName)
 bool PhrLocalSwLiTm::printAligModel(std::string printPrefix)
 {
   bool ret=_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >::printAligModel(printPrefix);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Obtain prefix of main model
   std::string mainPrintPrefix=this->obtainMainModelAbsoluteNameFromPrefix(printPrefix);
@@ -77,7 +77,7 @@ bool PhrLocalSwLiTm::printAligModel(std::string printPrefix)
   std::string lambdaFile=mainPrintPrefix;
   lambdaFile=lambdaFile+".lambda";
   ret=print_lambdas(lambdaFile.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
   
   return THOT_OK;
 }
@@ -113,14 +113,14 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
   if(tmp_file==0)
   {
     cerr<<"Error updating linear interpolation weights of the phrase model, tmp file could not be created"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Extract phrase pairs from development corpus
   Vector<Vector<PhrasePair> > invPhrPairs;
   int ret=extractPhrPairsFromDevCorpus(srcDevCorpusFileName,trgDevCorpusFileName,invPhrPairs,verbose);
   if(ret!=THOT_OK)
-    return ERROR;
+    return THOT_ERROR;
   
       // Execute downhill simplex algorithm
   bool end=false;
@@ -144,7 +144,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
       case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
         double perp;
         int retEval=new_dhs_eval(invPhrPairs,tmp_file,x,perp);
-        if(retEval==ERROR)
+        if(retEval==THOT_ERROR)
         {
           end=true;
           break;
@@ -178,7 +178,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
   fclose(tmp_file);
 
   if(ret!=THOT_OK)
-    return ERROR;
+    return THOT_ERROR;
   else
     return THOT_OK; 
 }
@@ -256,15 +256,15 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
   awkInputStream trgDevStream;
 
       // Open files
-  if(srcDevStream.open(srcDevCorpusFileName.c_str())==ERROR)
+  if(srcDevStream.open(srcDevCorpusFileName.c_str())==THOT_ERROR)
   {
     cerr<<"Unable to open file with source development sentences."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
-  if(trgDevStream.open(trgDevCorpusFileName.c_str())==ERROR)
+  if(trgDevStream.open(trgDevCorpusFileName.c_str())==THOT_ERROR)
   {
     cerr<<"Unable to open file with target development sentences."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
 
       // Iterate over all sentences
@@ -274,7 +274,7 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
     if(!trgDevStream.getln())
     {
       cerr<<"Unexpected end of file with target development sentences."<<endl;
-      return ERROR;      
+      return THOT_ERROR;      
     }
 
         // Obtain sentence pair
@@ -293,8 +293,8 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
         // Extract consistent phrase pairs
     Vector<PhrasePair> vecInvPhPair;
     int ret=extractConsistentPhrasePairs(srcSentStrVec,refSentStrVec,vecInvPhPair,verbose);
-    if(ret==ERROR)
-      return ERROR;
+    if(ret==THOT_ERROR)
+      return THOT_ERROR;
       
         // Add vector of phrase pairs
     invPhrPairs.push_back(vecInvPhPair);
@@ -705,7 +705,7 @@ int PhrLocalSwLiTm::onlineTrainFeatsSentPair(const char *srcSent,
   if(strlen(srcSent)==0 || strlen(refSent)==0)
   {
     cerr<<"Error: cannot process empty input sentences"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Train pair according to chosen algorithm
@@ -722,7 +722,7 @@ int PhrLocalSwLiTm::onlineTrainFeatsSentPair(const char *srcSent,
       break;
     default:
       cerr<<"Warning: requested online learning algoritm with id="<<onlineTrainingPars.onlineLearningAlgorithm<<" is not implemented."<<endl;
-      return ERROR;
+      return THOT_ERROR;
       break;
   }
 }
@@ -740,7 +740,7 @@ int PhrLocalSwLiTm::incrTrainFeatsSentPair(const char *srcSent,
       // Train language model
   if(verbose) cerr<<"Training language model..."<<endl;
   ret=langModelInfoPtr->lModelPtr->trainSentence(refSentStrVec,onlineTrainingPars.learnStepSize,0,verbose);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Revise vocabularies of the alignment models
   updateAligModelsSrcVoc(srcSentStrVec);
@@ -1183,7 +1183,7 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
   else
   {
     cerr<<"Warning: addition of new translation options not supported in this configuration!"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 
@@ -1192,7 +1192,7 @@ bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
 {
   awkInputStream awk;
   
-  if(awk.open(lambdaFileName)==ERROR)
+  if(awk.open(lambdaFileName)==THOT_ERROR)
   {
     cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist. Current values-> lambda_swm="<<swModelInfoPtr->lambda_swm<<" , lambda_invswm="<<swModelInfoPtr->lambda_invswm<<endl;
     return THOT_OK;
@@ -1220,14 +1220,14 @@ bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
         else
         {
           cerr<<"Anomalous file with lambda values."<<endl;
-          return ERROR;
+          return THOT_ERROR;
         }
       }
     }
     else
     {
       cerr<<"Anomalous file with lambda values."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }  
   return THOT_OK;
@@ -1242,7 +1242,7 @@ bool PhrLocalSwLiTm::print_lambdas(const char* lambdaFileName)
   if(!outF)
   {
     cerr<<"Error while printing file with lambda values."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {

@@ -33,7 +33,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 // General constants
 #define THOT_OK             0
-#define ERROR          1
+#define THOT_ERROR          1
 
 // Downhill simplex optimization constants
 #define DSO_EVAL_FUNC  2 // Error code to return when a new function evaluation

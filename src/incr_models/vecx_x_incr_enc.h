@@ -296,7 +296,7 @@ bool vecx_x_incr_enc<HX,X>::load(const char *prefixFileName)
   if(!ifile)
   {
     cerr<< "Error in target vocabulary file "<<prefixFileName<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -322,7 +322,7 @@ bool vecx_x_incr_enc<HX,X>::print(const char *prefixFileName)
   if(!ofile)
   {
     cerr<< "Error while opening target vocabulary file "<<prefixFileName<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {

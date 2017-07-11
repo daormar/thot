@@ -120,7 +120,7 @@ struct PhrDictKey
         return THOT_OK;
       }
       else
-        return ERROR;
+        return THOT_ERROR;
     }
 };
 

@@ -654,7 +654,7 @@ template<class HSRCDATA,class HTRGDATA,class SRCDATA,class TRGDATA,class SRC_INF
 bool _incrEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::loadEncodingInfo(const char *prefixFileName)
 {
   bool ret=this->encPtr->load(prefixFileName);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
     
   return THOT_OK;
 }
@@ -664,7 +664,7 @@ template<class HSRCDATA,class HTRGDATA,class SRCDATA,class TRGDATA,class SRC_INF
 bool _incrEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::printEncodingInfo(const char *prefixFileName)
 {
   bool ret=this->encPtr->print(prefixFileName);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
   
   return THOT_OK;
 }

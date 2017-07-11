@@ -131,11 +131,11 @@ bool FastBdbPhraseTable::init(const char *fileName)
       // Set comparison function for phrDictDb
   int ret=phrDictDb->set_bt_compare(static_phr_dict_cmp_func);
   if(ret)
-    return ERROR;
+    return THOT_ERROR;
   
   ret=phrDictDb->open(NULL,phrDictDbName.c_str(),NULL,DB_BTREE,o_flags,0);
   if(ret)
-    return ERROR;
+    return THOT_ERROR;
 
       // Verify existence of fast search availability flag (if it does
       // not exist, create and put its value to zero)
@@ -191,8 +191,8 @@ int FastBdbPhraseTable::retrieveDataForPhrDict(const Vector<WordIndex>& s,
       // Initialize key/data pair
   PhrDictKey phrDictKey;
   int ret=phrDictKey.setPhrPair(s,t);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
   Dbt key;
   initDbtKey(key,phrDictKey);
   
@@ -203,7 +203,7 @@ int FastBdbPhraseTable::retrieveDataForPhrDict(const Vector<WordIndex>& s,
   ret=phrDictDb->get(NULL,&key,&data,0);
   if(ret)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -219,8 +219,8 @@ int FastBdbPhraseTable::putDataForPhrDict(const Vector<WordIndex>& s,
       // Initialize key/data pair
   PhrDictKey phrDictKey;
   int ret=phrDictKey.setPhrPair(s,t);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
   Dbt key;
   initDbtKey(key,phrDictKey);
 
@@ -232,7 +232,7 @@ int FastBdbPhraseTable::putDataForPhrDict(const Vector<WordIndex>& s,
       // Put record
   ret=phrDictDb->put(NULL,&key,&data,0);
   if(ret)
-    return ERROR;
+    return THOT_ERROR;
   else
     return THOT_OK;
 }
@@ -244,12 +244,12 @@ int FastBdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
 {
   PhrDictValue phrDictValue;
   int ret=retrieveDataForPhrDict(s,t,phrDictValue);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
         // Entry was not found
     ret=putDataForPhrDict(s,t,c);
     if(ret)
-      return ERROR;
+      return THOT_ERROR;
     else
       return THOT_OK;
   }
@@ -258,7 +258,7 @@ int FastBdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
         // Entry was found
     ret=putDataForPhrDict(s,t,phrDictValue.count+c);
     if(ret)
-      return ERROR;
+      return THOT_ERROR;
     else
       return THOT_OK;
   }
@@ -345,7 +345,7 @@ Count FastBdbPhraseTable::getSrcInfo(const Vector<WordIndex>& s,
   PhrDictValue phrDictValue;
   Vector<WordIndex> emptyPhrase;
   int ret=retrieveDataForPhrDict(s,emptyPhrase,phrDictValue);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
         // Entry was not found
     found=false;
@@ -365,7 +365,7 @@ Count FastBdbPhraseTable::getTrgInfo(const Vector<WordIndex>& t,
   PhrDictValue phrDictValue;
   Vector<WordIndex> emptyPhrase;
   int ret=retrieveDataForPhrDict(emptyPhrase,t,phrDictValue);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
         // Entry was not found
     found=false;
@@ -385,7 +385,7 @@ Count FastBdbPhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
 {
   PhrDictValue phrDictValue;
   int ret=retrieveDataForPhrDict(s,t,phrDictValue);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
         // Entry was not found
     found=false;
@@ -477,7 +477,7 @@ Prob FastBdbPhraseTable::pTrgGivenSrc(const Vector<WordIndex>& s,
   {
     PhrDictValue phrDictValue;
     int ret=retrieveDataForPhrDict(s,t,phrDictValue);
-    if(ret==ERROR)
+    if(ret==THOT_ERROR)
       return PHRASE_PROB_SMOOTH;
     else
       return (float) phrDictValue.count/(float) phrDictValue.auxCount;

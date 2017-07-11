@@ -463,7 +463,7 @@ WordIndex _incrMuxPhraseModel::addSrcSymbol(string s,
 bool _incrMuxPhraseModel::printSrcVocab(const char* /*outputFileName*/)
 {
   cerr<<"Warning: printSrcVocab() function not implemented!"<<endl;
-  return ERROR;
+  return THOT_ERROR;
 }
 
 //-------------------------
@@ -530,7 +530,7 @@ WordIndex _incrMuxPhraseModel::addTrgSymbol(string t,
 bool _incrMuxPhraseModel::printTrgVocab(const char* /*outputFileName*/)
 {
   cerr<<"Warning: printTrgVocab() function not implemented!"<<endl;
-  return ERROR;
+  return THOT_ERROR;
 }
 
 //-------------------------

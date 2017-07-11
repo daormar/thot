@@ -93,9 +93,9 @@ int main(int argc,char *argv[])
 {
   thot_lmwu_pars pars;
 
-  if(handleParameters(argc,argv,pars)==ERROR)
+  if(handleParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -140,7 +140,7 @@ int update_lm_weights(const thot_lmwu_pars& pars)
       return update_lm_weights_interp(pars);
     }
     else
-      return ERROR;
+      return THOT_ERROR;
   }
 }
 
@@ -149,18 +149,18 @@ int update_lm_weights_jel_mer(const thot_lmwu_pars& pars)
 {
       // Load model
   int retVal=incrJelMerLmPtr->load(pars.langModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
   
       // Update weights
   retVal=incrJelMerLmPtr->updateModelWeights(pars.fileWithCorpus.c_str(),pars.verbosity);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
 
       // Print updated weights
   retVal=incrJelMerLmPtr->printWeights(pars.langModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
   
   return THOT_OK;  
 }
@@ -170,18 +170,18 @@ int update_lm_weights_interp(const thot_lmwu_pars& pars)
 {
       // Load model
   int retVal=incrInterpNgramLmPtr->load(pars.langModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
       
       // Update weights
   retVal=incrInterpNgramLmPtr->updateModelWeights(pars.fileWithCorpus.c_str(),pars.verbosity);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
       
       // Print updated weights
   retVal=incrInterpNgramLmPtr->printWeights(pars.langModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
       
   return THOT_OK;     
 }
@@ -191,10 +191,10 @@ int init_lm(int verbosity)
 {
       // Initialize dynamic class file handler
   DynClassFileHandler dynClassFileHandler;
-  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH,verbosity)==ERROR)
+  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH,verbosity)==THOT_ERROR)
   {
     cerr<<"Error while loading ini file"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
       // Define variables to obtain base class infomation
   std::string baseClassName;
@@ -203,18 +203,18 @@ int init_lm(int verbosity)
 
       ////////// Obtain info for BaseNgramLM class
   baseClassName="BaseNgramLM";
-  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==ERROR)
+  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
     cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
     cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
    
       // Load class derived from BaseSwAligModel dynamically
   if(!baseNgramLMDynClassLoader.open_module(soFileName,verbosity))
   {
     cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   lm=baseNgramLMDynClassLoader.make_obj(initPars);
@@ -223,7 +223,7 @@ int init_lm(int verbosity)
     cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
     baseNgramLMDynClassLoader.close_module();
     
-    return ERROR;
+    return THOT_ERROR;
   }
 
   return THOT_OK;
@@ -244,16 +244,16 @@ int handleParameters(int argc,
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
     version();
-    return ERROR;
+    return THOT_ERROR;
   }
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
+    return THOT_ERROR;   
   }
-  if(takeParameters(argc,argv,pars)==ERROR)
+  if(takeParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -263,7 +263,7 @@ int handleParameters(int argc,
     }
     else
     {
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -275,13 +275,13 @@ int takeParameters(int argc,
 {
       // Take language model file name
   int err=readSTLstring(argc,argv, "-lm", &pars.langModelFilePrefix);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
   
       // Take language model file name
   err=readSTLstring(argc,argv, "-c", &pars.fileWithCorpus);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
   if(readOption(argc,argv,"-v")==THOT_OK)
     pars.verbosity=true;
@@ -297,14 +297,14 @@ int checkParameters(thot_lmwu_pars& pars)
   if(pars.langModelFilePrefix.empty())
   {
     cerr<<"Error: parameter -lm not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
 
   }
 
   if(pars.fileWithCorpus.empty())
   {
     cerr<<"Error: parameter -c not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
   
   return THOT_OK;

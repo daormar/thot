@@ -203,14 +203,14 @@ WordIndex KenLm::getEosId(bool &found)const
 bool KenLm::loadVocab(const char* /*fileName*/)
 {
   cerr<<"KenLm: warning, loadVocab() function called but not currently implemented"<<endl;
-  return ERROR;
+  return THOT_ERROR;
 }
 
 //-------------------------
 bool KenLm::printVocab(const char* /*fileName*/)
 {
   cerr<<"KenLm: warning, printVocab() function called but not currently implemented"<<endl;
-  return ERROR;
+  return THOT_ERROR;
 }
 
 //-------------------------
@@ -253,14 +253,14 @@ bool KenLm::load_kenlm_file(const char *fileName)
     catch(...)
     {
       cerr<<"KenLm: something went wrong while loading "<<fileName<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     return THOT_OK;
   }
   else
   {
     cerr<<"KenLm: error, a language model was already loaded"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 
@@ -268,7 +268,7 @@ bool KenLm::load_kenlm_file(const char *fileName)
 bool KenLm::print(const char* /*fileName*/)
 {
   cerr<<"KenLm: warning, print() function called but not currently implemented"<<endl;
-  return ERROR;
+  return THOT_ERROR;
 }
 
 //-------------------------

@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
   {
     return process_ttable();
   }
-  else return ERROR;
+  else return THOT_ERROR;
 }
 
 //---------------
@@ -91,7 +91,7 @@ int extractEntryInfo(awkInputStream& awk,
       srcPhr.push_back(atoi(awk.dollar(i).c_str()));
   }
   if(i == awk.NF)
-    return ERROR;
+    return THOT_ERROR;
 
       // Obtain target phrase
   trgPhr.clear();
@@ -104,7 +104,7 @@ int extractEntryInfo(awkInputStream& awk,
       trgPhr.push_back(atoi(awk.dollar(i).c_str()));
   }
   if(i != awk.NF - 2)
-    return ERROR;
+    return THOT_ERROR;
 
       // Obtain joint count
   jointCount = atof(awk.dollar(awk.NF).c_str());
@@ -117,18 +117,18 @@ int process_ttable(void)
 {
       // Read standard input
   awkInputStream awk;
-  if(awk.open_stream(stdin) == ERROR)
+  if(awk.open_stream(stdin) == THOT_ERROR)
   {
     cerr << "Error while reading from standard input!" << endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
     LevelDbPhraseTable levelDbPt;
-    if(levelDbPt.init(outputFile) == ERROR)
+    if(levelDbPt.init(outputFile) == THOT_ERROR)
     {
       cerr << "Cannot create or recreate database (LevelDB)" << endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     
         // Process translation table
@@ -166,7 +166,7 @@ int TakeParameters(int argc,char *argv[])
   if(err != -1)
   {
     printUsage();
-    return ERROR;
+    return THOT_ERROR;
   }
 
       /* Takes the output files prefix */
@@ -174,7 +174,7 @@ int TakeParameters(int argc,char *argv[])
   if(err == -1)
   {
     printUsage();
-    return ERROR;
+    return THOT_ERROR;
   }
 
   return THOT_OK;  

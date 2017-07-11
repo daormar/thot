@@ -91,18 +91,18 @@ int main(int argc,char *argv[])
  if(TakeParameters(argc,argv)==THOT_OK)
  {
        // Create model instance
-  if(init_swm()==ERROR)
-    return ERROR;
+  if(init_swm()==THOT_ERROR)
+    return THOT_ERROR;
 
   if(pairPlusAligFile[0]==0 && sentPairFile[0]==0)
   {         
    cerr<<"s: "<<srcSent <<endl;
    cerr<<"t: "<<trgSent <<endl;   
    ret=swAligModelPtr->load(swFilePrefix);
-   if(ret==ERROR)
+   if(ret==THOT_ERROR)
    {
      release_swm();
-     return ERROR;
+     return THOT_ERROR;
    }
    if(alig_given) 
    {
@@ -150,20 +150,20 @@ int main(int argc,char *argv[])
     {
           // Process sentence pair + alignment file
       ret=processPairAligFile(swAligModelPtr,pairPlusAligFile);
-      if(ret==ERROR)
+      if(ret==THOT_ERROR)
       {
         release_swm();
-        return ERROR;
+        return THOT_ERROR;
       }
     }
     else
     {
           // Process sentence pair file
       ret=processSentPairFile(swAligModelPtr,sentPairFile);
-      if(ret==ERROR)
+      if(ret==THOT_ERROR)
       {
         release_swm();
-        return ERROR;
+        return THOT_ERROR;
       }
     }
   }
@@ -180,10 +180,10 @@ int init_swm(void)
 {
       // Initialize dynamic class file handler
   DynClassFileHandler dynClassFileHandler;
-  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH)==ERROR)
+  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH)==THOT_ERROR)
   {
     cerr<<"Error while loading ini file"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
       // Define variables to obtain base class infomation
   std::string baseClassName;
@@ -192,18 +192,18 @@ int init_swm(void)
 
       ////////// Obtain info for BaseSwAligModel class
   baseClassName="BaseSwAligModel";
-  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==ERROR)
+  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
     cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
     cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
    
       // Load class derived from BaseSwAligModel dynamically
   if(!baseSwAligModelDynClassLoader.open_module(soFileName))
   {
     cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   swAligModelPtr=baseSwAligModelDynClassLoader.make_obj(initPars);
@@ -212,7 +212,7 @@ int init_swm(void)
     cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
     baseSwAligModelDynClassLoader.close_module();
     
-    return ERROR;
+    return THOT_ERROR;
   }
 
   return THOT_OK;
@@ -245,15 +245,15 @@ int processPairAligFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
  else
  {
        // read input from file
-   if(awk.open(pairPlusAligFile)==ERROR)
+   if(awk.open(pairPlusAligFile)==THOT_ERROR)
    {
      cerr<<"Error in pairPlusAlig file, file "<<pairPlusAligFile<<" does not exist.\n";
-     return ERROR;
+     return THOT_ERROR;
    }
  }
      // Load model
  ret=swAligModelPtr->load(swFilePrefix);
- if(ret==ERROR) return ERROR;
+ if(ret==THOT_ERROR) return THOT_ERROR;
 
      // Process input
  while(awk.getln())
@@ -317,15 +317,15 @@ int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
  else
  {
        // read input from file
-   if(awk.open(sentPairFile)==ERROR)
+   if(awk.open(sentPairFile)==THOT_ERROR)
    {
      cerr<<"Error in sentPair file, file "<<sentPairFile<<" does not exist.\n";
-     return ERROR;
+     return THOT_ERROR;
    }
  }
      // Load model
  ret=swAligModelPtr->load(swFilePrefix);
- if(ret==ERROR) return ERROR;
+ if(ret==THOT_ERROR) return THOT_ERROR;
 
      // Process input
  while(awk.getln())
@@ -392,14 +392,14 @@ int TakeParameters(int argc,char *argv[])
  if(argc==1)
  {
    version();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
  err=readOption(argc,argv,"--help");
  if(err!=-1)
  {
    printUsage();
-   return ERROR;   
+   return THOT_ERROR;   
  }      
 
  // Take the giza files prefix 
@@ -413,7 +413,7 @@ int TakeParameters(int argc,char *argv[])
  if(swFilePrefix[0]==0 )
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
  // Init variables related to -F and -P options
@@ -437,7 +437,7 @@ int TakeParameters(int argc,char *argv[])
      if(err==-1 || argc<2)
      {
        printUsage();
-       return ERROR;
+       return THOT_ERROR;
      } 
     
          // Get t sentence
@@ -445,7 +445,7 @@ int TakeParameters(int argc,char *argv[])
      if(err==-1 || argc<2)
      {
        printUsage();
-       return ERROR;
+       return THOT_ERROR;
      } 
   
          // Get word alignment

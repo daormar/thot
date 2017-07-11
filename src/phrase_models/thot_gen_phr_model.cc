@@ -93,7 +93,7 @@ int main(int argc,char *argv[])
      if(wbaIncrPhraseModel.loadSrcVocab(srcInputVocabFileName)) 
      {
        cerr<<"Error while reading source vocabulary!\n"<<endl;
-       return ERROR;
+       return THOT_ERROR;
      }
      else
      {
@@ -104,7 +104,7 @@ int main(int argc,char *argv[])
      if(wbaIncrPhraseModel.loadTrgVocab(trgInputVocabFileName)) 
      {
        cerr<<"Error while reading target vocabulary!\n"<<endl;
-       return ERROR;
+       return THOT_ERROR;
      }
      else
      {
@@ -118,7 +118,7 @@ int main(int argc,char *argv[])
   { // generate phrase model given a GIZA alignment file
 
     if(wbaIncrPhraseModel.generateWbaIncrPhraseModel(aligFileName,phePars,BRF,verbose))
-      return ERROR;
+      return THOT_ERROR;
 	 
     // print model
     sprintf(outFileName,"%s.ttable",outputFilesPrefix); 
@@ -146,7 +146,7 @@ int main(int argc,char *argv[])
 
   return THOT_OK;
  }
- else return ERROR;
+ else return THOT_ERROR;
 }
 
 
@@ -159,7 +159,7 @@ int TakeParameters(int argc,char *argv[])
  if(argc==1)
  {
    printDesc();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
  /* Verify --help option */
@@ -167,7 +167,7 @@ int TakeParameters(int argc,char *argv[])
  if(err!=-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
  /* Verify --version option */
@@ -175,7 +175,7 @@ int TakeParameters(int argc,char *argv[])
  if(err!=-1)
  {
    version();
-   return ERROR;
+   return THOT_ERROR;
  }
 
  /* Take the .A3.final file name */
@@ -189,7 +189,7 @@ int TakeParameters(int argc,char *argv[])
  if(aligFileName[0]==0)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
  
  /* Take the output files prefix */
@@ -197,7 +197,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
    
  /* Take the maximum source phrase length */

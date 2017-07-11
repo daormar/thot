@@ -105,7 +105,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
      // Take reference file name
@@ -113,7 +113,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
      // -v option

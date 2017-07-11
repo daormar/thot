@@ -265,7 +265,7 @@ int BaseSmtModel<HYPOTHESIS>::onlineTrainFeatsSentPair(const char* /*srcSent*/,
                                                        int /*verbose*/)
 {
   cerr<<"Warning: training of a sentence pair was requested, but such functionality is not provided!"<<endl;
-  return ERROR;
+  return THOT_ERROR;
 }
 
 //---------------------------------

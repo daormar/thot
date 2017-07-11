@@ -116,8 +116,8 @@ int main(int argc,char *argv[])
   {
         // Open files
     int ret=openFiles();
-    if(ret==ERROR)
-      return ERROR;
+    if(ret==THOT_ERROR)
+      return THOT_ERROR;
     
         // Process entries contained in the set of files...
 
@@ -190,7 +190,7 @@ int main(int argc,char *argv[])
 
     return THOT_OK;
   }
-  else return ERROR;
+  else return THOT_ERROR;
 }
 
 //--------------- openFiles() function
@@ -205,7 +205,7 @@ int openFiles(void)
     if(! *ifstreamPtrVec[i])
     {
       cerr<<"Error in file with incremental lexical table, file "<<fileNameVec[i]<<" does not exist.\n";
-      return ERROR;    
+      return THOT_ERROR;    
     }
     
         // Create flag for file
@@ -338,7 +338,7 @@ int TakeParameters(int argc,char *argv[])
  if(argc==1)
  {
    printDesc();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
      /* Verify --help option */
@@ -346,7 +346,7 @@ int TakeParameters(int argc,char *argv[])
  if(err!=-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Takes the table file names */

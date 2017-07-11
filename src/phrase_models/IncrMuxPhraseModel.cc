@@ -44,7 +44,7 @@ bool IncrMuxPhraseModel::load(const char *prefix)
 {
       // Load phrase model entries
   int retval=loadTmEntries(prefix);
-  if(retval==ERROR) return ERROR;
+  if(retval==THOT_ERROR) return THOT_ERROR;
 
   return THOT_OK;
 }
@@ -61,14 +61,14 @@ bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
       int ret=loadTmEntry(modelDescEntryVec[i].modelType,
                           modelDescEntryVec[i].absolutizedModelFileName,
                           modelDescEntryVec[i].statusStr);
-      if(ret==ERROR)
-        return ERROR;
+      if(ret==THOT_ERROR)
+        return THOT_ERROR;
     }
         // Check if main model was found
     if(modelIndex!=MAIN_MUX_PMODEL_INDEX)
     {
       cerr<<"Error: the first model entry should be marked as main"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     else
       return THOT_OK;
@@ -78,7 +78,7 @@ bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
   else
   {
     cerr<<"Error while loading descriptor file"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 
@@ -90,7 +90,7 @@ bool IncrMuxPhraseModel::loadTmEntry(std::string tmType,
       // Create pointer to model
   BasePhraseModel* tmPtr=createTmPtr(tmType);
   if(tmPtr==NULL)
-    return ERROR;
+    return THOT_ERROR;
     
       // Store file pointer
   modelPtrVec.push_back(tmPtr);
@@ -102,7 +102,7 @@ bool IncrMuxPhraseModel::loadTmEntry(std::string tmType,
 
       // Load model from file
   int ret=modelPtrVec.back()->load(modelFileName.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
         
       // Store lm type
   tmTypeVec.push_back(tmType);
@@ -124,7 +124,7 @@ bool IncrMuxPhraseModel::loadTmEntry(std::string tmType,
 bool IncrMuxPhraseModel::print(const char* prefix)
 {
   int ret=printTmEntries(prefix);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
   return THOT_OK;
 }
 
@@ -137,7 +137,7 @@ bool IncrMuxPhraseModel::printTmEntries(const char *fileName)
   if(!outF)
   {
     cerr<<"Error while printing model to file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -153,8 +153,8 @@ bool IncrMuxPhraseModel::printTmEntries(const char *fileName)
 
           // Print translation model
       bool ret=printTm(fileName,i);
-      if(ret==ERROR)
-        return ERROR;
+      if(ret==THOT_ERROR)
+        return THOT_ERROR;
     }
     return THOT_OK;
   }
@@ -181,7 +181,7 @@ bool IncrMuxPhraseModel::printTm(const char* fileDescName,
     if(ret!=0)
     {
       cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
   else
@@ -190,7 +190,7 @@ bool IncrMuxPhraseModel::printTm(const char* fileDescName,
     {
           // A file with the same name existed
       cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
       // Print model files

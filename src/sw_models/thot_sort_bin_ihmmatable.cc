@@ -96,7 +96,7 @@ int main(int argc,char *argv[])
     if (!inF)
     {
       cerr<<"Error in file with incremental hmm alignment table, file "<<ihmmatableFileName<<" does not exist.\n";
-      return ERROR;    
+      return THOT_ERROR;    
     }
     else
     {
@@ -139,7 +139,7 @@ int main(int argc,char *argv[])
       return THOT_OK;
     }
   }
-  else return ERROR;
+  else return THOT_ERROR;
 }
 
 //--------------- TakeParameters function
@@ -150,7 +150,7 @@ int TakeParameters(int argc,char *argv[])
  if(argc==1)
  {
    printDesc();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
      /* Verify --help option */
@@ -158,7 +158,7 @@ int TakeParameters(int argc,char *argv[])
  if(err!=-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Takes the table file name */
@@ -166,7 +166,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
  return THOT_OK;  

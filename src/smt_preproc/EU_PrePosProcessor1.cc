@@ -57,9 +57,9 @@ bool EU_PrePosProcessor1::loadCapitInfo(const char* filename)
   }
   else
   {
-    cerr<<"ERROR"<<endl;
+    cerr<<"THOT_ERROR"<<endl;
     
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 

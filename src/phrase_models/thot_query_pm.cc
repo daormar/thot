@@ -87,10 +87,10 @@ int main(int argc,char *argv[])
   {
         // Initialize dynamic class file handler
     DynClassFileHandler dynClassFileHandler;
-    if(dynClassFileHandler.load(THOT_MASTER_INI_PATH)==ERROR)
+    if(dynClassFileHandler.load(THOT_MASTER_INI_PATH)==THOT_ERROR)
     {
       cerr<<"Error while loading ini file"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
         // Define variables to obtain base class infomation
     std::string baseClassName;
@@ -99,11 +99,11 @@ int main(int argc,char *argv[])
 
         // Obtain info for BasePhraseModel class
     baseClassName="BasePhraseModel";
-    if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==ERROR)
+    if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
     {
       cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
       cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
    
         // Load class derived from BasePhraseModel dynamically
@@ -111,7 +111,7 @@ int main(int argc,char *argv[])
     if(!basePhraseModelDynClassLoader.open_module(soFileName))
     {
       cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }     
    
     BasePhraseModel* pbModelPtr=basePhraseModelDynClassLoader.make_obj(initPars);
@@ -120,7 +120,7 @@ int main(int argc,char *argv[])
       cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
       
       basePhraseModelDynClassLoader.close_module();
-      return ERROR;
+      return THOT_ERROR;
     }
 
         // Process options
@@ -140,7 +140,7 @@ int main(int argc,char *argv[])
   }
   else
   {
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 
@@ -228,7 +228,7 @@ int p_option(BasePhraseModel* pbModelPtr)
   }
   else
   {
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 
@@ -238,10 +238,10 @@ int q_option(BasePhraseModel* pbModelPtr)
   awkInputStream awk;
 
       // Open input file
-  if(awk.open(phraseFileName.c_str())==ERROR)
+  if(awk.open(phraseFileName.c_str())==THOT_ERROR)
   {
     cerr<<"Error in file with phrases, file "<<phraseFileName<<" does not exist.\n";
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Load model
@@ -270,7 +270,7 @@ int q_option(BasePhraseModel* pbModelPtr)
   }
   else
   {
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 
@@ -280,10 +280,10 @@ int f_option(BasePhraseModel* pbModelPtr)
   awkInputStream awk;
 
       // Open input file
-  if(awk.open(phrasePairsFileName.c_str())==ERROR)
+  if(awk.open(phrasePairsFileName.c_str())==THOT_ERROR)
   {
     cerr<<"Error in file with phrase pairs, file "<<phrasePairsFileName<<" does not exist.\n";
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Load model
@@ -329,7 +329,7 @@ int f_option(BasePhraseModel* pbModelPtr)
   }
   else
   {
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 

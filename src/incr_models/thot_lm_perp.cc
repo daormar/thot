@@ -84,15 +84,15 @@ int main(int argc,char *argv[])
 
   if(TakeParameters(argc,argv)==THOT_OK)
   {
-    if(init_lm(true)==ERROR)
-      return ERROR;
+    if(init_lm(true)==THOT_ERROR)
+      return THOT_ERROR;
     
         // Load language model
-    if(lm->load(lmFileName.c_str())==ERROR)
+    if(lm->load(lmFileName.c_str())==THOT_ERROR)
     {
       cerr<<"Error while loading language model"<<endl;
       release_lm(true);
-      return ERROR;
+      return THOT_ERROR;
     }
     else
     {
@@ -100,10 +100,10 @@ int main(int argc,char *argv[])
       
       ctimer(&elapsed_ant,&ucpu,&scpu);
       int ret=lm->perplexity(corpusFileName.c_str(),sentenceNo,numWords,total_logp,perp,verbose);
-      if(ret==ERROR)
+      if(ret==THOT_ERROR)
       {
         release_lm(true);
-        return ERROR;
+        return THOT_ERROR;
       }
         
       ctimer(&elapsed,&ucpu,&scpu);  
@@ -123,7 +123,7 @@ int main(int argc,char *argv[])
       return THOT_OK;
     }
   }
-  else return ERROR;
+  else return THOT_ERROR;
 }
 
 //---------------
@@ -131,10 +131,10 @@ int init_lm(int verbosity)
 {
       // Initialize dynamic class file handler
   DynClassFileHandler dynClassFileHandler;
-  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH,verbosity)==ERROR)
+  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH,verbosity)==THOT_ERROR)
   {
     cerr<<"Error while loading ini file"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
       // Define variables to obtain base class infomation
   std::string baseClassName;
@@ -143,18 +143,18 @@ int init_lm(int verbosity)
 
       ////////// Obtain info for BaseNgramLM class
   baseClassName="BaseNgramLM";
-  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==ERROR)
+  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
     cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
     cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
    
       // Load class derived from BaseSwAligModel dynamically
   if(!baseNgramLMDynClassLoader.open_module(soFileName,verbosity))
   {
     cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   lm=baseNgramLMDynClassLoader.make_obj(initPars);
@@ -163,7 +163,7 @@ int init_lm(int verbosity)
     cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
     baseNgramLMDynClassLoader.close_module();
     
-    return ERROR;
+    return THOT_ERROR;
   }
 
   return THOT_OK;
@@ -186,7 +186,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1 || argc<2)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Take the language model file name */
@@ -194,7 +194,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
       /* Take order of the n-grams */
@@ -202,7 +202,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Check verbosity option */

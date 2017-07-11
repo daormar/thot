@@ -1207,10 +1207,10 @@ bool WordGraph::load(const char * filename)
 {
   awkInputStream awk;
   
-  if(awk.open(filename)==ERROR)
+  if(awk.open(filename)==THOT_ERROR)
   {
     cerr<<"Error while opening word graph file: "<<filename<<"\n";
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -1305,7 +1305,7 @@ bool WordGraph::print(const char* filename,
   if(!outS)
   {
     cerr<<"Error while printing recombination graph to file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {

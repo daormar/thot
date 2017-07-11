@@ -50,7 +50,7 @@ int ThotIbm2Aligner::init(char* filesPrefix)
   if (aligModel.load(filesPrefix) == 0) { // 0 means THOT_OK
     LOG(INFO) << "Alignment model with prefix " << filesPrefix << "was loaded successfully!" << endl;
   } else {
-    LOG(ERROR) << "Unable to open alignment model with prefix " << filesPrefix << endl;
+    LOG(THOT_ERROR) << "Unable to open alignment model with prefix " << filesPrefix << endl;
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;

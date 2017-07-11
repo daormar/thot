@@ -112,7 +112,7 @@ bool SegLenTable::load_seglentable(const char *segmLengthTableFileName)
  awkInputStream awk;
 	
  cerr<<"Loading segmentation length table from file "<<segmLengthTableFileName<<endl;
- if(awk.open(segmLengthTableFileName)==ERROR)
+ if(awk.open(segmLengthTableFileName)==THOT_ERROR)
  {
    // cerr<<"Warning: segmentation length tablefile not found, segmentation length probability will be assumed to be constant.\n";
    cerr<<"Segmentation length probability will be assumed to be constant.\n";

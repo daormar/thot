@@ -89,22 +89,22 @@ int main(int argc,char *argv[])
 {
   thot_scorer_pars pars;
 
-  if(handleParameters(argc,argv,pars)==ERROR)
+  if(handleParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
         // Initialize pointers
     int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH,false);
-    if(err==ERROR)
-      return ERROR;
+    if(err==THOT_ERROR)
+      return THOT_ERROR;
 
     baseScorerPtr=dynClassFactoryHandler.baseScorerDynClassLoader.make_obj(dynClassFactoryHandler.baseScorerInitPars);
     if(baseScorerPtr==NULL)
     {
       cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
 
         // Calculate score
@@ -128,16 +128,16 @@ int handleParameters(int argc,
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
     version();
-    return ERROR;
+    return THOT_ERROR;
   }
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
+    return THOT_ERROR;   
   }
-  if(takeParameters(argc,argv,pars)==ERROR)
+  if(takeParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -147,7 +147,7 @@ int handleParameters(int argc,
     }
     else
     {
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -158,12 +158,12 @@ int takeParameters(int argc,
                    thot_scorer_pars& pars)
 {
   int err=readSTLstring(argc,argv, "-r", &pars.fileWithReferences);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
   err=readSTLstring(argc,argv, "-t", &pars.fileWithSysSents);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
   return THOT_OK;
 }
@@ -174,13 +174,13 @@ int checkParameters(thot_scorer_pars& pars)
   if(pars.fileWithReferences.empty())
   {
     cerr<<"Error: parameter -r not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
   if(pars.fileWithSysSents.empty())
   {
     cerr<<"Error: parameter -t not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
   return THOT_OK;
@@ -196,10 +196,10 @@ int obtain_references(const thot_scorer_pars& pars,
       // Fill output variable
   awkInputStream awk;
 
-  if(awk.open(pars.fileWithReferences.c_str())==ERROR)
+  if(awk.open(pars.fileWithReferences.c_str())==THOT_ERROR)
   {
     cerr<<"Error while opening file "<<pars.fileWithReferences<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
   
   while(awk.getln())
@@ -220,10 +220,10 @@ int obtain_sys_sentences(const thot_scorer_pars& pars,
       // Fill output variable
   awkInputStream awk;
 
-  if(awk.open(pars.fileWithSysSents.c_str())==ERROR)
+  if(awk.open(pars.fileWithSysSents.c_str())==THOT_ERROR)
   {
     cerr<<"Error while opening file "<<pars.fileWithSysSents<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   
   while(awk.getln())
@@ -243,13 +243,13 @@ int calc_score(const thot_scorer_pars& pars)
   
       // Obtain references
   retVal=obtain_references(pars,referenceVec);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
 
       // Obtain system sentences
   retVal=obtain_sys_sentences(pars,sysSentVec);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
 
       // Calculate score
   double score;

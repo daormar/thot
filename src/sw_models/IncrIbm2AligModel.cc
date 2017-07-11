@@ -311,7 +311,7 @@ LgProb IncrIbm2AligModel::calcLgProbForAlig(const Vector<WordIndex>& sSent,
   if(tSent.size()!=alig.size())
   {
     cerr<<"Error: the sentence t and the alignment vector have not the same size."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }     
   else
   {
@@ -438,7 +438,7 @@ bool IncrIbm2AligModel::load(const char* prefFileName)
 
         // Load IBM 1 Model data
     retVal=IncrIbm1AligModel::load(prefFileName);
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
     
     cerr<<"Loading incremental IBM 2 Model data..."<<endl;
 
@@ -446,11 +446,11 @@ bool IncrIbm2AligModel::load(const char* prefFileName)
     std::string aligNumDenFile=prefFileName;
     aligNumDenFile=aligNumDenFile+".ibm2_alignd";
     retVal=incrIbm2AligTable.load(aligNumDenFile.c_str());
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
     return THOT_OK;
   }
-  else return ERROR;
+  else return THOT_ERROR;
 }
    
 //-------------------------
@@ -465,7 +465,7 @@ bool IncrIbm2AligModel::print(const char* prefFileName)
   std::string aligNumDenFile=prefFileName;
   aligNumDenFile=aligNumDenFile+".ibm2_alignd";
   retVal=incrIbm2AligTable.print(aligNumDenFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
   return THOT_OK;
 }

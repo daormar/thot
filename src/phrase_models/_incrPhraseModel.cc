@@ -276,7 +276,7 @@ bool _incrPhraseModel::load_given_prefix(const char *prefix)
   ttablefile=prefix;
   ttablefile=ttablefile+".ttable";
   ret=load_ttable(ttablefile.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Load segmentation length table
   seglenfile=prefix;
@@ -306,10 +306,10 @@ bool _incrPhraseModel::load_ttable(const char *_incrPhraseModelFileName)
 {
   awkInputStream awk;
   
-  if(awk.open(_incrPhraseModelFileName)==ERROR)
+  if(awk.open(_incrPhraseModelFileName)==THOT_ERROR)
   {
     cerr<<"Error in ttable file: "<<_incrPhraseModelFileName<<"\n";
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -319,7 +319,7 @@ bool _incrPhraseModel::load_ttable(const char *_incrPhraseModelFileName)
          strcmp("cache",awk.dollar(2).c_str())==0 && strcmp("ttable",awk.dollar(3).c_str())==0)
       {
         cerr<<"Error in ttable file: "<<_incrPhraseModelFileName<<"\n";
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -349,10 +349,10 @@ bool _incrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
 
  if(logFileOpen()) logF<<"Loading phrase ttable from file "<<phraseTTableFileName<<endl;	
 
- if(awk.open(phraseTTableFileName)==ERROR)
+ if(awk.open(phraseTTableFileName)==THOT_ERROR)
  {
    cerr<<"Error in WBA-Phrase Model file: "<<phraseTTableFileName<<endl;
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {   
@@ -389,7 +389,7 @@ bool _incrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
       {
         cerr<<"Error in WBA-Phrase Model file: "<<phraseTTableFileName<<endl;
         cerr<<"(Note: ensure your model was generated using the -pc option)"<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
     }
   }
@@ -424,14 +424,14 @@ bool _incrPhraseModel::print(const char *prefix)
   std::string ttableFileName=absolutizedMainFileName;
   ttableFileName+=".ttable";
   bool retVal=printTTable(ttableFileName.c_str());
-  if(retVal) return ERROR;
+  if(retVal) return THOT_ERROR;
 
       // Warning: generation of segmentation length tables is not
       // currently working
   std::string segLenTableFileName=absolutizedMainFileName;
   segLenTableFileName+=".seglentable";
   retVal=printSegmLengthTable(segLenTableFileName.c_str());
-  if(retVal) return ERROR;
+  if(retVal) return THOT_ERROR;
   
   return THOT_OK;
 }
@@ -446,7 +446,7 @@ bool _incrPhraseModel::printTTable(const char *outputFileName)
   if(!outF)
   {
     cerr<<"Error while printing phrase model to file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -460,7 +460,7 @@ bool _incrPhraseModel::printTTable(const char *outputFileName)
   if(outf==NULL)
   {
     cerr<<"Error while printing phrase model to file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -479,7 +479,7 @@ bool _incrPhraseModel::printSegmLengthTable(const char *outputFileName)
  if(!outF)
  {
    cerr<<"Error while printing segmentation length table."<<endl;
-   return ERROR;
+   return THOT_ERROR;
  }
 
  printSegmLengthTable(outF);	

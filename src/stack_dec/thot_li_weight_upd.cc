@@ -91,9 +91,9 @@ int main(int argc,char *argv[])
 {
   thot_liwu_pars pars;
 
-  if(handleParameters(argc,argv,pars)==ERROR)
+  if(handleParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -124,16 +124,16 @@ int handleParameters(int argc,
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
     version();
-    return ERROR;
+    return THOT_ERROR;
   }
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
+    return THOT_ERROR;   
   }
-  if(takeParameters(argc,argv,pars)==ERROR)
+  if(takeParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -143,7 +143,7 @@ int handleParameters(int argc,
     }
     else
     {
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -155,18 +155,18 @@ int takeParameters(int argc,
 {
       // Take language model file name
   int err=readSTLstring(argc,argv, "-tm", &pars.phrModelFilePrefix);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
   
       // Take language model file name
   err=readSTLstring(argc,argv, "-t", &pars.testCorpusFile);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
       // Take language model file name
   err=readSTLstring(argc,argv, "-r", &pars.refCorpusFile);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
   if(readOption(argc,argv,"-v")==THOT_OK)
     pars.verbosity=true;
@@ -182,20 +182,20 @@ int checkParameters(thot_liwu_pars& pars)
   if(pars.phrModelFilePrefix.empty())
   {
     cerr<<"Error: parameter -tm not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
 
   }
 
   if(pars.testCorpusFile.empty())
   {
     cerr<<"Error: parameter -t not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
   if(pars.refCorpusFile.empty())
   {
     cerr<<"Error: parameter -r not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
   return THOT_OK;
@@ -206,8 +206,8 @@ int initPhrModel(std::string phrModelFilePrefix)
 {
       // Initialize class factories
   int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
       // Obtain info about translation model entries
   unsigned int numTransModelEntries;
@@ -227,7 +227,7 @@ int initPhrModel(std::string phrModelFilePrefix)
   if(phrModelInfoPtr->invPbModelPtr==NULL)
   {
     cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Add one swm pointer per each translation model entry
@@ -238,7 +238,7 @@ int initPhrModel(std::string phrModelFilePrefix)
     if(swModelInfoPtr->swAligModelPtrVec[0]==NULL)
     {
       cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 
@@ -249,7 +249,7 @@ int initPhrModel(std::string phrModelFilePrefix)
     if(swModelInfoPtr->invSwAligModelPtrVec[0]==NULL)
     {
       cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 
@@ -281,23 +281,23 @@ int update_li_weights(const thot_liwu_pars& pars)
 
       // Initialize phrase model
   retVal=initPhrModel(pars.phrModelFilePrefix);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
   
       // Load model
   retVal=phrLocalSwLiTmPtr->loadAligModel(pars.phrModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
   
       // Update weights
   retVal=phrLocalSwLiTmPtr->updateLinInterpWeights(pars.testCorpusFile,pars.refCorpusFile,pars.verbosity);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
 
       // Print updated weights
   retVal=phrLocalSwLiTmPtr->printAligModel(pars.phrModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
 
       // Release phrase model
   releasePhrModel();

@@ -52,10 +52,10 @@ bool WeightedIncrNormSlm::load(const char *filename)
 
   clear();
   
-  if(awk.open(filename)==ERROR)
+  if(awk.open(filename)==THOT_ERROR)
   {
     cerr<<"Error in sentence length model file, file "<<filename<<" does not exist.\n";
-    return ERROR;
+    return THOT_ERROR;
   }
   if(awk.getln())
   {
@@ -66,7 +66,7 @@ bool WeightedIncrNormSlm::load(const char *filename)
     else
     {
       cerr<<"Anomalous sentence length model file: "<<filename<<"\n";
-      return ERROR;
+      return THOT_ERROR;
     }
   }
   else
@@ -86,7 +86,7 @@ bool WeightedIncrNormSlm::print(const char* filename)
   if(!outF)
   {
     cerr<<"Error while printing sentence length model."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -210,10 +210,10 @@ bool WeightedIncrNormSlm::readNormalPars(const char *normParsFileName)
  awkInputStream awk;
 
  cerr<<"Reading sentence length model file from: "<<normParsFileName<<" , using a weighted incremental normal distribution"<<endl;
- if(awk.open(normParsFileName)==ERROR)
+ if(awk.open(normParsFileName)==THOT_ERROR)
  {
    cerr<<"Error in sentence length model file, file "<<normParsFileName<<" does not exist.\n";
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -224,7 +224,7 @@ bool WeightedIncrNormSlm::readNormalPars(const char *normParsFileName)
    if(awk.NF!=8)
    {
      cerr<<"Anomalous sentence length model file!"<<endl;
-     return ERROR;
+     return THOT_ERROR;
    }
    numSents=atoi(awk.dollar(2).c_str());
    slenSum=atoi(awk.dollar(5).c_str());

@@ -84,9 +84,9 @@ int main(int argc,char *argv[])
 {
   thot_gen_sw_model_pars pars;
     
-  if(handleParameters(argc,argv,pars)==ERROR)
+  if(handleParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -103,10 +103,10 @@ int init_swm(int verbosity)
 {
       // Initialize dynamic class file handler
   DynClassFileHandler dynClassFileHandler;
-  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH,verbosity)==ERROR)
+  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH,verbosity)==THOT_ERROR)
   {
     cerr<<"Error while loading ini file"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
       // Define variables to obtain base class infomation
   std::string baseClassName;
@@ -115,18 +115,18 @@ int init_swm(int verbosity)
 
       ////////// Obtain info for BaseSwAligModel class
   baseClassName="BaseSwAligModel";
-  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==ERROR)
+  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
     cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
     cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
    
       // Load class derived from BaseSwAligModel dynamically
   if(!baseSwAligModelDynClassLoader.open_module(soFileName,verbosity))
   {
     cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   swAligModelPtr=baseSwAligModelDynClassLoader.make_obj(initPars);
@@ -135,7 +135,7 @@ int init_swm(int verbosity)
     cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
     baseSwAligModelDynClassLoader.close_module();
     
-    return ERROR;
+    return THOT_ERROR;
   }
 
   return THOT_OK;
@@ -153,18 +153,18 @@ int processParameters(thot_gen_sw_model_pars pars)
 {
   int verbosity=0;
 
-  if(init_swm(true)==ERROR)
-    return ERROR;
+  if(init_swm(true)==THOT_ERROR)
+    return THOT_ERROR;
   
       // Load model if -l option was given
   if(pars.l_given)
   {
         // Load model
     int ret=swAligModelPtr->load(pars.l_str.c_str());
-    if(ret==ERROR)
+    if(ret==THOT_ERROR)
     {
       release_swm(true);
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 
@@ -234,10 +234,10 @@ int processParameters(thot_gen_sw_model_pars pars)
                                               pars.t_str.c_str(),
                                               srctrgcFileName.c_str(),
                                               pui);
-    if(ret==ERROR)
+    if(ret==THOT_ERROR)
     {
       release_swm(true);
-      return ERROR;
+      return THOT_ERROR;
     }
   }
   
@@ -454,17 +454,17 @@ int handleParameters(int argc,
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
     version();
-    return ERROR;
+    return THOT_ERROR;
   }
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
+    return THOT_ERROR;   
   }
   Vector<std::string> argv_stl=argv2argv_stl(argc,argv);
-  if(takeParameters(argc,argv_stl,pars)==ERROR)
+  if(takeParameters(argc,argv_stl,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -474,7 +474,7 @@ int handleParameters(int argc,
     }
     else
     {
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -498,7 +498,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -s parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -515,7 +515,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -t parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -532,7 +532,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -l parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -549,7 +549,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -n parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -594,7 +594,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -r parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -618,7 +618,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -mb parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -635,7 +635,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no values for -lr parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -661,7 +661,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -np parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -678,7 +678,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -lf parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -695,7 +695,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -af parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -712,7 +712,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -o parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -740,7 +740,7 @@ int takeParameters(int argc,
     if(matched==0)
     {
       cerr<<"Error: parameter "<<argv_stl[i]<<" not valid."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     ++i;
   }
@@ -755,26 +755,26 @@ int checkParameters(thot_gen_sw_model_pars& pars)
     if(!pars.s_given)
     {
       cerr<<"Error: -s parameter not given!"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
 
     if(!pars.t_given)
     {
       cerr<<"Error: -t parameter not given!"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 
   if(!pars.n_given)
   {
     cerr<<"Error: -n parameter not given!"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   if(!pars.o_given)
   {
     cerr<<"Error: -o parameter not given!"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   if(pars.eb_given)
@@ -782,20 +782,20 @@ int checkParameters(thot_gen_sw_model_pars& pars)
     if(pars.i_given || pars.c_given || pars.r_given || pars.mb_given || pars.in_given)
     {
       cerr<<"Error: parameter -eb cannot be combined with parameters -i, -c, -r, -mb and -in"<<endl;
-      return ERROR;        
+      return THOT_ERROR;        
     }
   }
 
   if(pars.l_given && pars.c_given)
   {
     cerr<<"Error: parameter -l cannot be combined with parameter -c"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   if(pars.lr_given && !pars.mb_given)
   {
     cerr<<"Error: parameter -lr cannot be used without -mb parameter"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   
   if(pars.mb_given)
@@ -803,25 +803,25 @@ int checkParameters(thot_gen_sw_model_pars& pars)
     if(pars.eb_given || pars.i_given || pars.c_given || pars.r_given || pars.in_given)
     {
       cerr<<"Error: parameter -mb cannot be combined with parameters -i, -c, -r, -eb and -in"<<endl;
-      return ERROR;        
+      return THOT_ERROR;        
     }
   }
 
   if(pars.r_given && !pars.i_given)
   {
     cerr<<"Error: parameter -r cannot be used without -i parameter"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   if(pars.in_given && !pars.i_given)
   {
     cerr<<"Error: parameter -in cannot be used without -i parameter"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   
       // Check invalid options when using non-incremental sw models
-  if(init_swm(false)==ERROR)
-    return ERROR;
+  if(init_swm(false)==THOT_ERROR)
+    return THOT_ERROR;
       
   _incrSwAligModel<Vector<Prob> >* _incrSwAligModelPtr=dynamic_cast<_incrSwAligModel<Vector<Prob> >*>(swAligModelPtr);
   if(!_incrSwAligModelPtr)
@@ -830,7 +830,7 @@ int checkParameters(thot_gen_sw_model_pars& pars)
     {
       release_swm(false);
       cerr<<"Error: parameters -eb, -mb, -i, -c, -r and -in cannot be used with non-incremental single word models"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
   

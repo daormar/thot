@@ -567,7 +567,7 @@ LgProb IncrIbm1AligModel::calcLgProbForAlig(const Vector<WordIndex>& sSent,
   if(tSent.size()!=alig.size())
   {
     cerr<<"Error: the sentence t and the alignment vector have not the same size."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }     
   else
   {
@@ -816,27 +816,27 @@ bool IncrIbm1AligModel::load(const char* prefFileName)
     srctrgcFile=srctrgcFile+".srctrgc";
     pair<unsigned int,unsigned int> pui;
     retVal=readSentencePairs(srcsFile.c_str(),trgsFile.c_str(),srctrgcFile.c_str(),pui);
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load file with anji values
     retVal=anji.load(prefFileName);
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load file with lexical nd values
     std::string lexNumDenFile=prefFileName;
     lexNumDenFile=lexNumDenFile+".ibm_lexnd";
     retVal=incrLexTable.load(lexNumDenFile.c_str());
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load average sentence lengths
     std::string slmodelFile=prefFileName;
     slmodelFile=slmodelFile+".slmodel";
     retVal=sentLengthModel.load(slmodelFile.c_str());
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
 
     return THOT_OK;
   }
-  else return ERROR;
+  else return THOT_ERROR;
 }
    
 //-------------------------
@@ -861,23 +861,23 @@ bool IncrIbm1AligModel::print(const char* prefFileName)
   std::string srctrgcFile=prefFileName;
   srctrgcFile=srctrgcFile+".srctrgc";
   retVal=printSentPairs(srcsFile.c_str(),trgsFile.c_str(),srctrgcFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file anji values
   retVal=anji.print(prefFileName);
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with lexical nd values
   std::string lexNumDenFile=prefFileName;
   lexNumDenFile=lexNumDenFile+".ibm_lexnd";
   retVal=incrLexTable.print(lexNumDenFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with sentence length model
   std::string slmodelFile=prefFileName;
   slmodelFile=slmodelFile+".slmodel";
   retVal=sentLengthModel.print(slmodelFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
   return THOT_OK;
 }

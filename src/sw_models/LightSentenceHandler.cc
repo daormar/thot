@@ -65,18 +65,18 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
  sentRange.first=0;
 
      // Open source file
- if(awkSrc.open(srcFileName)==ERROR)
+ if(awkSrc.open(srcFileName)==THOT_ERROR)
  {
    cerr<<"Error in source language file: "<<srcFileName<<endl;
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
        // Open target file
-   if(awkTrg.open(trgFileName)==ERROR)
+   if(awkTrg.open(trgFileName)==THOT_ERROR)
    {
      cerr<<"Error in target language file: "<<trgFileName<<endl;
-     return ERROR;
+     return THOT_ERROR;
    }
    else
    {
@@ -89,7 +89,7 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
      else
      {
            // sentCountsFile is not empty
-       if(awkSrcTrgC.open(sentCountsFile)==ERROR)
+       if(awkSrcTrgC.open(sentCountsFile)==THOT_ERROR)
        {
          cerr<<"File with sentence counts "<<sentCountsFile<<" does not exist"<<endl;
          countFileExists=false;
@@ -107,7 +107,7 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
        if(!awkTrg.getln())
        {
          cerr<<"Error: the number of source and target sentences differ!"<<endl;
-         return ERROR;
+         return THOT_ERROR;
        }
 
            // Display warnings if sentences are empty
@@ -181,7 +181,7 @@ int LightSentenceHandler::nthSentPair(unsigned int n,
                                       Count& c)
 {
   if(n>=numSentPairs())
-    return ERROR;
+    return THOT_ERROR;
   else
   {
     if(n<nsPairsInFiles)
@@ -212,7 +212,7 @@ int LightSentenceHandler::nthSentPairFromFiles(unsigned int n,
 {
       // Check if entry is contained in files
   if(n>=nsPairsInFiles)
-    return ERROR;
+    return THOT_ERROR;
   
       // Find corresponding entries
   if(currFileSentIdx>n)
@@ -324,7 +324,7 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
   if(!srcOutF)
   {
     cerr<<"Error while printing file with source sentences."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Open file with target sentences
@@ -332,7 +332,7 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
   if(!trgOutF)
   {
     cerr<<"Error while printing file with target sentences."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Open file with sentence counts
@@ -340,7 +340,7 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
   if(!countsOutF)
   {
     cerr<<"Error while printing file with sentence counts."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   for(unsigned int n=0;n<numSentPairs();++n)

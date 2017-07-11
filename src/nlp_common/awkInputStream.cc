@@ -103,7 +103,7 @@ bool awkInputStream::open(const char *str)
  if(filePtr==NULL)
  {
    FS=0;
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -123,7 +123,7 @@ bool awkInputStream::open_stream(FILE *stream)
  if(filePtr==NULL)
  {
    FS=0;
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -152,7 +152,7 @@ bool awkInputStream::rwd(void)
    rewind(filePtr);
    return THOT_OK;
  }
- else return ERROR; 
+ else return THOT_ERROR; 
 }
 
 //----------
