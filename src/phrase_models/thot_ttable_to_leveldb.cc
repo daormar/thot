@@ -124,7 +124,12 @@ int process_ttable(void)
   }
   else
   {
-    leveldbPhraseTable levelDbPt;
+    LevelDbPhraseTable levelDbPt;
+    if(levelDbPt.init(outputFile) == ERROR)
+    {
+      cerr << "Cannot create or recreate database (LevelDB)" << endl;
+      return ERROR;
+    }
     
         // Process translation table
     int i = 0;
@@ -146,9 +151,6 @@ int process_ttable(void)
     }
 
     cout << "levelDB size: " << levelDbPt.size() << endl;
-
-      // Store data structure for further usage
-    levelDbPt.save(outputFile.c_str());
     
     return OK;
   }

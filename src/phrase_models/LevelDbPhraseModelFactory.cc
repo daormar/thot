@@ -34,7 +34,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 extern "C" BasePhraseModel* create(std::string /*str*/)
 {
-  return new LevelDbPhraseModel;  // TODO
+  return new LevelDbPhraseModel;
 }
 
 //---------------

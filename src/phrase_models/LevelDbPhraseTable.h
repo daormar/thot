@@ -21,8 +21,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /*                                                                  */
 /* Prototype file: LevelDbPhraseTable                               */
 /*                                                                  */
-/* Description: Implements a bilingual phrase table using a double  */
-/*              array trie.                                         */
+/* Description: Implements a bilingual phrase table using leveldb   */
 /*                                                                  */
 /********************************************************************/
 
@@ -66,9 +65,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 class LevelDbPhraseTable: public BasePhraseTable
 {
-    leveldb::DB* db;
+    leveldb::DB* db = NULL;
     leveldb::Options options;
-    string dbName = "/tmp/thot_leveldb";
+    string dbName;
 
         // Converters
     virtual string vectorToString(const Vector<WordIndex>& vec)const;
@@ -89,10 +88,12 @@ class LevelDbPhraseTable: public BasePhraseTable
       // Constructor
     LevelDbPhraseTable(void);
 
-        // Wrapper for saving trie structure
-    virtual bool save(const char *path);
-        // Wrapper for loading trie structure
-    virtual bool load(const char *path);
+        // Wrapper for initializing levelDB
+    virtual bool init(string levelDbPath);
+        // Wrapper for removing levelDB
+    virtual bool drop();
+        // Wrapper for loading existing levelDB
+    virtual bool load(string levelDbPath);
         // Returns s as (UNUSED_WORD, s)
     virtual Vector<WordIndex> getSrc(const Vector<WordIndex>& s);
         // Returns concatenated s and t as (UNUSED_WORD, s, UNUSED_WORD, t)
@@ -163,7 +164,7 @@ class LevelDbPhraseTable: public BasePhraseTable
         // size and clear functions
     virtual size_t size(void);
     virtual void print(bool printString = true);
-    virtual void clear(void);   
+    virtual void clear(void);
 
         // Destructor
     virtual ~LevelDbPhraseTable();

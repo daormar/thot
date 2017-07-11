@@ -36,12 +36,6 @@ LevelDbPhraseTable::LevelDbPhraseTable(void)
     options.create_if_missing = true;
     options.max_open_files = 4000;
     options.filter_policy = leveldb::NewBloomFilterPolicy(16);
-    leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
-    if(!status.ok())
-    {
-        printf("Cannot create or open database (LevelDB)\n");
-        exit(1);
-    }
 }
 
 //-------------------------
@@ -119,15 +113,40 @@ bool LevelDbPhraseTable::storeData(const Vector<WordIndex>& phrase, int count)co
 }
 
 //-------------------------
-bool LevelDbPhraseTable::save(const char *path)
+bool LevelDbPhraseTable::init(string levelDbPath)
 {
-  // TODO
+    if(db != NULL)
+        delete db;
+
+    if(load(levelDbPath) != OK)
+        return ERROR;
+
+    clear();
+
+    return OK;
 }
 
 //-------------------------
-bool LevelDbPhraseTable::load(const char *path)
+bool LevelDbPhraseTable::drop()
 {
-  // TODO
+    if(db != NULL)
+        delete db;
+
+    leveldb::Status status = leveldb::DestroyDB(dbName, options);
+
+    return (status.ok()) ? OK : ERROR;
+}
+
+//-------------------------
+bool LevelDbPhraseTable::load(string levelDbPath)
+{
+    if(db != NULL)
+        delete db;
+
+    dbName = levelDbPath;
+    leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
+
+    return (status.ok()) ? OK : ERROR;
 }
 
 //-------------------------
@@ -468,21 +487,31 @@ void LevelDbPhraseTable::print(bool printString)
 //-------------------------
 void LevelDbPhraseTable::clear(void)
 {
-    delete db;
-    leveldb::DestroyDB(dbName, options);
-    leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
+    if(db != NULL)
+        delete db;
+
+    leveldb::Status status = leveldb::DestroyDB(dbName, options);
+
     if(!status.ok())
     {
-        printf("Cannot recreate database (LevelDB)\n");
+        cerr << "Cannot clear levelDB" << endl;
         exit(2);
+    }
+
+    status = leveldb::DB::Open(options, dbName, &db);
+    
+    if(!status.ok())
+    {
+        cerr << "Cannot create new levelDB" << endl;
+        exit(3);
     }
 }
 
 //-------------------------
 LevelDbPhraseTable::~LevelDbPhraseTable(void)
 {
-    delete db;
-    leveldb::DestroyDB(dbName, options);  // TODO Should DB be removed?
+    if(db != NULL)
+        delete db;
 }
 
 //-------------------------
