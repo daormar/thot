@@ -487,7 +487,7 @@ size_t LevelDbPhraseTable::size(void)
 //-------------------------
 void LevelDbPhraseTable::print(bool printString)
 {
-    cout << "levelDB content:" << endl;
+    cout << "levelDB content:" << endl;   
     for(LevelDbPhraseTable::const_iterator iter = begin(); iter != end(); iter++)
     {
         pair<Vector<WordIndex>, int> x = *iter;
@@ -535,6 +535,8 @@ LevelDbPhraseTable::~LevelDbPhraseTable(void)
 LevelDbPhraseTable::const_iterator LevelDbPhraseTable::begin(void)const
 {
     leveldb::Iterator *local_iter = db->NewIterator(leveldb::ReadOptions());
+    local_iter->SeekToFirst();
+
     if(!local_iter->Valid()) {
         delete local_iter;
         local_iter = NULL;
@@ -559,7 +561,15 @@ bool LevelDbPhraseTable::const_iterator::operator++(void) //prefix
 {
     internalIter->Next();
 
-    return internalIter->Valid();
+    bool isValid = internalIter->Valid();
+
+    if(!isValid)
+    {
+        delete internalIter;
+        internalIter = NULL;
+    }
+
+    return isValid;
 }
 
 //--------------------------
