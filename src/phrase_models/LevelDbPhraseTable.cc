@@ -437,9 +437,11 @@ bool LevelDbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
         srctn.insert(pair<Vector<WordIndex>, PhrasePairInfo>(src, ppi));
     }
 
+    found = it->status().ok();
+
     delete it;
 
-    return i > 0 && it->status().ok();
+    return i > 0 && found;
 }
 
 //-------------------------
