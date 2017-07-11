@@ -45,7 +45,7 @@ thot_filter_bin_ilextable thot_prune_bin_ilextable thot_alig_op		\
 thot_query_pm thot_gen_phr_model thot_wg_proc thot_dhs_step_by_step_min	\
 thot_ms_dec thot_ms_alig thot_li_weight_upd thot_ll_weight_upd_nblist	\
 thot_client thot_server thot_scorer thot_calc_bleu $(DB_CXX_PROGS)	\
-$(TESTING_PROGS)
+thot_ttable_to_leveldb $(TESTING_PROGS)
 
 lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la incr_interp_ngram_lm_factory.la	\
@@ -57,6 +57,7 @@ wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
 mira_wer_factory.la mira_gtm_factory.la mira_chrf_factory.la		\
 kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
 wg_uncoupled_assisted_trans__swli_factory.la				\
+leveldb_phrase_model_factory.la \
 translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
 $(DB_CXX_LIBS)
 
@@ -175,6 +176,7 @@ casmacat_confid_defs=
 endif
 
 phrase_models_h= phrase_models/WbaIncrPhraseModel.h			\
+phrase_models/LevelDbPhraseTable.h phrase_models/LevelDbPhraseModel.h   \
 phrase_models/_wbaIncrPhraseModel.h phrase_models/_incrMuxPhraseModel.h	\
 phrase_models/IncrMuxPhraseModel.h					\
 phrase_models/VecUnsignedIntSortCriterion.h				\
@@ -202,6 +204,7 @@ phrase_models/AlignmentContainer.h phrase_models/AligInfo.h		\
 phrase_models/BasePhrasePairFilter.h					\
 phrase_models/CategPhrasePairFilter.h
 phrase_models_defs= phrase_models/WbaIncrPhraseModel.cc			\
+phrase_models/LevelDbPhraseTable.cc phrase_models/LevelDbPhraseModel.cc   \
 phrase_models/_wbaIncrPhraseModel.cc					\
 phrase_models/_incrMuxPhraseModel.cc					\
 phrase_models/IncrMuxPhraseModel.cc					\
@@ -330,8 +333,8 @@ endif
 exper_h=
 exper_defs=
 
-testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h
-testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc
+testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h  testing/LevelDbPhraseTableTest.h
+testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc testing/LevelDbPhraseTableTest.cc
 
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
@@ -394,6 +397,10 @@ phrase_models/FastBdbPhraseModelFactory.cc
 incr_mux_phrase_model_factory_h= 
 incr_mux_phrase_model_factory_defs=		\
 phrase_models/IncrMuxPhraseModelFactory.cc
+
+##########
+leveldb_phrase_model_factory_h= 
+leveldb_phrase_model_factory_defs= phrase_models/LevelDbPhraseModelFactory.cc
 
 ##########
 pfsm_ecm_for_wg_factory_h= 
@@ -520,6 +527,10 @@ thot_gen_phr_model_LDFLAGS = libthot.la
 ##########
 thot_ttable_to_fbdb_SOURCES = phrase_models/thot_ttable_to_fbdb.cc
 thot_ttable_to_fbdb_LDFLAGS = libthot.la
+
+##########
+thot_ttable_to_leveldb_SOURCES= phrase_models/thot_ttable_to_leveldb.cc
+thot_ttable_to_leveldb_LDFLAGS= libthot.la
 
 ##########
 thot_wg_proc_SOURCES = error_correction/thot_wg_proc_pars.h	\
@@ -659,6 +670,12 @@ $(incr_mux_phrase_model_factory_h)	\
 $(incr_mux_phrase_model_factory_defs)
 incr_mux_phrase_model_factory_la_LIBADD= libthot.la
 incr_mux_phrase_model_factory_la_LDFLAGS= -module
+
+##########
+leveldb_phrase_model_factory_la_SOURCES= $(leveldb_phrase_model_factory_h)	\
+$(leveldb_phrase_model_factory_defs)
+leveldb_phrase_model_factory_la_LIBADD= libthot.la
+leveldb_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 pfsm_ecm_for_wg_factory_la_SOURCES= $(pfsm_ecm_for_wg_factory_h)	\
