@@ -80,15 +80,16 @@ class LevelDbPhraseTableTest: public CppUnit::TestFixture
   CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
   CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
   CPPUNIT_TEST( testSize );
-  CPPUNIT_TEST( testSavingAndRestoringTrie );
-  CPPUNIT_TEST( testMmap );
+  CPPUNIT_TEST( testLoadingLevelDb );
+  CPPUNIT_TEST( testLoadedDataCorrectness );
   CPPUNIT_TEST( testSubkeys );
   CPPUNIT_TEST( test32bitRange );
-  CPPUNIT_TEST( testTail );
+  CPPUNIT_TEST( testByteMax );
   CPPUNIT_TEST_SUITE_END();
 
  private:
   LevelDbPhraseTable *tab;
+  string dbName = "/tmp/thot_leveldb_unit_test";
   
   Vector<WordIndex> getVector(string phrase);
 
@@ -110,11 +111,11 @@ class LevelDbPhraseTableTest: public CppUnit::TestFixture
   void testIteratorsOperatorsPlusPlusStar();
   void testIteratorsOperatorsEqualNotEqual();
   void testSize();
-  void testSavingAndRestoringTrie();  // TODO
-  void testMmap();  // TODO
+  void testLoadingLevelDb();
+  void testLoadedDataCorrectness();
   void testSubkeys();
   void test32bitRange();
-  void testTail();  // TODO
+  void testByteMax();
 };
 
 #endif

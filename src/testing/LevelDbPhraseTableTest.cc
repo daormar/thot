@@ -39,7 +39,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( LevelDbPhraseTableTest );
 void LevelDbPhraseTableTest::setUp()
 {
   tab = new LevelDbPhraseTable();
-  tab->init("/tmp/thot_leveldb/unit_test_db");
+  tab->init(dbName);
 }
 
 //---------------------------------------
@@ -289,7 +289,7 @@ void LevelDbPhraseTableTest::testGetNbestForTrg()
   NbestTableNode<PhraseTransTableNodeData> node;
   NbestTableNode<PhraseTransTableNodeData>::iterator iter;
 
-  // Fill trie structure with data
+  // Fill leveldb with data
   Vector<WordIndex> s1 = getVector("city hall");
   Vector<WordIndex> s2 = getVector("city hall in Morag");
   Vector<WordIndex> s3 = getVector("town hall");
@@ -378,7 +378,7 @@ void LevelDbPhraseTableTest::testIteratorsLoop()
     d[x.first].second++;  
   }
 
-  // Check if trie element returned by iterator are correct
+  // Check if element returned by iterator is correct
   CPPUNIT_ASSERT(d.size() == 3);
   CPPUNIT_ASSERT(d[tab->getSrc(s)].first == 1);
   CPPUNIT_ASSERT(d[tab->getSrc(s)].second == 1);
@@ -423,7 +423,7 @@ void LevelDbPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
   // Iterating beyond the last element should return FALSE value
   CPPUNIT_ASSERT( !found );
 
-  // Check if trie element returned by iterator are correct
+  // Check if element returned by iterator is correct
   CPPUNIT_ASSERT(d.size() == 3);
   CPPUNIT_ASSERT(d[tab->getSrc(s)].first == 2);
   CPPUNIT_ASSERT(d[tab->getSrc(s)].second == 1);
@@ -459,12 +459,12 @@ void LevelDbPhraseTableTest::testIteratorsOperatorsEqualNotEqual()
 void LevelDbPhraseTableTest::testSize()
 {
   /* TEST:
-     Check if number of elements in trie is returned correctly
+     Check if number of elements in the levelDB is returned correctly
   */
   tab->clear();
   CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
   
-  // Fill trie structure with data
+  // Fill leveldb with data
   tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping Kretowiny"), Count(1));
   tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping in Kretowiny"), Count(2));
 
@@ -491,14 +491,14 @@ void LevelDbPhraseTableTest::testSize()
 }
 
 //---------------------------------------
-void LevelDbPhraseTableTest::testSavingAndRestoringTrie()  // TODO
+void LevelDbPhraseTableTest::testLoadingLevelDb()
 {
   /* TEST:
-     Check saving and restoring trie structure on disk
+     Check restoring levelDB from disk
   */
   bool result;
   
-  // Fill trie structure with data
+  // Fill leveldb with data
   tab->clear();
   tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping Kretowiny"), Count(1));
   tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping in Kretowiny"), Count(2));
@@ -514,35 +514,23 @@ void LevelDbPhraseTableTest::testSavingAndRestoringTrie()  // TODO
                          getVector("First Adventure of Pan Samochodzik"), Count(7));
 
   unsigned int original_size = tab->size();
-  // Save structue on disk
-  const char* file_name = tmpnam(NULL);
-
-  // Save structure
-  //result = tab->save(file_name);
-  CPPUNIT_ASSERT( result == THOT_OK);
-
-  tab->clear();  // Remove structure to make sure that loading trie was performed
-
-  CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
-  
+   
   // Load structure
-  result = tab->load(file_name);
+  result = tab->load(dbName);
   CPPUNIT_ASSERT( result == THOT_OK);
   CPPUNIT_ASSERT( tab->size() == original_size );
-
-  tab->clear();  // Unmap loaded file
 }
 
 //---------------------------------------
-void LevelDbPhraseTableTest::testMmap()  // TODO
+void LevelDbPhraseTableTest::testLoadedDataCorrectness()
 {
   /* TEST:
-     Check if the trie restored from disk with mmap
+     Check if the data restored from disk
      contains all stored items and correct counts
   */
   bool result;
   
-  // Fill trie structure with data
+  // Fill levelDB with data
   tab->clear();
 
   // Define vectors
@@ -560,7 +548,7 @@ void LevelDbPhraseTableTest::testMmap()  // TODO
   Vector<WordIndex> t3_1 = getVector("Mister Automobile and the Unearthly Mansion");
   Vector<WordIndex> t3_2 = getVector("Pan Samochodzik and the Unearthly Mansion");
 
-  // Insert data to trie
+  // Insert data to levelDB
   tab->incrCountsOfEntry(s1, t1_1, Count(1));
   tab->incrCountsOfEntry(s1, t1_2, Count(2));
   tab->incrCountsOfEntry(s1, t1_3, Count(4));
@@ -573,19 +561,9 @@ void LevelDbPhraseTableTest::testMmap()  // TODO
   tab->incrCountsOfEntry(s3, t3_2, Count(128));
 
   unsigned int original_size = tab->size();
-  // Save structue on disk
-  const char* file_name = tmpnam(NULL);
-
-  // Save structure
-  result = THOT_OK;  //tab->save(file_name);
-  CPPUNIT_ASSERT( result == THOT_OK );
-
-  tab->clear();  // Remove structure to make sure that loading trie was performed
-
-  CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
-  
+   
   // Load structure
-  result = tab->load(file_name);
+  result = tab->load(dbName);
   CPPUNIT_ASSERT( result == THOT_OK );
   CPPUNIT_ASSERT( tab->size() == original_size );
 
@@ -612,7 +590,7 @@ void LevelDbPhraseTableTest::testMmap()  // TODO
   CPPUNIT_ASSERT( tab->cSrcTrg(s3, t3_1).get_c_st() == 64 );
   CPPUNIT_ASSERT( tab->cSrcTrg(s3, t3_2).get_c_st() == 128 );
 
-  tab->clear();  // Unmap loaded file
+  tab->clear();  // Remove data
   CPPUNIT_ASSERT( tab->size() == 0 );
 }
 
@@ -623,7 +601,7 @@ void LevelDbPhraseTableTest::testSubkeys()
      Check if subkeys are stored correctly
   */
  
-  // Fill trie structure with data
+  // Fill levelDB with data
   tab->clear();
 
   // Define vectors
@@ -636,7 +614,7 @@ void LevelDbPhraseTableTest::testSubkeys()
   Vector<WordIndex> t2_1 = getVector("Mister");
   Vector<WordIndex> t2_2 = getVector("Mr");
 
-  // Insert data to trie
+  // Insert data to levelDB
   tab->incrCountsOfEntry(s1, t1_1, Count(1));
   tab->incrCountsOfEntry(s1, t1_2, Count(2));
   tab->incrCountsOfEntry(s1, t1_3, Count(4));
@@ -667,8 +645,7 @@ void LevelDbPhraseTableTest::testSubkeys()
 void LevelDbPhraseTableTest::test32bitRange()
 {
   /* TEST:
-     Check if datrie supports codes from integer range
-     (negative values are reserved for datrie internal usage)
+     Check if levelDB supports codes from positive integer range
   */
   tab->clear();
 
@@ -677,17 +654,17 @@ void LevelDbPhraseTableTest::test32bitRange()
   minVector.push_back(0);
   maxVector.push_back(0x7FFFFFFE);
 
-  // Insert data to trie and check their correctness
+  // Insert data to levelDB and check their correctness
   tab->incrCountsOfEntry(minVector, maxVector, Count(20));
   CPPUNIT_ASSERT( tab->size() == 3 );
   CPPUNIT_ASSERT( (int) tab->cSrcTrg(minVector, maxVector).get_c_st() == 20 );
 }
 
 //---------------------------------------
-void LevelDbPhraseTableTest::testTail()  // TODO
+void LevelDbPhraseTableTest::testByteMax()
 {
   /* TEST:
-     Check if items are correctly added to the tail
+     Check if items with maximum byte value are added correctly
   */
   tab->clear();
 
@@ -696,7 +673,7 @@ void LevelDbPhraseTableTest::testTail()  // TODO
   s.push_back(8);
   t.push_back(255);
 
-  // Insert data to trie and check their correctness
+  // Insert data and check their correctness
   tab->incrCountsOfEntry(s, t, Count(1));
   CPPUNIT_ASSERT( tab->size() == 3 );
   CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t).get_c_st() == 1 );
