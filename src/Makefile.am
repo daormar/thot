@@ -59,7 +59,6 @@ kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
 wg_uncoupled_assisted_trans__swli_factory.la				\
 multi_stack_decoder_rec__pbtm_factory.la				\
 wg_uncoupled_assisted_trans__pbtm_factory.la				\
-									\
 translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
 $(DB_CXX_LIBS)
 
