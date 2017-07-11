@@ -137,9 +137,9 @@ int handleParameters(int argc,
   }
   else
   {
-    if(checkParameters(pars)==OK)
+    if(checkParameters(pars)==THOT_OK)
     {
-      return OK;
+      return THOT_OK;
     }
     else
     {
@@ -168,12 +168,12 @@ int takeParameters(int argc,
   if(err==ERROR)
     return ERROR;
 
-  if(readOption(argc,argv,"-v")==OK)
+  if(readOption(argc,argv,"-v")==THOT_OK)
     pars.verbosity=true;
   else
     pars.verbosity=false;
     
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -198,7 +198,7 @@ int checkParameters(thot_liwu_pars& pars)
     return ERROR;   
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -212,7 +212,7 @@ int initPhrModel(std::string phrModelFilePrefix)
       // Obtain info about translation model entries
   unsigned int numTransModelEntries;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(phrModelFilePrefix.c_str(),modelDescEntryVec)==OK)
+  if(extractModelEntryInfo(phrModelFilePrefix.c_str(),modelDescEntryVec)==THOT_OK)
   {
     numTransModelEntries=modelDescEntryVec.size();
   }
@@ -257,7 +257,7 @@ int initPhrModel(std::string phrModelFilePrefix)
   phrLocalSwLiTmPtr->link_pm_info(phrModelInfoPtr);
   phrLocalSwLiTmPtr->link_swm_info(swModelInfoPtr);
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -302,7 +302,7 @@ int update_li_weights(const thot_liwu_pars& pars)
       // Release phrase model
   releasePhrModel();
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------

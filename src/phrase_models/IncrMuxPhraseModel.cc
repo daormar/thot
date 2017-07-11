@@ -46,14 +46,14 @@ bool IncrMuxPhraseModel::load(const char *prefix)
   int retval=loadTmEntries(prefix);
   if(retval==ERROR) return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
 bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
 {
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(fileName,modelDescEntryVec)==OK)
+  if(extractModelEntryInfo(fileName,modelDescEntryVec)==THOT_OK)
   {
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
@@ -71,9 +71,9 @@ bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
       return ERROR;
     }
     else
-      return OK;
+      return THOT_OK;
 
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -117,7 +117,7 @@ bool IncrMuxPhraseModel::loadTmEntry(std::string tmType,
   if(statusStr=="main")
     modelIndex=modelPtrVec.size()-1;
   
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -125,7 +125,7 @@ bool IncrMuxPhraseModel::print(const char* prefix)
 {
   int ret=printTmEntries(prefix);
   if(ret==ERROR) return ERROR;
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -156,7 +156,7 @@ bool IncrMuxPhraseModel::printTmEntries(const char *fileName)
       if(ret==ERROR)
         return ERROR;
     }
-    return OK;
+    return THOT_OK;
   }
 }
 

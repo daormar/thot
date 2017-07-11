@@ -224,7 +224,7 @@ int p_option(BasePhraseModel* pbModelPtr)
 
     cerr<<"Total retrieving time in secs: "<<total_time<<endl;
     
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -266,7 +266,7 @@ int q_option(BasePhraseModel* pbModelPtr)
         process_phrase(pbModelPtr,wordVec);
       }
     }
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -325,7 +325,7 @@ int f_option(BasePhraseModel* pbModelPtr)
         cerr<<awk.dollar(0)<<" ||| "<<lp.get_p()<<endl;
       }
     } 
-    return OK;
+    return THOT_OK;
   }
   else
   {

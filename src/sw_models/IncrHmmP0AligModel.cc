@@ -55,7 +55,7 @@ bool IncrHmmP0AligModel::load(const char* prefFileName)
   retVal=loadHmmP0(hmmP0File.c_str());
   if(retVal==ERROR) return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
    
 //-------------------------
@@ -70,7 +70,7 @@ bool IncrHmmP0AligModel::print(const char* prefFileName)
   retVal=printHmmP0(hmmP0File.c_str());
   if(retVal==ERROR) return ERROR;
 
-  return OK;  
+  return THOT_OK;  
 }
 
 //-------------------------
@@ -91,7 +91,7 @@ bool IncrHmmP0AligModel::loadHmmP0(const char *hmmP0FileName)
   {
     cerr<<"Error in file with hmm p0 value, file "<<hmmP0FileName<<" does not exist. Assuming hmm_p0="<<DEFAULT_HMM_P0<<"\n";
     hmm_p0=DEFAULT_HMM_P0;
-    return OK;
+    return THOT_OK;
   }  
   else
   {
@@ -101,7 +101,7 @@ bool IncrHmmP0AligModel::loadHmmP0(const char *hmmP0FileName)
       {
         hmm_p0=(Prob)atof(awk.dollar(1).c_str());
         cerr<<"hmm p0 value has been set to "<<hmm_p0<<endl;
-        return OK;
+        return THOT_OK;
       }
       else
       {
@@ -130,7 +130,7 @@ bool IncrHmmP0AligModel::printHmmP0(const char *hmmP0FileName)
   else
   {
     outF<<hmm_p0<<endl;
-    return OK;
+    return THOT_OK;
   }
 }
 

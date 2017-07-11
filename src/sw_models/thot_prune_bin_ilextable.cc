@@ -87,7 +87,7 @@ float c_val;
 //--------------- main function
 int main(int argc,char *argv[])
 {
-  if(TakeParameters(argc,argv)==OK)
+  if(TakeParameters(argc,argv)==THOT_OK)
   {
         // Try to open file  
     ifstream inF (ilextableFileName.c_str(), ios::in | ios::binary);
@@ -158,7 +158,7 @@ int main(int argc,char *argv[])
           // print last group of counts
       printCounts(firstSrc,trgWordVec,lcSrc,lcSrcTrgVec);
 
-      return OK;
+      return THOT_OK;
     }  
   }
   else return ERROR;
@@ -250,7 +250,7 @@ int TakeParameters(int argc,char *argv[])
    return ERROR;
  }
 
- return OK;  
+ return THOT_OK;  
 }
 
 //--------------- printDesc() function

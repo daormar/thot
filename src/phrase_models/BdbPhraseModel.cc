@@ -261,7 +261,7 @@ bool BdbPhraseModel::load(const char *prefix)
       // Store prefix of model files
   prefixOfModelFiles=prefix;
 
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -275,7 +275,7 @@ bool BdbPhraseModel::print(const char *prefix)
   std::string prefixStl=prefix;
   if(prefixOfModelFiles==prefixStl)
   {
-    return OK;
+    return THOT_OK;
   }
   else
   {

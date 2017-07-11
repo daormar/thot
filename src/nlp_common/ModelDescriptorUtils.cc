@@ -172,7 +172,7 @@ bool extractModelEntryInfo(const char *fileName,
           }
         }
       }
-      return OK;
+      return THOT_OK;
     }
   }
   else

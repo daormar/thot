@@ -307,7 +307,7 @@ bool vecx_x_incr_enc<HX,X>::load(const char *prefixFileName)
       this->hx_to_x[hx]=x;
       this->x_to_hx[x]=hx;
     }
-    return OK;
+    return THOT_OK;
   }  
 }
 
@@ -331,7 +331,7 @@ bool vecx_x_incr_enc<HX,X>::print(const char *prefixFileName)
       ofile<<iter->first<<" "<<iter->second<<endl;
     }
     
-    return OK;
+    return THOT_OK;
   }  
 }
 

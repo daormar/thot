@@ -178,7 +178,7 @@ int calc_bleuf(FILE *reff,
     cerr<<"sys. words: "<<sysWords<<endl;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------

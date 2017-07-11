@@ -71,7 +71,7 @@ int BaseIncrPhraseModel::trainBilPhrases(const Vector<Vector<std::string> >& src
     }
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------

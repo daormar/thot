@@ -277,7 +277,7 @@ bool FastBdbPhraseModel::load_given_prefix(const char *prefix)
       // Store prefix of model files
   prefixOfModelFiles=prefix;
 
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -293,7 +293,7 @@ bool FastBdbPhraseModel::print(const char *prefix)
   if(prefixOfModelFiles==prefixStl)
   {
     fastBdbPhraseTable.enableFastSearch();
-    return OK;
+    return THOT_OK;
   }
   else
   {

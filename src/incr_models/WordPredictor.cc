@@ -50,7 +50,7 @@ bool WordPredictor::load(const char *fileName)
   ret=loadFileWithAdditionalInfo(fileAddInfoName.c_str());
   if(ret==ERROR) return ERROR;
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------------
@@ -80,7 +80,7 @@ bool WordPredictor::loadFileWithSents(const char *fileName)
       strVec.clear();
     }
     fileStream.close();
-    return OK;
+    return THOT_OK;
   }  
 }
 
@@ -93,7 +93,7 @@ bool WordPredictor::loadFileWithAdditionalInfo(const char *fileName)
   if(fileStream.open(fileName)==ERROR)
   {
 //    cerr<<"WordPredictor: file with additional info "<<fileName<<" not found. No additional info was loaded"<<endl;
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -106,7 +106,7 @@ bool WordPredictor::loadFileWithAdditionalInfo(const char *fileName)
         numSentsToRetain=atoi(fileStream.dollar(1).c_str());
         cerr<<"numSentsToRetain= "<<numSentsToRetain<<endl;
         fileStream.close();
-        return OK;
+        return THOT_OK;
       }
       else
       {

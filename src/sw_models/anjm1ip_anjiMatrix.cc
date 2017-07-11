@@ -75,7 +75,7 @@ bool anjm1ip_anjiMatrix::init_nth_entry(unsigned int n,
       anjm1ip_anji[mapped_n].resize(tlen+1,floatVecVec);
     }  
 
-    return OK;
+    return THOT_OK;
   }
   else
     return ERROR;
@@ -118,7 +118,7 @@ bool anjm1ip_anjiMatrix::reset_entries(void)
       }
     }
 
-    return OK;
+    return THOT_OK;
   }
   else
     return ERROR;
@@ -426,7 +426,7 @@ bool anjm1ip_anjiMatrix::load(const char* prefFileName)
     cerr<<"Maximum size for matrix is set to "<<UNRESTRICTED_ANJM1IP_ANJI_SIZE<<" (unrestricted size)."<<endl;
     anjm1ip_anji_maxnsize=UNRESTRICTED_ANJM1IP_ANJI_SIZE;
   }
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -461,7 +461,7 @@ bool anjm1ip_anjiMatrix::load_matrix_values(const char* matrixFile)
       }
       else end=true;
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -497,7 +497,7 @@ bool anjm1ip_anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
       }
     }
   }
-  return OK;     
+  return THOT_OK;     
 }
 
 //-------------------------
@@ -517,7 +517,7 @@ bool anjm1ip_anjiMatrix::print(const char* prefFileName)
     if(retVal==ERROR) return ERROR;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -550,7 +550,7 @@ bool anjm1ip_anjiMatrix::print_matrix_values(const char* matrixFile)
         }
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -576,7 +576,7 @@ bool anjm1ip_anjiMatrix::print_maxnsize_data(const char* maxnsizeDataFile)
       if(np_to_n_vector[np].first)
         outF<<np<<" "<<np_to_n_vector[np].second<<endl;
     }
-    return OK;
+    return THOT_OK;
   }  
 }
 

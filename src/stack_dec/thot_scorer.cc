@@ -141,9 +141,9 @@ int handleParameters(int argc,
   }
   else
   {
-    if(checkParameters(pars)==OK)
+    if(checkParameters(pars)==THOT_OK)
     {
-      return OK;
+      return THOT_OK;
     }
     else
     {
@@ -165,7 +165,7 @@ int takeParameters(int argc,
   if(err==ERROR)
     return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -183,7 +183,7 @@ int checkParameters(thot_scorer_pars& pars)
     return ERROR;   
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -207,7 +207,7 @@ int obtain_references(const thot_scorer_pars& pars,
     referenceVec.push_back(awk.dollar(0));
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -231,7 +231,7 @@ int obtain_sys_sentences(const thot_scorer_pars& pars,
     sysSentVec.push_back(awk.dollar(0));
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -260,7 +260,7 @@ int calc_score(const thot_scorer_pars& pars)
       // Print result
   cout<<"Score= "<<score<<endl;
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------

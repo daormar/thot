@@ -96,7 +96,7 @@ bool DynClassFileHandler::load(std::string _fileName,int verbose/*=1*/)
         }
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -111,7 +111,7 @@ int DynClassFileHandler::getInfoForBaseClass(std::string baseClassName,
     soFileName=dciIter->second.first;
     initPars=dciIter->second.second;
      
-    return OK;
+    return THOT_OK;
   }
   else
   {

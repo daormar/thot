@@ -656,7 +656,7 @@ bool _incrEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INF
   bool ret=this->encPtr->load(prefixFileName);
   if(ret==ERROR) return ERROR;
     
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -666,7 +666,7 @@ bool _incrEncCondProbModel<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INF
   bool ret=this->encPtr->print(prefixFileName);
   if(ret==ERROR) return ERROR;
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------

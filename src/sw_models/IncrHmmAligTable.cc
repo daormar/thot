@@ -186,7 +186,7 @@ bool IncrHmmAligTable::loadPlainText(const char* aligNumDenFile)
         setAligNumDen(asHmm,i,numer,denom);
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -225,7 +225,7 @@ bool IncrHmmAligTable::loadBin(const char* aligNumDenFile)
       }
       else end=true;
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -274,7 +274,7 @@ bool IncrHmmAligTable::printBin(const char* aligNumDenFile)
         }
       }      
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -313,7 +313,7 @@ bool IncrHmmAligTable::printPlainText(const char* aligNumDenFile)
         }
       }      
     }
-    return OK;
+    return THOT_OK;
   }
 }
 

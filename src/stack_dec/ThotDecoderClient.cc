@@ -53,7 +53,7 @@ int ThotDecoderClient::connectToTransServer(const char *dirServ,
  {
    int fd;
    int retVal=BasicSocketUtils::connect(dirServ,_port,fd);
-   if(retVal==OK)
+   if(retVal==THOT_OK)
    {
          // Set data member values    
      connected=true;
@@ -61,7 +61,7 @@ int ThotDecoderClient::connectToTransServer(const char *dirServ,
      serverName=dirServ;   
      fileDesc=fd;
 
-     return OK;
+     return THOT_OK;
    }
    else
      return ERROR;
@@ -131,7 +131,7 @@ bool ThotDecoderClient::sendSentToTranslate(int user_id,
 
     int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
     retVal=BasicSocketUtils::recvStlStr(fileDesc,bestHypInfo);
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -154,7 +154,7 @@ bool ThotDecoderClient::sendSentPairVerCov(int user_id,
     BasicSocketUtils::writeStr(fileDesc,refSent);
 
     int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -175,7 +175,7 @@ bool ThotDecoderClient::startCat(int user_id,
     BasicSocketUtils::writeStr(fileDesc,sentenceToTranslate);
     
     int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -196,7 +196,7 @@ bool ThotDecoderClient::addStrToPref(int user_id,
     BasicSocketUtils::writeStr(fileDesc,strToAddToPref);
     
     int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
-    return OK;
+    return THOT_OK;
   }
   else
   {

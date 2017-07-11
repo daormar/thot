@@ -128,7 +128,7 @@ int main(int argc,char *argv[])
 #        endif
        }
        alignmentContainer.clear();
-       return OK;
+       return THOT_OK;
      }
    }
    else // exhaustive option not given
@@ -152,7 +152,7 @@ int main(int argc,char *argv[])
          if(symmetr2Op) return alExt.symmetr2(GIZA_OpFileName,outputFileName,transposeFlag,verbose);	   
          if(growDiagFinalOp) return alExt.growDiagFinal(GIZA_OpFileName,outputFileName,transposeFlag,verbose);	   
        }
-       return OK;
+       return THOT_OK;
      } 
    }
  }	 
@@ -182,7 +182,7 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
      if(awk.NF==3)
      {
        bool invalid_op=true;
-       int ret=OK;
+       int ret=THOT_OK;
        transpose=atoi(awk.dollar(3).c_str());
        if(strcmp("-and",awk.dollar(1).c_str())==0)
        {
@@ -237,7 +237,7 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
        }
      } 
    }
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -268,7 +268,7 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
      if(awk.NF==3)
      {
        bool invalid_op=true;
-       int ret=OK;
+       int ret=THOT_OK;
        transpose=atoi(awk.dollar(3).c_str());
        if(strcmp("-and",awk.dollar(1).c_str())==0)
        {
@@ -341,7 +341,7 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
        }
      } 
    }
-   return OK;
+   return THOT_OK;
  }
 }
 

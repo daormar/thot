@@ -506,7 +506,7 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load_ngrams(const char *fileName)
   }
   if(ngramOrder==0) ngramOrder=ngramOrderAux;
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -539,7 +539,7 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
   {
     print(outF);
     outF.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 

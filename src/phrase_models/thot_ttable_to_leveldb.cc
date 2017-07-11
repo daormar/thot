@@ -66,7 +66,7 @@ std::string outputFile;
 //---------------
 int main(int argc, char *argv[])
 {
-  if(TakeParameters(argc,argv) == OK)
+  if(TakeParameters(argc,argv) == THOT_OK)
   {
     return process_ttable();
   }
@@ -109,7 +109,7 @@ int extractEntryInfo(awkInputStream& awk,
       // Obtain joint count
   jointCount = atof(awk.dollar(awk.NF).c_str());
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -142,7 +142,7 @@ int process_ttable(void)
       Vector<WordIndex> trgPhr;
       Count jointCount;
       int ret = extractEntryInfo(awk, srcPhr, trgPhr, jointCount);
-      if(ret == OK)
+      if(ret == THOT_OK)
         levelDbPt.incrCountsOfEntry(srcPhr, trgPhr, jointCount);
       i++;
 
@@ -152,7 +152,7 @@ int process_ttable(void)
 
     cout << "levelDB size: " << levelDbPt.size() << endl;
     
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -177,7 +177,7 @@ int TakeParameters(int argc,char *argv[])
     return ERROR;
   }
 
-  return OK;  
+  return THOT_OK;  
 }
 
 //---------------

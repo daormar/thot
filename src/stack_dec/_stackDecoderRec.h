@@ -375,7 +375,7 @@ bool _stackDecoderRec<SMT_MODEL>::printHypStateIdxInfo(const char* filename)
   {
     printHypStateIdxInfo(outS);
     outS.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 

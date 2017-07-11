@@ -170,7 +170,7 @@ bool IncrIbm2AligTable::loadPlainText(const char* aligNumDenFile)
         setAligNumDen(as,i,numer,denom);
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -210,7 +210,7 @@ bool IncrIbm2AligTable::loadBin(const char* aligNumDenFile)
       }
       else end=true;
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -252,7 +252,7 @@ bool IncrIbm2AligTable::printPlainText(const char* aligNumDenFile)
         outF<<denom<<endl;
       }
     }
-    return OK;
+    return THOT_OK;
   }  
 }
 
@@ -284,7 +284,7 @@ bool IncrIbm2AligTable::printBin(const char* aligNumDenFile)
         outF.write((char*)&denom,sizeof(float));
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 

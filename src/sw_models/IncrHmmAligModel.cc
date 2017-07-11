@@ -422,7 +422,7 @@ bool IncrHmmAligModel::loadLexSmIntFactor(const char* lexSmIntFactorFile)
   {
     cerr<<"Error in file with lexical smoothing interpolation factor, file "<<lexSmIntFactorFile<<" does not exist. Assuming default value."<<"\n";
     setLexSmIntFactor(DEFAULT_LEX_SMOOTH_INTERP_FACTOR); 
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -431,7 +431,7 @@ bool IncrHmmAligModel::loadLexSmIntFactor(const char* lexSmIntFactorFile)
       if(awk.NF==1)
       {
         setLexSmIntFactor((Prob)atof(awk.dollar(1).c_str())); 
-        return OK;
+        return THOT_OK;
       }
       else
       {
@@ -460,7 +460,7 @@ bool IncrHmmAligModel::printLexSmIntFactor(const char* lexSmIntFactorFile)
   else
   {
     outF<<lexSmoothInterpFactor<<endl;
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -475,7 +475,7 @@ bool IncrHmmAligModel::loadAlSmIntFactor(const char* alSmIntFactorFile)
   {
     cerr<<"Error in file with alignment smoothing interpolation factor, file "<<alSmIntFactorFile<<" does not exist. Assuming default value."<<"\n";
     setAlSmIntFactor(DEFAULT_ALIG_SMOOTH_INTERP_FACTOR); 
-    return OK;
+    return THOT_OK;
   }  
   else
   {
@@ -484,7 +484,7 @@ bool IncrHmmAligModel::loadAlSmIntFactor(const char* alSmIntFactorFile)
       if(awk.NF==1)
       {
         setAlSmIntFactor((Prob)atof(awk.dollar(1).c_str())); 
-        return OK;
+        return THOT_OK;
       }
       else
       {
@@ -513,7 +513,7 @@ bool IncrHmmAligModel::printAlSmIntFactor(const char* alSmIntFactorFile)
   else
   {
     outF<<aligSmoothInterpFactor<<endl;
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -1934,7 +1934,7 @@ bool IncrHmmAligModel::load(const char* prefFileName)
     retVal=sentLengthModel.load(slmodelFile.c_str());
     if(retVal==ERROR) return ERROR;
 
-    return OK;
+    return THOT_OK;
   }
   else return ERROR;
 }
@@ -2001,7 +2001,7 @@ bool IncrHmmAligModel::print(const char* prefFileName)
   retVal=sentLengthModel.print(slmodelFile.c_str());
   if(retVal==ERROR) return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------

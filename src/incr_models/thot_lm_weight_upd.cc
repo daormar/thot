@@ -114,7 +114,7 @@ int main(int argc,char *argv[])
     {
       cerr<<"Current model does not have weights to be updated"<<endl;
       release_lm(pars.verbosity);
-      return OK;
+      return THOT_OK;
     }
         // Update language model weights
     int retVal=update_lm_weights(pars);
@@ -162,7 +162,7 @@ int update_lm_weights_jel_mer(const thot_lmwu_pars& pars)
   if(retVal==ERROR)
     return ERROR;
   
-  return OK;  
+  return THOT_OK;  
 }
 
 //---------------
@@ -183,7 +183,7 @@ int update_lm_weights_interp(const thot_lmwu_pars& pars)
   if(retVal==ERROR)
     return ERROR;
       
-  return OK;     
+  return THOT_OK;     
 }
 
 //---------------
@@ -226,7 +226,7 @@ int init_lm(int verbosity)
     return ERROR;
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -257,9 +257,9 @@ int handleParameters(int argc,
   }
   else
   {
-    if(checkParameters(pars)==OK)
+    if(checkParameters(pars)==THOT_OK)
     {
-      return OK;
+      return THOT_OK;
     }
     else
     {
@@ -283,12 +283,12 @@ int takeParameters(int argc,
   if(err==ERROR)
     return ERROR;
 
-  if(readOption(argc,argv,"-v")==OK)
+  if(readOption(argc,argv,"-v")==THOT_OK)
     pars.verbosity=true;
   else
     pars.verbosity=false;
     
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -307,7 +307,7 @@ int checkParameters(thot_lmwu_pars& pars)
     return ERROR;   
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------

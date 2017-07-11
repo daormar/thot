@@ -79,7 +79,7 @@ int main(int argc,char *argv[])
   double perp;
   double total_time=0,elapsed_ant,elapsed,ucpu,scpu;
 
-  if(TakeParameters(argc,argv)==OK)
+  if(TakeParameters(argc,argv)==THOT_OK)
   {
     BaseIncrNgramLM<Vector<WordIndex> >* lm;
 
@@ -126,7 +126,7 @@ int main(int argc,char *argv[])
 
       delete lm;
    
-      return OK;
+      return THOT_OK;
     }
   }
   else return ERROR;
@@ -195,7 +195,7 @@ int TakeParameters(int argc,char *argv[])
    lmType=CACHE_JEL_MER_LM;
  }
 
- return OK;  
+ return THOT_OK;  
 }
 
 //--------------------------------

@@ -255,7 +255,7 @@ bool KenLm::load_kenlm_file(const char *fileName)
       cerr<<"KenLm: something went wrong while loading "<<fileName<<endl;
       return ERROR;
     }
-    return OK;
+    return THOT_OK;
   }
   else
   {

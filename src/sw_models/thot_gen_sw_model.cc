@@ -138,7 +138,7 @@ int init_swm(int verbosity)
     return ERROR;
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -281,7 +281,7 @@ int processParameters(thot_gen_sw_model_pars pars)
       // Delete pointer
   release_swm(true);
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- emIters function
@@ -468,9 +468,9 @@ int handleParameters(int argc,
   }
   else
   {
-    if(checkParameters(pars)==OK)
+    if(checkParameters(pars)==THOT_OK)
     {
-      return OK;
+      return THOT_OK;
     }
     else
     {
@@ -744,7 +744,7 @@ int takeParameters(int argc,
     }
     ++i;
   }
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- checkParameters function
@@ -836,7 +836,7 @@ int checkParameters(thot_gen_sw_model_pars& pars)
   
   release_swm(false);
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- printParameters function

@@ -511,7 +511,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::loadLangModel(const char* prefixFileNam
   {
     cerr<<"Warning: File for initializing the word predictor not provided!"<<endl;
   }
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -533,7 +533,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileNam
       // Instantiate weight vectors for phrase model
   instantiateWeightVectors();
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -543,7 +543,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::printLangModel(std::string printPrefix)
   bool retVal=langModelInfoPtr->lModelPtr->print(printPrefix.c_str());
   if(retVal==ERROR) return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -553,7 +553,7 @@ bool _phraseBasedTransModel<HYPOTHESIS>::printAligModel(std::string printPrefix)
   bool retVal=this->phrModelInfoPtr->invPbModelPtr->print(printPrefix.c_str());
   if(retVal==ERROR) return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------

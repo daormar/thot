@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         else cout<<bleu_n[i];
       }
       cout<<endl;
-      return OK;
+      return THOT_OK;
     }
     else
     {
@@ -132,7 +132,7 @@ int TakeParameters(int argc,char *argv[])
    sm_opt=0;
  }      
 
- return OK;
+ return THOT_OK;
 }
 
 //--------------- printUsage() function

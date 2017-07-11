@@ -51,14 +51,14 @@ bool IncrInterpNgramLM::load(const char *fileName)
   retval=loadWeights(fileNameW.c_str());
   if(retval==ERROR) return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
 bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
 {
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(fileName,modelDescEntryVec)==OK)
+  if(extractModelEntryInfo(fileName,modelDescEntryVec)==THOT_OK)
   {
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
@@ -69,7 +69,7 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
       if(ret==ERROR)
         return ERROR;
     }
-    return OK;
+    return THOT_OK;
   }
   else
     return ERROR;     
@@ -106,7 +106,7 @@ bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
   if(statusStr=="main")
     modelIndex=modelPtrVec.size()-1;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -145,7 +145,7 @@ bool IncrInterpNgramLM::loadWeights(const char *fileName)
         // Set weights
     setWeights(_weights);
       
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -157,7 +157,7 @@ bool IncrInterpNgramLM::print(const char *fileName)
 
   ret=printWeights(fileName);
   if(ret==ERROR) return ERROR;  
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -188,7 +188,7 @@ bool IncrInterpNgramLM::printLmEntries(const char *fileName)
       if(ret==ERROR)
         return ERROR;
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -266,7 +266,7 @@ bool IncrInterpNgramLM::printWeights(const char *fileName)
   if(ret==ERROR)
     return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -288,7 +288,7 @@ bool IncrInterpNgramLM::printInterModelWeights(const char *fileName)
     {
       outF<<weights[i]<<endl;
     }
-    return OK;
+    return THOT_OK;
   }
 } 
 
@@ -310,7 +310,7 @@ bool IncrInterpNgramLM::printIntraModelWeights(const char *fileName)
         return ERROR;
     }
   }
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -339,7 +339,7 @@ int IncrInterpNgramLM::updateModelWeights(const char *corpusFileName,
   if(ret==ERROR)
     return ERROR;
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -379,7 +379,7 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
 
     switch(ret)
     {
-      case OK: end=true;
+      case THOT_OK: end=true;
         break;
       case DSO_NMAX_ERROR: cerr<<"Error updating of Jelinek Mercer's language model weights, maximum number of iterations exceeded"<<endl;
         end=true;
@@ -406,7 +406,7 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
   }
   
       // Set new weights if updating was successful
-  if(ret==OK)
+  if(ret==THOT_OK)
   {
     Vector<double> _weights;
     for(unsigned int i=0;i<weights.size();++i)
@@ -424,10 +424,10 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
   free(x);
   fclose(tmp_file);
 
-  if(ret!=OK)
+  if(ret!=THOT_OK)
     return ERROR;
   else
-    return OK;
+    return THOT_OK;
 }
 
 //---------------
@@ -460,7 +460,7 @@ int IncrInterpNgramLM::new_dhs_eval(const char *corpusFileName,
   else
   {
     obj_func=DBL_MAX;
-    retVal=OK;
+    retVal=THOT_OK;
   }
       // Print result to tmp file
   fprintf(tmp_file,"%g\n",obj_func);

@@ -204,7 +204,7 @@ bool _phrSwTransModel<HYPOTHESIS>::loadMultipleSwModelsPrefix(const char* prefix
   cSwmScoreVec.push_back(phrasePairCacheTable);
   cInvSwmScoreVec.push_back(phrasePairCacheTable);
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -236,7 +236,7 @@ bool _phrSwTransModel<HYPOTHESIS>::loadMultipleSwModelsDescriptor(Vector<ModelDe
     cSwmScoreVec.push_back(phrasePairCacheTable);
     cInvSwmScoreVec.push_back(phrasePairCacheTable);
   }
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -289,7 +289,7 @@ bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
     if(ret==ERROR) return ERROR;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -314,7 +314,7 @@ bool _phrSwTransModel<HYPOTHESIS>::printAligModel(std::string printPrefix)
   ret=swModelInfoPtr->swAligModelPtrVec[0]->print(swModelPrefix.c_str());
   if(ret==ERROR) return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------

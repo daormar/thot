@@ -101,7 +101,7 @@ bool AlignmentContainer::extractAlignmentsFromGIZAFile(const char *_GizaAligFile
    }
  }
  	
- return OK;	
+ return THOT_OK;	
 }
 
 //-------------------------
@@ -134,7 +134,7 @@ bool AlignmentContainer::join(const char *_GizaAligFileName,bool transpose/*=0*/
 	  }
     }
     alExt.close();
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -169,7 +169,7 @@ bool AlignmentContainer::intersect(const char *_GizaAligFileName,
      }
    }
    alExt.close();
-   return OK;
+   return THOT_OK;
  }
 }
 //-------------------------
@@ -202,7 +202,7 @@ bool AlignmentContainer::sum(const char *_GizaAligFileName,bool transpose/*=0*/)
     }
    }
    alExt.close();
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -237,7 +237,7 @@ bool AlignmentContainer::symmetr1(const char *_GizaAligFileName,
      }
    }
    alExt.close();
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -272,7 +272,7 @@ bool AlignmentContainer::symmetr2(const char *_GizaAligFileName,
      }
    }
    alExt.close();
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -307,7 +307,7 @@ bool AlignmentContainer::growDiagFinal(const char *_GizaAligFileName,
      }
    }
    alExt.close();
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -401,7 +401,7 @@ bool AlignmentContainer::printNoCompact(ostream &outS)
         }
       }
 	}
-	return OK;
+	return THOT_OK;
   } 
 }
 //-------------------------
@@ -442,7 +442,7 @@ bool AlignmentContainer::printNoCompact(FILE *file)
         }
       }
 	}
-	return OK;
+	return THOT_OK;
   } 
 }
 

@@ -298,7 +298,7 @@ bool _incrPhraseModel::load_given_prefix(const char *prefix)
   trgSegmLenFile=trgSegmLenFile+".trgsegmlentable";
   trgSegmLenTable.load(trgSegmLenFile.c_str());
 
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -394,7 +394,7 @@ bool _incrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
     }
   }
  }
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------
@@ -433,7 +433,7 @@ bool _incrPhraseModel::print(const char *prefix)
   retVal=printSegmLengthTable(segLenTableFileName.c_str());
   if(retVal) return ERROR;
   
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -451,7 +451,7 @@ bool _incrPhraseModel::printTTable(const char *outputFileName)
   else
   {
     printTTable(outF);
-    return OK;
+    return THOT_OK;
   }
 # else
   FILE *outf;
@@ -465,7 +465,7 @@ bool _incrPhraseModel::printTTable(const char *outputFileName)
   else
   {
     printTTable(outf);
-    return OK;
+    return THOT_OK;
   }
 # endif
 }
@@ -485,7 +485,7 @@ bool _incrPhraseModel::printSegmLengthTable(const char *outputFileName)
  printSegmLengthTable(outF);	
  outF.close();	
 
- return OK;
+ return THOT_OK;
 }
 
 # ifdef _GLIBCXX_USE_LFS

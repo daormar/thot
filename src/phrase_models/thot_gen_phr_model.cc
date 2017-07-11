@@ -144,7 +144,7 @@ int main(int argc,char *argv[])
   }
   wbaIncrPhraseModel.closeLogFile();
 
-  return OK;
+  return THOT_OK;
  }
  else return ERROR;
 }
@@ -257,7 +257,7 @@ int TakeParameters(int argc,char *argv[])
  err=readOption(argc,argv, "-v1");
  if(err==0) verbose=2; 
  	 
- return OK;  
+ return THOT_OK;  
 }
 
 //--------------- printDesc() function

@@ -206,7 +206,7 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
       // Store init parameters for BaseStackDecoder
   baseStackDecoderInitPars=initPars;
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -289,7 +289,7 @@ int DynClassFactoryHandler::init_smt_and_imt(std::string fileName,
       // Store init parameters for BaseAssistedTrans
   baseAssistedTransInitPars=initPars;
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------

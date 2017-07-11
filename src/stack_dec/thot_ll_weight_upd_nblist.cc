@@ -180,9 +180,9 @@ int handleParameters(int argc,
   }
   else
   {
-    if(checkParameters(pars)==OK)
+    if(checkParameters(pars)==THOT_OK)
     {
-      return OK;
+      return THOT_OK;
     }
     else
     {
@@ -223,7 +223,7 @@ int takeParameters(int argc,
   if(err==ERROR)
     return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -247,7 +247,7 @@ int checkParameters(thot_llwu_nblist_pars& pars)
     return ERROR;       
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -271,7 +271,7 @@ int obtain_references(const thot_llwu_nblist_pars& pars,
     referenceVec.push_back(awk.dollar(0));
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -344,7 +344,7 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
     }
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -388,7 +388,7 @@ int obtain_nblists_and_scr_comps(const thot_llwu_nblist_pars& pars,
     scoreCompsVec.push_back(scoreComps);
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -460,7 +460,7 @@ int update_ll_weights(const thot_llwu_nblist_pars& pars)
     cout<<endl;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------

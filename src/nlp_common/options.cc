@@ -561,7 +561,7 @@ int readStringSeq(int argc,
  * @param argc number of arguments extracted from filename+1 (argv_stl[0]="filename").
  * @param argv arguments extracted from filename. argv_stl[0] contains the string "filename"
  * @param comment Starting string for comments.
- * @return ERROR if filename does not exist, OK otherwise.
+ * @return ERROR if filename does not exist, THOT_OK otherwise.
  */
 bool extractParsFromFile(const char* filename,
                          int& argc,
@@ -617,6 +617,6 @@ bool extractParsFromFile(const char* filename,
         }
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }

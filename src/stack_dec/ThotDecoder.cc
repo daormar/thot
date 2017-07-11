@@ -656,7 +656,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     ret=set_wgh(tdup.wgh_str.c_str(),verbose);
   if(ret==ERROR) return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -690,7 +690,7 @@ int ThotDecoder::initUserPars(int user_id,
       // Set cat weights
   set_catw(user_id,tdup.catWeightsVec,verbose);
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -700,7 +700,7 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
       // Return if current translation model does not use sw models
   _phrSwTransModel<SmtModel::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
   if(base_pbswtm_ptr==NULL)
-    return OK;
+    return THOT_OK;
 
       // Delete previous instantiation
   deleteSwModelPtrs();
@@ -708,7 +708,7 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
       // Obtain info about translation model entries
   unsigned int numTransModelEntries;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(tmFilesPrefix,modelDescEntryVec)==OK)
+  if(extractModelEntryInfo(tmFilesPrefix,modelDescEntryVec)==THOT_OK)
   {
     numTransModelEntries=modelDescEntryVec.size();
   }
@@ -739,7 +739,7 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
     }
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -756,7 +756,7 @@ bool ThotDecoder::load_tm(const char* tmFilesPrefix,
   if(strcmp(tdState.tmFilesPrefixGiven.c_str(),tmFilesPrefix)==0)
   {
     if(verbose) cerr<<"Translation model already loaded"<<endl;
-    ret=OK;
+    ret=THOT_OK;
   }
   else
   {
@@ -767,11 +767,11 @@ bool ThotDecoder::load_tm(const char* tmFilesPrefix,
         // Instantiate single word model information
     ret=instantiate_swm_info(tmFilesPrefix,verbose);
 
-    if(ret==OK)
+    if(ret==THOT_OK)
     {
         // Load alignment model
       ret=tdCommonVars.smtModelPtr->loadAligModel(tmFilesPrefix);
-      if(ret==OK)
+      if(ret==THOT_OK)
       {
         tdState.tmFilesPrefixGiven=tmFilesPrefix;
       }
@@ -797,7 +797,7 @@ bool ThotDecoder::load_lm(const char* lmFileName,
   if(strcmp(tdState.lmfileLoaded.c_str(),lmFileName)==0)
   {
     if(verbose) cerr<<"Language model already loaded"<<endl;
-    ret=OK;
+    ret=THOT_OK;
   }
   else
   {
@@ -806,7 +806,7 @@ bool ThotDecoder::load_lm(const char* lmFileName,
       cerr<<"Loading language model from file: "<<lmFileName<<endl;
     }
     ret=tdCommonVars.smtModelPtr->loadLangModel(lmFileName);
-    if(ret==OK)
+    if(ret==THOT_OK)
     {
       tdState.lmfileLoaded=lmFileName;
     }
@@ -829,7 +829,7 @@ bool ThotDecoder::load_ecm(const char* ecmFilesPrefix,
   if(strcmp(tdState.ecmFilesPrefixGiven.c_str(),ecmFilesPrefix)==0)
   {
     if(verbose) cerr<<"Error correcting model already loaded"<<endl;
-    ret=OK;
+    ret=THOT_OK;
   }
   else
   {
@@ -839,7 +839,7 @@ bool ThotDecoder::load_ecm(const char* ecmFilesPrefix,
     }
     
     ret=tdCommonVars.ecModelPtr->load(ecmFilesPrefix);
-    if(ret==OK)
+    if(ret==THOT_OK)
     {
       tdState.ecmFilesPrefixGiven=ecmFilesPrefix;
     }
@@ -1092,7 +1092,7 @@ bool ThotDecoder::translateSentence(int user_id,
       /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -1289,7 +1289,7 @@ bool ThotDecoder::sentPairVerCov(int user_id,
   pthread_mutex_unlock(&atomic_op_mut);
 
   if(!tdPerUserVarsVec[idx].smtModelPtr->isComplete(hyp))
-    return OK;
+    return THOT_OK;
   else return ERROR;
 }
 
@@ -1429,7 +1429,7 @@ bool ThotDecoder::set_G(int user_id,
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -1471,7 +1471,7 @@ bool ThotDecoder::set_np(int user_id,
   if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
   {
     tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr->set_n(np_par);
-    b=OK;
+    b=THOT_OK;
   }
   else
   {
@@ -1520,7 +1520,7 @@ bool ThotDecoder::set_wgp(int user_id,
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -1720,7 +1720,7 @@ bool ThotDecoder::startCat(int user_id,
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  return OK;
+  return THOT_OK;
 }
   
 //--------------------------
@@ -1906,7 +1906,7 @@ bool ThotDecoder::use_caseconv(int user_id,
   if(tdState.preprocId)
   {
     ret=tdPerUserVarsVec[idx].prePosProcessorPtr->loadCapitInfo(caseConvFile);
-    if(ret==OK)
+    if(ret==THOT_OK)
     {
       tdState.caseconv=true;
     }
@@ -1914,7 +1914,7 @@ bool ThotDecoder::use_caseconv(int user_id,
   else
   {
     cerr<<"Warning! case conversion cannot be activated because pre/pos-processing steps are disabled."<<endl;
-    ret=OK;
+    ret=THOT_OK;
   }
 
   /////////// end of mutex 
@@ -1990,11 +1990,11 @@ bool ThotDecoder::printModels(int verbose/*=0*/)
     
       // Print alignment model parameters
   int ret=tdCommonVars.smtModelPtr->printAligModel(tdState.tmFilesPrefixGiven);
-  if(ret==OK)
+  if(ret==THOT_OK)
   {
         // Print language model parameters
     int ret=tdCommonVars.smtModelPtr->printLangModel(tdState.lmfileLoaded);
-    if(ret==OK)
+    if(ret==THOT_OK)
     {
           // Print error correcting model parameters
       ret=tdCommonVars.ecModelPtr->print(tdState.ecmFilesPrefixGiven.c_str()); 
@@ -2059,7 +2059,7 @@ int ThotDecoder::printModelWeights(void)
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -2163,7 +2163,7 @@ int ThotDecoder::init_idx_data(size_t idx)
       // Initialize prePosProcessorPtr for idx
   tdPerUserVarsVec[idx].prePosProcessorPtr=NULL;
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------

@@ -194,7 +194,7 @@ bool TrgSegmLenTable::readAvgSegmLen(const char *avgSegmLenFileName)
      return ERROR;
    }
  }
- return OK;  
+ return THOT_OK;  
 }
 
 //-------------------------

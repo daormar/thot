@@ -142,7 +142,7 @@ bool FastBdbPhraseTable::init(const char *fileName)
   if(!fastSearchAvailableFlagIsDefined())
     resetFastSearchAvailableFlag();
     
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -207,7 +207,7 @@ int FastBdbPhraseTable::retrieveDataForPhrDict(const Vector<WordIndex>& s,
   }
   else
   {
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -234,7 +234,7 @@ int FastBdbPhraseTable::putDataForPhrDict(const Vector<WordIndex>& s,
   if(ret)
     return ERROR;
   else
-    return OK;
+    return THOT_OK;
 }
 
 //-------------------------
@@ -251,7 +251,7 @@ int FastBdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
     if(ret)
       return ERROR;
     else
-      return OK;
+      return THOT_OK;
   }
   else
   {
@@ -260,7 +260,7 @@ int FastBdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
     if(ret)
       return ERROR;
     else
-      return OK;
+      return THOT_OK;
   }
 }
 
@@ -610,7 +610,7 @@ bool FastBdbPhraseTable::getFastSearchAvailableFlag(void)
   Vector<WordIndex> emptyWordVec;
   PhrDictValue phrDictValue;
   int ret=retrieveDataForPhrDict(emptyWordVec,emptyWordVec,phrDictValue);
-  if(ret==OK)
+  if(ret==THOT_OK)
   {
     if((double)phrDictValue.count>0.0)
       return true;
@@ -627,7 +627,7 @@ bool FastBdbPhraseTable::fastSearchAvailableFlagIsDefined(void)
   Vector<WordIndex> emptyWordVec;
   PhrDictValue phrDictValue;
   int ret=retrieveDataForPhrDict(emptyWordVec,emptyWordVec,phrDictValue);
-  if(ret==OK)
+  if(ret==THOT_OK)
     return true;
   else
     return false;

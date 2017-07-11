@@ -88,7 +88,7 @@ int main(int argc,char *argv[])
  LgProb lp;
  bool ret;
  
- if(TakeParameters(argc,argv)==OK)
+ if(TakeParameters(argc,argv)==THOT_OK)
  {
        // Create model instance
   if(init_swm()==ERROR)
@@ -172,7 +172,7 @@ int main(int argc,char *argv[])
   release_swm();
  }
  
- return OK;
+ return THOT_OK;
 }
 
 //---------------
@@ -215,7 +215,7 @@ int init_swm(void)
     return ERROR;
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -290,7 +290,7 @@ int processPairAligFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
    
    cout<<awk.dollar(0)<<" ||| "<<lp<<endl;
  }   
- return OK;   
+ return THOT_OK;   
 }
 
 //---------------
@@ -381,7 +381,7 @@ int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
    }
  }
  
- return OK;   
+ return THOT_OK;   
 }
 
 //---------------
@@ -482,7 +482,7 @@ int TakeParameters(int argc,char *argv[])
    }
  }
    
- return OK;  
+ return THOT_OK;  
 }
 
 //---------------

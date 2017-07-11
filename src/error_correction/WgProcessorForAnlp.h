@@ -1424,7 +1424,7 @@ bool WgProcessorForAnlp<ECM_FOR_WG>::print(const char* filename)const
   {
     print(outS);
     outS.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 

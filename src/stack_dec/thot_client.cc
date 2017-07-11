@@ -75,7 +75,7 @@ int main(int argc,char *argv[])
 {
   thot_client_pars tdcPars;
  
-  if(TakeParameters(argc,argv,tdcPars)==OK)
+  if(TakeParameters(argc,argv,tdcPars)==THOT_OK)
   {
         // Parameters ok
    double elapsed_ant,elapsed,ucpu,scpu;
@@ -107,7 +107,7 @@ int process_request(const thot_client_pars& tdcPars)
   std::string translatedSentence;
   std::string bestHypInfo;
   ThotDecoderClient thotDecoderClient;
-  int retVal=OK;
+  int retVal=THOT_OK;
   double elapsed_ant,elapsed,ucpu,scpu;
 
       // Connect to translation server
@@ -263,7 +263,7 @@ int TakeParameters(int argc,
  if(err==0)
  {
    tdcPars.server_request_code=OL_TRAIN_PAIR;
-   return OK;
+   return THOT_OK;
  }
 
  //     /* Take the string pair for error correcting model training */
@@ -271,7 +271,7 @@ int TakeParameters(int argc,
  // if(err==0)
  // {
  //   tdcPars.server_request_code=TRAIN_ECM;
- //   return OK;
+ //   return THOT_OK;
  // }
 
      /* Take the sentence to be translated */
@@ -279,7 +279,7 @@ int TakeParameters(int argc,
  if(err==0)
  {
    tdcPars.server_request_code=TRANSLATE_SENT;
-   return OK;
+   return THOT_OK;
  }
 
      /* Take the sentence to be translated */
@@ -287,7 +287,7 @@ int TakeParameters(int argc,
  if(err==0)
  {
    tdcPars.server_request_code=TRANSLATE_SENT_HYPINFO;
-   return OK;
+   return THOT_OK;
  }
 
      /* Take the sentence pair for coverage verifying */
@@ -295,7 +295,7 @@ int TakeParameters(int argc,
  if(err==0)
  {
    tdcPars.server_request_code=VERIFY_COV;
-   return OK;
+   return THOT_OK;
  }
 
      /* Take the sentence to be translated in a CAT scenario using the
@@ -304,7 +304,7 @@ int TakeParameters(int argc,
  if(err==0)
  {
    tdcPars.server_request_code=START_CAT;
-   return OK;
+   return THOT_OK;
  }
 
      /* Take the sentence to be translated */
@@ -312,7 +312,7 @@ int TakeParameters(int argc,
  if(err==0)
  {
    tdcPars.server_request_code=ADD_STR_TO_PREF;
-   return OK;
+   return THOT_OK;
  }
 
      /* Check -rp option */
@@ -320,7 +320,7 @@ int TakeParameters(int argc,
  if(err!=-1)
  {
    tdcPars.server_request_code=RESET_PREF;
-   return OK;
+   return THOT_OK;
  }
 
      /* Verify clear option */
@@ -328,7 +328,7 @@ int TakeParameters(int argc,
  if(err==0)
  {
    tdcPars.server_request_code=CLEAR_TRANS;
-   return OK;
+   return THOT_OK;
  }
 
       /* Verify print option */
@@ -336,7 +336,7 @@ int TakeParameters(int argc,
  if(err==0)
  {
    tdcPars.server_request_code=PRINT_MODELS;
-   return OK;
+   return THOT_OK;
  }
 
      /* Verify -e option */
@@ -344,7 +344,7 @@ int TakeParameters(int argc,
  if(err==0)
  {
    tdcPars.server_request_code=END_SERVER;
-   return OK;
+   return THOT_OK;
  }
 
  return ERROR;

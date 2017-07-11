@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
       ret=align_corpus(tap);
       release_translator();
       if(ret==ERROR) return ERROR;
-      else return OK;
+      else return THOT_OK;
     }
   }
 }
@@ -200,7 +200,7 @@ int init_translator(const thot_ms_alig_pars& tap)
       // Obtain info about translation model entries
   unsigned int numTransModelEntries;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(tap.transModelPref.c_str(),modelDescEntryVec)==OK)
+  if(extractModelEntryInfo(tap.transModelPref.c_str(),modelDescEntryVec)==THOT_OK)
   {
     numTransModelEntries=modelDescEntryVec.size();
   }
@@ -362,7 +362,7 @@ int init_translator(const thot_ms_alig_pars& tap)
       // Set translator verbosity
   stackDecoderPtr->setVerbosity(tap.verbosity);
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -514,7 +514,7 @@ int align_corpus(const thot_ms_alig_pars& tap)
     cerr<<"- Time per sentence: "<<total_time/sentNo<<endl;
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------------
@@ -588,10 +588,10 @@ int handleParameters(int argc,
   }
   else
   {
-    if(checkParameters(tap)==OK)
+    if(checkParameters(tap)==THOT_OK)
     {
       printParameters(tap);
-      return OK;
+      return THOT_OK;
     }
     else
     {
@@ -616,7 +616,7 @@ int takeParameters(int argc,
   }
       // process command line parameters
   takeParametersGivenArgcArgv(argc,argv,tap);
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -648,7 +648,7 @@ int takeParametersFromCfgFile(std::string cfgFileName,
     free(cfgFileArgv);
 
         // Return without error
-    return OK;
+    return THOT_OK;
 }
 
 //---------------
@@ -791,7 +791,7 @@ int checkParameters(const thot_ms_alig_pars& tap)
      return ERROR;
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------

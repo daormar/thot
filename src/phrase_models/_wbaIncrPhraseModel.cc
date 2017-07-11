@@ -64,7 +64,7 @@ bool _wbaIncrPhraseModel::extendModel(const char *aligFileName,
   extendModelFromAlignments(phePars,BRF,alignmentExtractor,verbose);
   alignmentExtractor.close();
   
-  return OK;  
+  return THOT_OK;  
 }
 
 //-------------------------

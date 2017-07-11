@@ -69,5 +69,5 @@ bool TrgCutsTable::load(const char *trgCutsTableFileName)
      cerr<<"Target sentence cuts parameters: jumpOnePar="<<jumpOnePar<<" ; stopJumps="<<stopJumps<<".\n";
    }
  }
- return OK;	
+ return THOT_OK;	
 }

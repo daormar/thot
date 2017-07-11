@@ -119,7 +119,7 @@ int processParameters(thot_server_pars ts_pars)
   if(ts_pars.i_given)
   {
     delete thotDecoderPtr;
-    return OK;
+    return THOT_OK;
   }
   
   int ret=thotDecoderPtr->initUsingCfgFile(ts_pars.c_str,tdu_pars,ts_pars.v_given);
@@ -136,7 +136,7 @@ int processParameters(thot_server_pars ts_pars)
     thotDecoderPtr->printModelWeights();
     thotDecoderPtr->clearTrans();
     delete thotDecoderPtr;
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -228,7 +228,7 @@ int start_server(thot_server_pars ts_pars,
     close(new_fd);  
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- sigchld_handler function
@@ -326,7 +326,7 @@ int process_request(int s,
 
     case RESET_PREF:
       thotDecoderPtr->resetPrefix(user_id);
-      BasicSocketUtils::writeInt(s,OK);
+      BasicSocketUtils::writeInt(s,THOT_OK);
       break;
       
     case CLEAR_TRANS:
@@ -371,10 +371,10 @@ int handleParameters(int argc,
   }
   else
   {
-    if(checkParameters(ts_pars)==OK)
+    if(checkParameters(ts_pars)==THOT_OK)
     {
       printParameters(ts_pars);
-      return OK;
+      return THOT_OK;
     }
     else
     {
@@ -458,7 +458,7 @@ int takeParameters(int argc,
     }
     ++i;
   }
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- checkParameters function
@@ -476,7 +476,7 @@ int checkParameters(thot_server_pars& ts_pars)
     return ERROR;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- printParameters function

@@ -51,9 +51,9 @@ bool EU_PrePosProcessor1::loadCapitInfo(const char* filename)
   {
     EUpostprocInitializeCapitalization(*caps);
     delete caps;
-    cerr<<"OK"<<endl;
+    cerr<<"THOT_OK"<<endl;
     
-    return OK;
+    return THOT_OK;
   }
   else
   {

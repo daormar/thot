@@ -73,7 +73,7 @@ bool WeightedIncrNormSlm::load(const char *filename)
   {
     cerr<<"Warning: empty sentence length model file: "<<filename<<"\n";
     clear();
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -92,7 +92,7 @@ bool WeightedIncrNormSlm::print(const char* filename)
   {
     print(outF);
     outF.close();	
-    return OK;
+    return THOT_OK;
   }   
 }
 
@@ -247,7 +247,7 @@ bool WeightedIncrNormSlm::readNormalPars(const char *normParsFileName)
        set_sk(slen,sk_slen);
      }
    }
-   return OK;
+   return THOT_OK;
  }
 }
 

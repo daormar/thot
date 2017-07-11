@@ -360,7 +360,7 @@ bool AlignmentExtractor::join(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 //-------------------------
 bool AlignmentExtractor::intersect(const char *GizaAligFileName,
@@ -418,7 +418,7 @@ bool AlignmentExtractor::intersect(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 //-------------------------
 bool AlignmentExtractor::sum(const char *GizaAligFileName,
@@ -476,7 +476,7 @@ bool AlignmentExtractor::sum(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 //-------------------------
 bool AlignmentExtractor::symmetr1(const char *GizaAligFileName,
@@ -534,7 +534,7 @@ bool AlignmentExtractor::symmetr1(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------
@@ -593,7 +593,7 @@ bool AlignmentExtractor::symmetr2(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------
@@ -652,7 +652,7 @@ bool AlignmentExtractor::growDiagFinal(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------

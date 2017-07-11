@@ -82,7 +82,7 @@ int main(int argc,char *argv[])
   double perp;
   double total_time=0,elapsed_ant,elapsed,ucpu,scpu;
 
-  if(TakeParameters(argc,argv)==OK)
+  if(TakeParameters(argc,argv)==THOT_OK)
   {
     if(init_lm(true)==ERROR)
       return ERROR;
@@ -120,7 +120,7 @@ int main(int argc,char *argv[])
 
       release_lm(true);
    
-      return OK;
+      return THOT_OK;
     }
   }
   else return ERROR;
@@ -166,7 +166,7 @@ int init_lm(int verbosity)
     return ERROR;
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -218,7 +218,7 @@ int TakeParameters(int argc,char *argv[])
    verbose=2;
  }
 
- return OK;  
+ return THOT_OK;  
 }
 
 //---------------

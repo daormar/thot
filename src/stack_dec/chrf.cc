@@ -121,7 +121,7 @@ int calculate_chrf_file(FILE *reff,
         cerr<<"chrf: "<<chrf<<endl;
     }
 
-    return OK;
+    return THOT_OK;
 }
 
 void calculate_chrf(const std::string& refSentence,

@@ -137,7 +137,7 @@ bool BdbPhraseTable::init(const char *fileName)
   if(ret)
     return ERROR;
   
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -192,7 +192,7 @@ int BdbPhraseTable::retrieveDataForPhrDict(const Vector<WordIndex>& s,
   else
   {
     decodeKeyDataForPhrDictDb(phrDictKey,phrDictValue,key,data);
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -217,7 +217,7 @@ int BdbPhraseTable::putDataForPhrDict(const Vector<WordIndex>& s,
   if(ret)
     return ERROR;
   else
-    return OK;
+    return THOT_OK;
 }
 
 //-------------------------
@@ -235,7 +235,7 @@ int BdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
     if(ret)
       return ERROR;
     else
-      return OK;
+      return THOT_OK;
   }
   else
   {
@@ -245,7 +245,7 @@ int BdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
     if(ret)
       return ERROR;
     else
-      return OK;
+      return THOT_OK;
   }
 }
 

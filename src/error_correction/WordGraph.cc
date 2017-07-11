@@ -1291,7 +1291,7 @@ bool WordGraph::load(const char * filename)
       }
     }
     awk.close();
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -1311,7 +1311,7 @@ bool WordGraph::print(const char* filename,
   {
     print(outS,printOnlyUsefulStates);
     outS.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 

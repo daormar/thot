@@ -459,7 +459,7 @@ bool BaseSwAligModel<PPINFO>::obtainBestAlignments(const char *sourceTestFileNam
  }
  outF.close();
 
- return OK;
+ return THOT_OK;
 }
 //-------------------------
 template<class PPINFO>

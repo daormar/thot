@@ -66,7 +66,7 @@ bool WgHandler::load(const char * filename)
         sentToWgInfoMap[strVec]=wgi;
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -117,7 +117,7 @@ bool WgHandler::print(const char* filename)const
   {
     print(outS);
     outS.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 

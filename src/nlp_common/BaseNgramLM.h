@@ -278,7 +278,7 @@ int BaseNgramLM<LM_STATE>::perplexity(const char *corpusFileName,
 
   perp=exp(-((double)totalLogProb/(numWords+numOfSentences))*M_LN10);
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------

@@ -155,7 +155,7 @@ bool BaseStackDecoder<SMT_MODEL>::printSearchGraph(const char* filename)
   {
     printSearchGraphStream(outS);
     outS.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 

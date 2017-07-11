@@ -125,7 +125,7 @@ bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
     }
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------
@@ -144,7 +144,7 @@ bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
   {
     print(outF);
     outF.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 

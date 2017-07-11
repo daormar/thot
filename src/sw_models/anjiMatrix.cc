@@ -77,7 +77,7 @@ bool anjiMatrix::init_nth_entry(unsigned int n,
       anji[mapped_n].resize(tlen+1,floatVec);
     }
 
-    return OK;
+    return THOT_OK;
   }
   else
     return ERROR;
@@ -114,7 +114,7 @@ bool anjiMatrix::reset_entries(void)
       }
     }
 
-    return OK;
+    return THOT_OK;
   }
   else
     return ERROR;
@@ -173,7 +173,7 @@ bool anjiMatrix::load(const char* prefFileName)
     cerr<<"Maximum size for anji is set to "<<UNRESTRICTED_ANJI_SIZE<<" (unrestricted size)."<<endl;
     anji_maxnsize=UNRESTRICTED_ANJI_SIZE;
   }
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -207,7 +207,7 @@ bool anjiMatrix::load_anji_values(const char* anjiFile)
       }
       else end=true;
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -243,7 +243,7 @@ bool anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
       }
     }
   }
-  return OK;     
+  return THOT_OK;     
 }
 
 //-------------------------
@@ -263,7 +263,7 @@ bool anjiMatrix::print(const char* prefFileName)
     if(retVal==ERROR) return ERROR;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -292,7 +292,7 @@ bool anjiMatrix::print_anji_values(const char* anjiFile)
         }
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -318,7 +318,7 @@ bool anjiMatrix::print_maxnsize_data(const char* maxnsizeDataFile)
       if(np_to_n_vector[np].first)
         outF<<np<<" "<<np_to_n_vector[np].second<<endl;
     }
-    return OK;
+    return THOT_OK;
   }  
 }
 

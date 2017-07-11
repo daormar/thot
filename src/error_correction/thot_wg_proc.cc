@@ -232,7 +232,7 @@ int processParameters(thot_wg_proc_pars pars)
     }
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- printNbList function
@@ -275,7 +275,7 @@ int printNbList(const Vector<pair<std::string,float> >& compWeights,
       outS<<" "<<nblist[i].second<<endl;
     }
     outS.close();
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -331,7 +331,7 @@ int process_bp_par(const WordGraph& wordGraph,
         // Print sentence
     outS<<str<<endl;
     
-    return OK;
+    return THOT_OK;
   }  
 }
 
@@ -358,10 +358,10 @@ int handleParameters(int argc,
   }
   else
   {
-    if(checkParameters(pars)==OK)
+    if(checkParameters(pars)==THOT_OK)
     {
       printParameters(pars);
-      return OK;
+      return THOT_OK;
     }
     else
     {
@@ -517,7 +517,7 @@ int takeParameters(int argc,
     }
     ++i;
   }
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- checkParameters function
@@ -535,7 +535,7 @@ int checkParameters(thot_wg_proc_pars& pars)
     return ERROR;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- printParameters function

@@ -189,7 +189,7 @@ bool SingleWordVocab::loadGIZASrcVocab(const char *srcInputVocabFileName)
    }
    awk.close();
    
-   return OK;
+   return THOT_OK;
  } 
 }
 
@@ -206,7 +206,7 @@ bool SingleWordVocab::printGIZASrcVocab(const char *outputFileName)
  }
  outF<<stringToSrcWordIndexMap;
  outF.close();
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------
@@ -347,7 +347,7 @@ bool SingleWordVocab::loadGIZATrgVocab(const char *trgInputVocabFileName)
    }
    awk.close();
 
-   return OK;
+   return THOT_OK;
  } 
 }
 
@@ -364,7 +364,7 @@ bool SingleWordVocab::printGIZATrgVocab(const char *outputFileName)
  }
  outF<<stringToTrgWordIndexMap;
  outF.close();
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------
@@ -400,7 +400,7 @@ bool SingleWordVocab::loadSrcClassDicFile(char *srcClassDicFileName)
    }
  }
  
- return OK;
+ return THOT_OK;
 }
 //-------------------------
 ClassIndex SingleWordVocab::getClassForSrcWord(WordIndex w)
@@ -439,7 +439,7 @@ bool SingleWordVocab::loadTrgClassDicFile(char *trgClassDicFileName)
    }
  }
  
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------

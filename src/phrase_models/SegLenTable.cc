@@ -117,7 +117,7 @@ bool SegLenTable::load_seglentable(const char *segmLengthTableFileName)
    // cerr<<"Warning: segmentation length tablefile not found, segmentation length probability will be assumed to be constant.\n";
    cerr<<"Segmentation length probability will be assumed to be constant.\n";
    constantSegmLengthTable();	 
-   return OK;
+   return THOT_OK;
  }
  else
  {
@@ -140,7 +140,7 @@ bool SegLenTable::load_seglentable(const char *segmLengthTableFileName)
    }
  }
  
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------

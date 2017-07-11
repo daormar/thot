@@ -211,7 +211,7 @@ int BaseIncrNgramLM<LM_STATE>::trainSentence(Vector<std::string> strVec,
           // Update ngram info
       updateNgramInfo(word,hist,ngc,c,lowerBound);
     }
-    return OK;
+    return THOT_OK;
   }
 }
 //---------------
@@ -320,7 +320,7 @@ int BaseIncrNgramLM<LM_STATE>::trainSentenceVec(Vector<Vector<std::string> > vec
     int ret=trainSentence(vecOfStrVec[i],c,lowerBound,verbose);
     if(ret==ERROR) return ERROR;
   }
-  return OK;
+  return THOT_OK;
 }
 
 #endif

@@ -50,7 +50,7 @@ bool XRCE_PrePosProcessor2::loadCapitInfo(const char* filename)
   capOptFileName=filename;
   capOptFileName=capOptFileName+".cap";
   err=loadCapitOptions(capOptFileName.c_str());
-  if(err==OK)
+  if(err==THOT_OK)
   {
     err=loadLangModelForSmtPreproc(filename);
     return err;
@@ -231,7 +231,7 @@ bool XRCE_PrePosProcessor2::loadCapitOptions(const char* filename)
         cerr<<"Anomalous entry on line "<<lineNo<<endl;
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -242,7 +242,7 @@ bool XRCE_PrePosProcessor2::loadLangModelForSmtPreproc(const char* prefixFileNam
   languageModelFileName=languageModelFileName+".lm";
   if(lmodel.load(languageModelFileName.c_str())==ERROR)
     return ERROR;
-  else return OK;
+  else return THOT_OK;
 }
 
 //---------------------------------------

@@ -194,7 +194,7 @@ bool IncrLexTable::loadBin(const char* lexNumDenFile)
       }
       else end=true;
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -226,7 +226,7 @@ bool IncrLexTable::loadPlainText(const char* lexNumDenFile)
         setLexNumDen(s,t,numer,denom);
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -266,7 +266,7 @@ bool IncrLexTable::printBin(const char* lexNumDenFile)
         outF.write((char*)&denom,sizeof(float));
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -296,7 +296,7 @@ bool IncrLexTable::printPlainText(const char* lexNumDenFile)
         outF<<denom<<endl;;
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 

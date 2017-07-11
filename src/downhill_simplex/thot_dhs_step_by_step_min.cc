@@ -93,7 +93,7 @@ int main(int argc,char *argv[])
   std::string s;
   Vector<string> v;	
     
-  if(TakeParameters(argc,argv)==OK)
+  if(TakeParameters(argc,argv)==THOT_OK)
   {
         // init variables
     double* start=0;
@@ -164,7 +164,7 @@ int main(int argc,char *argv[])
     free(x);
     fclose(images_file);
     
-    return OK;
+    return THOT_OK;
   }
   return ERROR;
 }
@@ -368,7 +368,7 @@ int TakeParameters(int argc,char *argv[])
    verbosity=0;
  }      
 
- return OK;
+ return THOT_OK;
 }
 
 //--------------- printDesc() function

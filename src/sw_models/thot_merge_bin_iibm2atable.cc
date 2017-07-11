@@ -115,7 +115,7 @@ Vector<bool> eofFlagVec;
 //--------------- main function
 int main(int argc,char *argv[])
 {
-  if(TakeParameters(argc,argv)==OK)
+  if(TakeParameters(argc,argv)==THOT_OK)
   {
         // Open files
     int ret=openFiles();
@@ -191,7 +191,7 @@ int main(int argc,char *argv[])
         // Close files and release pointers
     clear();
 
-    return OK;
+    return THOT_OK;
   }
   else return ERROR;
 }
@@ -215,7 +215,7 @@ int openFiles(void)
     eofFlagVec.push_back(false);
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- initPrQueue() function
@@ -362,7 +362,7 @@ int TakeParameters(int argc,char *argv[])
    fileNameVec.push_back(fileName);
  }
 
- return OK;  
+ return THOT_OK;  
 }
 
 //--------------- printDesc() function

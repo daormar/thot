@@ -128,7 +128,7 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
        // Rewind files
    rewindFiles();
      
-   return OK;	
+   return THOT_OK;	
  }
 }
 
@@ -198,7 +198,7 @@ int LightSentenceHandler::nthSentPair(unsigned int n,
       
       c=sentPairCount[vecIdx];
       
-      return OK;
+      return THOT_OK;
     }
   }
 }
@@ -249,7 +249,7 @@ int LightSentenceHandler::nthSentPairFromFiles(unsigned int n,
     c=1;
   }
     
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -377,7 +377,7 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
   trgOutF.close();
   countsOutF.close();
   
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------

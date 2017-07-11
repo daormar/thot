@@ -61,7 +61,7 @@ bool PhrLocalSwLiTm::loadAligModel(const char* prefixFileName)
   ret=load_lambdas(lambdaFile.c_str());
   if(ret==ERROR) return ERROR;
     
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -79,7 +79,7 @@ bool PhrLocalSwLiTm::printAligModel(std::string printPrefix)
   ret=print_lambdas(lambdaFile.c_str());
   if(ret==ERROR) return ERROR;
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -119,7 +119,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
       // Extract phrase pairs from development corpus
   Vector<Vector<PhrasePair> > invPhrPairs;
   int ret=extractPhrPairsFromDevCorpus(srcDevCorpusFileName,trgDevCorpusFileName,invPhrPairs,verbose);
-  if(ret!=OK)
+  if(ret!=THOT_OK)
     return ERROR;
   
       // Execute downhill simplex algorithm
@@ -136,7 +136,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
     ret=step_by_step_simplex(start,ndim,PHRSWLITM_DHS_FTOL,PHRSWLITM_DHS_SCALE_PAR,NULL,tmp_file,&nfunk,&y,x,&curr_dhs_ftol,false);
     switch(ret)
     {
-      case OK: end=true;
+      case THOT_OK: end=true;
         break;
       case DSO_NMAX_ERROR: cerr<<"Error updating linear interpolation weights of the phrase model, maximum number of iterations exceeded"<<endl;
         end=true;
@@ -161,7 +161,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
   }
   
       // Set new weights if updating was successful
-  if(ret==OK)
+  if(ret==THOT_OK)
   {
     swModelInfoPtr->lambda_swm=start[0];
     swModelInfoPtr->lambda_invswm=start[1];
@@ -177,10 +177,10 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
   free(x);
   fclose(tmp_file);
 
-  if(ret!=OK)
+  if(ret!=THOT_OK)
     return ERROR;
   else
-    return OK; 
+    return THOT_OK; 
 }
 
 
@@ -224,7 +224,7 @@ int PhrLocalSwLiTm::extractConsistentPhrasePairs(const Vector<std::string>& srcS
                                                           invWaMatrix,
                                                           vecInvPhPair,
                                                           verbose);
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -238,7 +238,7 @@ int PhrLocalSwLiTm::extractConsistentPhrasePairs(const Vector<std::string>& srcS
                                                       invWaMatrix,
                                                       vecInvPhPair,
                                                       verbose);
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -304,7 +304,7 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
   srcDevStream.close();
   trgDevStream.close();
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -391,7 +391,7 @@ int PhrLocalSwLiTm::new_dhs_eval(const Vector<Vector<PhrasePair> >& invPhrPairs,
       // indicator is set at the start of the stream
   rewind(tmp_file);
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -904,7 +904,7 @@ int PhrLocalSwLiTm::minibatchTrainFeatsSentPair(const char *srcSent,
     ++stepNum;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -1024,7 +1024,7 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
     langModelInfoPtr->lModelPtr->trainSentenceVec(vecTrgSent,(Count)learningRate,(Count)0,verbose);
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -1178,7 +1178,7 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
         // Store new phrase model current sufficient statistics
     vecVecInvPhPair[mapped_n]=vecInvPhPair;
 
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -1195,7 +1195,7 @@ bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
   if(awk.open(lambdaFileName)==ERROR)
   {
     cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist. Current values-> lambda_swm="<<swModelInfoPtr->lambda_swm<<" , lambda_invswm="<<swModelInfoPtr->lambda_invswm<<endl;
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -1206,7 +1206,7 @@ bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
         swModelInfoPtr->lambda_swm=atof(awk.dollar(1).c_str());
         swModelInfoPtr->lambda_invswm=atof(awk.dollar(1).c_str());
         cerr<<"Read lambda value from file: "<<lambdaFileName<<" (lambda_swm="<<swModelInfoPtr->lambda_swm<<", lambda_invswm="<<swModelInfoPtr->lambda_invswm<<")"<<endl;
-        return OK;
+        return THOT_OK;
       }
       else
       {
@@ -1215,7 +1215,7 @@ bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
           swModelInfoPtr->lambda_swm=atof(awk.dollar(1).c_str());
           swModelInfoPtr->lambda_invswm=atof(awk.dollar(2).c_str());
           cerr<<"Read lambda value from file: "<<lambdaFileName<<" (lambda_swm="<<swModelInfoPtr->lambda_swm<<", lambda_invswm="<<swModelInfoPtr->lambda_invswm<<")"<<endl;
-          return OK;
+          return THOT_OK;
         }
         else
         {
@@ -1230,7 +1230,7 @@ bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
       return ERROR;
     }
   }  
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -1248,7 +1248,7 @@ bool PhrLocalSwLiTm::print_lambdas(const char* lambdaFileName)
   {
     print_lambdas(outF);
     outF.close();	
-    return OK;
+    return THOT_OK;
   }   
 }
 

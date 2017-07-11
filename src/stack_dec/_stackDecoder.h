@@ -696,7 +696,7 @@ int _stackDecoder<SMT_MODEL>::pre_trans_actions(std::string srcsent)
   specific_pre_trans_actions(srcsent);
   bestCompleteHypScore=worstScoreAllowed;
   bestCompleteHyp=smtm_ptr->nullHypothesis();
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------

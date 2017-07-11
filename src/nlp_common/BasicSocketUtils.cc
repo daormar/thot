@@ -31,9 +31,9 @@ namespace BasicSocketUtils
       fprintf(stderr,"Error initializing sockets!");
       return ERROR;
     }
-    else return OK;
+    else return THOT_OK;
 #else
-    return OK;
+    return THOT_OK;
 #endif
   }
 
@@ -190,7 +190,7 @@ namespace BasicSocketUtils
        return ERROR;
      }
 
-     return OK;
+     return THOT_OK;
   }
 
   //--------------- clean function

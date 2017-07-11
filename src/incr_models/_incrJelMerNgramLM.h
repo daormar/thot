@@ -209,7 +209,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
 
     switch(ret)
     {
-      case OK: end=true;
+      case THOT_OK: end=true;
         break;
       case DSO_NMAX_ERROR: cerr<<"Error updating of Jelinek Mercer's language model weights, maximum number of iterations exceeded"<<endl;
         end=true;
@@ -236,7 +236,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
   }
   
       // Set new weights if updating was successful
-  if(ret==OK)
+  if(ret==THOT_OK)
   {
     for(unsigned int i=0;i<weights.size();++i)
       weights[i]=start[i];
@@ -251,10 +251,10 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
   free(x);
   fclose(tmp_file);
 
-  if(ret!=OK)
+  if(ret!=THOT_OK)
     return ERROR;
   else
-    return OK;
+    return THOT_OK;
 }
 
 //---------------
@@ -286,7 +286,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::new_dhs_eval(const char *corpusFil
   else
   {
     obj_func=DBL_MAX;
-    retVal=OK;
+    retVal=THOT_OK;
   }
       // Print result to tmp file
   fprintf(tmp_file,"%g\n",obj_func);
@@ -342,7 +342,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
   retval=_incrNgramLM<SRC_INFO,SRCTRG_INFO>::load(fileName);
   if(retval==ERROR) return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -387,7 +387,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *prefixOfL
         weights.push_back((double)atof(awk.dollar(i).c_str()));
       }
       awk.close();
-      return OK;
+      return THOT_OK;
     }
     else
     {
@@ -412,7 +412,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
   retval=_incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(fileName);
   if(retval==ERROR) return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -454,7 +454,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *prefixOf
   fprintf(filePtr,"\n");
   fclose(filePtr);
 
-  return OK;
+  return THOT_OK;
 }  
 
 //---------------

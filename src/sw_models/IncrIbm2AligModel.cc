@@ -448,7 +448,7 @@ bool IncrIbm2AligModel::load(const char* prefFileName)
     retVal=incrIbm2AligTable.load(aligNumDenFile.c_str());
     if(retVal==ERROR) return ERROR;
 
-    return OK;
+    return THOT_OK;
   }
   else return ERROR;
 }
@@ -467,7 +467,7 @@ bool IncrIbm2AligModel::print(const char* prefFileName)
   retVal=incrIbm2AligTable.print(aligNumDenFile.c_str());
   if(retVal==ERROR) return ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------

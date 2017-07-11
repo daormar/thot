@@ -89,7 +89,7 @@ std::string ihmmatableFileName;
 //--------------- main function
 int main(int argc,char *argv[])
 {
-  if(TakeParameters(argc,argv)==OK)
+  if(TakeParameters(argc,argv)==THOT_OK)
   {
         // Try to open file  
     ifstream inF (ihmmatableFileName.c_str(), ios::in | ios::binary);
@@ -136,7 +136,7 @@ int main(int argc,char *argv[])
         cout.write((char*)&entryVec[i].denom,sizeof(float));            
       }
       
-      return OK;
+      return THOT_OK;
     }
   }
   else return ERROR;
@@ -169,7 +169,7 @@ int TakeParameters(int argc,char *argv[])
    return ERROR;
  }
 
- return OK;  
+ return THOT_OK;  
 }
 
 //--------------- printDesc() function
