@@ -97,17 +97,16 @@ bool LevelDbPhraseTable::retrieveData(const Vector<WordIndex>& phrase, int &coun
 //-------------------------
 bool LevelDbPhraseTable::storeData(const Vector<WordIndex>& phrase, int count)const
 {
-    int old_count;
-    retrieveData(phrase, old_count);
-    int new_count = old_count + count;
-
     stringstream ss;
-    ss << new_count;
-    string new_count_str = ss.str();
+    ss << count;
+    string count_str = ss.str();
 
     leveldb::WriteBatch batch;
-    batch.Put(vectorToString(phrase), new_count_str);
+    batch.Put(vectorToString(phrase), count_str);
     leveldb::Status s = db->Write(leveldb::WriteOptions(), &batch);
+
+    if(!s.ok())
+        cerr << "Storing data status: " << s.ToString() << endl;
 
     return s.ok();
 }
@@ -116,7 +115,10 @@ bool LevelDbPhraseTable::storeData(const Vector<WordIndex>& phrase, int count)co
 bool LevelDbPhraseTable::init(string levelDbPath)
 {
     if(db != NULL)
+    {
         delete db;
+        db = NULL;
+    }
 
     if(load(levelDbPath) != THOT_OK)
         return THOT_ERROR;
@@ -130,18 +132,33 @@ bool LevelDbPhraseTable::init(string levelDbPath)
 bool LevelDbPhraseTable::drop()
 {
     if(db != NULL)
+    {
         delete db;
+        db = NULL;
+    }
 
     leveldb::Status status = leveldb::DestroyDB(dbName, options);
 
-    return (status.ok()) ? THOT_OK : THOT_ERROR;
+    if(status.ok())
+    {
+        return THOT_OK;
+    }
+    else
+    {
+        cerr << "Dropping database status: " << status.ToString() << endl;
+        
+        return THOT_ERROR;
+    }
 }
 
 //-------------------------
 bool LevelDbPhraseTable::load(string levelDbPath)
 {
     if(db != NULL)
+    {
         delete db;
+        db = NULL;
+    }
 
     dbName = levelDbPath;
     leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
@@ -487,22 +504,19 @@ void LevelDbPhraseTable::print(bool printString)
 //-------------------------
 void LevelDbPhraseTable::clear(void)
 {
-    if(db != NULL)
-        delete db;
+    bool dropStatus = drop();
 
-    leveldb::Status status = leveldb::DestroyDB(dbName, options);
-
-    if(!status.ok())
+    if(dropStatus == THOT_ERROR)
     {
-        cerr << "Cannot clear levelDB" << endl;
         exit(2);
     }
 
-    status = leveldb::DB::Open(options, dbName, &db);
+    leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
     
     if(!status.ok())
     {
-        cerr << "Cannot create new levelDB" << endl;
+        cerr << "Cannot create new levelDB in " << dbName << endl;
+        cerr << "Returned status: " << status.ToString() << endl;
         exit(3);
     }
 }
@@ -511,7 +525,10 @@ void LevelDbPhraseTable::clear(void)
 LevelDbPhraseTable::~LevelDbPhraseTable(void)
 {
     if(db != NULL)
+    {
         delete db;
+        db = NULL;
+    }
 }
 
 //-------------------------
