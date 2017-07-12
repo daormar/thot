@@ -37,6 +37,7 @@ LevelDbPhraseTable::LevelDbPhraseTable(void)
     options.max_open_files = 4000;
     options.filter_policy = leveldb::NewBloomFilterPolicy(16);
     db = NULL;
+    dbName = "";
 }
 
 //-------------------------
@@ -507,20 +508,23 @@ void LevelDbPhraseTable::print(bool printString)
 //-------------------------
 void LevelDbPhraseTable::clear(void)
 {
-    bool dropStatus = drop();
-
-    if(dropStatus == THOT_ERROR)
+    if(dbName.size() > 0)
     {
-        exit(2);
-    }
+        bool dropStatus = drop();
 
-    leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
-    
-    if(!status.ok())
-    {
-        cerr << "Cannot create new levelDB in " << dbName << endl;
-        cerr << "Returned status: " << status.ToString() << endl;
-        exit(3);
+        if(dropStatus == THOT_ERROR)
+        {
+            exit(2);
+        }
+
+        leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
+        
+        if(!status.ok())
+        {
+            cerr << "Cannot create new levelDB in " << dbName << endl;
+            cerr << "Returned status: " << status.ToString() << endl;
+            exit(3);
+        }
     }
 }
 
