@@ -282,7 +282,7 @@ bool LevelDbPhraseModel::load_given_prefix(const char *prefix)
   
       // Load translation table
   std::string levelPt = prefix;
-  levelPt = levelPt + "_LevelDb_phrdict";
+  levelPt = levelPt + "_leveldb_phrdict";
   ret = levelDbPhraseTable.load(levelPt);
   if(ret == THOT_ERROR) return THOT_ERROR;
 
