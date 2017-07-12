@@ -327,11 +327,11 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
 
       // Heuristic related functions
   void initHeuristic(unsigned int maxSrcPhraseLength);
-  Score heurDirectPmScoreLt(Vector<WordIndex>& srcPhrase,
-                            Vector<WordIndex>& trgPhrase);
-  Score heurInversePmScoreLt(Vector<WordIndex>& srcPhrase,
-                             Vector<WordIndex>& trgPhrase);
-  Score heurLmScoreLtNoAdmiss(Vector<WordIndex>& trgPhrase);
+  Score heurDirectPmScoreLt(const Vector<WordIndex>& srcPhrase,
+                            const Vector<WordIndex>& trgPhrase);
+  Score heurInversePmScoreLt(const Vector<WordIndex>& srcPhrase,
+                             const Vector<WordIndex>& trgPhrase);
+  Score heurLmScoreLtNoAdmiss(const Vector<WordIndex>& trgPhrase);
   void initHeuristicLocalt(int maxSrcPhraseLength);
   void initHeuristicLocaltd(int maxSrcPhraseLength);
   virtual Score calcHeuristicScore(const _pbTransModel::Hypothesis& hyp);
@@ -1122,6 +1122,7 @@ void _pbTransModel<HYPOTHESIS>::initHeuristicLocalt(int maxSrcPhraseLength)
           {
                 // Obtain phrase to phrase translation probability
             score_ts=heurDirectPmScoreLt(srcPhrase,ttNodeIter->second)+heurInversePmScoreLt(srcPhrase,ttNodeIter->second);
+
                 // Obtain language model heuristic estimation
             score_ts+=heurLmScoreLtNoAdmiss(ttNodeIter->second);
             
@@ -1169,13 +1170,13 @@ void _pbTransModel<HYPOTHESIS>::initHeuristicLocalt(int maxSrcPhraseLength)
 
 //---------------------------------
 template<class HYPOTHESIS>
-Score _pbTransModel<HYPOTHESIS>::heurDirectPmScoreLt(Vector<WordIndex>& srcPhrase,
-                                                     Vector<WordIndex>& trgPhrase)
+Score _pbTransModel<HYPOTHESIS>::heurDirectPmScoreLt(const Vector<WordIndex>& srcPhrase,
+                                                     const Vector<WordIndex>& trgPhrase)
 {
       // Obtain string vector
   Vector<std::string> srcPhraseStr=srcIndexVectorToStrVector(srcPhrase);
   Vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
-
+  
       // Obtain direct phrase model feature pointers 
   Score scr=0;
   Vector<DirectPhraseModelFeat<HypScoreInfo>* > directPhraseModelFeatPtrs=featuresInfoPtr->getDirectPhraseModelFeatPtrs();
@@ -1188,8 +1189,8 @@ Score _pbTransModel<HYPOTHESIS>::heurDirectPmScoreLt(Vector<WordIndex>& srcPhras
 
 //---------------------------------
 template<class HYPOTHESIS>
-Score _pbTransModel<HYPOTHESIS>::heurInversePmScoreLt(Vector<WordIndex>& srcPhrase,
-                                                      Vector<WordIndex>& trgPhrase)
+Score _pbTransModel<HYPOTHESIS>::heurInversePmScoreLt(const Vector<WordIndex>& srcPhrase,
+                                                      const Vector<WordIndex>& trgPhrase)
 {
       // Obtain string vector
   Vector<std::string> srcPhraseStr=srcIndexVectorToStrVector(srcPhrase);
@@ -1207,7 +1208,7 @@ Score _pbTransModel<HYPOTHESIS>::heurInversePmScoreLt(Vector<WordIndex>& srcPhra
 
 //---------------------------------
 template<class HYPOTHESIS>
-Score _pbTransModel<HYPOTHESIS>::heurLmScoreLtNoAdmiss(Vector<WordIndex>& trgPhrase)
+Score _pbTransModel<HYPOTHESIS>::heurLmScoreLtNoAdmiss(const Vector<WordIndex>& trgPhrase)
 {
       // Obtain string vector
   Vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
