@@ -28,10 +28,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef _LevelDbPhraseTable
 #define _LevelDbPhraseTable
 
-#define WORD_INDEX_MODULO_BASE 254
-#define WORD_INDEX_MODULO_BYTES 3
-#define TRIE_NUM 10
-
 //--------------- Include files --------------------------------------
 
 #include <math.h>
@@ -65,7 +61,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 class LevelDbPhraseTable: public BasePhraseTable
 {
-    leveldb::DB* db = NULL;
+    leveldb::DB* db;
     leveldb::Options options;
     string dbName;
 
