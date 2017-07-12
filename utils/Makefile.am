@@ -42,6 +42,7 @@ phrase_models/thot_pbs_filter_ttable					\
 phrase_models/thot_pbs_get_nbest_for_trg phrase_models/thot_cut_ttable	\
 phrase_models/thot_conv_giza_alig_file					\
 phrase_models/thot_gen_fbdb_ttable					\
+phrase_models/thot_gen_leveldb_ttable					\
 phrase_models/thot_gen_exhaustive_giza_alig
 
 smt_preproc_bin_scripts= smt_preproc/thot_tokenize			\
