@@ -97,8 +97,9 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
   
       // Link pointers
   void link_lm(BaseNgramLM<LM_State>* _lModelPtr);
+  BaseNgramLM<LM_State>* get_lmptr(void);
   void link_wp(WordPredictor* _wordPredPtr);
-
+  
  protected:
 
   BaseNgramLM<LM_State>* lModelPtr;
@@ -240,6 +241,13 @@ template<class SCORE_INFO>
 void LangModelFeat<SCORE_INFO>::link_lm(BaseNgramLM<LM_State>* _lModelPtr)
 {
   lModelPtr=_lModelPtr;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+BaseNgramLM<LM_State>* LangModelFeat<SCORE_INFO>::get_lmptr(void)
+{
+  return lModelPtr;
 }
 
 //---------------------------------
