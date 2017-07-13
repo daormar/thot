@@ -94,7 +94,52 @@ FeaturesInfo<SmtModel::HypScoreInfo>* FeatureHandler::getFeatureInfoPtr(void)
 int FeatureHandler::updateLmLinInterpWeights(std::string trgCorpusFileName,
                                              int verbose/*=0*/)
 {
-      // TO-BE-DONE
+      // Iterate over language model features
+  Vector<LangModelFeat<SmtModel::HypScoreInfo>* > langModelFeatPtrs=featuresInfo.getLangModelFeatPtrs();
+
+  for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
+  {
+    if(verbose)
+      cerr<<"Updating linear interpolation weights for feature "<<langModelFeatPtrs[i]->getFeatName()<<endl;
+    BaseNgramLM<LM_State>* lModelPtr=langModelFeatPtrs[i]->get_lmptr();
+    int ret=updateLinWeightsForLmPtr(lModelPtr,trgCorpusFileName);
+    if(ret==ERROR)
+      return ERROR;
+  }
+  
+  return OK;
+}
+
+//---------------
+int FeatureHandler::updateLinWeightsForLmPtr(BaseNgramLM<LM_State>* lModelPtr,
+                                             std::string trgCorpusFileName,
+                                             int verbose/*=0*/)
+{
+      // Perform checkings to see if the model has weights to be updated
+  _incrJelMerNgramLM<Count,Count>* incrJelMerLmPtr=dynamic_cast<_incrJelMerNgramLM<Count,Count>* >(lModelPtr);
+  if(incrJelMerLmPtr)
+  {
+    int ret=incrJelMerLmPtr->updateModelWeights(trgCorpusFileName.c_str(),verbose);
+    if(ret==ERROR)
+      return ERROR;
+
+    return OK;
+  }
+    
+  _incrInterpNgramLM* incrInterpNgramLmPtr=dynamic_cast<_incrInterpNgramLM* >(lModelPtr);
+  if(incrInterpNgramLmPtr)
+  {
+    int ret=incrInterpNgramLmPtr->updateModelWeights(trgCorpusFileName.c_str(),verbose);
+    if(ret==ERROR)
+      return ERROR;
+
+    return OK;
+  }
+
+      // Model did not have weights to be updated
+  if(verbose)
+    cerr<<"Warning, current model does not have weights to be updated"<<endl;
+  
   return OK;
 }
 

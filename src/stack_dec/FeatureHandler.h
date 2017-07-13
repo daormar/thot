@@ -36,6 +36,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SrcPhraseLenFeat.h"
 #include "InversePhraseModelFeat.h"
 #include "DirectPhraseModelFeat.h"
+#include "_incrInterpNgramLM.h"
+#include "_incrJelMerNgramLM.h"
 #include "LangModelFeat.h"
 #include "WordPenaltyFeat.h"
 #include "FeaturesInfo.h"
@@ -158,6 +160,11 @@ class FeatureHandler
   bool process_tm_descriptor(std::string tmDescFile,
                              int verbose=0);
   bool process_tm_files_prefix(std::string tmFilesPrefix,
+                               int verbose=0);
+
+      // Weight updating related functions
+  int updateLinWeightsForLmPtr(BaseNgramLM<LM_State>* lModelPtr,
+                               std::string trgCorpusFileName,
                                int verbose=0);
 
       // Functions for performing on-line training
