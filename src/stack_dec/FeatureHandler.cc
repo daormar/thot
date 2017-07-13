@@ -164,11 +164,11 @@ int FeatureHandler::updatePmLinInterpWeights(std::string srcCorpusFileName,
     InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPmFeatPtr=dynamic_cast<InversePhraseModelFeat<SmtModel::HypScoreInfo>* >(featuresInfo.featPtrVec[invPhrModelFeatIdx]);
     
         // Update weights
-    int ret=WeightUpdateUtils::updateLinInterpWeights(srcCorpusFileName,
-                                                      trgCorpusFileName,
-                                                      dirPmFeatPtr,
-                                                      invPmFeatPtr,
-                                                      verbose);
+    int ret=WeightUpdateUtils::updatePmLinInterpWeights(srcCorpusFileName,
+                                                        trgCorpusFileName,
+                                                        dirPmFeatPtr,
+                                                        invPmFeatPtr,
+                                                        verbose);
     if(ret==ERROR)
       return ERROR;
   }
