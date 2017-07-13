@@ -103,11 +103,11 @@ namespace WeightUpdateUtils
   }
   
   //---------------------------------
-  int updateLinInterpWeights(std::string srcCorpusFileName,
-                             std::string trgCorpusFileName,
-                             DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
-                             InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
-                             int verbose/*=0*/)
+  int updatePmLinInterpWeights(std::string srcCorpusFileName,
+                               std::string trgCorpusFileName,
+                               DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
+                               InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
+                               int verbose/*=0*/)
   {
         // Initialize downhill simplex input parameters
     Vector<double> initial_weights;
