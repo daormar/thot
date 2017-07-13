@@ -509,7 +509,7 @@ obtain_smtweights_names()
 obtain_loglin_nonneg_const()
 {
     _smtw_names=`obtain_smtweights_names`
-    echo "${_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wpw" || $i=="tseglenw") printf"0 "; else printf"1 "}'
+    echo "${_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wpw" || $i=="tseglenw" || $i=="trg_phr_lenw") printf"0 "; else printf"1 "}'
 }
 
 ########
@@ -559,7 +559,6 @@ loglin_downhill()
 obtain_loglin_upd_va_opt_values()
 {
     _smtw_names=`obtain_smtweights_names`
-#    echo "${_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenli") printf"0 "; else printf"1 "}'
     echo "${_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'
 }
 
