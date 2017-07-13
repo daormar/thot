@@ -68,11 +68,11 @@ namespace WeightUpdateUtils
                               const Vector<pair<std::string,float> >& compWeights,
                               Vector<float>& newWeights,
                               int verbose=0);
-  int updateLinInterpWeights(std::string srcCorpusFileName,
-                             std::string trgCorpusFileName,
-                             DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
-                             InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
-                             int verbose=0);  
+  int updatePmLinInterpWeights(std::string srcCorpusFileName,
+                               std::string trgCorpusFileName,
+                               DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
+                               InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
+                               int verbose=0);  
 }
 
 #endif
