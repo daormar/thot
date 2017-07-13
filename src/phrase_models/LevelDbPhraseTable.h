@@ -40,6 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "leveldb/cache.h"
 #include "leveldb/db.h"
 #include "leveldb/filter_policy.h"
 #include "leveldb/write_batch.h"
