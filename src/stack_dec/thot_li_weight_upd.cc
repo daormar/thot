@@ -402,7 +402,7 @@ int update_li_weights_feat_impl(const thot_liwu_pars& pars)
     return ERROR;
 
       // Update weights
-  featureHandler.updateLinInterpWeights(pars.testCorpusFile,pars.refCorpusFile,pars.verbosity);
+  featureHandler.updatePmLinInterpWeights(pars.testCorpusFile,pars.refCorpusFile,pars.verbosity);
   
       // Print updated weights
   featureHandler.printAligModels(pars.phrModelFilePrefix);
