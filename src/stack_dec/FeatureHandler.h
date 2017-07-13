@@ -80,9 +80,11 @@ class FeatureHandler
   FeaturesInfo<SmtModel::HypScoreInfo>* getFeatureInfoPtr(void);
   
       // Functions to adjust weights
-  int updateLinInterpWeights(std::string srcCorpusFileName,
-                             std::string trgCorpusFileName,
-                             int verbose=0);
+  int updateLmLinInterpWeights(std::string trgCorpusFileName,
+                               int verbose=0);
+  int updatePmLinInterpWeights(std::string srcCorpusFileName,
+                               std::string trgCorpusFileName,
+                               int verbose=0);
 
       // Functions for online training of features
   int onlineTrainFeats(OnlineTrainingPars onlineTrainingPars,

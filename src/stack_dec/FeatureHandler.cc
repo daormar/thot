@@ -91,9 +91,17 @@ FeaturesInfo<SmtModel::HypScoreInfo>* FeatureHandler::getFeatureInfoPtr(void)
 }
 
 //---------------
-int FeatureHandler::updateLinInterpWeights(std::string srcCorpusFileName,
-                                           std::string trgCorpusFileName,
-                                           int verbose/*=0*/)
+int FeatureHandler::updateLmLinInterpWeights(std::string trgCorpusFileName,
+                                             int verbose/*=0*/)
+{
+      // TO-BE-DONE
+  return OK;
+}
+
+//---------------
+int FeatureHandler::updatePmLinInterpWeights(std::string srcCorpusFileName,
+                                             std::string trgCorpusFileName,
+                                             int verbose/*=0*/)
 {
       // Update linear interpolation weights for all direct and inverse
       // phrase model feature pairs
