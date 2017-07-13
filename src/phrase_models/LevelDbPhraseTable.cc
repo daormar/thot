@@ -45,9 +45,7 @@ string LevelDbPhraseTable::vectorToString(const Vector<WordIndex>& vec)const
 {
     stringstream ss;
     for(size_t i = 0; i < vec.size(); ++i) {
-        if(i != 0)
-            ss << " ";
-        ss << vec[i];
+        ss << vec[i] << "_";
     }
 
     return ss.str();
@@ -60,7 +58,7 @@ Vector<WordIndex> LevelDbPhraseTable::stringToVector(const string s)const
     string word_index_str;
     Vector<WordIndex> vec;
 
-    while(iss >> word_index_str) {
+    while(getline(iss, word_index_str, '_')) {
         vec.push_back(atoi(word_index_str.c_str()));
     }
 
@@ -419,6 +417,7 @@ bool LevelDbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
 
     string start_str = vectorToKey(start_vec);
     string end_str = vectorToKey(end_vec);
+    end_str.erase(end_str.size() - 1);  // Remove trailing separator
 
     leveldb::Slice start = start_str;
     leveldb::Slice end = end_str;
