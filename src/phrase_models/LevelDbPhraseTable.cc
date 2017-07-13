@@ -43,23 +43,32 @@ LevelDbPhraseTable::LevelDbPhraseTable(void)
 //-------------------------
 string LevelDbPhraseTable::vectorToString(const Vector<WordIndex>& vec)const
 {
-    stringstream ss;
-    for(size_t i = 0; i < vec.size(); ++i) {
-        ss << vec[i] << "_";
+    Vector<WordIndex> str;
+    for(int i = 0; i < vec.size(); i++) {
+        // Use WORD_INDEX_MODULO_BYTES bytes to encode index
+        for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--) {
+            str.push_back(1 + (vec[i] / (int) pow(WORD_INDEX_MODULO_BASE, j) % WORD_INDEX_MODULO_BASE));
+        }
     }
 
-    return ss.str();
+    string s(str.begin(), str.end());
+
+    return s;
 }
 
 //-------------------------
 Vector<WordIndex> LevelDbPhraseTable::stringToVector(const string s)const
 {
-    istringstream iss(s);
-    string word_index_str;
     Vector<WordIndex> vec;
 
-    while(getline(iss, word_index_str, '_')) {
-        vec.push_back(atoi(word_index_str.c_str()));
+    for(int i = 0; i < s.size();)  // A string length is WORD_INDEX_MODULO_BYTES * n + 1
+    {
+        int wi = 0;
+        for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--, i++) {
+            wi += (((int) s[i]) - 1) * (int) pow(WORD_INDEX_MODULO_BASE, j);
+        }
+
+        vec.push_back(wi);
     }
 
     return vec;
@@ -417,7 +426,6 @@ bool LevelDbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
 
     string start_str = vectorToKey(start_vec);
     string end_str = vectorToKey(end_vec);
-    end_str.erase(end_str.size() - 1);  // Remove trailing separator
 
     leveldb::Slice start = start_str;
     leveldb::Slice end = end_str;
