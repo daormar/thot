@@ -40,11 +40,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include THOT_LM_STATE_H // Define LM_State type. It is set in
+                         // configure by checking LM_STATE_H
+                         // variable (default value: LM_State.h)
 #include "_incrInterpNgramLM.h"
 #include "_incrJelMerNgramLM.h"
 #include "BaseNgramLM.h"
-#include "DynClassFileHandler.h"
 #include "SimpleDynClassLoader.h"
+#include "ModelDescriptorUtils.h"
+#include "DynClassFileHandler.h"
 #include "ErrorDefs.h"
 #include "options.h"
 #include <iostream>
@@ -58,14 +62,12 @@ using namespace std;
 struct thot_lmwu_pars
 {
   std::string fileWithCorpus;
-  std::string langModelFilePrefix;
+  std::string langModelFilesPrefix;
   int verbosity;
 };
 
 //--------------- Function Declarations ------------------------------
 
-int init_lm(int verbosity);
-void release_lm(int verbosity);
 int handleParameters(int argc,
                      char *argv[],
                      thot_lmwu_pars& pars);
@@ -73,14 +75,31 @@ int takeParameters(int argc,
                    char *argv[],
                    thot_lmwu_pars& pars);
 int checkParameters(thot_lmwu_pars& pars);
-int update_lm_weights(const thot_lmwu_pars& pars);
-int update_lm_weights_jel_mer(const thot_lmwu_pars& pars);
-  int update_lm_weights_interp(const thot_lmwu_pars& pars);
+int process_input(const thot_lmwu_pars& pars);
+int process_lm_descriptor(const thot_lmwu_pars& pars);
+int process_lm_files_prefix(const thot_lmwu_pars& pars);
+int obtain_default_lm_type(std::string& soFileName);
+int process_lm_entry(std::string corpusFile,
+                     const ModelDescriptorEntry& modelDescEntry,
+                     int verbosity);
+int init_lm(std::string modelType,
+            int verbosity);
+void release_lm(int verbosity);
+int update_lm_weights(std::string corpusFile,
+                      std::string modelFile,
+                      int verbosity);
+int update_lm_weights_jel_mer(std::string corpusFile,
+                              std::string modelFile,
+                              int verbosity);
+int update_lm_weights_interp(std::string corpusFile,
+                             std::string modelFile,
+                             int verbosity);
 void printUsage(void);
 void version(void);
 
 //--------------- Global variables -----------------------------------
 
+DynClassFileHandler dynClassFileHandler;
 SimpleDynClassLoader<BaseNgramLM<Vector<WordIndex> > > baseNgramLMDynClassLoader;
 BaseNgramLM<Vector<WordIndex> >* lm;
 _incrInterpNgramLM* incrInterpNgramLmPtr;
@@ -100,140 +119,12 @@ int main(int argc,char *argv[])
   else
   {
         // Print parameters
-    cerr<<"-lm option is "<<pars.langModelFilePrefix<<endl;
+    cerr<<"-lm option is "<<pars.langModelFilesPrefix<<endl;
     cerr<<"-c option is "<<pars.fileWithCorpus<<endl;
     cerr<<"-v option is "<<pars.verbosity<<endl;
 
-        // Initialize language model
-    init_lm(pars.verbosity);
-
-        // Check if the model has weights to be updated
-    incrJelMerLmPtr=dynamic_cast<_incrJelMerNgramLM<Count,Count>* >(lm);
-    incrInterpNgramLmPtr=dynamic_cast<_incrInterpNgramLM* >(lm);
-    if(!incrJelMerLmPtr && !incrInterpNgramLmPtr)
-    {
-      cerr<<"Current model does not have weights to be updated"<<endl;
-      release_lm(pars.verbosity);
-      return OK;
-    }
-        // Update language model weights
-    int retVal=update_lm_weights(pars);
-
-        // Release language model
-    release_lm(pars.verbosity);
-    
-    return retVal;
+    return process_input(pars);
   }
-}
-
-//--------------------------------
-int update_lm_weights(const thot_lmwu_pars& pars)
-{
-  if(incrJelMerLmPtr)
-  {
-    return update_lm_weights_jel_mer(pars);
-  }
-  else
-  {
-    if(incrInterpNgramLmPtr)
-    {
-      return update_lm_weights_interp(pars);
-    }
-    else
-      return ERROR;
-  }
-}
-
-//---------------
-int update_lm_weights_jel_mer(const thot_lmwu_pars& pars)
-{
-      // Load model
-  int retVal=incrJelMerLmPtr->load(pars.langModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
-  
-      // Update weights
-  retVal=incrJelMerLmPtr->updateModelWeights(pars.fileWithCorpus.c_str(),pars.verbosity);
-  if(retVal==ERROR)
-    return ERROR;
-
-      // Print updated weights
-  retVal=incrJelMerLmPtr->printWeights(pars.langModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
-  
-  return OK;  
-}
-
-//---------------
-int update_lm_weights_interp(const thot_lmwu_pars& pars)
-{
-      // Load model
-  int retVal=incrInterpNgramLmPtr->load(pars.langModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
-      
-      // Update weights
-  retVal=incrInterpNgramLmPtr->updateModelWeights(pars.fileWithCorpus.c_str(),pars.verbosity);
-  if(retVal==ERROR)
-    return ERROR;
-      
-      // Print updated weights
-  retVal=incrInterpNgramLmPtr->printWeights(pars.langModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
-      
-  return OK;     
-}
-
-//---------------
-int init_lm(int verbosity)
-{
-      // Initialize dynamic class file handler
-  DynClassFileHandler dynClassFileHandler;
-  if(dynClassFileHandler.load(THOT_MASTER_INI_PATH,verbosity)==ERROR)
-  {
-    cerr<<"Error while loading ini file"<<endl;
-    return ERROR;
-  }
-      // Define variables to obtain base class infomation
-  std::string baseClassName;
-  std::string soFileName;
-  std::string initPars;
-
-      ////////// Obtain info for BaseNgramLM class
-  baseClassName="BaseNgramLM";
-  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==ERROR)
-  {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
-    return ERROR;
-  }
-   
-      // Load class derived from BaseSwAligModel dynamically
-  if(!baseNgramLMDynClassLoader.open_module(soFileName,verbosity))
-  {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
-    return ERROR;
-  }
-
-  lm=baseNgramLMDynClassLoader.make_obj(initPars);
-  if(lm==NULL)
-  {
-    cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
-    baseNgramLMDynClassLoader.close_module();
-    
-    return ERROR;
-  }
-
-  return OK;
-}
-
-//---------------
-void release_lm(int verbosity)
-{
-  delete lm;
-  baseNgramLMDynClassLoader.close_module(verbosity);
 }
 
 //--------------------------------
@@ -274,7 +165,7 @@ int takeParameters(int argc,
                    thot_lmwu_pars& pars)
 {
       // Take language model file name
-  int err=readSTLstring(argc,argv, "-lm", &pars.langModelFilePrefix);
+  int err=readSTLstring(argc,argv, "-lm", &pars.langModelFilesPrefix);
   if(err==ERROR)
     return ERROR;
   
@@ -294,7 +185,7 @@ int takeParameters(int argc,
 //--------------------------------
 int checkParameters(thot_lmwu_pars& pars)
 {  
-  if(pars.langModelFilePrefix.empty())
+  if(pars.langModelFilesPrefix.empty())
   {
     cerr<<"Error: parameter -lm not given!"<<endl;
     return ERROR;   
@@ -308,6 +199,214 @@ int checkParameters(thot_lmwu_pars& pars)
   }
   
   return OK;
+}
+
+//--------------------------------
+int process_input(const thot_lmwu_pars& pars)
+{
+  std::string mainFileName;
+  if(fileIsDescriptor(pars.langModelFilesPrefix,mainFileName))
+    return process_lm_descriptor(pars);
+  else
+    return process_lm_files_prefix(pars);
+}
+
+//--------------------------------
+int process_lm_descriptor(const thot_lmwu_pars& pars)
+{
+  if(pars.verbosity)
+  {
+    cerr<<"Processing language model descriptor: "<<pars.langModelFilesPrefix<<endl;
+  }
+
+      // Obtain info about translation model entries
+  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  if(extractModelEntryInfo(pars.langModelFilesPrefix,modelDescEntryVec)==OK)
+  {
+        // Process descriptor entries
+    for(unsigned int i=0;i<modelDescEntryVec.size();++i)
+    {
+      int ret=process_lm_entry(pars.fileWithCorpus,modelDescEntryVec[i],pars.verbosity);
+      if(ret==ERROR)
+        return ERROR;
+    }
+
+    return OK;
+  }
+  else
+  {
+    return ERROR;
+  }
+}
+
+//--------------------------------
+int process_lm_files_prefix(const thot_lmwu_pars& pars)
+{
+  if(pars.verbosity)
+  {
+    cerr<<"Processing language model files prefix: "<<pars.langModelFilesPrefix<<endl;
+  }
+
+      // Obtain default model type
+  std::string defaultLangModelType;
+  int ret=obtain_default_lm_type(defaultLangModelType);
+  if(ret==ERROR)
+    return ERROR;
+  
+      // Create model descriptor entry
+  ModelDescriptorEntry modelDescEntry;
+  modelDescEntry.statusStr="main";
+  modelDescEntry.modelType=defaultLangModelType;
+  modelDescEntry.modelFileName=pars.langModelFilesPrefix;
+  modelDescEntry.absolutizedModelFileName=pars.langModelFilesPrefix;
+
+      // Process entry
+  ret=process_lm_entry(pars.fileWithCorpus,modelDescEntry,pars.verbosity);
+  if(ret==ERROR)
+    return ERROR;
+  
+  return OK;  
+}
+
+//--------------------------------
+int obtain_default_lm_type(std::string& soFileName)
+{
+      // Define variables to obtain base class infomation
+  std::string baseClassName;
+  std::string initPars;
+
+      ////////// Obtain info for BaseNgramLM class
+  baseClassName="BaseNgramLM";
+  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==ERROR)
+  {
+    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
+    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    return ERROR;
+  }
+
+  return OK;
+}
+
+//--------------------------------
+int process_lm_entry(std::string corpusFile,
+                     const ModelDescriptorEntry& modelDescEntry,
+                     int verbosity)
+{
+      // Initialize language model
+  init_lm(modelDescEntry.modelType,verbosity);
+
+      // Check if the model has weights to be updated
+  incrJelMerLmPtr=dynamic_cast<_incrJelMerNgramLM<Count,Count>* >(lm);
+  incrInterpNgramLmPtr=dynamic_cast<_incrInterpNgramLM* >(lm);
+  if(!incrJelMerLmPtr && !incrInterpNgramLmPtr)
+  {
+    cerr<<"Current model does not have weights to be updated"<<endl;
+    release_lm(verbosity);
+    return OK;
+  }
+      // Update language model weights
+  int retVal=update_lm_weights(corpusFile,modelDescEntry.absolutizedModelFileName,verbosity);
+
+      // Release language model
+  release_lm(verbosity);
+    
+  return retVal;
+}
+
+//---------------
+int init_lm(std::string modelType,
+            int verbosity)
+{  
+      // Open module
+  if(!baseNgramLMDynClassLoader.open_module(modelType,verbosity))
+  {
+    cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
+    return ERROR;
+  }
+
+      // Create lm file pointer
+  lm=baseNgramLMDynClassLoader.make_obj("");
+
+  if(lm==NULL)
+  {
+    cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;    
+    return ERROR;
+  }
+    
+  return OK;
+}
+
+//---------------
+void release_lm(int verbosity)
+{
+  delete lm;
+  baseNgramLMDynClassLoader.close_module(verbosity);
+}
+
+//--------------------------------
+int update_lm_weights(std::string corpusFile,
+                      std::string modelFile,
+                      int verbosity)
+{
+  if(incrJelMerLmPtr)
+  {
+    return update_lm_weights_jel_mer(corpusFile,modelFile,verbosity);
+  }
+  else
+  {
+    if(incrInterpNgramLmPtr)
+    {
+      return update_lm_weights_interp(corpusFile,modelFile,verbosity);
+    }
+    else
+      return OK;
+  }
+}
+
+//---------------
+int update_lm_weights_jel_mer(std::string corpusFile,
+                              std::string modelFile,
+                              int verbosity)
+{
+      // Load model
+  int retVal=incrJelMerLmPtr->load(modelFile.c_str());
+  if(retVal==ERROR)
+    return ERROR;
+  
+      // Update weights
+  retVal=incrJelMerLmPtr->updateModelWeights(corpusFile.c_str(),verbosity);
+  if(retVal==ERROR)
+    return ERROR;
+
+      // Print updated weights
+  retVal=incrJelMerLmPtr->printWeights(modelFile.c_str());
+  if(retVal==ERROR)
+    return ERROR;
+  
+  return OK;  
+}
+
+//---------------
+int update_lm_weights_interp(std::string corpusFile,
+                             std::string modelFile,
+                             int verbosity)
+{
+      // Load model
+  int retVal=incrInterpNgramLmPtr->load(modelFile.c_str());
+  if(retVal==ERROR)
+    return ERROR;
+      
+      // Update weights
+  retVal=incrInterpNgramLmPtr->updateModelWeights(corpusFile.c_str(),verbosity);
+  if(retVal==ERROR)
+    return ERROR;
+      
+      // Print updated weights
+  retVal=incrInterpNgramLmPtr->printWeights(modelFile.c_str());
+  if(retVal==ERROR)
+    return ERROR;
+      
+  return OK;     
 }
 
 //--------------------------------
