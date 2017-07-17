@@ -168,7 +168,7 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   ~_pbTransModel();
 
  protected:
-    
+  
       // Variable to store state of the translation model
   unsigned int state;
 
@@ -403,6 +403,7 @@ void _pbTransModel<HYPOTHESIS>::clear(void)
       // Initially, no heuristic is used
   heuristicId=NO_HEURISTIC;
 
+      // Clear vocabulary
   singleWordVocab.clear();
 
       // Clear input variables
@@ -414,7 +415,7 @@ template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
 {
       // Clear temporary variables
-  this->clearTempVars();
+  clearTempVars();
 
       // Set state info
   state=MODEL_TRANS_STATE;
@@ -990,6 +991,9 @@ void _pbTransModel<HYPOTHESIS>::clearTempVars(void)
       // Clear additional heuristic information
   refHeurLmLgProb.clear();
   prefHeurLmLgProb.clear();
+
+      // Clear n-best translation cache data
+  nbTransCacheData.clear();
 }
 
 //---------------------------------------
@@ -1056,7 +1060,7 @@ Score _pbTransModel<HYPOTHESIS>::unkWordScoreHeur(void)
   srcPhrase.push_back(UNK_WORD);
   trgPhrase.push_back(UNK_WORD);
 
-  return nbestTransScore(srcPhrase,trgPhrase);
+  return nbestTransScoreCached(srcPhrase,trgPhrase);
 }
 
 //---------------------------------
@@ -2016,7 +2020,7 @@ bool _pbTransModel<HYPOTHESIS>::getNbestTransForSrcPhrase(Vector<WordIndex> srcP
         // options is high
     for(std::set<Vector<WordIndex> >::iterator transSetIter=transSet.begin();transSetIter!=transSet.end();++transSetIter)
     {
-      scr=nbestTransScore(srcPhrase,*transSetIter);
+      scr=nbestTransScoreCached(srcPhrase,*transSetIter);
       nbt.insert(scr,*transSetIter);
     }
   }
