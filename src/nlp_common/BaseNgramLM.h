@@ -80,8 +80,8 @@ class BaseNgramLM
   virtual bool getStateForWordSeq(const Vector<WordIndex>& wordSeq,
                                   LM_STATE& state)=0;
   virtual void getStateForBeginOfSentence(LM_STATE &state)=0;
-  void addNextWordToState(WordIndex word,
-                          LM_State& state);
+  virtual void addNextWordToState(WordIndex word,
+                                  LM_State& state);
   virtual LgProb getNgramLgProbGivenState(WordIndex w,
                                           LM_STATE &state)=0;
   virtual LgProb getNgramLgProbGivenStateStr(std::string s,
