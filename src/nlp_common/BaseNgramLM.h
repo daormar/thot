@@ -80,6 +80,8 @@ class BaseNgramLM
   virtual bool getStateForWordSeq(const Vector<WordIndex>& wordSeq,
                                   LM_STATE& state)=0;
   virtual void getStateForBeginOfSentence(LM_STATE &state)=0;
+  void addNextWordToState(WordIndex word,
+                          LM_State& state);
   virtual LgProb getNgramLgProbGivenState(WordIndex w,
                                           LM_STATE &state)=0;
   virtual LgProb getNgramLgProbGivenStateStr(std::string s,
@@ -152,6 +154,14 @@ template<class LM_STATE>
 Prob BaseNgramLM<LM_STATE>::getZeroGramProb(void)
 {
   return (double) 1/getVocabSize();  
+}
+
+//---------------
+template<class LM_STATE>
+void BaseNgramLM<LM_STATE>::addNextWordToState(WordIndex word,
+                                               LM_State& state)
+{
+  this->getNgramLgProbGivenState(word,state);
 }
 
 //---------------
