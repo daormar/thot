@@ -109,6 +109,8 @@ class _incrNgramLM: public _incrEncCondProbModel<Vector<std::string>,std::string
   bool getStateForWordSeq(const Vector<WordIndex>& wordSeq,
                           Vector<WordIndex>& state); 
   void getStateForBeginOfSentence(Vector<WordIndex> &state);
+  void addNextWordToState(WordIndex word,
+                          LM_State& state);
   LgProb getNgramLgProbGivenState(WordIndex w,Vector<WordIndex> &state);
   LgProb getNgramLgProbGivenStateStr(std::string s,Vector<WordIndex> &state);
   LgProb getLgProbEndGivenState(Vector<WordIndex> &state);
@@ -304,14 +306,22 @@ void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getStateForBeginOfSentence(Vector<WordI
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
+void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::addNextWordToState(WordIndex word,
+                                                            LM_State& state)
+{
+  for(unsigned int i=1;i<state.size();++i) state[i-1]=state[i];
+  if(state.size()>0) state[state.size()-1]=word;  
+}
+
+//---------------
+template<class SRC_INFO,class SRCTRG_INFO>
 LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProbGivenState(WordIndex w,
                                                                     Vector<WordIndex> &state)
 {
   LgProb lp;
 
   lp=getNgramLgProb(w,state);
-  for(unsigned int i=1;i<state.size();++i) state[i-1]=state[i];
-  if(state.size()>0) state[state.size()-1]=w;
+  addNextWordToState(w,state);
   return lp;
 }
 
@@ -334,8 +344,7 @@ LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEndGivenState(Vector<WordInd
   bool found;
   
   lp=getLgProbEnd(state);
-  for(unsigned int i=1;i<state.size();++i) state[i-1]=state[i];
-  if(state.size()>0) state[state.size()-1]=getEosId(found);
+  addNextWordToState(getEosId(found),state);
   return lp;   
 }
 
