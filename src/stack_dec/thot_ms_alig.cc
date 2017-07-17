@@ -492,7 +492,9 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
   set_default_models();
   
       // Add model features
-  add_model_features(tap);
+  ret=add_model_features(tap);
+  if(ret==ERROR)
+    return ERROR;
   
       // Set heuristic
   smtModelPtr->setHeuristic(tap.heuristic);

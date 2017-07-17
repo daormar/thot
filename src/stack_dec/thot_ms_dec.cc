@@ -480,7 +480,9 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
   set_default_models();
   
       // Add model features
-  add_model_features(tdp);
+  ret=add_model_features(tdp);
+  if(ret==ERROR)
+    return ERROR;
   
       // Set heuristic
   smtModelPtr->setHeuristic(tdp.heuristic);
