@@ -205,7 +205,7 @@ class ThotDecoder
                              int verbose/*=0*/);
   bool process_tm_files_prefix(std::string tmFilesPrefix,
                                int verbose/*=0*/);
-  bool load_tm(const char* tmFilesPrefix,
+  bool load_tm_legacy_impl(const char* tmFilesPrefix,
                int verbose=0);
   bool load_tm_feat_impl(const char* tmFilesPrefix,
                          int verbose=0);
@@ -213,7 +213,7 @@ class ThotDecoder
   int createLangModelFeat(std::string featName,
                           const ModelDescriptorEntry& modelDescEntry,
                           LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef);
-  bool load_lm(const char* lmFileName,
+  bool load_lm_legacy_impl(const char* lmFileName,
                int verbose=0);
   bool load_lm_feat_impl(const char* lmFileName,
                          int verbose=0);

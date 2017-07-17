@@ -741,7 +741,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
   }
   else
   {
-    ret=load_lm(lm_str.c_str(),verbose);
+    ret=load_lm_legacy_impl(lm_str.c_str(),verbose);
     if(ret==ERROR) return ERROR;
   }
 
@@ -753,7 +753,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
   }
   else
   {
-    ret=load_tm(tm_str.c_str(),verbose);
+    ret=load_tm_legacy_impl(tm_str.c_str(),verbose);
     if(ret==ERROR) return ERROR;
   }
 
@@ -873,8 +873,8 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
 }
 
 //--------------------------
-bool ThotDecoder::load_tm(const char* tmFilesPrefix,
-                          int verbose/*=0*/)
+bool ThotDecoder::load_tm_legacy_impl(const char* tmFilesPrefix,
+                                      int verbose/*=0*/)
 {
   int ret;
   pthread_mutex_lock(&atomic_op_mut);
@@ -954,8 +954,8 @@ bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
 }
 
 //--------------------------
-bool ThotDecoder::load_lm(const char* lmFileName,
-                          int verbose/*=0*/)
+bool ThotDecoder::load_lm_legacy_impl(const char* lmFileName,
+                                      int verbose/*=0*/)
 {
   int ret;
   pthread_mutex_lock(&atomic_op_mut);
@@ -981,6 +981,8 @@ bool ThotDecoder::load_lm(const char* lmFileName,
         tdState.lmfileLoaded=lmFileName;
       }
     }
+    else
+      ret=ERROR;
   }
   
   /////////// end of mutex 
@@ -2332,6 +2334,8 @@ bool ThotDecoder::printModelsLegacyImpl(int verbose/*=0*/)
       }
     }
   }
+  else
+    ret=ERROR;
   
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
