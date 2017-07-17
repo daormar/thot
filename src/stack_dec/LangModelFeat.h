@@ -323,7 +323,7 @@ void LangModelFeat<SCORE_INFO>::addNextWordToStateStr(std::string word,
                                                       LM_State& state)
 {
   WordIndex wordIdx=this->stringToWordIndex(word);
-  this->lModelPtr->getNgramLgProbGivenState(wordIdx,state);
+  this->lModelPtr->addNextWordToState(wordIdx,state);
 }
 
 //---------------------------------
