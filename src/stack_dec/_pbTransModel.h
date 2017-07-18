@@ -1297,8 +1297,10 @@ Score _pbTransModel<HYPOTHESIS>::calcRefLmHeurScore(const _pbTransModel::Hypothe
   }
       // Return heuristic value
   unsigned int len=hyp.partialTransLength();
-  LgProb lp=refHeurLmLgProb.back()-refHeurLmLgProb[len-1];
-  return lp;
+  if(len==0)
+    return refHeurLmLgProb.back();
+  else
+    return refHeurLmLgProb.back()-refHeurLmLgProb[len-1];
 }
 
 //---------------------------------
@@ -1316,7 +1318,7 @@ Score _pbTransModel<HYPOTHESIS>::calcPrefLmHeurScore(const _pbTransModel::Hypoth
           // Update prefHeurLmLgProb
       for(unsigned int j=0;j<cumulativeScoreVec.size();++j)
       {
-        if(j==refHeurLmLgProb.size())
+        if(j==prefHeurLmLgProb.size())
           prefHeurLmLgProb.push_back(cumulativeScoreVec[j]);
         else
           prefHeurLmLgProb[j]+=cumulativeScoreVec[j];
@@ -1324,14 +1326,16 @@ Score _pbTransModel<HYPOTHESIS>::calcPrefLmHeurScore(const _pbTransModel::Hypoth
     }
   }
       // Return heuristic value
-  LgProb lp;
   unsigned int len=hyp.partialTransLength();
   if(len>=pbtmInputVars.nprefSentIdVec.size()-1)
-    lp=0;
+    return 0;
   else
-    lp=prefHeurLmLgProb.back()-prefHeurLmLgProb[len-1];
-
-  return lp;
+  {
+    if(len==0)
+      return prefHeurLmLgProb.back();
+    else
+      return prefHeurLmLgProb.back()-prefHeurLmLgProb[len-1];
+  }
 }
 
 //---------------------------------
