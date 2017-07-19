@@ -125,8 +125,10 @@ process_files_for_individual_lm()
     
     # Create lm files
     for file in `ls ${_lmfile}*`; do
-        # Create hard links for each file
-        $LN -f $file ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
+        if [ -f $file ]; then
+            # Create hard links for each file
+            $LN -f $file ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
+        fi
     done
 
     # Add entry to descriptor file
@@ -223,7 +225,7 @@ process_files_for_individual_tm()
 
     # Create tm files
     for file in ${_tmfile}*; do
-        if [ $file != ${_tmfile}.ttable ]; then
+        if [ -f $file -a $file != ${_tmfile}.ttable ]; then
             # Create hard links for each file
             $LN -f $file ${outd}/tm/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
         fi

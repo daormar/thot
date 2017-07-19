@@ -135,12 +135,14 @@ process_files_for_individual_lm()
 
     # Create lm files
     for file in ${_lmfile}*; do
-        if [ $file = ${_lmfile}.weights ]; then
-            # Create regular file for the weights
-            cp ${_lmfile}.weights ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
-        else
-            # Create hard links for the rest of the files
-            $LN -f $file ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
+        if [ -f $file ]; then
+            if [ $file = ${_lmfile}.weights ]; then
+                # Create regular file for the weights
+                cp ${_lmfile}.weights ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
+            else
+                # Create hard links for the rest of the files
+                $LN -f $file ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
+            fi
         fi
     done
 
@@ -386,13 +388,15 @@ process_files_for_individual_tm()
 
     # Create tm files
     for file in ${_tmfile}*; do
-        if [ $file = ${_tmfile}.lambda ]; then
-            # Synchronize lambda files for tm and tm_dev
-            basetmfile=`basename $file`
-            $LN -f ${outd}/tm_dev/${_tm_status}/$basetmfile ${outd}/tm/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
-        else
-            # Create hard links for each file except for that with lambda values
-            $LN -f $file ${outd}/tm/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
+        if [ -f $file ]; then
+            if [ $file = ${_tmfile}.lambda ]; then
+                # Synchronize lambda files for tm and tm_dev
+                basetmfile=`basename $file`
+                $LN -f ${outd}/tm_dev/${_tm_status}/$basetmfile ${outd}/tm/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
+            else
+                # Create hard links for each file except for that with lambda values
+                $LN -f $file ${outd}/tm/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
+            fi
         fi
     done
 
