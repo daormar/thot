@@ -169,7 +169,7 @@ create_lm_files()
             curr_lmtype=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$1}'`
             curr_lmfile=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$2}'`
             curr_status=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$3}'`
-            process_files_for_individual_lm ${curr_lmtype} ${lmdesc_dirname}/${curr_lmfile} ${curr_status}
+            process_files_for_individual_lm ${curr_lmtype} ${lmdesc_dirname}/${curr_lmfile} ${curr_status} || return 1;
         done
 
         # Copy weights for lm descriptor
@@ -186,7 +186,7 @@ create_lm_files()
         echo "thot lm descriptor" > ${outd}/lm/lm_desc
 
         # Create files for individual language model
-        process_files_for_individual_lm ${libdir}incr_jel_mer_ngram_lm_factory.so ${lmfile} "main"
+        process_files_for_individual_lm ${libdir}incr_jel_mer_ngram_lm_factory.so ${lmfile} "main" || return 1;
 
         # Obtain new lm file name
         baselmfile=`basename $lmfile`
@@ -269,7 +269,7 @@ create_tm_files()
             curr_tmtype=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$1}'`
             curr_tmfile=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$2}'`
             curr_status=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$3}'`
-            process_files_for_individual_tm ${curr_tmtype} ${tmdesc_dirname}/${curr_tmfile} ${curr_status}
+            process_files_for_individual_tm ${curr_tmtype} ${tmdesc_dirname}/${curr_tmfile} ${curr_status} || return 1;
         done
 
         # Obtain new file name for tm descriptor
@@ -280,7 +280,7 @@ create_tm_files()
         echo "thot tm descriptor" > ${outd}/tm/tm_desc
 
         # Create files for individual translation model
-        process_files_for_individual_tm "" ${tmfile} "main"
+        process_files_for_individual_tm "" ${tmfile} "main" || return 1;
 
         # Obtain new tm file name
         basetmfile=`basename $tmfile`
@@ -312,10 +312,10 @@ filter_ttables()
             curr_tmfile=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$2}'`
             curr_status=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$3}'`
             curr_tmfile_dirname=`$DIRNAME $curr_tmfile`
-            filter_ttable ${tmdesc_dirname}/${curr_tmfile} ${outd}/tm/${curr_tmfile_dirname}
+            filter_ttable ${tmdesc_dirname}/${curr_tmfile} ${outd}/tm/${curr_tmfile_dirname} || return 1;
         done
     else
-        filter_ttable ${tmfile} ${outd}/tm/main
+        filter_ttable ${tmfile} ${outd}/tm/main || return 1;
     fi
 }
 
