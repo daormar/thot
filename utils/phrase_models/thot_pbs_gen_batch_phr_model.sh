@@ -29,14 +29,14 @@ empty_train()
     # Generate direct single word model
     echo "* Generating source-to-target single word alignment model... " >&2
     ${bindir}/thot_gen_sw_model -s $scorpus -t $tcorpus -n 1 ${lf_opt} ${af_opt} ${np_opt} \
-        -o ${outp}_swm || exit 1
+        -o ${outp}_swm 2>/dev/null || exit 1
     echo "0" > ${outp}_swm.msinfo
     echo "" >&2
 
     # Generate inverse single word model
     echo "* Generating target-to-source single word alignment model... " >&2
     ${bindir}/thot_gen_sw_model -s $tcorpus -t $scorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
-        -o ${outp}_invswm || exit 1
+        -o ${outp}_invswm 2>/dev/null || exit 1
     echo "0" > ${outp}_invswm.msinfo
     echo "" >&2
 

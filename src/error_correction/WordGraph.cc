@@ -209,7 +209,10 @@ WordGraphArc WordGraph::wordGraphArcId2WordGraphArc(WordGraphArcId wordGraphArcI
   else
   {
     WordGraphArc wordGraphArc;
-
+    wordGraphArc.predStateIndex=INVALID_STATE;
+    wordGraphArc.succStateIndex=INVALID_STATE;
+    wordGraphArc.arcScore=0;
+    
     return wordGraphArc;
   }
 }
