@@ -540,10 +540,13 @@ void LevelDbPhraseTable::clear(void)
 LevelDbPhraseTable::~LevelDbPhraseTable(void)
 {
     if(db != NULL)
-    {
         delete db;
-        db = NULL;
-    }
+
+    if(options.filter_policy != NULL)
+        delete options.filter_policy;
+
+    if(options.block_cache != NULL)
+        delete options.block_cache;
 }
 
 //-------------------------
