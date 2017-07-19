@@ -1100,6 +1100,7 @@ bool FeatureHandler::printAligModels(std::string tmFileName,
   std::string mainFileName;
   if(fileIsDescriptor(tmFileName,mainFileName))
   {
+        // Print phrase models
     for(unsigned int i=0;i<phraseModelsInfo.invPbModelPtrVec.size();++i)
     {
       int ret=SmtModelUtils::printPhrModel(phraseModelsInfo.invPbModelPtrVec[i],phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName);
@@ -1107,30 +1108,36 @@ bool FeatureHandler::printAligModels(std::string tmFileName,
         return ERROR;
     }
 
-    for(unsigned int i=0;i<swModelsInfo.swAligModelPtrVec.size();++i)
+        // Print direct single word models
+    for(unsigned int i=0;i<swModelsInfo.featNameVec.size();++i)
     {
-      int ret=SmtModelUtils::printDirectSwModel(swModelsInfo.swAligModelPtrVec[i],tmFileName);
+      std::string modelFileName=phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName;
+      int ret=SmtModelUtils::printDirectSwModel(swModelsInfo.swAligModelPtrVec[i],modelFileName);
       if(ret==ERROR)
         return ERROR;      
     }
 
-    for(unsigned int i=0;i<swModelsInfo.invSwAligModelPtrVec.size();++i)
+        // Print inverse single word models
+    for(unsigned int i=0;i<swModelsInfo.featNameVec.size();++i)
     {
-      int ret=SmtModelUtils::printDirectSwModel(swModelsInfo.invSwAligModelPtrVec[i],tmFileName);
+      std::string modelFileName=phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName;
+      int ret=SmtModelUtils::printInverseSwModel(swModelsInfo.invSwAligModelPtrVec[i],modelFileName);
       if(ret==ERROR)
         return ERROR;      
     }
 
+        // Print lambda files
     for(unsigned int i=0;i<swModelsInfo.featNameVec.size();++i)
     {
       std::string featName=swModelsInfo.featNameVec[i];
       std::string invFeatName=swModelsInfo.invFeatNameVec[i];
       std::string modelFileName=phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName;
+
       int ret=printLambdas(modelFileName,featName,invFeatName,verbose);
       if(ret==ERROR)
         return ERROR;      
     }
-        
+    
     return OK;
   }
   else
