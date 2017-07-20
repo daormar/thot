@@ -267,10 +267,7 @@ bool _phrSwTransModel<HYPOTHESIS>::loadAligModel(const char* prefixFileName)
       // Load phrase model
   this->phrModelInfoPtr->phraseModelPars.readTablePrefix=prefixFileName;
   if(this->phrModelInfoPtr->invPbModelPtr->load(prefixFileName)!=0)
-  {
-    cerr<<"Error while reading phrase model file\n";
     return THOT_ERROR;
-  }
 
       // Instantiate weight vectors for phrase model
   this->instantiateWeightVectors();
