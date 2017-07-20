@@ -194,9 +194,9 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Set of unseen words
   std::set<std::string> unseenWordsSet;
 
-      // Data used to cache n-best translation scores
+      // Data used to cache n-best translation data
   NbestTransCacheData nbTransCacheData;
-
+  
   ////// Hypotheses-related functions
 
       // Expansion-related functions
@@ -264,6 +264,16 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // This function is identical to the previous function but is to
       // be used when the translation process is conducted by a given
       // reference sentence
+  void transUncovGapRefNoLastGapCached(const Hypothesis& hyp,
+                                       PositionIndex srcLeft,
+                                       PositionIndex srcRight,
+                                       NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                       float N);
+  void transUncovGapRefLastGapCached(const Hypothesis& hyp,
+                                     PositionIndex srcLeft,
+                                     PositionIndex srcRight,
+                                     NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                     float N);
   virtual bool getTransForHypUncovGapVer(const Hypothesis& hyp,
                                          PositionIndex srcLeft,
                                          PositionIndex srcRight,
@@ -284,6 +294,11 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Functions for translating with references or prefixes
   virtual bool hypDataTransIsPrefixOfTargetRef(const HypDataType& hypd,
                                                bool& equal)const=0;
+  void transUncovGapPrefNoGenCached(const Hypothesis& hyp,
+                                    PositionIndex srcLeft,
+                                    PositionIndex srcRight,
+                                    NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                    float N);
   void transUncovGapPrefNoGen(const Hypothesis& hyp,
                               PositionIndex srcLeft,
                               PositionIndex srcRight,
@@ -2113,10 +2128,38 @@ bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGapRef(const Hypothesis& hyp,
                                                           PositionIndex srcRight,
                                                           NbestTableNode<PhraseTransTableNodeData>& nbt,
                                                           float N)
+{  
+  if(hyp.getPartialTrans().size()>pbtmInputVars.nrefSentIdVec.size())
+    return false;
+  
+  if(this->numberOfUncoveredSrcWords(hyp)-(srcRight-srcLeft+1)>0)
+  {
+        // This is not the last gap to be covered
+    transUncovGapRefNoLastGapCached(hyp,srcLeft,srcRight,nbt,N);
+    if(nbt.size()==0) return false;
+    else return true;
+  }
+  else
+  {
+        // The last gap will be covered
+    transUncovGapRefLastGapCached(hyp,srcLeft,srcRight,nbt,N);
+    if(nbt.size()==0) return false;
+    else return true;
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::transUncovGapRefNoLastGapCached(const Hypothesis& hyp,
+                                                                PositionIndex srcLeft,
+                                                                PositionIndex srcRight,
+                                                                NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                                                float N)
 {
+  nbt.clear();
   Vector<WordIndex> srcPhrase;
   Vector<WordIndex> trgPhrase;
-  Vector<WordIndex> ntarget;
+  Vector<WordIndex> ntarget=hyp.getPartialTrans();
 
       // Obtain source phrase
   for(unsigned int i=srcLeft;i<=srcRight;++i)
@@ -2128,77 +2171,91 @@ bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGapRef(const Hypothesis& hyp,
   unsigned int minTrgSize=0;
   if(srcPhrase.size()>this->pbTransModelPars.E) minTrgSize=srcPhrase.size()-this->pbTransModelPars.E;
   unsigned int maxTrgSize=srcPhrase.size()+this->pbTransModelPars.E;
-
-  ntarget=hyp.getPartialTrans();	
-
-  nbt.clear();
-  if(ntarget.size()>pbtmInputVars.nrefSentIdVec.size()) return false;
-  if(this->numberOfUncoveredSrcWords(hyp)-(srcRight-srcLeft+1)>0)
-  {
-        // This is not the last gap to be covered
-    NbestTableNode<PhraseTransTableNodeData> *transTableNodePtr;
-    PhrNbestTransTableRefKey pNbtRefKey;
-
-    pNbtRefKey.srcLeft=srcLeft;
-    pNbtRefKey.srcRight=srcRight;
-    pNbtRefKey.ntrgSize=ntarget.size();
-        // The number of gaps to be covered AFTER covering
-        // srcPhrase{srcLeft}...srcPhrase{srcRight} is obtained to ensure that the
-        // resulting hypotheses have at least as many gaps as reference
-        // words to add
-    if(this->pbTransModelPars.U==0)
-      pNbtRefKey.numGaps=1;
-    else
-    {
-      Bitset<MAX_SENTENCE_LENGTH_ALLOWED> key=hyp.getKey();
-      for(unsigned int i=srcLeft;i<=srcRight;++i) key.set(i);
-      pNbtRefKey.numGaps=this->get_num_gaps(key);
-    }
-     
-        // Search the required translations in the cache translation
-        // table
     
-    transTableNodePtr=nbTransCacheData.cPhrNbestTransTableRef.getTranslationsForKey(pNbtRefKey);
-    if(transTableNodePtr!=NULL)
-    {// translations present in the cache translation table
-      nbt=*transTableNodePtr;
-    }
-    else
-    {// translations not present in the cache translation table
-      for(PositionIndex i=ntarget.size();i<pbtmInputVars.nrefSentIdVec.size()-pNbtRefKey.numGaps;++i)
-      {
-        trgPhrase.push_back(pbtmInputVars.nrefSentIdVec[i]);
-        if(trgPhrase.size()>=minTrgSize && trgPhrase.size()<=maxTrgSize)
-        {
-          Score scr=nbestTransScoreCached(srcPhrase,trgPhrase);
-          nbt.insert(scr,trgPhrase);
-        }
-      }
-          // Prune the list
-      if(N>=1)
-        while(nbt.size()>(unsigned int) N) nbt.removeLastElement();
-      else
-      {
-        Score bscr=nbt.getScoreOfBestElem();
-        nbt.pruneGivenThreshold(bscr+(double)log(N));
-      }
-          // Store the list in cPhrNbestTransTableRef
-      nbTransCacheData.cPhrNbestTransTableRef.insertEntry(pNbtRefKey,nbt);
-    }
+  PhrNbestTransTableRefKey pNbtRefKey;
+  pNbtRefKey.srcLeft=srcLeft;
+  pNbtRefKey.srcRight=srcRight;
+  pNbtRefKey.ntrgSize=ntarget.size();
+      // The number of gaps to be covered AFTER covering
+      // srcPhrase{srcLeft}...srcPhrase{srcRight} is obtained to ensure that the
+      // resulting hypotheses have at least as many gaps as reference
+      // words to add
+  if(this->pbTransModelPars.U==0)
+    pNbtRefKey.numGaps=1;
+  else
+  {
+    Bitset<MAX_SENTENCE_LENGTH_ALLOWED> key=hyp.getKey();
+    for(unsigned int i=srcLeft;i<=srcRight;++i) key.set(i);
+    pNbtRefKey.numGaps=this->get_num_gaps(key);
+  }
+     
+      // Search the required translations in the cache translation
+      // table    
+  NbestTableNode<PhraseTransTableNodeData>* transTableNodePtr=nbTransCacheData.cPhrNbestTransTableRef.getTranslationsForKey(pNbtRefKey);
+  if(transTableNodePtr!=NULL)
+  {
+        // translations present in the cache translation table
+    nbt=*transTableNodePtr;
   }
   else
   {
-        // The last gap will be covered
-    for(PositionIndex i=ntarget.size();i<pbtmInputVars.nrefSentIdVec.size();++i)
-      trgPhrase.push_back(pbtmInputVars.nrefSentIdVec[i]);
-    if(trgPhrase.size()>=minTrgSize && trgPhrase.size()<=maxTrgSize)
+        // translations not present in the cache translation table
+    for(PositionIndex i=ntarget.size();i<pbtmInputVars.nrefSentIdVec.size()-pNbtRefKey.numGaps;++i)
     {
-      Score scr=nbestTransScoreCached(srcPhrase,trgPhrase);
-      nbt.insert(scr,trgPhrase);
+      trgPhrase.push_back(pbtmInputVars.nrefSentIdVec[i]);
+      if(trgPhrase.size()>=minTrgSize && trgPhrase.size()<=maxTrgSize)
+      {
+        Score scr=nbestTransScoreCached(srcPhrase,trgPhrase);
+        nbt.insert(scr,trgPhrase);
+      }
     }
+        // Prune the list
+    if(N>=1)
+      while(nbt.size()>(unsigned int) N) nbt.removeLastElement();
+    else
+    {
+      Score bscr=nbt.getScoreOfBestElem();
+      nbt.pruneGivenThreshold(bscr+(double)log(N));
+    }
+        // Store the list in cPhrNbestTransTableRef
+    nbTransCacheData.cPhrNbestTransTableRef.insertEntry(pNbtRefKey,nbt);
   }
-  if(nbt.size()==0) return false;
-  else return true;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::transUncovGapRefLastGapCached(const Hypothesis& hyp,
+                                                              PositionIndex srcLeft,
+                                                              PositionIndex srcRight,
+                                                              NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                                              float N)
+{
+  nbt.clear();
+  Vector<WordIndex> srcPhrase;
+  Vector<WordIndex> trgPhrase;
+  Vector<WordIndex> ntarget=hyp.getPartialTrans();
+
+      // Obtain source phrase
+  for(unsigned int i=srcLeft;i<=srcRight;++i)
+  {
+    srcPhrase.push_back(pbtmInputVars.nsrcSentIdVec[i]);
+  }
+
+      // Obtain length limits for target phrase
+  unsigned int minTrgSize=0;
+  if(srcPhrase.size()>this->pbTransModelPars.E) minTrgSize=srcPhrase.size()-this->pbTransModelPars.E;
+  unsigned int maxTrgSize=srcPhrase.size()+this->pbTransModelPars.E;
+  
+      // Obtain target phrase
+  for(PositionIndex i=ntarget.size();i<pbtmInputVars.nrefSentIdVec.size();++i)
+    trgPhrase.push_back(pbtmInputVars.nrefSentIdVec[i]);
+
+      // Obtain translations
+  if(trgPhrase.size()>=minTrgSize && trgPhrase.size()<=maxTrgSize)
+  {
+    Score scr=nbestTransScoreCached(srcPhrase,trgPhrase);
+    nbt.insert(scr,trgPhrase);
+  }
 }
 
 //---------------------------------
@@ -2224,40 +2281,7 @@ bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGapPref(const Hypothesis& hyp
       // Check if the prefix has been generated
   if(ntrgSize<pbtmInputVars.nprefSentIdVec.size())
   {
-        // The prefix has not been generated
-    NbestTableNode<PhraseTransTableNodeData> *transTableNodePtr;
-    PhrNbestTransTablePrefKey pNbtPrefKey;
-
-    pNbtPrefKey.srcLeft=srcLeft;
-    pNbtPrefKey.srcRight=srcRight;
-    pNbtPrefKey.ntrgSize=ntrgSize;
-    if(this->numberOfUncoveredSrcWords(hyp)-(srcRight-srcLeft+1)>0)
-      pNbtPrefKey.lastGap=false;
-    else pNbtPrefKey.lastGap=true;
-    
-        // Search the required translations in the cache translation
-        // table
-    transTableNodePtr=nbTransCacheData.cPhrNbestTransTablePref.getTranslationsForKey(pNbtPrefKey);
-    if(transTableNodePtr!=NULL)
-    {// translations present in the cache translation table
-      nbt=*transTableNodePtr;
-    }
-    else
-    {
-          // Obtain list
-      transUncovGapPrefNoGen(hyp,srcLeft,srcRight,nbt);
-      
-          // Prune the list
-      if(N>=1)
-        while(nbt.size()>(unsigned int) N) nbt.removeLastElement();
-      else
-      {
-        Score bscr=nbt.getScoreOfBestElem();
-        nbt.pruneGivenThreshold(bscr+(double)log(N));
-      }
-          // Store the list in cPhrNbestTransTablePref
-      nbTransCacheData.cPhrNbestTransTablePref.insertEntry(pNbtPrefKey,nbt);
-    }
+    transUncovGapPrefNoGenCached(hyp,srcLeft,srcRight,nbt,N);
     if(nbt.size()==0) return false;
     else return true;
   }
@@ -2266,6 +2290,49 @@ bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGapPref(const Hypothesis& hyp
         // The prefix has been completely generated, the nbest list
         // is obtained as if no prefix was given
     return getTransForHypUncovGap(hyp,srcLeft,srcRight,nbt,N);
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::transUncovGapPrefNoGenCached(const Hypothesis& hyp,
+                                                             PositionIndex srcLeft,
+                                                             PositionIndex srcRight,
+                                                             NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                                             float N)
+{
+      // Initialize variables
+  PhrNbestTransTablePrefKey pNbtPrefKey;
+  pNbtPrefKey.srcLeft=srcLeft;
+  pNbtPrefKey.srcRight=srcRight;
+  pNbtPrefKey.ntrgSize=hyp.getPartialTrans().size();
+  if(this->numberOfUncoveredSrcWords(hyp)-(srcRight-srcLeft+1)>0)
+    pNbtPrefKey.lastGap=false;
+  else pNbtPrefKey.lastGap=true;
+  
+      // Search the required translations in the cache translation
+      // table
+  NbestTableNode<PhraseTransTableNodeData>* transTableNodePtr=nbTransCacheData.cPhrNbestTransTablePref.getTranslationsForKey(pNbtPrefKey);
+  if(transTableNodePtr!=NULL)
+  {
+        // translations present in the cache translation table
+    nbt=*transTableNodePtr;
+  }
+  else
+  {
+        // Obtain list
+    transUncovGapPrefNoGen(hyp,srcLeft,srcRight,nbt);
+    
+        // Prune the list
+    if(N>=1)
+      while(nbt.size()>(unsigned int) N) nbt.removeLastElement();
+    else
+    {
+      Score bscr=nbt.getScoreOfBestElem();
+      nbt.pruneGivenThreshold(bscr+(double)log(N));
+    }
+        // Store the list in cPhrNbestTransTablePref
+    nbTransCacheData.cPhrNbestTransTablePref.insertEntry(pNbtPrefKey,nbt);
   }
 }
 
