@@ -124,6 +124,8 @@ bool LevelDbPhraseTable::storeData(const Vector<WordIndex>& phrase, int count)co
 //-------------------------
 bool LevelDbPhraseTable::init(string levelDbPath)
 {
+    cerr << "Initializing LevelDB phrase table" << endl;
+
     if(db != NULL)
     {
         delete db;
