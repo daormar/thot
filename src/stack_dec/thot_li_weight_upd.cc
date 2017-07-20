@@ -402,10 +402,14 @@ int update_li_weights_feat_impl(const thot_liwu_pars& pars)
     return ERROR;
 
       // Update weights
-  featureHandler.updatePmLinInterpWeights(pars.testCorpusFile,pars.refCorpusFile,pars.verbosity);
+  retVal=featureHandler.updatePmLinInterpWeights(pars.testCorpusFile,pars.refCorpusFile,pars.verbosity);
+  if(retVal==ERROR)
+    return ERROR;
   
       // Print updated weights
-  featureHandler.printAligModels(pars.phrModelFilePrefix);
+  retVal=featureHandler.printAligModels(pars.phrModelFilePrefix);
+  if(retVal==ERROR)
+    return ERROR;
   
       // Release phrase model
   releaseMemFeatImpl();
