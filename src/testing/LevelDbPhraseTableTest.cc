@@ -80,6 +80,21 @@ void LevelDbPhraseTableTest::testStoreAndRestore()
 }
 
 //---------------------------------------
+void LevelDbPhraseTableTest::testKeyVectorConversion()
+{
+  Vector<WordIndex> s;
+  s.push_back(3);
+  s.push_back(4);
+  s.push_back(112175);
+  s.push_back(90664);
+  s.push_back(143);
+  s.push_back(749);
+  s.push_back(748);
+
+  CPPUNIT_ASSERT( tab->keyToVector(tab->vectorToKey(s)) == s );
+}
+
+//---------------------------------------
 void LevelDbPhraseTableTest::testAddTableEntry()
 {
   Vector<WordIndex> s = getVector("Narie lake");

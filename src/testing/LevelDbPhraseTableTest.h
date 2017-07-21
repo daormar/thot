@@ -66,6 +66,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class LevelDbPhraseTableTest: public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( LevelDbPhraseTableTest );
+  CPPUNIT_TEST( testKeyVectorConversion );
   CPPUNIT_TEST( testAddTableEntry );
   CPPUNIT_TEST( testIncCountsOfEntry );
   CPPUNIT_TEST( testStoreAndRestore );
@@ -97,6 +98,7 @@ class LevelDbPhraseTableTest: public CppUnit::TestFixture
   void setUp();
   void tearDown();
 
+  void testKeyVectorConversion();
   void testAddTableEntry();
   void testIncCountsOfEntry();
   void testStoreAndRestore();

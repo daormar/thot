@@ -144,6 +144,8 @@ int process_ttable(void)
       int ret = extractEntryInfo(awk, srcPhr, trgPhr, jointCount);
       if(ret == THOT_OK)
         levelDbPt.incrCountsOfEntry(srcPhr, trgPhr, jointCount);
+      else
+        cerr << "Cannot extract entry info" << endl;
       i++;
 
       if (i % 5000 == 0)

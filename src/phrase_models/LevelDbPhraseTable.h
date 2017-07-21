@@ -72,8 +72,6 @@ class LevelDbPhraseTable: public BasePhraseTable
         // Converters
     virtual string vectorToString(const Vector<WordIndex>& vec)const;
     virtual Vector<WordIndex> stringToVector(const string s)const;
-    virtual string vectorToKey(const Vector<WordIndex>& vec)const;
-    virtual Vector<WordIndex> keyToVector(const string key)const;
     
         // Read and write data
     virtual bool retrieveData(const Vector<WordIndex>& phrase, int &count)const;
@@ -87,6 +85,10 @@ class LevelDbPhraseTable: public BasePhraseTable
 
       // Constructor
     LevelDbPhraseTable(void);
+
+        // Key converters
+    virtual string vectorToKey(const Vector<WordIndex>& vec)const;
+    virtual Vector<WordIndex> keyToVector(const string key)const;
 
         // Wrapper for initializing levelDB
     virtual bool init(string levelDbPath);

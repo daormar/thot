@@ -45,10 +45,10 @@ LevelDbPhraseTable::LevelDbPhraseTable(void)
 string LevelDbPhraseTable::vectorToString(const Vector<WordIndex>& vec)const
 {
     Vector<WordIndex> str;
-    for(int i = 0; i < vec.size(); i++) {
+    for(size_t i = 0; i < vec.size(); i++) {
         // Use WORD_INDEX_MODULO_BYTES bytes to encode index
         for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--) {
-            str.push_back(1 + (vec[i] / (int) pow(WORD_INDEX_MODULO_BASE, j) % WORD_INDEX_MODULO_BASE));
+            str.push_back(1 + (vec[i] / (unsigned int) pow(WORD_INDEX_MODULO_BASE, j) % WORD_INDEX_MODULO_BASE));
         }
     }
 
@@ -62,11 +62,11 @@ Vector<WordIndex> LevelDbPhraseTable::stringToVector(const string s)const
 {
     Vector<WordIndex> vec;
 
-    for(int i = 0; i < s.size();)  // A string length is WORD_INDEX_MODULO_BYTES * n + 1
+    for(size_t i = 0; i < s.size();)  // A string length is WORD_INDEX_MODULO_BYTES * n + 1
     {
-        int wi = 0;
+        unsigned int wi = 0;
         for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--, i++) {
-            wi += (((int) s[i]) - 1) * (int) pow(WORD_INDEX_MODULO_BASE, j);
+            wi += (((unsigned char) s[i]) - 1) * (unsigned int) pow(WORD_INDEX_MODULO_BASE, j);
         }
 
         vec.push_back(wi);
@@ -506,12 +506,13 @@ void LevelDbPhraseTable::print(bool printString)
     {
         pair<Vector<WordIndex>, int> x = *iter;
         if (printString) {
-            cout << vectorToString(x.first);
+            for(size_t i = 0; i < x.first.size(); i++)
+                cout << x.first[i] << " ";
         } else {
             cout << vectorToKey(x.first);
         }
         
-        cout << "\t" << x.second << endl;
+        cout << ":\t" << x.second << endl;
     }
 }
 
