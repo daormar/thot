@@ -272,8 +272,7 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   void transUncovGapRefLastGapCached(const Hypothesis& hyp,
                                      PositionIndex srcLeft,
                                      PositionIndex srcRight,
-                                     NbestTableNode<PhraseTransTableNodeData>& nbt,
-                                     float N);
+                                     NbestTableNode<PhraseTransTableNodeData>& nbt);
   virtual bool getTransForHypUncovGapVer(const Hypothesis& hyp,
                                          PositionIndex srcLeft,
                                          PositionIndex srcRight,
@@ -314,6 +313,10 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // returns true if target word vector wiVec1 is a prefix of wiVec2
 
       // Functions to generate translation lists
+  bool getNbestTransForSrcPhraseCached(PositionIndex srcLeft,
+                                       PositionIndex srcRight,
+                                       NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                       float N);
   virtual bool getNbestTransForSrcPhrase(Vector<WordIndex> srcPhrase,
                                          NbestTableNode<PhraseTransTableNodeData>& nbt,
                                          float N);
@@ -1103,7 +1106,6 @@ void _pbTransModel<HYPOTHESIS>::initHeuristicLocalt(int maxSrcPhraseLength)
   Score compositionProduct;
   Score bestScore_ts=0;
   Score score_ts;
-  Vector<WordIndex> srcPhrase;
     
   unsigned int J=pbtmInputVars.nsrcSentIdVec.size()-1;
   heuristicScoreVec.clear();
@@ -1118,9 +1120,8 @@ void _pbTransModel<HYPOTHESIS>::initHeuristicLocalt(int maxSrcPhraseLength)
     for(unsigned int x=J-y-1;x<J;++x)
     {
           // obtain source phrase
-      unsigned int segmRightMostj=y;
-      unsigned int segmLeftMostj=J-x-1; 
-      srcPhrase.clear();
+      unsigned int segmRightMostj=y+1;
+      unsigned int segmLeftMostj=J-x; 
 
           // obtain score for best translation
       if((segmRightMostj-segmLeftMostj)+1>(unsigned int)maxSrcPhraseLength)
@@ -1129,11 +1130,12 @@ void _pbTransModel<HYPOTHESIS>::initHeuristicLocalt(int maxSrcPhraseLength)
       }
       else
       {
+        Vector<WordIndex> srcPhrase;
         for(unsigned int j=segmLeftMostj;j<=segmRightMostj;++j)
-          srcPhrase.push_back(pbtmInputVars.nsrcSentIdVec[j+1]);
+          srcPhrase.push_back(pbtmInputVars.nsrcSentIdVec[j]);
   
             // Obtain translations for srcPhrase
-        getNbestTransForSrcPhrase(srcPhrase,ttNode,this->pbTransModelPars.W);
+        getNbestTransForSrcPhraseCached(segmLeftMostj,segmRightMostj,ttNode,this->pbTransModelPars.W);
         if(ttNode.size()!=0) // Obtain best p(srcPhrase|t_)
         {
           bestScore_ts=-FLT_MAX;
@@ -2018,6 +2020,36 @@ Score _pbTransModel<EQCLASS_FUNC>::nbestTransScoreLast(const Vector<WordIndex>& 
 
 //---------------------------------
 template<class HYPOTHESIS>
+bool _pbTransModel<HYPOTHESIS>::getNbestTransForSrcPhraseCached(PositionIndex srcLeft,
+                                                                PositionIndex srcRight,
+                                                                NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                                                float N)
+{
+  NbestTableNode<PhraseTransTableNodeData>* transTableNodePtr=nbTransCacheData.cPhrNbestTransTable.getTranslationsForKey(make_pair(srcLeft,srcRight));
+  if(transTableNodePtr!=NULL)
+  {
+        // translation present in the cache translation table
+    nbt=*transTableNodePtr;
+    if(nbt.size()==0) return false;
+    else return true;
+  }
+  else
+  {
+        // translation not present in the cache translation table
+    Vector<WordIndex> srcPhrase;
+    for(unsigned int i=srcLeft;i<=srcRight;++i)
+    {
+      srcPhrase.push_back(pbtmInputVars.nsrcSentIdVec[i]);
+    }
+    getNbestTransForSrcPhrase(srcPhrase,nbt,N);
+    nbTransCacheData.cPhrNbestTransTable.insertEntry(make_pair(srcLeft,srcRight),nbt);
+    if(nbt.size()==0) return false;
+    else return true;
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
 bool _pbTransModel<HYPOTHESIS>::getNbestTransForSrcPhrase(Vector<WordIndex> srcPhrase,
                                                           NbestTableNode<PhraseTransTableNodeData>& nbt,
                                                           float N)
@@ -2107,16 +2139,7 @@ bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis& /*hyp*/
     else
     {
           // search translations for source phrase in translation table
-      Vector<WordIndex> srcPhrase;
-    
-      for(unsigned int i=srcLeft;i<=srcRight;++i)
-      {
-        srcPhrase.push_back(pbtmInputVars.nsrcSentIdVec[i]);
-      }
-    
-      getNbestTransForSrcPhrase(srcPhrase,nbt,N);
-      if(nbt.size()==0) return false;
-      else return true;
+      return getNbestTransForSrcPhraseCached(srcLeft,srcRight,nbt,N);
     }
   }
 }
@@ -2142,7 +2165,7 @@ bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGapRef(const Hypothesis& hyp,
   else
   {
         // The last gap will be covered
-    transUncovGapRefLastGapCached(hyp,srcLeft,srcRight,nbt,N);
+    transUncovGapRefLastGapCached(hyp,srcLeft,srcRight,nbt);
     if(nbt.size()==0) return false;
     else return true;
   }
@@ -2227,8 +2250,7 @@ template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::transUncovGapRefLastGapCached(const Hypothesis& hyp,
                                                               PositionIndex srcLeft,
                                                               PositionIndex srcRight,
-                                                              NbestTableNode<PhraseTransTableNodeData>& nbt,
-                                                              float N)
+                                                              NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
   nbt.clear();
   Vector<WordIndex> srcPhrase;
