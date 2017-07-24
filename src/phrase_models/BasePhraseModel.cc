@@ -146,7 +146,7 @@ int BasePhraseModel::trainSentPair(const Vector<std::string>& /*srcSentStrVec*/,
                                    int /*verbose*/)
 {
   cerr<<"Warning: Phrase-based model training of a sentence pair was requested, but such functionality is not provided!"<<endl;
-  return ERROR;
+  return THOT_ERROR;
 }
 
 //-------------------------
@@ -157,7 +157,7 @@ int BasePhraseModel::trainBilPhrases(const Vector<Vector<std::string> >& /*srcPh
                                      int /*verbose*/)
 {
   cerr<<"Warning: Phrase-based model training of bilingual phrases was requested, but such functionality is not provided!"<<endl;
-  return ERROR;
+  return THOT_ERROR;
 }
 
 //-------------------------

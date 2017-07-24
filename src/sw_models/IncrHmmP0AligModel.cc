@@ -47,30 +47,30 @@ void IncrHmmP0AligModel::set_hmm_p0(Prob _hmm_p0)
 bool IncrHmmP0AligModel::load(const char* prefFileName)
 {
   bool retVal=IncrHmmAligModel::load(prefFileName);
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Load file with hmm p0 value
   std::string hmmP0File=prefFileName;
   hmmP0File=hmmP0File+".hmm_p0";
   retVal=loadHmmP0(hmmP0File.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
-  return OK;
+  return THOT_OK;
 }
    
 //-------------------------
 bool IncrHmmP0AligModel::print(const char* prefFileName)
 {
   bool retVal=IncrHmmAligModel::print(prefFileName);
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with hmm p0 value
   std::string hmmP0File=prefFileName;
   hmmP0File=hmmP0File+".hmm_p0";
   retVal=printHmmP0(hmmP0File.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
-  return OK;  
+  return THOT_OK;  
 }
 
 //-------------------------
@@ -87,11 +87,11 @@ bool IncrHmmP0AligModel::loadHmmP0(const char *hmmP0FileName)
   
   awkInputStream awk;
     
-  if(awk.open(hmmP0FileName)==ERROR)
+  if(awk.open(hmmP0FileName)==THOT_ERROR)
   {
     cerr<<"Error in file with hmm p0 value, file "<<hmmP0FileName<<" does not exist. Assuming hmm_p0="<<DEFAULT_HMM_P0<<"\n";
     hmm_p0=DEFAULT_HMM_P0;
-    return OK;
+    return THOT_OK;
   }  
   else
   {
@@ -101,18 +101,18 @@ bool IncrHmmP0AligModel::loadHmmP0(const char *hmmP0FileName)
       {
         hmm_p0=(Prob)atof(awk.dollar(1).c_str());
         cerr<<"hmm p0 value has been set to "<<hmm_p0<<endl;
-        return OK;
+        return THOT_OK;
       }
       else
       {
         cerr<<"Error: anomalous .hmm_p0 file, "<<hmmP0FileName<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
     }
     else
     {
       cerr<<"Error: anomalous .hmm_p0 file, "<<hmmP0FileName<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -125,12 +125,12 @@ bool IncrHmmP0AligModel::printHmmP0(const char *hmmP0FileName)
   if(!outF)
   {
     cerr<<"Error while printing file with hmm p0 value."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
     outF<<hmm_p0<<endl;
-    return OK;
+    return THOT_OK;
   }
 }
 

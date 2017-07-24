@@ -43,11 +43,11 @@ bool DynClassFileHandler::load(std::string _fileName,int verbose/*=1*/)
   
   awkInputStream awk;
   
-  if(awk.open(fileName.c_str())==ERROR)
+  if(awk.open(fileName.c_str())==THOT_ERROR)
   {
     if(verbose)
       cerr<<"Error while opening file with dynamic class information: "<<fileName<<"\n";
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -96,7 +96,7 @@ bool DynClassFileHandler::load(std::string _fileName,int verbose/*=1*/)
         }
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -111,11 +111,11 @@ int DynClassFileHandler::getInfoForBaseClass(std::string baseClassName,
     soFileName=dciIter->second.first;
     initPars=dciIter->second.second;
      
-    return OK;
+    return THOT_OK;
   }
   else
   {
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 

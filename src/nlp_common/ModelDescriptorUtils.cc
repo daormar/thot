@@ -87,7 +87,7 @@ bool fileIsDescriptor(std::string fileName,
                       std::string& mainFileName)
 {
   awkInputStream awk;
-  if(awk.open(fileName.c_str())==ERROR)
+  if(awk.open(fileName.c_str())==THOT_ERROR)
     return false;
   else
   {
@@ -145,9 +145,9 @@ bool extractModelEntryInfo(std::string fileName,
   if(fileIsDescriptor(fileName,mainFileName))
   {
     awkInputStream awk;
-    if(awk.open(fileName.c_str())==ERROR)
+    if(awk.open(fileName.c_str())==THOT_ERROR)
     {
-      return ERROR;
+      return THOT_ERROR;
     }
     else
     {
@@ -172,11 +172,11 @@ bool extractModelEntryInfo(std::string fileName,
           }
         }
       }
-      return OK;
+      return THOT_OK;
     }
   }
   else
-    return ERROR;
+    return THOT_ERROR;
 }
 
 //---------------
@@ -189,7 +189,7 @@ bool printModelDescriptor(const Vector<ModelDescriptorEntry>& modelDescEntryVec,
   if(!outF)
   {
     cerr<<"Error while printing file containing model descriptor."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -199,6 +199,6 @@ bool printModelDescriptor(const Vector<ModelDescriptorEntry>& modelDescEntryVec,
       outF<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].modelFileName<<" "<<modelDescEntryVec[i].statusStr<<endl;
     }
     outF.close();	
-    return OK;
+    return THOT_OK;
   }
 }

@@ -43,14 +43,14 @@ bool WordPredictor::load(const char *fileName)
 {
       // Load file with sentences
   int ret=loadFileWithSents(fileName);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
   std::string fileAddInfoName=fileName;
   fileAddInfoName=fileAddInfoName+".addinfo";
   ret=loadFileWithAdditionalInfo(fileAddInfoName.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------------
@@ -59,10 +59,10 @@ bool WordPredictor::loadFileWithSents(const char *fileName)
   awkInputStream fileStream;
 
       // Open files
-  if(fileStream.open(fileName)==ERROR)
+  if(fileStream.open(fileName)==THOT_ERROR)
   {
     cerr<<"WordPredictor: Error while loading file with sentences "<<fileName<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -80,7 +80,7 @@ bool WordPredictor::loadFileWithSents(const char *fileName)
       strVec.clear();
     }
     fileStream.close();
-    return OK;
+    return THOT_OK;
   }  
 }
 
@@ -90,10 +90,10 @@ bool WordPredictor::loadFileWithAdditionalInfo(const char *fileName)
   awkInputStream fileStream;
 
       // Open files
-  if(fileStream.open(fileName)==ERROR)
+  if(fileStream.open(fileName)==THOT_ERROR)
   {
 //    cerr<<"WordPredictor: file with additional info "<<fileName<<" not found. No additional info was loaded"<<endl;
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -106,18 +106,18 @@ bool WordPredictor::loadFileWithAdditionalInfo(const char *fileName)
         numSentsToRetain=atoi(fileStream.dollar(1).c_str());
         cerr<<"numSentsToRetain= "<<numSentsToRetain<<endl;
         fileStream.close();
-        return OK;
+        return THOT_OK;
       }
       else
       {
         cerr<<"anomalous file with additional info"<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
     }
     else
     {
       cerr<<"unexpected end of file with additional info"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }    
 }

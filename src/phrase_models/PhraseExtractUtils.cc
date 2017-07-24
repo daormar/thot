@@ -37,15 +37,15 @@ namespace PhraseExtractUtils
     awkInputStream trgStream;
 
         // Open files
-    if(srcStream.open(srcCorpusFileName.c_str())==ERROR)
+    if(srcStream.open(srcCorpusFileName.c_str())==THOT_ERROR)
     {
       cerr<<"Unable to open file with source development sentences."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }  
-    if(trgStream.open(trgCorpusFileName.c_str())==ERROR)
+    if(trgStream.open(trgCorpusFileName.c_str())==THOT_ERROR)
     {
       cerr<<"Unable to open file with target development sentences."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }  
 
         // Iterate over all sentences
@@ -55,7 +55,7 @@ namespace PhraseExtractUtils
       if(!trgStream.getln())
       {
         cerr<<"Unexpected end of file with target development sentences."<<endl;
-        return ERROR;      
+        return THOT_ERROR;      
       }
 
           // Obtain sentence pair
@@ -74,8 +74,8 @@ namespace PhraseExtractUtils
           // Extract consistent phrase pairs
       Vector<PhrasePair> vecInvPhPair;
       int ret=extractConsistentPhrasePairs(swAligModelPtr,invSwAligModelPtr,srcSentStrVec,refSentStrVec,vecInvPhPair,verbose);
-      if(ret==ERROR)
-        return ERROR;
+      if(ret==THOT_ERROR)
+        return THOT_ERROR;
       
           // Add vector of phrase pairs
       invPhrPairs.push_back(vecInvPhPair);
@@ -85,7 +85,7 @@ namespace PhraseExtractUtils
     srcStream.close();
     trgStream.close();
 
-    return OK;
+    return THOT_OK;
   }
   
   //---------------------------------
@@ -120,7 +120,7 @@ namespace PhraseExtractUtils
                                    invWaMatrix,
                                    vecInvPhPair,
                                    verbose);
-    return OK;
+    return THOT_OK;
   }
 
   //---------------

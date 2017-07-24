@@ -48,7 +48,7 @@ int ThotMtFactory::init(int argc,
       // Init ThotDecoder instance
   int verbose=true;
   ret=thotDecoder.initUsingCfgFile(pars.c_str,tdup,verbose);
-  if(ret==OK) return EXIT_SUCCESS;
+  if(ret==THOT_OK) return EXIT_SUCCESS;
   else return EXIT_FAILURE;
 }
 

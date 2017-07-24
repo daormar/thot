@@ -175,9 +175,9 @@ int WgUncoupledAssistedTrans<SMT_MODEL>::link_stack_trans(BaseStackDecoder<SMT_M
 {
   sdr_ptr=dynamic_cast<_stackDecoderRec<SMT_MODEL>*>(_sd_ptr);
   if(sdr_ptr)
-    return OK;
+    return THOT_OK;
   else
-    return ERROR;
+    return THOT_ERROR;
 }
 
 //---------------------------------

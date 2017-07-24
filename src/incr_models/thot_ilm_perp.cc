@@ -79,7 +79,7 @@ int main(int argc,char *argv[])
   double perp;
   double total_time=0,elapsed_ant,elapsed,ucpu,scpu;
 
-  if(TakeParameters(argc,argv)==OK)
+  if(TakeParameters(argc,argv)==THOT_OK)
   {
     BaseIncrNgramLM<Vector<WordIndex> >* lm;
 
@@ -94,11 +94,11 @@ int main(int argc,char *argv[])
         break;
     }
 
-    if(lm->load(lmFileName.c_str())==ERROR)
+    if(lm->load(lmFileName.c_str())==THOT_ERROR)
     {
       cerr<<"Error while loading language model"<<endl;
       delete lm;
-      return ERROR;
+      return THOT_ERROR;
     }
     else
     {
@@ -106,10 +106,10 @@ int main(int argc,char *argv[])
       
       ctimer(&elapsed_ant,&ucpu,&scpu);
       int ret=lm->perplexity(corpusFileName.c_str(),sentenceNo,numWords,total_logp,perp,verbose);
-      if(ret==ERROR)
+      if(ret==THOT_ERROR)
       {
         delete lm;
-        return ERROR;
+        return THOT_ERROR;
       }
         
       ctimer(&elapsed,&ucpu,&scpu);  
@@ -126,10 +126,10 @@ int main(int argc,char *argv[])
 
       delete lm;
    
-      return OK;
+      return THOT_OK;
     }
   }
-  else return ERROR;
+  else return THOT_ERROR;
 }
 
 //--------------- TakeParameters function
@@ -142,7 +142,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1 || argc<2)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Take the language model file name */
@@ -150,7 +150,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
       /* Take order of the n-grams */
@@ -158,7 +158,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Check verbosity option */
@@ -195,7 +195,7 @@ int TakeParameters(int argc,char *argv[])
    lmType=CACHE_JEL_MER_LM;
  }
 
- return OK;  
+ return THOT_OK;  
 }
 
 //--------------------------------

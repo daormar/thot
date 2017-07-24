@@ -50,7 +50,7 @@ BaseSmtModel<PhrLocalSwLiTmHypRec<HypEqClassF> >* PhrLocalSwLiTm::clone(void)
 bool PhrLocalSwLiTm::loadAligModel(const char* prefixFileName)
 {
   bool ret=_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >::loadAligModel(prefixFileName);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Obtain prefix of main model
   std::string mainPrefixFileName=this->obtainMainModelAbsoluteNameFromPrefix(prefixFileName);
@@ -59,16 +59,16 @@ bool PhrLocalSwLiTm::loadAligModel(const char* prefixFileName)
   std::string lambdaFile=mainPrefixFileName;
   lambdaFile=lambdaFile+".lambda";
   ret=load_lambdas(lambdaFile.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
     
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
 bool PhrLocalSwLiTm::printAligModel(std::string printPrefix)
 {
   bool ret=_phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> >::printAligModel(printPrefix);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Obtain prefix of main model
   std::string mainPrintPrefix=this->obtainMainModelAbsoluteNameFromPrefix(printPrefix);
@@ -77,9 +77,9 @@ bool PhrLocalSwLiTm::printAligModel(std::string printPrefix)
   std::string lambdaFile=mainPrintPrefix;
   lambdaFile=lambdaFile+".lambda";
   ret=print_lambdas(lambdaFile.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -113,14 +113,14 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
   if(tmp_file==0)
   {
     cerr<<"Error updating linear interpolation weights of the phrase model, tmp file could not be created"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Extract phrase pairs from development corpus
   Vector<Vector<PhrasePair> > invPhrPairs;
   int ret=extractPhrPairsFromDevCorpus(srcDevCorpusFileName,trgDevCorpusFileName,invPhrPairs,verbose);
-  if(ret!=OK)
-    return ERROR;
+  if(ret!=THOT_OK)
+    return THOT_ERROR;
   
       // Execute downhill simplex algorithm
   bool end=false;
@@ -136,7 +136,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
     ret=step_by_step_simplex(start,ndim,PHRSWLITM_DHS_FTOL,PHRSWLITM_DHS_SCALE_PAR,NULL,tmp_file,&nfunk,&y,x,&curr_dhs_ftol,false);
     switch(ret)
     {
-      case OK: end=true;
+      case THOT_OK: end=true;
         break;
       case DSO_NMAX_ERROR: cerr<<"Error updating linear interpolation weights of the phrase model, maximum number of iterations exceeded"<<endl;
         end=true;
@@ -144,7 +144,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
       case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
         double perp;
         int retEval=new_dhs_eval(invPhrPairs,tmp_file,x,perp);
-        if(retEval==ERROR)
+        if(retEval==THOT_ERROR)
         {
           end=true;
           break;
@@ -161,7 +161,7 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
   }
   
       // Set new weights if updating was successful
-  if(ret==OK)
+  if(ret==THOT_OK)
   {
     swModelInfoPtr->lambda_swm=start[0];
     swModelInfoPtr->lambda_invswm=start[1];
@@ -177,10 +177,10 @@ int PhrLocalSwLiTm::updateLinInterpWeights(std::string srcDevCorpusFileName,
   free(x);
   fclose(tmp_file);
 
-  if(ret!=OK)
-    return ERROR;
+  if(ret!=THOT_OK)
+    return THOT_ERROR;
   else
-    return OK; 
+    return THOT_OK; 
 }
 
 
@@ -224,7 +224,7 @@ int PhrLocalSwLiTm::extractConsistentPhrasePairs(const Vector<std::string>& srcS
                                                           invWaMatrix,
                                                           vecInvPhPair,
                                                           verbose);
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -238,7 +238,7 @@ int PhrLocalSwLiTm::extractConsistentPhrasePairs(const Vector<std::string>& srcS
                                                       invWaMatrix,
                                                       vecInvPhPair,
                                                       verbose);
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -256,15 +256,15 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
   awkInputStream trgDevStream;
 
       // Open files
-  if(srcDevStream.open(srcDevCorpusFileName.c_str())==ERROR)
+  if(srcDevStream.open(srcDevCorpusFileName.c_str())==THOT_ERROR)
   {
     cerr<<"Unable to open file with source development sentences."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
-  if(trgDevStream.open(trgDevCorpusFileName.c_str())==ERROR)
+  if(trgDevStream.open(trgDevCorpusFileName.c_str())==THOT_ERROR)
   {
     cerr<<"Unable to open file with target development sentences."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
 
       // Iterate over all sentences
@@ -274,7 +274,7 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
     if(!trgDevStream.getln())
     {
       cerr<<"Unexpected end of file with target development sentences."<<endl;
-      return ERROR;      
+      return THOT_ERROR;      
     }
 
         // Obtain sentence pair
@@ -293,8 +293,8 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
         // Extract consistent phrase pairs
     Vector<PhrasePair> vecInvPhPair;
     int ret=extractConsistentPhrasePairs(srcSentStrVec,refSentStrVec,vecInvPhPair,verbose);
-    if(ret==ERROR)
-      return ERROR;
+    if(ret==THOT_ERROR)
+      return THOT_ERROR;
       
         // Add vector of phrase pairs
     invPhrPairs.push_back(vecInvPhPair);
@@ -304,7 +304,7 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
   srcDevStream.close();
   trgDevStream.close();
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -391,7 +391,7 @@ int PhrLocalSwLiTm::new_dhs_eval(const Vector<Vector<PhrasePair> >& invPhrPairs,
       // indicator is set at the start of the stream
   rewind(tmp_file);
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -705,7 +705,7 @@ int PhrLocalSwLiTm::onlineTrainFeatsSentPair(const char *srcSent,
   if(strlen(srcSent)==0 || strlen(refSent)==0)
   {
     cerr<<"Error: cannot process empty input sentences"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Train pair according to chosen algorithm
@@ -722,7 +722,7 @@ int PhrLocalSwLiTm::onlineTrainFeatsSentPair(const char *srcSent,
       break;
     default:
       cerr<<"Warning: requested online learning algoritm with id="<<onlineTrainingPars.onlineLearningAlgorithm<<" is not implemented."<<endl;
-      return ERROR;
+      return THOT_ERROR;
       break;
   }
 }
@@ -740,7 +740,7 @@ int PhrLocalSwLiTm::incrTrainFeatsSentPair(const char *srcSent,
       // Train language model
   if(verbose) cerr<<"Training language model..."<<endl;
   ret=langModelInfoPtr->lModelPtr->trainSentence(refSentStrVec,onlineTrainingPars.learnStepSize,0,verbose);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Revise vocabularies of the alignment models
   updateAligModelsSrcVoc(srcSentStrVec);
@@ -904,7 +904,7 @@ int PhrLocalSwLiTm::minibatchTrainFeatsSentPair(const char *srcSent,
     ++stepNum;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -1024,7 +1024,7 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
     langModelInfoPtr->lModelPtr->trainSentenceVec(vecTrgSent,(Count)learningRate,(Count)0,verbose);
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -1178,12 +1178,12 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
         // Store new phrase model current sufficient statistics
     vecVecInvPhPair[mapped_n]=vecInvPhPair;
 
-    return OK;
+    return THOT_OK;
   }
   else
   {
     cerr<<"Warning: addition of new translation options not supported in this configuration!"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 
@@ -1192,10 +1192,10 @@ bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
 {
   awkInputStream awk;
   
-  if(awk.open(lambdaFileName)==ERROR)
+  if(awk.open(lambdaFileName)==THOT_ERROR)
   {
     cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist. Current values-> lambda_swm="<<swModelInfoPtr->lambda_swm<<" , lambda_invswm="<<swModelInfoPtr->lambda_invswm<<endl;
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -1206,7 +1206,7 @@ bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
         swModelInfoPtr->lambda_swm=atof(awk.dollar(1).c_str());
         swModelInfoPtr->lambda_invswm=atof(awk.dollar(1).c_str());
         cerr<<"Read lambda value from file: "<<lambdaFileName<<" (lambda_swm="<<swModelInfoPtr->lambda_swm<<", lambda_invswm="<<swModelInfoPtr->lambda_invswm<<")"<<endl;
-        return OK;
+        return THOT_OK;
       }
       else
       {
@@ -1215,22 +1215,22 @@ bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
           swModelInfoPtr->lambda_swm=atof(awk.dollar(1).c_str());
           swModelInfoPtr->lambda_invswm=atof(awk.dollar(2).c_str());
           cerr<<"Read lambda value from file: "<<lambdaFileName<<" (lambda_swm="<<swModelInfoPtr->lambda_swm<<", lambda_invswm="<<swModelInfoPtr->lambda_invswm<<")"<<endl;
-          return OK;
+          return THOT_OK;
         }
         else
         {
           cerr<<"Anomalous file with lambda values."<<endl;
-          return ERROR;
+          return THOT_ERROR;
         }
       }
     }
     else
     {
       cerr<<"Anomalous file with lambda values."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }  
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------
@@ -1242,13 +1242,13 @@ bool PhrLocalSwLiTm::print_lambdas(const char* lambdaFileName)
   if(!outF)
   {
     cerr<<"Error while printing file with lambda values."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
     print_lambdas(outF);
     outF.close();	
-    return OK;
+    return THOT_OK;
   }   
 }
 

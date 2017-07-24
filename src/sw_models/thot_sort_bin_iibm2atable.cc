@@ -92,14 +92,14 @@ std::string iibm2atableFileName;
 //--------------- main function
 int main(int argc,char *argv[])
 {
-  if(TakeParameters(argc,argv)==OK)
+  if(TakeParameters(argc,argv)==THOT_OK)
   {
         // Try to open file  
     ifstream inF (iibm2atableFileName.c_str(), ios::in | ios::binary);
     if (!inF)
     {
       cerr<<"Error in file with incremental ibm2 alignment table, file "<<iibm2atableFileName<<" does not exist.\n";
-      return ERROR;    
+      return THOT_ERROR;    
     }
     else
     {
@@ -141,10 +141,10 @@ int main(int argc,char *argv[])
         cout.write((char*)&entryVec[i].denom,sizeof(float));            
       }
       
-      return OK;
+      return THOT_OK;
     }
   }
-  else return ERROR;
+  else return THOT_ERROR;
 }
 
 //--------------- TakeParameters function
@@ -155,7 +155,7 @@ int TakeParameters(int argc,char *argv[])
  if(argc==1)
  {
    printDesc();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
      /* Verify --help option */
@@ -163,7 +163,7 @@ int TakeParameters(int argc,char *argv[])
  if(err!=-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Takes the table file name */
@@ -171,10 +171,10 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
- return OK;  
+ return THOT_OK;  
 }
 
 //--------------- printDesc() function

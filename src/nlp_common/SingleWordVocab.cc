@@ -155,10 +155,10 @@ bool SingleWordVocab::loadGIZASrcVocab(const char *srcInputVocabFileName)
 {
  awkInputStream awk;
 
- if(awk.open(srcInputVocabFileName)==ERROR)
+ if(awk.open(srcInputVocabFileName)==THOT_ERROR)
  {
    cerr<<"Error in GIZA source vocabulary, file "<<srcInputVocabFileName<<" does not exist.\n";
-   return ERROR;
+   return THOT_ERROR;
  }  
  else
  {
@@ -183,13 +183,13 @@ bool SingleWordVocab::loadGIZASrcVocab(const char *srcInputVocabFileName)
        else
        {
          cerr<<"Error in GIZA source vocabulary file\n";
-         return ERROR;
+         return THOT_ERROR;
        }
      } 
    }
    awk.close();
    
-   return OK;
+   return THOT_OK;
  } 
 }
 
@@ -202,11 +202,11 @@ bool SingleWordVocab::printGIZASrcVocab(const char *outputFileName)
  if(!outF)
  {
    cerr<<"Error while printing source vocabulary."<<endl;
-   return ERROR;
+   return THOT_ERROR;
  }
  outF<<stringToSrcWordIndexMap;
  outF.close();
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------
@@ -314,10 +314,10 @@ bool SingleWordVocab::loadGIZATrgVocab(const char *trgInputVocabFileName)
 {
  awkInputStream awk;
 
- if(awk.open(trgInputVocabFileName)==ERROR)
+ if(awk.open(trgInputVocabFileName)==THOT_ERROR)
  {
    cerr<<"Error in GIZA target vocabulary, file "<<trgInputVocabFileName<<" does not exist.\n";
-   return ERROR;
+   return THOT_ERROR;
  }  
  else
  {
@@ -347,7 +347,7 @@ bool SingleWordVocab::loadGIZATrgVocab(const char *trgInputVocabFileName)
    }
    awk.close();
 
-   return OK;
+   return THOT_OK;
  } 
 }
 
@@ -360,11 +360,11 @@ bool SingleWordVocab::printGIZATrgVocab(const char *outputFileName)
  if(!outF)
  {
    cerr<<"Error while printing target vocabulary."<<endl;
-   return ERROR;
+   return THOT_ERROR;
  }
  outF<<stringToTrgWordIndexMap;
  outF.close();
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------
@@ -373,10 +373,10 @@ bool SingleWordVocab::loadSrcClassDicFile(char *srcClassDicFileName)
  awkInputStream awk;
  
  srcClassDic.clear();
- if(awk.open(srcClassDicFileName)==ERROR)
+ if(awk.open(srcClassDicFileName)==THOT_ERROR)
  {
    cerr<<"Error while reading source class dictionary file, file "<<srcClassDicFileName<<" does not exist.\n";
-   return ERROR;
+   return THOT_ERROR;
  }  
  else
  {
@@ -394,13 +394,13 @@ bool SingleWordVocab::loadSrcClassDicFile(char *srcClassDicFileName)
        else
        {
          cerr<<"Error in source class dictionary file\n";
-         return ERROR;
+         return THOT_ERROR;
        }
      }
    }
  }
  
- return OK;
+ return THOT_OK;
 }
 //-------------------------
 ClassIndex SingleWordVocab::getClassForSrcWord(WordIndex w)
@@ -413,10 +413,10 @@ bool SingleWordVocab::loadTrgClassDicFile(char *trgClassDicFileName)
  awkInputStream awk;
  
  trgClassDic.clear();
- if(awk.open(trgClassDicFileName)==ERROR)
+ if(awk.open(trgClassDicFileName)==THOT_ERROR)
  {
    cerr<<"Error while reading target class dictionary file, file "<<trgClassDicFileName<<" does not exist.\n";
-   return ERROR;
+   return THOT_ERROR;
  }  
  else
  {
@@ -433,13 +433,13 @@ bool SingleWordVocab::loadTrgClassDicFile(char *trgClassDicFileName)
        else
        {
          cerr<<"Error in target class dictionary file\n";
-         return ERROR;
+         return THOT_ERROR;
        }
      }
    }
  }
  
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------

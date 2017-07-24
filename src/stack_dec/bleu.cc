@@ -34,14 +34,14 @@ int calc_bleu(const char* ref,
   if(reff==NULL)
   {
     cerr<<"Error while opening file with references: "<<ref<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   sysf=fopen(sys,"r");
   if(sysf==NULL)
   {
     cerr<<"Error while opening file with translations: "<<sys<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   ret=calc_bleuf(reff,sysf,bleu,bp,bleu_n,verbosity);
@@ -81,15 +81,15 @@ int calc_bleuf(FILE *reff,
   }
   
       // Open files
-  if(refStream.open_stream(reff)==ERROR)
+  if(refStream.open_stream(reff)==THOT_ERROR)
   {
     cerr<<"Invalid file pointer to file with references."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
-  if(sysStream.open_stream(sysf)==ERROR)
+  if(sysStream.open_stream(sysf)==THOT_ERROR)
   {
     cerr<<"Invalid file pointer to file with system translations."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
 
   while(refStream.getln())
@@ -101,7 +101,7 @@ int calc_bleuf(FILE *reff,
     if(!ok)
     {
       cerr<<"Unexpected end of system file."<<endl;
-      return ERROR;      
+      return THOT_ERROR;      
     }
 
     ++numSents;
@@ -178,7 +178,7 @@ int calc_bleuf(FILE *reff,
     cerr<<"sys. words: "<<sysWords<<endl;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------

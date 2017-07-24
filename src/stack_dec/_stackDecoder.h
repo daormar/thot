@@ -268,9 +268,9 @@ bool _stackDecoder<SMT_MODEL>::link_smt_model(BaseSmtModel<Hypothesis>* _smtm_pt
       // Link smt model
   smtm_ptr=dynamic_cast<SMT_MODEL*>(_smtm_ptr);
   if(smtm_ptr)
-    return OK;
+    return THOT_OK;
   else
-    return ERROR;
+    return THOT_ERROR;
 }
 
 //---------------------------------------
@@ -400,7 +400,7 @@ _stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
   
         // Execute actions previous to the translation process
     int ret=pre_trans_actions(s);
-    if(ret==ERROR)
+    if(ret==THOT_ERROR)
     {
       init_state();
       Hypothesis nullHyp;
@@ -690,13 +690,13 @@ int _stackDecoder<SMT_MODEL>::pre_trans_actions(std::string srcsent)
       cerr<<"Warning: the sentence to translate is empty"<<endl;
     else
       cerr<<"Error: the sentence to translate is too long (MAX= "<<MAX_SENTENCE_LENGTH_ALLOWED<<" words)"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   specific_pre_trans_actions(srcsent);
   bestCompleteHypScore=worstScoreAllowed;
   bestCompleteHyp=smtm_ptr->nullHypothesis();
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------

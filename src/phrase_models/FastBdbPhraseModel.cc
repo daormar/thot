@@ -242,17 +242,17 @@ bool FastBdbPhraseModel::load_given_prefix(const char *prefix)
   std::string srcvocabfile=prefix;
   srcvocabfile=srcvocabfile+".srcvoc";
   ret=loadSrcVocab(srcvocabfile.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
   
       // Load target vocabulary
   std::string trgvocabfile=prefix;
   trgvocabfile=trgvocabfile+".trgvoc";
   ret=loadTrgVocab(trgvocabfile.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
   
       // Load translation table
   ret=fastBdbPhraseTable.init(prefix);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Load segmentation length table
   std::string seglenfile=prefix;
@@ -277,7 +277,7 @@ bool FastBdbPhraseModel::load_given_prefix(const char *prefix)
       // Store prefix of model files
   prefixOfModelFiles=prefix;
 
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -293,12 +293,12 @@ bool FastBdbPhraseModel::print(const char *prefix)
   if(prefixOfModelFiles==prefixStl)
   {
     fastBdbPhraseTable.enableFastSearch();
-    return OK;
+    return THOT_OK;
   }
   else
   {
     cerr<<"Warning: print() function not implemented for this model"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 

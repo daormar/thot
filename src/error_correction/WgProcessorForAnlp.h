@@ -1418,13 +1418,13 @@ bool WgProcessorForAnlp<ECM_FOR_WG>::print(const char* filename)const
   if(!outS)
   {
     cerr<<"Error while printing word-graph processing information to file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
     print(outS);
     outS.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 

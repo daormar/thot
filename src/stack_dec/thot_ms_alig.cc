@@ -173,17 +173,17 @@ int main(int argc, char *argv[])
 {
       // Take and check parameters
   thot_ms_alig_pars tap;
-  if(handleParameters(argc,argv,tap)==ERROR)
+  if(handleParameters(argc,argv,tap)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
         // init translator    
-    if(init_translator(tap)==ERROR)
+    if(init_translator(tap)==THOT_ERROR)
     {      
       cerr<<"Error during the initialization of the translator"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     else
     {
@@ -191,8 +191,8 @@ int main(int argc, char *argv[])
 
       ret=align_corpus(tap);
       release_translator();
-      if(ret==ERROR) return ERROR;
-      else return OK;
+      if(ret==THOT_ERROR) return THOT_ERROR;
+      else return THOT_OK;
     }
   }
 }
@@ -243,15 +243,15 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
         // Obtain info about translation model entries
   unsigned int numTransModelEntries;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(tap.transModelPref.c_str(),modelDescEntryVec)==OK)
+  if(extractModelEntryInfo(tap.transModelPref.c_str(),modelDescEntryVec)==THOT_OK)
     numTransModelEntries=modelDescEntryVec.size();
   else
     numTransModelEntries=1;
 
       // Initialize class factories
   ret=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
 
       // Create decoder variables
   langModelInfoPtr=new LangModelInfo;
@@ -259,14 +259,14 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
   if(langModelInfoPtr->wpModelPtr==NULL)
   {
     cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   langModelInfoPtr->lModelPtr=dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(dynClassFactoryHandler.baseNgramLMInitPars);
   if(langModelInfoPtr->lModelPtr==NULL)
   {
     cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   phrModelInfoPtr=new PhraseModelInfo;
@@ -274,7 +274,7 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
   if(phrModelInfoPtr->invPbModelPtr==NULL)
   {
     cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Add one swm pointer per each translation model entry
@@ -285,7 +285,7 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
     if(swModelInfoPtr->swAligModelPtrVec[i]==NULL)
     {
       cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 
@@ -296,7 +296,7 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
     if(swModelInfoPtr->invSwAligModelPtrVec[i]==NULL)
     {
       cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 
@@ -304,14 +304,14 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
   if(llWeightUpdaterPtr==NULL)
   {
     cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(trConstraintsPtr==NULL)
   {
     cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Instantiate smt model
@@ -337,17 +337,17 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
   if(phrbtm_ptr)
   {
     ret=phrbtm_ptr->loadLangModel(tap.languageModelFileName.c_str());
-    if(ret==ERROR)
+    if(ret==THOT_ERROR)
     {
       release_translator();
-      return ERROR;
+      return THOT_ERROR;
     }
     
     ret=phrbtm_ptr->loadAligModel(tap.transModelPref.c_str());
-    if(ret==ERROR)
+    if(ret==THOT_ERROR)
     {
       release_translator();
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 
@@ -372,7 +372,7 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
   if(stackDecoderPtr==NULL)
   {
     cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Determine if the translator incorporates hypotheses recombination
@@ -380,10 +380,10 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
 
       // Link translation model
   ret=stackDecoderPtr->link_smt_model(smtModelPtr);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
     cerr<<"Error while linking smt model to decoder, revise master.ini file"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   
       // Set translator parameters
@@ -411,7 +411,7 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
       // Set translator verbosity
   stackDecoderPtr->setVerbosity(tap.verbosity);
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -428,20 +428,20 @@ int add_model_features(const thot_ms_alig_pars& tap)
 {
       // Add word penalty model feature
   int ret=featureHandler.addWpFeat(tap.verbosity);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
 
       // Add language model features
   ret=featureHandler.addLmFeats(tap.languageModelFileName,tap.verbosity);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
 
       // Add translation model features
   ret=featureHandler.addTmFeats(tap.transModelPref,tap.verbosity);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -459,22 +459,22 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
 
       // Initialize class factories
   ret=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
 
       // Create decoder variables
   llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(llWeightUpdaterPtr==NULL)
   {
     cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(trConstraintsPtr==NULL)
   {
     cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Instantiate smt model
@@ -493,8 +493,8 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
   
       // Add model features
   ret=add_model_features(tap);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
   
       // Set heuristic
   smtModelPtr->setHeuristic(tap.heuristic);
@@ -517,7 +517,7 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
   if(stackDecoderPtr==NULL)
   {
     cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Determine if the translator incorporates hypotheses recombination
@@ -525,10 +525,10 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
 
       // Link translation model
   ret=stackDecoderPtr->link_smt_model(smtModelPtr);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
     cerr<<"Error while linking smt model to decoder, revise master.ini file"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Set translator parameters
@@ -556,7 +556,7 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
       // Set translator verbosity
   stackDecoderPtr->setVerbosity(tap.verbosity);
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -623,7 +623,7 @@ int align_corpus(const thot_ms_alig_pars& tap)
   if(testCorpusFile.fail())
   {
     cerr<<"Error while opening file with test sentences "<<tap.sourceSentencesFile<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   testCorpusFile.seekg(0, ios::beg);
 
@@ -632,7 +632,7 @@ int align_corpus(const thot_ms_alig_pars& tap)
   if(refCorpusFile.fail())
   {
     cerr<<"Error while opening file with references "<<tap.refSentencesFile<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   refCorpusFile.seekg(0, ios::beg);
 
@@ -641,7 +641,7 @@ int align_corpus(const thot_ms_alig_pars& tap)
   if(!testCorpusFile)
   {
     cerr<<"Test corpus error!"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -733,7 +733,7 @@ int align_corpus(const thot_ms_alig_pars& tap)
     cerr<<"- Time per sentence: "<<total_time/sentNo<<endl;
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------------------------------
@@ -794,27 +794,27 @@ int handleParameters(int argc,
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
     version();
-    return ERROR;
+    return THOT_ERROR;
   }
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
+    return THOT_ERROR;   
   }
-  if(takeParameters(argc,argv,tap)==ERROR)
+  if(takeParameters(argc,argv,tap)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
-    if(checkParameters(tap)==OK)
+    if(checkParameters(tap)==THOT_OK)
     {
       printParameters(tap);
-      return OK;
+      return THOT_OK;
     }
     else
     {
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -831,11 +831,11 @@ int takeParameters(int argc,
   {
         // Process configuration file
     err=takeParametersFromCfgFile(cfgFileName,tap);
-    if(err==ERROR) return ERROR;
+    if(err==THOT_ERROR) return THOT_ERROR;
   }
       // process command line parameters
   takeParametersGivenArgcArgv(argc,argv,tap);
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -847,7 +847,7 @@ int takeParametersFromCfgFile(std::string cfgFileName,
     int cfgFileArgc;
     Vector<std::string> cfgFileArgvStl;
     int ret=extractParsFromFile(cfgFileName.c_str(),cfgFileArgc,cfgFileArgvStl,comment);
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
 
         // Create argv for cfg file
     char** cfgFileArgv=(char**) malloc(cfgFileArgc*sizeof(char*));
@@ -867,7 +867,7 @@ int takeParametersFromCfgFile(std::string cfgFileName,
     free(cfgFileArgv);
 
         // Return without error
-    return OK;
+    return THOT_OK;
 }
 
 //---------------
@@ -983,34 +983,34 @@ int checkParameters(const thot_ms_alig_pars& tap)
   if(tap.languageModelFileName.empty())
   {
     cerr<<"Error: parameter -lm not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
   
   if(tap.transModelPref.empty())
   {
     cerr<<"Error: parameter -tm not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
   if(tap.sourceSentencesFile.empty())
   {
     cerr<<"Error: parameter -t not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
   if(tap.refSentencesFile.empty())
   {
     cerr<<"Error: parameter -r not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
   if(tap.p_option && tap.cov_option)
   {
      cerr<<"Error: -p and -cov options cannot be given simultaneously"<<endl;
-     return ERROR;
+     return THOT_ERROR;
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------

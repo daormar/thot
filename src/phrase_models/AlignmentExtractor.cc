@@ -75,7 +75,7 @@ bool AlignmentExtractor::open(const char *str,
   if(fileStream==NULL)
   {
     cerr<<"Error while opening file with alignments: "<<str<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Set value of data member fileFormat
@@ -332,9 +332,9 @@ bool AlignmentExtractor::join(const char *GizaAligFileName,
  }
 #endif
  
- if(alExt.open(GizaAligFileName)==ERROR)
+ if(alExt.open(GizaAligFileName)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -360,7 +360,7 @@ bool AlignmentExtractor::join(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 //-------------------------
 bool AlignmentExtractor::intersect(const char *GizaAligFileName,
@@ -389,9 +389,9 @@ bool AlignmentExtractor::intersect(const char *GizaAligFileName,
  }
 #endif
     
- if(alExt.open(GizaAligFileName)==ERROR)
+ if(alExt.open(GizaAligFileName)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -418,7 +418,7 @@ bool AlignmentExtractor::intersect(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 //-------------------------
 bool AlignmentExtractor::sum(const char *GizaAligFileName,
@@ -447,9 +447,9 @@ bool AlignmentExtractor::sum(const char *GizaAligFileName,
  }
 #endif
  
- if(alExt.open(GizaAligFileName)==ERROR)
+ if(alExt.open(GizaAligFileName)==THOT_ERROR)
  {   
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -476,7 +476,7 @@ bool AlignmentExtractor::sum(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 //-------------------------
 bool AlignmentExtractor::symmetr1(const char *GizaAligFileName,
@@ -505,9 +505,9 @@ bool AlignmentExtractor::symmetr1(const char *GizaAligFileName,
  }
 #endif
  
- if(alExt.open(GizaAligFileName)==ERROR)
+ if(alExt.open(GizaAligFileName)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -534,7 +534,7 @@ bool AlignmentExtractor::symmetr1(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------
@@ -564,9 +564,9 @@ bool AlignmentExtractor::symmetr2(const char *GizaAligFileName,
  }
 #endif
  
- if(alExt.open(GizaAligFileName)==ERROR)
+ if(alExt.open(GizaAligFileName)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -593,7 +593,7 @@ bool AlignmentExtractor::symmetr2(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------
@@ -623,9 +623,9 @@ bool AlignmentExtractor::growDiagFinal(const char *GizaAligFileName,
  }
 #endif
  
- if(alExt.open(GizaAligFileName)==ERROR)
+ if(alExt.open(GizaAligFileName)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -652,7 +652,7 @@ bool AlignmentExtractor::growDiagFinal(const char *GizaAligFileName,
  }
  rewind();
 
- return OK;
+ return THOT_OK;
 }
 
 //-------------------------

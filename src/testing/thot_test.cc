@@ -83,16 +83,16 @@ int main(int argc, char *argv[])
 {
       // Take and check parameters
   thot_test_pars ttp;
-  if(handleParameters(argc,argv,ttp)==ERROR)
+  if(handleParameters(argc,argv,ttp)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
         // Launch tests
     int ret=launch_tests(ttp);
-    if(ret==ERROR) return ERROR;
-    else return OK;
+    if(ret==THOT_ERROR) return THOT_ERROR;
+    else return THOT_OK;
   }
 }
 
@@ -121,29 +121,29 @@ int handleParameters(int argc,
                      char *argv[],
                      thot_test_pars& ttp)
 {
-  if(readOption(argc,argv,"--version")==OK)
+  if(readOption(argc,argv,"--version")==THOT_OK)
   {
     version();
-    return ERROR;
+    return THOT_ERROR;
   }
-  if(readOption(argc,argv,"--help")==OK)
+  if(readOption(argc,argv,"--help")==THOT_OK)
   {
     printUsage();
-    return ERROR;   
+    return THOT_ERROR;   
   }
-  if(takeParameters(argc,argv,ttp)==ERROR)
+  if(takeParameters(argc,argv,ttp)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
-    if(checkParameters(ttp)==OK)
+    if(checkParameters(ttp)==THOT_OK)
     {
-      return OK;
+      return THOT_OK;
     }
     else
     {
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -151,7 +151,7 @@ int handleParameters(int argc,
 //---------------
 int checkParameters(const thot_test_pars& ttp)
 {
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -166,7 +166,7 @@ int takeParameters(int argc,
   {
         // TO-BE-DONE
   }
-  return OK;
+  return THOT_OK;
 }
 
 //---------------

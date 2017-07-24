@@ -126,7 +126,7 @@ namespace WeightUpdateUtils
     if(tmp_file==0)
     {
       cerr<<"Error updating linear interpolation weights of the phrase model, tmp file could not be created"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
 
         // Extract phrase pairs from development corpus
@@ -137,8 +137,8 @@ namespace WeightUpdateUtils
                                                                trgCorpusFileName,
                                                                invPhrPairs,
                                                                verbose);
-    if(ret!=OK)
-      return ERROR;
+    if(ret!=THOT_OK)
+      return THOT_ERROR;
   
         // Execute downhill simplex algorithm
     bool end=false;
@@ -154,7 +154,7 @@ namespace WeightUpdateUtils
       ret=step_by_step_simplex(start,ndim,PHRSWLITM_DHS_FTOL,PHRSWLITM_DHS_SCALE_PAR,NULL,tmp_file,&nfunk,&y,x,&curr_dhs_ftol,false);
       switch(ret)
       {
-        case OK: end=true;
+        case THOT_OK: end=true;
           break;
         case DSO_NMAX_ERROR: cerr<<"Error updating linear interpolation weights of the phrase model, maximum number of iterations exceeded"<<endl;
           end=true;
@@ -162,7 +162,7 @@ namespace WeightUpdateUtils
         case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
           double perp;
           int retEval=linInterpWeightsDhsEval(invPhrPairs,dirPhrModelFeatPtr,invPhrModelFeatPtr,tmp_file,x,perp);
-          if(retEval==ERROR)
+          if(retEval==THOT_ERROR)
           {
             end=true;
             break;
@@ -179,7 +179,7 @@ namespace WeightUpdateUtils
     }
   
         // Set new weights if updating was successful
-    if(ret==OK)
+    if(ret==THOT_OK)
     {
       dirPhrModelFeatPtr->set_lambda(start[0]);
       invPhrModelFeatPtr->set_lambda(start[1]);
@@ -195,10 +195,10 @@ namespace WeightUpdateUtils
     free(x);
     fclose(tmp_file);
 
-    if(ret!=OK)
-      return ERROR;
+    if(ret!=THOT_OK)
+      return THOT_ERROR;
     else
-      return OK; 
+      return THOT_OK; 
   }
   
   //---------------------------------
@@ -242,7 +242,7 @@ namespace WeightUpdateUtils
         // indicator is set at the start of the stream
     rewind(tmp_file);
 
-    return OK;
+    return THOT_OK;
   }
 
   //---------------------------------

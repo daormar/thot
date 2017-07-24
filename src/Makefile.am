@@ -5,6 +5,7 @@ ZLIB=@ZLIB@
 BZ2LIB=@BZ2LIB@
 LZMALIB=@LZMALIB@
 LDB_CXX=@LDB_CXX@
+LEVELDB_LIB=@LEVELDB_LIB@
 CPPUNIT=@CPPUNIT@
 
 if HAVE_DB_CXX_LIB
@@ -12,6 +13,11 @@ if HAVE_DB_CXX_H
 DB_CXX_PROGS=thot_ttable_to_fbdb
 DB_CXX_LIBS=bdb_phrase_model_factory.la fast_bdb_phrase_model_factory.la
 endif
+endif
+
+if HAVE_LEVELDB_LIB
+LEVELDB_PROGS=thot_ttable_to_leveldb
+LEVELDB_LIBS=leveldb_phrase_model_factory.la
 endif
 
 AUTOMAKE_OPTIONS = subdir-objects
@@ -45,7 +51,7 @@ thot_filter_bin_ilextable thot_prune_bin_ilextable thot_alig_op		\
 thot_query_pm thot_gen_phr_model thot_wg_proc thot_dhs_step_by_step_min	\
 thot_ms_dec thot_ms_alig thot_li_weight_upd thot_ll_weight_upd_nblist	\
 thot_client thot_server thot_scorer thot_calc_bleu $(DB_CXX_PROGS)	\
-$(TESTING_PROGS)
+$(LEVELDB_PROGS) $(TESTING_PROGS)
 
 lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la incr_interp_ngram_lm_factory.la	\
@@ -60,7 +66,7 @@ wg_uncoupled_assisted_trans__swli_factory.la				\
 multi_stack_decoder_rec__pbtm_factory.la				\
 wg_uncoupled_assisted_trans__pbtm_factory.la				\
 translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
-$(DB_CXX_LIBS)
+$(DB_CXX_LIBS) $(LEVELDB_LIBS)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
@@ -72,7 +78,8 @@ AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
 
 AM_CFLAGS= $(AM_CXXFLAGS)
 
-LDADD = $(KENLM_LDADD) $(LGMP) $(ZLIB) $(LDB_CXX) $(CPPUNIT) -ldl
+LDADD = $(KENLM_LDADD) $(LGMP) $(ZLIB) $(LDB_CXX) $(LEVELDB_LIB)	\
+$(CPPUNIT) -ldl
 
 # sources
 common_src_h= thot_config.h
@@ -233,6 +240,13 @@ phrase_models/FastBdbPhraseModel.cc
 endif
 endif
 
+if HAVE_LEVELDB_LIB
+leveldb_pm_h=phrase_models/LevelDbPhraseTable.h	\
+phrase_models/LevelDbPhraseModel.h
+leveldb_pm_defs= phrase_models/LevelDbPhraseTable.cc	\
+phrase_models/LevelDbPhraseModel.cc
+endif
+
 smt_preproc_h= smt_preproc/SmtPreprocDefs.h smt_preproc/BasePrePosProcessor.h
 smt_preproc_defs=
 
@@ -354,13 +368,19 @@ exper_defs=
 testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h
 testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc
 
+if HAVE_LEVELDB_LIB
+leveldb_pm_testing_h= testing/LevelDbPhraseTableTest.h
+leveldb_pm_testing_defs= testing/LevelDbPhraseTableTest.cc
+endif
+
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
 $(sw_models_h) $(sw_models_defs) $(phrase_models_h)			\
-$(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs) $(smt_preproc_h)	\
-$(smt_preproc_defs) $(error_correction_h) $(error_correction_defs)	\
-$(downhill_simplex_h) $(downhill_simplex_defs) $(stack_dec_h)		\
-$(stack_dec_defs) $(exper_h) $(exper_defs)
+$(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs) $(leveldb_pm_h)	\
+$(leveldb_pm_defs) $(smt_preproc_h) $(smt_preproc_defs)			\
+$(error_correction_h) $(error_correction_defs) $(downhill_simplex_h)	\
+$(downhill_simplex_defs) $(stack_dec_h) $(stack_dec_defs) $(exper_h)	\
+$(exper_defs)
 
 # Class factories
 
@@ -415,6 +435,10 @@ phrase_models/FastBdbPhraseModelFactory.cc
 incr_mux_phrase_model_factory_h= 
 incr_mux_phrase_model_factory_defs=		\
 phrase_models/IncrMuxPhraseModelFactory.cc
+
+##########
+leveldb_phrase_model_factory_h= 
+leveldb_phrase_model_factory_defs= phrase_models/LevelDbPhraseModelFactory.cc
 
 ##########
 pfsm_ecm_for_wg_factory_h= 
@@ -553,6 +577,10 @@ thot_ttable_to_fbdb_SOURCES = phrase_models/thot_ttable_to_fbdb.cc
 thot_ttable_to_fbdb_LDFLAGS = libthot.la
 
 ##########
+thot_ttable_to_leveldb_SOURCES= phrase_models/thot_ttable_to_leveldb.cc
+thot_ttable_to_leveldb_LDFLAGS= libthot.la
+
+##########
 thot_wg_proc_SOURCES = error_correction/thot_wg_proc_pars.h	\
 error_correction/thot_wg_proc.cc
 thot_wg_proc_LDFLAGS = libthot.la
@@ -598,7 +626,8 @@ thot_calc_bleu_LDFLAGS = libthot.la
 
 ##########
 if CODE_TESTING
-thot_test_SOURCES = testing/thot_test.cc $(testing_h) $(testing_defs)
+thot_test_SOURCES = testing/thot_test.cc $(testing_h) $(testing_defs)	\
+$(leveldb_pm_testing_h) $(leveldb_pm_testing_defs)
 thot_test_LDFLAGS = libthot.la
 endif
 
@@ -606,9 +635,9 @@ endif
 includedir= $(prefix)/include/$(PACKAGE)
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
 $(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h)		\
-$(smt_preproc_h) $(error_correction_h) $(downhill_simplex_h)		\
-$(stack_dec_h) $(exper_h) $(exper_defs) $(casmacat_engines_h)		\
-$(casmacat_aligner_h) $(casmacat_confid_h)
+$(leveldb_pm_h) $(smt_preproc_h) $(error_correction_h)			\
+$(downhill_simplex_h) $(stack_dec_h) $(exper_h) $(exper_defs)		\
+$(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
 
 # libraries
 
@@ -690,6 +719,12 @@ $(incr_mux_phrase_model_factory_h)	\
 $(incr_mux_phrase_model_factory_defs)
 incr_mux_phrase_model_factory_la_LIBADD= libthot.la
 incr_mux_phrase_model_factory_la_LDFLAGS= -module
+
+##########
+leveldb_phrase_model_factory_la_SOURCES= $(leveldb_phrase_model_factory_h)	\
+$(leveldb_phrase_model_factory_defs)
+leveldb_phrase_model_factory_la_LIBADD= libthot.la
+leveldb_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
 pfsm_ecm_for_wg_factory_la_SOURCES= $(pfsm_ecm_for_wg_factory_h)	\

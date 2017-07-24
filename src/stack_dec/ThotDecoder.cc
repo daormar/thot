@@ -72,8 +72,8 @@ void ThotDecoder::init_translator_legacy_impl(void)
 
       // Initialize class factories
   int err=tdCommonVars.dynClassFactoryHandler.init_smt_and_imt(THOT_MASTER_INI_PATH);
-  if(err==ERROR)
-    exit(ERROR);
+  if(err==THOT_ERROR)
+    exit(THOT_ERROR);
   
       // Create server variables  
   tdCommonVars.langModelInfoPtr=new LangModelInfo;
@@ -82,14 +82,14 @@ void ThotDecoder::init_translator_legacy_impl(void)
   if(tdCommonVars.langModelInfoPtr->wpModelPtr==NULL)
   {
     cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
   
   tdCommonVars.langModelInfoPtr->lModelPtr=tdCommonVars.dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseNgramLMInitPars);
   if(tdCommonVars.langModelInfoPtr->lModelPtr==NULL)
   {
     cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
   
   tdCommonVars.phrModelInfoPtr=new PhraseModelInfo;
@@ -97,7 +97,7 @@ void ThotDecoder::init_translator_legacy_impl(void)
   if(tdCommonVars.phrModelInfoPtr->invPbModelPtr==NULL)
   {
     cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 
   tdCommonVars.swModelInfoPtr=new SwModelInfo;
@@ -108,7 +108,7 @@ void ThotDecoder::init_translator_legacy_impl(void)
   if(tdCommonVars.ecModelPtr==NULL)
   {
     cerr<<"Error: BaseErrorCorrectionModel pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 
       // Check if error correction model is valid for word graphs
@@ -117,7 +117,7 @@ void ThotDecoder::init_translator_legacy_impl(void)
   if(wgpPtr==NULL)
   {
     cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
   else
   {
@@ -133,28 +133,28 @@ void ThotDecoder::init_translator_legacy_impl(void)
   if(tdCommonVars.scorerPtr==NULL)
   {
     cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 
   tdCommonVars.llWeightUpdaterPtr=tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(tdCommonVars.llWeightUpdaterPtr==NULL)
   {
     cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 
       // Link scorer to weight updater
   if(!tdCommonVars.llWeightUpdaterPtr->link_scorer(tdCommonVars.scorerPtr))
   {
     cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 
   tdCommonVars.trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(tdCommonVars.trConstraintsPtr==NULL)
   {
     cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 
       // Instantiate smt model
@@ -195,8 +195,8 @@ void ThotDecoder::init_translator_feat_impl(void)
 
       // Initialize class factories
   int err=tdCommonVars.dynClassFactoryHandler.init_smt_and_imt(THOT_MASTER_INI_PATH);
-  if(err==ERROR)
-    exit(ERROR);
+  if(err==THOT_ERROR)
+    exit(THOT_ERROR);
   
       // Create server variables
   tdCommonVars.wgHandlerPtr=new WgHandler;
@@ -205,7 +205,7 @@ void ThotDecoder::init_translator_feat_impl(void)
   if(tdCommonVars.ecModelPtr==NULL)
   {
     cerr<<"Error: BaseErrorCorrectionModel pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 
       // Check if error correction model is valid for word graphs
@@ -214,7 +214,7 @@ void ThotDecoder::init_translator_feat_impl(void)
   if(wgpPtr==NULL)
   {
     cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
   else
   {
@@ -230,28 +230,28 @@ void ThotDecoder::init_translator_feat_impl(void)
   if(tdCommonVars.scorerPtr==NULL)
   {
     cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 
   tdCommonVars.llWeightUpdaterPtr=tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(tdCommonVars.llWeightUpdaterPtr==NULL)
   {
     cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 
       // Link scorer to weight updater
   if(!tdCommonVars.llWeightUpdaterPtr->link_scorer(tdCommonVars.scorerPtr))
   {
     cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 
   tdCommonVars.trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(tdCommonVars.trConstraintsPtr==NULL)
   {
     cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 
       // Instantiate smt model
@@ -334,9 +334,9 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
 
       // Extract parameters from file
   ret=extractParsFromFile(cfgFile.c_str(),argc,argv_stl,comment);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   cerr<<"Processing configuration file ("<<cfgFile<<")..."<<endl;
   
@@ -366,7 +366,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -tm parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -383,7 +383,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -lm parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -400,7 +400,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -W parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -417,7 +417,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -S parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -434,7 +434,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -A parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -451,7 +451,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -E parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -467,7 +467,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -nomon parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -492,7 +492,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -G parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -509,7 +509,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -h parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -526,7 +526,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no values for -olp parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -563,7 +563,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no values for -tmw parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -592,7 +592,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no values for -ecw parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -621,7 +621,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no values for -catw parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -650,7 +650,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -np parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -667,7 +667,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -wgp parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -684,7 +684,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -wgh parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -710,7 +710,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -uc parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -729,32 +729,32 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
   if(tdCommonVars.featureBasedImplEnabled)
   {
     ret=tdCommonVars.featureHandler.addWpFeat(verbose);
-    if(ret==ERROR)
-      return ERROR;
+    if(ret==THOT_ERROR)
+      return THOT_ERROR;
   }
 
       // Load language model
   if(tdCommonVars.featureBasedImplEnabled)
   {
     ret=load_lm_feat_impl(lm_str.c_str(),verbose);
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
   }
   else
   {
     ret=load_lm_legacy_impl(lm_str.c_str(),verbose);
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
   }
 
       // Load translation model
   if(tdCommonVars.featureBasedImplEnabled)
   {
     ret=load_tm_feat_impl(tm_str.c_str(),verbose);
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
   }
   else
   {
     ret=load_tm_legacy_impl(tm_str.c_str(),verbose);
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
   }
 
       // Set non-monotonicity level
@@ -784,9 +784,9 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       // Load wordgraph handler information if given
   if(tdup.wgh_str!="")
     ret=set_wgh(tdup.wgh_str.c_str(),verbose);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -815,12 +815,12 @@ int ThotDecoder::initUserPars(int user_id,
       // Load preproc. info if requested
   if(tdup.sp && tdup.uc_str!="")
     ret=use_caseconv(user_id,tdup.uc_str.c_str(),verbose);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
       // Set cat weights
   set_catw(user_id,tdup.catWeightsVec,verbose);
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -830,7 +830,7 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
       // Return if current translation model does not use sw models
   _phrSwTransModel<SmtModel::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
   if(base_pbswtm_ptr==NULL)
-    return OK;
+    return THOT_OK;
 
       // Delete previous instantiation
   deleteSwModelPtrs();
@@ -838,7 +838,7 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
       // Obtain info about translation model entries
   unsigned int numTransModelEntries;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(tmFilesPrefix,modelDescEntryVec)==OK)
+  if(extractModelEntryInfo(tmFilesPrefix,modelDescEntryVec)==THOT_OK)
   {
     numTransModelEntries=modelDescEntryVec.size();
   }
@@ -854,7 +854,7 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
     if(tdCommonVars.swModelInfoPtr->swAligModelPtrVec[i]==NULL)
     {
       cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 
@@ -865,11 +865,11 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
     if(tdCommonVars.swModelInfoPtr->invSwAligModelPtrVec[i]==NULL)
     {
       cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -886,7 +886,7 @@ bool ThotDecoder::load_tm_legacy_impl(const char* tmFilesPrefix,
   if(strcmp(tdState.tmFilesPrefixGiven.c_str(),tmFilesPrefix)==0)
   {
     if(verbose) cerr<<"Translation model already loaded"<<endl;
-    ret=OK;
+    ret=THOT_OK;
   }
   else
   {
@@ -897,14 +897,14 @@ bool ThotDecoder::load_tm_legacy_impl(const char* tmFilesPrefix,
         // Instantiate single word model information
     ret=instantiate_swm_info(tmFilesPrefix,verbose);
 
-    if(ret==OK)
+    if(ret==THOT_OK)
     {
         // Load alignment model
       _phraseBasedTransModel<SmtModel::Hypothesis>* phrbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
       if(phrbtm_ptr)
       {
         ret=phrbtm_ptr->loadAligModel(tmFilesPrefix);
-        if(ret==OK)
+        if(ret==THOT_OK)
         {
           tdState.tmFilesPrefixGiven=tmFilesPrefix;
         }
@@ -934,13 +934,13 @@ bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
   if(strcmp(tdState.tmFilesPrefixGiven.c_str(),tmFilesPrefix)==0)
   {
     if(verbose) cerr<<"Translation model already loaded"<<endl;
-    ret=OK;
+    ret=THOT_OK;
   }
   else
   {
     ret=tdCommonVars.featureHandler.addTmFeats(tmFilesPrefix,verbose);
         // Store tm information
-    if(ret==OK)
+    if(ret==THOT_OK)
       tdState.tmFilesPrefixGiven=tmFilesPrefix;
   }
   
@@ -964,7 +964,7 @@ bool ThotDecoder::load_lm_legacy_impl(const char* lmFileName,
   if(strcmp(tdState.lmfileLoaded.c_str(),lmFileName)==0)
   {
     if(verbose) cerr<<"Language model already loaded"<<endl;
-    ret=OK;
+    ret=THOT_OK;
   }
   else
   {
@@ -976,13 +976,13 @@ bool ThotDecoder::load_lm_legacy_impl(const char* lmFileName,
     if(phrbtm_ptr)
     {
       ret=phrbtm_ptr->loadLangModel(lmFileName);
-      if(ret==OK)
+      if(ret==THOT_OK)
       {
         tdState.lmfileLoaded=lmFileName;
       }
     }
     else
-      ret=ERROR;
+      ret=THOT_ERROR;
   }
   
   /////////// end of mutex 
@@ -1005,12 +1005,12 @@ bool ThotDecoder::load_lm_feat_impl(const char* lmFileName,
   if(strcmp(tdState.lmfileLoaded.c_str(),lmFileName)==0)
   {
     if(verbose) cerr<<"Language model already loaded"<<endl;
-    ret=OK;
+    ret=THOT_OK;
   }
   else
   {
     ret=tdCommonVars.featureHandler.addLmFeats(lmFileName,verbose);
-    if(ret==OK)
+    if(ret==THOT_OK)
       tdState.lmfileLoaded=lmFileName;
   }
   
@@ -1034,7 +1034,7 @@ bool ThotDecoder::load_ecm(const char* ecmFilesPrefix,
   if(strcmp(tdState.ecmFilesPrefixGiven.c_str(),ecmFilesPrefix)==0)
   {
     if(verbose) cerr<<"Error correcting model already loaded"<<endl;
-    ret=OK;
+    ret=THOT_OK;
   }
   else
   {
@@ -1044,7 +1044,7 @@ bool ThotDecoder::load_ecm(const char* ecmFilesPrefix,
     }
     
     ret=tdCommonVars.ecModelPtr->load(ecmFilesPrefix);
-    if(ret==OK)
+    if(ret==THOT_OK)
     {
       tdState.ecmFilesPrefixGiven=ecmFilesPrefix;
     }
@@ -1068,7 +1068,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
   if(strlen(srcSent)==0 || strlen(refSent)==0)
   {
     cerr<<"Error: one or both of the input sentences to be trained are empty"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
     
   pthread_mutex_lock(&atomic_op_mut);
@@ -1366,7 +1366,7 @@ bool ThotDecoder::translateSentence(int user_id,
       /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -1505,7 +1505,7 @@ bool ThotDecoder::translateSentencePrintWg(int user_id,
   }
 
       // Print word graph
-  int ret=ERROR;
+  int ret=THOT_ERROR;
   if(tdPerUserVarsVec[idx].stackDecoderRecPtr)
     ret=tdPerUserVarsVec[idx].stackDecoderRecPtr->printWordGraph(wgFilename);
   
@@ -1563,8 +1563,8 @@ bool ThotDecoder::sentPairVerCov(int user_id,
   pthread_mutex_unlock(&atomic_op_mut);
 
   if(!tdPerUserVarsVec[idx].smtModelPtr->isComplete(hyp))
-    return OK;
-  else return ERROR;
+    return THOT_OK;
+  else return THOT_ERROR;
 }
 
 //--------------------------
@@ -1703,7 +1703,7 @@ bool ThotDecoder::set_G(int user_id,
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -1745,13 +1745,13 @@ bool ThotDecoder::set_np(int user_id,
   if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
   {
     tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr->set_n(np_par);
-    b=OK;
+    b=THOT_OK;
   }
   else
   {
     if(verbose)
       cerr<<"warning! np parameter cannot be applied to coupled translators."<<endl;
-    b=ERROR;
+    b=THOT_ERROR;
   }
 
   /////////// end of mutex 
@@ -1769,7 +1769,7 @@ bool ThotDecoder::set_wgp(int user_id,
   if(!tdCommonVars.curr_ecm_valid_for_wg)
   {
     cerr<<"Error: EC model is not valid for word-graphs"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   
   pthread_mutex_lock(&atomic_op_mut);
@@ -1794,7 +1794,7 @@ bool ThotDecoder::set_wgp(int user_id,
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -1994,7 +1994,7 @@ bool ThotDecoder::startCat(int user_id,
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  return OK;
+  return THOT_OK;
 }
   
 //--------------------------
@@ -2180,7 +2180,7 @@ bool ThotDecoder::use_caseconv(int user_id,
   if(tdState.preprocId)
   {
     ret=tdPerUserVarsVec[idx].prePosProcessorPtr->loadCapitInfo(caseConvFile);
-    if(ret==OK)
+    if(ret==THOT_OK)
     {
       tdState.caseconv=true;
     }
@@ -2188,7 +2188,7 @@ bool ThotDecoder::use_caseconv(int user_id,
   else
   {
     cerr<<"Warning! case conversion cannot be activated because pre/pos-processing steps are disabled."<<endl;
-    ret=OK;
+    ret=THOT_OK;
   }
 
   /////////// end of mutex 
@@ -2294,7 +2294,7 @@ bool ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
       // Print alignment model parameters
   ret=tdCommonVars.featureHandler.print(tdState.tmFilesPrefixGiven,tdState.lmfileLoaded);
   
-  if(ret==OK)
+  if(ret==THOT_OK)
   {
         // Print error correcting model parameters
     ret=tdCommonVars.ecModelPtr->print(tdState.ecmFilesPrefixGiven.c_str());
@@ -2323,11 +2323,11 @@ bool ThotDecoder::printModelsLegacyImpl(int verbose/*=0*/)
   {
         // Print alignment model parameters
     ret=phrbtm_ptr->printAligModel(tdState.tmFilesPrefixGiven);
-    if(ret==OK)
+    if(ret==THOT_OK)
     {
           // Print language model parameters
       ret=phrbtm_ptr->printLangModel(tdState.lmfileLoaded);
-      if(ret==OK)
+      if(ret==THOT_OK)
       {
             // Print error correcting model parameters
         ret=tdCommonVars.ecModelPtr->print(tdState.ecmFilesPrefixGiven.c_str()); 
@@ -2335,7 +2335,7 @@ bool ThotDecoder::printModelsLegacyImpl(int verbose/*=0*/)
     }
   }
   else
-    ret=ERROR;
+    ret=THOT_ERROR;
   
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -2359,7 +2359,7 @@ int ThotDecoder::printModelWeights(void)
   if(assistedTransPtr==NULL)
   {
     cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   WgUncoupledAssistedTrans<SmtModel>* wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<SmtModel>*>(assistedTransPtr);
@@ -2395,7 +2395,7 @@ int ThotDecoder::printModelWeights(void)
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -2406,7 +2406,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   if(tdPerUserVarsVec[idx].stackDecoderPtr==NULL)
   {
     cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Set breadthFirst flag
@@ -2419,10 +2419,10 @@ int ThotDecoder::init_idx_data(size_t idx)
   
       // Link statistical machine translation model
   int ret=tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
     cerr<<"Error while linking smt model to decoder, revise master.ini file"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Enable best score pruning
@@ -2436,7 +2436,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   if(tdPerUserVarsVec[idx].ecModelForNbUcatPtr==NULL)
   {
     cerr<<"Error: BaseEcModelForNbUcat pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   
       // Link ecm for ucat with ecm
@@ -2447,7 +2447,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   if(tdPerUserVarsVec[idx].assistedTransPtr==NULL)
   {
     cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   
       // Link translator with the assisted translator
@@ -2478,7 +2478,7 @@ int ThotDecoder::init_idx_data(size_t idx)
     if(tdPerUserVarsVec[idx].wgpPtr==NULL)
     {
       cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     
     tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<SmtModel>*>(tdPerUserVarsVec[idx].assistedTransPtr);
@@ -2504,7 +2504,7 @@ int ThotDecoder::init_idx_data(size_t idx)
       // Initialize prePosProcessorPtr for idx
   tdPerUserVarsVec[idx].prePosProcessorPtr=NULL;
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -2620,7 +2620,7 @@ size_t ThotDecoder::get_vecidx_for_user_id(int user_id)
     ThotDecoderPerUserVars tdPerUserVars;
     tdPerUserVarsVec.push_back(tdPerUserVars);
     int ret=init_idx_data(tdPerUserVarsVec.size()-1);
-    if(ret==ERROR)
+    if(ret==THOT_ERROR)
       exit(1);
     
     std::string totalPrefix;

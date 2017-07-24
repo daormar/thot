@@ -87,7 +87,7 @@ bool SrcSegmLenTable::load(const char *segmLengthTableFileName)
  awkInputStream awk;
 	
  cerr<<"Loading source segment length table from file "<<segmLengthTableFileName<<endl;
- if(awk.open(segmLengthTableFileName)==ERROR)
+ if(awk.open(segmLengthTableFileName)==THOT_ERROR)
  {
    cerr<<"Warning: source segment length tablefile does not exist, source segment length probability will be assumed to be uniform.\n";
    return 1;

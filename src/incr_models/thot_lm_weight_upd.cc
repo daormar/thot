@@ -112,9 +112,9 @@ int main(int argc,char *argv[])
 {
   thot_lmwu_pars pars;
 
-  if(handleParameters(argc,argv,pars)==ERROR)
+  if(handleParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -135,26 +135,26 @@ int handleParameters(int argc,
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
     version();
-    return ERROR;
+    return THOT_ERROR;
   }
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
+    return THOT_ERROR;   
   }
-  if(takeParameters(argc,argv,pars)==ERROR)
+  if(takeParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
-    if(checkParameters(pars)==OK)
+    if(checkParameters(pars)==THOT_OK)
     {
-      return OK;
+      return THOT_OK;
     }
     else
     {
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -166,20 +166,20 @@ int takeParameters(int argc,
 {
       // Take language model file name
   int err=readSTLstring(argc,argv, "-lm", &pars.langModelFilesPrefix);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
   
       // Take language model file name
   err=readSTLstring(argc,argv, "-c", &pars.fileWithCorpus);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
-  if(readOption(argc,argv,"-v")==OK)
+  if(readOption(argc,argv,"-v")==THOT_OK)
     pars.verbosity=true;
   else
     pars.verbosity=false;
     
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -188,17 +188,17 @@ int checkParameters(thot_lmwu_pars& pars)
   if(pars.langModelFilesPrefix.empty())
   {
     cerr<<"Error: parameter -lm not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
 
   }
 
   if(pars.fileWithCorpus.empty())
   {
     cerr<<"Error: parameter -c not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -221,21 +221,21 @@ int process_lm_descriptor(const thot_lmwu_pars& pars)
 
       // Obtain info about translation model entries
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(pars.langModelFilesPrefix,modelDescEntryVec)==OK)
+  if(extractModelEntryInfo(pars.langModelFilesPrefix,modelDescEntryVec)==THOT_OK)
   {
         // Process descriptor entries
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
       int ret=process_lm_entry(pars.fileWithCorpus,modelDescEntryVec[i],pars.verbosity);
-      if(ret==ERROR)
-        return ERROR;
+      if(ret==THOT_ERROR)
+        return THOT_ERROR;
     }
 
-    return OK;
+    return THOT_OK;
   }
   else
   {
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 
@@ -250,8 +250,8 @@ int process_lm_files_prefix(const thot_lmwu_pars& pars)
       // Obtain default model type
   std::string defaultLangModelType;
   int ret=obtain_default_lm_type(defaultLangModelType);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
   
       // Create model descriptor entry
   ModelDescriptorEntry modelDescEntry;
@@ -262,10 +262,10 @@ int process_lm_files_prefix(const thot_lmwu_pars& pars)
 
       // Process entry
   ret=process_lm_entry(pars.fileWithCorpus,modelDescEntry,pars.verbosity);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
   
-  return OK;  
+  return THOT_OK;  
 }
 
 //--------------------------------
@@ -277,14 +277,14 @@ int obtain_default_lm_type(std::string& soFileName)
 
       ////////// Obtain info for BaseNgramLM class
   baseClassName="BaseNgramLM";
-  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==ERROR)
+  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
     cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
     cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -302,7 +302,7 @@ int process_lm_entry(std::string corpusFile,
   {
     cerr<<"Current model does not have weights to be updated"<<endl;
     release_lm(verbosity);
-    return OK;
+    return THOT_OK;
   }
       // Update language model weights
   int retVal=update_lm_weights(corpusFile,modelDescEntry.absolutizedModelFileName,verbosity);
@@ -321,7 +321,7 @@ int init_lm(std::string modelType,
   if(!baseNgramLMDynClassLoader.open_module(modelType,verbosity))
   {
     cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Create lm file pointer
@@ -330,10 +330,10 @@ int init_lm(std::string modelType,
   if(lm==NULL)
   {
     cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;    
-    return ERROR;
+    return THOT_ERROR;
   }
     
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -359,7 +359,7 @@ int update_lm_weights(std::string corpusFile,
       return update_lm_weights_interp(corpusFile,modelFile,verbosity);
     }
     else
-      return OK;
+      return THOT_OK;
   }
 }
 
@@ -370,20 +370,20 @@ int update_lm_weights_jel_mer(std::string corpusFile,
 {
       // Load model
   int retVal=incrJelMerLmPtr->load(modelFile.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
   
       // Update weights
   retVal=incrJelMerLmPtr->updateModelWeights(corpusFile.c_str(),verbosity);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
 
       // Print updated weights
   retVal=incrJelMerLmPtr->printWeights(modelFile.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
   
-  return OK;  
+  return THOT_OK;  
 }
 
 //---------------
@@ -393,20 +393,20 @@ int update_lm_weights_interp(std::string corpusFile,
 {
       // Load model
   int retVal=incrInterpNgramLmPtr->load(modelFile.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
       
       // Update weights
   retVal=incrInterpNgramLmPtr->updateModelWeights(corpusFile.c_str(),verbosity);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
       
       // Print updated weights
   retVal=incrInterpNgramLmPtr->printWeights(modelFile.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
       
-  return OK;     
+  return THOT_OK;     
 }
 
 //--------------------------------

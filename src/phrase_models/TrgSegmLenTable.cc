@@ -121,7 +121,7 @@ bool TrgSegmLenTable::load(const char *segmLengthTableFileName)
  awkInputStream awk;
 	
  cerr<<"Loading target segment length table from file "<<segmLengthTableFileName<<endl;
- if(awk.open(segmLengthTableFileName)==ERROR)
+ if(awk.open(segmLengthTableFileName)==THOT_ERROR)
  {
    cerr<<"Warning: target segment length tablefile does not exist, target segment length probability will be assumed to be uniform.\n";
    return 1;
@@ -140,7 +140,7 @@ bool TrgSegmLenTable::load(const char *segmLengthTableFileName)
      {
        mode=TRGSEGMLEN_POISSON;
        bool ret=readAvgSegmLen(segmLengthTableFileName);
-       if(ret==ERROR)
+       if(ret==THOT_ERROR)
        {
          avgSrcSegmLen=MAX_SENTENCE_LENGTH/2;
          avgTrgSegmLen=MAX_SENTENCE_LENGTH/2;
@@ -166,10 +166,10 @@ bool TrgSegmLenTable::readAvgSegmLen(const char *avgSegmLenFileName)
  awkInputStream awk;
 
  cerr<<"Reading average segment length file from: "<<avgSegmLenFileName<<endl;
- if(awk.open(avgSegmLenFileName)==ERROR)
+ if(awk.open(avgSegmLenFileName)==THOT_ERROR)
  {
    cerr<<"Error in average segment length file, file "<<avgSegmLenFileName<<" does not exist.\n";
-   return ERROR;
+   return THOT_ERROR;
  }  
  else
  {
@@ -181,7 +181,7 @@ bool TrgSegmLenTable::readAvgSegmLen(const char *avgSegmLenFileName)
    else
    {
      cerr<<"Error in average segment length file: "<<avgSegmLenFileName<<" \n";
-     return ERROR;
+     return THOT_ERROR;
    }
    awk.getln();
    if(awk.NF==6)
@@ -191,10 +191,10 @@ bool TrgSegmLenTable::readAvgSegmLen(const char *avgSegmLenFileName)
    else
    {
      cerr<<"Error in average segment length file: "<<avgSegmLenFileName<<" \n";
-     return ERROR;
+     return THOT_ERROR;
    }
  }
- return OK;  
+ return THOT_OK;  
 }
 
 //-------------------------

@@ -105,9 +105,9 @@ int main(int argc,char *argv[])
 {
   thot_liwu_pars pars;
 
-  if(handleParameters(argc,argv,pars)==ERROR)
+  if(handleParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -133,26 +133,26 @@ int handleParameters(int argc,
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
     version();
-    return ERROR;
+    return THOT_ERROR;
   }
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
+    return THOT_ERROR;   
   }
-  if(takeParameters(argc,argv,pars)==ERROR)
+  if(takeParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
-    if(checkParameters(pars)==OK)
+    if(checkParameters(pars)==THOT_OK)
     {
-      return OK;
+      return THOT_OK;
     }
     else
     {
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -164,25 +164,25 @@ int takeParameters(int argc,
 {
       // Take language model file name
   int err=readSTLstring(argc,argv, "-tm", &pars.phrModelFilePrefix);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
   
       // Take language model file name
   err=readSTLstring(argc,argv, "-t", &pars.testCorpusFile);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
       // Take language model file name
   err=readSTLstring(argc,argv, "-r", &pars.refCorpusFile);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
-  if(readOption(argc,argv,"-v")==OK)
+  if(readOption(argc,argv,"-v")==THOT_OK)
     pars.verbosity=true;
   else
     pars.verbosity=false;
     
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -191,23 +191,23 @@ int checkParameters(thot_liwu_pars& pars)
   if(pars.phrModelFilePrefix.empty())
   {
     cerr<<"Error: parameter -tm not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
 
   }
 
   if(pars.testCorpusFile.empty())
   {
     cerr<<"Error: parameter -t not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
   if(pars.refCorpusFile.empty())
   {
     cerr<<"Error: parameter -r not given!"<<endl;
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------
@@ -241,13 +241,13 @@ int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
 
       // Initialize class factories
   int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
-  if(err==ERROR)
-    return ERROR;
+  if(err==THOT_ERROR)
+    return THOT_ERROR;
 
       // Obtain info about translation model entries
   unsigned int numTransModelEntries;
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(phrModelFilePrefix.c_str(),modelDescEntryVec)==OK)
+  if(extractModelEntryInfo(phrModelFilePrefix.c_str(),modelDescEntryVec)==THOT_OK)
   {
     numTransModelEntries=modelDescEntryVec.size();
   }
@@ -262,7 +262,7 @@ int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
   if(phrModelInfoPtr->invPbModelPtr==NULL)
   {
     cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Add one swm pointer per each translation model entry
@@ -273,7 +273,7 @@ int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
     if(swModelInfoPtr->swAligModelPtrVec[0]==NULL)
     {
       cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 
@@ -284,7 +284,7 @@ int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
     if(swModelInfoPtr->invSwAligModelPtrVec[0]==NULL)
     {
       cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 
@@ -292,7 +292,7 @@ int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
   phrLocalSwLiTmPtr->link_pm_info(phrModelInfoPtr);
   phrLocalSwLiTmPtr->link_swm_info(swModelInfoPtr);
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -306,8 +306,8 @@ int initPhrModelFeatImpl(std::string phrModelFilePrefix)
 
       // Initialize class factories
   int ret=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
   
       // Set default models for feature handler
   set_default_models();
@@ -315,7 +315,7 @@ int initPhrModelFeatImpl(std::string phrModelFilePrefix)
       // Add model features
   add_model_features(phrModelFilePrefix);
     
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -331,10 +331,10 @@ int add_model_features(std::string phrModelFilePrefix)
       // Add translation model features
   int verbosity=false;
   int ret=featureHandler.addTmFeats(phrModelFilePrefix,verbosity);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -369,28 +369,28 @@ int update_li_weights_legacy_impl(const thot_liwu_pars& pars)
 
       // Initialize phrase model
   retVal=initPhrModelLegacyImpl(pars.phrModelFilePrefix);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
   
       // Load model
   retVal=phrLocalSwLiTmPtr->loadAligModel(pars.phrModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
   
       // Update weights
   retVal=phrLocalSwLiTmPtr->updateLinInterpWeights(pars.testCorpusFile,pars.refCorpusFile,pars.verbosity);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
 
       // Print updated weights
   retVal=phrLocalSwLiTmPtr->printAligModel(pars.phrModelFilePrefix.c_str());
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
 
       // Release phrase model
   releaseMemLegacyImpl();
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------
@@ -398,23 +398,23 @@ int update_li_weights_feat_impl(const thot_liwu_pars& pars)
 {
       // Initialize phrase model
   int retVal=initPhrModelFeatImpl(pars.phrModelFilePrefix);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
 
       // Update weights
   retVal=featureHandler.updatePmLinInterpWeights(pars.testCorpusFile,pars.refCorpusFile,pars.verbosity);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
   
       // Print updated weights
   retVal=featureHandler.printAligModels(pars.phrModelFilePrefix);
-  if(retVal==ERROR)
-    return ERROR;
+  if(retVal==THOT_ERROR)
+    return THOT_ERROR;
   
       // Release phrase model
   releaseMemFeatImpl();
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------------------------

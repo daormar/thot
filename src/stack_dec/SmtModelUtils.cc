@@ -33,19 +33,19 @@ namespace SmtModelUtils
     trgTrainVocabFileName+="_swm.tvcb";
     
     int ret=basePhraseModelPtr->loadSrcVocab(srcTrainVocabFileName.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
     
     ret=basePhraseModelPtr->loadTrgVocab(trgTrainVocabFileName.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
     
         // load phrase model
     if(basePhraseModelPtr->load(modelFileName.c_str())!=0)
     {
       cerr<<"Error while reading phrase model file\n";
-      return ERROR;
+      return THOT_ERROR;
     }  
     
-    return OK;
+    return THOT_OK;
   }
 
   //--------------------------
@@ -53,9 +53,9 @@ namespace SmtModelUtils
                     std::string modelFileName)
   {
     bool ret=basePhraseModelPtr->print(modelFileName.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
 
-    return OK;
+    return THOT_OK;
   }
   
   //--------------------------
@@ -67,9 +67,9 @@ namespace SmtModelUtils
     std::string invReadTablePrefix=modelFileName;
     invReadTablePrefix+="_invswm";
     bool ret=baseSwAligModelPtr->load(invReadTablePrefix.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
     
-    return OK;
+    return THOT_OK;
   }
 
   //--------------------------
@@ -78,9 +78,9 @@ namespace SmtModelUtils
   {
     std::string invSwModelPrefix=modelFileName+"_invswm";
     int ret=baseSwAligModelPtr->print(invSwModelPrefix.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
 
-    return OK;
+    return THOT_OK;
   }
 
   //--------------------------
@@ -92,9 +92,9 @@ namespace SmtModelUtils
     std::string invReadTablePrefix=modelFileName;
     invReadTablePrefix+="_swm";
     bool ret=baseSwAligModelPtr->load(invReadTablePrefix.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
     
-    return OK;
+    return THOT_OK;
   }
 
   //--------------------------
@@ -103,19 +103,19 @@ namespace SmtModelUtils
   {
     std::string invSwModelPrefix=modelFileName+"_swm";
     int ret=baseSwAligModelPtr->print(invSwModelPrefix.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
 
-    return OK;
+    return THOT_OK;
   }
 
   //--------------------------
   int loadLangModel(BaseNgramLM<LM_State>* baseNgLmPtr,
                     std::string modelFileName)
   {
-    if(baseNgLmPtr->load(modelFileName.c_str())==ERROR)
-      return ERROR;
+    if(baseNgLmPtr->load(modelFileName.c_str())==THOT_ERROR)
+      return THOT_ERROR;
     else
-      return OK;
+      return THOT_OK;
   }
 
   //---------------------------------
@@ -123,9 +123,9 @@ namespace SmtModelUtils
                      std::string modelFileName)
   {
     bool ret=baseNgLmPtr->print(modelFileName.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
     
-    return OK;
+    return THOT_OK;
   }
 
   //---------------------------------
@@ -135,10 +135,10 @@ namespace SmtModelUtils
   {
     awkInputStream awk;
   
-    if(awk.open(lambdaFileName.c_str())==ERROR)
+    if(awk.open(lambdaFileName.c_str())==THOT_ERROR)
     {
       cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     else
     {
@@ -148,7 +148,7 @@ namespace SmtModelUtils
         {
           lambda_swm=atof(awk.dollar(1).c_str());
           lambda_invswm=atof(awk.dollar(1).c_str());
-          return OK;
+          return THOT_OK;
         }
         else
         {
@@ -156,22 +156,22 @@ namespace SmtModelUtils
           {
             lambda_swm=atof(awk.dollar(1).c_str());
             lambda_invswm=atof(awk.dollar(2).c_str());
-            return OK;
+            return THOT_OK;
           }
           else
           {
             cerr<<"Anomalous file with lambda values."<<endl;
-            return ERROR;
+            return THOT_ERROR;
           }
         }
       }
       else
       {
         cerr<<"Anomalous file with lambda values."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
     }  
-    return OK;
+    return THOT_OK;
   }
 
   //---------------------------------
@@ -185,13 +185,13 @@ namespace SmtModelUtils
     if(!outF)
     {
       cerr<<"Error while printing file with lambda values."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     else
     {
       outF<<lambda_swm<<" "<<lambda_invswm<<endl;
       outF.close();	
-      return OK;
+      return THOT_OK;
     }
   }
 

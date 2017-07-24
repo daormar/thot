@@ -77,10 +77,10 @@ bool anjiMatrix::init_nth_entry(unsigned int n,
       anji[mapped_n].resize(tlen+1,floatVec);
     }
 
-    return OK;
+    return THOT_OK;
   }
   else
-    return ERROR;
+    return THOT_ERROR;
 }
 
 //-------------------------
@@ -114,10 +114,10 @@ bool anjiMatrix::reset_entries(void)
       }
     }
 
-    return OK;
+    return THOT_OK;
   }
   else
-    return ERROR;
+    return THOT_ERROR;
 }
 
 //-------------------------
@@ -163,17 +163,17 @@ bool anjiMatrix::load(const char* prefFileName)
   std::string anjiFile=prefFileName;
   anjiFile=anjiFile+".anji";
   retVal=load_anji_values(anjiFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
   std::string maxnsizeDataFile=prefFileName;
   maxnsizeDataFile=maxnsizeDataFile+".msinfo";
   retVal=load_maxnsize_data(maxnsizeDataFile.c_str());
-  if(retVal==ERROR)
+  if(retVal==THOT_ERROR)
   {
     cerr<<"Maximum size for anji is set to "<<UNRESTRICTED_ANJI_SIZE<<" (unrestricted size)."<<endl;
     anji_maxnsize=UNRESTRICTED_ANJI_SIZE;
   }
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -186,7 +186,7 @@ bool anjiMatrix::load_anji_values(const char* anjiFile)
   if (!inF)
   {
     cerr<<"File with anji values "<<anjiFile<<" does not exist.\n";
-    return ERROR;    
+    return THOT_ERROR;    
   }
   else
   {
@@ -207,7 +207,7 @@ bool anjiMatrix::load_anji_values(const char* anjiFile)
       }
       else end=true;
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -217,10 +217,10 @@ bool anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
   awkInputStream awk;
 
       // Try to open file  
-  if(awk.open(maxnsizeDataFile)==ERROR)
+  if(awk.open(maxnsizeDataFile)==THOT_ERROR)
   {
     cerr<<"Error in file with anji maximum size data, file "<<maxnsizeDataFile<<" does not exist.\n";
-    return ERROR;
+    return THOT_ERROR;
   }  
   else
   {
@@ -243,7 +243,7 @@ bool anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
       }
     }
   }
-  return OK;     
+  return THOT_OK;     
 }
 
 //-------------------------
@@ -253,17 +253,17 @@ bool anjiMatrix::print(const char* prefFileName)
   std::string anjiFile=prefFileName;
   anjiFile=anjiFile+".anji";
   retVal=print_anji_values(anjiFile.c_str());
-  if(retVal==ERROR) return ERROR;
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
   if(anji_maxnsize!=UNRESTRICTED_ANJI_SIZE)
   {
     std::string maxnsizeDataFile=prefFileName;
     maxnsizeDataFile=maxnsizeDataFile+".msinfo";
     retVal=print_maxnsize_data(maxnsizeDataFile.c_str());
-    if(retVal==ERROR) return ERROR;
+    if(retVal==THOT_ERROR) return THOT_ERROR;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -274,7 +274,7 @@ bool anjiMatrix::print_anji_values(const char* anjiFile)
   if(!outF)
   {
     cerr<<"Error while printing anji file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {    
@@ -292,7 +292,7 @@ bool anjiMatrix::print_anji_values(const char* anjiFile)
         }
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -304,7 +304,7 @@ bool anjiMatrix::print_maxnsize_data(const char* maxnsizeDataFile)
   if(!outF)
   {
     cerr<<"Error while printing file with anji maximum size data."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -318,7 +318,7 @@ bool anjiMatrix::print_maxnsize_data(const char* maxnsizeDataFile)
       if(np_to_n_vector[np].first)
         outF<<np<<" "<<np_to_n_vector[np].second<<endl;
     }
-    return OK;
+    return THOT_OK;
   }  
 }
 

@@ -404,7 +404,7 @@ int step_by_step_simplex(double start[],
   if(itr>=MAX_IT)
     return DSO_NMAX_ERROR;
   else
-    return OK;
+    return THOT_OK;
 }
 
 //--------------------------------------------------------
@@ -436,7 +436,7 @@ int get_next_funk(FILE *images_file,
       fprintf(stderr,"funk= %f\n",*y);
     }
     free(buff);
-    return OK;
+    return THOT_OK;
   }
 }
 

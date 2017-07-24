@@ -132,12 +132,12 @@ bool BdbPhraseTable::init(const char *fileName)
       // Set comparison function for phrDictDb
   int ret=phrDictDb->set_bt_compare(phr_dict_cmp_func);
   if(ret)
-    return ERROR;
+    return THOT_ERROR;
   ret=phrDictDb->open(NULL,phrDictDbName.c_str(),NULL,DB_BTREE,o_flags,0);
   if(ret)
-    return ERROR;
+    return THOT_ERROR;
   
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------
@@ -179,8 +179,8 @@ int BdbPhraseTable::retrieveDataForPhrDict(const Vector<WordIndex>& s,
       // Obtain source phrase index
   PhrDictKey phrDictKey;
   int ret=phrDictKey.setPhrPair(s,t);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
   Dbt key;
   Dbt data;
   encodeKeyDataForPhrDictDb(phrDictKey,phrDictValue,key,data);
@@ -188,11 +188,11 @@ int BdbPhraseTable::retrieveDataForPhrDict(const Vector<WordIndex>& s,
       // Retrieve key/data pair from database
   ret=phrDictDb->get(NULL,&key,&data,0);
   if(ret)
-    return ERROR;
+    return THOT_ERROR;
   else
   {
     decodeKeyDataForPhrDictDb(phrDictKey,phrDictValue,key,data);
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -204,8 +204,8 @@ int BdbPhraseTable::putDataForPhrDict(const Vector<WordIndex>& s,
       // Encode key/value pair
   PhrDictKey phrDictKey;
   int ret=phrDictKey.setPhrPair(s,t);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
   PhrDictValue phrDictValue;
   phrDictValue.count=c;
   Dbt key;
@@ -215,9 +215,9 @@ int BdbPhraseTable::putDataForPhrDict(const Vector<WordIndex>& s,
       // Put record
   ret=phrDictDb->put(NULL,&key,&data,0);
   if(ret)
-    return ERROR;
+    return THOT_ERROR;
   else
-    return OK;
+    return THOT_OK;
 }
 
 //-------------------------
@@ -227,15 +227,15 @@ int BdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
 {
   PhrDictValue phrDictValue;
   int ret=retrieveDataForPhrDict(s,t,phrDictValue);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
         // Entry was not found
 
     ret=putDataForPhrDict(s,t,c);
     if(ret)
-      return ERROR;
+      return THOT_ERROR;
     else
-      return OK;
+      return THOT_OK;
   }
   else
   {
@@ -243,9 +243,9 @@ int BdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
 
     ret=putDataForPhrDict(s,t,phrDictValue.count+c);
     if(ret)
-      return ERROR;
+      return THOT_ERROR;
     else
-      return OK;
+      return THOT_OK;
   }
 }
 
@@ -267,7 +267,7 @@ Count BdbPhraseTable::getSrcInfo(const Vector<WordIndex>& s,
   PhrDictValue phrDictValue;
   Vector<WordIndex> emptyPhrase;
   int ret=retrieveDataForPhrDict(s,emptyPhrase,phrDictValue);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
         // Entry was not found
     found=false;
@@ -287,7 +287,7 @@ Count BdbPhraseTable::getTrgInfo(const Vector<WordIndex>& t,
   PhrDictValue phrDictValue;
   Vector<WordIndex> emptyPhrase;
   int ret=retrieveDataForPhrDict(emptyPhrase,t,phrDictValue);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
         // Entry was not found
     found=false;
@@ -307,7 +307,7 @@ Count BdbPhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
 {
   PhrDictValue phrDictValue;
   int ret=retrieveDataForPhrDict(s,t,phrDictValue);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
         // Entry was not found
     found=false;

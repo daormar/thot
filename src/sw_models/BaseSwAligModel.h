@@ -431,15 +431,15 @@ bool BaseSwAligModel<PPINFO>::obtainBestAlignments(const char *sourceTestFileNam
    return 1;
  }
 
- if(srcTest.open(sourceTestFileName)==ERROR)
+ if(srcTest.open(sourceTestFileName)==THOT_ERROR)
  {
    cerr<<"Error in source test file, file "<<sourceTestFileName<<" does not exist.\n";
-   return ERROR;
+   return THOT_ERROR;
  }
- if(trgTest.open(targetTestFilename)==ERROR)
+ if(trgTest.open(targetTestFilename)==THOT_ERROR)
  {
    cerr<<"Error in target test file, file "<<targetTestFilename<<" does not exist.\n";
-   return ERROR;
+   return THOT_ERROR;
  }  
  while(srcTest.getln())
  {
@@ -459,7 +459,7 @@ bool BaseSwAligModel<PPINFO>::obtainBestAlignments(const char *sourceTestFileNam
  }
  outF.close();
 
- return OK;
+ return THOT_OK;
 }
 //-------------------------
 template<class PPINFO>
