@@ -418,6 +418,21 @@ if test $db_lib_found = yes; then
 fi
 AM_CONDITIONAL([HAVE_DB_CXX_H], [test x$db_header_found = xyes])
 
+# Checks for leveldb library
+LEVELDB_LIB=""
+libaux=${LIBS}
+AC_CHECK_LIB([leveldb], [leveldb_open])
+if test $ac_cv_lib_leveldb_leveldb_open = yes; then
+   LEVELDB_LIB="-lleveldb"
+   leveldb_lib_found="yes"
+   AC_DEFINE(HAVE_LEVELDB_LIB,,[Define if the leveldb library is present])
+else
+   leveldb_lib_found="no"
+fi
+AC_SUBST(LEVELDB_LIB)
+AM_CONDITIONAL([HAVE_LEVELDB_LIB], [test x$ac_cv_lib_leveldb_leveldb_open = xyes])
+LIBS=${libaux}
+
 # Checks for cppunit library
 CPPUNIT=""
 libaux=${LIBS}

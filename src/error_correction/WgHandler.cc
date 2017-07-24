@@ -41,10 +41,10 @@ bool WgHandler::load(const char * filename)
 {
   awkInputStream awk;
   
-  if(awk.open(filename)==ERROR)
+  if(awk.open(filename)==THOT_ERROR)
   {
     cerr<<"Error while opening word graph handler file: "<<filename<<"\n";
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -66,7 +66,7 @@ bool WgHandler::load(const char * filename)
         sentToWgInfoMap[strVec]=wgi;
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -111,13 +111,13 @@ bool WgHandler::print(const char* filename)const
   if(!outS)
   {
     cerr<<"Error while printing sentence to word graph path info."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
     print(outS);
     outS.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 

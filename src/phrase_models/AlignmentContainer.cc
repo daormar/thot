@@ -56,9 +56,9 @@ bool AlignmentContainer::extractAlignmentsFromGIZAFile(const char *_GizaAligFile
  tVocabInv.clear(); sVocabInv.clear();	
  numAlignments=0;
 	
- if(alignmentExtractor.open(_GizaAligFileName)==ERROR)
+ if(alignmentExtractor.open(_GizaAligFileName)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -101,7 +101,7 @@ bool AlignmentContainer::extractAlignmentsFromGIZAFile(const char *_GizaAligFile
    }
  }
  	
- return OK;	
+ return THOT_OK;	
 }
 
 //-------------------------
@@ -111,9 +111,9 @@ bool AlignmentContainer::join(const char *_GizaAligFileName,bool transpose/*=0*/
   map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
   unsigned int i;	
 	 
-  if(alExt.open(_GizaAligFileName)==ERROR)
+  if(alExt.open(_GizaAligFileName)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -134,7 +134,7 @@ bool AlignmentContainer::join(const char *_GizaAligFileName,bool transpose/*=0*/
 	  }
     }
     alExt.close();
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -146,9 +146,9 @@ bool AlignmentContainer::intersect(const char *_GizaAligFileName,
  map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
  unsigned int i;	
 	 
- if(alExt.open(_GizaAligFileName)==ERROR)
+ if(alExt.open(_GizaAligFileName)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -169,7 +169,7 @@ bool AlignmentContainer::intersect(const char *_GizaAligFileName,
      }
    }
    alExt.close();
-   return OK;
+   return THOT_OK;
  }
 }
 //-------------------------
@@ -179,9 +179,9 @@ bool AlignmentContainer::sum(const char *_GizaAligFileName,bool transpose/*=0*/)
  map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
  unsigned int i;	
 	 
- if(alExt.open(_GizaAligFileName)==ERROR)
+ if(alExt.open(_GizaAligFileName)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -202,7 +202,7 @@ bool AlignmentContainer::sum(const char *_GizaAligFileName,bool transpose/*=0*/)
     }
    }
    alExt.close();
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -214,9 +214,9 @@ bool AlignmentContainer::symmetr1(const char *_GizaAligFileName,
  map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
  unsigned int i;	
 	 
- if(alExt.open(_GizaAligFileName)==ERROR)
+ if(alExt.open(_GizaAligFileName)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -237,7 +237,7 @@ bool AlignmentContainer::symmetr1(const char *_GizaAligFileName,
      }
    }
    alExt.close();
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -249,9 +249,9 @@ bool AlignmentContainer::symmetr2(const char *_GizaAligFileName,
  map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
  unsigned int i;	
 	 
- if(alExt.open(_GizaAligFileName)==ERROR)
+ if(alExt.open(_GizaAligFileName)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -272,7 +272,7 @@ bool AlignmentContainer::symmetr2(const char *_GizaAligFileName,
      }
    }
    alExt.close();
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -284,9 +284,9 @@ bool AlignmentContainer::growDiagFinal(const char *_GizaAligFileName,
  map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
  unsigned int i;	
 	 
- if(alExt.open(_GizaAligFileName)==ERROR)
+ if(alExt.open(_GizaAligFileName)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -307,7 +307,7 @@ bool AlignmentContainer::growDiagFinal(const char *_GizaAligFileName,
      }
    }
    alExt.close();
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -374,9 +374,9 @@ bool AlignmentContainer::printNoCompact(ostream &outS)
   char cad[128];
   unsigned int numSent=0;
 	
-  if(alignmentExtractor.open(GizaAligFileName)==ERROR)
+  if(alignmentExtractor.open(GizaAligFileName)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {	   
@@ -401,7 +401,7 @@ bool AlignmentContainer::printNoCompact(ostream &outS)
         }
       }
 	}
-	return OK;
+	return THOT_OK;
   } 
 }
 //-------------------------
@@ -415,9 +415,9 @@ bool AlignmentContainer::printNoCompact(FILE *file)
   char cad[128];
   unsigned int numSent=0;
 	
-  if(alignmentExtractor.open(GizaAligFileName)==ERROR)
+  if(alignmentExtractor.open(GizaAligFileName)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {	   
@@ -442,7 +442,7 @@ bool AlignmentContainer::printNoCompact(FILE *file)
         }
       }
 	}
-	return OK;
+	return THOT_OK;
   } 
 }
 

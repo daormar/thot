@@ -216,7 +216,7 @@ bool _stackDecoderRec<SMT_MODEL>::printWordGraph(const char* filename)
       // NOTE: if the second parameter of wordGraphPtr->print() is set to
       // true, only useful states (those that allow us to reach to a
       // final state) are printed
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
   
       // Print state index info
   std::string filenameHypStateIdx=filename;
@@ -369,13 +369,13 @@ bool _stackDecoderRec<SMT_MODEL>::printHypStateIdxInfo(const char* filename)
   if(!outS)
   {
     cerr<<"Error while printing hypothesis state info file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
     printHypStateIdxInfo(outS);
     outS.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 

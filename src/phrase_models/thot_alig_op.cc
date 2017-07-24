@@ -89,9 +89,9 @@ int main(int argc,char *argv[])
  {
    if(exhaustive) // exhaustive option given
    {
-     if(alignmentContainer.extractAlignmentsFromGIZAFile(GizaAligFileName,gtFlag)==ERROR)
+     if(alignmentContainer.extractAlignmentsFromGIZAFile(GizaAligFileName,gtFlag)==THOT_ERROR)
      {
-       return ERROR;
+       return THOT_ERROR;
      }
      else
      {
@@ -128,14 +128,14 @@ int main(int argc,char *argv[])
 #        endif
        }
        alignmentContainer.clear();
-       return OK;
+       return THOT_OK;
      }
    }
    else // exhaustive option not given
    {
-     if(alExt.open(GizaAligFileName)==ERROR)
+     if(alExt.open(GizaAligFileName)==THOT_ERROR)
      {
-       return ERROR;
+       return THOT_ERROR;
      }
      else
      {
@@ -152,11 +152,11 @@ int main(int argc,char *argv[])
          if(symmetr2Op) return alExt.symmetr2(GIZA_OpFileName,outputFileName,transposeFlag,verbose);	   
          if(growDiagFinalOp) return alExt.growDiagFinal(GIZA_OpFileName,outputFileName,transposeFlag,verbose);	   
        }
-       return OK;
+       return THOT_OK;
      } 
    }
  }	 
- else return ERROR;	
+ else return THOT_ERROR;	
 }
 
 //--------------- parseAlignOpsFile function
@@ -168,9 +168,9 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
  awkInputStream awk;
  int transpose;
 	
- if(awk.open(alignOperationsFile)==ERROR)
+ if(awk.open(alignOperationsFile)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -182,7 +182,7 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
      if(awk.NF==3)
      {
        bool invalid_op=true;
-       int ret=OK;
+       int ret=THOT_OK;
        transpose=atoi(awk.dollar(3).c_str());
        if(strcmp("-and",awk.dollar(1).c_str())==0)
        {
@@ -221,10 +221,10 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
          if(verbose) cerr<<"-grd "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
 		 ret=alignmentContainer.growDiagFinal((char*)awk.dollar(2).c_str(),transpose);	
        }
-       if(ret==ERROR)
+       if(ret==THOT_ERROR)
        {
          cerr<<"Error while executing alignment operation"<<endl;
-         return ERROR;
+         return THOT_ERROR;
        }
        if(invalid_op) cerr<<"Warning! invalid operation at line "<<lineno<<endl;
      }
@@ -233,11 +233,11 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
        if(awk.NF!=0)
        {
          cerr<<"Error in alignment operations file\n";
-         return ERROR;
+         return THOT_ERROR;
        }
      } 
    }
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -253,9 +253,9 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
  FILE *out_file=0;
  FILE *tmp_file=0;
  
- if(awk.open(alignOperationsFile)==ERROR)
+ if(awk.open(alignOperationsFile)==THOT_ERROR)
  {
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -268,7 +268,7 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
      if(awk.NF==3)
      {
        bool invalid_op=true;
-       int ret=OK;
+       int ret=THOT_OK;
        transpose=atoi(awk.dollar(3).c_str());
        if(strcmp("-and",awk.dollar(1).c_str())==0)
        {
@@ -306,10 +306,10 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
          if(verbose) cerr<<"-grd "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
 		 ret=alignmentExtractor.growDiagFinal((char*)awk.dollar(2).c_str(),outputFileName,transpose);
        }
-       if(ret==ERROR)
+       if(ret==THOT_ERROR)
        {
          cerr<<"thot_alig_op aborted due to errors in the given alignment operations file."<<endl;
-         exit(ERROR);
+         exit(THOT_ERROR);
        }
        if(invalid_op) cerr<<"Warning! invalid operation at line "<<lineno<<endl;
        
@@ -320,7 +320,7 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
        if(out_file==NULL)
        {
          cerr<<"Error: Output file "<<outputFileName<<" cannot be created."<<endl;
-         exit(ERROR);
+         exit(THOT_ERROR);
        }
            // Create new temporary file
        tmp_file=gen_temp_file();
@@ -337,11 +337,11 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
        if(awk.NF!=0)
        {
          cerr<<"Error in alignment operations file\n";
-         return ERROR;
+         return THOT_ERROR;
        }
      } 
    }
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -355,7 +355,7 @@ FILE* gen_temp_file(void)
   else
   {
     cerr<<"Error: temporary file cannot be created!"<<endl;
-    exit(ERROR);
+    exit(THOT_ERROR);
   }
 }
 

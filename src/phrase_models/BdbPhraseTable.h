@@ -117,10 +117,10 @@ struct PhrDictKey
         {
           words[phrase1.size()+1+i]=phrase2[i];
         }
-        return OK;
+        return THOT_OK;
       }
       else
-        return ERROR;
+        return THOT_ERROR;
     }
 };
 

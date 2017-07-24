@@ -70,21 +70,21 @@ std::string filterInfoFileName;
 //--------------- main function
 int main(int argc,char *argv[])
 {
-  if(TakeParameters(argc,argv)==OK)
+  if(TakeParameters(argc,argv)==THOT_OK)
   {
         // Try to open file with lexical table  
     ifstream lexTableInF (ilextableFileName.c_str(), ios::in | ios::binary);
     if (!lexTableInF)
     {
       cerr<<"Error in file with incremental lexical table, file "<<ilextableFileName<<" does not exist.\n";
-      return ERROR;    
+      return THOT_ERROR;    
     }
 
     ifstream filtInfoInf (filterInfoFileName.c_str(), ios::in | ios::binary);
     if (!filtInfoInf)
     {
       cerr<<"Error in file with filtering information, file "<<filterInfoFileName<<" does not exist.\n";
-      return ERROR;    
+      return THOT_ERROR;    
     }
 
         // Filter table registers
@@ -128,9 +128,9 @@ int main(int argc,char *argv[])
     lexTableInF.close();
     filtInfoInf.close();      
     
-    return OK;
+    return THOT_OK;
   }
-  else return ERROR;
+  else return THOT_ERROR;
 }
 
 //--------------- readTableRecord function
@@ -171,7 +171,7 @@ int TakeParameters(int argc,char *argv[])
  if(argc==1)
  {
    printDesc();
-   return ERROR;   
+   return THOT_ERROR;   
  }
 
      /* Verify --help option */
@@ -179,7 +179,7 @@ int TakeParameters(int argc,char *argv[])
  if(err!=-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Takes the table file name */
@@ -187,7 +187,7 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Takes the name of the file with filtering information */
@@ -195,10 +195,10 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
- return OK;  
+ return THOT_OK;  
 }
 
 //--------------- printDesc() function

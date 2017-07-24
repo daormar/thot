@@ -100,9 +100,9 @@ int main(int argc,char *argv[])
 {
   thot_server_pars ts_pars;
     
-  if(handleParameters(argc,argv,ts_pars)==ERROR)
+  if(handleParameters(argc,argv,ts_pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -119,14 +119,14 @@ int processParameters(thot_server_pars ts_pars)
   if(ts_pars.i_given)
   {
     delete thotDecoderPtr;
-    return OK;
+    return THOT_OK;
   }
   
   int ret=thotDecoderPtr->initUsingCfgFile(ts_pars.c_str,tdu_pars,ts_pars.v_given);
-  if(ret==ERROR)
+  if(ret==THOT_ERROR)
   {
     delete thotDecoderPtr;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Parameters ok
@@ -136,7 +136,7 @@ int processParameters(thot_server_pars ts_pars)
     thotDecoderPtr->printModelWeights();
     thotDecoderPtr->clearTrans();
     delete thotDecoderPtr;
-    return OK;
+    return THOT_OK;
   }
   else
   {
@@ -228,7 +228,7 @@ int start_server(thot_server_pars ts_pars,
     close(new_fd);  
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- sigchld_handler function
@@ -267,11 +267,11 @@ int process_request(int s,
   
       // Init user parameters
   retVal=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
-  if(retVal==ERROR)
+  if(retVal==THOT_ERROR)
   {
     end=true;
     if(verbose) cerr<<"Server: shutting down"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
       // Process request
@@ -326,7 +326,7 @@ int process_request(int s,
 
     case RESET_PREF:
       thotDecoderPtr->resetPrefix(user_id);
-      BasicSocketUtils::writeInt(s,OK);
+      BasicSocketUtils::writeInt(s,THOT_OK);
       break;
       
     case CLEAR_TRANS:
@@ -356,29 +356,29 @@ int handleParameters(int argc,
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
     version();
-    return ERROR;
+    return THOT_ERROR;
   }
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
+    return THOT_ERROR;   
   }
   
   Vector<std::string> argv_stl=argv2argv_stl(argc,argv);
-  if(takeParameters(argc,argv_stl,ts_pars)==ERROR)
+  if(takeParameters(argc,argv_stl,ts_pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
-    if(checkParameters(ts_pars)==OK)
+    if(checkParameters(ts_pars)==THOT_OK)
     {
       printParameters(ts_pars);
-      return OK;
+      return THOT_OK;
     }
     else
     {
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -409,7 +409,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -c parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -426,7 +426,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -h parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -454,11 +454,11 @@ int takeParameters(int argc,
     if(matched==0)
     {
       cerr<<"Error: parameter "<<argv_stl[i]<<" not valid."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     ++i;
   }
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- checkParameters function
@@ -467,16 +467,16 @@ int checkParameters(thot_server_pars& ts_pars)
   if(!ts_pars.i_given && !ts_pars.c_given)
   {
     cerr<<"Error: either -c or -i parameter should be given!"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   if(ts_pars.i_given && ts_pars.w_given)
   {
     cerr<<"Error: -i and -w parameters cannot be given simultaneously!"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- printParameters function

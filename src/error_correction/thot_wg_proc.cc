@@ -79,9 +79,9 @@ int main(int argc,char *argv[])
 {
   thot_wg_proc_pars pars;
     
-  if(handleParameters(argc,argv,pars)==ERROR)
+  if(handleParameters(argc,argv,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -97,7 +97,7 @@ int processParameters(thot_wg_proc_pars pars)
 
       // Load word-graph
   ret=wordGraph.load(pars.w_str.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
   
   if(pars.wgp_given)
   {
@@ -126,14 +126,14 @@ int processParameters(thot_wg_proc_pars pars)
     std::string wgOutFile=pars.o_str;
     wgOutFile=wgOutFile+".wgp";
     ret=wgAux.print(wgOutFile.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
   }
 
   if(pars.bp_given)
   {
         // Obtain best-path from hypStateIndex
     ret=process_bp_par(wordGraph,pars);
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
   }
 
       // Print n-best list
@@ -158,7 +158,7 @@ int processParameters(thot_wg_proc_pars pars)
       std::string nbListFile=pars.o_str;
       nbListFile=nbListFile+".nbl_pruned";
       ret=printNbList(compWeights,nblist,scoreCompsVec,nbListFile);
-      if(ret==ERROR) return ERROR;
+      if(ret==THOT_ERROR) return THOT_ERROR;
     }
     else
     {
@@ -175,7 +175,7 @@ int processParameters(thot_wg_proc_pars pars)
       std::string nbListFile=pars.o_str;
       nbListFile=nbListFile+".nbl";
       ret=printNbList(compWeights,nblist,scoreCompsVec,nbListFile);
-      if(ret==ERROR) return ERROR;
+      if(ret==THOT_ERROR) return THOT_ERROR;
     }
   }
 
@@ -187,7 +187,7 @@ int processParameters(thot_wg_proc_pars pars)
     std::string wgArcsTopOrdFile=pars.o_str;
     wgArcsTopOrdFile=wgArcsTopOrdFile+".wg_arcs_top_order";
     ret=wgAux.print(wgArcsTopOrdFile.c_str());
-    if(ret==ERROR) return ERROR;
+    if(ret==THOT_ERROR) return THOT_ERROR;
   }
 
       // Obtain and print new word-graph composed of useful states
@@ -206,7 +206,7 @@ int processParameters(thot_wg_proc_pars pars)
       std::string wgUsefulOutFile=pars.o_str;
       wgUsefulOutFile=wgUsefulOutFile+".wg_useful_pruned";
       ret=wgAux.print(wgUsefulOutFile.c_str());
-      if(ret==ERROR) return ERROR;
+      if(ret==THOT_ERROR) return THOT_ERROR;
     }
     else
     {
@@ -228,11 +228,11 @@ int processParameters(thot_wg_proc_pars pars)
       std::string wgUsefulOutFile=pars.o_str;
       wgUsefulOutFile=wgUsefulOutFile+".wg_useful";
       ret=wgAux.print(wgUsefulOutFile.c_str());
-      if(ret==ERROR) return ERROR;
+      if(ret==THOT_ERROR) return THOT_ERROR;
     }
   }
 
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- printNbList function
@@ -246,7 +246,7 @@ int printNbList(const Vector<pair<std::string,float> >& compWeights,
   if(!outS)
   {
     cerr<<"Error while printing n-best list file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {    
@@ -275,7 +275,7 @@ int printNbList(const Vector<pair<std::string,float> >& compWeights,
       outS<<" "<<nblist[i].second<<endl;
     }
     outS.close();
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -301,7 +301,7 @@ int process_bp_par(const WordGraph& wordGraph,
   if(!outS)
   {
     cerr<<"Error while printing bp file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -331,7 +331,7 @@ int process_bp_par(const WordGraph& wordGraph,
         // Print sentence
     outS<<str<<endl;
     
-    return OK;
+    return THOT_OK;
   }  
 }
 
@@ -343,29 +343,29 @@ int handleParameters(int argc,
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
     version();
-    return ERROR;
+    return THOT_ERROR;
   }
   if(readOption(argc,argv,"--help")!=-1)
   {
     printUsage();
-    return ERROR;   
+    return THOT_ERROR;   
   }
 
   Vector<std::string> argv_stl=argv2argv_stl(argc,argv);
-  if(takeParameters(argc,argv_stl,pars)==ERROR)
+  if(takeParameters(argc,argv_stl,pars)==THOT_ERROR)
   {
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
-    if(checkParameters(pars)==OK)
+    if(checkParameters(pars)==THOT_OK)
     {
       printParameters(pars);
-      return OK;
+      return THOT_OK;
     }
     else
     {
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -389,7 +389,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -s parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -406,7 +406,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -wgp parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -423,7 +423,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -bp parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -455,7 +455,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -o parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -472,7 +472,7 @@ int takeParameters(int argc,
       if(i==argc-1)
       {
         cerr<<"Error: no value for -n parameter."<<endl;
-        return ERROR;
+        return THOT_ERROR;
       }
       else
       {
@@ -513,11 +513,11 @@ int takeParameters(int argc,
     if(matched==0)
     {
       cerr<<"Error: parameter "<<argv_stl[i]<<" not valid."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     ++i;
   }
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- checkParameters function
@@ -526,16 +526,16 @@ int checkParameters(thot_wg_proc_pars& pars)
   if(!pars.w_given)
   {
     cerr<<"Error: -w parameter not given!"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   if(!pars.o_given)
   {
     cerr<<"Error: -o parameter not given!"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------- printParameters function

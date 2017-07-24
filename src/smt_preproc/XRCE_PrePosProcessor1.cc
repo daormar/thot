@@ -50,15 +50,15 @@ bool XRCE_PrePosProcessor1::loadCapitInfo(const char* filename)
   {
     XRCEpostprocInitializeCapitalization(*caps);
     delete caps;
-    cerr<<"OK"<<endl;
+    cerr<<"THOT_OK"<<endl;
     
-    return OK;
+    return THOT_OK;
   }
   else
   {
-    cerr<<"ERROR"<<endl;
+    cerr<<"THOT_ERROR"<<endl;
     
-    return ERROR;
+    return THOT_ERROR;
   }
 }
 

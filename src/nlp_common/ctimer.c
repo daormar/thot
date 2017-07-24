@@ -28,7 +28,7 @@ static double firstcall;
  * @param elapsed elapsed time since the first call to ctimer (miliseconds.)
  * @param ucpu    cpu elapsed time since the first call to ctimer (miliseconds.)
  * @param scpu    system elapsed time since the first call to ctimer (miliseconds.)
- * @return 0 if OK. 
+ * @return 0 if THOT_OK. 
  * 
  * The function must be executed at least two times.
  * The first one starts the timer and sets elapsed to zero.

@@ -43,22 +43,22 @@ bool IncrInterpNgramLM::load(const char *fileName)
 {
       // Load language model entries
   int retval=loadLmEntries(fileName);
-  if(retval==ERROR) return ERROR;
+  if(retval==THOT_ERROR) return THOT_ERROR;
 
       // Load weights
   std::string fileNameW=fileName;
   fileNameW=fileNameW+".weights";
   retval=loadWeights(fileNameW.c_str());
-  if(retval==ERROR) return ERROR;
+  if(retval==THOT_ERROR) return THOT_ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
 bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
 {
   Vector<ModelDescriptorEntry> modelDescEntryVec;
-  if(extractModelEntryInfo(fileName,modelDescEntryVec)==OK)
+  if(extractModelEntryInfo(fileName,modelDescEntryVec)==THOT_OK)
   {
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
@@ -66,13 +66,13 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
       int ret=loadLmEntry(modelDescEntryVec[i].modelType,
                           modelDescEntryVec[i].absolutizedModelFileName,
                           modelDescEntryVec[i].statusStr);
-      if(ret==ERROR)
-        return ERROR;
+      if(ret==THOT_ERROR)
+        return THOT_ERROR;
     }
-    return OK;
+    return THOT_OK;
   }
   else
-    return ERROR;     
+    return THOT_ERROR;     
 }
 
 //---------------
@@ -83,7 +83,7 @@ bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
       // Create pointer to model
   BaseNgramLM<Vector<WordIndex> >* lmPtr=createLmPtr(lmType);
   if(lmPtr==NULL)
-    return ERROR;
+    return THOT_ERROR;
   
       // Store file pointer
   modelPtrVec.push_back(lmPtr);
@@ -94,7 +94,7 @@ bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
 
       // Load model from file
   int ret=modelPtrVec.back()->load(modelFileName.c_str());
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
         
       // Store lm type
   lmTypeVec.push_back(lmType);
@@ -106,7 +106,7 @@ bool IncrInterpNgramLM::loadLmEntry(std::string lmType,
   if(statusStr=="main")
     modelIndex=modelPtrVec.size()-1;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -114,10 +114,10 @@ bool IncrInterpNgramLM::loadWeights(const char *fileName)
 {
       // Open file with weights
   awkInputStream awk;
-  if(awk.open(fileName)==ERROR)
+  if(awk.open(fileName)==THOT_ERROR)
   {
     cerr<<"Error, file with weights "<<fileName<<" cannot be read"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
   else
   {
@@ -139,13 +139,13 @@ bool IncrInterpNgramLM::loadWeights(const char *fileName)
     if(numModels!=_weights.size())
     {
       cerr<<"Error, file "<<fileName<<" contains "<<_weights.size()<<" but "<<numModels<<" models were loaded"<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
     
         // Set weights
     setWeights(_weights);
       
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -153,11 +153,11 @@ bool IncrInterpNgramLM::loadWeights(const char *fileName)
 bool IncrInterpNgramLM::print(const char *fileName)
 {
   int ret=printLmEntries(fileName);
-  if(ret==ERROR) return ERROR;
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
   ret=printWeights(fileName);
-  if(ret==ERROR) return ERROR;  
-  return OK;
+  if(ret==THOT_ERROR) return THOT_ERROR;  
+  return THOT_OK;
 }
 
 //---------------
@@ -169,7 +169,7 @@ bool IncrInterpNgramLM::printLmEntries(const char *fileName)
   if(!outF)
   {
     cerr<<"Error while printing model to file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -185,10 +185,10 @@ bool IncrInterpNgramLM::printLmEntries(const char *fileName)
 
           // Print language model
       bool ret=printLm(fileName,i);
-      if(ret==ERROR)
-        return ERROR;
+      if(ret==THOT_ERROR)
+        return THOT_ERROR;
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -213,7 +213,7 @@ bool IncrInterpNgramLM::printLm(const char* fileDescName,
     if(ret!=0)
     {
       cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
   else
@@ -222,7 +222,7 @@ bool IncrInterpNgramLM::printLm(const char* fileDescName,
     {
           // A file with the same name existed
       cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<endl;
-      return ERROR;
+      return THOT_ERROR;
     }
   }
       // Print model files
@@ -259,14 +259,14 @@ std::string IncrInterpNgramLM::obtainDirNameForLmEntry(const std::string fileDes
 bool IncrInterpNgramLM::printWeights(const char *fileName)
 {
   int ret=printInterModelWeights(fileName);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
   
   ret=printIntraModelWeights(fileName);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -280,7 +280,7 @@ bool IncrInterpNgramLM::printInterModelWeights(const char *fileName)
   if(!outF)
   {
     cerr<<"Error while printing model to file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -288,7 +288,7 @@ bool IncrInterpNgramLM::printInterModelWeights(const char *fileName)
     {
       outF<<weights[i]<<endl;
     }
-    return OK;
+    return THOT_OK;
   }
 } 
 
@@ -306,11 +306,11 @@ bool IncrInterpNgramLM::printIntraModelWeights(const char *fileName)
     if(incrJelMerLmPtr)
     {
       bool ret=incrJelMerLmPtr->printWeights(currModelFileName.c_str());
-      if(ret==ERROR)
-        return ERROR;
+      if(ret==THOT_ERROR)
+        return THOT_ERROR;
     }
   }
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -336,10 +336,10 @@ int IncrInterpNgramLM::updateModelWeights(const char *corpusFileName,
   if(verbose)
     cerr<<"Updating weights of model combination..."<<endl;
   int ret=updateModelCombinationWeights(corpusFileName,verbose);
-  if(ret==ERROR)
-    return ERROR;
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
   
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -360,7 +360,7 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
   if(tmp_file==0)
   {
     cerr<<"Error updating of Jelinek Mercer's language model weights, tmp file could not be created"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
     
       // Execute downhill simplex algorithm
@@ -379,7 +379,7 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
 
     switch(ret)
     {
-      case OK: end=true;
+      case THOT_OK: end=true;
         break;
       case DSO_NMAX_ERROR: cerr<<"Error updating of Jelinek Mercer's language model weights, maximum number of iterations exceeded"<<endl;
         end=true;
@@ -387,7 +387,7 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
       case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
         double perp;
         int retEval=new_dhs_eval(corpusFileName,tmp_file,x,perp);
-        if(retEval==ERROR)
+        if(retEval==THOT_ERROR)
         {
           end=true;
           break;
@@ -406,7 +406,7 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
   }
   
       // Set new weights if updating was successful
-  if(ret==OK)
+  if(ret==THOT_OK)
   {
     Vector<double> _weights;
     for(unsigned int i=0;i<weights.size();++i)
@@ -424,10 +424,10 @@ int IncrInterpNgramLM::updateModelCombinationWeights(const char *corpusFileName,
   free(x);
   fclose(tmp_file);
 
-  if(ret!=OK)
-    return ERROR;
+  if(ret!=THOT_OK)
+    return THOT_ERROR;
   else
-    return OK;
+    return THOT_OK;
 }
 
 //---------------
@@ -460,7 +460,7 @@ int IncrInterpNgramLM::new_dhs_eval(const char *corpusFileName,
   else
   {
     obj_func=DBL_MAX;
-    retVal=OK;
+    retVal=THOT_OK;
   }
       // Print result to tmp file
   fprintf(tmp_file,"%g\n",obj_func);

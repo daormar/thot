@@ -149,13 +149,13 @@ bool BaseStackDecoder<SMT_MODEL>::printSearchGraph(const char* filename)
   if(!outS)
   {
     cerr<<"Error while printing search graph to file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
     printSearchGraphStream(outS);
     outS.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 

@@ -55,16 +55,16 @@ bool _wbaIncrPhraseModel::extendModel(const char *aligFileName,
     printPars(logF,phePars,BRF);
  
       // Estimate the phrase model
-  if(alignmentExtractor.open(aligFileName,GIZA_ALIG_FILE_FORMAT)==ERROR) 
+  if(alignmentExtractor.open(aligFileName,GIZA_ALIG_FILE_FORMAT)==THOT_ERROR) 
   {
     cerr<<"Error while reading alignment file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   } 
   if(logFileOpen()) logF<<"Estimating the phrase model from the alignment file "<<aligFileName<<endl;
   extendModelFromAlignments(phePars,BRF,alignmentExtractor,verbose);
   alignmentExtractor.close();
   
-  return OK;  
+  return THOT_OK;  
 }
 
 //-------------------------

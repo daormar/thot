@@ -190,7 +190,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
   if(tmp_file==0)
   {
     cerr<<"Error updating of Jelinek Mercer's language model weights, tmp file could not be created"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
     
       // Execute downhill simplex algorithm
@@ -209,7 +209,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
 
     switch(ret)
     {
-      case OK: end=true;
+      case THOT_OK: end=true;
         break;
       case DSO_NMAX_ERROR: cerr<<"Error updating of Jelinek Mercer's language model weights, maximum number of iterations exceeded"<<endl;
         end=true;
@@ -217,7 +217,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
       case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
         double perp;
         int retEval=new_dhs_eval(corpusFileName,tmp_file,x,perp);
-        if(retEval==ERROR)
+        if(retEval==THOT_ERROR)
         {
           end=true;
           break;
@@ -236,7 +236,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
   }
   
       // Set new weights if updating was successful
-  if(ret==OK)
+  if(ret==THOT_OK)
   {
     for(unsigned int i=0;i<weights.size();++i)
       weights[i]=start[i];
@@ -251,10 +251,10 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
   free(x);
   fclose(tmp_file);
 
-  if(ret!=OK)
-    return ERROR;
+  if(ret!=THOT_OK)
+    return THOT_ERROR;
   else
-    return OK;
+    return THOT_OK;
 }
 
 //---------------
@@ -286,7 +286,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::new_dhs_eval(const char *corpusFil
   else
   {
     obj_func=DBL_MAX;
-    retVal=OK;
+    retVal=THOT_OK;
   }
       // Print result to tmp file
   fprintf(tmp_file,"%g\n",obj_func);
@@ -336,13 +336,13 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
 
       // load weights
   retval=loadWeights(fileName);
-  if(retval==ERROR) return ERROR;
+  if(retval==THOT_ERROR) return THOT_ERROR;
 
       // load n-grams
   retval=_incrNgramLM<SRC_INFO,SRCTRG_INFO>::load(fileName);
-  if(retval==ERROR) return ERROR;
+  if(retval==THOT_ERROR) return THOT_ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -369,10 +369,10 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *prefixOfL
       // load weights
   awkInputStream awk;
   weights.clear();
-  if(awk.open(weightFileName.c_str())==ERROR)
+  if(awk.open(weightFileName.c_str())==THOT_ERROR)
   {
     cerr<<"Error, file with weights "<<weightFileName<<" cannot be read"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
   else
   {
@@ -387,13 +387,13 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *prefixOfL
         weights.push_back((double)atof(awk.dollar(i).c_str()));
       }
       awk.close();
-      return OK;
+      return THOT_OK;
     }
     else
     {
       cerr<<"Error while loading file with weights: "<<weightFileName<<endl;
       awk.close();
-      return ERROR;
+      return THOT_ERROR;
     }
   }
 }
@@ -406,13 +406,13 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
   
       // Print weights
   retval=printWeights(fileName);
-  if(retval==ERROR) return ERROR;
+  if(retval==THOT_ERROR) return THOT_ERROR;
 
       // print n-grams
   retval=_incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(fileName);
-  if(retval==ERROR) return ERROR;
+  if(retval==THOT_ERROR) return THOT_ERROR;
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -441,7 +441,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *prefixOf
   if(filePtr==NULL)
   {
     cerr<<"Error while printing file with lm weights ("<<weightFileName<<")"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
 
   fprintf(filePtr,"%d ",this->getNgramOrder());  
@@ -454,7 +454,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *prefixOf
   fprintf(filePtr,"\n");
   fclose(filePtr);
 
-  return OK;
+  return THOT_OK;
 }  
 
 //---------------

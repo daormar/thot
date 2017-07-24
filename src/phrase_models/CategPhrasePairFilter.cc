@@ -72,7 +72,7 @@ bool CategPhrasePairFilter::phrasePairIsOk(Vector<std::string> s_,
     }
   }
 
-      // Check if phrase pair is OK
+      // Check if phrase pair is correct
   std::map<std::string,unsigned int>::const_iterator srciter;
   for(srciter=srcCategMap.begin();srciter!=srcCategMap.end();++srciter)
   {

@@ -166,10 +166,10 @@ bool IncrHmmAligTable::loadPlainText(const char* aligNumDenFile)
   cerr<<"Loading alignd file in plain text format from "<<aligNumDenFile<<endl;
 
   awkInputStream awk;
-  if(awk.open(aligNumDenFile)==ERROR)
+  if(awk.open(aligNumDenFile)==THOT_ERROR)
   {
     cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   { 
@@ -186,7 +186,7 @@ bool IncrHmmAligTable::loadPlainText(const char* aligNumDenFile)
         setAligNumDen(asHmm,i,numer,denom);
       }
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -203,7 +203,7 @@ bool IncrHmmAligTable::loadBin(const char* aligNumDenFile)
   if(!inF)
   {
     cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
-    return ERROR;    
+    return THOT_ERROR;    
   }
   else
   {
@@ -225,7 +225,7 @@ bool IncrHmmAligTable::loadBin(const char* aligNumDenFile)
       }
       else end=true;
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -247,7 +247,7 @@ bool IncrHmmAligTable::printBin(const char* aligNumDenFile)
   if(!outF)
   {
     cerr<<"Error while printing alignment nd file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -274,7 +274,7 @@ bool IncrHmmAligTable::printBin(const char* aligNumDenFile)
         }
       }      
     }
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -286,7 +286,7 @@ bool IncrHmmAligTable::printPlainText(const char* aligNumDenFile)
   if(!outF)
   {
     cerr<<"Error while printing alignment nd file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -313,7 +313,7 @@ bool IncrHmmAligTable::printPlainText(const char* aligNumDenFile)
         }
       }      
     }
-    return OK;
+    return THOT_OK;
   }
 }
 

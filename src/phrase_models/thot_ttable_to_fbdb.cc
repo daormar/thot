@@ -66,11 +66,11 @@ std::string outputFilesPrefix;
 //---------------
 int main(int argc,char *argv[])
 {
-  if(TakeParameters(argc,argv)==OK)
+  if(TakeParameters(argc,argv)==THOT_OK)
   {
     return process_ttable();
   }
-  else return ERROR;
+  else return THOT_ERROR;
 }
 
 //---------------
@@ -91,7 +91,7 @@ int extractEntryInfo(awkInputStream& awk,
       srcPhr.push_back(atoi(awk.dollar(i).c_str()));
   }
   if(i==awk.NF)
-    return ERROR;
+    return THOT_ERROR;
 
       // Obtain target phrase
   trgPhr.clear();
@@ -104,12 +104,12 @@ int extractEntryInfo(awkInputStream& awk,
       trgPhr.push_back(atoi(awk.dollar(i).c_str()));
   }
   if(i!=awk.NF-2)
-    return ERROR;
+    return THOT_ERROR;
 
       // Obtain joint count
   jointCount=atof(awk.dollar(awk.NF).c_str());
 
-  return OK;
+  return THOT_OK;
 }
 
 //---------------
@@ -117,10 +117,10 @@ int process_ttable(void)
 {
       // Read standard input
   awkInputStream awk;
-  if(awk.open_stream(stdin)==ERROR)
+  if(awk.open_stream(stdin)==THOT_ERROR)
   {
     cerr<<"Error while reading from standard input!\n";
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
@@ -138,13 +138,13 @@ int process_ttable(void)
       Vector<WordIndex> trgPhr;
       Count jointCount;
       int ret=extractEntryInfo(awk,srcPhr,trgPhr,jointCount);
-      if(ret==OK)
+      if(ret==THOT_OK)
         fastBdbPt.incrCountsOfEntry(srcPhr,trgPhr,jointCount);
     }
 
     fastBdbPt.enableFastSearch();
     
-    return OK;
+    return THOT_OK;
   }
 }
 
@@ -158,7 +158,7 @@ int TakeParameters(int argc,char *argv[])
  if(err!=-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
      /* Takes the output files prefix */
@@ -166,10 +166,10 @@ int TakeParameters(int argc,char *argv[])
  if(err==-1)
  {
    printUsage();
-   return ERROR;
+   return THOT_ERROR;
  }
 
- return OK;  
+ return THOT_OK;  
 }
 
 //---------------

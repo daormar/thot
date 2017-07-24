@@ -103,7 +103,7 @@ bool awkInputStream::open(const char *str)
  if(filePtr==NULL)
  {
    FS=0;
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
@@ -111,7 +111,7 @@ bool awkInputStream::open(const char *str)
    fileName=str;
    FNR=0;
    FS=' ';
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -123,13 +123,13 @@ bool awkInputStream::open_stream(FILE *stream)
  if(filePtr==NULL)
  {
    FS=0;
-   return ERROR;
+   return THOT_ERROR;
  }
  else
  {
    FNR=0;
    FS=' ';
-   return OK;
+   return THOT_OK;
  }
 }
 
@@ -150,9 +150,9 @@ bool awkInputStream::rwd(void)
  {
    FNR=0;
    rewind(filePtr);
-   return OK;
+   return THOT_OK;
  }
- else return ERROR; 
+ else return THOT_ERROR; 
 }
 
 //----------

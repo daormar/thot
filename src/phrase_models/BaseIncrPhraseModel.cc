@@ -41,7 +41,7 @@ int BaseIncrPhraseModel::trainBilPhrases(const Vector<Vector<std::string> >& src
   if(srcPhrVec.size()!=trgPhrVec.size())
   {
     cerr<<"Error: different number of source and target phrases!"<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   
   for(unsigned int i=0;i<srcPhrVec.size();++i)
@@ -71,7 +71,7 @@ int BaseIncrPhraseModel::trainBilPhrases(const Vector<Vector<std::string> >& src
     }
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //-------------------------

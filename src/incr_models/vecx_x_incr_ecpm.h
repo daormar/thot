@@ -93,10 +93,10 @@ bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
   awkInputStream awk;
   unsigned int i;
 
-  if(awk.open(fileName)==ERROR)
+  if(awk.open(fileName)==THOT_ERROR)
   {
     cerr<<"Error while loading model file "<<fileName<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }  
   else
   {
@@ -125,7 +125,7 @@ bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
     }
   }
   
-  return OK;
+  return THOT_OK;
 }
 
 //--------------
@@ -138,13 +138,13 @@ bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
   if(!outF)
   {
     cerr<<"Error while printing model to file."<<endl;
-    return ERROR;
+    return THOT_ERROR;
   }
   else
   {
     print(outF);
     outF.close();	
-    return OK;
+    return THOT_OK;
   }
 }
 
