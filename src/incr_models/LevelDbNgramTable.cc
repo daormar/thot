@@ -150,12 +150,12 @@ bool LevelDbNgramTable::init(string levelDbPath)
         db = NULL;
     }
 
-    if(load(levelDbPath) != OK)
-        return ERROR;
+    if(load(levelDbPath) != THOT_OK)
+        return THOT_ERROR;
 
     clear();
 
-    return OK;
+    return THOT_OK;
 }
 
 //-------------------------
@@ -171,13 +171,13 @@ bool LevelDbNgramTable::drop()
 
     if(status.ok())
     {
-        return OK;
+        return THOT_OK;
     }
     else
     {
         cerr << "Dropping database status: " << status.ToString() << endl;
         
-        return ERROR;
+        return THOT_ERROR;
     }
 }
 
@@ -193,7 +193,7 @@ bool LevelDbNgramTable::load(string levelDbPath)
     dbName = levelDbPath;
     leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
 
-    return (status.ok()) ? OK : ERROR;
+    return (status.ok()) ? THOT_OK : THOT_ERROR;
 }
 
 //-------------------------
@@ -583,7 +583,7 @@ void LevelDbNgramTable::clear(void)
     {
         bool dropStatus = drop();
 
-        if(dropStatus == ERROR)
+        if(dropStatus == THOT_ERROR)
         {
             exit(2);
         }
