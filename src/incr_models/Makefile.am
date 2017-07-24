@@ -6,6 +6,7 @@ IncrInterpNgramLM.h _incrInterpNgramLM.h _incrInterpNgramLM.cc		\
 IncrInterpNgramLM.cc IncrEncoder.h _incrEncCondProbModel.h		\
 IncrCondProbTable.h im_pair.h BaseIncrEncoder.h				\
 BaseIncrEncCondProbModel.h BaseIncrCondProbTable.h			\
-BaseIncrCondProbModel.h BaseWordPenaltyModel.h WordPenaltyModel.h	\
+BaseIncrCondProbModel.h BaseWordPenaltyModel.h LevelDbNgramTable.h \
+LevelDbNgramTable.cc \WordPenaltyModel.h	\
 WordPenaltyModel.cc WordPredictor.h WordPredictor.cc			\
 IncrJelMerNgramLMFactory.cc WordPenaltyModelFactory.cc
