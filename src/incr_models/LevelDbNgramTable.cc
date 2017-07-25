@@ -122,7 +122,7 @@ bool LevelDbNgramTable::storeData(const Vector<WordIndex>& phrase, int count)
 
         return true;
     }
-    else
+    else if (count > 0)  // Do not store elements with zero occurency number
     {
         stringstream ss;
         ss << count;
@@ -212,7 +212,20 @@ Vector<WordIndex> LevelDbNgramTable::getSrcTrg(const Vector<WordIndex>& s,
 bool LevelDbNgramTable::getNbestForSrc(const Vector<WordIndex>& s,
                                        NbestTableNode<WordIndex>& nbt)
 {
-      // TO-BE-DONE (LOW PRIORITY)
+    TrgTableNode tnode;
+    typename TrgTableNode::iterator tNodeIter;
+    bool found;
+    Count s_count = cSrc(s);
+    
+    nbt.clear();
+    found = getEntriesForSource(s, tnode);
+
+    for(tNodeIter = tnode.begin(); tNodeIter != tnode.end(); tNodeIter++)
+    {
+        nbt.insert((float) tNodeIter->second.second.get_lc_st() - (float) s_count.get_lc_s(), tNodeIter->first);
+    }
+
+    return found;
 }
 //-------------------------
 bool LevelDbNgramTable::getNbestForTrg(const WordIndex& t,
@@ -417,43 +430,30 @@ LgProb LevelDbNgramTable::logpSrcGivenTrg(const Vector<WordIndex>& s,
 
 //-------------------------
 bool LevelDbNgramTable::getEntriesForTarget(const WordIndex& t,
-                                            LevelDbNgramTable::SrcTableNode& srctn)
+                                            LevelDbNgramTable::SrcTableNode& tnode)
 {
-    /*bool found;
+    // TODO Distinguish (s) and (s, t) phrases and use only the second ones for searching
+    pair<Vector<WordIndex>, im_pair<Count, Count> > pdp;
 
-    Vector<WordIndex> start_vec = t;
-    start_vec.push_back(UNUSED_WORD);
-
-    Vector<WordIndex> end_vec(t);
-    end_vec.push_back(3);
-
-    string start_str = vectorToKey(start_vec);
-    string end_str = vectorToKey(end_vec);
-
-    leveldb::Slice start = start_str;
-    leveldb::Slice end = end_str;
-
-    leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
+    tnode.clear();  // Make sure that structure does not keep old values
     
-    srctn.clear();  // Make sure that structure does not keep old values
-    
-    int i = 0;
-    for(it->Seek(start); it->Valid() && it->key().ToString() < end.ToString(); it->Next(), i++) {
-        Vector<WordIndex> vec = keyToVector(it->key().ToString());
-        Vector<WordIndex> src(vec.begin() + start_vec.size(), vec.end());
+    for(LevelDbNgramTable::const_iterator iter = begin(); iter != end(); iter++)
+    {
+        pair<Vector<WordIndex>, Count> x = *iter;
 
-        PhrasePairInfo ppi = infSrcTrg(src, t, found);
-        if (!found || (int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
-            continue;
+        if (x.first.size() > 1 && x.first.back() == t)
+        {
+            Vector<WordIndex> src(x.first.begin(), x.first.end() - 1);
 
-        srctn.insert(pair<Vector<WordIndex>, PhrasePairInfo>(src, ppi));
+            pdp.first = src;
+            pdp.second.first = cSrc(src);
+            pdp.second.second = x.second;
+
+            tnode.insert(pdp);
+        }
     }
 
-    found = it->status().ok();
-
-    delete it;
-
-    return i > 0 && found;*/
+    return tnode.size() > 0;
 }
 
 //-------------------------
@@ -461,7 +461,7 @@ bool LevelDbNgramTable::getEntriesForSource(const Vector<WordIndex>& s,
                                             LevelDbNgramTable::TrgTableNode& trgtn) 
 {
     bool found;
-    pair<WordIndex,im_pair<Count,Count> > pdp;
+    pair<WordIndex, im_pair<Count, Count> > pdp;
 
     Count s_count = cSrc(s);
 

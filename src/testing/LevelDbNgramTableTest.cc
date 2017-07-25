@@ -129,43 +129,47 @@ void LevelDbNgramTableTest::testIncrCountsOfEntryLog()
 }
 
 //---------------------------------------
-/*void LevelDbNgramTableTest::testGetEntriesForTarget()
+void LevelDbNgramTableTest::testGetEntriesForTarget()
 {
   LevelDbNgramTable::SrcTableNode node;
-  Vector<WordIndex> s1_1 = getVector("Pasleka river");
-  Vector<WordIndex> s1_2 = getVector("Pasleka");
-  Vector<WordIndex> t1_1 = getVector("rzeka Pasleka");
-  Vector<WordIndex> t1_2 = getVector("Pasleka");
-  Vector<WordIndex> s2 = getVector("river");
-  Vector<WordIndex> t2 = getVector("rzeka");
-  Count c = Count(1);
+  Vector<WordIndex> s1_1;
+  s1_1.push_back(1);
+  Vector<WordIndex> s1_2;
+  s1_2.push_back(1);
+  s1_2.push_back(2);
+  WordIndex t1_1 = 1;
+  WordIndex t1_2 = 5;
+  Vector<WordIndex> s2;
+  s2.push_back(3);
+  WordIndex t2 = 2;
+  LogCount c = LogCount(log(1));
 
   tab->clear();
-  tab->incrCountsOfEntry(s1_1, t1_1, c);
-  tab->incrCountsOfEntry(s1_2, t1_1, c);
-  tab->incrCountsOfEntry(s1_1, t1_2, c);
-  tab->incrCountsOfEntry(s2, t2, c);
+  tab->incrCountsOfEntryLog(s1_1, t1_1, c);
+  tab->incrCountsOfEntryLog(s1_2, t1_1, c);
+  tab->incrCountsOfEntryLog(s1_1, t1_2, c);
+  tab->incrCountsOfEntryLog(s2, t2, c);
 
   bool result;
-  // Looking for phrases for which 'rzeka Pasleka' is translation
+  // Looking for phrases with 1 as a target
   result = tab->getEntriesForTarget(t1_1, node);
   CPPUNIT_ASSERT( result );
   CPPUNIT_ASSERT( node.size() == 2 );
 
-  // Looking for phrases for which 'Pasleka' is translation
+  // Looking for phrases with 5 as a target
   result = tab->getEntriesForTarget(t1_2, node);
   CPPUNIT_ASSERT( result );
   CPPUNIT_ASSERT( node.size() == 1 );
 
-  // Looking for phrases for which 'rzeka' is translation
+  // Looking for phrases with 2 as a target
   result = tab->getEntriesForTarget(t2, node);
   CPPUNIT_ASSERT( result );
   CPPUNIT_ASSERT( node.size() == 1 );
 
-  // 'xyz'' key shoud not be found
-  result = tab->getEntriesForTarget(getVector("xyz"), node);
+  // '9' key shoud not be found
+  result = tab->getEntriesForTarget(9, node);
   CPPUNIT_ASSERT( !result );
-}*/
+}
 
 //---------------------------------------
 void LevelDbNgramTableTest::testRetrievingSubphrase()
@@ -310,47 +314,47 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
 }*/
 
 //---------------------------------------
-/*void LevelDbNgramTableTest::testGetNbestForTrg()
+void LevelDbNgramTableTest::testGetNbestForSrc()
 {
   //  TEST:
-  //  Check if method getNbestForTrg returns correct elements
+  //  Check if method getNbestForSrc returns correct elements
   //
   bool found;
-  NbestTableNode<PhraseTransTableNodeData> node;
-  NbestTableNode<PhraseTransTableNodeData>::iterator iter;
+  NbestTableNode<WordIndex> node;
+  NbestTableNode<WordIndex>::iterator iter;
 
   // Fill leveldb with data
-  Vector<WordIndex> s1 = getVector("city hall");
-  Vector<WordIndex> s2 = getVector("city hall in Morag");
-  Vector<WordIndex> s3 = getVector("town hall");
-  Vector<WordIndex> s4 = getVector("town hall in Morag");
-  Vector<WordIndex> t = getVector("ratusz miejski w Moragu");
+  Vector<WordIndex> s;
+  s.push_back(1);
+
+  WordIndex t1 = 1;
+  WordIndex t2 = 2;
+  WordIndex t3 = 3;
+  WordIndex t4 = 4;
   
   tab->clear();
-  tab->incrCountsOfEntry(s1, t, Count(4));
-  tab->incrCountsOfEntry(s2, t, Count(2));
-  tab->incrCountsOfEntry(s3, t, Count(3));
-  tab->incrCountsOfEntry(s4, t, Count(0));
+  tab->incrCountsOfEntryLog(s, t1, LogCount(log(4)));
+  tab->incrCountsOfEntryLog(s, t2, LogCount(log(2)));
+  tab->incrCountsOfEntryLog(s, t3, LogCount(log(3)));
+  tab->incrCountsOfEntryLog(s, t4, LogCount(log(1)));
 
   // Returned elements should not exceed number of elements
   // in the structure
-  found = tab->getNbestForTrg(t, node, 10);
-
+  found = tab->getNbestForSrc(s, node);
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( node.size() == 3 );
+  CPPUNIT_ASSERT( node.size() == 4 );
 
-  // If there are more available elements, only elements
-  // with the highest score should be returned
-  found = tab->getNbestForTrg(t, node, 2);
-
-  CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( node.size() == 2 );
-
+  // If there are more available elements, at the beginning
+  // the most frequent targets should be returned
   iter = node.begin();
-  CPPUNIT_ASSERT( iter->second == s1 );
+  CPPUNIT_ASSERT( iter->second == t1 );
   iter++;
-  CPPUNIT_ASSERT( iter->second == s3 );
-}*/
+  CPPUNIT_ASSERT( iter->second == t3 );
+  iter++;
+  CPPUNIT_ASSERT( iter->second == t2 );
+  iter++;
+  CPPUNIT_ASSERT( iter->second == t4 );
+}
 
 //---------------------------------------
 /*void LevelDbNgramTableTest::testAddSrcTrgInfo()
@@ -376,17 +380,19 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
 }*/
 
 //---------------------------------------
-/*void LevelDbNgramTableTest::testIteratorsLoop()
+void LevelDbNgramTableTest::testIteratorsLoop()
 {
   //  TEST:
   //  Check basic implementation of iterators - functions
   //  begin(), end() and operators (++ postfix, *).
   //
-  Vector<WordIndex> s = getVector("jezioro Skiertag");
-  Vector<WordIndex> t = getVector("Skiertag lake");
+  Vector<WordIndex> s;
+  s.push_back(1);
+  s.push_back(2);
+  WordIndex t = 3;
   
   tab->clear();
-  tab->incrCountsOfEntry(s, t, Count(1));
+  tab->incrCountsOfEntryLog(s, t, LogCount(log(2)));
 
   CPPUNIT_ASSERT(tab->begin() != tab->end());
   CPPUNIT_ASSERT(tab->begin() != tab->begin());
@@ -396,29 +402,26 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
 
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
-  map<Vector<WordIndex>, pair<int, int> > d;
-  d[tab->getSrc(s)] = make_pair(0, 0);
-  d[t] = make_pair(0, 0);
-  d[tab->getTrgSrc(s, t)] = make_pair(0, 0);
+  map<Vector<WordIndex>, pair<Count, Count> > d;
+  d[s] = make_pair(Count(0), Count(0));
+  d[tab->getSrcTrg(s, t)] = make_pair(Count(0), Count(0));
 
   for(LevelDbNgramTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
   {
-    pair<Vector<WordIndex>, int> x = *iter;
+    pair<Vector<WordIndex>, Count> x = *iter;
     d[x.first].first += x.second;
-    d[x.first].second++;  
+    d[x.first].second += 1;
   }
 
   // Check if element returned by iterator is correct
-  CPPUNIT_ASSERT(d.size() == 3);
-  CPPUNIT_ASSERT(d[tab->getSrc(s)].first == 1);
-  CPPUNIT_ASSERT(d[tab->getSrc(s)].second == 1);
-  CPPUNIT_ASSERT(d[t].first == 1);
-  CPPUNIT_ASSERT(d[t].second == 1);
-  CPPUNIT_ASSERT(d[tab->getTrgSrc(s, t)].first == 1);
-  CPPUNIT_ASSERT(d[tab->getTrgSrc(s, t)].second == 1);
+  CPPUNIT_ASSERT(d.size() == 2);
+  CPPUNIT_ASSERT(d[s].first.get_c_s() == 2);
+  CPPUNIT_ASSERT(d[s].second.get_c_s() == 1);
+  CPPUNIT_ASSERT(d[tab->getSrcTrg(s, t)].first.get_c_st() == 2);
+  CPPUNIT_ASSERT(d[tab->getSrcTrg(s, t)].second.get_c_s() == 1);
 
-  CPPUNIT_ASSERT( i == 3 );
-}*/
+  CPPUNIT_ASSERT( i == 2 );
+}
 
 //---------------------------------------
 /*void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()

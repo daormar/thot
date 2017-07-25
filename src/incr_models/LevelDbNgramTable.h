@@ -74,9 +74,6 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
     bool retrieveData(const Vector<WordIndex>& phrase, int &count)const;
     bool storeData(const Vector<WordIndex>& phrase, int count);
 
-      // Concatenate s and t phrases
-    Vector<WordIndex> getSrcTrg(const Vector<WordIndex>& s, const WordIndex& t)const;
-
         // Returns information related to a given key.
     Count getInfo(const Vector<WordIndex>& key, bool &found);
     Count getTrgInfo(const WordIndex& t, bool &found);
@@ -103,6 +100,10 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
       // Basic functions
       // TODO Add empty key to size, iter etc.
       // TODO Ordering by n-gram value
+
+      // Concatenate s and t phrases
+    Vector<WordIndex> getSrcTrg(const Vector<WordIndex>& s, const WordIndex& t)const;
+    
     void addTableEntry(const Vector<WordIndex>& s, const WordIndex& t, im_pair<Count,Count> inf);
     void addSrcInfo(const Vector<WordIndex>& s, Count s_inf);
     void addSrcTrgInfo(const Vector<WordIndex>& s, const WordIndex& t, Count st_inf);
