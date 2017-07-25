@@ -537,16 +537,18 @@ void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
 }
 
 //---------------------------------------
-/*void LevelDbNgramTableTest::testIteratorsOperatorsEqualNotEqual()
+void LevelDbNgramTableTest::testIteratorsOperatorsEqualNotEqual()
 {
   //  TEST:
   //    Check basic implementation of iterators - operators == and !=
   //
-  Vector<WordIndex> s = getVector("kemping w Kretowinach");
-  Vector<WordIndex> t = getVector("camping Kretowiny");
+  Vector<WordIndex> s;
+  s.push_back(150);
+  WordIndex t = 150150;
   
   tab->clear();
-  tab->incrCountsOfEntry(s, t, Count(1));
+  tab->addSrcInfo(s, Count(3));
+  tab->incrCountsOfEntryLog(s, t, LogCount(0));
 
   LevelDbNgramTable::const_iterator iter1 = tab->begin();
   iter1++;
@@ -556,10 +558,10 @@ void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
   CPPUNIT_ASSERT( !(iter1 != iter1) );
   CPPUNIT_ASSERT( !(iter1 == iter2) );
   CPPUNIT_ASSERT( iter1 != iter2 );
-}*/
+}
 
 //---------------------------------------
-/*void LevelDbNgramTableTest::testSize()
+void LevelDbNgramTableTest::testSize()
 {
   //  TEST:
   //    Check if number of elements in the levelDB is returned correctly
@@ -568,30 +570,46 @@ void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
   CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
   
   // Fill leveldb with data
-  tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping Kretowiny"), Count(1));
-  tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping in Kretowiny"), Count(2));
+  Vector<WordIndex> s1;
+  s1.push_back(100100);
+  s1.push_back(100200);
+  Vector<WordIndex> s2;
+  s2.push_back(200100);
+  s2.push_back(200200);
+  s2.push_back(200300);
+  Vector<WordIndex> s3;
+  s3.push_back(100100);
+  Vector<WordIndex> s4;  // Empty key
 
-  CPPUNIT_ASSERT( tab->size() == 5 );
+  WordIndex t1 = 555001;
+  WordIndex t2 = 555002;
+  WordIndex t3 = 555003;
+
+
+  tab->incrCountsOfEntryLog(s1, t1, LogCount(log(1)));
+  tab->incrCountsOfEntryLog(s1, t2, LogCount(log(2)));
+
+  CPPUNIT_ASSERT( tab->size() == 2 );
 
   tab->clear();
   CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
 
-  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Car"), Count(1));
-  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Pan Samochodzik"), Count(4));
-  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mister Automobile"), Count(20));
-  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Automobile"), Count(24));
+  tab->incrCountsOfEntryLog(s2, t1, LogCount(log(1)));
+  tab->incrCountsOfEntryLog(s2, t1, LogCount(log(2)));
+  tab->incrCountsOfEntryLog(s2, t2, LogCount(log(1)));
+  tab->incrCountsOfEntryLog(s3, t2, LogCount(log(2)));
 
-  CPPUNIT_ASSERT( tab->size() == 9 );
+  CPPUNIT_ASSERT( tab->size() == 3 );
 
-  tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
-                         getVector("First Adventure of Mister Automobile"), Count(5));
-  tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
-                         getVector("First Adventure of Pan Samochodzik"), Count(7));
+  tab->incrCountsOfEntryLog(s3, t1, LogCount(log(5)));
+  tab->incrCountsOfEntryLog(s4, t2, LogCount(log(7)));
 
+  CPPUNIT_ASSERT( tab->size() == 3 + 2 );
 
-  CPPUNIT_ASSERT( tab->size() == 9 + 5 );
-
-}*/
+  tab->addSrcInfo(s4, Count(17));
+  
+  CPPUNIT_ASSERT( tab->size() == 3 + 2 + 1 );
+}
 
 //---------------------------------------
 /*void LevelDbNgramTableTest::testLoadingLevelDb()

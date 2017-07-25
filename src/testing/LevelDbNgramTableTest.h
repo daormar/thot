@@ -81,9 +81,9 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
   //CPPUNIT_TEST( testAddSrcTrgInfo );
   CPPUNIT_TEST( testIteratorsLoop );
   CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
-  /*CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
+  CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
   CPPUNIT_TEST( testSize );
-  CPPUNIT_TEST( testLoadingLevelDb );
+  /*CPPUNIT_TEST( testLoadingLevelDb );
   CPPUNIT_TEST( testLoadedDataCorrectness );
   CPPUNIT_TEST( testSubkeys );
   CPPUNIT_TEST( test32bitRange );
