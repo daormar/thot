@@ -52,7 +52,8 @@ state-of-the-art phrase-based translation decoder as well as tools to
 estimate all of the models involved in the translation process. In
 addition to this, Thot is also able to incrementally update its models
 in real time after presenting an individual sentence pair using online
-learning.</p>
+learning (also known as online learning or adaptive machine
+translation).</p>
 
 <p>Thot is being developed by <a href="http://daormar.github.io/">Daniel
 Ortiz-Martínez</a>. Daniel is a researcher on natural language
@@ -61,20 +62,19 @@ at <a href="http://webinterpret.com/">Webinterpret</a>. Formerly, he was
 a member of the <a href="https://www.prhlt.upv.es/">PRHLT research
 group</a> as well as an assistant professor at
 the <a href="http://www.upv.es/">Technical University of
-Valencia</a>.</p>
+Valencia</a>. Recently, <a href="https://github.com/daormar/thot/graphs/contributors">new
+contributors</a> have joined the project.</p>
 
 <h2>
 <a id="news" class="anchor" href="#news" aria-hidden="true"><span class="octicon octicon-link"></span></a>News</h2>
 <p>A new version of the toolkit has been released with several improvements and new features:
 <ul>
-<li>Incorporation of a whole set of pre/post-processing tools</li>
-<li>Portability increased (Thot has been successfully compiled in many different platforms, including Mac OS X, FreeBSD, OpenBSD, NetBSD, etc.)</li>
-<li>Improved checking of runtime errors in all of the tools involved in the translation pipeline</li>
-<li>Early detection of bugs and portability problems using built-in checks</li>
-<li>Improvements in tools to carry out translation experiments and incorporation of new ones</li>
-<li>Translation can now be executed in parallel using clusters or multi-processor systems by means of the thot_decoder tool</li>
+<li>Ability to force translations for specific phrases of the source sentence</li>
+<li>Capability to access language and translation models from disk</li>  
+<li>Added functionality to use multiple language and translation models</li>  
+<li>Added tool to create empty models useful to perform online learning from scratch</li>  
+<li>Portability increased</li>
 <li>The Thot manual has been extended and revised</li>
-<!-- <li>Multiple minor improvements and bug fixes</li> -->
 </ul>
 
 <h2>
@@ -85,7 +85,7 @@ Valencia</a>.</p>
 <ul>
 <li>Phrase-based statistical machine translation decoder.</li>
 <li>Computer-aided translation (post-editing and interactive machine translation).</li>
-<li>Incremental estimation of all of the models involved in the translation process.</li>
+<li>Incremental estimation of statistical models (adaptive machine translation).</li>
 <li>Robust generation of alignments at phrase-level.</li>
 <li>Client-server implementation of the translation functionality.</li>
 <li>Single word alignment model estimation using the incremental EM algorithm.</li>
@@ -119,12 +119,9 @@ the <a href="https://www.cygwin.com/">Cygwin</a>
 environment. Alternatively, Thot can also be installed on Mac OS X
 systems using <a href="https://www.macports.org/">MacPorts</a>.</p>
 
-<p>On the other hand, some of the code used for corpus
-pre/post-processing (see more on this in the Thot manual) is based on
-the <a href="http://www.nltk.org/">Natural Language Toolkit (NLTK)</a>
-library. Those users interested in using the pre/post-processing
-functionality incorporated in Thot will need to install that library as
-well.</p>
+<p>On the other hand, some of the functionality incorporated by Thot
+requires the previous installation of third-party software
+(<a href="#third-party-software">see below</a>).</p>
 
 <p>Once the autotools are available (as well as other required software
 such as Cygwin, MacPorts or the NLTK library), you can proceed with the
@@ -150,7 +147,7 @@ code directory by typing <code>make clean</code>.</p></li>
 </ol>
 
 <p>By default the files are installed under the /usr/local/ directory (or
-similar, depending of the OS you use); however, since Step 5 requires
+similar, depending on the OS you use); however, since Step 5 requires
 root privileges, another directory can be specified during Step 3 by
 typing:</p>
 
@@ -198,11 +195,23 @@ below.</li>
 </ul>
 
 <h4>
-<a id="installation-including-the-casmacat-workbench" class="anchor" href="#installation-including-the-casmacat-workbench" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation Including the CasMaCat Workbench</h4>
+<a id="third-party-software" class="anchor" href="#third-party-software"
+aria-hidden="true"><span class="octicon octicon-link"></span></a>Third
+Party Software</h4>
 
-<p>Thot can be combined with the CasMacat Workbench that is being developed
-in the project of the same name. <a href="http://www.casmacat.eu/index.php?n=Workbench.Workbench">See this webpage</a> to get the specific
-installation instructions.</p>
+<p>Thot can currently be combined with third party software, extending
+its functionality:</p>
+
+<h6>KenLM</h6>
+
+<h6>Berkeley DB Library</h6>
+
+<h6>Casmacat Workbench</h6>
+
+<p>Thot can be used in combination with the CasMacat Workbench that is
+being developed in the project of the same
+name. <a href="http://www.casmacat.eu/index.php?n=Workbench.Workbench">See
+this webpage</a> to get the specific installation instructions.</p>
 
 <h4 id="checking-package-installation">Checking Package Installation</h4>
 
@@ -258,10 +267,11 @@ incorporated in the next months:</p>
 <ul>
 <li><p>Improved management of concurrency in the Thot translation server
 (concurrent translation processes are currently handled with mutual
-exclusion).</p></li>
-<li><p>Virtualized language models (i.e. accessing language model parameters
-from disk).</p></li>
-<li><p>Interpolation of language and translation models.</p></li>
+exclusion) <small><b>[STATUS: under development]</b></small></p></li>
+<li><p>Virtualized language models, i.e. accessing language model
+parameters from disk <small><b>[STATUS: implementation finished]</b></small></p></li>
+<li><p>Interpolation of language and translation
+models <small><b>[STATUS: implementation finished]</b></small></p></li>
 </ul>
 
 <p>Finally, here is a list of known issues with the Thot toolkit that are
@@ -276,12 +286,15 @@ estimation in multiple processors.  Another solution is to replace
 HMM-based models by IBM 2 Models, which can be estimated very
 efficiently. However, we are also investigating alternative optimization
 techniques to efficiently execute the estimation process of HMM-based
-models in a single processor.</p></li>
+models in a single processor <small><b>[STATUS: under development
+although code is faster now]</b></small></p></li>
 <li><p>Log-linear model weight adjustment is carried out by means of the
-downhill simplex algorithm, which is slow. Downhill simplex will
-be replaced by a more efficient technique.</p></li>
-<li><p>Non-monotonic translation is not yet sufficiently tested, specially
-with complex corpora such as Europarl.</p></li>
+downhill simplex algorithm, which is slow. Downhill simplex will be
+replaced by a more efficient technique <small><b>[STATUS:
+solved]</b></small></p></li>
+<li><p>Non-monotonic translation is not yet sufficiently tested,
+specially with complex corpora such as Europarl <small><b>[STATUS: under
+development]</b></small></p></li>
 </ul>
 
 <h2>
@@ -398,7 +411,7 @@ project</a> that belongs to the <a href="http://www.ingenio2010.es/">CONSOLIDER 
     <li><a href="http://www.upv.es"><img src="http://daormar.github.io/thot/images/logo-upv-hor.png" alt="UPV" height="50" /></a></li>
   </ul>
 
-<p>Last updated: 20 March 2017</p>
+<p>Last updated: 25 July 2017</p>
       </section>
     </div>
     <script src="javascripts/scale.fix.js"></script>
