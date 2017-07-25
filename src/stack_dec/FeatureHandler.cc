@@ -299,7 +299,7 @@ int FeatureHandler::trainAligModel(BasePhraseModel* invPbModelPtr,
   invSwAligModelPtr->addSentPair(refSentStrVec,srcSentStrVec,onlineTrainingPars.learnStepSize,sentRange);
 
       // Iterate over E_par interlaced samples
-  int ret;
+  int ret=THOT_OK;
   unsigned int curr_sample=sentRange.second;
   unsigned int oldest_sample=curr_sample-onlineTrainingPars.R_par;
   for(unsigned int i=1;i<=onlineTrainingPars.E_par;++i)
