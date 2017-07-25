@@ -310,9 +310,12 @@ void LevelDbNgramTable::incrCountsOfEntryLog(const Vector<WordIndex>& s,
     Count s_count = cSrc(s);
     Count src_trg_count = cSrcTrg(s, t);
 
+    s_count.incr_logcount((float) lc);
+    src_trg_count.incr_logcount((float) lc);
+
     // Update counts
-    addSrcInfo(s, s_count + lc.get_c_s());  // (USUSED_WORD, s)
-    addSrcTrgInfo(s, t, (src_trg_count + lc.get_c_st()).get_c_st());
+    addSrcInfo(s, s_count.get_c_s());  // (s)
+    addSrcTrgInfo(s, t, src_trg_count.get_c_st());  // (s, t)
 }
 
 //-------------------------
