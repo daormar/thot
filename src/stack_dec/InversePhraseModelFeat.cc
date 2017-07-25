@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- InversePhraseModelFeat class functions
 
 template<>
-typename InversePhraseModelFeat<PhrScoreInfo>::HypScoreInfo
+InversePhraseModelFeat<PhrScoreInfo>::HypScoreInfo
 InversePhraseModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
                                                     const HypScoreInfo& predHypScrInf,
                                                     const PhrHypDataStr& predHypDataStr,

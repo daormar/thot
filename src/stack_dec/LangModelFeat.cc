@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- LangModelFeat class functions
 
 template<>
-typename LangModelFeat<PhrScoreInfo>::HypScoreInfo
+LangModelFeat<PhrScoreInfo>::HypScoreInfo
 LangModelFeat<PhrScoreInfo>::nullHypScore(const HypScoreInfo& predHypScrInf,
                                           Score& unweightedScore)
 {
@@ -47,7 +47,7 @@ LangModelFeat<PhrScoreInfo>::nullHypScore(const HypScoreInfo& predHypScrInf,
 
 //---------------
 template<>
-typename LangModelFeat<PhrScoreInfo>::HypScoreInfo
+LangModelFeat<PhrScoreInfo>::HypScoreInfo
 LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
                                             const HypScoreInfo& predHypScrInf,
                                             const PhrHypDataStr& predHypDataStr,

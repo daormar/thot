@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- TrgPhraseLenFeat class functions
 
 template<>
-typename TrgPhraseLenFeat<PhrScoreInfo>::HypScoreInfo
+TrgPhraseLenFeat<PhrScoreInfo>::HypScoreInfo
 TrgPhraseLenFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
                                                const HypScoreInfo& predHypScrInf,
                                                const PhrHypDataStr& predHypDataStr,

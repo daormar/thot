@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- DirectPhraseModelFeat class functions
 
 template<>
-typename DirectPhraseModelFeat<PhrScoreInfo>::HypScoreInfo
+DirectPhraseModelFeat<PhrScoreInfo>::HypScoreInfo
 DirectPhraseModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
                                                     const HypScoreInfo& predHypScrInf,
                                                     const PhrHypDataStr& predHypDataStr,
