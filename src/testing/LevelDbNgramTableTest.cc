@@ -116,16 +116,17 @@ void LevelDbNgramTableTest::testAddTableEntry()
 void LevelDbNgramTableTest::testIncrCountsOfEntryLog()
 {
   Vector<WordIndex> s = getVector("Narie lake");
-  WordIndex t = 140991;
-  Count c_init = Count(3);
+  WordIndex t1 = 140991;
+  WordIndex t2 = 230689;
+  LogCount c_init = LogCount(log(3));
   LogCount c = LogCount(log(17));
 
   tab->clear();
-  tab->addSrcInfo(s, c_init);
-  tab->incrCountsOfEntryLog(s, t, c);
+  tab->incrCountsOfEntryLog(s, t1, c_init);
+  tab->incrCountsOfEntryLog(s, t2, c);
 
-  CPPUNIT_ASSERT( (int) tab->cSrc(s).get_c_s() == 20 );
-  CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t).get_c_st() == 17 );
+  CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t1).get_c_st() == 3 );
+  CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t2).get_c_st() == 17 );
 }
 
 //---------------------------------------
@@ -175,7 +176,7 @@ void LevelDbNgramTableTest::testGetEntriesForTarget()
 void LevelDbNgramTableTest::testRetrievingSubphrase()
 {
   //  TEST:
-  //  Accessing element with the subphrase should return count 0
+  //    Accessing element with the subphrase should return count 0
   //
   bool found;
   Vector<WordIndex> s1;
@@ -211,9 +212,9 @@ void LevelDbNgramTableTest::testRetrievingSubphrase()
 //---------------------------------------
 /*void LevelDbNgramTableTest::testRetrieveNonLeafPhrase()
 {
-  // TEST:
-  //   Phrases with count > 0 and not stored in the leaves
-  //   should be also retrieved
+  //  TEST:
+  //    Phrases with count > 0 and not stored in the leaves
+  //    should be also retrieved
   //
   bool found;
   LevelDbNgramTable::SrcTableNode node;
@@ -248,8 +249,9 @@ void LevelDbNgramTableTest::testRetrievingSubphrase()
 //---------------------------------------
 void LevelDbNgramTableTest::testGetEntriesForSource()
 {
-  // TEST:
-  //   Find translations for the source phrase
+  //  TEST:
+  //    Find translations for the source phrase
+  //    WARNING: Src phrases has to be present to get results
   //
   bool found;
   LevelDbNgramTable::TrgTableNode node;
@@ -267,11 +269,14 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
   // Prepare data struture
   tab->clear();
   // Add Narie phrases
+  tab->addSrcInfo(s1, c + c);
   tab->incrCountsOfEntry(s1, t1_1, c);
   tab->incrCountsOfEntry(s1, t1_2, c);
   // Add Skiertag phrases
+  tab->addSrcInfo(s2, c);
   tab->incrCountsOfEntry(s2, t2_1, c);
   // Add Jeziorak phrases
+  tab->addSrcInfo(s3, c + c);
   tab->incrCountsOfEntry(s3, t3_1, c);
   tab->incrCountsOfEntry(s3, t3_2, c);
 
@@ -317,7 +322,9 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
 void LevelDbNgramTableTest::testGetNbestForSrc()
 {
   //  TEST:
-  //  Check if method getNbestForSrc returns correct elements
+  //    Check if method getNbestForSrc returns correct elements
+  //    WARNING: Both - (s) and (s,t) phrases have to present to
+  //    retrieve results
   //
   bool found;
   NbestTableNode<WordIndex> node;
@@ -333,6 +340,7 @@ void LevelDbNgramTableTest::testGetNbestForSrc()
   WordIndex t4 = 4;
   
   tab->clear();
+  tab->addSrcInfo(s, Count(10));
   tab->incrCountsOfEntryLog(s, t1, LogCount(log(4)));
   tab->incrCountsOfEntryLog(s, t2, LogCount(log(2)));
   tab->incrCountsOfEntryLog(s, t3, LogCount(log(3)));
@@ -360,8 +368,8 @@ void LevelDbNgramTableTest::testGetNbestForSrc()
 /*void LevelDbNgramTableTest::testAddSrcTrgInfo()
 {
   //  TEST:
-  //  Check if two keys were added (for (s, t) and (t, s) vectors)
-  //  and if their values are the same
+  //    Check if two keys were added (for (s, t) and (t, s) vectors)
+  //    and if their values are the same
   //
   bool found;
 
@@ -383,16 +391,23 @@ void LevelDbNgramTableTest::testGetNbestForSrc()
 void LevelDbNgramTableTest::testIteratorsLoop()
 {
   //  TEST:
-  //  Check basic implementation of iterators - functions
-  //  begin(), end() and operators (++ postfix, *).
+  //    Check basic implementation of iterators - functions
+  //    begin(), end() and operators (++ postfix, *).
   //
-  Vector<WordIndex> s;
-  s.push_back(1);
-  s.push_back(2);
-  WordIndex t = 3;
+
+  Vector<WordIndex> s1;
+  s1.push_back(1);
+  WordIndex t1 = 2;
+
+  Vector<WordIndex> s2;
+  s2.push_back(1);
+  s2.push_back(2);
+  WordIndex t2 = 3;
   
   tab->clear();
-  tab->incrCountsOfEntryLog(s, t, LogCount(log(2)));
+  tab->addSrcInfo(s1, Count(2));
+  tab->incrCountsOfEntryLog(s1, t1, LogCount(log(2)));
+  tab->incrCountsOfEntryLog(s2, t2, LogCount(log(1)));
 
   CPPUNIT_ASSERT(tab->begin() != tab->end());
   CPPUNIT_ASSERT(tab->begin() != tab->begin());
@@ -403,8 +418,9 @@ void LevelDbNgramTableTest::testIteratorsLoop()
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
   map<Vector<WordIndex>, pair<Count, Count> > d;
-  d[s] = make_pair(Count(0), Count(0));
-  d[tab->getSrcTrg(s, t)] = make_pair(Count(0), Count(0));
+  d[s1] = make_pair(Count(0), Count(0));
+  d[tab->getSrcTrg(s1, t1)] = make_pair(Count(0), Count(0));
+  d[tab->getSrcTrg(s2, t2)] = make_pair(Count(0), Count(0));
 
   for(LevelDbNgramTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
   {
@@ -414,21 +430,23 @@ void LevelDbNgramTableTest::testIteratorsLoop()
   }
 
   // Check if element returned by iterator is correct
-  CPPUNIT_ASSERT(d.size() == 2);
-  CPPUNIT_ASSERT(d[s].first.get_c_s() == 2);
-  CPPUNIT_ASSERT(d[s].second.get_c_s() == 1);
-  CPPUNIT_ASSERT(d[tab->getSrcTrg(s, t)].first.get_c_st() == 2);
-  CPPUNIT_ASSERT(d[tab->getSrcTrg(s, t)].second.get_c_s() == 1);
+  CPPUNIT_ASSERT(d.size() == 3);
+  CPPUNIT_ASSERT(d[s1].first.get_c_s() == 2);
+  CPPUNIT_ASSERT(d[s1].second.get_c_s() == 1);
+  CPPUNIT_ASSERT(d[tab->getSrcTrg(s1, t1)].first.get_c_st() == 2);
+  CPPUNIT_ASSERT(d[tab->getSrcTrg(s1, t1)].second.get_c_s() == 1);
+  CPPUNIT_ASSERT(d[tab->getSrcTrg(s2, t2)].first.get_c_st() == 1);
+  CPPUNIT_ASSERT(d[tab->getSrcTrg(s2, t2)].second.get_c_s() == 1);
 
-  CPPUNIT_ASSERT( i == 2 );
+  CPPUNIT_ASSERT( i == 3 );
 }
 
 //---------------------------------------
 /*void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
 {
   //  TEST:
-  //  Check basic implementation of iterators - function
-  //  begin() and operators (++ prefix, ++ postfix, *, ->).
+  //    Check basic implementation of iterators - function
+  //    begin() and operators (++ prefix, ++ postfix, *, ->).
   //
   bool found = true;
 
@@ -470,7 +488,7 @@ void LevelDbNgramTableTest::testIteratorsLoop()
 /*void LevelDbNgramTableTest::testIteratorsOperatorsEqualNotEqual()
 {
   //  TEST:
-  //  Check basic implementation of iterators - operators == and !=
+  //    Check basic implementation of iterators - operators == and !=
   //
   Vector<WordIndex> s = getVector("kemping w Kretowinach");
   Vector<WordIndex> t = getVector("camping Kretowiny");
@@ -492,7 +510,7 @@ void LevelDbNgramTableTest::testIteratorsLoop()
 /*void LevelDbNgramTableTest::testSize()
 {
   //  TEST:
-  //  Check if number of elements in the levelDB is returned correctly
+  //    Check if number of elements in the levelDB is returned correctly
   //
   tab->clear();
   CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
@@ -527,7 +545,7 @@ void LevelDbNgramTableTest::testIteratorsLoop()
 /*void LevelDbNgramTableTest::testLoadingLevelDb()
 {
   //  TEST:
-  //  Check restoring levelDB from disk
+  //    Check restoring levelDB from disk
   //
   bool result;
   
@@ -558,8 +576,8 @@ void LevelDbNgramTableTest::testIteratorsLoop()
 /*void LevelDbNgramTableTest::testLoadedDataCorrectness()
 {
   //  TEST:
-  //  Check if the data restored from disk
-  //  contains all stored items and correct counts
+  //    Check if the data restored from disk
+  //    contains all stored items and correct counts
   //
   bool result;
   
@@ -631,7 +649,7 @@ void LevelDbNgramTableTest::testIteratorsLoop()
 /*void LevelDbNgramTableTest::testSubkeys()
 {
   //  TEST:
-  //  Check if subkeys are stored correctly
+  //    Check if subkeys are stored correctly
   //
  
   // Fill levelDB with data
@@ -678,7 +696,7 @@ void LevelDbNgramTableTest::testIteratorsLoop()
 /*void LevelDbNgramTableTest::test32bitRange()
 {
   //  TEST:
-  //  Check if levelDB supports codes from positive integer range
+  //    Check if levelDB supports codes from positive integer range
   //
   tab->clear();
 
@@ -697,7 +715,7 @@ void LevelDbNgramTableTest::testIteratorsLoop()
 /*void LevelDbNgramTableTest::testByteMax()
 {
   //  TEST:
-  //  Check if items with maximum byte value are added correctly
+  //    Check if items with maximum byte value are added correctly
   //
   tab->clear();
 
