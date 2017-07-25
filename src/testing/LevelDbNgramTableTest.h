@@ -73,21 +73,16 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
   CPPUNIT_TEST( testStoreAndRestoreSrcInfo );
   CPPUNIT_TEST( testGetEntriesForTarget );
   CPPUNIT_TEST( testRetrievingSubphrase );
-  //CPPUNIT_TEST( testRetrieveNonLeafPhrase );
   CPPUNIT_TEST( testGetEntriesForSource );
-  //CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );
+  CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );
   CPPUNIT_TEST( testGetNbestForSrc );
   CPPUNIT_TEST( testGetNbestForTrg );
-  //CPPUNIT_TEST( testAddSrcTrgInfo );
   CPPUNIT_TEST( testIteratorsLoop );
   CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
   CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
   CPPUNIT_TEST( testSize );
-  /*CPPUNIT_TEST( testLoadingLevelDb );
+  CPPUNIT_TEST( testLoadingLevelDb );
   CPPUNIT_TEST( testLoadedDataCorrectness );
-  CPPUNIT_TEST( testSubkeys );
-  CPPUNIT_TEST( test32bitRange );
-  CPPUNIT_TEST( testByteMax );*/
   CPPUNIT_TEST_SUITE_END();
 
  private:
@@ -106,21 +101,16 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
   void testStoreAndRestoreSrcInfo();
   void testGetEntriesForTarget();
   void testRetrievingSubphrase();
-  void testRetrieveNonLeafPhrase();
   void testGetEntriesForSource();
   void testRetrievingEntriesWithCountEqualZero();
   void testGetNbestForSrc();
   void testGetNbestForTrg();
-  void testAddSrcTrgInfo();
   void testIteratorsLoop();
   void testIteratorsOperatorsPlusPlusStar();
   void testIteratorsOperatorsEqualNotEqual();
   void testSize();
   void testLoadingLevelDb();
   void testLoadedDataCorrectness();
-  void testSubkeys();
-  void test32bitRange();
-  void testByteMax();
 };
 
 #endif

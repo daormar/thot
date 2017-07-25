@@ -18,9 +18,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: LevelDbNgramTableTest                                   */
+/* Module: LevelDbNgramTableTest                                    */
 /*                                                                  */
-/* Definitions file: LevelDbNgramTableTest.cc                      */
+/* Definitions file: LevelDbNgramTableTest.cc                       */
 /*                                                                  */
 /********************************************************************/
 
@@ -210,48 +210,11 @@ void LevelDbNgramTableTest::testRetrievingSubphrase()
 }
 
 //---------------------------------------
-/*void LevelDbNgramTableTest::testRetrieveNonLeafPhrase()
-{
-  //  TEST:
-  //    Phrases with count > 0 and not stored in the leaves
-  //    should be also retrieved
-  //
-  bool found;
-  LevelDbNgramTable::SrcTableNode node;
-  Vector<WordIndex> s = getVector("Hello");
-  Vector<WordIndex> t1 = getVector("Buenos Dias");
-  Vector<WordIndex> t2 = getVector("Buenos");
-
-  Count c = Count(1);
-  
-  tab->clear();
-  tab->incrCountsOfEntry(s, t1, c);
-  tab->incrCountsOfEntry(s, t2, c);
-
-  // Check phrases and their counts
-  // Phrase pair 1
-  c = tab->getSrcTrgInfo(s, t1, found);
-
-  CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( (int) c.get_c_s() == 1);
-  // Phrase pair 2
-  c = tab->getSrcTrgInfo(s, t2, found);
-
-  CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( (int) c.get_c_s() == 1);
-
-  // Looking for phrases for which 'Buenos' is translation
-  found = tab->getEntriesForTarget(t2, node);
-  CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( node.size() == 1 );
-}*/
-
-//---------------------------------------
 void LevelDbNgramTableTest::testGetEntriesForSource()
 {
   //  TEST:
-  //    Find translations for the source phrase
-  //    WARNING: Src phrases has to be present to get results
+  //    Find targets for the source phrase
+  //    WARNING: Src phrase has to be present to get results
   //
   bool found;
   LevelDbNgramTable::TrgTableNode node;
@@ -266,13 +229,13 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
 
   Count c = Count(1);
   
-  // Prepare data struture
+  // Prepare data structure
   tab->clear();
   // Add Narie phrases
   tab->addSrcInfo(s1, c + c);
   tab->incrCountsOfEntry(s1, t1_1, c);
   tab->incrCountsOfEntry(s1, t1_2, c);
-  // Add Skiertag phrases
+  // Add Krzywe phrases
   tab->addSrcInfo(s2, c);
   tab->incrCountsOfEntry(s2, t2_1, c);
   // Add Jeziorak phrases
@@ -280,12 +243,12 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
   tab->incrCountsOfEntry(s3, t3_1, c);
   tab->incrCountsOfEntry(s3, t3_2, c);
 
-  // Looking for translations
+  // Looking for targets
   // Narie phrases
   found = tab->getEntriesForSource(s1, node);
   CPPUNIT_ASSERT( found );
   CPPUNIT_ASSERT( node.size() == 2 );
-  // Skiertag phrases
+  // Krzywe phrases
   found = tab->getEntriesForSource(s2, node);
   CPPUNIT_ASSERT( found );
   CPPUNIT_ASSERT( node.size() == 1 );
@@ -296,7 +259,7 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
 }
 
 //---------------------------------------
-/*void LevelDbNgramTableTest::testRetrievingEntriesWithCountEqualZero()
+void LevelDbNgramTableTest::testRetrievingEntriesWithCountEqualZero()
 {
   // TEST:
   //   Function getEntriesForTarget for retrieving entries should skip
@@ -306,17 +269,19 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
   LevelDbNgramTable::SrcTableNode node;
   Vector<WordIndex> s1 = getVector("Palac Dohnow");
   Vector<WordIndex> s2 = getVector("Palac Dohnow w Moragu");
-  Vector<WordIndex> t = getVector("Dohn's Palace");
+  WordIndex t = 1935;
   
   tab->clear();
-  tab->incrCountsOfEntry(s1, t, Count(1));
-  tab->incrCountsOfEntry(s2, t, Count(0));
+  tab->addSrcInfo(s1, Count(0));
+  tab->addSrcInfo(s2, Count(0));
+  tab->incrCountsOfEntryLog(s1, t, LogCount(1));
+  tab->incrCountsOfEntryLog(s2, t, LogCount(2));
 
   found = tab->getEntriesForTarget(t, node);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( node.size() == 1 );
-}*/
+  CPPUNIT_ASSERT( node.size() == 2 );
+}
 
 //---------------------------------------
 void LevelDbNgramTableTest::testGetNbestForSrc()
@@ -346,8 +311,8 @@ void LevelDbNgramTableTest::testGetNbestForSrc()
   tab->incrCountsOfEntryLog(s, t3, LogCount(log(3)));
   tab->incrCountsOfEntryLog(s, t4, LogCount(log(1)));
 
-  // Returned elements should not exceed number of elements
-  // in the structure
+  // Returned elements should not exceed number of matching
+  // elements in the structure
   found = tab->getNbestForSrc(s, node);
   CPPUNIT_ASSERT( found );
   CPPUNIT_ASSERT( node.size() == 4 );
@@ -415,29 +380,6 @@ void LevelDbNgramTableTest::testGetNbestForTrg()
   iter++;
   CPPUNIT_ASSERT( iter->second == s3 );
 }
-
-//---------------------------------------
-/*void LevelDbNgramTableTest::testAddSrcTrgInfo()
-{
-  //  TEST:
-  //    Check if two keys were added (for (s, t) and (t, s) vectors)
-  //    and if their values are the same
-  //
-  bool found;
-
-  Vector<WordIndex> s = getVector("jezioro Skiertag");
-  Vector<WordIndex> t = getVector("Skiertag lake");
-  
-  tab->clear();
-  tab->addSrcTrgInfo(s, t, Count(1));
-
-  Count src_trg_count = tab->cSrcTrg(s, t);
-  Count trg_src_count = tab->getInfo(tab->getTrgSrc(s, t), found);
-
-  CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( (int) src_trg_count.get_c_s() == 1 );
-  CPPUNIT_ASSERT( (int) src_trg_count.get_c_s() == (int) trg_src_count.get_c_s() );
-}*/
 
 //---------------------------------------
 void LevelDbNgramTableTest::testIteratorsLoop()
@@ -607,12 +549,12 @@ void LevelDbNgramTableTest::testSize()
   CPPUNIT_ASSERT( tab->size() == 3 + 2 );
 
   tab->addSrcInfo(s4, Count(17));
-  
+
   CPPUNIT_ASSERT( tab->size() == 3 + 2 + 1 );
 }
 
 //---------------------------------------
-/*void LevelDbNgramTableTest::testLoadingLevelDb()
+void LevelDbNgramTableTest::testLoadingLevelDb()
 {
   //  TEST:
   //    Check restoring levelDB from disk
@@ -621,18 +563,16 @@ void LevelDbNgramTableTest::testSize()
   
   // Fill leveldb with data
   tab->clear();
-  tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping Kretowiny"), Count(1));
-  tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping in Kretowiny"), Count(2));
+  tab->incrCountsOfEntryLog(getVector("kemping w Kretowinach"), 14, LogCount(1));
+  tab->incrCountsOfEntryLog(getVector("kemping w Kretowinach"), 300, LogCount(2));
 
-  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Car"), Count(1));
-  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Pan Samochodzik"), Count(4));
-  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mister Automobile"), Count(20));
-  tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Automobile"), Count(24));
+  tab->incrCountsOfEntryLog(getVector("Pan Samochodzik"), 14, LogCount(1));
+  tab->incrCountsOfEntryLog(getVector("Pan Samochodzik"), 100, LogCount(4));
+  tab->incrCountsOfEntryLog(getVector("Pan Samochodzik"), 14100, LogCount(20));
+  tab->incrCountsOfEntryLog(getVector("Pan Samochodzik"), 58, LogCount(24));
 
-  tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
-                         getVector("First Adventure of Mister Automobile"), Count(5));
-  tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
-                         getVector("First Adventure of Pan Samochodzik"), Count(7));
+  tab->incrCountsOfEntryLog(getVector("Pierwsza przygoda Pana Samochodzika"), 4, LogCount(5));
+  tab->incrCountsOfEntryLog(getVector("Pierwsza przygoda Pana Samochodzika"), 2, LogCount(7));
 
   unsigned int original_size = tab->size();
    
@@ -640,14 +580,14 @@ void LevelDbNgramTableTest::testSize()
   result = tab->load(dbName);
   CPPUNIT_ASSERT( result == THOT_OK);
   CPPUNIT_ASSERT( tab->size() == original_size );
-}*/
+}
 
 //---------------------------------------
-/*void LevelDbNgramTableTest::testLoadedDataCorrectness()
+void LevelDbNgramTableTest::testLoadedDataCorrectness()
 {
   //  TEST:
   //    Check if the data restored from disk
-  //    contains all stored items and correct counts
+  //    contain all stored items and correct counts
   //
   bool result;
   
@@ -655,31 +595,37 @@ void LevelDbNgramTableTest::testSize()
   tab->clear();
 
   // Define vectors
-  Vector<WordIndex> s1 = getVector("Pan Samochodzik");
-  Vector<WordIndex> t1_1 = getVector("Mr Car");
-  Vector<WordIndex> t1_2 = getVector("Pan Samochodzik");
-  Vector<WordIndex> t1_3 = getVector("Mister Automobile");
-  Vector<WordIndex> t1_4 = getVector("Mr Automobile");
+  Vector<WordIndex> s1;
+  s1.push_back(1000);
+  s1.push_back(2000);
+  WordIndex t1_1 = 22000;
+  WordIndex t1_2 = 33000;
+  WordIndex t1_3 = 44000;
+  WordIndex t1_4 = 55000;
 
-  Vector<WordIndex> s2 = getVector("Pan Samochodzik i templariusze");
-  Vector<WordIndex> t2_1 = getVector("Mister Automobile and the Knights Templar");
-  Vector<WordIndex> t2_2 = getVector("Pan Samochodzik and the Knights Templar");
+  Vector<WordIndex> s2;
+  s2.push_back(122000);
+  s2.push_back(122);
+  WordIndex t2_1 = 66000;
+  WordIndex t2_2 = 77000;
 
-  Vector<WordIndex> s3 = getVector("Pan Samochodzik i niesamowity dwor");
-  Vector<WordIndex> t3_1 = getVector("Mister Automobile and the Unearthly Mansion");
-  Vector<WordIndex> t3_2 = getVector("Pan Samochodzik and the Unearthly Mansion");
+  Vector<WordIndex> s3;
+  s3.push_back(155000);
+  s3.push_back(177000);
+  WordIndex t3_1 = 88000;
+  WordIndex t3_2 = 99000;
 
   // Insert data to levelDB
-  tab->incrCountsOfEntry(s1, t1_1, Count(1));
-  tab->incrCountsOfEntry(s1, t1_2, Count(2));
-  tab->incrCountsOfEntry(s1, t1_3, Count(4));
-  tab->incrCountsOfEntry(s1, t1_4, Count(8));
+  tab->incrCountsOfEntryLog(s1, t1_1, LogCount(log(1)));
+  tab->incrCountsOfEntryLog(s1, t1_2, LogCount(log(2)));
+  tab->incrCountsOfEntryLog(s1, t1_3, LogCount(log(4)));
+  tab->incrCountsOfEntryLog(s1, t1_4, LogCount(log(8)));
 
-  tab->incrCountsOfEntry(s2, t2_1, Count(16));
-  tab->incrCountsOfEntry(s2, t2_2, Count(32));
+  tab->incrCountsOfEntryLog(s2, t2_1, LogCount(log(16)));
+  tab->incrCountsOfEntryLog(s2, t2_2, LogCount(log(32)));
 
-  tab->incrCountsOfEntry(s3, t3_1, Count(64));
-  tab->incrCountsOfEntry(s3, t3_2, Count(128));
+  tab->incrCountsOfEntryLog(s3, t3_1, LogCount(log(64)));
+  tab->incrCountsOfEntryLog(s3, t3_2, LogCount(log(128)));
 
   unsigned int original_size = tab->size();
    
@@ -689,113 +635,17 @@ void LevelDbNgramTableTest::testSize()
   CPPUNIT_ASSERT( tab->size() == original_size );
 
   // Check count values
-  CPPUNIT_ASSERT( tab->cSrc(s1).get_c_s() == 1 + 2 + 4 + 8 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_1).get_c_s() == 1 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_2).get_c_s() == 2 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_3).get_c_s() == 4 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_4).get_c_s() == 8 );
   CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_1).get_c_st() == 1 );
   CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_2).get_c_st() == 2 );
   CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_3).get_c_st() == 4 );
   CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_4).get_c_st() == 8 );
 
-  CPPUNIT_ASSERT( tab->cSrc(s2).get_c_s() == 16 + 32 );
-  CPPUNIT_ASSERT( tab->cTrg(t2_1).get_c_s() == 16 );
-  CPPUNIT_ASSERT( tab->cTrg(t2_2).get_c_s() == 32 );
   CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_1).get_c_st() == 16 );
   CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_2).get_c_st() == 32 );
 
-  CPPUNIT_ASSERT( tab->cSrc(s3).get_c_s() == 64 + 128 );
-  CPPUNIT_ASSERT( tab->cTrg(t3_1).get_c_s() == 64 );
-  CPPUNIT_ASSERT( tab->cTrg(t3_2).get_c_s() == 128 );
   CPPUNIT_ASSERT( tab->cSrcTrg(s3, t3_1).get_c_st() == 64 );
   CPPUNIT_ASSERT( tab->cSrcTrg(s3, t3_2).get_c_st() == 128 );
 
   tab->clear();  // Remove data
   CPPUNIT_ASSERT( tab->size() == 0 );
-}*/
-
-//---------------------------------------
-/*void LevelDbNgramTableTest::testSubkeys()
-{
-  //  TEST:
-  //    Check if subkeys are stored correctly
-  //
- 
-  // Fill levelDB with data
-  tab->clear();
-
-  // Define vectors
-  Vector<WordIndex> s1 = getVector("Pan Samochodzik");
-  Vector<WordIndex> t1_1 = getVector("Mr Car");
-  Vector<WordIndex> t1_2 = getVector("Pan");
-  Vector<WordIndex> t1_3 = getVector("Mr");
-
-  Vector<WordIndex> s2 = getVector("Pan");
-  Vector<WordIndex> t2_1 = getVector("Mister");
-  Vector<WordIndex> t2_2 = getVector("Mr");
-
-  // Insert data to levelDB
-  tab->incrCountsOfEntry(s1, t1_1, Count(1));
-  tab->incrCountsOfEntry(s1, t1_2, Count(2));
-  tab->incrCountsOfEntry(s1, t1_3, Count(4));
-
-  tab->incrCountsOfEntry(s2, t2_1, Count(8));
-  tab->incrCountsOfEntry(s2, t2_2, Count(16));
-  
-
-  CPPUNIT_ASSERT( tab->size() == 11 );
-
-  // Check count values
-  CPPUNIT_ASSERT( tab->cSrc(s1).get_c_s() == 1 + 2 + 4 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_1).get_c_s() == 1 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_2).get_c_s() == 2 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_3).get_c_s() == 4 + 16 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_1).get_c_st() == 1 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_2).get_c_st() == 2 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_3).get_c_st() == 4 );
-
-  CPPUNIT_ASSERT( tab->cSrc(s2).get_c_s() == 8 + 16 );
-  CPPUNIT_ASSERT( tab->cTrg(t2_1).get_c_s() == 8 );
-  CPPUNIT_ASSERT( tab->cTrg(t2_2).get_c_s() == 4 + 16 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_1).get_c_st() == 8 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_2).get_c_st() == 16 );
-}*/
-
-//---------------------------------------
-/*void LevelDbNgramTableTest::test32bitRange()
-{
-  //  TEST:
-  //    Check if levelDB supports codes from positive integer range
-  //
-  tab->clear();
-
-  Vector<WordIndex> minVector, maxVector;
-
-  minVector.push_back(0);
-  maxVector.push_back(0x7FFFFFFE);
-
-  // Insert data to levelDB and check their correctness
-  tab->incrCountsOfEntry(minVector, maxVector, Count(20));
-  CPPUNIT_ASSERT( tab->size() == 3 );
-  CPPUNIT_ASSERT( (int) tab->cSrcTrg(minVector, maxVector).get_c_st() == 20 );
-}*/
-
-//---------------------------------------
-/*void LevelDbNgramTableTest::testByteMax()
-{
-  //  TEST:
-  //    Check if items with maximum byte value are added correctly
-  //
-  tab->clear();
-
-  Vector<WordIndex> s, t;
-  s.push_back(201);
-  s.push_back(8);
-  t.push_back(255);
-
-  // Insert data and check their correctness
-  tab->incrCountsOfEntry(s, t, Count(1));
-  CPPUNIT_ASSERT( tab->size() == 3 );
-  CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t).get_c_st() == 1 );
-}*/
+}
