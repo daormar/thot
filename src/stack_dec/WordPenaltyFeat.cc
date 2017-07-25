@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- WordPenaltyFeat class functions
 
 template<>
-typename WordPenaltyFeat<PhrScoreInfo>::HypScoreInfo
+WordPenaltyFeat<PhrScoreInfo>::HypScoreInfo
 WordPenaltyFeat<PhrScoreInfo>::nullHypScore(const HypScoreInfo& predHypScrInf,
                                             Score& unweightedScore)
 {
@@ -45,7 +45,7 @@ WordPenaltyFeat<PhrScoreInfo>::nullHypScore(const HypScoreInfo& predHypScrInf,
 
 //---------------
 template<>
-typename WordPenaltyFeat<PhrScoreInfo>::HypScoreInfo
+WordPenaltyFeat<PhrScoreInfo>::HypScoreInfo
 WordPenaltyFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
                                               const HypScoreInfo& predHypScrInf,
                                               const PhrHypDataStr& predHypDataStr,
