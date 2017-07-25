@@ -374,8 +374,10 @@ testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h
 testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc
 
 if HAVE_LEVELDB_LIB
-leveldb_pm_testing_h= testing/LevelDbPhraseTableTest.h
-leveldb_pm_testing_defs= testing/LevelDbPhraseTableTest.cc
+leveldb_pm_testing_h= testing/LevelDbNgramTableTest.h       \
+testing/LevelDbPhraseTableTest.h
+leveldb_pm_testing_defs= testing/LevelDbNgramTableTest.cc      \
+testing/LevelDbPhraseTableTest.cc
 endif
 
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\

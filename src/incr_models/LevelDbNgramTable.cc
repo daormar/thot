@@ -267,7 +267,7 @@ bool LevelDbNgramTable::getNbestForTrg(const WordIndex& t,
 //-------------------------
 void LevelDbNgramTable::addTableEntry(const Vector<WordIndex>& s,
                                       const WordIndex& t,
-                                      im_pair<Count,Count> inf) 
+                                      im_pair<Count, Count> inf) 
 {
     addSrcInfo(s, inf.first);  // (USUSED_WORD, s)
     addSrcTrgInfo(s, t, inf.second);  // (t, UNUSED_WORD, s)

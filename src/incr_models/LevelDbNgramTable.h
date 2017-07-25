@@ -78,13 +78,13 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
     Vector<WordIndex> getSrcTrg(const Vector<WordIndex>& s, const WordIndex& t)const;
 
         // Returns information related to a given key.
-    Count getInfo(const Vector<WordIndex>& key,bool &found);
+    Count getInfo(const Vector<WordIndex>& key, bool &found);
     Count getTrgInfo(const WordIndex& t, bool &found);
 
  public:
 
-    typedef typename BaseIncrCondProbTable<Vector<WordIndex>,WordIndex,Count,Count>::SrcTableNode SrcTableNode;
-    typedef typename BaseIncrCondProbTable<Vector<WordIndex>,WordIndex,Count,Count>::TrgTableNode TrgTableNode;
+    typedef typename BaseIncrCondProbTable<Vector<WordIndex>, WordIndex, Count, Count>::SrcTableNode SrcTableNode;
+    typedef typename BaseIncrCondProbTable<Vector<WordIndex>, WordIndex, Count, Count>::TrgTableNode TrgTableNode;
 
       // Constructor
     LevelDbNgramTable(void);
@@ -101,7 +101,6 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
     bool load(string levelDbPath);
 
       // Basic functions
-      // TODO t: Vector<WordIndex> ===> WordIndex
       // TODO Add empty key to size, iter etc.
       // TODO Ordering by n-gram value
     void addTableEntry(const Vector<WordIndex>& s, const WordIndex& t, im_pair<Count,Count> inf);
@@ -113,22 +112,22 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
     im_pair<Count,Count> infSrcTrg(const Vector<WordIndex>& s,
                                    const WordIndex& t,
                                    bool& found);
-    Count getSrcInfo(const Vector<WordIndex>& s,bool& found);
-    Count getSrcTrgInfo(const Vector<WordIndex>& s,const WordIndex& t,bool& found);
-    Prob pTrgGivenSrc(const Vector<WordIndex>& s,const WordIndex& t);
-    LgProb logpTrgGivenSrc(const Vector<WordIndex>& s,const WordIndex& t);
-    Prob pSrcGivenTrg(const Vector<WordIndex>& s,const WordIndex& t);
-    LgProb logpSrcGivenTrg(const Vector<WordIndex>& s,const WordIndex& t);
-  bool getEntriesForSource(const Vector<WordIndex>& s,TrgTableNode& trgtn);  // TODO
-  bool getEntriesForTarget(const WordIndex& t,SrcTableNode& tnode);  // TODO
-  bool getNbestForSrc(const Vector<WordIndex>& s,NbestTableNode<WordIndex>& nbt);  // TODO
-  bool getNbestForTrg(const WordIndex& t,NbestTableNode<Vector<WordIndex> >& nbt,int N=-1);  // TODO
+    Count getSrcInfo(const Vector<WordIndex>& s, bool& found);
+    Count getSrcTrgInfo(const Vector<WordIndex>& s, const WordIndex& t, bool& found);
+    Prob pTrgGivenSrc(const Vector<WordIndex>& s, const WordIndex& t);
+    LgProb logpTrgGivenSrc(const Vector<WordIndex>& s, const WordIndex& t);
+    Prob pSrcGivenTrg(const Vector<WordIndex>& s, const WordIndex& t);
+    LgProb logpSrcGivenTrg(const Vector<WordIndex>& s, const WordIndex& t);
+    bool getEntriesForSource(const Vector<WordIndex>& s, TrgTableNode& trgtn);
+  bool getEntriesForTarget(const WordIndex& t, SrcTableNode& tnode);  // TODO
+  bool getNbestForSrc(const Vector<WordIndex>& s, NbestTableNode<WordIndex>& nbt);  // TODO
+  bool getNbestForTrg(const WordIndex& t, NbestTableNode<Vector<WordIndex> >& nbt, int N=-1);  // TODO
 
       // Count-related functions
-  Count cSrcTrg(const Vector<WordIndex>& s,const WordIndex& t);
-  Count cSrc(const Vector<WordIndex>& s);
+    Count cSrcTrg(const Vector<WordIndex>& s, const WordIndex& t);
+    Count cSrc(const Vector<WordIndex>& s);
   Count cTrg(const WordIndex& t);  // TODO
-  LogCount lcSrcTrg(const Vector<WordIndex>& s,const WordIndex& t);  // TODO
+  LogCount lcSrcTrg(const Vector<WordIndex>& s, const WordIndex& t);  // TODO
   LogCount lcSrc(const Vector<WordIndex>& s);  // TODO
   LogCount lcTrg(const WordIndex& t);  // TODO
 
