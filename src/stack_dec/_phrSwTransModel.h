@@ -218,7 +218,7 @@ bool _phrSwTransModel<HYPOTHESIS>::loadMultipleSwModelsDescriptor(Vector<ModelDe
 
   for(unsigned int i=0;i<modelDescEntryVec.size();++i)
   {
-    cerr<<"* Loading single word models for "<<modelDescEntryVec[i].statusStr<<" tm model"<<endl;
+    cerr<<"* Loading single word models for "<<modelDescEntryVec[i].statusStr<<" translation model"<<endl;
         // sw model (The direct model is the one with the prefix _invswm)
     std::string readTablePrefix=modelDescEntryVec[i].absolutizedModelFileName+"_invswm";
     swModelInfoPtr->swModelPars.readTablePrefixVec.push_back(readTablePrefix);
