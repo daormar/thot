@@ -409,3 +409,29 @@ Thot 3.1.0 Beta
 	- Multiple minor improvements and bug fixes
 
 --------------------------------------------------------------------
+Thot 3.2.0 Beta
+
+	- Ability to force translations for specific phrases of the source
+	  sentence to be translated
+
+	- Capability to access language and translation models from disk
+
+	- Added functionality to use multiple language and translation
+  	  models
+
+	- Added tool to create empty models useful to perform online
+          learning from scratch
+
+	- Portability fixes
+
+	- Improved checking of runtime errors in all of the tools involved
+	  in the translation pipeline
+
+	- Added new built-in checks for early detection of bugs and
+  	  portability problems
+
+	- The Thot manual has been extended and revised
+
+	- Multiple minor improvements and bug fixes
+
+--------------------------------------------------------------------
