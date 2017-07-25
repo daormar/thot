@@ -120,9 +120,9 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
     Prob pSrcGivenTrg(const Vector<WordIndex>& s, const WordIndex& t);
     LgProb logpSrcGivenTrg(const Vector<WordIndex>& s, const WordIndex& t);
     bool getEntriesForSource(const Vector<WordIndex>& s, TrgTableNode& trgtn);
-  bool getEntriesForTarget(const WordIndex& t, SrcTableNode& tnode);  // TODO
-  bool getNbestForSrc(const Vector<WordIndex>& s, NbestTableNode<WordIndex>& nbt);  // TODO
-  bool getNbestForTrg(const WordIndex& t, NbestTableNode<Vector<WordIndex> >& nbt, int N=-1);  // TODO
+    bool getEntriesForTarget(const WordIndex& t, SrcTableNode& tnode);
+    bool getNbestForSrc(const Vector<WordIndex>& s, NbestTableNode<WordIndex>& nbt);
+    bool getNbestForTrg(const WordIndex& t, NbestTableNode<Vector<WordIndex> >& nbt, int N = -1);
 
       // Count-related functions
     Count cSrcTrg(const Vector<WordIndex>& s, const WordIndex& t);

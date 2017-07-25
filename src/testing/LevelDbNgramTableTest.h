@@ -77,10 +77,11 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
   CPPUNIT_TEST( testGetEntriesForSource );
   //CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );
   CPPUNIT_TEST( testGetNbestForSrc );
+  CPPUNIT_TEST( testGetNbestForTrg );
   //CPPUNIT_TEST( testAddSrcTrgInfo );
   CPPUNIT_TEST( testIteratorsLoop );
-  /*CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
-  CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
+  CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
+  /*CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
   CPPUNIT_TEST( testSize );
   CPPUNIT_TEST( testLoadingLevelDb );
   CPPUNIT_TEST( testLoadedDataCorrectness );
@@ -109,6 +110,7 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
   void testGetEntriesForSource();
   void testRetrievingEntriesWithCountEqualZero();
   void testGetNbestForSrc();
+  void testGetNbestForTrg();
   void testAddSrcTrgInfo();
   void testIteratorsLoop();
   void testIteratorsOperatorsPlusPlusStar();

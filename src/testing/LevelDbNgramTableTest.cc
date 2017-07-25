@@ -365,6 +365,58 @@ void LevelDbNgramTableTest::testGetNbestForSrc()
 }
 
 //---------------------------------------
+void LevelDbNgramTableTest::testGetNbestForTrg()
+{
+  //  TEST:
+  //    Check if method getNbestForTrg returns correct elements
+  //
+  bool found;
+  NbestTableNode<Vector<WordIndex> > node;
+  NbestTableNode<Vector<WordIndex> >::iterator iter;
+
+  // Fill leveldb with data
+  Vector<WordIndex> s1;
+  s1.push_back(1);
+  Vector<WordIndex> s2;
+  s2.push_back(1);
+  s2.push_back(1);
+  Vector<WordIndex> s3;
+  s3.push_back(4);
+  s3.push_back(1);
+  Vector<WordIndex> s4;
+  s4.push_back(4);
+
+  WordIndex t1 = 1;
+  WordIndex t2 = 10;
+  
+  tab->clear();
+  tab->addSrcInfo(s1, Count(6));
+  tab->incrCountsOfEntryLog(s1, t2, LogCount(log(3)));  // Introduce element with different target
+  tab->incrCountsOfEntryLog(s1, t1, LogCount(log(3)));
+  tab->incrCountsOfEntryLog(s2, t1, LogCount(log(2)));
+  tab->incrCountsOfEntryLog(s3, t1, LogCount(log(3)));
+  tab->addSrcInfo(s4, Count(4));
+  tab->incrCountsOfEntryLog(s4, t1, LogCount(log(4)));
+
+  // Returned elements should not exceed number of elements
+  // in the structure or given threshold
+  found = tab->getNbestForTrg(t1, node);
+  CPPUNIT_ASSERT( found );
+  CPPUNIT_ASSERT( node.size() == 4 );
+
+  found = tab->getNbestForTrg(t1, node, 2);
+  CPPUNIT_ASSERT( found );
+  CPPUNIT_ASSERT( node.size() == 2 );
+
+  // If there are more available elements, at the beginning
+  // the most frequent targets should be returned
+  iter = node.begin();
+  CPPUNIT_ASSERT( iter->second == s4 );
+  iter++;
+  CPPUNIT_ASSERT( iter->second == s3 );
+}
+
+//---------------------------------------
 /*void LevelDbNgramTableTest::testAddSrcTrgInfo()
 {
   //  TEST:
@@ -442,7 +494,7 @@ void LevelDbNgramTableTest::testIteratorsLoop()
 }
 
 //---------------------------------------
-/*void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
+void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
 {
   //  TEST:
   //    Check basic implementation of iterators - function
@@ -450,23 +502,25 @@ void LevelDbNgramTableTest::testIteratorsLoop()
   //
   bool found = true;
 
-  Vector<WordIndex> s = getVector("zamek krzyzacki w Malborku");
-  Vector<WordIndex> t = getVector("teutonic castle in Malbork");
+  Vector<WordIndex> s;
+  s.push_back(14);
+  s.push_back(9);
+  WordIndex t = 91;
   
   tab->clear();
-  tab->incrCountsOfEntry(s, t, Count(2));
+  tab->addSrcInfo(s, Count(2));
+  tab->incrCountsOfEntryLog(s, t, LogCount(log(2)));
 
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
-  map<Vector<WordIndex>, pair<int, int> > d;
-  d[tab->getSrc(s)] = make_pair(0, 0);
-  d[t] = make_pair(0, 0);
-  d[tab->getTrgSrc(s, t)] = make_pair(0, 0);
+  map<Vector<WordIndex>, pair<Count, int> > d;
+  d[s] = make_pair(Count(), 0);
+  d[tab->getSrcTrg(s, t)] = make_pair(Count(), 0);
  
   for(LevelDbNgramTable::const_iterator iter = tab->begin(); iter != tab->end(); found = (iter++))
   {
     CPPUNIT_ASSERT( found );
-    pair<Vector<WordIndex>, int> x = *iter;
+    pair<Vector<WordIndex>, Count> x = *iter;
     d[x.first].first += x.second;
     d[x.first].second++;
   }
@@ -475,14 +529,12 @@ void LevelDbNgramTableTest::testIteratorsLoop()
   CPPUNIT_ASSERT( !found );
 
   // Check if element returned by iterator is correct
-  CPPUNIT_ASSERT(d.size() == 3);
-  CPPUNIT_ASSERT(d[tab->getSrc(s)].first == 2);
-  CPPUNIT_ASSERT(d[tab->getSrc(s)].second == 1);
-  CPPUNIT_ASSERT(d[t].first == 2);
-  CPPUNIT_ASSERT(d[t].second == 1);
-  CPPUNIT_ASSERT(d[tab->getTrgSrc(s, t)].first == 2);
-  CPPUNIT_ASSERT(d[tab->getTrgSrc(s, t)].second == 1);
-}*/
+  CPPUNIT_ASSERT(d.size() == 2);
+  CPPUNIT_ASSERT(d[s].first.get_c_s() == 2);
+  CPPUNIT_ASSERT(d[s].second == 1);
+  CPPUNIT_ASSERT(d[tab->getSrcTrg(s, t)].first.get_c_st() == 2);
+  CPPUNIT_ASSERT(d[tab->getSrcTrg(s, t)].second == 1);
+}
 
 //---------------------------------------
 /*void LevelDbNgramTableTest::testIteratorsOperatorsEqualNotEqual()
