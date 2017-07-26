@@ -61,6 +61,45 @@ Vector<WordIndex> LevelDbNgramTableTest::getVector(string phrase) {
 }
 
 //---------------------------------------
+void LevelDbNgramTableTest::testCTrg()
+{
+  // Prepare phrases and counters
+  Vector<WordIndex> s1;
+  s1.push_back(13);
+  s1.push_back(17);
+  Vector<WordIndex> s2;
+  s2.push_back(19);
+  s2.push_back(23);
+  s2.push_back(29);
+
+  WordIndex t1 = 3;
+  WordIndex t2 = 4;
+
+  LogCount lc1 = LogCount(log(23));
+  LogCount lc2 = LogCount(log(1));
+  
+  // Prepare data
+  tab->clear();
+  
+  tab->addSrcInfo(s1, Count((lc1 + lc1 + lc2).get_c_s()));
+  tab->incrCountsOfEntryLog(s1, t1, lc1);
+  tab->incrCountsOfEntryLog(s1, t1, lc1);
+  tab->incrCountsOfEntryLog(s1, t2, lc2);
+  
+  tab->addSrcInfo(s2, Count((lc1 + lc2).get_c_s()));
+  tab->incrCountsOfEntryLog(s2, t1, lc2);
+  tab->incrCountsOfEntryLog(s2, t2, lc1);
+
+  // Retrieve values
+  Count tc1 = tab->cTrg(t1);
+  Count tc2 = tab->cTrg(t2);
+  
+  // Validate results
+  CPPUNIT_ASSERT( (int) tc1.get_c_s() == 47 );
+  CPPUNIT_ASSERT( (int) tc2.get_c_s() == 24 );
+}
+
+//---------------------------------------
 void LevelDbNgramTableTest::testStoreAndRestoreSrcInfo()
 {
   Vector<WordIndex> s1 = getVector("Ulica Krancowa");

@@ -496,9 +496,19 @@ Count LevelDbNgramTable::cSrc(const Vector<WordIndex>& s)
 //-------------------------
 Count LevelDbNgramTable::cTrg(const WordIndex& t)
 {
-    // TODO - Not mandatory
-    //bool found;
-    //return getTrgInfo(t, found);
+    Count t_count = Count(0);
+
+    for(LevelDbNgramTable::const_iterator iter = begin(); iter != end(); iter++)
+    {
+        pair<Vector<WordIndex>, Count> x = *iter;
+
+        if (x.first.size() > 1 && x.first.back() == t)
+        {
+            t_count += x.second;
+        }
+    }
+
+    return t_count;
 }
 
 //-------------------------
