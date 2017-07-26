@@ -61,6 +61,29 @@ Vector<WordIndex> LevelDbNgramTableTest::getVector(string phrase) {
 }
 
 //---------------------------------------
+void LevelDbNgramTableTest::testAddTrgWithEmptySrc()
+{
+  Vector<WordIndex> s;
+  WordIndex t = 81;
+  Vector<WordIndex> t_vec;
+  t_vec.push_back(t);
+
+  LogCount lc = LogCount(log(5));
+
+  tab->clear();
+  
+  tab->incrCountsOfEntryLog(s, t, lc);
+  Count tc = tab->cSrc(t_vec);
+
+  CPPUNIT_ASSERT( (int) tc.get_c_s() == 5 );
+
+  tab->incrCountsOfEntryLog(s, t, lc);
+  tc = tab->cSrc(t_vec);
+
+  CPPUNIT_ASSERT( (int) tc.get_c_s() == 10 );
+}
+
+//---------------------------------------
 void LevelDbNgramTableTest::testCTrg()
 {
   // Prepare phrases and counters

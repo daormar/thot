@@ -67,6 +67,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class LevelDbNgramTableTest: public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( LevelDbNgramTableTest );
+  CPPUNIT_TEST( testAddTrgWithEmptySrc );
   CPPUNIT_TEST( testCTrg );
   CPPUNIT_TEST( testLogCountRetrieving );
   CPPUNIT_TEST( testStoreFloatValues );
@@ -98,6 +99,7 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
   void setUp();
   void tearDown();
 
+  void testAddTrgWithEmptySrc();
   void testCTrg();
   void testLogCountRetrieving();
   void testKeyVectorConversion();
