@@ -71,8 +71,8 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
     Vector<WordIndex> stringToVector(const string s)const;
     
         // Read and write data
-    bool retrieveData(const Vector<WordIndex>& phrase, int &count)const;
-    bool storeData(const Vector<WordIndex>& phrase, int count);
+    bool retrieveData(const Vector<WordIndex>& phrase, float &count)const;
+    bool storeData(const Vector<WordIndex>& phrase, float count);
 
         // Returns information related to a given key.
     Count getInfo(const Vector<WordIndex>& key, bool &found);

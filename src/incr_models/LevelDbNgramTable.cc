@@ -35,7 +35,7 @@ LevelDbNgramTable::LevelDbNgramTable(void)
 {
     options.create_if_missing = true;
     options.max_open_files = 4000;
-    options.filter_policy = leveldb::NewBloomFilterPolicy(48);
+    options.filter_policy = leveldb::NewBloomFilterPolicy(48);  // Use index store in memory to reduce number of disk operations
     options.block_cache = leveldb::NewLRUCache(100 * 1048576);  // 100 MB for cache
     db = NULL;
     dbName = "";
@@ -88,7 +88,7 @@ Vector<WordIndex> LevelDbNgramTable::keyToVector(const string key)const
 }
 
 //-------------------------
-bool LevelDbNgramTable::retrieveData(const Vector<WordIndex>& phrase, int &count)const
+bool LevelDbNgramTable::retrieveData(const Vector<WordIndex>& phrase, float &count)const
 {
     if (phrase.size() == 0)
     {
@@ -105,7 +105,7 @@ bool LevelDbNgramTable::retrieveData(const Vector<WordIndex>& phrase, int &count
         leveldb::Status result = db->Get(leveldb::ReadOptions(), key, &value_str);  // Read stored src value
 
         if (result.ok()) {
-            count = atoi(value_str.c_str());
+            count = atof(value_str.c_str());
             return true;
         } else {
             return false;
@@ -114,7 +114,7 @@ bool LevelDbNgramTable::retrieveData(const Vector<WordIndex>& phrase, int &count
 }
 
 //-------------------------
-bool LevelDbNgramTable::storeData(const Vector<WordIndex>& phrase, int count)
+bool LevelDbNgramTable::storeData(const Vector<WordIndex>& phrase, float count)
 {
     if (phrase.size() == 0)
     {
@@ -266,7 +266,7 @@ void LevelDbNgramTable::addTableEntry(const Vector<WordIndex>& s,
 void LevelDbNgramTable::addSrcInfo(const Vector<WordIndex>& s,
                                    Count s_inf)
 {
-    storeData(s, (int) s_inf.get_c_s());
+    storeData(s, s_inf.get_c_s());
 }
 
 //-------------------------
@@ -274,7 +274,7 @@ void LevelDbNgramTable::addSrcTrgInfo(const Vector<WordIndex>& s,
                                       const WordIndex& t,
                                       Count st_inf)
 {
-    storeData(getSrcTrg(s, t), (int) st_inf.get_c_st());  // (s, t)
+    storeData(getSrcTrg(s, t), st_inf.get_c_st());  // (s, t)
 }
 
 //-------------------------
@@ -314,10 +314,10 @@ im_pair<Count, Count> LevelDbNgramTable::infSrcTrg(const Vector<WordIndex>& s,
 Count LevelDbNgramTable::getInfo(const Vector<WordIndex>& key,
                                  bool &found)
 {
-    int count;
+    float count;
     found = retrieveData(key, count);
 
-    Count result = (found) ? Count((float) count) : Count();
+    Count result = (found) ? Count(count) : Count();
 
     return result;
 }
@@ -673,7 +673,7 @@ LevelDbNgramTable::const_iterator::operator->(void)
     string key = internalIter->key().ToString();
     Vector<WordIndex> key_vec = ptPtr->keyToVector(key);
 
-    int count = atoi(internalIter->value().ToString().c_str());
+    float count = atof(internalIter->value().ToString().c_str());
 
     dataItem = make_pair(key_vec, Count(count));
 

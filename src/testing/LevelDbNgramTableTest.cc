@@ -150,6 +150,29 @@ void LevelDbNgramTableTest::testLogCountRetrieving()
 }
 
 //---------------------------------------
+void LevelDbNgramTableTest::testStoreFloatValues()
+{
+  Vector<WordIndex> s;
+  s.push_back(7);
+  s.push_back(77);
+  WordIndex t = 777;
+
+  float s_count_val = 2.33;
+  float st_count_val = 7.77;
+
+  tab->clear();
+
+  tab->addSrcInfo(s, Count(s_count_val));
+  tab->incrCountsOfEntryLog(s, t, LogCount(log(st_count_val)));
+
+  Count s_count = tab->cSrc(s);
+  Count st_count = tab->cSrcTrg(s, t);
+
+  CPPUNIT_ASSERT( s_count.get_c_s() == s_count_val );
+  CPPUNIT_ASSERT( st_count.get_c_st() == st_count_val );
+}
+
+//---------------------------------------
 void LevelDbNgramTableTest::testStoreAndRestoreSrcInfo()
 {
   Vector<WordIndex> s1 = getVector("Ulica Krancowa");
@@ -614,8 +637,6 @@ void LevelDbNgramTableTest::testSize()
 
   WordIndex t1 = 555001;
   WordIndex t2 = 555002;
-  WordIndex t3 = 555003;
-
 
   tab->incrCountsOfEntryLog(s1, t1, LogCount(log(1)));
   tab->incrCountsOfEntryLog(s1, t2, LogCount(log(2)));
