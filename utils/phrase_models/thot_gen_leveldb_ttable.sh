@@ -230,8 +230,8 @@ else
     fi
 
     # Generate vocabulary file names
-    srcv=$out.srcvoc
-    trgv=$out.trgvoc
+    srcv=$out.leveldb_svcb
+    trgv=$out.leveldb_tvcb
 
     # Generate leveldb translation table
 
