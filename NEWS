@@ -1,23 +1,24 @@
 --------------------------------------------------------------------
-Thot 3.1.0 Beta
+Thot 3.2.0 Beta
 
-	- Incorporation of a whole set of pre/post-processing tools
+	- Ability to force translations for specific phrases of the source
+	  sentence to be translated
 
-	- Portability increased (Thot has been successfully compiled in
-  	  many different platforms, including Mac OS X, FreeBSD, OpenBSD,
-	  NetBSD, etc.)
+	- Capability to access language and translation models from disk
+
+	- Added functionality to use multiple language and translation
+  	  models
+
+	- Added tool to create empty models useful to perform online
+          learning from scratch
+
+	- Portability fixes
 
 	- Improved checking of runtime errors in all of the tools involved
 	  in the translation pipeline
 
-	- Early detection of bugs and portability problems using built-in
-	  checks
-
-	- Improvements in tools to carry out translation experiments and
-   	  incorporation of new ones
-
-	- Translation can now be executed parallel using clusters or
-  	  multi-processor systems by means of the thot_decoder tool
+	- Added new built-in checks for early detection of bugs and
+  	  portability problems
 
 	- The Thot manual has been extended and revised
 
