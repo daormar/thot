@@ -512,21 +512,21 @@ Count LevelDbNgramTable::cTrg(const WordIndex& t)
 }
 
 //-------------------------
-LogCount LevelDbNgramTable::lcSrcTrg(const Vector<WordIndex>& s,const WordIndex& t)
+LogCount LevelDbNgramTable::lcSrcTrg(const Vector<WordIndex>& s, const WordIndex& t)
 {
-    // TODO
+    return LogCount(cSrcTrg(s, t).get_lc_st());
 }
 
 //-------------------------
 LogCount LevelDbNgramTable::lcSrc(const Vector<WordIndex>& s)
 {
-    // TODO
+    return LogCount(cSrc(s).get_lc_s());
 }
 
 //-------------------------
 LogCount LevelDbNgramTable::lcTrg(const WordIndex& t)
 {
-    // TODO
+    return LogCount(cTrg(t).get_lc_s());
 }
 
 //-------------------------

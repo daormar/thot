@@ -68,6 +68,7 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( LevelDbNgramTableTest );
   CPPUNIT_TEST( testCTrg );
+  CPPUNIT_TEST( testLogCountRetrieving );
   CPPUNIT_TEST( testKeyVectorConversion );
   CPPUNIT_TEST( testAddTableEntry );
   CPPUNIT_TEST( testIncrCountsOfEntryLog );
@@ -97,6 +98,7 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
   void tearDown();
 
   void testCTrg();
+  void testLogCountRetrieving();
   void testKeyVectorConversion();
   void testAddTableEntry();
   void testIncrCountsOfEntryLog();

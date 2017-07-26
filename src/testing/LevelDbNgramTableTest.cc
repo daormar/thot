@@ -99,6 +99,56 @@ void LevelDbNgramTableTest::testCTrg()
   CPPUNIT_ASSERT( (int) tc2.get_c_s() == 24 );
 }
 
+
+//---------------------------------------
+void LevelDbNgramTableTest::testLogCountRetrieving()
+{
+  // Prepare phrases and counters
+  Vector<WordIndex> s1;
+  s1.push_back(13);
+  s1.push_back(17);
+  Vector<WordIndex> s2;
+  s2.push_back(19);
+  s2.push_back(23);
+  s2.push_back(29);
+
+  WordIndex t1 = 3;
+  WordIndex t2 = 4;
+
+  LogCount lc1 = LogCount(log(23));
+  LogCount lc2 = LogCount(log(1));
+  
+  // Prepare data
+  tab->clear();
+  
+  tab->addSrcInfo(s1, Count(lc1.get_c_s() + lc1.get_c_s() + lc2.get_c_s()));
+  tab->incrCountsOfEntryLog(s1, t1, lc1);
+  tab->incrCountsOfEntryLog(s1, t1, lc1);
+  tab->incrCountsOfEntryLog(s1, t2, lc2);
+  
+  tab->addSrcInfo(s2, Count(lc1.get_c_s() + lc2.get_c_s()));
+  tab->incrCountsOfEntryLog(s2, t1, lc2);
+  tab->incrCountsOfEntryLog(s2, t2, lc1);
+
+  // Retrieve values
+  LogCount sc1 = tab->lcSrc(s1);
+  LogCount sc2 = tab->lcSrc(s2);
+  LogCount tc1 = tab->lcTrg(t1);
+  LogCount tc2 = tab->lcTrg(t2);
+  LogCount stc1 = tab->lcSrcTrg(s1, t1);
+  LogCount stc2 = tab->lcSrcTrg(s2, t2);
+  
+  // Validate results
+  CPPUNIT_ASSERT( (int) sc1.get_c_s() == 47 );
+  CPPUNIT_ASSERT( (int) sc2.get_c_s() == 24 );
+
+  CPPUNIT_ASSERT( (int) tc1.get_c_s() == 47 );
+  CPPUNIT_ASSERT( (int) tc2.get_c_s() == 24 );
+  
+  CPPUNIT_ASSERT( (int) stc1.get_c_st() == 46 );
+  CPPUNIT_ASSERT( (int) stc2.get_c_st() == 23 );
+}
+
 //---------------------------------------
 void LevelDbNgramTableTest::testStoreAndRestoreSrcInfo()
 {
