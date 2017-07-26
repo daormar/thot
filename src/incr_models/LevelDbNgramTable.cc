@@ -1,5 +1,6 @@
 /*
 thot package for statistical machine translation
+Copyright (C) 2017 Adam Harasimowicz
  
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
@@ -467,7 +468,7 @@ bool LevelDbNgramTable::getEntriesForSource(const Vector<WordIndex>& s,
             pdp.second.second = Count(atoi(it->value().ToString().c_str()));  // sount(s, t)
 
 
-            if ((int) pdp.second.first.get_c_s() == 0 || (int) pdp.second.second.get_c_st() == 0)
+            if ((int) pdp.second.second.get_c_st() == 0)
                 continue;
 
             trgtn.insert(pdp);

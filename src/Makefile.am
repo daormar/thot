@@ -138,8 +138,8 @@ kenlm_defs=
 endif
 
 if HAVE_LEVELDB_LIB
-leveldb_lm_h= incr_models/LevelDbNgramTable.h
-leveldb_lm_defs= incr_models/LevelDbNgramTable.cc
+leveldb_lm_h= incr_models/LevelDbNgramTable.h incr_models/IncrJelMerLevelDbNgramLM.h
+leveldb_lm_defs= incr_models/LevelDbNgramTable.cc incr_models/IncrJelMerLevelDbNgramLM.cc
 endif
 
 sw_models_h= sw_models/WeightedIncrNormSlm.h sw_models/SwDefs.h		\
@@ -401,6 +401,11 @@ incr_models/WordPenaltyModelFactory.cc
 incr_jel_mer_ngram_lm_factory_h= 
 incr_jel_mer_ngram_lm_factory_defs=		\
 incr_models/IncrJelMerNgramLMFactory.cc
+
+##########
+incr_jel_mer_leveldb_ngram_lm_factory_h= 
+incr_jel_mer_leveldb_ngram_lm_factory_defs=		\
+incr_models/IncrJelMerLevelDbNgramLMFactory.cc
 
 ##########
 incr_interp_ngram_lm_factory_h=
@@ -665,6 +670,13 @@ $(incr_jel_mer_ngram_lm_factory_h)		\
 $(incr_jel_mer_ngram_lm_factory_defs)
 incr_jel_mer_ngram_lm_factory_la_LIBADD= libthot.la
 incr_jel_mer_ngram_lm_factory_la_LDFLAGS= -module
+
+##########
+incr_jel_mer_leveldb_ngram_lm_factory_la_SOURCES=	\
+$(incr_jel_mer_leveldb_ngram_lm_factory_h)		\
+$(incr_jel_mer_leveldb_ngram_lm_factory_defs)
+incr_jel_mer_leveldb_ngram_lm_factory_la_LIBADD= libthot.la
+incr_jel_mer_leveldb_ngram_lm_factory_la_LDFLAGS= -module
 
 ##########
 incr_interp_ngram_lm_factory_la_SOURCES=				\
