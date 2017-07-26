@@ -353,7 +353,7 @@ Count LevelDbNgramTable::getSrcTrgInfo(const Vector<WordIndex>& s,
 Prob LevelDbNgramTable::pTrgGivenSrc(const Vector<WordIndex>& s,
                                      const WordIndex& t)
 {
-    // Calculates p(t|s)=count(s,t)/count(s)
+    // Calculates P(t|s) = count(s,t) / count(s)
     Count st_count = cSrcTrg(s, t);
     if ((float) st_count > 0)
     {
@@ -383,7 +383,7 @@ LgProb LevelDbNgramTable::logpTrgGivenSrc(const Vector<WordIndex>& s,
 Prob LevelDbNgramTable::pSrcGivenTrg(const Vector<WordIndex>& s,
                                      const WordIndex& t)
 {
-    // p(s|t)=count(s,t)/count(t)
+    // P(s|t) = count(s, t) / count(t)
     Count st_count = cSrcTrg(s, t);
     if ((float) st_count > 0)
     {
@@ -407,6 +407,8 @@ LgProb LevelDbNgramTable::logpSrcGivenTrg(const Vector<WordIndex>& s,
 bool LevelDbNgramTable::getEntriesForTarget(const WordIndex& t,
                                             LevelDbNgramTable::SrcTableNode& tnode)
 {
+    // Method shouldn't be widely used as it requires to
+    // iterate over the whole database
     pair<Vector<WordIndex>, im_pair<Count, Count> > pdp;
 
     tnode.clear();  // Make sure that structure does not keep old values
@@ -435,10 +437,11 @@ bool LevelDbNgramTable::getEntriesForSource(const Vector<WordIndex>& s,
                                             LevelDbNgramTable::TrgTableNode& trgtn) 
 {
     bool found;
-    pair<WordIndex, im_pair<Count, Count> > pdp;
+    pair<WordIndex, im_pair<Count, Count> > pdp;  // Data structure format: (t, (count(s), count(s, t)))
 
-    Count s_count = cSrc(s);
+    Count s_count = cSrc(s);  // Retrieve count(s)
 
+    // Define key range in which we look for target phrases
     Vector<WordIndex> end_vec = s;
     end_vec[end_vec.size() - 1] += 1;
 
@@ -448,6 +451,7 @@ bool LevelDbNgramTable::getEntriesForSource(const Vector<WordIndex>& s,
     leveldb::Slice start = start_str;
     leveldb::Slice end = end_str;
 
+    // Iterate over the defined key range and populate valid results
     leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
     
     trgtn.clear();  // Make sure that structure does not keep old values
@@ -459,8 +463,8 @@ bool LevelDbNgramTable::getEntriesForSource(const Vector<WordIndex>& s,
         if ( s.size() == vec.size() - 1)
         {
             pdp.first = vec.back();  // t
-            pdp.second.first = s_count;  // COUNT(s)
-            pdp.second.second = Count(atoi(it->value().ToString().c_str()));  // COUNT(t|s)
+            pdp.second.first = s_count;  // count(s)
+            pdp.second.second = Count(atoi(it->value().ToString().c_str()));  // sount(s, t)
 
 
             if ((int) pdp.second.first.get_c_s() == 0 || (int) pdp.second.second.get_c_st() == 0)
@@ -496,6 +500,8 @@ Count LevelDbNgramTable::cSrc(const Vector<WordIndex>& s)
 //-------------------------
 Count LevelDbNgramTable::cTrg(const WordIndex& t)
 {
+    // Method shouldn't be widely used as it requires to
+    // iterate over the whole database
     Count t_count = Count(0);
 
     for(LevelDbNgramTable::const_iterator iter = begin(); iter != end(); iter++)
@@ -526,6 +532,8 @@ LogCount LevelDbNgramTable::lcSrc(const Vector<WordIndex>& s)
 //-------------------------
 LogCount LevelDbNgramTable::lcTrg(const WordIndex& t)
 {
+    // Method shouldn't be widely used as it requires to
+    // iterate over the whole database
     return LogCount(cTrg(t).get_lc_s());
 }
 
@@ -568,6 +576,7 @@ void LevelDbNgramTable::clear(void)
 {
     if(dbName.size() > 0)
     {
+        // Remove old database - faster than removing single keys
         bool dropStatus = drop();
 
         if(dropStatus == THOT_ERROR)
@@ -575,6 +584,7 @@ void LevelDbNgramTable::clear(void)
             exit(2);
         }
 
+        // Create empty DB
         leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
         
         if(!status.ok())
@@ -585,7 +595,7 @@ void LevelDbNgramTable::clear(void)
         }
     }
 
-    srcInfoNull = Count();
+    srcInfoNull = Count();  // Clear empty key counter
 }
 
 //-------------------------
