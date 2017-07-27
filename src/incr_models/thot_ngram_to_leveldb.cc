@@ -33,8 +33,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <LevelDbNgramTable.h>
-//#include "PhraseDefs.h"
+#include "LM_Defs.h"
+#include "LevelDbNgramTable.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -51,7 +51,8 @@ void printUsage(void);
 int extractEntryInfo(awkInputStream& awk,
                      Vector<WordIndex>& src,
                      WordIndex& trg,
-                     LogCount& logJointCount);
+                     LogCount& logJointCount,
+                     map<string, WordIndex>& vocab);
 int process_ttable(void);
 
 //--------------- Type definitions -----------------------------------
@@ -73,10 +74,43 @@ int main(int argc, char *argv[])
 }
 
 //---------------
+void saveVocabulary(map<string, WordIndex>& vocab)
+{
+    // Save vocabulary
+    ofstream vocabFile;
+    vocabFile.open(outputFile + ".leveldb_lm_vcb");
+
+    for (map<string, WordIndex>::iterator it = vocab.begin(); it != vocab.end(); it++)
+    {
+        vocabFile << it->first << " " << it->second << endl;
+    }
+        
+    vocabFile.close();
+}
+
+//---------------
+WordIndex getSymbolId(map<string, WordIndex> &vocab, string symbol)
+{
+    map<string, WordIndex>::iterator it = vocab.find(symbol);
+
+    WordIndex wi = -1;
+
+    if(it == vocab.end()) {
+        wi = vocab.size();
+        vocab[symbol] = wi;
+    } else {
+        wi = it->second;
+    }
+
+    return wi;
+}
+
+//---------------
 int extractEntryInfo(awkInputStream& awk,
                      Vector<WordIndex>& src,
                      WordIndex& trg,
-                     LogCount& logJointCount)
+                     LogCount& logJointCount,
+                     map<string, WordIndex>& vocab)
 {
     if (awk.NF < 3)
         return THOT_ERROR;
@@ -86,11 +120,12 @@ int extractEntryInfo(awkInputStream& awk,
 
     for(unsigned int i = 1; i <= awk.NF - 3; ++i)
     {
-        src.push_back(atoi(awk.dollar(i).c_str()));
+        WordIndex wi = getSymbolId(vocab, awk.dollar(i));
+        src.push_back(wi);
     }
 
     // Obtain target
-    trg = atoi(awk.dollar(awk.NF - 2).c_str());
+    trg = getSymbolId(vocab, awk.dollar(awk.NF - 2));
     // Obtain count
     float jointCount = atof(awk.dollar(awk.NF).c_str());
     logJointCount = LogCount(log(jointCount));
@@ -112,12 +147,19 @@ int process_ttable(void)
     {
         LevelDbNgramTable levelDbNt;
         int ret;
+        map<string, WordIndex> vocab;
 
         if(levelDbNt.init(outputFile) == THOT_ERROR)
         {
             cerr << "Cannot create or recreate database (LevelDB) for language model" << endl;
             return THOT_ERROR;
         }
+
+        // Define language model constants
+        vocab[UNK_SYMBOL_STR] = UNK_SYMBOL;
+        vocab[BOS_STR] = S_BEGIN;
+        vocab[EOS_STR] = S_END;
+        vocab[SP_SYM1_LM_STR] = SP_SYM1_LM;
         
         // Process translation table
         for(unsigned int i = 1; awk.getln(); i++)
@@ -126,7 +168,7 @@ int process_ttable(void)
             WordIndex trg;
             LogCount logJointCount;
 
-            ret = extractEntryInfo(awk, src, trg, logJointCount);
+            ret = extractEntryInfo(awk, src, trg, logJointCount, vocab);
 
             if(ret == THOT_OK)
             {
@@ -142,6 +184,9 @@ int process_ttable(void)
         }
 
         cout << "levelDB size: " << levelDbNt.size() << endl;
+
+        // Save vocabulary
+        saveVocabulary(vocab);
         
         return THOT_OK;
     }

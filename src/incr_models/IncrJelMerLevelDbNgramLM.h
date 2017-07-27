@@ -40,6 +40,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "_incrJelMerNgramLM.h"
 #include "LevelDbNgramTable.h"
 
+#include <string>
+
 //--------------- Constants ------------------------------------------
 
 
@@ -66,6 +68,9 @@ class IncrJelMerLevelDbNgramLM: public _incrJelMerNgramLM<Count,Count>
               // Set new pointer to table
             this->tablePtr = new LevelDbNgramTable();
         }
+
+          // Load model files and dictionary
+        bool load(const char *fileName);
 
           // Destructor
         ~IncrJelMerLevelDbNgramLM();

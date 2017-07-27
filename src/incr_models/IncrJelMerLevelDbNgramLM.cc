@@ -39,6 +39,24 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Classes --------------------------------------------
 
 //------------------------------
+bool IncrJelMerLevelDbNgramLM::load(const char *fileName)
+{
+    bool retval;
+
+    // Load vocabulary
+    std::string vocabFileName(fileName);
+    vocabFileName += ".leveldb_lm_vcb";
+    this->encPtr->load(vocabFileName.c_str());
+
+    // Load weights and language model
+    retval = _incrJelMerNgramLM<Count, Count>::load(fileName);
+
+    if (retval == THOT_ERROR) return THOT_ERROR;
+
+    return THOT_OK;
+}
+
+//------------------------------
 IncrJelMerLevelDbNgramLM::~IncrJelMerLevelDbNgramLM()
 {
   
