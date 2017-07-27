@@ -66,59 +66,59 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 class LevelDbNgramTableTest: public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE( LevelDbNgramTableTest );
-  CPPUNIT_TEST( testAddTrgWithEmptySrc );
-  CPPUNIT_TEST( testCTrg );
-  CPPUNIT_TEST( testLogCountRetrieving );
-  CPPUNIT_TEST( testStoreFloatValues );
-  CPPUNIT_TEST( testKeyVectorConversion );
-  CPPUNIT_TEST( testAddTableEntry );
-  CPPUNIT_TEST( testIncrCountsOfEntryLog );
-  CPPUNIT_TEST( testStoreAndRestoreSrcInfo );
-  CPPUNIT_TEST( testGetEntriesForTarget );
-  CPPUNIT_TEST( testRetrievingSubphrase );
-  CPPUNIT_TEST( testGetEntriesForSource );
-  CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );
-  CPPUNIT_TEST( testGetNbestForSrc );
-  CPPUNIT_TEST( testGetNbestForTrg );
-  CPPUNIT_TEST( testIteratorsLoop );
-  CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
-  CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
-  CPPUNIT_TEST( testSize );
-  CPPUNIT_TEST( testLoadingLevelDb );
-  CPPUNIT_TEST( testLoadedDataCorrectness );
-  CPPUNIT_TEST_SUITE_END();
+        CPPUNIT_TEST_SUITE( LevelDbNgramTableTest );
+        CPPUNIT_TEST( testAddTrgWithEmptySrc );
+        CPPUNIT_TEST( testCTrg );
+        CPPUNIT_TEST( testLogCountRetrieving );
+        CPPUNIT_TEST( testStoreFloatValues );
+        CPPUNIT_TEST( testKeyVectorConversion );
+        CPPUNIT_TEST( testAddTableEntry );
+        CPPUNIT_TEST( testIncrCountsOfEntryLog );
+        CPPUNIT_TEST( testStoreAndRestoreSrcInfo );
+        CPPUNIT_TEST( testGetEntriesForTarget );
+        CPPUNIT_TEST( testRetrievingSubphrase );
+        CPPUNIT_TEST( testGetEntriesForSource );
+        CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );
+        CPPUNIT_TEST( testGetNbestForSrc );
+        CPPUNIT_TEST( testGetNbestForTrg );
+        CPPUNIT_TEST( testIteratorsLoop );
+        CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
+        CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
+        CPPUNIT_TEST( testSize );
+        CPPUNIT_TEST( testLoadingLevelDb );
+        CPPUNIT_TEST( testLoadedDataCorrectness );
+        CPPUNIT_TEST_SUITE_END();
 
- private:
-  LevelDbNgramTable *tab;
-  string dbName = "/tmp/thot_leveldb_unit_test";
+    private:
+        LevelDbNgramTable *tab;
+        string dbName = "/tmp/thot_leveldb_unit_test";
   
-  Vector<WordIndex> getVector(string phrase);
+        Vector<WordIndex> getVector(string phrase);
 
- public:
-  void setUp();
-  void tearDown();
+    public:
+        void setUp();
+        void tearDown();
 
-  void testAddTrgWithEmptySrc();
-  void testCTrg();
-  void testLogCountRetrieving();
-  void testKeyVectorConversion();
-  void testStoreFloatValues();
-  void testAddTableEntry();
-  void testIncrCountsOfEntryLog();
-  void testStoreAndRestoreSrcInfo();
-  void testGetEntriesForTarget();
-  void testRetrievingSubphrase();
-  void testGetEntriesForSource();
-  void testRetrievingEntriesWithCountEqualZero();
-  void testGetNbestForSrc();
-  void testGetNbestForTrg();
-  void testIteratorsLoop();
-  void testIteratorsOperatorsPlusPlusStar();
-  void testIteratorsOperatorsEqualNotEqual();
-  void testSize();
-  void testLoadingLevelDb();
-  void testLoadedDataCorrectness();
+        void testAddTrgWithEmptySrc();
+        void testCTrg();
+        void testLogCountRetrieving();
+        void testKeyVectorConversion();
+        void testStoreFloatValues();
+        void testAddTableEntry();
+        void testIncrCountsOfEntryLog();
+        void testStoreAndRestoreSrcInfo();
+        void testGetEntriesForTarget();
+        void testRetrievingSubphrase();
+        void testGetEntriesForSource();
+        void testRetrievingEntriesWithCountEqualZero();
+        void testGetNbestForSrc();
+        void testGetNbestForTrg();
+        void testIteratorsLoop();
+        void testIteratorsOperatorsPlusPlusStar();
+        void testIteratorsOperatorsEqualNotEqual();
+        void testSize();
+        void testLoadingLevelDb();
+        void testLoadedDataCorrectness();
 };
 
 #endif

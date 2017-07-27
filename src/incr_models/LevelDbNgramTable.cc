@@ -48,7 +48,8 @@ string LevelDbNgramTable::vectorToString(const Vector<WordIndex>& vec)const
     Vector<WordIndex> str;
     for(size_t i = 0; i < vec.size(); i++) {
         // Use WORD_INDEX_MODULO_BYTES bytes to encode index
-        for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--) {
+        for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--)
+        {
             str.push_back(1 + (vec[i] / (unsigned int) pow(WORD_INDEX_MODULO_BASE, j) % WORD_INDEX_MODULO_BASE));
         }
     }
@@ -66,7 +67,8 @@ Vector<WordIndex> LevelDbNgramTable::stringToVector(const string s)const
     for(size_t i = 0; i < s.size();)  // A string length is WORD_INDEX_MODULO_BYTES * n + 1
     {
         unsigned int wi = 0;
-        for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--, i++) {
+        for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--, i++)
+        {
             wi += (((unsigned char) s[i]) - 1) * (unsigned int) pow(WORD_INDEX_MODULO_BASE, j);
         }
 
@@ -105,10 +107,13 @@ bool LevelDbNgramTable::retrieveData(const Vector<WordIndex>& phrase, float &cou
         
         leveldb::Status result = db->Get(leveldb::ReadOptions(), key, &value_str);  // Read stored src value
 
-        if (result.ok()) {
+        if (result.ok())
+        {
             count = atof(value_str.c_str());
             return true;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
@@ -458,7 +463,8 @@ bool LevelDbNgramTable::getEntriesForSource(const Vector<WordIndex>& s,
     trgtn.clear();  // Make sure that structure does not keep old values
     
     int i = 0;
-    for(it->Seek(start); it->Valid() && it->key().ToString() < end.ToString(); it->Next(), i++) {
+    for(it->Seek(start); it->Valid() && it->key().ToString() < end.ToString(); it->Next(), i++)
+    {
         Vector<WordIndex> vec = keyToVector(it->key().ToString());
 
         if ( s.size() == vec.size() - 1)
@@ -618,7 +624,8 @@ LevelDbNgramTable::const_iterator LevelDbNgramTable::begin(void)const
     leveldb::Iterator *local_iter = db->NewIterator(leveldb::ReadOptions());
     local_iter->SeekToFirst();
 
-    if(!local_iter->Valid()) {
+    if(!local_iter->Valid())
+    {
         delete local_iter;
         local_iter = NULL;
     }
