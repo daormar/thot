@@ -189,9 +189,15 @@ option allows to replace HMM-based alignment models by IBM 2 alignment
 models. IBM 2 alignment models can be estimated very efficiently without
 significantly affecting translation quality.</li>
 
-<li> <b><code>--with-casmacat</code></b>: this options enables the
-configuration required for the CasMaCat Workbench, see more information
-below.</li>
+<li> <b><code>--with-kenlm=&ltDIR></code></b>: installs Thot with the
+necessary code to combine it the with the KenLM
+library. <code>&ltDIR></code> is the absolute path where the KenLM
+library was installed. See more information below.</li>
+
+<li> <b><code>--with-casmacat=&ltDIR></code></b>: this option enables the
+configuration required for the CasMaCat Workbench. </code>&ltDIR></code>
+is the absolute path where the CasMaCat library was installed. See more
+information below.</li>
 </ul>
 
 <h4>
@@ -202,11 +208,60 @@ Party Software</h4>
 <p>Thot can currently be combined with third party software, extending
 its functionality:</p>
 
-<h6>KenLM</h6>
+<h5>KenLM</h5>
 
-<h6>Berkeley DB Library</h6>
+<p>The <a href="https://kheafield.com/code/kenlm/">KenLM library</a>
+provides software to estimate, filter and query language models. KenLM
+has been incorporated into Thot so as to enable access of language
+model parameters from disk. The advantage of doing this is a reduction
+of main memory requirements and loading times for language models to
+virtually zero, at the cost of a small time overhead incurred by disk
+usage.</p>
 
-<h6>Casmacat Workbench</h6>
+<p>KenLM library should be downloaded, compiled and installed before
+executing Thot's <code>configure</code> script. <code>configure</code>
+should be used with the <code>--with-kenlm=&ltDIR></code> option, where
+<code>&ltDIR></code> is the directory where the library was installed. A
+specific version of KenLM has been created with minor modifications
+focused on making the package easier to install. The required sequences
+of commands is as follows:</p>
+
+<pre><code>$ mkdir kenlm ; cd kenlm
+$ git clone https://github.com/daormar/kenlm.git
+$ mkdir build ; cd build
+$ cmake -DCMAKE_INSTALL_PREFIX=../ ../repo
+$ make
+$ make install    # Installs the library in the "kenlm" directory
+</code></pre>
+
+For more information about how to use this functionality, please refer
+to
+the <a href="http://daormar.github.io/thot/docsupport/thot_manual.pdf">Thot
+manual</a>.
+
+<h5>Berkeley DB Library</h5>
+
+<p><a href="http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html">Berkeley
+DB</a> is a software library providing a high performance database for
+key/value data. Berkeley DB can be combined with Thot so as to allow
+access to phrase model parameters from disk. The purpose of this is to
+reduce main memory requirements and loading times in the same way as was
+explained above for language models and KenLM.</p>
+
+<p>Berkeley DB library should be installed in a standard OS directory (such
+as <code>/usr/local</code>) before the <code>configure</code> script is
+executed. In systems providing the <code>apt</code> tool, this can be
+easily achieved with the following command:</p>
+
+<pre><code>$ ./reconf
+$ sudo apt install libdb++-dev
+</code></pre>
+
+For additional information about how to use this functionality, see
+the <a href="http://daormar.github.io/thot/docsupport/thot_manual.pdf">Thot
+manual</a>.
+
+<h5>Casmacat Workbench</h5>
 
 <p>Thot can be used in combination with the CasMacat Workbench that is
 being developed in the project of the same
@@ -287,10 +342,10 @@ HMM-based models by IBM 2 Models, which can be estimated very
 efficiently. However, we are also investigating alternative optimization
 techniques to efficiently execute the estimation process of HMM-based
 models in a single processor <small><b>[STATUS: under development
-although code is faster now]</b></small></p></li>
+although code is much faster now]</b></small></p></li>
 <li><p>Log-linear model weight adjustment is carried out by means of the
 downhill simplex algorithm, which is slow. Downhill simplex will be
-replaced by a more efficient technique <small><b>[STATUS:
+replaced by a more efficient technique <small><b>[STATUS: issue
 solved]</b></small></p></li>
 <li><p>Non-monotonic translation is not yet sufficiently tested,
 specially with complex corpora such as Europarl <small><b>[STATUS: under
