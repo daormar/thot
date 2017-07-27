@@ -16,7 +16,7 @@ endif
 endif
 
 if HAVE_LEVELDB_LIB
-LEVELDB_PROGS=thot_ttable_to_leveldb
+LEVELDB_PROGS=thot_ngram_to_leveldb thot_ttable_to_leveldb
 LEVELDB_LIBS=leveldb_phrase_model_factory.la
 endif
 
@@ -521,6 +521,10 @@ thot_lm_perp_SOURCES = incr_models/thot_lm_perp.cc
 thot_lm_perp_LDFLAGS = libthot.la
 
 ##########
+thot_ngram_to_leveldb_SOURCES = incr_models/thot_ngram_to_leveldb.cc
+thot_ngram_to_leveldb_LDFLAGS = libthot.la
+
+##########
 thot_ilm_perp_SOURCES = incr_models/thot_ilm_perp.cc
 thot_ilm_perp_LDFLAGS = libthot.la
 
@@ -590,8 +594,8 @@ thot_ttable_to_fbdb_SOURCES = phrase_models/thot_ttable_to_fbdb.cc
 thot_ttable_to_fbdb_LDFLAGS = libthot.la
 
 ##########
-thot_ttable_to_leveldb_SOURCES= phrase_models/thot_ttable_to_leveldb.cc
-thot_ttable_to_leveldb_LDFLAGS= libthot.la
+thot_ttable_to_leveldb_SOURCES = phrase_models/thot_ttable_to_leveldb.cc
+thot_ttable_to_leveldb_LDFLAGS = libthot.la
 
 ##########
 thot_wg_proc_SOURCES = error_correction/thot_wg_proc_pars.h	\

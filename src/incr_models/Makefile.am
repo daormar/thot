@@ -11,4 +11,4 @@ BaseIncrCondProbModel.h BaseWordPenaltyModel.h LevelDbNgramTable.h \
 LevelDbNgramTable.cc \WordPenaltyModel.h	\
 WordPenaltyModel.cc WordPredictor.h WordPredictor.cc			\
 IncrJelMerNgramLMFactory.cc IncrJelMerLevelDbNgramLMFactory.cc      \
-WordPenaltyModelFactory.cc
+WordPenaltyModelFactory.cc thot_ngram_to_leveldb.cc
