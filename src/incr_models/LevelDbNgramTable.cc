@@ -219,7 +219,7 @@ bool LevelDbNgramTable::getNbestForSrc(const Vector<WordIndex>& s,
                                        NbestTableNode<WordIndex>& nbt)
 {
     TrgTableNode tnode;
-    typename TrgTableNode::iterator tNodeIter;
+    TrgTableNode::iterator tNodeIter;
     bool found;
     Count s_count = cSrc(s);
     
@@ -239,7 +239,7 @@ bool LevelDbNgramTable::getNbestForTrg(const WordIndex& t,
                                        int N)
 {
     SrcTableNode tnode;
-    typename SrcTableNode::iterator tNodeIter;
+    SrcTableNode::iterator tNodeIter;
     bool found;
     Count s_count;
     

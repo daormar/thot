@@ -80,8 +80,8 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
 
     public:
 
-        typedef typename BaseIncrCondProbTable<Vector<WordIndex>, WordIndex, Count, Count>::SrcTableNode SrcTableNode;
-        typedef typename BaseIncrCondProbTable<Vector<WordIndex>, WordIndex, Count, Count>::TrgTableNode TrgTableNode;
+        typedef BaseIncrCondProbTable<Vector<WordIndex>, WordIndex, Count, Count>::SrcTableNode SrcTableNode;
+        typedef BaseIncrCondProbTable<Vector<WordIndex>, WordIndex, Count, Count>::TrgTableNode TrgTableNode;
 
           // Constructor
         LevelDbNgramTable(void);
