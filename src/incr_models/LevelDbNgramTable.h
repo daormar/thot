@@ -43,6 +43,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "leveldb/db.h"
 #include "leveldb/filter_policy.h"
 #include "leveldb/write_batch.h"
+#include <sstream>
 
 #include "BaseIncrCondProbTable.h"
 #include "ErrorDefs.h"
