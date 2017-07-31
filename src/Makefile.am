@@ -54,8 +54,8 @@ thot_client thot_server thot_scorer thot_calc_bleu $(DB_CXX_PROGS)	\
 $(LEVELDB_PROGS) $(TESTING_PROGS)
 
 lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
-incr_jel_mer_ngram_lm_factory.la incr_interp_ngram_lm_factory.la	\
-smoothed_incr_ibm2_alig_model_factory.la				\
+incr_jel_mer_ngram_lm_factory.la incr_jel_mer_leveldb_ngram_lm_factory.la       \
+incr_interp_ngram_lm_factory.la	smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la incr_phrase_model_factory.la		\
 wba_incr_phrase_model_factory.la incr_mux_phrase_model_factory.la	\
 pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
