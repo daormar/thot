@@ -707,7 +707,7 @@ void LevelDbNgramTableTest::testLoadingLevelDb()
     unsigned int original_size = tab->size();
     
     // Load structure
-    result = tab->load(dbName);
+    result = tab->load(dbName.c_str());
     CPPUNIT_ASSERT( result == THOT_OK);
     CPPUNIT_ASSERT( tab->size() == original_size );
 }
@@ -760,7 +760,7 @@ void LevelDbNgramTableTest::testLoadedDataCorrectness()
     unsigned int original_size = tab->size();
     
     // Load structure
-    result = tab->load(dbName);
+    result = tab->load(dbName.c_str());
     CPPUNIT_ASSERT( result == THOT_OK );
     CPPUNIT_ASSERT( tab->size() == original_size );
 

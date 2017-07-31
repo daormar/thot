@@ -156,7 +156,7 @@ bool LevelDbNgramTable::init(string levelDbPath)
         db = NULL;
     }
 
-    if(load(levelDbPath) != THOT_OK)
+    if(load(levelDbPath.c_str()) != THOT_OK)
         return THOT_ERROR;
 
     clear();
@@ -188,8 +188,10 @@ bool LevelDbNgramTable::drop()
 }
 
 //-------------------------
-bool LevelDbNgramTable::load(string levelDbPath)
+bool LevelDbNgramTable::load(const char *fileName)
 {
+    string levelDbPath(fileName);
+
     if(db != NULL)
     {
         delete db;

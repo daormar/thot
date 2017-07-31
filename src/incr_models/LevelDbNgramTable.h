@@ -96,7 +96,8 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
             // Wrapper for removing levelDB
         bool drop();
             // Wrapper for loading existing levelDB
-        bool load(string levelDbPath);
+        bool load(const char *fileName);
+        //bool load(string fileName);
 
           // Basic functions
           // TODO Ordering by n-gram value
