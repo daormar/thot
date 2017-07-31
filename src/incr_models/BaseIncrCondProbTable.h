@@ -128,6 +128,9 @@ class BaseIncrCondProbTable
        // size, clear functions
    virtual size_t size(void)=0;
    virtual void clear(void)=0;
+
+       // load function
+   virtual bool load(const char *fileName)=0;
    
        // destructor
    virtual ~BaseIncrCondProbTable(){};

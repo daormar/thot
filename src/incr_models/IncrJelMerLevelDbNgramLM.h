@@ -62,11 +62,14 @@ class IncrJelMerLevelDbNgramLM: public _incrJelMerNgramLM<Count,Count>
         typedef _incrJelMerNgramLM<Count,Count>::SrcTableNode SrcTableNode;
         typedef _incrJelMerNgramLM<Count,Count>::TrgTableNode TrgTableNode;
 
+        //LevelDbNgramTable* tablePtr;
+
           // Constructor
         IncrJelMerLevelDbNgramLM():_incrJelMerNgramLM<Count,Count>()
         {
               // Set new pointer to table
-            this->tablePtr = new LevelDbNgramTable();
+            //this->tablePtr = new LevelDbNgramTable();
+            tablePtr = new LevelDbNgramTable();
         }
 
           // Load model files and dictionary
