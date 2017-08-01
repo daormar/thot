@@ -56,6 +56,31 @@ empty_train()
 }
 
 ########
+gen_final_alig_file()
+{
+    if [ ${g_given} -eq 1 ]; then
+        # Set external alignment file
+        echo "* Setting external word alignment file in GIZA format... " >&2
+        cp ${gfile} ${outp}.A3.final
+        echo "" >&2
+    else
+        if [ ${dict_given} -eq 1 ]; then
+            # Generate exhaustive alignments so as to introduce sentence
+            # pairs as phrase table entries
+            echo "* Generating exhaustive word alignments... " >&2
+            $bindir/thot_gen_exhaustive_giza_alig -s $scorpus -t $tcorpus > ${outp}.A3.final
+            echo "" >&2
+        else
+            # Operate word alignments generated with the sw_models package
+            echo "* Operating word alignments... " >&2
+            $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal ${ao_opt} ${outp}_invswm.bestal -o ${outp} \
+                                     ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
+            echo "" >&2
+        fi
+    fi
+}
+
+########
 standard_train()
 {
     # Generate direct and inverse single word models using sw_models package
@@ -86,19 +111,8 @@ standard_train()
         ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
     echo "" >&2
 
-    if [ ${dict_given} -eq 1 ]; then
-        # Generate exhaustive alignments so as to introduce sentence
-        # pairs as phrase table entries
-        echo "* Generating exhaustive word alignments... " >&2
-        $bindir/thot_gen_exhaustive_giza_alig -s $scorpus -t $tcorpus > ${outp}.A3.final
-        echo "" >&2
-    else
-        # Operate word alignments generated with the sw_models package
-        echo "* Operating word alignments... " >&2
-        $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal ${ao_opt} ${outp}_invswm.bestal -o ${outp} \
-            ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
-        echo "" >&2
-    fi
+    # Generate final alignment file
+    gen_final_alig_file
 
     # Generate phrase model
     echo "* Generating phrase model... " >&2
@@ -127,8 +141,8 @@ standard_train()
 if [ $# -lt 1 ]; then
     echo "Usage: thot_pbs_gen_batch_phr_model -pr <int>"
     echo "                                    -s <string> -t <string> -o <string>"
-    echo "                                    [-n <int>] [-np <float>] [-lf <float>]"
-    echo "                                    [-af <float>] [-cpr <float>]"
+    echo "                                    [-g <string>] [-nit <int>] [-np <float>]"
+    echo "                                    [-lf <float>] [-af <float>] [-cpr <float>]"
     echo "                                    [-m <int>] [-ao <string>] [-to <int>]"
     echo "                                    [-dict] [-unk] [-nsh] [-qs <string>]"
     echo "                                    [-T <string>] [-sdir <string>] [-debug]"
@@ -140,7 +154,9 @@ if [ $# -lt 1 ]; then
     echo "                        using pbs clusters)"
     echo "-o <string>             Prefix of the output files (give absolute path when"
     echo "                        using pbs clusters)"
-    echo "-n <int>                Number of iterations of the EM algorithm executed by"
+    echo "-g <string>             Use external alignment file in GIZA format for phrase"
+    echo "                        extraction. Thot's native alignment file is not used" 
+    echo "-nit <int>              Number of iterations of the EM algorithm executed by"
     echo "                        the thot_gen_sw_model tool (5 by default)"
     echo "-lf <float>             Lexical smoothing interpolation factor for single-word"
     echo "                        models"
@@ -183,6 +199,7 @@ else
     t_given=0
     o_given=0
     nit_given=0
+    g_given=0
     lf_given=0
     af_given=0
     np_given=0
@@ -238,7 +255,13 @@ else
             "-nit") shift
                 if [ $# -ne 0 ]; then
                     niters=$1
-                    n_given=1
+                    nit_given=1
+                fi
+                ;;
+            "-g") shift
+                if [ $# -ne 0 ]; then
+                    gfile=$1
+                    g_given=1
                 fi
                 ;;
             "-lf") shift
@@ -369,6 +392,11 @@ else
             echo "Error! directory ${sdir} does not exist" >&2
             exit 1            
         fi
+    fi
+
+    if [ ${g_given} -eq 1 -a ! -f ${gfile} ]; then        
+        echo "Error! file ${gfile} does not exist" >&2
+        exit 1            
     fi
 
     # Verify if unknown words are to be added to training corpus
