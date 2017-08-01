@@ -35,7 +35,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "LM_Defs.h"
 #include "LevelDbNgramTable.h"
-#include "im_pair.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -111,7 +110,7 @@ WordIndex getSymbolId(map<string, WordIndex> &vocab, string symbol)
 int extractEntryInfo(awkInputStream& awk,
                      Vector<WordIndex>& src,
                      WordIndex& trg,
-                     im_pair<Count, Count>& inf,
+                     LogCount& logJointCount,
                      map<string, WordIndex>& vocab)
 {
     if (awk.NF < 3)
@@ -129,8 +128,8 @@ int extractEntryInfo(awkInputStream& awk,
     // Obtain target
     trg = getSymbolId(vocab, awk.dollar(awk.NF - 2));
     // Obtain count
-    inf.first = atof(awk.dollar(awk.NF-1).c_str());
-    inf.second = atof(awk.dollar(awk.NF).c_str());
+    float jointCount = atof(awk.dollar(awk.NF).c_str());
+    logJointCount = LogCount(log(jointCount));
 
     return THOT_OK;
 }
@@ -168,13 +167,13 @@ int process_ttable(void)
         {
             Vector<WordIndex> src;
             WordIndex trg;
-            im_pair<Count, Count> inf;
+            LogCount logJointCount;
 
-            ret = extractEntryInfo(awk, src, trg, inf, vocab);
+            ret = extractEntryInfo(awk, src, trg, logJointCount, vocab);
 
             if(ret == THOT_OK)
             {
-                levelDbNt.addTableEntry(src, trg, inf);
+                levelDbNt.incrCountsOfEntryLog(src, trg, logJointCount);
             }
             else
             {
