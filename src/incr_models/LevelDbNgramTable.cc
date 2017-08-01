@@ -473,12 +473,11 @@ bool LevelDbNgramTable::getEntriesForSource(const Vector<WordIndex>& s,
     
     trgtn.clear();  // Make sure that structure does not keep old values
     
-    int i = 0;
-    for(it->Seek(start); it->Valid() && it->key().ToString() < end.ToString(); it->Next(), i++)
+    for(it->Seek(start); it->Valid() && it->key().ToString() < end.ToString(); it->Next())
     {
         Vector<WordIndex> vec = keyToVector(it->key().ToString());
 
-        if ( s.size() == vec.size() - 1)
+        if (s.size() == vec.size() - 1 && vec.size() > 1)
         {
             pdp.first = vec.back();  // t
             pdp.second.first = s_count;  // count(s)
@@ -497,7 +496,7 @@ bool LevelDbNgramTable::getEntriesForSource(const Vector<WordIndex>& s,
 
     delete it;
 
-    return i > 0 && found;
+    return trgtn.size() > 0 && found;
 }
 
 //-------------------------
