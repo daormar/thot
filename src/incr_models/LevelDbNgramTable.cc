@@ -482,7 +482,7 @@ bool LevelDbNgramTable::getEntriesForSource(const Vector<WordIndex>& s,
         {
             pdp.first = vec.back();  // t
             pdp.second.first = s_count;  // count(s)
-            pdp.second.second = Count(atoi(it->value().ToString().c_str()));  // sount(s, t)
+            pdp.second.second = Count(atof(it->value().ToString().c_str()));  // sount(s, t)
 
 
             if ((int) pdp.second.second.get_c_st() == 0)
