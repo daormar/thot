@@ -309,8 +309,8 @@ void LevelDbNgramTable::incrCountsOfEntryLog(const Vector<WordIndex>& s,
 
 //-------------------------
 im_pair<Count, Count> LevelDbNgramTable::infSrcTrg(const Vector<WordIndex>& s,
-                                            const WordIndex& t,
-                                            bool& found) 
+                                                   const WordIndex& t,
+                                                   bool& found) 
 {
     im_pair<Count, Count> ppi;
 
