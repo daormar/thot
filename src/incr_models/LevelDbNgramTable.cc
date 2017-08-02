@@ -613,9 +613,6 @@ size_t LevelDbNgramTable::size(void)
 void LevelDbNgramTable::print(bool printString)
 {
     cout << "levelDB content:" << endl;
-    if (srcInfoNull.get_c_s() > 0)
-        cout << "<empty key> :\t" << srcInfoNull.get_c_s() << endl;
-
     for(LevelDbNgramTable::const_iterator iter = begin(); iter != end(); iter++)
     {
         pair<Vector<WordIndex>, Count> x = *iter;
