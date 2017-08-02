@@ -779,3 +779,46 @@ void LevelDbNgramTableTest::testLoadedDataCorrectness()
     tab->clear();  // Remove data
     CPPUNIT_ASSERT( tab->size() == 0 );
 }
+
+//---------------------------------------
+void LevelDbNgramTableTest::testLoadedDataNullCount()
+{
+    //  TEST:
+    //    Check if the data restored from disk
+    //    contain all null count
+    //
+    bool result;
+
+    // Fill levelDB with data
+    tab->clear();
+
+    // Define vectors
+    Vector<WordIndex> s1;
+    s1.push_back(1000);
+    s1.push_back(2000);
+    WordIndex t1 = 22000;
+
+    Vector<WordIndex> s2;
+    s2.push_back(122000);
+    s2.push_back(122);
+    WordIndex t2 = 66000;
+
+    Vector<WordIndex> s3;
+
+    // Insert data to levelDB
+    tab->addSrcInfo(s1, Count(1));
+    tab->addSrcTrgInfo(s1, t1, Count(2));
+    tab->addSrcInfo(s2, Count(4));
+    tab->addSrcTrgInfo(s2, t2, Count(8));
+    tab->addSrcInfo(s3, Count(16));
+
+    unsigned int original_size = tab->size();
+
+    // Load structure
+    result = tab->load(dbName.c_str());
+    CPPUNIT_ASSERT( result == THOT_OK );
+    CPPUNIT_ASSERT( tab->size() == original_size );
+
+    // Check count values
+    CPPUNIT_ASSERT( tab->cSrc(s3).get_c_st() == 16 );
+}

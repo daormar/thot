@@ -87,6 +87,7 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
         CPPUNIT_TEST( testSize );
         CPPUNIT_TEST( testLoadingLevelDb );
         CPPUNIT_TEST( testLoadedDataCorrectness );
+        CPPUNIT_TEST( testLoadedDataNullCount );
         CPPUNIT_TEST_SUITE_END();
 
     private:
@@ -119,6 +120,7 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
         void testSize();
         void testLoadingLevelDb();
         void testLoadedDataCorrectness();
+        void testLoadedDataNullCount();
 };
 
 #endif
