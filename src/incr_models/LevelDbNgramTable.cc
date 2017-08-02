@@ -40,6 +40,15 @@ LevelDbNgramTable::LevelDbNgramTable(void)
     options.block_cache = leveldb::NewLRUCache(100 * 1048576);  // 100 MB for cache
     db = NULL;
     dbName = "";
+    // Key for null info - use the maximum allowed value as the key
+    Vector<WordIndex> null_vec;
+    for (unsigned int i = 0; i < WORD_INDEX_MODULO_BYTES; i++)
+    {
+        null_vec.push_back(WORD_INDEX_MODULO_BASE);
+    }
+
+    string null_str(null_vec.begin(), null_vec.end());
+    dbNullKey = null_str;
 }
 
 //-------------------------
@@ -91,6 +100,25 @@ Vector<WordIndex> LevelDbNgramTable::keyToVector(const string key)const
 }
 
 //-------------------------
+bool LevelDbNgramTable::retrieveData(const string key, float &count)const
+{
+    string value_str;
+    count = 0;
+
+    leveldb::Status result = db->Get(leveldb::ReadOptions(), key, &value_str);  // Read stored src value
+
+    if (result.ok())
+    {
+        count = atof(value_str.c_str());
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+//-------------------------
 bool LevelDbNgramTable::retrieveData(const Vector<WordIndex>& phrase, float &count)const
 {
     if (phrase.size() == 0)
@@ -101,41 +129,22 @@ bool LevelDbNgramTable::retrieveData(const Vector<WordIndex>& phrase, float &cou
     }
     else
     {
-        string value_str;
-        count = 0;
         string key = vectorToString(phrase);
-        
-        leveldb::Status result = db->Get(leveldb::ReadOptions(), key, &value_str);  // Read stored src value
-
-        if (result.ok())
-        {
-            count = atof(value_str.c_str());
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return retrieveData(key, count);
     }
 }
 
 //-------------------------
-bool LevelDbNgramTable::storeData(const Vector<WordIndex>& phrase, float count)
+bool LevelDbNgramTable::storeData(const string key, float count)
 {
-    if (phrase.size() == 0)
-    {
-        srcInfoNull = count;
-
-        return true;
-    }
-    else if (count > 0)  // Do not store elements with zero occurency number
+    if (count > 0)  // Do not store elements with zero occurency number
     {
         stringstream ss;
         ss << count;
         string count_str = ss.str();
 
         leveldb::WriteBatch batch;
-        batch.Put(vectorToString(phrase), count_str);
+        batch.Put(key, count_str);
         leveldb::Status s = db->Write(leveldb::WriteOptions(), &batch);
 
         if(!s.ok())
@@ -143,6 +152,26 @@ bool LevelDbNgramTable::storeData(const Vector<WordIndex>& phrase, float count)
 
         return s.ok();
     }
+
+    return true;
+}
+
+//-------------------------
+bool LevelDbNgramTable::storeData(const Vector<WordIndex>& phrase, float count)
+{
+    string key;
+
+    if (phrase.size() == 0)
+    {
+        srcInfoNull = count;
+        key = dbNullKey;
+    }
+    else
+    {
+        key = vectorToString(phrase);
+    }
+
+    return storeData(key, count);
 }
 
 //-------------------------
@@ -203,6 +232,11 @@ bool LevelDbNgramTable::load(const char *fileName)
 
     if(status.ok())
     {
+        // Restore null count
+        float null_count;
+        retrieveData(dbNullKey, null_count);
+        srcInfoNull = null_count;
+
         return THOT_OK;
     }
     else
@@ -557,7 +591,7 @@ LogCount LevelDbNgramTable::lcTrg(const WordIndex& t)
 //-------------------------
 size_t LevelDbNgramTable::size(void)
 {
-    size_t len = srcInfoNull.get_c_s() > 0;
+    size_t len = 0;
 
     for(LevelDbNgramTable::const_iterator iter = begin(); iter != end(); iter++, len++)
     {

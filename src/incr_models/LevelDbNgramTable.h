@@ -66,13 +66,16 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
         leveldb::DB* db;
         leveldb::Options options;
         string dbName;
+        string dbNullKey;
 
             // Converters
         string vectorToString(const Vector<WordIndex>& vec)const;
         Vector<WordIndex> stringToVector(const string s)const;
         
             // Read and write data
+        bool retrieveData(const string key, float &count)const;
         bool retrieveData(const Vector<WordIndex>& phrase, float &count)const;
+        bool storeData(const string key, float count);
         bool storeData(const Vector<WordIndex>& phrase, float count);
 
             // Returns information related to a given key.
