@@ -556,15 +556,17 @@ void LevelDbNgramTableTest::testIteratorsLoop()
     }
 
     // Check if element returned by iterator is correct
-    CPPUNIT_ASSERT(d.size() == 3);
+    CPPUNIT_ASSERT(d.size() == 4);
     CPPUNIT_ASSERT(d[s1].first.get_c_s() == 2);
     CPPUNIT_ASSERT(d[s1].second.get_c_s() == 1);
     CPPUNIT_ASSERT(d[tab->getSrcTrg(s1, t1)].first.get_c_st() == 2);
     CPPUNIT_ASSERT(d[tab->getSrcTrg(s1, t1)].second.get_c_s() == 1);
     CPPUNIT_ASSERT(d[tab->getSrcTrg(s2, t2)].first.get_c_st() == 1);
     CPPUNIT_ASSERT(d[tab->getSrcTrg(s2, t2)].second.get_c_s() == 1);
+    CPPUNIT_ASSERT(d[tab->getVectorDbNullKey()].first.get_c_st() == 0);
+    CPPUNIT_ASSERT(d[tab->getVectorDbNullKey()].second.get_c_s() == 1);
 
-    CPPUNIT_ASSERT( i == 3 );
+    CPPUNIT_ASSERT( i == 4 );
 }
 
 //---------------------------------------
@@ -603,11 +605,13 @@ void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
     CPPUNIT_ASSERT( !found );
 
     // Check if element returned by iterator is correct
-    CPPUNIT_ASSERT(d.size() == 2);
+    CPPUNIT_ASSERT(d.size() == 3);
     CPPUNIT_ASSERT(d[s].first.get_c_s() == 2);
     CPPUNIT_ASSERT(d[s].second == 1);
     CPPUNIT_ASSERT(d[tab->getSrcTrg(s, t)].first.get_c_st() == 2);
     CPPUNIT_ASSERT(d[tab->getSrcTrg(s, t)].second == 1);
+    CPPUNIT_ASSERT(d[tab->getVectorDbNullKey()].first.get_c_st() == 0);
+    CPPUNIT_ASSERT(d[tab->getVectorDbNullKey()].second == 1);
 }
 
 //---------------------------------------
@@ -641,7 +645,7 @@ void LevelDbNgramTableTest::testSize()
     //    Check if number of elements in the levelDB is returned correctly
     //
     tab->clear();
-    CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
+    CPPUNIT_ASSERT( tab->size() == 1 );  // Collection after cleaning should contain only entry for null key
     
     // Fill leveldb with data
     Vector<WordIndex> s1;
@@ -661,26 +665,26 @@ void LevelDbNgramTableTest::testSize()
     tab->incrCountsOfEntryLog(s1, t1, LogCount(log(1)));
     tab->incrCountsOfEntryLog(s1, t2, LogCount(log(2)));
 
-    CPPUNIT_ASSERT( tab->size() == 2 );
+    CPPUNIT_ASSERT( tab->size() == 1 + 2 );
 
     tab->clear();
-    CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
+    CPPUNIT_ASSERT( tab->size() == 1 );  // Collection after cleaning should be empty
 
     tab->incrCountsOfEntryLog(s2, t1, LogCount(log(1)));
     tab->incrCountsOfEntryLog(s2, t1, LogCount(log(2)));
     tab->incrCountsOfEntryLog(s2, t2, LogCount(log(1)));
     tab->incrCountsOfEntryLog(s3, t2, LogCount(log(2)));
 
-    CPPUNIT_ASSERT( tab->size() == 3 );
+    CPPUNIT_ASSERT( tab->size() == 1 + 3 );
 
     tab->incrCountsOfEntryLog(s3, t1, LogCount(log(5)));
     tab->incrCountsOfEntryLog(s4, t2, LogCount(log(7)));
 
-    CPPUNIT_ASSERT( tab->size() == 3 + 2 );
+    CPPUNIT_ASSERT( tab->size() == 1 + 3 + 2 );
 
     tab->addSrcInfo(s4, Count(17));
 
-    CPPUNIT_ASSERT( tab->size() == 3 + 2 + 1 );
+    CPPUNIT_ASSERT( tab->size() == 1 + 3 + 2 );
 }
 
 //---------------------------------------
@@ -777,7 +781,7 @@ void LevelDbNgramTableTest::testLoadedDataCorrectness()
     CPPUNIT_ASSERT( tab->cSrcTrg(s3, t3_2).get_c_st() == 128 );
 
     tab->clear();  // Remove data
-    CPPUNIT_ASSERT( tab->size() == 0 );
+    CPPUNIT_ASSERT( tab->size() == 1 );
 }
 
 //---------------------------------------

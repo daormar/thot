@@ -86,6 +86,17 @@ Vector<WordIndex> LevelDbNgramTable::stringToVector(const string s)const
 
     return vec;
 }
+//-------------------------
+string LevelDbNgramTable::getDbNullKey(void)const
+{
+    return dbNullKey;
+}
+
+//-------------------------
+Vector<WordIndex> LevelDbNgramTable::getVectorDbNullKey(void)const
+{
+    return stringToVector(dbNullKey);
+}
 
 //-------------------------
 string LevelDbNgramTable::vectorToKey(const Vector<WordIndex>& vec)const
@@ -137,23 +148,18 @@ bool LevelDbNgramTable::retrieveData(const Vector<WordIndex>& phrase, float &cou
 //-------------------------
 bool LevelDbNgramTable::storeData(const string key, float count)
 {
-    if (count > 0)  // Do not store elements with zero occurency number
-    {
-        stringstream ss;
-        ss << count;
-        string count_str = ss.str();
+    stringstream ss;
+    ss << count;
+    string count_str = ss.str();
 
-        leveldb::WriteBatch batch;
-        batch.Put(key, count_str);
-        leveldb::Status s = db->Write(leveldb::WriteOptions(), &batch);
+    leveldb::WriteBatch batch;
+    batch.Put(key, count_str);
+    leveldb::Status s = db->Write(leveldb::WriteOptions(), &batch);
 
-        if(!s.ok())
-            cerr << "Storing data status: " << s.ToString() << endl;
+    if(!s.ok())
+        cerr << "Storing data status: " << s.ToString() << endl;
 
-        return s.ok();
-    }
-
-    return true;
+    return s.ok();
 }
 
 //-------------------------
@@ -235,6 +241,8 @@ bool LevelDbNgramTable::load(const char *fileName)
         // Restore null count
         float null_count;
         retrieveData(dbNullKey, null_count);
+        if (null_count == 0)  // Add key if it doesn't exist
+            storeData(dbNullKey, null_count);
         srcInfoNull = null_count;
 
         return THOT_OK;
@@ -591,7 +599,7 @@ LogCount LevelDbNgramTable::lcTrg(const WordIndex& t)
 //-------------------------
 size_t LevelDbNgramTable::size(void)
 {
-    size_t len = 0;
+    size_t len = 0;  // Count from -1 to omit null key entry
 
     for(LevelDbNgramTable::const_iterator iter = begin(); iter != end(); iter++, len++)
     {
@@ -646,7 +654,9 @@ void LevelDbNgramTable::clear(void)
         }
     }
 
-    srcInfoNull = Count();  // Clear empty key counter
+    // Clear empty key counter
+    storeData(dbNullKey, 0);
+    srcInfoNull = Count();
 }
 
 //-------------------------
