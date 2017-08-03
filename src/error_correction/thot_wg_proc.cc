@@ -143,7 +143,7 @@ int processParameters(thot_wg_proc_pars pars)
     {
           // Prune word-graph
       WordGraph wgAux=wordGraph;
-      unsigned int numPrunedArcs=wgAux.prune(pars.pruningThreshold);
+      wgAux.prune(pars.pruningThreshold);
 
                 // Obtain component weights
       Vector<pair<std::string,float> > compWeights;
@@ -197,7 +197,7 @@ int processParameters(thot_wg_proc_pars pars)
     if(pars.wgp_given)
     {
           // Prune word-graph
-      unsigned int numPrunedArcs=wgAux.prune(pars.pruningThreshold);
+      wgAux.prune(pars.pruningThreshold);
 
           // Obtain useful states
       wgAux.obtainWgComposedOfUsefulStates();

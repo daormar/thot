@@ -26,7 +26,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 void MiraWer::sentBackgroundScore(const std::string& candidate,
                                   const std::string& reference,
                                   double& score,
-                                  Vector<unsigned int>& sentStats)
+                                  Vector<unsigned int>& /*sentStats*/)
 {
   Vector<std::string> candidate_tokens, reference_tokens;
   candidate_tokens = StrProcUtils::stringToStringVector(candidate);

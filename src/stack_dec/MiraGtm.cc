@@ -33,6 +33,7 @@ bool MiraGtm::revCompFunction(std::pair<int, std::pair<std::pair<int,int>, std::
   return a.first > b.first;
 }
 
+//---------------------------------------
 bool MiraGtm::doIntersect(std::pair<int,int> a, std::set<int> b) {
   for (int it=a.first; it<=a.second; ++it) {
     if (b.find(it) != b.end())
@@ -164,7 +165,7 @@ double MiraGtm::scoreFromStats(Vector<unsigned int>& stats){
 void MiraGtm::sentBackgroundScore(const std::string& candidate,
                                   const std::string& reference,
                                   double& score,
-                                  Vector<unsigned int>& sentStats)
+                                  Vector<unsigned int>& /*sentStats*/)
 {
   Vector<std::string> candidate_tokens, reference_tokens;
   candidate_tokens = StrProcUtils::stringToStringVector(candidate);

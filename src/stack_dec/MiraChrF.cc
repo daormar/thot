@@ -24,7 +24,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 void MiraChrF::sentBackgroundScore(const std::string& candidate,
                                    const std::string& reference,
                                    double& score,
-                                   Vector<unsigned int>& sentStats)
+                                   Vector<unsigned int>& /*sentStats*/)
 {
   Vector<std::string> reference_tokens;
   reference_tokens = StrProcUtils::stringToStringVector(reference);

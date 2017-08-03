@@ -36,8 +36,8 @@ public:
 
   void resetBackgroundCorpus() { }
 
-  void updateBackgroundCorpus(const Vector<unsigned int>& stats,
-                              double decay) { }
+  void updateBackgroundCorpus(const Vector<unsigned int>& /*stats*/,
+                              double /*decay*/) { }
 
     // Score for sentence with background corpus stats
   void sentBackgroundScore(const std::string& candidate,

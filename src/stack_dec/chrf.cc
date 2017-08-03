@@ -91,7 +91,7 @@ int calculate_chrf_file(FILE *reff,
         ++numSents;
         if(verbosity) cerr<<numSents<<endl;
 
-        std:string refSentence=refStream.dollar(0);
+        std::string refSentence=refStream.dollar(0);
         if(verbosity) cerr<<refSentence<<" ";
 
         std::string sysSentence=sysStream.dollar(0);
