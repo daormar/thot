@@ -73,10 +73,7 @@ using namespace std;
 class PhraseExtractionTable
 {
  public:
-	 
-	bool pruneWasApplied;
-	unsigned long numSegmentationPrunings;
-	
+	 	
 	PhraseExtractionTable(void);
     PhraseExtractionTable& operator= (const PhraseExtractionTable &right);
         
@@ -152,6 +149,10 @@ class PhraseExtractionTable
                          const WordAligMatrix &_alig);
 
  private:
+
+    bool pruneWasApplied;
+	unsigned long numSegmentationPrunings;
+
     Vector<Vector<PhraseExtractionCell> > pecMatrix;
     Vector<Vector<iterator> > iterMatrix;
     
