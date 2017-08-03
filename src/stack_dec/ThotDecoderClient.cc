@@ -124,13 +124,14 @@ bool ThotDecoderClient::sendSentToTranslate(int user_id,
                                             std::string& bestHypInfo)
 {
   if(connected)
-  {// Send request
+  {
+        // Send request
     BasicSocketUtils::writeInt(fileDesc,TRANSLATE_SENT);
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,sentenceToTranslate);
 
-    int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
-    retVal=BasicSocketUtils::recvStlStr(fileDesc,bestHypInfo);
+    BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
+    BasicSocketUtils::recvStlStr(fileDesc,bestHypInfo);
     return THOT_OK;
   }
   else
@@ -147,13 +148,14 @@ bool ThotDecoderClient::sendSentPairVerCov(int user_id,
                                            std::string &translatedSentence)
 {
   if(connected)
-  {// Send request
+  {
+        // Send request
     BasicSocketUtils::writeInt(fileDesc,VERIFY_COV);
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,srcSent);
     BasicSocketUtils::writeStr(fileDesc,refSent);
 
-    int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
+    BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
     return THOT_OK;
   }
   else
@@ -169,12 +171,13 @@ bool ThotDecoderClient::startCat(int user_id,
                                  std::string &translatedSentence)
 {
   if(connected)
-  {// Send request
+  {
+        // Send request
     BasicSocketUtils::writeInt(fileDesc,START_CAT);
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,sentenceToTranslate);
     
-    int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
+    BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
     return THOT_OK;
   }
   else
@@ -195,7 +198,7 @@ bool ThotDecoderClient::addStrToPref(int user_id,
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,strToAddToPref);
     
-    int retVal=BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
+    BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
     return THOT_OK;
   }
   else
