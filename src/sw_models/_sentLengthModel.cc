@@ -54,7 +54,7 @@ void _sentLengthModel::linkSentPairInfo(BaseSentenceHandler* _sentenceHandlerPtr
 
 //-------------------------
 void _sentLengthModel::trainSentPairRange(pair<unsigned int,unsigned int> sentPairRange,
-                                          int verbosity/*=0*/)
+                                          int /*verbosity=0*/)
 {
       // Iterate over the training samples
   for(unsigned int n=sentPairRange.first;n<=sentPairRange.second;++n)
