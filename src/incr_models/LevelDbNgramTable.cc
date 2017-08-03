@@ -55,6 +55,8 @@ LevelDbNgramTable::LevelDbNgramTable(void)
 string LevelDbNgramTable::vectorToString(const Vector<WordIndex>& vec)const
 {
     Vector<WordIndex> str;
+    str.push_back(vec.size() + 1);  // Add 1 to avoid string with leading \0
+
     for(size_t i = 0; i < vec.size(); i++) {
         // Use WORD_INDEX_MODULO_BYTES bytes to encode index
         for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--)
@@ -73,7 +75,9 @@ Vector<WordIndex> LevelDbNgramTable::stringToVector(const string s)const
 {
     Vector<WordIndex> vec;
 
-    for(size_t i = 0; i < s.size();)  // A string length is WORD_INDEX_MODULO_BYTES * n + 1
+    // A string length is WORD_INDEX_MODULO_BYTES * n + 1
+    // Count from 1 to skip n value (technically, n+1)
+    for(size_t i = 1; i < s.size();)
     {
         unsigned int wi = 0;
         for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--, i++)
@@ -501,10 +505,14 @@ bool LevelDbNgramTable::getEntriesForSource(const Vector<WordIndex>& s,
     Count s_count = cSrc(s);  // Retrieve count(s)
 
     // Define key range in which we look for target phrases
+    Vector<WordIndex> start_vec = s;
+    start_vec.push_back(0);
+
     Vector<WordIndex> end_vec = s;
     end_vec[end_vec.size() - 1] += 1;
+    end_vec.push_back(0);
 
-    string start_str = vectorToKey(s);
+    string start_str = vectorToKey(start_vec);
     string end_str = vectorToKey(end_vec);
 
     leveldb::Slice start = start_str;
@@ -524,7 +532,6 @@ bool LevelDbNgramTable::getEntriesForSource(const Vector<WordIndex>& s,
             pdp.first = vec.back();  // t
             pdp.second.first = s_count;  // count(s)
             pdp.second.second = Count(atof(it->value().ToString().c_str()));  // sount(s, t)
-
 
             if ((int) pdp.second.second.get_c_st() == 0)
                 continue;
