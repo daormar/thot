@@ -230,12 +230,14 @@ float IncrLexLevelDbTable::getLexDenom(WordIndex s,
 
 //-------------------------
 bool IncrLexLevelDbTable::getTransForTarget(WordIndex t,
-                                     std::set<WordIndex>& transSet)
+                                            std::set<WordIndex>& transSet)
 {
     bool found;
 
-    Vector<WordIndex> start_vec(t);
-    Vector<WordIndex> end_vec(t + 1);
+    Vector<WordIndex> start_vec;
+    start_vec.push_back(t);
+    Vector<WordIndex> end_vec;
+    end_vec.push_back(t + 1);
 
     string start_str = vectorToKey(start_vec);
     string end_str = vectorToKey(end_vec);

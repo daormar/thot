@@ -68,6 +68,8 @@ class IncrLexLevelDbTableTest: public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE( IncrLexLevelDbTableTest );
   CPPUNIT_TEST( testGetSetLexDenom );
   CPPUNIT_TEST( testGetSetLexNumer );
+  CPPUNIT_TEST( testGetTransForTarget );
+  CPPUNIT_TEST( testSetLexNumerDenom );
   CPPUNIT_TEST_SUITE_END();
 
  private:
@@ -82,6 +84,8 @@ class IncrLexLevelDbTableTest: public CppUnit::TestFixture
   
   void testGetSetLexDenom();
   void testGetSetLexNumer();
+  void testGetTransForTarget();
+  void testSetLexNumerDenom();
 
 };
 

@@ -73,15 +73,84 @@ void IncrLexLevelDbTableTest::testGetSetLexNumer()
     bool found;
     WordIndex s = 14;
     WordIndex t = 10;
-    float denom = 15.7;
+    float numer = 15.7;
 
     tab->clear();
 
     tab->getLexNumer(s, t, found);
     CPPUNIT_ASSERT( !found );  // Element should not be found
 
-    tab->setLexNumer(s, t, denom);
-    float restoredDenom = tab->getLexNumer(s, t, found);
+    tab->setLexNumer(s, t, numer);
+    float restoredNumer = tab->getLexNumer(s, t, found);
+    CPPUNIT_ASSERT( found );  // Element should be found
+    CPPUNIT_ASSERT( numer == restoredNumer);
+}
+
+//---------------------------------------
+void IncrLexLevelDbTableTest::testSetLexNumerDenom()
+{
+    bool found;
+    WordIndex s = 14;
+    WordIndex t = 9;
+    float numer = 1.9;
+    float denom = 9.1;
+
+    tab->clear();
+
+    tab->getLexNumer(s, t, found);
+    CPPUNIT_ASSERT( !found );  // Element should not be found
+    tab->getLexDenom(s, found);
+    CPPUNIT_ASSERT( !found );  // Element should not be found
+
+    tab->setLexNumDen(s, t, numer, denom);
+
+    float restoredNumer = tab->getLexNumer(s, t, found);
+    CPPUNIT_ASSERT( found );  // Element should be found
+    CPPUNIT_ASSERT( numer == restoredNumer);
+
+    float restoredDenom = tab->getLexDenom(s, found);
     CPPUNIT_ASSERT( found );  // Element should be found
     CPPUNIT_ASSERT( denom == restoredDenom);
+}
+
+//---------------------------------------
+void IncrLexLevelDbTableTest::testGetTransForTarget()
+{
+    bool found;
+
+    WordIndex s1_1 = 1;
+    WordIndex s1_2 = 2;
+    WordIndex t1 = 3;
+
+    WordIndex s2 = 9;
+    WordIndex t2 = 11;
+
+    tab->clear();
+
+    // Fill structure with data
+    tab->setLexNumDen(s1_1, t1, 2.2, 3.3);
+    tab->setLexNumDen(s1_2, t1, 4.4, 5.5);
+    tab->setLexNumDen(s2, t2, 22.1, 22.7);
+
+    // Query structure and validate results
+    std::set<WordIndex> transSet;
+
+    // t1
+    std::set<WordIndex> t1Set;
+    t1Set.insert(s1_1);
+    t1Set.insert(s1_2);
+
+    found = tab->getTransForTarget(t1, transSet);
+    CPPUNIT_ASSERT( found );
+    CPPUNIT_ASSERT( transSet.size() == 2 );
+    CPPUNIT_ASSERT( transSet == t1Set);
+
+    // t2
+    std::set<WordIndex> t2Set;
+    t2Set.insert(s2);
+
+    found = tab->getTransForTarget(t2, transSet);
+    CPPUNIT_ASSERT( found );
+    CPPUNIT_ASSERT( transSet.size() == 1 );
+    CPPUNIT_ASSERT( transSet == t2Set);
 }
