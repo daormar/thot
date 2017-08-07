@@ -15,6 +15,7 @@ SmoothedIncrIbm2AligModel.cc SmoothedIncrIbm1AligModel.h		\
 SmoothedIncrIbm1AligModel.cc SentPairCont.h _sentLengthModel.h		\
 _sentLengthModel.cc LightSentenceHandler.h LightSentenceHandler.cc	\
 LexAuxVar.h _incrSwAligModel.h IncrLexTable.h IncrLexTable.cc		\
+IncrLexLevelDbTable.h IncrLexLevelDbTable.cc                        \
 IncrIbm2AligTable.h IncrIbm2AligTable.cc IncrIbm2AligModel.h		\
 IncrIbm2AligModel.cc IncrIbm1AligModel.h IncrIbm1AligModel.cc		\
 IncrHmmP0AligModel.h IncrHmmP0AligModel.cc IncrHmmAligTable.h		\
