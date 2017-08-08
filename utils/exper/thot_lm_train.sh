@@ -101,7 +101,7 @@ get_absolute_path()
 }
 
 ########
-generate_global_word_prediction_file()
+generate_global_word_predictor_file()
 {
     # Remove previous word predictor file
     if [ -f ${outd}/lm_desc.wp ]; then
@@ -151,7 +151,7 @@ create_desc_files()
     fi
 
     # Create global word predictor file
-    generate_global_word_prediction_file    
+    generate_global_word_predictor_file    
 }
 
 ########
@@ -180,7 +180,7 @@ generate_outsubdir_name()
 }
 
 ########
-estimate_ngram_parameters()
+estimate_thotlm()
 {
     # Obtain number of lines for input file
     nl=`$WC -l $corpus | $AWK '{printf"%s",$1}'`
@@ -190,18 +190,38 @@ estimate_ngram_parameters()
     relative_prefix=${outsubdir}/trg.lm
 
     # Estimate n-gram model parameters
-    if [ ${KENLM_BUILD_DIR} != "no" -a ${kenlm_given} -eq 1 ]; then
-        ${KENLM_BUILD_DIR}/bin/lmplz -T $tdir -o ${n_val} --text $corpus > ${prefix}.arpa 2> ${prefix}.arpa.log || return 1
-        ${KENLM_BUILD_DIR}/bin/build_binary -T $tdir trie ${prefix}.arpa ${prefix} 2> ${prefix}.log || return 1
+    if [ $nl -gt 0 ]; then
+        ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
+                 -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
+                 ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || return 1
     else
-        if [ $nl -gt 0 ]; then
-            ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
-                -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
-                ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || return 1
-        else
-            ${bindir}/thot_get_ngram_counts -c $corpus -o $prefix \
-                -n ${n_val} > $prefix || return 1
-        fi
+        ${bindir}/thot_get_ngram_counts -c $corpus -o $prefix \
+                 -n ${n_val} > $prefix || return 1
+    fi
+}
+
+########
+estimate_klm()
+{
+    # Determine output directory information
+    prefix=$outd/${outsubdir}/trg.klm
+    relative_prefix=${outsubdir}/trg.klm
+    
+    # Estimate n-gram model parameters
+    ${KENLM_BUILD_DIR}/bin/lmplz -T $tdir -o ${n_val} --text $corpus > ${prefix}.arpa 2> ${prefix}.arpa.log || return 1
+    ${KENLM_BUILD_DIR}/bin/build_binary -T $tdir trie ${prefix}.arpa ${prefix} 2> ${prefix}.log || return 1
+}
+
+########
+estimate_ngram_parameters()
+{
+    # Determine model type
+    if [ ${KENLM_BUILD_DIR} != "no" -a ${kenlm_given} -eq 1 ]; then
+        # Estimate KenLM model
+        estimate_klm
+    else
+        # Estimate thot language model
+        estimate_thotlm
     fi
 }
 
