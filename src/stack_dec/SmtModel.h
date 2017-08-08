@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-#ifndef _SmtModel_h
-#define _SmtModel_h
+#ifndef _SmtModelRefact_h
+#define _SmtModelRefact_h
 
 //--------------- Include files --------------------------------------
 
@@ -25,18 +25,20 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "PhrLocalSwLiTm.h"
+#include "PhrHypNumcovJumps01EqClassF.h"
+#include "PhraseBasedTmHypRec.h"
+#include "PbTransModel.h"
 
 //--------------- Constants ------------------------------------------
 
 // Set the SMT model type used by different programs such as
 // thot_ms_dec, thot_ms_alig, thot_server, etc. 
 
-#define SMT_MODEL_TYPE_NAME "PhrLocalSwLiTm"
-#define SMT_MODEL_DESC      "Lm + phrase-based model and local sw model linearly-interpolated"
+#define SMT_MODEL_TYPE_NAME "PbTransModel"
+#define SMT_MODEL_DESC      "phrase-based model"
 
 //--------------- User defined types ---------------------------------
 
-typedef PhrLocalSwLiTm SmtModel;
+typedef PbTransModel<PhrHypNumcovJumps01EqClassF> SmtModel;
 
 #endif

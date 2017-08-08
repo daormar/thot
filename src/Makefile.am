@@ -280,7 +280,7 @@ downhill_simplex_h= downhill_simplex/step_by_step_dhs.h
 downhill_simplex_defs= downhill_simplex/step_by_step_dhs.c
 
 stack_dec_h= stack_dec/LM_State.h stack_dec/PpInfo.h			\
-stack_dec/SmtModel.h stack_dec/SmtModelRefact.h				\
+stack_dec/SmtModel.h stack_dec/SmtModelLegacy.h				\
 stack_dec/DynClassFactoryHandler.h stack_dec/WgUncoupledAssistedTrans.h	\
 stack_dec/ThotDecoderUserPars.h stack_dec/ThotDecoderState.h		\
 stack_dec/ThotDecoderPerUserVars.h stack_dec/ThotDecoder.h		\

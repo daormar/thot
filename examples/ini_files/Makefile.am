@@ -1,5 +1,5 @@
 inifilesdir = $(datadir)/$(PACKAGE)/ini_files
-inifiles_DATA= standard.ini ibm2.ini wer.ini refact.ini
+inifiles_DATA= standard.ini ibm2.ini wer.ini legacy.ini
 
 EXTRA_DIST= $(inifiles_DATA)
 

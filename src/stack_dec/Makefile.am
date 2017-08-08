@@ -1,4 +1,4 @@
-EXTRA_DIST= LM_State.h PpInfo.h SmtModel.h SmtModelRefact.h		\
+EXTRA_DIST= LM_State.h PpInfo.h SmtModel.h SmtModelLegacy.h		\
 DynClassFactoryHandler.h DynClassFactoryHandler.cc			\
 WgUncoupledAssistedTrans.h UserNameToUserIdMap.h UserNameToUserIdMap.cc	\
 ThotMtFactoryInitPars.h ThotMtFactory.h ThotMtFactory.cc ThotMtEngine.h	\
