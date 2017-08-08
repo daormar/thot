@@ -230,8 +230,8 @@ else
     fi
 
     # Generate vocabulary file names
-    srcv=$out.srcvoc
-    trgv=$out.trgvoc
+    srcv=$out.fbdb_svcb
+    trgv=$out.fbdb_tvcb
 
     # Generate fbdb translation table files
 

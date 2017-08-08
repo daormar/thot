@@ -41,7 +41,7 @@ FastBdbPhraseModel::FastBdbPhraseModel(void)
 
 //-------------------------
 Count FastBdbPhraseModel::cSrcTrg(const Vector<WordIndex>& s,
-                      const Vector<WordIndex>& t)
+                                  const Vector<WordIndex>& t)
 {
   bool found;
   return fastBdbPhraseTable.getSrcTrgInfo(s,t,found);
@@ -240,13 +240,13 @@ bool FastBdbPhraseModel::load_given_prefix(const char *prefix)
 
       // Load source vocabulary
   std::string srcvocabfile=prefix;
-  srcvocabfile=srcvocabfile+".srcvoc";
+  srcvocabfile=srcvocabfile+".fbdb_svcb";
   ret=loadSrcVocab(srcvocabfile.c_str());
   if(ret==THOT_ERROR) return THOT_ERROR;
   
       // Load target vocabulary
   std::string trgvocabfile=prefix;
-  trgvocabfile=trgvocabfile+".trgvoc";
+  trgvocabfile=trgvocabfile+".fbdb_svcb";
   ret=loadTrgVocab(trgvocabfile.c_str());
   if(ret==THOT_ERROR) return THOT_ERROR;
   
