@@ -136,23 +136,6 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
       // Store init parameters for BasePhraseModel
   basePhraseModelInitPars=initPars;
 
-        ///////////// Obtain info for BaseErrorCorrectionModel class
-  baseClassName="BaseErrorCorrectionModel";
-  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
-  {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
-    return THOT_ERROR;
-  }   
-      // Load class derived from BaseErrorCorrectionModel dynamically
-  if(!baseErrorCorrectionModelDynClassLoader.open_module(soFileName,verbose))
-  {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
-    return THOT_ERROR;
-  }     
-      // Store init parameters for BaseErrorCorrectionModel
-  baseErrorCorrectionModelInitPars=initPars;
-
       ///////////// Obtain info for BaseScorer class
   baseClassName="BaseScorer";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
@@ -230,7 +213,6 @@ void DynClassFactoryHandler::release_smt(int verbose/*=1*/)
   baseNgramLMDynClassLoader.close_module(verbose);
   baseSwAligModelDynClassLoader.close_module(verbose);
   basePhraseModelDynClassLoader.close_module(verbose);
-  baseErrorCorrectionModelDynClassLoader.close_module(verbose);
   baseScorerDynClassLoader.close_module(verbose);
   baseLogLinWeightUpdaterDynClassLoader.close_module(verbose);
   baseTranslationConstraintsDynClassLoader.close_module(verbose);
@@ -250,6 +232,23 @@ int DynClassFactoryHandler::init_smt_and_imt(std::string fileName,
   std::string baseClassName;
   std::string soFileName;
   std::string initPars;
+
+        ///////////// Obtain info for BaseErrorCorrectionModel class
+  baseClassName="BaseErrorCorrectionModel";
+  if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
+  {
+    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
+    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    return THOT_ERROR;
+  }   
+      // Load class derived from BaseErrorCorrectionModel dynamically
+  if(!baseErrorCorrectionModelDynClassLoader.open_module(soFileName,verbose))
+  {
+    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    return THOT_ERROR;
+  }     
+      // Store init parameters for BaseErrorCorrectionModel
+  baseErrorCorrectionModelInitPars=initPars;
 
       ///////////// Obtain info for BaseEcModelForNbUcat class
   baseClassName="BaseEcModelForNbUcat";
@@ -312,6 +311,7 @@ void DynClassFactoryHandler::release_smt_and_imt(int verbose/*=1*/)
   release_smt(verbose);
 
       // Close imt modules
+  baseErrorCorrectionModelDynClassLoader.close_module(verbose);
   baseEcModelForNbUcatDynClassLoader.close_module(verbose);
   baseWgProcessorForAnlpDynClassLoader.close_module(verbose);
   baseAssistedTransDynClassLoader.close_module(verbose);
