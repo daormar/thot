@@ -394,9 +394,11 @@ else
         fi
     fi
 
-    if [ ${g_given} -eq 1 -a ! -f ${gfile} ]; then        
-        echo "Error! file ${gfile} does not exist" >&2
-        exit 1            
+    if [ ${g_given} -eq 1 ]; then
+        if [ ! -f ${gfile} ]; then        
+            echo "Error! file ${gfile} does not exist" >&2
+            exit 1
+        fi
     fi
 
     # Verify if unknown words are to be added to training corpus
