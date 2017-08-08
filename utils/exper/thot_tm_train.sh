@@ -128,7 +128,11 @@ get_absolute_path()
 create_desc_file()
 {
     # Determine model type
-    modeltype=${libdir}wba_incr_phrase_model_factory.so
+    if [ ! -z "${LDB_CXX}" -a ${bdb_given} -eq 1 ]; then
+        modeltype=${libdir}fast_bdb_phrase_model_factory.so
+    else
+        modeltype=${libdir}incr_phrase_model_factory.so
+    fi
 
     # Create descriptor file
     if [ ${o_given} -eq 1 ]; then
@@ -392,9 +396,11 @@ if [ ${a_given} -eq 1 ]; then
     outd=`get_absolute_path $outd`
 fi
 
-if [ ${g_given} -eq 1 -a ! -f ${gfile} ]; then        
-    echo "Error! file ${gfile} does not exist" >&2
-    exit 1            
+if [ ${g_given} -eq 1 ]; then
+    if [ ! -f ${gfile} ]; then        
+        echo "Error! file ${gfile} does not exist" >&2
+        exit 1
+    fi
 fi
 
 if [ ${tdir_given} -eq 1 ]; then
