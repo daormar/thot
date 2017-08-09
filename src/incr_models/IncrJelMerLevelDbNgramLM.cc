@@ -44,24 +44,11 @@ bool IncrJelMerLevelDbNgramLM::load(const char *fileName)
     bool retval;
 
     // Load vocabulary
-    std::string vocabFileName(fileName);
-    vocabFileName += ".ldb_vcb";
-    retval = this->encPtr->load(vocabFileName.c_str());
+    retval = loadVocab(fileName);
     if (retval == THOT_ERROR) return THOT_ERROR;
 
     // Load LevelDB ngram table
-    std::string mainFileName;
-    if(fileIsDescriptor(fileName, mainFileName))
-    {
-        std::string descFileName=fileName;
-        std::string absolutizedMainFileName=absolutizeModelFileName(descFileName,mainFileName);
-        retval = this->tablePtr->load(absolutizedMainFileName.c_str());
-    }
-    else
-    {
-        retval = this->tablePtr->load(fileName);
-    }
-
+    retval = loadNgramTable(fileName);
     if (retval == THOT_ERROR) return THOT_ERROR;
 
     // Load weights
@@ -69,6 +56,51 @@ bool IncrJelMerLevelDbNgramLM::load(const char *fileName)
     if (retval == THOT_ERROR) return THOT_ERROR;
 
     return THOT_OK;
+}
+
+//------------------------------
+bool IncrJelMerLevelDbNgramLM::loadVocab(const char *fileName)
+{
+    std:string vocabFileName;
+
+    // Load LevelDB ngram table
+    std::string mainFileName;
+    if(fileIsDescriptor(fileName, mainFileName))
+    {
+        std::string descFileName = fileName;
+        std::string absolutizedMainFileName = absolutizeModelFileName(descFileName, mainFileName);
+        vocabFileName = absolutizedMainFileName;
+    }
+    else
+    {
+        vocabFileName = fileName;
+    }
+
+    // Add vocab file extension
+    vocabFileName += ".ldb_vcb";
+
+    return this->encPtr->load(vocabFileName.c_str());
+}
+
+//------------------------------
+bool IncrJelMerLevelDbNgramLM::loadNgramTable(const char *fileName)
+{
+    const char *ngramTableFileName;
+
+    // Load LevelDB ngram table
+    std::string mainFileName;
+    if(fileIsDescriptor(fileName, mainFileName))
+    {
+        std::string descFileName = fileName;
+        std::string absolutizedMainFileName = absolutizeModelFileName(descFileName, mainFileName);
+        ngramTableFileName = absolutizedMainFileName.c_str();
+    }
+    else
+    {
+        ngramTableFileName = fileName;
+    }
+
+    return this->tablePtr->load(ngramTableFileName);
 }
 
 //------------------------------

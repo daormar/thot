@@ -57,6 +57,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 class IncrJelMerLevelDbNgramLM: public _incrJelMerNgramLM<Count,Count>
 {
+    private:
+
+        // Loading LM model components
+        bool loadVocab(const char *fileName);
+        bool loadNgramTable(const char *fileName);
+
     public:
 
         typedef _incrJelMerNgramLM<Count,Count>::SrcTableNode SrcTableNode;
