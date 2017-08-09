@@ -90,11 +90,9 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
           // Constructor
         LevelDbNgramTable(void);
 
-            // Key converters and getter
+            // Key converter and getter
         string vectorToKey(const Vector<WordIndex>& vec)const;
         Vector<WordIndex> keyToVector(const string key)const;
-        string getDbNullKey(void)const;
-        Vector<WordIndex> getVectorDbNullKey(void)const;
 
           // Wrapper for initializing levelDB
         bool init(string levelDbPath);
@@ -187,6 +185,10 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
   
     protected:
         Count srcInfoNull;
+
+        // Key and getter for nullInfo
+        string getDbNullKey(void)const;
+        Vector<WordIndex> getVectorDbNullKey(void)const;
 
 };
 

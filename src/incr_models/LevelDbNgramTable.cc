@@ -610,7 +610,7 @@ size_t LevelDbNgramTable::size(void)
 
     for(LevelDbNgramTable::const_iterator iter = begin(); iter != end(); iter++, len++)
     {
-        // Do nothing; iterates only over the elements in trie
+        // Do nothing; iterates only over the elements in DB
     }
 
     return len;
@@ -682,6 +682,13 @@ LevelDbNgramTable::const_iterator LevelDbNgramTable::begin(void)const
     leveldb::Iterator *local_iter = db->NewIterator(leveldb::ReadOptions());
     local_iter->SeekToFirst();
 
+    // Skip item, if it stores nullInfo, to be compatible with other implementations
+    if (local_iter->Valid() && local_iter->key().ToString() == getDbNullKey())
+    {
+        local_iter->Next();
+    }
+
+    // Check if iterator is ready to read data from it
     if(!local_iter->Valid())
     {
         delete local_iter;
@@ -706,6 +713,12 @@ LevelDbNgramTable::const_iterator LevelDbNgramTable::end(void)const
 bool LevelDbNgramTable::const_iterator::operator++(void) //prefix
 {
     internalIter->Next();
+
+    // Skip item, if it stores nullInfo, to be compatible with other implementations
+    if (internalIter->Valid() && internalIter->key().ToString() == ptPtr->getDbNullKey())
+    {
+        internalIter->Next();
+    }
 
     bool isValid = internalIter->Valid();
 
