@@ -606,7 +606,7 @@ LogCount LevelDbNgramTable::lcTrg(const WordIndex& t)
 //-------------------------
 size_t LevelDbNgramTable::size(void)
 {
-    size_t len = 0;  // Count from -1 to omit null key entry
+    size_t len = 0;  // It counts also null info entry
 
     for(LevelDbNgramTable::const_iterator iter = begin(); iter != end(); iter++, len++)
     {

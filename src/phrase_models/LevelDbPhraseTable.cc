@@ -175,7 +175,15 @@ bool LevelDbPhraseTable::load(string levelDbPath)
     dbName = levelDbPath;
     leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
 
-    return (status.ok()) ? THOT_OK : THOT_ERROR;
+    if (status.ok())
+    {
+        return THOT_OK;
+    }
+    else
+    {
+        cerr << status.ToString() << endl;
+        return THOT_ERROR;
+    }
 }
 
 //-------------------------
