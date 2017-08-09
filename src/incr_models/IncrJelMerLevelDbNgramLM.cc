@@ -45,7 +45,7 @@ bool IncrJelMerLevelDbNgramLM::load(const char *fileName)
 
     // Load vocabulary
     std::string vocabFileName(fileName);
-    vocabFileName += ".leveldb_lm_vcb";
+    vocabFileName += ".ldb_vcb";
     retval = this->encPtr->load(vocabFileName.c_str());
     if (retval == THOT_ERROR) return THOT_ERROR;
 

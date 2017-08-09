@@ -79,7 +79,7 @@ void saveVocabulary(map<string, WordIndex>& vocab)
 {
     // Save vocabulary
     std::ofstream vocabFile;
-    std::string vocabFileName = outputFile + ".leveldb_lm_vcb";
+    std::string vocabFileName = outputFile + ".ldb_vcb";
     vocabFile.open(vocabFileName.c_str());
 
     for (map<string, WordIndex>::iterator it = vocab.begin(); it != vocab.end(); it++)
