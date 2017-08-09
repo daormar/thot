@@ -1088,8 +1088,8 @@ void printUsage(void)
   cerr << "               [-v|-v1|-v2] [--help] [--version]"<<endl<<endl;
   cerr << " -c <string>           : Configuration file (command-line options override"<<endl;
   cerr << "                         configuration file options)."<<endl;
-  cerr << " -tm <string>          : Prefix of the translation model files."<<endl;
-  cerr << " -lm <string>          : Language model file name."<<endl;
+  cerr << " -tm <string>          : Prefix of translation model files or model descriptor."<<endl;
+  cerr << " -lm <string>          : Language model file name or model descriptor."<<endl;
   cerr << " -t <string>           : File with the test sentences."<<endl;
   cerr << " -r <string>           : File with the reference sentences."<<endl;
   cerr << " -p                    : Treat the reference sentences as prefixes."<<endl;
