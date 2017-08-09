@@ -656,11 +656,11 @@ void LevelDbNgramTable::clear(void)
             cerr << "Returned status: " << status.ToString() << endl;
             exit(3);
         }
-    }
 
-    // Clear empty key counter
-    storeData(dbNullKey, 0);
-    srcInfoNull = Count();
+        // Clear empty key counter
+        storeData(dbNullKey, 0);
+        srcInfoNull = Count();
+    }
 }
 
 //-------------------------
