@@ -3014,7 +3014,10 @@ void ThotDecoder::destroy_legacy_impl(void)
   delete tdCommonVars.llWeightUpdaterPtr;
   delete tdCommonVars.trConstraintsPtr;
   delete tdCommonVars.scorerPtr;
-    
+
+      // Release class factory handler
+  tdCommonVars.dynClassFactoryHandler.release_smt_and_imt();
+
       // Destroy mutexes and conditions
   pthread_mutex_destroy(&user_id_to_idx_mut);
   pthread_mutex_destroy(&atomic_op_mut);
