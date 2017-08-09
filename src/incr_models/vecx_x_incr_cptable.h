@@ -98,6 +98,9 @@ class vecx_x_incr_cptable: public BaseIncrCondProbTable<Vector<X>,X,SRC_INFO,SRC
   size_t size(void);
   void clear(void);
 
+      // load function
+  bool load(const char *fileName);
+
       // destructor
   ~vecx_x_incr_cptable(){}
   
@@ -146,6 +149,12 @@ void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::clear(void)
   srcInfo.clear();
   SRC_INFO srcInfoNullAux;
   srcInfoNull=srcInfoNullAux;
+}
+//-------------------------
+template<class X,class SRC_INFO,class SRCTRG_INFO>
+bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
+{
+  // Not implemented
 }
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>

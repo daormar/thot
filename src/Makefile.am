@@ -16,7 +16,7 @@ endif
 endif
 
 if HAVE_LEVELDB_LIB
-LEVELDB_PROGS=thot_ttable_to_leveldb
+LEVELDB_PROGS=thot_ngram_to_leveldb thot_ttable_to_leveldb
 LEVELDB_LIBS=leveldb_phrase_model_factory.la
 endif
 
@@ -54,8 +54,8 @@ thot_client thot_server thot_scorer thot_calc_bleu $(DB_CXX_PROGS)	\
 $(LEVELDB_PROGS) $(TESTING_PROGS)
 
 lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
-incr_jel_mer_ngram_lm_factory.la incr_interp_ngram_lm_factory.la	\
-smoothed_incr_ibm2_alig_model_factory.la				\
+incr_jel_mer_ngram_lm_factory.la incr_jel_mer_leveldb_ngram_lm_factory.la       \
+incr_interp_ngram_lm_factory.la	smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la incr_phrase_model_factory.la		\
 wba_incr_phrase_model_factory.la incr_mux_phrase_model_factory.la	\
 pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
@@ -122,11 +122,11 @@ incr_models/_incrEncCondProbModel.h incr_models/IncrCondProbTable.h	\
 incr_models/im_pair.h incr_models/BaseIncrEncoder.h			\
 incr_models/BaseIncrEncCondProbModel.h					\
 incr_models/BaseIncrCondProbTable.h incr_models/BaseIncrCondProbModel.h	\
-incr_models/BaseWordPenaltyModel.h incr_models/WordPenaltyModel.h	\
+incr_models/BaseWordPenaltyModel.h incr_models/WordPenaltyModel.h      \
 incr_models/WordPredictor.h
 incr_models_defs= incr_models/lm_ienc.cc incr_models/IncrNgramLM.cc	\
 incr_models/IncrJelMerNgramLM.cc incr_models/_incrInterpNgramLM.cc	\
-incr_models/IncrInterpNgramLM.cc incr_models/WordPenaltyModel.cc	\
+incr_models/IncrInterpNgramLM.cc incr_models/WordPenaltyModel.cc       \
 incr_models/WordPredictor.cc
 
 if KENLM_LIB_ENABLED
@@ -135,6 +135,11 @@ kenlm_defs= nlp_common/KenLm.cc
 else
 kenlm_h=
 kenlm_defs=
+endif
+
+if HAVE_LEVELDB_LIB
+leveldb_lm_h= incr_models/LevelDbNgramTable.h incr_models/IncrJelMerLevelDbNgramLM.h
+leveldb_lm_defs= incr_models/LevelDbNgramTable.cc incr_models/IncrJelMerLevelDbNgramLM.cc
 endif
 
 sw_models_h= sw_models/WeightedIncrNormSlm.h sw_models/SwDefs.h		\
@@ -369,12 +374,15 @@ testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h
 testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc
 
 if HAVE_LEVELDB_LIB
-leveldb_pm_testing_h= testing/LevelDbPhraseTableTest.h
-leveldb_pm_testing_defs= testing/LevelDbPhraseTableTest.cc
+leveldb_pm_testing_h= testing/LevelDbNgramTableTest.h       \
+testing/LevelDbPhraseTableTest.h
+leveldb_pm_testing_defs= testing/LevelDbNgramTableTest.cc      \
+testing/LevelDbPhraseTableTest.cc
 endif
 
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
+$(leveldb_lm_h) $(leveldb_lm_defs)  \
 $(sw_models_h) $(sw_models_defs) $(phrase_models_h)			\
 $(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs) $(leveldb_pm_h)	\
 $(leveldb_pm_defs) $(smt_preproc_h) $(smt_preproc_defs)			\
@@ -393,6 +401,11 @@ incr_models/WordPenaltyModelFactory.cc
 incr_jel_mer_ngram_lm_factory_h= 
 incr_jel_mer_ngram_lm_factory_defs=		\
 incr_models/IncrJelMerNgramLMFactory.cc
+
+##########
+incr_jel_mer_leveldb_ngram_lm_factory_h= 
+incr_jel_mer_leveldb_ngram_lm_factory_defs=		\
+incr_models/IncrJelMerLevelDbNgramLMFactory.cc
 
 ##########
 incr_interp_ngram_lm_factory_h=
@@ -508,6 +521,10 @@ thot_lm_perp_SOURCES = incr_models/thot_lm_perp.cc
 thot_lm_perp_LDFLAGS = libthot.la
 
 ##########
+thot_ngram_to_leveldb_SOURCES = incr_models/thot_ngram_to_leveldb.cc
+thot_ngram_to_leveldb_LDFLAGS = libthot.la
+
+##########
 thot_ilm_perp_SOURCES = incr_models/thot_ilm_perp.cc
 thot_ilm_perp_LDFLAGS = libthot.la
 
@@ -577,8 +594,8 @@ thot_ttable_to_fbdb_SOURCES = phrase_models/thot_ttable_to_fbdb.cc
 thot_ttable_to_fbdb_LDFLAGS = libthot.la
 
 ##########
-thot_ttable_to_leveldb_SOURCES= phrase_models/thot_ttable_to_leveldb.cc
-thot_ttable_to_leveldb_LDFLAGS= libthot.la
+thot_ttable_to_leveldb_SOURCES = phrase_models/thot_ttable_to_leveldb.cc
+thot_ttable_to_leveldb_LDFLAGS = libthot.la
 
 ##########
 thot_wg_proc_SOURCES = error_correction/thot_wg_proc_pars.h	\
@@ -635,7 +652,7 @@ endif
 includedir= $(prefix)/include/$(PACKAGE)
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
 $(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h)		\
-$(leveldb_pm_h) $(smt_preproc_h) $(error_correction_h)			\
+$(leveldb_lm_h) $(leveldb_pm_h) $(smt_preproc_h) $(error_correction_h)		\
 $(downhill_simplex_h) $(stack_dec_h) $(exper_h) $(exper_defs)		\
 $(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
 
@@ -657,6 +674,13 @@ $(incr_jel_mer_ngram_lm_factory_h)		\
 $(incr_jel_mer_ngram_lm_factory_defs)
 incr_jel_mer_ngram_lm_factory_la_LIBADD= libthot.la
 incr_jel_mer_ngram_lm_factory_la_LDFLAGS= -module
+
+##########
+incr_jel_mer_leveldb_ngram_lm_factory_la_SOURCES=	\
+$(incr_jel_mer_leveldb_ngram_lm_factory_h)		\
+$(incr_jel_mer_leveldb_ngram_lm_factory_defs)
+incr_jel_mer_leveldb_ngram_lm_factory_la_LIBADD= libthot.la
+incr_jel_mer_leveldb_ngram_lm_factory_la_LDFLAGS= -module
 
 ##########
 incr_interp_ngram_lm_factory_la_SOURCES=				\
