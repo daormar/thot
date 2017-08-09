@@ -41,66 +41,66 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //------------------------------
 bool IncrJelMerLevelDbNgramLM::load(const char *fileName)
 {
-    bool retval;
+  bool retval;
 
-    // Load vocabulary
-    retval = loadVocab(fileName);
-    if (retval == THOT_ERROR) return THOT_ERROR;
+      // Load vocabulary
+  retval = loadVocab(fileName);
+  if (retval == THOT_ERROR) return THOT_ERROR;
 
-    // Load LevelDB ngram table
-    retval = loadNgramTable(fileName);
-    if (retval == THOT_ERROR) return THOT_ERROR;
+      // Load LevelDB ngram table
+  retval = loadNgramTable(fileName);
+  if (retval == THOT_ERROR) return THOT_ERROR;
 
-    // Load weights
-    retval = loadWeights(fileName);
-    if (retval == THOT_ERROR) return THOT_ERROR;
+      // Load weights
+  retval = loadWeights(fileName);
+  if (retval == THOT_ERROR) return THOT_ERROR;
 
-    return THOT_OK;
+  return THOT_OK;
 }
 
 //------------------------------
 bool IncrJelMerLevelDbNgramLM::loadVocab(const char *fileName)
 {
-    std:string vocabFileName;
+  std::string vocabFileName;
 
-    // Load LevelDB ngram table
-    std::string mainFileName;
-    if(fileIsDescriptor(fileName, mainFileName))
-    {
-        std::string descFileName = fileName;
-        std::string absolutizedMainFileName = absolutizeModelFileName(descFileName, mainFileName);
-        vocabFileName = absolutizedMainFileName;
-    }
-    else
-    {
-        vocabFileName = fileName;
-    }
-
-    // Add vocab file extension
-    vocabFileName += ".ldb_vcb";
-
-    return this->encPtr->load(vocabFileName.c_str());
+      // Load LevelDB ngram table
+  std::string mainFileName;
+  if(fileIsDescriptor(fileName, mainFileName))
+  {
+    std::string descFileName = fileName;
+    std::string absolutizedMainFileName = absolutizeModelFileName(descFileName, mainFileName);
+    vocabFileName = absolutizedMainFileName;
+  }
+  else
+  {
+    vocabFileName = fileName;
+  }
+  
+      // Add vocab file extension
+  vocabFileName += ".ldb_vcb";
+  
+  return this->encPtr->load(vocabFileName.c_str());
 }
 
 //------------------------------
 bool IncrJelMerLevelDbNgramLM::loadNgramTable(const char *fileName)
 {
-    const char *ngramTableFileName;
+  const char *ngramTableFileName;
 
-    // Load LevelDB ngram table
-    std::string mainFileName;
-    if(fileIsDescriptor(fileName, mainFileName))
-    {
-        std::string descFileName = fileName;
-        std::string absolutizedMainFileName = absolutizeModelFileName(descFileName, mainFileName);
-        ngramTableFileName = absolutizedMainFileName.c_str();
-    }
-    else
-    {
-        ngramTableFileName = fileName;
-    }
+      // Load LevelDB ngram table
+  std::string mainFileName;
+  if(fileIsDescriptor(fileName, mainFileName))
+  {
+    std::string descFileName = fileName;
+    std::string absolutizedMainFileName = absolutizeModelFileName(descFileName, mainFileName);
+    ngramTableFileName = absolutizedMainFileName.c_str();
+  }
+  else
+  {
+    ngramTableFileName = fileName;
+  }
 
-    return this->tablePtr->load(ngramTableFileName);
+  return this->tablePtr->load(ngramTableFileName);
 }
 
 //------------------------------

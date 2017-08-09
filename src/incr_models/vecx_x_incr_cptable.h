@@ -39,6 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "BaseIncrCondProbTable.h"
 #include "TrieVecs.h"
+#include "ErrorDefs.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -152,9 +153,10 @@ void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::clear(void)
 }
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
+bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::load(const char */*fileName*/)
 {
   // Not implemented
+  return THOT_OK;
 }
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
