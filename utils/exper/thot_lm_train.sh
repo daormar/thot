@@ -204,8 +204,8 @@ estimate_thotlm()
 estimate_klm()
 {
     # Determine output directory information
-    prefix=$outd/${outsubdir}/trg.klm
-    relative_prefix=${outsubdir}/trg.klm
+    prefix=$outd/${outsubdir}/trg.lm
+    relative_prefix=${outsubdir}/trg.lm
     
     # Estimate n-gram model parameters
     ${KENLM_BUILD_DIR}/bin/lmplz -T $tdir -o ${n_val} --text $corpus > ${prefix}.arpa 2> ${prefix}.arpa.log || return 1
