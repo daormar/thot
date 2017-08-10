@@ -182,10 +182,10 @@ int process_ttable(void)
             }
 
             if (i % 5000 == 0)
-                cout << "Processed " << i << " lines" << endl;
+                cerr << "Processed " << i << " lines" << endl;
         }
 
-        cout << "levelDB size: " << levelDbNt.size() << endl;
+        cerr << "levelDB size: " << levelDbNt.size() << endl;
 
         // Save vocabulary
         saveVocabulary(vocab);
