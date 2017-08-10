@@ -25,10 +25,12 @@ version()
 usage()
 {
     echo "thot_lm_train      [-pr <int>] -c <string> [-o <string>|-a <string>]"
-    if [ ${KENLM_BUILD_DIR} = "no" ]; then
-        echo "                   -n <int> [-unk]"
-    else
-        echo "                   -n <int> [-unk] [-kenlm]"
+    echo "                   -n <int> [-unk]"
+    if [ ${KENLM_BUILD_DIR} != "no" ]; then
+        echo "                   [-kenlm]"
+    fi
+    if [ ! -z "${LEVELDB_LIB}" ]; then
+        echo "                        [-ldb]"
     fi
     echo "                   [-qs <string>] [-tdir <string>] [-sdir <string>]"
     echo "                   [-debug] [--help] [--version]"
@@ -41,7 +43,10 @@ usage()
     echo "-n <int>           Order of the n-grams."
     echo "-unk               Reserve probability mass for the unknown word."
     if [ ! ${KENLM_BUILD_DIR} = "no" ]; then
-        echo "-kenlm             Generate kenlm file in binary format."
+        echo "-kenlm             Generate on-disk language model in KenLM format."
+    fi
+    if [ ! -z "${LEVELDB_LIB}" ]; then
+        echo "-ldb                    Generate on-disk language model in LevelDB format."
     fi
     echo "-qs <string>       Specific options to be given to the qsub command"
     echo "                   (example: -qs \"-l pmem=1gb\")."
@@ -131,7 +136,11 @@ create_desc_files()
     if [ ${KENLM_BUILD_DIR} != "no" -a ${kenlm_given} -eq 1 ]; then
         modeltype=${libdir}kenlm_factory.so
     else
-        modeltype=${libdir}incr_jel_mer_ngram_lm_factory.so
+        if [ ! -z "${LEVELDB_LIB}" -a ${ldb_given} -eq 1 ]; then
+            modeltype=${libdir}incr_jel_mer_leveldb_ngram_lm_factory.so
+        else
+            modeltype=${libdir}incr_jel_mer_ngram_lm_factory.so
+        fi
     fi
 
     # Create descriptor file and file with weights
@@ -182,12 +191,12 @@ generate_outsubdir_name()
 ########
 estimate_thotlm()
 {
-    # Obtain number of lines for input file
-    nl=`$WC -l $corpus | $AWK '{printf"%s",$1}'`
-
     # Determine output directory information
     prefix=$outd/${outsubdir}/trg.lm
     relative_prefix=${outsubdir}/trg.lm
+
+    # Obtain number of lines for input file
+    nl=`$WC -l $corpus | $AWK '{printf"%s",$1}'`
 
     # Estimate n-gram model parameters
     if [ $nl -gt 0 ]; then
@@ -195,7 +204,7 @@ estimate_thotlm()
                  -c $corpus -o $prefix -n ${n_val} ${unk_opt} \
                  ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || return 1
     else
-        ${bindir}/thot_get_ngram_counts -c $corpus -o $prefix \
+        ${bindir}/thot_get_ngram_counts -c $corpus \
                  -n ${n_val} > $prefix || return 1
     fi
 }
@@ -213,6 +222,36 @@ estimate_klm()
 }
 
 ########
+estimate_ldb()
+{
+    # Determine output directory of native thot language model
+    thotlm_prefix=$outd/${outsubdir}/trg.thotlm
+
+    # Obtain number of lines for input file
+    nl=`$WC -l $corpus | $AWK '{printf"%s",$1}'`
+
+    # Estimate n-gram model parameters
+    if [ $nl -gt 0 ]; then
+        ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
+                 -c $corpus -o ${thotlm_prefix} -n ${n_val} ${unk_opt} \
+                 ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || return 1
+    else
+        ${bindir}/thot_get_ngram_counts -c $corpus \
+                 -n ${n_val} > ${thotlm_prefix} || return 1
+    fi
+
+    # Determine output directory information
+    prefix=$outd/${outsubdir}/trg.lm
+    relative_prefix=${outsubdir}/trg.lm
+
+    # Create leveldb model
+    cat ${thotlm_prefix} | ${bindir}/thot_ngram_to_leveldb -o $prefix 2> ${prefix}.ldb_err || return 1
+
+    # Remove native thot language model files
+    rm ${thotlm_prefix}*
+}
+
+########
 estimate_ngram_parameters()
 {
     # Determine model type
@@ -220,8 +259,13 @@ estimate_ngram_parameters()
         # Estimate KenLM model
         estimate_klm
     else
-        # Estimate thot language model
-        estimate_thotlm
+        if [ ! -z "${LEVELDB_LIB}" -a ${ldb_given} -eq 1 ]; then
+            # Estimate LevelDB model
+            estimate_ldb
+        else
+            # Estimate thot language model
+            estimate_thotlm
+        fi
     fi
 }
 
@@ -260,6 +304,7 @@ n_given=0
 qs_given=0
 unk_given=0
 kenlm_given=0
+ldb_given=0
 tdir_given=0
 tdir="/tmp"
 sdir_given=0
@@ -317,6 +362,8 @@ while [ $# -ne 0 ]; do
             unk_opt="-unk"
             ;;
         "-kenlm") kenlm_given=1
+            ;;
+        "-ldb") ldb_given=1
             ;;
         "-tdir") shift
             if [ $# -ne 0 ]; then
@@ -386,15 +433,20 @@ fi
 if [ ${tdir_given} -eq 1 ]; then
     if [ ! -d ${tdir} ]; then
         echo "Error! directory ${tdir} does not exist" >&2
-        exit 1           
+        exit 1
     fi 
 fi
 
 if [ ${sdir_given} -eq 1 ]; then
     if [ ! -d ${sdir} ]; then
         echo "Error! directory ${sdir} does not exist" >&2
-        exit 1            
+        exit 1
     fi
+fi
+
+if [ ${kenlm_given} -eq 1 -a ${ldb_given} -eq 1 ]; then
+    echo "Error! -kenlm and -ldb options cannot be given simultaneously" >&2
+    exit 1   
 fi
 
 # Process parameters
