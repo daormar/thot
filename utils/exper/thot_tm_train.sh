@@ -30,10 +30,12 @@ usage()
     echo "                        [-cpr <float>] [-np <float>] [-m <int>] [-ao <string>]"
     echo "                        [-to <int>] [-unk]"
     if [ ! -z "${LDB_CXX}" ]; then
-        echo "                        [-bdb] [-qs <string>] [-tdir <string>]"
-    else
-        echo "                        [-qs <string>] [-tdir <string>]"
+        echo "                        [-bdb]"
     fi
+    if [ ! -z "${LEVELDB_LIB}" ]; then
+        echo "                        [-ldb]"
+    fi
+    echo "                        [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
     echo "-pr <int>               Number of processors (1 by default)"
@@ -66,6 +68,9 @@ usage()
     echo "                        estimation"
     if [ ! -z "${LDB_CXX}" ]; then
         echo "-bdb                    Generate on-disk phrase table in BDB format"
+    fi
+    if [ ! -z "${LEVELDB_LIB}" ]; then
+        echo "-ldb                    Generate on-disk phrase table in LevelDB format"
     fi
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
@@ -131,7 +136,11 @@ create_desc_file()
     if [ ! -z "${LDB_CXX}" -a ${bdb_given} -eq 1 ]; then
         modeltype=${libdir}fast_bdb_phrase_model_factory.so
     else
-        modeltype=${libdir}incr_phrase_model_factory.so
+        if [ ! -z "${LEVELDB_LIB}" -a ${ldb_given} -eq 1 ]; then
+            modeltype=${libdir}leveldb_phrase_model_factory.so
+        else
+            modeltype=${libdir}incr_phrase_model_factory.so
+        fi
     fi
 
     # Create descriptor file
@@ -200,6 +209,7 @@ dict_given=0
 unk_given=0
 qs_given=0
 bdb_given=0
+ldb_given=0
 tdir_given=0
 tdir="/tmp"
 sdir_given=0
@@ -314,6 +324,8 @@ while [ $# -ne 0 ]; do
             ;;
         "-bdb") bdb_given=1
             ;;
+        "-ldb") ldb_given=1
+            ;;
         "-tdir") shift
             if [ $# -ne 0 ]; then
                 tdir=$1
@@ -359,6 +371,8 @@ else
         tcorpus=`get_absolute_path $tcorpus`
     fi
 fi
+
+
 
 # Check that source and target files are parallel
 nl_source=`wc -l $scorpus | $AWK '{printf"%d",$1}'`
@@ -417,6 +431,11 @@ if [ ${sdir_given} -eq 1 ]; then
     fi
 fi
 
+if [ ${bdb_given} -eq 1 -a ${ldb_given} -eq 1 ]; then
+    echo "Error! -bdb and -ldb options cannot be given simultaneously" >&2
+    exit 1            
+fi
+
 # Obtain name of the output subdirectory where the language model will
 # be stored
 outsubdir=`generate_outsubdir_name` || exit 1
@@ -437,6 +456,13 @@ if [ ! -z "${LDB_CXX}" -a ${bdb_given} -eq 1 ]; then
     echo "* Generating on-disk phrase table in BDB format..." >&2
     echo "" >&2
     ${bindir}/thot_gen_fbdb_ttable -p $prefix -o $prefix 2> ${prefix}.fbdb_err || exit 1 
+fi
+
+# Process -ldb option if given
+if [ ! -z "${LEVELDB_LIB}" -a ${ldb_given} -eq 1 ]; then
+    echo "* Generating on-disk phrase table in LevelDB format..." >&2
+    echo "" >&2
+    ${bindir}/thot_gen_leveldb_ttable -p $prefix -o $prefix 2> ${prefix}.ldb_err || exit 1 
 fi
 
 # Create descriptor file
