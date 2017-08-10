@@ -149,10 +149,10 @@ int process_ttable(void)
       i++;
 
       if (i % 5000 == 0)
-        cout << "Processed " << i << " lines" << endl;
+        cerr << "Processed " << i << " lines" << endl;
     }
 
-    cout << "levelDB size: " << levelDbPt.size() << endl;
+    cerr << "levelDB size: " << levelDbPt.size() << endl;
     
     return THOT_OK;
   }
