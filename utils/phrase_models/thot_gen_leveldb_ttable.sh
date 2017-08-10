@@ -162,7 +162,7 @@ gen_leveldb_files()
         plain_ttable_to_id $srcv $trgv $table > $out.idttable
     fi
 
-    plain_ttable_to_id $srcv $trgv $table | ${bindir}/thot_ttable_to_leveldb -o ${out}_leveldb_phrdict
+    plain_ttable_to_id $srcv $trgv $table | ${bindir}/thot_ttable_to_leveldb -o ${out}_ldb_phrdict
 }
 
 ########
@@ -230,8 +230,8 @@ else
     fi
 
     # Generate vocabulary file names
-    srcv=$out.leveldb_svcb
-    trgv=$out.leveldb_tvcb
+    srcv=$out.ldb_svcb
+    trgv=$out.ldb_tvcb
 
     # Generate leveldb translation table
 

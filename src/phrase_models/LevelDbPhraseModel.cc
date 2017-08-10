@@ -270,19 +270,19 @@ bool LevelDbPhraseModel::load_given_prefix(const char *prefix)
 
       // Load source vocabulary
   std::string srcvocabfile = prefix;
-  srcvocabfile = srcvocabfile + ".leveldb_svcb";
+  srcvocabfile = srcvocabfile + ".ldb_svcb";
   ret = loadSrcVocab(srcvocabfile.c_str());
   if(ret == THOT_ERROR) return THOT_ERROR;
   
       // Load target vocabulary
   std::string trgvocabfile = prefix;
-  trgvocabfile = trgvocabfile + ".leveldb_tvcb";
+  trgvocabfile = trgvocabfile + ".ldb_tvcb";
   ret = loadTrgVocab(trgvocabfile.c_str());
   if(ret == THOT_ERROR) return THOT_ERROR;
   
       // Load translation table
   std::string levelPt = prefix;
-  levelPt = levelPt + "_leveldb_phrdict";
+  levelPt = levelPt + "_ldb_phrdict";
   ret = levelDbPhraseTable.load(levelPt);
   if(ret == THOT_ERROR) return THOT_ERROR;
 
