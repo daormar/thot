@@ -230,7 +230,7 @@ bool LevelDbPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
 //-------------------------
 bool LevelDbPhraseModel::load(const char *prefix)
 {
-  cerr << "Loading phrase model (input: " << prefix << ")" << endl;
+  cerr << "Loading LevelDB phrase model (input: " << prefix << ")" << endl;
 
   std::string mainFileName;
   if(fileIsDescriptor(prefix, mainFileName))

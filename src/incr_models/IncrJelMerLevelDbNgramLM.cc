@@ -41,10 +41,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //------------------------------
 bool IncrJelMerLevelDbNgramLM::load(const char *fileName)
 {
-  bool retval;
+  cerr << "Loading LevelDB language model (input: " << fileName << ")" << endl;
 
       // Load vocabulary
-  retval = loadVocab(fileName);
+  bool retval = loadVocab(fileName);
   if (retval == THOT_ERROR) return THOT_ERROR;
 
       // Load LevelDB ngram table
