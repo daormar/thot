@@ -1024,7 +1024,7 @@ bool FeatureHandler::process_lm_files_prefix(std::string lmFilesPrefix,
   modelDescEntry.absolutizedModelFileName=lmFilesPrefix;
 
       // Create direct phrase model feature
-  std::string featName="pts";
+  std::string featName="lm";
   
   LangModelFeat<SmtModel::HypScoreInfo>* lmFeatPtr;
   int ret=createLangModelFeat(featName,modelDescEntry,&langModelsInfo.wordPredictor,&lmFeatPtr);
