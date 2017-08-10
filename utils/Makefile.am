@@ -139,6 +139,7 @@ SUFFIXES= .sh .pl .py .awk
 	echo "KENLM_BUILD_DIR="$(KENLM_BUILD_DIR) >> $@
 	echo "FASTER_RNNLM_BUILD_DIR="$(FASTER_RNNLM_BUILD_DIR) >> $@
 	echo "LDB_CXX="$(LDB_CXX) >> $@
+	echo "LEVELDB_LIB="$(LEVELDB_LIB) >> $@
 	cat $< >> $@
 	chmod ugo+x $@
 
