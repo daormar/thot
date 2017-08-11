@@ -144,6 +144,11 @@ process_files_for_individual_lm()
                 $LN -f $file ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
             fi
         fi
+        if [ -d $file ]; then
+            # create symbolic links for directories
+            basefname=`$BASENAME $file`
+            $LN -s $file ${outd}/lm/${_lm_status}/${basefname}
+        fi
     done
 
     # Add entry to descriptor file
@@ -289,14 +294,21 @@ process_files_for_individual_tm_dev()
 
     # Create tm files
     for file in ${_tmfile}*; do
-        if [ $file != ${_tmfile}.ttable ]; then
-            if [ $file = ${_tmfile}.lambda ]; then
-                # Create regular file for lambda values
-                cp $file ${outd}/tm_dev/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
-            else
-                # Create hard links for each file except for that with lambda values
-                $LN -f $file ${outd}/tm_dev/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
+        if [ -f $file ]; then
+            if [ $file != ${_tmfile}.ttable ]; then
+                if [ $file = ${_tmfile}.lambda ]; then
+                    # Create regular file for lambda values
+                    cp $file ${outd}/tm_dev/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
+                else
+                    # Create hard links for each file except for that with lambda values
+                    $LN -f $file ${outd}/tm_dev/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
+                fi
             fi
+        fi
+        if [ -d $file ]; then
+            # create symbolic links for directories
+            basefname=`$BASENAME $file`
+            $LN -s $file ${outd}/tm_dev/${_tm_status}/${basefname}
         fi
     done
 
@@ -397,6 +409,11 @@ process_files_for_individual_tm()
                 # Create hard links for each file except for that with lambda values
                 $LN -f $file ${outd}/tm/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
             fi
+        fi
+        if [ -d $file ]; then
+            # create symbolic links for directories
+            basefname=`$BASENAME $file`
+            $LN -s $file ${outd}/tm/${_tm_status}/${basefname}
         fi
     done
 

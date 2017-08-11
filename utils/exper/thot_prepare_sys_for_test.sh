@@ -124,10 +124,15 @@ process_files_for_individual_lm()
     fi
     
     # Create lm files
-    for file in `ls ${_lmfile}*`; do
+    for file in ${_lmfile}*; do
         if [ -f $file ]; then
             # Create hard links for each file
             $LN -f $file ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
+        fi
+        if [ -d $file ]; then
+            # create symbolic links for directories
+            basefname=`$BASENAME $file`
+            $LN -s $file ${outd}/lm/${_lm_status}/${basefname}
         fi
     done
 
@@ -225,9 +230,16 @@ process_files_for_individual_tm()
 
     # Create tm files
     for file in ${_tmfile}*; do
-        if [ -f $file -a $file != ${_tmfile}.ttable ]; then
-            # Create hard links for each file
-            $LN -f $file ${outd}/tm/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
+        if [ -f $file ]; then
+            if [ $file != ${_tmfile}.ttable ]; then
+                # Create hard links for each file
+                $LN -f $file ${outd}/tm/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
+            fi
+        fi
+        if [ -d $file ]; then
+            # create symbolic links for directories
+            basefname=`$BASENAME $file`
+            $LN -s $file ${outd}/tm/${_tm_status}/${basefname}
         fi
     done
 
