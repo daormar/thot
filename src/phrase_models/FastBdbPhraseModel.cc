@@ -246,7 +246,7 @@ bool FastBdbPhraseModel::load_given_prefix(const char *prefix)
   
       // Load target vocabulary
   std::string trgvocabfile=prefix;
-  trgvocabfile=trgvocabfile+".fbdb_svcb";
+  trgvocabfile=trgvocabfile+".fbdb_tvcb";
   ret=loadTrgVocab(trgvocabfile.c_str());
   if(ret==THOT_ERROR) return THOT_ERROR;
   
