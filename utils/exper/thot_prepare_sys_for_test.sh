@@ -132,7 +132,7 @@ process_files_for_individual_lm()
         if [ -d $file ]; then
             # create symbolic links for directories
             basefname=`$BASENAME $file`
-            $LN -s $file ${outd}/lm/${_lm_status}/${basefname}
+            $LN -s $file ${outd}/lm/${_lm_status}/${basefname} || { echo "Error while preparing language model files" >&2 ; return 1; }
         fi
     done
 
@@ -239,7 +239,7 @@ process_files_for_individual_tm()
         if [ -d $file ]; then
             # create symbolic links for directories
             basefname=`$BASENAME $file`
-            $LN -s $file ${outd}/tm/${_tm_status}/${basefname}
+            $LN -s $file ${outd}/tm/${_tm_status}/${basefname} || { echo "Error while preparing translation model files" >&2 ; return 1; }
         fi
     done
 
