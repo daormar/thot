@@ -22,36 +22,60 @@ version()
 ########
 usage()
 {
-    echo "thot_auto_smt          [-pr <int>]"
-    echo "                       -s <string> -t <string> -o <string>"
-    echo "                       [--skip-clean] [--tok] [--lower] [--categ] [--no-lim]"
-    echo "                       [--no-trans] [-nit <int>] [-n <int>] [-m <int>]"
-    echo "                       [-ao <string>] [-qs <string>] [-tdir <string>]"
-    echo "                       [-sdir <string>] [-debug] [--help] [--version]"
+    echo "thot_auto_smt     [-pr <int>]"
+    echo "                  -s <string> -t <string> -o <string>"
+    echo "                  [--skip-clean] [--tok] [--lower] [--categ] [--no-lim]"
+    echo "                  [--no-trans] [-nit <int>] [-n <int>] [-m <int>] [-ao <string>]"
+    if [ ${KENLM_BUILD_DIR} != "no" ]; then
+        echo "                  [-kenlm]"
+    fi
+    if [ ! -z "${LEVELDB_LIB}" ]; then
+        echo "                  [-ldblm]"
+    fi
+    if [ ! -z "${LDB_CXX}" ]; then
+        echo "                  [-bdbtm]"
+    fi
+    if [ ! -z "${LEVELDB_LIB}" ]; then
+        echo "                  [-ldbtm]"
+    fi
+    echo "                  [-qs <string>] [-tdir <string>]"
+    echo "                  [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
-    echo "-pr <int>              Number of processors (1 by default)"
-    echo "-s <string>            Prefix of files with source sentences (the"
-    echo "                       following suffixes are assumed: .train, .dev and .test)"
-    echo "-t <string>            Prefix of files with target sentences (the"
-    echo "                       following suffixes are assumed: .train, .dev and .test)"
-    echo "-o <string>            Output directory common to all processors"
-    echo "--skip-clean           Skip corpus cleaning stage"
-    echo "--tok                  Execute tokenization stage"
-    echo "--lower                Execute lowercasing stage"
-    echo "--categ                Execute categorization stage"
-    echo "--no-lim               Do not limit size of files used to train recaser and"
-    echo "                       detokenizer (requires more memory)"
-    echo "--no-trans             Do not generate translations"
-    echo "-nit <int>             Number of iterations of the EM algorithm when training"
-    echo "                       single word models (5 by default)"
-    echo "-n <int>               Order of the n-gram language models (4 by default)"
-    echo "-m <int>               Maximum target phrase length during phrase model"
-    echo "                       estimation (10 by default)"
-    echo "-ao <string>           Operation between alignments to be executed"
-    echo "                       (and|or|sum|sym1|sym2|grd)."
-    echo "-qs <string>           Specific options to be given to the qsub"
-    echo "                       command (example: -qs \"-l pmem=1gb\")"
-    echo "                       NOTES:"
+    echo "-pr <int>         Number of processors (1 by default)"
+    echo "-s <string>       Prefix of files with source sentences (the"
+    echo "                  following suffixes are assumed: .train, .dev and .test)"
+    echo "-t <string>       Prefix of files with target sentences (the"
+    echo "                  following suffixes are assumed: .train, .dev and .test)"
+    echo "-o <string>       Output directory common to all processors"
+    echo "--skip-clean      Skip corpus cleaning stage"
+    echo "--tok             Execute tokenization stage"
+    echo "--lower           Execute lowercasing stage"
+    echo "--categ           Execute categorization stage"
+    echo "--no-lim          Do not limit size of files used to train recaser and"
+    echo "                  detokenizer (requires more memory)"
+    echo "--no-trans        Do not generate translations"
+    echo "-nit <int>        Number of iterations of the EM algorithm when training"
+    echo "                  single word models (5 by default)"
+    echo "-n <int>          Order of the n-gram language models (4 by default)"
+    echo "-m <int>          Maximum target phrase length during phrase model"
+    echo "                  estimation (10 by default)"
+    echo "-ao <string>      Operation between alignments to be executed"
+    echo "                  (and|or|sum|sym1|sym2|grd)."
+    if [ ! ${KENLM_BUILD_DIR} = "no" ]; then
+        echo "-kenlm            Generate on-disk language model in KenLM format."
+    fi
+    if [ ! -z "${LEVELDB_LIB}" ]; then
+        echo "-ldblm            Generate on-disk language model in LevelDB format."
+    fi
+    if [ ! -z "${LDB_CXX}" ]; then
+        echo "-bdbtm            Generate on-disk translation model in BDB format"
+    fi    
+    if [ ! -z "${LEVELDB_LIB}" ]; then
+        echo "-ldbtm            Generate on-disk translation model in LevelDB format."
+    fi
+    echo "-qs <string>      Specific options to be given to the qsub"
+    echo "                  command (example: -qs \"-l pmem=1gb\")"
+    echo "                  NOTES:"
     echo "                        a) ignore this if not using a PBS cluster"
     echo "                        b) -qs option may be crucial to ensure the correct"
     echo "                           execution of the tool. The main purpose of -qs"
@@ -63,19 +87,19 @@ usage()
     echo "                           software, -qs \"-l h_vmem=1G,h_rt=10:00:00\","
     echo "                           requests 1GB of virtual memory and a time limit"
     echo "                           of 10 hours" 
-    echo "-tdir <string>         Directory for temporary files (/tmp by default)."
-    echo "                       NOTES:"
+    echo "-tdir <string>    Directory for temporary files (/tmp by default)."
+    echo "                  NOTES:"
     echo "                        a) give absolute paths when using pbs clusters"
     echo "                        b) ensure there is enough disk space in the partition"
-    echo "-sdir <string>         Absolute path of a directory common to all"
-    echo "                       processors. If not given, \$HOME will be used."
-    echo "                       NOTES:"
+    echo "-sdir <string>    Absolute path of a directory common to all"
+    echo "                  processors. If not given, \$HOME will be used."
+    echo "                  NOTES:"
     echo "                        a) give absolute paths when using pbs clusters"
     echo "                        b) ensure there is enough disk space in the partition"
-    echo "-debug                 After ending, do not delete temporary files"
-    echo "                       (for debugging purposes)"
-    echo "--help                 Display this help and exit"
-    echo "--version              Output version information and exit"
+    echo "-debug            After ending, do not delete temporary files"
+    echo "                  (for debugging purposes)"
+    echo "--help            Display this help and exit"
+    echo "--version         Output version information and exit"
 }
 
 ########
@@ -363,6 +387,156 @@ detok_output()
 }
 
 ########
+process_pars()
+{
+    # Create preproc dir if necessary
+    if [ ${tok_given} -eq 1 -o ${lower_given} -eq 1 -o ${skip_clean_given} -eq 0 ]; then
+        # Store preproc dir name in a variable
+        preproc_dir=preproc_data/initial
+        # Check if the directory exists
+        if [ ! -d ${outd}/${preproc_dir} ]; then
+            mkdir -p ${outd}/${preproc_dir} || exit 1
+        fi
+    fi
+
+    # Tokenize corpus if requested
+    if [ ${tok_given} -eq 1 ]; then
+        tok_corpus
+    fi
+
+    # Lowercase corpus if requested
+    if [ ${lower_given} -eq 1 ]; then
+        lowercase_corpus
+    fi
+
+    # Categorize corpus if requested
+    if [ ${categ_given} -eq 1 ]; then
+        categ_corpus
+    fi
+
+    # Clean corpus if requested
+    if [ ${skip_clean_given} -eq 0 ]; then
+        clean_corpus
+    fi
+
+    # Train models
+    if [ -f ${scorpus_train} -a -f ${tcorpus_train} ]; then
+
+        # Train language model
+        echo "**** Training language model" >&2
+        ${bindir}/thot_lm_train -pr ${pr_val} -c ${tcorpus_train} -o ${outd}/lm -n ${n_val} -unk \
+                 ${lmtype_opt} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+        
+        # Train translation model
+        echo "**** Training translation model" >&2
+        ${bindir}/thot_tm_train -pr ${pr_val} -s ${scorpus_train} -t ${tcorpus_train} -o ${outd}/tm -nit ${nitval} \
+                 -m ${m_val} ${ao_opt} ${tmtype_opt} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+
+    else
+        echo "Error! training files do not exist" >&2
+        exit 1                
+    fi
+
+    # Generate cfg file
+    echo "**** Generating configuration file" >&2
+    ${bindir}/thot_gen_cfg_file $outd/lm/lm_desc $outd/tm/tm_desc > $outd/before_tuning.cfg || exit 1
+    echo "" >&2
+
+    # Tune parameters
+    if [ -f ${scorpus_dev} -a -f ${tcorpus_dev} ]; then
+        echo "**** Tuning model parameters" >&2
+        ${bindir}/thot_smt_tune -pr ${pr_val} -c $outd/before_tuning.cfg -s ${scorpus_dev} -t ${tcorpus_dev} -o $outd/smt_tune ${qs_opt} \
+                 ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+        tuning_executed="yes"
+    fi
+
+    # Translate test corpus if requested
+
+    if [ ${notrans_given} -eq 0 ]; then
+
+        # Create dir for model filtering
+        if [ ! -d ${outd}/output/$curr_date ]; then
+            mkdir -p ${outd}/filtered_models || exit 1
+        fi
+
+        # Obtain basename of ${scorpus_test}
+        base_sct=`$BASENAME ${scorpus_test}`
+
+        # Prepare system to translate test corpus
+        if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
+            echo "**** Preparing system to translate test corpus" >&2
+            ${bindir}/thot_prepare_sys_for_test -c $outd/smt_tune/tuned_for_dev.cfg -t ${scorpus_test}  \
+                     -o $outd/filtered_models/${base_sct} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
+            echo "" >&2
+        fi
+
+        # Obtain current date
+        curr_date=`date '+%Y_%m_%d'`
+
+        # Create variable containing traslator output dir name
+        transoutd=${base_sct}.${curr_date}
+
+        # Create translator output dir
+        if [ ! -d ${outd}/output/${transoutd} ]; then
+            mkdir -p ${outd}/output/${transoutd} || exit 1
+        fi
+
+        # Generate translations
+        if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
+            echo "**** Translating test corpus" >&2
+            ${bindir}/thot_decoder -pr ${pr_val} -c $outd/filtered_models/${base_sct}/test_specific.cfg \
+                     -t ${scorpus_test} -o $outd/output/${transoutd}/thot_decoder_out ${debug_opt} -sdir $sdir -v || exit 1
+            test_trans_executed="yes"
+            echo "" >&2
+        fi
+
+        # Obtain score given by thot_scorer
+        if [ ${test_trans_executed} = "yes" ]; then
+            echo "**** Obtaining thot_scorer score" >&2
+            ${bindir}/thot_scorer -r ${tcorpus_test} -t $outd/output/${transoutd}/thot_decoder_out \
+                     > $outd/output/${transoutd}/thot_decoder_out.score || exit 1
+            echo "" >&2
+        fi
+
+        # Obtain BLEU score
+        if [ ${test_trans_executed} = "yes" ]; then
+            echo "**** Obtaining BLEU score" >&2
+            ${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $outd/output/${transoutd}/thot_decoder_out \
+                     > $outd/output/${transoutd}/thot_decoder_out.bleu || exit 1
+            echo "" >&2
+        fi
+
+        ### Execute post-processing steps if required
+
+        # Define output_file variable
+        output_file=$outd/output/${transoutd}/thot_decoder_out
+        
+        # Decategorizing stage
+        if [ ${categ_given} -eq 1 ]; then
+            # Decategorize
+            decateg_output
+        fi
+
+        # Recasing stage
+        if [ ${lower_given} -eq 1 ]; then
+            # Recase
+            recase_output
+        fi
+
+        # Detokenization stage
+        if [ ${tok_given} -eq 1 ]; then
+            # Detokenize
+            detok_output
+        fi
+
+    else
+
+        echo "Warning: translation step has been skipped because --no-trans option was provided" >&2
+        
+    fi
+}
+
+########
 if [ $# -lt 1 ]; then
     print_desc
     exit 1
@@ -387,6 +561,10 @@ n_val=4
 m_val=10
 ao_given=0
 ao_opt="-ao sym1"
+kenlm_given=0
+ldblm_given=0
+bdbtm_given=0
+ldbtm_given=0
 qs_given=0
 tdir_given=0
 tdir="/tmp"
@@ -464,6 +642,18 @@ while [ $# -ne 0 ]; do
                 ao_given=1
             fi
             ;;
+        "-kenlm") kenlm_given=1
+                  lmtype_opt="-kenlm"
+            ;;
+        "-ldblm") ldblm_given=1
+                  lmtype_opt="-ldb"
+                  ;;
+        "-bdbtm") bdbbtm_given=1
+                  tmtype_opt="-bdb"
+                  ;;
+        "-ldbtm") ldbtm_given=1
+                  tmtype_opt="-ldb"
+                  ;;        
         "-qs") shift
             if [ $# -ne 0 ]; then
                 qs_opt="-qs"
@@ -586,6 +776,16 @@ if [ ${sdir_given} -eq 1 ]; then
     fi
 fi
 
+if [ ${kenlm_given} -eq 1 -a ${ldblm_given} -eq 1 ]; then
+    echo "Error! -kenlm and -ldblm options cannot be given simultaneously" >&2
+    exit 1   
+fi
+
+if [ ${bdbtm_given} -eq 1 -a ${ldbtm_given} -eq 1 ]; then
+    echo "Error! -bdbtm and -ldbtm options cannot be given simultaneously" >&2
+    exit 1   
+fi
+
 ## Print parameters
 echo "-pr is ${pr_val}" > ${outd}/input_pars.txt
 echo "-s is ${scorpus_pref}" >> ${outd}/input_pars.txt
@@ -602,149 +802,4 @@ echo "-tdir is ${tdir}" >> ${outd}/input_pars.txt
 echo "-sdir is ${sdir}" >> ${outd}/input_pars.txt
 
 ## Process parameters
-
-# Create preproc dir if necessary
-if [ ${tok_given} -eq 1 -o ${lower_given} -eq 1 -o ${skip_clean_given} -eq 0 ]; then
-    # Store preproc dir name in a variable
-    preproc_dir=preproc_data/initial
-    # Check if the directory exists
-    if [ ! -d ${outd}/${preproc_dir} ]; then
-        mkdir -p ${outd}/${preproc_dir} || exit 1
-    fi
-fi
-
-# Tokenize corpus if requested
-if [ ${tok_given} -eq 1 ]; then
-    tok_corpus
-fi
-
-# Lowercase corpus if requested
-if [ ${lower_given} -eq 1 ]; then
-    lowercase_corpus
-fi
-
-# Categorize corpus if requested
-if [ ${categ_given} -eq 1 ]; then
-    categ_corpus
-fi
-
-# Clean corpus if requested
-if [ ${skip_clean_given} -eq 0 ]; then
-    clean_corpus
-fi
-
-# Train models
-if [ -f ${scorpus_train} -a -f ${tcorpus_train} ]; then
-
-    # Train language model
-    echo "**** Training language model" >&2
-    ${bindir}/thot_lm_train -pr ${pr_val} -c ${tcorpus_train} -o ${outd}/lm -n ${n_val} -unk \
-        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
-
-    # Train translation model
-    echo "**** Training translation model" >&2
-    ${bindir}/thot_tm_train -pr ${pr_val} -s ${scorpus_train} -t ${tcorpus_train} -o ${outd}/tm -nit ${nitval} \
-        -m ${m_val} ${ao_opt} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
-
-else
-    echo "Error! training files do not exist" >&2
-    exit 1                
-fi
-
-# Generate cfg file
-echo "**** Generating configuration file" >&2
-${bindir}/thot_gen_cfg_file $outd/lm/lm_desc $outd/tm/tm_desc > $outd/before_tuning.cfg || exit 1
-echo "" >&2
-
-# Tune parameters
-if [ -f ${scorpus_dev} -a -f ${tcorpus_dev} ]; then
-    echo "**** Tuning model parameters" >&2
-    ${bindir}/thot_smt_tune -pr ${pr_val} -c $outd/before_tuning.cfg -s ${scorpus_dev} -t ${tcorpus_dev} -o $outd/smt_tune ${qs_opt} \
-        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
-    tuning_executed="yes"
-fi
-
-# Translate test corpus if requested
-
-if [ ${notrans_given} -eq 0 ]; then
-
-    # Create dir for model filtering
-    if [ ! -d ${outd}/output/$curr_date ]; then
-        mkdir -p ${outd}/filtered_models || exit 1
-    fi
-
-    # Obtain basename of ${scorpus_test}
-    base_sct=`$BASENAME ${scorpus_test}`
-
-    # Prepare system to translate test corpus
-    if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
-        echo "**** Preparing system to translate test corpus" >&2
-        ${bindir}/thot_prepare_sys_for_test -c $outd/smt_tune/tuned_for_dev.cfg -t ${scorpus_test}  \
-            -o $outd/filtered_models/${base_sct} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
-        echo "" >&2
-    fi
-
-    # Obtain current date
-    curr_date=`date '+%Y_%m_%d'`
-
-    # Create variable containing traslator output dir name
-    transoutd=${base_sct}.${curr_date}
-
-    # Create translator output dir
-    if [ ! -d ${outd}/output/${transoutd} ]; then
-        mkdir -p ${outd}/output/${transoutd} || exit 1
-    fi
-
-    # Generate translations
-    if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
-        echo "**** Translating test corpus" >&2
-        ${bindir}/thot_decoder -pr ${pr_val} -c $outd/filtered_models/${base_sct}/test_specific.cfg \
-            -t ${scorpus_test} -o $outd/output/${transoutd}/thot_decoder_out ${debug_opt} -sdir $sdir -v || exit 1
-        test_trans_executed="yes"
-        echo "" >&2
-    fi
-
-    # Obtain score given by thot_scorer
-    if [ ${test_trans_executed} = "yes" ]; then
-        echo "**** Obtaining thot_scorer score" >&2
-        ${bindir}/thot_scorer -r ${tcorpus_test} -t $outd/output/${transoutd}/thot_decoder_out \
-            > $outd/output/${transoutd}/thot_decoder_out.score || exit 1
-        echo "" >&2
-    fi
-
-    # Obtain BLEU score
-    if [ ${test_trans_executed} = "yes" ]; then
-        echo "**** Obtaining BLEU score" >&2
-        ${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $outd/output/${transoutd}/thot_decoder_out \
-            > $outd/output/${transoutd}/thot_decoder_out.bleu || exit 1
-        echo "" >&2
-    fi
-
-    ### Execute post-processing steps if required
-
-    # Define output_file variable
-    output_file=$outd/output/${transoutd}/thot_decoder_out
-
-    # Decategorizing stage
-    if [ ${categ_given} -eq 1 ]; then
-        # Decategorize
-        decateg_output
-    fi
-
-    # Recasing stage
-    if [ ${lower_given} -eq 1 ]; then
-        # Recase
-        recase_output
-    fi
-
-    # Detokenization stage
-    if [ ${tok_given} -eq 1 ]; then
-        # Detokenize
-        detok_output
-    fi
-
-else
-
-    echo "Warning: translation step has been skipped because --no-trans option was provided" >&2
-    
-fi
+process_pars
