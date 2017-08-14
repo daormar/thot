@@ -49,18 +49,13 @@ bool _wbaIncrPhraseModel::extendModel(const char *aligFileName,
                                       int verbose/*=0*/)
 {
   ofstream outF;
-  	  
-  //     // Add parameters to Log File
-  // if(logFileOpen())
-  //   printPars(logF,phePars,BRF);
- 
+  	   
       // Estimate the phrase model
   if(alignmentExtractor.open(aligFileName,GIZA_ALIG_FILE_FORMAT)==THOT_ERROR) 
   {
     cerr<<"Error while reading alignment file."<<endl;
     return THOT_ERROR;
   } 
-  // if(logFileOpen()) logF<<"Estimating the phrase model from the alignment file "<<aligFileName<<endl;
   extendModelFromAlignments(phePars,BRF,alignmentExtractor,verbose);
   alignmentExtractor.close();
   
