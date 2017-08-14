@@ -68,6 +68,8 @@ namespace PhraseExtractUtils
                                          WordAligMatrix waMatrix,
                                          Vector<PhrasePair>& vecPhPair,
                                          int verbose=0);
+  void filterPhrasePairs(const Vector<PhrasePair>& vecUnfiltPhPair,
+                         Vector<PhrasePair>& vecPhPair);
 }
 
 #endif

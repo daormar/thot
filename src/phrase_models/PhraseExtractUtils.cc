@@ -139,13 +139,7 @@ namespace PhraseExtractUtils
       phraseExtract.extractConsistentPhrases(phePars,ns,t,waMatrix,vecUnfiltPhPair);
 
           // Filter phrase pairs
-      CategPhrasePairFilter phrasePairFilter;
-      vecPhPair.clear();
-      for(unsigned int i=0;i<vecUnfiltPhPair.size();++i)
-      {
-        if(phrasePairFilter.phrasePairIsOk(vecUnfiltPhPair[i].s_,vecUnfiltPhPair[i].t_))
-          vecPhPair.push_back(vecUnfiltPhPair[i]);
-      }
+      filterPhrasePairs(vecUnfiltPhPair,vecPhPair);
     }
     else
     {
@@ -169,13 +163,7 @@ namespace PhraseExtractUtils
       phraseExtract.segmBasedExtraction(phePars,ns,t,waMatrix,vecUnfiltPhPair);
 
           // Filter phrase pairs
-      CategPhrasePairFilter phrasePairFilter;
-      vecPhPair.clear();
-      for(unsigned int i=0;i<vecUnfiltPhPair.size();++i)
-      {
-        if(phrasePairFilter.phrasePairIsOk(vecUnfiltPhPair[i].s_,vecUnfiltPhPair[i].t_))
-          vecPhPair.push_back(vecUnfiltPhPair[i]);
-      }
+      filterPhrasePairs(vecUnfiltPhPair,vecPhPair);
     }
     else
     {
@@ -183,4 +171,18 @@ namespace PhraseExtractUtils
     }
   }
 
+      //---------------
+  void filterPhrasePairs(const Vector<PhrasePair>& vecUnfiltPhPair,
+                         Vector<PhrasePair>& vecPhPair)
+  {
+    CategPhrasePairFilter phrasePairFilter;
+    vecPhPair.clear();
+    for(unsigned int i=0;i<vecUnfiltPhPair.size();++i)
+    {
+      if(phrasePairFilter.phrasePairIsOk(vecUnfiltPhPair[i].s_,vecUnfiltPhPair[i].t_))
+        vecPhPair.push_back(vecUnfiltPhPair[i]);
+    }
+  }
+  
 }
+
