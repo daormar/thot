@@ -48,8 +48,6 @@ bool _wbaIncrPhraseModel::extendModel(const char *aligFileName,
                                       bool BRF,
                                       int verbose/*=0*/)
 {
-  ofstream outF;
-  	   
       // Estimate the phrase model
   if(alignmentExtractor.open(aligFileName,GIZA_ALIG_FILE_FORMAT)==THOT_ERROR) 
   {
