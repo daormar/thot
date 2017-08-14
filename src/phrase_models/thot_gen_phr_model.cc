@@ -33,12 +33,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <math.h>
+#include "PhraseExtractUtils.h"
+#include "IncrPhraseModel.h"
 #include "WbaIncrPhraseModel.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <string>
+#include <math.h>
 #include "options.h"
 #include "ctimer.h"
 
@@ -49,100 +51,198 @@ using namespace std;
 
 //--------------- Type definitions -----------------------------------
 
+struct thot_gen_phr_model_pars
+{
+  std::string aligFileName;
+  std::string outputFilesPrefix;
+  PhraseExtractParameters phePars;
+  bool BRF;
+  int verbose;
+};
 
 //--------------- Global variables -----------------------------------
 
-std::string aligFileName;
-std::string outputFilesPrefix;
-std::string srcInputVocabFileName;
-std::string trgInputVocabFileName;
-bool printVocabs;
-bool printInverseTable;
-PhraseExtractParameters phePars;
-bool BRF;
-int outputFormat;
-int verbose;
 
 //--------------- Function Definitions -------------------------------
 
+int genPhrModel(thot_gen_phr_model_pars pars);
+int genPhrModelBasedOnAligns(thot_gen_phr_model_pars pars,
+                             _incrPhraseModel* _incrPhraseModelPtr);
+void extendModelFromAlignments(PhraseExtractParameters phePars,
+                               bool BRF,
+                               _incrPhraseModel* _incrPhraseModelPtr,
+                               AlignmentExtractor& alignmentExtractor,
+                               int verbose=0);
+void extendModelFromPairPlusAlig(PhraseExtractParameters phePars,
+                                 _incrPhraseModel* _incrPhraseModelPtr,
+                                 Vector<std::string>& ns,
+                                 Vector<std::string>& t,
+                                 WordAligMatrix& waMatrix,
+                                 float numReps,
+                                 int verbose=0);
+void extendModelFromPairPlusAligBrf(PhraseExtractParameters phePars,
+                                    _incrPhraseModel* _incrPhraseModelPtr,
+                                    Vector<std::string>& ns,
+                                    Vector<std::string>& t,
+                                    WordAligMatrix& waMatrix,
+                                    float numReps,
+                                    int verbose=0);
 void printUsage(void);
 void version(void);
-int TakeParameters(int argc,char *argv[]);
+int takeParameters(int argc,
+                   char *argv[],
+                   thot_gen_phr_model_pars& pars);
 void printDesc(void);
 
-//--------------- main function
-
+//---------------
 int main(int argc,char *argv[])
-{  
- if(TakeParameters(argc,argv)==0)
- {
-   WbaIncrPhraseModel wbaIncrPhraseModel;
-	
-       // Load vocabularies
-   if(!srcInputVocabFileName.empty())
-   {
-     if(wbaIncrPhraseModel.loadSrcVocab(srcInputVocabFileName.c_str())) 
-     {
-       cerr<<"Error while reading source vocabulary!\n"<<endl;
-       return THOT_ERROR;
-     }
-     else
-     {
-       cerr<<"Read source vocabulary from file "<<srcInputVocabFileName<<endl;;
-     }
-     if(wbaIncrPhraseModel.loadTrgVocab(trgInputVocabFileName.c_str())) 
-     {
-       cerr<<"Error while reading target vocabulary!\n"<<endl;
-       return THOT_ERROR;
-     }
-     else
-     {
-       cerr<<"Read target vocabulary from file "<<trgInputVocabFileName<<endl;
-     }
-   }
- 
-  if(aligFileName[0]!=0)	 
+{
+  thot_gen_phr_model_pars pars;
+  if(takeParameters(argc,argv,pars)==0)
   {
-        // generate phrase model given a GIZA alignment file
-    if(wbaIncrPhraseModel.generateWbaIncrPhraseModel(aligFileName.c_str(),phePars,BRF,verbose))
-      return THOT_ERROR;
-	 
-        // print model
-    std::string outFileName=outputFilesPrefix;
-    outFileName+=".ttable";
-        // output in thot native format
-    wbaIncrPhraseModel.printTTable(outFileName.c_str());
-   	
-        // print segmentation length table
-    if(BRF==1)
-    {
-      std::string segmLengthTableFileName=outputFilesPrefix;
-      segmLengthTableFileName+=".seglentable";
-      wbaIncrPhraseModel.printSegmLengthTable(segmLengthTableFileName.c_str());
-    }
+    return genPhrModel(pars);
   }
-
-      // print vocabularies
-  if(printVocabs)
-  {
-    std::string srcVcbFileName=outputFilesPrefix;
-    srcVcbFileName+=".src.vcb";
-    wbaIncrPhraseModel.printSrcVocab(srcVcbFileName.c_str());
-       	   
-    std::string trgVcbFileName=outputFilesPrefix;
-    trgVcbFileName+=".trg.vcb";
-    wbaIncrPhraseModel.printTrgVocab(trgVcbFileName.c_str());
-  }
-
-  return THOT_OK;
- }
- else return THOT_ERROR;
+  else return THOT_ERROR;
 }
 
+//---------------
+int genPhrModel(thot_gen_phr_model_pars pars)
+{	 
+      // create model pointer
+  _incrPhraseModel* _incrPhraseModelPtr=new IncrPhraseModel;
 
-//--------------- TakeParameters function
+      // generate phrase model given a GIZA alignment file
+  int ret=genPhrModelBasedOnAligns(pars,_incrPhraseModelPtr);
+  if(ret==THOT_ERROR)
+  {
+    delete _incrPhraseModelPtr;
+    return THOT_ERROR;
+  }
+  
+       // print model
+   std::string outFileName=pars.outputFilesPrefix;
+   outFileName+=".ttable";
+       // output in thot native format
+   _incrPhraseModelPtr->printTTable(outFileName.c_str());
+   
+       // print segmentation length table
+   if(pars.BRF==1)
+   {
+     std::string segmLengthTableFileName=pars.outputFilesPrefix;
+     segmLengthTableFileName+=".seglentable";
+     _incrPhraseModelPtr->printSegmLengthTable(segmLengthTableFileName.c_str());
+   }
 
-int TakeParameters(int argc,char *argv[])
+       // Delete model pointer
+   delete _incrPhraseModelPtr;
+   
+   return THOT_OK;
+}
+
+//---------------
+int genPhrModelBasedOnAligns(thot_gen_phr_model_pars pars,
+                             _incrPhraseModel* _incrPhraseModelPtr)
+{
+      // Initialize alignment extractor
+  AlignmentExtractor alignmentExtractor;
+  int ret=alignmentExtractor.open(pars.aligFileName.c_str(),GIZA_ALIG_FILE_FORMAT);
+  if(ret==THOT_ERROR) 
+  {
+    cerr<<"Error while reading alignment file."<<endl;
+    return THOT_ERROR;
+  }
+      // Extend phrase model using the alignments provided by the
+      // extractor
+  extendModelFromAlignments(pars.phePars,pars.BRF,_incrPhraseModelPtr,alignmentExtractor,pars.verbose);
+  
+  alignmentExtractor.close();
+  
+  return THOT_OK;  
+}
+
+//---------------
+void extendModelFromAlignments(PhraseExtractParameters phePars,
+                               bool BRF,
+                               _incrPhraseModel* _incrPhraseModelPtr,
+                               AlignmentExtractor& alignmentExtractor,
+                               int verbose/*=0*/)
+{
+      // Iterate over alignments
+  int numSent=0;	
+  while(alignmentExtractor.getNextAlignment())
+  {
+    ++numSent;
+    if((numSent%10)==0 && BRF)
+      cerr<<"Processing sent. pair #"<<numSent<<"..."<<endl;
+
+        // Obtain alignment information
+    Vector<string> t=alignmentExtractor.get_t();
+    Vector<string> ns=alignmentExtractor.get_ns();	
+    WordAligMatrix waMatrix=alignmentExtractor.get_wamatrix();
+    float numReps=alignmentExtractor.get_numReps();
+
+    if(t.size()<MAX_SENTENCE_LENGTH && ns.size()-1<MAX_SENTENCE_LENGTH)
+    {
+      if(verbose)
+      {
+        cerr<<"* Processing sent. pair "<<numSent<<" (t length: "<< t.size()<<" , s length: "<< ns.size()-1<<" , numReps: "<<numReps<<")";
+        cerr<<endl;
+      }
+          // Extend model from individual alignment
+      if(BRF)
+        extendModelFromPairPlusAligBrf(phePars,_incrPhraseModelPtr,ns,t,waMatrix,numReps,verbose);
+      else
+        extendModelFromPairPlusAlig(phePars,_incrPhraseModelPtr,ns,t,waMatrix,numReps,verbose);
+    }
+    else
+      cerr<< "  Warning: Max. sentence length exceeded for sentence pair "<<numSent<<endl;
+  }
+}
+
+//---------------
+void extendModelFromPairPlusAlig(PhraseExtractParameters phePars,
+                                 _incrPhraseModel* _incrPhraseModelPtr,
+                                 Vector<std::string>& ns,
+                                 Vector<std::string>& t,
+                                 WordAligMatrix& waMatrix,
+                                 float numReps,
+                                 int verbose/*=0*/)
+{
+      // Extract phrase using BRF estimation
+  Vector<PhrasePair> vecPhPair;
+  PhraseExtractUtils::extractPhrasesFromPairPlusAlig(phePars,ns,t,waMatrix,vecPhPair,verbose);
+
+      // Store phrases in model
+  for(unsigned int i=0;i<vecPhPair.size();++i)
+  {
+    _incrPhraseModelPtr->strIncrCountsOfEntry(vecPhPair[i].s_,vecPhPair[i].t_,numReps*vecPhPair[i].weight);
+  }
+}
+
+//---------------
+void extendModelFromPairPlusAligBrf(PhraseExtractParameters phePars,
+                                    _incrPhraseModel* _incrPhraseModelPtr,
+                                    Vector<std::string>& ns,
+                                    Vector<std::string>& t,
+                                    WordAligMatrix& waMatrix,
+                                    float numReps,
+                                    int verbose/*=0*/)
+{
+      // Extract phrase using BRF estimation
+  Vector<PhrasePair> vecPhPair;
+  PhraseExtractUtils::extractPhrasesFromPairPlusAligBrf(phePars,ns,t,waMatrix,vecPhPair,verbose);
+
+      // Store phrases in model
+  for(unsigned int x=0;x<vecPhPair.size();++x)
+  {
+    _incrPhraseModelPtr->strIncrCountsOfEntry(vecPhPair[x].s_,vecPhPair[x].t_,numReps*vecPhPair[x].weight);
+  }
+}
+
+//---------------
+int takeParameters(int argc,
+                   char *argv[],
+                   thot_gen_phr_model_pars& pars)
 {
  int err;
 
@@ -169,21 +269,15 @@ int TakeParameters(int argc,char *argv[])
  }
 
  /* Take the .A3.final file name */
- err=readSTLstring(argc,argv, "-g", &aligFileName);
+ err=readSTLstring(argc,argv, "-g", &pars.aligFileName);
  if(err==-1)
- {
-   aligFileName[0]=0;
- }
- 
- // Verify if -g or -l option was introduced
- if(aligFileName[0]==0)
  {
    printUsage();
    return THOT_ERROR;
  }
- 
+  
  /* Take the output files prefix */
- err=readSTLstring(argc,argv, "-o", &outputFilesPrefix);
+ err=readSTLstring(argc,argv, "-o", &pars.outputFilesPrefix);
  if(err==-1)
  {
    printUsage();
@@ -191,66 +285,41 @@ int TakeParameters(int argc,char *argv[])
  }
    
  /* Take the maximum source phrase length */
- err=readInt(argc,argv, "-m", &phePars.maxTrgPhraseLength);
+ err=readInt(argc,argv, "-m", &pars.phePars.maxTrgPhraseLength);
  if(err==-1)
  {
-   phePars.maxTrgPhraseLength=MAX_SENTENCE_LENGTH;
+   pars.phePars.maxTrgPhraseLength=MAX_SENTENCE_LENGTH;
  }
     
  /* Verify monotone-model option */
  err=readOption(argc,argv, "-mon");
- phePars.monotone=1;
+ pars.phePars.monotone=1;
  if(err==-1)
  {
-   phePars.monotone=0;
+   pars.phePars.monotone=0;
  }
   
   /* Verify brf option */
  err=readOption(argc,argv, "-brf");
- BRF=1;
+ pars.BRF=1;
  if(err==-1)
  {
-   BRF=0;
+   pars.BRF=0;
  }
-   
- /* Verify print vocabularies option */
- err=readOption(argc,argv, "-p");
- printVocabs=1;
- if(err==-1)
- {
-   printVocabs=0;
- }
- 
- /* Verify output format options */
- outputFormat=THOT_COUNT_OUTPUT;
- 
- /* Take the input source vocabulary file */
- err=readSTLstring(argc,argv, "-s", &srcInputVocabFileName);
- if(err==-1)
- {
-   srcInputVocabFileName.clear(); 
- }
-   
- /* Take the input target vocabulary file */
- err=readSTLstring(argc,argv, "-t", &trgInputVocabFileName);
- if(err==-1)
- {
-   trgInputVocabFileName.clear();
- }  
-   
+      
  /* Verify verbose option */
- verbose=0;
+ pars.verbose=0;
    
  err=readOption(argc,argv, "-v");
- if(err==0) verbose=1;
+ if(err==0) pars.verbose=1;
     
  err=readOption(argc,argv, "-v1");
- if(err==0) verbose=2; 
+ if(err==0) pars.verbose=2; 
  	 
  return THOT_OK;  
 }
 
-//--------------- printDesc() function
+//---------------
 void printDesc(void)
 {
   cerr<<"thot_gen_phr_model written by Daniel Ortiz\n";
@@ -258,30 +327,27 @@ void printDesc(void)
   cerr<<"type \"thot_gen_phr_model --help\" to get usage information.\n";
 }
 
-//--------------------------------
+//---------------
 void printUsage(void)
 {
- cerr<<"Usage: thot_gen_phr_model -g <string> [-s <string> -t <string>]\n";
- cerr<<"                          [-m <int>] [-brf] -o <string> [-p]\n";
+ cerr<<"Usage: thot_gen_phr_model -g <string> [-m <int>] [-mon]\n";
+ cerr<<"                          [-brf] -o <string> [-p]\n";
  cerr<<"                          [-v | -v1] [--help] [--version]\n\n";
  cerr<<"-g <string>               Name of the alignment file in GIZA format for\n";
  cerr<<"                          generating a phrase model.\n\n"; 
  cerr<<"-m <int>                  Set maximum target phrase length (target is the\n";
  cerr<<"                          target language of the GIZA alignment file).\n\n";
- cerr<<"-s <string>               Source vocabulary file.\n\n";	
- cerr<<"-t <string>               Target vocabulary file.\n\n";	
+ cerr<<"-mon                      Generate monotone model.\n\n";
  cerr<<"-brf                      Obtain bisegmentation-based RF model (RF by\n";
  cerr<<"                          default).\n\n";
  cerr<<"-o <string>               Set output files prefix name.\n\n";
- cerr<<"-p                        Print vocabularies.\n\n";
  cerr<<"-v | -v1                  Verbose mode | more verbosity\n\n";
  cerr<<"--help                    Display this help and exit\n\n";
  cerr<<"--version                 Output version information and exit\n\n";
  
 }
 
-//--------------- version function
-
+//---------------
 void version(void)
 {
   cerr<<"thot_gen_phr_model is part of the Thot toolkit\n";
