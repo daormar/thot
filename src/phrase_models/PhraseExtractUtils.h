@@ -28,6 +28,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "CategPhrasePairFilter.h"
 #include "PhraseExtractionTable.h"
 #include "WordAligMatrix.h"
 #include THOT_PPINFO_H // Define PpInfo type. It is set in
@@ -61,6 +62,12 @@ namespace PhraseExtractUtils
                                       WordAligMatrix waMatrix,
                                       Vector<PhrasePair>& vecPhPair,
                                       int verbose=0);
+  void extractPhrasesFromPairPlusAligBrf(PhraseExtractParameters phePars,
+                                         Vector<string> ns,
+                                         Vector<string> t,
+                                         WordAligMatrix waMatrix,
+                                         Vector<PhrasePair>& vecPhPair,
+                                         int verbose=0);
 }
 
 #endif

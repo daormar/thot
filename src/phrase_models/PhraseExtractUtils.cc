@@ -133,13 +133,54 @@ namespace PhraseExtractUtils
   {
     if(t.size()<MAX_SENTENCE_LENGTH && ns.size()-1<MAX_SENTENCE_LENGTH)
     {
+          // Obtain vector of unfiltered phrase pairs
+      Vector<PhrasePair> vecUnfiltPhPair;
       PhraseExtractionTable phraseExtract;
-      phraseExtract.extractConsistentPhrases(phePars,ns,t,waMatrix,vecPhPair);
+      phraseExtract.extractConsistentPhrases(phePars,ns,t,waMatrix,vecUnfiltPhPair);
+
+          // Filter phrase pairs
+      CategPhrasePairFilter phrasePairFilter;
+      vecPhPair.clear();
+      for(unsigned int i=0;i<vecUnfiltPhPair.size();++i)
+      {
+        if(phrasePairFilter.phrasePairIsOk(vecUnfiltPhPair[i].s_,vecUnfiltPhPair[i].t_))
+          vecPhPair.push_back(vecUnfiltPhPair[i]);
+      }
     }
     else
     {
       cerr<< "Warning: Max. sentence length exceeded for sentence pair"<<endl;
     }
   }
-  
+
+  //---------------
+  void extractPhrasesFromPairPlusAligBrf(PhraseExtractParameters phePars,
+                                         Vector<string> ns,
+                                         Vector<string> t,
+                                         WordAligMatrix waMatrix,
+                                         Vector<PhrasePair>& vecPhPair,
+                                         int /*verbose=0*/)
+  {
+    if(t.size()<MAX_SENTENCE_LENGTH && ns.size()-1<MAX_SENTENCE_LENGTH)
+    {
+          // Obtain vector of unfiltered phrase pairs
+      Vector<PhrasePair> vecUnfiltPhPair;
+      PhraseExtractionTable phraseExtract;
+      phraseExtract.segmBasedExtraction(phePars,ns,t,waMatrix,vecUnfiltPhPair);
+
+          // Filter phrase pairs
+      CategPhrasePairFilter phrasePairFilter;
+      vecPhPair.clear();
+      for(unsigned int i=0;i<vecUnfiltPhPair.size();++i)
+      {
+        if(phrasePairFilter.phrasePairIsOk(vecUnfiltPhPair[i].s_,vecUnfiltPhPair[i].t_))
+          vecPhPair.push_back(vecUnfiltPhPair[i]);
+      }
+    }
+    else
+    {
+      cerr<< "Warning: Max. sentence length exceeded for sentence pair"<<endl;
+    }
+  }
+
 }
