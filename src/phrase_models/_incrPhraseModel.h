@@ -220,12 +220,6 @@ class _incrPhraseModel: public BaseIncrPhraseModel
     void clear(void);
     void clearTempVars(void);
 
-        // Log functions
-    bool createLogFile(char *_logFileName);
-    bool addToLogFile(char *s);	
-    bool logFileOpen(void);
-    void closeLogFile(void);
-
         // destructor
     ~_incrPhraseModel();
 	
@@ -250,9 +244,6 @@ class _incrPhraseModel: public BaseIncrPhraseModel
     
     TrgSegmLenTable trgSegmLenTable;
     
-	string logFileName;
-    ofstream logF;
-
 # ifdef _GLIBCXX_USE_LFS
         // Functions to print models if C++ "LARGE FILE SYSTEM (LFS)" IS
         // ENABLED

@@ -36,7 +36,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 _incrPhraseModel::_incrPhraseModel(void)
 {
- logFileName="";
 }
 
 //-------------------------
@@ -347,8 +346,6 @@ bool _incrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
  
  cerr<<"Loading phrase ttable from file "<<phraseTTableFileName<<endl;
 
- if(logFileOpen()) logF<<"Loading phrase ttable from file "<<phraseTTableFileName<<endl;	
-
  if(awk.open(phraseTTableFileName)==THOT_ERROR)
  {
    cerr<<"Error in WBA-Phrase Model file: "<<phraseTTableFileName<<endl;
@@ -400,7 +397,6 @@ bool _incrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
 //-------------------------
 bool _incrPhraseModel::load_seglentable(const char *segmLengthTableFileName)
 {
-  if(logFileOpen()) logF<<"Loading segmentation length table from file "<<segmLengthTableFileName<<endl;
   return segLenTable.load_seglentable(segmLengthTableFileName);
 }
 
@@ -707,48 +703,6 @@ bool _incrPhraseModel::printTrgVocab(const char *outputFileName)
 }
 
 //-------------------------
-bool _incrPhraseModel::createLogFile(char *_logFileName)
-{
- logF.open(_logFileName,ios::out);
- 
- if(!logF)
- {
-   cerr<<"Error while creating log file."<<endl; 
-   return 1;
- }
- else
- {
-   logFileName=_logFileName;
-   return 0;	 
- }
-}
-
-//-------------------------
-bool _incrPhraseModel::addToLogFile(char *s)
-{
- if(!logFileOpen()) return 0;
- else
- {
-   logF<<s;
-   return 1;		
- }
-}
-
-//-------------------------
-bool _incrPhraseModel::logFileOpen(void)
-{
- if(logFileName=="") return 0;
- else return 1;	 
-}
-
-//-------------------------
-void _incrPhraseModel::closeLogFile(void)
-{
- logFileName="";	
- logF.close();	
-}
-
-//-------------------------
 Vector<string> _incrPhraseModel::stringToStringVector(string s)
 {
  Vector<string> vs;	
@@ -816,7 +770,6 @@ void _incrPhraseModel::clearTempVars(void)
 //-------------------------
 _incrPhraseModel::~_incrPhraseModel()
 {
-  if(logFileOpen()) closeLogFile();
 }
 
 //-------------------------

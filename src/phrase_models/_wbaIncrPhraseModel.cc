@@ -50,9 +50,9 @@ bool _wbaIncrPhraseModel::extendModel(const char *aligFileName,
 {
   ofstream outF;
   	  
-      // Add parameters to Log File
-  if(logFileOpen())
-    printPars(logF,phePars,BRF);
+  //     // Add parameters to Log File
+  // if(logFileOpen())
+  //   printPars(logF,phePars,BRF);
  
       // Estimate the phrase model
   if(alignmentExtractor.open(aligFileName,GIZA_ALIG_FILE_FORMAT)==THOT_ERROR) 
@@ -60,7 +60,7 @@ bool _wbaIncrPhraseModel::extendModel(const char *aligFileName,
     cerr<<"Error while reading alignment file."<<endl;
     return THOT_ERROR;
   } 
-  if(logFileOpen()) logF<<"Estimating the phrase model from the alignment file "<<aligFileName<<endl;
+  // if(logFileOpen()) logF<<"Estimating the phrase model from the alignment file "<<aligFileName<<endl;
   extendModelFromAlignments(phePars,BRF,alignmentExtractor,verbose);
   alignmentExtractor.close();
   
@@ -162,12 +162,10 @@ void _wbaIncrPhraseModel::extendModelFromPairPlusAlig(PhraseExtractParameters ph
       {
         cerr<<"  log(Number of segmentations): "<< logNumSegms<<endl;
       }
-      if(exp(logNumSegms)==0) logF<< "  Warning: Zero segmentations for sentence pair "<<numSent<<endl;
     }
   }
   else
   {
-    logF<< "  Warning: Max. sentence length exceeded for sentence pair "<<numSent<<endl;
     cerr<< "  Warning: Max. sentence length exceeded for sentence pair "<<numSent<<endl;
   }
 }
@@ -186,7 +184,6 @@ void _wbaIncrPhraseModel::extractPhrasesFromPairPlusAlig(PhraseExtractParameters
   }
   else
   {
-    logF<< "  Warning: Max. sentence length exceeded for sentence pair "<<numSent<<endl;
     cerr<< "  Warning: Max. sentence length exceeded for sentence pair "<<numSent<<endl;
   }  
 }
