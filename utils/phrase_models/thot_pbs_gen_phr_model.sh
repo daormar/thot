@@ -19,7 +19,7 @@ version()
 usage()
 {
     echo "Usage: thot_pbs_gen_phr_model {-pr <int>}"
-    echo "                {-g <string> [-pml] [-mon]"
+    echo "                {-g <string> [-brf] [-mon]"
     echo "                [-m <int> [-nospur] [-ms]]"
     echo "                [-c <float]"
     echo "                {-o <string>} [-qs <string>] [-v | -v1 | -va]"
@@ -31,7 +31,7 @@ usage()
     echo "-g <string>                     Name of the alignment file in GIZA format for"
     echo "                                generating a phrase model."
     echo ""
-    echo "-pml                            Obtain pseudo-ml model (RF by default)."
+    echo "-brf                            Obtain pseudo-ml model (RF by default)."
     echo ""
     echo "-mon                            Obtain monotone model (non-monotone by default)."
     echo ""
@@ -167,7 +167,7 @@ merge_gen_phr()
         ${bindir}/thot_cut_ttable -c $cutoff 2>> $SDIR/merge.log > ${output}.ttable ; ${PIPE_FAIL} || \
         { echo "Error while executing merge_gen_phr" >> $SDIR/log ; return 1 ; }
 
-    if [ "${estimation}" = "PML" ]; then
+    if [ "${estimation}" = "BRF" ]; then
         cat $SDIR/*.seglentable > $tmpdir/${$}seglentable
         ${bindir}/thot_merge_seglen_counts $tmpdir/${$}seglentable > ${output}.seglentable
         rm $tmpdir/${$}seglentable
@@ -360,8 +360,8 @@ while [ $# -ne 0 ]; do
             ;;
         "-mon") thot_pars="$thot_pars -mon"
             ;;
-        "-pml") thot_pars="$thot_pars -pml"
-            estimation="PML"
+        "-brf") thot_pars="$thot_pars -brf"
+            estimation="BRF"
             ;;
         "-lex") shift
             lex_given=1
