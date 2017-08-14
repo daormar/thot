@@ -38,6 +38,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <string>
 #include "options.h"
 #include "ctimer.h"
 
@@ -51,11 +52,10 @@ using namespace std;
 
 //--------------- Global variables -----------------------------------
 
-char aligFileName[256];
-char outputFilesPrefix[256];
-char outBestAligFileName[256];
-char srcInputVocabFileName[256];
-char trgInputVocabFileName[256];
+std::string aligFileName;
+std::string outputFilesPrefix;
+std::string srcInputVocabFileName;
+std::string trgInputVocabFileName;
 bool printVocabs;
 bool printInverseTable;
 PhraseExtractParameters phePars;
@@ -73,76 +73,66 @@ void printDesc(void);
 //--------------- main function
 
 int main(int argc,char *argv[])
-{
-  char srcVcbFileName[256];
-  char trgVcbFileName[256];
-  char outFileName[256];
-  char segmLengthTableFileName[256];
-  char logFileName[256];
-  char cad[512];
-  WbaIncrPhraseModel wbaIncrPhraseModel;
-  
+{  
  if(TakeParameters(argc,argv)==0)
- { // Create log file
-   sprintf(logFileName,"%s.log",outputFilesPrefix); 	 
-   wbaIncrPhraseModel.createLogFile(logFileName);
+ {
+   WbaIncrPhraseModel wbaIncrPhraseModel;
 	
-   // Load vocabularies
-   if(srcInputVocabFileName[0]!=0)
+       // Load vocabularies
+   if(!srcInputVocabFileName.empty())
    {
-     if(wbaIncrPhraseModel.loadSrcVocab(srcInputVocabFileName)) 
+     if(wbaIncrPhraseModel.loadSrcVocab(srcInputVocabFileName.c_str())) 
      {
        cerr<<"Error while reading source vocabulary!\n"<<endl;
        return THOT_ERROR;
      }
      else
      {
-       sprintf(cad,"Read source vocabulary from file %s\n",srcInputVocabFileName);
-       cerr<<cad;
-       wbaIncrPhraseModel.addToLogFile(cad);
+       cerr<<"Read source vocabulary from file "<<srcInputVocabFileName<<endl;;
      }
-     if(wbaIncrPhraseModel.loadTrgVocab(trgInputVocabFileName)) 
+     if(wbaIncrPhraseModel.loadTrgVocab(trgInputVocabFileName.c_str())) 
      {
        cerr<<"Error while reading target vocabulary!\n"<<endl;
        return THOT_ERROR;
      }
      else
      {
-       sprintf(cad,"Read target vocabulary from file %s\n",trgInputVocabFileName);
-       cerr<<cad;
-       wbaIncrPhraseModel.addToLogFile(cad);
+       cerr<<"Read target vocabulary from file "<<trgInputVocabFileName<<endl;
      }
    }
  
   if(aligFileName[0]!=0)	 
-  { // generate phrase model given a GIZA alignment file
-
-    if(wbaIncrPhraseModel.generateWbaIncrPhraseModel(aligFileName,phePars,BRF,verbose))
+  {
+        // generate phrase model given a GIZA alignment file
+    if(wbaIncrPhraseModel.generateWbaIncrPhraseModel(aligFileName.c_str(),phePars,BRF,verbose))
       return THOT_ERROR;
 	 
-    // print model
-    sprintf(outFileName,"%s.ttable",outputFilesPrefix); 
-    // output in thot native format
-    wbaIncrPhraseModel.printTTable(outFileName);
+        // print model
+    std::string outFileName=outputFilesPrefix;
+    outFileName+=".ttable";
+        // output in thot native format
+    wbaIncrPhraseModel.printTTable(outFileName.c_str());
    	
-    // print segmentation length table
+        // print segmentation length table
     if(BRF==1)
     {
-      sprintf(segmLengthTableFileName,"%s.seglentable",outputFilesPrefix); 
-      wbaIncrPhraseModel.printSegmLengthTable(segmLengthTableFileName);
-    }	 
+      std::string segmLengthTableFileName=outputFilesPrefix;
+      segmLengthTableFileName+=".seglentable";
+      wbaIncrPhraseModel.printSegmLengthTable(segmLengthTableFileName.c_str());
+    }
   }
 
-  // print vocabularies
+      // print vocabularies
   if(printVocabs)
   {
-    sprintf(srcVcbFileName,"%s.src.vcb",outputFilesPrefix); 
-    wbaIncrPhraseModel.printSrcVocab(srcVcbFileName);
+    std::string srcVcbFileName=outputFilesPrefix;
+    srcVcbFileName+=".src.vcb";
+    wbaIncrPhraseModel.printSrcVocab(srcVcbFileName.c_str());
        	   
-    sprintf(trgVcbFileName,"%s.trg.vcb",outputFilesPrefix); 
-    wbaIncrPhraseModel.printTrgVocab(trgVcbFileName);
+    std::string trgVcbFileName=outputFilesPrefix;
+    trgVcbFileName+=".trg.vcb";
+    wbaIncrPhraseModel.printTrgVocab(trgVcbFileName.c_str());
   }
-  wbaIncrPhraseModel.closeLogFile();
 
   return THOT_OK;
  }
@@ -179,7 +169,7 @@ int TakeParameters(int argc,char *argv[])
  }
 
  /* Take the .A3.final file name */
- err=readString(argc,argv, "-g", aligFileName);
+ err=readSTLstring(argc,argv, "-g", &aligFileName);
  if(err==-1)
  {
    aligFileName[0]=0;
@@ -193,7 +183,7 @@ int TakeParameters(int argc,char *argv[])
  }
  
  /* Take the output files prefix */
- err=readString(argc,argv, "-o", outputFilesPrefix);
+ err=readSTLstring(argc,argv, "-o", &outputFilesPrefix);
  if(err==-1)
  {
    printUsage();
@@ -235,17 +225,17 @@ int TakeParameters(int argc,char *argv[])
  outputFormat=THOT_COUNT_OUTPUT;
  
  /* Take the input source vocabulary file */
- err=readString(argc,argv, "-s", srcInputVocabFileName);
+ err=readSTLstring(argc,argv, "-s", &srcInputVocabFileName);
  if(err==-1)
  {
-   srcInputVocabFileName[0]=0; 
+   srcInputVocabFileName.clear(); 
  }
    
  /* Take the input target vocabulary file */
- err=readString(argc,argv, "-t", trgInputVocabFileName);
+ err=readSTLstring(argc,argv, "-t", &trgInputVocabFileName);
  if(err==-1)
  {
-   trgInputVocabFileName[0]=0;
+   trgInputVocabFileName.clear();
  }  
    
  /* Verify verbose option */
