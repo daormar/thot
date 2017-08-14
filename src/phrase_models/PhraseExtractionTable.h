@@ -89,7 +89,7 @@ class PhraseExtractionTable
                                const Vector<string> &_t,
                                const WordAligMatrix &_alig,
                                Vector<PhrasePair>& outvph,
-                               int verbose/*=0*/);
+                               int verbose=0);
 	Bisegm& obtainPossibleSegmentations(PhraseExtractParameters phePars,
                                         const Vector<string> &_ns,
                                         const Vector<string> &_t,
