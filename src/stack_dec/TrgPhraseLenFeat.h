@@ -79,8 +79,8 @@ class TrgPhraseLenFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
-  Score scorePhrasePair(const Vector<std::string>& srcPhrase,
-                        const Vector<std::string>& trgPhrase);
+  Score scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
+                                  const Vector<std::string>& trgPhrase);
 
       // Functions related to model pointers
   void link_pm(BasePhraseModel* _invPbModelPtr);
@@ -112,8 +112,8 @@ std::string TrgPhraseLenFeat<SCORE_INFO>::getFeatType(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-Score TrgPhraseLenFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::string>& /*srcPhrase*/,
-                                                    const Vector<std::string>& /*trgPhrase*/)
+Score TrgPhraseLenFeat<SCORE_INFO>::scorePhrasePairUnweighted(const Vector<std::string>& /*srcPhrase*/,
+                                                              const Vector<std::string>& /*trgPhrase*/)
 {
   return 0;
 }

@@ -84,8 +84,8 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
-  Score scorePhrasePair(const Vector<std::string>& srcPhrase,
-                        const Vector<std::string>& trgPhrase);
+  Score scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
+                                  const Vector<std::string>& trgPhrase);
 
       // Functions to obtain translation options
   void obtainTransOptions(const Vector<std::string>& wordVec,
@@ -136,8 +136,8 @@ std::string DirectPhraseModelFeat<SCORE_INFO>::getFeatType(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-Score DirectPhraseModelFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::string>& srcPhrase,
-                                                         const Vector<std::string>& trgPhrase)
+Score DirectPhraseModelFeat<SCORE_INFO>::scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
+                                                                   const Vector<std::string>& trgPhrase)
 {
       // Obtain WordIndex vectors
   Vector<WordIndex> srcPhraseIdx;
@@ -148,7 +148,7 @@ Score DirectPhraseModelFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::strin
   for(unsigned int i=0;i<trgPhrase.size();++i)
     trgPhraseIdx.push_back(this->stringToTrgWordindex(trgPhrase[i]));
 
-  return this->weight*directPhrTransUnweightedScore(srcPhraseIdx,trgPhraseIdx);
+  return directPhrTransUnweightedScore(srcPhraseIdx,trgPhraseIdx);
 }
 
 //---------------------------------

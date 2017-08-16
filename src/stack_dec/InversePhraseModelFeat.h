@@ -84,7 +84,7 @@ class InversePhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
-  Score scorePhrasePair(const Vector<std::string>& srcPhrase,
+  Score scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
                         const Vector<std::string>& trgPhrase);
 
       // Functions to obtain translation options
@@ -136,8 +136,8 @@ std::string InversePhraseModelFeat<SCORE_INFO>::getFeatType(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-Score InversePhraseModelFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::string>& srcPhrase,
-                                                          const Vector<std::string>& trgPhrase)
+Score InversePhraseModelFeat<SCORE_INFO>::scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
+                                                                    const Vector<std::string>& trgPhrase)
 {
       // Obtain WordIndex vectors
   Vector<WordIndex> srcPhraseIdx;
@@ -148,7 +148,7 @@ Score InversePhraseModelFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::stri
   for(unsigned int i=0;i<trgPhrase.size();++i)
     trgPhraseIdx.push_back(this->stringToTrgWordindex(trgPhrase[i]));
 
-  return this->weight*inversePhrTransUnweightedScore(srcPhraseIdx,trgPhraseIdx);
+  return inversePhrTransUnweightedScore(srcPhraseIdx,trgPhraseIdx);
 }
 
 //---------------------------------

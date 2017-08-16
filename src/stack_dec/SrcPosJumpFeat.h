@@ -79,8 +79,8 @@ class SrcPosJumpFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
-  Score scorePhrasePair(const Vector<std::string>& srcPhrase,
-                        const Vector<std::string>& trgPhrase);
+  Score scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
+                                  const Vector<std::string>& trgPhrase);
 
       // Heuristic related functions
   Score calcHeurScore(const Vector<pair<PositionIndex,PositionIndex> >& gaps,
@@ -116,8 +116,8 @@ std::string SrcPosJumpFeat<SCORE_INFO>::getFeatType(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-Score SrcPosJumpFeat<SCORE_INFO>::scorePhrasePair(const Vector<std::string>& /*srcPhrase*/,
-                                                  const Vector<std::string>& /*trgPhrase*/)
+Score SrcPosJumpFeat<SCORE_INFO>::scorePhrasePairUnweighted(const Vector<std::string>& /*srcPhrase*/,
+                                                            const Vector<std::string>& /*trgPhrase*/)
 {
   return 0;
 }

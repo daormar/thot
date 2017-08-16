@@ -88,8 +88,10 @@ class BasePbTransModelFeature
                                       const PhrHypDataStr& predHypDataStr,
                                       const PhrHypDataStr& newHypDataStr,
                                       Score& unweightedScore)=0;
-  virtual Score scorePhrasePair(const Vector<std::string>& srcPhrase,
-                                const Vector<std::string>& trgPhrase)=0;
+  Score scorePhrasePair(const Vector<std::string>& srcPhrase,
+                        const Vector<std::string>& trgPhrase);
+  virtual Score scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
+                                          const Vector<std::string>& trgPhrase)=0;
 
       // Functions to obtain translation options
   virtual void obtainTransOptions(const Vector<std::string>& wordVec,
@@ -148,6 +150,14 @@ BasePbTransModelFeature<SCORE_INFO>::nullHypScore(const HypScoreInfo& predHypScr
   unweightedScore=0;
   HypScoreInfo hypScrInf=predHypScrInf;
   return hypScrInf;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+Score BasePbTransModelFeature<SCORE_INFO>::scorePhrasePair(const Vector<std::string>& srcPhrase,
+                                                           const Vector<std::string>& trgPhrase)
+{
+  return weight*scorePhrasePairUnweighted(srcPhrase,trgPhrase);
 }
 
 //---------------------------------
