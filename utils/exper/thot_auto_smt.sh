@@ -25,7 +25,8 @@ usage()
     echo "thot_auto_smt     [-pr <int>]"
     echo "                  -s <string> -t <string> -o <string>"
     echo "                  [--skip-clean] [--tok] [--lower] [--categ] [--no-lim]"
-    echo "                  [--no-trans] [-nit <int>] [-n <int>] [-m <int>] [-ao <string>]"
+    echo "                  [--no-trans] [-n <int>] [-nit <int>]"
+    echo "                  [-cpr <float>] [-m <int>] [-ao <string>]"
     if [ ${KENLM_BUILD_DIR} != "no" ]; then
         echo "                  [-kenlm]"
     fi
@@ -54,9 +55,11 @@ usage()
     echo "--no-lim          Do not limit size of files used to train recaser and"
     echo "                  detokenizer (requires more memory)"
     echo "--no-trans        Do not generate translations"
+    echo "-n <int>          Order of the n-gram language models (4 by default)"
     echo "-nit <int>        Number of iterations of the EM algorithm when training"
     echo "                  single word models (5 by default)"
-    echo "-n <int>          Order of the n-gram language models (4 by default)"
+    echo "-cpr <float>      Pruning parameter used during the estimation of single"
+    echo "                  word alignment models (0.00001 by default)"
     echo "-m <int>          Maximum target phrase length during phrase model"
     echo "                  estimation (10 by default)"
     echo "-ao <string>      Operation between alignments to be executed"
@@ -430,7 +433,7 @@ process_pars()
         # Train translation model
         echo "**** Training translation model" >&2
         ${bindir}/thot_tm_train -pr ${pr_val} -s ${scorpus_train} -t ${tcorpus_train} -o ${outd}/tm -nit ${nitval} \
-                 -m ${m_val} ${ao_opt} ${tmtype_opt} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+                 -cpr ${cprval} -m ${m_val} ${ao_opt} ${tmtype_opt} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
 
     else
         echo "Error! training files do not exist" >&2
@@ -554,10 +557,12 @@ lower_given=0
 categ_given=0
 nolim_given=0
 notrans_given=0
-nit_given=0
-nitval=5
 n_given=0
 n_val=4
+nit_given=0
+nitval=5
+cpr_given=0
+cprval=0.00001
 m_val=10
 ao_given=0
 ao_opt="-ao sym1"
@@ -618,16 +623,22 @@ while [ $# -ne 0 ]; do
             ;;
         "--no-trans") notrans_given=1
             ;;
+        "-n") shift
+            if [ $# -ne 0 ]; then
+                n_val=$1
+                n_given=1
+            fi
+            ;;
         "-nit") shift
             if [ $# -ne 0 ]; then
                 nitval=$1
                 nit_given=1
             fi
             ;;
-        "-n") shift
+        "-cpr") shift
             if [ $# -ne 0 ]; then
-                n_val=$1
-                n_given=1
+                cprval=$1
+                cpr_given=1
             fi
             ;;
         "-m") shift
@@ -793,6 +804,7 @@ echo "-t is ${tcorpus_pref}" >> ${outd}/input_pars.txt
 echo "-o is ${outd}" >> ${outd}/input_pars.txt
 echo "-n is ${n_val}" >> ${outd}/input_pars.txt
 echo "-nit is ${nitval}" >> ${outd}/input_pars.txt
+echo "-cpr is ${cprval}" >> ${outd}/input_pars.txt
 echo "--skip-clean is ${skip_clean_given}" >> ${outd}/input_pars.txt
 echo "--tok is ${tok_given}" >> ${outd}/input_pars.txt
 echo "--lower is ${lower_given}" >> ${outd}/input_pars.txt
