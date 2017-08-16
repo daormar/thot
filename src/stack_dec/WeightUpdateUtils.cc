@@ -264,12 +264,10 @@ namespace WeightUpdateUtils
         Vector<std::string> trgPhrasePair=invPhrPairs[i][j].s_;
 
             // Obtain unweighted score for target given source
-        Score ptsScr=dirPhrModelFeatPtr->scorePhrasePair(srcPhrasePair,trgPhrasePair);
-        Score unweightedPtsScr=ptsScr/dirPhrModelFeatPtr->getWeight();
-              
+        Score unweightedPtsScr=dirPhrModelFeatPtr->scorePhrasePairUnweighted(srcPhrasePair,trgPhrasePair);
+          
             // Obtain unweighted score for source given target
-        Score pstScr=invPhrModelFeatPtr->scorePhrasePair(srcPhrasePair,trgPhrasePair);
-        Score unweightedPstScr=pstScr/invPhrModelFeatPtr->getWeight();
+        Score unweightedPstScr=invPhrModelFeatPtr->scorePhrasePairUnweighted(srcPhrasePair,trgPhrasePair);
         
             // Update loglikelihood
         loglikelihood+=unweightedPtsScr+unweightedPstScr;
