@@ -26,7 +26,7 @@ namespace PhraseExtractUtils
                                      BaseSwAligModel<PpInfo>* invSwAligModelPtr,
                                      std::string srcCorpusFileName,
                                      std::string trgCorpusFileName,
-                                     Vector<Vector<PhrasePair> >& invPhrPairs,
+                                     Vector<Vector<PhrasePair> >& phrPairs,
                                      int verbose/*=0*/)
   {
         // NOTE: this function requires the ability to extract new translation
@@ -49,7 +49,7 @@ namespace PhraseExtractUtils
     }  
 
         // Iterate over all sentences
-    invPhrPairs.clear();
+    phrPairs.clear();
     while(srcStream.getln())
     {
       if(!trgStream.getln())
@@ -72,13 +72,13 @@ namespace PhraseExtractUtils
         refSentStrVec.push_back(trgStream.dollar(i));
 
           // Extract consistent phrase pairs
-      Vector<PhrasePair> vecInvPhPair;
-      int ret=extractConsistentPhrasePairs(swAligModelPtr,invSwAligModelPtr,srcSentStrVec,refSentStrVec,vecInvPhPair,verbose);
+      Vector<PhrasePair> vecPhrPair;
+      int ret=extractConsistentPhrasePairs(swAligModelPtr,invSwAligModelPtr,srcSentStrVec,refSentStrVec,vecPhrPair,verbose);
       if(ret==THOT_ERROR)
         return THOT_ERROR;
       
           // Add vector of phrase pairs
-      invPhrPairs.push_back(vecInvPhPair);
+      phrPairs.push_back(vecPhrPair);
     }
     
         // Close files
@@ -92,33 +92,29 @@ namespace PhraseExtractUtils
   int extractConsistentPhrasePairs(BaseSwAligModel<PpInfo>* swAligModelPtr,
                                    BaseSwAligModel<PpInfo>* invSwAligModelPtr,
                                    const Vector<std::string>& srcSentStrVec,
-                                   const Vector<std::string>& refSentStrVec,
-                                   Vector<PhrasePair>& vecInvPhPair,
+                                   const Vector<std::string>& trgSentStrVec,
+                                   Vector<PhrasePair>& vecPhrPair,
                                    bool verbose/*=0*/)
   {
         // Generate alignments
     WordAligMatrix waMatrix;
     WordAligMatrix invWaMatrix;
   
-    swAligModelPtr->obtainBestAlignmentVecStr(srcSentStrVec,refSentStrVec,waMatrix);
-    invSwAligModelPtr->obtainBestAlignmentVecStr(refSentStrVec,srcSentStrVec,invWaMatrix);
+    swAligModelPtr->obtainBestAlignmentVecStr(srcSentStrVec,trgSentStrVec,waMatrix);
+    invSwAligModelPtr->obtainBestAlignmentVecStr(trgSentStrVec,srcSentStrVec,invWaMatrix);
   
         // Operate alignments
-    Vector<std::string> nsrcSentStrVec=swAligModelPtr->addNullWordToStrVec(srcSentStrVec);
-    Vector<std::string> nrefSentStrVec=swAligModelPtr->addNullWordToStrVec(refSentStrVec);  
-
-    waMatrix.transpose();
-
-        // Execute symmetrization
-    invWaMatrix.symmetr1(waMatrix);
+    invWaMatrix.transpose();
+    waMatrix.symmetr1(invWaMatrix);
 
         // Extract consistent pairs
+    Vector<std::string> nsrcSentStrVec=swAligModelPtr->addNullWordToStrVec(srcSentStrVec);
     PhraseExtractParameters phePars;
     extractPhrasesFromPairPlusAlig(phePars,
-                                   nrefSentStrVec,
-                                   srcSentStrVec,
-                                   invWaMatrix,
-                                   vecInvPhPair,
+                                   nsrcSentStrVec,
+                                   trgSentStrVec,
+                                   waMatrix,
+                                   vecPhrPair,
                                    verbose);
     return THOT_OK;
   }
@@ -128,18 +124,14 @@ namespace PhraseExtractUtils
                                       Vector<string> ns,
                                       Vector<string> t,
                                       WordAligMatrix waMatrix,
-                                      Vector<PhrasePair>& vecPhPair,
+                                      Vector<PhrasePair>& vecPhrPair,
                                       int /*verbose=0*/)
   {
     if(t.size()<MAX_SENTENCE_LENGTH && ns.size()-1<MAX_SENTENCE_LENGTH)
     {
           // Obtain vector of unfiltered phrase pairs
-      Vector<PhrasePair> vecUnfiltPhPair;
       PhraseExtractionTable phraseExtract;
-      phraseExtract.extractConsistentPhrases(phePars,ns,t,waMatrix,vecUnfiltPhPair);
-
-          // Filter phrase pairs
-      filterPhrasePairs(vecUnfiltPhPair,vecPhPair);
+      phraseExtract.extractConsistentPhrases(phePars,ns,t,waMatrix,vecPhrPair);
     }
     else
     {
@@ -152,18 +144,14 @@ namespace PhraseExtractUtils
                                          Vector<string> ns,
                                          Vector<string> t,
                                          WordAligMatrix waMatrix,
-                                         Vector<PhrasePair>& vecPhPair,
+                                         Vector<PhrasePair>& vecPhrPair,
                                          int /*verbose=0*/)
   {
     if(t.size()<MAX_SENTENCE_LENGTH && ns.size()-1<MAX_SENTENCE_LENGTH)
     {
           // Obtain vector of unfiltered phrase pairs
-      Vector<PhrasePair> vecUnfiltPhPair;
       PhraseExtractionTable phraseExtract;
-      phraseExtract.segmBasedExtraction(phePars,ns,t,waMatrix,vecUnfiltPhPair);
-
-          // Filter phrase pairs
-      filterPhrasePairs(vecUnfiltPhPair,vecPhPair);
+      phraseExtract.segmBasedExtraction(phePars,ns,t,waMatrix,vecPhrPair);
     }
     else
     {
@@ -171,18 +159,17 @@ namespace PhraseExtractUtils
     }
   }
 
-      //---------------
-  void filterPhrasePairs(const Vector<PhrasePair>& vecUnfiltPhPair,
-                         Vector<PhrasePair>& vecPhPair)
+  //---------------
+  void filterPhrasePairs(const Vector<PhrasePair>& vecUnfiltPhrPair,
+                         Vector<PhrasePair>& vecPhrPair)
   {
     CategPhrasePairFilter phrasePairFilter;
-    vecPhPair.clear();
-    for(unsigned int i=0;i<vecUnfiltPhPair.size();++i)
+    vecPhrPair.clear();
+    for(unsigned int i=0;i<vecUnfiltPhrPair.size();++i)
     {
-      if(phrasePairFilter.phrasePairIsOk(vecUnfiltPhPair[i].s_,vecUnfiltPhPair[i].t_))
-        vecPhPair.push_back(vecUnfiltPhPair[i]);
+      if(phrasePairFilter.phrasePairIsOk(vecUnfiltPhrPair[i].s_,vecUnfiltPhrPair[i].t_))
+        vecPhrPair.push_back(vecUnfiltPhrPair[i]);
     }
   }
   
 }
-

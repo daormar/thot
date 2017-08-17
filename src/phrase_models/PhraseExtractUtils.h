@@ -48,28 +48,28 @@ namespace PhraseExtractUtils
                                      BaseSwAligModel<PpInfo>* invSwAligModelPtr,
                                      std::string srcCorpusFileName,
                                      std::string trgCorpusFileName,
-                                     Vector<Vector<PhrasePair> >& invPhrPairs,
+                                     Vector<Vector<PhrasePair> >& phrPairs,
                                      int verbose=0);
   int extractConsistentPhrasePairs(BaseSwAligModel<PpInfo>* swAligModelPtr,
                                    BaseSwAligModel<PpInfo>* invSwAligModelPtr,
                                    const Vector<std::string>& srcSentStrVec,
                                    const Vector<std::string>& refSentStrVec,
-                                   Vector<PhrasePair>& vecInvPhPair,
+                                   Vector<PhrasePair>& vecPhrPair,
                                    bool verbose=0);
   void extractPhrasesFromPairPlusAlig(PhraseExtractParameters phePars,
                                       Vector<string> ns,
                                       Vector<string> t,
                                       WordAligMatrix waMatrix,
-                                      Vector<PhrasePair>& vecPhPair,
+                                      Vector<PhrasePair>& vecPhrPair,
                                       int verbose=0);
   void extractPhrasesFromPairPlusAligBrf(PhraseExtractParameters phePars,
                                          Vector<string> ns,
                                          Vector<string> t,
                                          WordAligMatrix waMatrix,
-                                         Vector<PhrasePair>& vecPhPair,
+                                         Vector<PhrasePair>& vecPhrPair,
                                          int verbose=0);
-  void filterPhrasePairs(const Vector<PhrasePair>& vecUnfiltPhPair,
-                         Vector<PhrasePair>& vecPhPair);
+  void filterPhrasePairs(const Vector<PhrasePair>& vecUnfiltPhrPair,
+                         Vector<PhrasePair>& vecPhrPair);
 }
 
 #endif
