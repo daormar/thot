@@ -88,9 +88,10 @@ class AlignmentExtractor
 	bool getNextAlignment(void);
 
         // Functions to access alignment information
-    Vector<string>& get_ns(void);
-    Vector<string>& get_t(void);
-    WordAligMatrix& get_wamatrix(void);
+    Vector<string> get_ns(void);
+    Vector<string> get_s(void);
+    Vector<string> get_t(void);
+    WordAligMatrix get_wamatrix(void);
     float get_numReps(void);
 
         // Functions to operate alignments

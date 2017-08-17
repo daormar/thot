@@ -114,19 +114,28 @@ bool AlignmentExtractor::rewind(void)
 }
 
 //-------------------------
-Vector<string>& AlignmentExtractor::get_ns(void)
+Vector<string> AlignmentExtractor::get_ns(void)
 {
   return ns;
 }
 
 //-------------------------
-Vector<string>& AlignmentExtractor::get_t(void)
+Vector<string> AlignmentExtractor::get_s(void)
+{
+  Vector<string> s;
+  for(unsigned int i=1;i<ns.size();++i)
+    s.push_back(ns[i]);
+  return s;
+}
+
+//-------------------------
+Vector<string> AlignmentExtractor::get_t(void)
 {
   return t;
 }
 
 //-------------------------
-WordAligMatrix& AlignmentExtractor::get_wamatrix(void)
+WordAligMatrix AlignmentExtractor::get_wamatrix(void)
 {
   return wordAligMatrix;
 }
