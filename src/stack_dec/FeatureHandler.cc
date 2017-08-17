@@ -414,8 +414,12 @@ int FeatureHandler::addNewTransOpts(BasePhraseModel* invPbModelPtr,
     swAligModelPtr->nthSentPair(n,srcSentStrVec,refSentStrVec,c);
 
         // Extract consistent phrase pairs
+    Vector<PhrasePair> vecUnfiltInvPhPair;
+    PhraseExtractUtils::extractConsistentPhrasePairs(invSwAligModelPtr,swAligModelPtr,refSentStrVec,srcSentStrVec,vecUnfiltInvPhPair,verbose);
+
+        // Filter phrase pairs
     Vector<PhrasePair> vecInvPhPair;
-    PhraseExtractUtils::extractConsistentPhrasePairs(swAligModelPtr,invSwAligModelPtr,srcSentStrVec,refSentStrVec,vecInvPhPair,verbose);
+    PhraseExtractUtils::filterPhrasePairs(vecUnfiltInvPhPair,vecInvPhPair);
 
         // Obtain mapped_n
     unsigned int mapped_n=map_n_am_suff_stats(n);

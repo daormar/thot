@@ -130,13 +130,22 @@ namespace WeightUpdateUtils
     }
 
         // Extract phrase pairs from development corpus
-    Vector<Vector<PhrasePair> > invPhrPairs;
-    int ret=PhraseExtractUtils::extractPhrPairsFromCorpusFiles(dirPhrModelFeatPtr->get_swmptr(),
-                                                               invPhrModelFeatPtr->get_swmptr(),
-                                                               srcCorpusFileName,
+    Vector<Vector<PhrasePair> > unfiltInvPhrPairs;
+    int ret=PhraseExtractUtils::extractPhrPairsFromCorpusFiles(invPhrModelFeatPtr->get_swmptr(),
+                                                               dirPhrModelFeatPtr->get_swmptr(),
                                                                trgCorpusFileName,
-                                                               invPhrPairs,
+                                                               srcCorpusFileName,
+                                                               unfiltInvPhrPairs,
                                                                verbose);
+        // Filter phrase pairs
+    Vector<Vector<PhrasePair> > invPhrPairs;
+    for(unsigned int i=0;i<unfiltInvPhrPairs.size();++i)
+    {
+      Vector<PhrasePair> invPhrPairVec;
+      PhraseExtractUtils::filterPhrasePairs(unfiltInvPhrPairs[i],invPhrPairVec);
+      invPhrPairs.push_back(invPhrPairVec);
+    }
+
     if(ret!=THOT_OK)
       return THOT_ERROR;
   
