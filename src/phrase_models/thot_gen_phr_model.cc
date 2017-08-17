@@ -209,8 +209,12 @@ void extendModelFromPairPlusAlig(PhraseExtractParameters phePars,
                                  int verbose/*=0*/)
 {
       // Extract phrase using BRF estimation
+  Vector<PhrasePair> vecUnfiltPhPair;
+  PhraseExtractUtils::extractPhrasesFromPairPlusAlig(phePars,ns,t,waMatrix,vecUnfiltPhPair,verbose);
+
+      // Filter phrase pairs
   Vector<PhrasePair> vecPhPair;
-  PhraseExtractUtils::extractPhrasesFromPairPlusAlig(phePars,ns,t,waMatrix,vecPhPair,verbose);
+  PhraseExtractUtils::filterPhrasePairs(vecUnfiltPhPair,vecPhPair);
 
       // Store phrases in model
   for(unsigned int i=0;i<vecPhPair.size();++i)
@@ -229,8 +233,12 @@ void extendModelFromPairPlusAligBrf(PhraseExtractParameters phePars,
                                     int verbose/*=0*/)
 {
       // Extract phrase using BRF estimation
+  Vector<PhrasePair> vecUnfiltPhPair;
+  PhraseExtractUtils::extractPhrasesFromPairPlusAligBrf(phePars,ns,t,waMatrix,vecUnfiltPhPair,verbose);
+
+      // Filter phrase pairs
   Vector<PhrasePair> vecPhPair;
-  PhraseExtractUtils::extractPhrasesFromPairPlusAligBrf(phePars,ns,t,waMatrix,vecPhPair,verbose);
+  PhraseExtractUtils::filterPhrasePairs(vecUnfiltPhPair,vecPhPair);
 
       // Store phrases in model
   for(unsigned int x=0;x<vecPhPair.size();++x)
