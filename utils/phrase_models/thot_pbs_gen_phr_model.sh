@@ -147,7 +147,7 @@ estimate_frag()
     echo "** Processing chunk ${fragm} (started at "`date`")..." > $SDIR/${fragm}_proc.log
 
     $bindir/thot_gen_phr_model_mr -g $SDIR/${fragm} ${thot_pars} \
-        -o $SDIR/${fragm} -pc -la "$i" -T $tmpdir 2>> $SDIR/${fragm}_proc.log || \
+        -o $SDIR/${fragm} -la "$i" -T $tmpdir 2>> $SDIR/${fragm}_proc.log || \
         { echo "Error while executing estimate_frag for $SDIR/${fragm}" >> $SDIR/log ; return 1 ; }
 
     # Write date to log file
