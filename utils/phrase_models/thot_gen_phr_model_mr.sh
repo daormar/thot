@@ -1,4 +1,4 @@
-1# Author: Daniel Ortiz Mart\'inez
+# Author: Daniel Ortiz Mart\'inez
 # *- bash -*
 
 # Allows to train very large corpus using thot_gen_phr_model
