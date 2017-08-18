@@ -207,9 +207,8 @@ for i in `ls $TMP/chunk\_*`; do
     if [ "${estimation}" = "BRF" ]; then
         cat $TMP/${chunk}.seglentable >> $TMP/seglentable || exit 1
     fi
-    cat $TMP/${chunk}.log>> $TMP/log || exit 1
     
-    rm $TMP/${chunk} $TMP/${chunk}.log $TMP/${chunk}.ttable || exit 1
+    rm $TMP/${chunk} $TMP/${chunk}.ttable || exit 1
     c=`expr $c + 1`
 done
 
