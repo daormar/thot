@@ -123,7 +123,12 @@ int genPhrModel(thot_gen_phr_model_pars pars)
    std::string outFileName=pars.outputFilesPrefix;
    outFileName+=".ttable";
        // output in thot native format
-   _incrPhraseModelPtr->printTTable(outFileName.c_str());
+   ret=_incrPhraseModelPtr->printTTable(outFileName.c_str());
+   if(ret==THOT_ERROR)
+   {
+     delete _incrPhraseModelPtr;
+     return THOT_ERROR;
+   }
    
        // print segmentation length table
    if(pars.BRF==1)

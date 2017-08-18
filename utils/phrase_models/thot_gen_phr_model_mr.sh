@@ -1,4 +1,4 @@
-# Author: Daniel Ortiz Mart\'inez
+1# Author: Daniel Ortiz Mart\'inez
 # *- bash -*
 
 # Allows to train very large corpus using thot_gen_phr_model
@@ -202,14 +202,14 @@ for i in `ls $TMP/chunk\_*`; do
     echo "Processing chunk ${chunk}" >> $TMP/log
     echo "Processing chunk ${chunk}" >&2
 
-    ${bindir}/thot_gen_phr_model -g $TMP/${chunk} ${thot_pars} -o $TMP/${chunk} -pc || exit 1
-    ${AWK} -v cn=$c '{printf"%s %s\n",$0,cn}' $TMP/${chunk}.ttable >> $TMP/counts
+    ${bindir}/thot_gen_phr_model -g $TMP/${chunk} ${thot_pars} -o $TMP/${chunk} || exit 1
+    ${AWK} -v cn=$c '{printf"%s %s\n",$0,cn}' $TMP/${chunk}.ttable >> $TMP/counts || exit 1
     if [ "${estimation}" = "BRF" ]; then
-        cat $TMP/${chunk}.seglentable >> $TMP/seglentable
+        cat $TMP/${chunk}.seglentable >> $TMP/seglentable || exit 1
     fi
-    cat $TMP/${chunk}.log>> $TMP/log
+    cat $TMP/${chunk}.log>> $TMP/log || exit 1
     
-    rm $TMP/${chunk} $TMP/${chunk}.log $TMP/${chunk}.ttable
+    rm $TMP/${chunk} $TMP/${chunk}.log $TMP/${chunk}.ttable || exit 1
     c=`expr $c + 1`
 done
 
