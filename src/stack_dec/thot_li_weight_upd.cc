@@ -407,7 +407,7 @@ int update_li_weights_feat_impl(const thot_liwu_pars& pars)
     return THOT_ERROR;
   
       // Print updated weights
-  retVal=featureHandler.printAligModels(pars.phrModelFilePrefix);
+  retVal=featureHandler.printAligModelLambdas(pars.phrModelFilePrefix);
   if(retVal==THOT_ERROR)
     return THOT_ERROR;
   
