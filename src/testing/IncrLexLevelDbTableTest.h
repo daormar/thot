@@ -75,8 +75,6 @@ class IncrLexLevelDbTableTest: public CppUnit::TestFixture
  private:
   IncrLexLevelDbTable *tab;
   string dbName = "/tmp/thot_leveldb_unit_test";
-  
-  Vector<WordIndex> getVector(string phrase);
 
  public:
   void setUp();
