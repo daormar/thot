@@ -69,6 +69,8 @@ class FeatureHandler
              int verbose=0);
   bool printAligModels(std::string tmFileName,
                        int verbose=0);
+  bool printAligModelLambdas(std::string tmFileName,
+                             int verbose=0);
   bool printLangModels(std::string lmFileName,
                        int verbose=0);
 
@@ -207,10 +209,10 @@ class FeatureHandler
   unsigned int map_n_am_suff_stats(unsigned int n);
 
       // Auxiliary functions to print models
-  bool printLambdas(std::string modelFileName,
-                    std::string featName,
-                    std::string invFeatName,
-                    int verbose=0);
+  bool printLambdasForModel(std::string modelFileName,
+                            std::string featName,
+                            std::string invFeatName,
+                            int verbose=0);
        
       // Memory management functions
   void deleteWpModelPtr(void);

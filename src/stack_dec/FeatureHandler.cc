@@ -1077,10 +1077,10 @@ bool FeatureHandler::print(std::string tmFileName,
 }
 
 //--------------------------
-bool FeatureHandler::printLambdas(std::string modelFileName,
-                                  std::string featName,
-                                  std::string invFeatName,
-                                  int /*verbose=0*/)
+bool FeatureHandler::printLambdasForModel(std::string modelFileName,
+                                          std::string featName,
+                                          std::string invFeatName,
+                                          int /*verbose=0*/)
 {
   std::string lambdaFileName=modelFileName+".lambda";
 
@@ -1137,7 +1137,7 @@ bool FeatureHandler::printAligModels(std::string tmFileName,
       std::string invFeatName=swModelsInfo.invFeatNameVec[i];
       std::string modelFileName=phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName;
 
-      int ret=printLambdas(modelFileName,featName,invFeatName,verbose);
+      int ret=printLambdasForModel(modelFileName,featName,invFeatName,verbose);
       if(ret==THOT_ERROR)
         return THOT_ERROR;      
     }
@@ -1160,7 +1160,36 @@ bool FeatureHandler::printAligModels(std::string tmFileName,
 
     std::string featName=swModelsInfo.featNameVec[0];
     std::string invFeatName=swModelsInfo.invFeatNameVec[0];    
-    return printLambdas(tmFileName,featName,invFeatName,verbose);
+    return printLambdasForModel(tmFileName,featName,invFeatName,verbose);
+  }
+}
+
+//--------------------------
+bool FeatureHandler::printAligModelLambdas(std::string tmFileName,
+                                           int verbose/*=0*/)
+{
+  std::string mainFileName;
+  if(fileIsDescriptor(tmFileName,mainFileName))
+  {
+        // Print lambda files
+    for(unsigned int i=0;i<swModelsInfo.featNameVec.size();++i)
+    {
+      std::string featName=swModelsInfo.featNameVec[i];
+      std::string invFeatName=swModelsInfo.invFeatNameVec[i];
+      std::string modelFileName=phraseModelsInfo.modelDescEntryVec[i].absolutizedModelFileName;
+
+      int ret=printLambdasForModel(modelFileName,featName,invFeatName,verbose);
+      if(ret==THOT_ERROR)
+        return THOT_ERROR;      
+    }
+    
+    return THOT_OK;
+  }
+  else
+  {
+    std::string featName=swModelsInfo.featNameVec[0];
+    std::string invFeatName=swModelsInfo.invFeatNameVec[0];    
+    return printLambdasForModel(tmFileName,featName,invFeatName,verbose);
   }
 }
 
