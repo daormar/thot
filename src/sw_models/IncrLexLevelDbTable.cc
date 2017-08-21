@@ -287,7 +287,16 @@ bool IncrLexLevelDbTable::load(const char* lexNumDenFile)
     dbName = lexNumDenFile;
     leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
 
-    return (status.ok()) ? THOT_OK : THOT_ERROR;
+    if (status.ok())
+    {
+        return THOT_OK;
+    }
+    else
+    {
+        cerr << "Cannot open DB: " << status.ToString() << endl;
+
+        return THOT_ERROR;
+    }
 }
 
 //-------------------------
@@ -350,4 +359,17 @@ void IncrLexLevelDbTable::clear(void)
             exit(3);
         }
     }
+}
+
+//-------------------------
+IncrLexLevelDbTable::~IncrLexLevelDbTable(void)
+{
+    if(db != NULL)
+        delete db;
+
+    if(options.filter_policy != NULL)
+        delete options.filter_policy;
+
+    if(options.block_cache != NULL)
+        delete options.block_cache;
 }

@@ -83,8 +83,9 @@ class IncrLexLevelDbTable
 
     public:
 
-            // Constructor
+            // Constructor and destructor
         IncrLexLevelDbTable(void);
+        ~IncrLexLevelDbTable(void);
 
             // Function for initializing and removing LevelDB
         bool init(string levelDbPath);
