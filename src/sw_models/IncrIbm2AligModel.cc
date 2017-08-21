@@ -460,6 +460,7 @@ bool IncrIbm2AligModel::print(const char* prefFileName)
   
       // Print IBM 1 Model data
   retVal=IncrIbm1AligModel::print(prefFileName);
+  if(retVal==THOT_ERROR) return THOT_ERROR;
   
       // Print file with alignment nd values
   std::string aligNumDenFile=prefFileName;

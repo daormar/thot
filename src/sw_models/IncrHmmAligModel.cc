@@ -1947,12 +1947,14 @@ bool IncrHmmAligModel::print(const char* prefFileName)
       // Print vocabularies 
   std::string srcVocFileName=prefFileName;
   srcVocFileName=srcVocFileName+".svcb";
-  printGIZASrcVocab(srcVocFileName.c_str());
+  retVal=printGIZASrcVocab(srcVocFileName.c_str());
+  if(retVal==THOT_ERROR) return THOT_ERROR;
 
   std::string trgVocFileName=prefFileName;
   trgVocFileName=trgVocFileName+".tvcb";    
-  printGIZATrgVocab(trgVocFileName.c_str());
-  
+  retVal=printGIZATrgVocab(trgVocFileName.c_str());
+  if(retVal==THOT_ERROR) return THOT_ERROR;
+
       // Print files with source and target sentences
   std::string srcsFile=prefFileName;
   srcsFile=srcsFile+".src";
