@@ -267,9 +267,9 @@ bool IncrLexLevelDbTable::getTransForTarget(WordIndex t,
 
 //-------------------------
 void IncrLexLevelDbTable::setLexNumDen(WordIndex s,
-                                WordIndex t,
-                                float num,
-                                float den)
+                                       WordIndex t,
+                                       float num,
+                                       float den)
 {
     setLexDenom(s, den);
     setLexNumer(s, t, num);
