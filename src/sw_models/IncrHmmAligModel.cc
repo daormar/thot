@@ -34,6 +34,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //-------------------------
 IncrHmmAligModel::IncrHmmAligModel()
 {
+      // Create table with lexical parameters
+  incrLexTable = new IncrLexTable();
+
       // Link pointers with sentence length model
   sentLengthModel.linkVocabPtr(&swVocab);
   sentLengthModel.linkSentPairInfo(&sentenceHandler);
@@ -97,7 +100,7 @@ void IncrHmmAligModel::efficientBatchTrainingForRange(pair<unsigned int,unsigned
 #else
   calcNewLocalSuffStats(sentPairRange,verbosity);
 #endif
-  incrLexTable.clear();
+  incrLexTable->clear();
   incrHmmAligTable.clear();
   updateParsLex();
   updateParsAlig();
@@ -180,13 +183,13 @@ double IncrHmmAligModel::unsmoothed_logpts(WordIndex s,
   bool found;
   double numer;
 
-  numer=incrLexTable.getLexNumer(s,t,found);
+  numer=incrLexTable->getLexNumer(s,t,found);
   if(found)
   {
         // lexNumer for pair s,t exists
     double denom;
     
-    denom=incrLexTable.getLexDenom(s,found);
+    denom=incrLexTable->getLexDenom(s,found);
     if(!found) return SMALL_LG_NUM;
     else
     {
@@ -1295,11 +1298,11 @@ void IncrHmmAligModel::updateParsLex(void)
       {
             // Obtain lexNumer for s,t
         bool found;
-        float numer=incrLexTable.getLexNumer(s,t,found);
+        float numer=incrLexTable->getLexNumer(s,t,found);
         if(!found) numer=SMALL_LG_NUM;
       
             // Obtain lexDenom for s,t
-        float denom=incrLexTable.getLexDenom(s,found);
+        float denom=incrLexTable->getLexDenom(s,found);
         if(!found) denom=SMALL_LG_NUM;
       
             // Obtain new sufficient statistics
@@ -1310,7 +1313,7 @@ void IncrHmmAligModel::updateParsLex(void)
         new_denom=MathFuncs::lns_sumlog_float(new_denom,new_numer);
         
             // Set lexical numerator and denominator
-        incrLexTable.setLexNumDen(s,t,new_numer,new_denom);
+        incrLexTable->setLexNumDen(s,t,new_numer,new_denom);
       }
     }
   }
@@ -1907,7 +1910,7 @@ bool IncrHmmAligModel::load(const char* prefFileName)
         // Load file with lexical nd values
     std::string lexNumDenFile=prefFileName;
     lexNumDenFile=lexNumDenFile+".hmm_lexnd";
-    retVal=incrLexTable.load(lexNumDenFile.c_str());
+    retVal=incrLexTable->load(lexNumDenFile.c_str());
     if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load file with alignment nd values
@@ -1974,7 +1977,7 @@ bool IncrHmmAligModel::print(const char* prefFileName)
       // Print file with lexical nd values
   std::string lexNumDenFile=prefFileName;
   lexNumDenFile=lexNumDenFile+".hmm_lexnd";
-  retVal=incrLexTable.print(lexNumDenFile.c_str());
+  retVal=incrLexTable->print(lexNumDenFile.c_str());
   if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with alignment nd values
@@ -2014,7 +2017,7 @@ void IncrHmmAligModel::clear(void)
   lanjm1ip_anji_aux.clear();
   alphaMatrix.clear();
   betaMatrix.clear();
-  incrLexTable.clear();
+  incrLexTable->clear();
   incrHmmAligTable.clear();
   sentLengthModel.clear();
 }
@@ -2027,4 +2030,5 @@ void IncrHmmAligModel::clearTempVars(void)
 //-------------------------
 IncrHmmAligModel::~IncrHmmAligModel(void)
 {
+  delete incrLexTable;
 }

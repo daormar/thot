@@ -226,7 +226,7 @@ class IncrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    CachedHmmAligLgProb cachedAligLogProbs;
        // EM algorithm auxiliary variables
 
-   IncrLexTable incrLexTable;
+   IncrLexTable* incrLexTable;
        // Table with lexical parameters
 
    IncrHmmAligTable incrHmmAligTable;
