@@ -41,9 +41,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include <myVector.h>
-#include <set>
 #include <ErrorDefs.h>
-#include <fstream>
 #include <StatModelDefs.h>
 
 #include "leveldb/cache.h"
@@ -51,6 +49,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "leveldb/filter_policy.h"
 #include "leveldb/write_batch.h"
 
+#include <fstream>
+#include <set>
+#include <sstream>
+#include <stdlib.h>
 
 //--------------- Constants ------------------------------------------
 
