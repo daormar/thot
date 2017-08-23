@@ -1,6 +1,6 @@
 /*
 thot package for statistical machine translation
-Copyright (C) 2013 Daniel Ortiz-Mart\'inez
+Copyright (C) 2013-2017 Daniel Ortiz-Mart\'inez, Adam Harasimowicz
  
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
@@ -37,6 +37,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include <_incrLexTable.h>
 #include <myVector.h>
 #include <set>
 #include <ErrorDefs.h>
@@ -70,7 +71,7 @@ using __gnu_cxx::hash_map;
 
 //--------------- IncrLexTable class
 
-class IncrLexTable
+class IncrLexTable : public _incrLexTable
 {
   public:
 

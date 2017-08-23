@@ -1,6 +1,6 @@
 /*
 thot package for statistical machine translation
-Copyright (C) 2013-2017 Daniel Ortiz-Mart\'inez, Adam Harasimowicz
+Copyright (C) 2017 Adam Harasimowicz
  
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
@@ -18,22 +18,22 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: IncrHmmAligModel                                         */
+/* Module: IncrLevelDbHmmAligModel                                  */
 /*                                                                  */
-/* Definitions file: IncrHmmAligModel.cc                            */
+/* Definitions file: IncrLevelDbHmmAligModel.cc                     */
 /*                                                                  */
 /********************************************************************/
 
 
 //--------------- Include files --------------------------------------
 
-#include "IncrHmmAligModel.h"
+#include "IncrLevelDbHmmAligModel.h"
 
-//--------------- IncrHmmAligModel class function definitions
+//--------------- IncrLevelDbHmmAligModel class function definitions
 
 //-------------------------
-IncrHmmAligModel::IncrHmmAligModel()  : _incrHmmAligModel()
+IncrLevelDbHmmAligModel::IncrLevelDbHmmAligModel()  : _incrHmmAligModel()
 {
       // Create table with lexical parameters
-  incrLexTable = new IncrLexTable();
+  incrLexTable = new IncrLexLevelDbTable();
 }

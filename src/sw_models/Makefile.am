@@ -14,12 +14,13 @@ SwDefs.h _swAligModel.h SmoothedIncrIbm2AligModel.h			\
 SmoothedIncrIbm2AligModel.cc SmoothedIncrIbm1AligModel.h		\
 SmoothedIncrIbm1AligModel.cc SentPairCont.h _sentLengthModel.h		\
 _sentLengthModel.cc LightSentenceHandler.h LightSentenceHandler.cc	\
-LexAuxVar.h _incrSwAligModel.h IncrLexTable.h IncrLexTable.cc		\
-IncrLexLevelDbTable.h IncrLexLevelDbTable.cc                        \
+LexAuxVar.h _incrLexTable.h _incrSwAligModel.h _incrHmmAligModel.h  \
+IncrLexTable.h IncrLexTable.cc IncrLexLevelDbTable.h IncrLexLevelDbTable.cc     \
 IncrIbm2AligTable.h IncrIbm2AligTable.cc IncrIbm2AligModel.h		\
 IncrIbm2AligModel.cc IncrIbm1AligModel.h IncrIbm1AligModel.cc		\
 IncrHmmP0AligModel.h IncrHmmP0AligModel.cc IncrHmmAligTable.h		\
-IncrHmmAligTable.cc IncrHmmAligModel.h IncrHmmAligModel.cc		\
+_incrHmmAligModel.cc IncrHmmAligTable.cc IncrHmmAligModel.h         \
+IncrHmmAligModel.cc IncrLevelDbHmmAligModel.h IncrLevelDbHmmAligModel.cc		\
 HmmAligInfo.h CachedHmmAligLgProb.h CachedHmmAligLgProb.cc		\
 DoubleMatrix.h DoubleMatrix.cc BestLgProbForTrgWord.h BaseSwAligModel.h	\
 BaseStepwiseAligModel.h BaseSentLengthModel.h BaseSentenceHandler.h	\

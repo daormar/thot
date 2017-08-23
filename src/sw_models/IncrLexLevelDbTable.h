@@ -40,6 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include <_incrLexTable.h>
 #include <myVector.h>
 #include <ErrorDefs.h>
 #include <StatModelDefs.h>
@@ -65,7 +66,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- IncrLexLevelDbTable class
 
-class IncrLexLevelDbTable
+class IncrLexLevelDbTable : public _incrLexTable
 {
     leveldb::DB* db;
     leveldb::Options options;

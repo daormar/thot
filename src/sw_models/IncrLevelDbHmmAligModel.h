@@ -1,6 +1,6 @@
 /*
 thot package for statistical machine translation
-Copyright (C) 2013-2017 Daniel Ortiz-Mart\'inez, Adam Harasimowicz
+Copyright (C) 2017 Adam Harasimowicz
  
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
@@ -18,21 +18,20 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: IncrHmmAligModel                                         */
+/* Module: IncrLevelDbHmmAligModel                                  */
 /*                                                                  */
-/* Prototype file: IncrHmmAligModel.h                               */
+/* Prototype file: IncrLevelDbHmmAligModel.h                        */
 /*                                                                  */
-/* Description: Defines the IncrHmmAligModel class.                 */
-/*              IncrHmmAligModel class allows to generate and       */
-/*              access to the data of an HMM statistical            */
-/*              alignment model.                                    */
-/*                                                                  */
-/* Notes: 100% AC-DC powered                                        */
+/* Description: Defines the IncrLevelDbHmmAligModel class.          */
+/*              IncrLevelDbHmmAligModel class allows to generate    */
+/*              and access the data of an HMM statistical           */
+/*              alignment model which uses LevelDb as a table       */
+/*              lexical parameters.                                 */
 /*                                                                  */
 /********************************************************************/
 
-#ifndef _IncrHmmAligModel_h
-#define _IncrHmmAligModel_h
+#ifndef _IncrLevelDbHmmAligModel_h
+#define _IncrLevelDbHmmAligModel_h
 
 //--------------- Include files --------------------------------------
 
@@ -41,7 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_incrHmmAligModel.h"
-#include <IncrLexTable.h>
+#include <IncrLexLevelDbTable.h>
 
 //--------------- Constants ------------------------------------------
 
@@ -51,14 +50,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- IncrHmmAligModel class
+//--------------- IncrLevelDbHmmAligModel class
 
-class IncrHmmAligModel : public _incrHmmAligModel
+class IncrLevelDbHmmAligModel : public _incrHmmAligModel
 {
   public:
   
    // Constructor
-   IncrHmmAligModel();
+   IncrLevelDbHmmAligModel();
 
 };
 

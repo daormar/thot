@@ -142,10 +142,12 @@ sw_models/_swAligModel.h sw_models/SmoothedIncrIbm2AligModel.h		\
 sw_models/SmoothedIncrIbm1AligModel.h sw_models/SentPairCont.h		\
 sw_models/_sentLengthModel.h sw_models/LightSentenceHandler.h		\
 sw_models/LexAuxVar.h sw_models/_incrSwAligModel.h			\
+sw_models/_incrLexTable.h sw_models/_incrHmmAligModel.h         \
 sw_models/IncrLexTable.h sw_models/IncrIbm2AligTable.h			\
 sw_models/IncrIbm2AligModel.h sw_models/IncrIbm1AligModel.h		\
 sw_models/IncrHmmP0AligModel.h sw_models/IncrHmmAligTable.h		\
 sw_models/IncrHmmAligModel.h sw_models/HmmAligInfo.h			\
+sw_models/IncrLevelDbHmmAligModel.h                             \
 sw_models/CachedHmmAligLgProb.h sw_models/CachedHmmAligLgProb.cc	\
 sw_models/DoubleMatrix.h sw_models/BestLgProbForTrgWord.h		\
 sw_models/BaseSwAligModel.h sw_models/BaseStepwiseAligModel.h		\
@@ -156,10 +158,12 @@ sw_models/anjiMatrix.h
 sw_models_defs= sw_models/WeightedIncrNormSlm.cc			\
 sw_models/SmoothedIncrIbm2AligModel.cc					\
 sw_models/SmoothedIncrIbm1AligModel.cc sw_models/_sentLengthModel.cc	\
+sw_models/_incrHmmAligModel.cc                                      \
 sw_models/LightSentenceHandler.cc sw_models/IncrLexTable.cc		    \
 sw_models/IncrIbm2AligTable.cc sw_models/IncrIbm2AligModel.cc		\
 sw_models/IncrIbm1AligModel.cc sw_models/IncrHmmP0AligModel.cc		\
 sw_models/IncrHmmAligTable.cc sw_models/IncrHmmAligModel.cc		\
+sw_models/IncrLevelDbHmmAligModel.cc                            \
 sw_models/DoubleMatrix.cc sw_models/aSourceHmm.cc sw_models/aSource.cc	\
 sw_models/anjm1ip_anjiMatrix.cc sw_models/anjiMatrix.cc
 
