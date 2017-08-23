@@ -368,92 +368,10 @@ bool SingleWordVocab::printGIZATrgVocab(const char *outputFileName)
 }
 
 //-------------------------
-bool SingleWordVocab::loadSrcClassDicFile(char *srcClassDicFileName)
-{
- awkInputStream awk;
- 
- srcClassDic.clear();
- if(awk.open(srcClassDicFileName)==THOT_ERROR)
- {
-   cerr<<"Error while reading source class dictionary file, file "<<srcClassDicFileName<<" does not exist.\n";
-   return THOT_ERROR;
- }  
- else
- {
-   cerr<<"Reading source class dictionary from: "<<srcClassDicFileName<<endl;
-   awk.FS='	';
-   srcClassDic.addEntry(0,0);   
-   while(awk.getln())
-   {
-     if(awk.NF>1)
-     {
-       if(awk.NF==2)
-       {
-         srcClassDic.addEntry(stringToSrcWordIndex(awk.dollar(1)),atoi(awk.dollar(2).c_str()));
-       }
-       else
-       {
-         cerr<<"Error in source class dictionary file\n";
-         return THOT_ERROR;
-       }
-     }
-   }
- }
- 
- return THOT_OK;
-}
-//-------------------------
-ClassIndex SingleWordVocab::getClassForSrcWord(WordIndex w)
-{
- return srcClassDic.getClassForWord(w);
-}
-//-------------------------
-bool SingleWordVocab::loadTrgClassDicFile(char *trgClassDicFileName)
-{
- awkInputStream awk;
- 
- trgClassDic.clear();
- if(awk.open(trgClassDicFileName)==THOT_ERROR)
- {
-   cerr<<"Error while reading target class dictionary file, file "<<trgClassDicFileName<<" does not exist.\n";
-   return THOT_ERROR;
- }  
- else
- {
-   cerr<<"Reading target class dictionary from: "<<trgClassDicFileName<<endl;
-   awk.FS='	';
-   while(awk.getln())
-   {
-     if(awk.NF>1)
-     {
-       if(awk.NF==2)
-       {
-         trgClassDic.addEntry(stringToTrgWordIndex(awk.dollar(1)),atoi(awk.dollar(2).c_str()));
-       }
-       else
-       {
-         cerr<<"Error in target class dictionary file\n";
-         return THOT_ERROR;
-       }
-     }
-   }
- }
- 
- return THOT_OK;
-}
-
-//-------------------------
-ClassIndex SingleWordVocab::getClassForTrgWord(WordIndex w)
-{
- return trgClassDic.getClassForWord(w);
-}
-
-//-------------------------
 void SingleWordVocab::clearSrcVocab(void)
 {
   stringToSrcWordIndexMap.clear();
   srcWordIndexMapToString.clear();
-  srcClassDic.clear();
 
   add_null_word_to_srcvoc();
   add_unk_word_to_srcvoc();
@@ -465,7 +383,6 @@ void SingleWordVocab::clearTrgVocab(void)
 {
   stringToTrgWordIndexMap.clear();
   trgWordIndexMapToString.clear();
-  trgClassDic.clear();
 
   add_null_word_to_trgvoc();
   add_unk_word_to_trgvoc();

@@ -100,14 +100,6 @@ class SingleWordVocab
    bool printGIZATrgVocab(const char *trgInputVocabFileName);
        // Reads target vocabulary from a file in GIZA format
 
-   // Functions related to classes for source words
-   bool loadSrcClassDicFile(char *srcClassDicFileName);
-   ClassIndex getClassForSrcWord(WordIndex w);
-
-   // Functions related to classes for target words
-   bool loadTrgClassDicFile(char *trgClassDicFileName);
-   ClassIndex getClassForTrgWord(WordIndex w);
-
    // clear() function
    void clear(void);
 
@@ -120,9 +112,6 @@ class SingleWordVocab
    StrToIdxVocab stringToTrgWordIndexMap;
    IdxToStrVocab trgWordIndexMapToString;
       
-   ClassDic srcClassDic;
-   ClassDic trgClassDic;
-
    void clearSrcVocab(void);
    void clearTrgVocab(void);
    void add_null_word_to_srcvoc(void);
