@@ -49,6 +49,7 @@ struct ModelDescriptorEntry
 std::string absolutizeModelFileName(std::string descFileName,
                                     std::string modelFileName);
 std::string extractDirName(std::string filePath);
+bool fileIsDescriptor(std::string fileName);
 bool fileIsDescriptor(std::string fileName,
                       std::string& mainFileName);
 bool extractModelEntryInfo(std::string fileName,

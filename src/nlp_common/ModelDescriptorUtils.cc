@@ -83,6 +83,38 @@ std::string extractDirName(std::string filePath)
 }
 
 //---------------
+bool fileIsDescriptor(std::string fileName)
+{
+  awkInputStream awk;
+  if(awk.open(fileName.c_str())==THOT_ERROR)
+    return false;
+  else
+  {
+    if(awk.getln())
+    {
+      if(awk.NF>=3 && awk.dollar(1)=="thot" && (awk.dollar(2)=="tm" || awk.dollar(2)=="lm") && awk.dollar(3)=="descriptor")
+      {
+            // File is a descriptor
+        awk.close();
+        return true;
+      }
+      else
+      {
+            // File is not a descriptor
+        awk.close();
+        return false;
+      }
+    }
+    else
+    {
+          // File is empty
+      awk.close();
+      return false;
+    }
+  }
+}
+
+//---------------
 bool fileIsDescriptor(std::string fileName,
                       std::string& mainFileName)
 {
@@ -95,7 +127,7 @@ bool fileIsDescriptor(std::string fileName,
     {
       if(awk.NF>=3 && awk.dollar(1)=="thot" && (awk.dollar(2)=="tm" || awk.dollar(2)=="lm") && awk.dollar(3)=="descriptor")
       {
-            // Process descriptor (main file will be read)
+            // Process descriptor (main file will be searched)
         while(awk.getln())
         {
           if(awk.NF>=3 && awk.dollar(3)=="main")
@@ -117,9 +149,12 @@ bool fileIsDescriptor(std::string fileName,
             }
           }
         }
-            // File is not a descriptor since it does not incorporate a
-            // main model
-        return false;
+            // File is a descriptor but it does not incorporate a
+            // main model, so mainFileName is left empty
+        cerr<<"Warning: descriptor store in "<<fileName<<" does not contain a main entry"<<endl;
+        awk.close();
+        mainFileName.clear();
+        return true;
       }
       else
       {
