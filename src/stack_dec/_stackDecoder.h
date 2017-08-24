@@ -880,7 +880,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(v
     
   while(!end && iterNo<MAX_NUM_OF_ITER)
   {
-#ifdef THOT_DEBUG
 #ifdef THOT_ENABLE_GRAPH
     if((iterNo%PRINT_GRAPH_STEP)==0)
     {
@@ -889,7 +888,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(v
       this->printSearchGraph(printGraphFileName);
     }
 #endif      
-#endif
         // Select hypothesis to be expanded
     hypsToExpand.clear();
     while(!stack_ptr->empty() && hypsToExpand.size()<I)
@@ -1000,7 +998,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
 
   while(!end && iterNo<MAX_NUM_OF_ITER)
   {
-#ifdef THOT_DEBUG
 #ifdef THOT_ENABLE_GRAPH
     if((iterNo%PRINT_GRAPH_STEP)==0)
     {
@@ -1009,7 +1006,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
       this->printSearchGraph(printGraphFileName);
     }
 #endif      
-#endif
         // Select hypothesis to be expanded
     hypsToExpand.clear();
     while(!stack_ptr->empty() && hypsToExpand.size()<I)
@@ -1109,7 +1105,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVe
 
   while(!end && iterNo<MAX_NUM_OF_ITER)
   {
-#ifdef THOT_DEBUG
 #ifdef THOT_ENABLE_GRAPH
     if((iterNo%PRINT_GRAPH_STEP)==0)
     {
@@ -1118,7 +1113,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVe
       this->printSearchGraph(printGraphFileName);
     }
 #endif      
-#endif
         // Select hypothesis to be expanded
     hypsToExpand.clear();
     while(!stack_ptr->empty() && hypsToExpand.size()<I)
@@ -1217,7 +1211,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
 
   while(!end && iterNo<MAX_NUM_OF_ITER)
   {
-#ifdef THOT_DEBUG
 #ifdef THOT_ENABLE_GRAPH
     if((iterNo%PRINT_GRAPH_STEP)==0)
     {
@@ -1226,7 +1219,6 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeWi
       this->printSearchGraph(printGraphFileName);
     }
 #endif      
-#endif
         // Select hypothesis to be expanded
     hypsToExpand.clear();
     while(!stack_ptr->empty() && hypsToExpand.size()<I)

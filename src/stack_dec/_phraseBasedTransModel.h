@@ -2859,13 +2859,6 @@ void _phraseBasedTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
     }
     outS<<"----------------------------------------------"<<endl;
   }
-#ifdef THOT_DEBUG
-      // Print debug information
-  for(unsigned int i=0;i<hyp.hDebug.size();++i)
-  {
-    hyp.hDebug[i].print(outS);
-  }
-#endif 
 }
 
 //---------------------------------

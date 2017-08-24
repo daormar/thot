@@ -99,9 +99,6 @@ class BaseHypothesis
       // Destructor
   virtual ~BaseHypothesis(){};
 
-#ifdef THOT_DEBUG
-  Vector<HypDebugData> hDebug;
-#endif
 };
 
 #endif

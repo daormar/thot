@@ -415,18 +415,6 @@ PhrLocalSwLiTm::Hypothesis PhrLocalSwLiTm::nullHypothesis(void)
   hypAux.setData(nullHypothesisHypData());
   scoreInfo.score+=sentLenScoreForPartialHyp(hypAux.getKey(),0);
 
-#ifdef THOT_DEBUG
-  HypDebugData hdData;
-
-  hdData.opCode="init";
-  hdData.parameters.clear();
-  hdData.partialContribs.insert(hdData.partialContribs.begin(),getNumWeights(),0);
-  hdData.partialContribs[WPEN]=sumWordPenaltyScore(0);
-  hdData.partialContribs[getNumWeights()-1]=sentLenScoreForPartialHyp(hypAux.getKey(),0);
-  hdData.accum=scoreInfo.score;
-  hyp.hDebug.push_back(hdData);
-#endif
-
       // Set ScoreInfo
   hyp.setScoreInfo(scoreInfo);
 
@@ -1286,11 +1274,6 @@ Score PhrLocalSwLiTm::incrScore(const Hypothesis& pred_hyp,
       // Init scoreComponents
   scoreComponents.clear();
   for(unsigned int i=0;i<getNumWeights();++i) scoreComponents.push_back(0);
-
-#ifdef THOT_DEBUG
-  new_hyp.hDebug=pred_hyp.hDebug;
-  Vector<Score> prev_scoreComponents=scoreComponents;
-#endif
   
   for(unsigned int i=pred_hypd.sourceSegmentation.size();i<new_hypd.sourceSegmentation.size();++i)
   {
@@ -1354,25 +1337,6 @@ Score PhrLocalSwLiTm::incrScore(const Hypothesis& pred_hyp,
         // Increase trglen
     trglen+=trgphrase.size();
 
-#ifdef THOT_DEBUG
-    HypDebugData hdData;
-
-    hdData.opCode="extend";
-    hdData.parameters.push_back(srcLeft);
-    hdData.parameters.push_back(srcRight);
-    for(unsigned int k=0;k<trgphrase.size();++k)
-    {
-      hdData.parameters.push_back(trgphrase[k]);
-    }
-    hdData.accum=0;
-    for(unsigned int k=0;k<scoreComponents.size();++k)
-    {
-      hdData.partialContribs.push_back(scoreComponents[k]-prev_scoreComponents[k]);
-      hdData.accum+=scoreComponents[k]-prev_scoreComponents[k];
-    }
-    new_hyp.hDebug.push_back(hdData);
-    prev_scoreComponents=scoreComponents;
-#endif
   }
   if(numberOfUncoveredSrcWordsHypData(new_hypd)==0 &&
      numberOfUncoveredSrcWordsHypData(pred_hypd)!=0)
@@ -1387,19 +1351,6 @@ Score PhrLocalSwLiTm::incrScore(const Hypothesis& pred_hyp,
         // Calculate sentence length score
     scoreComponents[PTS+phrModelInfoPtr->phraseModelPars.ptsWeightVec.size()*2]-=sentLenScoreForPartialHyp(hypKey,trglen);
     scoreComponents[PTS+phrModelInfoPtr->phraseModelPars.ptsWeightVec.size()*2]+=sentLenScore(pbtmInputVars.srcSentVec.size(),trglen);
-
-#ifdef THOT_DEBUG
-    HypDebugData hdData;
-      
-    hdData.opCode="close";
-    hdData.accum=0;
-    for(unsigned int k=0;k<scoreComponents.size();++k)
-    {
-      hdData.partialContribs.push_back(scoreComponents[k]-prev_scoreComponents[k]);
-      hdData.accum+=scoreComponents[k]-prev_scoreComponents[k];
-    }
-    new_hyp.hDebug.push_back(hdData);
-#endif
   }
 
       // Accumulate the score stored in scoreComponents
