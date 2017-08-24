@@ -89,10 +89,10 @@ class SingleWordVocab
   public:
 
 #ifdef THOT_DISABLE_SPACE_EFFICIENT_VOCAB_STRUCTURES
-   typedef std::map<std::string,pair<WordIndex,Count> > StrToIdxVocab;
+   typedef std::map<std::string,WordIndex> StrToIdxVocab;
    typedef std::map<WordIndex,std::string> IdxToStrVocab;
 #else
-   typedef hash_map<std::string,pair<WordIndex,Count>,StringHashF> StrToIdxVocab;
+   typedef hash_map<std::string,WordIndex,StringHashF> StrToIdxVocab;
    typedef hash_map<WordIndex,std::string> IdxToStrVocab;
 #endif
    
@@ -105,12 +105,11 @@ class SingleWordVocab
    WordIndex stringToSrcWordIndex(std::string s)const;
    std::string wordIndexToSrcString(WordIndex w)const;
    bool existSrcSymbol(std::string s)const;
-   Vector<WordIndex> strVectorToSrcIndexVector(Vector<std::string> s,
-                                               Count numTimes=1);
+   Vector<WordIndex> strVectorToSrcIndexVector(Vector<std::string> s);
        //converts a string vector into a source word index vector, this
        //function automatically handles the source vocabulary,
        //increasing and modifying it if necessary
-   WordIndex addSrcSymbol(std::string s,Count numTimes=1);
+   WordIndex addSrcSymbol(std::string s);
    bool loadSrcVocab(const char *srcInputVocabFileName);
    bool printSrcVocab(const char *outputFileName);
    bool loadGIZASrcVocab(const char *srcInputVocabFileName);
@@ -123,12 +122,11 @@ class SingleWordVocab
    WordIndex stringToTrgWordIndex(std::string t)const;
    std::string wordIndexToTrgString(WordIndex w)const;
    bool existTrgSymbol(std::string t)const;
-   Vector<WordIndex> strVectorToTrgIndexVector(Vector<std::string> t,
-                                               Count numTimes=1);
+   Vector<WordIndex> strVectorToTrgIndexVector(Vector<std::string> t);
        //converts a string vector into a target word index vector, this
        //function automatically handles the target vocabulary,
        //increasing and modifying it if necessary
-   WordIndex addTrgSymbol(std::string t,Count numTimes=1);
+   WordIndex addTrgSymbol(std::string t);
    bool loadTrgVocab(const char *trgInputVocabFileName);
    bool printTrgVocab(const char *outputFileName);
    bool loadGIZATrgVocab(const char *trgInputVocabFileName);

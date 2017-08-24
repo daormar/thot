@@ -39,7 +39,8 @@ ostream& operator << (ostream &outS,
  
  for(vocabIter=vocab.begin();vocabIter!=vocab.end();++vocabIter)
  {
-   outS<< vocabIter->second.first <<" "<< vocabIter->first << " " <<vocabIter->second.second <<endl;
+   // outS<< vocabIter->second.first <<" "<< vocabIter->first << " " <<vocabIter->second.second <<endl;
+   outS<< vocabIter->second <<" "<< vocabIter->first <<endl;
  }
  
  return outS;
@@ -76,7 +77,7 @@ WordIndex SingleWordVocab::stringToSrcWordIndex(std::string s)const
  strToIdxVocabIter=stringToSrcWordIndexMap.find(s);
  if(strToIdxVocabIter!=stringToSrcWordIndexMap.end())
  {
-   return strToIdxVocabIter->second.first;
+   return strToIdxVocabIter->second;
  }
  else return UNK_WORD;
 }
@@ -108,8 +109,7 @@ bool SingleWordVocab::existSrcSymbol(std::string s)const
 }
 
 //-------------------------
-Vector<WordIndex> SingleWordVocab::strVectorToSrcIndexVector(Vector<std::string> s,
-                                                             Count numTimes/*=1*/)
+Vector<WordIndex> SingleWordVocab::strVectorToSrcIndexVector(Vector<std::string> s)
 {
  unsigned int i;
  Vector<WordIndex> wordIndex_s;
@@ -117,15 +117,14 @@ Vector<WordIndex> SingleWordVocab::strVectorToSrcIndexVector(Vector<std::string>
 	
  for(i=0;i<s.size();++i)
  {
-   wordIndex=addSrcSymbol(s[i],numTimes);
+   wordIndex=addSrcSymbol(s[i]);
    wordIndex_s.push_back(wordIndex);  
  }
  return wordIndex_s;
 }
 
 //-------------------------
-WordIndex SingleWordVocab::addSrcSymbol(std::string s,
-                                        Count numTimes/*=1*/)
+WordIndex SingleWordVocab::addSrcSymbol(std::string s)
 {
  WordIndex wordIndex;	
  StrToIdxVocab::const_iterator strToIdxVocabIter;
@@ -133,14 +132,12 @@ WordIndex SingleWordVocab::addSrcSymbol(std::string s,
  strToIdxVocabIter=stringToSrcWordIndexMap.find(s);
  if(strToIdxVocabIter!=stringToSrcWordIndexMap.end()) 
  {
-   stringToSrcWordIndexMap[s].second+=numTimes;
-   return strToIdxVocabIter->second.first;
+   return strToIdxVocabIter->second;
  }
  else
  {
    wordIndex=stringToSrcWordIndexMap.size();	
-   stringToSrcWordIndexMap[s].first=wordIndex;
-   stringToSrcWordIndexMap[s].second=numTimes;	 
+   stringToSrcWordIndexMap[s]=wordIndex;
    srcWordIndexMapToString[wordIndex]=s; 
  }
  return wordIndex;
@@ -166,18 +163,14 @@ bool SingleWordVocab::loadGIZASrcVocab(const char *srcInputVocabFileName)
 
    clearSrcVocab();
    
-   pair<WordIndex,Count> vocEntry;
-
        // Read file
    while(awk.getln())
    {
      if(awk.NF>1)
      {
-       if(awk.NF==3)
+       if(awk.NF==2 || awk.NF==3)
        {
-         vocEntry.first=atoi(awk.dollar(1).c_str());
-         vocEntry.second=atof(awk.dollar(3).c_str());
-         stringToSrcWordIndexMap[awk.dollar(2)]=vocEntry;
+         stringToSrcWordIndexMap[awk.dollar(2)]=atoi(awk.dollar(1).c_str());
          srcWordIndexMapToString[atoi(awk.dollar(1).c_str())]=awk.dollar(2);   
        }
        else
@@ -185,7 +178,7 @@ bool SingleWordVocab::loadGIZASrcVocab(const char *srcInputVocabFileName)
          cerr<<"Error in GIZA source vocabulary file\n";
          return THOT_ERROR;
        }
-     } 
+     }
    }
    awk.close();
    
@@ -235,7 +228,7 @@ WordIndex SingleWordVocab::stringToTrgWordIndex(std::string t)const
  trgVocabIter=stringToTrgWordIndexMap.find(t);
  if(trgVocabIter!=stringToTrgWordIndexMap.end())
  {
-   return trgVocabIter->second.first;
+   return trgVocabIter->second;
  }
  else return UNK_WORD;
 }
@@ -267,8 +260,7 @@ bool SingleWordVocab::existTrgSymbol(std::string t)const
 }
 
 //-------------------------
-Vector<WordIndex> SingleWordVocab::strVectorToTrgIndexVector(Vector<std::string> t,
-                                                             Count numTimes/*=1*/)
+Vector<WordIndex> SingleWordVocab::strVectorToTrgIndexVector(Vector<std::string> t)
 {
  unsigned int i;
  Vector<WordIndex> wordIndex_t;
@@ -276,14 +268,13 @@ Vector<WordIndex> SingleWordVocab::strVectorToTrgIndexVector(Vector<std::string>
 	
  for(i=0;i<t.size();++i)
  {
-   wordIndex=addTrgSymbol(t[i],numTimes);
+   wordIndex=addTrgSymbol(t[i]);
    wordIndex_t.push_back(wordIndex);  
  }
  return wordIndex_t;	
 }
 //-------------------------
-WordIndex SingleWordVocab::addTrgSymbol(std::string t,
-                                        Count numTimes/*=1*/)
+WordIndex SingleWordVocab::addTrgSymbol(std::string t)
 {
  WordIndex wordIndex;	
  StrToIdxVocab::const_iterator trgVocabIter;
@@ -291,14 +282,12 @@ WordIndex SingleWordVocab::addTrgSymbol(std::string t,
  trgVocabIter=stringToTrgWordIndexMap.find(t);
  if(trgVocabIter!=stringToTrgWordIndexMap.end()) 
  {
-   stringToTrgWordIndexMap[t].second+=numTimes;
-   return trgVocabIter->second.first;
+   return trgVocabIter->second;
  }
  else
  {
   wordIndex=stringToTrgWordIndexMap.size();	
-  stringToTrgWordIndexMap[t].first=wordIndex;
-  stringToTrgWordIndexMap[t].second=numTimes;	 
+  stringToTrgWordIndexMap[t]=wordIndex;
   trgWordIndexMapToString[wordIndex]=t; 
  }
  return wordIndex;
@@ -325,17 +314,13 @@ bool SingleWordVocab::loadGIZATrgVocab(const char *trgInputVocabFileName)
 
    clearTrgVocab();
    
-   pair<WordIndex,Count> vocEntry;
-
    while(awk.getln())
    {
      if(awk.NF>1)
      {
-       if(awk.NF==3)
+       if(awk.NF==2 || awk.NF==3)
        {
-         vocEntry.first=atoi(awk.dollar(1).c_str());
-         vocEntry.second=atof(awk.dollar(3).c_str());
-         stringToTrgWordIndexMap[awk.dollar(2)]=vocEntry;
+         stringToTrgWordIndexMap[awk.dollar(2)]=atoi(awk.dollar(1).c_str());
          trgWordIndexMapToString[atoi(awk.dollar(1).c_str())]=awk.dollar(2);    
        }
        else
@@ -399,73 +384,43 @@ void SingleWordVocab::clear(void)
 //-------------------------
 void SingleWordVocab::add_null_word_to_srcvoc(void)
 {
-  pair<WordIndex,Count> vocEntry;
-
-      // Add the null word to the source vocabulary
-  vocEntry.first=NULL_WORD;
-  vocEntry.second=0;
-  stringToSrcWordIndexMap[NULL_WORD_STR]=vocEntry;
-  srcWordIndexMapToString[vocEntry.first]=NULL_WORD_STR;
+  stringToSrcWordIndexMap[NULL_WORD_STR]=NULL_WORD;
+  srcWordIndexMapToString[NULL_WORD]=NULL_WORD_STR;
 }
 
 //-------------------------
 void SingleWordVocab::add_null_word_to_trgvoc(void)
 {
-  pair<WordIndex,Count> vocEntry;
-
-      // Add the null word to the target vocabulary
-  vocEntry.first=NULL_WORD;
-  vocEntry.second=0;
-  stringToTrgWordIndexMap[NULL_WORD_STR]=vocEntry;
-  trgWordIndexMapToString[vocEntry.first]=NULL_WORD_STR;
+  stringToTrgWordIndexMap[NULL_WORD_STR]=NULL_WORD;
+  trgWordIndexMapToString[NULL_WORD]=NULL_WORD_STR;
 }
 
 //-------------------------
 void SingleWordVocab::add_unk_word_to_srcvoc(void)
 {
-  pair<WordIndex,Count> vocEntry;
-
-      // Add the null word to the source vocabulary
-  vocEntry.first=UNK_WORD;
-  vocEntry.second=0;
-  stringToSrcWordIndexMap[UNK_WORD_STR]=vocEntry;
-  srcWordIndexMapToString[vocEntry.first]=UNK_WORD_STR;
+  stringToSrcWordIndexMap[UNK_WORD_STR]=UNK_WORD;
+  srcWordIndexMapToString[UNK_WORD]=UNK_WORD_STR;
 }
 
 //-------------------------
 void SingleWordVocab::add_unk_word_to_trgvoc(void)
 {
-  pair<WordIndex,Count> vocEntry;
-
-      // Add the null word to the target vocabulary
-  vocEntry.first=UNK_WORD;
-  vocEntry.second=0;
-  stringToTrgWordIndexMap[UNK_WORD_STR]=vocEntry;
-  trgWordIndexMapToString[vocEntry.first]=UNK_WORD_STR;
+  stringToTrgWordIndexMap[UNK_WORD_STR]=UNK_WORD;
+  trgWordIndexMapToString[UNK_WORD]=UNK_WORD_STR;
 }
 
 //-------------------------
 void SingleWordVocab::add_unused_word_to_srcvoc(void)
 {
-  pair<WordIndex,Count> vocEntry;
-
-      // Add the null word to the source vocabulary
-  vocEntry.first=UNUSED_WORD;
-  vocEntry.second=0;
-  stringToSrcWordIndexMap[UNUSED_WORD_STR]=vocEntry;
-  srcWordIndexMapToString[vocEntry.first]=UNUSED_WORD_STR;
+  stringToSrcWordIndexMap[UNUSED_WORD_STR]=UNUSED_WORD;
+  srcWordIndexMapToString[UNUSED_WORD]=UNUSED_WORD_STR;
 }
 
 //-------------------------
 void SingleWordVocab::add_unused_word_to_trgvoc(void)
 {
-  pair<WordIndex,Count> vocEntry;
-
-      // Add the null word to the target vocabulary
-  vocEntry.first=UNUSED_WORD;
-  vocEntry.second=0;
-  stringToTrgWordIndexMap[UNUSED_WORD_STR]=vocEntry;
-  trgWordIndexMapToString[vocEntry.first]=UNUSED_WORD_STR;
+  stringToTrgWordIndexMap[UNUSED_WORD_STR]=UNUSED_WORD;
+  trgWordIndexMapToString[UNUSED_WORD]=UNUSED_WORD_STR;
 }
 
 //-------------------------

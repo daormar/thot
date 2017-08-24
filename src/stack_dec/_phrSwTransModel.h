@@ -658,9 +658,9 @@ void _phrSwTransModel<HYPOTHESIS>::clearTempVars(void)
 template<class HYPOTHESIS>
 WordIndex _phrSwTransModel<HYPOTHESIS>::addSrcSymbolToAligModels(std::string s)
 {
-  WordIndex windex_ipbm=this->phrModelInfoPtr->invPbModelPtr->addTrgSymbol(s,0);
-  WordIndex windex_lex=swModelInfoPtr->swAligModelPtrVec[0]->addSrcSymbol(s,0);
-  WordIndex windex_ilex=swModelInfoPtr->invSwAligModelPtrVec[0]->addTrgSymbol(s,0);
+  WordIndex windex_ipbm=this->phrModelInfoPtr->invPbModelPtr->addTrgSymbol(s);
+  WordIndex windex_lex=swModelInfoPtr->swAligModelPtrVec[0]->addSrcSymbol(s);
+  WordIndex windex_ilex=swModelInfoPtr->invSwAligModelPtrVec[0]->addTrgSymbol(s);
   if(windex_ipbm!=windex_lex || windex_ipbm!=windex_ilex)
   {
     cerr<<"Warning! phrase-based model vocabularies are now different from lexical model vocabularies."<<endl;
@@ -673,9 +673,9 @@ WordIndex _phrSwTransModel<HYPOTHESIS>::addSrcSymbolToAligModels(std::string s)
 template<class HYPOTHESIS>
 WordIndex _phrSwTransModel<HYPOTHESIS>::addTrgSymbolToAligModels(std::string t)
 {
-  WordIndex windex_ipbm=this->phrModelInfoPtr->invPbModelPtr->addSrcSymbol(t,0);
-  WordIndex windex_lex=swModelInfoPtr->swAligModelPtrVec[0]->addTrgSymbol(t,0);
-  WordIndex windex_ilex=swModelInfoPtr->invSwAligModelPtrVec[0]->addSrcSymbol(t,0);
+  WordIndex windex_ipbm=this->phrModelInfoPtr->invPbModelPtr->addSrcSymbol(t);
+  WordIndex windex_lex=swModelInfoPtr->swAligModelPtrVec[0]->addTrgSymbol(t);
+  WordIndex windex_ilex=swModelInfoPtr->invSwAligModelPtrVec[0]->addSrcSymbol(t);
   if(windex_ipbm!=windex_lex || windex_ipbm!=windex_ilex)
   {
     cerr<<"Warning! phrase-based model vocabularies are now different from lexical model vocabularies."<<endl;

@@ -231,7 +231,7 @@ class BaseSwAligModel
 	virtual std::string wordIndexToSrcString(WordIndex w)const=0;
 	virtual bool existSrcSymbol(std::string s)const=0;
 	virtual Vector<WordIndex> strVectorToSrcIndexVector(Vector<std::string> s)=0;
-	virtual WordIndex addSrcSymbol(std::string s,Count numTimes=1)=0;
+	virtual WordIndex addSrcSymbol(std::string s)=0;
 	
 	virtual size_t getTrgVocabSize(void)const=0;
         // Returns the target vocabulary size
@@ -239,7 +239,7 @@ class BaseSwAligModel
 	virtual std::string wordIndexToTrgString(WordIndex w)const=0;
 	virtual bool existTrgSymbol(std::string t)const=0;
 	virtual Vector<WordIndex> strVectorToTrgIndexVector(Vector<std::string> t)=0;
-	virtual WordIndex addTrgSymbol(std::string t,Count numTimes=1)=0;
+	virtual WordIndex addTrgSymbol(std::string t)=0;
 
     // clear() function
     virtual void clear(void)=0;

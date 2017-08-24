@@ -367,9 +367,9 @@ WordIndex FeatureHandler::addSrcSymbolToAligModels(BasePhraseModel* invPbModelPt
                                                    BaseSwAligModel<PpInfo>* invSwAligModelPtr,
                                                    std::string s)
 {
-  WordIndex windex_ipbm=invPbModelPtr->addTrgSymbol(s,0);
-  WordIndex windex_lex=swAligModelPtr->addSrcSymbol(s,0);
-  WordIndex windex_ilex=invSwAligModelPtr->addTrgSymbol(s,0);
+  WordIndex windex_ipbm=invPbModelPtr->addTrgSymbol(s);
+  WordIndex windex_lex=swAligModelPtr->addSrcSymbol(s);
+  WordIndex windex_ilex=invSwAligModelPtr->addTrgSymbol(s);
   if(windex_ipbm!=windex_lex || windex_ipbm!=windex_ilex)
   {
     cerr<<"Warning! phrase-based model vocabularies are now different from lexical model vocabularies."<<endl;
@@ -384,9 +384,9 @@ WordIndex FeatureHandler::addTrgSymbolToAligModels(BasePhraseModel* invPbModelPt
                                                    BaseSwAligModel<PpInfo>* invSwAligModelPtr,
                                                    std::string t)
 {
-  WordIndex windex_ipbm=invPbModelPtr->addSrcSymbol(t,0);
-  WordIndex windex_lex=swAligModelPtr->addTrgSymbol(t,0);
-  WordIndex windex_ilex=invSwAligModelPtr->addSrcSymbol(t,0);
+  WordIndex windex_ipbm=invPbModelPtr->addSrcSymbol(t);
+  WordIndex windex_lex=swAligModelPtr->addTrgSymbol(t);
+  WordIndex windex_ilex=invSwAligModelPtr->addSrcSymbol(t);
   if(windex_ipbm!=windex_lex || windex_ipbm!=windex_ilex)
   {
     cerr<<"Warning! phrase-based model vocabularies are now different from lexical model vocabularies."<<endl;

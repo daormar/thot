@@ -372,13 +372,12 @@ bool LevelDbPhraseModel::existSrcSymbol(string s)const
 }
 
 //-------------------------
-Vector<WordIndex> LevelDbPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s,
-                                                               Count numTimes/*=1*/)
+Vector<WordIndex> LevelDbPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s)
 {
   Vector<WordIndex> swVec;
   
   for(unsigned int i = 0; i<s.size(); ++i)
-    swVec.push_back(addSrcSymbol(s[i], numTimes));
+    swVec.push_back(addSrcSymbol(s[i]));
   
   return swVec;
 }
@@ -395,10 +394,9 @@ Vector<string> LevelDbPhraseModel::srcIndexVectorToStrVector(const Vector<WordIn
  return vStr;
 }
 //-------------------------
-WordIndex LevelDbPhraseModel::addSrcSymbol(string s,
-                                          Count numTimes/*=1*/)
+WordIndex LevelDbPhraseModel::addSrcSymbol(string s)
 {
- return singleWordVocab.addSrcSymbol(s, numTimes);
+ return singleWordVocab.addSrcSymbol(s);
 }
 
 //-------------------------
@@ -432,16 +430,16 @@ bool LevelDbPhraseModel::existTrgSymbol(string t)const
 }
 
 //-------------------------
-Vector<WordIndex> LevelDbPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t,
-                                                               Count numTimes/*=1*/)
+Vector<WordIndex> LevelDbPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t)
 {
   Vector<WordIndex> twVec;
   
   for(unsigned int i = 0; i < t.size(); ++i)
-    twVec.push_back(addTrgSymbol(t[i], numTimes));
+    twVec.push_back(addTrgSymbol(t[i]));
   
   return twVec;
 }
+      
 //-------------------------
 Vector<string> LevelDbPhraseModel::trgIndexVectorToStrVector(const Vector<WordIndex>& t)
 {
@@ -453,11 +451,11 @@ Vector<string> LevelDbPhraseModel::trgIndexVectorToStrVector(const Vector<WordIn
 	
  return vStr;
 }
+  
 //-------------------------
-WordIndex LevelDbPhraseModel::addTrgSymbol(string t,
-                                       Count numTimes/*=1*/)
+WordIndex LevelDbPhraseModel::addTrgSymbol(string t)
 {
- return singleWordVocab.addTrgSymbol(t, numTimes);
+ return singleWordVocab.addTrgSymbol(t);
 }
 //-------------------------
 bool LevelDbPhraseModel::printTrgVocab(const char *outputFileName)

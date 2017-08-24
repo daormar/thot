@@ -339,13 +339,12 @@ bool FastBdbPhraseModel::existSrcSymbol(string s)const
 }
 
 //-------------------------
-Vector<WordIndex> FastBdbPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s,
-                                                                Count numTimes/*=1*/)
+Vector<WordIndex> FastBdbPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s)
 {
   Vector<WordIndex> swVec;
   
   for(unsigned int i=0;i<s.size();++i)
-    swVec.push_back(addSrcSymbol(s[i],numTimes));
+    swVec.push_back(addSrcSymbol(s[i]));
   
   return swVec;
 }
@@ -362,10 +361,9 @@ Vector<string> FastBdbPhraseModel::srcIndexVectorToStrVector(const Vector<WordIn
  return vStr;
 }
 //-------------------------
-WordIndex FastBdbPhraseModel::addSrcSymbol(string s,
-                               Count numTimes/*=1*/)
+WordIndex FastBdbPhraseModel::addSrcSymbol(string s)
 {
- return singleWordVocab.addSrcSymbol(s,numTimes);
+ return singleWordVocab.addSrcSymbol(s);
 }
 
 //-------------------------
@@ -399,13 +397,12 @@ bool FastBdbPhraseModel::existTrgSymbol(string t)const
 }
 
 //-------------------------
-Vector<WordIndex> FastBdbPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t,
-                                                                Count numTimes/*=1*/)
+Vector<WordIndex> FastBdbPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t)
 {
   Vector<WordIndex> twVec;
   
   for(unsigned int i=0;i<t.size();++i)
-    twVec.push_back(addTrgSymbol(t[i],numTimes));
+    twVec.push_back(addTrgSymbol(t[i]));
   
   return twVec;
 }
@@ -421,10 +418,9 @@ Vector<string> FastBdbPhraseModel::trgIndexVectorToStrVector(const Vector<WordIn
  return vStr;
 }
 //-------------------------
-WordIndex FastBdbPhraseModel::addTrgSymbol(string t,
-                                       Count numTimes/*=1*/)
+WordIndex FastBdbPhraseModel::addTrgSymbol(string t)
 {
- return singleWordVocab.addTrgSymbol(t,numTimes);
+ return singleWordVocab.addTrgSymbol(t);
 }
 //-------------------------
 bool FastBdbPhraseModel::printTrgVocab(const char *outputFileName)

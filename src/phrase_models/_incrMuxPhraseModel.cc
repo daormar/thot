@@ -429,13 +429,12 @@ bool _incrMuxPhraseModel::existSrcSymbol(string s)const
 }
 
 //-------------------------
-Vector<WordIndex> _incrMuxPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s,
-                                                                 Count numTimes/*=1*/)
+Vector<WordIndex> _incrMuxPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s)
 {
   Vector<WordIndex> swVec;
   
   for(unsigned int i=0;i<s.size();++i)
-    swVec.push_back(addSrcSymbol(s[i],numTimes));
+    swVec.push_back(addSrcSymbol(s[i]));
   
   return swVec;
 }
@@ -453,10 +452,9 @@ Vector<string> _incrMuxPhraseModel::srcIndexVectorToStrVector(const Vector<WordI
 }
 
 //-------------------------
-WordIndex _incrMuxPhraseModel::addSrcSymbol(string s,
-                                            Count numTimes/*=1*/)
+WordIndex _incrMuxPhraseModel::addSrcSymbol(string s)
 {
-  return swVocPtr->addSrcSymbol(s,numTimes);
+  return swVocPtr->addSrcSymbol(s);
 }
 
 //-------------------------
@@ -496,13 +494,12 @@ bool _incrMuxPhraseModel::existTrgSymbol(string t)const
 }
 
 //-------------------------
-Vector<WordIndex> _incrMuxPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t,
-                                                                 Count numTimes/*=1*/)
+Vector<WordIndex> _incrMuxPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t)
 {
   Vector<WordIndex> twVec;
   
   for(unsigned int i=0;i<t.size();++i)
-    twVec.push_back(addTrgSymbol(t[i],numTimes));
+    twVec.push_back(addTrgSymbol(t[i]));
   
   return twVec;
 }
@@ -520,10 +517,9 @@ Vector<string> _incrMuxPhraseModel::trgIndexVectorToStrVector(const Vector<WordI
 }
 
 //-------------------------
-WordIndex _incrMuxPhraseModel::addTrgSymbol(string t,
-                                            Count numTimes/*=1*/)
+WordIndex _incrMuxPhraseModel::addTrgSymbol(string t)
 {
-  return swVocPtr->addTrgSymbol(t,numTimes);
+  return swVocPtr->addTrgSymbol(t);
 }
 
 //-------------------------

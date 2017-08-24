@@ -45,8 +45,8 @@ void _incrPhraseModel::strAddTableEntry(const Vector<string>& s,
 {
   Vector<WordIndex> wordIndex_t,wordIndex_s;
  
-  wordIndex_s=strVectorToSrcIndexVector(s,inf.first.get_c_s());	
-  wordIndex_t=strVectorToTrgIndexVector(t,inf.second.get_c_st());
+  wordIndex_s=strVectorToSrcIndexVector(s);	
+  wordIndex_t=strVectorToTrgIndexVector(t);
  
   addTableEntry(wordIndex_s,wordIndex_t,inf);	
 }
@@ -66,8 +66,8 @@ void _incrPhraseModel::strIncrCountsOfEntry(const Vector<string>& s,
 {
  Vector<WordIndex> wordIndex_t,wordIndex_s;
  
- wordIndex_s=strVectorToSrcIndexVector(s,count);	
- wordIndex_t=strVectorToTrgIndexVector(t,count);
+ wordIndex_s=strVectorToSrcIndexVector(s);
+ wordIndex_t=strVectorToTrgIndexVector(t);
  
  incrCountsOfEntry(wordIndex_s,wordIndex_t,count);	
 }
@@ -609,13 +609,12 @@ bool _incrPhraseModel::existSrcSymbol(string s)const
 }
 
 //-------------------------
-Vector<WordIndex> _incrPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s,
-                                                             Count numTimes/*=1*/)
+Vector<WordIndex> _incrPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s)
 {
   Vector<WordIndex> swVec;
   
   for(unsigned int i=0;i<s.size();++i)
-    swVec.push_back(addSrcSymbol(s[i],numTimes));
+    swVec.push_back(addSrcSymbol(s[i]));
   
   return swVec;
 }
@@ -632,10 +631,9 @@ Vector<string> _incrPhraseModel::srcIndexVectorToStrVector(const Vector<WordInde
  return vStr;
 }
 //-------------------------
-WordIndex _incrPhraseModel::addSrcSymbol(string s,
-                                         Count numTimes/*=1*/)
+WordIndex _incrPhraseModel::addSrcSymbol(string s)
 {
- return singleWordVocab.addSrcSymbol(s,numTimes);
+ return singleWordVocab.addSrcSymbol(s);
 }
 
 //-------------------------
@@ -669,13 +667,12 @@ bool _incrPhraseModel::existTrgSymbol(string t)const
 }
 
 //-------------------------
-Vector<WordIndex> _incrPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t,
-                                                             Count numTimes/*=1*/)
+Vector<WordIndex> _incrPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t)
 {
   Vector<WordIndex> twVec;
   
   for(unsigned int i=0;i<t.size();++i)
-    twVec.push_back(addTrgSymbol(t[i],numTimes));
+    twVec.push_back(addTrgSymbol(t[i]));
   
   return twVec;
 }
@@ -691,10 +688,9 @@ Vector<string> _incrPhraseModel::trgIndexVectorToStrVector(const Vector<WordInde
  return vStr;
 }
 //-------------------------
-WordIndex _incrPhraseModel::addTrgSymbol(string t,
-                                         Count numTimes/*=1*/)
+WordIndex _incrPhraseModel::addTrgSymbol(string t)
 {
- return singleWordVocab.addTrgSymbol(t,numTimes);
+ return singleWordVocab.addTrgSymbol(t);
 }
 //-------------------------
 bool _incrPhraseModel::printTrgVocab(const char *outputFileName)

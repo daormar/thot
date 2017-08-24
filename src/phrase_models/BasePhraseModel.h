@@ -153,8 +153,7 @@ class BasePhraseModel
     virtual WordIndex stringToSrcWordIndex(string s)const=0;
     virtual string wordIndexToSrcString(WordIndex w)const=0;
 	virtual bool existSrcSymbol(string s)const=0;
-	virtual WordIndex addSrcSymbol(string s,
-                                   Count numTimes=1)=0;
+	virtual WordIndex addSrcSymbol(string s)=0;
 	virtual bool loadSrcVocab(const char *srcInputVocabFileName)=0;
         // loads source vocabulary, returns non-zero if error
 	virtual bool printSrcVocab(const char *outputFileName)=0;
@@ -165,8 +164,7 @@ class BasePhraseModel
     virtual WordIndex stringToTrgWordIndex(string t)const=0;
     virtual string wordIndexToTrgString(WordIndex w)const=0;
     virtual bool existTrgSymbol(string t)const=0;
-    virtual WordIndex addTrgSymbol(string t,
-                                   Count numTimes=1)=0;
+    virtual WordIndex addTrgSymbol(string t)=0;
     virtual bool loadTrgVocab(const char *trgInputVocabFileName)=0;
         // loads target vocabulary, returns non-zero if error
     virtual bool printTrgVocab(const char *outputFileName)=0;

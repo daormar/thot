@@ -321,13 +321,12 @@ bool BdbPhraseModel::existSrcSymbol(string s)const
 }
 
 //-------------------------
-Vector<WordIndex> BdbPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s,
-                                                            Count numTimes/*=1*/)
+Vector<WordIndex> BdbPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s)
 {
   Vector<WordIndex> swVec;
   
   for(unsigned int i=0;i<s.size();++i)
-    swVec.push_back(addSrcSymbol(s[i],numTimes));
+    swVec.push_back(addSrcSymbol(s[i]));
   
   return swVec;
 }
@@ -344,10 +343,9 @@ Vector<string> BdbPhraseModel::srcIndexVectorToStrVector(const Vector<WordIndex>
  return vStr;
 }
 //-------------------------
-WordIndex BdbPhraseModel::addSrcSymbol(string s,
-                               Count numTimes/*=1*/)
+WordIndex BdbPhraseModel::addSrcSymbol(string s)
 {
- return singleWordVocab.addSrcSymbol(s,numTimes);
+ return singleWordVocab.addSrcSymbol(s);
 }
 
 //-------------------------
@@ -381,13 +379,12 @@ bool BdbPhraseModel::existTrgSymbol(string t)const
 }
 
 //-------------------------
-Vector<WordIndex> BdbPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t,
-                                                            Count numTimes/*=1*/)
+Vector<WordIndex> BdbPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t)
 {
   Vector<WordIndex> twVec;
   
   for(unsigned int i=0;i<t.size();++i)
-    twVec.push_back(addTrgSymbol(t[i],numTimes));
+    twVec.push_back(addTrgSymbol(t[i]));
   
   return twVec;
 }
@@ -403,10 +400,9 @@ Vector<string> BdbPhraseModel::trgIndexVectorToStrVector(const Vector<WordIndex>
  return vStr;
 }
 //-------------------------
-WordIndex BdbPhraseModel::addTrgSymbol(string t,
-                                       Count numTimes/*=1*/)
+WordIndex BdbPhraseModel::addTrgSymbol(string t)
 {
- return singleWordVocab.addTrgSymbol(t,numTimes);
+ return singleWordVocab.addTrgSymbol(t);
 }
 //-------------------------
 bool BdbPhraseModel::printTrgVocab(const char *outputFileName)

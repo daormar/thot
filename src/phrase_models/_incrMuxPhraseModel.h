@@ -171,14 +171,13 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
     WordIndex stringToSrcWordIndex(string s)const;
     string wordIndexToSrcString(WordIndex w)const;
     bool existSrcSymbol(string s)const;
-    Vector<WordIndex> strVectorToSrcIndexVector(const Vector<string>& s,
-                                                Count numTimes=1);
+    Vector<WordIndex> strVectorToSrcIndexVector(const Vector<string>& s);
         //converts a string vector into a source word index Vector, this
         //function automatically handles the source vocabulary,
         //increasing and modifying it if necessary
     Vector<string> srcIndexVectorToStrVector(const Vector<WordIndex>& s);
         //Inverse operation
-    WordIndex addSrcSymbol(string s,Count numTimes=1);
+    WordIndex addSrcSymbol(string s);
     bool loadSrcVocab(const char *srcInputVocabFileName);
         // loads source vocabulary, returns non-zero if error
     bool printSrcVocab(const char *outputFileName);
@@ -189,14 +188,13 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
     WordIndex stringToTrgWordIndex(string t)const;
     string wordIndexToTrgString(WordIndex w)const;
     bool existTrgSymbol(string t)const;
-    Vector<WordIndex> strVectorToTrgIndexVector(const Vector<string>& t,
-                                                Count numTimes=1);
+    Vector<WordIndex> strVectorToTrgIndexVector(const Vector<string>& t);
         //converts a string vector into a target word index Vector, this
         //function automatically handles the target vocabulary,
         //increasing and modifying it if necessary
     Vector<string> trgIndexVectorToStrVector(const Vector<WordIndex>& t);
         //Inverse operation
-    WordIndex addTrgSymbol(string t,Count numTimes=1);
+    WordIndex addTrgSymbol(string t);
     bool loadTrgVocab(const char *trgInputVocabFileName);
         // loads target vocabulary, returns non-zero if error
     bool printTrgVocab(const char *outputFileName);

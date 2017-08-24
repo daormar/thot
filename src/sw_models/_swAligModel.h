@@ -108,14 +108,14 @@ class _swAligModel: public BaseSwAligModel<PPINFO>
 	std::string wordIndexToSrcString(WordIndex w)const;
 	bool existSrcSymbol(std::string s)const;
 	Vector<WordIndex> strVectorToSrcIndexVector(Vector<std::string> s);
-	WordIndex addSrcSymbol(std::string s,Count numTimes=1);
+	WordIndex addSrcSymbol(std::string s);
 	
 	size_t getTrgVocabSize(void)const; // Returns the target vocabulary size
 	WordIndex stringToTrgWordIndex(std::string t)const;
 	std::string wordIndexToTrgString(WordIndex w)const;
 	bool existTrgSymbol(std::string t)const;
 	Vector<WordIndex> strVectorToTrgIndexVector(Vector<std::string> t);
-	WordIndex addTrgSymbol(std::string t,Count numTimes=1);
+	WordIndex addTrgSymbol(std::string t);
 
     // clear() function
     void clear(void);
@@ -243,15 +243,14 @@ bool _swAligModel<PPINFO>::existSrcSymbol(std::string s)const
 template<class PPINFO>
 Vector<WordIndex> _swAligModel<PPINFO>::strVectorToSrcIndexVector(Vector<std::string> s)
 {
- return swVocab.strVectorToSrcIndexVector(s,0);
+ return swVocab.strVectorToSrcIndexVector(s);
 }
 
 //-------------------------
 template<class PPINFO>
-WordIndex _swAligModel<PPINFO>::addSrcSymbol(std::string s,
-                                             Count numTimes)
+WordIndex _swAligModel<PPINFO>::addSrcSymbol(std::string s)
 {
- return swVocab.addSrcSymbol(s,numTimes);
+ return swVocab.addSrcSymbol(s);
 }
 
 //-------------------------
@@ -286,15 +285,14 @@ bool _swAligModel<PPINFO>::existTrgSymbol(std::string t)const
 template<class PPINFO>
 Vector<WordIndex> _swAligModel<PPINFO>::strVectorToTrgIndexVector(Vector<std::string> t)
 {
- return swVocab.strVectorToTrgIndexVector(t,0);	
+ return swVocab.strVectorToTrgIndexVector(t);	
 }
 
 //-------------------------
 template<class PPINFO>
-WordIndex _swAligModel<PPINFO>::addTrgSymbol(std::string t,
-                                             Count numTimes)
+WordIndex _swAligModel<PPINFO>::addTrgSymbol(std::string t)
 {
- return swVocab.addTrgSymbol(t,numTimes);
+ return swVocab.addTrgSymbol(t);
 }
 
 //-------------------------
