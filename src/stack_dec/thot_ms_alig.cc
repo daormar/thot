@@ -842,32 +842,34 @@ int takeParameters(int argc,
 int takeParametersFromCfgFile(std::string cfgFileName,
                               thot_ms_alig_pars& tap)
 {
+  cerr<<"Processing configuration file ("<<cfgFileName<<")"<<endl;
+
       // Extract parameters from configuration file
-    std::string comment="#";
-    int cfgFileArgc;
-    Vector<std::string> cfgFileArgvStl;
-    int ret=extractParsFromFile(cfgFileName.c_str(),cfgFileArgc,cfgFileArgvStl,comment);
-    if(ret==THOT_ERROR) return THOT_ERROR;
+  std::string comment="#";
+  int cfgFileArgc;
+  Vector<std::string> cfgFileArgvStl;
+  int ret=extractParsFromFile(cfgFileName.c_str(),cfgFileArgc,cfgFileArgvStl,comment);
+  if(ret==THOT_ERROR) return THOT_ERROR;
 
-        // Create argv for cfg file
-    char** cfgFileArgv=(char**) malloc(cfgFileArgc*sizeof(char*));
-    for(unsigned int i=0;i<cfgFileArgvStl.size();++i)
-    {
-      cfgFileArgv[i]=(char*) malloc((cfgFileArgvStl[i].size()+1)*sizeof(char));
-      strcpy(cfgFileArgv[i],cfgFileArgvStl[i].c_str());
-    }
-        // Process extracted parameters
-    takeParametersGivenArgcArgv(cfgFileArgc,cfgFileArgv,tap);
+      // Create argv for cfg file
+  char** cfgFileArgv=(char**) malloc(cfgFileArgc*sizeof(char*));
+  for(unsigned int i=0;i<cfgFileArgvStl.size();++i)
+  {
+    cfgFileArgv[i]=(char*) malloc((cfgFileArgvStl[i].size()+1)*sizeof(char));
+    strcpy(cfgFileArgv[i],cfgFileArgvStl[i].c_str());
+  }
+      // Process extracted parameters
+  takeParametersGivenArgcArgv(cfgFileArgc,cfgFileArgv,tap);
 
-        // Release allocated memory
-    for(unsigned int i=0;i<cfgFileArgvStl.size();++i)
-    {
-      free(cfgFileArgv[i]);
-    }
-    free(cfgFileArgv);
+      // Release allocated memory
+  for(unsigned int i=0;i<cfgFileArgvStl.size();++i)
+  {
+    free(cfgFileArgv[i]);
+  }
+  free(cfgFileArgv);
 
-        // Return without error
-    return THOT_OK;
+      // Return without error
+  return THOT_OK;
 }
 
 //---------------
