@@ -234,9 +234,12 @@ else
     trgv=$out.fbdb_tvcb
 
     # Generate fbdb translation table files
+    echo "Starting BDB ttable generation..." >&2
 
     gen_vocab_files
 
     gen_fbdb_files
+
+    echo "BDB ttable generation process finished" >&2
 
 fi

@@ -234,9 +234,12 @@ else
     trgv=$out.ldb_tvcb
 
     # Generate leveldb translation table
-
+    echo "Starting LevelDB ttable generation..." >&2
+    
     gen_vocab_files
 
-    gen_leveldb_files
+    gen_leveldb_file
+
+    echo "LevelDB ttable generation process finished" >&2
 
 fi
