@@ -194,31 +194,6 @@ CFLAGS="${CFLAGS_AUX}"
 CXXFLAGS="${CXXFLAGS_AUX}"
 
 # Checks for basic flags
-AC_LANG(C++)
-for f in -Wno-deprecated
-do                        
-    AC_MSG_CHECKING(whether ${CXX} supports ${f})
-    saved_cxxflags="${CXXFLAGS}"
-    CXXFLAGS="${CXXFLAGS} ${f}"
-    AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
-                      AC_MSG_RESULT(yes),
-                      AC_MSG_RESULT(no)
-                      CXXFLAGS="${saved_cxxflags}")],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
-done
-
-dnl Check if we have to enable debug support.
-AC_MSG_CHECKING(whether to enable debugging)
-AC_ARG_ENABLE(debug,[  --enable-debug   turn on debugging], enable_debug=yes,
-              enable_debug=no)
-
-dnl Yes, debug is enabled
-if test "$enable_debug" = "yes"; then
-
-AC_MSG_RESULT(yes)
-
-AC_DEFINE(DEBUG,,[Define if the debugging mode is enabled])
-
-# Checks for flags
 AC_LANG(C)
 for f in -g -Wall  
 do                        
@@ -232,7 +207,7 @@ do
 done
 
 AC_LANG(C++)
-for f in -g -Wall
+for f in -g -Wall -Wno-deprecated
 do                        
     AC_MSG_CHECKING(whether ${CXX} supports ${f})
     saved_cxxflags="${CXXFLAGS}"
@@ -243,13 +218,24 @@ do
                       CXXFLAGS="${saved_cxxflags}")],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
 done
 
+dnl Check if we should disable compiler optimizations.
+AC_MSG_CHECKING(whether to disable compiler optimizations)
+AC_ARG_ENABLE(opts,[  --disable-opts   turn off compiler optimizations], disable_opts=yes,
+              disable_opts=no)
+
+if test "$disable_opts" = "yes"; then
+
+AC_MSG_RESULT(yes)
+
+dnl AC_DEFINE(DEBUG,,[Define if the debugging mode is enabled])
+
 else
 
 AC_MSG_RESULT(no)
 
 # Checks for flags
 AC_LANG(C)
-for f in -Wall -O2 
+for f in -O2 
 do                        
     AC_MSG_CHECKING(whether ${CC} supports ${f})
     saved_cflags="${CFLAGS}"
@@ -261,7 +247,7 @@ do
 done
 
 AC_LANG(C++)
-for f in -Wall -O2
+for f in -O2
 do                        
     AC_MSG_CHECKING(whether ${CXX} supports ${f})
     saved_cxxflags="${CXXFLAGS}"
@@ -289,14 +275,8 @@ dnl Yes, profiling is enabled
 if test "$enable_developer" = "yes"; then
 AC_MSG_RESULT(yes)
 
-if test "$enable_debug" = "yes"; then
- flags="-pg"
-else
- flags="-g -pg"
-fi
-
 AC_LANG(C)
-for f in ${flags}
+for f in -pg
 do                        
     AC_MSG_CHECKING(whether ${CC} supports ${f})
     saved_cflags="${CFLAGS}"
@@ -308,7 +288,7 @@ do
 done
 
 AC_LANG(C++)
-for f in ${flags}
+for f in -pg
 do                        
     AC_MSG_CHECKING(whether ${CXX} supports ${f})
     saved_cxxflags="${CXXFLAGS}"
@@ -548,7 +528,6 @@ dnl Check if we have to enable casmacat home edition configuration.
 AC_MSG_CHECKING(whether to enable casmacat home edition configuration)
 AC_ARG_ENABLE(casmacat-he,[  --enable-casmacat-he   enable casmacat home edition configuration], enable_casmacat_he=yes,
               enable_casmacat_he=no)
-dnl Yes, debug is enabled
 if test "$enable_casmacat_he" = "yes"; then
  AC_MSG_RESULT(yes)
 
@@ -565,7 +544,6 @@ dnl Check if fast language model downhill simplex algorithm is disabled.
 AC_MSG_CHECKING(whether to disable fast lm downhill simplex algorithm)
 AC_ARG_ENABLE(fast-dhslm,[  --disable-fast-dhslm   disable fast language model downhill simplex algorithm], disable_fast_dhslm=yes,
               disable_fast_dhslm=no)
-dnl Yes, debug is disabled
 if test "$disable_fast_dhslm" = "yes"; then
 DISABLE_FAST_DHSLM="1"
 AC_SUBST(DISABLE_FAST_DHSLM)
@@ -633,7 +611,6 @@ AC_MSG_CHECKING(whether to enable IBM 2 model as alignment model)
 AC_ARG_ENABLE(ibm2-alig,[  --enable-ibm2-alig   enable IBM 2 model as alignment model], enable_ibm2_alig=yes,
               enable_ibm2_alig=no)
 
-dnl Yes, debug is enabled
 if test "$enable_ibm2_alig" = "yes"; then
  AC_MSG_RESULT(yes)
  AC_SUBST(ENABLE_IBM2_ALIG,"yes")
