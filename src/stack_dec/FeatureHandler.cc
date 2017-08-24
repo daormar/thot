@@ -66,8 +66,7 @@ int FeatureHandler::addWpFeat(int /*verbose*/)
 int FeatureHandler::addLmFeats(std::string lmFileName,
                                int verbose)
 {
-  std::string mainFileName;
-  if(fileIsDescriptor(lmFileName,mainFileName))
+  if(fileIsDescriptor(lmFileName))
     return process_lm_descriptor(lmFileName,verbose);
   else
     return process_lm_files_prefix(lmFileName,verbose);
@@ -77,8 +76,7 @@ int FeatureHandler::addLmFeats(std::string lmFileName,
 int FeatureHandler::addTmFeats(std::string tmFilesPrefix,
                                int verbose)
 {
-  std::string mainFileName;
-  if(fileIsDescriptor(tmFilesPrefix,mainFileName))
+  if(fileIsDescriptor(tmFilesPrefix))
     return process_tm_descriptor(tmFilesPrefix,verbose);
   else
     return process_tm_files_prefix(tmFilesPrefix,verbose);
@@ -1101,8 +1099,7 @@ bool FeatureHandler::printLambdasForModel(std::string modelFileName,
 bool FeatureHandler::printAligModels(std::string tmFileName,
                                      int verbose/*=0*/)
 {
-  std::string mainFileName;
-  if(fileIsDescriptor(tmFileName,mainFileName))
+  if(fileIsDescriptor(tmFileName))
   {
         // Print phrase models
     for(unsigned int i=0;i<phraseModelsInfo.invPbModelPtrVec.size();++i)
@@ -1168,8 +1165,7 @@ bool FeatureHandler::printAligModels(std::string tmFileName,
 bool FeatureHandler::printAligModelLambdas(std::string tmFileName,
                                            int verbose/*=0*/)
 {
-  std::string mainFileName;
-  if(fileIsDescriptor(tmFileName,mainFileName))
+  if(fileIsDescriptor(tmFileName))
   {
         // Print lambda files
     for(unsigned int i=0;i<swModelsInfo.featNameVec.size();++i)
@@ -1197,8 +1193,7 @@ bool FeatureHandler::printAligModelLambdas(std::string tmFileName,
 bool FeatureHandler::printLangModels(std::string lmFileName,
                                      int /*verbose=0*/)
 {
-  std::string mainFileName;
-  if(fileIsDescriptor(lmFileName,mainFileName))
+  if(fileIsDescriptor(lmFileName))
   {
     for(unsigned int i=0;i<langModelsInfo.lModelPtrVec.size();++i)
     {
