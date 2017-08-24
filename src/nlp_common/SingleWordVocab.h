@@ -35,10 +35,24 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "StatModelDefs.h"
-#include "ClassDic.h"
-#include "awkInputStream.h"
+#ifdef THOT_DISABLE_SPACE_EFFICIENT_VOCAB_STRUCTURES
+
 #include <map>
+
+#else
+
+#if __GNUC__>2
+#include <ext/hash_map>
+using __gnu_cxx::hash_map;
+#else
+#include <hash_map>
+#endif
+
+#endif
+
+#include "StatModelDefs.h"
+#include "awkInputStream.h"
+#include "myVector.h"
 #include <string>
 
 //--------------- Constants -------------------------------------------
@@ -52,15 +66,36 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes ---------------------------------------------
 
+class StringHashF
+{
+ public:
+  size_t operator() (const std::string& str) const
+  {
+    unsigned int hash = 1315423911;
+
+    for(std::size_t i = 0; i < str.length(); i++)
+    {
+      hash ^= ((hash << 5) + str[i] + (hash >> 2));
+    }
+    
+    return (hash & 0x7FFFFFFF);
+  }
+};
+
 //--------------- SingleWordVocab class
 
 class SingleWordVocab
 {
   public:
 
+#ifdef THOT_DISABLE_SPACE_EFFICIENT_VOCAB_STRUCTURES
    typedef std::map<std::string,pair<WordIndex,Count> > StrToIdxVocab;
    typedef std::map<WordIndex,std::string> IdxToStrVocab;
-
+#else
+   typedef hash_map<std::string,pair<WordIndex,Count>,StringHashF> StrToIdxVocab;
+   typedef hash_map<WordIndex,std::string> IdxToStrVocab;
+#endif
+   
    // Constructor
    SingleWordVocab(void);
    
