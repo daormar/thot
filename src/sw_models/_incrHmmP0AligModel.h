@@ -1,6 +1,6 @@
 /*
 thot package for statistical machine translation
-Copyright (C) 2013 Daniel Ortiz-Mart\'inez
+Copyright (C) 2013-2017 Daniel Ortiz-Mart\'inez, Adam Harasimowicz
  
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
@@ -18,35 +18,95 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: IncrHmmP0AligModel                                       */
+/* Module: _incrHmmP0AligModel                                      */
 /*                                                                  */
-/* Definitions file: IncrHmmP0AligModel.cc                          */
+/* Prototype file: _incrHmmP0AligModel.h                            */
+/*                                                                  */
+/* Description: Defines the _incrHmmP0AligModel class.              */
+/*              _incrHmmP0AligModel class allows to generate and    */
+/*              access to the data of a Hmm statistical             */
+/*              alignment model with fixed p0 probability.          */
 /*                                                                  */
 /********************************************************************/
 
+#ifndef __incrHmmP0AligModel_h
+#define __incrHmmP0AligModel_h
 
 //--------------- Include files --------------------------------------
 
-#include "IncrHmmP0AligModel.h"
+#if HAVE_CONFIG_H
+#  include <thot_config.h>
+#endif /* HAVE_CONFIG_H */
 
-//--------------- IncrHmmP0AligModel class function definitions
+#include "_incrHmmAligModel.h"
+
+//--------------- Constants ------------------------------------------
+
+#define DEFAULT_HMM_P0 0.1
+
+//--------------- typedefs -------------------------------------------
+
+
+//--------------- function declarations ------------------------------
+
+//--------------- Classes --------------------------------------------
+
+//--------------- _incrHmmP0AligModel class
+
+template<class ALIG_MODEL>
+class _incrHmmP0AligModel: public ALIG_MODEL
+{
+  public:
+
+      // Constructor
+   _incrHmmP0AligModel();
+
+      // Set hmm p0 value
+   void set_hmm_p0(Prob _hmm_p0);
+
+      // load function
+   bool load(const char* prefFileName);
+
+      // print function
+   bool print(const char* prefFileName);
+
+      // clear() function
+   void clear(void);
+
+  protected:
+
+   Prob hmm_p0;
+
+   bool loadHmmP0(const char *hmmP0FileName);
+   bool printHmmP0(const char *hmmP0FileName);
+
+   Vector<WordIndex> extendWithNullWordAlig(const Vector<WordIndex>& srcWordIndexVec);
+   double unsmoothed_logaProb(PositionIndex prev_i,
+                              PositionIndex slen,
+                              PositionIndex i);
+};
+
+//--------------- Template function definitions
 
 //-------------------------
-IncrHmmP0AligModel::IncrHmmP0AligModel(void):IncrHmmAligModel()
+template<class ALIG_MODEL>
+_incrHmmP0AligModel<ALIG_MODEL>::_incrHmmP0AligModel(void):ALIG_MODEL()
 {
   hmm_p0=DEFAULT_HMM_P0;
 }
 
 //-------------------------
-void IncrHmmP0AligModel::set_hmm_p0(Prob _hmm_p0)
+template<class ALIG_MODEL>
+void _incrHmmP0AligModel<ALIG_MODEL>::set_hmm_p0(Prob _hmm_p0)
 {
   hmm_p0=_hmm_p0;
 }
 
 //-------------------------
-bool IncrHmmP0AligModel::load(const char* prefFileName)
+template<class ALIG_MODEL>
+bool _incrHmmP0AligModel<ALIG_MODEL>::load(const char* prefFileName)
 {
-  bool retVal=IncrHmmAligModel::load(prefFileName);
+  bool retVal=ALIG_MODEL::load(prefFileName);
   if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Load file with hmm p0 value
@@ -57,11 +117,12 @@ bool IncrHmmP0AligModel::load(const char* prefFileName)
 
   return THOT_OK;
 }
-   
+  
 //-------------------------
-bool IncrHmmP0AligModel::print(const char* prefFileName)
+template<class ALIG_MODEL>
+bool _incrHmmP0AligModel<ALIG_MODEL>::print(const char* prefFileName)
 {
-  bool retVal=IncrHmmAligModel::print(prefFileName);
+  bool retVal=ALIG_MODEL::print(prefFileName);
   if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with hmm p0 value
@@ -74,14 +135,16 @@ bool IncrHmmP0AligModel::print(const char* prefFileName)
 }
 
 //-------------------------
-void IncrHmmP0AligModel::clear(void)
+template<class ALIG_MODEL>
+void _incrHmmP0AligModel<ALIG_MODEL>::clear(void)
 {
-  IncrHmmAligModel::clear();
+  ALIG_MODEL::clear();
   hmm_p0=DEFAULT_HMM_P0;  
 }
 
 //-------------------------
-bool IncrHmmP0AligModel::loadHmmP0(const char *hmmP0FileName)
+template<class ALIG_MODEL>
+bool _incrHmmP0AligModel<ALIG_MODEL>::loadHmmP0(const char *hmmP0FileName)
 {
   cerr<<"Loading file with hmm p0 value from "<<hmmP0FileName<<endl;
   
@@ -118,7 +181,8 @@ bool IncrHmmP0AligModel::loadHmmP0(const char *hmmP0FileName)
 }
 
 //-------------------------
-bool IncrHmmP0AligModel::printHmmP0(const char *hmmP0FileName)
+template<class ALIG_MODEL>
+bool _incrHmmP0AligModel<ALIG_MODEL>::printHmmP0(const char *hmmP0FileName)
 {
   ofstream outF;
   outF.open(hmmP0FileName,ios::out);
@@ -135,7 +199,8 @@ bool IncrHmmP0AligModel::printHmmP0(const char *hmmP0FileName)
 }
 
 //-------------------------
-Vector<WordIndex> IncrHmmP0AligModel::extendWithNullWordAlig(const Vector<WordIndex>& srcWordIndexVec)
+template<class ALIG_MODEL>
+Vector<WordIndex> _incrHmmP0AligModel<ALIG_MODEL>::extendWithNullWordAlig(const Vector<WordIndex>& srcWordIndexVec)
 {
       // No extra NULL words are added when calculating suff. statistics
       // for alignment parameters, since the alignment with the NULL
@@ -144,12 +209,13 @@ Vector<WordIndex> IncrHmmP0AligModel::extendWithNullWordAlig(const Vector<WordIn
 }
 
 //-------------------------
-double IncrHmmP0AligModel::unsmoothed_logaProb(PositionIndex prev_i,
-                                               PositionIndex slen,
-                                               PositionIndex i)
+template<class ALIG_MODEL>
+double _incrHmmP0AligModel<ALIG_MODEL>::unsmoothed_logaProb(PositionIndex prev_i,
+                                                            PositionIndex slen,
+                                                            PositionIndex i)
 {
   HmmAligInfo hmmAligInfo;
-  getHmmAligInfo(prev_i,slen,i,hmmAligInfo);
+  ALIG_MODEL::getHmmAligInfo(prev_i,slen,i,hmmAligInfo);
   if(!hmmAligInfo.validAlig)
   {
     return SMALL_LG_NUM;
@@ -173,12 +239,12 @@ double IncrHmmP0AligModel::unsmoothed_logaProb(PositionIndex prev_i,
       asHmm.prev_i=hmmAligInfo.modified_ip;
       asHmm.slen=slen;
 
-      numer=incrHmmAligTable.getAligNumer(asHmm,i,found);
+      numer=ALIG_MODEL::incrHmmAligTable.getAligNumer(asHmm,i,found);
       if(found)
       {
             // aligNumer for pair asHmm,i exists
         double denom;
-        denom=incrHmmAligTable.getAligDenom(asHmm,found);
+        denom=ALIG_MODEL::incrHmmAligTable.getAligDenom(asHmm,found);
         if(!found) return SMALL_LG_NUM;
         else
         {
@@ -194,3 +260,5 @@ double IncrHmmP0AligModel::unsmoothed_logaProb(PositionIndex prev_i,
     }
   }
 }
+
+#endif

@@ -18,7 +18,7 @@ LexAuxVar.h _incrLexTable.h _incrSwAligModel.h _incrHmmAligModel.h  \
 IncrLexTable.h IncrLexTable.cc IncrLexLevelDbTable.h IncrLexLevelDbTable.cc     \
 IncrIbm2AligTable.h IncrIbm2AligTable.cc IncrIbm2AligModel.h		\
 IncrIbm2AligModel.cc IncrIbm1AligModel.h IncrIbm1AligModel.cc		\
-IncrHmmP0AligModel.h IncrHmmP0AligModel.cc IncrHmmAligTable.h		\
+_incrHmmP0AligModel.h IncrHmmP0AligModel.h IncrHmmAligTable.h		\
 _incrHmmAligModel.cc IncrHmmAligTable.cc IncrHmmAligModel.h         \
 IncrHmmAligModel.cc IncrLevelDbHmmAligModel.h IncrLevelDbHmmAligModel.cc		\
 HmmAligInfo.h CachedHmmAligLgProb.h CachedHmmAligLgProb.cc		\

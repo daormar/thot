@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- IncrHmmAligModel class function definitions
 
 //-------------------------
-IncrHmmAligModel::IncrHmmAligModel()  : _incrHmmAligModel()
+IncrHmmAligModel::IncrHmmAligModel() : _incrHmmAligModel()
 {
       // Create table with lexical parameters
   incrLexTable = new IncrLexTable();

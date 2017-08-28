@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- IncrLevelDbHmmAligModel class function definitions
 
 //-------------------------
-IncrLevelDbHmmAligModel::IncrLevelDbHmmAligModel()  : _incrHmmAligModel()
+IncrLevelDbHmmAligModel::IncrLevelDbHmmAligModel() : _incrHmmAligModel()
 {
       // Create table with lexical parameters
   incrLexTable = new IncrLexLevelDbTable();

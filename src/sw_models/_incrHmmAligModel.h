@@ -151,7 +151,7 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    virtual LgProb obtainBestAlignmentVecStrCached(Vector<std::string> srcSentenceVector,
                                                   Vector<std::string> trgSentenceVector,
                                                   CachedHmmAligLgProb& cached_logap,
-                                                  WordAligMatrix& bestWaMatrix);	
+                                                  WordAligMatrix& bestWaMatrix);
    LgProb obtainBestAlignment(Vector<WordIndex> srcSentIndexVector,
                               Vector<WordIndex> trgSentIndexVector,
                               WordAligMatrix& bestWaMatrix);
