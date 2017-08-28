@@ -17,7 +17,7 @@ endif
 
 if HAVE_LEVELDB_LIB
 LEVELDB_PROGS=thot_ttable_to_leveldb
-LEVELDB_LIBS=leveldb_phrase_model_factory.la
+LEVELDB_LIBS=leveldb_phrase_model_factory.la incr_leveldb_hmm_p0_alig_model_factory.la
 endif
 
 AUTOMAKE_OPTIONS = subdir-objects
@@ -423,8 +423,12 @@ sw_models/SmoothedIncrIbm2AligModelFactory.cc
 
 ##########
 incr_hmm_p0_alig_model_factory_h= 
-incr_hmm_p0_alig_model_factory_defs=		\
-sw_models/IncrHmmP0AligModelFactory.cc
+incr_hmm_p0_alig_model_factory_defs= sw_models/IncrHmmP0AligModelFactory.cc
+
+##########
+incr_leveldb_hmm_p0_alig_model_factory_h= 
+incr_leveldb_hmm_p0_alig_model_factory_defs=		\
+sw_models/IncrLevelDbHmmP0AligModelFactory.cc
 
 ##########
 incr_phrase_model_factory_h= 
@@ -698,6 +702,13 @@ $(incr_hmm_p0_alig_model_factory_h)		\
 $(incr_hmm_p0_alig_model_factory_defs)
 incr_hmm_p0_alig_model_factory_la_LIBADD= libthot.la
 incr_hmm_p0_alig_model_factory_la_LDFLAGS= -module
+
+##########
+incr_leveldb_hmm_p0_alig_model_factory_la_SOURCES=	\
+$(incr_leveldb_hmm_p0_alig_model_factory_h)		\
+$(incr_leveldb_hmm_p0_alig_model_factory_defs)
+incr_leveldb_hmm_p0_alig_model_factory_la_LIBADD= libthot.la
+incr_leveldb_hmm_p0_alig_model_factory_la_LDFLAGS= -module
 
 ##########
 incr_phrase_model_factory_la_SOURCES=	\
