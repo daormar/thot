@@ -36,4 +36,5 @@ IncrHmmAligModel::IncrHmmAligModel() : _incrHmmAligModel()
 {
       // Create table with lexical parameters
   incrLexTable = new IncrLexTable();
+  lexNumDenFileExtension = ".hmm_lexnd";
 }

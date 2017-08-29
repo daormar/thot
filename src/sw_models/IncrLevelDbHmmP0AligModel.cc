@@ -36,4 +36,5 @@ IncrLevelDbHmmP0AligModel::IncrLevelDbHmmP0AligModel() : _incrHmmP0AligModel()
 {
       // Create table with lexical parameters
   incrLexTable = new IncrLexLevelDbTable();
+  lexNumDenFileExtension = "_leveldb_hmm_lexnd";
 }

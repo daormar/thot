@@ -217,6 +217,9 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    Vector<Vector<double> > betaMatrix;
        // Data structures for manipulating expected values
 
+   std::string lexNumDenFileExtension;
+       // Extensions for input files for loading
+
    LexAuxVar lexAuxVar;
    Vector<Vector<double> > cachedLexLogProbs;
        // EM algorithm auxiliary variables

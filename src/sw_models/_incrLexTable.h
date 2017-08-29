@@ -88,7 +88,7 @@ class _incrLexTable
    virtual void clear(void) = 0;
 
        // Destructor
-   ~_incrLexTable(void) {};
+   virtual ~_incrLexTable(void) {};
 };
 
 #endif

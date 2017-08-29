@@ -1905,8 +1905,9 @@ bool _incrHmmAligModel::load(const char* prefFileName)
     if(retVal==THOT_ERROR) return THOT_ERROR;
 
         // Load file with lexical nd values
+    if(lexNumDenFileExtension.size() == 0) return THOT_ERROR;
     std::string lexNumDenFile=prefFileName;
-    lexNumDenFile=lexNumDenFile+".hmm_lexnd";
+    lexNumDenFile=lexNumDenFile+lexNumDenFileExtension;
     retVal=incrLexTable->load(lexNumDenFile.c_str());
     if(retVal==THOT_ERROR) return THOT_ERROR;
 
@@ -1972,8 +1973,9 @@ bool _incrHmmAligModel::print(const char* prefFileName)
   if(retVal==THOT_ERROR) return THOT_ERROR;
 
       // Print file with lexical nd values
+  if(lexNumDenFileExtension.size() == 0) return THOT_ERROR;
   std::string lexNumDenFile=prefFileName;
-  lexNumDenFile=lexNumDenFile+".hmm_lexnd";
+  lexNumDenFile=lexNumDenFile+lexNumDenFileExtension;
   retVal=incrLexTable->print(lexNumDenFile.c_str());
   if(retVal==THOT_ERROR) return THOT_ERROR;
 

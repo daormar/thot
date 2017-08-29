@@ -75,8 +75,9 @@ class IncrLexTable : public _incrLexTable
 {
   public:
 
-       // Constructor
-   IncrLexTable(void);   
+       // Constructor and destructor
+   IncrLexTable(void);
+   ~IncrLexTable(void);
 
        // Functions to handle lexNumer
    void setLexNumer(WordIndex s,
