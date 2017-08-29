@@ -31,6 +31,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files ---------------------------------------
 
 #include "IncrLexLevelDbTable.h"
+
+#include <fstream>
+#include <stdlib.h>
 #include "options.h"
 
 //--------------- Constants -------------------------------------------
@@ -69,7 +72,7 @@ int convert()
     IncrLexLevelDbTable lexTable;
     lexTable.init(outputPath);
 
-    ifstream inF (inputFile, ios::in | ios::binary);
+    ifstream inF (inputFile.c_str(), ios::in | ios::binary);
     if (!inF)
     {
       cerr << "Error in lexical nd file, file " << inputFile << " does not exist." << endl;
