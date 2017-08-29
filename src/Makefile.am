@@ -16,7 +16,7 @@ endif
 endif
 
 if HAVE_LEVELDB_LIB
-LEVELDB_PROGS=thot_ttable_to_leveldb
+LEVELDB_PROGS=thot_ttable_to_leveldb thot_lextable_to_leveldb
 LEVELDB_LIBS=leveldb_phrase_model_factory.la incr_leveldb_hmm_p0_alig_model_factory.la
 endif
 
@@ -43,7 +43,7 @@ KENLM_LIB= kenlm_factory.la
 endif
 
 bin_PROGRAMS = thot_lm_perp thot_ilm_perp thot_lm_weight_upd		\
-thot_calc_swm_lgprob thot_gen_sw_model thot_sort_bin_ilextable		\
+thot_calc_swm_lgprob thot_gen_sw_model thot_sort_bin_ilextable	   	\
 thot_sort_bin_ihmmatable thot_sort_bin_iibm2atable			\
 thot_merge_bin_ilextable thot_merge_bin_ihmmatable			\
 thot_merge_bin_iibm2atable thot_gen_bin_lex_filter_info			\
@@ -535,6 +535,10 @@ thot_lm_weight_upd_LDFLAGS = libthot.la
 ##########
 thot_calc_swm_lgprob_SOURCES = sw_models/thot_calc_swm_lgprob.cc
 thot_calc_swm_lgprob_LDFLAGS = libthot.la
+
+##########
+thot_lextable_to_leveldb_SOURCES = sw_models/thot_lextable_to_leveldb.cc
+thot_lextable_to_leveldb_LDFLAGS = libthot.la
 
 ##########
 thot_gen_sw_model_SOURCES = sw_models/thot_gen_sw_model_pars.h	\

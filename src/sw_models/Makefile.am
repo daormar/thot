@@ -35,6 +35,7 @@ thot_filter_bin_ilextable.cc        \
 thot_gen_bin_lex_filter_info.cc     \
 thot_gen_sw_model_pars.h            \
 thot_gen_sw_model.cc                \
+thot_lextable_to_leveldb.cc         \
 thot_merge_bin_ihmmatable.cc        \
 thot_merge_bin_iibm2atable.cc       \
 thot_merge_bin_ilextable.cc         \
