@@ -19,12 +19,15 @@ IncrLexTable.h IncrLexTable.cc IncrLexLevelDbTable.h IncrLexLevelDbTable.cc     
 IncrIbm2AligTable.h IncrIbm2AligTable.cc IncrIbm2AligModel.h		\
 IncrIbm2AligModel.cc IncrIbm1AligModel.h IncrIbm1AligModel.cc		\
 _incrHmmP0AligModel.h IncrHmmP0AligModel.h IncrHmmAligTable.h		\
+IncrHmmP0AligModel.cc                                               \
 _incrHmmAligModel.cc IncrHmmAligTable.cc IncrHmmAligModel.h         \
 IncrHmmAligModel.cc IncrLevelDbHmmAligModel.h IncrLevelDbHmmAligModel.cc		\
-HmmAligInfo.h CachedHmmAligLgProb.h CachedHmmAligLgProb.cc		\
+IncrLevelDbHmmP0AligModel.h                                         \
+HmmAligInfo.h CachedHmmAligLgProb.h CachedHmmAligLgProb.cc		    \
 DoubleMatrix.h DoubleMatrix.cc BestLgProbForTrgWord.h BaseSwAligModel.h	\
 BaseStepwiseAligModel.h BaseSentLengthModel.h BaseSentenceHandler.h	\
 aSourceHmm.h aSourceHmm.cc aSourceHashF.h aSource.h aSource.cc		\
 ashPidxPairHashF.h anjm1ip_anjiMatrix.h anjm1ip_anjiMatrix.cc		\
 anjiMatrix.h anjiMatrix.cc SmoothedIncrIbm2AligModelFactory.cc		\
+_incrHmmP0AligModel.cc IncrLevelDbHmmP0AligModel.cc                 \
 IncrHmmP0AligModelFactory.cc IncrLevelDbHmmP0AligModelFactory.cc

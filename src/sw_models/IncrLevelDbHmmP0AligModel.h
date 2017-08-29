@@ -40,7 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_incrHmmP0AligModel.h"
-#include "IncrLevelDbHmmAligModel.h"
+#include "IncrLexLevelDbTable.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -52,12 +52,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- IncrLevelDbHmmP0AligModel class
 
-class IncrLevelDbHmmP0AligModel : public _incrHmmP0AligModel<IncrLevelDbHmmAligModel>
+class IncrLevelDbHmmP0AligModel : public _incrHmmP0AligModel
 {
   public:
 
       // Constructor
-   IncrLevelDbHmmP0AligModel():_incrHmmP0AligModel<IncrLevelDbHmmAligModel>() {};
+   IncrLevelDbHmmP0AligModel();
 };
 
 #endif

@@ -51,12 +51,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- IncrHmmP0AligModel class
 
-class IncrHmmP0AligModel : public _incrHmmP0AligModel<IncrHmmAligModel>
+class IncrHmmP0AligModel : public _incrHmmP0AligModel
 {
   public:
 
       // Constructor
-   IncrHmmP0AligModel():_incrHmmP0AligModel<IncrHmmAligModel>() {};
+   IncrHmmP0AligModel();
 };
 
 #endif
