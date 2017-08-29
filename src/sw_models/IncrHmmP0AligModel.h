@@ -39,7 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_incrHmmP0AligModel.h"
-#include "IncrHmmAligModel.h"
+#include "IncrLexTable.h"
 
 //--------------- Constants ------------------------------------------
 

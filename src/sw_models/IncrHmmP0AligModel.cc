@@ -18,7 +18,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: IncrHmmP0AligModel                                      */
+/* Module: IncrHmmP0AligModel                                       */
 /*                                                                  */
 /* Definitions file: IncrHmmP0AligModel.cc                          */
 /*                                                                  */

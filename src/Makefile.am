@@ -158,19 +158,21 @@ sw_models/anjiMatrix.h
 sw_models_defs= sw_models/WeightedIncrNormSlm.cc			\
 sw_models/SmoothedIncrIbm2AligModel.cc					\
 sw_models/SmoothedIncrIbm1AligModel.cc sw_models/_sentLengthModel.cc	\
-sw_models/_incrHmmAligModel.cc sw_models/_incrHmmP0AligModel.cc         \
-sw_models/LightSentenceHandler.cc sw_models/IncrLexTable.cc		    \
+sw_models/_incrHmmAligModel.cc sw_models/_incrHmmP0AligModel.cc		\
+sw_models/LightSentenceHandler.cc sw_models/IncrLexTable.cc		\
 sw_models/IncrIbm2AligTable.cc sw_models/IncrIbm2AligModel.cc		\
-sw_models/IncrIbm1AligModel.cc sw_models/IncrHmmP0AligModel.cc 		\
+sw_models/IncrIbm1AligModel.cc sw_models/IncrHmmP0AligModel.cc		\
 sw_models/IncrHmmAligTable.cc sw_models/IncrHmmAligModel.cc		\
 sw_models/DoubleMatrix.cc sw_models/aSourceHmm.cc sw_models/aSource.cc	\
 sw_models/anjm1ip_anjiMatrix.cc sw_models/anjiMatrix.cc
 
 if HAVE_LEVELDB_LIB
-leveldb_sw_h= sw_models/IncrLexLevelDbTable.h                   \
-sw_models/IncrLevelDbHmmAligModel.h
-leveldb_sw_defs= sw_models/IncrLexLevelDbTable.cc               \
-sw_models/IncrLevelDbHmmAligModel.cc
+leveldb_sw_h= sw_models/IncrLexLevelDbTable.h	\
+sw_models/IncrLevelDbHmmAligModel.h		\
+sw_models/IncrLevelDbHmmP0AligModel.h
+leveldb_sw_defs= sw_models/IncrLexLevelDbTable.cc	\
+sw_models/IncrLevelDbHmmAligModel.cc			\
+sw_models/IncrLevelDbHmmP0AligModel.cc
 endif
 
 if CASMACAT_LIB_ENABLED
@@ -389,11 +391,10 @@ thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
 $(sw_models_h) $(sw_models_defs) $(phrase_models_h)			\
 $(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs) $(leveldb_pm_h)	\
-$(leveldb_pm_defs) $(leveldb_sw_h) $(leveldb_sw_defs)       \
-$(smt_preproc_h) $(smt_preproc_defs)			\
-$(error_correction_h) $(error_correction_defs) $(downhill_simplex_h)	\
-$(downhill_simplex_defs) $(stack_dec_h) $(stack_dec_defs) $(exper_h)	\
-$(exper_defs)
+$(leveldb_pm_defs) $(leveldb_sw_h) $(leveldb_sw_defs) $(smt_preproc_h)	\
+$(smt_preproc_defs) $(error_correction_h) $(error_correction_defs)	\
+$(downhill_simplex_h) $(downhill_simplex_defs) $(stack_dec_h)		\
+$(stack_dec_defs) $(exper_h) $(exper_defs)
 
 # Class factories
 

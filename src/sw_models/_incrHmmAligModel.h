@@ -48,7 +48,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "HmmAligInfo.h"
 #include "CachedHmmAligLgProb.h"
 #include "DoubleMatrix.h"
-#include "IncrLexTable.h"
+#include "_incrLexTable.h"
 #include "IncrHmmAligTable.h"
 #include "ashPidxPairHashF.h"
 #include "LexAuxVar.h"
