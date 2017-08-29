@@ -1,33 +1,58 @@
-EXTRA_DIST= WeightedIncrNormSlm.h WeightedIncrNormSlm.cc		\
-thot_sort_bin_ilextable.cc thot_sort_bin_iibm2atable.cc			\
-thot_sort_bin_ihmmatable.cc thot_prune_bin_ilextable.cc			\
-thot_merge_bin_ilextable.cc thot_merge_bin_iibm2atable.cc		\
-thot_merge_bin_ihmmatable.cc ThotIbmMaxConfid.h				\
-ThotIbmMaxConfidFactory.h ThotIbmMaxConfidFactory.cc			\
-ThotIbmMaxConfid.cc ThotIbm2Aligner.h ThotIbm2AlignerFactory.h		\
-ThotIbm2AlignerFactory.cc ThotIbm2Aligner.cc ThotHmmAligner.h		\
-ThotHmmAlignerFactory.h ThotHmmAlignerFactory.cc ThotHmmAligner.cc	\
-thot_gen_sw_model_pars.h thot_gen_sw_model.cc				\
-thot_gen_bin_lex_filter_info.cc thot_filter_bin_ilextable.cc		\
-thot_calc_swm_lgprob.cc test_casmacat_confid.cc test_casmacat_alig.cc	\
-SwDefs.h _swAligModel.h SmoothedIncrIbm2AligModel.h			\
-SmoothedIncrIbm2AligModel.cc SmoothedIncrIbm1AligModel.h		\
-SmoothedIncrIbm1AligModel.cc SentPairCont.h _sentLengthModel.h		\
-_sentLengthModel.cc LightSentenceHandler.h LightSentenceHandler.cc	\
-LexAuxVar.h _incrLexTable.h _incrSwAligModel.h _incrHmmAligModel.h  \
-IncrLexTable.h IncrLexTable.cc IncrLexLevelDbTable.h IncrLexLevelDbTable.cc     \
-IncrIbm2AligTable.h IncrIbm2AligTable.cc IncrIbm2AligModel.h		\
-IncrIbm2AligModel.cc IncrIbm1AligModel.h IncrIbm1AligModel.cc		\
-_incrHmmP0AligModel.h IncrHmmP0AligModel.h IncrHmmAligTable.h		\
-IncrHmmP0AligModel.cc                                               \
-_incrHmmAligModel.cc IncrHmmAligTable.cc IncrHmmAligModel.h         \
-IncrHmmAligModel.cc IncrLevelDbHmmAligModel.h IncrLevelDbHmmAligModel.cc		\
-IncrLevelDbHmmP0AligModel.h                                         \
-HmmAligInfo.h CachedHmmAligLgProb.h CachedHmmAligLgProb.cc		    \
-DoubleMatrix.h DoubleMatrix.cc BestLgProbForTrgWord.h BaseSwAligModel.h	\
-BaseStepwiseAligModel.h BaseSentLengthModel.h BaseSentenceHandler.h	\
-aSourceHmm.h aSourceHmm.cc aSourceHashF.h aSource.h aSource.cc		\
-ashPidxPairHashF.h anjm1ip_anjiMatrix.h anjm1ip_anjiMatrix.cc		\
-anjiMatrix.h anjiMatrix.cc SmoothedIncrIbm2AligModelFactory.cc		\
-_incrHmmP0AligModel.cc IncrLevelDbHmmP0AligModel.cc                 \
-IncrHmmP0AligModelFactory.cc IncrLevelDbHmmP0AligModelFactory.cc
+EXTRA_DIST=                         \
+_incrHmmAligModel.h                 \
+_incrHmmP0AligModel.h               \
+_incrLexTable.h                     \
+_incrSwAligModel.h                  \
+_sentLengthModel.cc                 \
+_sentLengthModel.h                  \
+_swAligModel.h                      \
+IncrHmmAligTable.h                  \
+IncrHmmP0AligModel.cc               \
+IncrHmmP0AligModel.h                \
+IncrIbm1AligModel.cc                \
+IncrIbm1AligModel.h                 \
+IncrIbm2AligModel.cc                \
+IncrIbm2AligModel.h                 \
+IncrIbm2AligTable.cc                \
+IncrIbm2AligTable.h                 \
+IncrLexLevelDbTable.cc              \
+IncrLexLevelDbTable.h               \
+IncrLexTable.cc                     \
+IncrLexTable.h                      \
+LexAuxVar.h                         \
+LightSentenceHandler.cc             \
+LightSentenceHandler.h              \
+SentPairCont.h                      \
+SmoothedIncrIbm1AligModel.cc        \
+SmoothedIncrIbm1AligModel.h         \
+SmoothedIncrIbm2AligModel.cc        \
+SmoothedIncrIbm2AligModel.h         \
+SwDefs.h                            \
+test_casmacat_alig.cc               \
+test_casmacat_confid.cc             \
+thot_calc_swm_lgprob.cc             \
+thot_filter_bin_ilextable.cc        \
+thot_gen_bin_lex_filter_info.cc     \
+thot_gen_sw_model_pars.h            \
+thot_gen_sw_model.cc                \
+thot_merge_bin_ihmmatable.cc        \
+thot_merge_bin_iibm2atable.cc       \
+thot_merge_bin_ilextable.cc         \
+thot_prune_bin_ilextable.cc         \
+thot_sort_bin_ihmmatable.cc         \
+thot_sort_bin_iibm2atable.cc        \
+thot_sort_bin_ilextable.cc          \
+ThotHmmAligner.cc                   \
+ThotHmmAligner.h                    \
+ThotHmmAlignerFactory.cc            \
+ThotHmmAlignerFactory.h             \
+ThotIbm2Aligner.cc                  \
+ThotIbm2Aligner.h                   \
+ThotIbm2AlignerFactory.cc           \
+ThotIbm2AlignerFactory.h            \
+ThotIbmMaxConfid.cc                 \
+ThotIbmMaxConfid.h                  \
+ThotIbmMaxConfidFactory.cc          \
+ThotIbmMaxConfidFactory.h           \
+WeightedIncrNormSlm.cc              \
+WeightedIncrNormSlm.h
