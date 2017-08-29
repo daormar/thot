@@ -1,6 +1,6 @@
 /*
 thot package for statistical machine translation
-Copyright (C) 2017 Adam Harasimowicz
+Copyright (C) 2013-2017 Daniel Ortiz-Mart\'inez, Adam Harasimowicz
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
@@ -18,7 +18,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: IncrbHmmP0AligModel                                      */
+/* Module: IncrHmmP0AligModel                                      */
 /*                                                                  */
 /* Definitions file: IncrHmmP0AligModel.cc                          */
 /*                                                                  */

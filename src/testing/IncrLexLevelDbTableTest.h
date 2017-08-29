@@ -80,7 +80,7 @@ class IncrLexLevelDbTableTest: public CppUnit::TestFixture
  public:
   void setUp();
   void tearDown();
-  
+
   void testGetSetLexDenom();
   void testGetSetLexNumer();
   void testGetTransForTarget();

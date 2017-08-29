@@ -1,21 +1,21 @@
 /*
 thot package for statistical machine translation
 Copyright (C) 2013-2017 Daniel Ortiz-Mart\'inez, Adam Harasimowicz
- 
+
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 3
 of the License, or (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
- 
+
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
 /********************************************************************/
 /*                                                                  */
 /* Module: _incrHmmAligModel                                        */
@@ -83,7 +83,7 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
 
    typedef _incrSwAligModel<Vector<Prob> >::PpInfo PpInfo;
    typedef map<WordIndex,Prob> SrcTableNode;
-  
+
    // Constructor
    _incrHmmAligModel();
 
@@ -115,7 +115,7 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
        // information about current model parameters
 
    // Functions to set model factors
-   
+
    void setLexSmIntFactor(double _lexSmoothInterpFactor);
        // Sets lexical smoothing interpolation factor
    void setAlSmIntFactor(double _aligSmoothInterpFactor);
@@ -146,7 +146,7 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    // Functions to get translations for word
    bool getEntriesForTarget(WordIndex t,
                             SrcTableNode& srctn);
-   
+
    // Functions to generate alignments
    virtual LgProb obtainBestAlignmentVecStrCached(Vector<std::string> srcSentenceVector,
                                                   Vector<std::string> trgSentenceVector,
@@ -194,7 +194,7 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
 
    // load function
    bool load(const char* prefFileName);
-   
+
    // print function
    bool print(const char* prefFileName);
 
@@ -231,12 +231,12 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
 
    IncrHmmAligTable incrHmmAligTable;
        // Table with alignment parameters
-   
+
    WeightedIncrNormSlm sentLengthModel;
 
    double aligSmoothInterpFactor;
    double lexSmoothInterpFactor;
-   
+
    // Functions to get sentence pairs
    Vector<WordIndex> getSrcSent(unsigned int n);
        // get n-th source sentence
@@ -248,11 +248,11 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
        // for the alignment parameters
    PositionIndex getSrcLen(const Vector<WordIndex>& nsrcWordIndexVec);
 
-   Vector<WordIndex> getTrgSent(unsigned int n);   
+   Vector<WordIndex> getTrgSent(unsigned int n);
        // get n-th target sentence
 
    bool sentenceLengthIsOk(const Vector<WordIndex> sentence);
-   
+
    // Auxiliary functions to load and print models
    bool loadLexSmIntFactor(const char* lexSmIntFactorFile);
    bool printLexSmIntFactor(const char* lexSmIntFactorFile);
@@ -285,7 +285,7 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
                            unsigned int& i);
        // Given ip and slen values, returns (asHmm,i) pair expressing a
        // valid alignment with the null word
-   
+
    void viterbiAlgorithm(const Vector<WordIndex>& nSrcSentIndexVector,
                          const Vector<WordIndex>& trgSentIndexVector,
                          Vector<Vector<double> >& vitMatrix,

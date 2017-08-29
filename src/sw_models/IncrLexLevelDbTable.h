@@ -1,21 +1,21 @@
 /*
 thot package for statistical machine translation
 Copyright (C) 2017 Daniel Ortiz-Mart\'inez, Adam Harasimowicz
- 
+
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 3
 of the License, or (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
- 
+
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
 /********************************************************************/
 /*                                                                  */
 /* Module: IncrLexLevelDbTable                                      */
@@ -75,7 +75,7 @@ class IncrLexLevelDbTable : public _incrLexTable
         // Converters
     string vectorToString(const Vector<WordIndex>& vec)const;
     Vector<WordIndex> stringToVector(const string s)const;
-    
+
         // Read and write data
     bool retrieveData(const Vector<WordIndex>& phrase, float &value)const;
     bool storeData(const Vector<WordIndex>& phrase, float value)const;
@@ -101,7 +101,7 @@ class IncrLexLevelDbTable : public _incrLexTable
         float getLexNumer(WordIndex s,
                           WordIndex t,
                           bool& found);
-   
+
             // Functions to handle lexDenom
         void setLexDenom(WordIndex s,
                          float f);
@@ -120,7 +120,7 @@ class IncrLexLevelDbTable : public _incrLexTable
 
             // load function
         bool load(const char* lexNumDenFile);
-   
+
             // print function
         bool print(const char* lexNumDenFile);
 

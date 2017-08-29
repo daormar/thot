@@ -1,21 +1,21 @@
 /*
 thot package for statistical machine translation
 Copyright (C) 2017 Daniel Ortiz-Mart\'inez, Adam Harasimowicz
- 
+
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 3
 of the License, or (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
- 
+
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
 /********************************************************************/
 /*                                                                  */
 /* Module: IncrLexLevelDbTable                                      */
@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Global variables -----------------------------------
 
 
-//--------------- Function declarations 
+//--------------- Function declarations
 
 
 //--------------- Constants
@@ -175,10 +175,10 @@ bool IncrLexLevelDbTable::storeData(const Vector<WordIndex>& phrase, float value
     return s.ok();
 }
 
-//-------------------------   
+//-------------------------
 void IncrLexLevelDbTable::setLexNumer(WordIndex s,
-                               WordIndex t,
-                               float f)
+                                      WordIndex t,
+                                      float f)
 {
     // Insert lexNumer for pair (s,t)
     // Due to performance of getTransForTarget method,
@@ -190,10 +190,10 @@ void IncrLexLevelDbTable::setLexNumer(WordIndex s,
     storeData(st_vec, f);
 }
 
-//-------------------------   
+//-------------------------
 float IncrLexLevelDbTable::getLexNumer(WordIndex s,
-                                WordIndex t,
-                                bool& found)
+                                       WordIndex t,
+                                       bool& found)
 {
     float lexNumber;
     Vector<WordIndex> st_vec;
@@ -204,10 +204,10 @@ float IncrLexLevelDbTable::getLexNumer(WordIndex s,
 
     return lexNumber;
 }
-   
-//-------------------------   
+
+//-------------------------
 void IncrLexLevelDbTable::setLexDenom(WordIndex s,
-                               float d)
+                                      float d)
 {
     Vector<WordIndex> s_vec;
     s_vec.push_back(s);
@@ -215,9 +215,9 @@ void IncrLexLevelDbTable::setLexDenom(WordIndex s,
     storeData(s_vec, d);
 }
 
-//-------------------------   
+//-------------------------
 float IncrLexLevelDbTable::getLexDenom(WordIndex s,
-                                bool& found)
+                                       bool& found)
 {
     float lexDenom;
     Vector<WordIndex> s_vec;
@@ -351,7 +351,7 @@ void IncrLexLevelDbTable::clear(void)
 
         // Create empty database
         leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
-        
+
         if(!status.ok())
         {
             cerr << "Cannot create new levelDB in " << dbName << endl;
