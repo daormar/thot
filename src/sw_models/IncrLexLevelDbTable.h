@@ -75,6 +75,8 @@ class IncrLexLevelDbTable : public _incrLexTable
         // Converters
     string vectorToString(const Vector<WordIndex>& vec)const;
     Vector<WordIndex> stringToVector(const string s)const;
+    bool stringToFloat(const string value_str, float &value)const;
+    string floatToString(const float value)const;
 
         // Read and write data
     bool retrieveData(const Vector<WordIndex>& phrase, float &value)const;

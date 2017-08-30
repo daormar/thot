@@ -142,6 +142,38 @@ Vector<WordIndex> IncrLexLevelDbTable::keyToVector(const string key)const
 }
 
 //-------------------------
+bool IncrLexLevelDbTable::stringToFloat(const string value_str, float &value)const
+{
+    // Decode string representation to float without loosing precision
+    Vector<WordIndex> vec = stringToVector(value_str);
+    unsigned char *p = reinterpret_cast<unsigned char*>(&value);
+
+    // Cannot retireve value or format is incorrect
+    if (vec.size() != sizeof(value)) return false;
+
+    for (size_t i = 0; i < sizeof(value); i++)
+    {
+        p[i] = vec[i];
+    }
+
+    return true;
+}
+
+//-------------------------
+string IncrLexLevelDbTable::floatToString(const float value)const
+{
+    // Encode float as a string without loosing precision
+    unsigned char const *p = reinterpret_cast<unsigned char const*>(&value);
+    Vector<WordIndex> vec;
+    for (size_t i = 0; i < sizeof(value); i++)
+    {
+        vec.push_back((WordIndex) p[i]);
+    }
+
+    return vectorToString(vec);
+}
+
+//-------------------------
 bool IncrLexLevelDbTable::retrieveData(const Vector<WordIndex>& phrase, float &value)const
 {
     string value_str;
@@ -151,13 +183,7 @@ bool IncrLexLevelDbTable::retrieveData(const Vector<WordIndex>& phrase, float &v
     leveldb::Status result = db->Get(leveldb::ReadOptions(), key, &value_str);
 
     if (result.ok()) {
-        Vector<WordIndex> vec = stringToVector(value_str);
-        unsigned char *p = reinterpret_cast<unsigned char*>(&value);
-        for (size_t i = 0; i < sizeof(value); i++)
-        {
-            p[i] = vec[i];
-        }
-        return true;
+        return stringToFloat(value_str, value);
     } else {
         return false;
     }
@@ -166,14 +192,7 @@ bool IncrLexLevelDbTable::retrieveData(const Vector<WordIndex>& phrase, float &v
 //-------------------------
 bool IncrLexLevelDbTable::storeData(const Vector<WordIndex>& phrase, float value)const
 {
-    unsigned char *p = reinterpret_cast<unsigned char*>(&value);
-    Vector<WordIndex> vec;
-    for (size_t i = 0; i < sizeof(value); i++)
-    {
-        vec.push_back((WordIndex) p[i]);
-    }
-
-    string value_str = vectorToString(vec);
+    string value_str = floatToString(value);
 
     leveldb::WriteBatch batch;
     batch.Put(vectorToString(phrase), value_str);
