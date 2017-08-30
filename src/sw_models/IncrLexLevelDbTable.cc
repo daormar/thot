@@ -313,6 +313,8 @@ bool IncrLexLevelDbTable::load(const char* lexNumDenFile)
         db = NULL;
     }
 
+    cerr << "Loading lexnd in LevelDB format from " << lexNumDenFile << endl;
+
     dbName = lexNumDenFile;
     leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
 
