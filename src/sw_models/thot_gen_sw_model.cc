@@ -199,7 +199,7 @@ int processParameters(thot_gen_sw_model_pars pars)
       // supported by the current alignment model
   if(pars.lf_given)
   {
-    IncrHmmAligModel* incrHmmAligModelPtr=dynamic_cast<IncrHmmAligModel*>(swAligModelPtr);
+    _incrHmmAligModel* incrHmmAligModelPtr=dynamic_cast<_incrHmmAligModel*>(swAligModelPtr);
     if(incrHmmAligModelPtr)
     {
       incrHmmAligModelPtr->setLexSmIntFactor(pars.lf_val);
@@ -214,7 +214,7 @@ int processParameters(thot_gen_sw_model_pars pars)
       // supported by the current alignment model
   if(pars.af_given)
   {
-    IncrHmmAligModel* incrHmmAligModelPtr=dynamic_cast<IncrHmmAligModel*>(swAligModelPtr);
+    _incrHmmAligModel* incrHmmAligModelPtr=dynamic_cast<_incrHmmAligModel*>(swAligModelPtr);
     if(incrHmmAligModelPtr)
     {
       incrHmmAligModelPtr->setAlSmIntFactor(pars.af_val);

@@ -18,19 +18,20 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: IncrHmmP0AligModel                                       */
+/* Module: IncrLevelDbHmmP0AligModel                                */
 /*                                                                  */
-/* Prototype file: IncrHmmP0AligModel.h                             */
+/* Prototype file: IncrLevelDbHmmP0AligModel.h                      */
 /*                                                                  */
-/* Description: Defines the IncrHmmP0AligModel class.               */
-/*              IncrHmmP0AligModel class allows to generate and     */
-/*              access to the data of a Hmm statistical             */
+/* Description: Defines the IncrLevelDbHmmP0AligModel class.        */
+/*              IncrLevelDbHmmP0AligModel class allows to generate  */
+/*              and access to the data of a HMM statistical         */
 /*              alignment model with fixed p0 probability.          */
+/*              Model uses LevelDB as a back-end data structure.    */
 /*                                                                  */
 /********************************************************************/
 
-#ifndef _IncrHmmP0AligModel_h
-#define _IncrHmmP0AligModel_h
+#ifndef _IncrLevelDbHmmP0AligModel_h
+#define _IncrLevelDbHmmP0AligModel_h
 
 //--------------- Include files --------------------------------------
 
@@ -39,7 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_incrHmmP0AligModel.h"
-#include "IncrLexTable.h"
+#include "IncrLexLevelDbTable.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -49,14 +50,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- IncrHmmP0AligModel class
+//--------------- IncrLevelDbHmmP0AligModel class
 
-class IncrHmmP0AligModel : public _incrHmmP0AligModel
+class IncrLevelDbHmmP0AligModel : public _incrHmmP0AligModel
 {
   public:
 
       // Constructor
-   IncrHmmP0AligModel();
+   IncrLevelDbHmmP0AligModel();
 };
 
 #endif

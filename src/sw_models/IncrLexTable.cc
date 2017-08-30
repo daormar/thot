@@ -306,3 +306,9 @@ void IncrLexTable::clear(void)
   lexNumer.clear();
   lexDenom.clear();
 }
+
+//-------------------------
+IncrLexTable::~IncrLexTable(void)
+{
+  // Nothing to do
+}
