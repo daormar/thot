@@ -16,8 +16,8 @@ endif
 endif
 
 if HAVE_LEVELDB_LIB
-LEVELDB_PROGS=thot_ngram_to_leveldb thot_ttable_to_leveldb
-LEVELDB_LIBS=leveldb_phrase_model_factory.la
+LEVELDB_PROGS=thot_ngram_to_leveldb thot_ttable_to_leveldb thot_lextable_to_leveldb
+LEVELDB_LIBS=leveldb_phrase_model_factory.la incr_leveldb_hmm_p0_alig_model_factory.la
 endif
 
 AUTOMAKE_OPTIONS = subdir-objects
@@ -43,7 +43,7 @@ KENLM_LIB= kenlm_factory.la
 endif
 
 bin_PROGRAMS = thot_lm_perp thot_ilm_perp thot_lm_weight_upd		\
-thot_calc_swm_lgprob thot_gen_sw_model thot_sort_bin_ilextable		\
+thot_calc_swm_lgprob thot_gen_sw_model thot_sort_bin_ilextable	   	\
 thot_sort_bin_ihmmatable thot_sort_bin_iibm2atable			\
 thot_merge_bin_ilextable thot_merge_bin_ihmmatable			\
 thot_merge_bin_iibm2atable thot_gen_bin_lex_filter_info			\
@@ -147,8 +147,10 @@ sw_models/_swAligModel.h sw_models/SmoothedIncrIbm2AligModel.h		\
 sw_models/SmoothedIncrIbm1AligModel.h sw_models/SentPairCont.h		\
 sw_models/_sentLengthModel.h sw_models/LightSentenceHandler.h		\
 sw_models/LexAuxVar.h sw_models/_incrSwAligModel.h			\
+sw_models/_incrLexTable.h sw_models/_incrHmmAligModel.h         \
 sw_models/IncrLexTable.h sw_models/IncrIbm2AligTable.h			\
 sw_models/IncrIbm2AligModel.h sw_models/IncrIbm1AligModel.h		\
+sw_models/_incrHmmP0AligModel.h                             	\
 sw_models/IncrHmmP0AligModel.h sw_models/IncrHmmAligTable.h		\
 sw_models/IncrHmmAligModel.h sw_models/HmmAligInfo.h			\
 sw_models/CachedHmmAligLgProb.h sw_models/CachedHmmAligLgProb.cc	\
@@ -161,12 +163,22 @@ sw_models/anjiMatrix.h
 sw_models_defs= sw_models/WeightedIncrNormSlm.cc			\
 sw_models/SmoothedIncrIbm2AligModel.cc					\
 sw_models/SmoothedIncrIbm1AligModel.cc sw_models/_sentLengthModel.cc	\
+sw_models/_incrHmmAligModel.cc sw_models/_incrHmmP0AligModel.cc		\
 sw_models/LightSentenceHandler.cc sw_models/IncrLexTable.cc		\
 sw_models/IncrIbm2AligTable.cc sw_models/IncrIbm2AligModel.cc		\
 sw_models/IncrIbm1AligModel.cc sw_models/IncrHmmP0AligModel.cc		\
 sw_models/IncrHmmAligTable.cc sw_models/IncrHmmAligModel.cc		\
 sw_models/DoubleMatrix.cc sw_models/aSourceHmm.cc sw_models/aSource.cc	\
 sw_models/anjm1ip_anjiMatrix.cc sw_models/anjiMatrix.cc
+
+if HAVE_LEVELDB_LIB
+leveldb_sw_h= sw_models/IncrLexLevelDbTable.h	\
+sw_models/IncrLevelDbHmmAligModel.h		\
+sw_models/IncrLevelDbHmmP0AligModel.h
+leveldb_sw_defs= sw_models/IncrLexLevelDbTable.cc	\
+sw_models/IncrLevelDbHmmAligModel.cc			\
+sw_models/IncrLevelDbHmmP0AligModel.cc
+endif
 
 if CASMACAT_LIB_ENABLED
 casmacat_aligner_h= sw_models/ThotIbm2AlignerFactory.h	\
@@ -374,10 +386,12 @@ testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h
 testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc
 
 if HAVE_LEVELDB_LIB
-leveldb_pm_testing_h= testing/LevelDbNgramTableTest.h       \
-testing/LevelDbPhraseTableTest.h
+leveldb_pm_testing_h= testing/LevelDbNgramTableTest.h          \
+testing/LevelDbPhraseTableTest.h                               \
+testing/IncrLexLevelDbTableTest.h
 leveldb_pm_testing_defs= testing/LevelDbNgramTableTest.cc      \
-testing/LevelDbPhraseTableTest.cc
+testing/LevelDbPhraseTableTest.cc                              \
+testing/IncrLexLevelDbTableTest.cc
 endif
 
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
@@ -385,10 +399,10 @@ $(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
 $(leveldb_lm_h) $(leveldb_lm_defs)  \
 $(sw_models_h) $(sw_models_defs) $(phrase_models_h)			\
 $(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs) $(leveldb_pm_h)	\
-$(leveldb_pm_defs) $(smt_preproc_h) $(smt_preproc_defs)			\
-$(error_correction_h) $(error_correction_defs) $(downhill_simplex_h)	\
-$(downhill_simplex_defs) $(stack_dec_h) $(stack_dec_defs) $(exper_h)	\
-$(exper_defs)
+$(leveldb_pm_defs) $(leveldb_sw_h) $(leveldb_sw_defs) $(smt_preproc_h)	\
+$(smt_preproc_defs) $(error_correction_h) $(error_correction_defs)	\
+$(downhill_simplex_h) $(downhill_simplex_defs) $(stack_dec_h)		\
+$(stack_dec_defs) $(exper_h) $(exper_defs)
 
 # Class factories
 
@@ -423,8 +437,12 @@ sw_models/SmoothedIncrIbm2AligModelFactory.cc
 
 ##########
 incr_hmm_p0_alig_model_factory_h= 
-incr_hmm_p0_alig_model_factory_defs=		\
-sw_models/IncrHmmP0AligModelFactory.cc
+incr_hmm_p0_alig_model_factory_defs= sw_models/IncrHmmP0AligModelFactory.cc
+
+##########
+incr_leveldb_hmm_p0_alig_model_factory_h= 
+incr_leveldb_hmm_p0_alig_model_factory_defs=		\
+sw_models/IncrLevelDbHmmP0AligModelFactory.cc
 
 ##########
 incr_phrase_model_factory_h= 
@@ -535,6 +553,10 @@ thot_lm_weight_upd_LDFLAGS = libthot.la
 ##########
 thot_calc_swm_lgprob_SOURCES = sw_models/thot_calc_swm_lgprob.cc
 thot_calc_swm_lgprob_LDFLAGS = libthot.la
+
+##########
+thot_lextable_to_leveldb_SOURCES = sw_models/thot_lextable_to_leveldb.cc
+thot_lextable_to_leveldb_LDFLAGS = libthot.la
 
 ##########
 thot_gen_sw_model_SOURCES = sw_models/thot_gen_sw_model_pars.h	\
@@ -709,6 +731,13 @@ $(incr_hmm_p0_alig_model_factory_h)		\
 $(incr_hmm_p0_alig_model_factory_defs)
 incr_hmm_p0_alig_model_factory_la_LIBADD= libthot.la
 incr_hmm_p0_alig_model_factory_la_LDFLAGS= -module
+
+##########
+incr_leveldb_hmm_p0_alig_model_factory_la_SOURCES=	\
+$(incr_leveldb_hmm_p0_alig_model_factory_h)		\
+$(incr_leveldb_hmm_p0_alig_model_factory_defs)
+incr_leveldb_hmm_p0_alig_model_factory_la_LIBADD= libthot.la
+incr_leveldb_hmm_p0_alig_model_factory_la_LDFLAGS= -module
 
 ##########
 incr_phrase_model_factory_la_SOURCES=	\

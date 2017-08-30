@@ -1,6 +1,6 @@
 /*
 thot package for statistical machine translation
-Copyright (C) 2013-2017 Daniel Ortiz-Mart\'inez, Adam Harasimowicz
+Copyright (C) 2017 Adam Harasimowicz
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
@@ -18,45 +18,75 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: IncrHmmP0AligModel                                       */
+/* Module: IncrLexLevelDbTableTest                                  */
 /*                                                                  */
-/* Prototype file: IncrHmmP0AligModel.h                             */
+/* Prototypes file: IncrLexLevelDbTableTest.h                       */
 /*                                                                  */
-/* Description: Defines the IncrHmmP0AligModel class.               */
-/*              IncrHmmP0AligModel class allows to generate and     */
-/*              access to the data of a Hmm statistical             */
-/*              alignment model with fixed p0 probability.          */
+/* Description: Declares the IncrLexLevelDbTableTest class          */
+/*              implementing unit tests for the IncrLexLevelDbTable */
+/*              class.                                              */
 /*                                                                  */
 /********************************************************************/
 
-#ifndef _IncrHmmP0AligModel_h
-#define _IncrHmmP0AligModel_h
+/**
+ * @file IncrLexLevelDbTableTest.h
+ *
+ * @brief Declares the IncrLexLevelDbTable class implementing unit tests
+ * for the IncrLexLevelDbTable class.
+ */
+
+#ifndef _IncrLexLevelDbTableTest_h
+#define _IncrLexLevelDbTableTest_h
 
 //--------------- Include files --------------------------------------
+
+#include "ErrorDefs.h"
 
 #if HAVE_CONFIG_H
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "_incrHmmP0AligModel.h"
-#include "IncrLexTable.h"
+#include "IncrLexLevelDbTable.h"
+#include <cppunit/extensions/HelperMacros.h>
 
 //--------------- Constants ------------------------------------------
 
+
 //--------------- typedefs -------------------------------------------
 
-//--------------- function declarations ------------------------------
 
 //--------------- Classes --------------------------------------------
 
-//--------------- IncrHmmP0AligModel class
+//--------------- IncrLexLevelDbTable template class
 
-class IncrHmmP0AligModel : public _incrHmmP0AligModel
+/**
+ * @brief Class implementing tests for IncrLexLevelDbTable.
+ */
+
+class IncrLexLevelDbTableTest: public CppUnit::TestFixture
 {
-  public:
+  CPPUNIT_TEST_SUITE( IncrLexLevelDbTableTest );
+  CPPUNIT_TEST( testGetSetLexDenom );
+  CPPUNIT_TEST( testGetSetLexNumer );
+  CPPUNIT_TEST( testGetTransForTarget );
+  CPPUNIT_TEST( testSetLexNumerDenom );
+  CPPUNIT_TEST( testLoad );
+  CPPUNIT_TEST_SUITE_END();
 
-      // Constructor
-   IncrHmmP0AligModel();
+ private:
+  IncrLexLevelDbTable *tab;
+  string dbName = "/tmp/thot_leveldb_unit_test";
+
+ public:
+  void setUp();
+  void tearDown();
+
+  void testGetSetLexDenom();
+  void testGetSetLexNumer();
+  void testGetTransForTarget();
+  void testSetLexNumerDenom();
+  void testLoad();
+
 };
 
 #endif
