@@ -1,7 +1,7 @@
 # Author: Daniel Ortiz Mart\'inez
 # *- bash -*
 
-# Executes language and translation model tuning.
+# Executes n-best list weight tuning.
 
 # \textbf{Categ}: modelling
 
