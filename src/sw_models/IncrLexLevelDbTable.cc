@@ -151,7 +151,12 @@ bool IncrLexLevelDbTable::retrieveData(const Vector<WordIndex>& phrase, float &v
     leveldb::Status result = db->Get(leveldb::ReadOptions(), key, &value_str);
 
     if (result.ok()) {
-        value = atof(value_str.c_str());
+        Vector<WordIndex> vec = stringToVector(value_str);
+        unsigned char *p = reinterpret_cast<unsigned char*>(&value);
+        for (size_t i = 0; i < sizeof(value); i++)
+        {
+            p[i] = vec[i];
+        }
         return true;
     } else {
         return false;
@@ -161,9 +166,14 @@ bool IncrLexLevelDbTable::retrieveData(const Vector<WordIndex>& phrase, float &v
 //-------------------------
 bool IncrLexLevelDbTable::storeData(const Vector<WordIndex>& phrase, float value)const
 {
-    stringstream ss;
-    ss << value;
-    string value_str = ss.str();
+    unsigned char *p = reinterpret_cast<unsigned char*>(&value);
+    Vector<WordIndex> vec;
+    for (size_t i = 0; i < sizeof(value); i++)
+    {
+        vec.push_back((WordIndex) p[i]);
+    }
+
+    string value_str = vectorToString(vec);
 
     leveldb::WriteBatch batch;
     batch.Put(vectorToString(phrase), value_str);
