@@ -348,48 +348,53 @@ bool _incrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
 
  if(awk.open(phraseTTableFileName)==THOT_ERROR)
  {
-   cerr<<"Error in WBA-Phrase Model file: "<<phraseTTableFileName<<endl;
+   cerr<<"Error in phrase model file: "<<phraseTTableFileName<<endl;
    return THOT_ERROR;
  }
  else
- {   
-  while(awk.getln())
-  {
-    if(awk.FNR>=1 && awk.NF>1)
-    {
-      i=1; 
-      s.clear();	  
-      while(i<=awk.NF && strcmp("|||",awk.dollar(i).c_str())!=0)	
-      {
-        s.push_back(awk.dollar(i)); 
-        ++i;
-      }
-      ++i;
-      t.clear();
-      while(i<=awk.NF && strcmp("|||",awk.dollar(i).c_str())!=0)	
-      {
-        t.push_back(awk.dollar(i));			   
-        ++i; 
-      }
-      if(i<awk.NF-1 && strcmp("|||",awk.dollar(i).c_str())==0)
-      {
-        ++i;
-        count_s_=atof(awk.dollar(i).c_str());
-        ++i;
-        count_s_t_=atof(awk.dollar(i).c_str());  
+ {
+   unsigned int numEntry=1; 
+   while(awk.getln())
+   {
+     if(awk.FNR>=1 && awk.NF>1)
+     {
+           // Read source phrase
+       i=1; 
+       s.clear();	  
+       while(i<=awk.NF && strcmp("|||",awk.dollar(i).c_str())!=0)	
+       {
+         s.push_back(awk.dollar(i)); 
+         ++i;
+       }
+           // Read target phrase
+       ++i;
+       t.clear();
+       while(i<=awk.NF && strcmp("|||",awk.dollar(i).c_str())!=0)	
+       {
+         t.push_back(awk.dollar(i));			   
+         ++i; 
+       }
+           // Verify entry
+       if(i<awk.NF-1 && strcmp("|||",awk.dollar(i).c_str())==0 && !s.empty() && !t.empty())
+       {
+             // Read count information
+         ++i;
+         count_s_=atof(awk.dollar(i).c_str());
+         ++i;
+         count_s_t_=atof(awk.dollar(i).c_str());  
 
-        phpinfo.first=count_s_;
-        phpinfo.second=count_s_t_;
-        strAddTableEntry(s,t,phpinfo);  
-      } 
-      else
-      {
-        cerr<<"Error in WBA-Phrase Model file: "<<phraseTTableFileName<<endl;
-        cerr<<"(Note: ensure your model was generated using the -pc option)"<<endl;
-        return THOT_ERROR;
-      }
-    }
-  }
+             // Add table entry
+         phpinfo.first=count_s_;
+         phpinfo.second=count_s_t_;
+         strAddTableEntry(s,t,phpinfo);
+       } 
+       else
+       {
+         cerr<<"Warning: discarding anomalous phrase table entry at line "<<numEntry<<endl;
+       }
+     }
+     ++numEntry;
+   }
  }
  return THOT_OK;
 }
