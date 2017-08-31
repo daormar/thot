@@ -20,6 +20,16 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ModelDescriptorUtils.h"
 
 //---------------
+bool soFileIsExternal(std::string absoluteSoFileName)
+{
+  std::string dirName=extractDirName(absoluteSoFileName);
+  if(dirName==THOT_LIBDIR)
+    return false;
+  else
+    return true;
+}
+
+//---------------
 std::string absolutizeModelFileName(std::string descFileName,
                                     std::string modelFileName)
 {

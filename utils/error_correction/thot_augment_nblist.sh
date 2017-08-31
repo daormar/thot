@@ -9,7 +9,7 @@
 print_desc()
 {
     echo "thot_augment_nblist written by Daniel Ortiz"
-    echo "thot_augment_nblist rescore n-best list using an rnn-lm"
+    echo "thot_augment_nblist rescore n-best list using a new score component"
     echo "type \"thot_augment_nblist --help\" to get usage information"
 }
 

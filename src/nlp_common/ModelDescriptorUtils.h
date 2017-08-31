@@ -46,6 +46,7 @@ struct ModelDescriptorEntry
 
 //--------------- Functions ------------------------------------------
 
+bool soFileIsExternal(std::string absoluteSoFileName);
 std::string absolutizeModelFileName(std::string descFileName,
                                     std::string modelFileName);
 std::string extractDirName(std::string filePath);

@@ -1,7 +1,7 @@
 # Author: Daniel Ortiz Mart\'inez
 # *- bash -*
 
-# Executes language and translation model tuning.
+# Executes n-best list weight tuning.
 
 # \textbf{Categ}: modelling
 
@@ -48,7 +48,7 @@ obtain_loglin_nonneg_const()
     echo "${_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wpw" || $i=="tseglenw") printf"0 "; else printf"1 "}'
 }
 
-##################
+########
 obtain_smtweights_names()
 {
     # Process n-best lists
@@ -58,7 +58,7 @@ obtain_smtweights_names()
     done
 }
 
-##################
+########
 obtain_smtweights_values()
 {
     # Process n-best lists
@@ -137,7 +137,7 @@ loglin_upd()
     ${bindir}/thot_dhs_nbl_rescore ${TDIR_NBLIST_TUNE} ${upd_weights} > ${outd}/llweights_tune.scr
 }
 
-##################
+########
 
 if [ $# -eq 0 ]; then
     print_desc

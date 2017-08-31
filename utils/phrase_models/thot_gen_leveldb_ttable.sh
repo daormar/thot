@@ -27,29 +27,52 @@ plain_ttable_to_id()
                   }
                  }
                  {
+                   # Check entry correctness and extract phrase pair
                    countSrc=1
+                   correct=1
+                   srcphr=""
+                   trgphr=""
                    for(i=1;i<NF;++i)
                    {
                     if($i != "|||")
                     {
                       if(countSrc==1)
-                       printf"%s ",s_word[$i]
+                      {
+                       if(! ($i in s_word)) 
+                       {
+                         correct=0
+                         break
+                       }
+                       else
+                        srcphr=srcphr" "s_word[$i]
+                      }
                       else
-                       printf"%s ",t_word[$i]
-                     }
-                     else
-                     {
+                       if(! ($i in t_word))
+                       {
+                         correct=0
+                         break
+                       }
+                       else
+                        trgphr=trgphr" "t_word[$i]
+                    }
+                    else
+                    {
                       if(countSrc==0) break
                       if(countSrc==1) 
-                      {
                         countSrc=0
-                        printf "||| "
-                      }
-                     }
                     }
-                    printf"||| %s %s\n",$(NF-1),$NF
+                   }
+                   if(length(srcphr)==0 || length(trgphr)==0)
+                     correct=0
+
+                   # Print entry information if it was correct
+                   if(correct)
+                     printf"%s ||| %s ||| %s %s\n",srcphr,trgphr,$(NF-1),$NF
+                   else
+                     printf"Warning: discarding anomalous phrase table entry at line %d (look for words outside vocabulary or empty phrases)\n",NR > "/dev/stderr"
                   }' ${_table}
 }
+
 
 ########
 obtain_vocab()
@@ -140,6 +163,7 @@ gen_trg_vocab()
         cat $table | extract_trg_phrases $tmpdir | obtain_vocab "NULL UNKNOWN_WORD <UNUSED_WORD>" > $trgv
     fi
 }
+
 ########
 gen_vocab_files()
 {
@@ -238,7 +262,7 @@ else
     
     gen_vocab_files
 
-    gen_leveldb_file
+    gen_leveldb_files
 
     echo "LevelDB ttable generation process finished" >&2
 
