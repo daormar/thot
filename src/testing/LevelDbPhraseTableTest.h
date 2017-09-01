@@ -1,6 +1,6 @@
 /*
 thot package for statistical machine translation
-Copyright (C) 2013 Daniel Ortiz-Mart\'inez
+Copyright (C) 2017 Adam Harasimowicz
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
@@ -46,8 +46,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "_phraseTableTest.h"
 #include "LevelDbPhraseTable.h"
-#include <cppunit/extensions/HelperMacros.h>
 
 //--------------- Constants ------------------------------------------
 
@@ -63,7 +63,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  * @brief Class implementing tests for LevelDbPhraseTable.
  */
 
-class LevelDbPhraseTableTest: public CppUnit::TestFixture
+class LevelDbPhraseTableTest: public _phraseTableTest
 {
   CPPUNIT_TEST_SUITE( LevelDbPhraseTableTest );
   CPPUNIT_TEST( testKeyVectorConversion );
@@ -89,35 +89,20 @@ class LevelDbPhraseTableTest: public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE_END();
 
  private:
-  LevelDbPhraseTable *tab;
   string dbName = "/tmp/thot_leveldb_unit_test";
-  
-  std::vector<WordIndex> getVector(string phrase);
+  LevelDbPhraseTable* tabLdb;  // Used for avoiding casting - should point on the same object like tab in parent class
 
  public:
   void setUp();
   void tearDown();
 
   void testKeyVectorConversion();
-  void testAddTableEntry();
-  void testIncCountsOfEntry();
-  void testStoreAndRestore();
-  void testGetEntriesForTarget();
-  void testRetrievingSubphrase();
-  void testRetrieveNonLeafPhrase();
-  void testGetEntriesForSource();
-  void testRetrievingEntriesWithCountEqualZero();
-  void testGetNbestForTrg();
   void testAddSrcTrgInfo();
   void testIteratorsLoop();
   void testIteratorsOperatorsPlusPlusStar();
   void testIteratorsOperatorsEqualNotEqual();
-  void testSize();
   void testLoadingLevelDb();
   void testLoadedDataCorrectness();
-  void testSubkeys();
-  void test32bitRange();
-  void testByteMax();
 };
 
 #endif
