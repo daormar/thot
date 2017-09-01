@@ -80,6 +80,8 @@ SrfNodeInfoMap.cc                               \
 SrfNodeInfoMap.h                                \
 SrfNodeKey.cc                                   \
 SrfNodeKey.h                                    \
+StlPhraseTable.h                                \
+StlPhraseTable.cc                               \
 thot_alig_op.cc                                 \
 thot_gen_phr_model.cc                           \
 thot_query_pm.cc                                \
