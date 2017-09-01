@@ -33,7 +33,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 CPPUNIT_TEST_SUITE_REGISTRATION( IncrLexLevelDbTableTest );
 
 //--------------- IncrLexLevelDbTableTest class functions
-//
 
 //---------------------------------------
 void IncrLexLevelDbTableTest::setUp()
