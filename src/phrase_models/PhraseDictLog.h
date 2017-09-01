@@ -50,7 +50,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- typedefs -------------------------------------------
  
 typedef OrderedVector<PhraseCountLogState,LogCount> PhraseTableNodeLog;
-// each Vector of WordIndex corresponds to one phrase
+// each vector of WordIndex corresponds to one phrase
 #ifdef USE_KNUTH_IMPL_FOR_TRIES
 typedef TrieOfWords<PhraseTableNodeLog> DictLog;
 #else
@@ -71,23 +71,23 @@ class PhraseDictLog
 	PhraseDictLog(void);
      
     LogCount getLogCounts_t_(PhraseCountLogState pls_state,
-                             const Vector<WordIndex>& t,
+                             const std::vector<WordIndex>& t,
                              bool& found);
-    LogCount getLogCount_t(const Vector<WordIndex>& f);
+    LogCount getLogCount_t(const std::vector<WordIndex>& f);
     void addSrcTrgPair(PhraseCountLogState pls_state,
-                       const Vector<WordIndex>& t,
+                       const std::vector<WordIndex>& t,
                        LogCount logCount);
     void incrSrcTrgLogCount(PhraseCountLogState pls_state,
-                            const Vector<WordIndex>& t,
+                            const std::vector<WordIndex>& t,
                             LogCount logCount);
-    std::map<Vector<WordIndex>,PhrasePairInfo>
+    std::map<std::vector<WordIndex>,PhrasePairInfo>
       getEntriesFor_s(PhraseCountLogState pls_state);
     NbestTableNode<PhraseTransTableNodeData>
       getTranslationsFor_s_(PhraseCountLogState pls_state);
-    PhraseTableNodeLog* getTranslationsFor_t_(const Vector<WordIndex>& t);
+    PhraseTableNodeLog* getTranslationsFor_t_(const std::vector<WordIndex>& t);
     pair<bool,PhraseTableNodeLog*>
-      nodeForTrgHasOneTransOrMore(const Vector<WordIndex>& t);
-    void addTrgIfNotExist(const Vector<WordIndex>& t);
+      nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t);
+    void addTrgIfNotExist(const std::vector<WordIndex>& t);
     
     size_t size(void);
     void clear(void);   

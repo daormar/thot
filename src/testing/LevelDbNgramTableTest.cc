@@ -50,8 +50,8 @@ void LevelDbNgramTableTest::tearDown()
 }
 
 //---------------------------------------
-Vector<WordIndex> LevelDbNgramTableTest::getVector(string phrase) {
-    Vector<WordIndex> v;
+std::vector<WordIndex> LevelDbNgramTableTest::getVector(string phrase) {
+    std::vector<WordIndex> v;
 
     for(unsigned int i = 0; i < phrase.size(); i++) {
         v.push_back(phrase[i]);
@@ -63,9 +63,9 @@ Vector<WordIndex> LevelDbNgramTableTest::getVector(string phrase) {
 //---------------------------------------
 void LevelDbNgramTableTest::testAddTrgWithEmptySrc()
 {
-    Vector<WordIndex> s;
+    std::vector<WordIndex> s;
     WordIndex t = 81;
-    Vector<WordIndex> t_vec;
+    std::vector<WordIndex> t_vec;
     t_vec.push_back(t);
 
     LogCount lc = LogCount(log(5));
@@ -87,10 +87,10 @@ void LevelDbNgramTableTest::testAddTrgWithEmptySrc()
 void LevelDbNgramTableTest::testCTrg()
 {
     // Prepare phrases and counters
-    Vector<WordIndex> s1;
+    std::vector<WordIndex> s1;
     s1.push_back(13);
     s1.push_back(17);
-    Vector<WordIndex> s2;
+    std::vector<WordIndex> s2;
     s2.push_back(19);
     s2.push_back(23);
     s2.push_back(29);
@@ -127,10 +127,10 @@ void LevelDbNgramTableTest::testCTrg()
 void LevelDbNgramTableTest::testLogCountRetrieving()
 {
     // Prepare phrases and counters
-    Vector<WordIndex> s1;
+    std::vector<WordIndex> s1;
     s1.push_back(13);
     s1.push_back(17);
-    Vector<WordIndex> s2;
+    std::vector<WordIndex> s2;
     s2.push_back(19);
     s2.push_back(23);
     s2.push_back(29);
@@ -175,7 +175,7 @@ void LevelDbNgramTableTest::testLogCountRetrieving()
 //---------------------------------------
 void LevelDbNgramTableTest::testStoreFloatValues()
 {
-    Vector<WordIndex> s;
+    std::vector<WordIndex> s;
     s.push_back(7);
     s.push_back(77);
     WordIndex t = 777;
@@ -198,8 +198,8 @@ void LevelDbNgramTableTest::testStoreFloatValues()
 //---------------------------------------
 void LevelDbNgramTableTest::testStoreAndRestoreSrcInfo()
 {
-    Vector<WordIndex> s1 = getVector("Ulica Krancowa");
-    Vector<WordIndex> s2 = getVector("Ulica Sienkiewicza");
+    std::vector<WordIndex> s1 = getVector("Ulica Krancowa");
+    std::vector<WordIndex> s2 = getVector("Ulica Sienkiewicza");
     Count cs1 = Count(1);
     Count cs2 = Count(23);
     tab->clear();
@@ -217,7 +217,7 @@ void LevelDbNgramTableTest::testStoreAndRestoreSrcInfo()
 //---------------------------------------
 void LevelDbNgramTableTest::testKeyVectorConversion()
 {
-    Vector<WordIndex> s;
+    std::vector<WordIndex> s;
     s.push_back(3);
     s.push_back(4);
     s.push_back(112175);
@@ -232,7 +232,7 @@ void LevelDbNgramTableTest::testKeyVectorConversion()
 //---------------------------------------
 void LevelDbNgramTableTest::testAddTableEntry()
 {
-    Vector<WordIndex> s = getVector("race around Narie");
+    std::vector<WordIndex> s = getVector("race around Narie");
     WordIndex t = 10688;
     Count s_count = Count(7);
     Count st_count = Count(5);
@@ -250,7 +250,7 @@ void LevelDbNgramTableTest::testAddTableEntry()
 //---------------------------------------
 void LevelDbNgramTableTest::testIncrCountsOfEntryLog()
 {
-    Vector<WordIndex> s = getVector("Narie lake");
+    std::vector<WordIndex> s = getVector("Narie lake");
     WordIndex t1 = 140991;
     WordIndex t2 = 230689;
     LogCount c_init = LogCount(log(3));
@@ -268,14 +268,14 @@ void LevelDbNgramTableTest::testIncrCountsOfEntryLog()
 void LevelDbNgramTableTest::testGetEntriesForTarget()
 {
     LevelDbNgramTable::SrcTableNode node;
-    Vector<WordIndex> s1_1;
+    std::vector<WordIndex> s1_1;
     s1_1.push_back(1);
-    Vector<WordIndex> s1_2;
+    std::vector<WordIndex> s1_2;
     s1_2.push_back(1);
     s1_2.push_back(2);
     WordIndex t1_1 = 1;
     WordIndex t1_2 = 5;
-    Vector<WordIndex> s2;
+    std::vector<WordIndex> s2;
     s2.push_back(3);
     WordIndex t2 = 2;
     LogCount c = LogCount(log(1));
@@ -314,10 +314,10 @@ void LevelDbNgramTableTest::testRetrievingSubphrase()
     //    Accessing element with the subphrase should return count 0
     //
     bool found;
-    Vector<WordIndex> s1;
+    std::vector<WordIndex> s1;
     s1.push_back(1);
     s1.push_back(1);
-    Vector<WordIndex> s2 = s1;
+    std::vector<WordIndex> s2 = s1;
     s2.push_back(1);
     WordIndex t1 = 2;
     WordIndex t2 = 3;
@@ -351,12 +351,12 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
     //
     bool found;
     LevelDbNgramTable::TrgTableNode node;
-    Vector<WordIndex> s1 = getVector("jezioro Narie");
+    std::vector<WordIndex> s1 = getVector("jezioro Narie");
     WordIndex t1_1 = 230689;
     WordIndex t1_2 = 140991;
-    Vector<WordIndex> s2 = getVector("jezioro Krzywe");
+    std::vector<WordIndex> s2 = getVector("jezioro Krzywe");
     WordIndex t2_1 = 110735;
-    Vector<WordIndex> s3 = getVector("jezioro Jeziorak");
+    std::vector<WordIndex> s3 = getVector("jezioro Jeziorak");
     WordIndex t3_1 = 5;
     WordIndex t3_2 = 10;
 
@@ -400,8 +400,8 @@ void LevelDbNgramTableTest::testRetrievingEntriesWithCountEqualZero()
     //
     bool found;
     LevelDbNgramTable::SrcTableNode node;
-    Vector<WordIndex> s1 = getVector("Palac Dohnow");
-    Vector<WordIndex> s2 = getVector("Palac Dohnow w Moragu");
+    std::vector<WordIndex> s1 = getVector("Palac Dohnow");
+    std::vector<WordIndex> s2 = getVector("Palac Dohnow w Moragu");
     WordIndex t = 1935;
     
     tab->clear();
@@ -429,7 +429,7 @@ void LevelDbNgramTableTest::testGetNbestForSrc()
     NbestTableNode<WordIndex>::iterator iter;
 
     // Fill leveldb with data
-    Vector<WordIndex> s;
+    std::vector<WordIndex> s;
     s.push_back(1);
 
     WordIndex t1 = 1;
@@ -469,19 +469,19 @@ void LevelDbNgramTableTest::testGetNbestForTrg()
     //    Check if method getNbestForTrg returns correct elements
     //
     bool found;
-    NbestTableNode<Vector<WordIndex> > node;
-    NbestTableNode<Vector<WordIndex> >::iterator iter;
+    NbestTableNode<std::vector<WordIndex> > node;
+    NbestTableNode<std::vector<WordIndex> >::iterator iter;
 
     // Fill leveldb with data
-    Vector<WordIndex> s1;
+    std::vector<WordIndex> s1;
     s1.push_back(1);
-    Vector<WordIndex> s2;
+    std::vector<WordIndex> s2;
     s2.push_back(1);
     s2.push_back(1);
-    Vector<WordIndex> s3;
+    std::vector<WordIndex> s3;
     s3.push_back(4);
     s3.push_back(1);
-    Vector<WordIndex> s4;
+    std::vector<WordIndex> s4;
     s4.push_back(4);
 
     WordIndex t1 = 1;
@@ -521,11 +521,11 @@ void LevelDbNgramTableTest::testIteratorsLoop()
     //    Check basic implementation of iterators - functions
     //    begin(), end() and operators (++ postfix, *).
     //
-    Vector<WordIndex> s1;
+    std::vector<WordIndex> s1;
     s1.push_back(1);
     WordIndex t1 = 2;
 
-    Vector<WordIndex> s2;
+    std::vector<WordIndex> s2;
     s2.push_back(1);
     s2.push_back(2);
     WordIndex t2 = 3;
@@ -543,14 +543,14 @@ void LevelDbNgramTableTest::testIteratorsLoop()
 
     // Construct dictionary to record results returned by iterator
     // Dictionary structure: (key, (total count value, number of occurences))
-    map<Vector<WordIndex>, pair<Count, Count> > d;
+    map<std::vector<WordIndex>, pair<Count, Count> > d;
     d[s1] = make_pair(Count(0), Count(0));
     d[tab->getSrcTrg(s1, t1)] = make_pair(Count(0), Count(0));
     d[tab->getSrcTrg(s2, t2)] = make_pair(Count(0), Count(0));
 
     for(LevelDbNgramTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
     {
-        pair<Vector<WordIndex>, Count> x = *iter;
+        pair<std::vector<WordIndex>, Count> x = *iter;
         d[x.first].first += x.second;
         d[x.first].second += 1;
     }
@@ -576,7 +576,7 @@ void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
     //
     bool found = true;
 
-    Vector<WordIndex> s;
+    std::vector<WordIndex> s;
     s.push_back(14);
     s.push_back(9);
     WordIndex t = 91;
@@ -587,14 +587,14 @@ void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
 
     // Construct dictionary to record results returned by iterator
     // Dictionary structure: (key, (total count value, number of occurences))
-    map<Vector<WordIndex>, pair<Count, int> > d;
+    map<std::vector<WordIndex>, pair<Count, int> > d;
     d[s] = make_pair(Count(), 0);
     d[tab->getSrcTrg(s, t)] = make_pair(Count(), 0);
   
     for(LevelDbNgramTable::const_iterator iter = tab->begin(); iter != tab->end(); found = (iter++))
     {
         CPPUNIT_ASSERT( found );
-        pair<Vector<WordIndex>, Count> x = *iter;
+        pair<std::vector<WordIndex>, Count> x = *iter;
         d[x.first].first += x.second;
         d[x.first].second++;
     }
@@ -616,7 +616,7 @@ void LevelDbNgramTableTest::testIteratorsOperatorsEqualNotEqual()
     //  TEST:
     //    Check basic implementation of iterators - operators == and !=
     //
-    Vector<WordIndex> s;
+    std::vector<WordIndex> s;
     s.push_back(150);
     WordIndex t = 150150;
     
@@ -644,16 +644,16 @@ void LevelDbNgramTableTest::testSize()
     CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should contain only entry for null key
     
     // Fill leveldb with data
-    Vector<WordIndex> s1;
+    std::vector<WordIndex> s1;
     s1.push_back(100100);
     s1.push_back(100200);
-    Vector<WordIndex> s2;
+    std::vector<WordIndex> s2;
     s2.push_back(200100);
     s2.push_back(200200);
     s2.push_back(200300);
-    Vector<WordIndex> s3;
+    std::vector<WordIndex> s3;
     s3.push_back(100100);
-    Vector<WordIndex> s4;  // Empty key
+    std::vector<WordIndex> s4;  // Empty key
 
     WordIndex t1 = 555001;
     WordIndex t2 = 555002;
@@ -725,7 +725,7 @@ void LevelDbNgramTableTest::testLoadedDataCorrectness()
     tab->clear();
 
     // Define vectors
-    Vector<WordIndex> s1;
+    std::vector<WordIndex> s1;
     s1.push_back(1000);
     s1.push_back(2000);
     WordIndex t1_1 = 22000;
@@ -733,13 +733,13 @@ void LevelDbNgramTableTest::testLoadedDataCorrectness()
     WordIndex t1_3 = 44000;
     WordIndex t1_4 = 55000;
 
-    Vector<WordIndex> s2;
+    std::vector<WordIndex> s2;
     s2.push_back(122000);
     s2.push_back(122);
     WordIndex t2_1 = 66000;
     WordIndex t2_2 = 77000;
 
-    Vector<WordIndex> s3;
+    std::vector<WordIndex> s3;
     s3.push_back(155000);
     s3.push_back(177000);
     WordIndex t3_1 = 88000;
@@ -793,17 +793,17 @@ void LevelDbNgramTableTest::testLoadedDataNullCount()
     tab->clear();
 
     // Define vectors
-    Vector<WordIndex> s1;
+    std::vector<WordIndex> s1;
     s1.push_back(1000);
     s1.push_back(2000);
     WordIndex t1 = 22000;
 
-    Vector<WordIndex> s2;
+    std::vector<WordIndex> s2;
     s2.push_back(122000);
     s2.push_back(122);
     WordIndex t2 = 66000;
 
-    Vector<WordIndex> s3;
+    std::vector<WordIndex> s3;
 
     // Insert data to levelDB
     tab->addSrcInfo(s1, Count(1));

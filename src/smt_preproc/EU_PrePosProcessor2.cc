@@ -44,20 +44,20 @@ bool EU_PrePosProcessor2::loadCapitInfo(const char* filename)
 {
   std::ifstream *caps=0;
   
-  cerr<<"Initializing capitalization from file "<<filename<<" ... ";
+  std::cerr<<"Initializing capitalization from file "<<filename<<" ... ";
 
   caps= new std::ifstream(filename);
   if ( caps )
   {
     EUpostprocInitializeCapitalization(*caps);
     delete caps;
-    cerr<<"THOT_OK"<<endl;
+    std::cerr<<"THOT_OK"<<std::endl;
     
     return THOT_OK;
   }
   else
   {
-    cerr<<"THOT_ERROR"<<endl;
+    std::cerr<<"THOT_ERROR"<<std::endl;
     
     return THOT_ERROR;
   }

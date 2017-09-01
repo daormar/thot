@@ -23,7 +23,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /* Prototype file: _incrNgramLM.h                                   */
 /*                                                                  */
 /* Description: Base class to manage incremental encoded ngram      */
-/*              language models p(x|Vector<x>).                     */
+/*              language models p(x|std::vector<x>).                */
 /*                                                                  */
 /********************************************************************/
 
@@ -56,23 +56,23 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- _incrNgramLM class
 
 template<class SRC_INFO,class SRCTRG_INFO>
-class _incrNgramLM: public _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>,public BaseIncrNgramLM<Vector<WordIndex> >
+class _incrNgramLM: public _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>,public BaseIncrNgramLM<std::vector<WordIndex> >
 {
  public:
 
-  typedef typename _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::SrcTableNode SrcTableNode;
-  typedef typename _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::TrgTableNode TrgTableNode;
-  typedef typename BaseIncrNgramLM<Vector<WordIndex> >::LM_State LM_State;
+  typedef typename _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::SrcTableNode SrcTableNode;
+  typedef typename _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::TrgTableNode TrgTableNode;
+  typedef typename BaseIncrNgramLM<std::vector<WordIndex> >::LM_State LM_State;
 
       // Constructor
-  _incrNgramLM():_incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>()
+  _incrNgramLM():_incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>()
   {
     this->encPtr=new lm_ienc;
     ngramOrder=3;
   }
 
       // Basic function redefinitions
-  void addTableEntryHigh(const Vector<std::string>& hs,
+  void addTableEntryHigh(const std::vector<std::string>& hs,
                          const std::string& ht,
                          im_pair<SRC_INFO,SRCTRG_INFO> inf);
   bool loadEncodingInfo(const char *prefixFileName);
@@ -80,40 +80,40 @@ class _incrNgramLM: public _incrEncCondProbModel<Vector<std::string>,std::string
   // _incrNgramLM function definitions
 
       // Functions to access model counts
-  Count cHist(const Vector<WordIndex>& vu);
+  Count cHist(const std::vector<WordIndex>& vu);
   Count cNgram(const WordIndex& w,
-               const Vector<WordIndex>& vu);
-  Count cHistStr(const Vector<std::string>& rq);
+               const std::vector<WordIndex>& vu);
+  Count cHistStr(const std::vector<std::string>& rq);
   Count cNgramStr(const std::string& s,
-                  const Vector<std::string>& rq);
+                  const std::vector<std::string>& rq);
 
       // Functions to incrementally extend the model
   void incrCountsOfNgramStr(const std::string& s,
-                            const Vector<std::string>& rq,
+                            const std::vector<std::string>& rq,
                             Count c);
   void incrCountsOfNgram(const WordIndex& w,
-                         const Vector<WordIndex>& vu,
+                         const std::vector<WordIndex>& vu,
                          Count c);
 
       // Probability functions
-  LgProb getNgramLgProb(WordIndex w,const Vector<WordIndex>& vu);
+  LgProb getNgramLgProb(WordIndex w,const std::vector<WordIndex>& vu);
       // returns the probability of a n-gram uv[0] stores the n-1'th
       // word of the n-gram, uv[1] the n-2'th one and so on
-  LgProb getNgramLgProbStr(string s,const Vector<string>& rq);
+  LgProb getNgramLgProbStr(string s,const std::vector<string>& rq);
       // returns the probability of a n-gram. Each string represents a
       // single word
-  LgProb getLgProbEnd(const Vector<WordIndex>& vu);
-  LgProb getLgProbEndStr(const Vector<string>& rq);
+  LgProb getLgProbEnd(const std::vector<WordIndex>& vu);
+  LgProb getLgProbEndStr(const std::vector<string>& rq);
 
       // Probability functions using states
-  bool getStateForWordSeq(const Vector<WordIndex>& wordSeq,
-                          Vector<WordIndex>& state); 
-  void getStateForBeginOfSentence(Vector<WordIndex> &state);
+  bool getStateForWordSeq(const std::vector<WordIndex>& wordSeq,
+                          std::vector<WordIndex>& state); 
+  void getStateForBeginOfSentence(std::vector<WordIndex> &state);
   void addNextWordToState(WordIndex word,
                           LM_State& state);
-  LgProb getNgramLgProbGivenState(WordIndex w,Vector<WordIndex> &state);
-  LgProb getNgramLgProbGivenStateStr(std::string s,Vector<WordIndex> &state);
-  LgProb getLgProbEndGivenState(Vector<WordIndex> &state);
+  LgProb getNgramLgProbGivenState(WordIndex w,std::vector<WordIndex> &state);
+  LgProb getNgramLgProbGivenStateStr(std::string s,std::vector<WordIndex> &state);
+  LgProb getLgProbEndGivenState(std::vector<WordIndex> &state);
    
       // encoding-related functions
   bool existSymbol(string s)const;
@@ -133,7 +133,7 @@ class _incrNgramLM: public _incrEncCondProbModel<Vector<std::string>,std::string
       // Functions to load and print the model
   bool load(const char *fileName);
   bool print(const char *fileName);
-  ostream& print(ostream &outS);
+  std::ostream& print(std::ostream &outS);
 
       // n-gram order related functions
   void setNgramOrder(int _ngramOrder);
@@ -159,13 +159,13 @@ class _incrNgramLM: public _incrEncCondProbModel<Vector<std::string>,std::string
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::addTableEntryHigh(const Vector<std::string>& hs,
+void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::addTableEntryHigh(const std::vector<std::string>& hs,
                                                            const std::string& ht,
                                                            im_pair<SRC_INFO,SRCTRG_INFO> inf)
 {
   std::string std_str;
   
-  _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::addTableEntryHigh(hs,ht,inf);
+  _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::addTableEntryHigh(hs,ht,inf);
 }
 
 //---------------
@@ -174,7 +174,7 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::loadEncodingInfo(const char *prefixFile
 {
   std::string std_str;
   
-  if(_incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::loadEncodingInfo(prefixFileName))
+  if(_incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::loadEncodingInfo(prefixFileName))
   {
     return true;
   }
@@ -192,38 +192,38 @@ void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::setNgramOrder(int _ngramOrder)
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-Count _incrNgramLM<SRC_INFO,SRCTRG_INFO>::cHist(const Vector<WordIndex>& vu)
+Count _incrNgramLM<SRC_INFO,SRCTRG_INFO>::cHist(const std::vector<WordIndex>& vu)
 {
-  return _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cSrc(vu);
+  return _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cSrc(vu);
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 Count _incrNgramLM<SRC_INFO,SRCTRG_INFO>::cNgram(const WordIndex& w,
-                                                 const Vector<WordIndex>& vu)
+                                                 const std::vector<WordIndex>& vu)
 {
-  return _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cSrcTrg(vu,w);  
+  return _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cSrcTrg(vu,w);  
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-Count _incrNgramLM<SRC_INFO,SRCTRG_INFO>::cHistStr(const Vector<std::string>& rq)
+Count _incrNgramLM<SRC_INFO,SRCTRG_INFO>::cHistStr(const std::vector<std::string>& rq)
 {
-  return _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cHSrc(rq);  
+  return _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cHSrc(rq);  
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 Count _incrNgramLM<SRC_INFO,SRCTRG_INFO>::cNgramStr(const std::string& s,
-                                                    const Vector<std::string>& rq)
+                                                    const std::vector<std::string>& rq)
 {
-  return _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cHSrcHTrg(rq,s);    
+  return _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::cHSrcHTrg(rq,s);    
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::incrCountsOfNgramStr(const std::string& s,
-                                                              const Vector<std::string>& rq,
+                                                              const std::vector<std::string>& rq,
                                                               Count c)
 {
       // Revise vocabularies if necessary
@@ -233,7 +233,7 @@ void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::incrCountsOfNgramStr(const std::string&
 
       // Increase counts
   WordIndex w=stringToWordIndex(s);
-  Vector<WordIndex> vu;
+  std::vector<WordIndex> vu;
   for(unsigned int i=0;i<rq.size();++i)
     vu.push_back(stringToWordIndex(rq[i]));
   incrCountsOfNgram(w,vu,c);
@@ -242,16 +242,16 @@ void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::incrCountsOfNgramStr(const std::string&
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::incrCountsOfNgram(const WordIndex& w,
-                                                           const Vector<WordIndex>& vu,
+                                                           const std::vector<WordIndex>& vu,
                                                            Count c)
 {
-  _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::incrCountsOfEntry(vu,w,c);
+  _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::incrCountsOfEntry(vu,w,c);
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProb(WordIndex w,
-                                                          const Vector<WordIndex>& vu)
+                                                          const std::vector<WordIndex>& vu)
 {
   return _incrNgramLM<SRC_INFO,SRCTRG_INFO>::logpTrgGivenSrc(vu,w);  
 }
@@ -259,14 +259,14 @@ LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProb(WordIndex w,
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProbStr(string s,
-                                                             const Vector<string>& rq)
+                                                             const std::vector<string>& rq)
 {
   return _incrNgramLM<SRC_INFO,SRCTRG_INFO>::logpHTrgGivenHSrc(rq,s);    
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEnd(const Vector<WordIndex>& vu)
+LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEnd(const std::vector<WordIndex>& vu)
 {
   bool found;
   return _incrNgramLM<SRC_INFO,SRCTRG_INFO>::logpTrgGivenSrc(vu,getEosId(found));  
@@ -274,15 +274,15 @@ LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEnd(const Vector<WordIndex>&
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEndStr(const Vector<string>& rq)
+LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEndStr(const std::vector<string>& rq)
 {
   return _incrNgramLM<SRC_INFO,SRCTRG_INFO>::logpHTrgGivenHSrc(rq,EOS_STR);    
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getStateForWordSeq(const Vector<WordIndex>& wordSeq,
-                                                            Vector<WordIndex>& state)
+bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getStateForWordSeq(const std::vector<WordIndex>& wordSeq,
+                                                            std::vector<WordIndex>& state)
 {
   state=wordSeq;
   return true;
@@ -290,9 +290,9 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getStateForWordSeq(const Vector<WordInd
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getStateForBeginOfSentence(Vector<WordIndex> &state)
+void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getStateForBeginOfSentence(std::vector<WordIndex> &state)
 {
-  Vector<WordIndex> keySeq;
+  std::vector<WordIndex> keySeq;
   bool found;
   
   state.clear();
@@ -316,7 +316,7 @@ void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::addNextWordToState(WordIndex word,
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProbGivenState(WordIndex w,
-                                                                    Vector<WordIndex> &state)
+                                                                    std::vector<WordIndex> &state)
 {
   LgProb lp;
 
@@ -328,7 +328,7 @@ LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProbGivenState(WordIndex w,
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProbGivenStateStr(std::string s,
-                                                                       Vector<WordIndex> &state)
+                                                                       std::vector<WordIndex> &state)
 {
  WordIndex w;
 	
@@ -338,7 +338,7 @@ LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProbGivenStateStr(std::stri
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEndGivenState(Vector<WordIndex> &state)
+LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEndGivenState(std::vector<WordIndex> &state)
 {
   LgProb lp;
   bool found;
@@ -354,21 +354,21 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::existSymbol(string s)const
 {
   WordIndex w;
   
-  return _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::HighTrg_to_Trg(s,w);  
+  return _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::HighTrg_to_Trg(s,w);  
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 WordIndex _incrNgramLM<SRC_INFO,SRCTRG_INFO>::addSymbol(std::string s)
 {
-  return _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::addHTrgCode(s);
+  return _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::addHTrgCode(s);
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 unsigned int _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getVocabSize(void)
 {
-  return _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::sizeTrgEnc();
+  return _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::sizeTrgEnc();
 }
 
 //---------------
@@ -377,7 +377,7 @@ WordIndex _incrNgramLM<SRC_INFO,SRCTRG_INFO>::stringToWordIndex(string s)const
 {
   WordIndex w;
   
-  bool found=_incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::HighTrg_to_Trg(s,w);
+  bool found=_incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::HighTrg_to_Trg(s,w);
   if(!found) w=UNK_SYMBOL;
   
   return w;
@@ -389,7 +389,7 @@ string _incrNgramLM<SRC_INFO,SRCTRG_INFO>::wordIndexToString(WordIndex w)const
 {
   std::string s;
   
-  bool found=_incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::Trg_to_HighTrg(w,s);
+  bool found=_incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::Trg_to_HighTrg(w,s);
   if(!found) s=UNK_SYMBOL_STR;
   
   return s;
@@ -403,7 +403,7 @@ WordIndex _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getBosId(bool &found)const
       // S_BEGIN and found is set to true
   WordIndex bosId=0;
   found=false;
-  if(_incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::HighTrg_to_Trg(BOS_STR,bosId))
+  if(_incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::HighTrg_to_Trg(BOS_STR,bosId))
     found=true;
   return bosId;
 }
@@ -416,7 +416,7 @@ WordIndex _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getEosId(bool &found)const
       // S_END and found is set to true
   WordIndex eosId=0;
   found=false;
-  if(_incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::HighTrg_to_Trg(EOS_STR,eosId))
+  if(_incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::HighTrg_to_Trg(EOS_STR,eosId))
     found=true;
   return eosId;
 }
@@ -425,21 +425,21 @@ WordIndex _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getEosId(bool &found)const
 template<class SRC_INFO,class SRCTRG_INFO>
 bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::loadVocab(const char *fileName)
 {
-  return _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::loadEncodingInfo(fileName);
+  return _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::loadEncodingInfo(fileName);
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::printVocab(const char *fileName)
 {
-  return _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::printEncodingInfo(fileName);  
+  return _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::printEncodingInfo(fileName);  
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::clearVocab(void)
 {
-  _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::clearEncodingInfo();
+  _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::clearEncodingInfo();
 }
 
 //---------------
@@ -463,7 +463,7 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
 template<class SRC_INFO,class SRCTRG_INFO>
 bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load_ngrams(const char *fileName)
 {
-  Vector<std::string> hs;
+  std::vector<std::string> hs;
   std::string ht;
   im_pair<SRC_INFO,SRCTRG_INFO> inf;
   awkInputStream awk;
@@ -472,12 +472,12 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load_ngrams(const char *fileName)
     
   if(awk.open(fileName)==THOT_ERROR)
   {
-    cerr<<"Error while loading language model file "<<fileName<<endl;
+    std::cerr<<"Error while loading language model file "<<fileName<<std::endl;
     return THOT_ERROR;
   }  
   else
   {
-    cerr<<"Loading language model file "<<fileName<<endl;
+    std::cerr<<"Loading language model file "<<fileName<<std::endl;
 
     ngramOrder=0;
     this->tablePtr->clear();
@@ -541,7 +541,7 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
   outF.open(lmFileName.c_str(),ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing model to file."<<endl;
+    std::cerr<<"Error while printing model to file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -554,10 +554,10 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-ostream& _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(ostream &outS)
+std::ostream& _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(std::ostream &outS)
 {
-  Vector<std::string> hs;
-  Vector<WordIndex> s;
+  std::vector<std::string> hs;
+  std::vector<WordIndex> s;
   std::string ht;
   vecx_x_incr_cptable<WordIndex,SRC_INFO,SRCTRG_INFO>* tableCptPtr=0;
   unsigned int i;
@@ -589,7 +589,7 @@ ostream& _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(ostream &outS)
           outS<<hs[i]<<" ";
         }
         bool found;
-        outS<<ht<<" "<<this->getSrcInfo(s,found)<<" "<<tableIter->second<<endl;
+        outS<<ht<<" "<<this->getSrcInfo(s,found)<<" "<<tableIter->second<<std::endl;
       }
     }     
   }
@@ -607,14 +607,14 @@ unsigned int _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramOrder(void)
 template<class SRC_INFO,class SRCTRG_INFO>
 size_t _incrNgramLM<SRC_INFO,SRCTRG_INFO>::size(void)
 {
-  return _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::size();
+  return _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::size();
 }
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
 void _incrNgramLM<SRC_INFO,SRCTRG_INFO>::clear(void)
 {
-  _incrEncCondProbModel<Vector<std::string>,std::string,Vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::clear();
+  _incrEncCondProbModel<std::vector<std::string>,std::string,std::vector<WordIndex>,WordIndex,SRC_INFO,SRCTRG_INFO>::clear();
 }
 
 //-----------------------------------------------------------------

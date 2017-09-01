@@ -61,8 +61,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- typedefs -------------------------------------------
 struct HopeFearData {
-  Vector<double> hopeFeatures, fearFeatures;
-  Vector<unsigned int> hopeQualityStats;
+  std::vector<double> hopeFeatures, fearFeatures;
+  std::vector<unsigned int> hopeQualityStats;
   double hopeScore, hopeQuality;
   double fearScore, fearQuality;
 };
@@ -90,17 +90,17 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
 
       // Compute new weights for an individual sentence
   void update(const std::string& reference,
-              const Vector<std::string>& nblist,
-              const Vector<Vector<double> >& scoreCompsVec,
-              const Vector<double>& currWeightsVec,
-              Vector<double>& newWeightsVec);
+              const std::vector<std::string>& nblist,
+              const std::vector<std::vector<double> >& scoreCompsVec,
+              const std::vector<double>& currWeightsVec,
+              std::vector<double>& newWeightsVec);
 
       // Compute new weights for a closed corpus
-  void updateClosedCorpus(const Vector<std::string>& references,
-                          const Vector<Vector<std::string> >& nblists,
-                          const Vector<Vector<Vector<double> > >& scoreCompsVecs,
-                          const Vector<double>& currWeightsVec,
-                          Vector<double>& newWeightsVec);
+  void updateClosedCorpus(const std::vector<std::string>& references,
+                          const std::vector<std::vector<std::string> >& nblists,
+                          const std::vector<std::vector<std::vector<double> > >& scoreCompsVecs,
+                          const std::vector<double>& currWeightsVec,
+                          std::vector<double>& newWeightsVec);
  private:
   double c;              // Step-size cap C
   double decay;          // Pseudo-corpus decay \gamma
@@ -110,21 +110,21 @@ class KbMiraLlWu: public BaseLogLinWeightUpdater
   BaseMiraScorer *scorer;
 
      // Compute max scoring translaiton according to w
-  void MaxTranslation(const Vector<double>& w,
-                      const Vector<std::string>& nBest,
-                      const Vector<Vector<double> >& nScores,
+  void MaxTranslation(const std::vector<double>& w,
+                      const std::vector<std::string>& nBest,
+                      const std::vector<std::vector<double> >& nScores,
                       std::string &maxTranslation);
 
      // Compute hope/fear translations and stores info in hopeFear
   void HopeFear(const std::string& reference,
-                const Vector<std::string>& nBest,
-                const Vector<Vector<double> >& nScores,
-                const Vector<double>& wv,
+                const std::vector<std::string>& nBest,
+                const std::vector<std::vector<double> >& nScores,
+                const std::vector<double>& wv,
                 HopeFearData* hopeFear);
 
    //get permutation indices
   void sampleWoReplacement(unsigned int nSamples,
-                           vector<unsigned int>& indices);
+                           std::vector<unsigned int>& indices);
 };
 
 #endif

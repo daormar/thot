@@ -72,7 +72,7 @@ template<class T> class VectorBase;
 	
 //--------------- function declarations ------------------------------
 template<class T>
-ostream& operator << (ostream &outS,const VectorBase<T> &vect);
+std::ostream& operator << (std::ostream &outS,const VectorBase<T> &vect);
 
 //--------------- Classes --------------------------------------------
 
@@ -151,7 +151,7 @@ class VectorBase
    const_iterator begin(void)const;
    const_iterator end(void)const;
     
-   friend ostream& operator<< <T> (ostream &outS,const VectorBase<T> &VectorBase);
+   friend std::ostream& operator<< <T> (std::ostream &outS,const VectorBase<T> &VectorBase);
 	
  protected:
 	unsigned int sizeOfVector;
@@ -421,13 +421,13 @@ void VectorBase<T>::clear(void)
 }
 //-------------------------
 template<class T>
-ostream& operator << (ostream &outS,const VectorBase<T> &vect)
+std::ostream& operator << (std::ostream &outS,const VectorBase<T> &vect)
 {
  unsigned int i;
 	
  for(i=0;i<vect.size();++i)
  {
-  outS<<vect[i]<<endl;
+  outS<<vect[i]<<std::endl;
  }
  return outS;
 }

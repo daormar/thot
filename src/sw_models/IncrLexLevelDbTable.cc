@@ -56,7 +56,7 @@ IncrLexLevelDbTable::IncrLexLevelDbTable(void)
 //-------------------------
 bool IncrLexLevelDbTable::init(string levelDbPath)
 {
-    cerr << "Initializing LevelDB phrase table" << endl;
+    std::cerr << "Initializing LevelDB phrase table" << std::endl;
 
     if(db != NULL)
     {
@@ -89,16 +89,16 @@ bool IncrLexLevelDbTable::drop()
     }
     else
     {
-        cerr << "Dropping database status: " << status.ToString() << endl;
+        std::cerr << "Dropping database status: " << status.ToString() << std::endl;
 
         return THOT_ERROR;
     }
 }
 
 //-------------------------
-string IncrLexLevelDbTable::vectorToString(const Vector<WordIndex>& vec)const
+string IncrLexLevelDbTable::vectorToString(const std::vector<WordIndex>& vec)const
 {
-    Vector<WordIndex> str;
+    std::vector<WordIndex> str;
     for(size_t i = 0; i < vec.size(); i++) {
         // Use WORD_INDEX_MODULO_BYTES bytes to encode index
         for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--) {
@@ -112,9 +112,9 @@ string IncrLexLevelDbTable::vectorToString(const Vector<WordIndex>& vec)const
 }
 
 //-------------------------
-Vector<WordIndex> IncrLexLevelDbTable::stringToVector(const string s)const
+std::vector<WordIndex> IncrLexLevelDbTable::stringToVector(const string s)const
 {
-    Vector<WordIndex> vec;
+    std::vector<WordIndex> vec;
 
     for(size_t i = 0; i < s.size();)  // A string length is WORD_INDEX_MODULO_BYTES * n + 1
     {
@@ -130,13 +130,13 @@ Vector<WordIndex> IncrLexLevelDbTable::stringToVector(const string s)const
 }
 
 //-------------------------
-string IncrLexLevelDbTable::vectorToKey(const Vector<WordIndex>& vec)const
+string IncrLexLevelDbTable::vectorToKey(const std::vector<WordIndex>& vec)const
 {
     return vectorToString(vec);
 }
 
 //-------------------------
-Vector<WordIndex> IncrLexLevelDbTable::keyToVector(const string key)const
+std::vector<WordIndex> IncrLexLevelDbTable::keyToVector(const string key)const
 {
     return stringToVector(key);
 }
@@ -145,7 +145,7 @@ Vector<WordIndex> IncrLexLevelDbTable::keyToVector(const string key)const
 bool IncrLexLevelDbTable::stringToFloat(const string value_str, float &value)const
 {
     // Decode string representation to float without loosing precision
-    Vector<WordIndex> vec = stringToVector(value_str);
+    std::vector<WordIndex> vec = stringToVector(value_str);
     unsigned char *p = reinterpret_cast<unsigned char*>(&value);
 
     // Cannot retireve value or format is incorrect
@@ -164,7 +164,7 @@ string IncrLexLevelDbTable::floatToString(const float value)const
 {
     // Encode float as a string without loosing precision
     unsigned char const *p = reinterpret_cast<unsigned char const*>(&value);
-    Vector<WordIndex> vec;
+    std::vector<WordIndex> vec;
     for (size_t i = 0; i < sizeof(value); i++)
     {
         vec.push_back((WordIndex) p[i]);
@@ -174,7 +174,7 @@ string IncrLexLevelDbTable::floatToString(const float value)const
 }
 
 //-------------------------
-bool IncrLexLevelDbTable::retrieveData(const Vector<WordIndex>& phrase, float &value)const
+bool IncrLexLevelDbTable::retrieveData(const std::vector<WordIndex>& phrase, float &value)const
 {
     string value_str;
     value = 0;
@@ -190,7 +190,7 @@ bool IncrLexLevelDbTable::retrieveData(const Vector<WordIndex>& phrase, float &v
 }
 
 //-------------------------
-bool IncrLexLevelDbTable::storeData(const Vector<WordIndex>& phrase, float value)const
+bool IncrLexLevelDbTable::storeData(const std::vector<WordIndex>& phrase, float value)const
 {
     string value_str = floatToString(value);
 
@@ -199,7 +199,7 @@ bool IncrLexLevelDbTable::storeData(const Vector<WordIndex>& phrase, float value
     leveldb::Status s = db->Write(leveldb::WriteOptions(), &batch);
 
     if(!s.ok())
-        cerr << "Storing data status: " << s.ToString() << endl;
+        std::cerr << "Storing data status: " << s.ToString() << std::endl;
 
     return s.ok();
 }
@@ -212,7 +212,7 @@ void IncrLexLevelDbTable::setLexNumer(WordIndex s,
     // Insert lexNumer for pair (s,t)
     // Due to performance of getTransForTarget method,
     // pair (s,t) is stored as (t,s) in DB
-    Vector<WordIndex> st_vec;
+    std::vector<WordIndex> st_vec;
     st_vec.push_back(t);
     st_vec.push_back(s);
 
@@ -225,7 +225,7 @@ float IncrLexLevelDbTable::getLexNumer(WordIndex s,
                                        bool& found)
 {
     float lexNumber;
-    Vector<WordIndex> st_vec;
+    std::vector<WordIndex> st_vec;
     st_vec.push_back(t);
     st_vec.push_back(s);
 
@@ -238,7 +238,7 @@ float IncrLexLevelDbTable::getLexNumer(WordIndex s,
 void IncrLexLevelDbTable::setLexDenom(WordIndex s,
                                       float d)
 {
-    Vector<WordIndex> s_vec;
+    std::vector<WordIndex> s_vec;
     s_vec.push_back(s);
 
     storeData(s_vec, d);
@@ -249,7 +249,7 @@ float IncrLexLevelDbTable::getLexDenom(WordIndex s,
                                        bool& found)
 {
     float lexDenom;
-    Vector<WordIndex> s_vec;
+    std::vector<WordIndex> s_vec;
     s_vec.push_back(s);
 
     found = retrieveData(s_vec, lexDenom);
@@ -263,9 +263,9 @@ bool IncrLexLevelDbTable::getTransForTarget(WordIndex t,
 {
     bool found;
 
-    Vector<WordIndex> start_vec;
+    std::vector<WordIndex> start_vec;
     start_vec.push_back(t);
-    Vector<WordIndex> end_vec;
+    std::vector<WordIndex> end_vec;
     end_vec.push_back(t + 1);
 
     string start_str = vectorToKey(start_vec);
@@ -279,7 +279,7 @@ bool IncrLexLevelDbTable::getTransForTarget(WordIndex t,
     transSet.clear();
 
     for(it->Seek(start); it->Valid() && it->key().ToString() < end.ToString(); it->Next()) {
-        Vector<WordIndex> vec = keyToVector(it->key().ToString());
+        std::vector<WordIndex> vec = keyToVector(it->key().ToString());
 
         if(vec.size() > 1) {  // Skip single word entry, e.g. (t)
             WordIndex s = vec[vec.size() - 1];
@@ -313,7 +313,7 @@ bool IncrLexLevelDbTable::load(const char* lexNumDenFile)
         db = NULL;
     }
 
-    cerr << "Loading lexnd in LevelDB format from " << lexNumDenFile << endl;
+    std::cerr << "Loading lexnd in LevelDB format from " << lexNumDenFile << std::endl;
 
     dbName = lexNumDenFile;
     leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
@@ -324,7 +324,7 @@ bool IncrLexLevelDbTable::load(const char* lexNumDenFile)
     }
     else
     {
-        cerr << "Cannot open DB: " << status.ToString() << endl;
+        std::cerr << "Cannot open DB: " << status.ToString() << std::endl;
 
         return THOT_ERROR;
     }
@@ -338,7 +338,7 @@ bool IncrLexLevelDbTable::print(const char* lexNumDenFile)
 
     if(!outF)
     {
-        cerr << "Error while printing lexical nd file." << endl;
+        std::cerr << "Error while printing lexical nd file." << std::endl;
 
         return THOT_ERROR;
     }
@@ -352,13 +352,13 @@ bool IncrLexLevelDbTable::print(const char* lexNumDenFile)
         leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions(options));
 
         for(it->SeekToFirst(); it->Valid(); it->Next()) {
-            Vector<WordIndex> vec = keyToVector(it->key().ToString());
+            std::vector<WordIndex> vec = keyToVector(it->key().ToString());
 
             for(size_t i = 0; i < vec.size(); i++) {
                 outF << vec[i] << " ";
             }
 
-            outF << it->value().ToString() << endl;
+            outF << it->value().ToString() << std::endl;
         }
 
         delete it;
@@ -385,8 +385,8 @@ void IncrLexLevelDbTable::clear(void)
 
         if(!status.ok())
         {
-            cerr << "Cannot create new levelDB in " << dbName << endl;
-            cerr << "Returned status: " << status.ToString() << endl;
+            std::cerr << "Cannot create new levelDB in " << dbName << std::endl;
+            std::cerr << "Returned status: " << status.ToString() << std::endl;
             exit(3);
         }
     }

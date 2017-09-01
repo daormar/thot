@@ -27,8 +27,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
-using namespace std;
-
 //--------------- Structs --------------------------------------------
 
 struct thot_gen_sw_model_pars
@@ -50,7 +48,7 @@ struct thot_gen_sw_model_pars
   bool mb_given;
   unsigned int mb;
   bool lr_given;
-  Vector<float> lrPars;
+  std::vector<float> lrPars;
   bool in_given;
   bool p_given;
   bool lf_given;

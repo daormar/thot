@@ -31,12 +31,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
-#include "myVector.h"
 #include "Score.h"
 #include <string.h>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 
@@ -53,11 +53,11 @@ class HypDebugData
  public:
 
   std::string opCode;
-  Vector<unsigned int> parameters;
-  Vector<Score> partialContribs;
+  std::vector<unsigned int> parameters;
+  std::vector<Score> partialContribs;
   Score accum;
 
-  void print(ostream &outS)const
+  void print(std::ostream &outS)const
     {
       outS<<"Op: "<<opCode;
       for(unsigned int i=0;i<parameters.size();++i)
@@ -69,7 +69,7 @@ class HypDebugData
       {
         outS<<" "<<partialContribs[i];
       }
-      outS<<" ; Accum. Score: "<<accum<<endl;
+      outS<<" ; Accum. Score: "<<accum<<std::endl;
     }
 };
 

@@ -28,7 +28,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <casmacat/IPluginFactory.h>
 #include <casmacat/utils.h>
 
-using namespace std;
 using namespace casmacat;
 
 //--------------- Classes --------------------------------------------
@@ -40,7 +39,7 @@ public:
   ThotIbm2Aligner(): _logger(0) { }
 
   virtual ~ThotIbm2Aligner() {
-    LOG(INFO) << "ThotIbm2Aligner is now free!" << endl;
+    LOG(INFO) << "ThotIbm2Aligner is now free!" << std::endl;
 //     delete &aligModel;
   }
 
@@ -53,7 +52,7 @@ public:
 
   virtual void setLogger(Logger *logger) {
     _logger = logger;
-    LOG(INFO) << "IBMAligner is joining the logger!" << endl;
+    LOG(INFO) << "IBMAligner is joining the logger!" << std::endl;
   }
 
   int init(char* filesPrefix);

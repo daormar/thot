@@ -52,8 +52,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SimpleDynClassLoader.h"
 #include "ErrorDefs.h"
 
-using namespace std;
-
 //--------------- Structs --------------------------------------------
 
 struct DynClassFactoryHandler

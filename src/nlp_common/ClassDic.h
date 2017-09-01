@@ -37,8 +37,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "StatModelDefs.h"
 #include <map>
+#include <vector>
 #include <string>
-#include "myVector.h"
 
 //--------------- Constants -------------------------------------------
 
@@ -61,7 +61,7 @@ class ClassDic
    ClassIndex getClassForWord(WordIndex w);
        // Returns the class for a given word. If the word does not exist
        // the function returns -1
-   Vector<WordIndex> getWordsOfClass(ClassIndex c);
+   std::vector<WordIndex> getWordsOfClass(ClassIndex c);
   
    void clear(void); 
  

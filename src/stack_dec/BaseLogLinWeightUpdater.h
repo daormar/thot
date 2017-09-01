@@ -47,8 +47,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "BaseScorer.h"
-#include "myVector.h"
 #include <string>
+#include <vector>
 #include <utility>
 
 //--------------- Constants ------------------------------------------
@@ -80,17 +80,17 @@ class BaseLogLinWeightUpdater
   
       // Function to compute new weights
   virtual void update(const std::string& reference,
-                      const Vector<std::string>& nblist,
-                      const Vector<Vector<double> >& scoreCompsVec,
-                      const Vector<double>& currWeightsVec,
-                      Vector<double>& newWeightsVec)=0;
+                      const std::vector<std::string>& nblist,
+                      const std::vector<std::vector<double> >& scoreCompsVec,
+                      const std::vector<double>& currWeightsVec,
+                      std::vector<double>& newWeightsVec)=0;
 
       // Compute new weights for a closed corpus
-  virtual void updateClosedCorpus(const Vector<std::string>& reference,
-                                  const Vector<Vector<string> >& nblist,
-                                  const Vector<Vector<Vector<double> > >& scoreCompsVec,
-                                  const Vector<double>& currWeightsVec,
-                                  Vector<double>& newWeightsVec)=0;
+  virtual void updateClosedCorpus(const std::vector<std::string>& reference,
+                                  const std::vector<std::vector<std::string> >& nblist,
+                                  const std::vector<std::vector<std::vector<double> > >& scoreCompsVec,
+                                  const std::vector<double>& currWeightsVec,
+                                  std::vector<double>& newWeightsVec)=0;
 
       // Destructor
   virtual ~BaseLogLinWeightUpdater(){};

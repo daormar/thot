@@ -83,13 +83,13 @@ void _incrHmmP0AligModel::clear(void)
 //-------------------------
 bool _incrHmmP0AligModel::loadHmmP0(const char *hmmP0FileName)
 {
-  cerr<<"Loading file with hmm p0 value from "<<hmmP0FileName<<endl;
+  std::cerr<<"Loading file with hmm p0 value from "<<hmmP0FileName<<std::endl;
 
   awkInputStream awk;
 
   if(awk.open(hmmP0FileName)==THOT_ERROR)
   {
-    cerr<<"Error in file with hmm p0 value, file "<<hmmP0FileName<<" does not exist. Assuming hmm_p0="<<DEFAULT_HMM_P0<<"\n";
+    std::cerr<<"Error in file with hmm p0 value, file "<<hmmP0FileName<<" does not exist. Assuming hmm_p0="<<DEFAULT_HMM_P0<<"\n";
     hmm_p0=DEFAULT_HMM_P0;
     return THOT_OK;
   }
@@ -100,18 +100,18 @@ bool _incrHmmP0AligModel::loadHmmP0(const char *hmmP0FileName)
       if(awk.NF==1)
       {
         hmm_p0=(Prob)atof(awk.dollar(1).c_str());
-        cerr<<"hmm p0 value has been set to "<<hmm_p0<<endl;
+        std::cerr<<"hmm p0 value has been set to "<<hmm_p0<<std::endl;
         return THOT_OK;
       }
       else
       {
-        cerr<<"Error: anomalous .hmm_p0 file, "<<hmmP0FileName<<endl;
+        std::cerr<<"Error: anomalous .hmm_p0 file, "<<hmmP0FileName<<std::endl;
         return THOT_ERROR;
       }
     }
     else
     {
-      cerr<<"Error: anomalous .hmm_p0 file, "<<hmmP0FileName<<endl;
+      std::cerr<<"Error: anomalous .hmm_p0 file, "<<hmmP0FileName<<std::endl;
       return THOT_ERROR;
     }
   }
@@ -124,18 +124,18 @@ bool _incrHmmP0AligModel::printHmmP0(const char *hmmP0FileName)
   outF.open(hmmP0FileName,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing file with hmm p0 value."<<endl;
+    std::cerr<<"Error while printing file with hmm p0 value."<<std::endl;
     return THOT_ERROR;
   }
   else
   {
-    outF<<hmm_p0<<endl;
+    outF<<hmm_p0<<std::endl;
     return THOT_OK;
   }
 }
 
 //-------------------------
-Vector<WordIndex> _incrHmmP0AligModel::extendWithNullWordAlig(const Vector<WordIndex>& srcWordIndexVec)
+std::vector<WordIndex> _incrHmmP0AligModel::extendWithNullWordAlig(const std::vector<WordIndex>& srcWordIndexVec)
 {
       // No extra NULL words are added when calculating suff. statistics
       // for alignment parameters, since the alignment with the NULL

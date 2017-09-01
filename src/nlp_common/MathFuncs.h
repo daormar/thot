@@ -77,7 +77,7 @@ namespace MathFuncs
     size_t countp;
     mpz_t mp_perms;
     
-/*       cerr<<"******************\n"; */
+/*       std::cerr<<"******************\n"; */
         // Initialize mp_perms
     mpz_init(mp_perms);
     
@@ -87,27 +87,27 @@ namespace MathFuncs
         // Initialize array of unsigned ints
     for(unsigned int i=0;i<NUM_WORDS(N);++i)
       ui_arr[i]=0;
-/*       cerr<<"countp: "<<countp<<endl; */
+/*       std::cerr<<"countp: "<<countp<<std::endl; */
 /*       for(unsigned int i=0;i<NUM_WORDS(N);++i) */
-/*         cerr<<ui_arr[i]<<" "; */
+/*         std::cerr<<ui_arr[i]<<" "; */
 
         // Export mp_perms to array
     mpz_export (ui_arr, &countp, -1, sizeof(unsigned int), 0, 0, mp_perms);
       
-/*       cerr<<"countp: "<<countp<<endl; */
+/*       std::cerr<<"countp: "<<countp<<std::endl; */
 /*       for(unsigned int i=0;i<NUM_WORDS(N);++i) */
-/*         cerr<<ui_arr[i]<<" "; */
-/*       cerr<<endl; */
+/*         std::cerr<<ui_arr[i]<<" "; */
+/*       std::cerr<<std::endl; */
 /*       gmp_printf ("num perms: %Zd\n", mp_perms); */
     mpz_clear(mp_perms);
 
           // Initialize bitset with array of ints
     Bitset<N> result(ui_arr);
-/*       cerr<<m<<" "<<n<<" "<<result<<endl; */
+/*       std::cerr<<m<<" "<<n<<" "<<result<<std::endl; */
 /*       Bitset<N> resultAlt((unsigned long) round(exp(logNumbPermsOfTwoElems(m,n)))); */
-/*       cerr<<"*********\n"; */
-/*       cerr<<result<<endl; */
-/*       cerr<<resultAlt<<endl; */
+/*       std::cerr<<"*********\n"; */
+/*       std::cerr<<result<<std::endl; */
+/*       std::cerr<<resultAlt<<std::endl; */
 
           // Return result
     return result;

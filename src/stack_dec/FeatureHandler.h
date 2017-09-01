@@ -98,7 +98,7 @@ class FeatureHandler
                        int verbose=0);
 
       // Functions to train word predictor
-  void trainWordPred(Vector<std::string> strVec);
+  void trainWordPred(std::vector<std::string> strVec);
        
       // Clear function
   void clear(void);
@@ -122,7 +122,7 @@ class FeatureHandler
   FeaturesInfo<SmtModel::HypScoreInfo> featuresInfo;
 
       // Training-related data members
-  Vector<Vector<PhrasePair> > vecVecInvPhPair;
+  std::vector<std::vector<PhrasePair> > vecVecInvPhPair;
 
       // Auxiliary functions
 
@@ -176,23 +176,23 @@ class FeatureHandler
                              int verbose=0);
   int trainLangModel(BaseNgramLM<LM_State>* lModelPtr,
                      float learnStepSize,
-                     Vector<std::string> refSentStrVec,
+                     std::vector<std::string> refSentStrVec,
                      int verbose=0);
   int trainAligModel(BasePhraseModel* invPbModelPtr,
                      BaseSwAligModel<PpInfo>* swAligModelPtr,
                      BaseSwAligModel<PpInfo>* invSwAligModelPtr,
                      OnlineTrainingPars onlineTrainingPars,
-                     Vector<std::string> srcSentStrVec,
-                     Vector<std::string> refSentStrVec,
+                     std::vector<std::string> srcSentStrVec,
+                     std::vector<std::string> refSentStrVec,
                      int verbose=0);
   void updateAligModelsSrcVoc(BasePhraseModel* invPbModelPtr,
                               BaseSwAligModel<PpInfo>* swAligModelPtr,
                               BaseSwAligModel<PpInfo>* invSwAligModelPtr,
-                              Vector<std::string> srcSentStrVec);
+                              std::vector<std::string> srcSentStrVec);
   void updateAligModelsTrgVoc(BasePhraseModel* invPbModelPtr,
                               BaseSwAligModel<PpInfo>* swAligModelPtr,
                               BaseSwAligModel<PpInfo>* invSwAligModelPtr,
-                              Vector<std::string> trgSentStrVec);
+                              std::vector<std::string> trgSentStrVec);
   WordIndex addSrcSymbolToAligModels(BasePhraseModel* invPbModelPtr,
                                      BaseSwAligModel<PpInfo>* swAligModelPtr,
                                      BaseSwAligModel<PpInfo>* invSwAligModelPtr,

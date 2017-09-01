@@ -41,8 +41,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SingleWordVocab.h"
 #include "BaseSentenceHandler.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -66,8 +64,8 @@ class _sentLengthModel: public BaseSentLengthModel
     void trainSentPairRange(pair<unsigned int,unsigned int> sentPairRange,
                             int verbosity=0);
     int nthSentPair(unsigned int n,
-                    Vector<std::string>& srcSentStr,
-                    Vector<std::string>& trgSentStr,
+                    std::vector<std::string>& srcSentStr,
+                    std::vector<std::string>& trgSentStr,
                     Count& c);
 	
  protected:

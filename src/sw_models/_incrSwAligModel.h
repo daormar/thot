@@ -40,8 +40,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "_swAligModel.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -79,7 +77,7 @@ template<class PPINFO>
 void _incrSwAligModel<PPINFO>::efficientBatchTrainingForRange(pair<unsigned int,unsigned int> /*sentPairRange*/,
                                                               int/* verbosity=0*/)
 {
-  cerr<<"Warning: efficient batch training not implemented for this class.\n";
+  std::cerr<<"Warning: efficient batch training not implemented for this class.\n";
 }
 
 //-------------------------

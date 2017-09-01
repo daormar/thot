@@ -48,11 +48,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "Score.h"
 #include "PositionIndex.h"
-#include "myVector.h"
 #include "Bitset.h"
 #include "SmtDefs.h"
-
-#include "HypDebugData.h"
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 

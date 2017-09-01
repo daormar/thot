@@ -25,32 +25,30 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdio.h>
 #include <math.h>
-#include "myVector.h"
 #include <string>
+#include <vector>
 #include <utility>
 #include "awkInputStream.h"
 #include "ErrorDefs.h"
 
 #define MAX_N 4
 
-using namespace std;
-
 int calc_bleu(const char* ref,
               const char* sys,
               float& bleu,
               float &bp,
-              Vector<float>& bleu_n,
+              std::vector<float>& bleu_n,
               int verbosity);
 
 int calc_bleuf(FILE *reff,
                FILE *sysf,
                float& bleu,
                float &bp,
-               Vector<float>& bleu_n,
+               std::vector<float>& bleu_n,
                int verbosity);
 
-void prec_n(Vector<std::string> refsen,
-            Vector<std::string> syssen,
+void prec_n(std::vector<std::string> refsen,
+            std::vector<std::string> syssen,
             unsigned int n,
             unsigned int& prec,
             unsigned int& total);

@@ -37,13 +37,13 @@ void CachedHmmAligLgProb::makeRoomGivenNSrcSentLen(PositionIndex nsrclen)
 {
   if(cachedLgProbs.size()<=nsrclen)
   {
-    Vector<Vector<double> > lpVecVec;
+    std::vector<std::vector<double> > lpVecVec;
     while(cachedLgProbs.size()<=nsrclen)
       cachedLgProbs.push_back(lpVecVec);
 
     for(unsigned int i=0;i<cachedLgProbs.size();++i)
     {
-      Vector<double> lpVec;
+      std::vector<double> lpVec;
       while(cachedLgProbs[i].size()<=nsrclen)
         cachedLgProbs[i].push_back(lpVec);
 
@@ -81,11 +81,11 @@ void CachedHmmAligLgProb::set_boundary_check(PositionIndex prev_i,
                                              double lp)
 {
       // Make room in cachedLgProbs if necessary
-  Vector<Vector<double> > lpVecVec;
+  std::vector<std::vector<double> > lpVecVec;
   while(cachedLgProbs.size()<=prev_i)
     cachedLgProbs.push_back(lpVecVec);
 
-  Vector<double> lpVec;
+  std::vector<double> lpVec;
   while(cachedLgProbs[prev_i].size()<=slen)
     cachedLgProbs[prev_i].push_back(lpVec);
 

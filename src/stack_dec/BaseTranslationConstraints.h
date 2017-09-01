@@ -26,13 +26,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "PositionIndex.h"
-#include "myVector.h"
 #include "ErrorDefs.h"
 #include "StrProcUtils.h"
-#include <utility>
 #include <string>
 #include <set>
 #include <map>
+#include <vector>
+#include <utility>
 #include <iostream>
 
 //--------------- Constants ------------------------------------------
@@ -51,12 +51,12 @@ class BaseTranslationConstraints
       // Services
   virtual void obtainTransConstraints(std::string rawSrcSent,
                                       int verbosity=0)=0;
-  virtual Vector<std::string> getSrcSentVec(void)const=0;
-  virtual Vector<std::string> getTransForSrcPhr(pair<PositionIndex,PositionIndex> srcPhr)const=0;
-  virtual std::set<pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const=0;
-  virtual bool srcPhrAffectedByConstraint(pair<PositionIndex,PositionIndex> srcPhr)const=0;
-  virtual bool translationSatisfiesConstraints(const Vector<std::string>& targetWordVec,
-                                               const Vector<pair<PositionIndex,PositionIndex> >& alignedPositions)const=0;
+  virtual std::vector<std::string> getSrcSentVec(void)const=0;
+  virtual std::vector<std::string> getTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhr)const=0;
+  virtual std::set<std::pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const=0;
+  virtual bool srcPhrAffectedByConstraint(std::pair<PositionIndex,PositionIndex> srcPhr)const=0;
+  virtual bool translationSatisfiesConstraints(const std::vector<std::string>& targetWordVec,
+                                               const std::vector<std::pair<PositionIndex,PositionIndex> >& alignedPositions)const=0;
       // NOTE: alignedPositions is a vector representing alignments
       // between source and target words.  The first index corresponds
       // to source word positions and the second one to target word

@@ -23,8 +23,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /* Prototype file: vecx_x_incr_cptable                              */
 /*                                                                  */
 /* Description: Class to manage incremental conditional probability */
-/*              tables of the form p(x|Vector<x>) (Note: x is a     */
-/*              data type)                                          */
+/*              tables of the form p(x|std::vector<x>) (Note: x is  */
+/*              a data type)                                        */
 /*                                                                  */
 /********************************************************************/
 
@@ -55,44 +55,44 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- vecx_x_incr_cptable class
 
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-class vecx_x_incr_cptable: public BaseIncrCondProbTable<Vector<X>,X,SRC_INFO,SRCTRG_INFO>
+class vecx_x_incr_cptable: public BaseIncrCondProbTable<std::vector<X>,X,SRC_INFO,SRCTRG_INFO>
 {
  public:
 
-  typedef typename BaseIncrCondProbTable<Vector<X>,X,SRC_INFO,SRCTRG_INFO>::SrcTableNode SrcTableNode;
-  typedef typename BaseIncrCondProbTable<Vector<X>,X,SRC_INFO,SRCTRG_INFO>::TrgTableNode TrgTableNode;
+  typedef typename BaseIncrCondProbTable<std::vector<X>,X,SRC_INFO,SRCTRG_INFO>::SrcTableNode SrcTableNode;
+  typedef typename BaseIncrCondProbTable<std::vector<X>,X,SRC_INFO,SRCTRG_INFO>::TrgTableNode TrgTableNode;
   typedef TrieVecs<X,SRCTRG_INFO> SrcTrgInfo;
   typedef TrieVecs<X,SRC_INFO> SrcInfo;
 
       // Basic functions
-  void addTableEntry(const Vector<X>& s,
+  void addTableEntry(const std::vector<X>& s,
                      const X& t,
                      im_pair<SRC_INFO,SRCTRG_INFO> inf);
-  void addSrcInfo(const Vector<X>& s,SRC_INFO s_inf);
-  void addSrcTrgInfo(const Vector<X>& s,const X& t,SRCTRG_INFO st_inf);
-  void incrCountsOfEntryLog(const Vector<X>& s,
+  void addSrcInfo(const std::vector<X>& s,SRC_INFO s_inf);
+  void addSrcTrgInfo(const std::vector<X>& s,const X& t,SRCTRG_INFO st_inf);
+  void incrCountsOfEntryLog(const std::vector<X>& s,
                             const X& t,
                             LogCount lc);
-  im_pair<SRC_INFO,SRCTRG_INFO> infSrcTrg(const Vector<X>& s,
+  im_pair<SRC_INFO,SRCTRG_INFO> infSrcTrg(const std::vector<X>& s,
                                           const X& t,
                                           bool& found);
-  SRC_INFO getSrcInfo(const Vector<X>& s,bool& found);
-  SRCTRG_INFO getSrcTrgInfo(const Vector<X>& s,const X& t,bool& found);
-  Prob pTrgGivenSrc(const Vector<X>& s,const X& t);
-  LgProb logpTrgGivenSrc(const Vector<X>& s,const X& t);
-  Prob pSrcGivenTrg(const Vector<X>& s,const X& t);
-  LgProb logpSrcGivenTrg(const Vector<X>& s,const X& t);
-  bool getEntriesForSource(const Vector<X>& s,TrgTableNode& trgtn);
+  SRC_INFO getSrcInfo(const std::vector<X>& s,bool& found);
+  SRCTRG_INFO getSrcTrgInfo(const std::vector<X>& s,const X& t,bool& found);
+  Prob pTrgGivenSrc(const std::vector<X>& s,const X& t);
+  LgProb logpTrgGivenSrc(const std::vector<X>& s,const X& t);
+  Prob pSrcGivenTrg(const std::vector<X>& s,const X& t);
+  LgProb logpSrcGivenTrg(const std::vector<X>& s,const X& t);
+  bool getEntriesForSource(const std::vector<X>& s,TrgTableNode& trgtn);
   bool getEntriesForTarget(const X& t,SrcTableNode& tnode);
-  bool getNbestForSrc(const Vector<X>& s,NbestTableNode<X>& nbt);
-  bool getNbestForTrg(const X& t,NbestTableNode<Vector<X> >& nbt,int N=-1);
+  bool getNbestForSrc(const std::vector<X>& s,NbestTableNode<X>& nbt);
+  bool getNbestForTrg(const X& t,NbestTableNode<std::vector<X> >& nbt,int N=-1);
 
       // Count-related functions
-  Count cSrcTrg(const Vector<X>& s,const X& t);
-  Count cSrc(const Vector<X>& s);
+  Count cSrcTrg(const std::vector<X>& s,const X& t);
+  Count cSrc(const std::vector<X>& s);
   Count cTrg(const X& t);
-  LogCount lcSrcTrg(const Vector<X>& s,const X& t);
-  LogCount lcSrc(const Vector<X>& s);
+  LogCount lcSrcTrg(const std::vector<X>& s,const X& t);
+  LogCount lcSrc(const std::vector<X>& s);
   LogCount lcTrg(const X& t);
 
       // size, clear functions
@@ -121,7 +121,7 @@ class vecx_x_incr_cptable: public BaseIncrCondProbTable<Vector<X>,X,SRC_INFO,SRC
     int operator==(const const_iterator& right);
     int operator!=(const const_iterator& right);
     const typename SrcTrgInfo::const_iterator& operator->(void)const;
-    pair<Vector<X>,SRCTRG_INFO> operator*(void)const;
+    pair<std::vector<X>,SRCTRG_INFO> operator*(void)const;
     ~const_iterator(){}
   };
       // const_iterator-related functions
@@ -160,7 +160,7 @@ bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::load(const char */*fileName*/)
 }
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::addTableEntry(const Vector<X>& s,
+void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::addTableEntry(const std::vector<X>& s,
                                                                 const X& t,
                                                                 im_pair<SRC_INFO,SRCTRG_INFO> inf)
 {
@@ -170,7 +170,7 @@ void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::addTableEntry(const Vector<X>&
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::addSrcInfo(const Vector<X>& s,
+void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::addSrcInfo(const std::vector<X>& s,
                                                              SRC_INFO s_inf)
 {
   if(s.size()!=0)
@@ -185,11 +185,11 @@ void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::addSrcInfo(const Vector<X>& s,
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::addSrcTrgInfo(const Vector<X>& s,
+void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::addSrcTrgInfo(const std::vector<X>& s,
                                                                 const X& t,
                                                                 SRCTRG_INFO st_inf)
 {
-  Vector<X> vecx;
+  std::vector<X> vecx;
   unsigned int i;
 
   
@@ -205,13 +205,13 @@ void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::addSrcTrgInfo(const Vector<X>&
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::incrCountsOfEntryLog(const Vector<X>& s,
+void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::incrCountsOfEntryLog(const std::vector<X>& s,
                                                                        const X& t,
                                                                        LogCount lc)
 {
   SRCTRG_INFO* stiPtr;
   SRC_INFO* siPtr;
-  Vector<X> vecx;
+  std::vector<X> vecx;
     
   for(unsigned int i=0;i<s.size();++i)
   {
@@ -257,13 +257,13 @@ void vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::incrCountsOfEntryLog(const Vec
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
 im_pair<SRC_INFO,SRCTRG_INFO>
-vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::infSrcTrg(const Vector<X>& s,
+vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::infSrcTrg(const std::vector<X>& s,
                                                        const X& t,
                                                        bool& found)
 {
   SRCTRG_INFO* stiPtr;
   im_pair<SRC_INFO,SRCTRG_INFO> psst;
-  Vector<X> vecx;
+  std::vector<X> vecx;
   unsigned int i;
   
   for(i=0;i<s.size();++i)
@@ -299,7 +299,7 @@ vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::infSrcTrg(const Vector<X>& s,
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-SRC_INFO vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getSrcInfo(const Vector<X>& s,
+SRC_INFO vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getSrcInfo(const std::vector<X>& s,
                                                                  bool& found)
 {
   if(s.size()!=0)
@@ -328,12 +328,12 @@ SRC_INFO vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getSrcInfo(const Vector<X>
 }
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-SRCTRG_INFO vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getSrcTrgInfo(const Vector<X>& s,
+SRCTRG_INFO vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getSrcTrgInfo(const std::vector<X>& s,
                                                                        const X& t,
                                                                        bool& found)
 {
   SRCTRG_INFO* stiPtr;
-  Vector<X> vecx;
+  std::vector<X> vecx;
   unsigned int i;
   
   for(i=0;i<s.size();++i)
@@ -360,7 +360,7 @@ SRCTRG_INFO vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getSrcTrgInfo(const Vec
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-Prob vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::pTrgGivenSrc(const Vector<X>& s,
+Prob vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::pTrgGivenSrc(const std::vector<X>& s,
                                                                const X& t)
 {
   im_pair<SRC_INFO,SRCTRG_INFO> psst;
@@ -383,7 +383,7 @@ Prob vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::pTrgGivenSrc(const Vector<X>& 
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-LgProb vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::logpTrgGivenSrc(const Vector<X>& s,
+LgProb vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::logpTrgGivenSrc(const std::vector<X>& s,
                                                                     const X& t)
 {
   im_pair<SRC_INFO,SRCTRG_INFO> psst;
@@ -406,14 +406,14 @@ LgProb vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::logpTrgGivenSrc(const Vector
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-Prob vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::pSrcGivenTrg(const Vector<X>& s,const X& t)
+Prob vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::pSrcGivenTrg(const std::vector<X>& s,const X& t)
 {
   return logpSrcGivenTrg(s,t).get_p();    
 }
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-LgProb vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::logpSrcGivenTrg(const Vector<X>& s,
+LgProb vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::logpSrcGivenTrg(const std::vector<X>& s,
                                                                     const X& t)
 {
   LogCount lc_st;
@@ -432,13 +432,13 @@ LgProb vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::logpSrcGivenTrg(const Vector
 }
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getEntriesForSource(const Vector<X>& s,
+bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getEntriesForSource(const std::vector<X>& s,
                                                                       TrgTableNode& trgtn)
 {
   typename SrcTrgInfo::const_iterator titer;
   unsigned int i;
   pair<X,im_pair<SRC_INFO,SRCTRG_INFO> > pdp;
-  Vector<X> vecx;
+  std::vector<X> vecx;
   SRC_INFO* siPtr;
 
   siPtr=srcInfo.find(s);
@@ -476,7 +476,7 @@ vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getEntriesForTarget(const X& t,type
 {
   typename SrcTrgInfo::const_iterator titer;
   unsigned int i;
-  pair<Vector<X>,im_pair<SRC_INFO,SRCTRG_INFO> > pdp;
+  pair<std::vector<X>,im_pair<SRC_INFO,SRCTRG_INFO> > pdp;
 
   tnode.clear();
   for(titer=srcTrgInfo.begin();titer!=srcTrgInfo.end();++titer)
@@ -504,7 +504,7 @@ vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getEntriesForTarget(const X& t,type
 }
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getNbestForSrc(const Vector<X>& s,
+bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getNbestForSrc(const std::vector<X>& s,
                                                                  NbestTableNode<X>& nbt)
 {
   TrgTableNode tnode;
@@ -527,7 +527,7 @@ bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getNbestForSrc(const Vector<X>
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
 bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getNbestForTrg(const X& t,
-                                                                 NbestTableNode<Vector<X> >& nbt,
+                                                                 NbestTableNode<std::vector<X> >& nbt,
                                                                  int N)
 {
   SrcTableNode tnode;
@@ -552,11 +552,11 @@ bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getNbestForTrg(const X& t,
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-Count vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::cSrcTrg(const Vector<X>& s,
+Count vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::cSrcTrg(const std::vector<X>& s,
                                                            const X& t)
 {
   SRCTRG_INFO* stiPtr;
-  Vector<X> vecx;
+  std::vector<X> vecx;
   unsigned int i;
   
   for(i=0;i<s.size();++i)
@@ -579,7 +579,7 @@ Count vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::cSrcTrg(const Vector<X>& s,
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-Count vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::cSrc(const Vector<X>& s)
+Count vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::cSrc(const std::vector<X>& s)
 {
   SRC_INFO* siPtr;
 
@@ -623,11 +623,11 @@ Count vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::cTrg(const X& t)
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-LogCount vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::lcSrcTrg(const Vector<X>& s,
+LogCount vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::lcSrcTrg(const std::vector<X>& s,
                                                                const X& t)
 {
   SRCTRG_INFO* stiPtr;
-  Vector<X> vecx;
+  std::vector<X> vecx;
   unsigned int i;
   
   for(i=0;i<s.size();++i)
@@ -650,7 +650,7 @@ LogCount vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::lcSrcTrg(const Vector<X>& 
 
 //-------------------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-LogCount vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::lcSrc(const Vector<X>& s)
+LogCount vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::lcSrc(const std::vector<X>& s)
 {
   SRC_INFO* siPtr;
 
@@ -736,7 +736,7 @@ vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::const_iterator::operator->(void)con
 }
 //---------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-pair<Vector<X>,SRCTRG_INFO > vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::const_iterator::operator*(void)const
+pair<std::vector<X>,SRCTRG_INFO > vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::const_iterator::operator*(void)const
 {
   return *srcTrgInfoIter;
 }

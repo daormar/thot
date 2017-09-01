@@ -31,8 +31,8 @@ struct PhraseModelPars
   string srcTrainVocabFileName;
   string trgTrainVocabFileName;
   string readTablePrefix;
-  Vector<double> ptsWeightVec;
-  Vector<double> pstWeightVec;
+  std::vector<double> ptsWeightVec;
+  std::vector<double> pstWeightVec;
   double trgSegmLenWeight;
   double srcJumpWeight;
   double srcSegmLenWeight;

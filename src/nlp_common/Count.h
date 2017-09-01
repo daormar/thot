@@ -25,8 +25,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <math.h>
 
-using namespace std;
-
 //--------------- Classes --------------------------------------------
 
 class Count
@@ -80,12 +78,12 @@ class Count
   float get_lc_s(void)const {return log(x);}
   float get_lc_st(void)const {return log(x);}
 
-  friend ostream& operator <<(ostream &outS,const Count& p)
+  friend std::ostream& operator <<(std::ostream &outS,const Count& p)
   {
     outS<<(double) p.x;
     return outS;
   }
-  friend istream& operator>>(istream& is, Count& p)
+  friend std::istream& operator>>(std::istream& is, Count& p)
   {
     is >> p.x;
     return is;

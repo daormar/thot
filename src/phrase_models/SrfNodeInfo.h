@@ -28,8 +28,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <float.h>
 #include "BpSet.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 #define UNINIT_NUM_LEAFS FLT_MAX
 

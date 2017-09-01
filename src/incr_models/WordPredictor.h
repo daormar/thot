@@ -48,9 +48,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 #include <iomanip>
-#include "myVector.h"
 #include <map>
 #include <string>
+#include <vector>
 #include "Count.h"
 #include "ErrorDefs.h"
 #include "awkInputStream.h"
@@ -72,7 +72,7 @@ class WordPredictor
 {
  public:
 
-  typedef std::map<Count,std::string,greater<Count> > SuffixList;
+  typedef std::map<Count,std::string,std::greater<Count> > SuffixList;
     
       // Constructor
   WordPredictor();
@@ -81,13 +81,13 @@ class WordPredictor
   bool load(const char *fileName);
 
       // Add a new sentence to the word predictor
-  void addSentence(Vector<std::string> strVec);
+  void addSentence(std::vector<std::string> strVec);
 
       // Get set of possible suffixes for a string
   void getSuffixList(std::string input,SuffixList &out);
 
       // Get the suffix with highest count for given string
-  pair<Count,std::string> getBestSuffix(std::string input);
+  std::pair<Count,std::string> getBestSuffix(std::string input);
   
   void clear(void);
   
@@ -98,11 +98,11 @@ class WordPredictor
   
   Trie<char,Count> charTrie;
   unsigned int numSentsToRetain;
-  Vector<Vector<std::string> > strVecVec;
+  std::vector<std::vector<std::string> > strVecVec;
   
   bool loadFileWithSents(const char *fileName);
   bool loadFileWithAdditionalInfo(const char *fileName);
-  void addSentenceAux(Vector<std::string> strVec);
+  void addSentenceAux(std::vector<std::string> strVec);
 
 };
 #endif

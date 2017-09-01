@@ -76,13 +76,13 @@ class WordPenaltyFeat: public BasePbTransModelFeature<SCORE_INFO>
       // Scoring functions
   HypScoreInfo nullHypScore(const HypScoreInfo& predHypScrInf,
                             Score& unweightedScore);
-  HypScoreInfo extensionScore(const Vector<std::string>& srcSent,
+  HypScoreInfo extensionScore(const std::vector<std::string>& srcSent,
                               const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
-  Score scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
-                                  const Vector<std::string>& trgPhrase);
+  Score scorePhrasePairUnweighted(const std::vector<std::string>& srcPhrase,
+                                  const std::vector<std::string>& trgPhrase);
   
       // Link pointer
   void link_wpm(BaseWordPenaltyModel* _wpModelPtr);
@@ -110,8 +110,8 @@ std::string WordPenaltyFeat<SCORE_INFO>::getFeatType(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-Score WordPenaltyFeat<SCORE_INFO>::scorePhrasePairUnweighted(const Vector<std::string>& /*srcPhrase*/,
-                                                             const Vector<std::string>& trgPhrase)
+Score WordPenaltyFeat<SCORE_INFO>::scorePhrasePairUnweighted(const std::vector<std::string>& /*srcPhrase*/,
+                                                             const std::vector<std::string>& trgPhrase)
 {
   return (double)wpModelPtr->wordPenaltyScore(trgPhrase.size());
 }

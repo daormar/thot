@@ -23,16 +23,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
 //--------------- PhrasePair struct
 struct PhrasePair
 {
-  Vector<string> s_;
-  Vector<string> t_;
+  std::vector<string> s_;
+  std::vector<string> t_;
   float weight;
 };
 

@@ -41,8 +41,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include <iostream>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -268,7 +266,7 @@ bool IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::loadSrc(const char *fileNam
   srcFile.open(fileName);
   if(!srcFile)
   {
-    cerr<< "Error in source vocabulary file "<<fileName<<endl;
+    std::cerr<< "Error in source vocabulary file "<<fileName<<std::endl;
     return false;
   }
   else
@@ -276,7 +274,7 @@ bool IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::loadSrc(const char *fileNam
     while(srcFile)
     {
       srcFile>>hs>>s;
-          //cout<<s<< " ||| " <<t<<" ||| "<<inf<<endl;
+          //cout<<s<< " ||| " <<t<<" ||| "<<inf<<std::endl;
       hsrc_to_src[hs]=s;      
     }
     return true;
@@ -294,7 +292,7 @@ bool IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::loadTrg(const char *fileNam
   trgFile.open(fileName);
   if(!trgFile)
   {
-    cerr<< "Error in target vocabulary file "<<fileName<<endl;
+    std::cerr<< "Error in target vocabulary file "<<fileName<<std::endl;
     return false;
   }
   else
@@ -302,7 +300,7 @@ bool IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::loadTrg(const char *fileNam
     while(trgFile)
     {
       trgFile>>ht>>t;
-          //cout<<s<< " ||| " <<t<<" ||| "<<inf<<endl;
+          //cout<<s<< " ||| " <<t<<" ||| "<<inf<<std::endl;
       htrg_to_trg[ht]=t;      
     }
     return true;
@@ -338,14 +336,14 @@ bool IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::printSrc(const char *fileNa
   srcFile.open(fileName,ios::out);
   if(!srcFile)
   {
-    cerr<< "Error while opening source vocabulary file "<<fileName<<endl;
+    std::cerr<< "Error while opening source vocabulary file "<<fileName<<std::endl;
     return false;
   }
   else
   {
     for(iter=hsrc_to_src.begin();iter!=hsrc_to_src.end();++iter)
     {
-      srcFile<<iter->first<<" "<<iter->second<<endl;
+      srcFile<<iter->first<<" "<<iter->second<<std::endl;
     }
     return true;
   }
@@ -361,14 +359,14 @@ bool IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::printTrg(const char *fileNa
   trgFile.open(fileName,ios::out);
   if(!trgFile)
   {
-    cerr<< "Error while opening target vocabulary file "<<fileName<<endl;
+    std::cerr<< "Error while opening target vocabulary file "<<fileName<<std::endl;
     return false;
   }
   else
   {
     for(iter=htrg_to_trg.begin();iter!=htrg_to_trg.end();++iter)
     {
-      trgFile<<iter->first<<" "<<iter->second<<endl;
+      trgFile<<iter->first<<" "<<iter->second<<std::endl;
     }
     
     return true;

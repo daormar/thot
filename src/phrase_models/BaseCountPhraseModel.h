@@ -41,7 +41,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "BasePhraseModel.h"
 
-using namespace std;
 
 //--------------- Constants ------------------------------------------
 
@@ -62,19 +61,19 @@ class BaseCountPhraseModel: public BasePhraseModel
     typedef BasePhraseModel::TrgTableNode TrgTableNode;
 
         // Counts-related functions
-    virtual Count cSrcTrg(const Vector<WordIndex>& s,
-                          const Vector<WordIndex>& t)=0;
-    virtual Count cSrc(const Vector<WordIndex>& s)=0;
-    virtual Count cTrg(const Vector<WordIndex>& t)=0;
+    virtual Count cSrcTrg(const std::vector<WordIndex>& s,
+                          const std::vector<WordIndex>& t)=0;
+    virtual Count cSrc(const std::vector<WordIndex>& s)=0;
+    virtual Count cTrg(const std::vector<WordIndex>& t)=0;
 
-    virtual Count cHSrcHTrg(const Vector<std::string>& s,
-                            const Vector<std::string>& t)=0;
-    virtual Count cHSrc(const Vector<std::string>& s)=0;
-    virtual Count cHTrg(const Vector<std::string>& t)=0;
+    virtual Count cHSrcHTrg(const std::vector<std::string>& s,
+                            const std::vector<std::string>& t)=0;
+    virtual Count cHSrc(const std::vector<std::string>& s)=0;
+    virtual Count cHTrg(const std::vector<std::string>& t)=0;
     
         // Functions to access model probabilities
-    virtual PhrasePairInfo infSrcTrg(const Vector<WordIndex>& s,
-                                     const Vector<WordIndex>& t,
+    virtual PhrasePairInfo infSrcTrg(const std::vector<WordIndex>& s,
+                                     const std::vector<WordIndex>& t,
                                      bool& found)=0;
 
     virtual ~BaseCountPhraseModel(){};

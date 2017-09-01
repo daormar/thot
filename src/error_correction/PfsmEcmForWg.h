@@ -68,9 +68,9 @@ class PfsmEcmForWg: public PfsmEcm, public BaseEcmForWg<PfsmEcmForWgEsi>
 
   typedef BaseEcmForWg<PfsmEcmForWgEsi>::EcmScoreInfo EcmScoreInfo;
 
-  void correctStrGivenPrefWg(Vector<std::string> uncorrStrVec,
-                             Vector<std::string> prefStrVec,
-                             Vector<std::string>& correctedStrVec);
+  void correctStrGivenPrefWg(std::vector<std::string> uncorrStrVec,
+                             std::vector<std::string> prefStrVec,
+                             std::vector<std::string>& correctedStrVec);
       // Corrects string 'uncorrStrVec' given the prefix 'prefStrVec'
       // storing the results in 'correctedStrVec'. This is a specialized
       // version for word graphs of the correctStrGivenPref function
@@ -82,23 +82,23 @@ class PfsmEcmForWg: public PfsmEcm, public BaseEcmForWg<PfsmEcmForWgEsi>
                             const std::string& word);
       // Constructs an esi object given a previous one
 
-  void extendInitialEsi(const Vector<std::string>& prefixDiffVec,
+  void extendInitialEsi(const std::vector<std::string>& prefixDiffVec,
                         const EcmScoreInfo& prevInitEsi,
                         EcmScoreInfo& newInitEsi);
       // Extends initial ecm score info
   
-  void extendEsi(const Vector<std::string>& prefixDiffVec,
+  void extendEsi(const std::vector<std::string>& prefixDiffVec,
                  const EcmScoreInfo& prevEsi,
                  const std::string& word,
                  EcmScoreInfo& newEsi);
       // Extends ecm score info
 
       // Functions to extract data from a given esi
-  Vector<Score> obtainScrVecFromEsi(const EcmScoreInfo& esi);
-  Vector<int> obtainLastInsPrefWordVecFromEsi(const EcmScoreInfo& esi);
+  std::vector<Score> obtainScrVecFromEsi(const EcmScoreInfo& esi);
+  std::vector<int> obtainLastInsPrefWordVecFromEsi(const EcmScoreInfo& esi);
 
   void updateEsiPositions(const EcmScoreInfo& esi1,
-                          const Vector<unsigned int>& posVec,
+                          const std::vector<unsigned int>& posVec,
                           EcmScoreInfo& esi2);
       // Updates the EcmScoreInfo object "esi2" using the given
       // positions of "esi1".

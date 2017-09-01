@@ -23,13 +23,13 @@ namespace WeightUpdateUtils
 {
       // Non-public function declarations
 
-  int linInterpWeightsDhsEval(const Vector<Vector<PhrasePair> >& invPhrPairs,
+  int linInterpWeightsDhsEval(const std::vector<std::vector<PhrasePair> >& invPhrPairs,
                               DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
                               InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
                               FILE* tmp_file,
                               double* x,
                               double& obj_func);
-  double phraseModelPerplexity(const Vector<Vector<PhrasePair> >& invPhrPairs,
+  double phraseModelPerplexity(const std::vector<std::vector<PhrasePair> >& invPhrPairs,
                                DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
                                InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
                                int verbose=0);
@@ -40,14 +40,14 @@ namespace WeightUpdateUtils
   void updateLogLinearWeights(std::string refSent,
                               WordGraph* wgPtr,
                               BaseLogLinWeightUpdater* llWeightUpdaterPtr,
-                              const Vector<pair<std::string,float> >& compWeights,
-                              Vector<float>& newWeights,
+                              const std::vector<pair<std::string,float> >& compWeights,
+                              std::vector<float>& newWeights,
                               int verbose/*=0*/)
   {
         // Obtain n-best list
     unsigned int len=NBLIST_SIZE_FOR_LLWEIGHT_UPDATE;
-    Vector<pair<Score,std::string> > nblist;
-    Vector<Vector<double> > scoreCompsVec;
+    std::vector<pair<Score,std::string> > nblist;
+    std::vector<std::vector<double> > scoreCompsVec;
     wgPtr->obtainNbestList(len,nblist,scoreCompsVec);
 
         // Obtain current weights
@@ -58,7 +58,7 @@ namespace WeightUpdateUtils
         // Print verbose information
     if(verbose)
     {
-      cerr<<"Training log linear combination weights (n-best list size= "<<nblist.size()<<")..."<<endl;
+      std::cerr<<"Training log linear combination weights (n-best list size= "<<nblist.size()<<")..."<<std::endl;
     }
   
         // Obtain new weights
@@ -74,7 +74,7 @@ namespace WeightUpdateUtils
     else
     {    
           // Invoke weight update engine
-      Vector<double> newWeightsDouble;
+      std::vector<double> newWeightsDouble;
       std::string reference=refSent;
       vector<string> nblistWithNoScr;
       for(unsigned int i=0;i<nblist.size();++i) nblistWithNoScr.push_back(nblist[i].second);
@@ -92,13 +92,13 @@ namespace WeightUpdateUtils
   
     if(verbose)
     {
-      cerr<<"The weights of the loglinear combination have been trained:"<<endl;
-      cerr<<" - Previous weights:";
-      for(unsigned int i=0;i<currentWeights.size();++i) cerr<<" "<<currentWeights[i];
-      cerr<<endl;
-      cerr<<" - New weights     :";
-      for(unsigned int i=0;i<newWeights.size();++i) cerr<<" "<<newWeights[i];
-      cerr<<endl;
+      std::cerr<<"The weights of the loglinear combination have been trained:"<<std::endl;
+      std::cerr<<" - Previous weights:";
+      for(unsigned int i=0;i<currentWeights.size();++i) std::cerr<<" "<<currentWeights[i];
+      std::cerr<<std::endl;
+      std::cerr<<" - New weights     :";
+      for(unsigned int i=0;i<newWeights.size();++i) std::cerr<<" "<<newWeights[i];
+      std::cerr<<std::endl;
     }
   }
   
@@ -110,7 +110,7 @@ namespace WeightUpdateUtils
                                int verbose/*=0*/)
   {
         // Initialize downhill simplex input parameters
-    Vector<double> initial_weights;
+    std::vector<double> initial_weights;
         // Obtain weights
     initial_weights.push_back(dirPhrModelFeatPtr->get_lambda());
     initial_weights.push_back(invPhrModelFeatPtr->get_lambda());
@@ -125,12 +125,12 @@ namespace WeightUpdateUtils
   
     if(tmp_file==0)
     {
-      cerr<<"Error updating linear interpolation weights of the phrase model, tmp file could not be created"<<endl;
+      std::cerr<<"Error updating linear interpolation weights of the phrase model, tmp file could not be created"<<std::endl;
       return THOT_ERROR;
     }
 
         // Extract phrase pairs from development corpus
-    Vector<Vector<PhrasePair> > unfiltInvPhrPairs;
+    std::vector<std::vector<PhrasePair> > unfiltInvPhrPairs;
     int ret=PhraseExtractUtils::extractPhrPairsFromCorpusFiles(invPhrModelFeatPtr->get_swmptr(),
                                                                dirPhrModelFeatPtr->get_swmptr(),
                                                                trgCorpusFileName,
@@ -138,10 +138,10 @@ namespace WeightUpdateUtils
                                                                unfiltInvPhrPairs,
                                                                verbose);
         // Filter phrase pairs
-    Vector<Vector<PhrasePair> > invPhrPairs;
+    std::vector<std::vector<PhrasePair> > invPhrPairs;
     for(unsigned int i=0;i<unfiltInvPhrPairs.size();++i)
     {
-      Vector<PhrasePair> invPhrPairVec;
+      std::vector<PhrasePair> invPhrPairVec;
       PhraseExtractUtils::filterPhrasePairs(unfiltInvPhrPairs[i],invPhrPairVec);
       invPhrPairs.push_back(invPhrPairVec);
     }
@@ -165,7 +165,7 @@ namespace WeightUpdateUtils
       {
         case THOT_OK: end=true;
           break;
-        case DSO_NMAX_ERROR: cerr<<"Error updating linear interpolation weights of the phrase model, maximum number of iterations exceeded"<<endl;
+        case DSO_NMAX_ERROR: std::cerr<<"Error updating linear interpolation weights of the phrase model, maximum number of iterations exceeded"<<std::endl;
           end=true;
           break;
         case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
@@ -179,9 +179,9 @@ namespace WeightUpdateUtils
               // Print verbose information
           if(verbose>=1)
           {
-            cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<PHRSWLITM_DHS_FTOL<<") ; ";
-            cerr<<"weights= "<<dirPhrModelFeatPtr->get_lambda()<<" "<<invPhrModelFeatPtr->get_lambda();
-            cerr<<" ; perp= "<<perp<<endl; 
+            std::cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<PHRSWLITM_DHS_FTOL<<") ; ";
+            std::cerr<<"weights= "<<dirPhrModelFeatPtr->get_lambda()<<" "<<invPhrModelFeatPtr->get_lambda();
+            std::cerr<<" ; perp= "<<perp<<std::endl; 
           }
           break;
       }
@@ -211,7 +211,7 @@ namespace WeightUpdateUtils
   }
   
   //---------------------------------
-  int linInterpWeightsDhsEval(const Vector<Vector<PhrasePair> >& invPhrPairs,
+  int linInterpWeightsDhsEval(const std::vector<std::vector<PhrasePair> >& invPhrPairs,
                               DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
                               InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
                               FILE* tmp_file,
@@ -255,7 +255,7 @@ namespace WeightUpdateUtils
   }
 
   //---------------------------------
-  double phraseModelPerplexity(const Vector<Vector<PhrasePair> >& invPhrPairs,
+  double phraseModelPerplexity(const std::vector<std::vector<PhrasePair> >& invPhrPairs,
                                DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPhrModelFeatPtr,
                                InversePhraseModelFeat<SmtModel::HypScoreInfo>* invPhrModelFeatPtr,
                                int /*verbose=0*/)
@@ -269,8 +269,8 @@ namespace WeightUpdateUtils
     {
       for(unsigned int j=0;j<invPhrPairs[i].size();++j)
       {
-        Vector<std::string> srcPhrasePair=invPhrPairs[i][j].t_;
-        Vector<std::string> trgPhrasePair=invPhrPairs[i][j].s_;
+        std::vector<std::string> srcPhrasePair=invPhrPairs[i][j].t_;
+        std::vector<std::string> trgPhrasePair=invPhrPairs[i][j].s_;
 
             // Obtain unweighted score for target given source
         Score unweightedPtsScr=dirPhrModelFeatPtr->scorePhrasePairUnweighted(srcPhrasePair,trgPhrasePair);

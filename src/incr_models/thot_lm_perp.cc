@@ -67,8 +67,8 @@ std::string lmFileName;
 std::string corpusFileName;
 int verbose=0;
 unsigned int order;
-SimpleDynClassLoader<BaseNgramLM<Vector<WordIndex> > > baseNgramLMDynClassLoader;
-BaseNgramLM<Vector<WordIndex> >* lm;
+SimpleDynClassLoader<BaseNgramLM<std::vector<WordIndex> > > baseNgramLMDynClassLoader;
+BaseNgramLM<std::vector<WordIndex> >* lm;
 
 //--------------- Function Definitions -------------------------------
 
@@ -77,7 +77,7 @@ int main(int argc,char *argv[])
 {
   LgProb total_logp=0;	
   std::string s;
-  vector<string> v;	
+  std::vector<std::string> v;	
   unsigned int sentenceNo=0,numWords=0;
   double perp;
   double total_time=0,elapsed_ant,elapsed,ucpu,scpu;
@@ -90,7 +90,7 @@ int main(int argc,char *argv[])
         // Load language model
     if(lm->load(lmFileName.c_str())==THOT_ERROR)
     {
-      cerr<<"Error while loading language model"<<endl;
+      std::cerr<<"Error while loading language model"<<std::endl;
       release_lm(true);
       return THOT_ERROR;
     }
@@ -111,12 +111,12 @@ int main(int argc,char *argv[])
       total_time+=elapsed-elapsed_ant;
 
           // Print results
-      cout<<"* Number of sentences: "<<sentenceNo<<endl;
-      cout<<"* Number of words: "<<numWords<<endl;	  
-      cout<<"* Total log10 prob: "<<total_logp<<endl;
-      cout<<"* Average-Log10-Likelihood (total_log10_prob/num_ngrams): "<<(float)total_logp/(numWords+sentenceNo)<<endl;
-      cout<<"* Perplexity: "<<perp<<endl;
-      cout<<"* Retrieving time: "<<total_time<<endl; 	   
+      std::cout<<"* Number of sentences: "<<sentenceNo<<std::endl;
+      std::cout<<"* Number of words: "<<numWords<<std::endl;	  
+      std::cout<<"* Total log10 prob: "<<total_logp<<std::endl;
+      std::cout<<"* Average-Log10-Likelihood (total_log10_prob/num_ngrams): "<<(float)total_logp/(numWords+sentenceNo)<<std::endl;
+      std::cout<<"* Perplexity: "<<perp<<std::endl;
+      std::cout<<"* Retrieving time: "<<total_time<<std::endl; 	   
 
       release_lm(true);
    
@@ -133,7 +133,7 @@ int init_lm(int verbosity)
   DynClassFileHandler dynClassFileHandler;
   if(dynClassFileHandler.load(THOT_MASTER_INI_PATH,verbosity)==THOT_ERROR)
   {
-    cerr<<"Error while loading ini file"<<endl;
+    std::cerr<<"Error while loading ini file"<<std::endl;
     return THOT_ERROR;
   }
       // Define variables to obtain base class infomation
@@ -145,22 +145,22 @@ int init_lm(int verbosity)
   baseClassName="BaseNgramLM";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }
    
       // Load class derived from BaseSwAligModel dynamically
   if(!baseNgramLMDynClassLoader.open_module(soFileName,verbosity))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
 
   lm=baseNgramLMDynClassLoader.make_obj(initPars);
   if(lm==NULL)
   {
-    cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<std::endl;
     baseNgramLMDynClassLoader.close_module();
     
     return THOT_ERROR;

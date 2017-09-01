@@ -51,8 +51,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include "myVector.h"
 #include <string>
+#include <vector>
 #include <utility>
 
 //--------------- Constants ------------------------------------------
@@ -121,8 +121,8 @@ class BaseStackDecoder
 
       // Functions to report information about the search
   virtual bool printSearchGraph(const char* filename);
-  virtual void printSearchGraphStream(ostream &outS)=0;
-  virtual void printGraphForHyp(const Hypothesis& hyp,ostream &outS)=0;
+  virtual void printSearchGraphStream(std::ostream &outS)=0;
+  virtual void printGraphForHyp(const Hypothesis& hyp,std::ostream &outS)=0;
 
       // Set verbosity level
   virtual void setVerbosity(int _verbosity)=0;
@@ -148,7 +148,7 @@ bool BaseStackDecoder<SMT_MODEL>::printSearchGraph(const char* filename)
   outS.open(filename,ios::out);
   if(!outS)
   {
-    cerr<<"Error while printing search graph to file."<<endl;
+    std::cerr<<"Error while printing search graph to file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -163,7 +163,7 @@ bool BaseStackDecoder<SMT_MODEL>::printSearchGraph(const char* filename)
 template<class SMT_MODEL>
 void BaseStackDecoder<SMT_MODEL>::set_G_par(unsigned int /*G_par*/)
 {
-//  cerr<<"Warning: granularity parameter not available"<<endl;
+//  std::cerr<<"Warning: granularity parameter not available"<<std::endl;
 }
 
 //---------------------------------------

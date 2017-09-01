@@ -41,7 +41,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include <_incrLexTable.h>
-#include <myVector.h>
 #include <ErrorDefs.h>
 #include <StatModelDefs.h>
 
@@ -52,6 +51,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <fstream>
 #include <set>
+#include <vector>
 #include <stdlib.h>
 
 //--------------- Constants ------------------------------------------
@@ -72,18 +72,18 @@ class IncrLexLevelDbTable : public _incrLexTable
     string dbName;
 
         // Converters
-    string vectorToString(const Vector<WordIndex>& vec)const;
-    Vector<WordIndex> stringToVector(const string s)const;
+    string vectorToString(const std::vector<WordIndex>& vec)const;
+    std::vector<WordIndex> stringToVector(const string s)const;
     bool stringToFloat(const string value_str, float &value)const;
     string floatToString(const float value)const;
 
         // Read and write data
-    bool retrieveData(const Vector<WordIndex>& phrase, float &value)const;
-    bool storeData(const Vector<WordIndex>& phrase, float value)const;
+    bool retrieveData(const std::vector<WordIndex>& phrase, float &value)const;
+    bool storeData(const std::vector<WordIndex>& phrase, float value)const;
 
         // Key converters
-    string vectorToKey(const Vector<WordIndex>& vec)const;
-    Vector<WordIndex> keyToVector(const string key)const;
+    string vectorToKey(const std::vector<WordIndex>& vec)const;
+    std::vector<WordIndex> keyToVector(const string key)const;
 
     public:
 

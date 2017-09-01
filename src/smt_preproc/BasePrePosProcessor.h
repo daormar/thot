@@ -47,8 +47,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <SmtPreprocDefs.h>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 

@@ -79,17 +79,17 @@ class InversePhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
   std::string getFeatType(void);
 
       // Scoring functions
-  HypScoreInfo extensionScore(const Vector<std::string>& srcSent,
+  HypScoreInfo extensionScore(const std::vector<std::string>& srcSent,
                               const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
-  Score scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
-                        const Vector<std::string>& trgPhrase);
+  Score scorePhrasePairUnweighted(const std::vector<std::string>& srcPhrase,
+                        const std::vector<std::string>& trgPhrase);
 
       // Functions to obtain translation options
-  void obtainTransOptions(const Vector<std::string>& wordVec,
-                          Vector<Vector<std::string> >& transOptVec);
+  void obtainTransOptions(const std::vector<std::string>& wordVec,
+                          std::vector<std::vector<std::string> >& transOptVec);
 
       // Functions related to model pointers
   void link_pm(BasePhraseModel* _invPbModelPtr);
@@ -107,10 +107,10 @@ class InversePhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
   BaseSwAligModel<PpInfo>* invSwAligModelPtr;
   float lambda;
   
-  Score inversePhrTransUnweightedScore(const Vector<WordIndex>& srcPhrase,
-                                       const Vector<WordIndex>& trgPhrase);
-  Score invSwLgProb(const Vector<WordIndex>& srcPhraseWidx,
-                    const Vector<WordIndex>& trgPhraseWidx);
+  Score inversePhrTransUnweightedScore(const std::vector<WordIndex>& srcPhrase,
+                                       const std::vector<WordIndex>& trgPhrase);
+  Score invSwLgProb(const std::vector<WordIndex>& srcPhraseWidx,
+                    const std::vector<WordIndex>& trgPhraseWidx);
   WordIndex stringToSrcWordindex(std::string word);
   std::string wordindexToSrcString(WordIndex wordIdx);
   WordIndex stringToTrgWordindex(std::string word);
@@ -136,15 +136,15 @@ std::string InversePhraseModelFeat<SCORE_INFO>::getFeatType(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-Score InversePhraseModelFeat<SCORE_INFO>::scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
-                                                                    const Vector<std::string>& trgPhrase)
+Score InversePhraseModelFeat<SCORE_INFO>::scorePhrasePairUnweighted(const std::vector<std::string>& srcPhrase,
+                                                                    const std::vector<std::string>& trgPhrase)
 {
       // Obtain WordIndex vectors
-  Vector<WordIndex> srcPhraseIdx;
+  std::vector<WordIndex> srcPhraseIdx;
   for(unsigned int i=0;i<srcPhrase.size();++i)
     srcPhraseIdx.push_back(this->stringToSrcWordindex(srcPhrase[i]));
 
-  Vector<WordIndex> trgPhraseIdx;
+  std::vector<WordIndex> trgPhraseIdx;
   for(unsigned int i=0;i<trgPhrase.size();++i)
     trgPhraseIdx.push_back(this->stringToTrgWordindex(trgPhrase[i]));
 
@@ -153,8 +153,8 @@ Score InversePhraseModelFeat<SCORE_INFO>::scorePhrasePairUnweighted(const Vector
 
 //---------------------------------
 template<class SCORE_INFO>
-void InversePhraseModelFeat<SCORE_INFO>::obtainTransOptions(const Vector<std::string>& /*wordVec*/,
-                                                           Vector<Vector<std::string> >& transOptVec)
+void InversePhraseModelFeat<SCORE_INFO>::obtainTransOptions(const std::vector<std::string>& /*wordVec*/,
+                                                           std::vector<std::vector<std::string> >& transOptVec)
 {
   transOptVec.clear();
 }
@@ -203,8 +203,8 @@ float InversePhraseModelFeat<SCORE_INFO>::get_lambda(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-Score InversePhraseModelFeat<SCORE_INFO>::inversePhrTransUnweightedScore(const Vector<WordIndex>& srcPhrase,
-                                                                         const Vector<WordIndex>& trgPhrase)
+Score InversePhraseModelFeat<SCORE_INFO>::inversePhrTransUnweightedScore(const std::vector<WordIndex>& srcPhrase,
+                                                                         const std::vector<WordIndex>& trgPhrase)
 {
   if(lambda==1.0)
   {
@@ -223,8 +223,8 @@ Score InversePhraseModelFeat<SCORE_INFO>::inversePhrTransUnweightedScore(const V
 
 //---------------------------------
 template<class SCORE_INFO>
-Score InversePhraseModelFeat<SCORE_INFO>::invSwLgProb(const Vector<WordIndex>& srcPhrase,
-                                                      const Vector<WordIndex>& trgPhrase)
+Score InversePhraseModelFeat<SCORE_INFO>::invSwLgProb(const std::vector<WordIndex>& srcPhrase,
+                                                      const std::vector<WordIndex>& trgPhrase)
 {
   return invSwAligModelPtr->calcLgProbPhr(trgPhrase,srcPhrase);
 }

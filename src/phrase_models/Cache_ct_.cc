@@ -44,7 +44,7 @@ bool Cache_ct_::is_valid(void)
 }
 
 //-------------------------
-bool Cache_ct_::t_present(const Vector<WordIndex>& _t_)
+bool Cache_ct_::t_present(const std::vector<WordIndex>& _t_)
 {
   if(is_valid() && t_==_t_)
     return true;
@@ -53,7 +53,7 @@ bool Cache_ct_::t_present(const Vector<WordIndex>& _t_)
 }
 
 //-------------------------
-void Cache_ct_::init(const Vector<WordIndex>& _t_,
+void Cache_ct_::init(const std::vector<WordIndex>& _t_,
                      Count _count_t_)
 {
   valid=true;

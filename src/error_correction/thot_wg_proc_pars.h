@@ -26,10 +26,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include <string>
+#include <vector>
 #include <options.h>
-#include <myVector.h>
-
-using namespace std;
 
 //--------------- Structs --------------------------------------------
 
@@ -41,7 +39,7 @@ struct thot_wg_proc_pars
   float pruningThreshold;
   bool bp_given;
   unsigned int hypStateIndex;
-  Vector<float> compWeights;
+  std::vector<float> compWeights;
   bool n_given;
   unsigned int nbListLen;
   bool u_given;

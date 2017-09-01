@@ -23,7 +23,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /* Prototype file: LevelDbNgramTable                                */
 /*                                                                  */
 /* Description: Class to manage incremental conditional probability */
-/*              tables of the form p(WordIndex|Vector<WordIndex>)   */
+/*              tables of the form                                  */
+/*              p(WordIndex|std::vector<WordIndex>)                 */
 /*                                                                  */
 /********************************************************************/
 
@@ -61,7 +62,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- LevelDbNgramTable class
 
-class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordIndex, Count, Count>
+class LevelDbNgramTable: public BaseIncrCondProbTable<std::vector<WordIndex>, WordIndex, Count, Count>
 {
         leveldb::DB* db;
         leveldb::Options options;
@@ -69,30 +70,30 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
         string dbNullKey;
 
             // Converters
-        string vectorToString(const Vector<WordIndex>& vec)const;
-        Vector<WordIndex> stringToVector(const string s)const;
+        string vectorToString(const std::vector<WordIndex>& vec)const;
+        std::vector<WordIndex> stringToVector(const string s)const;
         
             // Read and write data
         bool retrieveData(const string key, float &count)const;
-        bool retrieveData(const Vector<WordIndex>& phrase, float &count)const;
+        bool retrieveData(const std::vector<WordIndex>& phrase, float &count)const;
         bool storeData(const string key, float count);
-        bool storeData(const Vector<WordIndex>& phrase, float count);
+        bool storeData(const std::vector<WordIndex>& phrase, float count);
 
             // Returns information related to a given key.
-        Count getInfo(const Vector<WordIndex>& key, bool &found);
+        Count getInfo(const std::vector<WordIndex>& key, bool &found);
         Count getTrgInfo(const WordIndex& t, bool &found);
 
     public:
 
-        typedef BaseIncrCondProbTable<Vector<WordIndex>, WordIndex, Count, Count>::SrcTableNode SrcTableNode;
-        typedef BaseIncrCondProbTable<Vector<WordIndex>, WordIndex, Count, Count>::TrgTableNode TrgTableNode;
+        typedef BaseIncrCondProbTable<std::vector<WordIndex>, WordIndex, Count, Count>::SrcTableNode SrcTableNode;
+        typedef BaseIncrCondProbTable<std::vector<WordIndex>, WordIndex, Count, Count>::TrgTableNode TrgTableNode;
 
           // Constructor
         LevelDbNgramTable(void);
 
             // Key converter and getter
-        string vectorToKey(const Vector<WordIndex>& vec)const;
-        Vector<WordIndex> keyToVector(const string key)const;
+        string vectorToKey(const std::vector<WordIndex>& vec)const;
+        std::vector<WordIndex> keyToVector(const string key)const;
 
           // Wrapper for initializing levelDB
         bool init(string levelDbPath);
@@ -106,34 +107,34 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
           // TODO Ordering by n-gram value
 
           // Concatenate s and t phrases
-        Vector<WordIndex> getSrcTrg(const Vector<WordIndex>& s, const WordIndex& t)const;
+        std::vector<WordIndex> getSrcTrg(const std::vector<WordIndex>& s, const WordIndex& t)const;
         
-        void addTableEntry(const Vector<WordIndex>& s, const WordIndex& t, im_pair<Count,Count> inf);
-        void addSrcInfo(const Vector<WordIndex>& s, Count s_inf);
-        void addSrcTrgInfo(const Vector<WordIndex>& s, const WordIndex& t, Count st_inf);
-        void incrCountsOfEntryLog(const Vector<WordIndex>& s,
+        void addTableEntry(const std::vector<WordIndex>& s, const WordIndex& t, im_pair<Count,Count> inf);
+        void addSrcInfo(const std::vector<WordIndex>& s, Count s_inf);
+        void addSrcTrgInfo(const std::vector<WordIndex>& s, const WordIndex& t, Count st_inf);
+        void incrCountsOfEntryLog(const std::vector<WordIndex>& s,
                                   const WordIndex& t,
                                   LogCount lc);
-        im_pair<Count,Count> infSrcTrg(const Vector<WordIndex>& s,
+        im_pair<Count,Count> infSrcTrg(const std::vector<WordIndex>& s,
                                       const WordIndex& t,
                                       bool& found);
-        Count getSrcInfo(const Vector<WordIndex>& s, bool& found);
-        Count getSrcTrgInfo(const Vector<WordIndex>& s, const WordIndex& t, bool& found);
-        Prob pTrgGivenSrc(const Vector<WordIndex>& s, const WordIndex& t);
-        LgProb logpTrgGivenSrc(const Vector<WordIndex>& s, const WordIndex& t);
-        Prob pSrcGivenTrg(const Vector<WordIndex>& s, const WordIndex& t);
-        LgProb logpSrcGivenTrg(const Vector<WordIndex>& s, const WordIndex& t);
-        bool getEntriesForSource(const Vector<WordIndex>& s, TrgTableNode& trgtn);
+        Count getSrcInfo(const std::vector<WordIndex>& s, bool& found);
+        Count getSrcTrgInfo(const std::vector<WordIndex>& s, const WordIndex& t, bool& found);
+        Prob pTrgGivenSrc(const std::vector<WordIndex>& s, const WordIndex& t);
+        LgProb logpTrgGivenSrc(const std::vector<WordIndex>& s, const WordIndex& t);
+        Prob pSrcGivenTrg(const std::vector<WordIndex>& s, const WordIndex& t);
+        LgProb logpSrcGivenTrg(const std::vector<WordIndex>& s, const WordIndex& t);
+        bool getEntriesForSource(const std::vector<WordIndex>& s, TrgTableNode& trgtn);
         bool getEntriesForTarget(const WordIndex& t, SrcTableNode& tnode);
-        bool getNbestForSrc(const Vector<WordIndex>& s, NbestTableNode<WordIndex>& nbt);
-        bool getNbestForTrg(const WordIndex& t, NbestTableNode<Vector<WordIndex> >& nbt, int N = -1);
+        bool getNbestForSrc(const std::vector<WordIndex>& s, NbestTableNode<WordIndex>& nbt);
+        bool getNbestForTrg(const WordIndex& t, NbestTableNode<std::vector<WordIndex> >& nbt, int N = -1);
 
           // Count-related functions
-        Count cSrcTrg(const Vector<WordIndex>& s, const WordIndex& t);
-        Count cSrc(const Vector<WordIndex>& s);
+        Count cSrcTrg(const std::vector<WordIndex>& s, const WordIndex& t);
+        Count cSrc(const std::vector<WordIndex>& s);
         Count cTrg(const WordIndex& t);
-        LogCount lcSrcTrg(const Vector<WordIndex>& s, const WordIndex& t);
-        LogCount lcSrc(const Vector<WordIndex>& s);
+        LogCount lcSrcTrg(const std::vector<WordIndex>& s, const WordIndex& t);
+        LogCount lcSrc(const std::vector<WordIndex>& s);
         LogCount lcTrg(const WordIndex& t);
 
           // Size, clear, print functions
@@ -152,7 +153,7 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
             protected:
                 const LevelDbNgramTable* ptPtr;
                 leveldb::Iterator* internalIter;
-                pair<Vector<WordIndex>, Count> dataItem;
+                pair<std::vector<WordIndex>, Count> dataItem;
               
             public:
                 const_iterator(void)
@@ -169,8 +170,8 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
                 bool operator++(int);  //postfix
                 int operator==(const const_iterator& right); 
                 int operator!=(const const_iterator& right);
-                pair<Vector<WordIndex>, Count> operator*(void);
-                const pair<Vector<WordIndex>, Count>* operator->(void);
+                pair<std::vector<WordIndex>, Count> operator*(void);
+                const pair<std::vector<WordIndex>, Count>* operator->(void);
 
                 ~const_iterator()
                 {
@@ -188,7 +189,7 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<Vector<WordIndex>, WordInd
 
         // Key and getter for nullInfo
         string getDbNullKey(void)const;
-        Vector<WordIndex> getVectorDbNullKey(void)const;
+        std::vector<WordIndex> getVectorDbNullKey(void)const;
 
 };
 

@@ -38,8 +38,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <myVector.h>
 #include <awkInputStream.h>
+#include <vector>
 #include <utility>
 #include <limits.h>
 #include <StatModelDefs.h>
@@ -131,13 +131,13 @@ class anjm1ip_anjiMatrix
    
    unsigned int anjm1ip_anji_maxnsize;
    unsigned int anjm1ip_anji_pointer;
-   Vector<Vector<Vector<Vector<float> > > > anjm1ip_anji;
+   std::vector<std::vector<std::vector<std::vector<float> > > > anjm1ip_anji;
        // Use simple precission floating-point numbers for expected
        // values
-   Vector<pair<bool,unsigned int> > np_to_n_vector;
+   std::vector<pair<bool,unsigned int> > np_to_n_vector;
        // For each index of anji stores if it is already used and the
        // real index of the sample
-   Vector<pair<bool,unsigned int> > n_to_np_vector;
+   std::vector<pair<bool,unsigned int> > n_to_np_vector;
        // For each sample n stores if it is mapped in anji, and its
        // corresponding index
 

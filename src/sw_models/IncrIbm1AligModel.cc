@@ -97,10 +97,10 @@ pair<double,double> IncrIbm1AligModel::loglikelihoodForPairRange(pair<unsigned i
   
   for(unsigned int n=sentPairRange.first;n<=sentPairRange.second;++n)
   {
-    if(verbosity) cerr<<"* Calculating log-likelihood for sentence "<<n<<endl;
+    if(verbosity) std::cerr<<"* Calculating log-likelihood for sentence "<<n<<std::endl;
         // Add log-likelihood
-    Vector<WordIndex> nthSrcSent=getSrcSent(n);
-    Vector<WordIndex> nthTrgSent=getTrgSent(n);
+    std::vector<WordIndex> nthSrcSent=getSrcSent(n);
+    std::vector<WordIndex> nthTrgSent=getTrgSent(n);
     if(sentenceLengthIsOk(nthSrcSent) && sentenceLengthIsOk(nthTrgSent))
     {
       loglikelihood+=(double)calcLgProb(nthSrcSent,nthTrgSent,verbosity);
@@ -120,10 +120,10 @@ void IncrIbm1AligModel::clearInfoAboutSentRange(void)
 }
 
 //-------------------------
-Vector<WordIndex> IncrIbm1AligModel::getSrcSent(unsigned int n)
+std::vector<WordIndex> IncrIbm1AligModel::getSrcSent(unsigned int n)
 {
-  Vector<std::string> srcsStr;
-  Vector<WordIndex> result;
+  std::vector<std::string> srcsStr;
+  std::vector<WordIndex> result;
 
   sentenceHandler.getSrcSent(n,srcsStr);
   for(unsigned int i=0;i<srcsStr.size();++i)
@@ -137,16 +137,16 @@ Vector<WordIndex> IncrIbm1AligModel::getSrcSent(unsigned int n)
 }
 
 //-------------------------
-Vector<WordIndex> IncrIbm1AligModel::extendWithNullWord(const Vector<WordIndex>& srcWordIndexVec)
+std::vector<WordIndex> IncrIbm1AligModel::extendWithNullWord(const std::vector<WordIndex>& srcWordIndexVec)
 {
   return addNullWordToWidxVec(srcWordIndexVec);
 }
 
 //-------------------------
-Vector<WordIndex> IncrIbm1AligModel::getTrgSent(unsigned int n)
+std::vector<WordIndex> IncrIbm1AligModel::getTrgSent(unsigned int n)
 {
-  Vector<std::string> trgsStr;
-  Vector<WordIndex> trgs;
+  std::vector<std::string> trgsStr;
+  std::vector<WordIndex> trgs;
 
   sentenceHandler.getTrgSent(n,trgsStr);
   for(unsigned int i=0;i<trgsStr.size();++i)
@@ -160,7 +160,7 @@ Vector<WordIndex> IncrIbm1AligModel::getTrgSent(unsigned int n)
 }
 
 //-------------------------
-bool IncrIbm1AligModel::sentenceLengthIsOk(const Vector<WordIndex> sentence)
+bool IncrIbm1AligModel::sentenceLengthIsOk(const std::vector<WordIndex> sentence)
 {
   if(sentence.empty() || sentence.size()>IBM_SWM_MAX_SENT_LENGTH)
     return false;
@@ -178,9 +178,9 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
         // Calculate sufficient statistics
 
         // Init vars for n'th sample
-    Vector<WordIndex> srcSent=getSrcSent(n);
-    Vector<WordIndex> nsrcSent=extendWithNullWord(srcSent);
-    Vector<WordIndex> trgSent=getTrgSent(n);
+    std::vector<WordIndex> srcSent=getSrcSent(n);
+    std::vector<WordIndex> nsrcSent=extendWithNullWord(srcSent);
+    std::vector<WordIndex> trgSent=getTrgSent(n);
 
     Count weight;
     sentenceHandler.getCount(n,weight);
@@ -195,7 +195,7 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
     {
       if(verbosity)
       {
-        cerr<<"Warning, training pair "<<n+1<<" discarded due to sentence length (slen: "<<srcSent.size()<<" , tlen: "<<trgSent.size()<<")"<<endl;
+        std::cerr<<"Warning, training pair "<<n+1<<" discarded due to sentence length (slen: "<<srcSent.size()<<" , tlen: "<<trgSent.size()<<")"<<std::endl;
       }
     }
   }
@@ -203,8 +203,8 @@ void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
 
 //-------------------------   
 void IncrIbm1AligModel::calc_anji(unsigned int n,
-                                  const Vector<WordIndex>& nsrcSent,
-                                  const Vector<WordIndex>& trgSent,
+                                  const std::vector<WordIndex>& nsrcSent,
+                                  const std::vector<WordIndex>& trgSent,
                                   const Count& weight)
 {
       // Initialize anji and anji_aux
@@ -220,7 +220,7 @@ void IncrIbm1AligModel::calc_anji(unsigned int n,
   {
         // Obtain sum_anji_num_forall_s
     double sum_anji_num_forall_s=0;
-    Vector<double> numVec;
+    std::vector<double> numVec;
     for(unsigned int i=0;i<nsrcSent.size();++i)
     {
           // Smooth numerator
@@ -258,8 +258,8 @@ void IncrIbm1AligModel::calc_anji(unsigned int n,
 }
 
 //-------------------------   
-double IncrIbm1AligModel::calc_anji_num(const Vector<WordIndex>& nsrcSent,
-                                        const Vector<WordIndex>& trgSent,
+double IncrIbm1AligModel::calc_anji_num(const std::vector<WordIndex>& nsrcSent,
+                                        const std::vector<WordIndex>& trgSent,
                                         unsigned int i,
                                         unsigned int j)
 {
@@ -285,8 +285,8 @@ void IncrIbm1AligModel::fillEmAuxVars(unsigned int mapped_n,
                                       unsigned int mapped_n_aux,
                                       PositionIndex i,
                                       PositionIndex j,
-                                      const Vector<WordIndex>& nsrcSent,
-                                      const Vector<WordIndex>& trgSent,
+                                      const std::vector<WordIndex>& nsrcSent,
+                                      const std::vector<WordIndex>& trgSent,
                                       const Count& weight)
 {
       // Init vars
@@ -469,9 +469,9 @@ LgProb IncrIbm1AligModel::sentLenLgProb(unsigned int slen,
 }
 
 //-------------------------
-LgProb IncrIbm1AligModel::lexM1LpForBestAlig(Vector<WordIndex> nSrcSentIndexVector,
-                                             Vector<WordIndex> trgSentIndexVector,
-                                             Vector<PositionIndex>& bestAlig)
+LgProb IncrIbm1AligModel::lexM1LpForBestAlig(std::vector<WordIndex> nSrcSentIndexVector,
+                                             std::vector<WordIndex> trgSentIndexVector,
+                                             std::vector<PositionIndex>& bestAlig)
 {
  LgProb aligLgProb;
  LgProb lp;
@@ -517,13 +517,13 @@ bool IncrIbm1AligModel::getEntriesForTarget(WordIndex t,
 }
 
 //-------------------------
-LgProb IncrIbm1AligModel::obtainBestAlignment(Vector<WordIndex> srcSentIndexVector,
-                                              Vector<WordIndex> trgSentIndexVector,
+LgProb IncrIbm1AligModel::obtainBestAlignment(std::vector<WordIndex> srcSentIndexVector,
+                                              std::vector<WordIndex> trgSentIndexVector,
                                               WordAligMatrix& bestWaMatrix)
 {
   if(sentenceLengthIsOk(srcSentIndexVector) && sentenceLengthIsOk(trgSentIndexVector))
   {
-    Vector<PositionIndex> bestAlig;
+    std::vector<PositionIndex> bestAlig;
     LgProb lgProb=logaProbIbm1(srcSentIndexVector.size(),
                                trgSentIndexVector.size());
     lgProb+=sentLenLgProb(srcSentIndexVector.size(),
@@ -545,28 +545,28 @@ LgProb IncrIbm1AligModel::obtainBestAlignment(Vector<WordIndex> srcSentIndexVect
 }
 
 //-------------------------
-LgProb IncrIbm1AligModel::calcLgProbForAlig(const Vector<WordIndex>& sSent,
-                                            const Vector<WordIndex>& tSent,
+LgProb IncrIbm1AligModel::calcLgProbForAlig(const std::vector<WordIndex>& sSent,
+                                            const std::vector<WordIndex>& tSent,
                                             WordAligMatrix aligMatrix,
                                             int verbose)
 {
   unsigned int i;
 
-  Vector<PositionIndex> alig;
+  std::vector<PositionIndex> alig;
   aligMatrix.getAligVec(alig);
 
   if(verbose)
   {
-    for(i=0;i<sSent.size();++i) cerr<<sSent[i]<<" ";
-    cerr<<"\n";
-    for(i=0;i<tSent.size();++i) cerr<<tSent[i]<<" ";
-    cerr<<"\n";   
-    for(i=0;i<alig.size();++i) cerr<<alig[i]<<" ";
-    cerr<<"\n";
+    for(i=0;i<sSent.size();++i) std::cerr<<sSent[i]<<" ";
+    std::cerr<<"\n";
+    for(i=0;i<tSent.size();++i) std::cerr<<tSent[i]<<" ";
+    std::cerr<<"\n";   
+    for(i=0;i<alig.size();++i) std::cerr<<alig[i]<<" ";
+    std::cerr<<"\n";
   }
   if(tSent.size()!=alig.size())
   {
-    cerr<<"Error: the sentence t and the alignment vector have not the same size."<<endl;
+    std::cerr<<"Error: the sentence t and the alignment vector have not the same size."<<std::endl;
     return THOT_ERROR;
   }     
   else
@@ -576,29 +576,29 @@ LgProb IncrIbm1AligModel::calcLgProbForAlig(const Vector<WordIndex>& sSent,
 }
 
 //-------------------------
-LgProb IncrIbm1AligModel::incrIBM1LgProb(Vector<WordIndex> nsSent,
-                                         Vector<WordIndex> tSent,
-                                         Vector<PositionIndex> alig,
+LgProb IncrIbm1AligModel::incrIBM1LgProb(std::vector<WordIndex> nsSent,
+                                         std::vector<WordIndex> tSent,
+                                         std::vector<PositionIndex> alig,
                                          int verbose)
 {
   Prob p;
   LgProb lgProb;    
   unsigned int j;
-  if(verbose) cerr<<"Obtaining IBM Model 1 logprob...\n"; 
+  if(verbose) std::cerr<<"Obtaining IBM Model 1 logprob...\n"; 
   
   lgProb=logaProbIbm1(nsSent.size()-1,tSent.size()); 
   if(verbose)
-    cerr<<"- aligLgProb(tlen="<<tSent.size() <<" | slen="<<nsSent.size()-1 <<")= "<<logaProbIbm1(nsSent.size()-1,tSent.size())<<endl;
+    std::cerr<<"- aligLgProb(tlen="<<tSent.size() <<" | slen="<<nsSent.size()-1 <<")= "<<logaProbIbm1(nsSent.size()-1,tSent.size())<<std::endl;
   
   lgProb+=sentLenLgProb(nsSent.size()-1,tSent.size());
   if(verbose)
-    cerr<<"- lenLgProb(tlen="<<tSent.size() <<" | slen="<<nsSent.size()-1 <<")= "<<sentLenLgProb(nsSent.size()-1,tSent.size())<<endl;
+    std::cerr<<"- lenLgProb(tlen="<<tSent.size() <<" | slen="<<nsSent.size()-1 <<")= "<<sentLenLgProb(nsSent.size()-1,tSent.size())<<std::endl;
   
   for(j=0;j<alig.size();++j)
   { 
     p=pts(nsSent[alig[j]],tSent[j]);
     if(verbose)
-      cerr<<"t("<<tSent[j] <<"|"<<nsSent[alig[j]] <<")= "<<p<<" ; logp="<<(double)log((double)p)<<endl;   
+      std::cerr<<"t("<<tSent[j] <<"|"<<nsSent[alig[j]] <<")= "<<p<<" ; logp="<<(double)log((double)p)<<std::endl;   
     lgProb=lgProb+(double)log((double)p); 
   }
 
@@ -606,8 +606,8 @@ LgProb IncrIbm1AligModel::incrIBM1LgProb(Vector<WordIndex> nsSent,
 }
 
 //-------------------------
-LgProb IncrIbm1AligModel::calcLgProb(const Vector<WordIndex>& sSent,
-                                     const Vector<WordIndex>& tSent,
+LgProb IncrIbm1AligModel::calcLgProb(const std::vector<WordIndex>& sSent,
+                                     const std::vector<WordIndex>& tSent,
                                      int verbose)
 {
   if(sentenceLengthIsOk(sSent) && sentenceLengthIsOk(tSent))
@@ -625,7 +625,7 @@ LgProb IncrIbm1AligModel::calcSumIBM1LgProb(const char *sSent,
                                             const char *tSent,
                                             int verbose)
 {
- Vector<std::string> nsSentVec,tSentVec;
+ std::vector<std::string> nsSentVec,tSentVec;
 
  nsSentVec=StrProcUtils::charItemsToVector(sSent);
  nsSentVec=addNullWordToStrVec(nsSentVec);
@@ -634,11 +634,11 @@ LgProb IncrIbm1AligModel::calcSumIBM1LgProb(const char *sSent,
 }
 
 //-------------------------
-LgProb IncrIbm1AligModel::calcSumIBM1LgProb(Vector<std::string> nsSent,
-                                            Vector<std::string> tSent,
+LgProb IncrIbm1AligModel::calcSumIBM1LgProb(std::vector<std::string> nsSent,
+                                            std::vector<std::string> tSent,
                                             int verbose)
 {
- Vector<WordIndex> neIndexVector,fIndexVector;
+ std::vector<WordIndex> neIndexVector,fIndexVector;
     
  neIndexVector=strVectorToSrcIndexVector(nsSent);
  fIndexVector=strVectorToTrgIndexVector(tSent);
@@ -647,8 +647,8 @@ LgProb IncrIbm1AligModel::calcSumIBM1LgProb(Vector<std::string> nsSent,
 }
 
 //-------------------------
-LgProb IncrIbm1AligModel::calcSumIBM1LgProb(Vector<WordIndex> nsSent,
-                                            Vector<WordIndex> tSent,
+LgProb IncrIbm1AligModel::calcSumIBM1LgProb(std::vector<WordIndex> nsSent,
+                                            std::vector<WordIndex> tSent,
                                             int verbose)
 {
  Prob sump;
@@ -656,14 +656,14 @@ LgProb IncrIbm1AligModel::calcSumIBM1LgProb(Vector<WordIndex> nsSent,
  LgProb lgProb;    
  unsigned int i,j;
  
- if(verbose) cerr<<"Obtaining Sum IBM Model 1 logprob...\n"; 
+ if(verbose) std::cerr<<"Obtaining Sum IBM Model 1 logprob...\n"; 
      
  lgProb=logaProbIbm1(nsSent.size()-1,tSent.size());
  
- if(verbose) cerr<<"- aligLgProb(tlen="<<tSent.size() <<" | slen="<<nsSent.size()-1<<")= "<<logaProbIbm1(nsSent.size()-1,tSent.size())<<endl;
+ if(verbose) std::cerr<<"- aligLgProb(tlen="<<tSent.size() <<" | slen="<<nsSent.size()-1<<")= "<<logaProbIbm1(nsSent.size()-1,tSent.size())<<std::endl;
 
  lgProb+=sentLenLgProb(nsSent.size()-1,tSent.size());
- if(verbose) cerr<<"- lenLgProb(tlen="<<tSent.size() <<" | slen="<<nsSent.size()-1 <<")= "<<sentLenLgProb(nsSent.size()-1,tSent.size())<<endl;
+ if(verbose) std::cerr<<"- lenLgProb(tlen="<<tSent.size() <<" | slen="<<nsSent.size()-1 <<")= "<<sentLenLgProb(nsSent.size()-1,tSent.size())<<std::endl;
 
  lexContrib=0;
  for(j=0;j<tSent.size();++j)
@@ -673,14 +673,14 @@ LgProb IncrIbm1AligModel::calcSumIBM1LgProb(Vector<WordIndex> nsSent,
    {
      sump+=pts(nsSent[i],tSent[j]);
      if(verbose==2)
-       cerr<<"t( " <<tSent[j] <<" | " <<nsSent[i]<<" )= "<<pts(nsSent[i],tSent[j]) <<endl;
+       std::cerr<<"t( " <<tSent[j] <<" | " <<nsSent[i]<<" )= "<<pts(nsSent[i],tSent[j]) <<std::endl;
    }
    lexContrib+=(double)log((double)sump);  
-   if(verbose) cerr<<"- sumt(j="<<j<<")= "<<sump<<endl;
-   if(verbose==2) cerr<<endl;
+   if(verbose) std::cerr<<"- sumt(j="<<j<<")= "<<sump<<std::endl;
+   if(verbose==2) std::cerr<<std::endl;
  }
 
- if(verbose) cerr<<"- Lexical model contribution= "<<lexContrib<<endl;
+ if(verbose) std::cerr<<"- Lexical model contribution= "<<lexContrib<<std::endl;
  lgProb+=lexContrib;
  
  return lgProb;
@@ -688,7 +688,7 @@ LgProb IncrIbm1AligModel::calcSumIBM1LgProb(Vector<WordIndex> nsSent,
 
 //-------------------------
 void IncrIbm1AligModel::initPpInfo(unsigned int slen,
-                                   const Vector<WordIndex>& tSent,
+                                   const std::vector<WordIndex>& tSent,
                                    PpInfo& ppInfo)
 {
       // Make room in ppInfo
@@ -707,8 +707,8 @@ void IncrIbm1AligModel::initPpInfo(unsigned int slen,
 //-------------------------
 void IncrIbm1AligModel::partialProbWithoutLen(unsigned int /*srcPartialLen*/,
                                               unsigned int slen,
-                                              const Vector<WordIndex>& s_,
-                                              const Vector<WordIndex>& tSent,
+                                              const std::vector<WordIndex>& s_,
+                                              const std::vector<WordIndex>& tSent,
                                               PpInfo& ppInfo)
 {
   for(unsigned int i=0;i<s_.size();++i)
@@ -734,7 +734,7 @@ LgProb IncrIbm1AligModel::lpFromPpInfo(const PpInfo& ppInfo)
 
 //-------------------------
 void IncrIbm1AligModel::addHeurForNotAddedWords(int numSrcWordsToBeAdded,
-                                                const Vector<WordIndex>& tSent,
+                                                const std::vector<WordIndex>& tSent,
                                                 PpInfo& ppInfo)
 {
   for(unsigned int j=0;j<tSent.size();++j)
@@ -745,7 +745,7 @@ void IncrIbm1AligModel::addHeurForNotAddedWords(int numSrcWordsToBeAdded,
 
 //-------------------------
 void IncrIbm1AligModel::sustHeurForNotAddedWords(int numSrcWordsToBeAdded,
-                                                 const Vector<WordIndex>& tSent,
+                                                 const std::vector<WordIndex>& tSent,
                                                  PpInfo& ppInfo)
 {
   for(unsigned int j=0;j<tSent.size();++j)
@@ -794,7 +794,7 @@ bool IncrIbm1AligModel::load(const char* prefFileName)
   {
     bool retVal;
 
-    cerr<<"Loading incremental IBM 1 Model data..."<<endl;
+    std::cerr<<"Loading incremental IBM 1 Model data..."<<std::endl;
 
         // Load vocabularies if they exist
     std::string srcVocFileName=prefFileName;
@@ -887,7 +887,7 @@ bool IncrIbm1AligModel::print(const char* prefFileName)
 //-------------------------
 void IncrIbm1AligModel::clear(void)
 {
-  _swAligModel<Vector<Prob> >::clear();
+  _swAligModel<std::vector<Prob> >::clear();
   anji.clear();
   anji_aux.clear();
   incrLexTable.clear();

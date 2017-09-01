@@ -32,19 +32,19 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BaseNgramLM.h"
 #include "WordPredictor.h"
 #include "WordIndex.h"
-#include "myVector.h"
 #include "SimpleDynClassLoader.h"
+#include <vector>
 
 //--------------- LangModelsInfo struct
 
 struct LangModelsInfo
 {
   WordPredictor wordPredictor;
-  Vector<BaseNgramLM<LM_State>*> lModelPtrVec;
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
-  Vector<SimpleDynClassLoader<BaseNgramLM<LM_State> > > simpleDynClassLoaderVec;
+  std::vector<BaseNgramLM<LM_State>*> lModelPtrVec;
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
+  std::vector<SimpleDynClassLoader<BaseNgramLM<LM_State> > > simpleDynClassLoaderVec;
   SimpleDynClassLoader<BaseNgramLM<LM_State> > defaultClassLoader;
-  Vector<std::string> featNameVec;
+  std::vector<std::string> featNameVec;
 };
 
 #endif

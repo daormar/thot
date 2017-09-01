@@ -25,11 +25,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "myVector.h"
+#include <vector>
 #include <utility>
 
 //--------------- typedefs -------------------------------------------
 
-typedef pair<Vector<unsigned int>,Vector<unsigned int> > WordAndCharLevelOps;
+typedef std::pair<std::vector<unsigned int>,std::vector<unsigned int> > WordAndCharLevelOps;
 
 #endif

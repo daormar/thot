@@ -27,8 +27,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "PhraseDefs.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define DEFAULT_MAX_TRG_PHRASE_LENGTH     7

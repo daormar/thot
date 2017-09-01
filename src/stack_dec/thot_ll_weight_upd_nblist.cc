@@ -52,15 +52,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <iomanip>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 struct thot_llwu_nblist_pars
 {
-  Vector<float> llWeightVec;
-  Vector<string> includeVarStr;
-  Vector<bool> includeVarBool;
+  std::vector<float> llWeightVec;
+  std::vector<string> includeVarStr;
+  std::vector<bool> includeVarBool;
   std::string fileWithNbestLists;
   std::string fileWithReferences;
 };
@@ -76,14 +74,14 @@ int takeParameters(int argc,
 int checkParameters(thot_llwu_nblist_pars& pars);
 
 int obtain_references(const thot_llwu_nblist_pars& pars,
-                      Vector<std::string>& referenceVec);
+                      std::vector<std::string>& referenceVec);
 int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
                                          std::string nbfile,
-                                         Vector<std::string>& nblist,
-                                         Vector<Vector<double> >& scoreComps);
+                                         std::vector<std::string>& nblist,
+                                         std::vector<std::vector<double> >& scoreComps);
 int obtain_nblists_and_scr_comps(const thot_llwu_nblist_pars& pars,
-                                 Vector<Vector<string> >& nblistVec,
-                                 Vector<Vector<Vector<double> > >& scoreCompsVec);
+                                 std::vector<std::vector<string> >& nblistVec,
+                                 std::vector<std::vector<std::vector<double> > >& scoreCompsVec);
 int update_ll_weights(const thot_llwu_nblist_pars& pars);
 void printUsage(void);
 void version(void);
@@ -108,16 +106,16 @@ int main(int argc,char *argv[])
   else
   {
         // Print parameters
-    cerr<<"-w option is";
+    std::cerr<<"-w option is";
     for(unsigned int i=0;i<pars.llWeightVec.size();++i)
-      cerr<<" "<<pars.llWeightVec[i];
-    cerr<<endl;
-    cerr<<"-nb option is "<<pars.fileWithNbestLists<<endl;
-    cerr<<"-r option is "<<pars.fileWithReferences<<endl;
-    cerr<<"-va option is";
+      std::cerr<<" "<<pars.llWeightVec[i];
+    std::cerr<<std::endl;
+    std::cerr<<"-nb option is "<<pars.fileWithNbestLists<<std::endl;
+    std::cerr<<"-r option is "<<pars.fileWithReferences<<std::endl;
+    std::cerr<<"-va option is";
     for(unsigned int i=0;i<pars.includeVarStr.size();++i)
-      cerr<<" "<<pars.includeVarBool[i];
-    cerr<<endl;
+      std::cerr<<" "<<pars.includeVarBool[i];
+    std::cerr<<std::endl;
 
         // Initialize pointers
     int err=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH,false);
@@ -127,21 +125,21 @@ int main(int argc,char *argv[])
     baseScorerPtr=dynClassFactoryHandler.baseScorerDynClassLoader.make_obj(dynClassFactoryHandler.baseScorerInitPars);
     if(baseScorerPtr==NULL)
     {
-      cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseScorer pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
 
     llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
     if(llWeightUpdaterPtr==NULL)
     {
-      cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
 
         // Link scorer to weight updater
     if(!llWeightUpdaterPtr->link_scorer(baseScorerPtr))
     {
-      cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<endl;
+      std::cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<std::endl;
       return THOT_ERROR;
     }
     
@@ -231,19 +229,19 @@ int checkParameters(thot_llwu_nblist_pars& pars)
 {  
   if(pars.fileWithNbestLists.empty())
   {
-    cerr<<"Error: parameter -nb not given!"<<endl;
+    std::cerr<<"Error: parameter -nb not given!"<<std::endl;
     return THOT_ERROR;   
   }
 
   if(pars.fileWithReferences.empty())
   {
-    cerr<<"Error: parameter -r not given!"<<endl;
+    std::cerr<<"Error: parameter -r not given!"<<std::endl;
     return THOT_ERROR;   
   }
 
   if(pars.includeVarStr.size()!=pars.llWeightVec.size())
   {
-    cerr<<"Error: number of weights provided by -w and -va options are not equal!"<<endl;
+    std::cerr<<"Error: number of weights provided by -w and -va options are not equal!"<<std::endl;
     return THOT_ERROR;       
   }
 
@@ -252,7 +250,7 @@ int checkParameters(thot_llwu_nblist_pars& pars)
 
 //--------------------------------
 int obtain_references(const thot_llwu_nblist_pars& pars,
-                      Vector<std::string>& referenceVec)
+                      std::vector<std::string>& referenceVec)
 {
       // Clear output variable
   referenceVec.clear();
@@ -262,7 +260,7 @@ int obtain_references(const thot_llwu_nblist_pars& pars,
 
   if(awk.open(pars.fileWithReferences.c_str())==THOT_ERROR)
   {
-    cerr<<"Error while opening file "<<pars.fileWithReferences<<endl;
+    std::cerr<<"Error while opening file "<<pars.fileWithReferences<<std::endl;
     return THOT_ERROR;
   }  
   
@@ -277,8 +275,8 @@ int obtain_references(const thot_llwu_nblist_pars& pars,
 //--------------------------------
 int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
                                          std::string nbfile,
-                                         Vector<std::string>& nblist,
-                                         Vector<Vector<double> >& scoreComps)
+                                         std::vector<std::string>& nblist,
+                                         std::vector<std::vector<double> >& scoreComps)
 {
       // Clear output variables
   nblist.clear();
@@ -289,11 +287,11 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
 
   if(awk.open(nbfile.c_str())==THOT_ERROR)
   {
-    cerr<<"Error while opening file "<<nbfile<<endl;
+    std::cerr<<"Error while opening file "<<nbfile<<std::endl;
     return THOT_ERROR;
   }
 
-  // cerr<<"**** Processing file"<<nbfile<<endl;
+  // std::cerr<<"**** Processing file"<<nbfile<<std::endl;
   
       // Read n-best file
   while(awk.getln())
@@ -303,7 +301,7 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
           // Read n-best list entry
 
           // Read score components
-      Vector<double> scoreCompsForTrans;
+      std::vector<double> scoreCompsForTrans;
       unsigned int i;
       for(i=3;i<=awk.NF;++i)
       {
@@ -335,12 +333,12 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
       scoreComps.push_back(scoreCompsForTrans);
       nblist.push_back(nbest);
 
-      // cerr<<"|||||||||"<<nbest<<"||||||"<<endl;
+      // std::cerr<<"|||||||||"<<nbest<<"||||||"<<std::endl;
       // for(unsigned int i=0;i<scoreCompsForTrans.size();++i)
       // {
-      //   cerr<<scoreCompsForTrans[i]<<" ";
+      //   std::cerr<<scoreCompsForTrans[i]<<" ";
       // }
-      // cerr<<endl;
+      // std::cerr<<std::endl;
     }
   }
   
@@ -349,8 +347,8 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
 
 //--------------------------------
 int obtain_nblists_and_scr_comps(const thot_llwu_nblist_pars& pars,
-                                 Vector<Vector<string> >& nblistVec,
-                                 Vector<Vector<Vector<double> > >& scoreCompsVec)
+                                 std::vector<std::vector<string> >& nblistVec,
+                                 std::vector<std::vector<std::vector<double> > >& scoreCompsVec)
 {
       // Clear output variables
   nblistVec.clear();
@@ -361,14 +359,14 @@ int obtain_nblists_and_scr_comps(const thot_llwu_nblist_pars& pars,
 
   if(awk.open(pars.fileWithNbestLists.c_str())==THOT_ERROR)
   {
-    cerr<<"Error while opening file "<<pars.fileWithNbestLists<<endl;
+    std::cerr<<"Error while opening file "<<pars.fileWithNbestLists<<std::endl;
     return THOT_ERROR;
   }
   
   while(awk.getln())
   {
-    Vector<std::string> nblist;
-    Vector<Vector<double> > scoreComps;
+    std::vector<std::string> nblist;
+    std::vector<std::vector<double> > scoreComps;
 
         // Obtain n-best list file name
     std::string nbfile=awk.dollar(0);
@@ -395,9 +393,9 @@ int obtain_nblists_and_scr_comps(const thot_llwu_nblist_pars& pars,
 int update_ll_weights(const thot_llwu_nblist_pars& pars)
 {
   int retVal;
-  Vector<std::string> referenceVec;
-  Vector<Vector<string> > nblistVec;
-  Vector<Vector<Vector<double> > > scoreCompsVec;
+  std::vector<std::string> referenceVec;
+  std::vector<std::vector<string> > nblistVec;
+  std::vector<std::vector<std::vector<double> > > scoreCompsVec;
   
       // Obtain references
   retVal=obtain_references(pars,referenceVec);
@@ -410,7 +408,7 @@ int update_ll_weights(const thot_llwu_nblist_pars& pars)
     return THOT_ERROR;
 
       // Generate vector with current weights
-  Vector<double> currWeightsVec;
+  std::vector<double> currWeightsVec;
   for(unsigned int i=0;i<pars.llWeightVec.size();++i)
   {
     if(pars.includeVarBool.empty())
@@ -423,7 +421,7 @@ int update_ll_weights(const thot_llwu_nblist_pars& pars)
   }
 
       // Update log-linear weights
-  Vector<double> newWeightsVec;
+  std::vector<double> newWeightsVec;
   llWeightUpdaterPtr->updateClosedCorpus(referenceVec,
                                          nblistVec,
                                          scoreCompsVec,
@@ -435,7 +433,7 @@ int update_ll_weights(const thot_llwu_nblist_pars& pars)
   {
     for(unsigned int i=0;i<newWeightsVec.size();++i)
       cout<<" "<<newWeightsVec[i];
-    cout<<endl;
+    cout<<std::endl;
   }
   else
   {
@@ -451,13 +449,13 @@ int update_ll_weights(const thot_llwu_nblist_pars& pars)
         }
         else
         {
-          cerr<<"Warning: j index out of range while printing solution"<<endl;
+          std::cerr<<"Warning: j index out of range while printing solution"<<std::endl;
         }
       }
       else
         cout<<" 0";
     }
-    cout<<endl;
+    cout<<std::endl;
   }
   
   return THOT_OK;
@@ -466,26 +464,26 @@ int update_ll_weights(const thot_llwu_nblist_pars& pars)
 //--------------------------------
 void printUsage(void)
 {
-  cerr<<"thot_ll_weight_upd_nblist -w <float> ... <float>"<<endl;
-  cerr<<"                          [-va <bool> ... <bool>]"<<endl;
-  cerr<<"                          -nb <string> -r <string>"<<endl;
-  cerr<<"                          [--help] [--version]"<<endl;
-  cerr<<endl;
-  cerr<<"-w <float>...<float>     Weights used to generate the n-best lists."<<endl;
-  cerr<<"-va <bool>...<bool>      Set variable values to be excluded or included."<<endl;
-  cerr<<"                         Each value equal to 0 excludes the variable and values"<<endl;
-  cerr<<"                         equal to 1 include the variable."<<endl;
-  cerr<<"-nb <string>             File containing the names of files with n-best lists."<<endl;
-  cerr<<"-r <string>              File with reference sentences associated to each"<<endl;
-  cerr<<"                         n-best list."<<endl;
-  cerr<<"--help                   Display this help and exit."<<endl;
-  cerr<<"--version                Output version information and exit."<<endl;
+  std::cerr<<"thot_ll_weight_upd_nblist -w <float> ... <float>"<<std::endl;
+  std::cerr<<"                          [-va <bool> ... <bool>]"<<std::endl;
+  std::cerr<<"                          -nb <string> -r <string>"<<std::endl;
+  std::cerr<<"                          [--help] [--version]"<<std::endl;
+  std::cerr<<std::endl;
+  std::cerr<<"-w <float>...<float>     Weights used to generate the n-best lists."<<std::endl;
+  std::cerr<<"-va <bool>...<bool>      Set variable values to be excluded or included."<<std::endl;
+  std::cerr<<"                         Each value equal to 0 excludes the variable and values"<<std::endl;
+  std::cerr<<"                         equal to 1 include the variable."<<std::endl;
+  std::cerr<<"-nb <string>             File containing the names of files with n-best lists."<<std::endl;
+  std::cerr<<"-r <string>              File with reference sentences associated to each"<<std::endl;
+  std::cerr<<"                         n-best list."<<std::endl;
+  std::cerr<<"--help                   Display this help and exit."<<std::endl;
+  std::cerr<<"--version                Output version information and exit."<<std::endl;
 }
 
 //--------------------------------
 void version(void)
 {
-  cerr<<"thot_ll_weight_upd_nblist is part of the thot package"<<endl;
-  cerr<<"thot version "<<THOT_VERSION<<endl;
-  cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
+  std::cerr<<"thot_ll_weight_upd_nblist is part of the thot package"<<std::endl;
+  std::cerr<<"thot version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
 }

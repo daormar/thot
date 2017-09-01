@@ -53,43 +53,43 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- KenLm class
 
-class KenLm: public BaseNgramLM<Vector<WordIndex> >
+class KenLm: public BaseNgramLM<std::vector<WordIndex> >
 {
  public:
 
-  typedef BaseNgramLM<Vector<WordIndex> >::LM_State LM_State;
+  typedef BaseNgramLM<std::vector<WordIndex> >::LM_State LM_State;
 
       // Constructor
   KenLm();
 
         // Probability functions
-  LgProb getNgramLgProb(WordIndex w,const Vector<WordIndex>& vu);
+  LgProb getNgramLgProb(WordIndex w,const std::vector<WordIndex>& vu);
       // returns the probability of an n-gram, uv[0] stores the n-1'th
       // word of the n-gram, uv[1] the n-2'th one and so on
-  LgProb getNgramLgProbStr(string s,const Vector<string>& rq);
+  LgProb getNgramLgProbStr(std::string s,const std::vector<std::string>& rq);
       // returns the probability of an n-gram. Each string represents a
       // single word
-  LgProb getLgProbEnd(const Vector<WordIndex>& vu);
-  LgProb getLgProbEndStr(const Vector<string>& rq);
+  LgProb getLgProbEnd(const std::vector<WordIndex>& vu);
+  LgProb getLgProbEndStr(const std::vector<std::string>& rq);
 
         // Probability functions using states
-  bool getStateForWordSeq(const Vector<WordIndex>& wordSeq,
-                          Vector<WordIndex>& state);
-  void getStateForBeginOfSentence(Vector<WordIndex> &state);
+  bool getStateForWordSeq(const std::vector<WordIndex>& wordSeq,
+                          std::vector<WordIndex>& state);
+  void getStateForBeginOfSentence(std::vector<WordIndex> &state);
   LgProb getNgramLgProbGivenState(WordIndex w,
-                                  Vector<WordIndex> &state);
+                                  std::vector<WordIndex> &state);
   LgProb getNgramLgProbGivenStateStr(std::string s,
-                                     Vector<WordIndex> &state);
-  LgProb getLgProbEndGivenState(Vector<WordIndex> &state);
+                                     std::vector<WordIndex> &state);
+  LgProb getLgProbEndGivenState(std::vector<WordIndex> &state);
       // In these functions, the state is updated once the
       // function is executed
    
       // Encoding-related functions
-  bool existSymbol(string s)const;
-  WordIndex addSymbol(string s);
+  bool existSymbol(std::string s)const;
+  WordIndex addSymbol(std::string s);
   unsigned int getVocabSize(void);
-  WordIndex stringToWordIndex(string s)const;
-  string wordIndexToString(WordIndex w)const;
+  WordIndex stringToWordIndex(std::string s)const;
+  std::string wordIndexToString(WordIndex w)const;
   WordIndex getBosId(bool &found)const;
   WordIndex getEosId(bool &found)const;
   bool loadVocab(const char *fileName);

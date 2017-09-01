@@ -59,17 +59,17 @@ class TrieOfWords
   TrieOfWords<DATA_TYPE>& operator=(const TrieOfWords<DATA_TYPE>& tbw);
 
   // Basic functions
-  Trie<WordIndex,DATA_TYPE>* insert(const Vector<WordIndex>& keySeq,
+  Trie<WordIndex,DATA_TYPE>* insert(const std::vector<WordIndex>& keySeq,
                                     const DATA_TYPE& d);
       // Inserts a sequence of elements of class key. The last element 
       // of vector keySeq is the first element of the sequence.
-  bool erase(const Vector<WordIndex>& keySeq);
-  DATA_TYPE* find(const Vector<WordIndex>& keySeq);
-  Trie<WordIndex,DATA_TYPE>* getState(const Vector<WordIndex>& keySeq);
+  bool erase(const std::vector<WordIndex>& keySeq);
+  DATA_TYPE* find(const std::vector<WordIndex>& keySeq);
+  Trie<WordIndex,DATA_TYPE>* getState(const std::vector<WordIndex>& keySeq);
 	
   size_t size(void)const;
   unsigned int height(void)const;
-  Vector<unsigned long> branchingFactor(void)const;
+  std::vector<unsigned long> branchingFactor(void)const;
   size_t countSparseNodes(void)const;
   void clear(void);
   ~TrieOfWords();
@@ -110,7 +110,7 @@ class TrieOfWords
        int operator==(const const_iterator& right);
        int operator!=(const const_iterator& right);
        const typename Trie<WordIndex,DATA_TYPE>::const_iterator& operator->(void)const;
-       pair<Vector<WordIndex>,DATA_TYPE> operator*(void)const;
+       pair<std::vector<WordIndex>,DATA_TYPE> operator*(void)const;
     };
 
       // const_iterator functions for the trie class
@@ -118,7 +118,7 @@ class TrieOfWords
   const_iterator end(void)const;
 
  protected:
-  Vector<Trie<WordIndex,DATA_TYPE>* > vecTriePtr;
+  std::vector<Trie<WordIndex,DATA_TYPE>* > vecTriePtr;
 	      		      
 };
 
@@ -174,7 +174,7 @@ TrieOfWords<DATA_TYPE>::operator=(const TrieOfWords<DATA_TYPE>& tbw)
 
 //---------------
 template<class DATA_TYPE>
-Trie<WordIndex,DATA_TYPE>* TrieOfWords<DATA_TYPE>::insert(const Vector<WordIndex>& keySeq,
+Trie<WordIndex,DATA_TYPE>* TrieOfWords<DATA_TYPE>::insert(const std::vector<WordIndex>& keySeq,
                                                           const DATA_TYPE& d)
 {
   Trie<WordIndex,DATA_TYPE>* tptrn=NULL;
@@ -197,16 +197,16 @@ Trie<WordIndex,DATA_TYPE>* TrieOfWords<DATA_TYPE>::insert(const Vector<WordIndex
 
 //---------------
 template<class DATA_TYPE>
-bool TrieOfWords<DATA_TYPE>::erase(const Vector<WordIndex>& /*keySeq*/)
+bool TrieOfWords<DATA_TYPE>::erase(const std::vector<WordIndex>& /*keySeq*/)
 {
       // TO-DO
-  cerr<<"Warning: erase function not implemented in TrieOfWords\n";
+  std::cerr<<"Warning: erase function not implemented in TrieOfWords\n";
   return false;
 }
 
 //---------------
 template<class DATA_TYPE>
-DATA_TYPE* TrieOfWords<DATA_TYPE>::find(const Vector<WordIndex>& keySeq)
+DATA_TYPE* TrieOfWords<DATA_TYPE>::find(const std::vector<WordIndex>& keySeq)
 {
   if(keySeq.size()==0) return NULL;
   else
@@ -224,7 +224,7 @@ DATA_TYPE* TrieOfWords<DATA_TYPE>::find(const Vector<WordIndex>& keySeq)
 }
 //---------------
 template<class DATA_TYPE>
-Trie<WordIndex,DATA_TYPE>* TrieOfWords<DATA_TYPE>::getState(const Vector<WordIndex>& keySeq)
+Trie<WordIndex,DATA_TYPE>* TrieOfWords<DATA_TYPE>::getState(const std::vector<WordIndex>& keySeq)
 {
   if(keySeq.size()==0) return NULL;
   else
@@ -278,9 +278,9 @@ unsigned int TrieOfWords<DATA_TYPE>::height(void)const
 }
 //---------------
 template<class DATA_TYPE>
-Vector<unsigned long> TrieOfWords<DATA_TYPE>::branchingFactor(void)const
+std::vector<unsigned long> TrieOfWords<DATA_TYPE>::branchingFactor(void)const
 {
-  Vector<unsigned long> result,aux;
+  std::vector<unsigned long> result,aux;
   unsigned long i,j;
 
   for(i=0;i<vecTriePtr.size();++i)
@@ -418,7 +418,7 @@ TrieOfWords<DATA_TYPE>::const_iterator::operator->(void)const
 
 //--------------------------
 template<class DATA_TYPE>
-pair<Vector<WordIndex>,DATA_TYPE> TrieOfWords<DATA_TYPE>::const_iterator::operator*(void)const
+pair<std::vector<WordIndex>,DATA_TYPE> TrieOfWords<DATA_TYPE>::const_iterator::operator*(void)const
 {
   return *trieIter;
 }

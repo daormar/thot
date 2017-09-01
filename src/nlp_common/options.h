@@ -29,17 +29,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include <stdio.h>
-#include "myVector.h"
 #include "mem_alloc_utils.h"
 #include <map>
 #include <string.h>
 #include <string>
+#include <vector>
 #include "ErrorDefs.h"
 #include "awkInputStream.h"
 
-using namespace std;
-
-bool verifyParams(int argc, char **argv, map<string,bool> posPars);
+bool verifyParams(int argc, char **argv, std::map<std::string,bool> posPars);
 // Reads the boolean value associated to a given label.
 
 bool existParam(int argc, char **argv, const char *pszLabel);
@@ -69,7 +67,7 @@ int readFloat(int argc, char **argv, const char *pszLabel, float *Value);
 int readFloatSeq(int argc,
                  char **argv,
                  const char *pszLabel,
-                 Vector<float>& floatVec);
+                 std::vector<float>& floatVec);
 // Reads a sequence of floating point numbers associated to a given label
 
 int readDouble(int argc, char **argv, const char *pszLabel, double *Value);
@@ -97,28 +95,28 @@ int readTwoStringsSafe(int argc,
 // Reads two consecutive strings associated to a given label. Sizes of
 // the pointed strings are modified if necessary
 
-int readSTLstring(int argc, char **argv, const char *pszLabel, string *Value);
+int readSTLstring(int argc, char **argv, const char *pszLabel, std::string *Value);
 // Reads the stl string associated to a given label.
 
 int readTwoSTLstrings(int argc,
                       char **argv,
                       const char *pszLabel,
-                      string *val1,
-                      string *val2);
+                      std::string *val1,
+                      std::string *val2);
 // Reads two consecutive strings associated to a given label.
 
 int readStringSeq(int argc,
                   char **argv,
                   const char *pszLabel,
-                  Vector<string>& strVec);
+                  std::vector<std::string>& strVec);
 // Reads a sequence of strings associated to a given label
 
-Vector<std::string> argv2argv_stl(int argc, char **argv);
-// Converts const char **argv into Vector<std::string>
+std::vector<std::string> argv2argv_stl(int argc, char **argv);
+// Converts const char **argv into std::vector<std::string>
 
 bool extractParsFromFile(const char* filename,
                          int& argc,
-                         Vector<std::string>& argv_stl,
+                         std::vector<std::string>& argv_stl,
                          std::string comment="#");
 // Given a file name, extracts the parameters contained in it, ignoring
 // those lines starting with the string "comment"

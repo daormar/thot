@@ -59,17 +59,17 @@ class TrieBidOfWords
   TrieBidOfWords<DATA_TYPE>& operator=(const TrieBidOfWords<DATA_TYPE>& tbw);
 
   // Basic functions
-  TrieBid<WordIndex,DATA_TYPE>* insert(const Vector<WordIndex>& keySeq,
+  TrieBid<WordIndex,DATA_TYPE>* insert(const std::vector<WordIndex>& keySeq,
                                        const DATA_TYPE& d);
       // Inserts a sequence of elements of class key. The last element 
       // of vector keySeq is the first element of the sequence.
-  bool erase(const Vector<WordIndex>& keySeq);
-  DATA_TYPE* find(const Vector<WordIndex>& keySeq);
-  TrieBid<WordIndex,DATA_TYPE>* getState(const Vector<WordIndex>& keySeq);
+  bool erase(const std::vector<WordIndex>& keySeq);
+  DATA_TYPE* find(const std::vector<WordIndex>& keySeq);
+  TrieBid<WordIndex,DATA_TYPE>* getState(const std::vector<WordIndex>& keySeq);
 	
   size_t size(void)const;
   unsigned int height(void)const;
-  Vector<unsigned long> branchingFactor(void)const;
+  std::vector<unsigned long> branchingFactor(void)const;
   size_t countSparseNodes(void)const;
   void clear(void);
   ~TrieBidOfWords();
@@ -106,7 +106,7 @@ class TrieBidOfWords
        int operator==(const const_iterator& right);
        int operator!=(const const_iterator& right);
        const typename TrieBid<WordIndex,DATA_TYPE>::const_iterator& operator->(void)const;
-       pair<Vector<WordIndex>,DATA_TYPE> operator*(void)const;
+       pair<std::vector<WordIndex>,DATA_TYPE> operator*(void)const;
     };
 
       // const_iterator functions for the trie class
@@ -114,7 +114,7 @@ class TrieBidOfWords
   const_iterator end(void)const;
 
  protected:
-  Vector<TrieBid<WordIndex,DATA_TYPE>* > vecTriePtr;      		      
+  std::vector<TrieBid<WordIndex,DATA_TYPE>* > vecTriePtr;      		      
 };
 
 //--------------- Template method definitions
@@ -169,7 +169,7 @@ TrieBidOfWords<DATA_TYPE>::operator=(const TrieBidOfWords<DATA_TYPE>& tbw)
 
 //---------------
 template<class DATA_TYPE>
-TrieBid<WordIndex,DATA_TYPE>* TrieBidOfWords<DATA_TYPE>::insert(const Vector<WordIndex>& keySeq,const DATA_TYPE& d)
+TrieBid<WordIndex,DATA_TYPE>* TrieBidOfWords<DATA_TYPE>::insert(const std::vector<WordIndex>& keySeq,const DATA_TYPE& d)
 {
   TrieBid<WordIndex,DATA_TYPE>* tptrn=NULL;
 
@@ -191,16 +191,16 @@ TrieBid<WordIndex,DATA_TYPE>* TrieBidOfWords<DATA_TYPE>::insert(const Vector<Wor
 
 //---------------
 template<class DATA_TYPE>
-bool TrieBidOfWords<DATA_TYPE>::erase(const Vector<WordIndex>& /*keySeq*/)
+bool TrieBidOfWords<DATA_TYPE>::erase(const std::vector<WordIndex>& /*keySeq*/)
 {
       // TO-DO
-  cerr<<"Warning: erase function not implemented in TrieBidOfWords\n";
+  std::cerr<<"Warning: erase function not implemented in TrieBidOfWords\n";
   return false;
 }
 
 //---------------
 template<class DATA_TYPE>
-DATA_TYPE* TrieBidOfWords<DATA_TYPE>::find(const Vector<WordIndex>& keySeq)
+DATA_TYPE* TrieBidOfWords<DATA_TYPE>::find(const std::vector<WordIndex>& keySeq)
 {
   if(keySeq.size()==0) return NULL;
   else
@@ -218,7 +218,7 @@ DATA_TYPE* TrieBidOfWords<DATA_TYPE>::find(const Vector<WordIndex>& keySeq)
 }
 //---------------
 template<class DATA_TYPE>
-TrieBid<WordIndex,DATA_TYPE>* TrieBidOfWords<DATA_TYPE>::getState(const Vector<WordIndex>& keySeq)
+TrieBid<WordIndex,DATA_TYPE>* TrieBidOfWords<DATA_TYPE>::getState(const std::vector<WordIndex>& keySeq)
 {
   if(keySeq.size()==0) return NULL;
   else
@@ -272,9 +272,9 @@ unsigned int TrieBidOfWords<DATA_TYPE>::height(void)const
 }
 //---------------
 template<class DATA_TYPE>
-Vector<unsigned long> TrieBidOfWords<DATA_TYPE>::branchingFactor(void)const
+std::vector<unsigned long> TrieBidOfWords<DATA_TYPE>::branchingFactor(void)const
 {
-  Vector<unsigned long> result,aux;
+  std::vector<unsigned long> result,aux;
   unsigned long i,j;
 
   for(i=0;i<vecTriePtr.size();++i)
@@ -412,7 +412,7 @@ TrieBidOfWords<DATA_TYPE>::const_iterator::operator->(void)const
 
 //--------------------------
 template<class DATA_TYPE>
-pair<Vector<WordIndex>,DATA_TYPE> TrieBidOfWords<DATA_TYPE>::const_iterator::operator*(void)const
+pair<std::vector<WordIndex>,DATA_TYPE> TrieBidOfWords<DATA_TYPE>::const_iterator::operator*(void)const
 {
   return *trieIter;
 }

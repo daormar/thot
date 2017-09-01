@@ -40,8 +40,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SwDefs.h"
 //#include <stxxl.h>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -108,7 +106,7 @@ int main(int argc,char *argv[])
     ifstream inF (ilextableFileName.c_str(), ios::in | ios::binary);
     if (!inF)
     {
-      cerr<<"Error in file with incremental lexical table, file "<<ilextableFileName<<" does not exist.\n";
+      std::cerr<<"Error in file with incremental lexical table, file "<<ilextableFileName<<" does not exist.\n";
       return THOT_ERROR;    
     }
     else

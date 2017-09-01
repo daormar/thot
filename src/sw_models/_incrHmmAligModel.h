@@ -77,11 +77,11 @@ using __gnu_cxx::hash_map;
 
 //--------------- _incrHmmAligModel class
 
-class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
+class _incrHmmAligModel: public _incrSwAligModel<std::vector<Prob> >
 {
   public:
 
-   typedef _incrSwAligModel<Vector<Prob> >::PpInfo PpInfo;
+   typedef _incrSwAligModel<std::vector<Prob> >::PpInfo PpInfo;
    typedef map<WordIndex,Prob> SrcTableNode;
 
    // Constructor
@@ -148,48 +148,48 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
                             SrcTableNode& srctn);
 
    // Functions to generate alignments
-   virtual LgProb obtainBestAlignmentVecStrCached(Vector<std::string> srcSentenceVector,
-                                                  Vector<std::string> trgSentenceVector,
+   virtual LgProb obtainBestAlignmentVecStrCached(std::vector<std::string> srcSentenceVector,
+                                                  std::vector<std::string> trgSentenceVector,
                                                   CachedHmmAligLgProb& cached_logap,
                                                   WordAligMatrix& bestWaMatrix);
-   LgProb obtainBestAlignment(Vector<WordIndex> srcSentIndexVector,
-                              Vector<WordIndex> trgSentIndexVector,
+   LgProb obtainBestAlignment(std::vector<WordIndex> srcSentIndexVector,
+                              std::vector<WordIndex> trgSentIndexVector,
                               WordAligMatrix& bestWaMatrix);
-   virtual LgProb obtainBestAlignmentCached(Vector<WordIndex> srcSentIndexVector,
-                                            Vector<WordIndex> trgSentIndexVector,
+   virtual LgProb obtainBestAlignmentCached(std::vector<WordIndex> srcSentIndexVector,
+                                            std::vector<WordIndex> trgSentIndexVector,
                                             CachedHmmAligLgProb& cached_logap,
                                             WordAligMatrix& bestWaMatrix);
 
    // Functions to calculate probabilities for alignments
-   LgProb calcLgProbForAlig(const Vector<WordIndex>& sSent,
-                            const Vector<WordIndex>& tSent,
+   LgProb calcLgProbForAlig(const std::vector<WordIndex>& sSent,
+                            const std::vector<WordIndex>& tSent,
                             WordAligMatrix aligMatrix,
                             int verbose=0);
 
    // Scoring functions without giving an alignment
-   LgProb calcLgProb(const Vector<WordIndex>& sSent,
-                     const Vector<WordIndex>& tSent,
+   LgProb calcLgProb(const std::vector<WordIndex>& sSent,
+                     const std::vector<WordIndex>& tSent,
                      int verbose=0);
-   LgProb calcLgProbPhr(const Vector<WordIndex>& sPhr,
-                        const Vector<WordIndex>& tPhr,
+   LgProb calcLgProbPhr(const std::vector<WordIndex>& sPhr,
+                        const std::vector<WordIndex>& tPhr,
                         int verbose=0);
        // Scoring function for phrase pairs
 
    // Partial scoring functions
    void initPpInfo(unsigned int slen,
-                   const Vector<WordIndex>& tSent,
+                   const std::vector<WordIndex>& tSent,
                    PpInfo& ppInfo);
    void partialProbWithoutLen(unsigned int srcPartialLen,
                               unsigned int slen,
-                              const Vector<WordIndex>& s_,
-                              const Vector<WordIndex>& tSent,
+                              const std::vector<WordIndex>& s_,
+                              const std::vector<WordIndex>& tSent,
                               PpInfo& ppInfo);
    LgProb lpFromPpInfo(const PpInfo& ppInfo);
    void addHeurForNotAddedWords(int numSrcWordsToBeAdded,
-                                const Vector<WordIndex>& tSent,
+                                const std::vector<WordIndex>& tSent,
                                 PpInfo& ppInfo);
    void sustHeurForNotAddedWords(int numSrcWordsToBeAdded,
-                                 const Vector<WordIndex>& tSent,
+                                 const std::vector<WordIndex>& tSent,
                                  PpInfo& ppInfo);
 
    // load function
@@ -213,15 +213,15 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    anjiMatrix lanji_aux;
    anjm1ip_anjiMatrix lanjm1ip_anji;
    anjm1ip_anjiMatrix lanjm1ip_anji_aux;
-   Vector<Vector<double> > alphaMatrix;
-   Vector<Vector<double> > betaMatrix;
+   std::vector<std::vector<double> > alphaMatrix;
+   std::vector<std::vector<double> > betaMatrix;
        // Data structures for manipulating expected values
 
    std::string lexNumDenFileExtension;
        // Extensions for input files for loading
 
    LexAuxVar lexAuxVar;
-   Vector<Vector<double> > cachedLexLogProbs;
+   std::vector<std::vector<double> > cachedLexLogProbs;
        // EM algorithm auxiliary variables
 
    typedef hash_map<pair<aSourceHmm,PositionIndex>,pair<float,float>,ashPidxPairHashF> AligAuxVar;
@@ -241,20 +241,20 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    double lexSmoothInterpFactor;
 
    // Functions to get sentence pairs
-   Vector<WordIndex> getSrcSent(unsigned int n);
+   std::vector<WordIndex> getSrcSent(unsigned int n);
        // get n-th source sentence
-   virtual Vector<WordIndex> extendWithNullWord(const Vector<WordIndex>& srcWordIndexVec);
+   virtual std::vector<WordIndex> extendWithNullWord(const std::vector<WordIndex>& srcWordIndexVec);
        // given a vector with source words, returns a extended vector
        // including extra NULL words
-   virtual Vector<WordIndex> extendWithNullWordAlig(const Vector<WordIndex>& srcWordIndexVec);
+   virtual std::vector<WordIndex> extendWithNullWordAlig(const std::vector<WordIndex>& srcWordIndexVec);
        // the same as the previous one, but it is specific when calculating suff. statistics
        // for the alignment parameters
-   PositionIndex getSrcLen(const Vector<WordIndex>& nsrcWordIndexVec);
+   PositionIndex getSrcLen(const std::vector<WordIndex>& nsrcWordIndexVec);
 
-   Vector<WordIndex> getTrgSent(unsigned int n);
+   std::vector<WordIndex> getTrgSent(unsigned int n);
        // get n-th target sentence
 
-   bool sentenceLengthIsOk(const Vector<WordIndex> sentence);
+   bool sentenceLengthIsOk(const std::vector<WordIndex> sentence);
 
    // Auxiliary functions to load and print models
    bool loadLexSmIntFactor(const char* lexSmIntFactorFile);
@@ -268,9 +268,9 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    double get_nloglikelihood(unsigned int n);
 
    // Auxiliary scoring functions
-   void initCachedLexicalLps(const Vector<WordIndex>& nSrcSentIndexVector,
-                             const Vector<WordIndex>& trgSentIndexVector,
-                             Vector<Vector<double> >& cachedLps);
+   void initCachedLexicalLps(const std::vector<WordIndex>& nSrcSentIndexVector,
+                             const std::vector<WordIndex>& trgSentIndexVector,
+                             std::vector<std::vector<double> >& cachedLps);
    double unsmoothed_logpts(WordIndex s,
                             WordIndex t);
        // Returns log(p(t|s)) without smoothing
@@ -280,8 +280,8 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    double cached_logaProb(PositionIndex prev_i,
                           PositionIndex slen,
                           PositionIndex i,
-                          const Vector<WordIndex>& nsrcSent,
-                          const Vector<WordIndex>& trgSent);
+                          const std::vector<WordIndex>& nsrcSent,
+                          const std::vector<WordIndex>& trgSent);
    void nullAligSpecialPar(unsigned int ip,
                            unsigned int slen,
                            aSourceHmm& asHmm,
@@ -289,46 +289,46 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
        // Given ip and slen values, returns (asHmm,i) pair expressing a
        // valid alignment with the null word
 
-   void viterbiAlgorithm(const Vector<WordIndex>& nSrcSentIndexVector,
-                         const Vector<WordIndex>& trgSentIndexVector,
-                         Vector<Vector<double> >& vitMatrix,
-                         Vector<Vector<PositionIndex> >& predMatrix);
+   void viterbiAlgorithm(const std::vector<WordIndex>& nSrcSentIndexVector,
+                         const std::vector<WordIndex>& trgSentIndexVector,
+                         std::vector<std::vector<double> >& vitMatrix,
+                         std::vector<std::vector<PositionIndex> >& predMatrix);
        // Execute the Viterbi algorithm to obtain the best HMM word
        // alignment
-   void viterbiAlgorithmCached(const Vector<WordIndex>& nSrcSentIndexVector,
-                               const Vector<WordIndex>& trgSentIndexVector,
+   void viterbiAlgorithmCached(const std::vector<WordIndex>& nSrcSentIndexVector,
+                               const std::vector<WordIndex>& trgSentIndexVector,
                                CachedHmmAligLgProb& cached_logap,
-                               Vector<Vector<double> >& vitMatrix,
-                               Vector<Vector<PositionIndex> >& predMatrix);
+                               std::vector<std::vector<double> >& vitMatrix,
+                               std::vector<std::vector<PositionIndex> >& predMatrix);
        // Cached version of viterbiAlgorithm()
 
-   double bestAligGivenVitMatricesRaw(const Vector<Vector<double> >& vitMatrix,
-                                      const Vector<Vector<PositionIndex> >& predMatrix,
-                                      Vector<PositionIndex>& bestAlig);
+   double bestAligGivenVitMatricesRaw(const std::vector<std::vector<double> >& vitMatrix,
+                                      const std::vector<std::vector<PositionIndex> >& predMatrix,
+                                      std::vector<PositionIndex>& bestAlig);
        // Obtain best alignment vector from Viterbi algorithm matrices,
        // index of null word depends on how the source index vector is
        // transformed
    double bestAligGivenVitMatrices(PositionIndex slen,
-                                   const Vector<Vector<double> >& vitMatrix,
-                                   const Vector<Vector<PositionIndex> >& predMatrix,
-                                   Vector<PositionIndex>& bestAlig);
+                                   const std::vector<std::vector<double> >& vitMatrix,
+                                   const std::vector<std::vector<PositionIndex> >& predMatrix,
+                                   std::vector<PositionIndex>& bestAlig);
        // Obtain best alignment vector from Viterbi algorithm matrices,
        // index of null word is zero
-   double forwardAlgorithm(const Vector<WordIndex>& nSrcSentIndexVector,
-                           const Vector<WordIndex>& trgSentIndexVector,
+   double forwardAlgorithm(const std::vector<WordIndex>& nSrcSentIndexVector,
+                           const std::vector<WordIndex>& trgSentIndexVector,
                            int verbose=0);
        // Execute Forward algorithm to obtain the log-probability of a
        // sentence pair
-   double lgProbGivenForwardMatrix(const Vector<Vector<double> >& forwardMatrix);
-   LgProb calcVitIbm1LgProb(const Vector<WordIndex>& srcSentIndexVector,
-                            const Vector<WordIndex>& trgSentIndexVector);
-   virtual LgProb calcSumIBM1LgProb(const Vector<WordIndex>& sSent,
-                                    const Vector<WordIndex>& tSent,
+   double lgProbGivenForwardMatrix(const std::vector<std::vector<double> >& forwardMatrix);
+   LgProb calcVitIbm1LgProb(const std::vector<WordIndex>& srcSentIndexVector,
+                            const std::vector<WordIndex>& trgSentIndexVector);
+   virtual LgProb calcSumIBM1LgProb(const std::vector<WordIndex>& sSent,
+                                    const std::vector<WordIndex>& tSent,
                                     int verbose);
    LgProb logaProbIbm1(PositionIndex slen,
                        PositionIndex tlen);
-   LgProb noisyOrLgProb(const Vector<WordIndex>& sSent,
-                        const Vector<WordIndex>& tSent,
+   LgProb noisyOrLgProb(const std::vector<WordIndex>& sSent,
+                        const std::vector<WordIndex>& tSent,
                         int verbose);
 
    // EM-related functions
@@ -337,35 +337,35 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    void calcNewLocalSuffStatsVit(pair<unsigned int,unsigned int> sentPairRange,
                                  int verbosity=0);
    void calcAlphaMatrix(unsigned int n,
-                        const Vector<WordIndex>& nsrcSent,
-                        const Vector<WordIndex>& trgSent);
+                        const std::vector<WordIndex>& nsrcSent,
+                        const std::vector<WordIndex>& trgSent);
    void calcBetaMatrix(unsigned int n,
-                       const Vector<WordIndex>& nsrcSent,
-                       const Vector<WordIndex>& trgSent);
+                       const std::vector<WordIndex>& nsrcSent,
+                       const std::vector<WordIndex>& trgSent);
    void calc_lanji(unsigned int n,
-                   const Vector<WordIndex>& nsrcSent,
-                   const Vector<WordIndex>& trgSent,
+                   const std::vector<WordIndex>& nsrcSent,
+                   const std::vector<WordIndex>& trgSent,
                    const Count& weight);
    void calc_lanji_vit(unsigned int n,
-                       const Vector<WordIndex>& nsrcSent,
-                       const Vector<WordIndex>& trgSent,
-                       const Vector<PositionIndex>& bestAlig,
+                       const std::vector<WordIndex>& nsrcSent,
+                       const std::vector<WordIndex>& trgSent,
+                       const std::vector<PositionIndex>& bestAlig,
                        const Count& weight);
    void fillEmAuxVarsLex(unsigned int mapped_n,
                          unsigned int mapped_n_aux,
                          PositionIndex i,
                          PositionIndex j,
-                         const Vector<WordIndex>& nsrcSent,
-                         const Vector<WordIndex>& trgSent,
+                         const std::vector<WordIndex>& nsrcSent,
+                         const std::vector<WordIndex>& trgSent,
                          const Count& weight);
    void calc_lanjm1ip_anji(unsigned int n,
-                           const Vector<WordIndex>& nsrcSent,
-                           const Vector<WordIndex>& trgSent,
+                           const std::vector<WordIndex>& nsrcSent,
+                           const std::vector<WordIndex>& trgSent,
                            const Count& weight);
    void calc_lanjm1ip_anji_vit(unsigned int n,
-                               const Vector<WordIndex>& nsrcSent,
-                               const Vector<WordIndex>& trgSent,
-                               const Vector<PositionIndex>& bestAlig,
+                               const std::vector<WordIndex>& nsrcSent,
+                               const std::vector<WordIndex>& trgSent,
+                               const std::vector<PositionIndex>& bestAlig,
                                const Count& weight);
    bool isFirstNullAligPar(PositionIndex ip,
                            unsigned int slen,
@@ -373,27 +373,27 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    double calc_lanji_num(PositionIndex slen,
                          PositionIndex i,
                          PositionIndex j,
-                         const Vector<WordIndex>& nsrcSent,
-                         const Vector<WordIndex>& trgSent);
+                         const std::vector<WordIndex>& nsrcSent,
+                         const std::vector<WordIndex>& trgSent);
    double calc_lanjm1ip_anji_num_je1(PositionIndex slen,
                                      PositionIndex i,
-                                     const Vector<WordIndex>& nsrcSent,
-                                     const Vector<WordIndex>& trgSent);
+                                     const std::vector<WordIndex>& nsrcSent,
+                                     const std::vector<WordIndex>& trgSent);
    double calc_lanjm1ip_anji_num_jg1(PositionIndex ip,
                                      PositionIndex slen,
                                      PositionIndex i,
                                      PositionIndex j,
-                                     const Vector<WordIndex>& nsrcSent,
-                                     const Vector<WordIndex>& trgSent);
+                                     const std::vector<WordIndex>& nsrcSent,
+                                     const std::vector<WordIndex>& trgSent);
    void gatherLexSuffStats(unsigned int mapped_n,
                            unsigned int mapped_n_aux,
-                           const Vector<WordIndex>& nsrcSent,
-                           const Vector<WordIndex>& trgSent,
+                           const std::vector<WordIndex>& nsrcSent,
+                           const std::vector<WordIndex>& trgSent,
                            const Count& weight);
    void gatherAligSuffStats(unsigned int mapped_n,
                             unsigned int mapped_n_aux,
-                            const Vector<WordIndex>& nsrcSent,
-                            const Vector<WordIndex>& trgSent,
+                            const std::vector<WordIndex>& nsrcSent,
+                            const std::vector<WordIndex>& trgSent,
                             const Count& weight);
    void fillEmAuxVarsAlig(unsigned int mapped_n,
                           unsigned int mapped_n_aux,
@@ -418,13 +418,13 @@ class _incrHmmAligModel: public _incrSwAligModel<Vector<Prob> >
    double log_alpha(PositionIndex slen,
                     PositionIndex i,
                     PositionIndex j,
-                    const Vector<WordIndex>& nsrcSent,
-                    const Vector<WordIndex>& trgSent);
+                    const std::vector<WordIndex>& nsrcSent,
+                    const std::vector<WordIndex>& trgSent);
    double log_beta(PositionIndex slen,
                    PositionIndex i,
                    PositionIndex j,
-                   const Vector<WordIndex>& nsrcSent,
-                   const Vector<WordIndex>& trgSent);
+                   const std::vector<WordIndex>& nsrcSent,
+                   const std::vector<WordIndex>& trgSent);
    void updateParsLex(void);
    void updateParsAlig(void);
    virtual float obtainLogNewSuffStat(float lcurrSuffStat,

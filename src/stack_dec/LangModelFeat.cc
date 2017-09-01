@@ -48,7 +48,7 @@ LangModelFeat<PhrScoreInfo>::nullHypScore(const HypScoreInfo& predHypScrInf,
 //---------------
 template<>
 LangModelFeat<PhrScoreInfo>::HypScoreInfo
-LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
+LangModelFeat<PhrScoreInfo>::extensionScore(const std::vector<std::string>& srcSent,
                                             const HypScoreInfo& predHypScrInf,
                                             const PhrHypDataStr& predHypDataStr,
                                             const PhrHypDataStr& newHypDataStr,
@@ -59,7 +59,7 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
   unweightedScore=0;
 
       // Obtain current partial translation
-  Vector<std::string> currPartialTrans;
+  std::vector<std::string> currPartialTrans;
   obtainCurrPartialTrans(predHypDataStr,currPartialTrans);
 
       // Initialize state
@@ -76,7 +76,7 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
       trgLeft=1;
     else
       trgLeft=newHypDataStr.targetSegmentCuts[i-1]+1;
-    Vector<std::string> trgPhrase;
+    std::vector<std::string> trgPhrase;
     for(unsigned int k=trgLeft;k<=trgRight;++k)
       trgPhrase.push_back(newHypDataStr.ntarget[k]);
       

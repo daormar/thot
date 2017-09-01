@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function definitions
 
-extern "C" BaseSwAligModel<Vector<Prob> >* create(std::string /*str*/)
+extern "C" BaseSwAligModel<std::vector<Prob> >* create(std::string /*str*/)
 {
   return new IncrHmmP0AligModel;
 }

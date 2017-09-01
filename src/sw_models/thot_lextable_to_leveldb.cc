@@ -75,7 +75,7 @@ int convert()
     ifstream inF (inputFile.c_str(), ios::in | ios::binary);
     if (!inF)
     {
-      cerr << "Error in lexical nd file, file " << inputFile << " does not exist." << endl;
+      std::cerr << "Error in lexical nd file, file " << inputFile << " does not exist." << std::endl;
       return THOT_ERROR;    
     }
     else
@@ -145,18 +145,18 @@ int takeParameters(int argc, char *argv[])
 //--------------- printUsage function
 void printUsage(void)
 {
-    cerr << "Usage: thot_lextable_to_leveldb -i <string> -o <string>" << endl;
-    cerr << "                   [-v] [--help] [--version]" << endl << endl;
-    cerr << "-i <string>        Input file with lex table in binary format" << endl;
-    cerr << "-o <string>        Output path for LevelDB with lex table" << endl;
-    cerr << "--help             Display this help and exit." << endl;
-    cerr << "--version          Output version information and exit." << endl;
+    std::cerr << "Usage: thot_lextable_to_leveldb -i <string> -o <string>" << std::endl;
+    std::cerr << "                   [-v] [--help] [--version]" << std::endl << std::endl;
+    std::cerr << "-i <string>        Input file with lex table in binary format" << std::endl;
+    std::cerr << "-o <string>        Output path for LevelDB with lex table" << std::endl;
+    std::cerr << "--help             Display this help and exit." << std::endl;
+    std::cerr << "--version          Output version information and exit." << std::endl;
 }
 
 //--------------- printVersion function
 void printVersion(void)
 {
-    cerr << "thot_lextable_to_leveldb is part of the thot package " << endl;
-    cerr << "thot version " << THOT_VERSION << endl;
-    cerr << "thot is GNU software written by Daniel Ortiz" << endl;
+    std::cerr << "thot_lextable_to_leveldb is part of the thot package " << std::endl;
+    std::cerr << "thot version " << THOT_VERSION << std::endl;
+    std::cerr << "thot is GNU software written by Daniel Ortiz" << std::endl;
 }

@@ -29,10 +29,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Score.h>
 #include <utility>
 #include <map>
-#include <myVector.h>
+#include <vector>
 
 //--------------- Classes --------------------------------------------
 
-typedef std::map<pair<Vector<WordIndex>,Vector<WordIndex> >,Score> PhrasePairCacheTable;
+typedef std::map<pair<std::vector<WordIndex>,std::vector<WordIndex> >,Score> PhrasePairCacheTable;
 
 #endif

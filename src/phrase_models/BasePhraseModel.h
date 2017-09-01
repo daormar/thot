@@ -42,9 +42,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ErrorDefs.h"
 #include "awkInputStream.h"
 #include <string>
-#include "myVector.h"
-
-using namespace std;
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 
@@ -92,51 +90,51 @@ class BasePhraseModel
         // obtains the log-probability for the length of a target
         // segment log(p(z_k|y_k,x_k-x_{k-1},trgLen))
 
-	virtual Prob strPt_s_(const Vector<string>& s,
-                          const Vector<string>& t);
-	virtual LgProb strLogpt_s_(const Vector<string>& s,
-                               const Vector<string>& t);
-    virtual Prob pt_s_(const Vector<WordIndex>& s,
-                       const Vector<WordIndex>& t);
-	virtual LgProb logpt_s_(const Vector<WordIndex>& s,
-                            const Vector<WordIndex>& t)=0;
+	virtual Prob strPt_s_(const std::vector<string>& s,
+                          const std::vector<string>& t);
+	virtual LgProb strLogpt_s_(const std::vector<string>& s,
+                               const std::vector<string>& t);
+    virtual Prob pt_s_(const std::vector<WordIndex>& s,
+                       const std::vector<WordIndex>& t);
+	virtual LgProb logpt_s_(const std::vector<WordIndex>& s,
+                            const std::vector<WordIndex>& t)=0;
 	
-	virtual Prob strPs_t_(const Vector<string>& s,
-                          const Vector<string>& t);
-	virtual LgProb strLogps_t_(const Vector<string>& s,
-                               const Vector<string>& t);
-    virtual Prob ps_t_(const Vector<WordIndex>& s,
-                       const Vector<WordIndex>& t);
-	virtual LgProb logps_t_(const Vector<WordIndex>& s,
-                            const Vector<WordIndex>& t)=0;
+	virtual Prob strPs_t_(const std::vector<string>& s,
+                          const std::vector<string>& t);
+	virtual LgProb strLogps_t_(const std::vector<string>& s,
+                               const std::vector<string>& t);
+    virtual Prob ps_t_(const std::vector<WordIndex>& s,
+                       const std::vector<WordIndex>& t);
+	virtual LgProb logps_t_(const std::vector<WordIndex>& s,
+                            const std::vector<WordIndex>& t)=0;
     
         // Functions to obtain translations for source or target phrases
-    virtual bool strGetTransFor_s_(const Vector<string>& s,
+    virtual bool strGetTransFor_s_(const std::vector<string>& s,
                                    TrgTableNode& trgtn);
-    virtual bool getTransFor_s_(const Vector<WordIndex>& s,
+    virtual bool getTransFor_s_(const std::vector<WordIndex>& s,
                                 TrgTableNode& trgtn)=0;
-    virtual bool strGetTransFor_t_(const Vector<string>& t,
+    virtual bool strGetTransFor_t_(const std::vector<string>& t,
                                    SrcTableNode& srctn);
-    virtual bool getTransFor_t_(const Vector<WordIndex>& t,
+    virtual bool getTransFor_t_(const std::vector<WordIndex>& t,
                                 SrcTableNode& srctn)=0;
-    virtual bool strGetNbestTransFor_s_(const Vector<string>& s,
+    virtual bool strGetNbestTransFor_s_(const std::vector<string>& s,
                                         NbestTableNode<PhraseTransTableNodeData>& nbt);
-	virtual bool getNbestTransFor_s_(const Vector<WordIndex>& s,
+	virtual bool getNbestTransFor_s_(const std::vector<WordIndex>& s,
                                      NbestTableNode<PhraseTransTableNodeData>& nbt)=0;
-	virtual bool strGetNbestTransFor_t_(const Vector<string>& t,
+	virtual bool strGetNbestTransFor_t_(const std::vector<string>& t,
                                         NbestTableNode<PhraseTransTableNodeData>& nbt,
                                         int N=-1);
-	virtual bool getNbestTransFor_t_(const Vector<WordIndex>& t,
+	virtual bool getNbestTransFor_t_(const std::vector<WordIndex>& t,
                                      NbestTableNode<PhraseTransTableNodeData>& nbt,
                                      int N=-1)=0;
 
         // Functions for extending the model
-    virtual int trainSentPair(const Vector<std::string>& srcSentStrVec,
-                              const Vector<std::string>& trgSentStrVec,
+    virtual int trainSentPair(const std::vector<std::string>& srcSentStrVec,
+                              const std::vector<std::string>& trgSentStrVec,
                               Count c=1,
                               int verbose=0);
-    virtual int trainBilPhrases(const Vector<Vector<std::string> >& srcPhrVec,
-                                const Vector<Vector<std::string> >& trgPhrVec,
+    virtual int trainBilPhrases(const std::vector<std::vector<std::string> >& srcPhrVec,
+                                const std::vector<std::vector<std::string> >& trgPhrVec,
                                 Count c=1,
                                 Count lowerBound=0,
                                 int verbose=0);

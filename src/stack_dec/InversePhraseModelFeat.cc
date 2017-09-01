@@ -33,7 +33,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 template<>
 InversePhraseModelFeat<PhrScoreInfo>::HypScoreInfo
-InversePhraseModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
+InversePhraseModelFeat<PhrScoreInfo>::extensionScore(const std::vector<std::string>& srcSent,
                                                     const HypScoreInfo& predHypScrInf,
                                                     const PhrHypDataStr& predHypDataStr,
                                                     const PhrHypDataStr& newHypDataStr,
@@ -50,7 +50,7 @@ InversePhraseModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& 
     unsigned int srcRight=newHypDataStr.sourceSegmentation[i].second;
 
         // Obtain source phrase
-    Vector<WordIndex> srcPhrase;
+    std::vector<WordIndex> srcPhrase;
     for(unsigned int k=srcLeft;k<=srcRight;++k)
       srcPhrase.push_back(stringToSrcWordindex(srcSent[k-1]));
 
@@ -63,7 +63,7 @@ InversePhraseModelFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& 
       trgLeft=newHypDataStr.targetSegmentCuts[i-1]+1;
 
         // Obtain target phrase
-    Vector<WordIndex> trgPhrase;
+    std::vector<WordIndex> trgPhrase;
     for(unsigned int k=trgLeft;k<=trgRight;++k)
     {
       trgPhrase.push_back(stringToTrgWordindex(newHypDataStr.ntarget[k]));

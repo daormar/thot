@@ -31,7 +31,7 @@ class ThotIbm2AlignerFactory: public IAlignmentFactory {
 public:
   ThotIbm2AlignerFactory(): _logger(0) { };
   virtual ~ThotIbm2AlignerFactory() {
-    LOG(INFO) << "ThotIbm2Aligner is free!" << endl;
+    LOG(INFO) << "ThotIbm2Aligner is free!" << std::endl;
      delete ibm2a;
   };
 
@@ -41,7 +41,7 @@ public:
 
   virtual void setLogger(Logger *logger) {
     _logger = logger;
-    LOG(INFO) << "ThotIbm2Aligner is joining the logger!" << endl;
+    LOG(INFO) << "ThotIbm2Aligner is joining the logger!" << std::endl;
   }
 
   virtual IAlignmentEngine *createInstance(const std::string &specialization_id = "") {

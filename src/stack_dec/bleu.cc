@@ -23,7 +23,7 @@ int calc_bleu(const char* ref,
               const char* sys,
               float& bleu,
               float &bp,
-              Vector<float>& bleu_n,
+              std::vector<float>& bleu_n,
               int verbosity)
 {
   FILE *reff;
@@ -33,14 +33,14 @@ int calc_bleu(const char* ref,
   reff=fopen(ref,"r");
   if(reff==NULL)
   {
-    cerr<<"Error while opening file with references: "<<ref<<endl;
+    std::cerr<<"Error while opening file with references: "<<ref<<std::endl;
     return THOT_ERROR;
   }
 
   sysf=fopen(sys,"r");
   if(sysf==NULL)
   {
-    cerr<<"Error while opening file with translations: "<<sys<<endl;
+    std::cerr<<"Error while opening file with translations: "<<sys<<std::endl;
     return THOT_ERROR;
   }
 
@@ -57,7 +57,7 @@ int calc_bleuf(FILE *reff,
                FILE *sysf,
                float& bleu,
                float &bp,
-               Vector<float>& bleu_n,
+               std::vector<float>& bleu_n,
                int verbosity)
 {
   awkInputStream refStream;
@@ -65,11 +65,11 @@ int calc_bleuf(FILE *reff,
   unsigned int numSents=0;
   unsigned int refWords=0;
   unsigned int sysWords=0;
-  Vector<float> total;
-  Vector<float> precs;
+  std::vector<float> total;
+  std::vector<float> precs;
   unsigned int i;
-  Vector<std::string> refsen;
-  Vector<std::string> syssen;
+  std::vector<std::string> refsen;
+  std::vector<std::string> syssen;
   
   bleu_n.clear();
 
@@ -83,12 +83,12 @@ int calc_bleuf(FILE *reff,
       // Open files
   if(refStream.open_stream(reff)==THOT_ERROR)
   {
-    cerr<<"Invalid file pointer to file with references."<<endl;
+    std::cerr<<"Invalid file pointer to file with references."<<std::endl;
     return THOT_ERROR;
   }  
   if(sysStream.open_stream(sysf)==THOT_ERROR)
   {
-    cerr<<"Invalid file pointer to file with system translations."<<endl;
+    std::cerr<<"Invalid file pointer to file with system translations."<<std::endl;
     return THOT_ERROR;
   }  
 
@@ -100,7 +100,7 @@ int calc_bleuf(FILE *reff,
     bool ok=sysStream.getln();
     if(!ok)
     {
-      cerr<<"Unexpected end of system file."<<endl;
+      std::cerr<<"Unexpected end of system file."<<std::endl;
       return THOT_ERROR;      
     }
 
@@ -108,7 +108,7 @@ int calc_bleuf(FILE *reff,
     refWords+=refStream.NF;
     sysWords+=sysStream.NF;
 
-    if(verbosity) cerr<<numSents<<endl;
+    if(verbosity) std::cerr<<numSents<<std::endl;
 
         // extract ref sentence
     refsen.clear();
@@ -117,8 +117,8 @@ int calc_bleuf(FILE *reff,
       refsen.push_back(refStream.dollar(i));
       if(verbosity)
       {
-        cerr<<refsen[i-1]<<" ";
-        if(i==refStream.NF) cerr<<endl;
+        std::cerr<<refsen[i-1]<<" ";
+        if(i==refStream.NF) std::cerr<<std::endl;
       }
     }
         // extract translation
@@ -128,8 +128,8 @@ int calc_bleuf(FILE *reff,
       syssen.push_back(sysStream.dollar(i));
       if(verbosity)
       {
-        cerr<<syssen[i-1]<<" ";
-        if(i==sysStream.NF) cerr<<endl;
+        std::cerr<<syssen[i-1]<<" ";
+        if(i==sysStream.NF) std::cerr<<std::endl;
       }
     }
 
@@ -141,10 +141,10 @@ int calc_bleuf(FILE *reff,
       total[i-1]+=total_sent;
       if(verbosity)
       {
-        cerr<<prec_sent<<"|"<<precs[i-1]<<" / "<<total_sent<<"|"<<total[i-1]<<" ; ";
+        std::cerr<<prec_sent<<"|"<<precs[i-1]<<" / "<<total_sent<<"|"<<total[i-1]<<" ; ";
       }
     }
-    if(verbosity) cerr<<endl;
+    if(verbosity) std::cerr<<std::endl;
   }
 
       // calculate brevity penalty
@@ -155,7 +155,7 @@ int calc_bleuf(FILE *reff,
   else bp=1;
 
       // calculate bleu
-  if(verbosity) cerr<<"Counts: ";
+  if(verbosity) std::cerr<<"Counts: ";
   bleu=0;
   for(i=1;i<=MAX_N;++i)
   {
@@ -164,8 +164,8 @@ int calc_bleuf(FILE *reff,
     bleu+=((double)1/MAX_N)*(double)my_log((double)bleu_n[i-1]);
     if(verbosity)
     {
-      cerr<<precs[i-1]<<","<<total[i-1]<<" ; ";
-      if(i==MAX_N) cerr<<endl;
+      std::cerr<<precs[i-1]<<","<<total[i-1]<<" ; ";
+      if(i==MAX_N) std::cerr<<std::endl;
     }
   }
   
@@ -173,17 +173,17 @@ int calc_bleuf(FILE *reff,
   
   if(verbosity)
   {
-    cerr<<"#Sentences: "<<numSents<<endl;
-    cerr<<"ref. words: "<<refWords<<endl;
-    cerr<<"sys. words: "<<sysWords<<endl;
+    std::cerr<<"#Sentences: "<<numSents<<std::endl;
+    std::cerr<<"ref. words: "<<refWords<<std::endl;
+    std::cerr<<"sys. words: "<<sysWords<<std::endl;
   }
   
   return THOT_OK;
 }
 
 //---------------
-void prec_n(Vector<std::string> refsen,
-            Vector<std::string> syssen,
+void prec_n(std::vector<std::string> refsen,
+            std::vector<std::string> syssen,
             unsigned int n,
             unsigned int& prec,
             unsigned int& total)
@@ -191,7 +191,7 @@ void prec_n(Vector<std::string> refsen,
   unsigned int i;
   unsigned int j;
   unsigned int reftotal;
-  Vector<bool> matched;
+  std::vector<bool> matched;
     
   if(n>syssen.size()) total=0;
   else total=syssen.size()-n+1;

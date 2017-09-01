@@ -59,7 +59,7 @@ void IncrHmmAligTable::setAligNumer(aSourceHmm asHmm,
   while(aligNumer.size()<=i)
     aligNumer.push_back(aligNumerElem);
 
-  Vector<pair<bool,float> > bdpVec;
+  std::vector<pair<bool,float> > bdpVec;
   while(aligNumer[i].size()<=asHmm.prev_i)
     aligNumer[i].push_back(bdpVec);
   while(aligNumer[i][asHmm.prev_i].size()<=asHmm.slen)
@@ -105,7 +105,7 @@ float IncrHmmAligTable::getAligNumer(aSourceHmm asHmm,
 void IncrHmmAligTable::setAligDenom(aSourceHmm asHmm,
                                     float f)
 {
-  Vector<pair<bool,float> > bdpVec;
+  std::vector<pair<bool,float> > bdpVec;
   while(aligDenom.size()<=asHmm.prev_i)
     aligDenom.push_back(bdpVec);
   while(aligDenom[asHmm.prev_i].size()<=asHmm.slen)
@@ -163,12 +163,12 @@ bool IncrHmmAligTable::loadPlainText(const char* aligNumDenFile)
         // Clear data structures
   clear();
 
-  cerr<<"Loading alignd file in plain text format from "<<aligNumDenFile<<endl;
+  std::cerr<<"Loading alignd file in plain text format from "<<aligNumDenFile<<std::endl;
 
   awkInputStream awk;
   if(awk.open(aligNumDenFile)==THOT_ERROR)
   {
-    cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
+    std::cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
     return THOT_ERROR;
   }
   else
@@ -196,13 +196,13 @@ bool IncrHmmAligTable::loadBin(const char* aligNumDenFile)
       // Clear data structures
   clear();
 
-  cerr<<"Loading alignd file in binary format from "<<aligNumDenFile<<endl;
+  std::cerr<<"Loading alignd file in binary format from "<<aligNumDenFile<<std::endl;
 
       // Try to open file  
   ifstream inF (aligNumDenFile, ios::in | ios::binary);
   if(!inF)
   {
-    cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
+    std::cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
     return THOT_ERROR;    
   }
   else
@@ -246,7 +246,7 @@ bool IncrHmmAligTable::printBin(const char* aligNumDenFile)
   outF.open(aligNumDenFile,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing alignment nd file."<<endl;
+    std::cerr<<"Error while printing alignment nd file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -285,7 +285,7 @@ bool IncrHmmAligTable::printPlainText(const char* aligNumDenFile)
   outF.open(aligNumDenFile,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing alignment nd file."<<endl;
+    std::cerr<<"Error while printing alignment nd file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -308,7 +308,7 @@ bool IncrHmmAligTable::printPlainText(const char* aligNumDenFile)
             asHmm.prev_i=prev_i;
             asHmm.slen=slen;
             float denom=getAligDenom(asHmm,found);
-            outF<<denom<<endl;
+            outF<<denom<<std::endl;
           }
         }
       }      

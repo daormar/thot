@@ -58,8 +58,6 @@ using __gnu_cxx::hash_map;
 #include <hash_map>
 #endif
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 

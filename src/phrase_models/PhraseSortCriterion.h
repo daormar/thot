@@ -25,17 +25,17 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include <vector>
 #include <utility>
 #include "PositionIndex.h"
-#include "myVector.h"
 
 //--------------- PhraseSortCriterion class
 
 class PhraseSortCriterion
 {
  public:
-  bool operator() (const Vector<WordIndex> &a,
-                   const Vector<WordIndex> &b)const
+  bool operator() (const std::vector<WordIndex> &a,
+                   const std::vector<WordIndex> &b)const
     {
       unsigned int i;
 					  

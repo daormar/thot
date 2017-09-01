@@ -59,8 +59,8 @@ int phr_dict_cmp_func(Db* /*db*/,
     key2.words[i]=keyPtr2->words[i];
 
       // Obtain phrases
-  Vector<WordIndex> srcPhr1, srcPhr2;
-  Vector<WordIndex> trgPhr1, trgPhr2;
+  std::vector<WordIndex> srcPhr1, srcPhr2;
+  std::vector<WordIndex> trgPhr1, trgPhr2;
   key1.getPhrPair(srcPhr1,trgPhr1);
   key2.getPhrPair(srcPhr2,trgPhr2);
 
@@ -105,7 +105,7 @@ int phr_dict_cmp_func(Db* db,
 //-------------------------
 bool BdbPhraseTable::init(const char *fileName)
 {
-  cerr<<"Initializing BDB phrase table"<<endl;
+  std::cerr<<"Initializing BDB phrase table"<<std::endl;
 
       // clear object
   clear();
@@ -172,8 +172,8 @@ void BdbPhraseTable::decodeKeyDataForPhrDictDb(PhrDictKey& phrDictKey,
 }
 
 //-------------------------
-int BdbPhraseTable::retrieveDataForPhrDict(const Vector<WordIndex>& s,
-                                           const Vector<WordIndex>& t,
+int BdbPhraseTable::retrieveDataForPhrDict(const std::vector<WordIndex>& s,
+                                           const std::vector<WordIndex>& t,
                                            PhrDictValue& phrDictValue)
 {
       // Obtain source phrase index
@@ -197,8 +197,8 @@ int BdbPhraseTable::retrieveDataForPhrDict(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-int BdbPhraseTable::putDataForPhrDict(const Vector<WordIndex>& s,
-                                      const Vector<WordIndex>& t,
+int BdbPhraseTable::putDataForPhrDict(const std::vector<WordIndex>& s,
+                                      const std::vector<WordIndex>& t,
                                       Count c)
 {
       // Encode key/value pair
@@ -221,8 +221,8 @@ int BdbPhraseTable::putDataForPhrDict(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-int BdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
-                                     const Vector<WordIndex>& t,
+int BdbPhraseTable::incrPhrDictCount(const std::vector<WordIndex>& s,
+                                     const std::vector<WordIndex>& t,
                                      Count c)
 {
   PhrDictValue phrDictValue;
@@ -250,22 +250,22 @@ int BdbPhraseTable::incrPhrDictCount(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-void BdbPhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
-                                       const Vector<WordIndex>& t,
+void BdbPhraseTable::incrCountsOfEntry(const std::vector<WordIndex>& s,
+                                       const std::vector<WordIndex>& t,
                                        Count c)
 {
-  Vector<WordIndex> emptyPhrase;
+  std::vector<WordIndex> emptyPhrase;
   incrPhrDictCount(s,t,c);
   incrPhrDictCount(s,emptyPhrase,c);
   incrPhrDictCount(emptyPhrase,t,c);
 }
 
 //-------------------------
-Count BdbPhraseTable::getSrcInfo(const Vector<WordIndex>& s,
+Count BdbPhraseTable::getSrcInfo(const std::vector<WordIndex>& s,
                                  bool& found)
 {
   PhrDictValue phrDictValue;
-  Vector<WordIndex> emptyPhrase;
+  std::vector<WordIndex> emptyPhrase;
   int ret=retrieveDataForPhrDict(s,emptyPhrase,phrDictValue);
   if(ret==THOT_ERROR)
   {
@@ -281,11 +281,11 @@ Count BdbPhraseTable::getSrcInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Count BdbPhraseTable::getTrgInfo(const Vector<WordIndex>& t,
+Count BdbPhraseTable::getTrgInfo(const std::vector<WordIndex>& t,
                                  bool& found)
 {
   PhrDictValue phrDictValue;
-  Vector<WordIndex> emptyPhrase;
+  std::vector<WordIndex> emptyPhrase;
   int ret=retrieveDataForPhrDict(emptyPhrase,t,phrDictValue);
   if(ret==THOT_ERROR)
   {
@@ -301,8 +301,8 @@ Count BdbPhraseTable::getTrgInfo(const Vector<WordIndex>& t,
 }
 
 //-------------------------
-Count BdbPhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
-                                    const Vector<WordIndex>& t,
+Count BdbPhraseTable::getSrcTrgInfo(const std::vector<WordIndex>& s,
+                                    const std::vector<WordIndex>& t,
                                     bool &found)
 {
   PhrDictValue phrDictValue;
@@ -321,7 +321,7 @@ Count BdbPhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-bool BdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
+bool BdbPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
                                          SrcTableNode& srctn)
 {
       // Find translations for t
@@ -334,7 +334,7 @@ bool BdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
       // phrase dictionary
   srctn.clear();
   PhrDictKey phrDictKey;
-  Vector<WordIndex> emptyPhrase;
+  std::vector<WordIndex> emptyPhrase;
   phrDictKey.setPhrPair(emptyPhrase,t);
   Dbt key(&phrDictKey,phrDictKey.getSize());
   Dbt data;
@@ -354,15 +354,15 @@ bool BdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
   {
     PhrDictValue phrDictValue;
     decodeKeyDataForPhrDictDb(phrDictKey,phrDictValue,key,data);
-    Vector<WordIndex> curr_t;
-    Vector<WordIndex> curr_s;
+    std::vector<WordIndex> curr_t;
+    std::vector<WordIndex> curr_s;
     phrDictKey.getPhrPair(curr_s,curr_t);
     if(curr_t==t)
     {
       if(!curr_s.empty())
       {
             // Store translation option
-        pair<Vector<WordIndex>,PhrasePairInfo> pVecPhinfo;
+        pair<std::vector<WordIndex>,PhrasePairInfo> pVecPhinfo;
         pVecPhinfo.first=curr_s;
         pVecPhinfo.second.first=trgPhrCount;
         pVecPhinfo.second.second=phrDictValue.count;
@@ -384,8 +384,8 @@ bool BdbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
 }
 
 //-------------------------
-Prob BdbPhraseTable::pTrgGivenSrc(const Vector<WordIndex>& s,
-                                  const Vector<WordIndex>& t)
+Prob BdbPhraseTable::pTrgGivenSrc(const std::vector<WordIndex>& s,
+                                  const std::vector<WordIndex>& t)
 {
   bool found;
   Count count_s_t_=getSrcTrgInfo(s,t,found);
@@ -404,15 +404,15 @@ Prob BdbPhraseTable::pTrgGivenSrc(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-LgProb BdbPhraseTable::logpTrgGivenSrc(const Vector<WordIndex>& s,
-                                       const Vector<WordIndex>& t)
+LgProb BdbPhraseTable::logpTrgGivenSrc(const std::vector<WordIndex>& s,
+                                       const std::vector<WordIndex>& t)
 {
   return log((double)pTrgGivenSrc(s,t));
 }
 
 //-------------------------
-Prob BdbPhraseTable::pSrcGivenTrg(const Vector<WordIndex>& s,
-                                  const Vector<WordIndex>& t)
+Prob BdbPhraseTable::pSrcGivenTrg(const std::vector<WordIndex>& s,
+                                  const std::vector<WordIndex>& t)
 {
   bool found;
   Count count_s_t_=getSrcTrgInfo(s,t,found);
@@ -431,14 +431,14 @@ Prob BdbPhraseTable::pSrcGivenTrg(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-LgProb BdbPhraseTable::logpSrcGivenTrg(const Vector<WordIndex>& s,
-                                       const Vector<WordIndex>& t)
+LgProb BdbPhraseTable::logpSrcGivenTrg(const std::vector<WordIndex>& s,
+                                       const std::vector<WordIndex>& t)
 {
   return log((double)pSrcGivenTrg(s,t));  
 }
 
 //-------------------------
-bool BdbPhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
+bool BdbPhraseTable::getNbestForTrg(const std::vector<WordIndex>& t,
                                     NbestTableNode<PhraseTransTableNodeData>& nbt,
                                     int N)
 {
@@ -469,7 +469,7 @@ bool BdbPhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
 //-------------------------
 size_t BdbPhraseTable::size(void)
 {
-  cerr<<"Warning: size() function not implemented in BdbPhraseTable class"<<endl;
+  std::cerr<<"Warning: size() function not implemented in BdbPhraseTable class"<<std::endl;
 
   return 0;
 }

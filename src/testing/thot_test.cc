@@ -173,15 +173,15 @@ int takeParameters(int argc,
 
 void printUsage(void)
 {
-  cerr << "thot_test              [--help] [--version]"<<endl<<endl;
-  cerr << " --help                : Display this help and exit."<<endl;
-  cerr << " --version             : Output version information and exit."<<endl;
+  std::cerr << "thot_test              [--help] [--version]"<<std::endl<<std::endl;
+  std::cerr << " --help                : Display this help and exit."<<std::endl;
+  std::cerr << " --version             : Output version information and exit."<<std::endl;
 }
 
 //---------------
 void version(void)
 {
-  cerr<<"thot_test is part of the thot package "<<endl;
-  cerr<<"thot version "<<THOT_VERSION<<endl;
-  cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
+  std::cerr<<"thot_test is part of the thot package "<<std::endl;
+  std::cerr<<"thot version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
 }

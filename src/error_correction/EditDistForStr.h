@@ -57,20 +57,20 @@ class EditDistForStr: public _editDist<std::string>
 	
 	EditDistForStr(void);
 
-    Score calculateEditDistPrefix(const string& x,
-                                  const string& y,
+    Score calculateEditDistPrefix(const std::string& x,
+                                  const std::string& y,
                                   int verbose=0);
         // Calculates edit distance between x and y, given that y is an
         // incomplete prefix
-    Score calculateEditDistPrefixOps(const string& x,
-                                     const string& y,
-                                     Vector<unsigned int>& ops,
+    Score calculateEditDistPrefixOps(const std::string& x,
+                                     const std::string& y,
+                                     std::vector<unsigned int>& ops,
                                      int verbose=0);
         // The same as the previous function, but it also returns the
         // sequence of string operations
-    Score calculateEditDistPrefixOpsNoPrefDel(const string& x,
-                                              const string& y,
-                                              Vector<unsigned int>& ops,
+    Score calculateEditDistPrefixOpsNoPrefDel(const std::string& x,
+                                              const std::string& y,
+                                              std::vector<unsigned int>& ops,
                                               int verbose=0);
         // The same as the previous function, but the special PREF_DEL_OP
         // operation is not allowed    
@@ -79,8 +79,8 @@ class EditDistForStr: public _editDist<std::string>
     
   protected:
 
-    Score processMatrixCell(const string& x,
-                            const string& y,
+    Score processMatrixCell(const std::string& x,
+                            const std::string& y,
                             const DistMatrix& dm,
                             int i,
                             int j,
@@ -89,8 +89,8 @@ class EditDistForStr: public _editDist<std::string>
                             int& op_id);
         // Basic function to calculate edit distance
 
-    Score processMatrixCellPref(const string& x,
-                                const string& y,
+    Score processMatrixCellPref(const std::string& x,
+                                const std::string& y,
                                 const DistMatrix& dm,
                                 bool usePrefDelOp,
                                 int i,
@@ -100,20 +100,20 @@ class EditDistForStr: public _editDist<std::string>
                                 int& op_id);
         // Basic function to calculate edit distance given a prefix
 
-    void obtainOperationsPref(const string& x,
-                              const string& y,
+    void obtainOperationsPref(const std::string& x,
+                              const std::string& y,
                               const DistMatrix& dm,
                               bool usePrefDelOp,
                               int i,
                               int j,
-                              Vector<unsigned int> &opsCharLevel);
+                              std::vector<unsigned int> &opsCharLevel);
         // After an edit distance calculation given a prefix, this
         // function obtains the optimal sequence of operations.
 
-    Score calculateEditDistPrefixOpsAux(const string& x,
-                                        const string& y,
+    Score calculateEditDistPrefixOpsAux(const std::string& x,
+                                        const std::string& y,
                                         bool usePrefDelOp,
-                                        Vector<unsigned int>& ops,
+                                        std::vector<unsigned int>& ops,
                                         int verbose);
         // Auxiliary function for calculateEditDistPrefixOps()
 

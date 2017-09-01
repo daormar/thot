@@ -51,8 +51,8 @@ lm_ienc::lm_ienc():vecx_x_incr_enc<std::string,WordIndex>()
 }
 
 //---------------
-bool lm_ienc::HighSrc_to_Src(const Vector<std::string>& hs,
-                             Vector<WordIndex>& s)
+bool lm_ienc::HighSrc_to_Src(const std::vector<std::string>& hs,
+                             std::vector<WordIndex>& s)
 {
   std::map<std::string,WordIndex>::iterator iter;
   unsigned int i;

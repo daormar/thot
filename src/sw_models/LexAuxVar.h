@@ -47,10 +47,10 @@ using __gnu_cxx::hash_map;
 
 #ifdef THOT_DISABLE_SPACE_EFFICIENT_LEXDATA_STRUCTURES
 typedef hash_map<WordIndex,pair<float,float> > LexAuxVarElem;
-typedef Vector<LexAuxVarElem> LexAuxVar;
+typedef std::vector<LexAuxVarElem> LexAuxVar;
 #else
 typedef OrderedVector<WordIndex,pair<float,float> > LexAuxVarElem;
-typedef Vector<LexAuxVarElem> LexAuxVar;
+typedef std::vector<LexAuxVarElem> LexAuxVar;
 #endif
 
 //--------------- Classes ---------------------------------------------

@@ -31,8 +31,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "PhraseCacheTable.h"
 #include "PhrasePairCacheTable.h"
 
-using namespace std;
-
 //--------------- Classes --------------------------------------------
 
 class NbestTransCacheData

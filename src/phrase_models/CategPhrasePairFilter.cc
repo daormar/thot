@@ -40,8 +40,8 @@ CategPhrasePairFilter::CategPhrasePairFilter(void)
 }
 
 //-------------------------
-bool CategPhrasePairFilter::phrasePairIsOk(Vector<std::string> s_,
-                                           Vector<std::string> t_)
+bool CategPhrasePairFilter::phrasePairIsOk(std::vector<std::string> s_,
+                                           std::vector<std::string> t_)
 {
       // Initialize category maps
   std::map<std::string,unsigned int> srcCategMap;

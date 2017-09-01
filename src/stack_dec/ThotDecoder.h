@@ -174,11 +174,11 @@ class ThotDecoder
 
       // Data members
   std::map<int,size_t> userIdToIdx;
-  Vector<bool> idxDataReleased;
+  std::vector<bool> idxDataReleased;
   ThotDecoderState tdState;
   ThotDecoderCommonVars tdCommonVars;
-  Vector<ThotDecoderPerUserVars> tdPerUserVarsVec;
-  Vector<std::string> totalPrefixVec;
+  std::vector<ThotDecoderPerUserVars> tdPerUserVarsVec;
+  std::vector<std::string> totalPrefixVec;
 
       // Mutexes and conditions
   pthread_mutex_t user_id_to_idx_mut;
@@ -257,12 +257,12 @@ class ThotDecoder
   void set_preproc(int user_id,
                    unsigned int preprocId_par,
                    int verbose=0);
-  void set_tmw(Vector<float> tmwVec_par,
+  void set_tmw(std::vector<float> tmwVec_par,
                int verbose=0);
-  void set_ecw(Vector<float> ecwVec_par,
+  void set_ecw(std::vector<float> ecwVec_par,
                int verbose=0);
   void set_catw(int user_id,
-                Vector<float> catwVec_par,
+                std::vector<float> catwVec_par,
                 int verbose=0);
   bool set_wgh(const char *wgHandlerFileName,
                int verbose=0);
@@ -308,9 +308,9 @@ class ThotDecoder
   std::string robustMergePostProcTransWithUserPref(std::string postproctrans,
                                                    std::string totalPrefix);
   std::string expandLastWord(std::string& partialSent);
-  pair<Count,std::string> getBestSuffixGivenHist(Vector<std::string> hist,
+  pair<Count,std::string> getBestSuffixGivenHist(std::vector<std::string> hist,
                                                  std::string input);
-  pair<Count,std::string> getBestSuffixGivenHistFeatImpl(Vector<std::string> hist,
+  pair<Count,std::string> getBestSuffixGivenHistFeatImpl(std::vector<std::string> hist,
                                                          std::string input);
   std::string getWordCompletion(std::string uncompleteWord,
                                 std::string completeWord);

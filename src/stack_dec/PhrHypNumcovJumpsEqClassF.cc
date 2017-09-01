@@ -38,7 +38,7 @@ PhrHypNumcovJumpsEqClassF::EqClassType
 PhrHypNumcovJumpsEqClassF::operator()(const PhrHypData& pbtHypData)
 {
   EqClassType eqClass;
-  Vector<unsigned int> uivec;
+  std::vector<unsigned int> uivec;
   
   eqClass.first=0;  // eqClass.first will store the number of covered
                     // words
@@ -77,7 +77,7 @@ PhrHypNumcovJumpsEqClassF::operator()(const PhrHypData& pbtHypData)
 
 //---------------------------------
 void PhrHypNumcovJumpsEqClassF::set(unsigned int j,
-                                    Vector<unsigned int> &uivec)
+                                    std::vector<unsigned int> &uivec)
 {
   while(uivec.size()<=j)
   {

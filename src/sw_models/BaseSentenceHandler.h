@@ -37,9 +37,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <myVector.h>
 #include <ErrorDefs.h>
 #include <string>
+#include <vector>
 #include "SwDefs.h"
 
 //--------------- Constants ------------------------------------------
@@ -65,21 +65,21 @@ class BaseSentenceHandler
        // NOTE: when function readSentencePairs() is invoked, previously
        //       seen sentence pairs are removed
    
-   virtual void addSentPair(Vector<std::string> srcSentStr,
-                            Vector<std::string> trgSentStr,
+   virtual void addSentPair(std::vector<std::string> srcSentStr,
+                            std::vector<std::string> trgSentStr,
                             Count c,
                             pair<unsigned int,unsigned int>& sentRange)=0;
    virtual unsigned int numSentPairs(void)=0;
        // NOTE: the whole valid range in a given moment is
        // [ 0 , numSentPairs() )
    virtual int nthSentPair(unsigned int n,
-                           Vector<std::string>& srcSentStr,
-                           Vector<std::string>& trgSentStr,
+                           std::vector<std::string>& srcSentStr,
+                           std::vector<std::string>& trgSentStr,
                            Count& c)=0;
    virtual int getSrcSent(unsigned int n,
-                          Vector<std::string>& srcSentStr)=0;
+                          std::vector<std::string>& srcSentStr)=0;
    virtual int getTrgSent(unsigned int n,
-                          Vector<std::string>& trgSentStr)=0;
+                          std::vector<std::string>& trgSentStr)=0;
    virtual int getCount(unsigned int n,
                         Count& c)=0;
 

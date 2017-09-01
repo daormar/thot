@@ -41,7 +41,7 @@ XRCE_PrePosProcessor4::XRCE_PrePosProcessor4()
 //---------------------------------------
 bool XRCE_PrePosProcessor4::loadCapitInfo(const char* /*filename*/)
 {
-  cerr<<"Warning: this module does not capitalize or decapitalize sentences!"<<endl;
+  std::cerr<<"Warning: this module does not capitalize or decapitalize sentences!"<<std::endl;
   
   return THOT_OK;
 }

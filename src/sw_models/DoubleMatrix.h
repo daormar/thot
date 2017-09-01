@@ -22,7 +22,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files --------------------------------------
 
 #include "SwDefs.h"
-#include "myVector.h"
+#include <vector>
 #include <float.h>
 
 //--------------- Constants ------------------------------------------
@@ -57,7 +57,7 @@ class DoubleMatrix
   
  protected:
 
-  Vector<Vector<double> > doubleVecVec;
+  std::vector<std::vector<double> > doubleVecVec;
     
 };
 

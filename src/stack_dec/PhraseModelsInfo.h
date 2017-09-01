@@ -28,18 +28,18 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ModelDescriptorUtils.h"
 #include "BasePhraseModel.h"
 #include "PhraseModelPars.h"
-#include "myVector.h"
 #include "SimpleDynClassLoader.h"
+#include <vector>
 
 //--------------- PhraseModelsInfo struct
 
 struct PhraseModelsInfo
 {
-  Vector<BasePhraseModel*> invPbModelPtrVec;
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
-  Vector<SimpleDynClassLoader<BasePhraseModel> > simpleDynClassLoaderVec;
+  std::vector<BasePhraseModel*> invPbModelPtrVec;
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
+  std::vector<SimpleDynClassLoader<BasePhraseModel> > simpleDynClassLoaderVec;
   SimpleDynClassLoader<BasePhraseModel> defaultClassLoader;
-  Vector<std::string> featNameVec;
+  std::vector<std::string> featNameVec;
 };
 
 #endif

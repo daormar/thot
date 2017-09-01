@@ -39,8 +39,8 @@ ostream& operator << (ostream &outS,
  
  for(vocabIter=vocab.begin();vocabIter!=vocab.end();++vocabIter)
  {
-   // outS<< vocabIter->second.first <<" "<< vocabIter->first << " " <<vocabIter->second.second <<endl;
-   outS<< vocabIter->second <<" "<< vocabIter->first <<endl;
+   // outS<< vocabIter->second.first <<" "<< vocabIter->first << " " <<vocabIter->second.second <<std::endl;
+   outS<< vocabIter->second <<" "<< vocabIter->first <<std::endl;
  }
  
  return outS;
@@ -109,10 +109,10 @@ bool SingleWordVocab::existSrcSymbol(std::string s)const
 }
 
 //-------------------------
-Vector<WordIndex> SingleWordVocab::strVectorToSrcIndexVector(Vector<std::string> s)
+std::vector<WordIndex> SingleWordVocab::strVectorToSrcIndexVector(std::vector<std::string> s)
 {
  unsigned int i;
- Vector<WordIndex> wordIndex_s;
+ std::vector<WordIndex> wordIndex_s;
  WordIndex wordIndex;	
 	
  for(i=0;i<s.size();++i)
@@ -154,12 +154,12 @@ bool SingleWordVocab::loadGIZASrcVocab(const char *srcInputVocabFileName)
 
  if(awk.open(srcInputVocabFileName)==THOT_ERROR)
  {
-   cerr<<"Error in GIZA source vocabulary, file "<<srcInputVocabFileName<<" does not exist.\n";
+   std::cerr<<"Error in GIZA source vocabulary, file "<<srcInputVocabFileName<<" does not exist.\n";
    return THOT_ERROR;
  }  
  else
  {
-   cerr<<"Reading source vocabulary from: "<<srcInputVocabFileName<<endl;
+   std::cerr<<"Reading source vocabulary from: "<<srcInputVocabFileName<<std::endl;
 
    clearSrcVocab();
    
@@ -175,7 +175,7 @@ bool SingleWordVocab::loadGIZASrcVocab(const char *srcInputVocabFileName)
        }
        else
        {
-         cerr<<"Error in GIZA source vocabulary file\n";
+         std::cerr<<"Error in GIZA source vocabulary file\n";
          return THOT_ERROR;
        }
      }
@@ -194,7 +194,7 @@ bool SingleWordVocab::printGIZASrcVocab(const char *outputFileName)
  outF.open(outputFileName,ios::out);
  if(!outF)
  {
-   cerr<<"Error while printing source vocabulary."<<endl;
+   std::cerr<<"Error while printing source vocabulary."<<std::endl;
    return THOT_ERROR;
  }
  outF<<stringToSrcWordIndexMap;
@@ -260,10 +260,10 @@ bool SingleWordVocab::existTrgSymbol(std::string t)const
 }
 
 //-------------------------
-Vector<WordIndex> SingleWordVocab::strVectorToTrgIndexVector(Vector<std::string> t)
+std::vector<WordIndex> SingleWordVocab::strVectorToTrgIndexVector(std::vector<std::string> t)
 {
  unsigned int i;
- Vector<WordIndex> wordIndex_t;
+ std::vector<WordIndex> wordIndex_t;
  WordIndex wordIndex;	
 	
  for(i=0;i<t.size();++i)
@@ -305,12 +305,12 @@ bool SingleWordVocab::loadGIZATrgVocab(const char *trgInputVocabFileName)
 
  if(awk.open(trgInputVocabFileName)==THOT_ERROR)
  {
-   cerr<<"Error in GIZA target vocabulary, file "<<trgInputVocabFileName<<" does not exist.\n";
+   std::cerr<<"Error in GIZA target vocabulary, file "<<trgInputVocabFileName<<" does not exist.\n";
    return THOT_ERROR;
  }  
  else
  {
-   cerr<<"Reading target vocabulary from: "<<trgInputVocabFileName<<endl;
+   std::cerr<<"Reading target vocabulary from: "<<trgInputVocabFileName<<std::endl;
 
    clearTrgVocab();
    
@@ -325,7 +325,7 @@ bool SingleWordVocab::loadGIZATrgVocab(const char *trgInputVocabFileName)
        }
        else
        {
-         cerr<<"Error in GIZA target vocabulary file\n";
+         std::cerr<<"Error in GIZA target vocabulary file\n";
          return 1;
        }
      }
@@ -344,7 +344,7 @@ bool SingleWordVocab::printGIZATrgVocab(const char *outputFileName)
  outF.open(outputFileName,ios::out);
  if(!outF)
  {
-   cerr<<"Error while printing target vocabulary."<<endl;
+   std::cerr<<"Error while printing target vocabulary."<<std::endl;
    return THOT_ERROR;
  }
  outF<<stringToTrgWordIndexMap;

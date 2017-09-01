@@ -44,7 +44,7 @@ bool Cache_lct_::is_valid(void)
 }
 
 //-------------------------
-bool Cache_lct_::t_present(const Vector<WordIndex>& _t_)
+bool Cache_lct_::t_present(const std::vector<WordIndex>& _t_)
 {
   if(is_valid() && t_==_t_)
     return true;
@@ -53,7 +53,7 @@ bool Cache_lct_::t_present(const Vector<WordIndex>& _t_)
 }
 
 //-------------------------
-void Cache_lct_::init(const Vector<WordIndex>& _t_,
+void Cache_lct_::init(const std::vector<WordIndex>& _t_,
                       LogCount _lcount_t_)
 {
   valid=true;

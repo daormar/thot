@@ -112,7 +112,7 @@ void ThotIbmMaxConfid::update(const std::vector<std::string> &source,
   if(!source.empty() && !target.empty()){
     _ibm.addSentPair(source, target, 1, sentRange);
     _ibm.trainSentPairRange(sentRange,0);
-    LOG(INFO) << "Updated with new bilingual pair" << endl; 
+    LOG(INFO) << "Updated with new bilingual pair" << std::endl; 
   } 
 }
 

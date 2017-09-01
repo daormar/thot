@@ -29,11 +29,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "myVector.h"
+#include <vector>
 
 template<class VEC_ELEM>
-bool operator<(const Vector<VEC_ELEM> &left,
-               const Vector<VEC_ELEM> &right)
+bool operator<(const std::vector<VEC_ELEM> &left,
+               const std::vector<VEC_ELEM> &right)
 {
   if(left.size() < right.size()) return 0;
   if(right.size() < left.size()) return 1;

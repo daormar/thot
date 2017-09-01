@@ -42,8 +42,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <iostream>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 

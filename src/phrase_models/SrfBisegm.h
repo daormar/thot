@@ -25,10 +25,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <myVector.h>
 #include <PositionIndex.h>
-
-using namespace std;
+#include <vector>
 
 //--------------- typedefs and structs  ------------------------------
 
@@ -38,8 +36,8 @@ class SrfBisegm
 {
   public:
 
-   Vector<PositionIndex> srcCuts;
-   Vector<pair<PositionIndex,PositionIndex> > trgCuts;
+   std::vector<PositionIndex> srcCuts;
+   std::vector<pair<PositionIndex,PositionIndex> > trgCuts;
 };
 
 #endif

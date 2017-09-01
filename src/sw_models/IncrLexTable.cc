@@ -166,13 +166,13 @@ bool IncrLexTable::loadBin(const char* lexNumDenFile)
       // Clear data structures
   clear();
 
-  cerr<<"Loading lexnd file in binary format from "<<lexNumDenFile<<endl;
+  std::cerr<<"Loading lexnd file in binary format from "<<lexNumDenFile<<std::endl;
 
       // Try to open file  
   ifstream inF (lexNumDenFile, ios::in | ios::binary);
   if (!inF)
   {
-    cerr<<"Error in lexical nd file, file "<<lexNumDenFile<<" does not exist.\n";
+    std::cerr<<"Error in lexical nd file, file "<<lexNumDenFile<<" does not exist.\n";
     return THOT_ERROR;    
   }
   else
@@ -204,12 +204,12 @@ bool IncrLexTable::loadPlainText(const char* lexNumDenFile)
       // Clear data structures
   clear();
 
-  cerr<<"Loading lexnd file in plain text format from "<<lexNumDenFile<<endl;
+  std::cerr<<"Loading lexnd file in plain text format from "<<lexNumDenFile<<std::endl;
 
   awkInputStream awk;
   if(awk.open(lexNumDenFile)==THOT_ERROR)
   {
-    cerr<<"Error in file with lexical parameters, file "<<lexNumDenFile<<" does not exist.\n";
+    std::cerr<<"Error in file with lexical parameters, file "<<lexNumDenFile<<" does not exist.\n";
     return THOT_ERROR;
   }
   else
@@ -247,7 +247,7 @@ bool IncrLexTable::printBin(const char* lexNumDenFile)
   outF.open(lexNumDenFile,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing lexical nd file."<<endl;
+    std::cerr<<"Error while printing lexical nd file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -277,7 +277,7 @@ bool IncrLexTable::printPlainText(const char* lexNumDenFile)
   outF.open(lexNumDenFile,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing lexical nd file."<<endl;
+    std::cerr<<"Error while printing lexical nd file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -293,7 +293,7 @@ bool IncrLexTable::printPlainText(const char* lexNumDenFile)
         outF<<t<<" ";
         outF<<numElemIter->second<<" ";
         float denom=getLexDenom(numElemIter->first,found);
-        outF<<denom<<endl;;
+        outF<<denom<<std::endl;;
       }
     }
     return THOT_OK;

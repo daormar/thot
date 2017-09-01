@@ -58,7 +58,7 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
                                              pair<unsigned int,unsigned int>& sentRange)
 {
       // Clear sentence handler
- cerr<<"Initializing sentence handler..."<<endl;
+ std::cerr<<"Initializing sentence handler..."<<std::endl;
  clear();
   
      // Fill first field of sentRange
@@ -67,7 +67,7 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
      // Open source file
  if(awkSrc.open(srcFileName)==THOT_ERROR)
  {
-   cerr<<"Error in source language file: "<<srcFileName<<endl;
+   std::cerr<<"Error in source language file: "<<srcFileName<<std::endl;
    return THOT_ERROR;
  }
  else
@@ -75,7 +75,7 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
        // Open target file
    if(awkTrg.open(trgFileName)==THOT_ERROR)
    {
-     cerr<<"Error in target language file: "<<trgFileName<<endl;
+     std::cerr<<"Error in target language file: "<<trgFileName<<std::endl;
      return THOT_ERROR;
    }
    else
@@ -91,7 +91,7 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
            // sentCountsFile is not empty
        if(awkSrcTrgC.open(sentCountsFile)==THOT_ERROR)
        {
-         cerr<<"File with sentence counts "<<sentCountsFile<<" does not exist"<<endl;
+         std::cerr<<"File with sentence counts "<<sentCountsFile<<" does not exist"<<std::endl;
          countFileExists=false;
        }
        else
@@ -99,28 +99,28 @@ bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
      }
      
          // Read sentence pairs
-     cerr<<"Reading sentence pairs from files: "<<srcFileName<<" and "<<trgFileName<<endl;
-     if(countFileExists) cerr<<"Reading sentence pair counts from file "<<sentCountsFile<<endl;
+     std::cerr<<"Reading sentence pairs from files: "<<srcFileName<<" and "<<trgFileName<<std::endl;
+     if(countFileExists) std::cerr<<"Reading sentence pair counts from file "<<sentCountsFile<<std::endl;
 
      while(awkSrc.getln())
      {
        if(!awkTrg.getln())
        {
-         cerr<<"Error: the number of source and target sentences differ!"<<endl;
+         std::cerr<<"Error: the number of source and target sentences differ!"<<std::endl;
          return THOT_ERROR;
        }
 
            // Display warnings if sentences are empty
        if(awkSrc.NF==0)
-         cerr<<"Warning: source sentence "<<nsPairsInFiles<<" is empty"<<endl;
+         std::cerr<<"Warning: source sentence "<<nsPairsInFiles<<" is empty"<<std::endl;
        if(awkTrg.NF==0)
-         cerr<<"Warning: target sentence "<<nsPairsInFiles<<" is empty"<<endl;
+         std::cerr<<"Warning: target sentence "<<nsPairsInFiles<<" is empty"<<std::endl;
 
        nsPairsInFiles+=1;
      }
          // Print statistics
      if(nsPairsInFiles>0)
-       cerr<<"#Sentence pairs in files: "<<nsPairsInFiles<<endl;
+       std::cerr<<"#Sentence pairs in files: "<<nsPairsInFiles<<std::endl;
    }
        // Fill second field of sentRange
    sentRange.second=nsPairsInFiles-1;
@@ -148,8 +148,8 @@ void LightSentenceHandler::rewindFiles(void)
 }
 
 //-------------------------
-void LightSentenceHandler::addSentPair(Vector<std::string> srcSentStr,
-                                       Vector<std::string> trgSentStr,
+void LightSentenceHandler::addSentPair(std::vector<std::string> srcSentStr,
+                                       std::vector<std::string> trgSentStr,
                                        Count c,
                                        pair<unsigned int,unsigned int>& sentRange)
 {
@@ -163,9 +163,9 @@ void LightSentenceHandler::addSentPair(Vector<std::string> srcSentStr,
 
       // Display warnings if sentences are empty
   if(srcSentStr.empty())
-    cerr<<"Warning: source sentence "<<sentRange.first<<" is empty"<<endl;
+    std::cerr<<"Warning: source sentence "<<sentRange.first<<" is empty"<<std::endl;
   if(trgSentStr.empty())
-    cerr<<"Warning: target sentence "<<sentRange.first<<" is empty"<<endl;
+    std::cerr<<"Warning: target sentence "<<sentRange.first<<" is empty"<<std::endl;
 }
 
 //-------------------------
@@ -176,8 +176,8 @@ unsigned int LightSentenceHandler::numSentPairs(void)
 
 //-------------------------
 int LightSentenceHandler::nthSentPair(unsigned int n,
-                                      Vector<std::string>& srcSentStr,
-                                      Vector<std::string>& trgSentStr,
+                                      std::vector<std::string>& srcSentStr,
+                                      std::vector<std::string>& trgSentStr,
                                       Count& c)
 {
   if(n>=numSentPairs())
@@ -205,8 +205,8 @@ int LightSentenceHandler::nthSentPair(unsigned int n,
 
 //-------------------------
 int LightSentenceHandler::nthSentPairFromFiles(unsigned int n,
-                                               Vector<std::string>& srcSentStr,
-                                               Vector<std::string>& trgSentStr,
+                                               std::vector<std::string>& srcSentStr,
+                                               std::vector<std::string>& trgSentStr,
                                                Count& c)
 
 {
@@ -276,9 +276,9 @@ bool LightSentenceHandler::getNextLineFromFiles(void)
 
 //-------------------------
 int LightSentenceHandler::getSrcSent(unsigned int n,
-                                     Vector<std::string>& srcSentStr)
+                                     std::vector<std::string>& srcSentStr)
 {
-  Vector<std::string> trgSentStr;
+  std::vector<std::string> trgSentStr;
   Count c;
 
   int ret=nthSentPair(n,srcSentStr,trgSentStr,c);
@@ -288,9 +288,9 @@ int LightSentenceHandler::getSrcSent(unsigned int n,
 
 //-------------------------
 int LightSentenceHandler::getTrgSent(unsigned int n,
-                                     Vector<std::string>& trgSentStr)
+                                     std::vector<std::string>& trgSentStr)
 {
-  Vector<std::string> srcSentStr;
+  std::vector<std::string> srcSentStr;
   Count c;
 
   int ret=nthSentPair(n,srcSentStr,trgSentStr,c);
@@ -302,8 +302,8 @@ int LightSentenceHandler::getTrgSent(unsigned int n,
 int LightSentenceHandler::getCount(unsigned int n,
                                    Count& c)
 {
-  Vector<std::string> srcSentStr;
-  Vector<std::string> trgSentStr;
+  std::vector<std::string> srcSentStr;
+  std::vector<std::string> trgSentStr;
 
   int ret=nthSentPair(n,srcSentStr,trgSentStr,c);
 
@@ -323,7 +323,7 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
   srcOutF.open(srcSentFile,ios::out);
   if(!srcOutF)
   {
-    cerr<<"Error while printing file with source sentences."<<endl;
+    std::cerr<<"Error while printing file with source sentences."<<std::endl;
     return THOT_ERROR;
   }
 
@@ -331,7 +331,7 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
   trgOutF.open(trgSentFile,ios::out);
   if(!trgOutF)
   {
-    cerr<<"Error while printing file with target sentences."<<endl;
+    std::cerr<<"Error while printing file with target sentences."<<std::endl;
     return THOT_ERROR;
   }
 
@@ -339,14 +339,14 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
   countsOutF.open(sentCountsFile,ios::out);
   if(!countsOutF)
   {
-    cerr<<"Error while printing file with sentence counts."<<endl;
+    std::cerr<<"Error while printing file with sentence counts."<<std::endl;
     return THOT_ERROR;
   }
 
   for(unsigned int n=0;n<numSentPairs();++n)
   {
-    Vector<std::string> srcSentStr;
-    Vector<std::string> trgSentStr;
+    std::vector<std::string> srcSentStr;
+    std::vector<std::string> trgSentStr;
     Count c;
 
     nthSentPair(n,srcSentStr,trgSentStr,c);
@@ -357,7 +357,7 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
       srcOutF<<srcSentStr[j];
       if(j<srcSentStr.size()-1) srcOutF<<" ";
     }
-    srcOutF<<endl;
+    srcOutF<<std::endl;
       
         // print target sentence
     for(unsigned int j=0;j<trgSentStr.size();++j)
@@ -365,10 +365,10 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
       trgOutF<<trgSentStr[j];
       if(j<trgSentStr.size()-1) trgOutF<<" ";
     }
-    trgOutF<<endl;
+    trgOutF<<std::endl;
       
         // print count
-    countsOutF<<c<<endl;
+    countsOutF<<c<<std::endl;
   }
 
     

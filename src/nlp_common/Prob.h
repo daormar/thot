@@ -29,8 +29,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include <iostream>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define UNINIT_PROB   99
@@ -76,12 +74,12 @@ class Prob
   Prob get_p(void)const 
     {return *this;}
   LgProb get_lp(void)const;
-  friend ostream& operator <<(ostream &outS,const Prob& p)
+  friend std::ostream& operator <<(std::ostream &outS,const Prob& p)
   {
     outS<<(double) p.x;
     return outS;
   }
-  friend istream& operator>>(istream& is, Prob& p)
+  friend std::istream& operator>>(std::istream& is, Prob& p)
   {
     is >> p.x;
     return is;
@@ -139,7 +137,7 @@ class LgProb
   }
   LgProb get_lp(void)const
     {return *this;}
-  friend ostream& operator << (ostream &outS,const LgProb& lp)
+  friend std::ostream& operator << (std::ostream &outS,const LgProb& lp)
   {
     outS<<(double) lp.x;
     return outS;

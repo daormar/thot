@@ -52,17 +52,17 @@ class SimpleTrie
   SimpleTrie(void);
 
   // Basic functions
-  _simpleTrie<DATA_TYPE>* insert(const Vector<DATA_TYPE>& dataSeq);
+  _simpleTrie<DATA_TYPE>* insert(const std::vector<DATA_TYPE>& dataSeq);
       // Inserts a sequence of elements of class key. The last element 
       // of vector keySeq is the first element of the sequence.
-  bool erase(const Vector<DATA_TYPE>& dataSeq);
-  bool find(const Vector<DATA_TYPE>& dataSeq);
-  _simpleTrie<DATA_TYPE>* getState(const Vector<DATA_TYPE>& dataSeq);
+  bool erase(const std::vector<DATA_TYPE>& dataSeq);
+  bool find(const std::vector<DATA_TYPE>& dataSeq);
+  _simpleTrie<DATA_TYPE>* getState(const std::vector<DATA_TYPE>& dataSeq);
   DATA_TYPE& getData(void);
  
   size_t size(void)const;
   unsigned int height(void)const;
-  Vector<unsigned long> branchingFactor(void)const;
+  std::vector<unsigned long> branchingFactor(void)const;
   size_t countSparseNodes(void)const;
   void clear(void);
   ~SimpleTrie();
@@ -90,7 +90,7 @@ class SimpleTrie
        int operator==(const const_iterator& right);
        int operator!=(const const_iterator& right);
        const typename _simpleTrie<DATA_TYPE>::const_iterator& operator->(void)const;
-       Vector<DATA_TYPE> operator*(void)const;
+       std::vector<DATA_TYPE> operator*(void)const;
     };
   
       // const_iterator functions for the trie class
@@ -116,7 +116,7 @@ SimpleTrie<DATA_TYPE>::SimpleTrie(void)
 
 //---------------
 template<class DATA_TYPE>
-_simpleTrie<DATA_TYPE>* SimpleTrie<DATA_TYPE>::insert(const Vector<DATA_TYPE>& dataSeq)
+_simpleTrie<DATA_TYPE>* SimpleTrie<DATA_TYPE>::insert(const std::vector<DATA_TYPE>& dataSeq)
 {
   _simpleTrie<DATA_TYPE>* _stptr;
 
@@ -131,7 +131,7 @@ _simpleTrie<DATA_TYPE>* SimpleTrie<DATA_TYPE>::insert(const Vector<DATA_TYPE>& d
 
 //---------------
 template<class DATA_TYPE>
-bool SimpleTrie<DATA_TYPE>::erase(const Vector<DATA_TYPE>& dataSeq)
+bool SimpleTrie<DATA_TYPE>::erase(const std::vector<DATA_TYPE>& dataSeq)
 {
   bool ret;
 
@@ -145,13 +145,13 @@ bool SimpleTrie<DATA_TYPE>::erase(const Vector<DATA_TYPE>& dataSeq)
 
 //---------------
 template<class DATA_TYPE>
-bool SimpleTrie<DATA_TYPE>::find(const Vector<DATA_TYPE>& dataSeq)
+bool SimpleTrie<DATA_TYPE>::find(const std::vector<DATA_TYPE>& dataSeq)
 {
   return _strie.erase(dataSeq);
 }
 //---------------
 template<class DATA_TYPE>
-_simpleTrie<DATA_TYPE>* SimpleTrie<DATA_TYPE>::getState(const Vector<DATA_TYPE>& dataSeq)
+_simpleTrie<DATA_TYPE>* SimpleTrie<DATA_TYPE>::getState(const std::vector<DATA_TYPE>& dataSeq)
 {
   return _strie.getState(dataSeq);
 }
@@ -179,7 +179,7 @@ unsigned int SimpleTrie<DATA_TYPE>::height(void)const
 
 //---------------
 template<class DATA_TYPE>
-Vector<unsigned long> SimpleTrie<DATA_TYPE>::branchingFactor(void)const
+std::vector<unsigned long> SimpleTrie<DATA_TYPE>::branchingFactor(void)const
 {
   return _strie.branchingFactor();
 }
@@ -268,7 +268,7 @@ SimpleTrie<DATA_TYPE>::const_iterator::operator->(void)const
 }
 //--------------------------
 template<class DATA_TYPE>
-Vector<DATA_TYPE> SimpleTrie<DATA_TYPE>::const_iterator::operator*(void)const
+std::vector<DATA_TYPE> SimpleTrie<DATA_TYPE>::const_iterator::operator*(void)const
 {
   return *_strIter;
 }

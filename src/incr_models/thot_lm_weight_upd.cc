@@ -55,8 +55,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <iomanip>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 struct thot_lmwu_pars
@@ -100,8 +98,8 @@ void version(void);
 //--------------- Global variables -----------------------------------
 
 DynClassFileHandler dynClassFileHandler;
-SimpleDynClassLoader<BaseNgramLM<Vector<WordIndex> > > baseNgramLMDynClassLoader;
-BaseNgramLM<Vector<WordIndex> >* lm;
+SimpleDynClassLoader<BaseNgramLM<std::vector<WordIndex> > > baseNgramLMDynClassLoader;
+BaseNgramLM<std::vector<WordIndex> >* lm;
 _incrInterpNgramLM* incrInterpNgramLmPtr;
 _incrJelMerNgramLM<Count,Count>* incrJelMerLmPtr;
 
@@ -119,9 +117,9 @@ int main(int argc,char *argv[])
   else
   {
         // Print parameters
-    cerr<<"-lm option is "<<pars.langModelFilesPrefix<<endl;
-    cerr<<"-c option is "<<pars.fileWithCorpus<<endl;
-    cerr<<"-v option is "<<pars.verbosity<<endl;
+    std::cerr<<"-lm option is "<<pars.langModelFilesPrefix<<std::endl;
+    std::cerr<<"-c option is "<<pars.fileWithCorpus<<std::endl;
+    std::cerr<<"-v option is "<<pars.verbosity<<std::endl;
 
     return process_input(pars);
   }
@@ -187,14 +185,14 @@ int checkParameters(thot_lmwu_pars& pars)
 {  
   if(pars.langModelFilesPrefix.empty())
   {
-    cerr<<"Error: parameter -lm not given!"<<endl;
+    std::cerr<<"Error: parameter -lm not given!"<<std::endl;
     return THOT_ERROR;   
 
   }
 
   if(pars.fileWithCorpus.empty())
   {
-    cerr<<"Error: parameter -c not given!"<<endl;
+    std::cerr<<"Error: parameter -c not given!"<<std::endl;
     return THOT_ERROR;   
   }
   
@@ -216,11 +214,11 @@ int process_lm_descriptor(const thot_lmwu_pars& pars)
 {
   if(pars.verbosity)
   {
-    cerr<<"Processing language model descriptor: "<<pars.langModelFilesPrefix<<endl;
+    std::cerr<<"Processing language model descriptor: "<<pars.langModelFilesPrefix<<std::endl;
   }
 
       // Obtain info about translation model entries
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(pars.langModelFilesPrefix,modelDescEntryVec)==THOT_OK)
   {
         // Process descriptor entries
@@ -244,7 +242,7 @@ int process_lm_files_prefix(const thot_lmwu_pars& pars)
 {
   if(pars.verbosity)
   {
-    cerr<<"Processing language model files prefix: "<<pars.langModelFilesPrefix<<endl;
+    std::cerr<<"Processing language model files prefix: "<<pars.langModelFilesPrefix<<std::endl;
   }
 
       // Obtain default model type
@@ -279,8 +277,8 @@ int obtain_default_lm_type(std::string& soFileName)
   baseClassName="BaseNgramLM";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -300,7 +298,7 @@ int process_lm_entry(std::string corpusFile,
   incrInterpNgramLmPtr=dynamic_cast<_incrInterpNgramLM* >(lm);
   if(!incrJelMerLmPtr && !incrInterpNgramLmPtr)
   {
-    cerr<<"Current model does not have weights to be updated"<<endl;
+    std::cerr<<"Current model does not have weights to be updated"<<std::endl;
     release_lm(verbosity);
     return THOT_OK;
   }
@@ -320,7 +318,7 @@ int init_lm(std::string modelType,
       // Open module
   if(!baseNgramLMDynClassLoader.open_module(modelType,verbosity))
   {
-    cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -329,7 +327,7 @@ int init_lm(std::string modelType,
 
   if(lm==NULL)
   {
-    cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;    
+    std::cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<std::endl;    
     return THOT_ERROR;
   }
     
@@ -412,21 +410,21 @@ int update_lm_weights_interp(std::string corpusFile,
 //--------------------------------
 void printUsage(void)
 {
-  cerr<<"thot_lm_weight_upd -lm <string> -c <string> [-v]"<<endl;
-  cerr<<"                   [--help] [--version]"<<endl;
-  cerr<<endl;
-  cerr<<"-lm <string>       Prefix of language model files."<<endl;
-  cerr<<"                   (Warning: current weights will be overwritten)."<<endl;
-  cerr<<"-c <string>        Development corpus."<<endl;
-  cerr<<"-v                 Enable verbose mode."<<endl;
-  cerr<<"--help             Display this help and exit."<<endl;
-  cerr<<"--version          Output version information and exit."<<endl;
+  std::cerr<<"thot_lm_weight_upd -lm <string> -c <string> [-v]"<<std::endl;
+  std::cerr<<"                   [--help] [--version]"<<std::endl;
+  std::cerr<<std::endl;
+  std::cerr<<"-lm <string>       Prefix of language model files."<<std::endl;
+  std::cerr<<"                   (Warning: current weights will be overwritten)."<<std::endl;
+  std::cerr<<"-c <string>        Development corpus."<<std::endl;
+  std::cerr<<"-v                 Enable verbose mode."<<std::endl;
+  std::cerr<<"--help             Display this help and exit."<<std::endl;
+  std::cerr<<"--version          Output version information and exit."<<std::endl;
 }
 
 //--------------------------------
 void version(void)
 {
-  cerr<<"thot_lm_weight_upd is part of the thot package"<<endl;
-  cerr<<"thot version "<<THOT_VERSION<<endl;
-  cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
+  std::cerr<<"thot_lm_weight_upd is part of the thot package"<<std::endl;
+  std::cerr<<"thot version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
 }

@@ -81,7 +81,7 @@ class _phraseHypothesisRec: public BasePhraseHypothesisRec<SCORE_INFO,PhrHypData
   bool isAligned(PositionIndex i)const;
   bool areAligned(PositionIndex i,PositionIndex j)const;
   Bitset<MAX_SENTENCE_LENGTH_ALLOWED> getKey(void)const;
-  Vector<WordIndex> getPartialTrans(void)const;
+  std::vector<WordIndex> getPartialTrans(void)const;
   unsigned int partialTransLength(void)const;
 
       // Destructor
@@ -202,7 +202,7 @@ _phraseHypothesisRec<SCORE_INFO,EQCLASS_FUNC,HYPSTATE>::getKey(void)const
 
 //---------------------------------------
 template<class SCORE_INFO,class EQCLASS_FUNC,class HYPSTATE>
-Vector<WordIndex>
+std::vector<WordIndex>
 _phraseHypothesisRec<SCORE_INFO,EQCLASS_FUNC,HYPSTATE>::getPartialTrans(void)const
 {
   return this->data.ntarget;

@@ -66,7 +66,7 @@ class WgHandler
   WgHandler(void);
 
       // Basic functions
-  std::string pathAssociatedToSentence(const Vector<std::string>& strVec,
+  std::string pathAssociatedToSentence(const std::vector<std::string>& strVec,
                                        bool& found)const;
 
       // size related functions
@@ -78,7 +78,7 @@ class WgHandler
 
       // Functions to print sentence-wordgraph info
   bool print(const char* filename)const;
-  void print(ostream &outS)const;
+  void print(std::ostream &outS)const;
 
       // clear() function
   void clear(void);
@@ -87,7 +87,7 @@ class WgHandler
   
  protected:
   typedef std::string WgInfo;
-  typedef std::map<Vector<std::string>,WgInfo> SentToWgInfoMap;
+  typedef std::map<std::vector<std::string>,WgInfo> SentToWgInfoMap;
   
   SentToWgInfoMap sentToWgInfoMap;
 };

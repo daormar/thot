@@ -111,11 +111,11 @@ bool SegLenTable::load_seglentable(const char *segmLengthTableFileName)
 {
  awkInputStream awk;
 	
- cerr<<"Loading segmentation length table from file "<<segmLengthTableFileName<<endl;
+ std::cerr<<"Loading segmentation length table from file "<<segmLengthTableFileName<<std::endl;
  if(awk.open(segmLengthTableFileName)==THOT_ERROR)
  {
-   // cerr<<"Warning: segmentation length tablefile not found, segmentation length probability will be assumed to be constant.\n";
-   cerr<<"Segmentation length probability will be assumed to be constant.\n";
+   // std::cerr<<"Warning: segmentation length tablefile not found, segmentation length probability will be assumed to be constant.\n";
+   std::cerr<<"Segmentation length probability will be assumed to be constant.\n";
    constantSegmLengthTable();	 
    return THOT_OK;
  }
@@ -134,7 +134,7 @@ bool SegLenTable::load_seglentable(const char *segmLengthTableFileName)
        }
        else
        {
-         cerr<<"Warning reading seglentable entry, phrase length exceeded!"<<endl;
+         std::cerr<<"Warning reading seglentable entry, phrase length exceeded!"<<std::endl;
        }
      }
    }

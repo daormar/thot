@@ -65,10 +65,10 @@ bool ThotDecoder::featureBasedImplIsEnabled(void)
 void ThotDecoder::init_translator_legacy_impl(void)
 {
       // Show static types
-  cerr<<"Static types:"<<endl;
-  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
-  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
-  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+  std::cerr<<"Static types:"<<std::endl;
+  std::cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<std::endl;
+  std::cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<std::endl;
+  std::cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<std::endl;
 
       // Initialize class factories
   int err=tdCommonVars.dynClassFactoryHandler.init_smt_and_imt(THOT_MASTER_INI_PATH);
@@ -81,14 +81,14 @@ void ThotDecoder::init_translator_legacy_impl(void)
   tdCommonVars.langModelInfoPtr->wpModelPtr=tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelInitPars);
   if(tdCommonVars.langModelInfoPtr->wpModelPtr==NULL)
   {
-    cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
   
   tdCommonVars.langModelInfoPtr->lModelPtr=tdCommonVars.dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseNgramLMInitPars);
   if(tdCommonVars.langModelInfoPtr->lModelPtr==NULL)
   {
-    cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
   
@@ -96,7 +96,7 @@ void ThotDecoder::init_translator_legacy_impl(void)
   tdCommonVars.phrModelInfoPtr->invPbModelPtr=tdCommonVars.dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.basePhraseModelInitPars);
   if(tdCommonVars.phrModelInfoPtr->invPbModelPtr==NULL)
   {
-    cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
 
@@ -107,7 +107,7 @@ void ThotDecoder::init_translator_legacy_impl(void)
   tdCommonVars.ecModelPtr=tdCommonVars.dynClassFactoryHandler.baseErrorCorrectionModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseErrorCorrectionModelInitPars);
   if(tdCommonVars.ecModelPtr==NULL)
   {
-    cerr<<"Error: BaseErrorCorrectionModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseErrorCorrectionModel pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
 
@@ -116,7 +116,7 @@ void ThotDecoder::init_translator_legacy_impl(void)
   wgpPtr=tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpInitPars);
   if(wgpPtr==NULL)
   {
-    cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
   else
@@ -132,28 +132,28 @@ void ThotDecoder::init_translator_legacy_impl(void)
   tdCommonVars.scorerPtr=tdCommonVars.dynClassFactoryHandler.baseScorerDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseScorerInitPars);
   if(tdCommonVars.scorerPtr==NULL)
   {
-    cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseScorer pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
 
   tdCommonVars.llWeightUpdaterPtr=tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(tdCommonVars.llWeightUpdaterPtr==NULL)
   {
-    cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
 
       // Link scorer to weight updater
   if(!tdCommonVars.llWeightUpdaterPtr->link_scorer(tdCommonVars.scorerPtr))
   {
-    cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<endl;
+    std::cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<std::endl;
     exit(THOT_ERROR);
   }
 
   tdCommonVars.trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(tdCommonVars.trConstraintsPtr==NULL)
   {
-    cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
 
@@ -188,10 +188,10 @@ void ThotDecoder::init_translator_legacy_impl(void)
 void ThotDecoder::init_translator_feat_impl(void)
 {
       // Show static types
-  cerr<<"Static types:"<<endl;
-  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
-  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
-  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+  std::cerr<<"Static types:"<<std::endl;
+  std::cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<std::endl;
+  std::cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<std::endl;
+  std::cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<std::endl;
 
       // Initialize class factories
   int err=tdCommonVars.dynClassFactoryHandler.init_smt_and_imt(THOT_MASTER_INI_PATH);
@@ -204,7 +204,7 @@ void ThotDecoder::init_translator_feat_impl(void)
   tdCommonVars.ecModelPtr=tdCommonVars.dynClassFactoryHandler.baseErrorCorrectionModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseErrorCorrectionModelInitPars);
   if(tdCommonVars.ecModelPtr==NULL)
   {
-    cerr<<"Error: BaseErrorCorrectionModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseErrorCorrectionModel pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
 
@@ -213,7 +213,7 @@ void ThotDecoder::init_translator_feat_impl(void)
   wgpPtr=tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpInitPars);
   if(wgpPtr==NULL)
   {
-    cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
   else
@@ -229,28 +229,28 @@ void ThotDecoder::init_translator_feat_impl(void)
   tdCommonVars.scorerPtr=tdCommonVars.dynClassFactoryHandler.baseScorerDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseScorerInitPars);
   if(tdCommonVars.scorerPtr==NULL)
   {
-    cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseScorer pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
 
   tdCommonVars.llWeightUpdaterPtr=tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(tdCommonVars.llWeightUpdaterPtr==NULL)
   {
-    cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
 
       // Link scorer to weight updater
   if(!tdCommonVars.llWeightUpdaterPtr->link_scorer(tdCommonVars.scorerPtr))
   {
-    cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<endl;
+    std::cerr<<"Error: Scorer class could not be linked to log-linear weight updater"<<std::endl;
     exit(THOT_ERROR);
   }
 
   tdCommonVars.trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(tdCommonVars.trConstraintsPtr==NULL)
   {
-    cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
     exit(THOT_ERROR);
   }
 
@@ -329,7 +329,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
 {
   int ret;
   int argc;
-  Vector<std::string> argv_stl;
+  std::vector<std::string> argv_stl;
   std::string comment="#";
 
       // Extract parameters from file
@@ -338,7 +338,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
   {
     return THOT_ERROR;
   }
-  cerr<<"Processing configuration file ("<<cfgFile<<")..."<<endl;
+  std::cerr<<"Processing configuration file ("<<cfgFile<<")..."<<std::endl;
   
       // Set default values for parameters
   std::string tm_str="/home/dortiz/traduccion/corpus/Xerox/en_es/v14may2003/simplified2/TM/my_ef";
@@ -350,9 +350,9 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
   unsigned int h=TDEC_HEUR_DEFAULT;
   std::string cm_str="";
   OnlineTrainingPars onlineTrainingPars;
-  Vector<float> olParsVec;
-  Vector<float> tmWeightsVec;
-  Vector<float> ecWeightsVec;
+  std::vector<float> olParsVec;
+  std::vector<float> tmWeightsVec;
+  std::vector<float> ecWeightsVec;
   
       // Process parameters
   int i=1;
@@ -365,12 +365,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -tm parameter."<<endl;
+        std::cerr<<"Error: no value for -tm parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-tm parameter changed from \""<<tm_str<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-tm parameter changed from \""<<tm_str<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         tm_str=argv_stl[i+1];
         ++matched;
         ++i;
@@ -382,12 +382,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -lm parameter."<<endl;
+        std::cerr<<"Error: no value for -lm parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-lm parameter changed from \""<<lm_str<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-lm parameter changed from \""<<lm_str<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         lm_str=argv_stl[i+1];
         ++matched;
         ++i;
@@ -399,12 +399,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -W parameter."<<endl;
+        std::cerr<<"Error: no value for -W parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-W parameter changed from \""<<W<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-W parameter changed from \""<<W<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         W=atof(argv_stl[i+1].c_str());
         ++matched;
         ++i;
@@ -416,12 +416,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -S parameter."<<endl;
+        std::cerr<<"Error: no value for -S parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-S parameter changed from \""<<tdup.S<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-S parameter changed from \""<<tdup.S<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         tdup.S=atoi(argv_stl[i+1].c_str());
         ++matched;
         ++i;
@@ -433,12 +433,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -A parameter."<<endl;
+        std::cerr<<"Error: no value for -A parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-A parameter changed from \""<<A<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-A parameter changed from \""<<A<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         A=atoi(argv_stl[i+1].c_str());
         ++matched;
         ++i;
@@ -450,12 +450,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -E parameter."<<endl;
+        std::cerr<<"Error: no value for -E parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-E parameter changed from \""<<E<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-E parameter changed from \""<<E<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         E=atoi(argv_stl[i+1].c_str());
         ++matched;
         ++i;
@@ -466,12 +466,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -nomon parameter."<<endl;
+        std::cerr<<"Error: no value for -nomon parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-nomon parameter changed from \""<<nomon<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-nomon parameter changed from \""<<nomon<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         nomon=atoi(argv_stl[i+1].c_str());
         ++matched;
         ++i;
@@ -481,7 +481,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
         // -be parameter
     if(argv_stl[i]=="-be" && !matched)
     {
-      cerr<<"-be parameter given (not given by default)"<<endl;
+      std::cerr<<"-be parameter given (not given by default)"<<std::endl;
       tdup.be=true;
       ++matched;
     }
@@ -491,12 +491,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -G parameter."<<endl;
+        std::cerr<<"Error: no value for -G parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-G parameter changed from \""<<tdup.G<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-G parameter changed from \""<<tdup.G<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         tdup.G=atoi(argv_stl[i+1].c_str());
         ++matched;
         ++i;
@@ -508,12 +508,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -h parameter."<<endl;
+        std::cerr<<"Error: no value for -h parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-h parameter changed from \""<<h<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-h parameter changed from \""<<h<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         h=atoi(argv_stl[i+1].c_str());
         ++matched;
         ++i;
@@ -525,7 +525,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no values for -olp parameter."<<endl;
+        std::cerr<<"Error: no values for -olp parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
@@ -550,10 +550,10 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
         if(olParsVec.size()>=5) onlineTrainingPars.E_par=(unsigned int) olParsVec[4];
         if(olParsVec.size()>=6) onlineTrainingPars.R_par=(unsigned int) olParsVec[5];
 
-        cerr<<"-olp parameter given:";
+        std::cerr<<"-olp parameter given:";
         for(unsigned int i=0;i<olParsVec.size();++i)
-          cerr<<" "<<olParsVec[i];
-        cerr<<endl;
+          std::cerr<<" "<<olParsVec[i];
+        std::cerr<<std::endl;
       }
     }
 
@@ -562,7 +562,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no values for -tmw parameter."<<endl;
+        std::cerr<<"Error: no values for -tmw parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
@@ -579,10 +579,10 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
             ++i;
           }
         }
-        cerr<<"-tmw parameter given:";
+        std::cerr<<"-tmw parameter given:";
         for(unsigned int i=0;i<tmWeightsVec.size();++i)
-          cerr<<" "<<tmWeightsVec[i];
-        cerr<<endl;
+          std::cerr<<" "<<tmWeightsVec[i];
+        std::cerr<<std::endl;
       }
     }
 
@@ -591,7 +591,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no values for -ecw parameter."<<endl;
+        std::cerr<<"Error: no values for -ecw parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
@@ -608,10 +608,10 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
             ++i;
           }
         }
-        cerr<<"-ecw parameter given:";
+        std::cerr<<"-ecw parameter given:";
         for(unsigned int i=0;i<ecWeightsVec.size();++i)
-          cerr<<" "<<ecWeightsVec[i];
-        cerr<<endl;
+          std::cerr<<" "<<ecWeightsVec[i];
+        std::cerr<<std::endl;
       }
     }
 
@@ -620,7 +620,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no values for -catw parameter."<<endl;
+        std::cerr<<"Error: no values for -catw parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
@@ -637,10 +637,10 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
             ++i;
           }
         }
-        cerr<<"-catw parameter given:";
+        std::cerr<<"-catw parameter given:";
         for(unsigned int i=0;i<tdup.catWeightsVec.size();++i)
-          cerr<<" "<<tdup.catWeightsVec[i];
-        cerr<<endl;
+          std::cerr<<" "<<tdup.catWeightsVec[i];
+        std::cerr<<std::endl;
       }
     }
 
@@ -649,12 +649,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -np parameter."<<endl;
+        std::cerr<<"Error: no value for -np parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-np parameter changed from \""<<tdup.np<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-np parameter changed from \""<<tdup.np<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         tdup.np=atoi(argv_stl[i+1].c_str());
         ++matched;
         ++i;
@@ -666,12 +666,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -wgp parameter."<<endl;
+        std::cerr<<"Error: no value for -wgp parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-wgp parameter changed from \""<<tdup.wgp<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-wgp parameter changed from \""<<tdup.wgp<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         tdup.wgp=atof(argv_stl[i+1].c_str());
         ++matched;
         ++i;
@@ -683,12 +683,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -wgh parameter."<<endl;
+        std::cerr<<"Error: no value for -wgh parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-wgh parameter changed from \""<<tdup.wgh_str<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-wgh parameter changed from \""<<tdup.wgh_str<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         tdup.wgh_str=argv_stl[i+1];
         ++matched;
         ++i;
@@ -698,7 +698,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
         // -sp option
     if(argv_stl[i]=="-sp" && !matched)
     {
-      cerr<<"-sp parameter changed from \""<<false<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+      std::cerr<<"-sp parameter changed from \""<<false<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
       tdup.sp=atoi(argv_stl[i+1].c_str());
       ++matched;
       ++i;
@@ -709,12 +709,12 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     {
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -uc parameter."<<endl;
+        std::cerr<<"Error: no value for -uc parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        cerr<<"-uc parameter changed from \""<<tdup.uc_str<<"\" to \""<<argv_stl[i+1]<<"\""<<endl;
+        std::cerr<<"-uc parameter changed from \""<<tdup.uc_str<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
         tdup.uc_str=argv_stl[i+1];
         ++matched;
         ++i;
@@ -837,7 +837,7 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
 
       // Obtain info about translation model entries
   unsigned int numTransModelEntries;
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(tmFilesPrefix,modelDescEntryVec)==THOT_OK)
   {
     numTransModelEntries=modelDescEntryVec.size();
@@ -853,7 +853,7 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
     tdCommonVars.swModelInfoPtr->swAligModelPtrVec.push_back(tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars));
     if(tdCommonVars.swModelInfoPtr->swAligModelPtrVec[i]==NULL)
     {
-      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
   }
@@ -864,7 +864,7 @@ bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
     tdCommonVars.swModelInfoPtr->invSwAligModelPtrVec.push_back(tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseSwAligModelInitPars));
     if(tdCommonVars.swModelInfoPtr->invSwAligModelPtrVec[i]==NULL)
     {
-      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
   }
@@ -885,14 +885,14 @@ bool ThotDecoder::load_tm_legacy_impl(const char* tmFilesPrefix,
     
   if(strcmp(tdState.tmFilesPrefixGiven.c_str(),tmFilesPrefix)==0)
   {
-    if(verbose) cerr<<"Translation model already loaded"<<endl;
+    if(verbose) std::cerr<<"Translation model already loaded"<<std::endl;
     ret=THOT_OK;
   }
   else
   {
     if(verbose)
     {
-      cerr<<"Loading translation model given prefix: "<<tmFilesPrefix<<endl;
+      std::cerr<<"Loading translation model given prefix: "<<tmFilesPrefix<<std::endl;
     }
         // Instantiate single word model information
     ret=instantiate_swm_info(tmFilesPrefix,verbose);
@@ -933,7 +933,7 @@ bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
     
   if(strcmp(tdState.tmFilesPrefixGiven.c_str(),tmFilesPrefix)==0)
   {
-    if(verbose) cerr<<"Translation model already loaded"<<endl;
+    if(verbose) std::cerr<<"Translation model already loaded"<<std::endl;
     ret=THOT_OK;
   }
   else
@@ -963,14 +963,14 @@ bool ThotDecoder::load_lm_legacy_impl(const char* lmFileName,
 
   if(strcmp(tdState.lmfileLoaded.c_str(),lmFileName)==0)
   {
-    if(verbose) cerr<<"Language model already loaded"<<endl;
+    if(verbose) std::cerr<<"Language model already loaded"<<std::endl;
     ret=THOT_OK;
   }
   else
   {
     if(verbose)
     {
-      cerr<<"Loading language model from file: "<<lmFileName<<endl;
+      std::cerr<<"Loading language model from file: "<<lmFileName<<std::endl;
     }
     _phraseBasedTransModel<SmtModel::Hypothesis>* phrbtm_ptr=dynamic_cast<_phraseBasedTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
     if(phrbtm_ptr)
@@ -1004,7 +1004,7 @@ bool ThotDecoder::load_lm_feat_impl(const char* lmFileName,
 
   if(strcmp(tdState.lmfileLoaded.c_str(),lmFileName)==0)
   {
-    if(verbose) cerr<<"Language model already loaded"<<endl;
+    if(verbose) std::cerr<<"Language model already loaded"<<std::endl;
     ret=THOT_OK;
   }
   else
@@ -1033,14 +1033,14 @@ bool ThotDecoder::load_ecm(const char* ecmFilesPrefix,
 
   if(strcmp(tdState.ecmFilesPrefixGiven.c_str(),ecmFilesPrefix)==0)
   {
-    if(verbose) cerr<<"Error correcting model already loaded"<<endl;
+    if(verbose) std::cerr<<"Error correcting model already loaded"<<std::endl;
     ret=THOT_OK;
   }
   else
   {
     if(verbose)
     {
-      cerr<<"Loading error correcting model given the prefix: "<<ecmFilesPrefix<<endl;
+      std::cerr<<"Loading error correcting model given the prefix: "<<ecmFilesPrefix<<std::endl;
     }
     
     ret=tdCommonVars.ecModelPtr->load(ecmFilesPrefix);
@@ -1067,7 +1067,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
       // Check if input sentences are empty
   if(strlen(srcSent)==0 || strlen(refSent)==0)
   {
-    cerr<<"Error: one or both of the input sentences to be trained are empty"<<endl;
+    std::cerr<<"Error: one or both of the input sentences to be trained are empty"<<std::endl;
     return THOT_ERROR;
   }
     
@@ -1076,13 +1076,13 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(verbose)
   {
-    cerr<<"Training sentence pair:"<<endl;
-    cerr<<" - source: "<<srcSent<<endl;
-    cerr<<" - reference: "<<refSent<<endl;
+    std::cerr<<"Training sentence pair:"<<std::endl;
+    std::cerr<<" - source: "<<srcSent<<std::endl;
+    std::cerr<<" - reference: "<<refSent<<std::endl;
   }
 
       // Check if pre/post processing is enabled
@@ -1098,14 +1098,14 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
 
     if(verbose)
     {
-      cerr<<" - preproc. source: "<<preprocSrcSent<<endl;
-      cerr<<" - preproc. reference: "<<preprocRefSent<<endl;
-      cerr<<" - preproc. sys translation: "<<preprocSysSent<<endl;
+      std::cerr<<" - preproc. source: "<<preprocSrcSent<<std::endl;
+      std::cerr<<" - preproc. reference: "<<preprocRefSent<<std::endl;
+      std::cerr<<" - preproc. sys translation: "<<preprocSysSent<<std::endl;
     }
         // Add sentence to word-predictor
     addSentenceToWordPred(preprocRefSent,verbose);
 
-    if(verbose) cerr<<"Training models..."<<endl;
+    if(verbose) std::cerr<<"Training models..."<<std::endl;
 
         // Measure training time
     double prevElapsedTime,elapsedTime,ucpu,scpu;
@@ -1117,8 +1117,8 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     ctimer(&elapsedTime,&ucpu,&scpu);
     if(verbose)
     {
-      cerr<<"Training process ended."<<endl;
-      cerr<<"Training time: "<<elapsedTime-prevElapsedTime<<endl;
+      std::cerr<<"Training process ended."<<std::endl;
+      std::cerr<<"Training time: "<<elapsedTime-prevElapsedTime<<std::endl;
     }
   }
   else
@@ -1135,7 +1135,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
         // Add sentence to word-predictor
     addSentenceToWordPred(refSent,verbose);
 
-    if(verbose) cerr<<"Training models..."<<endl;
+    if(verbose) std::cerr<<"Training models..."<<std::endl;
 
         // Measure training time
     double prevElapsedTime,elapsedTime,ucpu,scpu;
@@ -1151,7 +1151,7 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     ret=onlineTrainFeats(srcSent,refSent,sysSent,verbose);
    
     ctimer(&elapsedTime,&ucpu,&scpu);
-    if(verbose) cerr<<"Training time: "<<elapsedTime-prevElapsedTime<<endl;
+    if(verbose) std::cerr<<"Training time: "<<elapsedTime-prevElapsedTime<<std::endl;
   }
 
   /////////// end of mutex 
@@ -1204,7 +1204,7 @@ void ThotDecoder::onlineTrainLogLinWeights(size_t idx,
   {
         // Retrieve pointer to wordgraph (use word-graph provided by the
         // word-graph handler if available)
-    Vector<std::string> sentStrVec=StrProcUtils::stringToStringVector(srcSent);
+    std::vector<std::string> sentStrVec=StrProcUtils::stringToStringVector(srcSent);
     bool found;
     std::string wgPathStr=tdCommonVars.wgHandlerPtr->pathAssociatedToSentence(sentStrVec,found);
     if(found)
@@ -1212,9 +1212,9 @@ void ThotDecoder::onlineTrainLogLinWeights(size_t idx,
           // Obtain new weights
       WordGraph wg;
       wg.load(wgPathStr.c_str());
-      Vector<pair<std::string,float> > compWeights;
+      std::vector<pair<std::string,float> > compWeights;
       tdCommonVars.smtModelPtr->getWeights(compWeights);
-      Vector<float> newWeights;
+      std::vector<float> newWeights;
       WeightUpdateUtils::updateLogLinearWeights(refSent,
                                                 &wg,
                                                 tdCommonVars.llWeightUpdaterPtr,
@@ -1227,9 +1227,9 @@ void ThotDecoder::onlineTrainLogLinWeights(size_t idx,
     else
     {
           // Obtain new weights
-      Vector<pair<std::string,float> > compWeights;
+      std::vector<pair<std::string,float> > compWeights;
       tdCommonVars.smtModelPtr->getWeights(compWeights);
-      Vector<float> newWeights;
+      std::vector<float> newWeights;
       WordGraph* wgPtr=tdPerUserVarsVec[idx].stackDecoderRecPtr->getWordGraphPtr();
       WeightUpdateUtils::updateLogLinearWeights(refSent,
                                                 wgPtr,
@@ -1253,14 +1253,14 @@ void ThotDecoder::setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
 
   if(verbose)
   {
-    cerr<<"Setting online training pars..."<<endl;
+    std::cerr<<"Setting online training pars..."<<std::endl;
 
-    cerr<<"onlineLearningAlgorithm= "<<onlineTrainingPars.onlineLearningAlgorithm<<" ; ";
-    cerr<<"learningRatePolicy= "<<onlineTrainingPars.learningRatePolicy<<" ; ";
-    cerr<<"learnStepSize= "<<onlineTrainingPars.learnStepSize<<" ; ";
-    cerr<<"emIters= "<<onlineTrainingPars.emIters<<" ; ";
-    cerr<<"E_par= "<<onlineTrainingPars.E_par<<" ; ";
-    cerr<<"R_par= "<<onlineTrainingPars.R_par<<endl;
+    std::cerr<<"onlineLearningAlgorithm= "<<onlineTrainingPars.onlineLearningAlgorithm<<" ; ";
+    std::cerr<<"learningRatePolicy= "<<onlineTrainingPars.learningRatePolicy<<" ; ";
+    std::cerr<<"learnStepSize= "<<onlineTrainingPars.learnStepSize<<" ; ";
+    std::cerr<<"emIters= "<<onlineTrainingPars.emIters<<" ; ";
+    std::cerr<<"E_par= "<<onlineTrainingPars.E_par<<" ; ";
+    std::cerr<<"R_par= "<<onlineTrainingPars.R_par<<std::endl;
   }
 
   tdCommonVars.onlineTrainingPars=onlineTrainingPars;
@@ -1286,14 +1286,14 @@ bool ThotDecoder::trainEcm(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   
   if(verbose)
   {
-    cerr<<"Training ecm for string pair:"<<endl;
-    cerr<<" - string x: "<<strx<<endl;
-    cerr<<" - string y: "<<stry<<endl;
+    std::cerr<<"Training ecm for string pair:"<<std::endl;
+    std::cerr<<" - string x: "<<strx<<std::endl;
+    std::cerr<<" - string y: "<<stry<<std::endl;
   }
     
   if(tdState.preprocId)
@@ -1302,8 +1302,8 @@ bool ThotDecoder::trainEcm(int user_id,
     std::string preprocy=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(stry,tdState.caseconv,false);
     if(verbose)
     {
-      cerr<<" - preproc. string x: "<<preprocx<<endl;
-      cerr<<" - preproc. string y: "<<preprocy<<endl;
+      std::cerr<<" - preproc. string x: "<<preprocx<<std::endl;
+      std::cerr<<" - preproc. string y: "<<preprocy<<std::endl;
     }
     ret=tdCommonVars.ecModelPtr->trainStrPair(preprocx.c_str(),preprocy.c_str(),verbose);
   }
@@ -1330,18 +1330,18 @@ bool ThotDecoder::translateSentence(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(verbose)
   {
-    cerr<<"Translating sentence: "<<sentenceToTranslate<<endl;
+    std::cerr<<"Translating sentence: "<<sentenceToTranslate<<std::endl;
   }
   if(tdState.preprocId)
   {
     std::string preprocSrcSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(sentenceToTranslate,tdState.caseconv,true);
     if(verbose)
     {
-      cerr<<" - preproc. source: "<<preprocSrcSent<<endl;
+      std::cerr<<" - preproc. source: "<<preprocSrcSent<<std::endl;
     }
 
         // Obtain translation using precalculated word-graph or translator
@@ -1350,8 +1350,8 @@ bool ThotDecoder::translateSentence(int user_id,
     result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
     if(verbose)
     {
-      cerr<<" - preproc. target: "<<aux<<endl;
-      cerr<<" - posproc. target: "<<result<<endl;     
+      std::cerr<<" - preproc. target: "<<aux<<std::endl;
+      std::cerr<<" - posproc. target: "<<result<<std::endl;     
     }
   }
   else
@@ -1359,7 +1359,7 @@ bool ThotDecoder::translateSentence(int user_id,
     result=translateSentenceAux(idx,sentenceToTranslate,bestHypInfo,verbose);
     if(verbose)
     {
-      cerr<<"- target translation: "<<result<<endl;
+      std::cerr<<"- target translation: "<<result<<std::endl;
     }
   }
 
@@ -1381,7 +1381,7 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
       // Initialize variables
   bestHypInfo.clear();
   
-  Vector<std::string> sentStrVec=StrProcUtils::stringToStringVector(sentenceToTranslate);
+  std::vector<std::string> sentStrVec=StrProcUtils::stringToStringVector(sentenceToTranslate);
   std::string wgPathStr=tdCommonVars.wgHandlerPtr->pathAssociatedToSentence(sentStrVec,found);
   if(found)
   {
@@ -1392,42 +1392,42 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
     wg.load(wgPathStr.c_str());
 
         // Obtain original word graph component weights
-    Vector<pair<std::string,float> > originalWgCompWeights;
+    std::vector<pair<std::string,float> > originalWgCompWeights;
     wg.getCompWeights(originalWgCompWeights);
 
         // Print component weight info to the error output
     if(verbose)
     {
-      cerr<<"Original word graph component vector:";
+      std::cerr<<"Original word graph component vector:";
       for(unsigned int i=0;i<originalWgCompWeights.size();++i)
-        cerr<<" "<<originalWgCompWeights[i].first<<": "<<originalWgCompWeights[i].second<<";";
-      cerr<<endl;
+        std::cerr<<" "<<originalWgCompWeights[i].first<<": "<<originalWgCompWeights[i].second<<";";
+      std::cerr<<std::endl;
     }
 
         // Set current component weights (this operation causes a
         // complete re-scoring of the word graph arcs if there exist
         // score component information for them)
-    Vector<pair<std::string,float> > currCompWeights;
+    std::vector<pair<std::string,float> > currCompWeights;
     tdCommonVars.smtModelPtr->getWeights(currCompWeights);
     wg.setCompWeights(currCompWeights);
 
         // Print component weight info to the error output
     if(verbose)
     {
-      cerr<<"New word graph component vector:";
+      std::cerr<<"New word graph component vector:";
       for(unsigned int i=0;i<currCompWeights.size();++i)
-        cerr<<" "<<currCompWeights[i].first<<": "<<currCompWeights[i].second<<";";
-      cerr<<endl;
+        std::cerr<<" "<<currCompWeights[i].first<<": "<<currCompWeights[i].second<<";";
+      std::cerr<<std::endl;
     }
     
         // Obtain best path
     std::set<WordGraphArcId> emptyExcludedArcsSet;
-    Vector<WordGraphArc> arcVec;
+    std::vector<WordGraphArc> arcVec;
     wg.bestPathFromFinalStateToIdx(INITIAL_STATE,emptyExcludedArcsSet,arcVec);
 
         // Obtain translation
-    Vector<std::string> resultVec;
-    for(Vector<WordGraphArc>::reverse_iterator riter=arcVec.rbegin();riter!=arcVec.rend();++riter)
+    std::vector<std::string> resultVec;
+    for(std::vector<WordGraphArc>::reverse_iterator riter=arcVec.rbegin();riter!=arcVec.rend();++riter)
     {
       for(unsigned int j=0;j<riter->words.size();++j)
         resultVec.push_back(riter->words[j]);
@@ -1443,10 +1443,10 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
     SmtModel::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(sentenceToTranslate.c_str());
     if(verbose)
     {
-      cerr<<"- source sentence without constraint information: ";
-      cerr<<tdPerUserVarsVec[idx].smtModelPtr->getCurrentSrcSent()<<endl;
-      cerr<<"- best hypothesis: "<<endl;
-      tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,cerr);
+      std::cerr<<"- source sentence without constraint information: ";
+      std::cerr<<tdPerUserVarsVec[idx].smtModelPtr->getCurrentSrcSent()<<std::endl;
+      std::cerr<<"- best hypothesis: "<<std::endl;
+      tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,std::cerr);
     }
     std::string result=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
     std::ostringstream stream;
@@ -1470,17 +1470,17 @@ bool ThotDecoder::translateSentencePrintWg(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
       // Enable word graph generation
   if(tdPerUserVarsVec[idx].stackDecoderRecPtr)
     tdPerUserVarsVec[idx].stackDecoderRecPtr->enableWordGraph();
   else
-    cerr<<"Warning! current configuration does not allow to generate word graphs"<<endl;
+    std::cerr<<"Warning! current configuration does not allow to generate word graphs"<<std::endl;
   
   if(verbose)
   {
-    cerr<<"Translating sentence: "<<sentenceToTranslate<<endl;
+    std::cerr<<"Translating sentence: "<<sentenceToTranslate<<std::endl;
   }
   SmtModel::Hypothesis hyp;
   if(tdState.preprocId)
@@ -1488,7 +1488,7 @@ bool ThotDecoder::translateSentencePrintWg(int user_id,
     std::string preprocSrcSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(sentenceToTranslate,tdState.caseconv,false);
     if(verbose)
     {
-      cerr<<" - preproc. source: "<<preprocSrcSent<<endl;
+      std::cerr<<" - preproc. source: "<<preprocSrcSent<<std::endl;
     }
     hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(preprocSrcSent.c_str());
     std::string aux=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
@@ -1501,7 +1501,7 @@ bool ThotDecoder::translateSentencePrintWg(int user_id,
   }
   if(verbose)
   {
-    tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,cerr);
+    tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,std::cerr);
   }
 
       // Print word graph
@@ -1527,11 +1527,11 @@ bool ThotDecoder::sentPairVerCov(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(verbose)
   {
-    cerr<<"Verifying model coverage for sentence pair: "<<srcSent<<" ||| "<<refSent<<endl;
+    std::cerr<<"Verifying model coverage for sentence pair: "<<srcSent<<" ||| "<<refSent<<std::endl;
   }
   SmtModel::Hypothesis hyp;
   if(tdState.preprocId)
@@ -1540,8 +1540,8 @@ bool ThotDecoder::sentPairVerCov(int user_id,
     std::string preprocRefSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(refSent,tdState.caseconv,false);
     if(verbose)
     {
-      cerr<<" - preproc. source: "<<preprocSrcSent<<endl;
-      cerr<<" - preproc. reference: "<<preprocRefSent<<endl;
+      std::cerr<<" - preproc. source: "<<preprocSrcSent<<std::endl;
+      std::cerr<<" - preproc. reference: "<<preprocRefSent<<std::endl;
     }
     hyp=tdPerUserVarsVec[idx].stackDecoderPtr->verifyCoverageForRef(preprocSrcSent.c_str(),preprocRefSent.c_str());
     std::string aux=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
@@ -1554,9 +1554,9 @@ bool ThotDecoder::sentPairVerCov(int user_id,
   }
   if(verbose)
   {
-    tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,cerr);
+    tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,std::cerr);
     if(!tdPerUserVarsVec[idx].smtModelPtr->isComplete(hyp))
-      cerr<<"No coverage for sentence pair!"<<endl;
+      std::cerr<<"No coverage for sentence pair!"<<std::endl;
   }
 
   /////////// end of mutex 
@@ -1576,7 +1576,7 @@ void ThotDecoder::setNonMonotonicity(int nomon,
 
   if(verbose)
   {
-    cerr<<"Non-monotonicity is now set to "<<nomon<<endl;
+    std::cerr<<"Non-monotonicity is now set to "<<nomon<<std::endl;
   }
 
       // Set appropriate model parameters
@@ -1595,7 +1595,7 @@ void ThotDecoder::set_W(float W_par,
 
   if(verbose)
   {
-    cerr<<"W parameter is set to "<<W_par<<endl;
+    std::cerr<<"W parameter is set to "<<W_par<<std::endl;
   }
   tdCommonVars.smtModelPtr->set_W_par(W_par);
 
@@ -1614,11 +1614,11 @@ void ThotDecoder::set_S(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(verbose)
   {
-    cerr<<"S parameter is set to "<<S_par<<endl;
+    std::cerr<<"S parameter is set to "<<S_par<<std::endl;
   }
   tdPerUserVarsVec[idx].stackDecoderPtr->set_S_par(S_par);
 
@@ -1635,7 +1635,7 @@ void ThotDecoder::set_A(unsigned int A_par,
 
   if(verbose)
   {
-    cerr<<"A parameter is set to "<<A_par<<endl;
+    std::cerr<<"A parameter is set to "<<A_par<<std::endl;
   }
   tdCommonVars.smtModelPtr->set_A_par(A_par);
 
@@ -1652,7 +1652,7 @@ void ThotDecoder::set_E(unsigned int E_par,
 
   if(verbose)
   {
-    cerr<<"E parameter is set to "<<E_par<<endl;
+    std::cerr<<"E parameter is set to "<<E_par<<std::endl;
   }
   tdCommonVars.smtModelPtr->set_E_par(E_par);
 
@@ -1670,11 +1670,11 @@ void ThotDecoder::set_be(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(verbose)
   {
-    cerr<<"be parameter is set to "<<be_par<<endl;
+    std::cerr<<"be parameter is set to "<<be_par<<std::endl;
   }
   tdPerUserVarsVec[idx].stackDecoderPtr->set_breadthFirst(!be_par);
 
@@ -1692,11 +1692,11 @@ bool ThotDecoder::set_G(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(verbose)
   {
-    cerr<<"G parameter is set to "<<G_par<<endl;
+    std::cerr<<"G parameter is set to "<<G_par<<std::endl;
   }
   tdPerUserVarsVec[idx].stackDecoderPtr->set_G_par(G_par);
 
@@ -1715,7 +1715,7 @@ void ThotDecoder::set_h(unsigned int h_par,
 
   if(verbose)
   {
-    cerr<<"h parameter is set to "<<h_par<<endl;
+    std::cerr<<"h parameter is set to "<<h_par<<std::endl;
   }
       // Set heuristic
   tdCommonVars.smtModelPtr->setHeuristic(h_par);
@@ -1734,11 +1734,11 @@ bool ThotDecoder::set_np(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(verbose)
   {
-    cerr<<"np parameter is set to "<<np_par<<endl;
+    std::cerr<<"np parameter is set to "<<np_par<<std::endl;
   }
       // Set np value
   bool b;
@@ -1750,7 +1750,7 @@ bool ThotDecoder::set_np(int user_id,
   else
   {
     if(verbose)
-      cerr<<"warning! np parameter cannot be applied to coupled translators."<<endl;
+      std::cerr<<"warning! np parameter cannot be applied to coupled translators."<<std::endl;
     b=THOT_ERROR;
   }
 
@@ -1768,7 +1768,7 @@ bool ThotDecoder::set_wgp(int user_id,
       // Check if ECM can be used to process word graphs
   if(!tdCommonVars.curr_ecm_valid_for_wg)
   {
-    cerr<<"Error: EC model is not valid for word-graphs"<<endl;
+    std::cerr<<"Error: EC model is not valid for word-graphs"<<std::endl;
     return THOT_ERROR;
   }
   
@@ -1777,18 +1777,18 @@ bool ThotDecoder::set_wgp(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(verbose)
   {
-    cerr<<"wgp parameter is set to "<<wgp_par<<endl;
+    std::cerr<<"wgp parameter is set to "<<wgp_par<<std::endl;
   }
       // Set wgp value
   if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
     tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->set_wgp(wgp_par);
   else
   {
-    cerr<<"warning! wgp parameter cannot be applied to translators that do not use word-graphs."<<endl;
+    std::cerr<<"warning! wgp parameter cannot be applied to translators that do not use word-graphs."<<std::endl;
   }
 
   /////////// end of mutex 
@@ -1804,7 +1804,7 @@ void ThotDecoder::set_preproc(int user_id,
 {
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   tdState.preprocId=preprocId_par;
   if(tdPerUserVarsVec[idx].prePosProcessorPtr!=0)
@@ -1815,43 +1815,43 @@ void ThotDecoder::set_preproc(int user_id,
     case DISABLE_PREPROC:
       tdPerUserVarsVec[idx].prePosProcessorPtr=0;
       if(verbose)
-        cerr<<"The Pre/pos-processing steps are disabled."<<endl;
+        std::cerr<<"The Pre/pos-processing steps are disabled."<<std::endl;
       break;
 #ifndef THOT_DISABLE_PREPROC_CODE
     case XRCE_PREPROC1: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor1();
       if(verbose)
-        cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 1."<<endl;
+        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 1."<<std::endl;
       break;
     case XRCE_PREPROC2: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor2();
       if(verbose)
-        cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 2."<<endl;
+        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 2."<<std::endl;
       break;
     case XRCE_PREPROC3: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor3();
       if(verbose)
-        cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 3."<<endl;
+        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 3."<<std::endl;
       break;
     case XRCE_PREPROC4: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor4();
       if(verbose)
-        cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 4."<<endl;
+        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 4."<<std::endl;
       break;
     case EU_PREPROC1: tdPerUserVarsVec[idx].prePosProcessorPtr=new EU_PrePosProcessor1();
       if(verbose)
-        cerr<<"Pre/pos-processing steps enabled for the EU corpus, version 1."<<endl;
+        std::cerr<<"Pre/pos-processing steps enabled for the EU corpus, version 1."<<std::endl;
       break;
     case EU_PREPROC2: tdPerUserVarsVec[idx].prePosProcessorPtr=new EU_PrePosProcessor2();
       if(verbose)
-        cerr<<"Pre/pos-processing steps enabled for the EU corpus, version 2."<<endl;
+        std::cerr<<"Pre/pos-processing steps enabled for the EU corpus, version 2."<<std::endl;
       break;
 #endif
     default: tdPerUserVarsVec[idx].prePosProcessorPtr=0;
       if(verbose)
-        cerr<<"Warning! invalid preprocId, the pre/pos-processing steps are disabled"<<endl;
+        std::cerr<<"Warning! invalid preprocId, the pre/pos-processing steps are disabled"<<std::endl;
       break;
   }
 }
   
 //--------------------------
-void ThotDecoder::set_tmw(Vector<float> tmwVec_par,
+void ThotDecoder::set_tmw(std::vector<float> tmwVec_par,
                                int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1862,8 +1862,8 @@ void ThotDecoder::set_tmw(Vector<float> tmwVec_par,
     
   if(verbose)
   {
-    tdCommonVars.smtModelPtr->printWeights(cerr);
-    cerr<<endl;
+    tdCommonVars.smtModelPtr->printWeights(std::cerr);
+    std::cerr<<std::endl;
   }
 
   /////////// end of mutex 
@@ -1871,7 +1871,7 @@ void ThotDecoder::set_tmw(Vector<float> tmwVec_par,
 }
   
 //--------------------------
-void ThotDecoder::set_ecw(Vector<float> ecwVec_par,
+void ThotDecoder::set_ecw(std::vector<float> ecwVec_par,
                           int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1882,8 +1882,8 @@ void ThotDecoder::set_ecw(Vector<float> ecwVec_par,
     
   if(verbose)
   {
-    tdCommonVars.ecModelPtr->printWeights(cerr);
-    cerr<<endl;
+    tdCommonVars.ecModelPtr->printWeights(std::cerr);
+    std::cerr<<std::endl;
   }
 
   /////////// end of mutex 
@@ -1892,7 +1892,7 @@ void ThotDecoder::set_ecw(Vector<float> ecwVec_par,
   
 //--------------------------
 void ThotDecoder::set_catw(int user_id,
-                           Vector<float> catwVec_par,
+                           std::vector<float> catwVec_par,
                            int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
@@ -1900,15 +1900,15 @@ void ThotDecoder::set_catw(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
       // Set cat weights
   tdPerUserVarsVec[idx].assistedTransPtr->setWeights(catwVec_par);
     
   if(verbose)
   {
-    tdPerUserVarsVec[idx].assistedTransPtr->printWeights(cerr);
-    cerr<<endl;
+    tdPerUserVarsVec[idx].assistedTransPtr->printWeights(std::cerr);
+    std::cerr<<std::endl;
   }
 
   /////////// end of mutex 
@@ -1923,7 +1923,7 @@ bool ThotDecoder::set_wgh(const char *wgHandlerFileName,
   /////////// begin of mutex 
 
   if(verbose)
-    cerr<<"Loading worgraph handler information from file "<<wgHandlerFileName<<endl;
+    std::cerr<<"Loading worgraph handler information from file "<<wgHandlerFileName<<std::endl;
   
   bool ret=tdCommonVars.wgHandlerPtr->load(wgHandlerFileName);
   
@@ -1944,7 +1944,7 @@ bool ThotDecoder::startCat(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
   
   if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
   {
@@ -1956,7 +1956,7 @@ bool ThotDecoder::startCat(int user_id,
   totalPrefixVec[idx]="";
   if(verbose)
   {
-    cerr<<"***** Translating sentence: "<<sentenceToTranslate<<endl;
+    std::cerr<<"***** Translating sentence: "<<sentenceToTranslate<<std::endl;
   }
   
   if(tdState.preprocId)
@@ -1968,9 +1968,9 @@ bool ThotDecoder::startCat(int user_id,
     catResult=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
     if(verbose)
     {
-      cerr<<"* preprocessed sentence: "<<preprocSent<<endl;
-      cerr<<"* translation: "<<aux<<endl;
-      cerr<<"* postprocessed translation: "<<catResult<<endl;
+      std::cerr<<"* preprocessed sentence: "<<preprocSent<<std::endl;
+      std::cerr<<"* translation: "<<aux<<std::endl;
+      std::cerr<<"* postprocessed translation: "<<catResult<<std::endl;
     }
   }
   else
@@ -1980,7 +1980,7 @@ bool ThotDecoder::startCat(int user_id,
     catResult=tdPerUserVarsVec[idx].assistedTransPtr->translateWithPrefix(sentenceToTranslate,"",emptyRejWordsSet,verbose);
     if(verbose)
     {
-      cerr<<"* translation: "<<catResult<<endl;
+      std::cerr<<"* translation: "<<catResult<<std::endl;
     }
   }
 
@@ -2012,7 +2012,7 @@ void ThotDecoder::addStrToPref(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
   {  
@@ -2037,8 +2037,8 @@ void ThotDecoder::addStrToPref(int user_id,
   
   if(verbose)
   {
-    cerr<<"Add string to prefix: "<<strToAddToPref<<"|"<<endl;
-    cerr<<"Total prefix (not preprocessed): "<<totalPrefixVec[idx]<<"|"<<endl;
+    std::cerr<<"Add string to prefix: "<<strToAddToPref<<"|"<<std::endl;
+    std::cerr<<"Total prefix (not preprocessed): "<<totalPrefixVec[idx]<<"|"<<std::endl;
   }
   if(tdState.preprocId)
   {    
@@ -2071,10 +2071,10 @@ void ThotDecoder::addStrToPref(int user_id,
     
     if(verbose)
     {
-      cerr<<"Preprocessed prefix: "<<preprocPrefUnexpanded<<"|"<<endl;
-      cerr<<"Expanded preprocessed prefix: "<<preprocPref<<"|"<<endl;
-      cerr<<"Translation: "<<trans<<"|"<<endl;
-      cerr<<"Postproc. trans. with user pref.: "<<catResult<<"|"<<endl;
+      std::cerr<<"Preprocessed prefix: "<<preprocPrefUnexpanded<<"|"<<std::endl;
+      std::cerr<<"Expanded preprocessed prefix: "<<preprocPref<<"|"<<std::endl;
+      std::cerr<<"Translation: "<<trans<<"|"<<std::endl;
+      std::cerr<<"Postproc. trans. with user pref.: "<<catResult<<"|"<<std::endl;
     }
   }
   else
@@ -2092,9 +2092,9 @@ void ThotDecoder::addStrToPref(int user_id,
     
     if(verbose)
     {
-      cerr<<"Expanded prefix: "<<expPref<<"|"<<endl;
-      cerr<<"Translation: "<<trans<<"|"<<endl;
-      cerr<<"Final output: "<<catResult<<"|"<<endl;
+      std::cerr<<"Expanded prefix: "<<expPref<<"|"<<std::endl;
+      std::cerr<<"Translation: "<<trans<<"|"<<std::endl;
+      std::cerr<<"Final output: "<<catResult<<"|"<<std::endl;
     }
   }
 
@@ -2152,11 +2152,11 @@ void ThotDecoder::resetPrefix(int user_id,
 {
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(verbose)
   {
-    cerr<<"Reset prefix"<<endl;
+    std::cerr<<"Reset prefix"<<std::endl;
   }
 
   totalPrefixVec[idx]="";
@@ -2175,7 +2175,7 @@ bool ThotDecoder::use_caseconv(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) cerr<<"user_id: "<<user_id<<", idx: "<<idx<<endl;
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(tdState.preprocId)
   {
@@ -2187,7 +2187,7 @@ bool ThotDecoder::use_caseconv(int user_id,
   }
   else
   {
-    cerr<<"Warning! case conversion cannot be activated because pre/pos-processing steps are disabled."<<endl;
+    std::cerr<<"Warning! case conversion cannot be activated because pre/pos-processing steps are disabled."<<std::endl;
     ret=THOT_OK;
   }
 
@@ -2286,7 +2286,7 @@ bool ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
 
   if(verbose)
   {
-    cerr<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<endl;
+    std::cerr<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<std::endl;
   }
 
   int ret;
@@ -2314,7 +2314,7 @@ bool ThotDecoder::printModelsLegacyImpl(int verbose/*=0*/)
 
   if(verbose)
   {
-    cerr<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<endl;
+    std::cerr<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<std::endl;
   }
 
   int ret;
@@ -2352,13 +2352,13 @@ int ThotDecoder::printModelWeights(void)
       // Print smt model weights
   cout<<"- SMT model weights= ";
   tdCommonVars.smtModelPtr->printWeights(cout);
-  cout<<endl;
+  cout<<std::endl;
 
       // Print assisted translator weights
   BaseAssistedTrans<SmtModel>* assistedTransPtr=tdCommonVars.dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseAssistedTransInitPars);
   if(assistedTransPtr==NULL)
   {
-    cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -2367,7 +2367,7 @@ int ThotDecoder::printModelWeights(void)
   {
     cout<<"- Assisted translator weights= ";
     assistedTransPtr->printWeights(cout);
-    cout << endl;
+    cout << std::endl;
   }
   else
   {
@@ -2375,11 +2375,11 @@ int ThotDecoder::printModelWeights(void)
     {
       cout<<"- Assisted translator weights= ";
       assistedTransPtr->printWeights(cout);
-      cout << endl;
+      cout << std::endl;
     }
     else
     {
-      cout<<"Warning: current error correcting model cannot be combined with word-graph based assisted translators"<<endl;
+      cout<<"Warning: current error correcting model cannot be combined with word-graph based assisted translators"<<std::endl;
     }
   }
 
@@ -2389,7 +2389,7 @@ int ThotDecoder::printModelWeights(void)
       // Print error correction model weights
   cout<<"- Error correction model weights= ";
   tdCommonVars.ecModelPtr->printWeights(cout);
-  cout<<endl;
+  cout<<std::endl;
 
   
   /////////// end of mutex 
@@ -2405,7 +2405,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].stackDecoderPtr=tdCommonVars.dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseStackDecoderInitPars);
   if(tdPerUserVarsVec[idx].stackDecoderPtr==NULL)
   {
-    cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -2421,7 +2421,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   int ret=tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
   if(ret==THOT_ERROR)
   {
-    cerr<<"Error while linking smt model to decoder, revise master.ini file"<<endl;
+    std::cerr<<"Error while linking smt model to decoder, revise master.ini file"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -2435,7 +2435,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].ecModelForNbUcatPtr=tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatInitPars);
   if(tdPerUserVarsVec[idx].ecModelForNbUcatPtr==NULL)
   {
-    cerr<<"Error: BaseEcModelForNbUcat pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseEcModelForNbUcat pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
   
@@ -2446,7 +2446,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].assistedTransPtr=tdCommonVars.dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseAssistedTransInitPars);
   if(tdPerUserVarsVec[idx].assistedTransPtr==NULL)
   {
-    cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
   
@@ -2477,7 +2477,7 @@ int ThotDecoder::init_idx_data(size_t idx)
     tdPerUserVarsVec[idx].wgpPtr=tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpInitPars);
     if(tdPerUserVarsVec[idx].wgpPtr==NULL)
     {
-      cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
     
@@ -2641,8 +2641,8 @@ std::string ThotDecoder::robustObtainFinalOutput(BasePrePosProcessor* prePosProc
                                                  std::string trans,
                                                  bool caseconv)
 {
-  Vector<std::string> preprocPrefVec=StrProcUtils::stringToStringVector(preprocPref);
-  Vector<std::string> transVec=StrProcUtils::stringToStringVector(trans);
+  std::vector<std::string> preprocPrefVec=StrProcUtils::stringToStringVector(preprocPref);
+  std::vector<std::string> transVec=StrProcUtils::stringToStringVector(trans);
   std::string checkedTrans;
   
       // Check if translation does not contain the prefix
@@ -2759,18 +2759,18 @@ std::string ThotDecoder::postprocWithCriticalError(BasePrePosProcessor* prePosPr
     unpreprocPref=StrProcUtils::removeLastBlank(unpreprocPref);
   result=unpreprocPref+lastPrefWordCompletion+suffixInModifiedTrans;
   
-//   cerr<<"******************************"<<endl;
-//   cerr<<"unpreprocPref: "<<unpreprocPref<<"|"<<endl; 
-//   cerr<<"preprocPrefUnexpanded: "<<preprocPrefUnexpanded<<"|"<<endl;
-//   cerr<<"trans: "<<trans<<"|"<<endl;
-//   cerr<<"prefEndInTrans: "<<prefEndInTrans<<endl;
-//   cerr<<"startStr: "<<startStr<<"|"<<endl;
-//   cerr<<"endStr: "<<endStr<<"|"<<endl;
-//   cerr<<"lastPrefWordCompletion: "<<lastPrefWordCompletion<<"|"<<endl;
-//   cerr<<"modifiedTrans: "<<modifiedTrans<<"|"<<endl;
-//   cerr<<"postprocModifiedTrans: "<<postprocModifiedTrans<<"|"<<endl;
-//   cerr<<"suffixInModifiedTrans: "<<suffixInModifiedTrans<<"|"<<endl;
-//   cerr<<"result: "<<result<<"|"<<endl;
+//   std::cerr<<"******************************"<<std::endl;
+//   std::cerr<<"unpreprocPref: "<<unpreprocPref<<"|"<<std::endl; 
+//   std::cerr<<"preprocPrefUnexpanded: "<<preprocPrefUnexpanded<<"|"<<std::endl;
+//   std::cerr<<"trans: "<<trans<<"|"<<std::endl;
+//   std::cerr<<"prefEndInTrans: "<<prefEndInTrans<<std::endl;
+//   std::cerr<<"startStr: "<<startStr<<"|"<<std::endl;
+//   std::cerr<<"endStr: "<<endStr<<"|"<<std::endl;
+//   std::cerr<<"lastPrefWordCompletion: "<<lastPrefWordCompletion<<"|"<<std::endl;
+//   std::cerr<<"modifiedTrans: "<<modifiedTrans<<"|"<<std::endl;
+//   std::cerr<<"postprocModifiedTrans: "<<postprocModifiedTrans<<"|"<<std::endl;
+//   std::cerr<<"suffixInModifiedTrans: "<<suffixInModifiedTrans<<"|"<<std::endl;
+//   std::cerr<<"result: "<<result<<"|"<<std::endl;
 
   return result;
 }
@@ -2784,8 +2784,8 @@ std::string ThotDecoder::robustMergeTransWithUserPref(std::string trans,
       // blank characters between words
   
       // Check if translation does not contain the prefix
-  Vector<std::string> totalPrefixVec=StrProcUtils::stringToStringVector(totalPrefix);
-  Vector<std::string> transVec=StrProcUtils::stringToStringVector(trans);
+  std::vector<std::string> totalPrefixVec=StrProcUtils::stringToStringVector(totalPrefix);
+  std::vector<std::string> transVec=StrProcUtils::stringToStringVector(trans);
   if(!StrProcUtils::isPrefixStrVec(totalPrefixVec,transVec))
   {
     return totalPrefix;
@@ -2882,8 +2882,8 @@ std::string ThotDecoder::expandLastWord(std::string& partialSent)
     {
           // predict last word
       pair<Count,std::string> pcs;
-      Vector<std::string> strVec=StrProcUtils::stringToStringVector(partialSent);
-      Vector<std::string> hist;
+      std::vector<std::string> strVec=StrProcUtils::stringToStringVector(partialSent);
+      std::vector<std::string> hist;
 
       if(strVec.size()>=3) hist.push_back(strVec[strVec.size()-3]);
       if(strVec.size()>=2) hist.push_back(strVec[strVec.size()-2]);
@@ -2900,7 +2900,7 @@ std::string ThotDecoder::expandLastWord(std::string& partialSent)
 }
 
 //--------------------------
-pair<Count,std::string> ThotDecoder::getBestSuffixGivenHist(Vector<std::string> hist,
+pair<Count,std::string> ThotDecoder::getBestSuffixGivenHist(std::vector<std::string> hist,
                                                             std::string input)
 {
   if(tdCommonVars.featureBasedImplEnabled)
@@ -2914,14 +2914,14 @@ pair<Count,std::string> ThotDecoder::getBestSuffixGivenHist(Vector<std::string> 
 }
 
 //--------------------------
-pair<Count,std::string> ThotDecoder::getBestSuffixGivenHistFeatImpl(Vector<std::string> hist,
+pair<Count,std::string> ThotDecoder::getBestSuffixGivenHistFeatImpl(std::vector<std::string> hist,
                                                                     std::string input)
 {
       // Obtain pointer to features info
   FeaturesInfo<SmtModel::HypScoreInfo>* featsInfoPtr=tdCommonVars.featureHandler.getFeatureInfoPtr();
 
       // Obtain pointers to language model features
-  Vector<LangModelFeat<SmtModel::HypScoreInfo>* > langModelFeatsVec=featsInfoPtr->getLangModelFeatPtrs();
+  std::vector<LangModelFeat<SmtModel::HypScoreInfo>* > langModelFeatsVec=featsInfoPtr->getLangModelFeatPtrs();
   
       // Obtain best suffix using first available language model feature
   if(langModelFeatsVec.empty())

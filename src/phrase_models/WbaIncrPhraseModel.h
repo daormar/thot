@@ -41,8 +41,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "_wbaIncrPhraseModel.h"
 #include "PhraseExtractionTable.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define VERBOSE_AACHEN  -1

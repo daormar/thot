@@ -98,17 +98,17 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
 
         // Expansion-related functions
   virtual void expand(const Hypothesis& hyp,
-                      Vector<Hypothesis>& hypVec,
-                      Vector<Vector<Score> >& scrCompVec)=0;
+                      std::vector<Hypothesis>& hypVec,
+                      std::vector<std::vector<Score> >& scrCompVec)=0;
   virtual void expand_ref(const Hypothesis& hyp,
-                          Vector<Hypothesis>& hypVec,
-                          Vector<Vector<Score> >& scrCompVec)=0;
+                          std::vector<Hypothesis>& hypVec,
+                          std::vector<std::vector<Score> >& scrCompVec)=0;
   virtual void expand_ver(const Hypothesis& hyp,
-                          Vector<Hypothesis>& hypVec,
-                          Vector<Vector<Score> >& scrCompVec)=0;
+                          std::vector<Hypothesis>& hypVec,
+                          std::vector<std::vector<Score> >& scrCompVec)=0;
   virtual void expand_prefix(const Hypothesis& hyp,
-                             Vector<Hypothesis>& hypVec,
-                             Vector<Vector<Score> >& scrCompVec)=0;
+                             std::vector<Hypothesis>& hypVec,
+                             std::vector<std::vector<Score> >& scrCompVec)=0;
 
       // Functions for performing on-line training
   void setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPars,
@@ -120,11 +120,11 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
   virtual bool obtainPredecessor(Hypothesis& hyp);
   virtual unsigned int distToNullHyp(const Hypothesis& hyp)=0;
   virtual void printHyp(const Hypothesis& hyp,
-                        ostream &outS,
+                        std::ostream &outS,
                         int verbose=false)=0; 
   virtual void diffScoreCompsForHyps(const Hypothesis& pred_hyp,
                                      const Hypothesis& succ_hyp,
-                                     Vector<Score>& scoreComponents);
+                                     std::vector<Score>& scoreComponents);
      
       // IMPORTANT NOTE: Before using the hypothesis-related functions
       // it is mandatory the previous invocation of one of the
@@ -134,7 +134,7 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
   virtual ~_smtModel(){};
 
 # ifdef THOT_STATS
-  virtual ostream & printStats(ostream &outS)=0;
+  virtual std::ostream & printStats(std::ostream &outS)=0;
   virtual void clearStats(void)=0;
 # endif
 
@@ -148,7 +148,7 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
   virtual Score incrScore(const Hypothesis& prev_hyp,
                           const HypDataType& new_hypd,
                           Hypothesis& new_hyp,
-                          Vector<Score>& scoreComponents)=0;
+                          std::vector<Score>& scoreComponents)=0;
 
       // Helper functions
   float smoothLlWeight(float weight);
@@ -184,7 +184,7 @@ template<class HYPOTHESIS>
 bool _smtModel<HYPOTHESIS>::obtainPredecessor(Hypothesis& hyp)
 {
   typename Hypothesis::DataType predData;
-  Vector<Score> scoreComponents;
+  std::vector<Score> scoreComponents;
 
   predData=hyp.getData();
   if(!this->obtainPredecessorHypData(predData)) return false;
@@ -202,7 +202,7 @@ template<class HYPOTHESIS>
 void _smtModel<HYPOTHESIS>::obtainHypFromHypData(const HypDataType& hypDataType,
                                                  Hypothesis& hyp)
 {
-  Vector<Score> scoreComponents;
+  std::vector<Score> scoreComponents;
   
   incrScore(this->nullHypothesis(),hypDataType,hyp,scoreComponents);
 }
@@ -211,7 +211,7 @@ void _smtModel<HYPOTHESIS>::obtainHypFromHypData(const HypDataType& hypDataType,
 template<class HYPOTHESIS>
 void _smtModel<HYPOTHESIS>::diffScoreCompsForHyps(const Hypothesis& pred_hyp,
                                                   const Hypothesis& succ_hyp,
-                                                  Vector<Score>& scoreComponents)
+                                                  std::vector<Score>& scoreComponents)
 {
   typename Hypothesis::DataType succ_hypd=succ_hyp.getData();
   Hypothesis aux;

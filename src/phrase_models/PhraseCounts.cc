@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Function definitions
 
 //--------------- insert function specialization for the Trie class 
-template<> TrieBid<WordIndex,Count>* TrieBid<WordIndex,Count>::insert(const Vector<WordIndex>& keySeq,
+template<> TrieBid<WordIndex,Count>* TrieBid<WordIndex,Count>::insert(const std::vector<WordIndex>& keySeq,
                                                                       const Count& d)
 {
   unsigned int i;
@@ -106,7 +106,7 @@ PhraseCounts::PhraseCounts(void)
   numberOfPhrasesStored=0;
 }
 //-------------------------
-PhraseCountState PhraseCounts::addPhrase(const Vector<WordIndex>& phrase,
+PhraseCountState PhraseCounts::addPhrase(const std::vector<WordIndex>& phrase,
                                          Count count)
 {
   PhraseCountState pState;
@@ -129,7 +129,7 @@ PhraseCountState PhraseCounts::addPhrase(const Vector<WordIndex>& phrase,
  return pState;
 }
 //-------------------------
-PhraseCountState PhraseCounts::incrCountOfPhrase(const Vector<WordIndex>& phrase,
+PhraseCountState PhraseCounts::incrCountOfPhrase(const std::vector<WordIndex>& phrase,
                                                  Count count)
 {
   PhraseCountState pState;
@@ -152,7 +152,7 @@ PhraseCountState PhraseCounts::incrCountOfPhrase(const Vector<WordIndex>& phrase
   return pState;
 }
 //-------------------------
-Count PhraseCounts::getCount(const Vector<WordIndex>& phrase,
+Count PhraseCounts::getCount(const std::vector<WordIndex>& phrase,
                              bool& found)
 {
   Count* countPtr;
@@ -171,14 +171,14 @@ Count PhraseCounts::getCount(const Vector<WordIndex>& phrase,
   }
 }
 //-------------------------
-PhraseCountState PhraseCounts::getState(const Vector<WordIndex>& phrase)
+PhraseCountState PhraseCounts::getState(const std::vector<WordIndex>& phrase)
 {
   return pcTable.getState(phrase);
 }
 
 //-------------------------
 void PhraseCounts::getPhraseGivenState(PhraseCountState pState,
-                                       Vector<WordIndex>& phrase)
+                                       std::vector<WordIndex>& phrase)
 {
   if(pState!=NULL)
   {
@@ -209,8 +209,9 @@ void PhraseCounts::clear(void)
  numberOfPhrasesStored=0;	
 }
 //-------------------------
-Vector<WordIndex> PhraseCounts::invertVectorElements(const Vector<WordIndex>& v)
-{Vector<WordIndex> inv;
+std::vector<WordIndex> PhraseCounts::invertVectorElements(const std::vector<WordIndex>& v)
+{
+ std::vector<WordIndex> inv;
  int i;
 
  inv.clear();

@@ -43,8 +43,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <db_cxx.h>
 #include <map>
+#include <vector>
 #include <algorithm>
-#include <myVector.h>
 #include <awkInputStream.h>
 
 //--------------- Constants ------------------------------------------
@@ -75,11 +75,11 @@ struct PhrDictKey
       for(unsigned int i=0;i<MAX_PHR_DICT_KEY_SIZE;++i)
         words[i]=MAX_VOCAB_SIZE;
     }
-  void getPhrPair(Vector<WordIndex>& srcPhr,
-                  Vector<WordIndex>& trgPhr)
+  void getPhrPair(std::vector<WordIndex>& srcPhr,
+                  std::vector<WordIndex>& trgPhr)
     {
-      Vector<WordIndex> phrase1;
-      Vector<WordIndex> phrase2;
+      std::vector<WordIndex> phrase1;
+      std::vector<WordIndex> phrase2;
       if(words[0]!=MAX_VOCAB_SIZE)
       {
         for(unsigned int i=0;i<MAX_PHR_DICT_KEY_SIZE;++i)
@@ -100,14 +100,14 @@ struct PhrDictKey
       srcPhr=phrase1;
       trgPhr=phrase2;
     }
-  int setPhrPair(const Vector<WordIndex>& srcPhr,
-                 const Vector<WordIndex>& trgPhr)
+  int setPhrPair(const std::vector<WordIndex>& srcPhr,
+                 const std::vector<WordIndex>& trgPhr)
     {
       if(srcPhr.size()+trgPhr.size()+1<=MAX_PHR_DICT_KEY_SIZE)
       {
         clear();
-        Vector<WordIndex> phrase1=srcPhr;
-        Vector<WordIndex> phrase2=trgPhr;
+        std::vector<WordIndex> phrase1=srcPhr;
+        std::vector<WordIndex> phrase2=trgPhr;
         for(unsigned int i=0;i<phrase1.size();++i)
         {
           words[i]=phrase1[i];
@@ -140,8 +140,8 @@ struct PhrDictValue
 class BdbPhraseTable
 {
  public:
-    typedef std::map<Vector<WordIndex>,PhrasePairInfo> SrcTableNode;
-    typedef std::map<Vector<WordIndex>,PhrasePairInfo> TrgTableNode;
+    typedef std::map<std::vector<WordIndex>,PhrasePairInfo> SrcTableNode;
+    typedef std::map<std::vector<WordIndex>,PhrasePairInfo> TrgTableNode;
   
         // Constructor
     BdbPhraseTable(void);
@@ -150,33 +150,33 @@ class BdbPhraseTable
     bool init(const char *fileName);
 
         // Functions to update table counts
-    void incrCountsOfEntry(const Vector<WordIndex>& s,
-                           const Vector<WordIndex>& t,
+    void incrCountsOfEntry(const std::vector<WordIndex>& s,
+                           const std::vector<WordIndex>& t,
                            Count c);
 
         // Functions to access table
-    Count getSrcInfo(const Vector<WordIndex>& s,
+    Count getSrcInfo(const std::vector<WordIndex>& s,
                      bool& found);
-    Count getTrgInfo(const Vector<WordIndex>& t,
+    Count getTrgInfo(const std::vector<WordIndex>& t,
                      bool& found);
-    Count getSrcTrgInfo(const Vector<WordIndex>& s,
-                        const Vector<WordIndex>& t,
+    Count getSrcTrgInfo(const std::vector<WordIndex>& s,
+                        const std::vector<WordIndex>& t,
                         bool &found);
-    bool getEntriesForTarget(const Vector<WordIndex>& t,
+    bool getEntriesForTarget(const std::vector<WordIndex>& t,
                              SrcTableNode& srctn);
 
         // Functions to obtain log-probabilities
-    Prob pTrgGivenSrc(const Vector<WordIndex>& s,
-                      const Vector<WordIndex>& t);
-    LgProb logpTrgGivenSrc(const Vector<WordIndex>& s,
-                           const Vector<WordIndex>& t);
-    Prob pSrcGivenTrg(const Vector<WordIndex>& s,
-                      const Vector<WordIndex>& t);
-    LgProb logpSrcGivenTrg(const Vector<WordIndex>& s,
-                           const Vector<WordIndex>& t);
+    Prob pTrgGivenSrc(const std::vector<WordIndex>& s,
+                      const std::vector<WordIndex>& t);
+    LgProb logpTrgGivenSrc(const std::vector<WordIndex>& s,
+                           const std::vector<WordIndex>& t);
+    Prob pSrcGivenTrg(const std::vector<WordIndex>& s,
+                      const std::vector<WordIndex>& t);
+    LgProb logpSrcGivenTrg(const std::vector<WordIndex>& s,
+                           const std::vector<WordIndex>& t);
 
         // Additional functions
-    bool getNbestForTrg(const Vector<WordIndex>& t,
+    bool getNbestForTrg(const std::vector<WordIndex>& t,
                         NbestTableNode<PhraseTransTableNodeData>& nbt,
                         int N);
 
@@ -204,14 +204,14 @@ class BdbPhraseTable
                                   PhrDictValue& phrDictValue,
                                   Dbt& key,
                                   Dbt& data);
-    int retrieveDataForPhrDict(const Vector<WordIndex>& s,
-                               const Vector<WordIndex>& t,
+    int retrieveDataForPhrDict(const std::vector<WordIndex>& s,
+                               const std::vector<WordIndex>& t,
                               PhrDictValue& phrDictValue);
-    int putDataForPhrDict(const Vector<WordIndex>& s,
-                          const Vector<WordIndex>& t,
+    int putDataForPhrDict(const std::vector<WordIndex>& s,
+                          const std::vector<WordIndex>& t,
                           Count c);
-    int incrPhrDictCount(const Vector<WordIndex>& s,
-                         const Vector<WordIndex>& t,
+    int incrPhrDictCount(const std::vector<WordIndex>& s,
+                         const std::vector<WordIndex>& t,
                          Count c);
     std::string extractDirName(std::string filePath);
 };

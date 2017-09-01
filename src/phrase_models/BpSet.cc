@@ -47,11 +47,11 @@ void BpSet::incrPair(PositionIndex x1,
                      float lc/*=1*/)
 {
       // Make room if necessary
-  Vector<Vector<BpSetInfo > > vvp;
+  std::vector<std::vector<BpSetInfo > > vvp;
   while(consPairs.size()<=x1)
     consPairs.push_back(vvp);
   
-  Vector<BpSetInfo> vp;
+  std::vector<BpSetInfo> vp;
   while(consPairs[x1].size()<=x2)
     consPairs[x1].push_back(vp);
 

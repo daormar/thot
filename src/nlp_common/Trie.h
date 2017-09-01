@@ -32,9 +32,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files --------------------------------------
 
 #include <float.h>
-#include <myVector.h>
 #include <iostream>
 #include <iomanip>
+#include <vector>
 #include <utility>
 
 //--------------- Constants ------------------------------------------
@@ -60,20 +60,20 @@ class Trie
   Trie<KEY,DATA_TYPE>& operator=(const Trie<KEY,DATA_TYPE>& t);
 
   // Basic functions
-  Trie<KEY,DATA_TYPE>* insert(const Vector<KEY>& keySeq,const DATA_TYPE& d);
+  Trie<KEY,DATA_TYPE>* insert(const std::vector<KEY>& keySeq,const DATA_TYPE& d);
       // Inserts a sequence of elements of class key. The last element 
       // of vector keySeq is the first element of the sequence.
-  bool erase(const Vector<KEY>& keySeq);
-  DATA_TYPE* find(const Vector<KEY>& keySeq);
-  Trie<KEY,DATA_TYPE>* getState(const Vector<KEY>& keySeq);
-  Vector<DATA_TYPE*> findV(const Vector<KEY>& keySeq);
-  DATA_TYPE&  operator[](const Vector<KEY>& keySeq);
-  const DATA_TYPE&  operator[](const Vector<KEY>& keySeq) const;
+  bool erase(const std::vector<KEY>& keySeq);
+  DATA_TYPE* find(const std::vector<KEY>& keySeq);
+  Trie<KEY,DATA_TYPE>* getState(const std::vector<KEY>& keySeq);
+  std::vector<DATA_TYPE*> findV(const std::vector<KEY>& keySeq);
+  DATA_TYPE&  operator[](const std::vector<KEY>& keySeq);
+  const DATA_TYPE&  operator[](const std::vector<KEY>& keySeq) const;
   DATA_TYPE& getData(void);
 	
   size_t size(void)const;
   unsigned int height(void)const;
-  Vector<unsigned long> branchingFactor(void)const;
+  std::vector<unsigned long> branchingFactor(void)const;
   size_t countSparseNodes(void)const;
   void clear(void);
   ~Trie();
@@ -84,8 +84,8 @@ class Trie
   class const_iterator
     {
       protected:
-       Vector<const Trie<KEY,DATA_TYPE>* > vecTriePtr;
-       pair<Vector<KEY>,DATA_TYPE> vecKeyDataPair;
+       std::vector<const Trie<KEY,DATA_TYPE>* > vecTriePtr;
+       std::pair<std::vector<KEY>,DATA_TYPE> vecKeyDataPair;
            
       public:
        const_iterator(void)
@@ -119,8 +119,8 @@ class Trie
        bool operator++(int);  //postfix
        int operator==(const const_iterator& right);
        int operator!=(const const_iterator& right);
-       const pair<Vector<KEY>,DATA_TYPE>* operator->(void)const;
-       pair<Vector<KEY>,DATA_TYPE> operator*(void)const;
+       const std::pair<std::vector<KEY>,DATA_TYPE>* operator->(void)const;
+       std::pair<std::vector<KEY>,DATA_TYPE> operator*(void)const;
     };
  
       // const_iterator functions for the trie class
@@ -134,7 +134,7 @@ class Trie
   Trie<KEY,DATA_TYPE>* children;
   
   void height(unsigned int i,unsigned int& r)const;
-  void branchingFactor(unsigned int i,Vector<unsigned long>& r)const;
+  void branchingFactor(unsigned int i,std::vector<unsigned long>& r)const;
   void countSparseNodes(size_t& sp,bool isFirst)const;		      
 };
 
@@ -218,7 +218,7 @@ Trie<KEY,DATA_TYPE>::operator=(const Trie<KEY,DATA_TYPE>& t)
   
 //---------------
 template<class KEY,class DATA_TYPE>
-Trie<KEY,DATA_TYPE>* Trie<KEY,DATA_TYPE>::insert(const Vector<KEY>& keySeq,const DATA_TYPE& d)
+Trie<KEY,DATA_TYPE>* Trie<KEY,DATA_TYPE>::insert(const std::vector<KEY>& keySeq,const DATA_TYPE& d)
 {
   unsigned int i;
   Trie<KEY,DATA_TYPE> *t,*newt;
@@ -279,7 +279,7 @@ Trie<KEY,DATA_TYPE>* Trie<KEY,DATA_TYPE>::insert(const Vector<KEY>& keySeq,const
 
 //---------------
 template<class KEY,class DATA_TYPE>
-bool Trie<KEY,DATA_TYPE>::erase(const Vector<KEY>& keySeq)
+bool Trie<KEY,DATA_TYPE>::erase(const std::vector<KEY>& keySeq)
 {
   unsigned int i;
   Trie<KEY,DATA_TYPE> *t,tprev;
@@ -322,7 +322,7 @@ bool Trie<KEY,DATA_TYPE>::erase(const Vector<KEY>& keySeq)
 
 //---------------
 template<class KEY,class DATA_TYPE>
-DATA_TYPE* Trie<KEY,DATA_TYPE>::find(const Vector<KEY>& keySeq)
+DATA_TYPE* Trie<KEY,DATA_TYPE>::find(const std::vector<KEY>& keySeq)
 {
   unsigned int i;
   Trie<KEY,DATA_TYPE> *t;
@@ -357,7 +357,7 @@ DATA_TYPE* Trie<KEY,DATA_TYPE>::find(const Vector<KEY>& keySeq)
 }
 //---------------
 template<class KEY,class DATA_TYPE>
-Trie<KEY,DATA_TYPE>* Trie<KEY,DATA_TYPE>::getState(const Vector<KEY>& keySeq)
+Trie<KEY,DATA_TYPE>* Trie<KEY,DATA_TYPE>::getState(const std::vector<KEY>& keySeq)
 {
   unsigned int i;
   Trie<KEY,DATA_TYPE> *t;
@@ -392,12 +392,12 @@ Trie<KEY,DATA_TYPE>* Trie<KEY,DATA_TYPE>::getState(const Vector<KEY>& keySeq)
 }
 //---------------
 template<class KEY,class DATA_TYPE>
-Vector<DATA_TYPE*> Trie<KEY,DATA_TYPE>::findV(const Vector<KEY>& keySeq)
+std::vector<DATA_TYPE*> Trie<KEY,DATA_TYPE>::findV(const std::vector<KEY>& keySeq)
 {
   unsigned int i;
   const Trie<KEY,DATA_TYPE> *t;
   KEY k;
-  Vector<DATA_TYPE*> result;
+  std::vector<DATA_TYPE*> result;
   
   t=this;
  
@@ -430,7 +430,7 @@ Vector<DATA_TYPE*> Trie<KEY,DATA_TYPE>::findV(const Vector<KEY>& keySeq)
 }
 //---------------
 template<class KEY,class DATA_TYPE>
-DATA_TYPE& Trie<KEY,DATA_TYPE>::operator[](const Vector<KEY>& keySeq)
+DATA_TYPE& Trie<KEY,DATA_TYPE>::operator[](const std::vector<KEY>& keySeq)
 {
   unsigned int i;
   Trie<KEY,DATA_TYPE> *t,*newt;
@@ -490,7 +490,7 @@ DATA_TYPE& Trie<KEY,DATA_TYPE>::operator[](const Vector<KEY>& keySeq)
 }
 //---------------
 template<class KEY,class DATA_TYPE>
-const DATA_TYPE& Trie<KEY,DATA_TYPE>::operator[](const Vector<KEY>& keySeq) const 
+const DATA_TYPE& Trie<KEY,DATA_TYPE>::operator[](const std::vector<KEY>& keySeq) const 
 {
   unsigned int i;
   const Trie<KEY,DATA_TYPE> *t,*newt;
@@ -585,8 +585,9 @@ void Trie<KEY,DATA_TYPE>::height(unsigned int i,unsigned int& r)const
 }
 //---------------
 template<class KEY,class DATA_TYPE>
-Vector<unsigned long> Trie<KEY,DATA_TYPE>::branchingFactor(void)const
-{Vector<unsigned long> result;
+std::vector<unsigned long> Trie<KEY,DATA_TYPE>::branchingFactor(void)const
+{
+  std::vector<unsigned long> result;
   unsigned long z=0,h;
 
   h=height();
@@ -596,7 +597,7 @@ Vector<unsigned long> Trie<KEY,DATA_TYPE>::branchingFactor(void)const
 }
 //---------------
 template<class KEY,class DATA_TYPE>
-void Trie<KEY,DATA_TYPE>::branchingFactor(unsigned int i,Vector<unsigned long>& r)const
+void Trie<KEY,DATA_TYPE>::branchingFactor(unsigned int i,std::vector<unsigned long>& r)const
 {
   if(this!=this->children) // the node is initialized?
   {
@@ -750,18 +751,18 @@ int Trie<KEY,DATA_TYPE>::const_iterator::operator!=(const const_iterator& right)
 }
 //--------------------------
 template<class KEY,class DATA_TYPE>
-const pair<Vector<KEY>,DATA_TYPE>*
+const std::pair<std::vector<KEY>,DATA_TYPE>*
 Trie<KEY,DATA_TYPE>::const_iterator::operator->(void)const
 {
   if(vecTriePtr.size()==1 && vecTriePtr[0]==NULL)
   {
     return NULL;
   }
-  else  return (pair<Vector<KEY>,DATA_TYPE>*) &(vecKeyDataPair);
+  else  return (std::pair<std::vector<KEY>,DATA_TYPE>*) &(vecKeyDataPair);
 }
 //--------------------------
 template<class KEY,class DATA_TYPE>
-pair<Vector<KEY>,DATA_TYPE> Trie<KEY,DATA_TYPE>::const_iterator::operator*(void)const
+std::pair<std::vector<KEY>,DATA_TYPE> Trie<KEY,DATA_TYPE>::const_iterator::operator*(void)const
 {
   return vecKeyDataPair;
 }

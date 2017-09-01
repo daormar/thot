@@ -38,12 +38,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include <_incrLexTable.h>
-#include <myVector.h>
-#include <set>
 #include <ErrorDefs.h>
 #include <fstream>
 #include <awkInputStream.h>
 #include <StatModelDefs.h>
+#include <set>
+#include <vector>
 
 #ifdef THOT_DISABLE_SPACE_EFFICIENT_LEXDATA_STRUCTURES
 
@@ -121,8 +121,8 @@ class IncrLexTable : public _incrLexTable
    typedef OrderedVector<WordIndex,float> LexNumerElem;
 #endif
    
-   typedef Vector<LexNumerElem> LexNumer;
-   typedef Vector<pair<bool,float> >LexDenom;
+   typedef std::vector<LexNumerElem> LexNumer;
+   typedef std::vector<pair<bool,float> >LexDenom;
 
    LexNumer lexNumer;
    LexDenom lexDenom;

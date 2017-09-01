@@ -27,8 +27,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ctimer.h"
 #include "Prob.h"
 
-using namespace std;
-
 //--------------- Constants --------------------------------------------------
 
 
@@ -49,7 +47,7 @@ class BasePbTransModelStats
        transOptions=0;
        getTransCalls=0;		
      }
-   ostream & print(ostream & outS)
+   std::ostream & print(std::ostream & outS)
      {
        outS<< " * Translation options mean       : " << (float)transOptions/getTransCalls <<"\n";
        return outS;

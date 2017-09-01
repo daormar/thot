@@ -28,10 +28,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <StatModelDefs.h>
 #include <Score.h>
 #include <map>
-#include <myVector.h>
+#include <vector>
 
 //--------------- Classes --------------------------------------------
 
-typedef std::map<Vector<WordIndex>,Score> PhraseCacheTable;
+typedef std::map<std::vector<WordIndex>,Score> PhraseCacheTable;
 
 #endif

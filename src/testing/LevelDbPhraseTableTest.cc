@@ -50,8 +50,8 @@ void LevelDbPhraseTableTest::tearDown()
 }
 
 //---------------------------------------
-Vector<WordIndex> LevelDbPhraseTableTest::getVector(string phrase) {
-  Vector<WordIndex> v;
+std::vector<WordIndex> LevelDbPhraseTableTest::getVector(string phrase) {
+  std::vector<WordIndex> v;
 
   for(unsigned int i = 0; i < phrase.size(); i++) {
     v.push_back(phrase[i]);
@@ -63,8 +63,8 @@ Vector<WordIndex> LevelDbPhraseTableTest::getVector(string phrase) {
 //---------------------------------------
 void LevelDbPhraseTableTest::testStoreAndRestore()
 {
-  Vector<WordIndex> s1 = getVector("Morag city");
-  Vector<WordIndex> s2 = getVector("Narie lake");
+  std::vector<WordIndex> s1 = getVector("Morag city");
+  std::vector<WordIndex> s2 = getVector("Narie lake");
   Count cs1 = Count(5);
   Count cs2 = Count(2);
   tab->clear();
@@ -82,7 +82,7 @@ void LevelDbPhraseTableTest::testStoreAndRestore()
 //---------------------------------------
 void LevelDbPhraseTableTest::testKeyVectorConversion()
 {
-  Vector<WordIndex> s;
+  std::vector<WordIndex> s;
   s.push_back(3);
   s.push_back(4);
   s.push_back(112175);
@@ -97,8 +97,8 @@ void LevelDbPhraseTableTest::testKeyVectorConversion()
 //---------------------------------------
 void LevelDbPhraseTableTest::testAddTableEntry()
 {
-  Vector<WordIndex> s = getVector("Narie lake");
-  Vector<WordIndex> t = getVector("jezioro Narie");
+  std::vector<WordIndex> s = getVector("Narie lake");
+  std::vector<WordIndex> t = getVector("jezioro Narie");
   Count s_count = Count(3);
   Count t_count = Count(2);
   PhrasePairInfo ppi(s_count, t_count);
@@ -114,8 +114,8 @@ void LevelDbPhraseTableTest::testAddTableEntry()
 //---------------------------------------
 void LevelDbPhraseTableTest::testIncCountsOfEntry()
 {
-  Vector<WordIndex> s = getVector("Narie lake");
-  Vector<WordIndex> t = getVector("jezioro Narie");
+  std::vector<WordIndex> s = getVector("Narie lake");
+  std::vector<WordIndex> t = getVector("jezioro Narie");
   Count c_init = Count(3);
   Count c = Count(17);
 
@@ -132,12 +132,12 @@ void LevelDbPhraseTableTest::testIncCountsOfEntry()
 void LevelDbPhraseTableTest::testGetEntriesForTarget()
 {
   LevelDbPhraseTable::SrcTableNode node;
-  Vector<WordIndex> s1_1 = getVector("Pasleka river");
-  Vector<WordIndex> s1_2 = getVector("Pasleka");
-  Vector<WordIndex> t1_1 = getVector("rzeka Pasleka");
-  Vector<WordIndex> t1_2 = getVector("Pasleka");
-  Vector<WordIndex> s2 = getVector("river");
-  Vector<WordIndex> t2 = getVector("rzeka");
+  std::vector<WordIndex> s1_1 = getVector("Pasleka river");
+  std::vector<WordIndex> s1_2 = getVector("Pasleka");
+  std::vector<WordIndex> t1_1 = getVector("rzeka Pasleka");
+  std::vector<WordIndex> t1_2 = getVector("Pasleka");
+  std::vector<WordIndex> s2 = getVector("river");
+  std::vector<WordIndex> t2 = getVector("rzeka");
   Count c = Count(1);
 
   tab->clear();
@@ -174,9 +174,9 @@ void LevelDbPhraseTableTest::testRetrievingSubphrase()
      Accessing element with the subphrase should return count 0
   */
   bool found;
-  Vector<WordIndex> s = getVector("Hello");
-  Vector<WordIndex> t1 = getVector("Buenos Dias");
-  Vector<WordIndex> t2 = getVector("Buenos");
+  std::vector<WordIndex> s = getVector("Hello");
+  std::vector<WordIndex> t1 = getVector("Buenos Dias");
+  std::vector<WordIndex> t2 = getVector("Buenos");
 
   Count c = Count(1);
   
@@ -197,9 +197,9 @@ void LevelDbPhraseTableTest::testRetrieveNonLeafPhrase()
   */
   bool found;
   LevelDbPhraseTable::SrcTableNode node;
-  Vector<WordIndex> s = getVector("Hello");
-  Vector<WordIndex> t1 = getVector("Buenos Dias");
-  Vector<WordIndex> t2 = getVector("Buenos");
+  std::vector<WordIndex> s = getVector("Hello");
+  std::vector<WordIndex> t1 = getVector("Buenos Dias");
+  std::vector<WordIndex> t2 = getVector("Buenos");
 
   Count c = Count(1);
   
@@ -233,14 +233,14 @@ void LevelDbPhraseTableTest::testGetEntriesForSource()
   */
   bool found;
   LevelDbPhraseTable::TrgTableNode node;
-  Vector<WordIndex> s1 = getVector("jezioro Narie");
-  Vector<WordIndex> t1_1 = getVector("Narie lake");
-  Vector<WordIndex> t1_2 = getVector("Narie");
-  Vector<WordIndex> s2 = getVector("jezioro Skiertag");
-  Vector<WordIndex> t2_1 = getVector("Skiertag");
-  Vector<WordIndex> s3 = getVector("jezioro Jeziorak");
-  Vector<WordIndex> t3_1 = getVector("Jeziorak lake");
-  Vector<WordIndex> t3_2 = getVector("Jeziorak");
+  std::vector<WordIndex> s1 = getVector("jezioro Narie");
+  std::vector<WordIndex> t1_1 = getVector("Narie lake");
+  std::vector<WordIndex> t1_2 = getVector("Narie");
+  std::vector<WordIndex> s2 = getVector("jezioro Skiertag");
+  std::vector<WordIndex> t2_1 = getVector("Skiertag");
+  std::vector<WordIndex> s3 = getVector("jezioro Jeziorak");
+  std::vector<WordIndex> t3_1 = getVector("Jeziorak lake");
+  std::vector<WordIndex> t3_2 = getVector("Jeziorak");
 
   Count c = Count(1);
   
@@ -280,9 +280,9 @@ void LevelDbPhraseTableTest::testRetrievingEntriesWithCountEqualZero()
   */
   bool found;
   LevelDbPhraseTable::SrcTableNode node;
-  Vector<WordIndex> s1 = getVector("Palac Dohnow");
-  Vector<WordIndex> s2 = getVector("Palac Dohnow w Moragu");
-  Vector<WordIndex> t = getVector("Dohn's Palace");
+  std::vector<WordIndex> s1 = getVector("Palac Dohnow");
+  std::vector<WordIndex> s2 = getVector("Palac Dohnow w Moragu");
+  std::vector<WordIndex> t = getVector("Dohn's Palace");
   
   tab->clear();
   tab->incrCountsOfEntry(s1, t, Count(1));
@@ -305,11 +305,11 @@ void LevelDbPhraseTableTest::testGetNbestForTrg()
   NbestTableNode<PhraseTransTableNodeData>::iterator iter;
 
   // Fill leveldb with data
-  Vector<WordIndex> s1 = getVector("city hall");
-  Vector<WordIndex> s2 = getVector("city hall in Morag");
-  Vector<WordIndex> s3 = getVector("town hall");
-  Vector<WordIndex> s4 = getVector("town hall in Morag");
-  Vector<WordIndex> t = getVector("ratusz miejski w Moragu");
+  std::vector<WordIndex> s1 = getVector("city hall");
+  std::vector<WordIndex> s2 = getVector("city hall in Morag");
+  std::vector<WordIndex> s3 = getVector("town hall");
+  std::vector<WordIndex> s4 = getVector("town hall in Morag");
+  std::vector<WordIndex> t = getVector("ratusz miejski w Moragu");
   
   tab->clear();
   tab->incrCountsOfEntry(s1, t, Count(4));
@@ -346,8 +346,8 @@ void LevelDbPhraseTableTest::testAddSrcTrgInfo()
   */
   bool found;
 
-  Vector<WordIndex> s = getVector("jezioro Skiertag");
-  Vector<WordIndex> t = getVector("Skiertag lake");
+  std::vector<WordIndex> s = getVector("jezioro Skiertag");
+  std::vector<WordIndex> t = getVector("Skiertag lake");
   
   tab->clear();
   tab->addSrcTrgInfo(s, t, Count(1));
@@ -367,8 +367,8 @@ void LevelDbPhraseTableTest::testIteratorsLoop()
      Check basic implementation of iterators - functions
      begin(), end() and operators (++ postfix, *).
   */
-  Vector<WordIndex> s = getVector("jezioro Skiertag");
-  Vector<WordIndex> t = getVector("Skiertag lake");
+  std::vector<WordIndex> s = getVector("jezioro Skiertag");
+  std::vector<WordIndex> t = getVector("Skiertag lake");
   
   tab->clear();
   tab->incrCountsOfEntry(s, t, Count(1));
@@ -381,14 +381,14 @@ void LevelDbPhraseTableTest::testIteratorsLoop()
 
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
-  map<Vector<WordIndex>, pair<int, int> > d;
+  map<std::vector<WordIndex>, pair<int, int> > d;
   d[tab->getSrc(s)] = make_pair(0, 0);
   d[t] = make_pair(0, 0);
   d[tab->getTrgSrc(s, t)] = make_pair(0, 0);
 
   for(LevelDbPhraseTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
   {
-    pair<Vector<WordIndex>, int> x = *iter;
+    pair<std::vector<WordIndex>, int> x = *iter;
     d[x.first].first += x.second;
     d[x.first].second++;  
   }
@@ -414,15 +414,15 @@ void LevelDbPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
   */
   bool found = true;
 
-  Vector<WordIndex> s = getVector("zamek krzyzacki w Malborku");
-  Vector<WordIndex> t = getVector("teutonic castle in Malbork");
+  std::vector<WordIndex> s = getVector("zamek krzyzacki w Malborku");
+  std::vector<WordIndex> t = getVector("teutonic castle in Malbork");
   
   tab->clear();
   tab->incrCountsOfEntry(s, t, Count(2));
 
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
-  map<Vector<WordIndex>, pair<int, int> > d;
+  map<std::vector<WordIndex>, pair<int, int> > d;
   d[tab->getSrc(s)] = make_pair(0, 0);
   d[t] = make_pair(0, 0);
   d[tab->getTrgSrc(s, t)] = make_pair(0, 0);
@@ -430,7 +430,7 @@ void LevelDbPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
   for(LevelDbPhraseTable::const_iterator iter = tab->begin(); iter != tab->end(); found = (iter++))
   {
     CPPUNIT_ASSERT( found );
-    pair<Vector<WordIndex>, int> x = *iter;
+    pair<std::vector<WordIndex>, int> x = *iter;
     d[x.first].first += x.second;
     d[x.first].second++;
   }
@@ -454,8 +454,8 @@ void LevelDbPhraseTableTest::testIteratorsOperatorsEqualNotEqual()
   /* TEST:
      Check basic implementation of iterators - operators == and !=
   */
-  Vector<WordIndex> s = getVector("kemping w Kretowinach");
-  Vector<WordIndex> t = getVector("camping Kretowiny");
+  std::vector<WordIndex> s = getVector("kemping w Kretowinach");
+  std::vector<WordIndex> t = getVector("camping Kretowiny");
   
   tab->clear();
   tab->incrCountsOfEntry(s, t, Count(1));
@@ -549,19 +549,19 @@ void LevelDbPhraseTableTest::testLoadedDataCorrectness()
   tab->clear();
 
   // Define vectors
-  Vector<WordIndex> s1 = getVector("Pan Samochodzik");
-  Vector<WordIndex> t1_1 = getVector("Mr Car");
-  Vector<WordIndex> t1_2 = getVector("Pan Samochodzik");
-  Vector<WordIndex> t1_3 = getVector("Mister Automobile");
-  Vector<WordIndex> t1_4 = getVector("Mr Automobile");
+  std::vector<WordIndex> s1 = getVector("Pan Samochodzik");
+  std::vector<WordIndex> t1_1 = getVector("Mr Car");
+  std::vector<WordIndex> t1_2 = getVector("Pan Samochodzik");
+  std::vector<WordIndex> t1_3 = getVector("Mister Automobile");
+  std::vector<WordIndex> t1_4 = getVector("Mr Automobile");
 
-  Vector<WordIndex> s2 = getVector("Pan Samochodzik i templariusze");
-  Vector<WordIndex> t2_1 = getVector("Mister Automobile and the Knights Templar");
-  Vector<WordIndex> t2_2 = getVector("Pan Samochodzik and the Knights Templar");
+  std::vector<WordIndex> s2 = getVector("Pan Samochodzik i templariusze");
+  std::vector<WordIndex> t2_1 = getVector("Mister Automobile and the Knights Templar");
+  std::vector<WordIndex> t2_2 = getVector("Pan Samochodzik and the Knights Templar");
 
-  Vector<WordIndex> s3 = getVector("Pan Samochodzik i niesamowity dwor");
-  Vector<WordIndex> t3_1 = getVector("Mister Automobile and the Unearthly Mansion");
-  Vector<WordIndex> t3_2 = getVector("Pan Samochodzik and the Unearthly Mansion");
+  std::vector<WordIndex> s3 = getVector("Pan Samochodzik i niesamowity dwor");
+  std::vector<WordIndex> t3_1 = getVector("Mister Automobile and the Unearthly Mansion");
+  std::vector<WordIndex> t3_2 = getVector("Pan Samochodzik and the Unearthly Mansion");
 
   // Insert data to levelDB
   tab->incrCountsOfEntry(s1, t1_1, Count(1));
@@ -620,14 +620,14 @@ void LevelDbPhraseTableTest::testSubkeys()
   tab->clear();
 
   // Define vectors
-  Vector<WordIndex> s1 = getVector("Pan Samochodzik");
-  Vector<WordIndex> t1_1 = getVector("Mr Car");
-  Vector<WordIndex> t1_2 = getVector("Pan");
-  Vector<WordIndex> t1_3 = getVector("Mr");
+  std::vector<WordIndex> s1 = getVector("Pan Samochodzik");
+  std::vector<WordIndex> t1_1 = getVector("Mr Car");
+  std::vector<WordIndex> t1_2 = getVector("Pan");
+  std::vector<WordIndex> t1_3 = getVector("Mr");
 
-  Vector<WordIndex> s2 = getVector("Pan");
-  Vector<WordIndex> t2_1 = getVector("Mister");
-  Vector<WordIndex> t2_2 = getVector("Mr");
+  std::vector<WordIndex> s2 = getVector("Pan");
+  std::vector<WordIndex> t2_1 = getVector("Mister");
+  std::vector<WordIndex> t2_2 = getVector("Mr");
 
   // Insert data to levelDB
   tab->incrCountsOfEntry(s1, t1_1, Count(1));
@@ -664,7 +664,7 @@ void LevelDbPhraseTableTest::test32bitRange()
   */
   tab->clear();
 
-  Vector<WordIndex> minVector, maxVector;
+  std::vector<WordIndex> minVector, maxVector;
 
   minVector.push_back(0);
   maxVector.push_back(0x7FFFFFFE);
@@ -683,7 +683,7 @@ void LevelDbPhraseTableTest::testByteMax()
   */
   tab->clear();
 
-  Vector<WordIndex> s, t;
+  std::vector<WordIndex> s, t;
   s.push_back(201);
   s.push_back(8);
   t.push_back(255);

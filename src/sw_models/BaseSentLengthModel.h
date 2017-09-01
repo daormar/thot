@@ -71,8 +71,8 @@ class BaseSentLengthModel
       // Functions to train the sentence length model
   virtual void trainSentPairRange(pair<unsigned int,unsigned int> sentPairRange,
                                   int verbosity=0)=0;
-  virtual void trainSentPair(Vector<std::string> srcSentVec,
-                             Vector<std::string> trgSentVec,
+  virtual void trainSentPair(std::vector<std::string> srcSentVec,
+                             std::vector<std::string> trgSentVec,
                              Count c=1)=0;
   
       // clear function

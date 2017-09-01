@@ -29,8 +29,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <PositionIndex.h>
 #include <Bitset.h>
 
-using namespace std;
-
 //--------------- typedefs and structs  ------------------------------
 
 //--------------- Classes

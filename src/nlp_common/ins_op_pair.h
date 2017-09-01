@@ -33,8 +33,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 
 template<class ELEM_X,class ELEM_Y>
-ostream& operator<<(ostream &outS,
-                    const pair<ELEM_X,ELEM_Y> &pair)
+std::ostream& operator<<(std::ostream &outS,
+                         const std::pair<ELEM_X,ELEM_Y> &pair)
 {
   outS<<pair.first<<" "<<pair.second;
   return outS;

@@ -47,8 +47,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <StrProcUtils.h>
 #include <WordAligMatrix.h>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -82,16 +80,16 @@ class BaseSwAligModel
                                    const char *trgFileName,
                                    const char *sentCountsFile,
                                    pair<unsigned int,unsigned int>& sentRange)=0;
-    virtual void addSentPair(Vector<std::string> srcSentStr,
-                             Vector<std::string> trgSentStr,
+    virtual void addSentPair(std::vector<std::string> srcSentStr,
+                             std::vector<std::string> trgSentStr,
                              Count c,
                              pair<unsigned int,unsigned int>& sentRange)=0;
     virtual unsigned int numSentPairs(void)=0;
         // NOTE: the whole valid range in a given moment is
         // [ 0 , numSentPairs() )
     virtual int nthSentPair(unsigned int n,
-                            Vector<std::string>& srcSentStr,
-                            Vector<std::string>& trgSentStr,
+                            std::vector<std::string>& srcSentStr,
+                            std::vector<std::string>& trgSentStr,
                             Count& c)=0;
 
     // Functions to print sentence pairs
@@ -129,12 +127,12 @@ class BaseSwAligModel
                                  const char *tSent,
                                  WordAligMatrix aligMatrix,
                                  int verbose=0);
-    LgProb calcLgProbForAligVecStr(const Vector<std::string>& sSent,
-                                   const Vector<std::string>& tSent,
+    LgProb calcLgProbForAligVecStr(const std::vector<std::string>& sSent,
+                                   const std::vector<std::string>& tSent,
                                    WordAligMatrix aligMatrix,
                                    int verbose=0);
-    virtual LgProb calcLgProbForAlig(const Vector<WordIndex>& sSent,
-                                     const Vector<WordIndex>& tSent,
+    virtual LgProb calcLgProbForAlig(const std::vector<WordIndex>& sSent,
+                                     const std::vector<WordIndex>& tSent,
                                      WordAligMatrix aligMatrix,
                                      int verbose=0)=0;
 
@@ -142,25 +140,25 @@ class BaseSwAligModel
     LgProb calcLgProbChar(const char *sSent,
                           const char *tSent,
                           int verbose=0);
-    LgProb calcLgProbVecStr(const Vector<std::string>& sSent,
-                            const Vector<std::string>& tSent,
+    LgProb calcLgProbVecStr(const std::vector<std::string>& sSent,
+                            const std::vector<std::string>& tSent,
                             int verbose=0);
-    virtual LgProb calcLgProb(const Vector<WordIndex>& sSent,
-                              const Vector<WordIndex>& tSent,
+    virtual LgProb calcLgProb(const std::vector<WordIndex>& sSent,
+                              const std::vector<WordIndex>& tSent,
                               int verbose=0)=0;
-    virtual LgProb calcLgProbPhr(const Vector<WordIndex>& sPhr,
-                                 const Vector<WordIndex>& tPhr,
+    virtual LgProb calcLgProbPhr(const std::vector<WordIndex>& sPhr,
+                                 const std::vector<WordIndex>& tPhr,
                                  int verbose=0);
         // Scoring function for phrase pairs
 
     // Partial scoring functions
     virtual void initPpInfo(unsigned int slen,
-                            const Vector<WordIndex>& tSent,
+                            const std::vector<WordIndex>& tSent,
                             PpInfo& ppInfo);
     virtual void partialProbWithoutLen(unsigned int srcPartialLen,
                                        unsigned int slen,
-                                       const Vector<WordIndex>& s_,
-                                       const Vector<WordIndex>& tSent,
+                                       const std::vector<WordIndex>& s_,
+                                       const std::vector<WordIndex>& tSent,
                                        PpInfo& ppInfo);
         // Calculate partial probability
         // srcPartialLen-> partial length of the source phrase
@@ -170,10 +168,10 @@ class BaseSwAligModel
         // ppInfo-> PpInfo object containing info about new partial probability
     virtual LgProb lpFromPpInfo(const PpInfo& ppInfo);
     virtual void addHeurForNotAddedWords(int numSrcWordsToBeAdded,
-                                         const Vector<WordIndex>& tSent,
+                                         const std::vector<WordIndex>& tSent,
                                          PpInfo& ppInfo);
     virtual void sustHeurForNotAddedWords(int numSrcWordsToBeAdded,
-                                          const Vector<WordIndex>& tSent,
+                                          const std::vector<WordIndex>& tSent,
                                           PpInfo& ppInfo);
 
     // Best-alignment functions
@@ -187,23 +185,23 @@ class BaseSwAligModel
                                    const char *targetSentence,
                                    WordAligMatrix& bestWaMatrix);	
         // Obtains the best alignment for the given sentence pair
-    LgProb obtainBestAlignmentVecStr(Vector<std::string> srcSentenceVector,
-                                     Vector<std::string> trgSentenceVector,
+    LgProb obtainBestAlignmentVecStr(std::vector<std::string> srcSentenceVector,
+                                     std::vector<std::string> trgSentenceVector,
                                      WordAligMatrix& bestWaMatrix);	
         // Obtains the best alignment for the given sentence pair (input
         // parameters are now string vectors)
-    virtual LgProb obtainBestAlignment(Vector<WordIndex> srcSentIndexVector,
-                                       Vector<WordIndex> trgSentIndexVector,
+    virtual LgProb obtainBestAlignment(std::vector<WordIndex> srcSentIndexVector,
+                                       std::vector<WordIndex> trgSentIndexVector,
                                        WordAligMatrix& bestWaMatrix)=0;	
         // Obtains the best alignment for the given sentence pair
         // (input parameters are now index vectors) depending on the
         // value of the modelNumber data member.
     
-    ostream& printAligInGizaFormat(const char *sourceSentence,
+    std::ostream& printAligInGizaFormat(const char *sourceSentence,
                                    const char *targetSentence,
                                    Prob p,
-                                   Vector<PositionIndex> alig,
-                                   ostream &outS);
+                                   std::vector<PositionIndex> alig,
+                                   std::ostream &outS);
         // Prints the given alignment to 'outS' stream in GIZA format
 
     // load() function
@@ -230,7 +228,7 @@ class BaseSwAligModel
 	virtual WordIndex stringToSrcWordIndex(std::string s)const=0;
 	virtual std::string wordIndexToSrcString(WordIndex w)const=0;
 	virtual bool existSrcSymbol(std::string s)const=0;
-	virtual Vector<WordIndex> strVectorToSrcIndexVector(Vector<std::string> s)=0;
+	virtual std::vector<WordIndex> strVectorToSrcIndexVector(std::vector<std::string> s)=0;
 	virtual WordIndex addSrcSymbol(std::string s)=0;
 	
 	virtual size_t getTrgVocabSize(void)const=0;
@@ -238,7 +236,7 @@ class BaseSwAligModel
 	virtual WordIndex stringToTrgWordIndex(std::string t)const=0;
 	virtual std::string wordIndexToTrgString(WordIndex w)const=0;
 	virtual bool existTrgSymbol(std::string t)const=0;
-	virtual Vector<WordIndex> strVectorToTrgIndexVector(Vector<std::string> t)=0;
+	virtual std::vector<WordIndex> strVectorToTrgIndexVector(std::vector<std::string> t)=0;
 	virtual WordIndex addTrgSymbol(std::string t)=0;
 
     // clear() function
@@ -248,8 +246,8 @@ class BaseSwAligModel
     virtual void clearTempVars(void){};
 
     // Utilities
-    Vector<WordIndex> addNullWordToWidxVec(const Vector<WordIndex>& vw);
-    Vector<std::string> addNullWordToStrVec(const Vector<std::string>& vw);
+    std::vector<WordIndex> addNullWordToWidxVec(const std::vector<WordIndex>& vw);
+    std::vector<std::string> addNullWordToStrVec(const std::vector<std::string>& vw);
     
     // Destructor
 	virtual ~BaseSwAligModel();
@@ -268,21 +266,21 @@ template<class PPINFO>
 void BaseSwAligModel<PPINFO>::trainSentPairRange(pair<unsigned int,unsigned int> /*sentPairRange*/,
                                                  int /*verbosity*/)
 {
-  cerr<<"Warning: training for sentence pair range not implemented!"<<endl;
+  std::cerr<<"Warning: training for sentence pair range not implemented!"<<std::endl;
 }
 
 //-------------------------
 template<class PPINFO>
 void BaseSwAligModel<PPINFO>::trainAllSents(int /*verbosity*/)
 {
-  cerr<<"Warning: training for all sentence pairs not implemented!"<<endl;
+  std::cerr<<"Warning: training for all sentence pairs not implemented!"<<std::endl;
 }
 
 //-------------------------
 template<class PPINFO>
 void BaseSwAligModel<PPINFO>::clearInfoAboutSentRange(void)
 {
-  cerr<<"Warning: clearInfoAboutSentRange() functionality not implemented!"<<endl;
+  std::cerr<<"Warning: clearInfoAboutSentRange() functionality not implemented!"<<std::endl;
 }
 
 //-------------------------
@@ -290,7 +288,7 @@ template<class PPINFO>
 pair<double,double> BaseSwAligModel<PPINFO>::loglikelihoodForPairRange(pair<unsigned int,unsigned int> /*sentPairRange*/,
                                                                        int /*verbosity*//*=0*/)
 {
-  cerr<<"Warning: loglikelihoodForAllSents() functionality not implemented!"<<endl;
+  std::cerr<<"Warning: loglikelihoodForAllSents() functionality not implemented!"<<std::endl;
   return make_pair(0.0,0.0);  
 }
 
@@ -309,7 +307,7 @@ LgProb BaseSwAligModel<PPINFO>::calcLgProbForAligChar(const char *sSent,
                                                       WordAligMatrix aligMatrix,
                                                       int verbose)
 {
- Vector<std::string> sSentVec,tSentVec;
+ std::vector<std::string> sSentVec,tSentVec;
 
  sSentVec=StrProcUtils::charItemsToVector(sSent);
  tSentVec=StrProcUtils::charItemsToVector(tSent);   
@@ -318,12 +316,12 @@ LgProb BaseSwAligModel<PPINFO>::calcLgProbForAligChar(const char *sSent,
 
 //-------------------------
 template<class PPINFO>
-LgProb BaseSwAligModel<PPINFO>::calcLgProbForAligVecStr(const Vector<std::string>& sSent,
-                                                        const Vector<std::string>& tSent,
+LgProb BaseSwAligModel<PPINFO>::calcLgProbForAligVecStr(const std::vector<std::string>& sSent,
+                                                        const std::vector<std::string>& tSent,
                                                         WordAligMatrix aligMatrix,
                                                         int verbose)
 {
- Vector<WordIndex> sIndexVector,tIndexVector;
+ std::vector<WordIndex> sIndexVector,tIndexVector;
     
  sIndexVector=strVectorToSrcIndexVector(sSent);
  tIndexVector=strVectorToTrgIndexVector(tSent);  
@@ -336,7 +334,7 @@ LgProb BaseSwAligModel<PPINFO>::calcLgProbChar(const char *sSent,
                                                const char *tSent,
                                                int verbose)
 {
- Vector<std::string> sSentVec,tSentVec;
+ std::vector<std::string> sSentVec,tSentVec;
 
  sSentVec=StrProcUtils::charItemsToVector(sSent);
  tSentVec=StrProcUtils::charItemsToVector(tSent);   
@@ -345,12 +343,12 @@ LgProb BaseSwAligModel<PPINFO>::calcLgProbChar(const char *sSent,
 
 //-------------------------
 template<class PPINFO>
-LgProb BaseSwAligModel<PPINFO>::calcLgProbVecStr(const Vector<std::string>& sSent,
-                                                 const Vector<std::string>& tSent,
+LgProb BaseSwAligModel<PPINFO>::calcLgProbVecStr(const std::vector<std::string>& sSent,
+                                                 const std::vector<std::string>& tSent,
                                                  int verbose)
 {
- Vector<WordIndex> sIndexVector,tIndexVector;
- Vector<PositionIndex> aligIndexVec;
+ std::vector<WordIndex> sIndexVector,tIndexVector;
+ std::vector<PositionIndex> aligIndexVec;
     
  sIndexVector=strVectorToSrcIndexVector(sSent);
  tIndexVector=strVectorToTrgIndexVector(tSent);
@@ -360,8 +358,8 @@ LgProb BaseSwAligModel<PPINFO>::calcLgProbVecStr(const Vector<std::string>& sSen
 
 //-------------------------
 template<class PPINFO>
-LgProb BaseSwAligModel<PPINFO>::calcLgProbPhr(const Vector<WordIndex>& sPhr,
-                                              const Vector<WordIndex>& tPhr,
+LgProb BaseSwAligModel<PPINFO>::calcLgProbPhr(const std::vector<WordIndex>& sPhr,
+                                              const std::vector<WordIndex>& tPhr,
                                               int verbose/*=0*/)
 {
   return calcLgProb(sPhr,tPhr,verbose);
@@ -370,47 +368,47 @@ LgProb BaseSwAligModel<PPINFO>::calcLgProbPhr(const Vector<WordIndex>& sPhr,
 //-------------------------
 template<class PPINFO>
 void BaseSwAligModel<PPINFO>::initPpInfo(unsigned int /*slen*/,
-                                         const Vector<WordIndex>& /*tSent*/,
+                                         const std::vector<WordIndex>& /*tSent*/,
                                          PpInfo& /*ppInfo*/)
 {
-  cerr<<"Warning! partial probability initialization not implemented"<<endl;  
+  std::cerr<<"Warning! partial probability initialization not implemented"<<std::endl;  
 }
 
 //-------------------------
 template<class PPINFO>
 void BaseSwAligModel<PPINFO>::partialProbWithoutLen(unsigned int /*srcPartialLen*/,
                                                     unsigned int /*slen*/,
-                                                    const Vector<WordIndex>& /*s_*/,
-                                                    const Vector<WordIndex>& /*tSent*/,
+                                                    const std::vector<WordIndex>& /*s_*/,
+                                                    const std::vector<WordIndex>& /*tSent*/,
                                                     PpInfo& /*ppInfo*/)
 {
-  cerr<<"Warning! partial probability assignment not implemented"<<endl;
+  std::cerr<<"Warning! partial probability assignment not implemented"<<std::endl;
 }
 
 //-------------------------
 template<class PPINFO>
 LgProb BaseSwAligModel<PPINFO>::lpFromPpInfo(const PpInfo& /*ppInfo*/)
 {
-  cerr<<"Warning! lpFromPpInfo() function not implemented"<<endl;
+  std::cerr<<"Warning! lpFromPpInfo() function not implemented"<<std::endl;
   return 0;
 }
 
 //-------------------------
 template<class PPINFO>
 void BaseSwAligModel<PPINFO>::addHeurForNotAddedWords(int /*numSrcWordsToBeAdded*/,
-                                                      const Vector<WordIndex>& /*tSent*/,
+                                                      const std::vector<WordIndex>& /*tSent*/,
                                                       PpInfo& /*ppInfo*/)
 {
-  cerr<<"Warning! lpFromPpInfo() function not implemented"<<endl;
+  std::cerr<<"Warning! lpFromPpInfo() function not implemented"<<std::endl;
 }
 
 //-------------------------
 template<class PPINFO>
 void BaseSwAligModel<PPINFO>::sustHeurForNotAddedWords(int /*numSrcWordsToBeAdded*/,
-                                                       const Vector<WordIndex>& /*tSent*/,
+                                                       const std::vector<WordIndex>& /*tSent*/,
                                                        PpInfo& /*ppInfo*/)
 {
-  cerr<<"Warning! lpFromPpInfo() function not implemented"<<endl;
+  std::cerr<<"Warning! lpFromPpInfo() function not implemented"<<std::endl;
 }
 
 //-------------------------
@@ -420,25 +418,25 @@ bool BaseSwAligModel<PPINFO>::obtainBestAlignments(const char *sourceTestFileNam
                                                    const char *outFileName)
 {
  awkInputStream srcTest,trgTest;
- Vector<PositionIndex> bestAlig;
+ std::vector<PositionIndex> bestAlig;
  LgProb bestLgProb;
  ofstream outF;
 
  outF.open(outFileName,ios::out);
  if(!outF)
  {
-   cerr<<"Error while opening output file."<<endl;
+   std::cerr<<"Error while opening output file."<<std::endl;
    return 1;
  }
 
  if(srcTest.open(sourceTestFileName)==THOT_ERROR)
  {
-   cerr<<"Error in source test file, file "<<sourceTestFileName<<" does not exist.\n";
+   std::cerr<<"Error in source test file, file "<<sourceTestFileName<<" does not exist.\n";
    return THOT_ERROR;
  }
  if(trgTest.open(targetTestFilename)==THOT_ERROR)
  {
-   cerr<<"Error in target test file, file "<<targetTestFilename<<" does not exist.\n";
+   std::cerr<<"Error in target test file, file "<<targetTestFilename<<" does not exist.\n";
    return THOT_ERROR;
  }  
  while(srcTest.getln())
@@ -454,7 +452,7 @@ bool BaseSwAligModel<PPINFO>::obtainBestAlignments(const char *sourceTestFileNam
    }
    else
    {
-     cerr<<"Error: Source and target test files have not the same size."<<endl;
+     std::cerr<<"Error: Source and target test files have not the same size."<<std::endl;
    }
  }
  outF.close();
@@ -467,7 +465,7 @@ LgProb BaseSwAligModel<PPINFO>::obtainBestAlignmentChar(const char *sourceSenten
                                                         const char *targetSentence,
                                                         WordAligMatrix& bestWaMatrix)
 {
- Vector<std::string> targetVector,sourceVector;
+ std::vector<std::string> targetVector,sourceVector;
  LgProb lp;
 
      // Convert sourceSentence into a vector of strings
@@ -481,12 +479,12 @@ LgProb BaseSwAligModel<PPINFO>::obtainBestAlignmentChar(const char *sourceSenten
 }
 //-------------------------
 template<class PPINFO>
-LgProb BaseSwAligModel<PPINFO>::obtainBestAlignmentVecStr(Vector<std::string> srcSentenceVector,
-                                                          Vector<std::string> trgSentenceVector,
+LgProb BaseSwAligModel<PPINFO>::obtainBestAlignmentVecStr(std::vector<std::string> srcSentenceVector,
+                                                          std::vector<std::string> trgSentenceVector,
                                                           WordAligMatrix& bestWaMatrix)
 {
  LgProb lp;
- Vector<WordIndex> srcSentIndexVector,trgSentIndexVector;
+ std::vector<WordIndex> srcSentIndexVector,trgSentIndexVector;
 
  srcSentIndexVector=strVectorToSrcIndexVector(srcSentenceVector);
  trgSentIndexVector=strVectorToTrgIndexVector(trgSentenceVector);
@@ -496,17 +494,17 @@ LgProb BaseSwAligModel<PPINFO>::obtainBestAlignmentVecStr(Vector<std::string> sr
 }
 //-------------------------
 template<class PPINFO>
-ostream& BaseSwAligModel<PPINFO>::printAligInGizaFormat(const char *sourceSentence,
+std::ostream& BaseSwAligModel<PPINFO>::printAligInGizaFormat(const char *sourceSentence,
                                                         const char *targetSentence,
                                                         Prob p,
-                                                        Vector<PositionIndex> alig,
-                                                        ostream &outS)
+                                                        std::vector<PositionIndex> alig,
+                                                        std::ostream &outS)
 {
- Vector<std::string> targetVector,sourceVector;
+ std::vector<std::string> targetVector,sourceVector;
  unsigned int i,j;
 
- outS<<"alignment score : "<<p<<endl;
- outS<<targetSentence<<endl;
+ outS<<"alignment score : "<<p<<std::endl;
+ outS<<targetSentence<<std::endl;
  sourceVector=StrProcUtils::charItemsToVector(sourceSentence);
  targetVector=StrProcUtils::charItemsToVector(targetSentence);
 
@@ -521,15 +519,15 @@ ostream& BaseSwAligModel<PPINFO>::printAligInGizaFormat(const char *sourceSenten
      if(alig[j]==i+1) outS<<j+1<<" ";
    outS<<"}) ";
  }
- outS<<endl;
+ outS<<std::endl;
  return outS;
 }
 
 //---------------------------------
 template<class PPINFO>
-Vector<WordIndex> BaseSwAligModel<PPINFO>::addNullWordToWidxVec(const Vector<WordIndex>& vw)
+std::vector<WordIndex> BaseSwAligModel<PPINFO>::addNullWordToWidxVec(const std::vector<WordIndex>& vw)
 {
-  Vector<WordIndex> result;
+  std::vector<WordIndex> result;
 
   result.push_back(NULL_WORD);
   for(unsigned int i=0;i<vw.size();++i)
@@ -540,9 +538,9 @@ Vector<WordIndex> BaseSwAligModel<PPINFO>::addNullWordToWidxVec(const Vector<Wor
 
 //---------------------------------
 template<class PPINFO>
-Vector<std::string> BaseSwAligModel<PPINFO>::addNullWordToStrVec(const Vector<std::string>& vw)
+std::vector<std::string> BaseSwAligModel<PPINFO>::addNullWordToStrVec(const std::vector<std::string>& vw)
 {
-  Vector<std::string> result;
+  std::vector<std::string> result;
 
   result.push_back(NULL_WORD_STR);
   for(unsigned int i=0;i<vw.size();++i)

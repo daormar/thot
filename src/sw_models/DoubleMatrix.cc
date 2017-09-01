@@ -45,7 +45,7 @@ void DoubleMatrix::set(unsigned int i,
       // Grow in the dimension of i if necessary
   while(doubleVecVec.size()<=i)
   {
-    Vector<double> aj;
+    std::vector<double> aj;
     doubleVecVec.push_back(aj);
   }
 

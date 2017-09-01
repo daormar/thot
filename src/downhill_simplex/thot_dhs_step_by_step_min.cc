@@ -51,8 +51,6 @@ USA.
 #include "ErrorDefs.h"
 #include "step_by_step_dhs.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define DEFAULT_FTOL   0.0001
@@ -61,8 +59,8 @@ using namespace std;
 //--------------- Function Declarations ------------------------------
 
 void genFixedVarsBoolVector(void);
-void printVarVec(ostream &outS,double x[]);
-Vector<double> xToVarVec(double x[]);
+void printVarVec(std::ostream &outS,double x[]);
+std::vector<double> xToVarVec(double x[]);
 unsigned int getNumDims(void);
 FILE* gen_temp_file(void);
 void gen_init_sol(double x[]);
@@ -77,10 +75,10 @@ void printDesc(void);
 unsigned int ndim;
 double ftol;
 double curr_ftol;
-Vector<string> fixNonFixVarsStr;
-Vector<float> fixNonFixVars;
-Vector<float> initVals;
-Vector<bool> fixedVarsBoolVec;
+std::vector<std::string> fixNonFixVarsStr;
+std::vector<float> fixNonFixVars;
+std::vector<float> initVals;
+std::vector<bool> fixedVarsBoolVec;
 std::string imagesFileName;
 int verbosity;
 
@@ -91,7 +89,7 @@ int verbosity;
 int main(int argc,char *argv[])
 {
   std::string s;
-  Vector<string> v;	
+  std::vector<std::string> v;	
     
   if(TakeParameters(argc,argv)==THOT_OK)
   {
@@ -110,14 +108,14 @@ int main(int argc,char *argv[])
     images_file=fopen(imagesFileName.c_str(),"r");
     if(images_file==NULL)
     {
-      cerr<<"Error while opening file with images: "<<imagesFileName<<endl;
+      std::cerr<<"Error while opening file with images: "<<imagesFileName<<std::endl;
       return THOT_ERROR;
     }
 
-    cerr<<"*** Executing step by step minimization..."<<endl;
+    std::cerr<<"*** Executing step by step minimization..."<<std::endl;
 
         // Print value of ftol
-    cerr<<"ftol: "<<ftol<<endl;
+    std::cerr<<"ftol: "<<ftol<<std::endl;
 
         // Set ndim value and allocate memory
     ndim=getNumDims();
@@ -128,7 +126,7 @@ int main(int argc,char *argv[])
     gen_init_sol(start);
 
         // Minimize variables
-    cerr<<"Executing step by step downhill simplex algorithm..."<<endl;
+    std::cerr<<"Executing step by step downhill simplex algorithm..."<<std::endl;
     ret=step_by_step_simplex(start,
                              ndim,
                              ftol,
@@ -144,20 +142,20 @@ int main(int argc,char *argv[])
         // Check return code
     if(ret==DSO_EVAL_FUNC)
     {
-      cerr<<"Image for x required!"<<endl;
-      printVarVec(cout,x);
+      std::cerr<<"Image for x required!"<<std::endl;
+      printVarVec(std::cout,x);
       return DSO_EVAL_FUNC;
     }
     if(ret==DSO_NMAX_ERROR)
     {
-      cerr<<"Maximum number of function evaluations exceeded!"<<endl;
-      printVarVec(cout,x);
+      std::cerr<<"Maximum number of function evaluations exceeded!"<<std::endl;
+      printVarVec(std::cout,x);
       return DSO_NMAX_ERROR;
     }
     
-    cerr<<"Solution ..."<<endl;
-    printVarVec(cerr,start);
-    printVarVec(cout,start);
+    std::cerr<<"Solution ..."<<std::endl;
+    printVarVec(std::cerr,start);
+    printVarVec(std::cout,start);
     
         // Release memory
     free(start);
@@ -187,20 +185,20 @@ void genFixedVarsBoolVector(void)
 }
 
 //--------------- printVarVec function
-void printVarVec(ostream &outS,double x[])
+void printVarVec(std::ostream &outS,double x[])
 {
-  Vector<double> varVec=xToVarVec(x);
+  std::vector<double> varVec=xToVarVec(x);
   for(unsigned int i=0;i<varVec.size();++i)
   {
     outS<<varVec[i]<<" ";
   }
-  outS<<endl;
+  outS<<std::endl;
 }
 
 //--------------- xToVarVec function
-Vector<double> xToVarVec(double x[])
+std::vector<double> xToVarVec(double x[])
 {
-  Vector<double> varVec;
+  std::vector<double> varVec;
   unsigned int idx=0;
   for(unsigned int i=0;i<fixedVarsBoolVec.size();++i)
   {
@@ -237,7 +235,7 @@ FILE* gen_temp_file(void)
     return tmp_file;
   else
   {
-    cerr<<"Error: temporary file cannot be created!"<<endl;
+    std::cerr<<"Error: temporary file cannot be created!"<<std::endl;
     exit(THOT_ERROR);
   }
 }
@@ -267,13 +265,13 @@ void gen_init_sol(double x[])
   }
   
       // Print initial variables
-  cerr<<"Initial variables..."<<endl;
-  Vector<double> varVec=xToVarVec(x);
+  std::cerr<<"Initial variables..."<<std::endl;
+  std::vector<double> varVec=xToVarVec(x);
   for(unsigned int i=0;i<varVec.size();++i)
   {
-    cerr<<varVec[i]<<" ";
+    std::cerr<<varVec[i]<<" ";
   }
-  cerr<<endl<<endl;
+  std::cerr<<std::endl<<std::endl;
 }
 
 //--------------- getFirstNonBlankLine function
@@ -340,7 +338,7 @@ int TakeParameters(int argc,char *argv[])
  {
    if(fixNonFixVars.size()!=initVals.size())
    {
-     cerr<<"Error: The number of values given by -va and -iv options are not equal."<<endl;
+     std::cerr<<"Error: The number of values given by -va and -iv options are not equal."<<std::endl;
      return THOT_ERROR;
    }
  }
@@ -349,7 +347,7 @@ int TakeParameters(int argc,char *argv[])
  err=readSTLstring(argc,argv, "-i",&imagesFileName);
  if(err==-1)
  {
-   cerr<<"Error: parameter -i not given!"<<endl;
+   std::cerr<<"Error: parameter -i not given!"<<std::endl;
    printUsage();
    return THOT_ERROR;   
  }
@@ -374,36 +372,36 @@ int TakeParameters(int argc,char *argv[])
 //--------------- printDesc() function
 void printDesc(void)
 {
-  cerr << "thot_dhs_step_by_step_min written by Daniel Ortiz"<<endl;
-  cerr << "thot_dhs_step_by_step_min allows to minimize a given target function."<<endl;
-  cerr << "type \"thot_dhs_step_by_step_min --help\" to get usage information."<<endl;
+  std::cerr << "thot_dhs_step_by_step_min written by Daniel Ortiz"<<std::endl;
+  std::cerr << "thot_dhs_step_by_step_min allows to minimize a given target function."<<std::endl;
+  std::cerr << "type \"thot_dhs_step_by_step_min --help\" to get usage information."<<std::endl;
 }
 
 //--------------------------------
 void printUsage(void)
 {
-  cerr << "thot_dhs_step_by_step_min  -va <float> ... <float>"<<endl;
-  cerr << "                           [-iv <float> ... <float>]"<<endl;
-  cerr << "                           -i <string> [-ftol <float>]"<<endl;
-  cerr << "                           [-v] [--help] [--version]"<<endl<<endl;
-  cerr << " -va <float>...<float>: Set fixed and non-fixed variable values."<<endl;
-  cerr << "                        The number of variables and their meaning depends"<<endl;
-  cerr << "                        on the target function you want to minimize."<<endl;
-  cerr << "                        Each value equal to -0 is considered a non fixed value."<<endl;
-  cerr << " -iv <float>...<float>: Initial values for the variables (fixed values set by"<<endl;
-  cerr << "                        -va are not affected by -iv)."<<endl;
-  cerr << " -i <string>          : File with images of the target function for each step."<<endl;
-  cerr << " -ftol <float>        : Fractional convergence tolerance"<<endl;
-  cerr << "                        ("<<DEFAULT_FTOL<<" by default.)"<<endl;
-  cerr << " -v                   : Verbose mode."<<endl;
-  cerr << " --help               : Display this help and exit."<<endl;
-  cerr << " --version            : Output version information and exit."<<endl;
+  std::cerr << "thot_dhs_step_by_step_min  -va <float> ... <float>"<<std::endl;
+  std::cerr << "                           [-iv <float> ... <float>]"<<std::endl;
+  std::cerr << "                           -i <string> [-ftol <float>]"<<std::endl;
+  std::cerr << "                           [-v] [--help] [--version]"<<std::endl<<std::endl;
+  std::cerr << " -va <float>...<float>: Set fixed and non-fixed variable values."<<std::endl;
+  std::cerr << "                        The number of variables and their meaning depends"<<std::endl;
+  std::cerr << "                        on the target function you want to minimize."<<std::endl;
+  std::cerr << "                        Each value equal to -0 is considered a non fixed value."<<std::endl;
+  std::cerr << " -iv <float>...<float>: Initial values for the variables (fixed values set by"<<std::endl;
+  std::cerr << "                        -va are not affected by -iv)."<<std::endl;
+  std::cerr << " -i <string>          : File with images of the target function for each step."<<std::endl;
+  std::cerr << " -ftol <float>        : Fractional convergence tolerance"<<std::endl;
+  std::cerr << "                        ("<<DEFAULT_FTOL<<" by default.)"<<std::endl;
+  std::cerr << " -v                   : Verbose mode."<<std::endl;
+  std::cerr << " --help               : Display this help and exit."<<std::endl;
+  std::cerr << " --version            : Output version information and exit."<<std::endl;
 }
 
 //--------------------------------
 void version(void)
 {
-  cerr<<"thot_dhs_step_by_step_min is part of the downhill package "<<endl;
-  cerr<<"downhill version "<<THOT_VERSION<<endl;
-  cerr<<"downhill is GNU software written by Daniel Ortiz"<<endl;
+  std::cerr<<"thot_dhs_step_by_step_min is part of the downhill package "<<std::endl;
+  std::cerr<<"downhill version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"downhill is GNU software written by Daniel Ortiz"<<std::endl;
 }

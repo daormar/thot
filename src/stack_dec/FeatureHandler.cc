@@ -39,7 +39,7 @@ FeatureHandler::FeatureHandler()
 int FeatureHandler::addWpFeat(int /*verbose*/)
 {
   std::string featName="wp";
-  cerr<<"** Creating word penalty feature ("<<featName<<" "<<wpModelType<<")"<<endl;
+  std::cerr<<"** Creating word penalty feature ("<<featName<<" "<<wpModelType<<")"<<std::endl;
 
       // Create model pointer if necessary
   if(wpModelInfo.wpModelPtr==NULL)
@@ -48,7 +48,7 @@ int FeatureHandler::addWpFeat(int /*verbose*/)
     wpModelInfo.wpModelPtr=wpModelInfo.classLoader.make_obj(initPars);
     if(wpModelInfo.wpModelPtr==NULL)
     {
-      cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;    
+      std::cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<std::endl;    
       return THOT_ERROR;
     }
   }
@@ -93,12 +93,12 @@ int FeatureHandler::updateLmLinInterpWeights(std::string trgCorpusFileName,
                                              int verbose/*=0*/)
 {
       // Iterate over language model features
-  Vector<LangModelFeat<SmtModel::HypScoreInfo>* > langModelFeatPtrs=featuresInfo.getLangModelFeatPtrs();
+  std::vector<LangModelFeat<SmtModel::HypScoreInfo>* > langModelFeatPtrs=featuresInfo.getLangModelFeatPtrs();
 
   for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
   {
     if(verbose)
-      cerr<<"Updating linear interpolation weights for feature "<<langModelFeatPtrs[i]->getFeatName()<<endl;
+      std::cerr<<"Updating linear interpolation weights for feature "<<langModelFeatPtrs[i]->getFeatName()<<std::endl;
     BaseNgramLM<LM_State>* lModelPtr=langModelFeatPtrs[i]->get_lmptr();
     int ret=updateLinWeightsForLmPtr(lModelPtr,trgCorpusFileName);
     if(ret==THOT_ERROR)
@@ -136,7 +136,7 @@ int FeatureHandler::updateLinWeightsForLmPtr(BaseNgramLM<LM_State>* lModelPtr,
 
       // Model did not have weights to be updated
   if(verbose)
-    cerr<<"Warning, current model does not have weights to be updated"<<endl;
+    std::cerr<<"Warning, current model does not have weights to be updated"<<std::endl;
   
   return THOT_OK;
 }
@@ -151,7 +151,7 @@ int FeatureHandler::updatePmLinInterpWeights(std::string srcCorpusFileName,
   for(unsigned int i=0;i<swModelsInfo.swAligModelPtrVec.size();++i)
   {
     if(verbose)
-      cerr<<"Updating linear interpolation weights for features "<<swModelsInfo.featNameVec[i]<<" and "<<swModelsInfo.invFeatNameVec[i]<<endl;
+      std::cerr<<"Updating linear interpolation weights for features "<<swModelsInfo.featNameVec[i]<<" and "<<swModelsInfo.invFeatNameVec[i]<<std::endl;
 
         // Obtain indices for features
     unsigned int dirPhrModelFeatIdx=getFeatureIdx(swModelsInfo.featNameVec[i]);
@@ -184,7 +184,7 @@ int FeatureHandler::onlineTrainFeats(OnlineTrainingPars onlineTrainingPars,
        // Check if input sentences are empty
   if(srcSent.size()==0 || refSent.size()==0)
   {
-    cerr<<"Error: cannot process empty input sentences"<<endl;
+    std::cerr<<"Error: cannot process empty input sentences"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -201,7 +201,7 @@ int FeatureHandler::onlineTrainFeats(OnlineTrainingPars onlineTrainingPars,
     //   return batchRetrainFeatsSentPair(srcSent,refSent,verbose);
     //   break;
     default:
-      cerr<<"Warning: requested online learning algoritm with id="<<onlineTrainingPars.onlineLearningAlgorithm<<" is not implemented."<<endl;
+      std::cerr<<"Warning: requested online learning algoritm with id="<<onlineTrainingPars.onlineLearningAlgorithm<<" is not implemented."<<std::endl;
       return THOT_ERROR;
       break;
   } 
@@ -214,8 +214,8 @@ int FeatureHandler::incrTrainFeatsSentPair(OnlineTrainingPars onlineTrainingPars
                                            int verbose/*=0*/)
 {
       // Break input strings into word vectors
-  Vector<std::string> srcSentStrVec=StrProcUtils::stringToStringVector(srcSent);
-  Vector<std::string> refSentStrVec=StrProcUtils::stringToStringVector(refSent);
+  std::vector<std::string> srcSentStrVec=StrProcUtils::stringToStringVector(srcSent);
+  std::vector<std::string> refSentStrVec=StrProcUtils::stringToStringVector(refSent);
 
       // Train language model
   int ret=trainLangModel(langModelsInfo.lModelPtrVec[0],onlineTrainingPars.learnStepSize,refSentStrVec,verbose);
@@ -267,11 +267,11 @@ FeatureHandler::getInversePhraseModelFeatPtr(std::string invPhrModelFeatName)
 //---------------
 int FeatureHandler::trainLangModel(BaseNgramLM<LM_State>* lModelPtr,
                                    float learnStepSize,
-                                   Vector<std::string> refSentStrVec,
+                                   std::vector<std::string> refSentStrVec,
                                    int verbose/*=0*/)
 {
       // Train language model
-  if(verbose) cerr<<"Training language model..."<<endl;
+  if(verbose) std::cerr<<"Training language model..."<<std::endl;
   int ret=lModelPtr->trainSentence(refSentStrVec,learnStepSize,0,verbose);
   if(ret==THOT_ERROR) return THOT_ERROR;
 
@@ -283,8 +283,8 @@ int FeatureHandler::trainAligModel(BasePhraseModel* invPbModelPtr,
                                    BaseSwAligModel<PpInfo>* swAligModelPtr,
                                    BaseSwAligModel<PpInfo>* invSwAligModelPtr,
                                    OnlineTrainingPars onlineTrainingPars,
-                                   Vector<std::string> srcSentStrVec,
-                                   Vector<std::string> refSentStrVec,
+                                   std::vector<std::string> srcSentStrVec,
+                                   std::vector<std::string> refSentStrVec,
                                    int verbose/*=0*/)
 {
       // Revise vocabularies of the alignment models
@@ -306,18 +306,18 @@ int FeatureHandler::trainAligModel(BasePhraseModel* invPbModelPtr,
     if(n>=0)
     {
       if(verbose)
-        cerr<<"Alig. model training iteration over sample "<<n<<" ..."<<endl;
+        std::cerr<<"Alig. model training iteration over sample "<<n<<" ..."<<std::endl;
 
           // Train sw model
-      if(verbose) cerr<<"Training single-word model..."<<endl;
+      if(verbose) std::cerr<<"Training single-word model..."<<std::endl;
       swAligModelPtr->trainSentPairRange(make_pair(n,n),verbose);
 
           // Train inverse sw model
-      if(verbose) cerr<<"Training inverse single-word model..."<<endl;
+      if(verbose) std::cerr<<"Training inverse single-word model..."<<std::endl;
       invSwAligModelPtr->trainSentPairRange(make_pair(n,n),verbose);
 
           // Add new translation options
-      if(verbose) cerr<<"Adding new translation options..."<<endl;
+      if(verbose) std::cerr<<"Adding new translation options..."<<std::endl;
       ret=addNewTransOpts(invPbModelPtr,swAligModelPtr,invSwAligModelPtr,n,verbose);
     }
   }
@@ -339,7 +339,7 @@ int FeatureHandler::trainAligModel(BasePhraseModel* invPbModelPtr,
 void FeatureHandler::updateAligModelsSrcVoc(BasePhraseModel* invPbModelPtr,
                                             BaseSwAligModel<PpInfo>* swAligModelPtr,
                                             BaseSwAligModel<PpInfo>* invSwAligModelPtr,
-                                            Vector<std::string> srcSentStrVec)
+                                            std::vector<std::string> srcSentStrVec)
 {
   for(unsigned int i=0;i<srcSentStrVec.size();++i)
   {
@@ -351,7 +351,7 @@ void FeatureHandler::updateAligModelsSrcVoc(BasePhraseModel* invPbModelPtr,
 void FeatureHandler::updateAligModelsTrgVoc(BasePhraseModel* invPbModelPtr,
                                             BaseSwAligModel<PpInfo>* swAligModelPtr,
                                             BaseSwAligModel<PpInfo>* invSwAligModelPtr,
-                                            Vector<std::string> trgSentStrVec)
+                                            std::vector<std::string> trgSentStrVec)
 {
   for(unsigned int i=0;i<trgSentStrVec.size();++i)
   {
@@ -370,7 +370,7 @@ WordIndex FeatureHandler::addSrcSymbolToAligModels(BasePhraseModel* invPbModelPt
   WordIndex windex_ilex=invSwAligModelPtr->addTrgSymbol(s);
   if(windex_ipbm!=windex_lex || windex_ipbm!=windex_ilex)
   {
-    cerr<<"Warning! phrase-based model vocabularies are now different from lexical model vocabularies."<<endl;
+    std::cerr<<"Warning! phrase-based model vocabularies are now different from lexical model vocabularies."<<std::endl;
   }
   
   return windex_ipbm;
@@ -387,7 +387,7 @@ WordIndex FeatureHandler::addTrgSymbolToAligModels(BasePhraseModel* invPbModelPt
   WordIndex windex_ilex=invSwAligModelPtr->addSrcSymbol(t);
   if(windex_ipbm!=windex_lex || windex_ipbm!=windex_ilex)
   {
-    cerr<<"Warning! phrase-based model vocabularies are now different from lexical model vocabularies."<<endl;
+    std::cerr<<"Warning! phrase-based model vocabularies are now different from lexical model vocabularies."<<std::endl;
   }
   
   return windex_ipbm;
@@ -406,24 +406,24 @@ int FeatureHandler::addNewTransOpts(BasePhraseModel* invPbModelPtr,
   if(baseIncrPhraseModelPtr)
   {
         // Obtain sentence pair
-    Vector<std::string> srcSentStrVec;
-    Vector<std::string> refSentStrVec;
+    std::vector<std::string> srcSentStrVec;
+    std::vector<std::string> refSentStrVec;
     Count c;
     swAligModelPtr->nthSentPair(n,srcSentStrVec,refSentStrVec,c);
 
         // Extract consistent phrase pairs
-    Vector<PhrasePair> vecUnfiltInvPhPair;
+    std::vector<PhrasePair> vecUnfiltInvPhPair;
     PhraseExtractUtils::extractConsistentPhrasePairs(invSwAligModelPtr,swAligModelPtr,refSentStrVec,srcSentStrVec,vecUnfiltInvPhPair,verbose);
 
         // Filter phrase pairs
-    Vector<PhrasePair> vecInvPhPair;
+    std::vector<PhrasePair> vecInvPhPair;
     PhraseExtractUtils::filterPhrasePairs(vecUnfiltInvPhPair,vecInvPhPair);
 
         // Obtain mapped_n
     unsigned int mapped_n=map_n_am_suff_stats(n);
   
         // Grow vecVecInvPhPair if necessary
-    Vector<PhrasePair> vpp;
+    std::vector<PhrasePair> vpp;
     while(vecVecInvPhPair.size()<=mapped_n) vecVecInvPhPair.push_back(vpp);
     
         // Subtract current phrase model sufficient statistics
@@ -435,7 +435,7 @@ int FeatureHandler::addNewTransOpts(BasePhraseModel* invPbModelPtr,
     }
 
         // Add new phrase model current sufficient statistics
-    if(verbose) cerr<<"List of extracted consistent phrase pairs:"<<endl;
+    if(verbose) std::cerr<<"List of extracted consistent phrase pairs:"<<std::endl;
     for(unsigned int i=0;i<vecInvPhPair.size();++i)
     {
       baseIncrPhraseModelPtr->strIncrCountsOfEntry(vecInvPhPair[i].s_,
@@ -443,10 +443,10 @@ int FeatureHandler::addNewTransOpts(BasePhraseModel* invPbModelPtr,
                                                    1);
       if(verbose)
       {
-        for(unsigned int j=0;j<vecInvPhPair[i].s_.size();++j) cerr<<vecInvPhPair[i].s_[j]<<" ";
-        cerr<<"|||";
-        for(unsigned int j=0;j<vecInvPhPair[i].t_.size();++j) cerr<<" "<<vecInvPhPair[i].t_[j];
-        cerr<<endl;
+        for(unsigned int j=0;j<vecInvPhPair[i].s_.size();++j) std::cerr<<vecInvPhPair[i].s_[j]<<" ";
+        std::cerr<<"|||";
+        for(unsigned int j=0;j<vecInvPhPair[i].t_.size();++j) std::cerr<<" "<<vecInvPhPair[i].t_[j];
+        std::cerr<<std::endl;
       }
     }
   
@@ -457,7 +457,7 @@ int FeatureHandler::addNewTransOpts(BasePhraseModel* invPbModelPtr,
   }
   else
   {
-    cerr<<"Warning: addition of new translation options not supported in this configuration!"<<endl;
+    std::cerr<<"Warning: addition of new translation options not supported in this configuration!"<<std::endl;
     return THOT_ERROR;
   }
 }
@@ -469,7 +469,7 @@ unsigned int FeatureHandler::map_n_am_suff_stats(unsigned int n)
 }
 
 //---------------
-void FeatureHandler::trainWordPred(Vector<std::string> strVec)
+void FeatureHandler::trainWordPred(std::vector<std::string> strVec)
 {
   langModelsInfo.wordPredictor.addSentence(strVec);
 }
@@ -481,7 +481,7 @@ int FeatureHandler::setWordPenModelType(std::string modelType)
   int verbosity=false;
   if(!wpModelInfo.classLoader.open_module(modelType,verbosity))
   {
-    cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -497,7 +497,7 @@ int FeatureHandler::setDefaultLangModelType(std::string modelType)
   int verbosity=false;
   if(!langModelsInfo.defaultClassLoader.open_module(modelType,verbosity))
   {
-    cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -513,7 +513,7 @@ int FeatureHandler::setDefaultTransModelType(std::string modelType)
   int verbosity=false;
   if(!phraseModelsInfo.defaultClassLoader.open_module(modelType,verbosity))
   {
-    cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -529,7 +529,7 @@ int FeatureHandler::setDefaultSingleWordModelType(std::string modelType)
   int verbosity=false;
   if(!swModelsInfo.defaultClassLoader.open_module(modelType,verbosity))
   {
-    cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -557,7 +557,7 @@ BasePhraseModel* FeatureHandler::createPmPtr(std::string modelType)
     bool verbosity=false;
     if(!simpleDynClassLoader.open_module(modelType,verbosity))
     {
-      cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
+      std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
       return NULL;
     }
 
@@ -566,7 +566,7 @@ BasePhraseModel* FeatureHandler::createPmPtr(std::string modelType)
 
     if(tmPtr==NULL)
     {
-      cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;    
+      std::cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<std::endl;    
       return NULL;
     }
 
@@ -593,7 +593,7 @@ int FeatureHandler::createDirectPhrModelFeat(std::string featName,
                                              const ModelDescriptorEntry& modelDescEntry,
                                              DirectPhraseModelFeat<SmtModel::HypScoreInfo>** dirPmFeatPtrRef)
 {
-  cerr<<"** Creating direct phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<endl;
+  std::cerr<<"** Creating direct phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
 
       // Create feature pointer and set name
   (*dirPmFeatPtrRef)=new DirectPhraseModelFeat<SmtModel::HypScoreInfo>;
@@ -613,7 +613,7 @@ int FeatureHandler::createDirectPhrModelFeat(std::string featName,
   phraseModelsInfo.featNameVec.push_back(featName);
   
       // Load phrase model
-  cerr<<"* Loading phrase model..."<<endl;
+  std::cerr<<"* Loading phrase model..."<<std::endl;
   int ret=SmtModelUtils::loadPhrModel(basePhraseModelPtr,modelDescEntry.absolutizedModelFileName);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
@@ -626,7 +626,7 @@ int FeatureHandler::createDirectPhrModelFeat(std::string featName,
   BaseSwAligModel<PpInfo>* baseSwAligModelPtr=swModelsInfo.defaultClassLoader.make_obj(initPars);
   if(baseSwAligModelPtr==NULL)
   {
-    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
   swModelsInfo.swAligModelPtrVec.push_back(baseSwAligModelPtr);
@@ -635,7 +635,7 @@ int FeatureHandler::createDirectPhrModelFeat(std::string featName,
   swModelsInfo.featNameVec.push_back(featName);
 
       // Load direct single word model
-  cerr<<"* Loading direct single word model..."<<endl;
+  std::cerr<<"* Loading direct single word model..."<<std::endl;
   ret=SmtModelUtils::loadDirectSwModel(baseSwAligModelPtr,modelDescEntry.absolutizedModelFileName);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
@@ -644,14 +644,14 @@ int FeatureHandler::createDirectPhrModelFeat(std::string featName,
   dirPmFeatPtr->link_swm(baseSwAligModelPtr);
 
       // Obtain lambda value
-  cerr<<"* Reading lambda interpolation value..."<<endl;
+  std::cerr<<"* Reading lambda interpolation value..."<<std::endl;
   float lambda_swm;
   float lambda_invswm;
   std::string lambdaFileName=modelDescEntry.absolutizedModelFileName+".lambda";
   ret=SmtModelUtils::loadSwmLambdas(lambdaFileName,lambda_swm,lambda_invswm);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
-  cerr<<"lambda= "<<lambda_swm<<endl;
+  std::cerr<<"lambda= "<<lambda_swm<<std::endl;
   
       // Set lambda value for feature
   dirPmFeatPtr->set_lambda(lambda_swm);
@@ -665,7 +665,7 @@ int FeatureHandler::createInversePhrModelFeat(std::string featName,
                                               BasePhraseModel* invPbModelPtr,
                                               InversePhraseModelFeat<SmtModel::HypScoreInfo>** invPmFeatPtrRef)
 {
-  cerr<<"** Creating inverse phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<endl;
+  std::cerr<<"** Creating inverse phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
 
       // Create feature pointer and set name
   (*invPmFeatPtrRef)=new InversePhraseModelFeat<SmtModel::HypScoreInfo>;
@@ -673,7 +673,7 @@ int FeatureHandler::createInversePhrModelFeat(std::string featName,
   invPmFeatPtr->setFeatName(featName);
 
       // Link pointer to feature
-  cerr<<"* Linking phrase model previously loaded..."<<endl;
+  std::cerr<<"* Linking phrase model previously loaded..."<<std::endl;
   invPmFeatPtr->link_pm(invPbModelPtr);
 
       // Add inverse swm pointer
@@ -681,7 +681,7 @@ int FeatureHandler::createInversePhrModelFeat(std::string featName,
   BaseSwAligModel<PpInfo>* baseSwAligModelPtr=swModelsInfo.defaultClassLoader.make_obj(initPars);
   if(baseSwAligModelPtr==NULL)
   {
-    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
   swModelsInfo.invSwAligModelPtrVec.push_back(baseSwAligModelPtr);
@@ -690,7 +690,7 @@ int FeatureHandler::createInversePhrModelFeat(std::string featName,
   swModelsInfo.invFeatNameVec.push_back(featName);
 
       // Load inverse single word model
-  cerr<<"* Loading inverse single word model..."<<endl;
+  std::cerr<<"* Loading inverse single word model..."<<std::endl;
   int ret=SmtModelUtils::loadInverseSwModel(baseSwAligModelPtr,modelDescEntry.absolutizedModelFileName);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
@@ -699,14 +699,14 @@ int FeatureHandler::createInversePhrModelFeat(std::string featName,
   invPmFeatPtr->link_swm(baseSwAligModelPtr);
 
         // Obtain lambda value
-  cerr<<"* Reading lambda interpolation value..."<<endl;
+  std::cerr<<"* Reading lambda interpolation value..."<<std::endl;
   float lambda_swm;
   float lambda_invswm;
   std::string lambdaFileName=modelDescEntry.absolutizedModelFileName+".lambda";
   ret=SmtModelUtils::loadSwmLambdas(lambdaFileName,lambda_swm,lambda_invswm);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
-  cerr<<"lambda= "<<lambda_invswm<<endl;
+  std::cerr<<"lambda= "<<lambda_invswm<<std::endl;
   
       // Set lambda value for feature
   invPmFeatPtr->set_lambda(lambda_invswm);
@@ -719,7 +719,7 @@ int FeatureHandler::createSrcPhraseLenFeat(std::string featName,
                                            BasePhraseModel* basePhraseModelPtr,
                                            SrcPhraseLenFeat<SmtModel::HypScoreInfo>** srcPhraseLenFeatRef)
 {
-  cerr<<"** Creating source phrase length feature ("<<featName<<")"<<endl;
+  std::cerr<<"** Creating source phrase length feature ("<<featName<<")"<<std::endl;
 
       // Create feature pointer and set name
   (*srcPhraseLenFeatRef)=new SrcPhraseLenFeat<SmtModel::HypScoreInfo>;
@@ -737,7 +737,7 @@ int FeatureHandler::createTrgPhraseLenFeat(std::string featName,
                                            BasePhraseModel* basePhraseModelPtr,
                                            TrgPhraseLenFeat<SmtModel::HypScoreInfo>** trgPhraseLenFeatRef)
 {
-  cerr<<"** Creating target phrase length feature ("<<featName<<")"<<endl;
+  std::cerr<<"** Creating target phrase length feature ("<<featName<<")"<<std::endl;
 
       // Create feature pointer and set name
   (*trgPhraseLenFeatRef)=new TrgPhraseLenFeat<SmtModel::HypScoreInfo>;
@@ -755,7 +755,7 @@ int FeatureHandler::createSrcPosJumpFeat(std::string featName,
                                          BasePhraseModel* basePhraseModelPtr,
                                          SrcPosJumpFeat<SmtModel::HypScoreInfo>** srcPosJumpFeatRef)
 {
-  cerr<<"** Creating source position jump feature ("<<featName<<")"<<endl;
+  std::cerr<<"** Creating source position jump feature ("<<featName<<")"<<std::endl;
 
       // Create feature pointer and set name
   (*srcPosJumpFeatRef)=new SrcPosJumpFeat<SmtModel::HypScoreInfo>;
@@ -774,11 +774,11 @@ bool FeatureHandler::process_tm_descriptor(std::string tmDescFile,
 {
   if(verbose)
   {
-    cerr<<"Processing translation model descriptor: "<<tmDescFile<<endl;
+    std::cerr<<"Processing translation model descriptor: "<<tmDescFile<<std::endl;
   }
 
       // Obtain info about translation model entries
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(tmDescFile,modelDescEntryVec)==THOT_OK)
   {
         // Process descriptor entries
@@ -839,7 +839,7 @@ bool FeatureHandler::process_tm_files_prefix(std::string tmFilesPrefix,
 {
   if(verbose)
   {
-    cerr<<"Processing translation model files prefix: "<<tmFilesPrefix<<endl;
+    std::cerr<<"Processing translation model files prefix: "<<tmFilesPrefix<<std::endl;
   }
 
       // Create model descriptor entry
@@ -910,7 +910,7 @@ BaseNgramLM<LM_State>* FeatureHandler::createLmPtr(std::string modelType)
     bool verbosity=false;
     if(!simpleDynClassLoader.open_module(modelType,verbosity))
     {
-      cerr<<"Error: so file ("<<modelType<<") could not be opened"<<endl;
+      std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
       return NULL;
     }
 
@@ -922,7 +922,7 @@ BaseNgramLM<LM_State>* FeatureHandler::createLmPtr(std::string modelType)
 
     if(lmPtr==NULL)
     {
-      cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;    
+      std::cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<std::endl;    
       return NULL;
     }
     
@@ -936,7 +936,7 @@ int FeatureHandler::createLangModelFeat(std::string featName,
                                         WordPredictor* wordPredPtr,
                                         LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef)
 {
-  cerr<<"** Creating language model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<endl;
+  std::cerr<<"** Creating language model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
 
       // Create feature pointer and set name
   (*langModelFeatPtrRef)=new LangModelFeat<SmtModel::HypScoreInfo>;
@@ -956,7 +956,7 @@ int FeatureHandler::createLangModelFeat(std::string featName,
   langModelsInfo.featNameVec.push_back(featName);
 
       // Load language model
-  cerr<<"* Loading language model..."<<endl;
+  std::cerr<<"* Loading language model..."<<std::endl;
   int ret=SmtModelUtils::loadLangModel(baseNgLmPtr,modelDescEntry.absolutizedModelFileName);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
@@ -976,11 +976,11 @@ bool FeatureHandler::process_lm_descriptor(std::string lmDescFile,
 {
   if(verbose)
   {
-    cerr<<"Processing language model descriptor: "<<lmDescFile<<endl;
+    std::cerr<<"Processing language model descriptor: "<<lmDescFile<<std::endl;
   }
 
       // Obtain info about translation model entries
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(lmDescFile,modelDescEntryVec)==THOT_OK)
   {
         // Process descriptor entries
@@ -996,7 +996,7 @@ bool FeatureHandler::process_lm_descriptor(std::string lmDescFile,
     }
 
         // Load word predictor information
-    cerr<<"** Loading word predictor information..."<<endl;
+    std::cerr<<"** Loading word predictor information..."<<std::endl;
     int ret=loadWordPredInfo(lmDescFile);
     if(ret==THOT_ERROR)
       return THOT_ERROR;
@@ -1015,7 +1015,7 @@ bool FeatureHandler::process_lm_files_prefix(std::string lmFilesPrefix,
 {
   if(verbose)
   {
-    cerr<<"Processing language model files prefix: "<<lmFilesPrefix<<endl;
+    std::cerr<<"Processing language model files prefix: "<<lmFilesPrefix<<std::endl;
   }
   
         // Create model descriptor entry
@@ -1035,7 +1035,7 @@ bool FeatureHandler::process_lm_files_prefix(std::string lmFilesPrefix,
   featuresInfo.featPtrVec.push_back(lmFeatPtr);
 
       // Load word predictor information
-  cerr<<"** Loading word predictor information..."<<endl;
+  std::cerr<<"** Loading word predictor information..."<<std::endl;
   ret=loadWordPredInfo(lmFilesPrefix);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
@@ -1051,7 +1051,7 @@ bool FeatureHandler::loadWordPredInfo(std::string lmFilesPrefix)
   int err=langModelsInfo.wordPredictor.load(predFile.c_str());
   if(err==THOT_ERROR)
   {
-    cerr<<"Warning: File for initializing the word predictor not provided!"<<endl;
+    std::cerr<<"Warning: File for initializing the word predictor not provided!"<<std::endl;
   }
   return THOT_OK;
 }

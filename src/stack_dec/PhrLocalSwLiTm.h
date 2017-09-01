@@ -128,10 +128,10 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   bool isCompleteHypData(const HypDataType& hypd)const;
 
       // Model weights functions
-  void setWeights(Vector<float> wVec);
-  void getWeights(Vector<pair<std::string,float> >& compWeights);
+  void setWeights(std::vector<float> wVec);
+  void getWeights(std::vector<pair<std::string,float> >& compWeights);
   unsigned int getNumWeights(void);
-  void printWeights(ostream &outS);
+  void printWeights(std::ostream &outS);
 
       // Functions for performing on-line training
   void setOnlineTrainingPars(OnlineTrainingPars _onlineTrainingPars,
@@ -147,25 +147,25 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
  protected:
 
       // Training-related data members
-  Vector<Vector<std::string> > vecSrcSent;
-  Vector<Vector<std::string> > vecTrgSent;  
-  Vector<Vector<std::string> > vecSysSent;  
-  Vector<Vector<PhrasePair> > vecVecInvPhPair;
+  std::vector<std::vector<std::string> > vecSrcSent;
+  std::vector<std::vector<std::string> > vecTrgSent;  
+  std::vector<std::vector<std::string> > vecSysSent;  
+  std::vector<std::vector<PhrasePair> > vecVecInvPhPair;
   unsigned int stepNum;
 
       // Weight auxiliary functions
-  void setPmWeights(Vector<float> wVec);
-  void getPmWeights(Vector<pair<std::string,float> >& compWeights);
-  void printPmWeights(ostream &outS);
+  void setPmWeights(std::vector<float> wVec);
+  void getPmWeights(std::vector<pair<std::string,float> >& compWeights);
+  void printPmWeights(std::ostream &outS);
 
       // Functions related to linear interpolation weights updating
   int extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileName,
                                    std::string trgDevCorpusFileName,
-                                   Vector<Vector<PhrasePair> >& invPhrPairs,
+                                   std::vector<std::vector<PhrasePair> >& invPhrPairs,
                                    int verbose/*=0*/);
-  double phraseModelPerplexity(const Vector<Vector<PhrasePair> >& invPhrPairs,
+  double phraseModelPerplexity(const std::vector<std::vector<PhrasePair> >& invPhrPairs,
                                int verbose=0);
-  int new_dhs_eval(const Vector<Vector<PhrasePair> >& invPhrPairs,
+  int new_dhs_eval(const std::vector<std::vector<PhrasePair> >& invPhrPairs,
                    FILE* tmp_file,
                    double* x,
                    double& obj_func);
@@ -173,7 +173,7 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
       // Function lo load and print lambda values
   bool load_lambdas(const char* lambdaFileName);
   bool print_lambdas(const char* lambdaFileName);
-  ostream& print_lambdas(ostream &outS);
+  std::ostream& print_lambdas(std::ostream &outS);
 
       // Misc. operations with hypothesis
   unsigned int
@@ -183,39 +183,39 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
   Score incrScore(const Hypothesis& prev_hyp,
                   const HypDataType& new_hypd,
                   Hypothesis& new_hyp,
-                  Vector<Score>& scoreComponents);
+                  std::vector<Score>& scoreComponents);
       // Phrase model scoring functions
-  Score smoothedPhrScore_s_t_(const Vector<WordIndex>& s_,
-                              const Vector<WordIndex>& t_);
+  Score smoothedPhrScore_s_t_(const std::vector<WordIndex>& s_,
+                              const std::vector<WordIndex>& t_);
   Score muxPmSmoothedPhrScore_s_t_(int idx,
-                                   const Vector<WordIndex>& s_,
-                                   const Vector<WordIndex>& t_);
-  Score regularSmoothedPhrScore_s_t_(const Vector<WordIndex>& s_,
-                                     const Vector<WordIndex>& t_);
-  Vector<Score> smoothedPhrScoreVec_s_t_(const Vector<WordIndex>& s_,
-                                         const Vector<WordIndex>& t_);
+                                   const std::vector<WordIndex>& s_,
+                                   const std::vector<WordIndex>& t_);
+  Score regularSmoothedPhrScore_s_t_(const std::vector<WordIndex>& s_,
+                                     const std::vector<WordIndex>& t_);
+  std::vector<Score> smoothedPhrScoreVec_s_t_(const std::vector<WordIndex>& s_,
+                                         const std::vector<WordIndex>& t_);
 
-  Score smoothedPhrScore_t_s_(const Vector<WordIndex>& s_,
-                              const Vector<WordIndex>& t_);
+  Score smoothedPhrScore_t_s_(const std::vector<WordIndex>& s_,
+                              const std::vector<WordIndex>& t_);
   Score muxPmSmoothedPhrScore_t_s_(int idx,
-                                   const Vector<WordIndex>& s_,
-                                   const Vector<WordIndex>& t_);
-  Score regularSmoothedPhrScore_t_s_(const Vector<WordIndex>& s_,
-                                     const Vector<WordIndex>& t_);
-  Vector<Score> smoothedPhrScoreVec_t_s_(const Vector<WordIndex>& s_,
-                                         const Vector<WordIndex>& t_);
+                                   const std::vector<WordIndex>& s_,
+                                   const std::vector<WordIndex>& t_);
+  Score regularSmoothedPhrScore_t_s_(const std::vector<WordIndex>& s_,
+                                     const std::vector<WordIndex>& t_);
+  std::vector<Score> smoothedPhrScoreVec_t_s_(const std::vector<WordIndex>& s_,
+                                              const std::vector<WordIndex>& t_);
 
       // Vocabulary related functions
-  void obtainSrcSwVocWordIdxVec(const Vector<WordIndex>& s_,
-                                Vector<WordIndex>& swVoc_s_);
-  void obtainTrgSwVocWordIdxVec(const Vector<WordIndex>& t_,
-                                Vector<WordIndex>& swVoc_t_);
+  void obtainSrcSwVocWordIdxVec(const std::vector<WordIndex>& s_,
+                                std::vector<WordIndex>& swVoc_s_);
+  void obtainTrgSwVocWordIdxVec(const std::vector<WordIndex>& t_,
+                                std::vector<WordIndex>& swVoc_t_);
 
       // Functions to score n-best translations lists
-  Score nbestTransScore(const Vector<WordIndex>& s_,
-                        const Vector<WordIndex>& t_);
-  Score nbestTransScoreLast(const Vector<WordIndex>& s_,
-                            const Vector<WordIndex>& t_);
+  Score nbestTransScore(const std::vector<WordIndex>& s_,
+                        const std::vector<WordIndex>& t_);
+  Score nbestTransScoreLast(const std::vector<WordIndex>& s_,
+                            const std::vector<WordIndex>& t_);
 
   PositionIndex getLastSrcPosCoveredHypData(const HypDataType& hypd);
       // Get the index of last source position which was covered
@@ -227,13 +227,13 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
       // Specific phrase-based functions
   void extendHypDataIdx(PositionIndex srcLeft,
                         PositionIndex srcRight,
-                        const Vector<WordIndex>& trgPhraseIdx,
+                        const std::vector<WordIndex>& trgPhraseIdx,
                         HypDataType& hypd);
 
       // Functions for performing on-line training
-  int extractConsistentPhrasePairs(const Vector<std::string>& srcSentStrVec,
-                                   const Vector<std::string>& refSentStrVec,
-                                   Vector<PhrasePair>& vecInvPhPair,
+  int extractConsistentPhrasePairs(const std::vector<std::string>& srcSentStrVec,
+                                   const std::vector<std::string>& refSentStrVec,
+                                   std::vector<PhrasePair>& vecInvPhPair,
                                    bool verbose=0);
   int incrTrainFeatsSentPair(const char *srcSent,
                              const char *refSent,

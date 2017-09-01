@@ -25,8 +25,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include <iostream>
 
-using namespace std;
-
 //--------------- Classes --------------------------------------------
 
 class LogCount
@@ -79,12 +77,12 @@ class LogCount
   float get_lc_s(void)const {return x;}
   float get_lc_st(void)const {return x;}
 
-  friend ostream& operator <<(ostream &outS,const LogCount& p)
+  friend std::ostream& operator <<(std::ostream &outS,const LogCount& p)
   {
     outS<<(double) p.x;
     return outS;
   }
-  friend istream& operator>>(istream& is, LogCount& p)
+  friend std::istream& operator>>(std::istream& is, LogCount& p)
   {
     is >> p.x;
     return is;

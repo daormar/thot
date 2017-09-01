@@ -52,8 +52,8 @@ using __gnu_cxx::hash_map;
 
 #include "StatModelDefs.h"
 #include "awkInputStream.h"
-#include "myVector.h"
 #include <string>
+#include <vector>
 
 //--------------- Constants -------------------------------------------
 
@@ -105,7 +105,7 @@ class SingleWordVocab
    WordIndex stringToSrcWordIndex(std::string s)const;
    std::string wordIndexToSrcString(WordIndex w)const;
    bool existSrcSymbol(std::string s)const;
-   Vector<WordIndex> strVectorToSrcIndexVector(Vector<std::string> s);
+   std::vector<WordIndex> strVectorToSrcIndexVector(std::vector<std::string> s);
        //converts a string vector into a source word index vector, this
        //function automatically handles the source vocabulary,
        //increasing and modifying it if necessary
@@ -122,7 +122,7 @@ class SingleWordVocab
    WordIndex stringToTrgWordIndex(std::string t)const;
    std::string wordIndexToTrgString(WordIndex w)const;
    bool existTrgSymbol(std::string t)const;
-   Vector<WordIndex> strVectorToTrgIndexVector(Vector<std::string> t);
+   std::vector<WordIndex> strVectorToTrgIndexVector(std::vector<std::string> t);
        //converts a string vector into a target word index vector, this
        //function automatically handles the target vocabulary,
        //increasing and modifying it if necessary

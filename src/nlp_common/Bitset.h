@@ -39,7 +39,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #ifdef THOT_DONT_USE_MY_BITSET
 # include <bitset>
 # define Bitset bitset
-using namespace std;
 
 template<size_t N>
 bool operator < (const Bitset<N> &left,const Bitset<N> &right);
@@ -92,7 +91,7 @@ using namespace std;
 template<size_t N> class Bitset;
 
 template<size_t N>
-ostream& operator << (ostream &outS,const Bitset<N> &bs);
+std::ostream& operator << (std::ostream &outS,const Bitset<N> &bs);
 
 template<size_t N>
 bool operator < (const Bitset<N> &left,const Bitset<N> &right);
@@ -134,7 +133,7 @@ class Bitset
   size_t count(unsigned int J=N)const;
   unsigned int to_uint(void)const;
   unsigned long to_ulong(void)const;
-  friend ostream& operator << <N> (ostream &outS,const Bitset<N> &bs);
+  friend std::ostream& operator << <N> (std::ostream &outS,const Bitset<N> &bs);
  
  private:   
   unsigned int words[NUM_WORDS(N)];
@@ -497,7 +496,7 @@ bool operator> (const Bitset<N> &left,const Bitset<N> &right)
 
 //-------------------------
 template<size_t N>
-ostream& operator << (ostream &outS,const Bitset<N> &bs)
+std::ostream& operator << (std::ostream &outS,const Bitset<N> &bs)
 {
   unsigned int i,j,n=1,w;
   unsigned int first_one=0;

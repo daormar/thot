@@ -58,8 +58,8 @@ class CategPhrasePairFilter: public BasePhrasePairFilter
 
     CategPhrasePairFilter(void);
 
-    bool phrasePairIsOk(Vector<std::string> s_,
-                        Vector<std::string> t_);
+    bool phrasePairIsOk(std::vector<std::string> s_,
+                        std::vector<std::string> t_);
 	
     ~CategPhrasePairFilter(){};
 

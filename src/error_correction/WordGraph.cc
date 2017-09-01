@@ -37,7 +37,7 @@ WordGraph::WordGraph(void)
 }
 
 //---------------------------------------
-void WordGraph::setCompWeights(const Vector<pair<std::string,float> >& _compWeights)
+void WordGraph::setCompWeights(const std::vector<std::pair<std::string,float> >& _compWeights)
 {
       // Set new component weight vector
   compWeights=_compWeights;
@@ -47,7 +47,7 @@ void WordGraph::setCompWeights(const Vector<pair<std::string,float> >& _compWeig
 }
 
 //---------------------------------------
-void WordGraph::rescoreArcsGivenWeights(const Vector<pair<std::string,float> >& _compWeights)
+void WordGraph::rescoreArcsGivenWeights(const std::vector<std::pair<std::string,float> >& _compWeights)
 {
       // Iterate over arcs
   for(WordGraphArcId wgArcId=0;wgArcId<wordGraphArcs.size();++wgArcId)
@@ -69,7 +69,7 @@ void WordGraph::rescoreArcsGivenWeights(const Vector<pair<std::string,float> >& 
 }
 
 //---------------------------------------
-void WordGraph::getCompWeights(Vector<pair<std::string,float> >& _compWeights)const
+void WordGraph::getCompWeights(std::vector<std::pair<std::string,float> >& _compWeights)const
 {
   _compWeights=compWeights;
 }
@@ -77,7 +77,7 @@ void WordGraph::getCompWeights(Vector<pair<std::string,float> >& _compWeights)co
 //---------------------------------------
 void WordGraph::addArc(HypStateIndex predStateIndex,
                        HypStateIndex succStateIndex,
-                       const Vector<std::string>& words,
+                       const std::vector<std::string>& words,
                        Score arcScore)
 {
   WordGraphArc wordGraphArc;
@@ -120,22 +120,22 @@ void WordGraph::addArc(HypStateIndex predStateIndex,
   }
 
       // Add empty score vector
-  Vector<Score> emptyScrVec;
+  std::vector<Score> emptyScrVec;
   scrCompsVec.push_back(emptyScrVec);
 }
 
 //---------------------------------------
 void WordGraph::addArcWithScrComps(HypStateIndex predStateIndex,
                                    HypStateIndex succStateIndex,
-                                   const Vector<std::string>& words,
+                                   const std::vector<std::string>& words,
                                    Score arcScore,
-                                   Vector<Score> scrVec)
+                                   std::vector<Score> scrVec)
 {
       // Add arc
   addArc(predStateIndex,succStateIndex,words,arcScore);
 
       // Store components
-  Vector<Score> emptyScrVec;
+  std::vector<Score> emptyScrVec;
   while(scrCompsVec.size()!=wordGraphArcs.size())
   {
     scrCompsVec.push_back(emptyScrVec);
@@ -168,21 +168,21 @@ Score WordGraph::getInitialStateScore(void)const
 }
 
 //---------------------------------------
-pair<HypStateIndex,HypStateIndex> WordGraph::getHypStateIndexRange(void)const
+std::pair<HypStateIndex,HypStateIndex> WordGraph::getHypStateIndexRange(void)const
 {
   if(wordGraphStates.empty())
-    return make_pair(INVALID_STATE,INVALID_STATE);
+    return std::make_pair(INVALID_STATE,INVALID_STATE);
   else
-    return make_pair(INITIAL_STATE,wordGraphStates.size()-1);
+    return std::make_pair(INITIAL_STATE,wordGraphStates.size()-1);
 }
 
 //---------------------------------------
-pair<WordGraphArcId,WordGraphArcId> WordGraph::getArcIndexRange(void)const
+std::pair<WordGraphArcId,WordGraphArcId> WordGraph::getArcIndexRange(void)const
 {
   if(wordGraphArcs.empty())
-    return make_pair(INVALID_ARCID,INVALID_ARCID);  
+    return std::make_pair(INVALID_ARCID,INVALID_ARCID);  
   else
-    return make_pair(0,wordGraphArcs.size()-1);  
+    return std::make_pair(0,wordGraphArcs.size()-1);  
 }
 
 //---------------------------------------
@@ -219,9 +219,9 @@ WordGraphArc WordGraph::wordGraphArcId2WordGraphArc(WordGraphArcId wordGraphArcI
 
 //---------------------------------------
 void WordGraph::getArcsToPredStates(HypStateIndex hypStateIndex,
-                                    Vector<WordGraphArc>& wgArcs)const
+                                    std::vector<WordGraphArc>& wgArcs)const
 {
-  Vector<WordGraphArcId> wgArcIds;
+  std::vector<WordGraphArcId> wgArcIds;
 
   getArcIdsToPredStates(hypStateIndex,wgArcIds);
 
@@ -234,11 +234,11 @@ void WordGraph::getArcsToPredStates(HypStateIndex hypStateIndex,
 
 //---------------------------------------
 void WordGraph::getArcIdsToPredStates(HypStateIndex hypStateIndex,
-                                      Vector<WordGraphArcId>& wgArcIds)const
+                                      std::vector<WordGraphArcId>& wgArcIds)const
 {
   if(hypStateIndex<wordGraphStates.size())
   {
-    Vector<WordGraphArcId>::const_iterator arcIdVecIter;
+    std::vector<WordGraphArcId>::const_iterator arcIdVecIter;
 
     wgArcIds.clear();
         // Iterate over the arcs to predecessors
@@ -256,9 +256,9 @@ void WordGraph::getArcIdsToPredStates(HypStateIndex hypStateIndex,
 
 //---------------------------------------
 void WordGraph::getArcsToSuccStates(HypStateIndex hypStateIndex,
-                                    Vector<WordGraphArc>& wgArcs)const
+                                    std::vector<WordGraphArc>& wgArcs)const
 {
-  Vector<WordGraphArcId> wgArcIds;
+  std::vector<WordGraphArcId> wgArcIds;
 
   getArcIdsToSuccStates(hypStateIndex,wgArcIds);
 
@@ -271,11 +271,11 @@ void WordGraph::getArcsToSuccStates(HypStateIndex hypStateIndex,
 
 //---------------------------------------
 void WordGraph::getArcIdsToSuccStates(HypStateIndex hypStateIndex,
-                                      Vector<WordGraphArcId>& wgArcIds)const
+                                      std::vector<WordGraphArcId>& wgArcIds)const
 {
   if(hypStateIndex<wordGraphStates.size())
   {
-    Vector<WordGraphArcId>::const_iterator arcIdVecIter;
+    std::vector<WordGraphArcId>::const_iterator arcIdVecIter;
 
     wgArcIds.clear();
         // Iterate over the arcs to succesors
@@ -361,8 +361,8 @@ bool WordGraph::arcPruned(WordGraphArcId wordGraphArcId)const
 
 //---------------------------------------
 void WordGraph::obtainNbestList(unsigned int len,
-                                Vector<pair<Score,std::string> >& nblist,
-                                Vector<Vector<Score> >& scoreCompsVec,
+                                std::vector<std::pair<Score,std::string> >& nblist,
+                                std::vector<std::vector<Score> >& scoreCompsVec,
                                 int verbosity/*=false*/)
 {
       // Check if word-graph is empty
@@ -376,7 +376,7 @@ void WordGraph::obtainNbestList(unsigned int len,
   {
         // Word-graph is not empty
         // Obtain heuristic values
-    Vector<Score> heurForEachState;
+    std::vector<Score> heurForEachState;
     obtainNbSearchHeurInfo(heurForEachState);
   
         // Execute A-star search
@@ -385,7 +385,7 @@ void WordGraph::obtainNbestList(unsigned int len,
 }
 
 //---------------------------------------
-void WordGraph::obtainNbSearchHeurInfo(Vector<Score>& heurForEachState)
+void WordGraph::obtainNbSearchHeurInfo(std::vector<Score>& heurForEachState)
 {
       // Clear vector
   heurForEachState.clear();
@@ -416,9 +416,9 @@ void WordGraph::obtainNbSearchHeurInfo(Vector<Score>& heurForEachState)
 
 //---------------------------------------
 void WordGraph::nbSearch(unsigned int len,
-                         const Vector<Score>& heurForEachState,
-                         Vector<pair<Score,std::string> >& nblist,
-                         Vector<Vector<Score> >& scoreCompsVec,
+                         const std::vector<Score>& heurForEachState,
+                         std::vector<std::pair<Score,std::string> >& nblist,
+                         std::vector<std::vector<Score> >& scoreCompsVec,
                          int verbosity/*=false*/)
 {
   // Perform A-star search
@@ -442,7 +442,7 @@ void WordGraph::nbSearch(unsigned int len,
   while(!end)
   {
     if(verbosity>=1)
-      cerr<<"* Iteration "<<numIters<<endl;
+      std::cerr<<"* Iteration "<<numIters<<std::endl;
     
         // Check if there are "len" complete hypotheses
     if(completeHypStack.size()>=len)
@@ -455,7 +455,7 @@ void WordGraph::nbSearch(unsigned int len,
       if(!nbSearchStack.empty())
       {
             // Pop top of the stack
-        pair<Score,NbSearchHyp> scrHypPair=nbSearchStack.top();
+        std::pair<Score,NbSearchHyp> scrHypPair=nbSearchStack.top();
         nbSearchStack.pop();
 
             // Obtain index of last state
@@ -473,10 +473,10 @@ void WordGraph::nbSearch(unsigned int len,
 
         if(verbosity>=1)
         {
-          cerr<<"- Top of the stack: "<<scrHypPair.first<<" ;";
+          std::cerr<<"- Top of the stack: "<<scrHypPair.first<<" ;";
           for(unsigned int j=0;j<scrHypPair.second.size();++j)
-            cerr<<" "<<scrHypPair.second[j];
-          cerr<<endl;
+            std::cerr<<" "<<scrHypPair.second[j];
+          std::cerr<<std::endl;
         }
 
             // Check if hyp is complete
@@ -487,19 +487,19 @@ void WordGraph::nbSearch(unsigned int len,
         else
         {
           if(verbosity>=1)
-            cerr<<"- Expanding top of the stack..."<<endl;
+            std::cerr<<"- Expanding top of the stack..."<<std::endl;
 
             // Expand hypothesis
-          Vector<WordGraphArcId> wgArcIds;
+          std::vector<WordGraphArcId> wgArcIds;
           getArcIdsToSuccStates(lastHypStateIndex,wgArcIds);
 
-          Vector<pair<Score,NbSearchHyp> > scrHypPairVec;
+          std::vector<std::pair<Score,NbSearchHyp> > scrHypPairVec;
           for(unsigned int i=0;i<wgArcIds.size();++i)
           {
             if(!arcPruned(wgArcIds[i]))
             {
               WordGraphArc wgArc=wordGraphArcId2WordGraphArc(wgArcIds[i]);
-              pair<Score,NbSearchHyp> newScrHypPair;
+              std::pair<Score,NbSearchHyp> newScrHypPair;
               newScrHypPair=scrHypPair;
                   // Obtain new score
               newScrHypPair.first+=wgArc.arcScore;
@@ -512,7 +512,7 @@ void WordGraph::nbSearch(unsigned int len,
 
               if(verbosity>=1)
               {
-                cerr<<"  Adding extension, score contribution: "<<wgArc.arcScore<<" ; successor state: "<<wgArc.succStateIndex<<endl;
+                std::cerr<<"  Adding extension, score contribution: "<<wgArc.arcScore<<" ; successor state: "<<wgArc.succStateIndex<<std::endl;
               }
             }
           }
@@ -531,24 +531,24 @@ void WordGraph::nbSearch(unsigned int len,
       }
     }
     ++numIters;
-    if(verbosity>=1) cerr<<endl;
+    if(verbosity>=1) std::cerr<<std::endl;
   }          
       // Obtain result
   nblist.clear();
   scoreCompsVec.clear();
   if(verbosity>=1)
   {
-    cerr<<"* Verbose info about complete hypotheses..."<<endl;
+    std::cerr<<"* Verbose info about complete hypotheses..."<<std::endl;
   }
   
   while(!completeHypStack.empty())
   {
         // Pop top of the stack
-    pair<Score,NbSearchHyp> scrHypPair=completeHypStack.top();
+    std::pair<Score,NbSearchHyp> scrHypPair=completeHypStack.top();
     completeHypStack.pop();
 
         // Obtain string from hyp
-    Vector<Score> scoreComps;
+    std::vector<Score> scoreComps;
     std::string translation=stringAssociatedToHyp(scrHypPair.second,scoreComps);
     if(!scoreComps.empty()) scoreCompsVec.push_back(scoreComps);
       
@@ -558,14 +558,14 @@ void WordGraph::nbSearch(unsigned int len,
         // Print verbose information
     if(verbosity>=1)
     {
-      cerr<<scrHypPair.first<<" ||| "<<translation<<" |||";
+      std::cerr<<scrHypPair.first<<" ||| "<<translation<<" |||";
       for(unsigned int j=0;j<scrHypPair.second.size();++j)
       {
         WordGraphArc wgArc=wordGraphArcId2WordGraphArc(scrHypPair.second[j]);
         HypStateIndex hidx=wgArc.succStateIndex;
-        cerr<<" "<<hidx;
+        std::cerr<<" "<<hidx;
       }
-      cerr<<endl;
+      std::cerr<<std::endl;
     }
   }
 }
@@ -587,7 +587,7 @@ bool WordGraph::hypIsComplete(const NbSearchHyp& nbSearchHyp)
 
 //---------------------------------------
 std::string WordGraph::stringAssociatedToHyp(const NbSearchHyp& nbSearchHyp,
-                                             Vector<Score>& scoreComps)
+                                             std::vector<Score>& scoreComps)
 {
   std::string str;
   for(unsigned int i=0;i<nbSearchHyp.size();++i)
@@ -627,15 +627,15 @@ void WordGraph::obtainWgComposedOfUsefulStates(void)
   if(!empty())
   {
         // Obtain useful states
-    Vector<bool> stateIsUsefulVec;
+    std::vector<bool> stateIsUsefulVec;
     std::map<HypStateIndex,HypStateIndex> remappedStates;
     obtainUsefulStates(stateIsUsefulVec,remappedStates);
 
         // Save current arc information
     WordGraphArcs wordGraphArcsAux=wordGraphArcs;
     FinalStateSet finalStateSetAux=finalStateSet;
-    Vector<bool> arcsPrunedAux=arcsPruned;
-    Vector<Vector<Score> > scrCompsVecAux=scrCompsVec;
+    std::vector<bool> arcsPrunedAux=arcsPruned;
+    std::vector<std::vector<Score> > scrCompsVecAux=scrCompsVec;
     
         // Clear information subject to change
     wordGraphArcs.clear();
@@ -664,7 +664,7 @@ void WordGraph::obtainWgComposedOfUsefulStates(void)
       {
             // Obtain wordgraph arc information
         WordGraphArc wgArc=wordGraphArcsAux[arcid];
-        Vector<Score> scrVec=scrCompsVecAux[arcid];
+        std::vector<Score> scrVec=scrCompsVecAux[arcid];
         
             // Check if arc connects two useful states
         if(stateIsUsefulVec[wgArc.predStateIndex] && stateIsUsefulVec[wgArc.succStateIndex])
@@ -696,10 +696,10 @@ void WordGraph::orderArcsTopol(void)
       // Define auxiliary variables
   WordGraphArcs wordGraphArcsAux;
 
-  Vector<bool> arcAdded;
+  std::vector<bool> arcAdded;
   arcAdded.insert(arcAdded.begin(),wordGraphArcs.size(),false);
   
-  Vector<bool> stateClosed;
+  std::vector<bool> stateClosed;
   stateClosed.insert(stateClosed.begin(),wordGraphStates.size(),false);
   
       // Repeat until all arcs has been reintroduced
@@ -707,7 +707,7 @@ void WordGraph::orderArcsTopol(void)
   {
     unsigned int atLeastOneArcAdded=false;
 
-    pair<WordGraphArcId,WordGraphArcId> wgArcIdPair=getArcIndexRange();
+    std::pair<WordGraphArcId,WordGraphArcId> wgArcIdPair=getArcIndexRange();
 
     for(WordGraphArcId wgArcId=wgArcIdPair.first;wgArcId<=wgArcIdPair.second;++wgArcId)
     {
@@ -718,7 +718,7 @@ void WordGraph::orderArcsTopol(void)
         WordGraphArc wgArc=wordGraphArcId2WordGraphArc(wgArcId);
 
             // Obtain predecessors of predecessor node
-        Vector<WordGraphArcId> wgArcIds;
+        std::vector<WordGraphArcId> wgArcIds;
         getArcIdsToPredStates(wgArc.predStateIndex,wgArcIds);
 
             // Check if all precessor states are closed
@@ -761,7 +761,7 @@ void WordGraph::orderArcsTopol(void)
     if(!atLeastOneArcAdded)
     {
           // Print error message
-      cerr<<"Error while executing orderArcsTopol() function, anomalous word-graph"<<endl;
+      std::cerr<<"Error while executing orderArcsTopol() function, anomalous word-graph"<<std::endl;
           // End while loop
       break;
     }
@@ -778,11 +778,11 @@ void WordGraph::orderArcsTopol(void)
 //---------------------------------------
 void WordGraph::calcPrevScores(HypStateIndex hypStateIndex,
                                const std::set<WordGraphArcId>& excludedArcs,
-                               Vector<Score>& prevScores,
-                               Vector<WordGraphArc>& bestPredArcForStateVec)const
+                               std::vector<Score>& prevScores,
+                               std::vector<WordGraphArc>& bestPredArcForStateVec)const
 {
       // Invoke calcPrevScoresWeights() using an empty weight vector
-  Vector<float> altCompWeights;
+  std::vector<float> altCompWeights;
   
   calcPrevScoresWeights(hypStateIndex,
                         excludedArcs,
@@ -794,9 +794,9 @@ void WordGraph::calcPrevScores(HypStateIndex hypStateIndex,
 //---------------------------------------
 void WordGraph::calcPrevScoresWeights(HypStateIndex hypStateIndex,
                                      const std::set<WordGraphArcId>& excludedArcs,
-                                     const Vector<float>& altCompWeights,
-                                     Vector<Score>& prevScores,
-                                     Vector<WordGraphArc>& bestPredArcForStateVec)const
+                                     const std::vector<float>& altCompWeights,
+                                     std::vector<Score>& prevScores,
+                                     std::vector<WordGraphArc>& bestPredArcForStateVec)const
 {
       // Check if word graph is empty
   if(empty())
@@ -813,7 +813,7 @@ void WordGraph::calcPrevScoresWeights(HypStateIndex hypStateIndex,
   
         // Show warning if alt. weights cannot be applied
     if(!altCompWeights.empty() && altWeightsAppliable==false)
-      cerr<<"Warning: alternative weights cannot be applied!"<<endl;
+      std::cerr<<"Warning: alternative weights cannot be applied!"<<std::endl;
 
         // Make room for vectors
     prevScores.clear();
@@ -830,13 +830,13 @@ void WordGraph::calcPrevScoresWeights(HypStateIndex hypStateIndex,
       prevScores[hypStateIndex]=0;
 
         // Initialize boolean vector of accessible states
-    Vector<bool> accessibleStateVec;
+    std::vector<bool> accessibleStateVec;
     accessibleStateVec.insert(accessibleStateVec.begin(),wordGraphStates.size()-INITIAL_STATE,false);
     accessibleStateVec[hypStateIndex]=true;
   
         // Iteration over the arcs (arcs are assumed to be topologically
         // ordered)
-    pair<WordGraphArcId,WordGraphArcId> wgArcIdPair=getArcIndexRange();
+    std::pair<WordGraphArcId,WordGraphArcId> wgArcIdPair=getArcIndexRange();
 
     for(WordGraphArcId wgArcId=wgArcIdPair.first;wgArcId<=wgArcIdPair.second;++wgArcId)
     {
@@ -892,7 +892,7 @@ void WordGraph::calcPrevScoresWeights(HypStateIndex hypStateIndex,
 }
 
 //---------------------------------------
-bool WordGraph::checkIfAltWeightsAppliable(const Vector<float>& altCompWeights)const
+bool WordGraph::checkIfAltWeightsAppliable(const std::vector<float>& altCompWeights)const
 {
       // Check if alternative weights can be applied
   bool altWeightsAppliable=true;
@@ -917,7 +917,7 @@ bool WordGraph::checkIfAltWeightsAppliable(const Vector<float>& altCompWeights)c
   return altWeightsAppliable;
 }
 //---------------------------------------
-void WordGraph::calcRestScores(Vector<Score>& restScores)const
+void WordGraph::calcRestScores(std::vector<Score>& restScores)const
 {
       // Make room for vector
   restScores.clear();
@@ -951,9 +951,9 @@ void WordGraph::calcRestScores(Vector<Score>& restScores)const
 //---------------------------------------
 Score WordGraph::bestPathFromFinalStateToIdx(HypStateIndex hypStateIndex,
                                              const std::set<WordGraphArcId>& excludedArcs,
-                                             Vector<WordGraphArc>& arcVec)const
+                                             std::vector<WordGraphArc>& arcVec)const
 {
-  Vector<float> altCompWeights;
+  std::vector<float> altCompWeights;
 
   return bestPathFromFinalStateToIdxWeights(hypStateIndex,
                                             excludedArcs,
@@ -964,12 +964,12 @@ Score WordGraph::bestPathFromFinalStateToIdx(HypStateIndex hypStateIndex,
 //---------------------------------------
 Score WordGraph::bestPathFromFinalStateToIdxWeights(HypStateIndex hypStateIndex,
                                                     const std::set<WordGraphArcId>& excludedArcs,
-                                                    const Vector<float>& altCompWeights,
-                                                    Vector<WordGraphArc>& arcVec)const
+                                                    const std::vector<float>& altCompWeights,
+                                                    std::vector<WordGraphArc>& arcVec)const
 {
       // Obtain previous scores
-  Vector<Score> prevScores;
-  Vector<WordGraphArc> bestPredArcForStateVec;
+  std::vector<Score> prevScores;
+  std::vector<WordGraphArc> bestPredArcForStateVec;
 
   calcPrevScoresWeights(hypStateIndex,
                         excludedArcs,
@@ -986,9 +986,9 @@ Score WordGraph::bestPathFromFinalStateToIdxWeights(HypStateIndex hypStateIndex,
 
 //---------------------------------------
 Score WordGraph::bestPathFromFinalStateToIdxAux(HypStateIndex hypStateIndex,
-                                                const Vector<Score>& prevScores,
-                                                const Vector<WordGraphArc>& bestPredArcForStateVec,
-                                                Vector<WordGraphArc>& arcVec)const
+                                                const std::vector<Score>& prevScores,
+                                                const std::vector<WordGraphArc>& bestPredArcForStateVec,
+                                                std::vector<WordGraphArc>& arcVec)const
 {  
       // Initialize variables
   Score bestFinalStateScore=SMALL_SCORE;
@@ -1039,13 +1039,13 @@ unsigned int WordGraph::pruneArcsToPredStates(float threshold)
   else logThreshold=log(threshold);
 
       // Calculate rest scores
-  Vector<Score> restScores;
+  std::vector<Score> restScores;
   calcRestScores(restScores);
   
       // Calculate previous scores
   std::set<WordGraphArcId> emptyWgArcIdSet;
-  Vector<Score> prevScores;
-  Vector<WordGraphArc> bestPredArcForStateVec;
+  std::vector<Score> prevScores;
+  std::vector<WordGraphArc> bestPredArcForStateVec;
   calcPrevScores(INITIAL_STATE,
                  emptyWgArcIdSet,
                  prevScores,
@@ -1066,10 +1066,10 @@ unsigned int WordGraph::pruneArcsToPredStates(float threshold)
       // Explore nodes
   for(HypStateIndex hidx=0;hidx<wordGraphStates.size();++hidx)  
   {
-    Vector<pair<Score,WordGraphArcId> > scoreArcIdVec;
+    std::vector<std::pair<Score,WordGraphArcId> > scoreArcIdVec;
     
         // Iterate over the arcs to predecessors
-    Vector<WordGraphArcId>::iterator arcIdVecIter;
+    std::vector<WordGraphArcId>::iterator arcIdVecIter;
     for(arcIdVecIter=wordGraphStates[hidx].arcsToPredStates.begin();arcIdVecIter!=wordGraphStates[hidx].arcsToPredStates.end();++arcIdVecIter)
     {
           // Extract relevant arc information
@@ -1078,8 +1078,8 @@ unsigned int WordGraph::pruneArcsToPredStates(float threshold)
       HypStateIndex succStateIndex=wordGraphArcs[wordGraphArcId].succStateIndex;
       Score arcScore=wordGraphArcs[wordGraphArcId].arcScore;
       Score bestScoreAssociatedToArc=prevScores[predStateIndex]+arcScore+restScores[succStateIndex];
-      // cerr<<predStateIndex<<" -> "<<succStateIndex<<" , "<<prevScores[predStateIndex]<<" ";
-      // cerr<<arcScore<<" "<<restScores[succStateIndex]<<" , "<<bestScoreAssociatedToArc<<" , "<<bestHypScore<<" "<<bestHypScore+logThreshold<<endl;
+      // std::cerr<<predStateIndex<<" -> "<<succStateIndex<<" , "<<prevScores[predStateIndex]<<" ";
+      // std::cerr<<arcScore<<" "<<restScores[succStateIndex]<<" , "<<bestScoreAssociatedToArc<<" , "<<bestHypScore<<" "<<bestHypScore+logThreshold<<std::endl;
 
           // Decide if the arc has to be pruned
       if(bestScoreAssociatedToArc<bestHypScore+logThreshold)
@@ -1100,7 +1100,7 @@ unsigned int WordGraph::pruneArcsToPredStates(float threshold)
 bool WordGraph::finalStatePruned(HypStateIndex hypStateIndex)const
 {
       // Obtain arcs to predecessors for final state
-  Vector<WordGraphArcId> wgArcIds;
+  std::vector<WordGraphArcId> wgArcIds;
   getArcIdsToPredStates(hypStateIndex,wgArcIds);
 
       // Verify if there is at least one arc that has not been pruned
@@ -1118,7 +1118,7 @@ bool WordGraph::finalStatePruned(HypStateIndex hypStateIndex)const
 }
 
 //---------------------------------------
-void WordGraph::obtainStatesReachableFromInit(Vector<bool>& stateReachableFromInitVec)const
+void WordGraph::obtainStatesReachableFromInit(std::vector<bool>& stateReachableFromInitVec)const
 {
       // Initialize stateReachableFromInitVec variable
   stateReachableFromInitVec.clear();
@@ -1139,7 +1139,7 @@ void WordGraph::obtainStatesReachableFromInit(Vector<bool>& stateReachableFromIn
 }
 
 //---------------------------------------
-void WordGraph::obtainUsefulStates(Vector<bool>& stateIsUsefulVec,
+void WordGraph::obtainUsefulStates(std::vector<bool>& stateIsUsefulVec,
                                    std::map<HypStateIndex,HypStateIndex>& remappedStates)const
 {  
       // Initialize vector
@@ -1154,7 +1154,7 @@ void WordGraph::obtainUsefulStates(Vector<bool>& stateIsUsefulVec,
     bool atLeastOneArcArrivesToState=false;
     
         // Obtain arcs to final state
-    Vector<WordGraphArcId> wgArcIds;
+    std::vector<WordGraphArcId> wgArcIds;
     getArcIdsToPredStates(*fssIter,wgArcIds);
 
         // Check if there is at least one not pruned arc
@@ -1173,7 +1173,7 @@ void WordGraph::obtainUsefulStates(Vector<bool>& stateIsUsefulVec,
   }
 
       // Obtain boolean vector of states reachable from initial node
-  Vector<bool> stateReachableFromInitVec;
+  std::vector<bool> stateReachableFromInitVec;
   obtainStatesReachableFromInit(stateReachableFromInitVec);
   
       // Reverse iteration over the arcs (arcs are assumed to be
@@ -1194,7 +1194,7 @@ void WordGraph::obtainUsefulStates(Vector<bool>& stateIsUsefulVec,
 
       // Build remappedStates
   HypStateIndex newIdx=INITIAL_STATE;
-  pair<HypStateIndex,HypStateIndex> range=getHypStateIndexRange();
+  std::pair<HypStateIndex,HypStateIndex> range=getHypStateIndexRange();
   for(HypStateIndex idx=range.first;idx<=range.second;++idx)
   {
     if(stateIsUsefulVec[idx])
@@ -1212,12 +1212,12 @@ bool WordGraph::load(const char * filename)
   
   if(awk.open(filename)==THOT_ERROR)
   {
-    cerr<<"Error while opening word graph file: "<<filename<<"\n";
+    std::cerr<<"Error while opening word graph file: "<<filename<<"\n";
     return THOT_ERROR;
   }
   else
   {
-    cerr<<"Reading word graph from file: "<<filename<<"\n";
+    std::cerr<<"Reading word graph from file: "<<filename<<"\n";
     
         // Clear word graph
     clear();
@@ -1229,10 +1229,10 @@ bool WordGraph::load(const char * filename)
     if(awk.dollar(1)=="#")
     {
           // Read weights
-      Vector<pair<std::string,float> > _compWeights;
+      std::vector<std::pair<std::string,float> > _compWeights;
       for(unsigned int i=2;i<=awk.NF;i+=3)
       {
-        pair<std::string,float> compWeight;
+        std::pair<std::string,float> compWeight;
         compWeight.first=awk.dollar(i);
         compWeight.second=atof(awk.dollar(i+1).c_str());  
         _compWeights.push_back(compWeight);
@@ -1265,7 +1265,7 @@ bool WordGraph::load(const char * filename)
         Score arcScore=atof(awk.dollar(3).c_str());
 
             // Read score components if given
-        Vector<Score> scrVec;
+        std::vector<Score> scrVec;
         unsigned int col=4;
         if(awk.dollar(4)=="|||")
         {
@@ -1279,7 +1279,7 @@ bool WordGraph::load(const char * filename)
         }
         
             // Read words
-        Vector<std::string> words;
+        std::vector<std::string> words;
             // The vector "words" may be empty if the entry only has 3
             // columns
         for(;col<=awk.NF;++col)
@@ -1302,12 +1302,12 @@ bool WordGraph::load(const char * filename)
 bool WordGraph::print(const char* filename,
                       bool printOnlyUsefulStates/*=false*/)const
 {
-  ofstream outS;
+  std::ofstream outS;
 
-  outS.open(filename,ios::trunc);
+  outS.open(filename,std::ios::trunc);
   if(!outS)
   {
-    cerr<<"Error while printing recombination graph to file."<<endl;
+    std::cerr<<"Error while printing recombination graph to file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -1319,7 +1319,7 @@ bool WordGraph::print(const char* filename,
 }
 
 //---------------------------------------
-void WordGraph::print(ostream &outS,
+void WordGraph::print(std::ostream &outS,
                       bool printOnlyUsefulStates/*=false*/)const
 {
   FinalStateSet::const_iterator finalStateSetIter;
@@ -1333,7 +1333,7 @@ void WordGraph::print(ostream &outS,
       outS<<compWeights[i].first<<" "<<compWeights[i].second;
       if(i!=compWeights.size()-1) outS<<" , ";
     }
-    outS<<endl;
+    outS<<std::endl;
   }
   
       // Print final states  
@@ -1344,10 +1344,10 @@ void WordGraph::print(ostream &outS,
       outS<<*finalStateSetIter<<" ";
     }
   }
-  outS<<endl;
+  outS<<std::endl;
 
       // Obtain useful states (may be misplaced)
-  Vector<bool> stateIsUsefulVec;
+  std::vector<bool> stateIsUsefulVec;
   std::map<HypStateIndex,HypStateIndex> remappedStates;
   if(printOnlyUsefulStates)
     obtainUsefulStates(stateIsUsefulVec,remappedStates);
@@ -1366,7 +1366,7 @@ void WordGraph::print(ostream &outS,
 
           //Print indices
       // // debug
-      // cerr<<"*** "<<wordGraphArc.predStateIndex<<" "<<wordGraphArc.succStateIndex<<" "<<wordGraphArc.arcScore<<" "<<arcsPruned[i]<<endl;
+      // std::cerr<<"*** "<<wordGraphArc.predStateIndex<<" "<<wordGraphArc.succStateIndex<<" "<<wordGraphArc.arcScore<<" "<<arcsPruned[i]<<std::endl;
       outS<<wordGraphArc.predStateIndex<<" "<<wordGraphArc.succStateIndex<<" "<<wordGraphArc.arcScore<<" ";
 
       if(!scrCompsVec[i].empty())
@@ -1385,7 +1385,7 @@ void WordGraph::print(ostream &outS,
         outS<<wordGraphArc.words[i];
         if(i<wordGraphArc.words.size()-1) outS<<" ";
       }
-      outS<<endl;
+      outS<<std::endl;
     }
   }
 }

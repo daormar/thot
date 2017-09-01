@@ -48,8 +48,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <map>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define INVALID_MUX_PMODEL_INDEX  -1
@@ -74,29 +72,29 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
     _incrMuxPhraseModel(void);
 
         // Functions to extend or modify the model
-    void strAddTableEntry(const Vector<string>& s,
-                          const Vector<string>& t,
+    void strAddTableEntry(const std::vector<string>& s,
+                          const std::vector<string>& t,
                           PhrasePairInfo inf);
-    void addTableEntry(const Vector<WordIndex>& s,
-                       const Vector<WordIndex>& t,
+    void addTableEntry(const std::vector<WordIndex>& s,
+                       const std::vector<WordIndex>& t,
                        PhrasePairInfo inf);
-	void strIncrCountsOfEntry(const Vector<string>& s,
-                              const Vector<string>& t,
+	void strIncrCountsOfEntry(const std::vector<string>& s,
+                              const std::vector<string>& t,
                               Count count=1);
-    void incrCountsOfEntry(const Vector<WordIndex>& s,
-                           const Vector<WordIndex>& t,
+    void incrCountsOfEntry(const std::vector<WordIndex>& s,
+                           const std::vector<WordIndex>& t,
                            Count count=1);
 
         // Counts-related functions
-    Count cSrcTrg(const Vector<WordIndex>& s,
-                  const Vector<WordIndex>& t);
-    Count cSrc(const Vector<WordIndex>& s);
-    Count cTrg(const Vector<WordIndex>& t);
+    Count cSrcTrg(const std::vector<WordIndex>& s,
+                  const std::vector<WordIndex>& t);
+    Count cSrc(const std::vector<WordIndex>& s);
+    Count cTrg(const std::vector<WordIndex>& t);
 
-    Count cHSrcHTrg(const Vector<std::string>& hs,
-                    const Vector<std::string>& ht);
-    Count cHSrc(const Vector<std::string>& hs);
-    Count cHTrg(const Vector<std::string>& ht);
+    Count cHSrcHTrg(const std::vector<std::string>& hs,
+                    const std::vector<std::string>& ht);
+    Count cHSrc(const std::vector<std::string>& hs);
+    Count cHTrg(const std::vector<std::string>& ht);
 
         // Functions to access model probabilities
 
@@ -136,32 +134,32 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
                                unsigned int lastSrcSegmLen);
         // access model with idx index
     
-    PhrasePairInfo infSrcTrg(const Vector<WordIndex>& s,
-                             const Vector<WordIndex>& t,
+    PhrasePairInfo infSrcTrg(const std::vector<WordIndex>& s,
+                             const std::vector<WordIndex>& t,
                              bool& found);
 
-	LgProb logpt_s_(const Vector<WordIndex>& s,
-                    const Vector<WordIndex>& t);
+	LgProb logpt_s_(const std::vector<WordIndex>& s,
+                    const std::vector<WordIndex>& t);
 	LgProb idxLogpt_s_(int idx,
-                       const Vector<WordIndex>& s,
-                       const Vector<WordIndex>& t);
+                       const std::vector<WordIndex>& s,
+                       const std::vector<WordIndex>& t);
 	
-	LgProb logps_t_(const Vector<WordIndex>& s,
-                    const Vector<WordIndex>& t);
+	LgProb logps_t_(const std::vector<WordIndex>& s,
+                    const std::vector<WordIndex>& t);
 	LgProb idxLogps_t_(int idx,
-                       const Vector<WordIndex>& s,
-                       const Vector<WordIndex>& t);
+                       const std::vector<WordIndex>& s,
+                       const std::vector<WordIndex>& t);
 
         // Functions to obtain translations for source or target phrases
-    bool getTransFor_s_(const Vector<WordIndex>& s,
+    bool getTransFor_s_(const std::vector<WordIndex>& s,
                         TrgTableNode& trgtn);
-    bool getTransFor_t_(const Vector<WordIndex>& t,
+    bool getTransFor_t_(const std::vector<WordIndex>& t,
                         SrcTableNode& srctn);
-    bool getTransVecFor_t_(const Vector<WordIndex>& t,
-                           Vector<SrcTableNode>& srctnVec);
-	bool getNbestTransFor_s_(const Vector<WordIndex>& s,
+    bool getTransVecFor_t_(const std::vector<WordIndex>& t,
+                           std::vector<SrcTableNode>& srctnVec);
+	bool getNbestTransFor_s_(const std::vector<WordIndex>& s,
                              NbestTableNode<PhraseTransTableNodeData>& nbt);
-	bool getNbestTransFor_t_(const Vector<WordIndex>& t,
+	bool getNbestTransFor_t_(const std::vector<WordIndex>& t,
                              NbestTableNode<PhraseTransTableNodeData>& nbt,
                              int N=-1);
         
@@ -171,11 +169,11 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
     WordIndex stringToSrcWordIndex(string s)const;
     string wordIndexToSrcString(WordIndex w)const;
     bool existSrcSymbol(string s)const;
-    Vector<WordIndex> strVectorToSrcIndexVector(const Vector<string>& s);
-        //converts a string vector into a source word index Vector, this
+    std::vector<WordIndex> strVectorToSrcIndexVector(const std::vector<string>& s);
+        //converts a string vector into a source word index vector, this
         //function automatically handles the source vocabulary,
         //increasing and modifying it if necessary
-    Vector<string> srcIndexVectorToStrVector(const Vector<WordIndex>& s);
+    std::vector<string> srcIndexVectorToStrVector(const std::vector<WordIndex>& s);
         //Inverse operation
     WordIndex addSrcSymbol(string s);
     bool loadSrcVocab(const char *srcInputVocabFileName);
@@ -188,11 +186,11 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
     WordIndex stringToTrgWordIndex(string t)const;
     string wordIndexToTrgString(WordIndex w)const;
     bool existTrgSymbol(string t)const;
-    Vector<WordIndex> strVectorToTrgIndexVector(const Vector<string>& t);
-        //converts a string vector into a target word index Vector, this
+    std::vector<WordIndex> strVectorToTrgIndexVector(const std::vector<string>& t);
+        //converts a string vector into a target word index vector, this
         //function automatically handles the target vocabulary,
         //increasing and modifying it if necessary
-    Vector<string> trgIndexVectorToStrVector(const Vector<WordIndex>& t);
+    std::vector<string> trgIndexVectorToStrVector(const std::vector<WordIndex>& t);
         //Inverse operation
     WordIndex addTrgSymbol(string t);
     bool loadTrgVocab(const char *trgInputVocabFileName);
@@ -221,45 +219,45 @@ class _incrMuxPhraseModel: public BaseIncrPhraseModel
     typedef std::map<WordIndex,WordIndex> GlobalToLocalDataMap;
 
         // Data members
-    Vector<BasePhraseModel*> modelPtrVec;
-    Vector<GlobalToLocalDataMap> srcGtlDataMapVec;
-    Vector<GlobalToLocalDataMap> trgGtlDataMapVec;
+    std::vector<BasePhraseModel*> modelPtrVec;
+    std::vector<GlobalToLocalDataMap> srcGtlDataMapVec;
+    std::vector<GlobalToLocalDataMap> trgGtlDataMapVec;
     SingleWordVocab* swVocPtr;
     int modelIndex;
         // modelIndex determines to which model are applied certain
         // functions
 
         // Auxiliary functions to handle vocabularies
-    bool srcGlobalStrVecToWidxVec(const Vector<std::string>& rq,
-                                  Vector<WordIndex>& vu)const;
+    bool srcGlobalStrVecToWidxVec(const std::vector<std::string>& rq,
+                                  std::vector<WordIndex>& vu)const;
     bool srcGlobalStringToWordIndex(const std::string& str,
                                     WordIndex& w)const;
-    bool trgGlobalStrVecToWidxVec(const Vector<std::string>& rq,
-                                  Vector<WordIndex>& vu)const;
+    bool trgGlobalStrVecToWidxVec(const std::vector<std::string>& rq,
+                                  std::vector<WordIndex>& vu)const;
     bool trgGlobalStringToWordIndex(const std::string& str,
                                     WordIndex& w)const;
 
         // Auxiliary encoding functions
     bool existSrcGlobalString(const std::string& str)const;
-    Vector<WordIndex> srcMapGlobalToLocalWidxVec(unsigned int index,
-                                                 const Vector<WordIndex>& widxVec);
+    std::vector<WordIndex> srcMapGlobalToLocalWidxVec(unsigned int index,
+                                                      const std::vector<WordIndex>& widxVec);
     WordIndex srcMapGlobalToLocalWidx(unsigned int index,
                                       const WordIndex& widx);
-    Vector<WordIndex> srcMapLocalToGlobalWidxVec(unsigned int index,
-                                                 const Vector<WordIndex>& widxVec);
+    std::vector<WordIndex> srcMapLocalToGlobalWidxVec(unsigned int index,
+                                                      const std::vector<WordIndex>& widxVec);
     bool existTrgGlobalString(const std::string& str)const;
-    Vector<WordIndex> trgMapGlobalToLocalWidxVec(unsigned int index,
-                                                 const Vector<WordIndex>& widxVec);
+    std::vector<WordIndex> trgMapGlobalToLocalWidxVec(unsigned int index,
+                                                      const std::vector<WordIndex>& widxVec);
     WordIndex trgMapGlobalToLocalWidx(unsigned int index,
                                       const WordIndex& widx);
-    Vector<WordIndex> trgMapLocalToGlobalWidxVec(unsigned int index,
-                                                 const Vector<WordIndex>& widxVec);
+    std::vector<WordIndex> trgMapLocalToGlobalWidxVec(unsigned int index,
+                                                      const std::vector<WordIndex>& widxVec);
   
         // Auxiliary functions to handle strings
-    Vector<string> stringToStringVector(string s);
-	Vector<string> extractCharItemsToVector(char *ch)const;
+    std::vector<string> stringToStringVector(string s);
+	std::vector<string> extractCharItemsToVector(char *ch)const;
         // Extracts the words in the string 'ch' with the form "w1
-        // ... wn" to a string Vector
+        // ... wn" to a string vector
 };
 
 #endif

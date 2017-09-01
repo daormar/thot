@@ -30,27 +30,27 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "DirectPhraseModelFeat.h"
 #include "LangModelFeat.h"
 #include "BasePbTransModelFeature.h"
-#include "myVector.h"
+#include <vector>
 
 //--------------- FeaturesInfo struct
 
 template<class SCORE_INFO>
 struct FeaturesInfo
 {
-  Vector<BasePbTransModelFeature<SCORE_INFO>* > featPtrVec;
+  std::vector<BasePbTransModelFeature<SCORE_INFO>* > featPtrVec;
 
       // Functions to get pointers to features
-  Vector<LangModelFeat<SCORE_INFO>* > getLangModelFeatPtrs(void);
-  Vector<DirectPhraseModelFeat<SCORE_INFO>* > getDirectPhraseModelFeatPtrs(void);
-  Vector<InversePhraseModelFeat<SCORE_INFO>* > getInversePhraseModelFeatPtrs(void);
-  Vector<SrcPosJumpFeat<SCORE_INFO>* > getSrcPosJumpFeatPtrs(void);
+  std::vector<LangModelFeat<SCORE_INFO>* > getLangModelFeatPtrs(void);
+  std::vector<DirectPhraseModelFeat<SCORE_INFO>* > getDirectPhraseModelFeatPtrs(void);
+  std::vector<InversePhraseModelFeat<SCORE_INFO>* > getInversePhraseModelFeatPtrs(void);
+  std::vector<SrcPosJumpFeat<SCORE_INFO>* > getSrcPosJumpFeatPtrs(void);
 };
 
 //---------------
 template<class SCORE_INFO>
-Vector<LangModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getLangModelFeatPtrs(void)
+std::vector<LangModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getLangModelFeatPtrs(void)
 {
-  Vector<LangModelFeat<SCORE_INFO>* > lmFeatPtrVec;
+  std::vector<LangModelFeat<SCORE_INFO>* > lmFeatPtrVec;
   for(unsigned int i=0;i<featPtrVec.size();++i)
   {
     LangModelFeat<SCORE_INFO>* lmFeatPtr=dynamic_cast<LangModelFeat<SCORE_INFO>* >(featPtrVec[i]);
@@ -62,9 +62,9 @@ Vector<LangModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getLangModelFeatPt
 
 //---------------
 template<class SCORE_INFO>
-Vector<DirectPhraseModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getDirectPhraseModelFeatPtrs(void)
+std::vector<DirectPhraseModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getDirectPhraseModelFeatPtrs(void)
 {
-  Vector<DirectPhraseModelFeat<SCORE_INFO>* > directPhraseModelFeatPtrVec;
+  std::vector<DirectPhraseModelFeat<SCORE_INFO>* > directPhraseModelFeatPtrVec;
   for(unsigned int i=0;i<featPtrVec.size();++i)
   {
     DirectPhraseModelFeat<SCORE_INFO>* directPhraseModelFeatPtr=dynamic_cast<DirectPhraseModelFeat<SCORE_INFO>* >(featPtrVec[i]);
@@ -76,9 +76,9 @@ Vector<DirectPhraseModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getDirectP
 
 //---------------
 template<class SCORE_INFO>
-Vector<InversePhraseModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getInversePhraseModelFeatPtrs(void)
+std::vector<InversePhraseModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getInversePhraseModelFeatPtrs(void)
 {
-  Vector<InversePhraseModelFeat<SCORE_INFO>* > inversePhraseModelFeatPtrVec;
+  std::vector<InversePhraseModelFeat<SCORE_INFO>* > inversePhraseModelFeatPtrVec;
   for(unsigned int i=0;i<featPtrVec.size();++i)
   {
     InversePhraseModelFeat<SCORE_INFO>* inversePhraseModelFeatPtr=dynamic_cast<InversePhraseModelFeat<SCORE_INFO>* >(featPtrVec[i]);
@@ -90,9 +90,9 @@ Vector<InversePhraseModelFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getInvers
 
 //---------------
 template<class SCORE_INFO>
-Vector<SrcPosJumpFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getSrcPosJumpFeatPtrs(void)
+std::vector<SrcPosJumpFeat<SCORE_INFO>* > FeaturesInfo<SCORE_INFO>::getSrcPosJumpFeatPtrs(void)
 {
-  Vector<SrcPosJumpFeat<SCORE_INFO>* > srcPosJumpFeatPtrVec;
+  std::vector<SrcPosJumpFeat<SCORE_INFO>* > srcPosJumpFeatPtrVec;
   for(unsigned int i=0;i<featPtrVec.size();++i)
   {
     SrcPosJumpFeat<SCORE_INFO>* srcPosJumpFeatPtr=dynamic_cast<SrcPosJumpFeat<SCORE_INFO>* >(featPtrVec[i]);

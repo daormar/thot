@@ -55,15 +55,15 @@ class PhraseCounts
 {
  public:
   PhraseCounts(void);
-  PhraseCountState addPhrase(const Vector<WordIndex>& phrase,
+  PhraseCountState addPhrase(const std::vector<WordIndex>& phrase,
                              Count count=1);
-  PhraseCountState incrCountOfPhrase(const Vector<WordIndex>& phrase,
+  PhraseCountState incrCountOfPhrase(const std::vector<WordIndex>& phrase,
                                      Count count);	
-  Count getCount(const Vector<WordIndex>& phrase,
+  Count getCount(const std::vector<WordIndex>& phrase,
                  bool& found);
-  PhraseCountState getState(const Vector<WordIndex>& phrase);
+  PhraseCountState getState(const std::vector<WordIndex>& phrase);
   void getPhraseGivenState(PhraseCountState pState,
-                           Vector<WordIndex>& phrase);
+                           std::vector<WordIndex>& phrase);
   Count getCountGivenState(PhraseCountState pState);
   unsigned int size(void);
   unsigned int trieSize(void);
@@ -73,7 +73,7 @@ class PhraseCounts
   PcTable pcTable;
   unsigned int numberOfPhrasesStored;
   
-  Vector<WordIndex> invertVectorElements(const Vector<WordIndex>& v);
+  std::vector<WordIndex> invertVectorElements(const std::vector<WordIndex>& v);
 };
 
 #endif

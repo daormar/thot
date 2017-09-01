@@ -25,15 +25,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "myVector.h"
+#include <vector>
 
 //--------------- VecUnsignedIntSortCriterion class
 
 class VecUnsignedIntSortCriterion
 {
  public:
-  bool operator() (const Vector<unsigned int> &a,
-                   const Vector<unsigned int> &b)const
+  bool operator() (const std::vector<unsigned int> &a,
+                   const std::vector<unsigned int> &b)const
     {
       unsigned int i;
       

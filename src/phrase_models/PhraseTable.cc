@@ -36,7 +36,7 @@ PhraseTable::PhraseTable(void)
 {
 }
 //-------------------------
-bool PhraseTable::getNbestForSrc(const Vector<WordIndex>& s,
+bool PhraseTable::getNbestForSrc(const std::vector<WordIndex>& s,
                                  NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
   PhraseCountState ps_state;
@@ -50,7 +50,7 @@ bool PhraseTable::getNbestForSrc(const Vector<WordIndex>& s,
   }
 }
 //-------------------------
-bool PhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
+bool PhraseTable::getNbestForTrg(const std::vector<WordIndex>& t,
                                  NbestTableNode<PhraseTransTableNodeData>& nbt,
                                  int N)
 {
@@ -58,7 +58,7 @@ bool PhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
   PhraseTableNode::iterator phraseTNodeIter;	
   Count count_t_;	
   LgProb lgProb;
-  Vector<WordIndex> s;
+  std::vector<WordIndex> s;
 
   nbt.clear();
   
@@ -110,8 +110,8 @@ bool PhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
 }
 
 //-------------------------
-void PhraseTable::addTableEntry(const Vector<WordIndex>& s,
-                                const Vector<WordIndex>& t,
+void PhraseTable::addTableEntry(const std::vector<WordIndex>& s,
+                                const std::vector<WordIndex>& t,
                                 PhrasePairInfo inf) 
 {
   PhraseCountState ps_state;
@@ -123,7 +123,7 @@ void PhraseTable::addTableEntry(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-void PhraseTable::addSrcInfo(const Vector<WordIndex>& s,
+void PhraseTable::addSrcInfo(const std::vector<WordIndex>& s,
                              Count s_inf)
 {
   // Revise source phrase count
@@ -131,8 +131,8 @@ void PhraseTable::addSrcInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-void PhraseTable::addSrcTrgInfo(const Vector<WordIndex>& s,
-                                const Vector<WordIndex>& t,
+void PhraseTable::addSrcTrgInfo(const std::vector<WordIndex>& s,
+                                const std::vector<WordIndex>& t,
                                 Count st_inf)
 {
   PhraseCountState ps_state;
@@ -150,8 +150,8 @@ void PhraseTable::addSrcTrgInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-void PhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
-                                    const Vector<WordIndex>& t,
+void PhraseTable::incrCountsOfEntry(const std::vector<WordIndex>& s,
+                                    const std::vector<WordIndex>& t,
                                     Count c) 
 {
   PhraseCountState ps_state;
@@ -164,8 +164,8 @@ void PhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-PhrasePairInfo PhraseTable::infSrcTrg(const Vector<WordIndex>& s,
-                                      const Vector<WordIndex>& t,
+PhrasePairInfo PhraseTable::infSrcTrg(const std::vector<WordIndex>& s,
+                                      const std::vector<WordIndex>& t,
                                       bool& found) 
 {
   PhrasePairInfo ppi;
@@ -184,7 +184,7 @@ PhrasePairInfo PhraseTable::infSrcTrg(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Count PhraseTable::getSrcInfo(const Vector<WordIndex>& s,
+Count PhraseTable::getSrcInfo(const std::vector<WordIndex>& s,
                               bool &found)
 {
   Count c;
@@ -194,8 +194,8 @@ Count PhraseTable::getSrcInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Count PhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
-                                 const Vector<WordIndex>& t,
+Count PhraseTable::getSrcTrgInfo(const std::vector<WordIndex>& s,
+                                 const std::vector<WordIndex>& t,
                                  bool &found)
 {
   PhraseCountState ps_state;
@@ -215,8 +215,8 @@ Count PhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Prob PhraseTable::pTrgGivenSrc(const Vector<WordIndex>& s,
-                               const Vector<WordIndex>& t)
+Prob PhraseTable::pTrgGivenSrc(const std::vector<WordIndex>& s,
+                               const std::vector<WordIndex>& t)
 {  
   Count count_s_t_=cSrcTrg(s,t);	
   if((float)count_s_t_>0)
@@ -233,15 +233,15 @@ Prob PhraseTable::pTrgGivenSrc(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-LgProb PhraseTable::logpTrgGivenSrc(const Vector<WordIndex>& s,
-                                    const Vector<WordIndex>& t)
+LgProb PhraseTable::logpTrgGivenSrc(const std::vector<WordIndex>& s,
+                                    const std::vector<WordIndex>& t)
 {
   return log((double)pTrgGivenSrc(s,t));
 }
 
 //-------------------------
-Prob PhraseTable::pSrcGivenTrg(const Vector<WordIndex>& s,
-                               const Vector<WordIndex>& t)
+Prob PhraseTable::pSrcGivenTrg(const std::vector<WordIndex>& s,
+                               const std::vector<WordIndex>& t)
 {
   Count count_s_t_=cSrcTrg(s,t);
   if((float)count_s_t_>0)
@@ -257,14 +257,14 @@ Prob PhraseTable::pSrcGivenTrg(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-LgProb PhraseTable::logpSrcGivenTrg(const Vector<WordIndex>& s,
-                                    const Vector<WordIndex>& t)
+LgProb PhraseTable::logpSrcGivenTrg(const std::vector<WordIndex>& s,
+                                    const std::vector<WordIndex>& t)
 {
   return log((double)pSrcGivenTrg(s,t));
 }
 
 //-------------------------
-bool PhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
+bool PhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
                                       PhraseTable::SrcTableNode& srctn) 
 {
   pair<bool,PhraseTableNode*> p_bool_ptnode;
@@ -284,7 +284,7 @@ bool PhraseTable::getEntriesForTarget(PhraseTableNode* ptnPtr,
                                       PhraseTable::SrcTableNode& srctn)
 {
   PhraseTableNode::iterator phraseTNodeIter;
-  Vector<WordIndex> s;
+  std::vector<WordIndex> s;
   PhrasePairInfo phpinfo;
 
   srctn.clear();
@@ -316,7 +316,7 @@ bool PhraseTable::getEntriesForTarget(PhraseTableNode* ptnPtr,
 }
 
 //-------------------------
-bool PhraseTable::getEntriesForSource(const Vector<WordIndex>& s,
+bool PhraseTable::getEntriesForSource(const std::vector<WordIndex>& s,
                                       PhraseTable::TrgTableNode& trgtn) 
 {
   PhraseCountState ps_state;
@@ -328,28 +328,28 @@ bool PhraseTable::getEntriesForSource(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Count PhraseTable::cSrcTrg(const Vector<WordIndex>& s,
-                           const Vector<WordIndex>& t)
+Count PhraseTable::cSrcTrg(const std::vector<WordIndex>& s,
+                           const std::vector<WordIndex>& t)
 {
   bool found;
   return getSrcTrgInfo(s,t,found).get_c_st();
 }
 
 //-------------------------
-Count PhraseTable::cSrc(const Vector<WordIndex>& s)
+Count PhraseTable::cSrc(const std::vector<WordIndex>& s)
 {
   bool found;
   return getSrcInfo(s,found).get_c_s();
 }
 
 //-------------------------
-Count PhraseTable::cTrg(const Vector<WordIndex>& t)
+Count PhraseTable::cTrg(const std::vector<WordIndex>& t)
 {
   return phraseDict.getCount_t(t);  
 }
 
 //-------------------------
-bool PhraseTable::nodeForTrgHasAtLeastOneTrans(const Vector<WordIndex>& t)
+bool PhraseTable::nodeForTrgHasAtLeastOneTrans(const std::vector<WordIndex>& t)
 {
   pair<bool,PhraseTableNode*> pbp;
 
@@ -358,14 +358,14 @@ bool PhraseTable::nodeForTrgHasAtLeastOneTrans(const Vector<WordIndex>& t)
 }
 
 //-------------------------
-pair<bool,PhraseTableNode*> PhraseTable::nodeForTrgHasOneTransOrMore(const Vector<WordIndex>& t)
+pair<bool,PhraseTableNode*> PhraseTable::nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t)
 {
   return phraseDict.nodeForTrgHasOneTransOrMore(t);
 }
 
 //-------------------------
 void PhraseTable::getPhraseGivenState(PhraseCountState ps_state,
-                                      Vector<WordIndex>& s_phrase)
+                                      std::vector<WordIndex>& s_phrase)
 {
   sourcePhraseCounts.getPhraseGivenState(ps_state,s_phrase);
 }

@@ -39,8 +39,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <LM_Defs.h>
 #include <string>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -61,7 +59,8 @@ class lm_ienc: public vecx_x_incr_enc<std::string,WordIndex>
        // Constructor
    lm_ienc();
 
-   bool HighSrc_to_Src(const Vector<std::string>& hs,Vector<WordIndex>& s);
+   bool HighSrc_to_Src(const std::vector<std::string>& hs,
+                       std::vector<WordIndex>& s);
        // Given a HSRCDATA object "hs" obtains its corresponding encoded
        // value in "s". Returns true if the encoding was successful
        // ("hs" exists in the vocabulary).  s stores the corresponding

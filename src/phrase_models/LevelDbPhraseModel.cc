@@ -40,33 +40,33 @@ LevelDbPhraseModel::LevelDbPhraseModel(void)
 }
 
 //-------------------------
-Count LevelDbPhraseModel::cSrcTrg(const Vector<WordIndex>& s,
-                                 const Vector<WordIndex>& t)
+Count LevelDbPhraseModel::cSrcTrg(const std::vector<WordIndex>& s,
+                                 const std::vector<WordIndex>& t)
 {
   bool found;
   return levelDbPhraseTable.getSrcTrgInfo(s, t, found);
 }
 
 //-------------------------
-Count LevelDbPhraseModel::cSrc(const Vector<WordIndex>& s)
+Count LevelDbPhraseModel::cSrc(const std::vector<WordIndex>& s)
 {
   bool found;
   return levelDbPhraseTable.getSrcInfo(s, found);
 }
 
 //-------------------------
-Count LevelDbPhraseModel::cTrg(const Vector<WordIndex>& t)
+Count LevelDbPhraseModel::cTrg(const std::vector<WordIndex>& t)
 {
   bool found;
   return levelDbPhraseTable.getTrgInfo(t, found);
 }
 
 //-------------------------
-Count LevelDbPhraseModel::cHSrcHTrg(const Vector<std::string>& hs,
-                                   const Vector<std::string>& ht)
+Count LevelDbPhraseModel::cHSrcHTrg(const std::vector<std::string>& hs,
+                                   const std::vector<std::string>& ht)
 {
-  Vector<WordIndex> s;
-  Vector<WordIndex> t;
+  std::vector<WordIndex> s;
+  std::vector<WordIndex> t;
 
       // Generate vector of source WordIndex
   for(unsigned int i = 0; i < hs.size(); ++i)
@@ -90,9 +90,9 @@ Count LevelDbPhraseModel::cHSrcHTrg(const Vector<std::string>& hs,
 }
 
 //-------------------------
-Count LevelDbPhraseModel::cHSrc(const Vector<std::string>& hs)
+Count LevelDbPhraseModel::cHSrc(const std::vector<std::string>& hs)
 {
-  Vector<WordIndex> s;
+  std::vector<WordIndex> s;
 
       // Generate vector of source WordIndex
   for(unsigned int i = 0; i < hs.size(); ++i)
@@ -107,9 +107,9 @@ Count LevelDbPhraseModel::cHSrc(const Vector<std::string>& hs)
 }
 
 //-------------------------
-Count LevelDbPhraseModel::cHTrg(const Vector<std::string>& ht)
+Count LevelDbPhraseModel::cHTrg(const std::vector<std::string>& ht)
 {
-  Vector<WordIndex> t;
+  std::vector<WordIndex> t;
 
       // Generate vector of target WordIndex
   for(unsigned int i = 0; i < ht.size(); ++i)
@@ -124,8 +124,8 @@ Count LevelDbPhraseModel::cHTrg(const Vector<std::string>& ht)
 }
 
 //-------------------------
-PhrasePairInfo LevelDbPhraseModel::infSrcTrg(const Vector<WordIndex>& s,
-                                            const Vector<WordIndex>& t,
+PhrasePairInfo LevelDbPhraseModel::infSrcTrg(const std::vector<WordIndex>& s,
+                                            const std::vector<WordIndex>& t,
                                             bool& found)
 {
   PhrasePairInfo ppInfo;
@@ -171,8 +171,8 @@ LgProb LevelDbPhraseModel::trgSegmLenLgProb(unsigned int k,
 }
 
 //-------------------------
-LgProb LevelDbPhraseModel::logpt_s_(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t)
+LgProb LevelDbPhraseModel::logpt_s_(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t)
 {
   LgProb lp = levelDbPhraseTable.logpTrgGivenSrc(s, t);
 
@@ -183,8 +183,8 @@ LgProb LevelDbPhraseModel::logpt_s_(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-LgProb LevelDbPhraseModel::logps_t_(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t)
+LgProb LevelDbPhraseModel::logps_t_(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t)
 {
   LgProb lp = levelDbPhraseTable.logpSrcGivenTrg(s, t);
   
@@ -195,32 +195,32 @@ LgProb LevelDbPhraseModel::logps_t_(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-bool LevelDbPhraseModel::getTransFor_s_(const Vector<WordIndex>& /*s*/,
+bool LevelDbPhraseModel::getTransFor_s_(const std::vector<WordIndex>& /*s*/,
                                        LevelDbPhraseModel::TrgTableNode& trgtn)
 {
   trgtn.clear();
-  cerr << "Warning: getTransFor_s_() function not implemented for this class" << endl;
+  std::cerr << "Warning: getTransFor_s_() function not implemented for this class" << std::endl;
   return false;
 }
 
 //-------------------------
-bool LevelDbPhraseModel::getTransFor_t_(const Vector<WordIndex>& t,
+bool LevelDbPhraseModel::getTransFor_t_(const std::vector<WordIndex>& t,
                                        LevelDbPhraseModel::SrcTableNode& srctn)
 {
   return levelDbPhraseTable.getEntriesForTarget(t, srctn);
 }
 
 //-------------------------
-bool LevelDbPhraseModel::getNbestTransFor_s_(const Vector<WordIndex>& /*s*/,
+bool LevelDbPhraseModel::getNbestTransFor_s_(const std::vector<WordIndex>& /*s*/,
                                             NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
   nbt.clear();
-  cerr << "Warning: getNbestTransFor_s_() function not implemented for this class" << endl;
+  std::cerr << "Warning: getNbestTransFor_s_() function not implemented for this class" << std::endl;
   return false;
 }
 
 //-------------------------	
-bool LevelDbPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
+bool LevelDbPhraseModel::getNbestTransFor_t_(const std::vector<WordIndex>& t,
                                             NbestTableNode<PhraseTransTableNodeData>& nbt,
                                             int N/*=-1*/) 
 {  
@@ -230,7 +230,7 @@ bool LevelDbPhraseModel::getNbestTransFor_t_(const Vector<WordIndex>& t,
 //-------------------------
 bool LevelDbPhraseModel::load(const char *prefix)
 {
-  cerr << "Loading LevelDB phrase model (input: " << prefix << ")" << endl;
+  std::cerr << "Loading LevelDB phrase model (input: " << prefix << ")" << std::endl;
 
   std::string mainFileName;
   if(fileIsDescriptor(prefix, mainFileName))
@@ -240,7 +240,7 @@ bool LevelDbPhraseModel::load(const char *prefix)
     int ret = load_given_prefix(absolutizedMainFileName.c_str());
     if(ret == THOT_ERROR)
     {
-      cerr << "Error while loading phrase model" << endl;
+      std::cerr << "Error while loading phrase model" << std::endl;
       return THOT_ERROR;
     }
 
@@ -251,7 +251,7 @@ bool LevelDbPhraseModel::load(const char *prefix)
     int ret = load_given_prefix(prefix);
     if(ret == THOT_ERROR)
     {
-      cerr << "Error while loading phrase model" << endl;
+      std::cerr << "Error while loading phrase model" << std::endl;
       return THOT_ERROR;
     }
 
@@ -330,7 +330,7 @@ bool LevelDbPhraseModel::print(const char *prefix)
   }
   else
   {
-    cerr << "Warning: print() function not implemented for this model" << endl;
+    std::cerr << "Warning: print() function not implemented for this model" << std::endl;
     return THOT_ERROR;
   }
 }
@@ -372,9 +372,9 @@ bool LevelDbPhraseModel::existSrcSymbol(string s)const
 }
 
 //-------------------------
-Vector<WordIndex> LevelDbPhraseModel::strVectorToSrcIndexVector(const Vector<string>& s)
+std::vector<WordIndex> LevelDbPhraseModel::strVectorToSrcIndexVector(const std::vector<string>& s)
 {
-  Vector<WordIndex> swVec;
+  std::vector<WordIndex> swVec;
   
   for(unsigned int i = 0; i<s.size(); ++i)
     swVec.push_back(addSrcSymbol(s[i]));
@@ -383,9 +383,9 @@ Vector<WordIndex> LevelDbPhraseModel::strVectorToSrcIndexVector(const Vector<str
 }
 
 //-------------------------
-Vector<string> LevelDbPhraseModel::srcIndexVectorToStrVector(const Vector<WordIndex>& s)
+std::vector<string> LevelDbPhraseModel::srcIndexVectorToStrVector(const std::vector<WordIndex>& s)
 {
- Vector<string> vStr;
+ std::vector<string> vStr;
  unsigned int i;
 
  for(i = 0; i < s.size(); ++i)
@@ -430,9 +430,9 @@ bool LevelDbPhraseModel::existTrgSymbol(string t)const
 }
 
 //-------------------------
-Vector<WordIndex> LevelDbPhraseModel::strVectorToTrgIndexVector(const Vector<string>& t)
+std::vector<WordIndex> LevelDbPhraseModel::strVectorToTrgIndexVector(const std::vector<string>& t)
 {
-  Vector<WordIndex> twVec;
+  std::vector<WordIndex> twVec;
   
   for(unsigned int i = 0; i < t.size(); ++i)
     twVec.push_back(addTrgSymbol(t[i]));
@@ -441,9 +441,9 @@ Vector<WordIndex> LevelDbPhraseModel::strVectorToTrgIndexVector(const Vector<str
 }
       
 //-------------------------
-Vector<string> LevelDbPhraseModel::trgIndexVectorToStrVector(const Vector<WordIndex>& t)
+std::vector<string> LevelDbPhraseModel::trgIndexVectorToStrVector(const std::vector<WordIndex>& t)
 {
- Vector<string> vStr;
+ std::vector<string> vStr;
  unsigned int i;
 
  for(i = 0; i < t.size(); ++i)

@@ -42,9 +42,9 @@ LevelDbPhraseTable::LevelDbPhraseTable(void)
 }
 
 //-------------------------
-string LevelDbPhraseTable::vectorToString(const Vector<WordIndex>& vec)const
+string LevelDbPhraseTable::vectorToString(const std::vector<WordIndex>& vec)const
 {
-    Vector<WordIndex> str;
+    std::vector<WordIndex> str;
     for(size_t i = 0; i < vec.size(); i++) {
         // Use WORD_INDEX_MODULO_BYTES bytes to encode index
         for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--) {
@@ -58,9 +58,9 @@ string LevelDbPhraseTable::vectorToString(const Vector<WordIndex>& vec)const
 }
 
 //-------------------------
-Vector<WordIndex> LevelDbPhraseTable::stringToVector(const string s)const
+std::vector<WordIndex> LevelDbPhraseTable::stringToVector(const string s)const
 {
-    Vector<WordIndex> vec;
+    std::vector<WordIndex> vec;
 
     for(size_t i = 0; i < s.size();)  // A string length is WORD_INDEX_MODULO_BYTES * n + 1
     {
@@ -76,19 +76,19 @@ Vector<WordIndex> LevelDbPhraseTable::stringToVector(const string s)const
 }
 
 //-------------------------
-string LevelDbPhraseTable::vectorToKey(const Vector<WordIndex>& vec)const
+string LevelDbPhraseTable::vectorToKey(const std::vector<WordIndex>& vec)const
 {
     return vectorToString(vec);
 }
 
 //-------------------------
-Vector<WordIndex> LevelDbPhraseTable::keyToVector(const string key)const
+std::vector<WordIndex> LevelDbPhraseTable::keyToVector(const string key)const
 {
     return stringToVector(key);
 }
 
 //-------------------------
-bool LevelDbPhraseTable::retrieveData(const Vector<WordIndex>& phrase, int &count)const
+bool LevelDbPhraseTable::retrieveData(const std::vector<WordIndex>& phrase, int &count)const
 {
     string value_str;
     count = 0;
@@ -105,7 +105,7 @@ bool LevelDbPhraseTable::retrieveData(const Vector<WordIndex>& phrase, int &coun
 }
 
 //-------------------------
-bool LevelDbPhraseTable::storeData(const Vector<WordIndex>& phrase, int count)const
+bool LevelDbPhraseTable::storeData(const std::vector<WordIndex>& phrase, int count)const
 {
     stringstream ss;
     ss << count;
@@ -116,7 +116,7 @@ bool LevelDbPhraseTable::storeData(const Vector<WordIndex>& phrase, int count)co
     leveldb::Status s = db->Write(leveldb::WriteOptions(), &batch);
 
     if(!s.ok())
-        cerr << "Storing data status: " << s.ToString() << endl;
+        std::cerr << "Storing data status: " << s.ToString() << std::endl;
 
     return s.ok();
 }
@@ -124,7 +124,7 @@ bool LevelDbPhraseTable::storeData(const Vector<WordIndex>& phrase, int count)co
 //-------------------------
 bool LevelDbPhraseTable::init(string levelDbPath)
 {
-    cerr << "Initializing LevelDB phrase table" << endl;
+    std::cerr << "Initializing LevelDB phrase table" << std::endl;
 
     if(db != NULL)
     {
@@ -157,7 +157,7 @@ bool LevelDbPhraseTable::drop()
     }
     else
     {
-        cerr << "Dropping database status: " << status.ToString() << endl;
+        std::cerr << "Dropping database status: " << status.ToString() << std::endl;
         
         return THOT_ERROR;
     }
@@ -181,16 +181,16 @@ bool LevelDbPhraseTable::load(string levelDbPath)
     }
     else
     {
-        cerr << status.ToString() << endl;
+        std::cerr << status.ToString() << std::endl;
         return THOT_ERROR;
     }
 }
 
 //-------------------------
-Vector<WordIndex> LevelDbPhraseTable::getSrc(const Vector<WordIndex>& s)
+std::vector<WordIndex> LevelDbPhraseTable::getSrc(const std::vector<WordIndex>& s)
 {
     // Prepare s vector as (UNUSED_WORD, s)
-    Vector<WordIndex> uw_s_vec;
+    std::vector<WordIndex> uw_s_vec;
     uw_s_vec.push_back(UNUSED_WORD);
     uw_s_vec.insert(uw_s_vec.end(), s.begin(), s.end());
 
@@ -198,11 +198,11 @@ Vector<WordIndex> LevelDbPhraseTable::getSrc(const Vector<WordIndex>& s)
 }
 
 //-------------------------
-Vector<WordIndex> LevelDbPhraseTable::getSrcTrg(const Vector<WordIndex>& s,
-                                               const Vector<WordIndex>& t)
+std::vector<WordIndex> LevelDbPhraseTable::getSrcTrg(const std::vector<WordIndex>& s,
+                                               const std::vector<WordIndex>& t)
 {
     // Prepare (s,t) vector as (UNUSED_WORD, s, UNUSED_WORD, t)
-    Vector<WordIndex> uw_s_uw_t_vec = getSrc(s);
+    std::vector<WordIndex> uw_s_uw_t_vec = getSrc(s);
     uw_s_uw_t_vec.push_back(UNUSED_WORD);
     uw_s_uw_t_vec.insert(uw_s_uw_t_vec.end(), t.begin(), t.end());
 
@@ -210,11 +210,11 @@ Vector<WordIndex> LevelDbPhraseTable::getSrcTrg(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Vector<WordIndex> LevelDbPhraseTable::getTrgSrc(const Vector<WordIndex>& s,
-                                               const Vector<WordIndex>& t)
+std::vector<WordIndex> LevelDbPhraseTable::getTrgSrc(const std::vector<WordIndex>& s,
+                                               const std::vector<WordIndex>& t)
 {
     // Prepare (t,s) vector as (t, UNUSED_WORD, s)
-    Vector<WordIndex> t_uw_s_vec = t;
+    std::vector<WordIndex> t_uw_s_vec = t;
     t_uw_s_vec.push_back(UNUSED_WORD);
     t_uw_s_vec.insert(t_uw_s_vec.end(), s.begin(), s.end());
 
@@ -222,13 +222,13 @@ Vector<WordIndex> LevelDbPhraseTable::getTrgSrc(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-bool LevelDbPhraseTable::getNbestForSrc(const Vector<WordIndex>& s,
+bool LevelDbPhraseTable::getNbestForSrc(const std::vector<WordIndex>& s,
                                        NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
       // TO-BE-DONE (LOW PRIORITY)
 }
 //-------------------------
-bool LevelDbPhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
+bool LevelDbPhraseTable::getNbestForTrg(const std::vector<WordIndex>& t,
                                        NbestTableNode<PhraseTransTableNodeData>& nbt,
                                        int N)
 {
@@ -248,7 +248,7 @@ bool LevelDbPhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
         // Generate transTableNode
         for(iter = node.begin(); iter != node.end(); iter++) 
         {
-            Vector<WordIndex> s = iter->first;
+            std::vector<WordIndex> s = iter->first;
             PhrasePairInfo ppi = (PhrasePairInfo) iter->second;
             lgProb = log((float) ppi.second.get_c_st() / (float) t_count);
             nbt.insert(lgProb, s); // Insert pair <log probability, source phrase>
@@ -278,8 +278,8 @@ bool LevelDbPhraseTable::getNbestForTrg(const Vector<WordIndex>& t,
 }
 
 //-------------------------
-void LevelDbPhraseTable::addTableEntry(const Vector<WordIndex>& s,
-                                      const Vector<WordIndex>& t,
+void LevelDbPhraseTable::addTableEntry(const std::vector<WordIndex>& s,
+                                      const std::vector<WordIndex>& t,
                                       PhrasePairInfo inf) 
 {
     addSrcInfo(s, inf.first.get_c_s());  // (USUSED_WORD, s)
@@ -288,23 +288,23 @@ void LevelDbPhraseTable::addTableEntry(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-void LevelDbPhraseTable::addSrcInfo(const Vector<WordIndex>& s,
+void LevelDbPhraseTable::addSrcInfo(const std::vector<WordIndex>& s,
                                    Count s_inf)
 {
     storeData(getSrc(s), (int) s_inf.get_c_s());
 }
 
 //-------------------------
-void LevelDbPhraseTable::addSrcTrgInfo(const Vector<WordIndex>& s,
-                                      const Vector<WordIndex>& t,
+void LevelDbPhraseTable::addSrcTrgInfo(const std::vector<WordIndex>& s,
+                                      const std::vector<WordIndex>& t,
                                       Count st_inf)
 {
     storeData(getTrgSrc(s, t), (int) st_inf.get_c_st());  // (t, UNUSED_WORD, s)
 }
 
 //-------------------------
-void LevelDbPhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
-                                          const Vector<WordIndex>& t,
+void LevelDbPhraseTable::incrCountsOfEntry(const std::vector<WordIndex>& s,
+                                          const std::vector<WordIndex>& t,
                                           Count c) 
 {
     // Retrieve previous states
@@ -319,8 +319,8 @@ void LevelDbPhraseTable::incrCountsOfEntry(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-PhrasePairInfo LevelDbPhraseTable::infSrcTrg(const Vector<WordIndex>& s,
-                                            const Vector<WordIndex>& t,
+PhrasePairInfo LevelDbPhraseTable::infSrcTrg(const std::vector<WordIndex>& s,
+                                            const std::vector<WordIndex>& t,
                                             bool& found) 
 {
     PhrasePairInfo ppi;
@@ -339,7 +339,7 @@ PhrasePairInfo LevelDbPhraseTable::infSrcTrg(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Count LevelDbPhraseTable::getInfo(const Vector<WordIndex>& key,
+Count LevelDbPhraseTable::getInfo(const std::vector<WordIndex>& key,
                                     bool &found)
 {
     int count;
@@ -351,14 +351,14 @@ Count LevelDbPhraseTable::getInfo(const Vector<WordIndex>& key,
 }
 
 //-------------------------
-Count LevelDbPhraseTable::getSrcInfo(const Vector<WordIndex>& s,
+Count LevelDbPhraseTable::getSrcInfo(const std::vector<WordIndex>& s,
                                     bool &found)
 {
     return getInfo(getSrc(s), found);
 }
 
 //-------------------------
-Count LevelDbPhraseTable::getTrgInfo(const Vector<WordIndex>& t,
+Count LevelDbPhraseTable::getTrgInfo(const std::vector<WordIndex>& t,
                                     bool &found)
 {
     // Retrieve counter state
@@ -366,8 +366,8 @@ Count LevelDbPhraseTable::getTrgInfo(const Vector<WordIndex>& t,
 }
 
 //-------------------------
-Count LevelDbPhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
-                                       const Vector<WordIndex>& t,
+Count LevelDbPhraseTable::getSrcTrgInfo(const std::vector<WordIndex>& s,
+                                       const std::vector<WordIndex>& t,
                                        bool &found)
 {
     // Retrieve counter state
@@ -375,8 +375,8 @@ Count LevelDbPhraseTable::getSrcTrgInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Prob LevelDbPhraseTable::pTrgGivenSrc(const Vector<WordIndex>& s,
-                                     const Vector<WordIndex>& t)
+Prob LevelDbPhraseTable::pTrgGivenSrc(const std::vector<WordIndex>& s,
+                                     const std::vector<WordIndex>& t)
 {
     // Calculates p(t|s)=count(s,t)/count(s)
     Count st_count = cSrcTrg(s, t);	
@@ -393,15 +393,15 @@ Prob LevelDbPhraseTable::pTrgGivenSrc(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-LgProb LevelDbPhraseTable::logpTrgGivenSrc(const Vector<WordIndex>& s,
-                                          const Vector<WordIndex>& t)
+LgProb LevelDbPhraseTable::logpTrgGivenSrc(const std::vector<WordIndex>& s,
+                                          const std::vector<WordIndex>& t)
 {
     return log((double) pTrgGivenSrc(s,t));
 }
 
 //-------------------------
-Prob LevelDbPhraseTable::pSrcGivenTrg(const Vector<WordIndex>& s,
-                                     const Vector<WordIndex>& t)
+Prob LevelDbPhraseTable::pSrcGivenTrg(const std::vector<WordIndex>& s,
+                                     const std::vector<WordIndex>& t)
 {
     // p(s|t)=count(s,t)/count(t)
     Count st_count = cSrcTrg(s, t);
@@ -417,22 +417,22 @@ Prob LevelDbPhraseTable::pSrcGivenTrg(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-LgProb LevelDbPhraseTable::logpSrcGivenTrg(const Vector<WordIndex>& s,
-                                          const Vector<WordIndex>& t)
+LgProb LevelDbPhraseTable::logpSrcGivenTrg(const std::vector<WordIndex>& s,
+                                          const std::vector<WordIndex>& t)
 {
     return log((double) pSrcGivenTrg(s,t));
 }
 
 //-------------------------
-bool LevelDbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
+bool LevelDbPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
                                             LevelDbPhraseTable::SrcTableNode& srctn) 
 {
     bool found;
 
-    Vector<WordIndex> start_vec = t;
+    std::vector<WordIndex> start_vec = t;
     start_vec.push_back(UNUSED_WORD);
 
-    Vector<WordIndex> end_vec(t);
+    std::vector<WordIndex> end_vec(t);
     end_vec.push_back(3);
 
     string start_str = vectorToKey(start_vec);
@@ -447,14 +447,14 @@ bool LevelDbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
     
     int i = 0;
     for(it->Seek(start); it->Valid() && it->key().ToString() < end.ToString(); it->Next(), i++) {
-        Vector<WordIndex> vec = keyToVector(it->key().ToString());
-        Vector<WordIndex> src(vec.begin() + start_vec.size(), vec.end());
+        std::vector<WordIndex> vec = keyToVector(it->key().ToString());
+        std::vector<WordIndex> src(vec.begin() + start_vec.size(), vec.end());
 
         PhrasePairInfo ppi = infSrcTrg(src, t, found);
         if (!found || (int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
             continue;
 
-        srctn.insert(pair<Vector<WordIndex>, PhrasePairInfo>(src, ppi));
+        srctn.insert(pair<std::vector<WordIndex>, PhrasePairInfo>(src, ppi));
     }
 
     found = it->status().ok();
@@ -465,29 +465,29 @@ bool LevelDbPhraseTable::getEntriesForTarget(const Vector<WordIndex>& t,
 }
 
 //-------------------------
-bool LevelDbPhraseTable::getEntriesForSource(const Vector<WordIndex>& s,
+bool LevelDbPhraseTable::getEntriesForSource(const std::vector<WordIndex>& s,
                                             LevelDbPhraseTable::TrgTableNode& trgtn) 
 {
     // TO-BE-DONE (LOW PRIORITY)
 }
 
 //-------------------------
-Count LevelDbPhraseTable::cSrcTrg(const Vector<WordIndex>& s,
-                                 const Vector<WordIndex>& t)
+Count LevelDbPhraseTable::cSrcTrg(const std::vector<WordIndex>& s,
+                                 const std::vector<WordIndex>& t)
 {
     bool found;
     return getSrcTrgInfo(s,t,found);
 }
 
 //-------------------------
-Count LevelDbPhraseTable::cSrc(const Vector<WordIndex>& s)
+Count LevelDbPhraseTable::cSrc(const std::vector<WordIndex>& s)
 {
     bool found;
     return getSrcInfo(s,found);
 }
 
 //-------------------------
-Count LevelDbPhraseTable::cTrg(const Vector<WordIndex>& t)
+Count LevelDbPhraseTable::cTrg(const std::vector<WordIndex>& t)
 {
     bool found;
     return getTrgInfo(t,found);
@@ -509,10 +509,10 @@ size_t LevelDbPhraseTable::size(void)
 //-------------------------
 void LevelDbPhraseTable::print(bool printString)
 {
-    cout << "levelDB content:" << endl;   
+    cout << "levelDB content:" << std::endl;   
     for(LevelDbPhraseTable::const_iterator iter = begin(); iter != end(); iter++)
     {
-        pair<Vector<WordIndex>, int> x = *iter;
+        pair<std::vector<WordIndex>, int> x = *iter;
         if (printString) {
             for(size_t i = 0; i < x.first.size(); i++)
                 cout << x.first[i] << " ";
@@ -520,7 +520,7 @@ void LevelDbPhraseTable::print(bool printString)
             cout << vectorToKey(x.first);
         }
         
-        cout << ":\t" << x.second << endl;
+        cout << ":\t" << x.second << std::endl;
     }
 }
 
@@ -540,8 +540,8 @@ void LevelDbPhraseTable::clear(void)
         
         if(!status.ok())
         {
-            cerr << "Cannot create new levelDB in " << dbName << endl;
-            cerr << "Returned status: " << status.ToString() << endl;
+            std::cerr << "Cannot create new levelDB in " << dbName << std::endl;
+            std::cerr << "Returned status: " << status.ToString() << std::endl;
             exit(3);
         }
     }
@@ -620,17 +620,17 @@ int LevelDbPhraseTable::const_iterator::operator!=(const const_iterator& right)
 }
 
 //--------------------------
-pair<Vector<WordIndex>, int> LevelDbPhraseTable::const_iterator::operator*(void)
+pair<std::vector<WordIndex>, int> LevelDbPhraseTable::const_iterator::operator*(void)
 {
     return *operator->();
 }
 
 //--------------------------
-const pair<Vector<WordIndex>, int>*
+const pair<std::vector<WordIndex>, int>*
 LevelDbPhraseTable::const_iterator::operator->(void)
 {
     string key = internalIter->key().ToString();
-    Vector<WordIndex> key_vec = ptPtr->keyToVector(key);
+    std::vector<WordIndex> key_vec = ptPtr->keyToVector(key);
 
     int count = atoi(internalIter->value().ToString().c_str());
 

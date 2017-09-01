@@ -40,8 +40,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SwDefs.h"
 #include <MathFuncs.h>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define RECORD_READ     0
@@ -84,9 +82,9 @@ void initPrQueue(MergePrQueue& entryPrQueue);
 int getNextEntry(MergePrQueue& entryPrQueue,
                  Entry& entry);
 void printCounts(WordIndex firstSrc,
-                 const Vector<WordIndex>& trgWordVec,
+                 const std::vector<WordIndex>& trgWordVec,
                  float lcSrc,
-                 const Vector<float>& lcSrcTrgVec);
+                 const std::vector<float>& lcSrcTrgVec);
 void clear();
 int readTableRecord(ifstream& inF,
                     WordIndex& s,
@@ -99,9 +97,9 @@ void printDesc(void);
 
 //--------------- Global variables -----------------------------------
 
-Vector<std::string> fileNameVec;
-Vector<ifstream*> ifstreamPtrVec;
-Vector<bool> eofFlagVec;
+std::vector<std::string> fileNameVec;
+std::vector<ifstream*> ifstreamPtrVec;
+std::vector<bool> eofFlagVec;
 
 //--------------- Function Definitions -------------------------------
 
@@ -126,8 +124,8 @@ int main(int argc,char *argv[])
     bool first_entry=true;
     WordIndex firstSrc=0;
     float lcSrc=SMALL_LG_NUM;
-    Vector<WordIndex> trgWordVec;
-    Vector<float> lcSrcTrgVec;
+    std::vector<WordIndex> trgWordVec;
+    std::vector<float> lcSrcTrgVec;
     ChunkSet chunkSet;
     
     while(!end)
@@ -200,7 +198,7 @@ int openFiles(void)
     ifstreamPtrVec[i]->open(fileNameVec[i].c_str(), ios::in | ios::binary);
     if(! *ifstreamPtrVec[i])
     {
-      cerr<<"Error in file with incremental lexical table, file "<<fileNameVec[i]<<" does not exist.\n";
+      std::cerr<<"Error in file with incremental lexical table, file "<<fileNameVec[i]<<" does not exist.\n";
       return THOT_ERROR;    
     }
     
@@ -261,9 +259,9 @@ int getNextEntry(MergePrQueue& entryPrQueue,
 
 //--------------- printCounts() function
 void printCounts(WordIndex firstSrc,
-                 const Vector<WordIndex>& trgWordVec,
+                 const std::vector<WordIndex>& trgWordVec,
                  float lcSrc,
-                 const Vector<float>& lcSrcTrgVec)
+                 const std::vector<float>& lcSrcTrgVec)
 {
   WordIndex firstTrg=trgWordVec[0];
   float glcSrcTrg=lcSrcTrgVec[0];

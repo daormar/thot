@@ -38,13 +38,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "PositionIndex.h"
 #include "Count.h"
-#include "myVector.h"
 #include <map>
 #include <string>
+#include <vector>
 #include "StatModelDefs.h"
 #include "SentPairCont.h"
-
-using namespace std;
 
 //--------------- Constants ------------------------------------------
 

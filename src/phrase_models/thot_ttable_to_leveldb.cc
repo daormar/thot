@@ -49,8 +49,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 int TakeParameters(int argc, char *argv[]);
 void printUsage(void);
 int extractEntryInfo(awkInputStream& awk,
-                     Vector<WordIndex>& srcPhr,
-                     Vector<WordIndex>& trgPhr,
+                     std::vector<WordIndex>& srcPhr,
+                     std::vector<WordIndex>& trgPhr,
                      Count& jointCount);
 int process_ttable(void);
 
@@ -75,8 +75,8 @@ int main(int argc, char *argv[])
 
 //---------------
 int extractEntryInfo(awkInputStream& awk,
-                     Vector<WordIndex>& srcPhr,
-                     Vector<WordIndex>& trgPhr,
+                     std::vector<WordIndex>& srcPhr,
+                     std::vector<WordIndex>& trgPhr,
                      Count& jointCount)
 {
   unsigned int i;
@@ -119,7 +119,7 @@ int process_ttable(void)
   awkInputStream awk;
   if(awk.open_stream(stdin) == THOT_ERROR)
   {
-    cerr << "Error while reading from standard input!" << endl;
+    std::cerr << "Error while reading from standard input!" << std::endl;
     return THOT_ERROR;
   }
   else
@@ -127,7 +127,7 @@ int process_ttable(void)
     LevelDbPhraseTable levelDbPt;
     if(levelDbPt.init(outputFile) == THOT_ERROR)
     {
-      cerr << "Cannot create or recreate database (LevelDB)" << endl;
+      std::cerr << "Cannot create or recreate database (LevelDB)" << std::endl;
       return THOT_ERROR;
     }
     
@@ -136,23 +136,23 @@ int process_ttable(void)
     while(awk.getln())
     {
       // if(awk.FNR % 1000 ==0)
-      //   cerr<<"Processing entry "<<awk.FNR<<endl;
+      //   std::cerr<<"Processing entry "<<awk.FNR<<std::endl;
 
-      Vector<WordIndex> srcPhr;
-      Vector<WordIndex> trgPhr;
+      std::vector<WordIndex> srcPhr;
+      std::vector<WordIndex> trgPhr;
       Count jointCount;
       int ret = extractEntryInfo(awk, srcPhr, trgPhr, jointCount);
       if(ret == THOT_OK)
         levelDbPt.incrCountsOfEntry(srcPhr, trgPhr, jointCount);
       else
-        cerr << "Cannot extract entry info" << endl;
+        std::cerr << "Cannot extract entry info" << std::endl;
       i++;
 
       if (i % 5000 == 0)
-        cerr << "Processed " << i << " lines" << endl;
+        std::cerr << "Processed " << i << " lines" << std::endl;
     }
 
-    cerr << "levelDB size: " << levelDbPt.size() << endl;
+    std::cerr << "levelDB size: " << levelDbPt.size() << std::endl;
     
     return THOT_OK;
   }

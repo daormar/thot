@@ -72,7 +72,7 @@ class CachedHmmAligLgProb
   void clear(void);
   
  private:
-  Vector<Vector<Vector<double> > > cachedLgProbs;
+  std::vector<std::vector<std::vector<double> > > cachedLgProbs;
 };
 
 #endif

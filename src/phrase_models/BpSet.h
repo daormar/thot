@@ -37,15 +37,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <myVector.h>
 #include <PositionIndex.h>
 #include "BpSetInfo.h"
 #include <MathFuncs.h>
-
-using namespace std;
+#include <vector>
 
 //--------------- Constants ------------------------------------------
-typedef Vector<BpSetInfo> BpSetInfoCont;
+typedef std::vector<BpSetInfo> BpSetInfoCont;
 
 //--------------- typedefs -------------------------------------------
 
@@ -83,7 +81,7 @@ class BpSet
     
   private:
     
-    Vector<Vector<Vector<BpSetInfo> > > consPairs;
+    std::vector<std::vector<std::vector<BpSetInfo> > > consPairs;
 };
 
 #endif

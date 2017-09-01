@@ -40,7 +40,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ThotMtEngine.h"
 #include "ThotMtFactoryInitPars.h"
 
-using namespace std;
 using namespace casmacat;
 
 //--------------- Classes --------------------------------------------

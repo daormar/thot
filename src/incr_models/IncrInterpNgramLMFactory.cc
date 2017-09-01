@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function definitions
 
-extern "C" BaseNgramLM<Vector<WordIndex> >* create(std::string /*str*/)
+extern "C" BaseNgramLM<std::vector<WordIndex> >* create(std::string /*str*/)
 {
   return new IncrInterpNgramLM;
 }

@@ -29,19 +29,19 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include <stdio.h>
-#include "myVector.h"
 #include <string>
+#include <vector>
 
 namespace StrProcUtils
 {
-  Vector<string> charItemsToVector(const char *ch);
-  Vector<std::string> stringToStringVector(std::string s);
-  std::string stringVectorToString(Vector<std::string> svec);
-  std::string stringVectorToStringWithoutSpaces(Vector<std::string> svec);
+  std::vector<std::string> charItemsToVector(const char *ch);
+  std::vector<std::string> stringToStringVector(std::string s);
+  std::string stringVectorToString(std::vector<std::string> svec);
+  std::string stringVectorToStringWithoutSpaces(std::vector<std::string> svec);
   bool isPrefix(std::string str1,std::string str2);
       // returns true if string str1 is a prefix of string str2
-  bool isPrefixStrVec(Vector<std::string> strVec1,
-                      Vector<std::string> strVec2);
+  bool isPrefixStrVec(std::vector<std::string> strVec1,
+                      std::vector<std::string> strVec2);
       // returns true if string vector strVec1 is a prefix of string
       // vector strVec2
   std::string getLastWord(std::string str);
@@ -52,7 +52,7 @@ namespace StrProcUtils
       // Remove last blank character of str if exists
   std::string addBlank(std::string str);
       // Add blank character at the end of str
-  Vector<float> strVecToFloatVec(Vector<std::string> strVec);
+  std::vector<float> strVecToFloatVec(std::vector<std::string> strVec);
       // Convert string vector into a float vector
 }
 

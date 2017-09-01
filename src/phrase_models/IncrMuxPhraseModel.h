@@ -43,8 +43,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <sys/stat.h>
 #include <map>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -85,9 +83,9 @@ class IncrMuxPhraseModel: public _incrMuxPhraseModel
  protected:
 
     typedef std::map<std::string,SimpleDynClassLoader<BasePhraseModel> > SimpleDynClassLoaderMap;
-    Vector<std::string> tmTypeVec;
-    Vector<std::string> modelFileNameVec;
-    Vector<std::string> modelStatusVec;
+    std::vector<std::string> tmTypeVec;
+    std::vector<std::string> modelFileNameVec;
+    std::vector<std::string> modelStatusVec;
     SimpleDynClassLoaderMap simpleDynClassLoaderMap;
       
     bool loadTmEntries(const char *fileName);

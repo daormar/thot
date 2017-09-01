@@ -57,15 +57,15 @@ class PhraseCountsLog
 {
  public:
   PhraseCountsLog(void);
-  PhraseCountLogState addPhrase(const Vector<WordIndex>& phrase,
+  PhraseCountLogState addPhrase(const std::vector<WordIndex>& phrase,
                                 LogCount logCount);
-  PhraseCountLogState incrLogCountOfPhrase(const Vector<WordIndex>& phrase,
+  PhraseCountLogState incrLogCountOfPhrase(const std::vector<WordIndex>& phrase,
                                            LogCount logCount);	
-  LogCount getLogCount(const Vector<WordIndex>& phrase,
+  LogCount getLogCount(const std::vector<WordIndex>& phrase,
                        bool& found);
-  PhraseCountLogState getState(const Vector<WordIndex>& phrase);
+  PhraseCountLogState getState(const std::vector<WordIndex>& phrase);
   void getPhraseGivenState(PhraseCountLogState plState,
-                           Vector<WordIndex>& phrase);
+                           std::vector<WordIndex>& phrase);
   LogCount getLogCountGivenState(PhraseCountLogState plState);
   unsigned int size(void);
   unsigned int trieSize(void);
@@ -75,7 +75,7 @@ class PhraseCountsLog
   PlcTable plcTable;
   unsigned int numberOfPhrasesStored;
   
-  Vector<WordIndex> invertVectorElements(const Vector<WordIndex>& v);
+  std::vector<WordIndex> invertVectorElements(const std::vector<WordIndex>& v);
 };
 
 #endif

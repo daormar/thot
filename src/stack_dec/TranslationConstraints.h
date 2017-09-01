@@ -45,12 +45,12 @@ class TranslationConstraints: public BaseTranslationConstraints
       // Services
   void obtainTransConstraints(std::string rawSrcSent,
                               int verbosity=0);
-  Vector<std::string> getSrcSentVec(void)const;
-  Vector<std::string> getTransForSrcPhr(pair<PositionIndex,PositionIndex> srcPhr)const;
-  std::set<pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const;
-  bool srcPhrAffectedByConstraint(pair<PositionIndex,PositionIndex> srcPhr)const;
-  bool translationSatisfiesConstraints(const Vector<std::string>& targetWordVec,
-                                       const Vector<pair<PositionIndex,PositionIndex> >& alignedPositions)const;
+  std::vector<std::string> getSrcSentVec(void)const;
+  std::vector<std::string> getTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhr)const;
+  std::set<std::pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const;
+  bool srcPhrAffectedByConstraint(std::pair<PositionIndex,PositionIndex> srcPhr)const;
+  bool translationSatisfiesConstraints(const std::vector<std::string>& targetWordVec,
+                                       const std::vector<std::pair<PositionIndex,PositionIndex> >& alignedPositions)const;
       // NOTE: alignedPositions is a vector representing alignments
       // between source and target words.  The first index corresponds
       // to source word positions and the second one to target word
@@ -62,8 +62,8 @@ class TranslationConstraints: public BaseTranslationConstraints
 
       // Data members
   std::set<std::string> xmlTagSet;
-  Vector<std::string> srcSentVec;
-  std::map<pair<PositionIndex,PositionIndex>,Vector<std::string> > srcPhrTransMap;
+  std::vector<std::string> srcSentVec;
+  std::map<std::pair<PositionIndex,PositionIndex>,std::vector<std::string> > srcPhrTransMap;
 
       // Auxiliary functions
   std::string tokenizeSrcSentence(std::string srcSent)const;
@@ -72,10 +72,10 @@ class TranslationConstraints: public BaseTranslationConstraints
   bool xmlTag(std::string srcSent,
               unsigned int initialPos,
               unsigned int& endTagPos)const;
-  bool constraintFound(Vector<std::string> tokRawSrcSentVec,
+  bool constraintFound(std::vector<std::string> tokRawSrcSentVec,
                        unsigned int currPos,
-                       Vector<std::string>& srcPhrase,
-                       Vector<std::string>& trgPhrase,
+                       std::vector<std::string>& srcPhrase,
+                       std::vector<std::string>& trgPhrase,
                        unsigned int& finalPos)const;
 };
 

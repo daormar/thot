@@ -46,9 +46,9 @@ void NonPbEcModelForNbUcat::link_ecm(BaseErrorCorrectionModel* _ecm_ptr)
 
 //---------------------------------------
 NbestCorrections
-NonPbEcModelForNbUcat::correct(const Vector<std::string>& outputSentVec,
-                               const Vector<unsigned int>& /*sourceCuts*/,
-                               const Vector<std::string>& prefixVec,
+NonPbEcModelForNbUcat::correct(const std::vector<std::string>& outputSentVec,
+                               const std::vector<unsigned int>& /*sourceCuts*/,
+                               const std::vector<std::string>& prefixVec,
                                unsigned int maxMapSize,
                                int verbose)
 {
@@ -67,8 +67,8 @@ NonPbEcModelForNbUcat::correct(const Vector<std::string>& outputSentVec,
 
 //---------------------------------------
 NonPbEcModelForNbUcat::MonolingSegmNbest
-NonPbEcModelForNbUcat::nonPhraseBasedAlign(const Vector<std::string>& _outputSentVec,
-                                           const Vector<std::string>& _prefixVec,
+NonPbEcModelForNbUcat::nonPhraseBasedAlign(const std::vector<std::string>& _outputSentVec,
+                                           const std::vector<std::string>& _prefixVec,
                                            unsigned int _maxMapSize,
                                            int verbose)
 {
@@ -78,7 +78,7 @@ NonPbEcModelForNbUcat::nonPhraseBasedAlign(const Vector<std::string>& _outputSen
   sourceCuts.push_back(outputSentVec.size()-1);
   prefixVec=_prefixVec;
   
-  if(verbose) cerr<<"*** Starting prefix aligner"<<endl;
+  if(verbose) std::cerr<<"*** Starting prefix aligner"<<std::endl;
 
       // Clear n-best corrections list
   monolingSegmNbest.clear();
@@ -87,7 +87,7 @@ NonPbEcModelForNbUcat::nonPhraseBasedAlign(const Vector<std::string>& _outputSen
   maxMapSize=_maxMapSize;
 
       // Create vector with source segments
-  if(verbose) cerr<<"* Create vector with source segments"<<endl;
+  if(verbose) std::cerr<<"* Create vector with source segments"<<std::endl;
   outputSegmVec=obtainVectorWithSegms(outputSentVec,sourceCuts,verbose);
 
       // Check the prefix length
@@ -120,16 +120,16 @@ NonPbEcModelForNbUcat::nonPhraseBasedAlign(const Vector<std::string>& _outputSen
 }
 
 //---------------------------------------
-Vector<Vector<std::string> >
-NonPbEcModelForNbUcat::obtainVectorWithSegms(Vector<std::string> sentVec,
-                                             Vector<unsigned int> cuts,
+std::vector<std::vector<std::string> >
+NonPbEcModelForNbUcat::obtainVectorWithSegms(std::vector<std::string> sentVec,
+                                             std::vector<unsigned int> cuts,
                                              int verbose)
 {
-  Vector<Vector<std::string> > result;
+  std::vector<std::vector<std::string> > result;
   
   for(unsigned int i=0;i<cuts.size();++i)
   {
-    Vector<std::string> segm;
+    std::vector<std::string> segm;
     unsigned int j;
     
     if(i==0) j=0;
@@ -142,8 +142,8 @@ NonPbEcModelForNbUcat::obtainVectorWithSegms(Vector<std::string> sentVec,
     if(verbose)
     {
       for(unsigned int j=0;j<segm.size();++j)
-        cerr<<segm[j]<<" ";
-      cerr<<endl;
+        std::cerr<<segm[j]<<" ";
+      std::cerr<<std::endl;
     }
   }
   return result;
@@ -172,12 +172,12 @@ void NonPbEcModelForNbUcat::removeLastFromMonolingSegmNbest(void)
 }
 
 //---------------------------------------
-Vector<std::string> NonPbEcModelForNbUcat::correctedSent(PrefAlignInfo& prefAlignInfo)
+std::vector<std::string> NonPbEcModelForNbUcat::correctedSent(PrefAlignInfo& prefAlignInfo)
 {
-  Vector<std::string> lastOutSegm;
-  Vector<std::string> lastPrefSegm;
-  Vector<std::string> corrSent;
-  Vector<std::string> correctedLastSegm;
+  std::vector<std::string> lastOutSegm;
+  std::vector<std::string> lastPrefSegm;
+  std::vector<std::string> corrSent;
+  std::vector<std::string> correctedLastSegm;
   unsigned int l;
   unsigned int lastTransCut;
   
@@ -245,9 +245,9 @@ Vector<std::string> NonPbEcModelForNbUcat::correctedSent(PrefAlignInfo& prefAlig
 }
 
 //---------------------------------------
-void NonPbEcModelForNbUcat::getLastOutSegm(Vector<std::string>& x,
-                                           Vector<unsigned int>& cuts,
-                                           Vector<std::string>& lastOutSegm)
+void NonPbEcModelForNbUcat::getLastOutSegm(std::vector<std::string>& x,
+                                           std::vector<unsigned int>& cuts,
+                                           std::vector<std::string>& lastOutSegm)
 {
   unsigned int left;
   unsigned int right;

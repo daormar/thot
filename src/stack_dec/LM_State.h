@@ -26,18 +26,18 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "WordIndex.h"
-#include "myVector.h"
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 
 // Set the LM_State type used to represent the word history of an n-gram
 // language model.
 
-#define LM_STATE_TYPE_NAME "Vector<WordIndex>"
+#define LM_STATE_TYPE_NAME "std::vector<WordIndex>"
 #define LM_STATE_DESC      ""
 
 //--------------- User defined types ---------------------------------
 
-typedef Vector<WordIndex> LM_State;
+typedef std::vector<WordIndex> LM_State;
 
 #endif

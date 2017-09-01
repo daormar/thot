@@ -27,10 +27,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <utility>
 #include "PositionIndex.h"
-#include "myVector.h"
+#include <vector>
 
 //--------------- Typedefs -------------------------------------------
 
-typedef Vector<pair<PositionIndex,PositionIndex> > SentSegmentation;
+typedef std::vector<pair<PositionIndex,PositionIndex> > SentSegmentation;
 
 #endif

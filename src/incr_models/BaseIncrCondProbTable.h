@@ -39,10 +39,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <StatModelDefs.h>
 #include "NbestTableNode.h"
 #include "im_pair.h"
-#include "myVector.h"
 #include <map>
-
-using namespace std;
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 

@@ -44,8 +44,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "awkInputStream.h"
 #include "Prob.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -75,7 +73,7 @@ class SegLenTable
 
     bool printSegmLengthTable(char *outputFileName);
     bool load_seglentable(const char *segmLengthTableFileName);
-	void printSegmLengthTable(ostream &outS);
+	void printSegmLengthTable(std::ostream &outS);
   
   private:
     

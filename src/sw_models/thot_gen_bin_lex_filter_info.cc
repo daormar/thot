@@ -36,8 +36,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "options.h"
 #include "SwDefs.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -65,7 +63,7 @@ int main(int argc,char *argv[])
     ifstream inF (lexTableFileName.c_str(), ios::in | ios::binary);
     if (!inF)
     {
-      cerr<<"Error in file with incremental lexical table, file "<<lexTableFileName<<" does not exist.\n";
+      std::cerr<<"Error in file with incremental lexical table, file "<<lexTableFileName<<" does not exist.\n";
       return THOT_ERROR;    
     }
     else

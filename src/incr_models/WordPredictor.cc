@@ -61,16 +61,16 @@ bool WordPredictor::loadFileWithSents(const char *fileName)
       // Open files
   if(fileStream.open(fileName)==THOT_ERROR)
   {
-    cerr<<"WordPredictor: Error while loading file with sentences "<<fileName<<endl;
+    std::cerr<<"WordPredictor: Error while loading file with sentences "<<fileName<<std::endl;
     return THOT_ERROR;
   }
   else
   {
-    cerr<<"WordPredictor: loading file with sentences "<<fileName<<endl;
+    std::cerr<<"WordPredictor: loading file with sentences "<<fileName<<std::endl;
           
     while(fileStream.getln())
     {
-      Vector<std::string> strVec;
+      std::vector<std::string> strVec;
 
       for(unsigned int i=1;i<=fileStream.NF;++i)
       {
@@ -92,38 +92,38 @@ bool WordPredictor::loadFileWithAdditionalInfo(const char *fileName)
       // Open files
   if(fileStream.open(fileName)==THOT_ERROR)
   {
-//    cerr<<"WordPredictor: file with additional info "<<fileName<<" not found. No additional info was loaded"<<endl;
+//    std::cerr<<"WordPredictor: file with additional info "<<fileName<<" not found. No additional info was loaded"<<std::endl;
     return THOT_OK;
   }
   else
   {
-    cerr<<"WordPredictor: loading file with additional info "<<fileName<<" ... ";
+    std::cerr<<"WordPredictor: loading file with additional info "<<fileName<<" ... ";
           
     if(fileStream.getln())
     {
       if(fileStream.NF==1)
       {
         numSentsToRetain=atoi(fileStream.dollar(1).c_str());
-        cerr<<"numSentsToRetain= "<<numSentsToRetain<<endl;
+        std::cerr<<"numSentsToRetain= "<<numSentsToRetain<<std::endl;
         fileStream.close();
         return THOT_OK;
       }
       else
       {
-        cerr<<"anomalous file with additional info"<<endl;
+        std::cerr<<"anomalous file with additional info"<<std::endl;
         return THOT_ERROR;
       }
     }
     else
     {
-      cerr<<"unexpected end of file with additional info"<<endl;
+      std::cerr<<"unexpected end of file with additional info"<<std::endl;
       return THOT_ERROR;
     }
   }    
 }
 
 //---------------------------------------
-void WordPredictor::addSentence(Vector<std::string> strVec)
+void WordPredictor::addSentence(std::vector<std::string> strVec)
 {
   if(numSentsToRetain>0)
   {
@@ -138,9 +138,9 @@ void WordPredictor::addSentence(Vector<std::string> strVec)
 }
 
 //---------------------------------------
-void WordPredictor::addSentenceAux(Vector<std::string> strVec)
+void WordPredictor::addSentenceAux(std::vector<std::string> strVec)
 {
-  Vector<char> vecChar;
+  std::vector<char> vecChar;
   std::string chain;
   Count *cPtr;
 
@@ -169,7 +169,7 @@ void WordPredictor::getSuffixList(std::string input,
                                   SuffixList &out)
 {
   Trie<char,Count>* triePtr;
-  Vector<char> charVec;
+  std::vector<char> charVec;
   
   out.clear();
   for(unsigned int i=0;i<input.size();++i)
@@ -202,9 +202,9 @@ void WordPredictor::getSuffixList(std::string input,
 }
 
 //---------------------------------------
-pair<Count,std::string> WordPredictor::getBestSuffix(std::string input)
+std::pair<Count,std::string> WordPredictor::getBestSuffix(std::string input)
 {
-  pair<Count,std::string> pcs;
+  std::pair<Count,std::string> pcs;
   SuffixList suffixList; 
   SuffixList::iterator suffListIter;
     

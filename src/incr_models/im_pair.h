@@ -30,8 +30,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include <iostream>
 
-using namespace std;
-
 //--------------- Classes --------------------------------------------
 
 template<class T1,class T2>
@@ -72,13 +70,13 @@ class im_pair /* incremental model pair */
       return false;
     }
   
-  friend ostream& operator <<(ostream &outS,const im_pair& imp)
+  friend std::ostream& operator <<(std::ostream &outS,const im_pair& imp)
     {
       outS<<imp.first<<" "<<imp.second;
       return outS;
     }
   
-  friend istream& operator>>(istream& is, const im_pair& imp)
+  friend std::istream& operator>>(std::istream& is, const im_pair& imp)
     {
       is >> imp.first>>" ">>imp.second;
       return is;

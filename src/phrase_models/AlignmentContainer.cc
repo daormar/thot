@@ -44,12 +44,12 @@ bool AlignmentContainer::extractAlignmentsFromGIZAFile(const char *_GizaAligFile
                                                        bool transpose/*=0*/)
 {
  unsigned int j;
- Vector<string> ns,t;
- Vector<unsigned int> t_id,s_id;
+ std::vector<string> ns,t;
+ std::vector<unsigned int> t_id,s_id;
  AlignmentExtractor alignmentExtractor;
- map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
+ map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
  AligInfo alInfo;
- Vector<AligInfo> alInfoVec;
+ std::vector<AligInfo> alInfoVec;
 	
  aligCont.clear();
  tVocab.clear(); sVocab.clear();
@@ -108,7 +108,7 @@ bool AlignmentContainer::extractAlignmentsFromGIZAFile(const char *_GizaAligFile
 bool AlignmentContainer::join(const char *_GizaAligFileName,bool transpose/*=0*/)
 {
   AlignmentExtractor alExt;
-  map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
+  map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
   unsigned int i;	
 	 
   if(alExt.open(_GizaAligFileName)==THOT_ERROR)
@@ -143,7 +143,7 @@ bool AlignmentContainer::intersect(const char *_GizaAligFileName,
                                    bool transpose/*=0*/)
 {
  AlignmentExtractor alExt;
- map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
+ map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
  unsigned int i;	
 	 
  if(alExt.open(_GizaAligFileName)==THOT_ERROR)
@@ -176,7 +176,7 @@ bool AlignmentContainer::intersect(const char *_GizaAligFileName,
 bool AlignmentContainer::sum(const char *_GizaAligFileName,bool transpose/*=0*/)
 {
  AlignmentExtractor alExt;
- map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
+ map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
  unsigned int i;	
 	 
  if(alExt.open(_GizaAligFileName)==THOT_ERROR)
@@ -211,7 +211,7 @@ bool AlignmentContainer::symmetr1(const char *_GizaAligFileName,
                                   bool transpose/*=0*/)
 {
  AlignmentExtractor alExt;
- map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
+ map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
  unsigned int i;	
 	 
  if(alExt.open(_GizaAligFileName)==THOT_ERROR)
@@ -246,7 +246,7 @@ bool AlignmentContainer::symmetr2(const char *_GizaAligFileName,
                                   bool transpose/*=0*/)
 {
  AlignmentExtractor alExt;
- map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
+ map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
  unsigned int i;	
 	 
  if(alExt.open(_GizaAligFileName)==THOT_ERROR)
@@ -281,7 +281,7 @@ bool AlignmentContainer::growDiagFinal(const char *_GizaAligFileName,
                                        bool transpose/*=0*/)
 {
  AlignmentExtractor alExt;
- map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
+ map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion>::iterator alIter;
  unsigned int i;	
 	 
  if(alExt.open(_GizaAligFileName)==THOT_ERROR)
@@ -312,12 +312,12 @@ bool AlignmentContainer::growDiagFinal(const char *_GizaAligFileName,
 }
 
 //-------------------------
-Vector<unsigned int> AlignmentContainer::vecString2VecUnsigInt(Vector<string> vStr,
+std::vector<unsigned int> AlignmentContainer::vecString2VecUnsigInt(std::vector<string> vStr,
                                                                map<string,unsigned int> & vocab,
-                                                               Vector<string> & vocabInv)const
+                                                               std::vector<string> & vocabInv)const
 {
  unsigned int i;
- Vector<unsigned int> vInt;
+ std::vector<unsigned int> vInt;
  map<string,unsigned int>::iterator vocabIter;
  unsigned int wIndex;
 	
@@ -339,11 +339,11 @@ Vector<unsigned int> AlignmentContainer::vecString2VecUnsigInt(Vector<string> vS
 }
 
 //-------------------------
-Vector<string> AlignmentContainer::vecUnsigInt2VecString(Vector<unsigned int> vInt,
-                                                         const Vector<string> & vocabInv)const
+std::vector<string> AlignmentContainer::vecUnsigInt2VecString(std::vector<unsigned int> vInt,
+                                                         const std::vector<string> & vocabInv)const
 {
  unsigned int i;
- Vector<string> vStr;
+ std::vector<string> vStr;
 	
  for(i=0;i<vInt.size();++i)
  {
@@ -366,11 +366,11 @@ void AlignmentContainer::clear(void)
 //-------------------------
 bool AlignmentContainer::printNoCompact(ostream &outS)
 {
-  map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::const_iterator acIter;
-  Vector<AligInfo>::const_iterator eAlVectorIter;
+  map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion>::const_iterator acIter;
+  std::vector<AligInfo>::const_iterator eAlVectorIter;
   AlignmentExtractor alignmentExtractor;
-  Vector<string> ns,t,s_cont,t_cont;
-  Vector<unsigned int> t_ui;
+  std::vector<string> ns,t,s_cont,t_cont;
+  std::vector<unsigned int> t_ui;
   char cad[128];
   unsigned int numSent=0;
 	
@@ -407,11 +407,11 @@ bool AlignmentContainer::printNoCompact(ostream &outS)
 //-------------------------
 bool AlignmentContainer::printNoCompact(FILE *file)
 {
-  map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::const_iterator acIter;
-  Vector<AligInfo>::const_iterator eAlVectorIter;
+  map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion>::const_iterator acIter;
+  std::vector<AligInfo>::const_iterator eAlVectorIter;
   AlignmentExtractor alignmentExtractor;
-  Vector<string> ns,t,s_cont,t_cont;
-  Vector<unsigned int> t_ui;
+  std::vector<string> ns,t,s_cont,t_cont;
+  std::vector<unsigned int> t_ui;
   char cad[128];
   unsigned int numSent=0;
 	
@@ -450,9 +450,9 @@ bool AlignmentContainer::printNoCompact(FILE *file)
 ostream& operator << (ostream &outS,
                       const AlignmentContainer &ac)
 {
- map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::const_iterator acIter;
- Vector<AligInfo>::const_iterator eAlVectorIter;
- Vector<string> s,t;	
+ map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion>::const_iterator acIter;
+ std::vector<AligInfo>::const_iterator eAlVectorIter;
+ std::vector<string> s,t;	
  char cad[128];
 	
  for(acIter=ac.aligCont.begin();acIter!=ac.aligCont.end();++acIter)
@@ -470,9 +470,9 @@ ostream& operator << (ostream &outS,
 //-------------------------
 void AlignmentContainer::printCompact(FILE *file)
 {
- map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion>::const_iterator acIter;
- Vector<AligInfo>::const_iterator eAlVectorIter;
- Vector<string> s,t;	
+ map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion>::const_iterator acIter;
+ std::vector<AligInfo>::const_iterator eAlVectorIter;
+ std::vector<string> s,t;	
  char cad[128];
 	
  for(acIter=this->aligCont.begin();acIter!=this->aligCont.end();++acIter)

@@ -26,7 +26,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "BaseScorer.h"
-#include "myVector.h"
+#include <vector>
 #include <string>
 
 //--------------- Classes --------------------------------------------
@@ -42,18 +42,18 @@ class BaseMiraScorer: public BaseScorer
  public:
     // Functions to manage background corpus
   virtual void resetBackgroundCorpus()=0;
-  virtual void updateBackgroundCorpus(const Vector<unsigned int>& stats,
+  virtual void updateBackgroundCorpus(const std::vector<unsigned int>& stats,
                                       double decay)=0;
 
     // Score for sentence with background corpus stats
   virtual void sentBackgroundScore(const std::string& candidate,
                                    const std::string& reference,
                                    double& score,
-                                   Vector<unsigned int>& stats)=0;
+                                   std::vector<unsigned int>& stats)=0;
 
     // Score for corpus
-  virtual void corpusScore(const Vector<std::string>& candidates,
-                           const Vector<std::string>& references,
+  virtual void corpusScore(const std::vector<std::string>& candidates,
+                           const std::vector<std::string>& references,
                            double& score)=0;
 
     // Score for sentence

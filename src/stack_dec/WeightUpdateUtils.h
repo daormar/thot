@@ -51,8 +51,8 @@ extern "C" {
 #include "PhrasePair.h"
 #include "BaseLogLinWeightUpdater.h"
 #include <stdio.h>
-#include "myVector.h"
 #include <string>
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 
@@ -65,8 +65,8 @@ namespace WeightUpdateUtils
   void updateLogLinearWeights(std::string refSent,
                               WordGraph* wgPtr,
                               BaseLogLinWeightUpdater* llWeightUpdaterPtr,
-                              const Vector<pair<std::string,float> >& compWeights,
-                              Vector<float>& newWeights,
+                              const std::vector<pair<std::string,float> >& compWeights,
+                              std::vector<float>& newWeights,
                               int verbose=0);
   int updatePmLinInterpWeights(std::string srcCorpusFileName,
                                std::string trgCorpusFileName,

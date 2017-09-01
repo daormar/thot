@@ -39,38 +39,38 @@ EditDistForStr::EditDistForStr(void):_editDist<std::string>()
 }
 
 //---------------------------------------
-Score EditDistForStr::calculateEditDistPrefix(const string& x,
-                                              const string& y,
+Score EditDistForStr::calculateEditDistPrefix(const std::string& x,
+                                              const std::string& y,
                                               int verbose)
 {
-  Vector<unsigned int> ops;
+  std::vector<unsigned int> ops;
 
   return calculateEditDistPrefixOps(x,y,ops,verbose);
 }
 
 //---------------------------------------
-Score EditDistForStr::calculateEditDistPrefixOps(const string& x,
-                                                 const string& y,
-                                                 Vector<unsigned int>& ops,
+Score EditDistForStr::calculateEditDistPrefixOps(const std::string& x,
+                                                 const std::string& y,
+                                                 std::vector<unsigned int>& ops,
                                                  int verbose)
 {
   return calculateEditDistPrefixOpsAux(x,y,USE_PREF_DEL_OP,ops,verbose);
 }
 
 //---------------------------------------
-Score EditDistForStr::calculateEditDistPrefixOpsNoPrefDel(const string& x,
-                                                          const string& y,
-                                                          Vector<unsigned int>& ops,
+Score EditDistForStr::calculateEditDistPrefixOpsNoPrefDel(const std::string& x,
+                                                          const std::string& y,
+                                                          std::vector<unsigned int>& ops,
                                                           int verbose)
 {
   return calculateEditDistPrefixOpsAux(x,y,DONT_USE_PREF_DEL_OP,ops,verbose);
 }
 
 //---------------------------------------
-Score EditDistForStr::calculateEditDistPrefixOpsAux(const string& x,
-                                                    const string& y,
+Score EditDistForStr::calculateEditDistPrefixOpsAux(const std::string& x,
+                                                    const std::string& y,
                                                     bool usePrefDelOp,
-                                                    Vector<unsigned int>& ops,
+                                                    std::vector<unsigned int>& ops,
                                                     int verbose)
 {
   int pred_i;
@@ -91,13 +91,13 @@ Score EditDistForStr::calculateEditDistPrefixOpsAux(const string& x,
       // Retrieve operations
   obtainOperationsPref(x,y,dm,usePrefDelOp,x.size(),y.size(),ops);
 
-  if(verbose) printDistMatrix(x,y,dm,cerr);
+  if(verbose) printDistMatrix(x,y,dm,std::cerr);
   return dm[x.size()][y.size()];	
 }
 
 //---------------------------------------
-Score EditDistForStr::processMatrixCell(const string& x,
-                                        const string& y,
+Score EditDistForStr::processMatrixCell(const std::string& x,
+                                        const std::string& y,
                                         const DistMatrix& dm,
                                         int i,
                                         int j,
@@ -176,8 +176,8 @@ Score EditDistForStr::processMatrixCell(const string& x,
 }
 
 //---------------------------------------
-Score EditDistForStr::processMatrixCellPref(const string& x,
-                                            const string& y,
+Score EditDistForStr::processMatrixCellPref(const std::string& x,
+                                            const std::string& y,
                                             const DistMatrix& dm,
                                             bool usePrefDelOp,
                                             int i,
@@ -262,15 +262,15 @@ Score EditDistForStr::processMatrixCellPref(const string& x,
 }
 
 //---------------------------------------
-void EditDistForStr::obtainOperationsPref(const string& x,
-                                          const string& y,
+void EditDistForStr::obtainOperationsPref(const std::string& x,
+                                          const std::string& y,
                                           const DistMatrix& dm,
                                           bool usePrefDelOp,
                                           int i,
                                           int j,
-                                          Vector<unsigned int> &opsCharLevel)
+                                          std::vector<unsigned int> &opsCharLevel)
 {  
-  Vector<unsigned int> vuiaux;
+  std::vector<unsigned int> vuiaux;
   int op_id;
 
       // Trace back edit distance path

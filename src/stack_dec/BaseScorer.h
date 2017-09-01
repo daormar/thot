@@ -31,8 +31,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "myVector.h"
 #include <string>
+#include <vector>
 #include <utility>
 
 //--------------- Constants ------------------------------------------
@@ -54,8 +54,8 @@ class BaseScorer
   typedef std::string type_id_t(void);
 
     // Score for corpus
-  virtual void corpusScore(const Vector<std::string>& candidates,
-                           const Vector<std::string>& references,
+  virtual void corpusScore(const std::vector<std::string>& candidates,
+                           const std::vector<std::string>& references,
                            double& score)=0;
 
     // Score for sentence

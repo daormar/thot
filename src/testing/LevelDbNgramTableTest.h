@@ -18,12 +18,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: LevelDbNgramTableTest                                   */
+/* Module: LevelDbNgramTableTest                                    */
 /*                                                                  */
-/* Prototypes file: LevelDbNgramTableTest.h                        */
+/* Prototypes file: LevelDbNgramTableTest.h                         */
 /*                                                                  */
-/* Description: Declares the LevelDbNgramTableTest class           */
-/*              implementing unit tests for the LevelDbNgramTable  */
+/* Description: Declares the LevelDbNgramTableTest class            */
+/*              implementing unit tests for the LevelDbNgramTable   */
 /*              class.                                              */
 /*                                                                  */
 /********************************************************************/
@@ -94,7 +94,7 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
         LevelDbNgramTable *tab;
         string dbName = "/tmp/thot_leveldb_unit_test";
   
-        Vector<WordIndex> getVector(string phrase);
+        std::vector<WordIndex> getVector(string phrase);
 
     public:
         void setUp();

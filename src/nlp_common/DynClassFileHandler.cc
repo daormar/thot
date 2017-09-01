@@ -46,13 +46,13 @@ bool DynClassFileHandler::load(std::string _fileName,int verbose/*=1*/)
   if(awk.open(fileName.c_str())==THOT_ERROR)
   {
     if(verbose)
-      cerr<<"Error while opening file with dynamic class information: "<<fileName<<"\n";
+      std::cerr<<"Error while opening file with dynamic class information: "<<fileName<<"\n";
     return THOT_ERROR;
   }
   else
   {
     if(verbose)
-      cerr<<"Reading dynamic class information file: "<<fileName<<"\n";
+      std::cerr<<"Reading dynamic class information file: "<<fileName<<"\n";
 
         // Clear data structures
     dynClassInfoMap.clear();
@@ -79,7 +79,7 @@ bool DynClassFileHandler::load(std::string _fileName,int verbose/*=1*/)
         if(!isComment)
         {
               // Extract entry information
-          Vector<std::string> strVec;
+          std::vector<std::string> strVec;
           std::string baseClassName=awk.dollar(1);
           std::string soFileName=awk.dollar(3);
           std::string initPars;
@@ -92,7 +92,7 @@ bool DynClassFileHandler::load(std::string _fileName,int verbose/*=1*/)
           DynClassInfo dynClassInfo(soFileName,initPars);
           dynClassInfoMap[baseClassName]=dynClassInfo;
           if(verbose)
-            cerr<<"Found entry for class "<<baseClassName<<", so file: "<<soFileName<<", init parameters: "<<initPars<<endl;
+            std::cerr<<"Found entry for class "<<baseClassName<<", so file: "<<soFileName<<", init parameters: "<<initPars<<std::endl;
         }
       }
     }

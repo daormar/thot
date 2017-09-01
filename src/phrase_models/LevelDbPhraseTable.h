@@ -70,25 +70,25 @@ class LevelDbPhraseTable: public BasePhraseTable
     string dbName;
 
         // Converters
-    virtual string vectorToString(const Vector<WordIndex>& vec)const;
-    virtual Vector<WordIndex> stringToVector(const string s)const;
+    virtual string vectorToString(const std::vector<WordIndex>& vec)const;
+    virtual std::vector<WordIndex> stringToVector(const string s)const;
     
         // Read and write data
-    virtual bool retrieveData(const Vector<WordIndex>& phrase, int &count)const;
-    virtual bool storeData(const Vector<WordIndex>& phrase, int count)const;
+    virtual bool retrieveData(const std::vector<WordIndex>& phrase, int &count)const;
+    virtual bool storeData(const std::vector<WordIndex>& phrase, int count)const;
 
   
   public:
 
-    typedef std::map<Vector<WordIndex>,PhrasePairInfo> SrcTableNode;
-    typedef std::map<Vector<WordIndex>,PhrasePairInfo> TrgTableNode;
+    typedef std::map<std::vector<WordIndex>,PhrasePairInfo> SrcTableNode;
+    typedef std::map<std::vector<WordIndex>,PhrasePairInfo> TrgTableNode;
 
       // Constructor
     LevelDbPhraseTable(void);
 
         // Key converters
-    virtual string vectorToKey(const Vector<WordIndex>& vec)const;
-    virtual Vector<WordIndex> keyToVector(const string key)const;
+    virtual string vectorToKey(const std::vector<WordIndex>& vec)const;
+    virtual std::vector<WordIndex> keyToVector(const string key)const;
 
         // Wrapper for initializing levelDB
     virtual bool init(string levelDbPath);
@@ -97,70 +97,70 @@ class LevelDbPhraseTable: public BasePhraseTable
         // Wrapper for loading existing levelDB
     virtual bool load(string levelDbPath);
         // Returns s as (UNUSED_WORD, s)
-    virtual Vector<WordIndex> getSrc(const Vector<WordIndex>& s);
+    virtual std::vector<WordIndex> getSrc(const std::vector<WordIndex>& s);
         // Returns concatenated s and t as (UNUSED_WORD, s, UNUSED_WORD, t)
-    virtual Vector<WordIndex> getSrcTrg(const Vector<WordIndex>& s,
-                                        const Vector<WordIndex>& t);
+    virtual std::vector<WordIndex> getSrcTrg(const std::vector<WordIndex>& s,
+                                        const std::vector<WordIndex>& t);
         // Returns concatenated t and s as (t, UNUSED_WORD, s)
-    virtual Vector<WordIndex> getTrgSrc(const Vector<WordIndex>& s,
-                                        const Vector<WordIndex>& t);
+    virtual std::vector<WordIndex> getTrgSrc(const std::vector<WordIndex>& s,
+                                        const std::vector<WordIndex>& t);
         // Abstract function definitions
-    virtual void addTableEntry(const Vector<WordIndex>& s,
-                               const Vector<WordIndex>& t,
+    virtual void addTableEntry(const std::vector<WordIndex>& s,
+                               const std::vector<WordIndex>& t,
                                PhrasePairInfo inf);
         // Adds an entry to the probability table
-    virtual void addSrcInfo(const Vector<WordIndex>& s,Count s_inf);
-    virtual void addSrcTrgInfo(const Vector<WordIndex>& s,
-                               const Vector<WordIndex>& t,
+    virtual void addSrcInfo(const std::vector<WordIndex>& s,Count s_inf);
+    virtual void addSrcTrgInfo(const std::vector<WordIndex>& s,
+                               const std::vector<WordIndex>& t,
                                Count st_inf);
-    virtual void incrCountsOfEntry(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t,
+    virtual void incrCountsOfEntry(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t,
                                    Count c);
         // Increase the counts of a given phrase pair
-    virtual PhrasePairInfo infSrcTrg(const Vector<WordIndex>& s,
-                                     const Vector<WordIndex>& t,
+    virtual PhrasePairInfo infSrcTrg(const std::vector<WordIndex>& s,
+                                     const std::vector<WordIndex>& t,
                                      bool& found);
         // Returns information related to a given key.
-    virtual Count getInfo(const Vector<WordIndex>& key,bool &found);
+    virtual Count getInfo(const std::vector<WordIndex>& key,bool &found);
         // Returns information related to a given s.
-    virtual Count getSrcInfo(const Vector<WordIndex>& s,bool &found);
+    virtual Count getSrcInfo(const std::vector<WordIndex>& s,bool &found);
         // Returns information related to a given t.
-    virtual Count getTrgInfo(const Vector<WordIndex>& t,bool &found);
+    virtual Count getTrgInfo(const std::vector<WordIndex>& t,bool &found);
         // Returns information related to a given s and t.
-    virtual Count getSrcTrgInfo(const Vector<WordIndex>& s,
-                                const Vector<WordIndex>& t,
+    virtual Count getSrcTrgInfo(const std::vector<WordIndex>& s,
+                                const std::vector<WordIndex>& t,
                                 bool &found);
         // Returns information related to a given s and t.
-    virtual Prob pTrgGivenSrc(const Vector<WordIndex>& s,
-                              const Vector<WordIndex>& t);
-    virtual LgProb logpTrgGivenSrc(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t);
-    virtual Prob pSrcGivenTrg(const Vector<WordIndex>& s,
-                              const Vector<WordIndex>& t);
-    virtual LgProb logpSrcGivenTrg(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t);
-    virtual bool getEntriesForTarget(const Vector<WordIndex>& t,
+    virtual Prob pTrgGivenSrc(const std::vector<WordIndex>& s,
+                              const std::vector<WordIndex>& t);
+    virtual LgProb logpTrgGivenSrc(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t);
+    virtual Prob pSrcGivenTrg(const std::vector<WordIndex>& s,
+                              const std::vector<WordIndex>& t);
+    virtual LgProb logpSrcGivenTrg(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t);
+    virtual bool getEntriesForTarget(const std::vector<WordIndex>& t,
                                      SrcTableNode& srctn);
         // Stores in srctn the entries associated to a given target
         // phrase t, returns true if there are one or more entries
-    virtual bool getEntriesForSource(const Vector<WordIndex>& s,
+    virtual bool getEntriesForSource(const std::vector<WordIndex>& s,
                                      TrgTableNode& trgtn);
         // Stores in trgtn the entries associated to a given source
         // phrase s, returns true if there are one or more entries
-    virtual bool getNbestForSrc(const Vector<WordIndex>& s,
+    virtual bool getNbestForSrc(const std::vector<WordIndex>& s,
                                 NbestTableNode<PhraseTransTableNodeData>& nbt);
-    virtual bool getNbestForTrg(const Vector<WordIndex>& t,
+    virtual bool getNbestForTrg(const std::vector<WordIndex>& t,
                                 NbestTableNode<PhraseTransTableNodeData>& nbt,
                                 int N=-1);
 
        // Counts-related functions
-    virtual Count cSrcTrg(const Vector<WordIndex>& s,
-                          const Vector<WordIndex>& t);
-    virtual Count cSrc(const Vector<WordIndex>& s);
-    virtual Count cTrg(const Vector<WordIndex>& t);
+    virtual Count cSrcTrg(const std::vector<WordIndex>& s,
+                          const std::vector<WordIndex>& t);
+    virtual Count cSrc(const std::vector<WordIndex>& s);
+    virtual Count cTrg(const std::vector<WordIndex>& t);
 
         // Additional Functions
-    bool nodeForTrgHasAtLeastOneTrans(const Vector<WordIndex>& t);
+    bool nodeForTrgHasAtLeastOneTrans(const std::vector<WordIndex>& t);
         // Returns true if t has one translation or more
     
         // size and clear functions
@@ -179,7 +179,7 @@ class LevelDbPhraseTable: public BasePhraseTable
       protected:
         const LevelDbPhraseTable* ptPtr;
         leveldb::Iterator* internalIter;
-        pair<Vector<WordIndex>, int> dataItem;
+        pair<std::vector<WordIndex>, int> dataItem;
            
       public:
         const_iterator(void)
@@ -196,8 +196,8 @@ class LevelDbPhraseTable: public BasePhraseTable
         bool operator++(int);  //postfix
         int operator==(const const_iterator& right); 
         int operator!=(const const_iterator& right);
-        pair<Vector<WordIndex>, int> operator*(void);
-        const pair<Vector<WordIndex>, int>* operator->(void);
+        pair<std::vector<WordIndex>, int> operator*(void);
+        const pair<std::vector<WordIndex>, int>* operator->(void);
         /* const PhraseDict::const_iterator& operator->(void)const; */
         ~const_iterator()
         {

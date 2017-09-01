@@ -24,7 +24,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /*                                                                  */
 /* Description: Class to manage encoded incremental                 */
 /*              Jelinek-Mercer ngram language                       */
-/*              models p(x|Vector<x>).                              */
+/*              models p(x|vector<x>).                              */
 /*                                                                  */
 /********************************************************************/
 

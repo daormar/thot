@@ -39,8 +39,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "PhrasePair.h"
 #include "PhraseDefs.h"
 #include <stdio.h>
-#include "myVector.h"
 #include <string>
+#include <vector>
 
 namespace PhraseExtractUtils
 {
@@ -48,28 +48,28 @@ namespace PhraseExtractUtils
                                      BaseSwAligModel<PpInfo>* invSwAligModelPtr,
                                      std::string srcCorpusFileName,
                                      std::string trgCorpusFileName,
-                                     Vector<Vector<PhrasePair> >& phrPairs,
+                                     std::vector<std::vector<PhrasePair> >& phrPairs,
                                      int verbose=0);
   int extractConsistentPhrasePairs(BaseSwAligModel<PpInfo>* swAligModelPtr,
                                    BaseSwAligModel<PpInfo>* invSwAligModelPtr,
-                                   const Vector<std::string>& srcSentStrVec,
-                                   const Vector<std::string>& refSentStrVec,
-                                   Vector<PhrasePair>& vecPhrPair,
+                                   const std::vector<std::string>& srcSentStrVec,
+                                   const std::vector<std::string>& refSentStrVec,
+                                   std::vector<PhrasePair>& vecPhrPair,
                                    bool verbose=0);
   void extractPhrasesFromPairPlusAlig(PhraseExtractParameters phePars,
-                                      Vector<string> ns,
-                                      Vector<string> t,
+                                      std::vector<string> ns,
+                                      std::vector<string> t,
                                       WordAligMatrix waMatrix,
-                                      Vector<PhrasePair>& vecPhrPair,
+                                      std::vector<PhrasePair>& vecPhrPair,
                                       int verbose=0);
   void extractPhrasesFromPairPlusAligBrf(PhraseExtractParameters phePars,
-                                         Vector<string> ns,
-                                         Vector<string> t,
+                                         std::vector<string> ns,
+                                         std::vector<string> t,
                                          WordAligMatrix waMatrix,
-                                         Vector<PhrasePair>& vecPhrPair,
+                                         std::vector<PhrasePair>& vecPhrPair,
                                          int verbose=0);
-  void filterPhrasePairs(const Vector<PhrasePair>& vecUnfiltPhrPair,
-                         Vector<PhrasePair>& vecPhrPair);
+  void filterPhrasePairs(const std::vector<PhrasePair>& vecUnfiltPhrPair,
+                         std::vector<PhrasePair>& vecPhrPair);
 }
 
 #endif

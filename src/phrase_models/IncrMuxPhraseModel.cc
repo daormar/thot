@@ -52,12 +52,12 @@ bool IncrMuxPhraseModel::load(const char *prefix)
 //-------------------------
 bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
 {
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(fileName,modelDescEntryVec)==THOT_OK)
   {
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-      cerr<<"* Reading TM entry: "<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<" "<<modelDescEntryVec[i].statusStr<<endl;
+      std::cerr<<"* Reading TM entry: "<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<" "<<modelDescEntryVec[i].statusStr<<std::endl;
       int ret=loadTmEntry(modelDescEntryVec[i].modelType,
                           modelDescEntryVec[i].absolutizedModelFileName,
                           modelDescEntryVec[i].statusStr);
@@ -67,7 +67,7 @@ bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
         // Check if main model was found
     if(modelIndex!=MAIN_MUX_PMODEL_INDEX)
     {
-      cerr<<"Error: the first model entry should be marked as main"<<endl;
+      std::cerr<<"Error: the first model entry should be marked as main"<<std::endl;
       return THOT_ERROR;
     }
     else
@@ -77,7 +77,7 @@ bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
   }
   else
   {
-    cerr<<"Error while loading descriptor file"<<endl;
+    std::cerr<<"Error while loading descriptor file"<<std::endl;
     return THOT_ERROR;
   }
 }
@@ -136,20 +136,20 @@ bool IncrMuxPhraseModel::printTmEntries(const char *fileName)
   outF.open(fileName,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing model to file."<<endl;
+    std::cerr<<"Error while printing model to file."<<std::endl;
     return THOT_ERROR;
   }
   else
   {
         // Print header
-    outF<<"thot tm descriptor"<<endl;
+    outF<<"thot tm descriptor"<<std::endl;
 
         // Print pm entries
     for(unsigned int i=0;i<tmTypeVec.size();++i)
     {
           // Print descriptor entry
       std::string currModelFileName=obtainFileNameForTmEntry(fileName,i);
-      outF<<tmTypeVec[i]<<" "<<currModelFileName<<" "<<modelStatusVec[i]<<endl;
+      outF<<tmTypeVec[i]<<" "<<currModelFileName<<" "<<modelStatusVec[i]<<std::endl;
 
           // Print translation model
       bool ret=printTm(fileName,i);
@@ -180,7 +180,7 @@ bool IncrMuxPhraseModel::printTm(const char* fileDescName,
     int ret = mkdir(currDirName.c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
     if(ret!=0)
     {
-      cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<endl;
+      std::cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<std::endl;
       return THOT_ERROR;
     }
   }
@@ -189,7 +189,7 @@ bool IncrMuxPhraseModel::printTm(const char* fileDescName,
     if(info.st_mode & S_IFREG)
     {
           // A file with the same name existed
-      cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<endl;
+      std::cerr<<"Error while printing model, directory "<<currDirName<<" could not be created."<<std::endl;
       return THOT_ERROR;
     }
   }
@@ -240,7 +240,7 @@ BasePhraseModel* IncrMuxPhraseModel::createTmPtr(std::string tmType)
     bool verbosity=false;
     if(!simpleDynClassLoader.open_module(tmType,verbosity))
     {
-      cerr<<"Error: so file ("<<tmType<<") could not be opened"<<endl;
+      std::cerr<<"Error: so file ("<<tmType<<") could not be opened"<<std::endl;
       return NULL;
     }
 
@@ -248,7 +248,7 @@ BasePhraseModel* IncrMuxPhraseModel::createTmPtr(std::string tmType)
     BasePhraseModel* tmPtr=simpleDynClassLoader.make_obj("");
     if(tmPtr==NULL)
     {
-      cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<std::endl;
       simpleDynClassLoader.close_module();
     
       return NULL;

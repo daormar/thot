@@ -36,6 +36,6 @@ int BaseErrorCorrectionModel::trainStrPair(const char* /*x*/,
                                            const char* /*y*/,
                                            int /*verbose*/)
 {
-  cerr<<"Warning: training of a string pair was requested, but such functionality is not provided!"<<endl;
+  std::cerr<<"Warning: training of a string pair was requested, but such functionality is not provided!"<<std::endl;
   return THOT_OK;
 }

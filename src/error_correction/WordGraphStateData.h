@@ -25,8 +25,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "myVector.h"
 #include "WordGraphArcId.h"
+#include <vector>
 
 //--------------- Classes --------------------------------------------
 
@@ -34,8 +34,8 @@ class WordGraphStateData
 {
   public:
 
-   Vector<WordGraphArcId> arcsToPredStates;
-   Vector<WordGraphArcId> arcsToSuccStates;
+   std::vector<WordGraphArcId> arcsToPredStates;
+   std::vector<WordGraphArcId> arcsToSuccStates;
 };
 
 #endif

@@ -40,17 +40,17 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 
 //---------------
-Prob IncrNgramLM::pHTrgGivenHSrc(const Vector<std::string>& hs,const std::string& ht)
+Prob IncrNgramLM::pHTrgGivenHSrc(const std::vector<std::string>& hs,const std::string& ht)
 {
   return this->_incrNgramLM<Count,Count>::pHTrgGivenHSrc(hs,ht);
 }
 
 //---------------
-Prob IncrNgramLM::pTrgGivenSrc(const Vector<WordIndex>& s,const WordIndex& t)
+Prob IncrNgramLM::pTrgGivenSrc(const std::vector<WordIndex>& s,const WordIndex& t)
 {
       // Remove extra BOS symbols
   bool found;
-  Vector<WordIndex> aux_s;
+  std::vector<WordIndex> aux_s;
   if(s.size()>=2)
   {
     unsigned int i=0;
@@ -67,7 +67,7 @@ Prob IncrNgramLM::pTrgGivenSrc(const Vector<WordIndex>& s,const WordIndex& t)
       // Access table
   Prob p=this->tablePtr->pTrgGivenSrc(aux_s,t);
       // Obtain smoothing data
-  Vector<WordIndex> empty_hist;
+  std::vector<WordIndex> empty_hist;
   Count c=this->tablePtr->cSrc(empty_hist);
       // Return probability
   return (1.0-INLM_SMOOTHING_FACTOR)*(double)p + INLM_SMOOTHING_FACTOR*((double)1.0/(double)c);

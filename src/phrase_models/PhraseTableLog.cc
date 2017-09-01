@@ -37,7 +37,7 @@ PhraseTableLog::PhraseTableLog(void)
 }
 
 //-------------------------
-bool PhraseTableLog::getNbestForSrc(const Vector<WordIndex>& s,
+bool PhraseTableLog::getNbestForSrc(const std::vector<WordIndex>& s,
                                     NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
   PhraseCountLogState pls_state;
@@ -52,7 +52,7 @@ bool PhraseTableLog::getNbestForSrc(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-bool PhraseTableLog::getNbestForTrg(const Vector<WordIndex>& t,
+bool PhraseTableLog::getNbestForTrg(const std::vector<WordIndex>& t,
                                     NbestTableNode<PhraseTransTableNodeData>& nbt,
                                     int N)
 {
@@ -60,7 +60,7 @@ bool PhraseTableLog::getNbestForTrg(const Vector<WordIndex>& t,
   PhraseTableNodeLog::iterator ptnlIter;	
   LogCount lcount_t_;	
   LgProb lgProb;
-  Vector<WordIndex> s;
+  std::vector<WordIndex> s;
 
   nbt.clear();
   
@@ -112,8 +112,8 @@ bool PhraseTableLog::getNbestForTrg(const Vector<WordIndex>& t,
 }
 
 //-------------------------
-void PhraseTableLog::addTableEntry(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t,
+void PhraseTableLog::addTableEntry(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t,
                                    PhrasePairInfo inf) 
 {
   PhraseCountLogState pls_state;
@@ -125,8 +125,8 @@ void PhraseTableLog::addTableEntry(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-void PhraseTableLog::addTableEntry(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t,
+void PhraseTableLog::addTableEntry(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t,
                                    LogCount lcs,
                                    LogCount lcst)
 {
@@ -139,7 +139,7 @@ void PhraseTableLog::addTableEntry(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-void PhraseTableLog::addSrcInfo(const Vector<WordIndex>& s,
+void PhraseTableLog::addSrcInfo(const std::vector<WordIndex>& s,
                                 Count s_inf)
 {
   // Revise source phrase count
@@ -147,8 +147,8 @@ void PhraseTableLog::addSrcInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-void PhraseTableLog::addSrcTrgInfo(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t,
+void PhraseTableLog::addSrcTrgInfo(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t,
                                    Count st_inf)
 {
   PhraseCountLogState pls_state;
@@ -166,8 +166,8 @@ void PhraseTableLog::addSrcTrgInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-void PhraseTableLog::incrCountsOfEntry(const Vector<WordIndex>& s,
-                                       const Vector<WordIndex>& t,
+void PhraseTableLog::incrCountsOfEntry(const std::vector<WordIndex>& s,
+                                       const std::vector<WordIndex>& t,
                                        Count c) 
 {
   PhraseCountLogState pls_state;
@@ -180,8 +180,8 @@ void PhraseTableLog::incrCountsOfEntry(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-void PhraseTableLog::incrCountsOfEntryLog(const Vector<WordIndex>& s,
-                                          const Vector<WordIndex>& t,
+void PhraseTableLog::incrCountsOfEntryLog(const std::vector<WordIndex>& s,
+                                          const std::vector<WordIndex>& t,
                                           LogCount lc) 
 {
   PhraseCountLogState pls_state;
@@ -194,8 +194,8 @@ void PhraseTableLog::incrCountsOfEntryLog(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-PhrasePairInfo PhraseTableLog::infSrcTrg(const Vector<WordIndex>& s,
-                                         const Vector<WordIndex>& t,
+PhrasePairInfo PhraseTableLog::infSrcTrg(const std::vector<WordIndex>& s,
+                                         const std::vector<WordIndex>& t,
                                          bool& found) 
 {
   PhrasePairInfo ppi;
@@ -214,7 +214,7 @@ PhrasePairInfo PhraseTableLog::infSrcTrg(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Count PhraseTableLog::getSrcInfo(const Vector<WordIndex>& s,
+Count PhraseTableLog::getSrcInfo(const std::vector<WordIndex>& s,
                                  bool &found)
 {
   Count c;
@@ -224,15 +224,15 @@ Count PhraseTableLog::getSrcInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-LogCount PhraseTableLog::getSrcLogCount(const Vector<WordIndex>& s,
+LogCount PhraseTableLog::getSrcLogCount(const std::vector<WordIndex>& s,
                                         bool &found)
 {
   return s_LogCounts.getLogCount(s,found);
 }
 
 //-------------------------
-LogCount PhraseTableLog::getSrcTrgLogCount(const Vector<WordIndex>& s,
-                                           const Vector<WordIndex>& t,
+LogCount PhraseTableLog::getSrcTrgLogCount(const std::vector<WordIndex>& s,
+                                           const std::vector<WordIndex>& t,
                                            bool &found)
 {
   PhraseCountLogState pls_state;
@@ -250,8 +250,8 @@ LogCount PhraseTableLog::getSrcTrgLogCount(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Count PhraseTableLog::getSrcTrgInfo(const Vector<WordIndex>& s,
-                                    const Vector<WordIndex>& t,
+Count PhraseTableLog::getSrcTrgInfo(const std::vector<WordIndex>& s,
+                                    const std::vector<WordIndex>& t,
                                     bool &found)
 {
   PhraseCountLogState pls_state;
@@ -271,15 +271,15 @@ Count PhraseTableLog::getSrcTrgInfo(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Prob PhraseTableLog::pTrgGivenSrc(const Vector<WordIndex>& s,
-                                  const Vector<WordIndex>& t)
+Prob PhraseTableLog::pTrgGivenSrc(const std::vector<WordIndex>& s,
+                                  const std::vector<WordIndex>& t)
 {
   return exp((float)logpTrgGivenSrc(s,t));
 }
 
 //-------------------------
-LgProb PhraseTableLog::logpTrgGivenSrc(const Vector<WordIndex>& s,
-                                       const Vector<WordIndex>& t)
+LgProb PhraseTableLog::logpTrgGivenSrc(const std::vector<WordIndex>& s,
+                                       const std::vector<WordIndex>& t)
 {
   bool found;
   LogCount lcount_s_t_=getSrcTrgLogCount(s,t,found);	
@@ -296,15 +296,15 @@ LgProb PhraseTableLog::logpTrgGivenSrc(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Prob PhraseTableLog::pSrcGivenTrg(const Vector<WordIndex>& s,
-                                  const Vector<WordIndex>& t)
+Prob PhraseTableLog::pSrcGivenTrg(const std::vector<WordIndex>& s,
+                                  const std::vector<WordIndex>& t)
 {
   return exp((float)logpSrcGivenTrg(s,t));
 }
 
 //-------------------------
-LgProb PhraseTableLog::logpSrcGivenTrg(const Vector<WordIndex>& s,
-                                       const Vector<WordIndex>& t)
+LgProb PhraseTableLog::logpSrcGivenTrg(const std::vector<WordIndex>& s,
+                                       const std::vector<WordIndex>& t)
 {
   bool found;
   LogCount lcount_s_t_=getSrcTrgLogCount(s,t,found);	
@@ -322,7 +322,7 @@ LgProb PhraseTableLog::logpSrcGivenTrg(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-bool PhraseTableLog::getEntriesForTarget(const Vector<WordIndex>& t,
+bool PhraseTableLog::getEntriesForTarget(const std::vector<WordIndex>& t,
                                          PhraseTableLog::SrcTableNode& srctn) 
 {
   pair<bool,PhraseTableNodeLog*> p_bool_ptnodel;
@@ -342,7 +342,7 @@ bool PhraseTableLog::getEntriesForTarget(PhraseTableNodeLog* ptnPtr,
                                          PhraseTableLog::SrcTableNode& srctn)
 {
   PhraseTableNodeLog::iterator ptnlIter;
-  Vector<WordIndex> s;
+  std::vector<WordIndex> s;
   PhrasePairInfo phpinfo;
 
   srctn.clear();
@@ -374,7 +374,7 @@ bool PhraseTableLog::getEntriesForTarget(PhraseTableNodeLog* ptnPtr,
 }
 
 //-------------------------
-bool PhraseTableLog::getEntriesForSource(const Vector<WordIndex>& s,
+bool PhraseTableLog::getEntriesForSource(const std::vector<WordIndex>& s,
                                          PhraseTableLog::TrgTableNode& trgtn) 
 {
   PhraseCountLogState pls_state;
@@ -386,49 +386,49 @@ bool PhraseTableLog::getEntriesForSource(const Vector<WordIndex>& s,
 }
 
 //-------------------------
-Count PhraseTableLog::cSrcTrg(const Vector<WordIndex>& s,
-                              const Vector<WordIndex>& t)
+Count PhraseTableLog::cSrcTrg(const std::vector<WordIndex>& s,
+                              const std::vector<WordIndex>& t)
 {
   bool found;
   return getSrcTrgInfo(s,t,found).get_c_st();
 }
 
 //-------------------------
-Count PhraseTableLog::cSrc(const Vector<WordIndex>& s)
+Count PhraseTableLog::cSrc(const std::vector<WordIndex>& s)
 {
   bool found;
   return getSrcInfo(s,found).get_c_s();
 }
 
 //-------------------------
-Count PhraseTableLog::cTrg(const Vector<WordIndex>& t)
+Count PhraseTableLog::cTrg(const std::vector<WordIndex>& t)
 {
   return exp((float)phraseDictLog.getLogCount_t(t));  
 }
 
 //-------------------------
-LogCount PhraseTableLog::lcSrcTrg(const Vector<WordIndex>& s,
-                                  const Vector<WordIndex>& t)
+LogCount PhraseTableLog::lcSrcTrg(const std::vector<WordIndex>& s,
+                                  const std::vector<WordIndex>& t)
 {
   bool found;
   return getSrcTrgLogCount(s,t,found);
 }
 
 //-------------------------
-LogCount PhraseTableLog::lcSrc(const Vector<WordIndex>& s)
+LogCount PhraseTableLog::lcSrc(const std::vector<WordIndex>& s)
 {
   bool found;
   return getSrcLogCount(s,found);
 }
 
 //-------------------------
-LogCount PhraseTableLog::lcTrg(const Vector<WordIndex>& t)
+LogCount PhraseTableLog::lcTrg(const std::vector<WordIndex>& t)
 {
   return (float)phraseDictLog.getLogCount_t(t);  
 }
 
 //-------------------------
-bool PhraseTableLog::nodeForTrgHasAtLeastOneTrans(const Vector<WordIndex>& t)
+bool PhraseTableLog::nodeForTrgHasAtLeastOneTrans(const std::vector<WordIndex>& t)
 {
   pair<bool,PhraseTableNodeLog*> pbp;
 
@@ -437,14 +437,14 @@ bool PhraseTableLog::nodeForTrgHasAtLeastOneTrans(const Vector<WordIndex>& t)
 }
 
 //-------------------------
-pair<bool,PhraseTableNodeLog*> PhraseTableLog::nodeForTrgHasOneTransOrMore(const Vector<WordIndex>& t)
+pair<bool,PhraseTableNodeLog*> PhraseTableLog::nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t)
 {
   return phraseDictLog.nodeForTrgHasOneTransOrMore(t);
 }
 
 //-------------------------
 void PhraseTableLog::getPhraseGivenState(PhraseCountLogState pls_state,
-                                         Vector<WordIndex>& s_phrase)
+                                         std::vector<WordIndex>& s_phrase)
 {
   s_LogCounts.getPhraseGivenState(pls_state,s_phrase);
 }

@@ -36,8 +36,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                               // variable (default value: SmtModel.h)
 #include "BasePrePosProcessor.h"
 
-using namespace std;
-
 //--------------- Classes --------------------------------------------
 
 class ThotDecoderPerUserVars

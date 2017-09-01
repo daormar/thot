@@ -38,7 +38,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <casmacat/IPluginFactory.h>
 #include <casmacat/utils.h>
 
-using namespace std;
 using namespace casmacat;
 
 //--------------- Classes --------------------------------------------
@@ -51,7 +50,7 @@ public:
   
   // do not forget to free all allocated resources
   // otherwise define the destructor with an empty body
-  virtual ~ThotIbmMaxConfid() { LOG(INFO) << "ThotIbmMaxConfid am freed." << endl; };
+  virtual ~ThotIbmMaxConfid() { LOG(INFO) << "ThotIbmMaxConfid am freed." << std::endl; };
 	
   virtual float getWordConfidences(const vector<string> &source,
                                    const vector<string> &target,
@@ -71,7 +70,7 @@ public:
   int init(string filesPrefix)
   {
     
-    LOG(INFO) << "Initializing confidencer..." << endl;
+    LOG(INFO) << "Initializing confidencer..." << std::endl;
     _ibm.load(filesPrefix.c_str());
     
     return EXIT_SUCCESS;

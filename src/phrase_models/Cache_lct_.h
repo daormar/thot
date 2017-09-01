@@ -56,8 +56,8 @@ class Cache_lct_
 
   Cache_lct_(void);
   bool is_valid(void);
-  bool t_present(const Vector<WordIndex>& _t_);
-  void init(const Vector<WordIndex>& _t_,
+  bool t_present(const std::vector<WordIndex>& _t_);
+  void init(const std::vector<WordIndex>& _t_,
             LogCount _lcount_t_);
   LogCount lct_(void);
   void clear(void);
@@ -65,7 +65,7 @@ class Cache_lct_
  protected:
   
   bool valid;
-  Vector<WordIndex> t_;
+  std::vector<WordIndex> t_;
   LogCount lcount_t_;
 };
 

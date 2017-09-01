@@ -41,22 +41,20 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "PhraseDefs.h"
 #include "AligInfo.h"
 #include <printAligFuncs.h>
-#include <map>
 #include "awkInputStream.h"
-
-using namespace std;
+#include <map>
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 
 //--------------- typedefs -------------------------------------------
 
-//--------------- Classes --------------------------------------------
-
+//--------------- Classes
 class AlignmentContainer;
 
 //--------------- function declarations ------------------------------
 
-ostream& operator << (ostream &outS,const AlignmentContainer &ac);
+std::ostream& operator << (std::ostream &outS,const AlignmentContainer &ac);
 
 //--------------- AlignmentContainer class
 class AlignmentContainer 
@@ -83,25 +81,25 @@ class AlignmentContainer
                   bool transpose=0);
 	bool growDiagFinal(const char *_GizaAligFileName,
                        bool transpose=0);
-	Vector<unsigned int>
-      vecString2VecUnsigInt(Vector<string> vStr,
+	std::vector<unsigned int>
+      vecString2VecUnsigInt(std::vector<string> vStr,
                             map<string,unsigned int> & vocab,
-                            Vector<string> & vocabInv)const;
-	Vector<string> vecUnsigInt2VecString(Vector<unsigned int> vInt,
-                                         const Vector<string> & vocabInv)const;
+                            std::vector<string> & vocabInv)const;
+	std::vector<string> vecUnsigInt2VecString(std::vector<unsigned int> vInt,
+                                              const std::vector<string> & vocabInv)const;
 	void clear(void);
-	bool printNoCompact(ostream &outS);
+	bool printNoCompact(std::ostream &outS);
     bool printNoCompact(FILE *file);
-	friend ostream& operator << (ostream &outS,const AlignmentContainer &ac);
+	friend std::ostream& operator << (std::ostream &outS,const AlignmentContainer &ac);
     void printCompact(FILE *file);
 
  protected:
 
-    map<Vector<unsigned int>,Vector<AligInfo>,VecUnsignedIntSortCriterion> aligCont;
+    map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion> aligCont;
 	map<string,unsigned int> sVocab;
 	map<string,unsigned int> tVocab;
-	Vector<string> sVocabInv;
-	Vector<string> tVocabInv;
+	std::vector<string> sVocabInv;
+	std::vector<string> tVocabInv;
     char GizaAligFileName[256];	
 	unsigned long numAlignments;
 };

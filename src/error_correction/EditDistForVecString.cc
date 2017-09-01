@@ -27,12 +27,12 @@ EditDistForVecString::EditDistForVecString(void):EditDistForVec<std::string>()
 }
 
 //---------------------------------------
-Score EditDistForVecString::calculateEditDist(const Vector<std::string>& x,
-                                              const Vector<std::string>& y,
+Score EditDistForVecString::calculateEditDist(const std::vector<std::string>& x,
+                                              const std::vector<std::string>& y,
                                               int verbose)
 {
-  Vector<std::string> xVec;
-  Vector<std::string> yVec;
+  std::vector<std::string> xVec;
+  std::vector<std::string> yVec;
   xVec=x;
   yVec=y;
 
@@ -46,47 +46,47 @@ Score EditDistForVecString::calculateEditDist(const Vector<std::string>& x,
 }
 
 //---------------------------------------
-Score EditDistForVecString::calculateEditDistPrefix(const Vector<std::string>& x,
-                                                    const Vector<std::string>& y,
+Score EditDistForVecString::calculateEditDistPrefix(const std::vector<std::string>& x,
+                                                    const std::vector<std::string>& y,
                                                     int verbose)
 {
-  Vector<unsigned int> opsWordLevel;
-  Vector<unsigned int> opsCharLevel;
+  std::vector<unsigned int> opsWordLevel;
+  std::vector<unsigned int> opsCharLevel;
   
   return calculateEditDistPrefixOps(x,y,opsWordLevel,opsCharLevel,verbose);
 }
 
 //---------------------------------------
-Score EditDistForVecString::calculateEditDistPrefixOps(const Vector<std::string>& x,
-                                                       const Vector<std::string>& y,
-                                                       Vector<unsigned int>& opsWordLevel,
-                                                       Vector<unsigned int>& opsCharLevel,    
+Score EditDistForVecString::calculateEditDistPrefixOps(const std::vector<std::string>& x,
+                                                       const std::vector<std::string>& y,
+                                                       std::vector<unsigned int>& opsWordLevel,
+                                                       std::vector<unsigned int>& opsCharLevel,    
                                                        int verbose)
 {
   return calculateEditDistPrefixOpsAux(x,y,opsWordLevel,opsCharLevel,USE_PREF_DEL_OP,verbose);
 }
 
 //---------------------------------------
-Score EditDistForVecString::calculateEditDistPrefixOpsNoPrefDel(const Vector<std::string>& x,
-                                                                const Vector<std::string>& y,
-                                                                Vector<unsigned int>& opsWordLevel,
-                                                                Vector<unsigned int>& opsCharLevel,                                                    
+Score EditDistForVecString::calculateEditDistPrefixOpsNoPrefDel(const std::vector<std::string>& x,
+                                                                const std::vector<std::string>& y,
+                                                                std::vector<unsigned int>& opsWordLevel,
+                                                                std::vector<unsigned int>& opsCharLevel,                                                    
                                                                 int verbose)
 {
   return calculateEditDistPrefixOpsAux(x,y,opsWordLevel,opsCharLevel,DONT_USE_PREF_DEL_OP,verbose);
 }
 
 //---------------------------------------
-Score EditDistForVecString::calculateEditDistPrefixOpsAux(const Vector<std::string>& x,
-                                                          const Vector<std::string>& y,
-                                                          Vector<unsigned int>& opsWordLevel,
-                                                          Vector<unsigned int>& opsCharLevel,
+Score EditDistForVecString::calculateEditDistPrefixOpsAux(const std::vector<std::string>& x,
+                                                          const std::vector<std::string>& y,
+                                                          std::vector<unsigned int>& opsWordLevel,
+                                                          std::vector<unsigned int>& opsCharLevel,
                                                           bool usePrefDelOp,
                                                           int verbose)
 {
   bool lastWordIsComplete=true;
-  Vector<std::string> xVec;
-  Vector<std::string> yVec;
+  std::vector<std::string> xVec;
+  std::vector<std::string> yVec;
   xVec=x;
   yVec=y;
   if(!y.empty())
@@ -126,24 +126,24 @@ Score EditDistForVecString::calculateEditDistPrefixOpsAux(const Vector<std::stri
   }
 
       // Retrieve word level operations
-  Vector<Score> opCosts;
+  std::vector<Score> opCosts;
   obtainOperationsPref(xVec,yVec,dm,lastWordIsComplete,usePrefDelOp,x.size(),y.size(),opsWordLevel,opsCharLevel,opCosts);
 
       // Obtain costs per operation type
-  Vector<unsigned int> opsPerType;
-  Vector<Score> opCostsPerType;
+  std::vector<unsigned int> opsPerType;
+  std::vector<Score> opCostsPerType;
   obtainOpsAndOpCostsPerType(opsWordLevel,opCosts,opsPerType,opCostsPerType);
 
       // Print verbose information
 
       // If verbose, print distance matrix
-  if(verbose) printDistMatrix(xVec,yVec,dm,cerr);
+  if(verbose) printDistMatrix(xVec,yVec,dm,std::cerr);
 
       // If verbose, print operation costs per type
   if(verbose)
   {
-    cerr<<"Operation costs per type: ";
-    cerr<<HIT_OP_STR<<": "<<opCostsPerType[HIT_OP]<<" ; "<<INS_OP_STR<<": "<<opCostsPerType[INS_OP]<<" ; "<<SUBST_OP_STR<<": "<<opCostsPerType[SUBST_OP]<<" ; "<<DEL_OP_STR<<": "<<opCostsPerType[DEL_OP]<<endl;
+    std::cerr<<"Operation costs per type: ";
+    std::cerr<<HIT_OP_STR<<": "<<opCostsPerType[HIT_OP]<<" ; "<<INS_OP_STR<<": "<<opCostsPerType[INS_OP]<<" ; "<<SUBST_OP_STR<<": "<<opCostsPerType[SUBST_OP]<<" ; "<<DEL_OP_STR<<": "<<opCostsPerType[DEL_OP]<<std::endl;
   }
 
       // return edit distance
@@ -151,7 +151,7 @@ Score EditDistForVecString::calculateEditDistPrefixOpsAux(const Vector<std::stri
 }
 
 //---------------------------------------
-void EditDistForVecString::addBlankCharacters(Vector<std::string> strVec)
+void EditDistForVecString::addBlankCharacters(std::vector<std::string> strVec)
 {
   for(unsigned int i=0;i<strVec.size();++i)
   {
@@ -161,9 +161,9 @@ void EditDistForVecString::addBlankCharacters(Vector<std::string> strVec)
 }
 
 //---------------------------------------
-void EditDistForVecString::incrEditDistPrefixFirstRow(const Vector<std::string>& incr_y,
-                                                      const Vector<Score> prevScoreVec,
-                                                      Vector<Score>& newScoreVec)
+void EditDistForVecString::incrEditDistPrefixFirstRow(const std::vector<std::string>& incr_y,
+                                                      const std::vector<Score> prevScoreVec,
+                                                      std::vector<Score>& newScoreVec)
 {
   newScoreVec=prevScoreVec; 
   unsigned int startingPos=newScoreVec.size();
@@ -179,10 +179,10 @@ void EditDistForVecString::incrEditDistPrefixFirstRow(const Vector<std::string>&
 
 //---------------------------------------
 void EditDistForVecString::incrEditDistPrefix(const std::string& xWord,
-                                              const Vector<std::string>& incr_y,
-                                              const Vector<Score> prevScoreVec,
-                                              Vector<Score>& newScoreVec,
-                                              Vector<int>& opIdVec)
+                                              const std::vector<std::string>& incr_y,
+                                              const std::vector<Score> prevScoreVec,
+                                              std::vector<Score>& newScoreVec,
+                                              std::vector<int>& opIdVec)
 {
   SubstCostMap substCostMap;
   
@@ -196,11 +196,11 @@ void EditDistForVecString::incrEditDistPrefix(const std::string& xWord,
 
 //---------------------------------------
 void EditDistForVecString::incrEditDistPrefixCached(const std::string& xWord,
-                                                    const Vector<std::string>& incr_y,
-                                                    const Vector<Score> prevScoreVec,
+                                                    const std::vector<std::string>& incr_y,
+                                                    const std::vector<Score> prevScoreVec,
                                                     SubstCostMap& substCostMap,
-                                                    Vector<Score>& newScoreVec,
-                                                    Vector<int>& opIdVec)
+                                                    std::vector<Score>& newScoreVec,
+                                                    std::vector<int>& opIdVec)
 {
       // Execute typical edit distance algorithm except for the specific
       // substitution cost for the last word (note: y is the incomplete
@@ -216,11 +216,11 @@ void EditDistForVecString::incrEditDistPrefixCached(const std::string& xWord,
   else lastyWithoutBlanks=lasty;
 
       // Init x vector
-  Vector<std::string> xVec;
+  std::vector<std::string> xVec;
   xVec.push_back(xWord);
 
       // Init y vector
-  Vector<std::string> yVec;
+  std::vector<std::string> yVec;
   yVec.insert(yVec.begin(),prevScoreVec.size()-1,"");
   for(unsigned int i=0;i<incr_y.size();++i)
     yVec[prevScoreVec.size()-incr_y.size()-1+i]=incr_y[i];
@@ -292,8 +292,8 @@ void EditDistForVecString::setErrorModel(Score _hitCost,
 }
 
 //---------------------------------------
-Score EditDistForVecString::processMatrixCell(const Vector<std::string>& x,
-                                              const Vector<std::string>& y,
+Score EditDistForVecString::processMatrixCell(const std::vector<std::string>& x,
+                                              const std::vector<std::string>& y,
                                               const DistMatrix& dm,
                                               int i,
                                               int j,
@@ -370,8 +370,8 @@ Score EditDistForVecString::processMatrixCell(const Vector<std::string>& x,
 }
 
 //---------------------------------------
-Score EditDistForVecString::processMatrixCellPref(const Vector<std::string>& x,
-                                                  const Vector<std::string>& y,
+Score EditDistForVecString::processMatrixCellPref(const std::vector<std::string>& x,
+                                                  const std::vector<std::string>& y,
                                                   const DistMatrix& dm,
                                                   SubstCostMap& substCostMap,
                                                   bool lastWordIsComplete,
@@ -477,13 +477,13 @@ Score EditDistForVecString::cachedPrefSubstCost(std::string xWord,
                                                 SubstCostMap& substCostMap)
 {
   std::string xWordAdapted=xWord+" pref";
-  SubstCostMap::const_iterator scmConstIter=substCostMap.find(make_pair(xWordAdapted,yWord));
+  SubstCostMap::const_iterator scmConstIter=substCostMap.find(std::make_pair(xWordAdapted,yWord));
   if(scmConstIter!=substCostMap.end())
     return scmConstIter->second;
   else
   {
     Score subst_cost=prefSubstitutionCost(xWord,yWord);
-    substCostMap[make_pair(xWordAdapted,yWord)]=subst_cost;
+    substCostMap[std::make_pair(xWordAdapted,yWord)]=subst_cost;
     return subst_cost;
   }
 }
@@ -493,32 +493,32 @@ Score EditDistForVecString::cachedSubstCost(std::string xWord,
                                             std::string yWord,
                                             SubstCostMap& substCostMap)
 {
-  SubstCostMap::const_iterator scmConstIter=substCostMap.find(make_pair(xWord,yWord));
+  SubstCostMap::const_iterator scmConstIter=substCostMap.find(std::make_pair(xWord,yWord));
   if(scmConstIter!=substCostMap.end())
     return scmConstIter->second;
   else
   {
     Score subst_cost=substitutionCost(xWord,yWord);
-    substCostMap[make_pair(xWord,yWord)]=subst_cost;
+    substCostMap[std::make_pair(xWord,yWord)]=subst_cost;
     return subst_cost;
   }
 }
 
 //---------------------------------------
-void EditDistForVecString::obtainOperationsPref(const Vector<std::string>& x,
-                                                const Vector<std::string>& y,
+void EditDistForVecString::obtainOperationsPref(const std::vector<std::string>& x,
+                                                const std::vector<std::string>& y,
                                                 const DistMatrix& dm,
                                                 bool lastWordIsComplete,
                                                 bool usePrefDelOp,
                                                 int i,
                                                 int j,
-                                                Vector<unsigned int> &opsWordLevel,
-                                                Vector<unsigned int> &opsCharLevel,
-                                                Vector<Score>& opCosts)
+                                                std::vector<unsigned int> &opsWordLevel,
+                                                std::vector<unsigned int> &opsCharLevel,
+                                                std::vector<Score>& opCosts)
 {
       // Init variables
-  Vector<unsigned int> vuiaux;
-  Vector<Score> vscraux;
+  std::vector<unsigned int> vuiaux;
+  std::vector<Score> vscraux;
   int op_id;
 
       // Trace back edit distance path

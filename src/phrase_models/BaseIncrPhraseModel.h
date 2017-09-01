@@ -41,7 +41,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "BaseCountPhraseModel.h"
 
-using namespace std;
 
 //--------------- Constants ------------------------------------------
 
@@ -62,22 +61,22 @@ class BaseIncrPhraseModel: public BaseCountPhraseModel
     typedef BaseCountPhraseModel::TrgTableNode TrgTableNode;
 
         // Functions to extend or modify the model
-    virtual void strAddTableEntry(const Vector<string>& s,
-                                  const Vector<string>& t,
+    virtual void strAddTableEntry(const std::vector<string>& s,
+                                  const std::vector<string>& t,
                                   PhrasePairInfo inf)=0;
-    virtual void addTableEntry(const Vector<WordIndex>& s,
-                               const Vector<WordIndex>& t,
+    virtual void addTableEntry(const std::vector<WordIndex>& s,
+                               const std::vector<WordIndex>& t,
                                PhrasePairInfo inf)=0;
-	virtual void strIncrCountsOfEntry(const Vector<string>& s,
-                                      const Vector<string>& t,
+	virtual void strIncrCountsOfEntry(const std::vector<string>& s,
+                                      const std::vector<string>& t,
                                       Count count=1)=0;
-	virtual void incrCountsOfEntry(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t,
+	virtual void incrCountsOfEntry(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t,
                                    Count count=1)=0;
 
         // Functions for extending the model
-    virtual int trainBilPhrases(const Vector<Vector<std::string> >& srcPhrVec,
-                                const Vector<Vector<std::string> >& trgPhrVec,
+    virtual int trainBilPhrases(const std::vector<std::vector<std::string> >& srcPhrVec,
+                                const std::vector<std::vector<std::string> >& trgPhrVec,
                                 Count c=1,
                                 Count lowerBound=0,
                                 int verbose=0);

@@ -52,12 +52,12 @@ bool TrgCutsTable::load(const char *trgCutsTableFileName)
 {
  awkInputStream awk;
 	
- cerr<<"Loading model for target sentence cuts from file "<<trgCutsTableFileName<<endl;
+ std::cerr<<"Loading model for target sentence cuts from file "<<trgCutsTableFileName<<std::endl;
  if(awk.open(trgCutsTableFileName)==THOT_ERROR)
  {
    jumpOnePar=JUMP_ONE_POS_DEFAULT_PAR;
    stopJumps=STOP_JUMPS_DEFAULT_PAR;
-   cerr<<"Warning: file with model for target sentence cuts does not exist, assuming default parameters, jumpOnePar="<<jumpOnePar<<" ; stopJumps="<<stopJumps<<".\n";
+   std::cerr<<"Warning: file with model for target sentence cuts does not exist, assuming default parameters, jumpOnePar="<<jumpOnePar<<" ; stopJumps="<<stopJumps<<".\n";
    return THOT_ERROR;
  }
  else
@@ -66,7 +66,7 @@ bool TrgCutsTable::load(const char *trgCutsTableFileName)
    {
      stopJumps=atof(awk.dollar(1).c_str());
      jumpOnePar=1-stopJumps;
-     cerr<<"Target sentence cuts parameters: jumpOnePar="<<jumpOnePar<<" ; stopJumps="<<stopJumps<<".\n";
+     std::cerr<<"Target sentence cuts parameters: jumpOnePar="<<jumpOnePar<<" ; stopJumps="<<stopJumps<<".\n";
    }
  }
  return THOT_OK;	

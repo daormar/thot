@@ -25,10 +25,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <myVector.h>
 #include <string>
-
-using namespace std;
+#include <vector>
 
 //--------------- Structs --------------------------------------------
 
@@ -45,7 +43,7 @@ struct thot_client_pars
   std::string sentenceToTranslate;
   std::string strToAddToPref;
   std::string serverIP;
-  Vector<float> floatVec;
+  std::vector<float> floatVec;
   int user_id;
   int server_request_code;
   unsigned int server_port;

@@ -47,59 +47,59 @@ _incrInterpNgramLM::_incrInterpNgramLM()
 }
 
 //---------------
-Count _incrInterpNgramLM::cHist(const Vector<WordIndex>& vu)
+Count _incrInterpNgramLM::cHist(const std::vector<WordIndex>& vu)
 {
-  BaseIncrNgramLM<Vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<Vector<WordIndex> >* > (modelPtrVec[modelIndex]);
+  BaseIncrNgramLM<std::vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<std::vector<WordIndex> >* > (modelPtrVec[modelIndex]);
   if(ilmPtr)
     return ilmPtr->cHist(mapGlobalToLocalWidxVec(modelIndex,vu));
   else
   {
-    cerr<<"Warning: cHist() function not available for this model!"<<endl;
+    std::cerr<<"Warning: cHist() function not available for this model!"<<std::endl;
     return 0;
   }
 }
 
 //---------------
 Count _incrInterpNgramLM::cNgram(const WordIndex& w,
-                                 const Vector<WordIndex>& vu)
+                                 const std::vector<WordIndex>& vu)
 {
-  BaseIncrNgramLM<Vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<Vector<WordIndex> >* > (modelPtrVec[modelIndex]);
+  BaseIncrNgramLM<std::vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<std::vector<WordIndex> >* > (modelPtrVec[modelIndex]);
   if(ilmPtr)
     return ilmPtr->cNgram(mapGlobalToLocalWidx(modelIndex,w),mapGlobalToLocalWidxVec(modelIndex,vu));
   else
   {
-    cerr<<"Warning: cNgram() function not available for this model!"<<endl;
+    std::cerr<<"Warning: cNgram() function not available for this model!"<<std::endl;
     return 0;
   }
 }
 
 //---------------
-Count _incrInterpNgramLM::cHistStr(const Vector<std::string>& rq)
+Count _incrInterpNgramLM::cHistStr(const std::vector<std::string>& rq)
 {
       // Process history
-  Vector<WordIndex> vu;
+  std::vector<WordIndex> vu;
   bool found=globalStrVecToWidxVec(rq,vu);
   if(!found)
     return 0;
   
-  BaseIncrNgramLM<Vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<Vector<WordIndex> >* > (modelPtrVec[modelIndex]);
+  BaseIncrNgramLM<std::vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<std::vector<WordIndex> >* > (modelPtrVec[modelIndex]);
   if(ilmPtr)
   {
     return ilmPtr->cHist(vu);
   }
   else
   {
-    cerr<<"Warning: cHistStr() function not available for this model!"<<endl;
+    std::cerr<<"Warning: cHistStr() function not available for this model!"<<std::endl;
     return 0;
   }
 }
 
 //---------------
 Count _incrInterpNgramLM::cNgramStr(const std::string& s,
-                                    const Vector<std::string>& rq)
+                                    const std::vector<std::string>& rq)
 {
       // Process history
-  Vector<WordIndex> vu;
+  std::vector<WordIndex> vu;
   bool found=globalStrVecToWidxVec(rq,vu);
   if(!found)
     return 0;
@@ -109,43 +109,43 @@ Count _incrInterpNgramLM::cNgramStr(const std::string& s,
   if(!globalStringToWordIndex(s,w))
     return 0;
 
-  BaseIncrNgramLM<Vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<Vector<WordIndex> >* > (modelPtrVec[modelIndex]);
+  BaseIncrNgramLM<std::vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<std::vector<WordIndex> >* > (modelPtrVec[modelIndex]);
   if(ilmPtr)
     return ilmPtr->cNgram(w,vu);
   else
   {
-    cerr<<"Warning: cNgramStr() function not available for this model!"<<endl;
+    std::cerr<<"Warning: cNgramStr() function not available for this model!"<<std::endl;
     return 0;
   }
 }
 
 //---------------
 void _incrInterpNgramLM::incrCountsOfNgramStr(const std::string& s,
-                                              const Vector<std::string>& rq,
+                                              const std::vector<std::string>& rq,
                                               Count c)
 {  
-  BaseIncrNgramLM<Vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<Vector<WordIndex> >* > (modelPtrVec[modelIndex]);
+  BaseIncrNgramLM<std::vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<std::vector<WordIndex> >* > (modelPtrVec[modelIndex]);
   if(ilmPtr)
     ilmPtr->incrCountsOfNgramStr(s,rq,c);
   else
-    cerr<<"Warning: incrCountsOfNgramStr() function not implemented!"<<endl;
+    std::cerr<<"Warning: incrCountsOfNgramStr() function not implemented!"<<std::endl;
 }
 
 //---------------
 void _incrInterpNgramLM::incrCountsOfNgram(const WordIndex& w,
-                                           const Vector<WordIndex>& vu,
+                                           const std::vector<WordIndex>& vu,
                                            Count c)
 {
-  BaseIncrNgramLM<Vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<Vector<WordIndex> >* > (modelPtrVec[modelIndex]);
+  BaseIncrNgramLM<std::vector<WordIndex> >* ilmPtr=dynamic_cast<BaseIncrNgramLM<std::vector<WordIndex> >* > (modelPtrVec[modelIndex]);
   if(ilmPtr)
     ilmPtr->incrCountsOfNgram(mapGlobalToLocalWidx(modelIndex,w),mapGlobalToLocalWidxVec(modelIndex,vu),c);
   else
-    cerr<<"Warning: incrCountsOfNgramStr() function not implemented!"<<endl;
+    std::cerr<<"Warning: incrCountsOfNgramStr() function not implemented!"<<std::endl;
 }
 
 //---------------
 LgProb _incrInterpNgramLM::getNgramLgProb(WordIndex w,
-                                          const Vector<WordIndex>& vu)
+                                          const std::vector<WordIndex>& vu)
 {
   double lp=SMALL_LG_NUM;
     
@@ -154,18 +154,18 @@ LgProb _incrInterpNgramLM::getNgramLgProb(WordIndex w,
     double lpmodel=(double) log(normWeights[i])+ (double) modelPtrVec[i]->getNgramLgProb(mapGlobalToLocalWidx(i,w),
                                                                                          mapGlobalToLocalWidxVec(i,vu));
     lp=MathFuncs::lns_sumlog(lp,lpmodel);
-//    cerr<<lp<<" "<<lpmodel<<" "<<normWeights[i]<<" "<<modelPtrVec[i]->getNgramLgProb(mapGlobalToLocalWidx(i,w),mapGlobalToLocalWidxVec(i,vu))<<endl;
+//    std::cerr<<lp<<" "<<lpmodel<<" "<<normWeights[i]<<" "<<modelPtrVec[i]->getNgramLgProb(mapGlobalToLocalWidx(i,w),mapGlobalToLocalWidxVec(i,vu))<<std::endl;
   }
-//  cerr<<"***"<<endl;
+//  std::cerr<<"***"<<std::endl;
   return lp;
 }
 
 //---------------
 LgProb _incrInterpNgramLM::getNgramLgProbStr(string s,
-                                             const Vector<string>& rq)
+                                             const std::vector<string>& rq)
 {
       // Process history
-  Vector<WordIndex> vu;
+  std::vector<WordIndex> vu;
   bool found=globalStrVecToWidxVec(rq,vu);
   if(!found)
     return SMALL_LG_NUM;
@@ -180,7 +180,7 @@ LgProb _incrInterpNgramLM::getNgramLgProbStr(string s,
 }
 
 //---------------
-LgProb _incrInterpNgramLM::getLgProbEnd(const Vector<WordIndex>& vu)
+LgProb _incrInterpNgramLM::getLgProbEnd(const std::vector<WordIndex>& vu)
 {
   bool found;
   
@@ -188,23 +188,23 @@ LgProb _incrInterpNgramLM::getLgProbEnd(const Vector<WordIndex>& vu)
 }
 
 //---------------
-LgProb _incrInterpNgramLM::getLgProbEndStr(const Vector<string>& rq)
+LgProb _incrInterpNgramLM::getLgProbEndStr(const std::vector<string>& rq)
 {
   return getNgramLgProbStr("</s>",rq);
 }
 
 //---------------
-bool _incrInterpNgramLM::getStateForWordSeq(const Vector<WordIndex>& wordSeq,
-                                            Vector<WordIndex>& state)
+bool _incrInterpNgramLM::getStateForWordSeq(const std::vector<WordIndex>& wordSeq,
+                                            std::vector<WordIndex>& state)
 {
   state=wordSeq;
   return true;
 }
 
 //---------------
-void _incrInterpNgramLM::getStateForBeginOfSentence(Vector<WordIndex> &state)
+void _incrInterpNgramLM::getStateForBeginOfSentence(std::vector<WordIndex> &state)
 {
-  Vector<WordIndex> keySeq;
+  std::vector<WordIndex> keySeq;
   int i;
   bool found;
   
@@ -214,7 +214,7 @@ void _incrInterpNgramLM::getStateForBeginOfSentence(Vector<WordIndex> &state)
 
 //---------------
 LgProb _incrInterpNgramLM::getNgramLgProbGivenState(WordIndex w,
-                                                    Vector<WordIndex> &state)
+                                                    std::vector<WordIndex> &state)
 {
   LgProb lp;
 
@@ -226,7 +226,7 @@ LgProb _incrInterpNgramLM::getNgramLgProbGivenState(WordIndex w,
 
 //---------------
 LgProb _incrInterpNgramLM::getNgramLgProbGivenStateStr(std::string s,
-                                                       Vector<WordIndex> &state)
+                                                       std::vector<WordIndex> &state)
 {
  WordIndex w;
 	
@@ -235,7 +235,7 @@ LgProb _incrInterpNgramLM::getNgramLgProbGivenStateStr(std::string s,
 }
 
 //---------------
-LgProb _incrInterpNgramLM::getLgProbEndGivenState(Vector<WordIndex> &state)
+LgProb _incrInterpNgramLM::getLgProbEndGivenState(std::vector<WordIndex> &state)
 {
   LgProb lp;
   bool found;
@@ -293,21 +293,21 @@ string _incrInterpNgramLM::wordIndexToString(WordIndex w)const
 //---------------
 bool _incrInterpNgramLM::loadVocab(const char* /*fileName*/)
 {
-  cerr<<"Warning: loadVocab() function not implemented!"<<endl;
+  std::cerr<<"Warning: loadVocab() function not implemented!"<<std::endl;
   return THOT_ERROR;
 }
 
 //---------------
 bool _incrInterpNgramLM::printVocab(const char* /*fileName*/)
 {
-  cerr<<"Warning: printVocab() function not implemented!"<<endl;
+  std::cerr<<"Warning: printVocab() function not implemented!"<<std::endl;
   return THOT_ERROR;
 }
 
 //---------------
 void _incrInterpNgramLM::clearVocab(void)
 {
-  cerr<<"Warning: clearVocab() function not implemented!"<<endl;
+  std::cerr<<"Warning: clearVocab() function not implemented!"<<std::endl;
 }
 
 //---------------
@@ -360,8 +360,8 @@ bool _incrInterpNgramLM::globalStringToWordIndex(const std::string& ht,
 }
 
 //---------------
-bool _incrInterpNgramLM::globalStrVecToWidxVec(const Vector<std::string>& rq,
-                                               Vector<WordIndex>& vu)const
+bool _incrInterpNgramLM::globalStrVecToWidxVec(const std::vector<std::string>& rq,
+                                               std::vector<WordIndex>& vu)const
 {
   for(unsigned int i=0;i<rq.size();++i)
   {
@@ -376,10 +376,10 @@ bool _incrInterpNgramLM::globalStrVecToWidxVec(const Vector<std::string>& rq,
 }
 
 //---------------
-Vector<WordIndex> _incrInterpNgramLM::mapGlobalToLocalWidxVec(unsigned int index,
-                                                              const Vector<WordIndex>& global_s)
+std::vector<WordIndex> _incrInterpNgramLM::mapGlobalToLocalWidxVec(unsigned int index,
+                                                              const std::vector<WordIndex>& global_s)
 {
-  Vector<WordIndex> widxVec;
+  std::vector<WordIndex> widxVec;
   for(unsigned int i=0;i<global_s.size();++i)
   {
     widxVec.push_back(mapGlobalToLocalWidx(index,global_s[i]));
@@ -412,14 +412,14 @@ WordIndex _incrInterpNgramLM::mapGlobalToLocalWidx(unsigned int index,
 }
 
 //---------------
-void _incrInterpNgramLM::setWeights(const Vector<double>& _weights)
+void _incrInterpNgramLM::setWeights(const std::vector<double>& _weights)
 {
   weights=_weights;
   normWeights=obtainNormWeights(weights);
 }
 
 //---------------
-Vector<double> _incrInterpNgramLM::obtainNormWeights(const Vector<double>& unnormWeights)
+std::vector<double> _incrInterpNgramLM::obtainNormWeights(const std::vector<double>& unnormWeights)
 {
       // Obtain sum
   double sum=0;
@@ -427,7 +427,7 @@ Vector<double> _incrInterpNgramLM::obtainNormWeights(const Vector<double>& unnor
     sum+=unnormWeights[i];
 
       // Create norm. weights vector
-  Vector<double> result;
+  std::vector<double> result;
   for(unsigned int i=0;i<unnormWeights.size();++i)
   {
     result.push_back(unnormWeights[i]/sum);

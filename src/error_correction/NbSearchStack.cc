@@ -41,7 +41,7 @@ NbSearchStack::NbSearchStack(void)
 void NbSearchStack::push(Score scr,
                          NbSearchHyp nbsHyp)
 {
-  container.insert(make_pair(scr,nbsHyp));
+  container.insert(std::make_pair(scr,nbsHyp));
   if(maxStackSize!=UNLIMITED_MAX_NBSTACK_SIZE)
   {
     while(container.size()>(unsigned int) maxStackSize)
@@ -65,7 +65,7 @@ void NbSearchStack::removeLast(void)
 }
 
 //---------------------------------------
-pair<Score,NbSearchHyp> NbSearchStack::top(void)
+std::pair<Score,NbSearchHyp> NbSearchStack::top(void)
 {
   return *container.begin();
 }
@@ -91,7 +91,7 @@ bool NbSearchStack::empty(void)
 }
 
 //---------------------------------------
-size_t NbSearchStack::size(void)
+std::size_t NbSearchStack::size(void)
 {
   return container.size();
 }

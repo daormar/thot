@@ -40,8 +40,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SwDefs.h"
 #include "aSourceHmm.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -95,7 +93,7 @@ int main(int argc,char *argv[])
     ifstream inF (ihmmatableFileName.c_str(), ios::in | ios::binary);
     if (!inF)
     {
-      cerr<<"Error in file with incremental hmm alignment table, file "<<ihmmatableFileName<<" does not exist.\n";
+      std::cerr<<"Error in file with incremental hmm alignment table, file "<<ihmmatableFileName<<" does not exist.\n";
       return THOT_ERROR;    
     }
     else

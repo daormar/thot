@@ -29,7 +29,7 @@ void ThotIbm2Aligner::align(const vector<string> &source,
 {
   WordAligMatrix w;
   if (source.size() == 0 || target.size() == 0) {
-    LOG(INFO) << "WARNING: ThotIbm2Aligner received an empty source or target sentence!!" << endl << "WARNING: Returning empty alignment matrix!" << endl;
+    LOG(INFO) << "WARNING: ThotIbm2Aligner received an empty source or target sentence!!" << std::endl << "WARNING: Returning empty alignment matrix!" << std::endl;
     alignments.resize(0);
     return;
   }
@@ -48,9 +48,9 @@ void ThotIbm2Aligner::align(const vector<string> &source,
 int ThotIbm2Aligner::init(char* filesPrefix)
 {
   if (aligModel.load(filesPrefix) == 0) { // 0 means THOT_OK
-    LOG(INFO) << "Alignment model with prefix " << filesPrefix << "was loaded successfully!" << endl;
+    LOG(INFO) << "Alignment model with prefix " << filesPrefix << "was loaded successfully!" << std::endl;
   } else {
-    LOG(THOT_ERROR) << "Unable to open alignment model with prefix " << filesPrefix << endl;
+    LOG(THOT_ERROR) << "Unable to open alignment model with prefix " << filesPrefix << std::endl;
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;

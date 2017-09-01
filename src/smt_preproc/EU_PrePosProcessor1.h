@@ -52,8 +52,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "preprocess.h"
 #include "postprocess.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 

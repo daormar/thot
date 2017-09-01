@@ -42,8 +42,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SingleWordVocab.h"
 #include <LightSentenceHandler.h>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -73,16 +71,16 @@ class _swAligModel: public BaseSwAligModel<PPINFO>
                            const char *trgFileName,
                            const char *sentCountsFile,
                            pair<unsigned int,unsigned int>& sentRange);
-    void addSentPair(Vector<std::string> srcSentStr,
-                     Vector<std::string> trgSentStr,
+    void addSentPair(std::vector<std::string> srcSentStr,
+                     std::vector<std::string> trgSentStr,
                      Count c,
                      pair<unsigned int,unsigned int>& sentRange);
     unsigned int numSentPairs(void);
         // NOTE: the whole valid range in a given moment is
         // [ 0 , numSentPairs() )
     int nthSentPair(unsigned int n,
-                    Vector<std::string>& srcSentStr,
-                    Vector<std::string>& trgSentStr,
+                    std::vector<std::string>& srcSentStr,
+                    std::vector<std::string>& trgSentStr,
                     Count& c);
 
     // Functions to print sentence pairs
@@ -107,14 +105,14 @@ class _swAligModel: public BaseSwAligModel<PPINFO>
 	WordIndex stringToSrcWordIndex(std::string s)const;
 	std::string wordIndexToSrcString(WordIndex w)const;
 	bool existSrcSymbol(std::string s)const;
-	Vector<WordIndex> strVectorToSrcIndexVector(Vector<std::string> s);
+	std::vector<WordIndex> strVectorToSrcIndexVector(std::vector<std::string> s);
 	WordIndex addSrcSymbol(std::string s);
 	
 	size_t getTrgVocabSize(void)const; // Returns the target vocabulary size
 	WordIndex stringToTrgWordIndex(std::string t)const;
 	std::string wordIndexToTrgString(WordIndex w)const;
 	bool existTrgSymbol(std::string t)const;
-	Vector<WordIndex> strVectorToTrgIndexVector(Vector<std::string> t);
+	std::vector<WordIndex> strVectorToTrgIndexVector(std::vector<std::string> t);
 	WordIndex addTrgSymbol(std::string t);
 
     // clear() function
@@ -150,8 +148,8 @@ bool _swAligModel<PPINFO>::readSentencePairs(const char *srcFileName,
 
 //-------------------------
 template<class PPINFO>
-void _swAligModel<PPINFO>::addSentPair(Vector<std::string> srcSentStr,
-                                       Vector<std::string> trgSentStr,
+void _swAligModel<PPINFO>::addSentPair(std::vector<std::string> srcSentStr,
+                                       std::vector<std::string> trgSentStr,
                                        Count c,
                                        pair<unsigned int,unsigned int>& sentRange)
 {
@@ -168,8 +166,8 @@ unsigned int _swAligModel<PPINFO>::numSentPairs(void)
 //-------------------------
 template<class PPINFO>
 int _swAligModel<PPINFO>::nthSentPair(unsigned int n,
-                                      Vector<std::string>& srcSentStr,
-                                      Vector<std::string>& trgSentStr,
+                                      std::vector<std::string>& srcSentStr,
+                                      std::vector<std::string>& trgSentStr,
                                       Count& c)
 {
   return sentenceHandler.nthSentPair(n,srcSentStr,trgSentStr,c);
@@ -241,7 +239,7 @@ bool _swAligModel<PPINFO>::existSrcSymbol(std::string s)const
 
 //-------------------------
 template<class PPINFO>
-Vector<WordIndex> _swAligModel<PPINFO>::strVectorToSrcIndexVector(Vector<std::string> s)
+std::vector<WordIndex> _swAligModel<PPINFO>::strVectorToSrcIndexVector(std::vector<std::string> s)
 {
  return swVocab.strVectorToSrcIndexVector(s);
 }
@@ -283,7 +281,7 @@ bool _swAligModel<PPINFO>::existTrgSymbol(std::string t)const
 
 //-------------------------
 template<class PPINFO>
-Vector<WordIndex> _swAligModel<PPINFO>::strVectorToTrgIndexVector(Vector<std::string> t)
+std::vector<WordIndex> _swAligModel<PPINFO>::strVectorToTrgIndexVector(std::vector<std::string> t)
 {
  return swVocab.strVectorToTrgIndexVector(t);	
 }

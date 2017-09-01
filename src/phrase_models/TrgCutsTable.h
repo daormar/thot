@@ -43,8 +43,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include <fstream>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define STOP_JUMPS_DEFAULT_PAR          0.999

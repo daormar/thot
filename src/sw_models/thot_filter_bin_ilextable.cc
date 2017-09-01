@@ -37,8 +37,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "options.h"
 #include "SwDefs.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define RECORD_READ     0
@@ -76,14 +74,14 @@ int main(int argc,char *argv[])
     ifstream lexTableInF (ilextableFileName.c_str(), ios::in | ios::binary);
     if (!lexTableInF)
     {
-      cerr<<"Error in file with incremental lexical table, file "<<ilextableFileName<<" does not exist.\n";
+      std::cerr<<"Error in file with incremental lexical table, file "<<ilextableFileName<<" does not exist.\n";
       return THOT_ERROR;    
     }
 
     ifstream filtInfoInf (filterInfoFileName.c_str(), ios::in | ios::binary);
     if (!filtInfoInf)
     {
-      cerr<<"Error in file with filtering information, file "<<filterInfoFileName<<" does not exist.\n";
+      std::cerr<<"Error in file with filtering information, file "<<filterInfoFileName<<" does not exist.\n";
       return THOT_ERROR;    
     }
 

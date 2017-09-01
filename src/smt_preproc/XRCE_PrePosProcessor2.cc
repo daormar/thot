@@ -108,11 +108,11 @@ bool XRCE_PrePosProcessor2::isCategory(std::string word)
 //---------------------------------------
 std::string XRCE_PrePosProcessor2::capitalize(std::string str)
 {
-  Vector<std::string> strVec=StrProcUtils::stringToStringVector(str);
-  Vector<std::string> lastPreprocStrVec=StrProcUtils::stringToStringVector(lastPreprocStr);
-  Vector<std::string> resultVec;
+  std::vector<std::string> strVec=StrProcUtils::stringToStringVector(str);
+  std::vector<std::string> lastPreprocStrVec=StrProcUtils::stringToStringVector(lastPreprocStr);
+  std::vector<std::string> resultVec;
   std::string best_word;
-  std::map<std::string,Vector<std::string> >::iterator mapCapitIter;
+  std::map<std::string,std::vector<std::string> >::iterator mapCapitIter;
   IncrJelMerNgramLM::LM_State lm_state;
   unsigned int i=0;
   
@@ -202,16 +202,16 @@ bool XRCE_PrePosProcessor2::loadCapitOptions(const char* filename)
       // Open file
   if(capitInfoStream.open(filename)==THOT_ERROR)
   {
-    cerr<<"Error while loading file with capitalization options: "<<filename<<endl;
+    std::cerr<<"Error while loading file with capitalization options: "<<filename<<std::endl;
     return THOT_ERROR;
   }
   else
   {
     unsigned int lineNo=0;
-    Vector<std::string> strVec;
+    std::vector<std::string> strVec;
     std::string canonicStr;
     
-    cerr<<"Reading capitalization information from file: "<<filename<<endl;
+    std::cerr<<"Reading capitalization information from file: "<<filename<<std::endl;
     
     while(capitInfoStream.getln())
     {      
@@ -228,7 +228,7 @@ bool XRCE_PrePosProcessor2::loadCapitOptions(const char* filename)
       }
       else
       {
-        cerr<<"Anomalous entry on line "<<lineNo<<endl;
+        std::cerr<<"Anomalous entry on line "<<lineNo<<std::endl;
       }
     }
     return THOT_OK;

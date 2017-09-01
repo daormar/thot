@@ -41,7 +41,7 @@ namespace SmtModelUtils
         // load phrase model
     if(basePhraseModelPtr->load(modelFileName.c_str())!=0)
     {
-      cerr<<"Error while reading phrase model file\n";
+      std::cerr<<"Error while reading phrase model file\n";
       return THOT_ERROR;
     }  
     
@@ -137,7 +137,7 @@ namespace SmtModelUtils
   
     if(awk.open(lambdaFileName.c_str())==THOT_ERROR)
     {
-      cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist."<<endl;
+      std::cerr<<"Error in file containing the lambda value, file "<<lambdaFileName<<" does not exist."<<std::endl;
       return THOT_ERROR;
     }
     else
@@ -160,14 +160,14 @@ namespace SmtModelUtils
           }
           else
           {
-            cerr<<"Anomalous file with lambda values."<<endl;
+            std::cerr<<"Anomalous file with lambda values."<<std::endl;
             return THOT_ERROR;
           }
         }
       }
       else
       {
-        cerr<<"Anomalous file with lambda values."<<endl;
+        std::cerr<<"Anomalous file with lambda values."<<std::endl;
         return THOT_ERROR;
       }
     }  
@@ -184,12 +184,12 @@ namespace SmtModelUtils
     outF.open(lambdaFileName,ios::out);
     if(!outF)
     {
-      cerr<<"Error while printing file with lambda values."<<endl;
+      std::cerr<<"Error while printing file with lambda values."<<std::endl;
       return THOT_ERROR;
     }
     else
     {
-      outF<<lambda_swm<<" "<<lambda_invswm<<endl;
+      outF<<lambda_swm<<" "<<lambda_invswm<<std::endl;
       outF.close();	
       return THOT_OK;
     }

@@ -21,13 +21,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
-#include "myVector.h"
+#include <vector>
 
 //--------------- PrefAlignInfo struct
 struct PrefAlignInfo
 {
-  Vector<unsigned int> transCuts;
-  Vector<unsigned int> prefCuts;
+  std::vector<unsigned int> transCuts;
+  std::vector<unsigned int> prefCuts;
 };
 
 #endif

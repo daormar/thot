@@ -34,8 +34,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <iomanip>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -71,7 +69,7 @@ int main()
 int casmacat_mt_engine(void)
 {
   // casmacat mt engine test
-  cerr<<"Casmacat mt-engine test"<<endl;
+  std::cerr<<"Casmacat mt-engine test"<<std::endl;
 
       // Create instance of mt engine
   std::string username="dom";
@@ -88,7 +86,7 @@ int casmacat_mt_engine(void)
   ret=thotMtFactory.init(argc_mt,argv_mt);
   if(ret==EXIT_FAILURE)
   {
-    cerr<<"Error during initialization of casmacat mt engine"<<endl;
+    std::cerr<<"Error during initialization of casmacat mt engine"<<std::endl;
     return EXIT_FAILURE;
   }
   IMtEngine* mt_engine_ptr=thotMtFactory.createInstance(username);
@@ -101,19 +99,19 @@ int casmacat_mt_engine(void)
       //tokenize(source, srcVec);
   cout<<"Source sentence: ";
   copy(srcVec.begin(), srcVec.end(), ostream_iterator<string>(cout, " "));
-  cout<<endl;
+  cout<<std::endl;
       
       // Translate sentence
-  cout<< "* Translating sentence..."<<endl;
+  cout<< "* Translating sentence..."<<std::endl;
   mt_engine_ptr->translate(srcVec,trgVec);
 
       // Print translation
   cout<< "Translation: ";
   copy(trgVec.begin(), trgVec.end(), ostream_iterator<string>(cout, " "));
-  cerr<<endl;
+  std::cerr<<std::endl;
 
       // Extend models
-  cout<< "* Extending models..."<<endl;
+  cout<< "* Extending models..."<<std::endl;
   mt_engine_ptr->update(srcVec,trgVec);
 
       // Delete mt engine instance
@@ -126,7 +124,7 @@ int casmacat_mt_engine(void)
 int casmacat_imt_engine(void)
 {
   // casmacat imt engine test
-  cerr<<"Casmacat imt-engine test"<<endl;
+  std::cerr<<"Casmacat imt-engine test"<<std::endl;
 
       // Create instance of imt engine
   std::string username="dom";
@@ -142,7 +140,7 @@ int casmacat_imt_engine(void)
   int ret=thotImtFactory.init(argc_mt,argv_mt);
   if(ret==EXIT_FAILURE)
   {
-    cerr<<"Error during initialization of casmacat imt engine"<<endl;
+    std::cerr<<"Error during initialization of casmacat imt engine"<<std::endl;
     return EXIT_FAILURE;
   }
   IInteractiveMtEngine* imt_engine_ptr=thotImtFactory.createInstance(username);
@@ -151,19 +149,19 @@ int casmacat_imt_engine(void)
   vector<string> srcVec=StrProcUtils::charItemsToVector("all rights reserved .");
   cout<<"Source sentence: ";
   copy(srcVec.begin(), srcVec.end(), ostream_iterator<string>(cout, " "));
-  cout<<endl;
+  cout<<std::endl;
 
       // Create prefix
   vector<string> prefixVec=StrProcUtils::charItemsToVector("reservados");
   cout<<"target prefix: ";
   copy(prefixVec.begin(), prefixVec.end(), ostream_iterator<string>(cout, " "));
-  cout<<endl;
+  cout<<std::endl;
 
       // Create new imt session
   IInteractiveMtSession * imtSessionPtr=imt_engine_ptr->newSession(srcVec);  
       
       // Generate suffix
-  cout<< "* Obtaining target translation..."<<endl;
+  cout<< "* Obtaining target translation..."<<std::endl;
   vector<string> suffixVec;
   bool last_token_is_partial=false;
   vector<string> targetVec;
@@ -172,13 +170,13 @@ int casmacat_imt_engine(void)
       // Print target translation
   cout<< "User prefix: ";
   copy(prefixVec.begin(),prefixVec.end(), ostream_iterator<string>(cout, " "));
-  cout<<endl;
+  cout<<std::endl;
   cout<< "Target translation: ";
   copy(targetVec.begin(),targetVec.end(), ostream_iterator<string>(cout, " "));
-  cout<<endl;
+  cout<<std::endl;
 
       // Reject operation at the beginning of a word
-  cout<< "* Testing reject operation at the beginning of a word..."<<endl;
+  cout<< "* Testing reject operation at the beginning of a word..."<<std::endl;
   vector<string> suffixRejVec=StrProcUtils::charItemsToVector("los derechos reservados .");
   last_token_is_partial=false;
   imtSessionPtr->rejectSuffix(prefixVec,suffixRejVec,last_token_is_partial,targetVec);
@@ -186,13 +184,13 @@ int casmacat_imt_engine(void)
       // Print target translation
   cout<< "User prefix: ";
   copy(prefixVec.begin(),prefixVec.end(), ostream_iterator<string>(cout, " "));
-  cout<<endl;
+  cout<<std::endl;
   cout<< "Target translation after rejection: ";
   copy(targetVec.begin(),targetVec.end(), ostream_iterator<string>(cout, " "));
-  cout<<endl;
+  cout<<std::endl;
 
         // Reject operation in the middle of a word
-  cout<< "* Testing reject operation in the middle of a word..."<<endl;
+  cout<< "* Testing reject operation in the middle of a word..."<<std::endl;
   prefixVec.push_back("l");
   suffixRejVec=StrProcUtils::charItemsToVector("os derechos reservados .");
   last_token_is_partial=true;
@@ -201,10 +199,10 @@ int casmacat_imt_engine(void)
       // Print target translation
   cout<< "User prefix: ";
   copy(prefixVec.begin(),prefixVec.end(), ostream_iterator<string>(cout, " "));
-  cout<<endl;
+  cout<<std::endl;
   cout<< "Target translation after rejection: ";
   copy(targetVec.begin(),targetVec.end(), ostream_iterator<string>(cout, " "));
-  cout<<endl;
+  cout<<std::endl;
 
       // Delete imt session
   imt_engine_ptr->deleteSession(imtSessionPtr);

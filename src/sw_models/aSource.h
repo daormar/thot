@@ -47,6 +47,6 @@ class aSource
 
 };
 
-ostream& operator << (ostream &outS,const aSource &aSrc);
+std::ostream& operator << (std::ostream &outS,const aSource &aSrc);
 
 #endif

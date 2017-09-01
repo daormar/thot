@@ -59,8 +59,8 @@ void _sentLengthModel::trainSentPairRange(pair<unsigned int,unsigned int> sentPa
       // Iterate over the training samples
   for(unsigned int n=sentPairRange.first;n<=sentPairRange.second;++n)
   {
-    Vector<std::string> srcSentStrVec;
-    Vector<std::string> trgSentStrVec;
+    std::vector<std::string> srcSentStrVec;
+    std::vector<std::string> trgSentStrVec;
     Count c;
     nthSentPair(n,srcSentStrVec,trgSentStrVec,c);
 
@@ -70,8 +70,8 @@ void _sentLengthModel::trainSentPairRange(pair<unsigned int,unsigned int> sentPa
 
 //-------------------------
 int _sentLengthModel::nthSentPair(unsigned int n,
-                                  Vector<std::string>& srcSentStr,
-                                  Vector<std::string>& trgSentStr,
+                                  std::vector<std::string>& srcSentStr,
+                                  std::vector<std::string>& trgSentStr,
                                   Count& c)
 {
   return sentenceHandlerPtr->nthSentPair(n,srcSentStr,trgSentStr,c);

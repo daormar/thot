@@ -52,9 +52,9 @@ anjiMatrix::anjiMatrix(void)
 
 //-------------------------
 bool anjiMatrix::init_nth_entry(unsigned int n,
-                               PositionIndex nslen,
-                               PositionIndex tlen,
-                               unsigned int& mapped_n)
+                                PositionIndex nslen,
+                                PositionIndex tlen,
+                                unsigned int& mapped_n)
 {
   if(anji_maxnsize>0)
   {
@@ -73,7 +73,7 @@ bool anjiMatrix::init_nth_entry(unsigned int n,
       anji[mapped_n].clear();
 
           // Initialize data structure for entry
-      Vector<float> floatVec(nslen+1,INVALID_ANJI_VAL);
+      std::vector<float> floatVec(nslen+1,INVALID_ANJI_VAL);
       anji[mapped_n].resize(tlen+1,floatVec);
     }
 
@@ -170,7 +170,7 @@ bool anjiMatrix::load(const char* prefFileName)
   retVal=load_maxnsize_data(maxnsizeDataFile.c_str());
   if(retVal==THOT_ERROR)
   {
-    cerr<<"Maximum size for anji is set to "<<UNRESTRICTED_ANJI_SIZE<<" (unrestricted size)."<<endl;
+    std::cerr<<"Maximum size for anji is set to "<<UNRESTRICTED_ANJI_SIZE<<" (unrestricted size)."<<std::endl;
     anji_maxnsize=UNRESTRICTED_ANJI_SIZE;
   }
   return THOT_OK;
@@ -179,13 +179,13 @@ bool anjiMatrix::load(const char* prefFileName)
 //-------------------------
 bool anjiMatrix::load_anji_values(const char* anjiFile)
 {
-  cerr<<"Loading file with anji values from "<<anjiFile<<endl;
+  std::cerr<<"Loading file with anji values from "<<anjiFile<<std::endl;
 
       // Try to open file  
   ifstream inF (anjiFile, ios::in | ios::binary);
   if (!inF)
   {
-    cerr<<"File with anji values "<<anjiFile<<" does not exist.\n";
+    std::cerr<<"File with anji values "<<anjiFile<<" does not exist.\n";
     return THOT_ERROR;    
   }
   else
@@ -219,13 +219,13 @@ bool anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
       // Try to open file  
   if(awk.open(maxnsizeDataFile)==THOT_ERROR)
   {
-    cerr<<"Error in file with anji maximum size data, file "<<maxnsizeDataFile<<" does not exist.\n";
+    std::cerr<<"Error in file with anji maximum size data, file "<<maxnsizeDataFile<<" does not exist.\n";
     return THOT_ERROR;
   }  
   else
   {
         // Read values
-    cerr<<"Reading anji maximum size data from file: "<<maxnsizeDataFile<<endl;
+    std::cerr<<"Reading anji maximum size data from file: "<<maxnsizeDataFile<<std::endl;
     awk.getln();
     anji_maxnsize=atoi(awk.dollar(1).c_str());
     awk.getln();
@@ -273,7 +273,7 @@ bool anjiMatrix::print_anji_values(const char* anjiFile)
   outF.open(anjiFile,ios::out|ios::binary);
   if(!outF)
   {
-    cerr<<"Error while printing anji file."<<endl;
+    std::cerr<<"Error while printing anji file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -303,20 +303,20 @@ bool anjiMatrix::print_maxnsize_data(const char* maxnsizeDataFile)
   outF.open(maxnsizeDataFile,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing file with anji maximum size data."<<endl;
+    std::cerr<<"Error while printing file with anji maximum size data."<<std::endl;
     return THOT_ERROR;
   }
   else
   {
         // Print maximum size for anji
-    outF<<anji_maxnsize<<endl;
-    outF<<anji_pointer<<endl;
+    outF<<anji_maxnsize<<std::endl;
+    outF<<anji_pointer<<std::endl;
     
         // Print np to n vector
     for(unsigned int np=0;np<np_to_n_vector.size();++np)
     {
       if(np_to_n_vector[np].first)
-        outF<<np<<" "<<np_to_n_vector[np].second<<endl;
+        outF<<np<<" "<<np_to_n_vector[np].second<<std::endl;
     }
     return THOT_OK;
   }  
@@ -336,14 +336,14 @@ void anjiMatrix::set(unsigned int n,
         // Grow in the dimension of np if necessary
     while(anji.size()<=np)
     {
-      Vector<Vector<float> > aji;
+      std::vector<std::vector<float> > aji;
       anji.push_back(aji);
     }
 
         // Grow in the dimension of j if necessary
     while(anji[np].size()<=j)
     {
-      Vector<float> ai;
+      std::vector<float> ai;
       anji[np].push_back(ai);
     }
 

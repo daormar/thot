@@ -38,8 +38,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BasePhraseModel.h"
 #include "BaseNgramLM.h"
 #include <stdio.h>
-#include "myVector.h"
 #include <string>
+#include <vector>
 
 namespace SmtModelUtils
 {

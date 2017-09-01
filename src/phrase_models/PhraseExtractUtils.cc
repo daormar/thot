@@ -26,7 +26,7 @@ namespace PhraseExtractUtils
                                      BaseSwAligModel<PpInfo>* invSwAligModelPtr,
                                      std::string srcCorpusFileName,
                                      std::string trgCorpusFileName,
-                                     Vector<Vector<PhrasePair> >& phrPairs,
+                                     std::vector<std::vector<PhrasePair> >& phrPairs,
                                      int verbose/*=0*/)
   {
         // NOTE: this function requires the ability to extract new translation
@@ -39,12 +39,12 @@ namespace PhraseExtractUtils
         // Open files
     if(srcStream.open(srcCorpusFileName.c_str())==THOT_ERROR)
     {
-      cerr<<"Unable to open file with source development sentences."<<endl;
+      std::cerr<<"Unable to open file with source development sentences."<<std::endl;
       return THOT_ERROR;
     }  
     if(trgStream.open(trgCorpusFileName.c_str())==THOT_ERROR)
     {
-      cerr<<"Unable to open file with target development sentences."<<endl;
+      std::cerr<<"Unable to open file with target development sentences."<<std::endl;
       return THOT_ERROR;
     }  
 
@@ -54,13 +54,13 @@ namespace PhraseExtractUtils
     {
       if(!trgStream.getln())
       {
-        cerr<<"Unexpected end of file with target development sentences."<<endl;
+        std::cerr<<"Unexpected end of file with target development sentences."<<std::endl;
         return THOT_ERROR;      
       }
 
           // Obtain sentence pair
-      Vector<std::string> srcSentStrVec;
-      Vector<std::string> refSentStrVec;
+      std::vector<std::string> srcSentStrVec;
+      std::vector<std::string> refSentStrVec;
       Count c;
 
           // Extract source sentence
@@ -72,7 +72,7 @@ namespace PhraseExtractUtils
         refSentStrVec.push_back(trgStream.dollar(i));
 
           // Extract consistent phrase pairs
-      Vector<PhrasePair> vecPhrPair;
+      std::vector<PhrasePair> vecPhrPair;
       int ret=extractConsistentPhrasePairs(swAligModelPtr,invSwAligModelPtr,srcSentStrVec,refSentStrVec,vecPhrPair,verbose);
       if(ret==THOT_ERROR)
         return THOT_ERROR;
@@ -91,9 +91,9 @@ namespace PhraseExtractUtils
   //---------------------------------
   int extractConsistentPhrasePairs(BaseSwAligModel<PpInfo>* swAligModelPtr,
                                    BaseSwAligModel<PpInfo>* invSwAligModelPtr,
-                                   const Vector<std::string>& srcSentStrVec,
-                                   const Vector<std::string>& trgSentStrVec,
-                                   Vector<PhrasePair>& vecPhrPair,
+                                   const std::vector<std::string>& srcSentStrVec,
+                                   const std::vector<std::string>& trgSentStrVec,
+                                   std::vector<PhrasePair>& vecPhrPair,
                                    bool verbose/*=0*/)
   {
         // Generate alignments
@@ -108,7 +108,7 @@ namespace PhraseExtractUtils
     waMatrix.symmetr1(invWaMatrix);
 
         // Extract consistent pairs
-    Vector<std::string> nsrcSentStrVec=swAligModelPtr->addNullWordToStrVec(srcSentStrVec);
+    std::vector<std::string> nsrcSentStrVec=swAligModelPtr->addNullWordToStrVec(srcSentStrVec);
     PhraseExtractParameters phePars;
     extractPhrasesFromPairPlusAlig(phePars,
                                    nsrcSentStrVec,
@@ -121,10 +121,10 @@ namespace PhraseExtractUtils
 
   //---------------
   void extractPhrasesFromPairPlusAlig(PhraseExtractParameters phePars,
-                                      Vector<string> ns,
-                                      Vector<string> t,
+                                      std::vector<string> ns,
+                                      std::vector<string> t,
                                       WordAligMatrix waMatrix,
-                                      Vector<PhrasePair>& vecPhrPair,
+                                      std::vector<PhrasePair>& vecPhrPair,
                                       int /*verbose=0*/)
   {
     if(t.size()<MAX_SENTENCE_LENGTH && ns.size()-1<MAX_SENTENCE_LENGTH)
@@ -135,16 +135,16 @@ namespace PhraseExtractUtils
     }
     else
     {
-      cerr<< "Warning: Max. sentence length exceeded for sentence pair"<<endl;
+      std::cerr<< "Warning: Max. sentence length exceeded for sentence pair"<<std::endl;
     }
   }
 
   //---------------
   void extractPhrasesFromPairPlusAligBrf(PhraseExtractParameters phePars,
-                                         Vector<string> ns,
-                                         Vector<string> t,
+                                         std::vector<string> ns,
+                                         std::vector<string> t,
                                          WordAligMatrix waMatrix,
-                                         Vector<PhrasePair>& vecPhrPair,
+                                         std::vector<PhrasePair>& vecPhrPair,
                                          int /*verbose=0*/)
   {
     if(t.size()<MAX_SENTENCE_LENGTH && ns.size()-1<MAX_SENTENCE_LENGTH)
@@ -155,13 +155,13 @@ namespace PhraseExtractUtils
     }
     else
     {
-      cerr<< "Warning: Max. sentence length exceeded for sentence pair"<<endl;
+      std::cerr<< "Warning: Max. sentence length exceeded for sentence pair"<<std::endl;
     }
   }
 
   //---------------
-  void filterPhrasePairs(const Vector<PhrasePair>& vecUnfiltPhrPair,
-                         Vector<PhrasePair>& vecPhrPair)
+  void filterPhrasePairs(const std::vector<PhrasePair>& vecUnfiltPhrPair,
+                         std::vector<PhrasePair>& vecPhrPair)
   {
     CategPhrasePairFilter phrasePairFilter;
     vecPhrPair.clear();

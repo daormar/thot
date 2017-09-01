@@ -37,13 +37,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <myVector.h>
 #include <ErrorDefs.h>
 #include <fstream>
 #include <awkInputStream.h>
 #include <StatModelDefs.h>
 #include "aSource.h"
 #include "aSourceHashF.h"
+#include <vector>
 
 #if __GNUC__>2
 #include <ext/hash_map>
@@ -104,7 +104,7 @@ class IncrIbm2AligTable
 
        // Alignment model types
    typedef hash_map<aSource,float,aSourceHashF> AligNumerElem;
-   typedef Vector<AligNumerElem> AligNumer;
+   typedef std::vector<AligNumerElem> AligNumer;
    typedef hash_map<aSource,float,aSourceHashF> AligDenom;
 
    AligNumer aligNumer;

@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files --------------------------------------
 
 #include <Score.h>
-#include <myVector.h>
+#include <vector>
 
 //--------------- PfsmEcmForWgEsi class
 
@@ -40,8 +40,8 @@ class PfsmEcmForWgEsi
 {
  public:
 
-  Vector<Score> scrVec;
-  Vector<int> opIdVec;
+  std::vector<Score> scrVec;
+  std::vector<int> opIdVec;
 };
 
 #endif

@@ -61,8 +61,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <set>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define PALIG_W_DEFAULT 10
@@ -95,7 +93,7 @@ struct thot_ms_alig_pars
   std::string transModelPref;
   std::string wordGraphFileName;
   float wgPruningThreshold;
-  Vector<float> weightVec;
+  std::vector<float> weightVec;
 
   thot_ms_alig_pars()
     {
@@ -128,7 +126,7 @@ void release_translator_legacy_impl(void);
 void release_translator_feat_impl(void);
 void release_translator(void);
 int align_corpus(const thot_ms_alig_pars& tap);
-Vector<string> stringToStringVector(string s);
+std::vector<string> stringToStringVector(string s);
 void version(void);
 void print_alig_a3_final(std::string srcstr,
                          std::string trgstr,
@@ -182,7 +180,7 @@ int main(int argc, char *argv[])
         // init translator    
     if(init_translator(tap)==THOT_ERROR)
     {      
-      cerr<<"Error during the initialization of the translator"<<endl;
+      std::cerr<<"Error during the initialization of the translator"<<std::endl;
       return THOT_ERROR;
     }
     else
@@ -232,17 +230,17 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
 {
   int ret;
   
-  cerr<<"\n- Initializing translator...\n\n";
+  std::cerr<<"\n- Initializing translator...\n\n";
 
       // Show static types
-  cerr<<"Static types:"<<endl;
-  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
-  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
-  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+  std::cerr<<"Static types:"<<std::endl;
+  std::cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<std::endl;
+  std::cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<std::endl;
+  std::cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<std::endl;
 
         // Obtain info about translation model entries
   unsigned int numTransModelEntries;
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(tap.transModelPref.c_str(),modelDescEntryVec)==THOT_OK)
     numTransModelEntries=modelDescEntryVec.size();
   else
@@ -258,14 +256,14 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
   langModelInfoPtr->wpModelPtr=dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(dynClassFactoryHandler.baseWordPenaltyModelInitPars);
   if(langModelInfoPtr->wpModelPtr==NULL)
   {
-    cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
   langModelInfoPtr->lModelPtr=dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(dynClassFactoryHandler.baseNgramLMInitPars);
   if(langModelInfoPtr->lModelPtr==NULL)
   {
-    cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -273,7 +271,7 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
   phrModelInfoPtr->invPbModelPtr=dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(dynClassFactoryHandler.basePhraseModelInitPars);
   if(phrModelInfoPtr->invPbModelPtr==NULL)
   {
-    cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -284,7 +282,7 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
     swModelInfoPtr->swAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
     if(swModelInfoPtr->swAligModelPtrVec[i]==NULL)
     {
-      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
   }
@@ -295,7 +293,7 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
     swModelInfoPtr->invSwAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
     if(swModelInfoPtr->invSwAligModelPtrVec[i]==NULL)
     {
-      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
   }
@@ -303,14 +301,14 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
   llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(llWeightUpdaterPtr==NULL)
   {
-    cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
   trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(trConstraintsPtr==NULL)
   {
-    cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -356,8 +354,8 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
 
       // Set weights
   smtModelPtr->setWeights(tap.weightVec);
-  smtModelPtr->printWeights(cerr);
-  cerr<<endl;
+  smtModelPtr->printWeights(std::cerr);
+  std::cerr<<std::endl;
 
       // Set model parameters
   smtModelPtr->set_W_par(tap.W);
@@ -371,7 +369,7 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
   stackDecoderPtr=dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(dynClassFactoryHandler.baseStackDecoderInitPars);
   if(stackDecoderPtr==NULL)
   {
-    cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -382,7 +380,7 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
   ret=stackDecoderPtr->link_smt_model(smtModelPtr);
   if(ret==THOT_ERROR)
   {
-    cerr<<"Error while linking smt model to decoder, revise master.ini file"<<endl;
+    std::cerr<<"Error while linking smt model to decoder, revise master.ini file"<<std::endl;
     return THOT_ERROR;
   }
   
@@ -449,13 +447,13 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
 {
   int ret;
   
-  cerr<<"\n- Initializing translator...\n\n";
+  std::cerr<<"\n- Initializing translator...\n\n";
 
       // Show static types
-  cerr<<"Static types:"<<endl;
-  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
-  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
-  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+  std::cerr<<"Static types:"<<std::endl;
+  std::cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<std::endl;
+  std::cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<std::endl;
+  std::cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<std::endl;
 
       // Initialize class factories
   ret=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
@@ -466,14 +464,14 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
   llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(llWeightUpdaterPtr==NULL)
   {
-    cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
   trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(trConstraintsPtr==NULL)
   {
-    cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -501,8 +499,8 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
 
       // Set weights
   smtModelPtr->setWeights(tap.weightVec);
-  smtModelPtr->printWeights(cerr);
-  cerr<<endl;
+  smtModelPtr->printWeights(std::cerr);
+  std::cerr<<std::endl;
 
       // Set model parameters
   smtModelPtr->set_W_par(tap.W);
@@ -516,7 +514,7 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
   stackDecoderPtr=dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(dynClassFactoryHandler.baseStackDecoderInitPars);
   if(stackDecoderPtr==NULL)
   {
-    cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -527,7 +525,7 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
   ret=stackDecoderPtr->link_smt_model(smtModelPtr);
   if(ret==THOT_ERROR)
   {
-    cerr<<"Error while linking smt model to decoder, revise master.ini file"<<endl;
+    std::cerr<<"Error while linking smt model to decoder, revise master.ini file"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -622,7 +620,7 @@ int align_corpus(const thot_ms_alig_pars& tap)
   testCorpusFile.open(tap.sourceSentencesFile.c_str());
   if(testCorpusFile.fail())
   {
-    cerr<<"Error while opening file with test sentences "<<tap.sourceSentencesFile<<endl;
+    std::cerr<<"Error while opening file with test sentences "<<tap.sourceSentencesFile<<std::endl;
     return THOT_ERROR;
   }
   testCorpusFile.seekg(0, ios::beg);
@@ -631,16 +629,16 @@ int align_corpus(const thot_ms_alig_pars& tap)
   refCorpusFile.open(tap.refSentencesFile.c_str());
   if(refCorpusFile.fail())
   {
-    cerr<<"Error while opening file with references "<<tap.refSentencesFile<<endl;
+    std::cerr<<"Error while opening file with references "<<tap.refSentencesFile<<std::endl;
     return THOT_ERROR;
   }
   refCorpusFile.seekg(0, ios::beg);
 
-  cerr<<"\n- Processing corpora...\n\n";
+  std::cerr<<"\n- Processing corpora...\n\n";
 
   if(!testCorpusFile)
   {
-    cerr<<"Test corpus error!"<<endl;
+    std::cerr<<"Test corpus error!"<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -659,7 +657,7 @@ int align_corpus(const thot_ms_alig_pars& tap)
         
       if(tap.verbosity)
       {
-        cerr<<sentNo<<endl<<srcSentenceString<<endl;
+        std::cerr<<sentNo<<std::endl<<srcSentenceString<<std::endl;
         ctimer(&elapsed_ant,&ucpu,&scpu);
       }
        
@@ -689,12 +687,12 @@ int align_corpus(const thot_ms_alig_pars& tap)
           
       if(tap.verbosity)
       {
-        smtModelPtr->printHyp(result,cerr,tap.verbosity);
+        smtModelPtr->printHyp(result,std::cerr,tap.verbosity);
 #         ifdef THOT_STATS
         stackDecoderPtr->printStats();
 #         endif
 
-        cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<endl<<endl;
+        std::cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<std::endl<<std::endl;
         total_time+=elapsed-elapsed_ant;
       }
 
@@ -715,7 +713,7 @@ int align_corpus(const thot_ms_alig_pars& tap)
       ofstream outS;
       sprintf(printGraphFileName,"sent%d.graph_file",sentNo);
       outS.open(printGraphFileName,ios::out);
-      if(!outS) cerr<<"Error while printing search graph to file."<<endl;
+      if(!outS) std::cerr<<"Error while printing search graph to file."<<std::endl;
       else
       {
         stackDecoderPtr->printSearchGraphStream(outS);
@@ -730,7 +728,7 @@ int align_corpus(const thot_ms_alig_pars& tap)
 
   if(tap.verbosity)
   {
-    cerr<<"- Time per sentence: "<<total_time/sentNo<<endl;
+    std::cerr<<"- Time per sentence: "<<total_time/sentNo<<std::endl;
   }
 
   return THOT_OK;
@@ -744,14 +742,14 @@ void print_alig_a3_final(std::string srcstr,
                          const thot_ms_alig_pars& tap)
 {
   SmtModel::Hypothesis::DataType dataType;
-  Vector<std::string> sysTrgVec;
-  Vector<std::string> trgVec;
+  std::vector<std::string> sysTrgVec;
+  std::vector<std::string> trgVec;
     
   sysTrgVec=smtModelPtr->getTransInPlainTextVec(hyp);
   trgVec=stringToStringVector(trgstr);
   dataType=hyp.getData();
-  cout<<"# "<<sentNo <<" ; Align. score= "<<hyp.getScore()<<endl;
-  cout<<srcstr<<endl;
+  cout<<"# "<<sentNo <<" ; Align. score= "<<hyp.getScore()<<std::endl;
+  cout<<srcstr<<std::endl;
   cout<<"NULL ({ })";
   if(sysTrgVec!=trgVec && !tap.p_option)
   {
@@ -764,7 +762,7 @@ void print_alig_a3_final(std::string srcstr,
       for(unsigned int j=1;j<=srcsize;++j) cout<<j<<" ";
       cout<<"})";
     }
-    cout<<endl;
+    cout<<std::endl;
   }
   else
   {
@@ -782,7 +780,7 @@ void print_alig_a3_final(std::string srcstr,
         cout<<"})";
       }
     }
-    cout<<endl;
+    cout<<std::endl;
   }
 }
 
@@ -842,12 +840,12 @@ int takeParameters(int argc,
 int takeParametersFromCfgFile(std::string cfgFileName,
                               thot_ms_alig_pars& tap)
 {
-  cerr<<"Processing configuration file ("<<cfgFileName<<")"<<endl;
+  std::cerr<<"Processing configuration file ("<<cfgFileName<<")"<<std::endl;
 
       // Extract parameters from configuration file
   std::string comment="#";
   int cfgFileArgc;
-  Vector<std::string> cfgFileArgvStl;
+  std::vector<std::string> cfgFileArgvStl;
   int ret=extractParsFromFile(cfgFileName.c_str(),cfgFileArgc,cfgFileArgvStl,comment);
   if(ret==THOT_ERROR) return THOT_ERROR;
 
@@ -984,31 +982,31 @@ int checkParameters(const thot_ms_alig_pars& tap)
 {
   if(tap.languageModelFileName.empty())
   {
-    cerr<<"Error: parameter -lm not given!"<<endl;
+    std::cerr<<"Error: parameter -lm not given!"<<std::endl;
     return THOT_ERROR;   
   }
   
   if(tap.transModelPref.empty())
   {
-    cerr<<"Error: parameter -tm not given!"<<endl;
+    std::cerr<<"Error: parameter -tm not given!"<<std::endl;
     return THOT_ERROR;   
   }
 
   if(tap.sourceSentencesFile.empty())
   {
-    cerr<<"Error: parameter -t not given!"<<endl;
+    std::cerr<<"Error: parameter -t not given!"<<std::endl;
     return THOT_ERROR;   
   }
 
   if(tap.refSentencesFile.empty())
   {
-    cerr<<"Error: parameter -r not given!"<<endl;
+    std::cerr<<"Error: parameter -r not given!"<<std::endl;
     return THOT_ERROR;   
   }
 
   if(tap.p_option && tap.cov_option)
   {
-     cerr<<"Error: -p and -cov options cannot be given simultaneously"<<endl;
+     std::cerr<<"Error: -p and -cov options cannot be given simultaneously"<<std::endl;
      return THOT_ERROR;
   }
 
@@ -1018,46 +1016,46 @@ int checkParameters(const thot_ms_alig_pars& tap)
 //---------------
 void printParameters(const thot_ms_alig_pars& tap)
 {
- cerr<<"p option: "<<tap.p_option<<endl;
- cerr<<"cov option: "<<tap.cov_option<<endl;
- cerr<<"W: "<<tap.W<<endl;   
- cerr<<"S: "<<tap.S<<endl;   
- cerr<<"A: "<<tap.A<<endl;
- cerr<<"E: "<<tap.E<<endl;
- cerr<<"I: "<<tap.I<<endl;
+ std::cerr<<"p option: "<<tap.p_option<<std::endl;
+ std::cerr<<"cov option: "<<tap.cov_option<<std::endl;
+ std::cerr<<"W: "<<tap.W<<std::endl;   
+ std::cerr<<"S: "<<tap.S<<std::endl;   
+ std::cerr<<"A: "<<tap.A<<std::endl;
+ std::cerr<<"E: "<<tap.E<<std::endl;
+ std::cerr<<"I: "<<tap.I<<std::endl;
 #ifdef MULTI_STACK_USE_GRAN
- cerr<<"G: "<<tap.G<<endl;
+ std::cerr<<"G: "<<tap.G<<std::endl;
 #endif
- cerr<<"h: "<<tap.heuristic<<endl;
- cerr<<"be: "<<tap.be<<endl;
- cerr<<"nomon: "<<tap.nomon<<endl;
- cerr<<"weight vector:";
+ std::cerr<<"h: "<<tap.heuristic<<std::endl;
+ std::cerr<<"be: "<<tap.be<<std::endl;
+ std::cerr<<"nomon: "<<tap.nomon<<std::endl;
+ std::cerr<<"weight vector:";
  for(unsigned int i=0;i<tap.weightVec.size();++i)
-   cerr<<" "<<tap.weightVec[i];
- cerr<<endl;
- cerr<<"lmfile: "<<tap.languageModelFileName<<endl;   
- cerr<<"tm files prefix: "<<tap.transModelPref<<endl;   
- cerr<<"test file: "<<tap.sourceSentencesFile<<endl;   
- cerr<<"ref file: "<<tap.refSentencesFile<<endl;
+   std::cerr<<" "<<tap.weightVec[i];
+ std::cerr<<std::endl;
+ std::cerr<<"lmfile: "<<tap.languageModelFileName<<std::endl;   
+ std::cerr<<"tm files prefix: "<<tap.transModelPref<<std::endl;   
+ std::cerr<<"test file: "<<tap.sourceSentencesFile<<std::endl;   
+ std::cerr<<"ref file: "<<tap.refSentencesFile<<std::endl;
  if(tap.wordGraphFileName!="")
  {
-   cerr<<"word graph file prefix: "<<tap.wordGraphFileName<<endl;
+   std::cerr<<"word graph file prefix: "<<tap.wordGraphFileName<<std::endl;
    if(tap.wgPruningThreshold==UNLIMITED_DENSITY)
-     cerr<<"word graph pruning threshold: word graph density unrestricted"<<endl;
+     std::cerr<<"word graph pruning threshold: word graph density unrestricted"<<std::endl;
    else
-     cerr<<"word graph pruning threshold: "<<tap.wgPruningThreshold<<endl;
+     std::cerr<<"word graph pruning threshold: "<<tap.wgPruningThreshold<<std::endl;
  }
  else
  {
-   cerr<<"word graph file prefix not given (wordgraphs will not be generated)"<<endl;
+   std::cerr<<"word graph file prefix not given (wordgraphs will not be generated)"<<std::endl;
  }
- cerr<<"verbosity level: "<<tap.verbosity<<endl;
+ std::cerr<<"verbosity level: "<<tap.verbosity<<std::endl;
 }
 
-//--------------- stringToStringVector function
-Vector<string> stringToStringVector(string s)
+//---------------
+std::vector<string> stringToStringVector(string s)
 {
- Vector<string> vs;	
+ std::vector<string> vs;	
  string aux="";
  unsigned int i;	
 
@@ -1080,69 +1078,69 @@ Vector<string> stringToStringVector(string s)
 //---------------
 void printUsage(void)
 {
-  cerr << "thot_ms_alig   [-c <string>] [-tm <string>] [-lm <string>]"<<endl;
-  cerr << "               -t <string> -r <string>"<<endl;
-  cerr << "               [-p|-cov] [-W <float>]"<<endl;
-  cerr << "               [-S <int>] [-A <int>] [-E <int>] [-I <int>]"<<endl;
-  cerr << "               [-G <int>] [-h <int>] [-be] [-nomon <int>]"<<endl;
-  cerr << "               [-tmw <float> ... <float>]"<<endl;
-  cerr << "               [-wg <string> [-wgp <float>] ]"<<endl;
-  cerr << "               [-v|-v1|-v2] [--help] [--version]"<<endl<<endl;
-  cerr << " -c <string>           : Configuration file (command-line options override"<<endl;
-  cerr << "                         configuration file options)."<<endl;
-  cerr << " -tm <string>          : Prefix of translation model files or model descriptor."<<endl;
-  cerr << " -lm <string>          : Language model file name or model descriptor."<<endl;
-  cerr << " -t <string>           : File with the test sentences."<<endl;
-  cerr << " -r <string>           : File with the reference sentences."<<endl;
-  cerr << " -p                    : Treat the reference sentences as prefixes."<<endl;
-  cerr << " -cov                  : Verify model coverage for the reference sentence."<<endl;
-  cerr << " -W <float>            : Maximum number of translation options to be considered"<<endl;
-  cerr << "                         per each source phrase ("<<PALIG_W_DEFAULT<<" by default)."<<endl;
-  cerr << " -S <int>              : Maximum number of hypotheses that can be stored in"<<endl;
-  cerr << "                         each stack ("<<PALIG_S_DEFAULT<<" by default)."<<endl;    
-  cerr << " -A <int>              : Maximum length in words of the source phrases to be"<<endl;
-  cerr << "                         aligned ("<<PALIG_A_DEFAULT<<" by default)."<<endl;
-  cerr << " -E <int>              : Constrain the target phrase length to be in the"<<endl;
-  cerr << "                         interval [splen-<int> , splen+<int>] where splen is"<<endl;
-  cerr << "                         the length of the source phrase to be aligned"<<endl;
-  cerr << "                         ("<<PALIG_E_DEFAULT<<" by default)."<<endl;
-  cerr << " -I <int>              : Number of hypotheses expanded at each iteration"<<endl;
-  cerr << "                         ("<<PALIG_I_DEFAULT<<" by default)."<<endl;
+  std::cerr << "thot_ms_alig   [-c <string>] [-tm <string>] [-lm <string>]"<<std::endl;
+  std::cerr << "               -t <string> -r <string>"<<std::endl;
+  std::cerr << "               [-p|-cov] [-W <float>]"<<std::endl;
+  std::cerr << "               [-S <int>] [-A <int>] [-E <int>] [-I <int>]"<<std::endl;
+  std::cerr << "               [-G <int>] [-h <int>] [-be] [-nomon <int>]"<<std::endl;
+  std::cerr << "               [-tmw <float> ... <float>]"<<std::endl;
+  std::cerr << "               [-wg <string> [-wgp <float>] ]"<<std::endl;
+  std::cerr << "               [-v|-v1|-v2] [--help] [--version]"<<std::endl<<std::endl;
+  std::cerr << " -c <string>           : Configuration file (command-line options override"<<std::endl;
+  std::cerr << "                         configuration file options)."<<std::endl;
+  std::cerr << " -tm <string>          : Prefix of translation model files or model descriptor."<<std::endl;
+  std::cerr << " -lm <string>          : Language model file name or model descriptor."<<std::endl;
+  std::cerr << " -t <string>           : File with the test sentences."<<std::endl;
+  std::cerr << " -r <string>           : File with the reference sentences."<<std::endl;
+  std::cerr << " -p                    : Treat the reference sentences as prefixes."<<std::endl;
+  std::cerr << " -cov                  : Verify model coverage for the reference sentence."<<std::endl;
+  std::cerr << " -W <float>            : Maximum number of translation options to be considered"<<std::endl;
+  std::cerr << "                         per each source phrase ("<<PALIG_W_DEFAULT<<" by default)."<<std::endl;
+  std::cerr << " -S <int>              : Maximum number of hypotheses that can be stored in"<<std::endl;
+  std::cerr << "                         each stack ("<<PALIG_S_DEFAULT<<" by default)."<<std::endl;    
+  std::cerr << " -A <int>              : Maximum length in words of the source phrases to be"<<std::endl;
+  std::cerr << "                         aligned ("<<PALIG_A_DEFAULT<<" by default)."<<std::endl;
+  std::cerr << " -E <int>              : Constrain the target phrase length to be in the"<<std::endl;
+  std::cerr << "                         interval [splen-<int> , splen+<int>] where splen is"<<std::endl;
+  std::cerr << "                         the length of the source phrase to be aligned"<<std::endl;
+  std::cerr << "                         ("<<PALIG_E_DEFAULT<<" by default)."<<std::endl;
+  std::cerr << " -I <int>              : Number of hypotheses expanded at each iteration"<<std::endl;
+  std::cerr << "                         ("<<PALIG_I_DEFAULT<<" by default)."<<std::endl;
 #ifdef MULTI_STACK_USE_GRAN
-  cerr << " -G <int>              : Granularity parameter ("<<PALIG_G_DEFAULT<<"by default)."<<endl;
+  std::cerr << " -G <int>              : Granularity parameter ("<<PALIG_G_DEFAULT<<"by default)."<<std::endl;
 #else
-  cerr << " -G <int>              : Parameter not available with the given configuration."<<endl;
+  std::cerr << " -G <int>              : Parameter not available with the given configuration."<<std::endl;
 #endif
-  cerr << " -h <int>              : Heuristic function used: "<<NO_HEURISTIC<<"->None, "<<LOCAL_T_HEURISTIC<<"->LOCAL_T, "<<endl;
-  cerr << "                         "<<LOCAL_TD_HEURISTIC<<"->LOCAL_TD ("<<PALIG_H_DEFAULT<<" by default)."<<endl;
-  cerr << " -be                   : Execute a best-first algorithm (breadth-first search"<<endl;
-  cerr << "                         is executed by default)."<<endl;
-  cerr << " -nomon <int>          : Perform a non-monotonic search, allowing the decoder"<<endl;
-  cerr << "                         to skip up to <int> words from the last aligned source"<<endl;
-  cerr << "                         words. If <int> is equal to zero, then a monotonic"<<endl;
-  cerr << "                         search is performed ("<<PALIG_NOMON_DEFAULT<<" is the default value)."<<endl;
-  cerr << " -tmw <float>...<float>: Set model weights, the number of weights and their"<<endl;
-  cerr << "                         meaning depends on the model type (use --config"<<endl;
-  cerr << "                         option)."<<endl;
-  cerr << " -wg <string>          : Print word graph after each translation, the prefix" <<endl;
-  cerr << "                         of the files is given as parameter."<<endl;
-  cerr << " -wgp <float>          : Prune word-graph using the given threshold.\n";
-  cerr << "                         Threshold=0 -> no pruning is performed.\n";
-  cerr << "                         Threshold=1 -> only the best arc arriving to each\n";
-  cerr << "                                        state is retained.\n";
-  cerr << "                         If not given, the number of arcs is not\n";
-  cerr << "                         restricted.\n";
-  cerr << "                         not restricted."<<endl;
-  cerr << " -v|-v1|-v2            : verbose modes."<<endl;
-  cerr << " --help                : Display this help and exit."<<endl;
-  cerr << " --version             : Output version information and exit."<<endl;
-  cerr << " --config              : Show current configuration."<<endl;
+  std::cerr << " -h <int>              : Heuristic function used: "<<NO_HEURISTIC<<"->None, "<<LOCAL_T_HEURISTIC<<"->LOCAL_T, "<<std::endl;
+  std::cerr << "                         "<<LOCAL_TD_HEURISTIC<<"->LOCAL_TD ("<<PALIG_H_DEFAULT<<" by default)."<<std::endl;
+  std::cerr << " -be                   : Execute a best-first algorithm (breadth-first search"<<std::endl;
+  std::cerr << "                         is executed by default)."<<std::endl;
+  std::cerr << " -nomon <int>          : Perform a non-monotonic search, allowing the decoder"<<std::endl;
+  std::cerr << "                         to skip up to <int> words from the last aligned source"<<std::endl;
+  std::cerr << "                         words. If <int> is equal to zero, then a monotonic"<<std::endl;
+  std::cerr << "                         search is performed ("<<PALIG_NOMON_DEFAULT<<" is the default value)."<<std::endl;
+  std::cerr << " -tmw <float>...<float>: Set model weights, the number of weights and their"<<std::endl;
+  std::cerr << "                         meaning depends on the model type (use --config"<<std::endl;
+  std::cerr << "                         option)."<<std::endl;
+  std::cerr << " -wg <string>          : Print word graph after each translation, the prefix" <<std::endl;
+  std::cerr << "                         of the files is given as parameter."<<std::endl;
+  std::cerr << " -wgp <float>          : Prune word-graph using the given threshold.\n";
+  std::cerr << "                         Threshold=0 -> no pruning is performed.\n";
+  std::cerr << "                         Threshold=1 -> only the best arc arriving to each\n";
+  std::cerr << "                                        state is retained.\n";
+  std::cerr << "                         If not given, the number of arcs is not\n";
+  std::cerr << "                         restricted.\n";
+  std::cerr << "                         not restricted."<<std::endl;
+  std::cerr << " -v|-v1|-v2            : verbose modes."<<std::endl;
+  std::cerr << " --help                : Display this help and exit."<<std::endl;
+  std::cerr << " --version             : Output version information and exit."<<std::endl;
+  std::cerr << " --config              : Show current configuration."<<std::endl;
 }
 
 //---------------
 void version(void)
 {
-  cerr<<"thot_ms_alig is part of the thot package "<<endl;
-  cerr<<"thot version "<<THOT_VERSION<<endl;
-  cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
+  std::cerr<<"thot_ms_alig is part of the thot package "<<std::endl;
+  std::cerr<<"thot version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
 }

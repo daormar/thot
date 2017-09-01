@@ -25,8 +25,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define PBM_W_DEFAULT          10

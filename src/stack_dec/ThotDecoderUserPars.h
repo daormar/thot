@@ -28,8 +28,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <WordGraph.h>
 #include <string>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define TD_USER_S_DEFAULT         10
@@ -53,7 +51,7 @@ class ThotDecoderUserPars
   std::string wgh_str;
   unsigned int sp;
   std::string uc_str;
-  Vector<float> catWeightsVec;
+  std::vector<float> catWeightsVec;
   
   ThotDecoderUserPars()
   {

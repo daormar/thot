@@ -68,21 +68,21 @@ class LightSentenceHandler: public BaseSentenceHandler
        // NOTE: when function readSentencePairs() is invoked, previously
        //       seen sentence pairs are removed
 
-   void addSentPair(Vector<std::string> srcSentStr,
-                    Vector<std::string> trgSentStr,
+   void addSentPair(std::vector<std::string> srcSentStr,
+                    std::vector<std::string> trgSentStr,
                     Count c,
                     pair<unsigned int,unsigned int>& sentRange);
    unsigned int numSentPairs(void);
        // NOTE: the whole valid range in a given moment is
        // [ 0 , numSentPairs() )
    int nthSentPair(unsigned int n,
-                   Vector<std::string>& srcSentStr,
-                   Vector<std::string>& trgSentStr,
+                   std::vector<std::string>& srcSentStr,
+                   std::vector<std::string>& trgSentStr,
                    Count& c);
    int getSrcSent(unsigned int n,
-                  Vector<std::string>& srcSentStr);
+                  std::vector<std::string>& srcSentStr);
    int getTrgSent(unsigned int n,
-                  Vector<std::string>& trgSentStr);
+                  std::vector<std::string>& trgSentStr);
    int getCount(unsigned int n,
                 Count& c);
 
@@ -104,14 +104,14 @@ class LightSentenceHandler: public BaseSentenceHandler
    size_t nsPairsInFiles;
    size_t currFileSentIdx;
    
-   Vector<pair<Vector<std::string>,Vector<std::string> > > sentPairCont;
-   Vector<Count> sentPairCount;
+   std::vector<pair<std::vector<std::string>,std::vector<std::string> > > sentPairCont;
+   std::vector<Count> sentPairCount;
 
    void rewindFiles(void);
    bool getNextLineFromFiles(void);
    int nthSentPairFromFiles(unsigned int n,
-                            Vector<std::string>& srcSentStr,
-                            Vector<std::string>& trgSentStr,
+                            std::vector<std::string>& srcSentStr,
+                            std::vector<std::string>& trgSentStr,
                             Count& c);
 };
 

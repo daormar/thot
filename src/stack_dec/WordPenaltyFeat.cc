@@ -46,7 +46,7 @@ WordPenaltyFeat<PhrScoreInfo>::nullHypScore(const HypScoreInfo& predHypScrInf,
 //---------------
 template<>
 WordPenaltyFeat<PhrScoreInfo>::HypScoreInfo
-WordPenaltyFeat<PhrScoreInfo>::extensionScore(const Vector<std::string>& srcSent,
+WordPenaltyFeat<PhrScoreInfo>::extensionScore(const std::vector<std::string>& srcSent,
                                               const HypScoreInfo& predHypScrInf,
                                               const PhrHypDataStr& predHypDataStr,
                                               const PhrHypDataStr& newHypDataStr,

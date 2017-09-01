@@ -43,12 +43,12 @@ bool WgHandler::load(const char * filename)
   
   if(awk.open(filename)==THOT_ERROR)
   {
-    cerr<<"Error while opening word graph handler file: "<<filename<<"\n";
+    std::cerr<<"Error while opening word graph handler file: "<<filename<<"\n";
     return THOT_ERROR;
   }
   else
   {
-    cerr<<"Reading word graph handler file: "<<filename<<"\n";
+    std::cerr<<"Reading word graph handler file: "<<filename<<"\n";
 
         // Clear word graph
     clear();
@@ -57,7 +57,7 @@ bool WgHandler::load(const char * filename)
     {
       if(awk.NF>=3)
       {
-        Vector<std::string> strVec;
+        std::vector<std::string> strVec;
         for(unsigned int i=1;i<awk.NF-1;++i)
         {
           strVec.push_back(awk.dollar(i));
@@ -71,7 +71,7 @@ bool WgHandler::load(const char * filename)
 }
 
 //---------------------------------------
-std::string WgHandler::pathAssociatedToSentence(const Vector<std::string>& strVec,
+std::string WgHandler::pathAssociatedToSentence(const std::vector<std::string>& strVec,
                                                 bool& found)const
 {
   found=false;
@@ -105,12 +105,12 @@ size_t WgHandler::size(void)const
 //---------------------------------------
 bool WgHandler::print(const char* filename)const
 {
-  ofstream outS;
+  std::ofstream outS;
 
-  outS.open(filename,ios::trunc);
+  outS.open(filename,std::ios::trunc);
   if(!outS)
   {
-    cerr<<"Error while printing sentence to word graph path info."<<endl;
+    std::cerr<<"Error while printing sentence to word graph path info."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -122,7 +122,7 @@ bool WgHandler::print(const char* filename)const
 }
 
 //---------------------------------------
-void WgHandler::print(ostream &outS)const
+void WgHandler::print(std::ostream &outS)const
 {
   for(SentToWgInfoMap::const_iterator citer=sentToWgInfoMap.begin();citer!=sentToWgInfoMap.end();++citer)
   {
@@ -130,7 +130,7 @@ void WgHandler::print(ostream &outS)const
     {
       outS<<citer->first[i]<<" ";
     }
-    outS<<"||| "<<citer->second<<endl;
+    outS<<"||| "<<citer->second<<std::endl;
   }
 }
 

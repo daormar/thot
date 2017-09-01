@@ -47,9 +47,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "awkInputStream.h"
 #include "ErrorDefs.h"
 #include <algorithm>
-#include <map>
 #include <string>
-#include "myVector.h"
+#include <map>
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 

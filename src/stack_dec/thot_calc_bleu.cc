@@ -32,9 +32,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "bleu.h"
 #include "options.h"
-#include "myVector.h"
-
-using namespace std;
 
 //--------------- Constants ------------------------------------------
 
@@ -59,7 +56,7 @@ bool sm_opt;
 //--------------- main function
 int main(int argc, char *argv[])
 {
-  Vector<float> bleu_n;
+  std::vector<float> bleu_n;
   float bleu;
   float bp;
   int err;
@@ -72,13 +69,13 @@ int main(int argc, char *argv[])
   {
     if(!sm_opt)
     {
-      cout<<"BLEU= "<< bleu <<" , BP= "<<bp<<" , ";
+      std::cout<<"BLEU= "<< bleu <<" , BP= "<<bp<<" , ";
       for(unsigned int i=0;i<bleu_n.size();++i)
       {
-        if(i!=bleu_n.size()-1) cout<</*i+1<<"-gram prec: "<<*/bleu_n[i]<<" / ";
-        else cout<<bleu_n[i];
+        if(i!=bleu_n.size()-1) std::cout<</*i+1<<"-gram prec: "<<*/bleu_n[i]<<" / ";
+        else std::cout<<bleu_n[i];
       }
-      cout<<endl;
+      std::cout<<std::endl;
       return THOT_OK;
     }
     else
@@ -88,7 +85,7 @@ int main(int argc, char *argv[])
       {
         smoothed_bleu+=(bleu_n[i-1])/((float)pow((float)2,(float)4-i+1));
       }
-      cout<<"Smoothed BLEU= "<< smoothed_bleu <<endl;
+      std::cout<<"Smoothed BLEU= "<< smoothed_bleu <<std::endl;
     }
   }
   else return err;
@@ -139,9 +136,9 @@ int TakeParameters(int argc,char *argv[])
 
 void printUsage(void)
 {
-  cerr << "thot_calc_bleu -r <string> -t <string> [-sm] [-v]"<<endl<<endl;
-  cerr << "-r <string>       File containing the reference sentences"<<endl<<endl;
-  cerr << "-t <string>       File containing the system translations"<<endl<<endl;
-  cerr << "-sm               Calculate smoothed BLEU."<<endl<<endl;
-  cerr << "-v                Verbose mode"<<endl;
+  std::cerr << "thot_calc_bleu -r <string> -t <string> [-sm] [-v]"<<std::endl<<std::endl;
+  std::cerr << "-r <string>       File containing the reference sentences"<<std::endl<<std::endl;
+  std::cerr << "-t <string>       File containing the system translations"<<std::endl<<std::endl;
+  std::cerr << "-sm               Calculate smoothed BLEU."<<std::endl<<std::endl;
+  std::cerr << "-v                Verbose mode"<<std::endl;
 }

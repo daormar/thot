@@ -51,8 +51,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <sys/wait.h>
 #include <signal.h>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define BACKLOG                    10     // Maximum number of pending
@@ -75,7 +73,7 @@ int handleParameters(int argc,
                      char *argv[],
                      thot_server_pars& pars);
 int takeParameters(int argc,
-                   const Vector<std::string>& argv_stl,
+                   const std::vector<std::string>& argv_stl,
                    thot_server_pars& ts_pars);
 int checkParameters(thot_server_pars& ts_pars);
 void printParameters(thot_server_pars ts_pars);
@@ -196,7 +194,7 @@ int start_server(thot_server_pars ts_pars,
     exit(1);
   }
 
-  cerr<<"Listening to port "<< ts_pars.server_port <<"..."<<endl;
+  std::cerr<<"Listening to port "<< ts_pars.server_port <<"..."<<std::endl;
   
       // main accept() loop
   
@@ -210,8 +208,8 @@ int start_server(thot_server_pars ts_pars,
     }
     if(ts_pars.v_given)
     {
-      cerr<<"----------------------------------------------------"<<endl;
-      cerr<<"Server: got connection from "<<inet_ntoa(their_addr.sin_addr)<<endl;
+      std::cerr<<"----------------------------------------------------"<<std::endl;
+      std::cerr<<"Server: got connection from "<<inet_ntoa(their_addr.sin_addr)<<std::endl;
     }
 
     process_request(new_fd,ts_pars,tdu_pars,end); 
@@ -252,24 +250,24 @@ int process_request(int s,
   std::string result;
   std::string bestHypInfo;
   std::string catResult;
-  Vector<float> floatVec;
+  std::vector<float> floatVec;
   RejectedWordsSet emptyRejWordsSet;
   int verbose=ts_pars.v_given;
 
       // Get request code
   int server_request_code=BasicSocketUtils::recvInt(s);
-  if(verbose) cerr<<"Server: request code "<<server_request_code<<endl;
+  if(verbose) std::cerr<<"Server: request code "<<server_request_code<<std::endl;
 
       // Get user id
   int user_id=BasicSocketUtils::recvInt(s);
-  if(verbose) cerr<<"Server: received request from user "<<user_id<<endl;
+  if(verbose) std::cerr<<"Server: received request from user "<<user_id<<std::endl;
   
       // Init user parameters
   retVal=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
   if(retVal==THOT_ERROR)
   {
     end=true;
-    if(verbose) cerr<<"Server: shutting down"<<endl;
+    if(verbose) std::cerr<<"Server: shutting down"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -339,7 +337,7 @@ int process_request(int s,
       break;
 
     case END_SERVER: end=true;
-      if(verbose) cerr<<"Server: shutting down"<<endl;
+      if(verbose) std::cerr<<"Server: shutting down"<<std::endl;
       BasicSocketUtils::writeInt(s,1);
       thotDecoderPtr->clearTrans(verbose);
       break;
@@ -363,7 +361,7 @@ int handleParameters(int argc,
     return THOT_ERROR;   
   }
   
-  Vector<std::string> argv_stl=argv2argv_stl(argc,argv);
+  std::vector<std::string> argv_stl=argv2argv_stl(argc,argv);
   if(takeParameters(argc,argv_stl,ts_pars)==THOT_ERROR)
   {
     return THOT_ERROR;
@@ -384,7 +382,7 @@ int handleParameters(int argc,
 
 //--------------- takeparameters function
 int takeParameters(int argc,
-                   const Vector<std::string>& argv_stl,
+                   const std::vector<std::string>& argv_stl,
                    thot_server_pars& ts_pars)
 {
   int i=1;
@@ -407,7 +405,7 @@ int takeParameters(int argc,
       ts_pars.c_given=true;
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -c parameter."<<endl;
+        std::cerr<<"Error: no value for -c parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
@@ -424,7 +422,7 @@ int takeParameters(int argc,
       ts_pars.p_given=true;
       if(i==argc-1)
       {
-        cerr<<"Error: no value for -h parameter."<<endl;
+        std::cerr<<"Error: no value for -h parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
@@ -452,7 +450,7 @@ int takeParameters(int argc,
         // Check if current parameter is not valid
     if(matched==0)
     {
-      cerr<<"Error: parameter "<<argv_stl[i]<<" not valid."<<endl;
+      std::cerr<<"Error: parameter "<<argv_stl[i]<<" not valid."<<std::endl;
       return THOT_ERROR;
     }
     ++i;
@@ -465,13 +463,13 @@ int checkParameters(thot_server_pars& ts_pars)
 {
   if(!ts_pars.i_given && !ts_pars.c_given)
   {
-    cerr<<"Error: either -c or -i parameter should be given!"<<endl;
+    std::cerr<<"Error: either -c or -i parameter should be given!"<<std::endl;
     return THOT_ERROR;
   }
 
   if(ts_pars.i_given && ts_pars.w_given)
   {
-    cerr<<"Error: -i and -w parameters cannot be given simultaneously!"<<endl;
+    std::cerr<<"Error: -i and -w parameters cannot be given simultaneously!"<<std::endl;
     return THOT_ERROR;
   }
   
@@ -481,31 +479,31 @@ int checkParameters(thot_server_pars& ts_pars)
 //--------------- printParameters function
 void printParameters(thot_server_pars ts_pars)
 {
-  cerr<<"Server port: "<<ts_pars.server_port<<endl;
-  cerr<<"-w: "<<ts_pars.w_given<<endl;
-  cerr<<"-v: "<<ts_pars.v_given<<endl;
+  std::cerr<<"Server port: "<<ts_pars.server_port<<std::endl;
+  std::cerr<<"-w: "<<ts_pars.w_given<<std::endl;
+  std::cerr<<"-v: "<<ts_pars.v_given<<std::endl;
 }
 
 //--------------- printUsage function
 void printUsage(void)
 {
-  cerr<<"thot_server written by Daniel Ortiz"<<endl;
-  cerr<<"Usage: thot_server    -i | -c <string>"<<endl;
-  cerr<<"                      [-p <int>] [ -w ] [ -v ] [--help] [--version]"<<endl;
-  cerr<<endl;  
-  cerr<<"-i <string>    Test server initialization and exit"<<endl<<endl;  
-  cerr<<"-c <string>    Configuration file"<<endl<<endl;  
-  cerr<<"-p <int>       Port used by the server"<<endl<<endl;  
-  cerr<<"-w             Print model weights and exit"<<endl<<endl;  
-  cerr<<"-v             Verbose mode"<<endl<<endl;
-  cerr<<"--help         Print this help and exit"<<endl<<endl;
-  cerr<<"--version      Output version information and exit"<<endl<<endl;
+  std::cerr<<"thot_server written by Daniel Ortiz"<<std::endl;
+  std::cerr<<"Usage: thot_server    -i | -c <string>"<<std::endl;
+  std::cerr<<"                      [-p <int>] [ -w ] [ -v ] [--help] [--version]"<<std::endl;
+  std::cerr<<std::endl;  
+  std::cerr<<"-i <string>    Test server initialization and exit"<<std::endl<<std::endl;  
+  std::cerr<<"-c <string>    Configuration file"<<std::endl<<std::endl;  
+  std::cerr<<"-p <int>       Port used by the server"<<std::endl<<std::endl;  
+  std::cerr<<"-w             Print model weights and exit"<<std::endl<<std::endl;  
+  std::cerr<<"-v             Verbose mode"<<std::endl<<std::endl;
+  std::cerr<<"--help         Print this help and exit"<<std::endl<<std::endl;
+  std::cerr<<"--version      Output version information and exit"<<std::endl<<std::endl;
 }
 
 //--------------- version function
 void version(void)
 {
-  cerr<<"thot_server is part of the thot package "<<endl;
-  cerr<<"thot version "<<THOT_VERSION<<endl;
-  cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
+  std::cerr<<"thot_server is part of the thot package "<<std::endl;
+  std::cerr<<"thot version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
 }

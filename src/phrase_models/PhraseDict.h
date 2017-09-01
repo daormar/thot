@@ -50,7 +50,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- typedefs -------------------------------------------
  
 typedef OrderedVector<PhraseCountState,Count> PhraseTableNode;
-// each Vector of WordIndex corresponds to one phrase
+// each vector of WordIndex corresponds to one phrase
 #ifdef USE_KNUTH_IMPL_FOR_TRIES
 typedef TrieOfWords<PhraseTableNode> Dict;
 #else
@@ -71,23 +71,23 @@ class PhraseDict
 	PhraseDict(void);
      
     Count getCounts_t_(PhraseCountState ps_state,
-                       const Vector<WordIndex>& t,
+                       const std::vector<WordIndex>& t,
                        bool& found);
-    Count getCount_t(const Vector<WordIndex>& f);
+    Count getCount_t(const std::vector<WordIndex>& f);
     void addSrcTrgPair(PhraseCountState ps_state,
-                       const Vector<WordIndex>& t,
+                       const std::vector<WordIndex>& t,
                        Count count);
     void incrSrcTrgCount(PhraseCountState pe_state,
-                         const Vector<WordIndex>& t,
+                         const std::vector<WordIndex>& t,
                          Count count);
-    std::map<Vector<WordIndex>,PhrasePairInfo>
+    std::map<std::vector<WordIndex>,PhrasePairInfo>
       getEntriesFor_s(PhraseCountState ps_state);
     NbestTableNode<PhraseTransTableNodeData>
       getTranslationsFor_s_(PhraseCountState ps_state);
-    PhraseTableNode* getTranslationsFor_t_(const Vector<WordIndex>& t);
+    PhraseTableNode* getTranslationsFor_t_(const std::vector<WordIndex>& t);
     pair<bool,PhraseTableNode*>
-      nodeForTrgHasOneTransOrMore(const Vector<WordIndex>& t);
-    void addTrgIfNotExist(const Vector<WordIndex>& t);
+      nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t);
+    void addTrgIfNotExist(const std::vector<WordIndex>& t);
     
     size_t size(void);
     void clear(void);   

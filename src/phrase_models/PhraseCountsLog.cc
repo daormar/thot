@@ -32,8 +32,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Function definitions
 
 //--------------- insert function specialization for the Trie class 
-template<> TrieBid<WordIndex,LogCount>* TrieBid<WordIndex,LogCount>::insert(const Vector<WordIndex>& keySeq,
-                                                                            const LogCount& d)
+template<> TrieBid<WordIndex,LogCount>*
+TrieBid<WordIndex,LogCount>::insert(const std::vector<WordIndex>& keySeq,
+                                    const LogCount& d)
 {
   unsigned int i;
   TrieBid<WordIndex,LogCount> *t,*newt;
@@ -106,7 +107,7 @@ PhraseCountsLog::PhraseCountsLog(void)
   numberOfPhrasesStored=0;
 }
 //-------------------------
-PhraseCountLogState PhraseCountsLog::addPhrase(const Vector<WordIndex>& phrase,
+PhraseCountLogState PhraseCountsLog::addPhrase(const std::vector<WordIndex>& phrase,
                                                LogCount logCount)
 {
   PhraseCountLogState plState;
@@ -129,7 +130,7 @@ PhraseCountLogState PhraseCountsLog::addPhrase(const Vector<WordIndex>& phrase,
  return plState;
 }
 //-------------------------
-PhraseCountLogState PhraseCountsLog::incrLogCountOfPhrase(const Vector<WordIndex>& phrase,
+PhraseCountLogState PhraseCountsLog::incrLogCountOfPhrase(const std::vector<WordIndex>& phrase,
                                                           LogCount logCount)
 {
   PhraseCountLogState plState;
@@ -152,7 +153,7 @@ PhraseCountLogState PhraseCountsLog::incrLogCountOfPhrase(const Vector<WordIndex
   return plState;
 }
 //-------------------------
-LogCount PhraseCountsLog::getLogCount(const Vector<WordIndex>& phrase,
+LogCount PhraseCountsLog::getLogCount(const std::vector<WordIndex>& phrase,
                                       bool& found)
 {
   LogCount* lcountPtr;
@@ -171,14 +172,14 @@ LogCount PhraseCountsLog::getLogCount(const Vector<WordIndex>& phrase,
   }
 }
 //-------------------------
-PhraseCountLogState PhraseCountsLog::getState(const Vector<WordIndex>& phrase)
+PhraseCountLogState PhraseCountsLog::getState(const std::vector<WordIndex>& phrase)
 {
   return plcTable.getState(phrase);
 }
 
 //-------------------------
 void PhraseCountsLog::getPhraseGivenState(PhraseCountLogState plState,
-                                          Vector<WordIndex>& phrase)
+                                          std::vector<WordIndex>& phrase)
 {
   if(plState!=NULL)
   {
@@ -209,13 +210,15 @@ void PhraseCountsLog::clear(void)
  numberOfPhrasesStored=0;	
 }
 //-------------------------
-Vector<WordIndex> PhraseCountsLog::invertVectorElements(const Vector<WordIndex>& v)
-{Vector<WordIndex> inv;
+std::vector<WordIndex> PhraseCountsLog::invertVectorElements(const std::vector<WordIndex>& v)
+{
+ std::vector<WordIndex> inv;
  int i;
 
  inv.clear();
  for(i=v.size()-1;i>=0;--i)
- {inv.push_back(v[i]);
+ {
+   inv.push_back(v[i]);
  }
  return inv; 
 }

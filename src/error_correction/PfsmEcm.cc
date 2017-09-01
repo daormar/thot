@@ -47,16 +47,16 @@ PfsmEcm::PfsmEcm()
 }
 
 //---------------------------------------
-Score PfsmEcm::similarityGivenPrefix(Vector<std::string> x,
-                                     Vector<std::string> y)
+Score PfsmEcm::similarityGivenPrefix(std::vector<std::string> x,
+                                     std::vector<std::string> y)
 {
   return simGivenPrefPfsm(x,y);
 }
 
 //---------------------------------------
-void PfsmEcm::correctStrGivenPref(Vector<std::string> uncorrStrVec,
-                                  Vector<std::string> prefStrVec,
-                                  Vector<std::string>& correctedStrVec)
+void PfsmEcm::correctStrGivenPref(std::vector<std::string> uncorrStrVec,
+                                  std::vector<std::string> prefStrVec,
+                                  std::vector<std::string>& correctedStrVec)
 {
   WordAndCharLevelOps wcOps;
   
@@ -66,7 +66,7 @@ void PfsmEcm::correctStrGivenPref(Vector<std::string> uncorrStrVec,
 }
 
 //---------------------------------------
-void PfsmEcm::setWeights(Vector<float> wVec)
+void PfsmEcm::setWeights(std::vector<float> wVec)
 {
   if(wVec.size()==5)
   {
@@ -101,10 +101,10 @@ void PfsmEcm::setWeights(Vector<float> wVec)
     else
     {
       if(hprob_ge_one)
-        cerr<<"Warning: hProb parameter cannot be equal or above one"<<endl;
+        std::cerr<<"Warning: hProb parameter cannot be equal or above one"<<std::endl;
       if(weights_le_zero)
-        cerr<<"Warning: error correction model weights cannot be negative or zero"<<endl;
-      cerr<<"Error correction model weights were not changed"<<endl;
+        std::cerr<<"Warning: error correction model weights cannot be negative or zero"<<std::endl;
+      std::cerr<<"Error correction model weights were not changed"<<std::endl;
     }
   }
 }
@@ -131,14 +131,14 @@ void PfsmEcm::printWeights(ostream &outS)
 //---------------------------------------
 bool PfsmEcm::load(const char */*prefix*/)
 {
-//  cerr<<"Warning: This error correction model has not any parameters to load from file"<<endl;
+//  std::cerr<<"Warning: This error correction model has not any parameters to load from file"<<std::endl;
   return THOT_OK;
 }
 
 //---------------------------------------
 bool PfsmEcm::print(const char */*prefix*/)
 {
-//  cerr<<"Warning: This error correction model has not any parameters to print to file"<<endl;
+//  std::cerr<<"Warning: This error correction model has not any parameters to print to file"<<std::endl;
   return THOT_OK;
 }
 
@@ -160,7 +160,7 @@ void PfsmEcm::setErrorModel(float vocsize,
       // Print error log-probs that will be used when calculating edit
       // distance
   if(verbose)
-    cerr<<"ECM error log-probs changed to: log(hp)= "<<log(hprob)<<" , log(ip)= "<<log(ip)<<" , log(sp)= "<<log(sp)<<" , log(dp)= "<<log(dp)<<endl;
+    std::cerr<<"ECM error log-probs changed to: log(hp)= "<<log(hprob)<<" , log(ip)= "<<log(ip)<<" , log(sp)= "<<log(sp)<<" , log(dp)= "<<log(dp)<<std::endl;
 
       // Set error model for the edit distance module
   editDistForVecStr.setErrorModel(-log(hprob),
@@ -193,29 +193,29 @@ void PfsmEcm::obtainErrorProbsFromParams(float vocsize,
 }
 
 //---------------------------------------
-Score PfsmEcm::similarity(Vector<std::string> x,
-                          Vector<std::string> y)
+Score PfsmEcm::similarity(std::vector<std::string> x,
+                          std::vector<std::string> y)
 {
   return simPfsm(x,y);
 }
 
 //---------------------------------------
-Score PfsmEcm::simPfsm(Vector<std::string> x,
-                       Vector<std::string> y)
+Score PfsmEcm::simPfsm(std::vector<std::string> x,
+                       std::vector<std::string> y)
 {
   return -editDistForVecStr.calculateEditDist(x,y);
 }
 
 //---------------------------------------
-Score PfsmEcm::simGivenPrefPfsm(Vector<std::string> x,
-                                Vector<std::string> y)
+Score PfsmEcm::simGivenPrefPfsm(std::vector<std::string> x,
+                                std::vector<std::string> y)
 {
   return -editDistForVecStr.calculateEditDistPrefix(x,y);
 }
 
 //---------------------------------------
-Score PfsmEcm::simGivenPrefOpsPfsm(Vector<std::string> x,
-                                   Vector<std::string> y,
+Score PfsmEcm::simGivenPrefOpsPfsm(std::vector<std::string> x,
+                                   std::vector<std::string> y,
                                    WordAndCharLevelOps& wcOps)
 {
   return -editDistForVecStr.calculateEditDistPrefixOps(x,y,wcOps.first,wcOps.second);

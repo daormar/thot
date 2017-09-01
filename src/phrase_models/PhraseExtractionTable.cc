@@ -45,13 +45,13 @@ PhraseExtractionTable::PhraseExtractionTable(void)
 
       // Make room for pecMatrix
   PhraseExtractionCell pec;
-  Vector<PhraseExtractionCell> pecVec;
+  std::vector<PhraseExtractionCell> pecVec;
   pecVec.insert(pecVec.begin(),MAX_SENTENCE_LENGTH,pec);
   pecMatrix.insert(pecMatrix.begin(),MAX_SENTENCE_LENGTH,pecVec);
 
       // Make room for iterMatrix
   iterator iter;
-  Vector<iterator> iterVec;
+  std::vector<iterator> iterVec;
   iterVec.insert(iterVec.begin(),MAX_SENTENCE_LENGTH,iter);
   iterMatrix.insert(iterMatrix.begin(),MAX_SENTENCE_LENGTH,iterVec);
 }
@@ -80,10 +80,10 @@ PhraseExtractionCell& PhraseExtractionTable::cell(unsigned int x, unsigned int y
 
 //-------------------------
 void PhraseExtractionTable::extractConsistentPhrases(PhraseExtractParameters phePars,
-                                                     const Vector<string> &_ns,
-                                                     const Vector<string> &_t,
+                                                     const std::vector<string> &_ns,
+                                                     const std::vector<string> &_t,
                                                      const WordAligMatrix &_alig,
-                                                     Vector<PhrasePair>& outvph)
+                                                     std::vector<PhrasePair>& outvph)
 {
 #ifdef USE_OCH_PHRASE_EXTRACT
   extractConsistentPhrasesOch(phePars,_ns,_t,_alig,outvph);
@@ -94,14 +94,14 @@ void PhraseExtractionTable::extractConsistentPhrases(PhraseExtractParameters phe
 
 //-------------------------
 void PhraseExtractionTable::extractConsistentPhrasesOld(PhraseExtractParameters phePars,
-                                                        const Vector<string> &_ns,
-                                                        const Vector<string> &_t,
+                                                        const std::vector<string> &_ns,
+                                                        const std::vector<string> &_t,
                                                         const WordAligMatrix &_alig,
-                                                        Vector<PhrasePair>& outvph)
+                                                        std::vector<PhrasePair>& outvph)
 { 
  if(_t.size()>=MAX_SENTENCE_LENGTH || _ns.size()-1>=MAX_SENTENCE_LENGTH)
  {
-   cerr<<"Warning! the sentences are too long."<<endl;
+   std::cerr<<"Warning! the sentences are too long."<<std::endl;
  }
  else
  {
@@ -122,14 +122,14 @@ void PhraseExtractionTable::extractConsistentPhrasesOld(PhraseExtractParameters 
 
 //-------------------------
 void PhraseExtractionTable::extractConsistentPhrasesOch(PhraseExtractParameters phePars,
-                                                        const Vector<string> &_ns,
-                                                        const Vector<string> &_t,
+                                                        const std::vector<string> &_ns,
+                                                        const std::vector<string> &_t,
                                                         const WordAligMatrix &_alig,
-                                                        Vector<PhrasePair>& outvph)
+                                                        std::vector<PhrasePair>& outvph)
 {
  if(_t.size()>=MAX_SENTENCE_LENGTH || _ns.size()-1>=MAX_SENTENCE_LENGTH)
  {
-   cerr<<"Warning! the sentences are too long."<<endl;
+   std::cerr<<"Warning! the sentences are too long."<<std::endl;
  }
  else
  {
@@ -147,7 +147,7 @@ void PhraseExtractionTable::extractConsistentPhrasesOch(PhraseExtractParameters 
      for(PositionIndex i2=i1;i2<=slen;++i2)
      {
            // Obtain SP
-       Vector<PositionIndex> SP;
+       std::vector<PositionIndex> SP;
        for(unsigned int j=1;j<=tlen;++j)
        {
          for(unsigned int k=i1;k<=i2;++k)
@@ -184,13 +184,13 @@ void PhraseExtractionTable::extractConsistentPhrasesOch(PhraseExtractParameters 
            }
          }
        }
-//        cerr<<"------"<<endl;
-//        cerr<<i1<<" "<<i2<<endl;
-//        cerr<<"SP: ";
-//        for(unsigned int k=0;k<SP.size();++k) cerr<<SP[k]<<" ";
-//        cerr<<endl;
-//        cerr<<"consec: "<<consec<<endl;
-//        cerr<<"******"<<endl;
+//        std::cerr<<"------"<<std::endl;
+//        std::cerr<<i1<<" "<<i2<<std::endl;
+//        std::cerr<<"SP: ";
+//        for(unsigned int k=0;k<SP.size();++k) std::cerr<<SP[k]<<" ";
+//        std::cerr<<std::endl;
+//        std::cerr<<"consec: "<<consec<<std::endl;
+//        std::cerr<<"******"<<std::endl;
        
        if(consec)
        {
@@ -199,7 +199,7 @@ void PhraseExtractionTable::extractConsistentPhrasesOch(PhraseExtractParameters 
          PositionIndex j2=SP.back();
 
              // Obtain TP
-         Vector<PositionIndex> TP;
+         std::vector<PositionIndex> TP;
          for(unsigned int i=1;i<=slen;++i)
          {
            for(unsigned int k=j1;k<=j2;++k)
@@ -212,11 +212,11 @@ void PhraseExtractionTable::extractConsistentPhrasesOch(PhraseExtractParameters 
            }
          }
 
-//          cerr<<j1<<" "<<j2<<endl;
-//          cerr<<"TP: ";
-//          for(unsigned int k=0;k<TP.size();++k) cerr<<TP[k]<<" ";
-//          cerr<<endl;
-//          cerr<<"++++++"<<endl;
+//          std::cerr<<j1<<" "<<j2<<std::endl;
+//          std::cerr<<"TP: ";
+//          for(unsigned int k=0;k<TP.size();++k) std::cerr<<TP[k]<<" ";
+//          std::cerr<<std::endl;
+//          std::cerr<<"++++++"<<std::endl;
          
              // Check if TP is in [i1,..,i2]
          if(!TP.empty() && TP.front()>=i1 && TP.back()<=i2)
@@ -236,14 +236,14 @@ void PhraseExtractionTable::extractConsistentPhrasesOch(PhraseExtractParameters 
                if(ppair.t_.size()<=(unsigned int)maxTrgPhraseLength)
                  outvph.push_back(ppair);
 
-//                cerr<<jp<<" "<<jpp<<endl;
+//                std::cerr<<jp<<" "<<jpp<<std::endl;
 //                for(unsigned int k=0;k<ppair.s_.size();++k)
-//                  cerr<<ppair.s_[k]<<" ";
-//                cerr<<endl;
+//                  std::cerr<<ppair.s_[k]<<" ";
+//                std::cerr<<std::endl;
 
 //                for(unsigned int k=0;k<ppair.t_.size();++k)
-//                  cerr<<ppair.t_[k]<<" ";
-//                cerr<<endl;
+//                  std::cerr<<ppair.t_[k]<<" ";
+//                std::cerr<<std::endl;
 
                jpp+=1;
              }
@@ -258,15 +258,15 @@ void PhraseExtractionTable::extractConsistentPhrasesOch(PhraseExtractParameters 
 
 //-------------------------
 double PhraseExtractionTable::segmBasedExtraction(PhraseExtractParameters phePars,
-                                                  const Vector<string> &_ns,
-                                                  const Vector<string> &_t,
+                                                  const std::vector<string> &_ns,
+                                                  const std::vector<string> &_t,
                                                   const WordAligMatrix &_alig,
-                                                  Vector<PhrasePair>& outvph,
+                                                  std::vector<PhrasePair>& outvph,
                                                   int verbose/*=0*/)
 {
  if(_t.size()>=MAX_SENTENCE_LENGTH || _ns.size()-1>=MAX_SENTENCE_LENGTH)
  {
-   cerr<<"Warning! the sentences are too long."<<endl;
+   std::cerr<<"Warning! the sentences are too long."<<std::endl;
    return 0;
  }
  else
@@ -398,7 +398,7 @@ double PhraseExtractionTable::srfPhraseExtractDp(const BpSet& bpSet,
   SrfNodeInfoMap sniMap;
   fillSrfNodeInfoMap(bpSet,sniMap);
   if(verbose)
-    cerr<<"Num. equiv. classes: "<<sniMap.size()<<" ; Equiv. classes with leafs: "<<sniMap.numNodesWithLeafs()<<endl;
+    std::cerr<<"Num. equiv. classes: "<<sniMap.size()<<" ; Equiv. classes with leafs: "<<sniMap.numNodesWithLeafs()<<std::endl;
   
   Bitset<MAX_SENTENCE_LENGTH> SP((unsigned int)0);
   for(unsigned int x=1;x<=nslen-1;++x) SP.set(x,1);
@@ -422,19 +422,19 @@ double PhraseExtractionTable::approxSrfPhraseExtract(const BpSet& bpSet,
   srand(DEFAULT_RANDOM_SEED);
 
   if(verbose)
-    cerr<<"Performing approximate srf phrase extract"<<endl;
+    std::cerr<<"Performing approximate srf phrase extract"<<std::endl;
   
       // Obtain bisegmentation length info
   if(verbose)
-    cerr<<"Obtaining bisegmentation length info..."<<endl;
+    std::cerr<<"Obtaining bisegmentation length info..."<<std::endl;
   SrfNodeInfoMap sniMap;
   fillSrfNodeInfoMap(bpSet,sniMap,false);
   if(verbose)
-    cerr<<"#Equivalence classes: "<<sniMap.size()<<endl;
+    std::cerr<<"#Equivalence classes: "<<sniMap.size()<<std::endl;
   
       // Execute random walks
   if(verbose)
-    cerr<<"Executing random walks..."<<endl;
+    std::cerr<<"Executing random walks..."<<std::endl;
   double logNumSegms;
   logNumSegms=bisegmRandWalk(bpSet,sniMap,C);
   
@@ -678,10 +678,10 @@ bool PhraseExtractionTable::bisegmRandWalkRec(const BpSet& bpSet,
     }
 
         // Iterate over all possible source segments to be covered
-    Vector<pair<SrfNodeKey,SrfNodeInfo> > nextSegmStepVec;
-    Vector<SrfBisegm> nextSbVec;
-    Vector<Bitset<MAX_SENTENCE_LENGTH> > srcPosVec;
-    Vector<Bitset<MAX_SENTENCE_LENGTH> > trgPosVec;
+    std::vector<pair<SrfNodeKey,SrfNodeInfo> > nextSegmStepVec;
+    std::vector<SrfBisegm> nextSbVec;
+    std::vector<Bitset<MAX_SENTENCE_LENGTH> > srcPosVec;
+    std::vector<Bitset<MAX_SENTENCE_LENGTH> > trgPosVec;
     
     for(unsigned int x=x1;x<=x2;++x)
     {
@@ -790,7 +790,7 @@ bool PhraseExtractionTable::bisegmRandWalkRec(const BpSet& bpSet,
 
 //-------------------------
 void PhraseExtractionTable::obtainPhrPairVecFromBpSet(const BpSet& bpSet,
-                                                      Vector<PhrasePair>& outvph,
+                                                      std::vector<PhrasePair>& outvph,
                                                       double logNumSegms/*=1*/)
 {
   outvph.clear();
@@ -838,7 +838,7 @@ void PhraseExtractionTable::obtainConsistentPhrases(void)
  {
    for(unsigned int x=tlen-y-1;x<tlen;++x)
    {
-         //cerr<<"- "<<x<<" "<<y<<" "<<pecMatrix[x][y].cellAligs.size()<<endl;
+         //std::cerr<<"- "<<x<<" "<<y<<" "<<pecMatrix[x][y].cellAligs.size()<<std::endl;
          // Obtain the length of the source phrase
      if(countSpurious) trgPhraseLength=trgPhraseLengthInCell(x,y);
      else trgPhraseLength=trgPhraseLengthInCellNonSpurious(x,y,spurBitset);
@@ -977,15 +977,15 @@ void PhraseExtractionTable::obtainBpSet(BpSet& bpSet)
 }
 
 //-------------------------
-void PhraseExtractionTable::createVectorWithConsPhrases(Vector<PhrasePair>& consistentPhrases)
+void PhraseExtractionTable::createVectorWithConsPhrases(std::vector<PhrasePair>& consistentPhrases)
 {
   unsigned int x,y,i,a,z,numWordsAligned;
   PhrasePair phPair;
-  Vector<string> t_,s_;
+  std::vector<string> t_,s_;
   consistentPhrases.clear();
   spurBitset=spuriousWordsBitset(alig);
 
-  // Create a Vector with the consistent phrases
+  // Create a vector with the consistent phrases
   for(y=0;y<tlen;++y)
   {
     for(x=tlen-y-1;x<tlen;++x)
@@ -1020,13 +1020,13 @@ void PhraseExtractionTable::createVectorWithConsPhrases(Vector<PhrasePair>& cons
 
 //-------------------------
 Bisegm& PhraseExtractionTable::obtainPossibleSegmentations(PhraseExtractParameters phePars,
-                                                           const Vector<string> &_ns,
-                                                           const Vector<string> &_t,
+                                                           const std::vector<string> &_ns,
+                                                           const std::vector<string> &_t,
                                                            const WordAligMatrix &_alig)
 {
   if(_t.size()>=MAX_SENTENCE_LENGTH || _ns.size()>=MAX_SENTENCE_LENGTH)
   {
-    cerr<<"Warning! the sentences are too long."<<endl;
+    std::cerr<<"Warning! the sentences are too long."<<std::endl;
     clear();
   }
   else
@@ -1054,7 +1054,7 @@ Bisegm& PhraseExtractionTable::obtainPossibleSegmentations(PhraseExtractParamete
 void PhraseExtractionTable::getSegmentationsForEachCell(void)
 {
  unsigned int x,y,z,a,k,numCells,trgPhraseLength;
- Vector<CellID> comb;	
+ std::vector<CellID> comb;	
  CellID cid;
  Bitset<MAX_SENTENCE_LENGTH> zFertBitset,spurBitset;	
  float diag_prune_factor=1;
@@ -1130,7 +1130,7 @@ void PhraseExtractionTable::getSegmentationsForEachCell(void)
 void PhraseExtractionTable::getSegmentationsForEachCellFast(void)
 {
  unsigned int x,y,z,a,k,trgPhraseLength;
- Vector<CellID> comb;	
+ std::vector<CellID> comb;	
  CellID cid;
  Bitset<MAX_SENTENCE_LENGTH> zFertBitset,spurBitset;	
  float row_prune_factor=1;
@@ -1267,13 +1267,13 @@ bool PhraseExtractionTable::validCoverageForCell(Bitset<MAX_SENTENCE_LENGTH>& c,
 }
 
 //-------------------------
-Vector<PhrasePair> PhraseExtractionTable::getPhrasesFromSegmentation(Vector<CellID>& comb)
+std::vector<PhrasePair> PhraseExtractionTable::getPhrasesFromSegmentation(std::vector<CellID>& comb)
 {
  unsigned int b;
- Vector<string> s_;
+ std::vector<string> s_;
  CellID cid;
  PhrasePair phPair;	
- Vector<PhrasePair> segmentation;
+ std::vector<PhrasePair> segmentation;
 	
  for(b=0;b<comb.size();++b)
  {
@@ -1288,7 +1288,7 @@ Vector<PhrasePair> PhraseExtractionTable::getPhrasesFromSegmentation(Vector<Cell
 PhrasePair PhraseExtractionTable::getPhrasePairFromCellID(CellID& cid)
 {
  unsigned int z,i,numWordsAligned;
- Vector<string> t_,s_;
+ std::vector<string> t_,s_;
  PhrasePair phPair;	
 	
  t_.clear(); s_.clear();
@@ -1314,7 +1314,7 @@ PhrasePair PhraseExtractionTable::getPhrasePairFromCellID(CellID& cid)
 }
 
 //-------------------------
-bool PhraseExtractionTable::validSegmentationForCell(const Vector<CellID> &cidVec,
+bool PhraseExtractionTable::validSegmentationForCell(const std::vector<CellID> &cidVec,
                                                      Bitset<MAX_SENTENCE_LENGTH>& zFertBits,
                                                      unsigned int x,
                                                      unsigned int y,
@@ -1398,7 +1398,7 @@ Bitset<MAX_SENTENCE_LENGTH> PhraseExtractionTable::spuriousWordsBitset(WordAligM
 }
 
 //-------------------------
-bool PhraseExtractionTable::existCellAlig(const Vector<CellAlignment> &cellAligs,CellAlignment calig)
+bool PhraseExtractionTable::existCellAlig(const std::vector<CellAlignment> &cellAligs,CellAlignment calig)
 {
  unsigned int i;
  bool found;
@@ -1467,7 +1467,7 @@ unsigned int PhraseExtractionTable::getDiagNumber(unsigned int x,
 }
 
 //-------------------------
-unsigned int PhraseExtractionTable::trgPhraseLengthInComb(const Vector<CellID> &cidVec)
+unsigned int PhraseExtractionTable::trgPhraseLengthInComb(const std::vector<CellID> &cidVec)
 {
  unsigned int a,l;
  
@@ -1481,7 +1481,7 @@ unsigned int PhraseExtractionTable::trgPhraseLengthInComb(const Vector<CellID> &
 }
 
 //-------------------------
-unsigned int PhraseExtractionTable::maxTrgPhraseLengthInComb(const Vector<CellID> &cidVec,
+unsigned int PhraseExtractionTable::maxTrgPhraseLengthInComb(const std::vector<CellID> &cidVec,
                                                              unsigned int first)
 {
  unsigned int a,l,maxL;
@@ -1497,7 +1497,7 @@ unsigned int PhraseExtractionTable::maxTrgPhraseLengthInComb(const Vector<CellID
 }
 
 //-------------------------
-unsigned int PhraseExtractionTable::maxTrgPhraseLengthInCombNonSpurious(const Vector<CellID> &cidVec,
+unsigned int PhraseExtractionTable::maxTrgPhraseLengthInCombNonSpurious(const std::vector<CellID> &cidVec,
 	                                                                    Bitset<MAX_SENTENCE_LENGTH>& spurBits,
                                                                         unsigned int first)
 {
@@ -1560,14 +1560,14 @@ PhraseExtractionTable::~PhraseExtractionTable(void)
 //---------------
 
 PhraseExtractionTable::iterator PhraseExtractionTable::getSegmIter(PhraseExtractParameters phePars,
-                                                                   const Vector<string> &_ns,
-                                                                   const Vector<string> &_t,
+                                                                   const std::vector<string> &_ns,
+                                                                   const std::vector<string> &_t,
                                                                    const WordAligMatrix &_alig)
 
 {
   if(_t.size()>=MAX_SENTENCE_LENGTH || _ns.size()>=MAX_SENTENCE_LENGTH)
   {
-    cerr<<"Warning! the sentences are too long."<<endl;
+    std::cerr<<"Warning! the sentences are too long."<<std::endl;
     clear();
   }
   else
@@ -1598,7 +1598,7 @@ PhraseExtractionTable::iterator PhraseExtractionTable::getSegmIter(PhraseExtract
 //----- iterator class static member definitions
 
 PhraseExtractionTable* PhraseExtractionTable::iterator::petPtr;
-Vector<CellID> PhraseExtractionTable::iterator::cidVec;
+std::vector<CellID> PhraseExtractionTable::iterator::cidVec;
 
 // iterator function definitions
 //--------------------------
@@ -1801,9 +1801,9 @@ void PhraseExtractionTable::iterator::clear(void)
 }
 
 //-------------------------
-Vector<CellID> PhraseExtractionTable::iterator::operator*(void)const 
+std::vector<CellID> PhraseExtractionTable::iterator::operator*(void)const 
 {
-  Vector<CellID> vcid;
+  std::vector<CellID> vcid;
   CellID cid;
 
   if(!(this->end()))
@@ -1830,7 +1830,7 @@ Vector<CellID> PhraseExtractionTable::iterator::operator*(void)const
 }
 
 //-------------------------
-const Vector<CellID>& PhraseExtractionTable::iterator::getCidVec(void)const
+const std::vector<CellID>& PhraseExtractionTable::iterator::getCidVec(void)const
 {
   return cidVec;
 }

@@ -54,9 +54,9 @@ int TakeParameters(int argc,char *argv[]);
 void printUsage(void);
 int init_swm(void);
 void release_swm(void);
-int processPairAligFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
+int processPairAligFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
                         const char *pairPlusAligFile);
-int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
+int processSentPairFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
                         const char *sentPairFile);
 void version(void);
 
@@ -65,8 +65,8 @@ void version(void);
 
 //--------------- Global variables ------------------------------------
 
-SimpleDynClassLoader<BaseSwAligModel<Vector<Prob> > > baseSwAligModelDynClassLoader;
-BaseSwAligModel<Vector<Prob> >* swAligModelPtr;
+SimpleDynClassLoader<BaseSwAligModel<std::vector<Prob> > > baseSwAligModelDynClassLoader;
+BaseSwAligModel<std::vector<Prob> >* swAligModelPtr;
 
 char swFilePrefix[512];
 char outputFilesPrefix[512];
@@ -96,8 +96,8 @@ int main(int argc,char *argv[])
 
   if(pairPlusAligFile[0]==0 && sentPairFile[0]==0)
   {         
-   cerr<<"s: "<<srcSent <<endl;
-   cerr<<"t: "<<trgSent <<endl;   
+   std::cerr<<"s: "<<srcSent <<std::endl;
+   std::cerr<<"t: "<<trgSent <<std::endl;   
    ret=swAligModelPtr->load(swFilePrefix);
    if(ret==THOT_ERROR)
    {
@@ -107,19 +107,19 @@ int main(int argc,char *argv[])
    if(alig_given) 
    {
          // Calculate log-prob given alignment
-    Vector<std::string> aligVec=StrProcUtils::stringToStringVector(alig);
-    Vector<PositionIndex> aligIndexVec;
+    std::vector<std::string> aligVec=StrProcUtils::stringToStringVector(alig);
+    std::vector<PositionIndex> aligIndexVec;
     for(unsigned int i=0;i<alig.size();++i)
       aligIndexVec.push_back(atoi(aligVec[i].c_str()));
     WordAligMatrix waMatrix;
     waMatrix.putAligVec(aligIndexVec);
     
-    cerr<<"a: "<<alig <<endl;
+    std::cerr<<"a: "<<alig <<std::endl;
     lp=swAligModelPtr->calcLgProbForAligChar(srcSent.c_str(),
                                              trgSent.c_str(),
                                              waMatrix,
                                              verbosity); 
-    cout<<"Single-word model logProbability= "<<lp<<endl;      
+    cout<<"Single-word model logProbability= "<<lp<<std::endl;      
    }
    else
    {
@@ -130,7 +130,7 @@ int main(int argc,char *argv[])
        lp=swAligModelPtr->calcLgProbChar(srcSent.c_str(),
                                          trgSent.c_str(),
                                          verbosity);  
-       cout<<"Single-word model logprob sum for each alignment= "<<lp<<endl;
+       cout<<"Single-word model logprob sum for each alignment= "<<lp<<std::endl;
      }
      else
      {
@@ -140,7 +140,7 @@ int main(int argc,char *argv[])
        lp=swAligModelPtr->obtainBestAlignmentChar(srcSent.c_str(),
                                                   trgSent.c_str(),
                                                   waMatrix);  
-       cout<<"Single-word model logprob for the best alignment= "<<lp<<endl;
+       cout<<"Single-word model logprob for the best alignment= "<<lp<<std::endl;
      }
    }
   }
@@ -182,7 +182,7 @@ int init_swm(void)
   DynClassFileHandler dynClassFileHandler;
   if(dynClassFileHandler.load(THOT_MASTER_INI_PATH)==THOT_ERROR)
   {
-    cerr<<"Error while loading ini file"<<endl;
+    std::cerr<<"Error while loading ini file"<<std::endl;
     return THOT_ERROR;
   }
       // Define variables to obtain base class infomation
@@ -194,22 +194,22 @@ int init_swm(void)
   baseClassName="BaseSwAligModel";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }
    
       // Load class derived from BaseSwAligModel dynamically
   if(!baseSwAligModelDynClassLoader.open_module(soFileName))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
 
   swAligModelPtr=baseSwAligModelDynClassLoader.make_obj(initPars);
   if(swAligModelPtr==NULL)
   {
-    cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;
     baseSwAligModelDynClassLoader.close_module();
     
     return THOT_ERROR;
@@ -226,14 +226,14 @@ void release_swm(void)
 }
 
 //---------------
-int processPairAligFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
+int processPairAligFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
                         const char *pairPlusAligFile)
 {
  bool ret;
  awkInputStream awk;
- Vector<std::string> fileSrcSentVec;
- Vector<std::string> fileTrgSentVec;
- Vector<PositionIndex> fileAligVec;
+ std::vector<std::string> fileSrcSentVec;
+ std::vector<std::string> fileTrgSentVec;
+ std::vector<PositionIndex> fileAligVec;
  WordAligMatrix waMatrix;
  LgProb lp;
 
@@ -247,7 +247,7 @@ int processPairAligFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
        // read input from file
    if(awk.open(pairPlusAligFile)==THOT_ERROR)
    {
-     cerr<<"Error in pairPlusAlig file, file "<<pairPlusAligFile<<" does not exist.\n";
+     std::cerr<<"Error in pairPlusAlig file, file "<<pairPlusAligFile<<" does not exist.\n";
      return THOT_ERROR;
    }
  }
@@ -288,20 +288,20 @@ int processPairAligFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
                                       waMatrix,
                                       verbosity);
    
-   cout<<awk.dollar(0)<<" ||| "<<lp<<endl;
+   cout<<awk.dollar(0)<<" ||| "<<lp<<std::endl;
  }   
  return THOT_OK;   
 }
 
 //---------------
-int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
+int processSentPairFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
                         const char *sentPairFile)
 {
       // Define variables
  bool ret;
  awkInputStream awk;
- Vector<std::string> srcSentVec;
- Vector<std::string> trgSentVec;
+ std::vector<std::string> srcSentVec;
+ std::vector<std::string> trgSentVec;
  LgProb lp;
 
      // Define variables required to speed up generation of best
@@ -319,7 +319,7 @@ int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
        // read input from file
    if(awk.open(sentPairFile)==THOT_ERROR)
    {
-     cerr<<"Error in sentPair file, file "<<sentPairFile<<" does not exist.\n";
+     std::cerr<<"Error in sentPair file, file "<<sentPairFile<<" does not exist.\n";
      return THOT_ERROR;
    }
  }
@@ -377,7 +377,7 @@ int processSentPairFile(BaseSwAligModel<Vector<Prob> > *swAligModelPtr,
      lp=swAligModelPtr->calcLgProbVecStr(srcSentVec,
                                          trgSentVec,
                                          verbosity);
-     cout<<awk.dollar(0)<<" ||| "<<lp<<endl;
+     cout<<awk.dollar(0)<<" ||| "<<lp<<std::endl;
    }
  }
  
@@ -488,33 +488,33 @@ int TakeParameters(int argc,char *argv[])
 //---------------
 void printUsage(void)
 {
- cerr<<"Usage: thot_calc_swm_lgprob -sw <string>\n";
- cerr<<"                            {-ss <string> -ts <string>\n";
- cerr<<"                            [-a <string>] [-max] | -F <string>\n";
- cerr<<"                            | -P <string> [-max]} [-v|-v1] \n";
- cerr<<"                            [--help]\n\n";
- cerr<<"-sw <string>                Prefix of the single-word model files\n";
- cerr<<"                            to load\n\n";
- cerr<<"-ss <string>                Source sentence\n\n";	
- cerr<<"-ts <string>                Target sentence\n\n";	
- cerr<<"-a <string>                 Word-alignment between s and t: \"0 1 ... n\"\n";
- cerr<<"                            If not given, the sum of IBM 1 log-prob\n";
- cerr<<"                            for each possible alignment is calculated\n\n";
- cerr<<"-max                        Obtain log-prob for the best alignment\n\n";
- cerr<<"-F <string>                 File with sentence pairs and their alignment.\n";
- cerr<<"                            If <string>=\"-\" then stdin is read.\n";
- cerr<<"                            Format: src ||| trg ||| alig\n\n";
- cerr<<"-P <string>                 File with sentence pairs without alignment.\n";
- cerr<<"                            If <string>=\"-\" then stdin is read.\n";
- cerr<<"                            Format: src ||| trg\n\n";
- cerr<<"-v | -v1                    Verbose mode\n\n";
- cerr<<"--help                      Display this help and exit\n\n";
+ std::cerr<<"Usage: thot_calc_swm_lgprob -sw <string>\n";
+ std::cerr<<"                            {-ss <string> -ts <string>\n";
+ std::cerr<<"                            [-a <string>] [-max] | -F <string>\n";
+ std::cerr<<"                            | -P <string> [-max]} [-v|-v1] \n";
+ std::cerr<<"                            [--help]\n\n";
+ std::cerr<<"-sw <string>                Prefix of the single-word model files\n";
+ std::cerr<<"                            to load\n\n";
+ std::cerr<<"-ss <string>                Source sentence\n\n";	
+ std::cerr<<"-ts <string>                Target sentence\n\n";	
+ std::cerr<<"-a <string>                 Word-alignment between s and t: \"0 1 ... n\"\n";
+ std::cerr<<"                            If not given, the sum of IBM 1 log-prob\n";
+ std::cerr<<"                            for each possible alignment is calculated\n\n";
+ std::cerr<<"-max                        Obtain log-prob for the best alignment\n\n";
+ std::cerr<<"-F <string>                 File with sentence pairs and their alignment.\n";
+ std::cerr<<"                            If <string>=\"-\" then stdin is read.\n";
+ std::cerr<<"                            Format: src ||| trg ||| alig\n\n";
+ std::cerr<<"-P <string>                 File with sentence pairs without alignment.\n";
+ std::cerr<<"                            If <string>=\"-\" then stdin is read.\n";
+ std::cerr<<"                            Format: src ||| trg\n\n";
+ std::cerr<<"-v | -v1                    Verbose mode\n\n";
+ std::cerr<<"--help                      Display this help and exit\n\n";
 }
 
 //---------------
 void version(void)
 {
-  cerr<<"thot_calc_swm_lgprob is part of the thot package "<<endl;
-  cerr<<"thot version "<<THOT_VERSION<<endl;
-  cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
+  std::cerr<<"thot_calc_swm_lgprob is part of the thot package "<<std::endl;
+  std::cerr<<"thot version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
 }

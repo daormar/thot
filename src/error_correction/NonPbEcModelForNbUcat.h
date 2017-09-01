@@ -48,9 +48,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 #include <iomanip>
-#include "myVector.h"
 #include <map>
 #include <string>
+#include <vector>
 #include "PrefAlignInfo.h"
 #include "Prob.h"
 #include "BaseEcModelForNbUcat.h"
@@ -81,9 +81,9 @@ class NonPbEcModelForNbUcat: public BaseEcModelForNbUcat
       // uncoupled cat
   void link_ecm(BaseErrorCorrectionModel* _ecm_ptr);
 
-  NbestCorrections correct(const Vector<std::string>& outputSentVec,
-                           const Vector<unsigned int>& sourceCuts,
-                           const Vector<std::string>& prefixVec,
+  NbestCorrections correct(const std::vector<std::string>& outputSentVec,
+                           const std::vector<unsigned int>& sourceCuts,
+                           const std::vector<std::string>& prefixVec,
                            unsigned int _maxMapSize,
                            int verbose=0);
       // Correct sentence given in outputSentVec using prefixVec. The
@@ -104,27 +104,27 @@ class NonPbEcModelForNbUcat: public BaseEcModelForNbUcat
 
   typedef std::multimap<LgProb,PrefAlignInfo,greater<LgProb> > MonolingSegmNbest;
 
-  Vector<std::string> outputSentVec;
-  Vector<unsigned int> sourceCuts;
-  Vector<Vector<std::string> > outputSegmVec;
-  Vector<std::string> prefixVec;
+  std::vector<std::string> outputSentVec;
+  std::vector<unsigned int> sourceCuts;
+  std::vector<std::vector<std::string> > outputSegmVec;
+  std::vector<std::string> prefixVec;
   unsigned int maxMapSize;
   MonolingSegmNbest monolingSegmNbest;
 
   BaseErrorCorrectionModel *ecm_ptr;
   
-  MonolingSegmNbest nonPhraseBasedAlign(const Vector<std::string>& _outputSentVec,
-                                        const Vector<std::string>& _prefixVec,
+  MonolingSegmNbest nonPhraseBasedAlign(const std::vector<std::string>& _outputSentVec,
+                                        const std::vector<std::string>& _prefixVec,
                                         unsigned int _maxMapSize,
                                         int verbose=0);
-  Vector<std::string> correctedSent(PrefAlignInfo& prefAlignInfo);
-  Vector<Vector<std::string> > obtainVectorWithSegms(Vector<std::string> sentVec,
-                                                     Vector<unsigned int> cuts,
-                                                     int verbose=0);
+  std::vector<std::string> correctedSent(PrefAlignInfo& prefAlignInfo);
+  std::vector<std::vector<std::string> > obtainVectorWithSegms(std::vector<std::string> sentVec,
+                                                               std::vector<unsigned int> cuts,
+                                                               int verbose=0);
   void addSegm(LgProb lp,PrefAlignInfo& prefAlignInfo);
   void removeLastFromMonolingSegmNbest(void);
-  void getLastOutSegm(Vector<std::string>& x,
-                      Vector<unsigned int>& cuts,
-                      Vector<std::string>& lastOutSegm);
+  void getLastOutSegm(std::vector<std::string>& x,
+                      std::vector<unsigned int>& cuts,
+                      std::vector<std::string>& lastOutSegm);
 };
 #endif

@@ -49,12 +49,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "Prob.h"
-#include "myVector.h"
 #include <map>
+#include <vector>
 #include "BaseErrorCorrectionModel.h"
 #include "NbestCorrections.h"
-
-using namespace std;
 
 //--------------- Constants ------------------------------------------
 
@@ -83,9 +81,9 @@ class BaseEcModelForNbUcat
       // uncoupled cat
   virtual void link_ecm(BaseErrorCorrectionModel* _ecm_ptr)=0;
 
-  virtual NbestCorrections correct(const Vector<std::string>& outputSentVec,
-                                   const Vector<unsigned int>& sourceCuts,
-                                   const Vector<std::string>& prefixVec,
+  virtual NbestCorrections correct(const std::vector<std::string>& outputSentVec,
+                                   const std::vector<unsigned int>& sourceCuts,
+                                   const std::vector<std::string>& prefixVec,
                                    unsigned int _maxMapSize,
                                    int verbose=0)=0;
       // Correct sentence given in outputSentVec using prefixVec. The

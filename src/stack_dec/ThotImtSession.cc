@@ -109,7 +109,7 @@ void ThotImtSession::rejectSuffix(const vector<string>& prefix,
     
     rejectedWords.insert(make_pair(accepted_prefix,rejected_suffix));
 
-    // cerr<<"Accepted prefix: "<<accepted_prefix<<" , Rejected suffix: "<<rejected_suffix<<endl;
+    // std::cerr<<"Accepted prefix: "<<accepted_prefix<<" , Rejected suffix: "<<rejected_suffix<<std::endl;
     
         // Update prevPrefStr variable
     prevPrefStr=prefix;
@@ -142,7 +142,7 @@ void ThotImtSession::rejectSuffix(const vector<string>& prefix,
     if(!suffix.empty())
     {
       std::string rejectedWord=suffix[0];
-      // cerr<<"New rejected word: "<<rejectedWord<<endl;
+      // std::cerr<<"New rejected word: "<<rejectedWord<<std::endl;
 
           // Add word to the set of rejected words (if the word is not null)
       if(!rejectedWord.empty())

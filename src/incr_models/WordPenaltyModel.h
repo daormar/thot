@@ -87,7 +87,7 @@ class WordPenaltyModel: public BaseWordPenaltyModel
   double p_geom;
       // p_geom is the probability of success on each trial
 
-  Vector<LgProb> sum_wlp;
+  std::vector<LgProb> sum_wlp;
       // Precalculates the sum of the word penalty
   
       // auxiliary function for sumWordPenaltyScore()

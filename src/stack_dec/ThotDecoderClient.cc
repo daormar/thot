@@ -68,7 +68,7 @@ int ThotDecoderClient::connectToTransServer(const char *dirServ,
  }
  else
  {
-   cerr<<"Client already connected!"<<endl;
+   std::cerr<<"Client already connected!"<<std::endl;
    return THOT_ERROR;
  }
 }
@@ -90,7 +90,7 @@ bool ThotDecoderClient::sendSentPairForOlTrain(int user_id,
   }
   else
   {
-    cerr<<"ThotDecoderClient not connected!"<<endl;
+    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
     return THOT_ERROR;
   }
 }
@@ -112,7 +112,7 @@ bool ThotDecoderClient::sendStrPairForTrainEcm(int user_id,
   }
   else
   {
-    cerr<<"ThotDecoderClient not connected!"<<endl;
+    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
     return THOT_ERROR;
   }
 }
@@ -136,7 +136,7 @@ bool ThotDecoderClient::sendSentToTranslate(int user_id,
   }
   else
   {
-    cerr<<"ThotDecoderClient not connected!"<<endl;
+    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
     return THOT_ERROR;
   }    
 }
@@ -160,7 +160,7 @@ bool ThotDecoderClient::sendSentPairVerCov(int user_id,
   }
   else
   {
-    cerr<<"ThotDecoderClient not connected!"<<endl;
+    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
     return THOT_ERROR;
   }
 }
@@ -182,7 +182,7 @@ bool ThotDecoderClient::startCat(int user_id,
   }
   else
   {
-    cerr<<"ThotDecoderClient not connected!"<<endl;
+    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
     return THOT_ERROR;
   }
 }
@@ -203,7 +203,7 @@ bool ThotDecoderClient::addStrToPref(int user_id,
   }
   else
   {
-    cerr<<"ThotDecoderClient not connected!"<<endl;
+    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
     return THOT_ERROR;
   }
 }
@@ -222,7 +222,7 @@ bool ThotDecoderClient::resetPref(int user_id)
   }
   else
   {
-    cerr<<"ThotDecoderClient not connected!"<<endl;
+    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
     return THOT_ERROR;
   }        
 }
@@ -240,7 +240,7 @@ bool ThotDecoderClient::sendClearRequest(int user_id)
   }
   else
   {
-    cerr<<"ThotDecoderClient not connected!"<<endl;
+    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
     return THOT_ERROR;
   }      
 }
@@ -258,7 +258,7 @@ bool ThotDecoderClient::sendPrintRequest(int user_id)
   }
   else
   {
-    cerr<<"ThotDecoderClient not connected!"<<endl;
+    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
     return THOT_ERROR;
   }    
 }
@@ -290,7 +290,7 @@ bool ThotDecoderClient::sendEndServerRequest(int user_id)
   }
   else
   {
-    cerr<<"ThotDecoderClient not connected!"<<endl;
+    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
     return THOT_ERROR;
   }
 }

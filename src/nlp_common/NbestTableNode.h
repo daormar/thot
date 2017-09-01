@@ -39,9 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 #include <map>
 #include <algorithm>
-#include "myVector.h"
-
-using namespace std;
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 
@@ -178,7 +176,7 @@ template<class NODEDATA>
 void NbestTableNode<NODEDATA>::stableSort(void)
 {
  typename multimap<Score,NODEDATA,greaterScore >::iterator tableNodeIter;
- Vector<pair<Score,NODEDATA> > vp;
+ std::vector<pair<Score,NODEDATA> > vp;
  pair<Score,NODEDATA> p;
  unsigned int i;
  

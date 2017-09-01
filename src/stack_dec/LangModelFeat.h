@@ -80,19 +80,19 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
       // Scoring functions
   HypScoreInfo nullHypScore(const HypScoreInfo& predHypScrInf,
                             Score& unweightedScore);
-  HypScoreInfo extensionScore(const Vector<std::string>& srcSent,
+  HypScoreInfo extensionScore(const std::vector<std::string>& srcSent,
                               const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
-  Score scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
-                                  const Vector<std::string>& trgPhrase);
-  Score scoreTrgSentence(const Vector<std::string>& trgSent,
-                         Vector<Score>& cumulativeScoreVec);
+  Score scorePhrasePairUnweighted(const std::vector<std::string>& srcPhrase,
+                                  const std::vector<std::string>& trgPhrase);
+  Score scoreTrgSentence(const std::vector<std::string>& trgSent,
+                         std::vector<Score>& cumulativeScoreVec);
 
       // Word predictor related functions
   pair<Count,std::string> getBestSuffix(std::string input);
-  pair<Count,std::string> getBestSuffixGivenHist(Vector<std::string> hist,
+  pair<Count,std::string> getBestSuffixGivenHist(std::vector<std::string> hist,
                                                  std::string input);
   
       // Link pointers
@@ -107,16 +107,16 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
   
       // Functions to access language model parameters
   Score getEosScoreGivenState(LM_State& lmHist);
-  Score getNgramScoreGivenState(Vector<std::string> trgphrase,
+  Score getNgramScoreGivenState(std::vector<std::string> trgphrase,
                                 LM_State& lmHist);
-  void addWordSeqToStateStr(const Vector<std::string>& trgPhrase,
+  void addWordSeqToStateStr(const std::vector<std::string>& trgPhrase,
                             LM_State& state);
   void addNextWordToStateStr(std::string word,
                              LM_State& state);
 
       // Auxiliary functions
   void obtainCurrPartialTrans(const PhrHypDataStr& predHypDataStr,
-                              Vector<std::string>& currPartialTrans);
+                              std::vector<std::string>& currPartialTrans);
   WordIndex stringToWordIndex(std::string str);
 };
 
@@ -138,10 +138,10 @@ std::string LangModelFeat<SCORE_INFO>::getFeatType(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-Score LangModelFeat<SCORE_INFO>::scorePhrasePairUnweighted(const Vector<std::string>& /*srcPhrase*/,
-                                                           const Vector<std::string>& trgPhrase)
+Score LangModelFeat<SCORE_INFO>::scorePhrasePairUnweighted(const std::vector<std::string>& /*srcPhrase*/,
+                                                           const std::vector<std::string>& trgPhrase)
 {
-  Vector<WordIndex> hist;
+  std::vector<WordIndex> hist;
   LM_State state;    
   lModelPtr->getStateForWordSeq(hist,state);
   return getNgramScoreGivenState(trgPhrase,state);
@@ -149,8 +149,8 @@ Score LangModelFeat<SCORE_INFO>::scorePhrasePairUnweighted(const Vector<std::str
 
 //---------------------------------
 template<class SCORE_INFO>
-Score LangModelFeat<SCORE_INFO>::scoreTrgSentence(const Vector<std::string>& trgSent,
-                                                  Vector<Score>& cumulativeScoreVec)
+Score LangModelFeat<SCORE_INFO>::scoreTrgSentence(const std::vector<std::string>& trgSent,
+                                                  std::vector<Score>& cumulativeScoreVec)
 {
       // Initialize state
   LM_State state;
@@ -161,7 +161,7 @@ Score LangModelFeat<SCORE_INFO>::scoreTrgSentence(const Vector<std::string>& trg
   cumulativeScoreVec.clear();
   for(unsigned int i=0;i<trgSent.size();++i)
   {
-    Vector<std::string> wordVec;
+    std::vector<std::string> wordVec;
     wordVec.push_back(trgSent[i]);
     Score scr=this->weight*getNgramScoreGivenState(wordVec,state);
     finalScr+=scr;
@@ -187,7 +187,7 @@ LangModelFeat<SCORE_INFO>::getBestSuffix(std::string input)
 //---------------------------------
 template<class SCORE_INFO>
 pair<Count,std::string>
-LangModelFeat<SCORE_INFO>::getBestSuffixGivenHist(Vector<std::string> hist,
+LangModelFeat<SCORE_INFO>::getBestSuffixGivenHist(std::vector<std::string> hist,
                                                   std::string input)
 {
   WordPredictor::SuffixList suffixList;
@@ -270,11 +270,11 @@ Score LangModelFeat<SCORE_INFO>::getEosScoreGivenState(LM_State& lmHist)
 
 //---------------------------------
 template<class SCORE_INFO>
-Score LangModelFeat<SCORE_INFO>::getNgramScoreGivenState(Vector<std::string> trgphrase,
+Score LangModelFeat<SCORE_INFO>::getNgramScoreGivenState(std::vector<std::string> trgphrase,
                                                          LM_State& lmHist)
 {
         // Score not present in cache table
-  Vector<WordIndex> trgPhraseIdx;
+  std::vector<WordIndex> trgPhraseIdx;
   Score result=0;
 
       // trgPhraseIdx stores the target sentence using indices of the language model
@@ -300,7 +300,7 @@ Score LangModelFeat<SCORE_INFO>::getNgramScoreGivenState(Vector<std::string> trg
 //---------------------------------
 template<class SCORE_INFO>
 void LangModelFeat<SCORE_INFO>::obtainCurrPartialTrans(const PhrHypDataStr& predHypDataStr,
-                                                       Vector<std::string>& currPartialTrans)
+                                                       std::vector<std::string>& currPartialTrans)
 {
       // Add current partial translation words
   currPartialTrans.clear();
@@ -310,7 +310,7 @@ void LangModelFeat<SCORE_INFO>::obtainCurrPartialTrans(const PhrHypDataStr& pred
 
 //---------------------------------
 template<class SCORE_INFO>
-void LangModelFeat<SCORE_INFO>::addWordSeqToStateStr(const Vector<std::string>& trgPhrase,
+void LangModelFeat<SCORE_INFO>::addWordSeqToStateStr(const std::vector<std::string>& trgPhrase,
                                                      LM_State& state)
 {
   for(unsigned int i=0;i<trgPhrase.size();++i)

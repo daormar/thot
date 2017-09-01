@@ -38,8 +38,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include <utility>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -60,15 +58,15 @@ class TrieVecs
    TrieVecs(void);
 
    // Basic functions
-   TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>* insert(const Vector<KEY>& keySeq,
+   TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>* insert(const std::vector<KEY>& keySeq,
                                                       const DATA_TYPE& d);
      // Inserts a sequence of elements of class key. The last element 
      // of vector keySeq is the first element of the sequence.
-   DATA_TYPE* find(const Vector<KEY>& keySeq);
+   DATA_TYPE* find(const std::vector<KEY>& keySeq);
 
    size_t size(void)const;
    unsigned int height(void)const;
-   Vector<unsigned long> branchingFactor(void)const;
+   std::vector<unsigned long> branchingFactor(void)const;
    size_t countSparseNodes(void)const;
    void clear(void);
 
@@ -80,9 +78,9 @@ class TrieVecs
    class const_iterator
    {
      protected:
-      Vector<const TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>* > vecTrieVecsPtr;
-      Vector<typename Children::const_iterator> childrenIterVec;
-      pair<Vector<KEY>,DATA_TYPE> vecKeyDataPair;
+      std::vector<const TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>* > vecTrieVecsPtr;
+      std::vector<typename Children::const_iterator> childrenIterVec;
+      pair<std::vector<KEY>,DATA_TYPE> vecKeyDataPair;
            
      public:
       const_iterator(void)
@@ -114,8 +112,8 @@ class TrieVecs
       bool operator++(int);  //postfix
       int operator==(const const_iterator& right);
       int operator!=(const const_iterator& right);
-      const pair<Vector<KEY>,DATA_TYPE>* operator->(void)const;
-      pair<Vector<KEY>,DATA_TYPE> operator*(void)const;
+      const pair<std::vector<KEY>,DATA_TYPE>* operator->(void)const;
+      pair<std::vector<KEY>,DATA_TYPE> operator*(void)const;
    };
 
      // const_iterator functions for the TrieVecs class
@@ -126,7 +124,7 @@ class TrieVecs
    DATA_TYPE data;
    Children children;
    void height(unsigned int i,unsigned int& r)const;
-   void branchingFactor(unsigned int i,Vector<unsigned long>& r)const;
+   void branchingFactor(unsigned int i,std::vector<unsigned long>& r)const;
    void countSparseNodes(size_t& sp,bool isFirst)const; 
 };
 
@@ -143,7 +141,7 @@ TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::TrieVecs(void)
 //---------------
 template<class KEY,class DATA_TYPE,class KEY_SORT_CRITERION>
 TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>*
-TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::insert(const Vector<KEY>& keySeq,
+TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::insert(const std::vector<KEY>& keySeq,
                                                    const DATA_TYPE& d)
 {
   unsigned int i;
@@ -177,7 +175,7 @@ TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::insert(const Vector<KEY>& keySeq,
 
 //---------------
 template<class KEY,class DATA_TYPE,class KEY_SORT_CRITERION>
-DATA_TYPE* TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::find(const Vector<KEY>& keySeq)
+DATA_TYPE* TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::find(const std::vector<KEY>& keySeq)
 {
   unsigned int i;
   TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION> *childrenPos;
@@ -247,9 +245,9 @@ void TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::height(unsigned int i,unsigned 
 }
 //---------------
 template<class KEY,class DATA_TYPE,class KEY_SORT_CRITERION>
-Vector<unsigned long> TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::branchingFactor(void)const
+std::vector<unsigned long> TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::branchingFactor(void)const
 {
-  Vector<unsigned long> result;
+  std::vector<unsigned long> result;
   unsigned long z=0;
 	
   result.insert(result.begin(),height(),z);	
@@ -259,7 +257,7 @@ Vector<unsigned long> TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::branchingFacto
 //---------------
 template<class KEY,class DATA_TYPE,class KEY_SORT_CRITERION>
 void TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::branchingFactor(unsigned int i,
-                                                                 Vector<unsigned long>& r)const
+                                                                 std::vector<unsigned long>& r)const
 {
   typename Children::const_iterator childrenPos;
 	
@@ -404,18 +402,18 @@ int TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::const_iterator::operator!=(const
 }
 //--------------------------
 template<class KEY,class DATA_TYPE,class KEY_SORT_CRITERION>
-const pair<Vector<KEY>,DATA_TYPE>*
+const pair<std::vector<KEY>,DATA_TYPE>*
 TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::const_iterator::operator->(void)const
 {
   if(vecTrieVecsPtr.size()==1 && vecTrieVecsPtr[0]==NULL)
   {
     return NULL;
   }
-  else  return (pair<Vector<KEY>,DATA_TYPE>*) &(vecKeyDataPair);
+  else  return (pair<std::vector<KEY>,DATA_TYPE>*) &(vecKeyDataPair);
 }
 //--------------------------
 template<class KEY,class DATA_TYPE,class KEY_SORT_CRITERION>
-pair<Vector<KEY>,DATA_TYPE> TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::const_iterator::operator*(void)const
+pair<std::vector<KEY>,DATA_TYPE> TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::const_iterator::operator*(void)const
 {
   return vecKeyDataPair;
 }

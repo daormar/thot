@@ -56,8 +56,8 @@ class MiraChrFTest: public CppUnit::TestFixture
 
     private:
         MiraChrF *chrf_metric;
-        Vector<std::string> system_sentences;
-        Vector<std::string> reference_sentences;
+        std::vector<std::string> system_sentences;
+        std::vector<std::string> reference_sentences;
 
     public:
         void setUp();

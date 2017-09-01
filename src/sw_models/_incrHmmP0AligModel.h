@@ -79,7 +79,7 @@ class _incrHmmP0AligModel: public _incrHmmAligModel
    bool loadHmmP0(const char *hmmP0FileName);
    bool printHmmP0(const char *hmmP0FileName);
 
-   Vector<WordIndex> extendWithNullWordAlig(const Vector<WordIndex>& srcWordIndexVec);
+   std::vector<WordIndex> extendWithNullWordAlig(const std::vector<WordIndex>& srcWordIndexVec);
    double unsmoothed_logaProb(PositionIndex prev_i,
                               PositionIndex slen,
                               PositionIndex i);

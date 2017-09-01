@@ -31,8 +31,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ErrorDefs.h"
 #include "awkInputStream.h"
 #include <stdio.h>
-#include "myVector.h"
 #include <string>
+#include <vector>
 
 //--------------- typedefs -------------------------------------------
 
@@ -54,7 +54,7 @@ bool fileIsDescriptor(std::string fileName);
 bool fileIsDescriptor(std::string fileName,
                       std::string& mainFileName);
 bool extractModelEntryInfo(std::string fileName,
-                           Vector<ModelDescriptorEntry>& modelDescEntryVec);
-bool printModelDescriptor(const Vector<ModelDescriptorEntry>& modelDescEntryVec,
+                           std::vector<ModelDescriptorEntry>& modelDescEntryVec);
+bool printModelDescriptor(const std::vector<ModelDescriptorEntry>& modelDescEntryVec,
                           std::string fileName);
 #endif

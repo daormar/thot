@@ -47,8 +47,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <_smtMultiStack.h>
 #include "HypStateDict.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 

@@ -74,16 +74,16 @@ class SrcPosJumpFeat: public BasePbTransModelFeature<SCORE_INFO>
   std::string getFeatType(void);
 
       // Scoring functions
-  HypScoreInfo extensionScore(const Vector<std::string>& srcSent,
+  HypScoreInfo extensionScore(const std::vector<std::string>& srcSent,
                               const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
                               Score& unweightedScore);
-  Score scorePhrasePairUnweighted(const Vector<std::string>& srcPhrase,
-                                  const Vector<std::string>& trgPhrase);
+  Score scorePhrasePairUnweighted(const std::vector<std::string>& srcPhrase,
+                                  const std::vector<std::string>& trgPhrase);
 
       // Heuristic related functions
-  Score calcHeurScore(const Vector<pair<PositionIndex,PositionIndex> >& gaps,
+  Score calcHeurScore(const std::vector<pair<PositionIndex,PositionIndex> >& gaps,
                       PositionIndex lastSrcPosCovered)const;
   
       // Functions related to model pointers
@@ -94,8 +94,8 @@ class SrcPosJumpFeat: public BasePbTransModelFeature<SCORE_INFO>
   BasePhraseModel* invPbModelPtr;
 
   Score srcJumpScore(unsigned int offset)const;
-  Vector<unsigned int> min_jumps(const Vector<pair<PositionIndex,PositionIndex> >& gaps,
-                                 PositionIndex lastSrcPosCovered)const;
+  std::vector<unsigned int> min_jumps(const std::vector<pair<PositionIndex,PositionIndex> >& gaps,
+                                      PositionIndex lastSrcPosCovered)const;
 };
 
 //--------------- SrcPosJumpFeat class functions
@@ -116,19 +116,19 @@ std::string SrcPosJumpFeat<SCORE_INFO>::getFeatType(void)
 
 //---------------------------------
 template<class SCORE_INFO>
-Score SrcPosJumpFeat<SCORE_INFO>::scorePhrasePairUnweighted(const Vector<std::string>& /*srcPhrase*/,
-                                                            const Vector<std::string>& /*trgPhrase*/)
+Score SrcPosJumpFeat<SCORE_INFO>::scorePhrasePairUnweighted(const std::vector<std::string>& /*srcPhrase*/,
+                                                            const std::vector<std::string>& /*trgPhrase*/)
 {
   return 0;
 }
 
 //---------------------------------
 template<class SCORE_INFO>
-Score SrcPosJumpFeat<SCORE_INFO>::calcHeurScore(const Vector<pair<PositionIndex,PositionIndex> >& gaps,
+Score SrcPosJumpFeat<SCORE_INFO>::calcHeurScore(const std::vector<pair<PositionIndex,PositionIndex> >& gaps,
                                                 PositionIndex lastSrcPosCovered)const
 {
   Score result=0;
-  Vector<unsigned int> jumps=min_jumps(gaps,lastSrcPosCovered);
+  std::vector<unsigned int> jumps=min_jumps(gaps,lastSrcPosCovered);
   for(unsigned int k=0;k<jumps.size();++k)
     result+=srcJumpScore(jumps[k]);
   return result;
@@ -150,10 +150,10 @@ Score SrcPosJumpFeat<SCORE_INFO>::srcJumpScore(unsigned int offset)const
 
 //---------------------------------
 template<class SCORE_INFO>
-Vector<unsigned int> SrcPosJumpFeat<SCORE_INFO>::min_jumps(const Vector<pair<PositionIndex,PositionIndex> >& gaps,
-                                                           PositionIndex lastSrcPosCovered)const
+std::vector<unsigned int> SrcPosJumpFeat<SCORE_INFO>::min_jumps(const std::vector<pair<PositionIndex,PositionIndex> >& gaps,
+                                                                PositionIndex lastSrcPosCovered)const
 {
-  Vector<unsigned int> result;
+  std::vector<unsigned int> result;
   PositionIndex j=lastSrcPosCovered;
   for(unsigned int k=0;k<gaps.size();++k)
   {

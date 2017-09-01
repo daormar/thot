@@ -55,8 +55,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <iomanip>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 struct thot_liwu_pars
@@ -112,10 +110,10 @@ int main(int argc,char *argv[])
   else
   {
         // Print parameters
-    cerr<<"-tm option is "<<pars.phrModelFilePrefix<<endl;
-    cerr<<"-t option is "<<pars.testCorpusFile<<endl;
-    cerr<<"-r option is "<<pars.refCorpusFile<<endl;
-    cerr<<"-v option is "<<pars.verbosity<<endl;
+    std::cerr<<"-tm option is "<<pars.phrModelFilePrefix<<std::endl;
+    std::cerr<<"-t option is "<<pars.testCorpusFile<<std::endl;
+    std::cerr<<"-r option is "<<pars.refCorpusFile<<std::endl;
+    std::cerr<<"-v option is "<<pars.verbosity<<std::endl;
     
         // Update language model weights
     if(featureBasedImplIsEnabled())
@@ -190,20 +188,20 @@ int checkParameters(thot_liwu_pars& pars)
 {  
   if(pars.phrModelFilePrefix.empty())
   {
-    cerr<<"Error: parameter -tm not given!"<<endl;
+    std::cerr<<"Error: parameter -tm not given!"<<std::endl;
     return THOT_ERROR;   
 
   }
 
   if(pars.testCorpusFile.empty())
   {
-    cerr<<"Error: parameter -t not given!"<<endl;
+    std::cerr<<"Error: parameter -t not given!"<<std::endl;
     return THOT_ERROR;   
   }
 
   if(pars.refCorpusFile.empty())
   {
-    cerr<<"Error: parameter -r not given!"<<endl;
+    std::cerr<<"Error: parameter -r not given!"<<std::endl;
     return THOT_ERROR;   
   }
 
@@ -231,10 +229,10 @@ bool featureBasedImplIsEnabled(void)
 int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
 {
       // Show static types
-  cerr<<"Static types:"<<endl;
-  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
-  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
-  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+  std::cerr<<"Static types:"<<std::endl;
+  std::cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<std::endl;
+  std::cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<std::endl;
+  std::cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<std::endl;
 
       // Initialize weight updater
   phrLocalSwLiTmPtr=new PhrLocalSwLiTm;
@@ -246,7 +244,7 @@ int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
 
       // Obtain info about translation model entries
   unsigned int numTransModelEntries;
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(phrModelFilePrefix.c_str(),modelDescEntryVec)==THOT_OK)
   {
     numTransModelEntries=modelDescEntryVec.size();
@@ -261,7 +259,7 @@ int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
   phrModelInfoPtr->invPbModelPtr=dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(dynClassFactoryHandler.basePhraseModelInitPars);
   if(phrModelInfoPtr->invPbModelPtr==NULL)
   {
-    cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -272,7 +270,7 @@ int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
     swModelInfoPtr->swAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
     if(swModelInfoPtr->swAligModelPtrVec[0]==NULL)
     {
-      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
   }
@@ -283,7 +281,7 @@ int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
     swModelInfoPtr->invSwAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
     if(swModelInfoPtr->invSwAligModelPtrVec[0]==NULL)
     {
-      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
   }
@@ -299,10 +297,10 @@ int initPhrModelLegacyImpl(std::string phrModelFilePrefix)
 int initPhrModelFeatImpl(std::string phrModelFilePrefix)
 {
       // Show static types
-  cerr<<"Static types:"<<endl;
-  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
-  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
-  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+  std::cerr<<"Static types:"<<std::endl;
+  std::cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<std::endl;
+  std::cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<std::endl;
+  std::cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<std::endl;
 
       // Initialize class factories
   int ret=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
@@ -420,22 +418,22 @@ int update_li_weights_feat_impl(const thot_liwu_pars& pars)
 //--------------------------------
 void printUsage(void)
 {
-  cerr<<"thot_li_weight_upd -tm <string> -t <string> -r <string>"<<endl;
-  cerr<<"                   [-v] [--help] [--version]"<<endl;
-  cerr<<endl;
-  cerr<<"-tm <string>       Prefix or descriptor of translation model files."<<endl;
-  cerr<<"                   (Warning: current weights will be overwritten)."<<endl;
-  cerr<<"-t <string>        File with test sentences."<<endl;
-  cerr<<"-r <string>        File with reference sentences."<<endl;
-  cerr<<"-v                 Enable verbose mode."<<endl;
-  cerr<<"--help             Display this help and exit."<<endl;
-  cerr<<"--version          Output version information and exit."<<endl;
+  std::cerr<<"thot_li_weight_upd -tm <string> -t <string> -r <string>"<<std::endl;
+  std::cerr<<"                   [-v] [--help] [--version]"<<std::endl;
+  std::cerr<<std::endl;
+  std::cerr<<"-tm <string>       Prefix or descriptor of translation model files."<<std::endl;
+  std::cerr<<"                   (Warning: current weights will be overwritten)."<<std::endl;
+  std::cerr<<"-t <string>        File with test sentences."<<std::endl;
+  std::cerr<<"-r <string>        File with reference sentences."<<std::endl;
+  std::cerr<<"-v                 Enable verbose mode."<<std::endl;
+  std::cerr<<"--help             Display this help and exit."<<std::endl;
+  std::cerr<<"--version          Output version information and exit."<<std::endl;
 }
 
 //--------------------------------
 void version(void)
 {
-  cerr<<"thot_li_weight_upd is part of the thot package"<<endl;
-  cerr<<"thot version "<<THOT_VERSION<<endl;
-  cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
+  std::cerr<<"thot_li_weight_upd is part of the thot package"<<std::endl;
+  std::cerr<<"thot version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
 }

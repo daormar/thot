@@ -161,7 +161,7 @@ bool fileIsDescriptor(std::string fileName,
         }
             // File is a descriptor but it does not incorporate a
             // main model, so mainFileName is left empty
-        cerr<<"Warning: descriptor store in "<<fileName<<" does not contain a main entry"<<endl;
+        std::cerr<<"Warning: descriptor store in "<<fileName<<" does not contain a main entry"<<std::endl;
         awk.close();
         mainFileName.clear();
         return true;
@@ -184,7 +184,7 @@ bool fileIsDescriptor(std::string fileName,
 
 //---------------
 bool extractModelEntryInfo(std::string fileName,
-                           Vector<ModelDescriptorEntry>& modelDescEntryVec)
+                           std::vector<ModelDescriptorEntry>& modelDescEntryVec)
 {
   std::string mainFileName;
   if(fileIsDescriptor(fileName,mainFileName))
@@ -225,23 +225,23 @@ bool extractModelEntryInfo(std::string fileName,
 }
 
 //---------------
-bool printModelDescriptor(const Vector<ModelDescriptorEntry>& modelDescEntryVec,
+bool printModelDescriptor(const std::vector<ModelDescriptorEntry>& modelDescEntryVec,
                           std::string fileName)
 {
-  ofstream outF;
+  std::ofstream outF;
 
-  outF.open(fileName.c_str(),ios::out);
+  outF.open(fileName.c_str(),std::ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing file containing model descriptor."<<endl;
+    std::cerr<<"Error while printing file containing model descriptor."<<std::endl;
     return THOT_ERROR;
   }
   else
   {
-    outF<<"thot tm descriptor"<<endl;
+    outF<<"thot tm descriptor"<<std::endl;
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-      outF<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].modelFileName<<" "<<modelDescEntryVec[i].statusStr<<endl;
+      outF<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].modelFileName<<" "<<modelDescEntryVec[i].statusStr<<std::endl;
     }
     outF.close();	
     return THOT_OK;

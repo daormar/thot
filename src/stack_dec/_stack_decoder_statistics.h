@@ -27,8 +27,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ctimer.h"
 #include "Prob.h"
 
-using namespace std;
-
 //--------------- Constants --------------------------------------------------
 
 
@@ -61,7 +59,7 @@ class _stack_decoder_statistics
        totalPushNo=0;
        pushAborted=0;
      }
-   ostream & print(ostream &outS)
+   std::ostream & print(std::ostream &outS)
      {
        outS<< " * Number of iterations           : " << numIter <<"\n";	 
        outS<< " * Total number of expansions     : " << totalExpansionNo <<"\n";
@@ -70,7 +68,7 @@ class _stack_decoder_statistics
        outS<< " * Push op's aborted (best score) : " << pushAborted <<"\n";
        return outS;
      }
-   ostream & heuristicInfo(ostream &outS)
+   std::ostream & heuristicInfo(std::ostream &outS)
     {
       Prob heuristicVal;
       heuristicVal=(double)nullHypHeuristicValue/(double)sentencesTranslated;

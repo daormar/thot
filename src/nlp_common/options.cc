@@ -23,13 +23,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  *
  * @param argv pointer array containing the options introduced in the command-line.
  * @param argc number of arguments introduced in the command-line.
- * @param posPars a map containing a list of labels associated to the parameters that must be verified in the command-line.
+ * @param posPars a std::map containing a list of labels associated to the parameters that must be verified in the command-line.
  * @return 1 if the parameters are correct, 0 in other case.
  */
-bool verifyParams(int argc, char **argv, map<string,bool> posPars)
+bool verifyParams(int argc, char **argv, std::map<std::string,bool> posPars)
 {
   int i;
-  std::map<string,bool>::iterator parMapPos;
+  std::map<std::string,bool>::iterator parMapPos;
 	
   i = 1;
   while (i < argc)
@@ -232,7 +232,7 @@ int readFloat(int argc, char **argv, const char *pszLabel, float *Value)
 int readFloatSeq(int argc,
                  char **argv,
                  const char *pszLabel,
-                 Vector<float>& floatVec)
+                 std::vector<float>& floatVec)
 {
   float value;
   int i = 1;
@@ -241,7 +241,7 @@ int readFloatSeq(int argc,
   {
     if (!strcmp(argv[i], pszLabel))
     {
-      Vector<float> floatVecAux;
+      std::vector<float> floatVecAux;
       bool end=false;
       ++i;
       while(!end)
@@ -436,7 +436,7 @@ int readTwoStringsSafe(int argc,
  * @param Value pointer to the value identified by the label.
  * @return 0 if the label was found, -1 in other case.
  */
-int readSTLstring(int argc, char **argv, const char *pszLabel, string *Value)
+int readSTLstring(int argc, char **argv, const char *pszLabel, std::string *Value)
 {
   int i;
   
@@ -466,8 +466,8 @@ int readSTLstring(int argc, char **argv, const char *pszLabel, string *Value)
 int readTwoSTLstrings(int argc,
                       char **argv,
                       const char *pszLabel,
-                      string *val1,
-                      string *val2)
+                      std::string *val1,
+                      std::string *val2)
 {
   int i;
   
@@ -493,15 +493,15 @@ int readTwoSTLstrings(int argc,
 }
 
 /**
- * @brief Converts const char **argv into Vector<std::string>.
+ * @brief Converts const char **argv into std::vector<std::string>.
  *
  * @param argv pointer array containing the options introduced in the command-line.
  * @param argc number of arguments introduced in the command-line.
- * @return A Vector of strings equivalent to argv.
+ * @return A std::vector of strings equivalent to argv.
  */
-Vector<std::string> argv2argv_stl(int argc, char **argv)
+std::vector<std::string> argv2argv_stl(int argc, char **argv)
 {
-  Vector<std::string> result;
+  std::vector<std::string> result;
 
   for(int i=0;i<argc;++i)
     result.push_back(argv[i]);
@@ -522,7 +522,7 @@ Vector<std::string> argv2argv_stl(int argc, char **argv)
 int readStringSeq(int argc,
                  char **argv,
                  const char *pszLabel,
-                 Vector<string>& strVec)
+                 std::vector<std::string>& strVec)
 {
   int i = 1;
   
@@ -530,7 +530,7 @@ int readStringSeq(int argc,
   {
     if (!strcmp(argv[i], pszLabel))
     {
-      Vector<string> strVecAux;
+      std::vector<std::string> strVecAux;
       bool end=false;
       ++i;
       while(!end)
@@ -565,7 +565,7 @@ int readStringSeq(int argc,
  */
 bool extractParsFromFile(const char* filename,
                          int& argc,
-                         Vector<std::string>& argv_stl,
+                         std::vector<std::string>& argv_stl,
                          std::string comment)
 {
   awkInputStream awk;
@@ -576,7 +576,7 @@ bool extractParsFromFile(const char* filename,
   
   if(awk.open(filename)==THOT_ERROR)
   {
-    cerr<<"Error: file "<<filename<<" does not exist.\n";
+    std::cerr<<"Error: file "<<filename<<" does not exist.\n";
     return THOT_ERROR;
   }
   else

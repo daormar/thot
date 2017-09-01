@@ -25,7 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- MiraBleu class functions
 
 //---------------------------------------
-double MiraBleu::scoreFromStats(Vector<unsigned int>& stats){
+double MiraBleu::scoreFromStats(std::vector<unsigned int>& stats){
   double bp;
   if (stats[0] < stats[1])
     bp = (double)exp((double)1-(double)stats[1]/stats[0]);
@@ -43,9 +43,9 @@ double MiraBleu::scoreFromStats(Vector<unsigned int>& stats){
 }
 
 //---------------------------------------
-void MiraBleu::statsForSentence(const Vector<std::string>& candidate_tokens,
-                                const Vector<std::string>& reference_tokens,
-                                Vector<unsigned int>& stats)
+void MiraBleu::statsForSentence(const std::vector<std::string>& candidate_tokens,
+                                const std::vector<std::string>& reference_tokens,
+                                std::vector<unsigned int>& stats)
 {
   stats.clear();
 
@@ -63,23 +63,23 @@ void MiraBleu::statsForSentence(const Vector<std::string>& candidate_tokens,
 void MiraBleu::sentBackgroundScore(const std::string& candidate,
                                    const std::string& reference,
                                    double& bleu,
-                                   Vector<unsigned int>& sentStats)
+                                   std::vector<unsigned int>& sentStats)
 {
-  Vector<std::string> candidate_tokens, reference_tokens;
+  std::vector<std::string> candidate_tokens, reference_tokens;
   candidate_tokens = StrProcUtils::stringToStringVector(candidate);
   reference_tokens = StrProcUtils::stringToStringVector(reference);
 
   statsForSentence(candidate_tokens, reference_tokens, sentStats);
 
-  Vector<unsigned int> stats;
+  std::vector<unsigned int> stats;
   for (unsigned int i=0; i<N_STATS; i++)
     stats.push_back(sentStats[i] + backgroundBleu[i]);
 
-  // cerr << "stats: [";
+  // std::cerr << "stats: [";
   // for(unsigned k=0; k<stats.size(); k++)
-  //   cerr << stats[k] << " ";
-  // cerr << "]" << endl;
-  // cerr << scoreFromStats(stats) << "*" <<  reference_tokens.size()<< endl;
+  //   std::cerr << stats[k] << " ";
+  // std::cerr << "]" << std::endl;
+  // std::cerr << scoreFromStats(stats) << "*" <<  reference_tokens.size()<< std::endl;
 
   // scale bleu to roughly typical margins
   bleu = scoreFromStats(stats) * stats[1]; // according to chiang
@@ -90,11 +90,11 @@ void MiraBleu::sentScore(const std::string& candidate,
                          const std::string& reference,
                          double& bleu)
 {
-  Vector<std::string> candidate_tokens, reference_tokens;
+  std::vector<std::string> candidate_tokens, reference_tokens;
   candidate_tokens = StrProcUtils::stringToStringVector(candidate);
   reference_tokens = StrProcUtils::stringToStringVector(reference);
 
-  Vector<unsigned int> stats;
+  std::vector<unsigned int> stats;
   statsForSentence(candidate_tokens, reference_tokens, stats);
 
   for (unsigned int i=0; i<N_STATS; i++)
@@ -104,26 +104,26 @@ void MiraBleu::sentScore(const std::string& candidate,
 }
 
 //---------------------------------------
-void MiraBleu::corpusScore(const Vector<std::string>& candidates,
-                           const Vector<std::string>& references,
+void MiraBleu::corpusScore(const std::vector<std::string>& candidates,
+                           const std::vector<std::string>& references,
                            double& bleu)
 {
-  Vector<unsigned int> corpusStats(N_STATS, 0);
+  std::vector<unsigned int> corpusStats(N_STATS, 0);
   for (unsigned int i=0; i<candidates.size(); i++) {
-    Vector<std::string> candidate_tokens, reference_tokens;
+    std::vector<std::string> candidate_tokens, reference_tokens;
     candidate_tokens = StrProcUtils::stringToStringVector(candidates[i]);
     reference_tokens = StrProcUtils::stringToStringVector(references[i]);
 
-    Vector<unsigned int> stats;
+    std::vector<unsigned int> stats;
     statsForSentence(candidate_tokens, reference_tokens, stats);
 
     for (unsigned int i=0; i<N_STATS; i++)
       corpusStats[i] += stats[i];
   }
-  // cerr << "CS: [";
+  // std::cerr << "CS: [";
   // for(unsigned int k=0; k<N_STATS; k++)
-  //   cerr << corpusStats[k] << " ";
-  // cerr << "]" << endl;
+  //   std::cerr << corpusStats[k] << " ";
+  // std::cerr << "]" << std::endl;
   bleu = scoreFromStats(corpusStats);
 }
 

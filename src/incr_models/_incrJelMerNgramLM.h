@@ -24,7 +24,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /*                                                                  */
 /* Description: Base class to manage encoded incremental            */
 /*              Jelinek-Mercer n-gram language                      */
-/*              models p(x|Vector<x>).                              */
+/*              models p(x|std::vector<x>).                         */
 /*                                                                  */
 /********************************************************************/
 
@@ -78,7 +78,7 @@ class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
     }
 
       // Basic function redefinitions
-  Prob pTrgGivenSrc(const Vector<WordIndex>& s,const WordIndex& t);
+  Prob pTrgGivenSrc(const std::vector<WordIndex>& s,const WordIndex& t);
 
       // Functions to update model weights
   virtual int updateModelWeights(const char *corpusFileName,
@@ -96,7 +96,7 @@ class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
   ~_incrJelMerNgramLM();
    
  protected:
-  Vector<double> weights;
+  std::vector<double> weights;
   unsigned int numBucketsPerOrder;
   double sizeOfBucket;
 
@@ -107,12 +107,12 @@ class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
                    double& obj_func);
 
       // Weights related functions
-  double getJelMerWeight(const Vector<WordIndex>& s,
+  double getJelMerWeight(const std::vector<WordIndex>& s,
                          const WordIndex& t);
-  virtual double freqOfNgram(const Vector<WordIndex>& s);
+  virtual double freqOfNgram(const std::vector<WordIndex>& s);
 
       // Recursive function to interpolate models
-  Prob pTrgGivenSrcRec(const Vector<WordIndex>& s,
+  Prob pTrgGivenSrcRec(const std::vector<WordIndex>& s,
                        const WordIndex& t);
 };
 
@@ -120,12 +120,12 @@ class _incrJelMerNgramLM: public _incrNgramLM<SRC_INFO,SRCTRG_INFO>
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrc(const Vector<WordIndex>& s,
+Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrc(const std::vector<WordIndex>& s,
                                                             const WordIndex& t)
 {
       // Remove extra BOS symbols
   bool found;
-  Vector<WordIndex> aux_s;
+  std::vector<WordIndex> aux_s;
   if(s.size()>=2)
   {
     unsigned int i=0;
@@ -146,7 +146,7 @@ Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrc(const Vector<WordInd
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrcRec(const Vector<WordIndex>& s,
+Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrcRec(const std::vector<WordIndex>& s,
                                                                const WordIndex& t)
 {
   if(s.size()==0)
@@ -158,7 +158,7 @@ Prob _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::pTrgGivenSrcRec(const Vector<Word
   }
   else
   {
-    Vector<WordIndex> s_shifted;
+    std::vector<WordIndex> s_shifted;
     if(s.size()>1)
     {
       for(unsigned int i=1;i<s.size();++i)
@@ -177,7 +177,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
                                                                  int verbose/*=0*/)
 {
       // Initialize downhill simplex input parameters
-  Vector<double> initial_weights=weights;
+  std::vector<double> initial_weights=weights;
   int ndim=initial_weights.size();
   double* start=(double*) malloc(ndim*sizeof(double));
   int nfunk=0;
@@ -189,7 +189,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
   
   if(tmp_file==0)
   {
-    cerr<<"Error updating of Jelinek Mercer's language model weights, tmp file could not be created"<<endl;
+    std::cerr<<"Error updating of Jelinek Mercer's language model weights, tmp file could not be created"<<std::endl;
     return THOT_ERROR;
   }
     
@@ -211,7 +211,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
     {
       case THOT_OK: end=true;
         break;
-      case DSO_NMAX_ERROR: cerr<<"Error updating of Jelinek Mercer's language model weights, maximum number of iterations exceeded"<<endl;
+      case DSO_NMAX_ERROR: std::cerr<<"Error updating of Jelinek Mercer's language model weights, maximum number of iterations exceeded"<<std::endl;
         end=true;
         break;
       case DSO_EVAL_FUNC: // A new function evaluation is requested by downhill simplex
@@ -225,11 +225,11 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::updateModelWeights(const char *cor
             // Print verbose information
         if(verbose>=1)
         {
-          cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<DHS_LM_FTOL<<") ; ";
-          cerr<<"weights=";
+          std::cerr<<"niter= "<<nfunk<<" ; current ftol= "<<curr_dhs_ftol<<" (FTOL="<<DHS_LM_FTOL<<") ; ";
+          std::cerr<<"weights=";
           for(unsigned int i=0;i<weights.size();++i)
-            cerr<<" "<<weights[i];
-          cerr<<" ; perp= "<<perp<<endl; 
+            std::cerr<<" "<<weights[i];
+          std::cerr<<" ; perp= "<<perp<<std::endl; 
         }
         break;
     }
@@ -300,7 +300,7 @@ int _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::new_dhs_eval(const char *corpusFil
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::getJelMerWeight(const Vector<WordIndex>& s,
+double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::getJelMerWeight(const std::vector<WordIndex>& s,
                                                                  const WordIndex& /*t*/)
 {
   if(numBucketsPerOrder==1)
@@ -323,7 +323,7 @@ double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::getJelMerWeight(const Vector<Wo
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::freqOfNgram(const Vector<WordIndex>& s)
+double _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::freqOfNgram(const std::vector<WordIndex>& s)
 {
   return (double)this->tablePtr->cSrc(s);
 }
@@ -371,12 +371,12 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *prefixOfL
   weights.clear();
   if(awk.open(weightFileName.c_str())==THOT_ERROR)
   {
-    cerr<<"Error, file with weights "<<weightFileName<<" cannot be read"<<endl;
+    std::cerr<<"Error, file with weights "<<weightFileName<<" cannot be read"<<std::endl;
     return THOT_ERROR;
   }  
   else
   {
-    cerr<<"Loading weights from "<<weightFileName<<endl;
+    std::cerr<<"Loading weights from "<<weightFileName<<std::endl;
     if(awk.getln())
     {
       this->ngramOrder=atoi(awk.dollar(1).c_str());
@@ -391,7 +391,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *prefixOfL
     }
     else
     {
-      cerr<<"Error while loading file with weights: "<<weightFileName<<endl;
+      std::cerr<<"Error while loading file with weights: "<<weightFileName<<std::endl;
       awk.close();
       return THOT_ERROR;
     }
@@ -440,7 +440,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::printWeights(const char *prefixOf
   FILE *filePtr=fopen(weightFileName.c_str(),"w");
   if(filePtr==NULL)
   {
-    cerr<<"Error while printing file with lm weights ("<<weightFileName<<")"<<endl;
+    std::cerr<<"Error while printing file with lm weights ("<<weightFileName<<")"<<std::endl;
     return THOT_ERROR;
   }
 

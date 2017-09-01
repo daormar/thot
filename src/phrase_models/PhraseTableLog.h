@@ -57,52 +57,52 @@ class PhraseTableLog: public BasePhraseTable
 {
  public:
 
-    typedef std::map<Vector<WordIndex>,PhrasePairInfo> SrcTableNode;
-    typedef std::map<Vector<WordIndex>,PhrasePairInfo> TrgTableNode;
+    typedef std::map<std::vector<WordIndex>,PhrasePairInfo> SrcTableNode;
+    typedef std::map<std::vector<WordIndex>,PhrasePairInfo> TrgTableNode;
 
       // Constructor
     PhraseTableLog(void);
 
         // Abstract function definitions
-    virtual void addTableEntry(const Vector<WordIndex>& s,
-                               const Vector<WordIndex>& t,
+    virtual void addTableEntry(const std::vector<WordIndex>& s,
+                               const std::vector<WordIndex>& t,
                                PhrasePairInfo inf);
-    void addTableEntry(const Vector<WordIndex>& s,
-                       const Vector<WordIndex>& t,
+    void addTableEntry(const std::vector<WordIndex>& s,
+                       const std::vector<WordIndex>& t,
                        LogCount lcs,
                        LogCount lcst);
 
         // Adds an entry to the probability table
-    virtual void addSrcInfo(const Vector<WordIndex>& s,Count s_inf);
-    virtual void addSrcTrgInfo(const Vector<WordIndex>& s,
-                               const Vector<WordIndex>& t,
+    virtual void addSrcInfo(const std::vector<WordIndex>& s,Count s_inf);
+    virtual void addSrcTrgInfo(const std::vector<WordIndex>& s,
+                               const std::vector<WordIndex>& t,
                                Count st_inf);
-    virtual void incrCountsOfEntry(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t,
+    virtual void incrCountsOfEntry(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t,
                                    Count c);
-    virtual void incrCountsOfEntryLog(const Vector<WordIndex>& s,
-                                      const Vector<WordIndex>& t,
+    virtual void incrCountsOfEntryLog(const std::vector<WordIndex>& s,
+                                      const std::vector<WordIndex>& t,
                                       LogCount lc);
         // Increase the counts of a given phrase pair
-    virtual PhrasePairInfo infSrcTrg(const Vector<WordIndex>& s,
-                                     const Vector<WordIndex>& t,
+    virtual PhrasePairInfo infSrcTrg(const std::vector<WordIndex>& s,
+                                     const std::vector<WordIndex>& t,
                                      bool& found);
         // Returns information related to a given s and t.
-    virtual Count getSrcInfo(const Vector<WordIndex>& s,bool &found);
+    virtual Count getSrcInfo(const std::vector<WordIndex>& s,bool &found);
         // Returns information related to a given s and t.
-    virtual Count getSrcTrgInfo(const Vector<WordIndex>& s,
-                                const Vector<WordIndex>& t,
+    virtual Count getSrcTrgInfo(const std::vector<WordIndex>& s,
+                                const std::vector<WordIndex>& t,
                                 bool &found);
         // Returns information related to a given s and t.
-    virtual Prob pTrgGivenSrc(const Vector<WordIndex>& s,
-                              const Vector<WordIndex>& t);
-    virtual LgProb logpTrgGivenSrc(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t);
-    virtual Prob pSrcGivenTrg(const Vector<WordIndex>& s,
-                              const Vector<WordIndex>& t);
-    virtual LgProb logpSrcGivenTrg(const Vector<WordIndex>& s,
-                                   const Vector<WordIndex>& t);
-    virtual bool getEntriesForTarget(const Vector<WordIndex>& t,
+    virtual Prob pTrgGivenSrc(const std::vector<WordIndex>& s,
+                              const std::vector<WordIndex>& t);
+    virtual LgProb logpTrgGivenSrc(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t);
+    virtual Prob pSrcGivenTrg(const std::vector<WordIndex>& s,
+                              const std::vector<WordIndex>& t);
+    virtual LgProb logpSrcGivenTrg(const std::vector<WordIndex>& s,
+                                   const std::vector<WordIndex>& t);
+    virtual bool getEntriesForTarget(const std::vector<WordIndex>& t,
                                      SrcTableNode& srctn);
         // Stores in srctn the entries associated to a given target
         // phrase t, returns true if there are one or more entries
@@ -111,29 +111,29 @@ class PhraseTableLog: public BasePhraseTable
         // The same as the previous function but a pointer to a
         // PhraseTableNodeLog object is given (which is provided by the
         // nodeForTrgHasOneTransOrMore function)
-    virtual bool getEntriesForSource(const Vector<WordIndex>& s,
+    virtual bool getEntriesForSource(const std::vector<WordIndex>& s,
                                      TrgTableNode& trgtn);
         // Stores in trgtn the entries associated to a given source
         // phrase s, returns true if there are one or more entries
-    virtual bool getNbestForSrc(const Vector<WordIndex>& s,
+    virtual bool getNbestForSrc(const std::vector<WordIndex>& s,
                                 NbestTableNode<PhraseTransTableNodeData>& nbt);
-    virtual bool getNbestForTrg(const Vector<WordIndex>& t,
+    virtual bool getNbestForTrg(const std::vector<WordIndex>& t,
                                 NbestTableNode<PhraseTransTableNodeData>& nbt,
                                 int N=-1);
 
        // Counts-related functions
-    virtual Count cSrcTrg(const Vector<WordIndex>& s,
-                          const Vector<WordIndex>& t);
-    virtual Count cSrc(const Vector<WordIndex>& s);
-    virtual Count cTrg(const Vector<WordIndex>& t);
+    virtual Count cSrcTrg(const std::vector<WordIndex>& s,
+                          const std::vector<WordIndex>& t);
+    virtual Count cSrc(const std::vector<WordIndex>& s);
+    virtual Count cTrg(const std::vector<WordIndex>& t);
 
-    virtual LogCount lcSrcTrg(const Vector<WordIndex>& s,
-                              const Vector<WordIndex>& t);
-    virtual LogCount lcSrc(const Vector<WordIndex>& s);
-    virtual LogCount lcTrg(const Vector<WordIndex>& t);
+    virtual LogCount lcSrcTrg(const std::vector<WordIndex>& s,
+                              const std::vector<WordIndex>& t);
+    virtual LogCount lcSrc(const std::vector<WordIndex>& s);
+    virtual LogCount lcTrg(const std::vector<WordIndex>& t);
 
         // Additional Functions
-    bool nodeForTrgHasAtLeastOneTrans(const Vector<WordIndex>& t);
+    bool nodeForTrgHasAtLeastOneTrans(const std::vector<WordIndex>& t);
         // Returns true if t has one translation or more
     
         // size and clear functions
@@ -174,19 +174,19 @@ class PhraseTableLog: public BasePhraseTable
     PhraseCountsLog s_LogCounts;
 
     void getPhraseGivenState(PhraseCountLogState pls_state,
-                             Vector<WordIndex>& s_phrase);
+                             std::vector<WordIndex>& s_phrase);
     Count getCountGivenState(PhraseCountLogState pls_state);
-    LogCount getSrcLogCount(const Vector<WordIndex>& s,
+    LogCount getSrcLogCount(const std::vector<WordIndex>& s,
                             bool &found);
         // Get log(c(s))
-    LogCount getSrcTrgLogCount(const Vector<WordIndex>& s,
-                               const Vector<WordIndex>& t,
+    LogCount getSrcTrgLogCount(const std::vector<WordIndex>& s,
+                               const std::vector<WordIndex>& t,
                                bool &found);
         // Get log(c(s,t))
 
     
     pair<bool,PhraseTableNodeLog*>
-      nodeForTrgHasOneTransOrMore(const Vector<WordIndex>& t);
+      nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t);
         // Returns true if the target phrase t has one translation or
         // more and a pointer to the corresponding translations
 

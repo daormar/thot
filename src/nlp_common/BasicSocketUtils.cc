@@ -48,7 +48,7 @@ namespace BasicSocketUtils
       if ((numbytes=recv(s,str,numbytes,0)) == -1)
       {
             // recv() call 
-        cerr<<"recv() error!"<<endl;
+        std::cerr<<"recv() error!"<<std::endl;
         exit(-1);
       }
     }
@@ -69,7 +69,7 @@ namespace BasicSocketUtils
       if ((numbytes=recv(s,str,numbytes,0)) == -1)
       {
             // recv() call 
-        cerr<<"recv() error!"<<endl;
+        std::cerr<<"recv() error!"<<std::endl;
         exit(-1);
       }
     }
@@ -88,7 +88,7 @@ namespace BasicSocketUtils
     if ((numbytes=recv(s,(char*)&receivedInt,sizeof(int),0)) == -1)
     {
           // recv() call 
-      cerr<<"recv() error!"<<endl;
+      std::cerr<<"recv() error!"<<std::endl;
       exit(-1);
     }
     else
@@ -125,7 +125,7 @@ namespace BasicSocketUtils
     i=htonl(i);
     if((ret=write(fd,(char*) &i,sizeof(i)))==-1)
     {
-      cerr<<"write() error"<<endl;
+      std::cerr<<"write() error"<<std::endl;
       exit(-1);   
     }
     return ret;
@@ -142,7 +142,7 @@ namespace BasicSocketUtils
     {
      if((ret+=write(fd,(char*) s,numbytes))==-1)
      {  
-       cerr<<"write() error"<<endl;
+       std::cerr<<"write() error"<<std::endl;
        exit(-1);   
      }
     }
@@ -163,14 +163,14 @@ namespace BasicSocketUtils
      if ((he=gethostbyname(dirServ))==NULL)
      {       
            /* gethostbyname() call */
-       cerr<<"gethostbyname() error\n";
+       std::cerr<<"gethostbyname() error\n";
        return THOT_ERROR;
      }
 
      if ((fileDesc=socket(AF_INET, SOCK_STREAM, 0))==-1)
      {  
            /* socket() call */
-       cerr<<"socket() error\n";
+       std::cerr<<"socket() error\n";
        return THOT_ERROR;
      }
 
@@ -186,7 +186,7 @@ namespace BasicSocketUtils
      if(connect(fileDesc, (struct sockaddr *)&server,sizeof(struct sockaddr))==-1)
      { 
            // connect() call 
-       cerr<<"connect() error\n";
+       std::cerr<<"connect() error\n";
        return THOT_ERROR;
      }
 

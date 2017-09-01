@@ -74,7 +74,7 @@ class multi_stack_decoder_rec: public _stackDecoderRec<SMT_MODEL>
       // Constructor. 
 
       // Functions to report information about the search
-  void printSearchGraphStream(ostream &outS);
+  void printSearchGraphStream(std::ostream &outS);
 
       // Destructor
   ~multi_stack_decoder_rec();
@@ -111,7 +111,7 @@ multi_stack_decoder_rec<SMT_MODEL>::multi_stack_decoder_rec(void):_stackDecoderR
 
 //---------------------------------------
 template<class SMT_MODEL>
-void multi_stack_decoder_rec<SMT_MODEL>::printSearchGraphStream(ostream &outS)
+void multi_stack_decoder_rec<SMT_MODEL>::printSearchGraphStream(std::ostream &outS)
 {
   SmtMultiStackRec<Hypothesis>* smtMultiStackRecPtr;
   typename SmtMultiStackRec<Hypothesis>::iterator mStackIter;
@@ -119,7 +119,7 @@ void multi_stack_decoder_rec<SMT_MODEL>::printSearchGraphStream(ostream &outS)
 
   smtMultiStackRecPtr=dynamic_cast<SmtMultiStackRec<Hypothesis>*>(this->stack_ptr);
 
-  outS<<"SrcLen= "<<StrProcUtils::stringToStringVector(this->srcSentence).size()<<endl;
+  outS<<"SrcLen= "<<StrProcUtils::stringToStringVector(this->srcSentence).size()<<std::endl;
   for(mStackIter=smtMultiStackRecPtr->begin();mStackIter!=smtMultiStackRecPtr->end();++mStackIter)
   {
     typename SmtStack<Hypothesis>::iterator stackIter;
@@ -129,7 +129,7 @@ void multi_stack_decoder_rec<SMT_MODEL>::printSearchGraphStream(ostream &outS)
       Hypothesis hyp;
 
       hyp=*stackIter;
-      outS<<"Stack ID. "<<mStackIter->first<<endl;
+      outS<<"Stack ID. "<<mStackIter->first<<std::endl;
       this->smtm_ptr->subtractHeuristicToHyp(hyp);
       this->subtractgToHyp(hyp);
       this->printGraphForHyp(hyp,outS);

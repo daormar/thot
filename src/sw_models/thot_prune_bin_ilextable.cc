@@ -33,14 +33,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include "options.h"
 #include <MathFuncs.h>
-#include <myVector.h>
 #include <queue>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include "SwDefs.h"
-
-using namespace std;
 
 //--------------- Constants ------------------------------------------
 
@@ -48,9 +45,9 @@ using namespace std;
 //--------------- Function Declarations ------------------------------
 
 void printCounts(WordIndex firstSrc,
-                 Vector<WordIndex> trgWordVec,
+                 std::vector<WordIndex> trgWordVec,
                  float lcSrc,
-                 Vector<float> lcSrcTrgVec);
+                 std::vector<float> lcSrcTrgVec);
 int TakeParameters(int argc,char *argv[]);
 void printUsage(void);
 void printDesc(void);
@@ -93,7 +90,7 @@ int main(int argc,char *argv[])
     ifstream inF (ilextableFileName.c_str(), ios::in | ios::binary);
     if (!inF)
     {
-      cerr<<"Error in file with incremental lexical table, file "<<ilextableFileName<<" does not exist.\n";
+      std::cerr<<"Error in file with incremental lexical table, file "<<ilextableFileName<<" does not exist.\n";
       return THOT_ERROR;    
     }
     else
@@ -103,8 +100,8 @@ int main(int argc,char *argv[])
       bool first_entry=true;
       WordIndex firstSrc=0;
       float lcSrc=SMALL_LG_NUM;
-      Vector<WordIndex> trgWordVec;
-      Vector<float> lcSrcTrgVec;
+      std::vector<WordIndex> trgWordVec;
+      std::vector<float> lcSrcTrgVec;
       
       while(!end)
       {
@@ -166,9 +163,9 @@ int main(int argc,char *argv[])
 
 //--------------- printCounts() function
 void printCounts(WordIndex firstSrc,
-                 Vector<WordIndex> trgWordVec,
+                 std::vector<WordIndex> trgWordVec,
                  float lcSrc,
-                 Vector<float> lcSrcTrgVec)
+                 std::vector<float> lcSrcTrgVec)
 {
       // Sort counts for source word
   std::vector<TrgWordLogCount> trgWordLogCountVec;

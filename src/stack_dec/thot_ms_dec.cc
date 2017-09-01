@@ -62,8 +62,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <set>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define PMSTACK_W_DEFAULT 10
@@ -93,7 +91,7 @@ struct thot_ms_dec_pars
   std::string wordGraphFileName;
   std::string outFile;
   float wgPruningThreshold;
-  Vector<float> weightVec;
+  std::vector<float> weightVec;
 
   thot_ms_dec_pars()
     {
@@ -123,7 +121,7 @@ void release_translator_legacy_impl(void);
 void release_translator_feat_impl(void);
 void release_translator(void);
 int translate_corpus(const thot_ms_dec_pars& tdp);
-Vector<string> stringToStringVector(string s);
+std::vector<string> stringToStringVector(string s);
 void version(void);
 int handleParameters(int argc,
                      char *argv[],
@@ -172,7 +170,7 @@ int main(int argc, char *argv[])
         // init translator    
     if(init_translator(tdp)==THOT_ERROR)
     {      
-      cerr<<"Error during the initialization of the translator"<<endl;
+      std::cerr<<"Error during the initialization of the translator"<<std::endl;
       return THOT_ERROR;
     }
     else
@@ -220,17 +218,17 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
 {
   int ret;
   
-  cerr<<"\n- Initializing translator...\n\n";
+  std::cerr<<"\n- Initializing translator...\n\n";
 
       // Show static types
-  cerr<<"Static types:"<<endl;
-  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
-  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
-  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+  std::cerr<<"Static types:"<<std::endl;
+  std::cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<std::endl;
+  std::cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<std::endl;
+  std::cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<std::endl;
 
         // Obtain info about translation model entries
   unsigned int numTransModelEntries;
-  Vector<ModelDescriptorEntry> modelDescEntryVec;
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(tdp.transModelPref.c_str(),modelDescEntryVec)==THOT_OK)
     numTransModelEntries=modelDescEntryVec.size();
   else
@@ -246,14 +244,14 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
   langModelInfoPtr->wpModelPtr=dynClassFactoryHandler.baseWordPenaltyModelDynClassLoader.make_obj(dynClassFactoryHandler.baseWordPenaltyModelInitPars);
   if(langModelInfoPtr->wpModelPtr==NULL)
   {
-    cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseWordPenaltyModel pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
   langModelInfoPtr->lModelPtr=dynClassFactoryHandler.baseNgramLMDynClassLoader.make_obj(dynClassFactoryHandler.baseNgramLMInitPars);
   if(langModelInfoPtr->lModelPtr==NULL)
   {
-    cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -261,7 +259,7 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
   phrModelInfoPtr->invPbModelPtr=dynClassFactoryHandler.basePhraseModelDynClassLoader.make_obj(dynClassFactoryHandler.basePhraseModelInitPars);
   if(phrModelInfoPtr->invPbModelPtr==NULL)
   {
-    cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -272,7 +270,7 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
     swModelInfoPtr->swAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
     if(swModelInfoPtr->swAligModelPtrVec[i]==NULL)
     {
-      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
   }
@@ -283,7 +281,7 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
     swModelInfoPtr->invSwAligModelPtrVec.push_back(dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj(dynClassFactoryHandler.baseSwAligModelInitPars));
     if(swModelInfoPtr->invSwAligModelPtrVec[i]==NULL)
     {
-      cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
   }
@@ -291,14 +289,14 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
   llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(llWeightUpdaterPtr==NULL)
   {
-    cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
   trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(trConstraintsPtr==NULL)
   {
-    cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -344,8 +342,8 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
 
       // Set weights
   smtModelPtr->setWeights(tdp.weightVec);
-  smtModelPtr->printWeights(cerr);
-  cerr<<endl;
+  smtModelPtr->printWeights(std::cerr);
+  std::cerr<<std::endl;
 
       // Set model parameters
   smtModelPtr->set_W_par(tdp.W);
@@ -359,7 +357,7 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
   stackDecoderPtr=dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(dynClassFactoryHandler.baseStackDecoderInitPars);
   if(stackDecoderPtr==NULL)
   {
-    cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -370,7 +368,7 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
   ret=stackDecoderPtr->link_smt_model(smtModelPtr);
   if(ret==THOT_ERROR)
   {
-    cerr<<"Error while linking smt model to decoder, revise master.ini file"<<endl;
+    std::cerr<<"Error while linking smt model to decoder, revise master.ini file"<<std::endl;
     return THOT_ERROR;
   }
   
@@ -437,13 +435,13 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
 {
   int ret;
   
-  cerr<<"\n- Initializing translator...\n\n";
+  std::cerr<<"\n- Initializing translator...\n\n";
 
       // Show static types
-  cerr<<"Static types:"<<endl;
-  cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<endl;
-  cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<endl;
-  cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<endl;
+  std::cerr<<"Static types:"<<std::endl;
+  std::cerr<<"- SMT model type (SmtModel): "<<SMT_MODEL_TYPE_NAME<<" ("<<THOT_SMTMODEL_H<<")"<<std::endl;
+  std::cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<std::endl;
+  std::cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<std::endl;
 
       // Initialize class factories
   ret=dynClassFactoryHandler.init_smt(THOT_MASTER_INI_PATH);
@@ -454,14 +452,14 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
   llWeightUpdaterPtr=dynClassFactoryHandler.baseLogLinWeightUpdaterDynClassLoader.make_obj(dynClassFactoryHandler.baseLogLinWeightUpdaterInitPars);
   if(llWeightUpdaterPtr==NULL)
   {
-    cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseLogLinWeightUpdater pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
   trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(trConstraintsPtr==NULL)
   {
-    cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -489,8 +487,8 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
 
       // Set weights
   smtModelPtr->setWeights(tdp.weightVec);
-  smtModelPtr->printWeights(cerr);
-  cerr<<endl;
+  smtModelPtr->printWeights(std::cerr);
+  std::cerr<<std::endl;
 
       // Set model parameters
   smtModelPtr->set_W_par(tdp.W);
@@ -504,7 +502,7 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
   stackDecoderPtr=dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(dynClassFactoryHandler.baseStackDecoderInitPars);
   if(stackDecoderPtr==NULL)
   {
-    cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<endl;
+    std::cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -515,7 +513,7 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
   ret=stackDecoderPtr->link_smt_model(smtModelPtr);
   if(ret==THOT_ERROR)
   {
-    cerr<<"Error while linking smt model to decoder, revise master.ini file"<<endl;
+    std::cerr<<"Error while linking smt model to decoder, revise master.ini file"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -609,11 +607,11 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
   testCorpusFile.open(tdp.sourceSentencesFile.c_str());    
   testCorpusFile.seekg(0, ios::beg);
 
-  cerr<<"\n- Translating test corpus sentences...\n\n";
+  std::cerr<<"\n- Translating test corpus sentences...\n\n";
 
   if(!testCorpusFile)
   {
-    cerr<<"Test corpus error!"<<endl;
+    std::cerr<<"Test corpus error!"<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -623,7 +621,7 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
     if(!tdp.outFile.empty())
     {
       outS.open(tdp.outFile.c_str(),ios::out);
-      if(!outS) cerr<<"Error while opening output file."<<endl;
+      if(!outS) std::cerr<<"Error while opening output file."<<std::endl;
     }
     
         // Translate corpus sentences
@@ -639,7 +637,7 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
         
       if(tdp.verbosity)
       {
-        cerr<<sentNo<<endl<<srcSentenceString<<endl;
+        std::cerr<<sentNo<<std::endl<<srcSentenceString<<std::endl;
         ctimer(&elapsed_ant,&ucpu,&scpu);
       }
        
@@ -650,18 +648,18 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
       if(tdp.verbosity) ctimer(&elapsed,&ucpu,&scpu);
 
       if(tdp.outFile.empty())
-        cout<<smtModelPtr->getTransInPlainText(result)<<endl;
+        cout<<smtModelPtr->getTransInPlainText(result)<<std::endl;
       else
-        outS<<smtModelPtr->getTransInPlainText(result)<<endl;
+        outS<<smtModelPtr->getTransInPlainText(result)<<std::endl;
           
       if(tdp.verbosity)
       {
-        smtModelPtr->printHyp(result,cerr,tdp.verbosity);
+        smtModelPtr->printHyp(result,std::cerr,tdp.verbosity);
 #         ifdef THOT_STATS
         stackDecoderPtr->printStats();
 #         endif
 
-        cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<endl<<endl;
+        std::cerr<<"- Elapsed Time: "<<elapsed-elapsed_ant<<std::endl<<std::endl;
         total_time+=elapsed-elapsed_ant;
       }
 
@@ -682,7 +680,7 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
       ofstream graphOutS;
       sprintf(printGraphFileName,"sent%d.graph_file",sentNo);
       graphOutS.open(printGraphFileName,ios::out);
-      if(!graphOutS) cerr<<"Error while printing search graph to file."<<endl;
+      if(!graphOutS) std::cerr<<"Error while printing search graph to file."<<std::endl;
       else
       {
         stackDecoderPtr->printSearchGraphStream(graphOutS);
@@ -704,7 +702,7 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
 
   if(tdp.verbosity)
   {
-    cerr<<"- Time per sentence: "<<total_time/sentNo<<endl;
+    std::cerr<<"- Time per sentence: "<<total_time/sentNo<<std::endl;
   }
 
   return THOT_OK;
@@ -766,12 +764,12 @@ int takeParameters(int argc,
 int takeParametersFromCfgFile(std::string cfgFileName,
                               thot_ms_dec_pars& tdp)
 {
-  cerr<<"Processing configuration file ("<<cfgFileName<<")"<<endl;
+  std::cerr<<"Processing configuration file ("<<cfgFileName<<")"<<std::endl;
   
       // Extract parameters from configuration file
   std::string comment="#";
   int cfgFileArgc;
-  Vector<std::string> cfgFileArgvStl;
+  std::vector<std::string> cfgFileArgvStl;
   int ret=extractParsFromFile(cfgFileName.c_str(),cfgFileArgc,cfgFileArgvStl,comment);
   if(ret==THOT_ERROR) return THOT_ERROR;
 
@@ -891,19 +889,19 @@ int checkParameters(const thot_ms_dec_pars& tdp)
 {
   if(tdp.languageModelFileName.empty())
   {
-    cerr<<"Error: parameter -lm not given!"<<endl;
+    std::cerr<<"Error: parameter -lm not given!"<<std::endl;
     return THOT_ERROR;   
   }
   
   if(tdp.transModelPref.empty())
   {
-    cerr<<"Error: parameter -tm not given!"<<endl;
+    std::cerr<<"Error: parameter -tm not given!"<<std::endl;
     return THOT_ERROR;   
   }
 
   if(tdp.sourceSentencesFile.empty())
   {
-    cerr<<"Error: parameter -t not given!"<<endl;
+    std::cerr<<"Error: parameter -t not given!"<<std::endl;
     return THOT_ERROR;   
   }
   
@@ -913,42 +911,42 @@ int checkParameters(const thot_ms_dec_pars& tdp)
 //---------------
 void printParameters(const thot_ms_dec_pars& tdp)
 {
- cerr<<"W: "<<tdp.W<<endl;   
- cerr<<"S: "<<tdp.S<<endl;   
- cerr<<"A: "<<tdp.A<<endl;
- cerr<<"I: "<<tdp.I<<endl;
+ std::cerr<<"W: "<<tdp.W<<std::endl;   
+ std::cerr<<"S: "<<tdp.S<<std::endl;   
+ std::cerr<<"A: "<<tdp.A<<std::endl;
+ std::cerr<<"I: "<<tdp.I<<std::endl;
 #ifdef MULTI_STACK_USE_GRAN
- cerr<<"G: "<<tdp.G<<endl;
+ std::cerr<<"G: "<<tdp.G<<std::endl;
 #endif
- cerr<<"h: "<<tdp.heuristic<<endl;
- cerr<<"be: "<<tdp.be<<endl;
- cerr<<"nomon: "<<tdp.nomon<<endl;
- cerr<<"weight vector:";
+ std::cerr<<"h: "<<tdp.heuristic<<std::endl;
+ std::cerr<<"be: "<<tdp.be<<std::endl;
+ std::cerr<<"nomon: "<<tdp.nomon<<std::endl;
+ std::cerr<<"weight vector:";
  for(unsigned int i=0;i<tdp.weightVec.size();++i)
-   cerr<<" "<<tdp.weightVec[i];
- cerr<<endl;
- cerr<<"lmfile: "<<tdp.languageModelFileName<<endl;   
- cerr<<"tm files prefix: "<<tdp.transModelPref<<endl;
- cerr<<"test file: "<<tdp.sourceSentencesFile<<endl;
+   std::cerr<<" "<<tdp.weightVec[i];
+ std::cerr<<std::endl;
+ std::cerr<<"lmfile: "<<tdp.languageModelFileName<<std::endl;   
+ std::cerr<<"tm files prefix: "<<tdp.transModelPref<<std::endl;
+ std::cerr<<"test file: "<<tdp.sourceSentencesFile<<std::endl;
  if(tdp.wordGraphFileName!="")
  {
-   cerr<<"word graph file prefix: "<<tdp.wordGraphFileName<<endl;
+   std::cerr<<"word graph file prefix: "<<tdp.wordGraphFileName<<std::endl;
    if(tdp.wgPruningThreshold==UNLIMITED_DENSITY)
-     cerr<<"word graph pruning threshold: word graph density unrestricted"<<endl;
+     std::cerr<<"word graph pruning threshold: word graph density unrestricted"<<std::endl;
    else
-     cerr<<"word graph pruning threshold: "<<tdp.wgPruningThreshold<<endl;
+     std::cerr<<"word graph pruning threshold: "<<tdp.wgPruningThreshold<<std::endl;
  }
  else
  {
-   cerr<<"word graph file prefix not given (wordgraphs will not be generated)"<<endl;
+   std::cerr<<"word graph file prefix not given (wordgraphs will not be generated)"<<std::endl;
  }
- cerr<<"verbosity level: "<<tdp.verbosity<<endl;
+ std::cerr<<"verbosity level: "<<tdp.verbosity<<std::endl;
 }
 
 //---------------
-Vector<string> stringToStringVector(string s)
+std::vector<string> stringToStringVector(string s)
 {
- Vector<string> vs;	
+ std::vector<string> vs;	
  string aux="";
  unsigned int i;	
 
@@ -965,62 +963,62 @@ Vector<string> stringToStringVector(string s)
 //---------------
 void printUsage(void)
 {
-  cerr << "thot_ms_dec      [-c <string>] [-tm <string>] [-lm <string>]"<<endl;
-  cerr << "                 -t <string> [-o <string>]"<<endl;
-  cerr << "                 [-W <float>] [-S <int>] [-A <int>]"<<endl;
-  cerr << "                 [-I <int>] [-G <int>] [-h <int>]"<<endl;
-  cerr << "                 [-be] [ -nomon <int>] [-tmw <float> ... <float>]"<<endl;
-  cerr << "                 [-wg <string> [-wgp <float>] ]"<<endl;
-  cerr << "                 [-v|-v1|-v2]"<<endl;
-  cerr << "                 [--help] [--version]"<<endl<<endl;
-  cerr << " -c <string>           : Configuration file (command-line options override"<<endl;
-  cerr << "                         configuration file options)."<<endl;
-  cerr << " -tm <string>          : Prefix of translation model files or model descriptor."<<endl;
-  cerr << " -lm <string>          : Language model file name or model descriptor."<<endl;
-  cerr << " -t <string>           : File with the test sentences."<<endl;
-  cerr << " -o <string>           : File to store translations (if not given, they are"<<endl;
-  cerr << "                         printed to the standard output)."<<endl;
-  cerr << " -W <float>            : Maximum number of translation options to be considered"<<endl;
-  cerr << "                         per each source phrase ("<<PMSTACK_W_DEFAULT<<" by default)."<<endl;
-  cerr << " -S <int>              : Maximum number of hypotheses that can be stored in"<<endl;
-  cerr << "                         each stack ("<<PMSTACK_S_DEFAULT<<" by default)."<<endl;    
-  cerr << " -A <int>              : Maximum length in words of the source phrases to be"<<endl;
-  cerr << "                         translated ("<<PMSTACK_A_DEFAULT<<" by default)."<<endl;
-  cerr << " -I <int>              : Number of hypotheses expanded at each iteration"<<endl;
-  cerr << "                         ("<<PMSTACK_I_DEFAULT<<" by default)."<<endl;
+  std::cerr << "thot_ms_dec      [-c <string>] [-tm <string>] [-lm <string>]"<<std::endl;
+  std::cerr << "                 -t <string> [-o <string>]"<<std::endl;
+  std::cerr << "                 [-W <float>] [-S <int>] [-A <int>]"<<std::endl;
+  std::cerr << "                 [-I <int>] [-G <int>] [-h <int>]"<<std::endl;
+  std::cerr << "                 [-be] [ -nomon <int>] [-tmw <float> ... <float>]"<<std::endl;
+  std::cerr << "                 [-wg <string> [-wgp <float>] ]"<<std::endl;
+  std::cerr << "                 [-v|-v1|-v2]"<<std::endl;
+  std::cerr << "                 [--help] [--version]"<<std::endl<<std::endl;
+  std::cerr << " -c <string>           : Configuration file (command-line options override"<<std::endl;
+  std::cerr << "                         configuration file options)."<<std::endl;
+  std::cerr << " -tm <string>          : Prefix of translation model files or model descriptor."<<std::endl;
+  std::cerr << " -lm <string>          : Language model file name or model descriptor."<<std::endl;
+  std::cerr << " -t <string>           : File with the test sentences."<<std::endl;
+  std::cerr << " -o <string>           : File to store translations (if not given, they are"<<std::endl;
+  std::cerr << "                         printed to the standard output)."<<std::endl;
+  std::cerr << " -W <float>            : Maximum number of translation options to be considered"<<std::endl;
+  std::cerr << "                         per each source phrase ("<<PMSTACK_W_DEFAULT<<" by default)."<<std::endl;
+  std::cerr << " -S <int>              : Maximum number of hypotheses that can be stored in"<<std::endl;
+  std::cerr << "                         each stack ("<<PMSTACK_S_DEFAULT<<" by default)."<<std::endl;    
+  std::cerr << " -A <int>              : Maximum length in words of the source phrases to be"<<std::endl;
+  std::cerr << "                         translated ("<<PMSTACK_A_DEFAULT<<" by default)."<<std::endl;
+  std::cerr << " -I <int>              : Number of hypotheses expanded at each iteration"<<std::endl;
+  std::cerr << "                         ("<<PMSTACK_I_DEFAULT<<" by default)."<<std::endl;
 #ifdef MULTI_STACK_USE_GRAN
-  cerr << " -G <int>              : Granularity parameter ("<<PMSTACK_G_DEFAULT<<"by default)."<<endl;
+  std::cerr << " -G <int>              : Granularity parameter ("<<PMSTACK_G_DEFAULT<<"by default)."<<std::endl;
 #else
-  cerr << " -G <int>              : Parameter not available with the given configuration."<<endl;
+  std::cerr << " -G <int>              : Parameter not available with the given configuration."<<std::endl;
 #endif
-  cerr << " -h <int>              : Heuristic function used: "<<NO_HEURISTIC<<"->None, "<<LOCAL_T_HEURISTIC<<"->LOCAL_T, "<<endl;
-  cerr << "                         "<<LOCAL_TD_HEURISTIC<<"->LOCAL_TD ("<<PMSTACK_H_DEFAULT<<" by default)."<<endl;
-  cerr << " -be                   : Execute a best-first algorithm (breadth-first search"<<endl;
-  cerr << "                         is executed by default)."<<endl;
-  cerr << " -nomon <int>          : Perform a non-monotonic search, allowing the decoder"<<endl;
-  cerr << "                         to skip up to <int> words from the last aligned source"<<endl;
-  cerr << "                         words. If <int> is equal to zero, then a monotonic"<<endl;
-  cerr << "                         search is performed ("<<PMSTACK_NOMON_DEFAULT<<" is the default value)."<<endl;
-  cerr << " -tmw <float>...<float>: Set model weights, the number of weights and their"<<endl;
-  cerr << "                         meaning depends on the model type (use --config"<<endl;
-  cerr << "                         option)."<<endl;
-  cerr << " -wg <string>          : Print word graph after each translation, the prefix" <<endl;
-  cerr << "                         of the files is given as parameter."<<endl;
-  cerr << " -wgp <float>          : Prune word-graph using the given threshold.\n";
-  cerr << "                         Threshold=0 -> no pruning is performed.\n";
-  cerr << "                         Threshold=1 -> only the best arc arriving to each\n";
-  cerr << "                                       state is retained.\n";
-  cerr << "                         If not given, the number of arcs is not\n";
-  cerr << "                         restricted.\n";
-  cerr << " -v|-v1|-v2            : verbose modes."<<endl;
-  cerr << " --help                : Display this help and exit."<<endl;
-  cerr << " --version             : Output version information and exit."<<endl;
+  std::cerr << " -h <int>              : Heuristic function used: "<<NO_HEURISTIC<<"->None, "<<LOCAL_T_HEURISTIC<<"->LOCAL_T, "<<std::endl;
+  std::cerr << "                         "<<LOCAL_TD_HEURISTIC<<"->LOCAL_TD ("<<PMSTACK_H_DEFAULT<<" by default)."<<std::endl;
+  std::cerr << " -be                   : Execute a best-first algorithm (breadth-first search"<<std::endl;
+  std::cerr << "                         is executed by default)."<<std::endl;
+  std::cerr << " -nomon <int>          : Perform a non-monotonic search, allowing the decoder"<<std::endl;
+  std::cerr << "                         to skip up to <int> words from the last aligned source"<<std::endl;
+  std::cerr << "                         words. If <int> is equal to zero, then a monotonic"<<std::endl;
+  std::cerr << "                         search is performed ("<<PMSTACK_NOMON_DEFAULT<<" is the default value)."<<std::endl;
+  std::cerr << " -tmw <float>...<float>: Set model weights, the number of weights and their"<<std::endl;
+  std::cerr << "                         meaning depends on the model type (use --config"<<std::endl;
+  std::cerr << "                         option)."<<std::endl;
+  std::cerr << " -wg <string>          : Print word graph after each translation, the prefix" <<std::endl;
+  std::cerr << "                         of the files is given as parameter."<<std::endl;
+  std::cerr << " -wgp <float>          : Prune word-graph using the given threshold.\n";
+  std::cerr << "                         Threshold=0 -> no pruning is performed.\n";
+  std::cerr << "                         Threshold=1 -> only the best arc arriving to each\n";
+  std::cerr << "                                       state is retained.\n";
+  std::cerr << "                         If not given, the number of arcs is not\n";
+  std::cerr << "                         restricted.\n";
+  std::cerr << " -v|-v1|-v2            : verbose modes."<<std::endl;
+  std::cerr << " --help                : Display this help and exit."<<std::endl;
+  std::cerr << " --version             : Output version information and exit."<<std::endl;
 }
 
 //---------------
 void version(void)
 {
-  cerr<<"thot_ms_dec is part of the thot package "<<endl;
-  cerr<<"thot version "<<THOT_VERSION<<endl;
-  cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
+  std::cerr<<"thot_ms_dec is part of the thot package "<<std::endl;
+  std::cerr<<"thot version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
 }

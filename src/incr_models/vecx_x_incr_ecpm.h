@@ -23,7 +23,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /* Prototype file: vecx_x_incr_ecpm                                 */
 /*                                                                  */
 /* Description: Class to manage incremental encoded conditional     */
-/*              probability models p(x|Vector<x>).                  */
+/*              probability models p(x|std::vector<x>).             */
 /*                                                                  */
 /********************************************************************/
 
@@ -55,15 +55,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- vecx_x_incr_ecpm class
 
 template<class HX,class X,class SRC_INFO,class SRCTRG_INFO>
-class vecx_x_incr_ecpm: public _incrEncCondProbModel<Vector<HX>,HX,Vector<X>,X,SRC_INFO,SRCTRG_INFO>
+class vecx_x_incr_ecpm: public _incrEncCondProbModel<std::vector<HX>,HX,std::vector<X>,X,SRC_INFO,SRCTRG_INFO>
 {
  public:
 
-  typedef typename _incrEncCondProbModel<Vector<HX>,HX,Vector<X>,X,SRC_INFO,SRCTRG_INFO>::SrcTableNode SrcTableNode;
-  typedef typename _incrEncCondProbModel<Vector<HX>,HX,Vector<X>,X,SRC_INFO,SRCTRG_INFO>::TrgTableNode TrgTableNode;
+  typedef typename _incrEncCondProbModel<std::vector<HX>,HX,std::vector<X>,X,SRC_INFO,SRCTRG_INFO>::SrcTableNode SrcTableNode;
+  typedef typename _incrEncCondProbModel<std::vector<HX>,HX,std::vector<X>,X,SRC_INFO,SRCTRG_INFO>::TrgTableNode TrgTableNode;
 
       // Constructor
-  vecx_x_incr_ecpm():_incrEncCondProbModel<Vector<HX>,HX,Vector<X>,X,SRC_INFO,SRCTRG_INFO>()
+  vecx_x_incr_ecpm():_incrEncCondProbModel<std::vector<HX>,HX,std::vector<X>,X,SRC_INFO,SRCTRG_INFO>()
   {
     this->tablePtr=new vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>;
     this->encPtr=new vecx_x_incr_enc<HX,X>;
@@ -72,7 +72,7 @@ class vecx_x_incr_ecpm: public _incrEncCondProbModel<Vector<HX>,HX,Vector<X>,X,S
       // Functions to load and print the model
   bool load(const char *fileName);
   bool print(const char *fileName);
-  ostream& print(ostream &outS);
+  std::ostream& print(std::ostream &outS);
 
       // Destructor
   ~vecx_x_incr_ecpm();
@@ -87,7 +87,7 @@ class vecx_x_incr_ecpm: public _incrEncCondProbModel<Vector<HX>,HX,Vector<X>,X,S
 template<class HX,class X,class SRC_INFO,class SRCTRG_INFO>
 bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
 {
-  Vector<HX> hs;
+  std::vector<HX> hs;
   HX ht;
   im_pair<SRC_INFO,SRCTRG_INFO> inf;
   awkInputStream awk;
@@ -95,12 +95,12 @@ bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
 
   if(awk.open(fileName)==THOT_ERROR)
   {
-    cerr<<"Error while loading model file "<<fileName<<endl;
+    std::cerr<<"Error while loading model file "<<fileName<<std::endl;
     return THOT_ERROR;
   }  
   else
   {
-    cerr<<"Loading model file "<<fileName<<endl;
+    std::cerr<<"Loading model file "<<fileName<<std::endl;
 
     this->tablePtr->clear();
     this->modelFileName=fileName;
@@ -137,7 +137,7 @@ bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
   outF.open(fileName,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing model to file."<<endl;
+    std::cerr<<"Error while printing model to file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -150,10 +150,10 @@ bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
 
 //--------------
 template<class HX,class X,class SRC_INFO,class SRCTRG_INFO>
-ostream& vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::print(ostream &outS)
+std::ostream& vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::print(std::ostream &outS)
 {
-  Vector<HX> hs;
-  Vector<X> s;
+  std::vector<HX> hs;
+  std::vector<X> s;
   HX ht;
   vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>* tableCptPtr=0;
   unsigned int i;
@@ -185,7 +185,7 @@ ostream& vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::print(ostream &outS)
           outS<<hs[i]<<" ";
         }
         bool found;
-        outS<<ht<<" "<<this->getSrcInfo(s,found)<<" "<<tableIter->second<<endl;
+        outS<<ht<<" "<<this->getSrcInfo(s,found)<<" "<<tableIter->second<<std::endl;
       }
     }     
   }

@@ -42,10 +42,10 @@ KenLm::KenLm(void)
 
 //-------------------------
 LgProb KenLm::getNgramLgProb(WordIndex w,
-                             const Vector<WordIndex>& vu)
+                             const std::vector<WordIndex>& vu)
 {
       // Reverse history (required by kenlm library)
-  Vector<WordIndex> rev_vu=vu;
+  std::vector<WordIndex> rev_vu=vu;
   std::reverse(rev_vu.begin(),rev_vu.end());
 
       // Obtain log-prob
@@ -54,12 +54,12 @@ LgProb KenLm::getNgramLgProb(WordIndex w,
 }
 
 //-------------------------
-LgProb KenLm::getNgramLgProbStr(string s,
-                                const Vector<string>& rq)
+LgProb KenLm::getNgramLgProbStr(std::string s,
+                                const std::vector<std::string>& rq)
 {
   WordIndex w=stringToWordIndex(s);
 
-  Vector<WordIndex> wIdxVec;
+  std::vector<WordIndex> wIdxVec;
   for(unsigned int i=0;i<rq.size();++i)
   {
     wIdxVec.push_back(stringToWordIndex(rq[i]));
@@ -69,16 +69,16 @@ LgProb KenLm::getNgramLgProbStr(string s,
 }
 
 //-------------------------
-LgProb KenLm::getLgProbEnd(const Vector<WordIndex>& vu)
+LgProb KenLm::getLgProbEnd(const std::vector<WordIndex>& vu)
 {
   bool found;
   return getNgramLgProb(getEosId(found),vu);
 }
 
 //-------------------------
-LgProb KenLm::getLgProbEndStr(const Vector<string>& rq)
+LgProb KenLm::getLgProbEndStr(const std::vector<std::string>& rq)
 {
-  Vector<WordIndex> wIdxVec;
+  std::vector<WordIndex> wIdxVec;
   for(unsigned int i=0;i<rq.size();++i)
   {
     wIdxVec.push_back(stringToWordIndex(rq[i]));
@@ -88,15 +88,15 @@ LgProb KenLm::getLgProbEndStr(const Vector<string>& rq)
 }
 
 //-------------------------
-bool KenLm::getStateForWordSeq(const Vector<WordIndex>& wordSeq,
-                               Vector<WordIndex>& state)
+bool KenLm::getStateForWordSeq(const std::vector<WordIndex>& wordSeq,
+                               std::vector<WordIndex>& state)
 {
   state=wordSeq;
   return true;
 }
 
 //-------------------------
-void KenLm::getStateForBeginOfSentence(Vector<WordIndex>& state)
+void KenLm::getStateForBeginOfSentence(std::vector<WordIndex>& state)
 {
   bool found;
   unsigned int ngramOrder=getNgramOrder();
@@ -111,7 +111,7 @@ void KenLm::getStateForBeginOfSentence(Vector<WordIndex>& state)
 
 //-------------------------
 LgProb KenLm::getNgramLgProbGivenState(WordIndex w,
-                                       Vector<WordIndex>& state)
+                                       std::vector<WordIndex>& state)
 {
   LgProb lp=getNgramLgProb(w,state);
   for(unsigned int i=1;i<state.size();++i) state[i-1]=state[i];
@@ -121,7 +121,7 @@ LgProb KenLm::getNgramLgProbGivenState(WordIndex w,
 
 //-------------------------
 LgProb KenLm::getNgramLgProbGivenStateStr(std::string s,
-                                          Vector<WordIndex>& state)
+                                          std::vector<WordIndex>& state)
 {
   WordIndex w=stringToWordIndex(s);
 
@@ -129,7 +129,7 @@ LgProb KenLm::getNgramLgProbGivenStateStr(std::string s,
 }
 
 //-------------------------
-LgProb KenLm::getLgProbEndGivenState(Vector<WordIndex>& state)
+LgProb KenLm::getLgProbEndGivenState(std::vector<WordIndex>& state)
 {
   bool found;
 
@@ -140,7 +140,7 @@ LgProb KenLm::getLgProbEndGivenState(Vector<WordIndex>& state)
 }
 
 //-------------------------
-bool KenLm::existSymbol(string s)const
+bool KenLm::existSymbol(std::string s)const
 {
   const KlmVocabulary& vocab=modelPtr->GetVocabulary();
   WordIndex w=vocab.Index(s);  
@@ -148,21 +148,21 @@ bool KenLm::existSymbol(string s)const
 }
 
 //-------------------------
-WordIndex KenLm::addSymbol(string /*s*/)
+WordIndex KenLm::addSymbol(std::string /*s*/)
 {
-  cerr<<"KenLm: warning, addSymbol() function called but not currently implemented"<<endl;
+  std::cerr<<"KenLm: warning, addSymbol() function called but not currently implemented"<<std::endl;
   return 0;
 }
 
 //-------------------------
 unsigned int KenLm::getVocabSize(void)
 {
-  cerr<<"KenLm: warning, getVocabSize() function called but not currently implemented"<<endl;
+  std::cerr<<"KenLm: warning, getVocabSize() function called but not currently implemented"<<std::endl;
   return 0;
 }
 
 //-------------------------
-WordIndex KenLm::stringToWordIndex(string s)const
+WordIndex KenLm::stringToWordIndex(std::string s)const
 {
   if(modelPtr!=NULL)
   {
@@ -177,9 +177,9 @@ WordIndex KenLm::stringToWordIndex(string s)const
 }
 
 //-------------------------
-string KenLm::wordIndexToString(WordIndex /*w*/)const
+std::string KenLm::wordIndexToString(WordIndex /*w*/)const
 {
-  cerr<<"KenLm: warning, wordIndexToString() function called but not currently implemented"<<endl;
+  std::cerr<<"KenLm: warning, wordIndexToString() function called but not currently implemented"<<std::endl;
   return UNK_SYMBOL_STR;
 }
 
@@ -202,21 +202,21 @@ WordIndex KenLm::getEosId(bool &found)const
 //-------------------------
 bool KenLm::loadVocab(const char* /*fileName*/)
 {
-  cerr<<"KenLm: warning, loadVocab() function called but not currently implemented"<<endl;
+  std::cerr<<"KenLm: warning, loadVocab() function called but not currently implemented"<<std::endl;
   return THOT_ERROR;
 }
 
 //-------------------------
 bool KenLm::printVocab(const char* /*fileName*/)
 {
-  cerr<<"KenLm: warning, printVocab() function called but not currently implemented"<<endl;
+  std::cerr<<"KenLm: warning, printVocab() function called but not currently implemented"<<std::endl;
   return THOT_ERROR;
 }
 
 //-------------------------
 void KenLm::clearVocab(void)
 {
-  cerr<<"KenLm: warning, clearVocab() function called but not currently implemented"<<endl;
+  std::cerr<<"KenLm: warning, clearVocab() function called but not currently implemented"<<std::endl;
 }
 
 //-------------------------
@@ -247,19 +247,19 @@ bool KenLm::load_kenlm_file(const char *fileName)
       config.load_method=util::LAZY;
         
           // Load model
-      cerr<<"Loading kenlm model from "<<fileName<<" ..."<<endl;
+      std::cerr<<"Loading kenlm model from "<<fileName<<" ..."<<std::endl;
       modelPtr=new KenLangModel(fileName,config);
     }
     catch(...)
     {
-      cerr<<"KenLm: something went wrong while loading "<<fileName<<endl;
+      std::cerr<<"KenLm: something went wrong while loading "<<fileName<<std::endl;
       return THOT_ERROR;
     }
     return THOT_OK;
   }
   else
   {
-    cerr<<"KenLm: error, a language model was already loaded"<<endl;
+    std::cerr<<"KenLm: error, a language model was already loaded"<<std::endl;
     return THOT_ERROR;
   }
 }
@@ -267,7 +267,7 @@ bool KenLm::load_kenlm_file(const char *fileName)
 //-------------------------
 bool KenLm::print(const char* /*fileName*/)
 {
-  cerr<<"KenLm: warning, print() function called but not currently implemented"<<endl;
+  std::cerr<<"KenLm: warning, print() function called but not currently implemented"<<std::endl;
   return THOT_ERROR;
 }
 
@@ -280,20 +280,20 @@ unsigned int KenLm::getNgramOrder(void)
 //-------------------------
 void KenLm::setNgramOrder(int /*_ngramOrder*/)
 {
-  cerr<<"KenLm: warning, setNgramOrder() function called but not currently implemented"<<endl;
+  std::cerr<<"KenLm: warning, setNgramOrder() function called but not currently implemented"<<std::endl;
 }
 
 //-------------------------
 size_t KenLm::size(void)
 {
-  cerr<<"KenLm: warning, size() function called but not currently implemented"<<endl;
+  std::cerr<<"KenLm: warning, size() function called but not currently implemented"<<std::endl;
   return 0;
 }
 
 //-------------------------
 void KenLm::clear(void)
 {
-  cerr<<"KenLm: warning, clear() function called but not currently implemented"<<endl;
+  std::cerr<<"KenLm: warning, clear() function called but not currently implemented"<<std::endl;
 }
 
 //-------------------------

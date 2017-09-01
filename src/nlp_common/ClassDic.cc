@@ -53,10 +53,10 @@ ClassIndex ClassDic::getClassForWord(WordIndex w)
  else return -1;
 }
 //-------------------------
-Vector<WordIndex> ClassDic::getWordsOfClass(ClassIndex c)
+std::vector<WordIndex> ClassDic::getWordsOfClass(ClassIndex c)
 {
  std::map<WordIndex,ClassIndex>::iterator wordToClassMapIter;
- Vector<WordIndex> wordVec;    
+ std::vector<WordIndex> wordVec;    
     
  for(wordToClassMapIter=wordToClassMap.begin();wordToClassMapIter!=wordToClassMap.end();++wordToClassMapIter)   
      if(wordToClassMapIter->second==c) wordVec.push_back(wordToClassMapIter->first);

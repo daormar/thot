@@ -27,8 +27,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "CatDefs.h"
 
-using namespace std;
-
 //--------------- Structs --------------------------------------------
 
 struct ThotDecoderState

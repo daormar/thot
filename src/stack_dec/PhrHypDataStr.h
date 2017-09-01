@@ -27,8 +27,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "PositionIndex.h"
 #include "SourceSegmentation.h"
-#include "myVector.h"
 #include <string>
+#include <vector>
 
 //--------------- Classes --------------------------------------------
 
@@ -37,11 +37,11 @@ class PhrHypDataStr
   public:
 
        // Partial translation
-   Vector<std::string> ntarget;
+   std::vector<std::string> ntarget;
 
        // Translation model info
    SourceSegmentation sourceSegmentation;
-   Vector<PositionIndex> targetSegmentCuts;
+   std::vector<PositionIndex> targetSegmentCuts;
 };
 
 #endif

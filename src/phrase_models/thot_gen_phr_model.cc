@@ -44,8 +44,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "options.h"
 #include "ctimer.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -75,15 +73,15 @@ void extendModelFromAlignments(PhraseExtractParameters phePars,
                                int verbose=0);
 void extendModelFromPairPlusAlig(PhraseExtractParameters phePars,
                                  _incrPhraseModel* _incrPhraseModelPtr,
-                                 Vector<std::string>& ns,
-                                 Vector<std::string>& t,
+                                 std::vector<std::string>& ns,
+                                 std::vector<std::string>& t,
                                  WordAligMatrix& waMatrix,
                                  float numReps,
                                  int verbose=0);
 void extendModelFromPairPlusAligBrf(PhraseExtractParameters phePars,
                                     _incrPhraseModel* _incrPhraseModelPtr,
-                                    Vector<std::string>& ns,
-                                    Vector<std::string>& t,
+                                    std::vector<std::string>& ns,
+                                    std::vector<std::string>& t,
                                     WordAligMatrix& waMatrix,
                                     float numReps,
                                     int verbose=0);
@@ -153,7 +151,7 @@ int genPhrModelBasedOnAligns(thot_gen_phr_model_pars pars,
   int ret=alignmentExtractor.open(pars.aligFileName.c_str(),GIZA_ALIG_FILE_FORMAT);
   if(ret==THOT_ERROR) 
   {
-    cerr<<"Error while reading alignment file."<<endl;
+    std::cerr<<"Error while reading alignment file."<<std::endl;
     return THOT_ERROR;
   }
       // Extend phrase model using the alignments provided by the
@@ -178,11 +176,11 @@ void extendModelFromAlignments(PhraseExtractParameters phePars,
   {
     ++numSent;
     if((numSent%10)==0 && BRF)
-      cerr<<"Processing sent. pair #"<<numSent<<"..."<<endl;
+      std::cerr<<"Processing sent. pair #"<<numSent<<"..."<<std::endl;
 
         // Obtain alignment information
-    Vector<string> t=alignmentExtractor.get_t();
-    Vector<string> ns=alignmentExtractor.get_ns();	
+    std::vector<string> t=alignmentExtractor.get_t();
+    std::vector<string> ns=alignmentExtractor.get_ns();	
     WordAligMatrix waMatrix=alignmentExtractor.get_wamatrix();
     float numReps=alignmentExtractor.get_numReps();
 
@@ -190,8 +188,8 @@ void extendModelFromAlignments(PhraseExtractParameters phePars,
     {
       if(verbose)
       {
-        cerr<<"* Processing sent. pair "<<numSent<<" (t length: "<< t.size()<<" , s length: "<< ns.size()-1<<" , numReps: "<<numReps<<")";
-        cerr<<endl;
+        std::cerr<<"* Processing sent. pair "<<numSent<<" (t length: "<< t.size()<<" , s length: "<< ns.size()-1<<" , numReps: "<<numReps<<")";
+        std::cerr<<std::endl;
       }
           // Extend model from individual alignment
       if(BRF)
@@ -200,25 +198,25 @@ void extendModelFromAlignments(PhraseExtractParameters phePars,
         extendModelFromPairPlusAlig(phePars,_incrPhraseModelPtr,ns,t,waMatrix,numReps,verbose);
     }
     else
-      cerr<< "  Warning: Max. sentence length exceeded for sentence pair "<<numSent<<endl;
+      std::cerr<< "  Warning: Max. sentence length exceeded for sentence pair "<<numSent<<std::endl;
   }
 }
 
 //---------------
 void extendModelFromPairPlusAlig(PhraseExtractParameters phePars,
                                  _incrPhraseModel* _incrPhraseModelPtr,
-                                 Vector<std::string>& ns,
-                                 Vector<std::string>& t,
+                                 std::vector<std::string>& ns,
+                                 std::vector<std::string>& t,
                                  WordAligMatrix& waMatrix,
                                  float numReps,
                                  int verbose/*=0*/)
 {
       // Extract phrase using BRF estimation
-  Vector<PhrasePair> vecUnfiltPhPair;
+  std::vector<PhrasePair> vecUnfiltPhPair;
   PhraseExtractUtils::extractPhrasesFromPairPlusAlig(phePars,ns,t,waMatrix,vecUnfiltPhPair,verbose);
 
       // Filter phrase pairs
-  Vector<PhrasePair> vecPhPair;
+  std::vector<PhrasePair> vecPhPair;
   PhraseExtractUtils::filterPhrasePairs(vecUnfiltPhPair,vecPhPair);
 
       // Store phrases in model
@@ -231,18 +229,18 @@ void extendModelFromPairPlusAlig(PhraseExtractParameters phePars,
 //---------------
 void extendModelFromPairPlusAligBrf(PhraseExtractParameters phePars,
                                     _incrPhraseModel* _incrPhraseModelPtr,
-                                    Vector<std::string>& ns,
-                                    Vector<std::string>& t,
+                                    std::vector<std::string>& ns,
+                                    std::vector<std::string>& t,
                                     WordAligMatrix& waMatrix,
                                     float numReps,
                                     int verbose/*=0*/)
 {
       // Extract phrase using BRF estimation
-  Vector<PhrasePair> vecUnfiltPhPair;
+  std::vector<PhrasePair> vecUnfiltPhPair;
   PhraseExtractUtils::extractPhrasesFromPairPlusAligBrf(phePars,ns,t,waMatrix,vecUnfiltPhPair,verbose);
 
       // Filter phrase pairs
-  Vector<PhrasePair> vecPhPair;
+  std::vector<PhrasePair> vecPhPair;
   PhraseExtractUtils::filterPhrasePairs(vecUnfiltPhPair,vecPhPair);
 
       // Store phrases in model
@@ -335,35 +333,35 @@ int takeParameters(int argc,
 //---------------
 void printDesc(void)
 {
-  cerr<<"thot_gen_phr_model written by Daniel Ortiz\n";
-  cerr<<"thot_gen_phr_model trains phrase-based models\n";
-  cerr<<"type \"thot_gen_phr_model --help\" to get usage information.\n";
+  std::cerr<<"thot_gen_phr_model written by Daniel Ortiz\n";
+  std::cerr<<"thot_gen_phr_model trains phrase-based models\n";
+  std::cerr<<"type \"thot_gen_phr_model --help\" to get usage information.\n";
 }
 
 //---------------
 void printUsage(void)
 {
- cerr<<"Usage: thot_gen_phr_model -g <string> [-m <int>] [-mon]\n";
- cerr<<"                          [-brf] -o <string> [-p]\n";
- cerr<<"                          [-v | -v1] [--help] [--version]\n\n";
- cerr<<"-g <string>               Name of the alignment file in GIZA format for\n";
- cerr<<"                          generating a phrase model.\n\n"; 
- cerr<<"-m <int>                  Set maximum target phrase length (target is the\n";
- cerr<<"                          target language of the GIZA alignment file).\n\n";
- cerr<<"-mon                      Generate monotone model.\n\n";
- cerr<<"-brf                      Obtain bisegmentation-based RF model (RF by\n";
- cerr<<"                          default).\n\n";
- cerr<<"-o <string>               Set output files prefix name.\n\n";
- cerr<<"-v | -v1                  Verbose mode | more verbosity\n\n";
- cerr<<"--help                    Display this help and exit\n\n";
- cerr<<"--version                 Output version information and exit\n\n";
+ std::cerr<<"Usage: thot_gen_phr_model -g <string> [-m <int>] [-mon]\n";
+ std::cerr<<"                          [-brf] -o <string> [-p]\n";
+ std::cerr<<"                          [-v | -v1] [--help] [--version]\n\n";
+ std::cerr<<"-g <string>               Name of the alignment file in GIZA format for\n";
+ std::cerr<<"                          generating a phrase model.\n\n"; 
+ std::cerr<<"-m <int>                  Set maximum target phrase length (target is the\n";
+ std::cerr<<"                          target language of the GIZA alignment file).\n\n";
+ std::cerr<<"-mon                      Generate monotone model.\n\n";
+ std::cerr<<"-brf                      Obtain bisegmentation-based RF model (RF by\n";
+ std::cerr<<"                          default).\n\n";
+ std::cerr<<"-o <string>               Set output files prefix name.\n\n";
+ std::cerr<<"-v | -v1                  Verbose mode | more verbosity\n\n";
+ std::cerr<<"--help                    Display this help and exit\n\n";
+ std::cerr<<"--version                 Output version information and exit\n\n";
  
 }
 
 //---------------
 void version(void)
 {
-  cerr<<"thot_gen_phr_model is part of the Thot toolkit\n";
-  cerr<<"Thot version "<<THOT_VERSION<<endl;
-  cerr<<"Thot is GNU software written by Daniel Ortiz\n";
+  std::cerr<<"thot_gen_phr_model is part of the Thot toolkit\n";
+  std::cerr<<"Thot version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"Thot is GNU software written by Daniel Ortiz\n";
 }

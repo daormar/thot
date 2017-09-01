@@ -28,9 +28,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class uiPairHashF
 {
  public:
-  size_t operator() (const pair<unsigned int,unsigned int> &pui)const
+  std::size_t operator() (const std::pair<unsigned int,unsigned int> &pui)const
     {
-      return (size_t) pui.first*pui.second;
+      return (std::size_t) pui.first*pui.second;
     }
 };
 #endif

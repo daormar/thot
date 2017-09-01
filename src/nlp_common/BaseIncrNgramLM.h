@@ -39,9 +39,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <BaseNgramLM.h>
 #include "LM_Defs.h"
 #include <math.h>
-#include "myVector.h"
 #include <string>
 #include <map>
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 
@@ -65,19 +65,19 @@ class BaseIncrNgramLM: public BaseNgramLM<LM_STATE>
   
       // Probability functions
   virtual LgProb getNgramLgProb(WordIndex w,
-                                const Vector<WordIndex>& vu)=0;
+                                const std::vector<WordIndex>& vu)=0;
       // returns the probability of an n-gram, uv[0] stores the n-1'th
       // word of the n-gram, uv[1] the n-2'th one and so on
-  virtual LgProb getNgramLgProbStr(string s,
-                                   const Vector<string>& rq)=0;
+  virtual LgProb getNgramLgProbStr(std::string s,
+                                   const std::vector<std::string>& rq)=0;
       // returns the probability of an n-gram. Each string represents a
       // single word
-  virtual LgProb getLgProbEnd(const Vector<WordIndex>& vu)=0;
-  virtual LgProb getLgProbEndStr(const Vector<string>& rq)=0;
+  virtual LgProb getLgProbEnd(const std::vector<WordIndex>& vu)=0;
+  virtual LgProb getLgProbEndStr(const std::vector<std::string>& rq)=0;
   virtual Prob getZeroGramProb(void);
 
       // Probability functions using states
-  virtual bool getStateForWordSeq(const Vector<WordIndex>& wordSeq,
+  virtual bool getStateForWordSeq(const std::vector<WordIndex>& wordSeq,
                                   LM_STATE& state)=0;
   virtual void getStateForBeginOfSentence(LM_STATE &state)=0;
   virtual LgProb getNgramLgProbGivenState(WordIndex w,
@@ -89,11 +89,11 @@ class BaseIncrNgramLM: public BaseNgramLM<LM_STATE>
       // function is executed
    
       // Encoding-related functions
-  virtual bool existSymbol(string s)const=0;
-  virtual WordIndex addSymbol(string s)=0;
+  virtual bool existSymbol(std::string s)const=0;
+  virtual WordIndex addSymbol(std::string s)=0;
   virtual unsigned int getVocabSize(void)=0;
-  virtual WordIndex stringToWordIndex(string s)const=0;
-  virtual string wordIndexToString(WordIndex w)const=0;
+  virtual WordIndex stringToWordIndex(std::string s)const=0;
+  virtual std::string wordIndexToString(WordIndex w)const=0;
   virtual WordIndex getBosId(bool &found)const=0;
   virtual WordIndex getEosId(bool &found)const=0;
   virtual bool loadVocab(const char *fileName)=0;
@@ -104,30 +104,30 @@ class BaseIncrNgramLM: public BaseNgramLM<LM_STATE>
       // Clears encoding information
 
       // Functions to access model counts
-  virtual Count cHist(const Vector<WordIndex>& vu)=0;
+  virtual Count cHist(const std::vector<WordIndex>& vu)=0;
   virtual Count cNgram(const WordIndex& w,
-                       const Vector<WordIndex>& vu)=0;
-  virtual Count cHistStr(const Vector<std::string>& rq)=0;
+                       const std::vector<WordIndex>& vu)=0;
+  virtual Count cHistStr(const std::vector<std::string>& rq)=0;
   virtual Count cNgramStr(const std::string& s,
-                          const Vector<std::string>& rq)=0;
+                          const std::vector<std::string>& rq)=0;
   
       // Functions to extend the model
-  virtual int trainSentence(Vector<std::string> strVec,
+  virtual int trainSentence(std::vector<std::string> strVec,
                             Count c=1,
                             Count lowerBound=0,
                             int verbose=0);
 
-  virtual int trainSentenceVec(Vector<Vector<std::string> > vecOfStrVec,
+  virtual int trainSentenceVec(std::vector<std::vector<std::string> > vecOfStrVec,
                                Count c=1,
                                Count lowerBound=0,
                                int verbose=0);
 
       // Functions to incrementally extend the model
   virtual void incrCountsOfNgramStr(const std::string& s,
-                                    const Vector<std::string>& rq,
+                                    const std::vector<std::string>& rq,
                                     Count c)=0;
   virtual void incrCountsOfNgram(const WordIndex& w,
-                                 const Vector<WordIndex>& vu,
+                                 const std::vector<WordIndex>& vu,
                                  Count c)=0;
 
       // Functions to load and print the model
@@ -145,15 +145,15 @@ class BaseIncrNgramLM: public BaseNgramLM<LM_STATE>
    
  protected:
 
-  typedef std::map<pair<std::string,Vector<std::string> >,Count> NgramCountMap;
+  typedef std::map<std::pair<std::string,std::vector<std::string> >,Count> NgramCountMap;
 
-  void collectNgramCounts(Vector<std::string> strVec,
+  void collectNgramCounts(std::vector<std::string> strVec,
                           NgramCountMap& ngramCountMap);
   void accumNgramCounts(NgramCountMap& ngramCountMap,
                         std::string word,
-                        Vector<std::string>& hist);
+                        std::vector<std::string>& hist);
   virtual void updateNgramInfo(std::string word,
-                               Vector<std::string> hist,
+                               std::vector<std::string> hist,
                                Count extractedCount,
                                Count c,
                                Count lowerBound);
@@ -178,7 +178,7 @@ Prob BaseIncrNgramLM<LM_STATE>::getZeroGramProb(void)
 
 //---------------
 template<class LM_STATE>
-int BaseIncrNgramLM<LM_STATE>::trainSentence(Vector<std::string> strVec,
+int BaseIncrNgramLM<LM_STATE>::trainSentence(std::vector<std::string> strVec,
                                              Count c/*=1*/,
                                              Count lowerBound/*=0*/,
                                              int verbose)
@@ -197,15 +197,15 @@ int BaseIncrNgramLM<LM_STATE>::trainSentence(Vector<std::string> strVec,
     {
           // Extract n-gram information
       std::string word=ngramCountMapIter->first.first;
-      Vector<std::string> hist=ngramCountMapIter->first.second;
+      std::vector<std::string> hist=ngramCountMapIter->first.second;
       Count ngc=ngramCountMapIter->second;
 
           // Print current counts
       if(verbose)
       {
         for(unsigned int k=0;k<hist.size();++k)
-          cerr<<hist[k]<<" ";
-        cerr<<word<<" "<<cNgramStr(word,hist)<<endl;
+          std::cerr<<hist[k]<<" ";
+        std::cerr<<word<<" "<<cNgramStr(word,hist)<<std::endl;
       }
 
           // Update ngram info
@@ -216,12 +216,12 @@ int BaseIncrNgramLM<LM_STATE>::trainSentence(Vector<std::string> strVec,
 }
 //---------------
 template<class LM_STATE>
-void BaseIncrNgramLM<LM_STATE>::collectNgramCounts(Vector<std::string> strVec,
+void BaseIncrNgramLM<LM_STATE>::collectNgramCounts(std::vector<std::string> strVec,
                                                    NgramCountMap& ngramCountMap)
 {
   unsigned int ngram_order=getNgramOrder();
   bool bos_added;
-  Vector<std::string> hist;
+  std::vector<std::string> hist;
 
       // Add begin of sentence symbol
   accumNgramCounts(ngramCountMap,BOS_STR,hist);
@@ -283,23 +283,23 @@ void BaseIncrNgramLM<LM_STATE>::collectNgramCounts(Vector<std::string> strVec,
 template<class LM_STATE>
 void BaseIncrNgramLM<LM_STATE>::accumNgramCounts(NgramCountMap& ngramCountMap,
                                                  std::string word,
-                                                 Vector<std::string>& hist)
+                                                 std::vector<std::string>& hist)
 {
-  NgramCountMap::iterator ngramCountMapIter=ngramCountMap.find(make_pair(word,hist));
+  NgramCountMap::iterator ngramCountMapIter=ngramCountMap.find(std::make_pair(word,hist));
   if(ngramCountMapIter!=ngramCountMap.end())
   {
     ngramCountMapIter->second=ngramCountMapIter->second+(Count)1;
   }
   else
   {
-    ngramCountMap[make_pair(word,hist)]=1;
+    ngramCountMap[std::make_pair(word,hist)]=1;
   }
 }
 
 //---------------
 template<class LM_STATE>
 void BaseIncrNgramLM<LM_STATE>::updateNgramInfo(std::string word,
-                                                Vector<std::string> hist,
+                                                std::vector<std::string> hist,
                                                 Count extractedCount,
                                                 Count c,
                                                 Count lowerBound)
@@ -310,7 +310,7 @@ void BaseIncrNgramLM<LM_STATE>::updateNgramInfo(std::string word,
 
 //---------------
 template<class LM_STATE>
-int BaseIncrNgramLM<LM_STATE>::trainSentenceVec(Vector<Vector<std::string> > vecOfStrVec,
+int BaseIncrNgramLM<LM_STATE>::trainSentenceVec(std::vector<std::vector<std::string> > vecOfStrVec,
                                                 Count c/*=1*/,
                                                 Count lowerBound/*=0*/,
                                                 int verbose)

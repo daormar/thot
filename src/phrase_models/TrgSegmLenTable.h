@@ -46,8 +46,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "Prob.h"
 #include <MathFuncs.h>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define TRGSEGMLEN_UNIFORM       1

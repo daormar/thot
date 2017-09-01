@@ -92,7 +92,7 @@ class LevelDbPhraseTableTest: public CppUnit::TestFixture
   LevelDbPhraseTable *tab;
   string dbName = "/tmp/thot_leveldb_unit_test";
   
-  Vector<WordIndex> getVector(string phrase);
+  std::vector<WordIndex> getVector(string phrase);
 
  public:
   void setUp();

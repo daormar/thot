@@ -26,9 +26,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class uiHashF
 {
  public:
-  size_t operator() (const unsigned int &ui)const
+  std::size_t operator() (const unsigned int &ui)const
     {
-      return (size_t) ui;
+      return (std::size_t) ui;
     }
 };
 #endif

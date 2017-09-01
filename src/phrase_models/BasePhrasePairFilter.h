@@ -40,7 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "ErrorDefs.h"
 #include <string>
-#include "myVector.h"
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 
@@ -61,8 +61,8 @@ class BasePhrasePairFilter
     typedef BasePhrasePairFilter* create_t(std::string);
     typedef std::string type_id_t(void);
 
-    virtual bool phrasePairIsOk(Vector<std::string> s_,
-                                Vector<std::string> t_)=0;
+    virtual bool phrasePairIsOk(std::vector<std::string> s_,
+                                std::vector<std::string> t_)=0;
 	
     virtual ~BasePhrasePairFilter(){};
 };

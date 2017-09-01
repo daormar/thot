@@ -21,8 +21,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "WordAligMatrix.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 //--------------- typedefs -------------------------------------------
@@ -31,7 +29,7 @@ using namespace std;
 
 struct AligInfo
 {
- Vector<unsigned int> s;
+ std::vector<unsigned int> s;
  WordAligMatrix wordAligMatrix;
  unsigned int count_s_t_;	
 };

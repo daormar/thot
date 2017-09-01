@@ -32,9 +32,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "PhraseDefs.h"
-#include "myVector.h"
 #include <string.h>
 #include <string>
+#include <vector>
 #include <fstream>
 #include <iostream>
 #include "awkInputStream.h"
@@ -64,7 +64,7 @@ class AlignmentExtractor;
 
 //--------------- function declarations----------------------------------
 
-ostream& operator << (ostream &outS,AlignmentExtractor &ae);
+std::ostream& operator << (std::ostream &outS,AlignmentExtractor &ae);
 
 //--------------- AlignmentExtractor class: class for extracting
 //                sentence pair alignments from a GIZA xxx.A3.final file
@@ -88,9 +88,9 @@ class AlignmentExtractor
 	bool getNextAlignment(void);
 
         // Functions to access alignment information
-    Vector<string> get_ns(void);
-    Vector<string> get_s(void);
-    Vector<string> get_t(void);
+    std::vector<string> get_ns(void);
+    std::vector<string> get_s(void);
+    std::vector<string> get_t(void);
     WordAligMatrix get_wamatrix(void);
     float get_numReps(void);
 
@@ -130,8 +130,8 @@ class AlignmentExtractor
 	~AlignmentExtractor();
 	
  private:
-    Vector<string> ns;
-    Vector<string> t;
+    std::vector<string> ns;
+    std::vector<string> t;
     WordAligMatrix wordAligMatrix;	
     float numReps;
     unsigned int fileFormat;

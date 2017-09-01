@@ -51,8 +51,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <iomanip>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 struct thot_scorer_pars
@@ -72,7 +70,7 @@ int takeParameters(int argc,
 int checkParameters(thot_scorer_pars& pars);
 
 int obtain_references(const thot_scorer_pars& pars,
-                      Vector<std::string>& referenceVec);
+                      std::vector<std::string>& referenceVec);
 int calc_score(const thot_scorer_pars& pars);
 void printUsage(void);
 void version(void);
@@ -103,7 +101,7 @@ int main(int argc,char *argv[])
     baseScorerPtr=dynClassFactoryHandler.baseScorerDynClassLoader.make_obj(dynClassFactoryHandler.baseScorerInitPars);
     if(baseScorerPtr==NULL)
     {
-      cerr<<"Error: BaseScorer pointer could not be instantiated"<<endl;
+      std::cerr<<"Error: BaseScorer pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
 
@@ -173,13 +171,13 @@ int checkParameters(thot_scorer_pars& pars)
 {  
   if(pars.fileWithReferences.empty())
   {
-    cerr<<"Error: parameter -r not given!"<<endl;
+    std::cerr<<"Error: parameter -r not given!"<<std::endl;
     return THOT_ERROR;   
   }
 
   if(pars.fileWithSysSents.empty())
   {
-    cerr<<"Error: parameter -t not given!"<<endl;
+    std::cerr<<"Error: parameter -t not given!"<<std::endl;
     return THOT_ERROR;   
   }
 
@@ -188,7 +186,7 @@ int checkParameters(thot_scorer_pars& pars)
 
 //--------------------------------
 int obtain_references(const thot_scorer_pars& pars,
-                      Vector<std::string>& referenceVec)
+                      std::vector<std::string>& referenceVec)
 {
       // Clear output variable
   referenceVec.clear();
@@ -198,7 +196,7 @@ int obtain_references(const thot_scorer_pars& pars,
 
   if(awk.open(pars.fileWithReferences.c_str())==THOT_ERROR)
   {
-    cerr<<"Error while opening file "<<pars.fileWithReferences<<endl;
+    std::cerr<<"Error while opening file "<<pars.fileWithReferences<<std::endl;
     return THOT_ERROR;
   }  
   
@@ -212,7 +210,7 @@ int obtain_references(const thot_scorer_pars& pars,
 
 //--------------------------------
 int obtain_sys_sentences(const thot_scorer_pars& pars,
-                         Vector<std::string>& sysSentVec)
+                         std::vector<std::string>& sysSentVec)
 {
       // Clear output variable
   sysSentVec.clear();
@@ -222,7 +220,7 @@ int obtain_sys_sentences(const thot_scorer_pars& pars,
 
   if(awk.open(pars.fileWithSysSents.c_str())==THOT_ERROR)
   {
-    cerr<<"Error while opening file "<<pars.fileWithSysSents<<endl;
+    std::cerr<<"Error while opening file "<<pars.fileWithSysSents<<std::endl;
     return THOT_ERROR;
   }
   
@@ -238,8 +236,8 @@ int obtain_sys_sentences(const thot_scorer_pars& pars,
 int calc_score(const thot_scorer_pars& pars)
 {
   int retVal;
-  Vector<std::string> referenceVec;
-  Vector<std::string> sysSentVec;
+  std::vector<std::string> referenceVec;
+  std::vector<std::string> sysSentVec;
   
       // Obtain references
   retVal=obtain_references(pars,referenceVec);
@@ -258,7 +256,7 @@ int calc_score(const thot_scorer_pars& pars)
                              score);
   
       // Print result
-  cout<<"Score= "<<score<<endl;
+  cout<<"Score= "<<score<<std::endl;
   
   return THOT_OK;
 }
@@ -266,19 +264,19 @@ int calc_score(const thot_scorer_pars& pars)
 //--------------------------------
 void printUsage(void)
 {
-  cerr<<"thot_scorer              -r <string> -t <string>"<<endl;
-  cerr<<"                         [--help] [--version]"<<endl;
-  cerr<<endl;
-  cerr<<"-r <string>              File with reference sentences."<<endl;
-  cerr<<"-t <string>              File with system sentences."<<endl;
-  cerr<<"--help                   Display this help and exit."<<endl;
-  cerr<<"--version                Output version information and exit."<<endl;
+  std::cerr<<"thot_scorer              -r <string> -t <string>"<<std::endl;
+  std::cerr<<"                         [--help] [--version]"<<std::endl;
+  std::cerr<<std::endl;
+  std::cerr<<"-r <string>              File with reference sentences."<<std::endl;
+  std::cerr<<"-t <string>              File with system sentences."<<std::endl;
+  std::cerr<<"--help                   Display this help and exit."<<std::endl;
+  std::cerr<<"--version                Output version information and exit."<<std::endl;
 }
 
 //--------------------------------
 void version(void)
 {
-  cerr<<"thot_scorer is part of the thot package"<<endl;
-  cerr<<"thot version "<<THOT_VERSION<<endl;
-  cerr<<"thot is GNU software written by Daniel Ortiz"<<endl;
+  std::cerr<<"thot_scorer is part of the thot package"<<std::endl;
+  std::cerr<<"thot version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
 }

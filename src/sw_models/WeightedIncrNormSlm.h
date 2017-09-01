@@ -75,8 +75,8 @@ class WeightedIncrNormSlm: public _sentLengthModel
   LgProb sumSentLenLgProb(unsigned int slen,unsigned int tlen);
 
       // Functions to train the sentence length model 
-  void trainSentPair(Vector<std::string> srcSentVec,
-                     Vector<std::string> trgSentVec,
+  void trainSentPair(std::vector<std::string> srcSentVec,
+                     std::vector<std::string> trgSentVec,
                      Count c=1);
 
       // clear function
@@ -87,13 +87,13 @@ class WeightedIncrNormSlm: public _sentLengthModel
   unsigned int numSents;
   unsigned int slenSum;
   unsigned int tlenSum;
-  Vector<unsigned int> kVec;
-  Vector<float> swkVec;
-  Vector<float> mkVec;
-  Vector<float> skVec;
+  std::vector<unsigned int> kVec;
+  std::vector<float> swkVec;
+  std::vector<float> mkVec;
+  std::vector<float> skVec;
 
       // Auxiliary functions
-  ostream& print(ostream &outS);
+  std::ostream& print(std::ostream &outS);
   LgProb sentLenLgProbNorm(unsigned int slen,
                            unsigned int tlen);
   Prob sumSentLenProbNorm(unsigned int slen,

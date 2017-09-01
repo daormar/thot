@@ -22,7 +22,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 int calculate_chrf_file_name(const char* ref,
                              const char* sys,
                              double& chrf,
-                             Vector<double>& chrf_n,
+                             std::vector<double>& chrf_n,
                              int verbosity)
 {
     FILE *refFile;
@@ -32,14 +32,14 @@ int calculate_chrf_file_name(const char* ref,
     refFile=fopen(ref,"r");
     if(refFile==NULL)
     {
-        cerr<<"Error while opening file with references: "<<ref<<endl;
+        std::cerr<<"Error while opening file with references: "<<ref<<std::endl;
         return THOT_ERROR;
     }
 
     sysFile=fopen(sys,"r");
     if(sysFile==NULL)
     {
-        cerr<<"Error while opening file with translations: "<<sys<<endl;
+        std::cerr<<"Error while opening file with translations: "<<sys<<std::endl;
         return THOT_ERROR;
     }
 
@@ -55,7 +55,7 @@ int calculate_chrf_file_name(const char* ref,
 int calculate_chrf_file(FILE *reff,
                         FILE *sysf,
                         double& chrf,
-                        Vector<double>& chrf_n,
+                        std::vector<double>& chrf_n,
                         int verbosity)
 {
     awkInputStream refStream;
@@ -70,12 +70,12 @@ int calculate_chrf_file(FILE *reff,
     // Open files
     if(refStream.open_stream(reff)==THOT_ERROR)
     {
-        cerr<<"Invalid file pointer to file with references."<<endl;
+        std::cerr<<"Invalid file pointer to file with references."<<std::endl;
         return THOT_ERROR;
     }
     if(sysStream.open_stream(sysf)==THOT_ERROR)
     {
-        cerr<<"Invalid file pointer to file with system translations."<<endl;
+        std::cerr<<"Invalid file pointer to file with system translations."<<std::endl;
         return THOT_ERROR;
     }
 
@@ -84,41 +84,41 @@ int calculate_chrf_file(FILE *reff,
         bool ok=sysStream.getln();
         if(!ok)
         {
-            cerr<<"Unexpected end of system file."<<endl;
+            std::cerr<<"Unexpected end of system file."<<std::endl;
             return THOT_ERROR;
         }
 
         ++numSents;
-        if(verbosity) cerr<<numSents<<endl;
+        if(verbosity) std::cerr<<numSents<<std::endl;
 
         std::string refSentence=refStream.dollar(0);
-        if(verbosity) cerr<<refSentence<<" ";
+        if(verbosity) std::cerr<<refSentence<<" ";
 
         std::string sysSentence=sysStream.dollar(0);
-        if(verbosity) cerr<<sysSentence<<" ";
+        if(verbosity) std::cerr<<sysSentence<<" ";
 
         refChars+=refSentence.size();
         sysChars+=sysSentence.size();
 
-        if(verbosity) cerr<<endl;
+        if(verbosity) std::cerr<<std::endl;
 
         double chrf_i;
         calculate_chrf(refSentence, sysSentence, chrf_i);
         chrf_n.push_back(chrf_i);
         chrf+=chrf_i;
 
-        if(verbosity) cerr<<"chrf: " << chrf_i;
-        if(verbosity) cerr<<endl<<endl;
+        if(verbosity) std::cerr<<"chrf: " << chrf_i;
+        if(verbosity) std::cerr<<std::endl<<std::endl;
     }
 
     chrf /= numSents;
 
     if(verbosity)
     {
-        cerr<<"#Sentences: "<<numSents<<endl;
-        cerr<<"ref. chars: "<<refChars<<endl;
-        cerr<<"sys. chars: "<<sysChars<<endl;
-        cerr<<"chrf: "<<chrf<<endl;
+        std::cerr<<"#Sentences: "<<numSents<<std::endl;
+        std::cerr<<"ref. chars: "<<refChars<<std::endl;
+        std::cerr<<"sys. chars: "<<sysChars<<std::endl;
+        std::cerr<<"chrf: "<<chrf<<std::endl;
     }
 
     return THOT_OK;
@@ -184,7 +184,7 @@ void count_ngrams(const std::string& refSentence,
     unsigned int countref=0;
     unsigned int systotal;
     unsigned int reftotal;
-    Vector<bool> matched;
+    std::vector<bool> matched;
 
 
     if(ngramLength>sysSentence.size()) systotal=0;

@@ -70,8 +70,8 @@ bool anjm1ip_anjiMatrix::init_nth_entry(unsigned int n,
       anjm1ip_anji[mapped_n].clear();
 
           // Initialize data structure for entry
-      Vector<float> floatVec(nslen+1,INVALID_ANJM1IP_ANJI_VAL);
-      Vector<Vector<float> > floatVecVec(nslen+1,floatVec);
+      std::vector<float> floatVec(nslen+1,INVALID_ANJM1IP_ANJI_VAL);
+      std::vector<std::vector<float> > floatVecVec(nslen+1,floatVec);
       anjm1ip_anji[mapped_n].resize(tlen+1,floatVecVec);
     }  
 
@@ -179,21 +179,21 @@ void anjm1ip_anjiMatrix::set(unsigned int n,
         // Grow in the dimension of np if necessary
     while(anjm1ip_anji.size()<=np)
     {
-      Vector<Vector<Vector<float> > > ajiip;
+      std::vector<std::vector<std::vector<float> > > ajiip;
       anjm1ip_anji.push_back(ajiip);
     }
 
         // Grow in the dimension of j if necessary
     while(anjm1ip_anji[np].size()<=j)
     {
-      Vector<Vector<float> > aiip;
+      std::vector<std::vector<float> > aiip;
       anjm1ip_anji[np].push_back(aiip);
     }
 
         // Grow in the dimension of i if necessary
     while(anjm1ip_anji[np][j].size()<=i)
     {
-      Vector<float> aip;
+      std::vector<float> aip;
       anjm1ip_anji[np][j].push_back(aip);
     }
 
@@ -423,7 +423,7 @@ bool anjm1ip_anjiMatrix::load(const char* prefFileName)
   retVal=load_maxnsize_data(maxnsizeDataFile.c_str());
   if(retVal==THOT_ERROR)
   {
-    cerr<<"Maximum size for matrix is set to "<<UNRESTRICTED_ANJM1IP_ANJI_SIZE<<" (unrestricted size)."<<endl;
+    std::cerr<<"Maximum size for matrix is set to "<<UNRESTRICTED_ANJM1IP_ANJI_SIZE<<" (unrestricted size)."<<std::endl;
     anjm1ip_anji_maxnsize=UNRESTRICTED_ANJM1IP_ANJI_SIZE;
   }
   return THOT_OK;
@@ -432,12 +432,12 @@ bool anjm1ip_anjiMatrix::load(const char* prefFileName)
 //-------------------------
 bool anjm1ip_anjiMatrix::load_matrix_values(const char* matrixFile)
 {
-  cerr<<"Loading file with anjm1ip_anji values from "<<matrixFile<<endl;
+  std::cerr<<"Loading file with anjm1ip_anji values from "<<matrixFile<<std::endl;
       // Try to open file  
   ifstream inF(matrixFile, ios::in | ios::binary);
   if (!inF)
   {
-    cerr<<"File with anjm1ip_anji values "<<matrixFile<<" does not exist.\n";
+    std::cerr<<"File with anjm1ip_anji values "<<matrixFile<<" does not exist.\n";
     return THOT_ERROR;    
   }
   else
@@ -473,13 +473,13 @@ bool anjm1ip_anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
       // Try to open file  
   if(awk.open(maxnsizeDataFile)==THOT_ERROR)
   {
-    cerr<<"Error in file with anji maximum size data, file "<<maxnsizeDataFile<<" does not exist.\n";
+    std::cerr<<"Error in file with anji maximum size data, file "<<maxnsizeDataFile<<" does not exist.\n";
     return THOT_ERROR;
   }  
   else
   {
         // Read values
-    cerr<<"Reading matrix maximum size data from file: "<<maxnsizeDataFile<<endl;
+    std::cerr<<"Reading matrix maximum size data from file: "<<maxnsizeDataFile<<std::endl;
     awk.getln();
     anjm1ip_anji_maxnsize=atoi(awk.dollar(1).c_str());
     awk.getln();
@@ -527,7 +527,7 @@ bool anjm1ip_anjiMatrix::print_matrix_values(const char* matrixFile)
   outF.open(matrixFile,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing anji file."<<endl;
+    std::cerr<<"Error while printing anji file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -561,20 +561,20 @@ bool anjm1ip_anjiMatrix::print_maxnsize_data(const char* maxnsizeDataFile)
   outF.open(maxnsizeDataFile,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing file with anji maximum size data."<<endl;
+    std::cerr<<"Error while printing file with anji maximum size data."<<std::endl;
     return THOT_ERROR;
   }
   else
   {
         // Print maximum size for anji
-    outF<<anjm1ip_anji_maxnsize<<endl;
-    outF<<anjm1ip_anji_pointer<<endl;
+    outF<<anjm1ip_anji_maxnsize<<std::endl;
+    outF<<anjm1ip_anji_pointer<<std::endl;
     
         // Print np to n vector
     for(unsigned int np=0;np<np_to_n_vector.size();++np)
     {
       if(np_to_n_vector[np].first)
-        outF<<np<<" "<<np_to_n_vector[np].second<<endl;
+        outF<<np<<" "<<np_to_n_vector[np].second<<std::endl;
     }
     return THOT_OK;
   }  

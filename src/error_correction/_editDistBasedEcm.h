@@ -65,10 +65,10 @@ class _editDistBasedEcm: public BaseErrorCorrectionModel
  protected:
 
   void correctStrGivenPrefOps(WordAndCharLevelOps wordCharOpsForSegm,
-                              Vector<std::string> uncorrStrVec,
-                              Vector<std::string> prefStrVec,
-                              Vector<std::string>& correctedStrVec);
-  void correctWordGivenPrefOps(Vector<unsigned int> charOpsForWord,
+                              std::vector<std::string> uncorrStrVec,
+                              std::vector<std::string> prefStrVec,
+                              std::vector<std::string>& correctedStrVec);
+  void correctWordGivenPrefOps(std::vector<unsigned int> charOpsForWord,
                                std::string word,
                                std::string pref,
                                std::string& correctedWord);

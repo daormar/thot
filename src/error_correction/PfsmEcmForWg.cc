@@ -33,9 +33,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //
 
 //---------------------------------------
-void PfsmEcmForWg::correctStrGivenPrefWg(Vector<std::string> uncorrStrVec,
-                                         Vector<std::string> prefStrVec,
-                                         Vector<std::string>& correctedStrVec)
+void PfsmEcmForWg::correctStrGivenPrefWg(std::vector<std::string> uncorrStrVec,
+                                         std::vector<std::string> prefStrVec,
+                                         std::vector<std::string>& correctedStrVec)
 {
   WordAndCharLevelOps wcOps;
   
@@ -49,8 +49,8 @@ PfsmEcmForWg::constructInitEsi(void)
 {
   EcmScoreInfo esi;
 
-  Vector<std::string> xVec;
-  Vector<std::string> yVec;
+  std::vector<std::string> xVec;
+  std::vector<std::string> yVec;
 
   Score scr=editDistForVecStr.calculateEditDist(xVec,yVec);
   esi.scrVec.push_back(scr);
@@ -65,9 +65,9 @@ PfsmEcmForWg::constructEsi(const EcmScoreInfo& prevEsi,
 {
   EcmScoreInfo esi;
 
-  Vector<std::string> xVec;
+  std::vector<std::string> xVec;
   xVec.push_back(word);
-  Vector<std::string> yVec;
+  std::vector<std::string> yVec;
 
       // Create score vector
   Score scr=editDistForVecStr.calculateEditDist(xVec,yVec);
@@ -80,7 +80,7 @@ PfsmEcmForWg::constructEsi(const EcmScoreInfo& prevEsi,
 }
 
 //---------------------------------------
-void PfsmEcmForWg::extendInitialEsi(const Vector<std::string>& prefixDiffVec,
+void PfsmEcmForWg::extendInitialEsi(const std::vector<std::string>& prefixDiffVec,
                                     const EcmScoreInfo& prevInitEsi,
                                     EcmScoreInfo& newInitEsi)
 {
@@ -91,13 +91,13 @@ void PfsmEcmForWg::extendInitialEsi(const Vector<std::string>& prefixDiffVec,
 }
   
 //---------------------------------------
-void PfsmEcmForWg::extendEsi(const Vector<std::string>& prefixDiffVec,
+void PfsmEcmForWg::extendEsi(const std::vector<std::string>& prefixDiffVec,
                              const EcmScoreInfo& prevEsi,
                              const std::string& word,
                              EcmScoreInfo& newEsi)
 {
       // Extend score vector
-  Vector<int> opIdVec;
+  std::vector<int> opIdVec;
   editDistForVecStr.incrEditDistPrefix(word,
                                        prefixDiffVec,
                                        prevEsi.scrVec,
@@ -110,9 +110,9 @@ void PfsmEcmForWg::extendEsi(const Vector<std::string>& prefixDiffVec,
 }
 
 //---------------------------------------
-Vector<Score> PfsmEcmForWg::obtainScrVecFromEsi(const EcmScoreInfo& esi)
+std::vector<Score> PfsmEcmForWg::obtainScrVecFromEsi(const EcmScoreInfo& esi)
 {
-  Vector<Score> scrVec;
+  std::vector<Score> scrVec;
 
   for(unsigned int i=0;i<esi.scrVec.size();++i)
     scrVec.push_back(-esi.scrVec[i]);
@@ -121,10 +121,10 @@ Vector<Score> PfsmEcmForWg::obtainScrVecFromEsi(const EcmScoreInfo& esi)
 }
 
 //---------------------------------------
-Vector<int> PfsmEcmForWg::obtainLastInsPrefWordVecFromEsi(const EcmScoreInfo& esi)
+std::vector<int> PfsmEcmForWg::obtainLastInsPrefWordVecFromEsi(const EcmScoreInfo& esi)
 {
       // Extract info from esi
-  Vector<int> lastInsPrefWordVec(esi.opIdVec.size(),0);
+  std::vector<int> lastInsPrefWordVec(esi.opIdVec.size(),0);
   int j_aux;
   for(int j=esi.opIdVec.size()-1;j>=0;--j)
   {
@@ -152,7 +152,7 @@ Vector<int> PfsmEcmForWg::obtainLastInsPrefWordVecFromEsi(const EcmScoreInfo& es
 
 //---------------------------------------
 void PfsmEcmForWg::updateEsiPositions(const EcmScoreInfo& esi1,
-                                      const Vector<unsigned int>& posVec,
+                                      const std::vector<unsigned int>& posVec,
                                       EcmScoreInfo& esi2)
 {
       // Update score vector

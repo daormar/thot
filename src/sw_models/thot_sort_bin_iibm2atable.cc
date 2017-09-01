@@ -40,8 +40,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SwDefs.h"
 #include "aSource.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -98,7 +96,7 @@ int main(int argc,char *argv[])
     ifstream inF (iibm2atableFileName.c_str(), ios::in | ios::binary);
     if (!inF)
     {
-      cerr<<"Error in file with incremental ibm2 alignment table, file "<<iibm2atableFileName<<" does not exist.\n";
+      std::cerr<<"Error in file with incremental ibm2 alignment table, file "<<iibm2atableFileName<<" does not exist.\n";
       return THOT_ERROR;    
     }
     else

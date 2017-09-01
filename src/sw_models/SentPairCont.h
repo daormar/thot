@@ -25,18 +25,16 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "myVector.h"
 #include "WordIndex.h"
 #include <string>
-
-using namespace std;
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 
 //--------------- typedefs -------------------------------------------
 
-typedef Vector<WordIndex> Sentence;
-typedef Vector<pair<Sentence,Sentence> > SentPairCont;
+typedef std::vector<WordIndex> Sentence;
+typedef std::vector<pair<Sentence,Sentence> > SentPairCont;
 
 //---------------
 

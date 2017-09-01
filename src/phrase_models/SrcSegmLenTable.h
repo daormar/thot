@@ -45,8 +45,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "awkInputStream.h"
 #include "Prob.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define SRCSEGMLEN_UNIFORM       1

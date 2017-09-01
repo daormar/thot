@@ -86,19 +86,19 @@ class PbTransModel: public _pbTransModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >
 
       // Misc. operations with hypothesis
   Score nullHypothesisScrComps(Hypothesis& nullHyp,
-                               Vector<Score>& scoreComponents);
+                               std::vector<Score>& scoreComponents);
   unsigned int numberOfUncoveredSrcWordsHypData(const HypDataType& hypd)const;
 
       // Scoring functions
   Score incrScore(const Hypothesis& pred_hyp,
                   const HypDataType& new_hypd,
                   Hypothesis& new_hyp,
-                  Vector<Score>& scoreComponents);
+                  std::vector<Score>& scoreComponents);
 
       // Specific phrase-based functions
   void extendHypDataIdx(PositionIndex srcLeft,
                         PositionIndex srcRight,
-                        const Vector<WordIndex>& trgPhraseIdx,
+                        const std::vector<WordIndex>& trgPhraseIdx,
                         HypDataType& hypd);
 
       // Functions for translating with references or prefixes
@@ -132,7 +132,7 @@ BaseSmtModel<PhraseBasedTmHypRec<EQCLASS_FUNC> >* PbTransModel<EQCLASS_FUNC>::cl
 //---------------------------------
 template<class EQCLASS_FUNC>
 Score PbTransModel<EQCLASS_FUNC>::nullHypothesisScrComps(Hypothesis& nullHyp,
-                                                         Vector<Score>& scoreComponents)
+                                                         std::vector<Score>& scoreComponents)
 {
       // Initialize variables
   HypScoreInfo hypScoreInfo;
@@ -190,7 +190,7 @@ bool PbTransModel<EQCLASS_FUNC>::obtainPredecessorHypData(HypDataType& hypd)
 
     if(predData.targetSegmentCuts.size()==0)
     {
-      cerr<<"Warning: hypothesis data corrupted"<<endl;
+      std::cerr<<"Warning: hypothesis data corrupted"<<std::endl;
       return false;
     }
 
@@ -244,7 +244,7 @@ template<class EQCLASS_FUNC>
 Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
                                             const HypDataType& new_hypd,
                                             Hypothesis& new_hyp,
-                                            Vector<Score>& scoreComponents)
+                                            std::vector<Score>& scoreComponents)
 {
       // Initialize variables
   HypScoreInfo hypScoreInfo=pred_hyp.getScoreInfo();
@@ -284,7 +284,7 @@ unsigned int PbTransModel<EQCLASS_FUNC>::numberOfUncoveredSrcWordsHypData(const 
 template<class EQCLASS_FUNC>
 void PbTransModel<EQCLASS_FUNC>::extendHypDataIdx(PositionIndex srcLeft,
                                                   PositionIndex srcRight,
-                                                  const Vector<WordIndex>& trgPhraseIdx,
+                                                  const std::vector<WordIndex>& trgPhraseIdx,
                                                   HypDataType& hypd)
 {
   pair<PositionIndex,PositionIndex> sourceSegm;

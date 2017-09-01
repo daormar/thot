@@ -31,7 +31,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BaseSwAligModel.h"
 #include "SwModelPars.h"
 #include "Prob.h"
-#include "myVector.h"
+#include <vector>
 
 //--------------- Constants ------------------------------------------
 
@@ -48,11 +48,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 struct SwModelInfo
 {
       // sw model members
-  Vector<BaseSwAligModel<PpInfo>*> swAligModelPtrVec;
+  std::vector<BaseSwAligModel<PpInfo>*> swAligModelPtrVec;
   SwModelPars swModelPars;
 
       // Inverse sw model members
-  Vector<BaseSwAligModel<PpInfo>*> invSwAligModelPtrVec;
+  std::vector<BaseSwAligModel<PpInfo>*> invSwAligModelPtrVec;
   SwModelPars invSwModelPars;
 
       // Confidence interval for length model

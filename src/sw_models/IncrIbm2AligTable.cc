@@ -145,12 +145,12 @@ bool IncrIbm2AligTable::loadPlainText(const char* aligNumDenFile)
       // Clear data structures
   clear();
 
-  cerr<<"Loading alignd file in plain text format from "<<aligNumDenFile<<endl;
+  std::cerr<<"Loading alignd file in plain text format from "<<aligNumDenFile<<std::endl;
 
   awkInputStream awk;
   if(awk.open(aligNumDenFile)==THOT_ERROR)
   {
-    cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
+    std::cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
     return THOT_ERROR;
   }
   else
@@ -180,13 +180,13 @@ bool IncrIbm2AligTable::loadBin(const char* aligNumDenFile)
       // Clear data structures
   clear();
 
-  cerr<<"Loading alignd file in binary format from "<<aligNumDenFile<<endl;
+  std::cerr<<"Loading alignd file in binary format from "<<aligNumDenFile<<std::endl;
 
       // Try to open file  
   ifstream inF (aligNumDenFile, ios::in | ios::binary);
   if(!inF)
   {
-    cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
+    std::cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
     return THOT_ERROR;    
   }
   else
@@ -231,7 +231,7 @@ bool IncrIbm2AligTable::printPlainText(const char* aligNumDenFile)
   outF.open(aligNumDenFile,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing alignment nd file."<<endl;
+    std::cerr<<"Error while printing alignment nd file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -249,7 +249,7 @@ bool IncrIbm2AligTable::printPlainText(const char* aligNumDenFile)
         outF<<i<<" ";
         outF<<numElemIter->second<<" ";
         float denom=getAligDenom(numElemIter->first,found);
-        outF<<denom<<endl;
+        outF<<denom<<std::endl;
       }
     }
     return THOT_OK;
@@ -263,7 +263,7 @@ bool IncrIbm2AligTable::printBin(const char* aligNumDenFile)
   outF.open(aligNumDenFile,ios::out);
   if(!outF)
   {
-    cerr<<"Error while printing alignment nd file."<<endl;
+    std::cerr<<"Error while printing alignment nd file."<<std::endl;
     return THOT_ERROR;
   }
   else

@@ -47,9 +47,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <ctimer.h>
 #include <StrProcUtils.h>
-#include <myVector.h>
 #include <map>
 #include <set>
+#include <vector>
 #include "BaseWgProcessorForAnlp.h"
 
 //--------------- Constants ------------------------------------------
@@ -108,13 +108,13 @@ class WgProcessorForAnlp: public BaseWgProcessorForAnlp
  protected:
 
   typedef typename ECM_FOR_WG::EcmScoreInfo EcmScoreInfo;
-  typedef Vector<EcmScoreInfo> EcmScrInfoForArc;
+  typedef std::vector<EcmScoreInfo> EcmScrInfoForArc;
   typedef std::multimap<float,HypStateIndex,greater<float> > NbestHypStates;
   typedef pair<WordGraphArcId,unsigned int> HypSubStateIdx;
   typedef std::multimap<float,HypSubStateIdx,greater<float> > NbestHypSubStates;
   typedef std::set<HypStateIndex> StatesInvolvedInArcs;
     
-  Vector<std::string> previousPrefixVec;
+  std::vector<std::string> previousPrefixVec;
   
   const WordGraph* wg_ptr;
   
@@ -128,22 +128,22 @@ class WgProcessorForAnlp: public BaseWgProcessorForAnlp
                          // processor variables has been
                          // initialized for current word-graph
   
-  Vector<Score> restScores;     // Rest scores for each state of the
+  std::vector<Score> restScores;     // Rest scores for each state of the
                                 // word-graph
 
-  Vector<EcmScoreInfo> ecmScrInfoForState;
+  std::vector<EcmScoreInfo> ecmScrInfoForState;
       // Ecm score info for each state
 
-  Vector<EcmScrInfoForArc> ecmScrInfoForArcVec;
+  std::vector<EcmScrInfoForArc> ecmScrInfoForArcVec;
       // Ecm score info for each arc
 
-  Vector<Score> wgScoreForState;  // Best word-graph score for each
+  std::vector<Score> wgScoreForState;  // Best word-graph score for each
                                   // state
 
-  Vector<Vector<Score> > bestScoresForState; // Best scores for each
+  std::vector<std::vector<Score> > bestScoresForState; // Best scores for each
                                              // state
 
-  Vector<Vector<WordGraphArcId> > bestPredsForState; // Best predecessors
+  std::vector<std::vector<WordGraphArcId> > bestPredsForState; // Best predecessors
                                                      // for each state
 
   StatesInvolvedInArcs statesInvolvedInArcs; // List of states involved in arcs
@@ -153,7 +153,7 @@ class WgProcessorForAnlp: public BaseWgProcessorForAnlp
   // Functions to initialize word-graph
   void initVars(unsigned int verbose=0);
   void genListOfStatesInvolvedInArcs(StatesInvolvedInArcs& stInvInArcs)const;
-  void updateSizeOfVars(const Vector<std::string>& validProcPrefixVec);
+  void updateSizeOfVars(const std::vector<std::string>& validProcPrefixVec);
   void initWgpInfoForArcs(unsigned int verbose=0);
   void initWgpInfoForInitState(unsigned int verbose=0);
   void initWgpInfoForArc(WordGraphArcId wgArcId,
@@ -162,10 +162,10 @@ class WgProcessorForAnlp: public BaseWgProcessorForAnlp
                               unsigned int verbose=0);
   
   // Functions to incrementally process the word-graph
-  Vector<std::string> getValidProcPrefixVec(const Vector<std::string>& prefixVec);
-  Vector<std::string> getPrefixDiffVec(const Vector<std::string>& validProcPrefixVec,
-                                       const Vector<std::string>& prefixVec);
-  void procWgGivenPrefDiff(Vector<std::string> prefixDiffVec,
+  std::vector<std::string> getValidProcPrefixVec(const std::vector<std::string>& prefixVec);
+  std::vector<std::string> getPrefixDiffVec(const std::vector<std::string>& validProcPrefixVec,
+                                            const std::vector<std::string>& prefixVec);
+  void procWgGivenPrefDiff(std::vector<std::string> prefixDiffVec,
                            unsigned int verbose=0);
   NbestHypStates obtainNbestHypStates(unsigned int n,
                                       const RejectedWordsSet& rejectedWords,
@@ -179,21 +179,21 @@ class WgProcessorForAnlp: public BaseWgProcessorForAnlp
       // substates of the words-graph with best probability
   bool wordSatisfiesRejWordConstraint(std::string word,
                                       const RejectedWordsSet& rejectedWords);
-  void updateWgpInfoForInitState(const Vector<std::string>& prefixDiffVec,
+  void updateWgpInfoForInitState(const std::vector<std::string>& prefixDiffVec,
                                  unsigned int verbose=0);
       // Auxiliar function of the obtainNbestHypStates() function, it
       // updates the information of the word-processor for the initial
       // state.
-  void updateWgpInfoForArc(const Vector<std::string>& prefixDiffVec,
+  void updateWgpInfoForArc(const std::vector<std::string>& prefixDiffVec,
                            WordGraphArcId wgArcId,
                            unsigned int verbose=0);
       // Auxiliar function of the obtainNbestHypStates() function, it
       // updates the information of the word-processor for a given state
       // and arc.
-  void updateEcmScoreInfoForArc(const Vector<std::string>& prefixDiffVec,
+  void updateEcmScoreInfoForArc(const std::vector<std::string>& prefixDiffVec,
                                 WordGraphArcId wgArcId,
                                 unsigned int verbose=0);
-  NbestCorrections obtainNbestCorrections(Vector<std::string> prefixVec,
+  NbestCorrections obtainNbestCorrections(std::vector<std::string> prefixVec,
                                           unsigned int n,
                                           const RejectedWordsSet& rejectedWords,
                                           const NbestHypStates& nbestHypStates,
@@ -201,20 +201,20 @@ class WgProcessorForAnlp: public BaseWgProcessorForAnlp
                                           unsigned int verbose=0);
       // Given a prefix and a list of n-best states, obtains a list of
       // the n-best corrections
-  Vector<std::string> obtainBestUncorrPrefHypState(unsigned int procPrefPos,
+  std::vector<std::string> obtainBestUncorrPrefHypState(unsigned int procPrefPos,
                                                    HypStateIndex hypStateIndex,
-                                                   Vector<WordGraphArcId>& wgaidVec);
-  Vector<std::string> obtainBestUncorrPrefHypSubState(unsigned int procPrefPos,
+                                                   std::vector<WordGraphArcId>& wgaidVec);
+  std::vector<std::string> obtainBestUncorrPrefHypSubState(unsigned int procPrefPos,
                                                       WordGraphArcId wgArcId,
                                                       unsigned int arcPos,
-                                                      Vector<WordGraphArcId>& wgaidVec);
-  Vector<std::string> obtainCorrForHypState(Vector<std::string> prefixVec,
-                                            HypStateIndex hypStateIndex,
-                                            const RejectedWordsSet& rejectedWords,
-                                            unsigned int verbose=0);
-  Vector<std::string> obtainCorrForHypSubState(Vector<std::string> prefixVec,
-                                               HypSubStateIdx hypSubStateIdx,
-                                               unsigned int verbose=0);
+                                                      std::vector<WordGraphArcId>& wgaidVec);
+  std::vector<std::string> obtainCorrForHypState(std::vector<std::string> prefixVec,
+                                                 HypStateIndex hypStateIndex,
+                                                 const RejectedWordsSet& rejectedWords,
+                                                 unsigned int verbose=0);
+  std::vector<std::string> obtainCorrForHypSubState(std::vector<std::string> prefixVec,
+                                                    HypSubStateIdx hypSubStateIdx,
+                                                    unsigned int verbose=0);
   void removeLastFromNbestHypStates(NbestHypStates &nbestHypStates);
   void removeLastFromNbestHypSubStates(NbestHypSubStates &nbestHypSubStates);
   void removeLastFromNbestCorrs(NbestCorrections &nbestCorrections);
@@ -226,19 +226,19 @@ class WgProcessorForAnlp: public BaseWgProcessorForAnlp
                                 unsigned int verbose=0);
 
   // print() function given an output stream
-  void print(ostream &outS)const;
-  void printInfoAboutScores(ostream &outS)const;
+  void print(std::ostream &outS)const;
+  void printInfoAboutScores(std::ostream &outS)const;
 
   // auxiliary funtions to print state information
-  void printInfoForStates(ostream &outS)const;
+  void printInfoForStates(std::ostream &outS)const;
   void printStateInfo(HypStateIndex idx,
-                      ostream &outS)const;
+                      std::ostream &outS)const;
   
   // auxiliary funtions to print sub-state information
-  void printInfoForSubStates(ostream &outS)const;
+  void printInfoForSubStates(std::ostream &outS)const;
   void printSubStateInfo(WordGraphArcId wgArcId,
                          unsigned int w,
-                         ostream &outS)const;
+                         std::ostream &outS)const;
 };
 
 //--------------- WgProcessorForAnlp template class function definitions
@@ -301,7 +301,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::correct(std::string prefix,
   if(wg_ptr==NULL || wg_ptr->empty())
   {
         // Word graph empty
-    cerr<<"Word-graph proccessor error: word-graph is empty!"<<endl;
+    std::cerr<<"Word-graph proccessor error: word-graph is empty!"<<std::endl;
     NbestCorrections nbestCorrections;
     return nbestCorrections;
   }
@@ -314,7 +314,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::correct(std::string prefix,
     {
           // Initialize variables
           // Get initial time
-      if(verbose) cerr<<"Initialize word-graph processor variables..."<<endl;
+      if(verbose) std::cerr<<"Initialize word-graph processor variables..."<<std::endl;
       double total_time=0,elapsed_ant,elapsed,ucpu,scpu;
       ctimer(&elapsed_ant,&ucpu,&scpu);
 
@@ -325,11 +325,11 @@ WgProcessorForAnlp<ECM_FOR_WG>::correct(std::string prefix,
           // Obtain total time
       total_time+=elapsed-elapsed_ant;
       if(verbose)
-        cerr<<"done, processing time: "<<total_time<<" seconds"<<endl;
+        std::cerr<<"done, processing time: "<<total_time<<" seconds"<<std::endl;
     }
 
         // Obtain prefix vector
-    Vector<std::string> prefixVec=StrProcUtils::stringToStringVector(prefix);
+    std::vector<std::string> prefixVec=StrProcUtils::stringToStringVector(prefix);
     if(prefix[prefix.size()-1]==' ' && prefixVec.size()>0)
     {
       prefixVec[prefixVec.size()-1]+=' ';
@@ -337,44 +337,44 @@ WgProcessorForAnlp<ECM_FOR_WG>::correct(std::string prefix,
 
     if(verbose)
     {
-      cerr<<"Processing prefix:";
+      std::cerr<<"Processing prefix:";
       for(unsigned int i=0;i<prefixVec.size();++i)
-        cerr<<" "<<prefixVec[i];
-      cerr<<"|"<<endl;
+        std::cerr<<" "<<prefixVec[i];
+      std::cerr<<"|"<<std::endl;
     }
     
         // Obtain portion of the processed prefix vector which is valid
         // in the current interaction and update size of variables if
         // necessary
-    if(verbose) cerr<<"Obtaining valid portion of the processed prefix vector..."<<endl;
-    Vector<std::string> validProcPrefixVec=getValidProcPrefixVec(prefixVec);
+    if(verbose) std::cerr<<"Obtaining valid portion of the processed prefix vector..."<<std::endl;
+    std::vector<std::string> validProcPrefixVec=getValidProcPrefixVec(prefixVec);
     if(verbose)
     {
-      cerr<<" - Previously processed prefix:";
-      for(unsigned int i=0;i<previousPrefixVec.size();++i) cerr<<" "<<previousPrefixVec[i];
-      cerr<<"|"<<endl;
+      std::cerr<<" - Previously processed prefix:";
+      for(unsigned int i=0;i<previousPrefixVec.size();++i) std::cerr<<" "<<previousPrefixVec[i];
+      std::cerr<<"|"<<std::endl;
 
-      cerr<<" - Valid portion of the processed prefix vector:";
-      for(unsigned int i=0;i<validProcPrefixVec.size();++i) cerr<<" "<<validProcPrefixVec[i];
-      cerr<<"|"<<endl;
+      std::cerr<<" - Valid portion of the processed prefix vector:";
+      for(unsigned int i=0;i<validProcPrefixVec.size();++i) std::cerr<<" "<<validProcPrefixVec[i];
+      std::cerr<<"|"<<std::endl;
     }
     updateSizeOfVars(validProcPrefixVec);
 
         // Obtain difference between prefixVec and valid portion of the
         // processed prefix
-    if(verbose) cerr<<"Obtaining difference between prefix and valid portion..."<<endl;
-    Vector<std::string> prefixDiffVec=getPrefixDiffVec(validProcPrefixVec,
+    if(verbose) std::cerr<<"Obtaining difference between prefix and valid portion..."<<std::endl;
+    std::vector<std::string> prefixDiffVec=getPrefixDiffVec(validProcPrefixVec,
                                                        prefixVec);
     if(verbose)
     {
-      cerr<<" - Difference between prefix and valid portion:";
-      for(unsigned int i=0;i<prefixDiffVec.size();++i) cerr<<" "<<prefixDiffVec[i];
-      cerr<<"|"<<endl;
+      std::cerr<<" - Difference between prefix and valid portion:";
+      for(unsigned int i=0;i<prefixDiffVec.size();++i) std::cerr<<" "<<prefixDiffVec[i];
+      std::cerr<<"|"<<std::endl;
     }
 
         // Process word-graph given prefix difference
         // Get initial time
-    if(verbose) cerr<<"Processing word-graph given prefix difference..."<<endl;
+    if(verbose) std::cerr<<"Processing word-graph given prefix difference..."<<std::endl;
     double total_time=0,elapsed_ant,elapsed,ucpu,scpu;  
     ctimer(&elapsed_ant,&ucpu,&scpu);
 
@@ -385,19 +385,19 @@ WgProcessorForAnlp<ECM_FOR_WG>::correct(std::string prefix,
         // Obtain total time
     total_time+=elapsed-elapsed_ant;
     if(verbose)
-      cerr<<"done, processing time: "<<total_time<<" seconds"<<endl;
+      std::cerr<<"done, processing time: "<<total_time<<" seconds"<<std::endl;
 
         // Obtain n-best list of hypothesis states
-    if(verbose) cerr<<"Obtaining n-best list of hypothesis states..."<<endl;
+    if(verbose) std::cerr<<"Obtaining n-best list of hypothesis states..."<<std::endl;
     NbestHypStates nbestHypStates=obtainNbestHypStates(n,rejectedWords,verbose);
 
         // Obtain n-best list of hypothesis sub-states
-    if(verbose) cerr<<"Obtain n-best list of hypothesis sub-states..."<<endl;
+    if(verbose) std::cerr<<"Obtain n-best list of hypothesis sub-states..."<<std::endl;
     NbestHypSubStates nbestHypSubStates=obtainNbestHypSubStates(n,rejectedWords,verbose);
 
         // Obtain n-best list of corrections from n-best list of
         // hypothesis states and sub-states
-    if(verbose) cerr<<"Obtaining n-best corrections..."<<endl;
+    if(verbose) std::cerr<<"Obtaining n-best corrections..."<<std::endl;
     NbestCorrections nbestCorrections=obtainNbestCorrections(prefixVec,n,rejectedWords,nbestHypStates,nbestHypSubStates,verbose);
     
         // Update previousPrefixVec
@@ -480,10 +480,10 @@ void WgProcessorForAnlp<ECM_FOR_WG>::initEcmScoreInfoForArc(WordGraphArcId wgArc
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-Vector<std::string>
-WgProcessorForAnlp<ECM_FOR_WG>::getValidProcPrefixVec(const Vector<std::string>& prefixVec)
+std::vector<std::string>
+WgProcessorForAnlp<ECM_FOR_WG>::getValidProcPrefixVec(const std::vector<std::string>& prefixVec)
 {
-  Vector<std::string> result;
+  std::vector<std::string> result;
 
   for(unsigned int i=0;i<previousPrefixVec.size();++i)
   {
@@ -496,11 +496,11 @@ WgProcessorForAnlp<ECM_FOR_WG>::getValidProcPrefixVec(const Vector<std::string>&
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-Vector<std::string>
-WgProcessorForAnlp<ECM_FOR_WG>::getPrefixDiffVec(const Vector<std::string>& validProcPrefixVec,
-                                                 const Vector<std::string>& prefixVec)
+std::vector<std::string>
+WgProcessorForAnlp<ECM_FOR_WG>::getPrefixDiffVec(const std::vector<std::string>& validProcPrefixVec,
+                                                 const std::vector<std::string>& prefixVec)
 {
-  Vector<std::string> prefixDiffVec;
+  std::vector<std::string> prefixDiffVec;
   
   if(validProcPrefixVec.size()==0)
   {
@@ -516,7 +516,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::getPrefixDiffVec(const Vector<std::string>& vali
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-void WgProcessorForAnlp<ECM_FOR_WG>::procWgGivenPrefDiff(Vector<std::string> prefixDiffVec,
+void WgProcessorForAnlp<ECM_FOR_WG>::procWgGivenPrefDiff(std::vector<std::string> prefixDiffVec,
                                                          unsigned int verbose/*=0*/)
 {
       // Declare and initialize variables
@@ -535,7 +535,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::procWgGivenPrefDiff(Vector<std::string> pre
       // assumed that the arcs of the word-graph are topologically
       // ordered)
   if(verbose)
-    cerr<<"Arc id range: "<<arcIdxRange.first<<" "<<arcIdxRange.second<<endl;
+    std::cerr<<"Arc id range: "<<arcIdxRange.first<<" "<<arcIdxRange.second<<std::endl;
   
   if(prefixDiffVec.size()!=0)
   {
@@ -573,7 +573,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestHypStates(unsigned int n,
     if(!rejectedWords.empty())
     {
           // Obtain successors
-      Vector<WordGraphArc> wgArcs;
+      std::vector<WordGraphArc> wgArcs;
       wg_ptr->getArcsToSuccStates(hsIdx,wgArcs);
 
           // Find the best successor
@@ -659,7 +659,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestHypSubStates(unsigned int n,
                 // the set of rejected words
             
                 // Obtain ecm score vector for w'th word of current arc
-            Vector<Score> ecmScrVec=ecm_wg_ptr->obtainScrVecFromEsi(ecmScrInfoForArcVec[wgArcId][w]);
+            std::vector<Score> ecmScrVec=ecm_wg_ptr->obtainScrVecFromEsi(ecmScrInfoForArcVec[wgArcId][w]);
                 // Calculate score of the sub-state
             Score score=wgWeight*wgScr+ecmWeight*ecmScrVec.back()+(wgWeight*restScores[wgArc.predStateIndex]);
             
@@ -718,7 +718,7 @@ bool WgProcessorForAnlp<ECM_FOR_WG>::wordSatisfiesRejWordConstraint(std::string 
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-void WgProcessorForAnlp<ECM_FOR_WG>::updateWgpInfoForInitState(const Vector<std::string>& prefixDiffVec,
+void WgProcessorForAnlp<ECM_FOR_WG>::updateWgpInfoForInitState(const std::vector<std::string>& prefixDiffVec,
                                                                unsigned int verbose/*=0*/)
 {
       // Obtain initial Esi object
@@ -735,7 +735,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::updateWgpInfoForInitState(const Vector<std:
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-void WgProcessorForAnlp<ECM_FOR_WG>::updateWgpInfoForArc(const Vector<std::string>& prefixDiffVec,
+void WgProcessorForAnlp<ECM_FOR_WG>::updateWgpInfoForArc(const std::vector<std::string>& prefixDiffVec,
                                                          WordGraphArcId wgArcId,
                                                          unsigned int verbose/*=0*/)
 {
@@ -752,7 +752,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::updateWgpInfoForArc(const Vector<std::strin
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-void WgProcessorForAnlp<ECM_FOR_WG>::updateEcmScoreInfoForArc(const Vector<std::string>& prefixDiffVec,
+void WgProcessorForAnlp<ECM_FOR_WG>::updateEcmScoreInfoForArc(const std::vector<std::string>& prefixDiffVec,
                                                               WordGraphArcId wgArcId,
                                                               unsigned int /*verbose*//*=0*/)
 {
@@ -787,7 +787,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::updateEcmScoreInfoForArc(const Vector<std::
 template<class ECM_FOR_WG>
 void WgProcessorForAnlp<ECM_FOR_WG>::updateBestScoresForInitState(unsigned int /*verbose*//*=0*/)
 {
-  Vector<Score> ecmScrVec=ecm_wg_ptr->obtainScrVecFromEsi(ecmScrInfoForState[INITIAL_STATE]);
+  std::vector<Score> ecmScrVec=ecm_wg_ptr->obtainScrVecFromEsi(ecmScrInfoForState[INITIAL_STATE]);
 
       // Obtain wg score for initial state
   wgScoreForState[INITIAL_STATE]=wg_ptr->getInitialStateScore();
@@ -830,7 +830,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::updateBestScoresForState(WordGraphArcId wgA
   else prevEsi=ecmScrInfoForArcVec[wgArcId].back();
   
       // Obtain ecm score vector for successor state
-  Vector<Score> ecmScrVec=ecm_wg_ptr->obtainScrVecFromEsi(prevEsi);
+  std::vector<Score> ecmScrVec=ecm_wg_ptr->obtainScrVecFromEsi(prevEsi);
       
       // Obtain wg score for successor state from the wg score
       // vector of the predecessor state
@@ -846,7 +846,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::updateBestScoresForState(WordGraphArcId wgA
   }
 
       // Update best scores and create posVec vector
-  Vector<unsigned int> posVec;
+  std::vector<unsigned int> posVec;
       // Set value of startPos
   unsigned int startPos;
   if(prefDiffSize==0)
@@ -881,7 +881,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::updateBestScoresForState(WordGraphArcId wgA
 //---------------------------------------
 template<class ECM_FOR_WG>
 NbestCorrections
-WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestCorrections(Vector<std::string> prefixVec,
+WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestCorrections(std::vector<std::string> prefixVec,
                                                        unsigned int n,
                                                        const RejectedWordsSet& rejectedWords,
                                                        const NbestHypStates& nbestHypStates,
@@ -900,7 +900,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestCorrections(Vector<std::string> prefi
     HypStateIndex hypStateIndex=nbestHypStatesIter->second;
     
         // Obtain suffix
-    Vector<std::string> correction=obtainCorrForHypState(prefixVec,hypStateIndex,rejectedWords,verbose);
+    std::vector<std::string> correction=obtainCorrForHypState(prefixVec,hypStateIndex,rejectedWords,verbose);
        
         // Insert correction
     nbestCorrections.insert(make_pair(nbestHypStatesIter->first,correction));
@@ -916,7 +916,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestCorrections(Vector<std::string> prefi
     HypSubStateIdx hypSubStateIdx=nbestHypSubStatesIter->second;
     
         // Obtain suffix
-    Vector<std::string> correction=obtainCorrForHypSubState(prefixVec,hypSubStateIdx,verbose);
+    std::vector<std::string> correction=obtainCorrForHypSubState(prefixVec,hypSubStateIdx,verbose);
 
         // Insert correction
     nbestCorrections.insert(make_pair(nbestHypSubStatesIter->first,correction));
@@ -929,18 +929,18 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestCorrections(Vector<std::string> prefi
       // Print corrections
   if(verbose)
   {
-    cerr<<"Corrections:"<<endl;
+    std::cerr<<"Corrections:"<<std::endl;
     NbestCorrections::const_iterator nbestCorrIter;
     for(nbestCorrIter=nbestCorrections.begin();nbestCorrIter!=nbestCorrections.end();++nbestCorrIter)
     {
-      cerr<<nbestCorrIter->first;
+      std::cerr<<nbestCorrIter->first;
       for(unsigned int i=0;i<nbestCorrIter->second.size();++i)
-        cerr<<" "<<nbestCorrIter->second[i];
-      cerr<<"|"<<endl;
+        std::cerr<<" "<<nbestCorrIter->second[i];
+      std::cerr<<"|"<<std::endl;
     }
     
         // Print information about scores
-    printInfoAboutScores(cerr);
+    printInfoAboutScores(std::cerr);
   }  
 
       // Return n-best corrections
@@ -949,13 +949,13 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestCorrections(Vector<std::string> prefi
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-Vector<std::string>
+std::vector<std::string>
 WgProcessorForAnlp<ECM_FOR_WG>::obtainBestUncorrPrefHypState(unsigned int procPrefPos,
                                                              HypStateIndex hypStateIndex,
-                                                             Vector<WordGraphArcId>& wgaidVec)
+                                                             std::vector<WordGraphArcId>& wgaidVec)
 {
-  Vector<std::string> invResult;
-  Vector<std::string> result;
+  std::vector<std::string> invResult;
+  std::vector<std::string> result;
 
       // Initialize wgaidVec
   wgaidVec.clear();
@@ -966,7 +966,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainBestUncorrPrefHypState(unsigned int procPr
   while(hsidx!=INITIAL_STATE)
   {
     /*     // Remove comments to get debug information */
-    /* cerr<<currProcPrefPos<<" "<<hsidx<<" "<<bestScoresForState[hsidx][currProcPrefPos]<<endl; */
+    /* std::cerr<<currProcPrefPos<<" "<<hsidx<<" "<<bestScoresForState[hsidx][currProcPrefPos]<<std::endl; */
 
         // Obtain best predecessor hypothesis state
     WordGraphArcId wordGraphArcId=bestPredsForState[hsidx][currProcPrefPos];
@@ -976,7 +976,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainBestUncorrPrefHypState(unsigned int procPr
         // Obtain new value for currProcPrefPos
     for(unsigned int w=wordGraphArc.words.size();w>0;--w)
     {
-      Vector<int> predPrefWordVec=ecm_wg_ptr->obtainLastInsPrefWordVecFromEsi(ecmScrInfoForArcVec[wordGraphArcId][w-1]);
+      std::vector<int> predPrefWordVec=ecm_wg_ptr->obtainLastInsPrefWordVecFromEsi(ecmScrInfoForArcVec[wordGraphArcId][w-1]);
       currProcPrefPos=predPrefWordVec[currProcPrefPos];
     }
 
@@ -1002,27 +1002,27 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainBestUncorrPrefHypState(unsigned int procPr
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-Vector<std::string>
+std::vector<std::string>
 WgProcessorForAnlp<ECM_FOR_WG>::obtainBestUncorrPrefHypSubState(unsigned int procPrefPos,
                                                                 WordGraphArcId wgArcId,
                                                                 unsigned int arcPos,
-                                                                Vector<WordGraphArcId>& wgaidVec)
+                                                                std::vector<WordGraphArcId>& wgaidVec)
 {
       // Initialize variables
   WordGraphArc wgArc=wg_ptr->wordGraphArcId2WordGraphArc(wgArcId);
-  Vector<std::string> auxResult;
-  Vector<std::string> result;
+  std::vector<std::string> auxResult;
+  std::vector<std::string> result;
 
       // Obtain new value for currProcPrefPos
   unsigned int currProcPrefPos=procPrefPos;
   for(unsigned int w=arcPos+1;w>0;--w)
   {
-    Vector<int> predPrefWordVec=ecm_wg_ptr->obtainLastInsPrefWordVecFromEsi(ecmScrInfoForArcVec[wgArcId][w-1]);
+    std::vector<int> predPrefWordVec=ecm_wg_ptr->obtainLastInsPrefWordVecFromEsi(ecmScrInfoForArcVec[wgArcId][w-1]);
     currProcPrefPos=predPrefWordVec[currProcPrefPos];
   }
 
       // Backtrack path to initial state
-  Vector<WordGraphArcId> wgaidVecAux;
+  std::vector<WordGraphArcId> wgaidVecAux;
   result=obtainBestUncorrPrefHypState(currProcPrefPos,wgArc.predStateIndex,wgaidVecAux);
 
       // Compose result
@@ -1040,22 +1040,22 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainBestUncorrPrefHypSubState(unsigned int pro
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-Vector<std::string>
-WgProcessorForAnlp<ECM_FOR_WG>::obtainCorrForHypState(Vector<std::string> prefixVec,
+std::vector<std::string>
+WgProcessorForAnlp<ECM_FOR_WG>::obtainCorrForHypState(std::vector<std::string> prefixVec,
                                                       HypStateIndex hypStateIndex,
                                                       const RejectedWordsSet& rejectedWords,
                                                       unsigned int verbose/*=0*/)
 {
   if(verbose)
-    cerr<<" - Obtaining correction for hypothesis state "<<hypStateIndex<<endl;
+    std::cerr<<" - Obtaining correction for hypothesis state "<<hypStateIndex<<std::endl;
 
       // Obtain uncorrected prefix
-  Vector<WordGraphArcId> wgaidVec;
-  Vector<std::string> uncorrPrefVec=obtainBestUncorrPrefHypState(prefixVec.size(),
+  std::vector<WordGraphArcId> wgaidVec;
+  std::vector<std::string> uncorrPrefVec=obtainBestUncorrPrefHypState(prefixVec.size(),
                                                                  hypStateIndex,
                                                                  wgaidVec);
       // Combine prefix and uncorrected prefix
-  Vector<std::string> combinedPref;
+  std::vector<std::string> combinedPref;
   if(uncorrPrefVec.empty())
   {
     combinedPref=prefixVec;
@@ -1070,13 +1070,13 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainCorrForHypState(Vector<std::string> prefix
         // the prefix "prefixVec", obtaining a new string which is
         // compatible with the prefix.
   }
-  Vector<std::string> result=combinedPref;
+  std::vector<std::string> result=combinedPref;
   
   // Obtain suffix for successor state
 
       // Obtain set of excluded arcs
   std::set<WordGraphArcId> excludedWgArcIdSet;
-  Vector<WordGraphArcId> arcIdsSuccStatesVec;
+  std::vector<WordGraphArcId> arcIdsSuccStatesVec;
   if(!rejectedWords.empty())
   {
     wg_ptr->getArcIdsToSuccStates(hypStateIndex,arcIdsSuccStatesVec);
@@ -1090,10 +1090,10 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainCorrForHypState(Vector<std::string> prefix
   }
 
       // Obtain best path
-  Vector<WordGraphArc> arcVec;
+  std::vector<WordGraphArc> arcVec;
   wg_ptr->bestPathFromFinalStateToIdx(hypStateIndex,excludedWgArcIdSet,arcVec);
   
-  for(Vector<WordGraphArc>::reverse_iterator riter=arcVec.rbegin();riter!=arcVec.rend();++riter)
+  for(std::vector<WordGraphArc>::reverse_iterator riter=arcVec.rbegin();riter!=arcVec.rend();++riter)
   {
     for(unsigned int i=0;i<riter->words.size();++i)
       result.push_back(riter->words[i]);
@@ -1105,28 +1105,28 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainCorrForHypState(Vector<std::string> prefix
 
   if(verbose)
   {
-    cerr<<"   Uncorrected prefix:";
-    for(unsigned int i=0;i<uncorrPrefVec.size();++i) cerr<<" "<<uncorrPrefVec[i];
-    cerr<<"|"<<endl;
-    cerr<<"   Associated word-graph state sequence:";
+    std::cerr<<"   Uncorrected prefix:";
+    for(unsigned int i=0;i<uncorrPrefVec.size();++i) std::cerr<<" "<<uncorrPrefVec[i];
+    std::cerr<<"|"<<std::endl;
+    std::cerr<<"   Associated word-graph state sequence:";
     for(unsigned int i=0;i<wgaidVec.size();++i)
     {
       WordGraphArc wgArc=wg_ptr->wordGraphArcId2WordGraphArc(wgaidVec[i]);
-      cerr<<" "<<wgArc.succStateIndex<<"<-"<<wgArc.predStateIndex;
+      std::cerr<<" "<<wgArc.succStateIndex<<"<-"<<wgArc.predStateIndex;
     }
-    cerr<<endl;
-    cerr<<"   Prefix:";
-    for(unsigned int i=0;i<prefixVec.size();++i) cerr<<" "<<prefixVec[i];
-    cerr<<"|"<<endl;
-    cerr<<"   Combined prefix:";
-    for(unsigned int i=0;i<combinedPref.size();++i) cerr<<" "<<combinedPref[i];
-    cerr<<"|"<<endl;
-    cerr<<"   Correction:";
-    for(unsigned int i=0;i<result.size();++i) cerr<<" "<<result[i];
-    cerr<<"|"<<endl;
-    cerr<<"   Score information: ";
-    printStateInfo(hypStateIndex,cerr);
-    cerr<<endl;
+    std::cerr<<std::endl;
+    std::cerr<<"   Prefix:";
+    for(unsigned int i=0;i<prefixVec.size();++i) std::cerr<<" "<<prefixVec[i];
+    std::cerr<<"|"<<std::endl;
+    std::cerr<<"   Combined prefix:";
+    for(unsigned int i=0;i<combinedPref.size();++i) std::cerr<<" "<<combinedPref[i];
+    std::cerr<<"|"<<std::endl;
+    std::cerr<<"   Correction:";
+    for(unsigned int i=0;i<result.size();++i) std::cerr<<" "<<result[i];
+    std::cerr<<"|"<<std::endl;
+    std::cerr<<"   Score information: ";
+    printStateInfo(hypStateIndex,std::cerr);
+    std::cerr<<std::endl;
   }
   
       // Return result
@@ -1135,29 +1135,29 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainCorrForHypState(Vector<std::string> prefix
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-Vector<std::string>
-WgProcessorForAnlp<ECM_FOR_WG>::obtainCorrForHypSubState(Vector<std::string> prefixVec,
+std::vector<std::string>
+WgProcessorForAnlp<ECM_FOR_WG>::obtainCorrForHypSubState(std::vector<std::string> prefixVec,
                                                          HypSubStateIdx hypSubStateIdx,
                                                          unsigned int verbose/*=0*/)
 {
   if(verbose)
   {
-    cerr<<" - Obtaining correction for hypothesis sub-state ";//<<hypSubStateIdx.first<<" "<<hypSubStateIdx.second;
+    std::cerr<<" - Obtaining correction for hypothesis sub-state ";//<<hypSubStateIdx.first<<" "<<hypSubStateIdx.second;
         // Obtain arc from arc id.
     WordGraphArc wgArc=wg_ptr->wordGraphArcId2WordGraphArc(hypSubStateIdx.first);
-    cerr<<wgArc.predStateIndex<<"->"<<wgArc.succStateIndex<<", "<<hypSubStateIdx.second<<"'th word"<<endl;
+    std::cerr<<wgArc.predStateIndex<<"->"<<wgArc.succStateIndex<<", "<<hypSubStateIdx.second<<"'th word"<<std::endl;
   }
 
-  Vector<std::string> result;
+  std::vector<std::string> result;
 
       // Obtain uncorrected prefix
-  Vector<WordGraphArcId> wgaidVec;
-  Vector<std::string> uncorrPrefVec=obtainBestUncorrPrefHypSubState(prefixVec.size(),
+  std::vector<WordGraphArcId> wgaidVec;
+  std::vector<std::string> uncorrPrefVec=obtainBestUncorrPrefHypSubState(prefixVec.size(),
                                                                     hypSubStateIdx.first,
                                                                     hypSubStateIdx.second,
                                                                     wgaidVec);
       // Combine prefix and uncorrected prefix
-  Vector<std::string> combinedPref;
+  std::vector<std::string> combinedPref;
   if(uncorrPrefVec.empty())
   {
     combinedPref=prefixVec;
@@ -1183,14 +1183,14 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainCorrForHypSubState(Vector<std::string> pre
     result.push_back(wgArc.words[w]);
 
   // Obtain suffix for successor state
-  Vector<Score> prevScores;
-  Vector<WordGraphArc> arcVec;
+  std::vector<Score> prevScores;
+  std::vector<WordGraphArc> arcVec;
   
       // Obtain best path
   std::set<WordGraphArcId> emptyWgArcIdSet;
   wg_ptr->bestPathFromFinalStateToIdx(wgArc.succStateIndex,emptyWgArcIdSet,arcVec);
 
-  for(Vector<WordGraphArc>::reverse_iterator riter=arcVec.rbegin();riter!=arcVec.rend();++riter)
+  for(std::vector<WordGraphArc>::reverse_iterator riter=arcVec.rbegin();riter!=arcVec.rend();++riter)
   {
     for(unsigned int i=0;i<riter->words.size();++i)
       result.push_back(riter->words[i]);
@@ -1202,28 +1202,28 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainCorrForHypSubState(Vector<std::string> pre
 
   if(verbose)
   {
-    cerr<<"   Uncorrected prefix:";
-    for(unsigned int i=0;i<uncorrPrefVec.size();++i) cerr<<" "<<uncorrPrefVec[i];
-    cerr<<"|"<<endl;
-    cerr<<"   Associated word-graph state sequence:";
+    std::cerr<<"   Uncorrected prefix:";
+    for(unsigned int i=0;i<uncorrPrefVec.size();++i) std::cerr<<" "<<uncorrPrefVec[i];
+    std::cerr<<"|"<<std::endl;
+    std::cerr<<"   Associated word-graph state sequence:";
     for(unsigned int i=0;i<wgaidVec.size();++i)
     {
       WordGraphArc wgArc=wg_ptr->wordGraphArcId2WordGraphArc(wgaidVec[i]);
-      cerr<<" "<<wgArc.succStateIndex<<"<-"<<wgArc.predStateIndex;
+      std::cerr<<" "<<wgArc.succStateIndex<<"<-"<<wgArc.predStateIndex;
     }
-    cerr<<endl;
-    cerr<<"   Prefix:";
-    for(unsigned int i=0;i<prefixVec.size();++i) cerr<<" "<<prefixVec[i];
-    cerr<<"|"<<endl;
-    cerr<<"   Combined prefix:";
-    for(unsigned int i=0;i<combinedPref.size();++i) cerr<<" "<<combinedPref[i];
-    cerr<<"|"<<endl;
-    cerr<<"   Correction:";
-    for(unsigned int i=0;i<result.size();++i) cerr<<" "<<result[i];
-    cerr<<"|"<<endl;
-    cerr<<"   Score information: ";
-    printSubStateInfo(hypSubStateIdx.first,hypSubStateIdx.second,cerr);
-    cerr<<endl;
+    std::cerr<<std::endl;
+    std::cerr<<"   Prefix:";
+    for(unsigned int i=0;i<prefixVec.size();++i) std::cerr<<" "<<prefixVec[i];
+    std::cerr<<"|"<<std::endl;
+    std::cerr<<"   Combined prefix:";
+    for(unsigned int i=0;i<combinedPref.size();++i) std::cerr<<" "<<combinedPref[i];
+    std::cerr<<"|"<<std::endl;
+    std::cerr<<"   Correction:";
+    for(unsigned int i=0;i<result.size();++i) std::cerr<<" "<<result[i];
+    std::cerr<<"|"<<std::endl;
+    std::cerr<<"   Score information: ";
+    printSubStateInfo(hypSubStateIdx.first,hypSubStateIdx.second,std::cerr);
+    std::cerr<<std::endl;
   }
 
       // Return result
@@ -1329,10 +1329,10 @@ void WgProcessorForAnlp<ECM_FOR_WG>::initVars(unsigned int verbose/*=0*/)
   bestPredsForState.clear();
   if(wg_ptr!=NULL)
   {
-    Vector<Score> scoreVec;
+    std::vector<Score> scoreVec;
     bestScoresForState.insert(bestScoresForState.begin(),wg_ptr->numStates(),scoreVec);
 
-    Vector<WordGraphArcId> wgArcIdVec;
+    std::vector<WordGraphArcId> wgArcIdVec;
     bestPredsForState.insert(bestPredsForState.begin(),wg_ptr->numStates(),wgArcIdVec);
   }
 
@@ -1372,7 +1372,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::genListOfStatesInvolvedInArcs(StatesInvolve
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-void WgProcessorForAnlp<ECM_FOR_WG>::updateSizeOfVars(const Vector<std::string>& validProcPrefixVec)
+void WgProcessorForAnlp<ECM_FOR_WG>::updateSizeOfVars(const std::vector<std::string>& validProcPrefixVec)
 {
       // Obtain diff size
   unsigned int diffSize=previousPrefixVec.size()-validProcPrefixVec.size();
@@ -1417,7 +1417,7 @@ bool WgProcessorForAnlp<ECM_FOR_WG>::print(const char* filename)const
   outS.open(filename,ios::out);
   if(!outS)
   {
-    cerr<<"Error while printing word-graph processing information to file."<<endl;
+    std::cerr<<"Error while printing word-graph processing information to file."<<std::endl;
     return THOT_ERROR;
   }
   else
@@ -1430,13 +1430,13 @@ bool WgProcessorForAnlp<ECM_FOR_WG>::print(const char* filename)const
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-void WgProcessorForAnlp<ECM_FOR_WG>::print(ostream &outS)const
+void WgProcessorForAnlp<ECM_FOR_WG>::print(std::ostream &outS)const
 {
       // Print prefix
   outS<<"# Prefix:";
   for(unsigned int i=0;i<previousPrefixVec.size();++i)
     outS<<" "<<previousPrefixVec[i];
-  outS<<"|"<<endl;
+  outS<<"|"<<std::endl;
 
       // Print final states
   WordGraph::FinalStateSet finalStateSet=wg_ptr->getFinalStateSet();
@@ -1446,7 +1446,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::print(ostream &outS)const
   {
     outS<<*constIter<<" ";
   }
-  outS<<endl;
+  outS<<std::endl;
 
       // Print information about scores
   printInfoAboutScores(outS);
@@ -1455,7 +1455,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::print(ostream &outS)const
   printInfoForStates(outS);
 
       // Print separator
-  outS<<"#"<<endl;
+  outS<<"#"<<std::endl;
 
       // Print sub-state info
   printInfoForSubStates(outS);
@@ -1463,23 +1463,23 @@ void WgProcessorForAnlp<ECM_FOR_WG>::print(ostream &outS)const
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-void WgProcessorForAnlp<ECM_FOR_WG>::printInfoAboutScores(ostream &outS)const
+void WgProcessorForAnlp<ECM_FOR_WG>::printInfoAboutScores(std::ostream &outS)const
 {
-  outS<<"# INFO ABOUT SCORE CALCULATION: totalScr = wgWeight*wgRestScr + wgWeight*wgPrefScr + ecmWeight*ecmScr"<<endl;
-  outS<<"# (ecm and word-graph scores are multiplied by their corresponding weights,"<<endl;
+  outS<<"# INFO ABOUT SCORE CALCULATION: totalScr = wgWeight*wgRestScr + wgWeight*wgPrefScr + ecmWeight*ecmScr"<<std::endl;
+  outS<<"# (ecm and word-graph scores are multiplied by their corresponding weights,"<<std::endl;
   outS<<"# ecm parameters: ";
   ecm_wg_ptr->printWeights(outS);
-  outS<<" ;"<<endl;
-  outS<<"# wgWeight= "<<wgWeight<<" ; ecmWeight= "<<ecmWeight<<")"<<endl;
-  outS<<"#"<<endl;
+  outS<<" ;"<<std::endl;
+  outS<<"# wgWeight= "<<wgWeight<<" ; ecmWeight= "<<ecmWeight<<")"<<std::endl;
+  outS<<"#"<<std::endl;
 }
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-void WgProcessorForAnlp<ECM_FOR_WG>::printInfoForStates(ostream &outS)const
+void WgProcessorForAnlp<ECM_FOR_WG>::printInfoForStates(std::ostream &outS)const
 {
       // Print state info header
-  outS<<"# State info..."<<endl;
+  outS<<"# State info..."<<std::endl;
 
       // Generate list of states involved in arcs
   StatesInvolvedInArcs stInvInArcs;
@@ -1493,14 +1493,14 @@ void WgProcessorForAnlp<ECM_FOR_WG>::printInfoForStates(ostream &outS)const
 
     printStateInfo(idx,outS);
 
-    outS<<endl;
+    outS<<std::endl;
   }
 }
 
 //---------------------------------------
 template<class ECM_FOR_WG>
 void WgProcessorForAnlp<ECM_FOR_WG>::printStateInfo(HypStateIndex idx,
-                                                    ostream &outS)const
+                                                    std::ostream &outS)const
 {
       // Print state index
   outS<<"State index: "<<idx<<" ;";
@@ -1528,7 +1528,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::printStateInfo(HypStateIndex idx,
   outS<<" wgPrefScr: "<<wgScoreForState[idx]<<" ;";
 
       // Print ecm score
-  Vector<Score> ecmScrVec=ecm_wg_ptr->obtainScrVecFromEsi(ecmScrInfoForState[idx]);
+  std::vector<Score> ecmScrVec=ecm_wg_ptr->obtainScrVecFromEsi(ecmScrInfoForState[idx]);
   outS<<" ecmScr: "<<ecmScrVec.back()<<" ;";
 
       // Print ecm score vector
@@ -1538,7 +1538,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::printStateInfo(HypStateIndex idx,
   outS<<" ;";
 
       // Print last inserted prefix word vector
-  Vector<int> lastInsPrefWordVec=ecm_wg_ptr->obtainLastInsPrefWordVecFromEsi(ecmScrInfoForState[idx]);
+  std::vector<int> lastInsPrefWordVec=ecm_wg_ptr->obtainLastInsPrefWordVecFromEsi(ecmScrInfoForState[idx]);
   outS<<" lastInsPrefWordVec:";
   for(unsigned int i=0;i<lastInsPrefWordVec.size();++i)
     outS<<" "<<lastInsPrefWordVec[i];
@@ -1560,10 +1560,10 @@ void WgProcessorForAnlp<ECM_FOR_WG>::printStateInfo(HypStateIndex idx,
 
 //---------------------------------------
 template<class ECM_FOR_WG>
-void WgProcessorForAnlp<ECM_FOR_WG>::printInfoForSubStates(ostream &outS)const
+void WgProcessorForAnlp<ECM_FOR_WG>::printInfoForSubStates(std::ostream &outS)const
 {
       // Print sub-state info header
-  outS<<"# Sub-state info..."<<endl;
+  outS<<"# Sub-state info..."<<std::endl;
 
       // Obtain arc range
   pair<WordGraphArcId,WordGraphArcId> arcIdxRange=wg_ptr->getArcIndexRange();
@@ -1579,7 +1579,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::printInfoForSubStates(ostream &outS)const
       for(unsigned int w=0;w<wgArc.words.size();++w)
       {
         printSubStateInfo(wgArcId,w,outS);
-        outS<<endl;
+        outS<<std::endl;
       }
     }
   }
@@ -1589,7 +1589,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::printInfoForSubStates(ostream &outS)const
 template<class ECM_FOR_WG>
 void WgProcessorForAnlp<ECM_FOR_WG>::printSubStateInfo(WordGraphArcId wgArcId,
                                                        unsigned int w,
-                                                       ostream &outS)const
+                                                       std::ostream &outS)const
 {
       // Obtain arc from arc id.
   WordGraphArc wgArc=wg_ptr->wordGraphArcId2WordGraphArc(wgArcId);
@@ -1601,7 +1601,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::printSubStateInfo(WordGraphArcId wgArcId,
   outS<<"Sub-state index: "<<wgArc.predStateIndex<<"->"<<wgArc.succStateIndex<<","<<w<<" ;";
 
       // Obtain ecm score vector for w'th word of current arc
-  Vector<Score> ecmScrVec=ecm_wg_ptr->obtainScrVecFromEsi(ecmScrInfoForArcVec[wgArcId][w]);
+  std::vector<Score> ecmScrVec=ecm_wg_ptr->obtainScrVecFromEsi(ecmScrInfoForArcVec[wgArcId][w]);
 
       // Print total score
   if(restScores.size()>wgArc.predStateIndex)
@@ -1636,7 +1636,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::printSubStateInfo(WordGraphArcId wgArcId,
   outS<<" ;";
   
       // Print last inserted prefix word vector
-  Vector<int> lastInsPrefWordVec=ecm_wg_ptr->obtainLastInsPrefWordVecFromEsi(ecmScrInfoForArcVec[wgArcId][w]);
+  std::vector<int> lastInsPrefWordVec=ecm_wg_ptr->obtainLastInsPrefWordVecFromEsi(ecmScrInfoForArcVec[wgArcId][w]);
   outS<<" lastInsPrefWordVec:";
   for(unsigned int i=0;i<lastInsPrefWordVec.size();++i)
     outS<<" "<<lastInsPrefWordVec[i];

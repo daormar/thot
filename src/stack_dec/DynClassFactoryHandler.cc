@@ -47,7 +47,7 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
   
   if(dynClassFileHandler.load(fileName,verbose)==THOT_ERROR)
   {
-    cerr<<"Error while loading ini file"<<endl;
+    std::cerr<<"Error while loading ini file"<<std::endl;
     return THOT_ERROR;
   }
       // Define variables to obtain base class infomation
@@ -59,14 +59,14 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
   baseClassName="BaseWordPenaltyModel";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }
       // Load class derived from BaseWordPenaltyModel dynamically
   if(!baseWordPenaltyModelDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
       // Store so file name
@@ -79,14 +79,14 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
   baseClassName="BaseNgramLM";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
       // Load class derived from BaseNgramLM dynamically
   if(!baseNgramLMDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
       // Store so file name
@@ -99,14 +99,14 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
   baseClassName="BaseSwAligModel";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
       // Load class derived from BaseSwAligModel dynamically
   if(!baseSwAligModelDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -120,14 +120,14 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
   baseClassName="BasePhraseModel";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
       // Load class derived from BasePhraseModel dynamically
   if(!basePhraseModelDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
       // Store so file name
@@ -140,14 +140,14 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
   baseClassName="BaseScorer";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
       // Load class derived from BaseScorer dynamically
   if(!baseScorerDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }     
 
@@ -155,14 +155,14 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
   baseClassName="BaseLogLinWeightUpdater";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
       // Load class derived from BaseLogLinWeightUpdater dynamically
   if(!baseLogLinWeightUpdaterDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }     
       // Store init parameters for BaseLogLinWeightUpdater
@@ -172,14 +172,14 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
   baseClassName="BaseTranslationConstraints";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
       // Load class derived from BaseTranslationConstraints dynamically
   if(!baseTranslationConstraintsDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }     
       // Store init parameters for BaseTranslationConstraints
@@ -189,14 +189,14 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
   baseClassName="BaseStackDecoder";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
       // Load class derived from BaseStackDecoder dynamically
   if(!baseStackDecoderDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }     
       // Store init parameters for BaseStackDecoder
@@ -237,14 +237,14 @@ int DynClassFactoryHandler::init_smt_and_imt(std::string fileName,
   baseClassName="BaseErrorCorrectionModel";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
       // Load class derived from BaseErrorCorrectionModel dynamically
   if(!baseErrorCorrectionModelDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }     
       // Store init parameters for BaseErrorCorrectionModel
@@ -254,14 +254,14 @@ int DynClassFactoryHandler::init_smt_and_imt(std::string fileName,
   baseClassName="BaseEcModelForNbUcat";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
       // Load class derived from BaseEcModelForNbUcat dynamically
   if(!baseEcModelForNbUcatDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }     
       // Store init parameters for BaseEcModelForNbUcat
@@ -271,14 +271,14 @@ int DynClassFactoryHandler::init_smt_and_imt(std::string fileName,
   baseClassName="BaseWgProcessorForAnlp";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
       // Load class derived from BaseWgProcessorForAnlp dynamically
   if(!baseWgProcessorForAnlpDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }     
       // Store init parameters for BaseWgProcessorForAnlp
@@ -288,14 +288,14 @@ int DynClassFactoryHandler::init_smt_and_imt(std::string fileName,
   baseClassName="BaseAssistedTrans";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
-    cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<endl;
-    cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<endl;
+    std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
+    std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
       // Load class derived from BaseAssistedTrans dynamically
   if(!baseAssistedTransDynClassLoader.open_module(soFileName,verbose))
   {
-    cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }     
       // Store init parameters for BaseAssistedTrans

@@ -93,9 +93,9 @@ class _nbUncoupledAssistedTrans: public _assistedTrans<SMT_MODEL>
       // assisted translation
     
       // Model weights functions
-  virtual void setWeights(Vector<float> wVec)=0;
+  virtual void setWeights(std::vector<float> wVec)=0;
   virtual unsigned int getNumWeights(void)=0;
-  virtual void printWeights(ostream &outS)=0;
+  virtual void printWeights(std::ostream &outS)=0;
   
   virtual void clear(void)=0;
       // Remove all data structures used by the assisted translator

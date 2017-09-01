@@ -38,7 +38,7 @@ PhraseDict::PhraseDict(void)
 
 //-------------------------
 Count PhraseDict::getCounts_t_(PhraseCountState ps_state,
-                               const Vector<WordIndex>& t,
+                               const std::vector<WordIndex>& t,
                                bool& found)
 {
   PhraseTableNode* phraseTableNodePtr;
@@ -65,7 +65,7 @@ Count PhraseDict::getCounts_t_(PhraseCountState ps_state,
   }
 }
 //-------------------------
-Count PhraseDict::getCount_t(const Vector<WordIndex>& t)
+Count PhraseDict::getCount_t(const std::vector<WordIndex>& t)
 {
   if(cache_ct_.t_present(t))
   {
@@ -98,7 +98,7 @@ Count PhraseDict::getCount_t(const Vector<WordIndex>& t)
 }
 //-------------------------
 void PhraseDict::addSrcTrgPair(PhraseCountState ps_state,
-                               const Vector<WordIndex>& t,
+                               const std::vector<WordIndex>& t,
                                Count count)
 {
   PhraseTableNode* phraseTableNodePtr;
@@ -135,7 +135,7 @@ void PhraseDict::addSrcTrgPair(PhraseCountState ps_state,
 }
 //-------------------------
 void PhraseDict::incrSrcTrgCount(PhraseCountState ps_state,
-                                 const Vector<WordIndex>& t,
+                                 const std::vector<WordIndex>& t,
                                  Count count)
 {
   PhraseTableNode* phraseTableNodePtr;
@@ -172,12 +172,12 @@ void PhraseDict::incrSrcTrgCount(PhraseCountState ps_state,
 }
 
 //-------------------------
-std::map<Vector<WordIndex>,PhrasePairInfo> PhraseDict::getEntriesFor_s(PhraseCountState ps_state)
+std::map<std::vector<WordIndex>,PhrasePairInfo> PhraseDict::getEntriesFor_s(PhraseCountState ps_state)
 {
-  std::map<Vector<WordIndex>,PhrasePairInfo> map_vecw_phpinfo;
+  std::map<std::vector<WordIndex>,PhrasePairInfo> map_vecw_phpinfo;
   Dict::const_iterator phraseTableIter;
   PhraseTableNode::const_iterator phraseTableNodeIter;
-  pair<Vector<WordIndex>,PhrasePairInfo> vecw_phpinfo;
+  pair<std::vector<WordIndex>,PhrasePairInfo> vecw_phpinfo;
 	
   for(phraseTableIter=dict.begin();phraseTableIter!=dict.end();++phraseTableIter)
   {
@@ -203,7 +203,7 @@ NbestTableNode<PhraseTransTableNodeData> PhraseDict::getTranslationsFor_s_(Phras
   NbestTableNode<PhraseTransTableNodeData> transTableNode; 
   Dict::const_iterator phraseTableIter;
   PhraseTableNode::const_iterator phraseTableNodeIter;
-  pair<LgProb,Vector<WordIndex> > lgProbVecPair;
+  pair<LgProb,std::vector<WordIndex> > lgProbVecPair;
 	
   for(phraseTableIter=dict.begin();phraseTableIter!=dict.end();++phraseTableIter)
   {
@@ -223,12 +223,12 @@ NbestTableNode<PhraseTransTableNodeData> PhraseDict::getTranslationsFor_s_(Phras
 }
 
 //-------------------------
-PhraseTableNode* PhraseDict::getTranslationsFor_t_(const Vector<WordIndex>& t)
+PhraseTableNode* PhraseDict::getTranslationsFor_t_(const std::vector<WordIndex>& t)
 {
   return dict.find(t);
 }
 //-------------------------
-pair<bool,PhraseTableNode*> PhraseDict::nodeForTrgHasOneTransOrMore(const Vector<WordIndex>& t)
+pair<bool,PhraseTableNode*> PhraseDict::nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t)
 {
   pair<bool,PhraseTableNode*> p_bool_ptnode;
   
@@ -254,7 +254,7 @@ pair<bool,PhraseTableNode*> PhraseDict::nodeForTrgHasOneTransOrMore(const Vector
 }
 
 //-------------------------
-void PhraseDict::addTrgIfNotExist(const Vector<WordIndex>& t)
+void PhraseDict::addTrgIfNotExist(const std::vector<WordIndex>& t)
 {
   PhraseTableNode* phraseTableNodePtr;
   PhraseTableNode phraseTableNode;

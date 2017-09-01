@@ -50,7 +50,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 int TakeParameters(int argc, char *argv[]);
 void printUsage(void);
 int extractEntryInfo(awkInputStream& awk,
-                     Vector<WordIndex>& src,
+                     std::vector<WordIndex>& src,
                      WordIndex& trg,
                      LogCount& logJointCount,
                      map<string, WordIndex>& vocab);
@@ -84,7 +84,7 @@ void saveVocabulary(map<string, WordIndex>& vocab)
 
     for (map<string, WordIndex>::iterator it = vocab.begin(); it != vocab.end(); it++)
     {
-        vocabFile << it->first << " " << it->second << endl;
+        vocabFile << it->first << " " << it->second << std::endl;
     }
         
     vocabFile.close();
@@ -109,7 +109,7 @@ WordIndex getSymbolId(map<string, WordIndex> &vocab, string symbol)
 
 //---------------
 int extractEntryInfo(awkInputStream& awk,
-                     Vector<WordIndex>& src,
+                     std::vector<WordIndex>& src,
                      WordIndex& trg,
                      im_pair<Count, Count>& inf,
                      map<string, WordIndex>& vocab)
@@ -142,7 +142,7 @@ int process_ttable(void)
     awkInputStream awk;
     if (awk.open_stream(stdin) == THOT_ERROR)
     {
-        cerr << "Error while reading from standard input!" << endl;
+        std::cerr << "Error while reading from standard input!" << std::endl;
         return THOT_ERROR;
     }
     else
@@ -153,7 +153,7 @@ int process_ttable(void)
 
         if(levelDbNt.init(outputFile) == THOT_ERROR)
         {
-            cerr << "Cannot create or recreate database (LevelDB) for language model" << endl;
+            std::cerr << "Cannot create or recreate database (LevelDB) for language model" << std::endl;
             return THOT_ERROR;
         }
 
@@ -166,7 +166,7 @@ int process_ttable(void)
         // Process translation table
         for(unsigned int i = 1; awk.getln(); i++)
         {
-            Vector<WordIndex> src;
+            std::vector<WordIndex> src;
             WordIndex trg;
             im_pair<Count, Count> inf;
 
@@ -178,14 +178,14 @@ int process_ttable(void)
             }
             else
             {
-                cerr << "Cannot extract entry info" << endl;
+                std::cerr << "Cannot extract entry info" << std::endl;
             }
 
             if (i % 5000 == 0)
-                cerr << "Processed " << i << " lines" << endl;
+                std::cerr << "Processed " << i << " lines" << std::endl;
         }
 
-        cerr << "levelDB size: " << levelDbNt.size() << endl;
+        std::cerr << "levelDB size: " << levelDbNt.size() << std::endl;
 
         // Save vocabulary
         saveVocabulary(vocab);

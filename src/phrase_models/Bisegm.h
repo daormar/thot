@@ -28,8 +28,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SimpleTrie.h"
 #include "CellID.h"
 
-using namespace std;
-
 //--------------- typedefs and structs  ------------------------------
 
 //--------------- Bisegm type

@@ -38,13 +38,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files --------------------------------------
 
-#include <myVector.h>
 #include <algorithm>
 #include <stdio.h>
 #include <string.h>
+#include <vector>
 #include <iostream>
-
-using namespace std;
 
 //--------------- Constants ------------------------------------------
 

@@ -81,7 +81,7 @@ int main(int argc,char *argv[])
 
   if(TakeParameters(argc,argv)==THOT_OK)
   {
-    BaseIncrNgramLM<Vector<WordIndex> >* lm;
+    BaseIncrNgramLM<std::vector<WordIndex> >* lm;
 
         // Load language model
     switch(lmType)
@@ -96,7 +96,7 @@ int main(int argc,char *argv[])
 
     if(lm->load(lmFileName.c_str())==THOT_ERROR)
     {
-      cerr<<"Error while loading language model"<<endl;
+      std::cerr<<"Error while loading language model"<<std::endl;
       delete lm;
       return THOT_ERROR;
     }
@@ -117,12 +117,12 @@ int main(int argc,char *argv[])
       total_time+=elapsed-elapsed_ant;
 
           // Print results
-      cout<<"* Number of sentences: "<<sentenceNo<<endl;
-      cout<<"* Number of words: "<<numWords<<endl;	  
-      cout<<"* Total log10 prob: "<<total_logp<<endl;
-      cout<<"* Average-Log10-Likelihood (total_log10_prob/num_ngrams): "<<(float)total_logp/(numWords+sentenceNo)<<endl;
-      cout<<"* Perplexity: "<<perp<<endl;
-      cout<<"* Retrieving time: "<<total_time<<endl; 	   
+      cout<<"* Number of sentences: "<<sentenceNo<<std::endl;
+      cout<<"* Number of words: "<<numWords<<std::endl;	  
+      cout<<"* Total log10 prob: "<<total_logp<<std::endl;
+      cout<<"* Average-Log10-Likelihood (total_log10_prob/num_ngrams): "<<(float)total_logp/(numWords+sentenceNo)<<std::endl;
+      cout<<"* Perplexity: "<<perp<<std::endl;
+      cout<<"* Retrieving time: "<<total_time<<std::endl; 	   
 
       delete lm;
    

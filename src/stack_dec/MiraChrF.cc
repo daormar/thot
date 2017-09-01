@@ -24,9 +24,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 void MiraChrF::sentBackgroundScore(const std::string& candidate,
                                    const std::string& reference,
                                    double& score,
-                                   Vector<unsigned int>& /*sentStats*/)
+                                   std::vector<unsigned int>& /*sentStats*/)
 {
-  Vector<std::string> reference_tokens;
+  std::vector<std::string> reference_tokens;
   reference_tokens = StrProcUtils::stringToStringVector(reference);
 
   sentScore(candidate, reference, score);
@@ -40,8 +40,8 @@ void MiraChrF::sentScore(const std::string& candidate,
     calculate_chrf(reference, candidate, score);
 }
 
-void MiraChrF::corpusScore(const Vector<std::string>& candidates,
-                           const Vector<std::string>& references,
+void MiraChrF::corpusScore(const std::vector<std::string>& candidates,
+                           const std::vector<std::string>& references,
                            double& score)
 {
     score = 0;

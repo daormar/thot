@@ -43,8 +43,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ctimer.h"
 #include "AlignmentContainer.h"
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 
@@ -187,52 +185,52 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
        if(strcmp("-and",awk.dollar(1).c_str())==0)
        {
          invalid_op=false;
-         if(verbose) cerr<<"-and "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-and "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
          ret=alignmentContainer.intersect((char*)awk.dollar(2).c_str(),transpose);
        }
        if(strcmp("-or",awk.dollar(1).c_str())==0)
        {
          
          invalid_op=false;
-         if(verbose) cerr<<"-or "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-or "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
 		 ret=alignmentContainer.join((char*)awk.dollar(2).c_str(),transpose);	
        }
        if(strcmp("-sum",awk.dollar(1).c_str())==0)
        {
          invalid_op=false;
-         if(verbose) cerr<<"-sum "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-sum "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
 		 ret=alignmentContainer.sum((char*)awk.dollar(2).c_str(),transpose);	
        }
        if(strcmp("-sym1",awk.dollar(1).c_str())==0)
        {
          invalid_op=false;
-         if(verbose) cerr<<"-sym1 "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-sym1 "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
 		 ret=alignmentContainer.symmetr1((char*)awk.dollar(2).c_str(),transpose);	
        }
        if(strcmp("-sym2",awk.dollar(1).c_str())==0)
        {
          invalid_op=false;
-         if(verbose) cerr<<"-sym2 "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-sym2 "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
 		 ret=alignmentContainer.symmetr2((char*)awk.dollar(2).c_str(),transpose);	
        }
        if(strcmp("-grd",awk.dollar(1).c_str())==0)
        {
          invalid_op=false;
-         if(verbose) cerr<<"-grd "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-grd "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
 		 ret=alignmentContainer.growDiagFinal((char*)awk.dollar(2).c_str(),transpose);	
        }
        if(ret==THOT_ERROR)
        {
-         cerr<<"Error while executing alignment operation"<<endl;
+         std::cerr<<"Error while executing alignment operation"<<std::endl;
          return THOT_ERROR;
        }
-       if(invalid_op) cerr<<"Warning! invalid operation at line "<<lineno<<endl;
+       if(invalid_op) std::cerr<<"Warning! invalid operation at line "<<lineno<<std::endl;
      }
 	 else
      {
        if(awk.NF!=0)
        {
-         cerr<<"Error in alignment operations file\n";
+         std::cerr<<"Error in alignment operations file\n";
          return THOT_ERROR;
        }
      } 
@@ -273,45 +271,45 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
        if(strcmp("-and",awk.dollar(1).c_str())==0)
        {
          invalid_op=false;
-         if(verbose) cerr<<"-and "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-and "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
 		 ret=alignmentExtractor.intersect((char*)awk.dollar(2).c_str(),outputFileName,transpose);
        }
        if(strcmp("-or",awk.dollar(1).c_str())==0)
        {
          invalid_op=false;
-         if(verbose) cerr<<"-or "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-or "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
 		 ret=alignmentExtractor.join((char*)awk.dollar(2).c_str(),outputFileName,transpose);
        }
        if(strcmp("-sum",awk.dollar(1).c_str())==0)
        {
          invalid_op=false;
-         if(verbose) cerr<<"-sum "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-sum "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
 		 ret=alignmentExtractor.sum((char*)awk.dollar(2).c_str(),outputFileName,transpose);
        }
        if(strcmp("-sym1",awk.dollar(1).c_str())==0)
        {
          invalid_op=false;
-         if(verbose) cerr<<"-sym1 "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-sym1 "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
 		 ret=alignmentExtractor.symmetr1((char*)awk.dollar(2).c_str(),outputFileName,transpose);
        }
        if(strcmp("-sym2",awk.dollar(1).c_str())==0)
        {
          invalid_op=false;
-         if(verbose) cerr<<"-sym2 "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-sym2 "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
 		 ret=alignmentExtractor.symmetr2((char*)awk.dollar(2).c_str(),outputFileName,transpose);
        }
        if(strcmp("-grd",awk.dollar(1).c_str())==0)
        {
          invalid_op=false;
-         if(verbose) cerr<<"-grd "<<awk.dollar(2).c_str()<<" "<<transpose<<endl;
+         if(verbose) std::cerr<<"-grd "<<awk.dollar(2).c_str()<<" "<<transpose<<std::endl;
 		 ret=alignmentExtractor.growDiagFinal((char*)awk.dollar(2).c_str(),outputFileName,transpose);
        }
        if(ret==THOT_ERROR)
        {
-         cerr<<"thot_alig_op aborted due to errors in the given alignment operations file."<<endl;
+         std::cerr<<"thot_alig_op aborted due to errors in the given alignment operations file."<<std::endl;
          exit(THOT_ERROR);
        }
-       if(invalid_op) cerr<<"Warning! invalid operation at line "<<lineno<<endl;
+       if(invalid_op) std::cerr<<"Warning! invalid operation at line "<<lineno<<std::endl;
        
            // Close alignment extractor (this closes and removes the temporary file)
        alignmentExtractor.close();
@@ -319,7 +317,7 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
        out_file=fopen(outputFileName,"r");
        if(out_file==NULL)
        {
-         cerr<<"Error: Output file "<<outputFileName<<" cannot be created."<<endl;
+         std::cerr<<"Error: Output file "<<outputFileName<<" cannot be created."<<std::endl;
          exit(THOT_ERROR);
        }
            // Create new temporary file
@@ -336,7 +334,7 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
      {
        if(awk.NF!=0)
        {
-         cerr<<"Error in alignment operations file\n";
+         std::cerr<<"Error in alignment operations file\n";
          return THOT_ERROR;
        }
      } 
@@ -354,7 +352,7 @@ FILE* gen_temp_file(void)
     return tmp_file;
   else
   {
-    cerr<<"Error: temporary file cannot be created!"<<endl;
+    std::cerr<<"Error: temporary file cannot be created!"<<std::endl;
     exit(THOT_ERROR);
   }
 }
@@ -370,13 +368,13 @@ void fileCopy (FILE* from, FILE *to)
     ch = fgetc(from);
     if(ferror(from))
     {
-      cerr<<"Error reading temporary file."<<endl;
+      std::cerr<<"Error reading temporary file."<<std::endl;
       exit(1);
     }
     if(!feof(from)) fputc(ch, to);
     if(ferror(to))
     {
-      cerr<<"Error writing temporary file."<<endl;
+      std::cerr<<"Error writing temporary file."<<std::endl;
       exit(1);
     }
   }  
@@ -515,47 +513,47 @@ int TakeParameters(int argc,char *argv[])
 //--------------- printDesc() function
 void printDesc(void)
 {
-  cerr<<"thot_alig_op written by Daniel Ortiz\n";
-  cerr<<"thot_alig_op allows to operate alignment matrices\n";
-  cerr<<"type \"thot_alig_op --help\" to get usage information.\n";
+  std::cerr<<"thot_alig_op written by Daniel Ortiz\n";
+  std::cerr<<"thot_alig_op allows to operate alignment matrices\n";
+  std::cerr<<"type \"thot_alig_op --help\" to get usage information.\n";
 }
 
 //--------------------------------
 void printUsage(void)
 {
- cerr<<"Usage: thot_alig_op {-g <string> | -gt <string>} \n";
- cerr<<"               {{-and|-or|-sum|-sym1|-sym2|-grd} <string>|\n";
- cerr<<"               -f <string>}\n";	
- cerr<<"               -o <string> [-no-transpose] [-e [-compact]] [-v]\n";
- cerr<<"               [--help] [--version]\n\n";
- cerr<<"-g <string> | -gt <string>\n";
- cerr<<"                             Name of the GIZA-alignment file name.\n";
- cerr<<"                             If -gt, the alignment matrices are transposed.\n\n";
- cerr<<"-and | -or | -sum | -sym1 | -sym2 | -grd <string>\n";
- cerr<<"                             performs and, or, sum, sym1, sym2 or grd\n";
- cerr<<"                             operations with the given GIZA file.\n";
- cerr<<"                             Note: sym1 and sym2 are two different versions\n";
- cerr<<"                             of the alignment symmetrization, and grd.\n";
- cerr<<"                             correspondes to grow-diag-final operation.\n\n";
- cerr<<"-f <string>                  Gives a file with a sequence of alignment\n";
- cerr<<"                             operations over the initial Giza file name.\n";	
- cerr<<"                             Operations: '-and|-or|-sum|-sym1|-sym2|-grd'\n";
- cerr<<"                             The file consists of a set of entries and must\n";
- cerr<<"                             have only one entry per line.\n";
- cerr<<"                             Format of each entry: \n";
- cerr<<"                             '<operation> <fileName> <transposeFlag=0|1>'\n\n";
- cerr<<"-o <string>                  Set output files prefix name.\n\n";
- cerr<<"-no-transpose                Do not transpose the alignment matrix when \n";
- cerr<<"                             using -and | -or | -sum etc.\n\n";	
- cerr<<"-e                           With this flag it is not necessary a one to one\n";
- cerr<<"                             alignment correspondence between files\n";
- cerr<<"                             because the alignments are operated exhaustively\n";
- cerr<<"                             (increases time and space complexity).\n\n";	
- cerr<<"-compact                     Generate the output in a compact format (it can\n";
- cerr<<"                             be applied only if -e option was given).\n\n";
- cerr<<"-v                           Verbose mode\n\n";
- cerr<<"--help                       Display this help and exit\n\n";
- cerr<<"--version                    Output version information and exit\n\n";
+ std::cerr<<"Usage: thot_alig_op {-g <string> | -gt <string>} \n";
+ std::cerr<<"               {{-and|-or|-sum|-sym1|-sym2|-grd} <string>|\n";
+ std::cerr<<"               -f <string>}\n";	
+ std::cerr<<"               -o <string> [-no-transpose] [-e [-compact]] [-v]\n";
+ std::cerr<<"               [--help] [--version]\n\n";
+ std::cerr<<"-g <string> | -gt <string>\n";
+ std::cerr<<"                             Name of the GIZA-alignment file name.\n";
+ std::cerr<<"                             If -gt, the alignment matrices are transposed.\n\n";
+ std::cerr<<"-and | -or | -sum | -sym1 | -sym2 | -grd <string>\n";
+ std::cerr<<"                             performs and, or, sum, sym1, sym2 or grd\n";
+ std::cerr<<"                             operations with the given GIZA file.\n";
+ std::cerr<<"                             Note: sym1 and sym2 are two different versions\n";
+ std::cerr<<"                             of the alignment symmetrization, and grd.\n";
+ std::cerr<<"                             correspondes to grow-diag-final operation.\n\n";
+ std::cerr<<"-f <string>                  Gives a file with a sequence of alignment\n";
+ std::cerr<<"                             operations over the initial Giza file name.\n";	
+ std::cerr<<"                             Operations: '-and|-or|-sum|-sym1|-sym2|-grd'\n";
+ std::cerr<<"                             The file consists of a set of entries and must\n";
+ std::cerr<<"                             have only one entry per line.\n";
+ std::cerr<<"                             Format of each entry: \n";
+ std::cerr<<"                             '<operation> <fileName> <transposeFlag=0|1>'\n\n";
+ std::cerr<<"-o <string>                  Set output files prefix name.\n\n";
+ std::cerr<<"-no-transpose                Do not transpose the alignment matrix when \n";
+ std::cerr<<"                             using -and | -or | -sum etc.\n\n";	
+ std::cerr<<"-e                           With this flag it is not necessary a one to one\n";
+ std::cerr<<"                             alignment correspondence between files\n";
+ std::cerr<<"                             because the alignments are operated exhaustively\n";
+ std::cerr<<"                             (increases time and space complexity).\n\n";	
+ std::cerr<<"-compact                     Generate the output in a compact format (it can\n";
+ std::cerr<<"                             be applied only if -e option was given).\n\n";
+ std::cerr<<"-v                           Verbose mode\n\n";
+ std::cerr<<"--help                       Display this help and exit\n\n";
+ std::cerr<<"--version                    Output version information and exit\n\n";
 
 }
 
@@ -563,7 +561,7 @@ void printUsage(void)
 
 void version(void)
 {
-  cerr<<"thot_alig_op is part of the Thot toolkit\n";
-  cerr<<"Thot version "<<THOT_VERSION<<endl;
-  cerr<<"Thot is GNU software written by Daniel Ortiz\n";
+  std::cerr<<"thot_alig_op is part of the Thot toolkit\n";
+  std::cerr<<"Thot version "<<THOT_VERSION<<std::endl;
+  std::cerr<<"Thot is GNU software written by Daniel Ortiz\n";
 }

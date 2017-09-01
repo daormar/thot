@@ -60,15 +60,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <map>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define THOT_COUNT_OUTPUT       2 
 
 //--------------- typedefs -------------------------------------------
 
-typedef NbestTransTable<Vector<WordIndex>,PhraseTransTableNodeData> PhraseNbestTransTable;
+typedef NbestTransTable<std::vector<WordIndex>,PhraseTransTableNodeData> PhraseNbestTransTable;
 
 //--------------- Classes --------------------------------------------
 
@@ -86,29 +84,29 @@ class _incrPhraseModel: public BaseIncrPhraseModel
     _incrPhraseModel(void);
 
         // Functions to extend or modify the model
-    void strAddTableEntry(const Vector<string>& s,
-                          const Vector<string>& t,
+    void strAddTableEntry(const std::vector<string>& s,
+                          const std::vector<string>& t,
                           PhrasePairInfo inf);
-    void addTableEntry(const Vector<WordIndex>& s,
-                       const Vector<WordIndex>& t,
+    void addTableEntry(const std::vector<WordIndex>& s,
+                       const std::vector<WordIndex>& t,
                        PhrasePairInfo inf);
-	void strIncrCountsOfEntry(const Vector<string>& s,
-                              const Vector<string>& t,
+	void strIncrCountsOfEntry(const std::vector<string>& s,
+                              const std::vector<string>& t,
                               Count count=1);
-    void incrCountsOfEntry(const Vector<WordIndex>& s,
-                           const Vector<WordIndex>& t,
+    void incrCountsOfEntry(const std::vector<WordIndex>& s,
+                           const std::vector<WordIndex>& t,
                            Count count=1);
 
         // Counts-related functions
-    Count cSrcTrg(const Vector<WordIndex>& s,
-                  const Vector<WordIndex>& t);
-    Count cSrc(const Vector<WordIndex>& s);
-    Count cTrg(const Vector<WordIndex>& t);
+    Count cSrcTrg(const std::vector<WordIndex>& s,
+                  const std::vector<WordIndex>& t);
+    Count cSrc(const std::vector<WordIndex>& s);
+    Count cTrg(const std::vector<WordIndex>& t);
 
-    Count cHSrcHTrg(const Vector<std::string>& hs,
-                    const Vector<std::string>& ht);
-    Count cHSrc(const Vector<std::string>& hs);
-    Count cHTrg(const Vector<std::string>& ht);
+    Count cHSrcHTrg(const std::vector<std::string>& hs,
+                    const std::vector<std::string>& ht);
+    Count cHSrc(const std::vector<std::string>& hs);
+    Count cHTrg(const std::vector<std::string>& ht);
 
         // Functions to access model probabilities
 
@@ -134,25 +132,25 @@ class _incrPhraseModel: public BaseIncrPhraseModel
         // obtains the log-probability for the length of a target
         // segment log(p(z_k|y_k,x_k-x_{k-1},trgLen))
 
-    PhrasePairInfo infSrcTrg(const Vector<WordIndex>& s,
-                             const Vector<WordIndex>& t,
+    PhrasePairInfo infSrcTrg(const std::vector<WordIndex>& s,
+                             const std::vector<WordIndex>& t,
                              bool& found);
 
-	LgProb logpt_s_(const Vector<WordIndex>& s,
-                    const Vector<WordIndex>& t);
+	LgProb logpt_s_(const std::vector<WordIndex>& s,
+                    const std::vector<WordIndex>& t);
 	
-	LgProb logps_t_(const Vector<WordIndex>& s,
-                    const Vector<WordIndex>& t);
+	LgProb logps_t_(const std::vector<WordIndex>& s,
+                    const std::vector<WordIndex>& t);
 
 
         // Functions to obtain translations for source or target phrases
-    bool getTransFor_s_(const Vector<WordIndex>& s,
+    bool getTransFor_s_(const std::vector<WordIndex>& s,
                         TrgTableNode& trgtn);
-    bool getTransFor_t_(const Vector<WordIndex>& t,
+    bool getTransFor_t_(const std::vector<WordIndex>& t,
                         SrcTableNode& srctn);
-	bool getNbestTransFor_s_(const Vector<WordIndex>& s,
+	bool getNbestTransFor_s_(const std::vector<WordIndex>& s,
                              NbestTableNode<PhraseTransTableNodeData>& nbt);
-	bool getNbestTransFor_t_(const Vector<WordIndex>& t,
+	bool getNbestTransFor_t_(const std::vector<WordIndex>& t,
                              NbestTableNode<PhraseTransTableNodeData>& nbt,
                              int N=-1);
     
@@ -180,11 +178,11 @@ class _incrPhraseModel: public BaseIncrPhraseModel
     WordIndex stringToSrcWordIndex(string s)const;
     string wordIndexToSrcString(WordIndex w)const;
     bool existSrcSymbol(string s)const;
-    Vector<WordIndex> strVectorToSrcIndexVector(const Vector<string>& s);
-        //converts a string vector into a source word index Vector, this
+    std::vector<WordIndex> strVectorToSrcIndexVector(const std::vector<string>& s);
+        //converts a string vector into a source word index std::vector, this
         //function automatically handles the source vocabulary,
         //increasing and modifying it if necessary
-    Vector<string> srcIndexVectorToStrVector(const Vector<WordIndex>& s);
+    std::vector<string> srcIndexVectorToStrVector(const std::vector<WordIndex>& s);
         //Inverse operation
     WordIndex addSrcSymbol(string s);
     bool loadSrcVocab(const char *srcInputVocabFileName);
@@ -197,21 +195,21 @@ class _incrPhraseModel: public BaseIncrPhraseModel
     WordIndex stringToTrgWordIndex(string t)const;
     string wordIndexToTrgString(WordIndex w)const;
     bool existTrgSymbol(string t)const;
-    Vector<WordIndex> strVectorToTrgIndexVector(const Vector<string>& t);
-        //converts a string vector into a target word index Vector, this
+    std::vector<WordIndex> strVectorToTrgIndexVector(const std::vector<string>& t);
+        //converts a string vector into a target word index std::vector, this
         //function automatically handles the target vocabulary,
         //increasing and modifying it if necessary
-    Vector<string> trgIndexVectorToStrVector(const Vector<WordIndex>& t);
+    std::vector<string> trgIndexVectorToStrVector(const std::vector<WordIndex>& t);
         //Inverse operation
     WordIndex addTrgSymbol(string t);
     bool loadTrgVocab(const char *trgInputVocabFileName);
         // loads target vocabulary, returns non-zero if error
     bool printTrgVocab(const char *outputFileName);
 	
-	Vector<string> stringToStringVector(string s);
-	Vector<string> extractCharItemsToVector(char *ch)const;
+	std::vector<string> stringToStringVector(string s);
+	std::vector<string> extractCharItemsToVector(char *ch)const;
         // Extracts the words in the string 'ch' with the form "w1
-        // ... wn" to a string Vector
+        // ... wn" to a string std::vector
 
         // size and clear functions
     size_t size(void);
@@ -229,7 +227,7 @@ class _incrPhraseModel: public BaseIncrPhraseModel
     SingleWordVocab singleWordVocab;
     
 #   ifdef THOT_HAVE_BASEICONDPROBTABLE_H
-    BaseICondProbTable<Vector<WordIndex>,Vector<WordIndex>,PhrasePairInfo>* basePhraseTablePtr;
+    BaseICondProbTable<std::vector<WordIndex>,std::vector<WordIndex>,PhrasePairInfo>* basePhraseTablePtr;
 #   else
     BasePhraseTable* basePhraseTablePtr;
 #   endif
@@ -245,14 +243,14 @@ class _incrPhraseModel: public BaseIncrPhraseModel
 # ifdef _GLIBCXX_USE_LFS
         // Functions to print models if C++ "LARGE FILE SYSTEM (LFS)" IS
         // ENABLED
-    void printTTable(ostream &outS);
+    void printTTable(std::ostream &outS);
 # endif
         // Functions to print models using standard C library
     void printTTable(FILE* file);
 
     void printNbestTransTableNode(NbestTableNode<PhraseTransTableNodeData> tTableNode,
-                                  ostream &outS);
-    void printSegmLengthTable(ostream &outS);								
+                                  std::ostream &outS);
+    void printSegmLengthTable(std::ostream &outS);								
 
         // Functions to load ttable
     virtual bool loadPlainTextTTable(const char *phraseTTableFileName);

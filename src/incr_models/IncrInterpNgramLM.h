@@ -23,7 +23,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /* Prototype file: IncrInterpNgramLM.h                              */
 /*                                                                  */
 /* Description: Class to manage incremental encoded interpolated    */
-/*              ngram language models p(x|Vector<x>).               */
+/*              ngram language models p(x|std::vector<x>).          */
 /*                                                                  */
 /********************************************************************/
 
@@ -94,9 +94,9 @@ class IncrInterpNgramLM: public _incrInterpNgramLM
    
  protected:
 
-  typedef std::map<std::string,SimpleDynClassLoader<BaseNgramLM<Vector<WordIndex> > > > SimpleDynClassLoaderMap;
-  Vector<std::string> lmTypeVec;
-  Vector<std::string> modelStatusVec;
+  typedef std::map<std::string,SimpleDynClassLoader<BaseNgramLM<std::vector<WordIndex> > > > SimpleDynClassLoaderMap;
+  std::vector<std::string> lmTypeVec;
+  std::vector<std::string> modelStatusVec;
   SimpleDynClassLoaderMap simpleDynClassLoaderMap;
 
   int updateModelCombinationWeights(const char *corpusFileName,
@@ -118,7 +118,7 @@ class IncrInterpNgramLM: public _incrInterpNgramLM
                                        unsigned int entry_index);
   std::string obtainDirNameForLmEntry(const std::string fileDescName,
                                       unsigned int entry_index);
-  BaseNgramLM<Vector<WordIndex> >* createLmPtr(std::string tmType);
+  BaseNgramLM<std::vector<WordIndex> >* createLmPtr(std::string tmType);
   void deleteModelPointers(void);
   void closeDynamicModules(void);
 };

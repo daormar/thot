@@ -107,7 +107,7 @@ void WordAligMatrix::init(unsigned int I_dims,unsigned int J_dims)
 }
 
 //-------------------------
-void WordAligMatrix::putAligVec(Vector<PositionIndex> aligVec)
+void WordAligMatrix::putAligVec(std::vector<PositionIndex> aligVec)
 {
   unsigned int j;
 	
@@ -121,7 +121,7 @@ void WordAligMatrix::putAligVec(Vector<PositionIndex> aligVec)
 }
 
 //-------------------------
-bool WordAligMatrix::getAligVec(Vector<PositionIndex>& aligVec)
+bool WordAligMatrix::getAligVec(std::vector<PositionIndex>& aligVec)
 {
   aligVec.clear();
   for(unsigned int j=0;j<J;++j)
@@ -417,7 +417,7 @@ WordAligMatrix& WordAligMatrix::growDiagFinal(const WordAligMatrix &waMatrix)
           if(getValue(i,j))
           {
                 // Explore neighbourhood
-            Vector<pair<unsigned int,unsigned int> > neighboursVec=obtainAdjacentCells(i,j);
+            std::vector<std::pair<unsigned int,unsigned int> > neighboursVec=obtainAdjacentCells(i,j);
             for(unsigned int k=0;k<neighboursVec.size();++k)
             {
               unsigned int ip=neighboursVec[k].first;
@@ -466,12 +466,13 @@ WordAligMatrix& WordAligMatrix::growDiagFinal(const WordAligMatrix &waMatrix)
 }
 
 //-------------------------
-Vector<pair<unsigned int,unsigned int> > WordAligMatrix::obtainAdjacentCells(unsigned int i,
-                                                                             unsigned int j)
+std::vector<std::pair<unsigned int,unsigned int> >
+WordAligMatrix::obtainAdjacentCells(unsigned int i,
+                                    unsigned int j)
 {
       // Initialize variables
-  Vector<pair<unsigned int,unsigned int> > puintVec;
-  pair<unsigned int,unsigned int> puint;
+  std::vector<std::pair<unsigned int,unsigned int> > puintVec;
+  std::pair<unsigned int,unsigned int> puint;
 
       // Add neighbour points
   for(int delta_i=-1;delta_i<=1;++delta_i)
@@ -484,7 +485,7 @@ Vector<pair<unsigned int,unsigned int> > WordAligMatrix::obtainAdjacentCells(uns
         int jp=j+delta_j;
         if(ip<(int) I && jp<(int) J && ip>=0 && jp>=0)
         {
-          puintVec.push_back(make_pair((unsigned int) ip,(unsigned int) jp));
+          puintVec.push_back(std::make_pair((unsigned int) ip,(unsigned int) jp));
         }
       }
     }
@@ -559,7 +560,7 @@ void WordAligMatrix::clear(void)
 }
 
 //-------------------------
-ostream& operator << (ostream &outS,const WordAligMatrix &waMatrix)
+std::ostream& operator << (std::ostream &outS,const WordAligMatrix &waMatrix)
 {
   unsigned int j;
   int i;
@@ -568,7 +569,7 @@ ostream& operator << (ostream &outS,const WordAligMatrix &waMatrix)
   {
     for(j=0;j<waMatrix.J;++j)	
       outS<<(unsigned int) waMatrix.matrix[i][j]<<" ";
-    outS<<endl;	 
+    outS<<std::endl;	 
   }
   return outS;	
 }
@@ -587,9 +588,10 @@ void WordAligMatrix::print(FILE* f)
 }
 
 //-------------------------
-void WordAligMatrix::wordAligAsVectors(Vector<pair<unsigned int,unsigned int> >& sourceSegm,Vector<unsigned int>& targetCuts)
+void WordAligMatrix::wordAligAsVectors(std::vector<std::pair<unsigned int,unsigned int> >& sourceSegm,
+                                       std::vector<unsigned int>& targetCuts)
 {
-  pair<unsigned int,unsigned int> prevIntPair,intPair;
+  std::pair<unsigned int,unsigned int> prevIntPair,intPair;
   unsigned int i,j;
 
   targetCuts.clear();

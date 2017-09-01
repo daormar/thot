@@ -83,40 +83,40 @@ class IncrIbm2AligModel: public IncrIbm1AligModel
                    PositionIndex i);
        // Returns log(p(i|j,slen,tlen))
    // Functions to generate alignments 
-   LgProb obtainBestAlignment(Vector<WordIndex> srcSentIndexVector,
-                              Vector<WordIndex> trgSentIndexVector,
+   LgProb obtainBestAlignment(std::vector<WordIndex> srcSentIndexVector,
+                              std::vector<WordIndex> trgSentIndexVector,
                               WordAligMatrix& bestWaMatrix);
 
-   LgProb lexAligM2LpForBestAlig(Vector<WordIndex> nSrcSentIndexVector,
-                                 Vector<WordIndex> trgSentIndexVector,
-                                 Vector<PositionIndex>& bestAlig);
+   LgProb lexAligM2LpForBestAlig(std::vector<WordIndex> nSrcSentIndexVector,
+                                 std::vector<WordIndex> trgSentIndexVector,
+                                 std::vector<PositionIndex>& bestAlig);
 
    // Functions to calculate probabilities for alignments
-   LgProb calcLgProbForAlig(const Vector<WordIndex>& sSent,
-                            const Vector<WordIndex>& tSent,
+   LgProb calcLgProbForAlig(const std::vector<WordIndex>& sSent,
+                            const std::vector<WordIndex>& tSent,
                             WordAligMatrix aligMatrix,
                             int verbose=0);
-   LgProb incrIBM2LgProb(Vector<WordIndex> nsSent,
-                         Vector<WordIndex> tSent,
-                         Vector<PositionIndex> alig,
+   LgProb incrIBM2LgProb(std::vector<WordIndex> nsSent,
+                         std::vector<WordIndex> tSent,
+                         std::vector<PositionIndex> alig,
                          int verbose=0);
 
    // Scoring functions without giving an alignment
-   LgProb calcLgProb(const Vector<WordIndex>& sSent,
-                     const Vector<WordIndex>& tSent,
+   LgProb calcLgProb(const std::vector<WordIndex>& sSent,
+                     const std::vector<WordIndex>& tSent,
                      int verbose=0);
-   LgProb calcSumIBM2LgProb(Vector<WordIndex> nsSent,
-                            Vector<WordIndex> tSent,
+   LgProb calcSumIBM2LgProb(std::vector<WordIndex> nsSent,
+                            std::vector<WordIndex> tSent,
                             int verbose=0);
 
    // Partial scoring functions
    void initPpInfo(unsigned int slen,
-                   const Vector<WordIndex>& tSent,
+                   const std::vector<WordIndex>& tSent,
                    PpInfo& ppInfo);
    void partialProbWithoutLen(unsigned int srcPartialLen,
                               unsigned int slen,
-                              const Vector<WordIndex>& s_,
-                              const Vector<WordIndex>& tSent,
+                              const std::vector<WordIndex>& s_,
+                              const std::vector<WordIndex>& tSent,
                               PpInfo& ppInfo);
 
    // load function
@@ -152,8 +152,8 @@ class IncrIbm2AligModel: public IncrIbm1AligModel
          // Returns log(p(i|j,slen,tlen)) without smoothing
      
    // EM-related functions
-   double calc_anji_num(const Vector<WordIndex>& nsrcSent,
-                        const Vector<WordIndex>& trgSent,
+   double calc_anji_num(const std::vector<WordIndex>& nsrcSent,
+                        const std::vector<WordIndex>& trgSent,
                         unsigned int i,
                         unsigned int j);
    double calc_anji_num_alig(PositionIndex i,
@@ -164,8 +164,8 @@ class IncrIbm2AligModel: public IncrIbm1AligModel
                       unsigned int mapped_n_aux,
                       PositionIndex i,
                       PositionIndex j,
-                      const Vector<WordIndex>& nsrcSent,
-                      const Vector<WordIndex>& trgSent,
+                      const std::vector<WordIndex>& nsrcSent,
+                      const std::vector<WordIndex>& trgSent,
                       const Count& weight);
    void fillEmAuxVarsAlig(unsigned int mapped_n,
                           unsigned int mapped_n_aux,
