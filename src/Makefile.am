@@ -383,16 +383,22 @@ endif
 exper_h=
 exper_defs=
 
-testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h
-testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc
+testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h          \
+testing/_incrLexTableTest.h testing/_phraseTableTest.h              \
+testing/IncrLexTableTest.h
+testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc     \
+testing/_incrLexTableTest.cc testing/_phraseTableTest.cc            \
+testing/IncrLexTableTest.cc
 
 if HAVE_LEVELDB_LIB
-leveldb_pm_testing_h= testing/LevelDbNgramTableTest.h          \
-testing/LevelDbPhraseTableTest.h                               \
-testing/IncrLexLevelDbTableTest.h
-leveldb_pm_testing_defs= testing/LevelDbNgramTableTest.cc      \
-testing/LevelDbPhraseTableTest.cc                              \
-testing/IncrLexLevelDbTableTest.cc
+leveldb_pm_testing_h= \
+testing/IncrLexLevelDbTableTest.h                              \
+testing/LevelDbNgramTableTest.h                                \
+testing/LevelDbPhraseTableTest.h
+leveldb_pm_testing_defs= \
+testing/IncrLexLevelDbTableTest.cc                             \
+testing/LevelDbNgramTableTest.cc                               \
+testing/LevelDbPhraseTableTest.cc
 endif
 
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\

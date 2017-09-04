@@ -18,25 +18,25 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: IncrLexLevelDbTableTest                                  */
+/* Module: _incrLexTableTest                                        */
 /*                                                                  */
-/* Prototypes file: IncrLexLevelDbTableTest.h                       */
+/* Prototypes file: _incrLexTableTest.h                             */
 /*                                                                  */
-/* Description: Declares the IncrLexLevelDbTableTest class          */
-/*              implementing unit tests for the IncrLexLevelDbTable */
-/*              class.                                              */
+/* Description: Declares the _incrLexTableTest abstract class       */
+/*              implementing unit tests for the incremental         */
+/*              lexical table classes.  */
 /*                                                                  */
 /********************************************************************/
 
 /**
- * @file IncrLexLevelDbTableTest.h
+ * @file _incrLexTableTest.h
  *
- * @brief Declares the IncrLexLevelDbTable class implementing unit tests
- * for the IncrLexLevelDbTable class.
+ * @brief Declares the _incrLexTable abstract class implementing
+ * unit tests for the incremental lexical table classes.
  */
 
-#ifndef _IncrLexLevelDbTableTest_h
-#define _IncrLexLevelDbTableTest_h
+#ifndef __incrLexTableTest_h
+#define __incrLexTableTest_h
 
 //--------------- Include files --------------------------------------
 
@@ -46,14 +46,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "_incrLexTableTest.h"
-#include "IncrLexLevelDbTable.h"
+#include "_incrLexTable.h"
+#include <cppunit/extensions/HelperMacros.h>
 
 //--------------- Constants ------------------------------------------
 
-
 //--------------- typedefs -------------------------------------------
-
 
 //--------------- Classes --------------------------------------------
 
@@ -63,24 +61,19 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  * @brief Class implementing tests for IncrLexLevelDbTable.
  */
 
-class IncrLexLevelDbTableTest: public _incrLexTableTest
+class _incrLexTableTest: public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE( IncrLexLevelDbTableTest );
-  CPPUNIT_TEST( testGetSetLexDenom );
-  CPPUNIT_TEST( testGetSetLexNumer );
-  CPPUNIT_TEST( testGetTransForTarget );
-  CPPUNIT_TEST( testSetLexNumerDenom );
-  CPPUNIT_TEST( testLoad );
-  CPPUNIT_TEST_SUITE_END();
+    protected:
+        _incrLexTable *tab;
 
- private:
-  string dbName = "/tmp/thot_leveldb_unit_test";
+    public:
+        virtual void setUp() = 0;
+        virtual void tearDown() = 0;
 
- public:
-  void setUp();
-  void tearDown();
-
-  void testLoad();
+        void testGetSetLexDenom();
+        void testGetSetLexNumer();
+        void testGetTransForTarget();
+        void testSetLexNumerDenom();
 
 };
 

@@ -18,25 +18,24 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: IncrLexLevelDbTableTest                                  */
+/* Module: IncrLexTableTest                                         */
 /*                                                                  */
-/* Prototypes file: IncrLexLevelDbTableTest.h                       */
+/* Prototypes file: IncrLexTableTest.h                              */
 /*                                                                  */
-/* Description: Declares the IncrLexLevelDbTableTest class          */
-/*              implementing unit tests for the IncrLexLevelDbTable */
-/*              class.                                              */
+/* Description: Declares the IncrLexTableTest class implementing    */
+/*              unit tests for the IncrLexTable class.              */
 /*                                                                  */
 /********************************************************************/
 
 /**
- * @file IncrLexLevelDbTableTest.h
+ * @file IncrLexTableTest.h
  *
- * @brief Declares the IncrLexLevelDbTable class implementing unit tests
- * for the IncrLexLevelDbTable class.
+ * @brief Declares the IncrLexTableTest class implementing unit tests
+ * for the IncrLexTable class.
  */
 
-#ifndef _IncrLexLevelDbTableTest_h
-#define _IncrLexLevelDbTableTest_h
+#ifndef _IncrLexTableTest_h
+#define _IncrLexTableTest_h
 
 //--------------- Include files --------------------------------------
 
@@ -47,13 +46,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_incrLexTableTest.h"
-#include "IncrLexLevelDbTable.h"
+#include "IncrLexTable.h"
 
 //--------------- Constants ------------------------------------------
 
-
 //--------------- typedefs -------------------------------------------
-
 
 //--------------- Classes --------------------------------------------
 
@@ -63,24 +60,18 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  * @brief Class implementing tests for IncrLexLevelDbTable.
  */
 
-class IncrLexLevelDbTableTest: public _incrLexTableTest
+class IncrLexTableTest: public _incrLexTableTest
 {
-  CPPUNIT_TEST_SUITE( IncrLexLevelDbTableTest );
-  CPPUNIT_TEST( testGetSetLexDenom );
-  CPPUNIT_TEST( testGetSetLexNumer );
-  CPPUNIT_TEST( testGetTransForTarget );
-  CPPUNIT_TEST( testSetLexNumerDenom );
-  CPPUNIT_TEST( testLoad );
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE( IncrLexTableTest );
+    CPPUNIT_TEST( testGetSetLexDenom );
+    CPPUNIT_TEST( testGetSetLexNumer );
+    CPPUNIT_TEST( testGetTransForTarget );
+    CPPUNIT_TEST( testSetLexNumerDenom );
+    CPPUNIT_TEST_SUITE_END();
 
- private:
-  string dbName = "/tmp/thot_leveldb_unit_test";
-
- public:
-  void setUp();
-  void tearDown();
-
-  void testLoad();
+    public:
+        void setUp();
+        void tearDown();
 
 };
 
