@@ -93,7 +93,7 @@ ThotDecoder* thotDecoderPtr;
 //--------------- Function Definitions --------------------------------
 
 
-//--------------- main function
+//---------------
 int main(int argc,char *argv[])
 {
   thot_server_pars ts_pars;
@@ -108,7 +108,7 @@ int main(int argc,char *argv[])
   }
 }
 
-//--------------- processParameters function
+//---------------
 int processParameters(thot_server_pars ts_pars)
 {
       // Process configuration file
@@ -144,7 +144,7 @@ int processParameters(thot_server_pars ts_pars)
   }
 }
 
-//--------------- start_server function
+//---------------
 int start_server(thot_server_pars ts_pars,
                  ThotDecoderUserPars tdu_pars)
 {
@@ -228,13 +228,13 @@ int start_server(thot_server_pars ts_pars,
   return THOT_OK;
 }
 
-//--------------- sigchld_handler function
+//---------------
 void sigchld_handler(int /*s*/)
 {
   while(wait(NULL) > 0){};
 }
 
-//--------------- process_requests function
+//---------------
 int process_request(int s,
                     const thot_server_pars& ts_pars,
                     const ThotDecoderUserPars& tdu_pars,
@@ -345,7 +345,7 @@ int process_request(int s,
   return retVal;
 }
 
-//--------------- handleParameters function
+//---------------
 int handleParameters(int argc,
                      char *argv[],
                      thot_server_pars& ts_pars)
@@ -380,7 +380,7 @@ int handleParameters(int argc,
   }
 }
 
-//--------------- takeparameters function
+//---------------
 int takeParameters(int argc,
                    const std::vector<std::string>& argv_stl,
                    thot_server_pars& ts_pars)
@@ -458,7 +458,7 @@ int takeParameters(int argc,
   return THOT_OK;
 }
 
-//--------------- checkParameters function
+//---------------
 int checkParameters(thot_server_pars& ts_pars)
 {
   if(!ts_pars.i_given && !ts_pars.c_given)
@@ -476,7 +476,7 @@ int checkParameters(thot_server_pars& ts_pars)
   return THOT_OK;
 }
 
-//--------------- printParameters function
+//---------------
 void printParameters(thot_server_pars ts_pars)
 {
   std::cerr<<"Server port: "<<ts_pars.server_port<<std::endl;
@@ -484,7 +484,7 @@ void printParameters(thot_server_pars ts_pars)
   std::cerr<<"-v: "<<ts_pars.v_given<<std::endl;
 }
 
-//--------------- printUsage function
+//---------------
 void printUsage(void)
 {
   std::cerr<<"thot_server written by Daniel Ortiz"<<std::endl;
@@ -500,7 +500,7 @@ void printUsage(void)
   std::cerr<<"--version      Output version information and exit"<<std::endl<<std::endl;
 }
 
-//--------------- version function
+//---------------
 void version(void)
 {
   std::cerr<<"thot_server is part of the thot package "<<std::endl;

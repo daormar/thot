@@ -68,7 +68,7 @@ void printDesc(void);
 
 //--------------- Function Definitions -------------------------------
 
-//--------------- main function
+//---------------
 int main(int argc,char *argv[])
 {
   thot_client_pars tdcPars;
@@ -96,8 +96,7 @@ int main(int argc,char *argv[])
  else return THOT_ERROR;  
 }
 
-
-//--------------- main function
+//---------------
 int process_request(const thot_client_pars& tdcPars)
 {
   std::string s;
@@ -200,8 +199,7 @@ int process_request(const thot_client_pars& tdcPars)
   return retVal;
 }
 
-//--------------- TakeParameters function
-
+//---------------
 int TakeParameters(int argc,
                    char *argv[],
                    thot_client_pars& tdcPars)
@@ -348,7 +346,7 @@ int TakeParameters(int argc,
  return THOT_ERROR;
 }
 
-//--------------- printDesc() function
+//---------------
 void printDesc(void)
 {
   std::cerr<<"thot_client is part of the thot package "<<std::endl;
@@ -356,7 +354,7 @@ void printDesc(void)
   std::cerr<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
 }
 
-//--------------------------------
+//---------------
 void printUsage(void)
 {
   std::cerr<<"Usage: thot_client           -i <string> [-p <int>] [-uid <int>]\n";
@@ -387,7 +385,8 @@ void printUsage(void)
   std::cerr<<"--help                       Display this help and exit.\n";
   std::cerr<<"--version                    Output version information and exit.\n";
 }
-//--------------------------------
+
+//---------------
 void version(void)
 {
   std::cerr<<"thot_client is part of the thot package\n";
