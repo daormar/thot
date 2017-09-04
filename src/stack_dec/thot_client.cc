@@ -359,7 +359,7 @@ void printUsage(void)
 {
   std::cerr<<"Usage: thot_client           -i <string> [-p <int>] [-uid <int>]\n";
   std::cerr<<"                             { -tr <srcstring> <refstring> | \n";
-  // std::cerr<<"                          | -tre <srcsent> <refsent> | \n";
+  // std::cerr<<"                          | -tre <srcstring> <refstring> | \n";
   std::cerr<<"                             | -t <string> | -th <string> |\n";
   std::cerr<<"                             | -c <srcstring> <refstring> |\n";
   std::cerr<<"                             | -sc <string> | -ap <string> | -rp |\n";
@@ -369,7 +369,7 @@ void printUsage(void)
   std::cerr<<"-p <int>                     Server port.\n";
   std::cerr<<"-uid <int>                   Set user id ("<<DEFAULT_USER_ID<<" by default).\n";
   std::cerr<<"-tr <srcstring> <refstring>  Train server models given a sentence pair.\n";
-  // std::cerr<<"-tre <srcsent> <refsent>  Train error correcting model given a string pair.\n";
+  // std::cerr<<"-tre <srcstring> <refstring>  Train error correcting model given a string pair.\n";
   std::cerr<<"-t <string>                  Translate sentence.\n";
   std::cerr<<"-th <string>                 Translate sentence (returns hypothesis\n";
   std::cerr<<"                             information).\n";
