@@ -61,6 +61,8 @@ class StlPhraseTable: public BasePhraseTable
         typedef std::map<std::vector<WordIndex>, Count> SrcPhraseInfo;
         typedef std::map<std::vector<WordIndex>, Count> TrgPhraseInfo;
 
+        typedef std::pair<std::vector<WordIndex>, int> PhraseInfoElement;
+
         // Implementation of comparator (<) for pair of iterators
         class SrcTrgKey : public pair<SrcPhraseInfo::iterator, TrgPhraseInfo::iterator>
         {
@@ -156,7 +158,7 @@ class StlPhraseTable: public BasePhraseTable
         {
             protected:
                 const StlPhraseTable* ptPtr;
-                //PhraseDict::const_iterator pdIter;  // TODO
+                StlPhraseTable::PhraseInfoElement dataItem;
 
             public:
                 const_iterator(void){ptPtr=NULL;}
@@ -168,7 +170,8 @@ class StlPhraseTable: public BasePhraseTable
                 bool operator++(int);  //postfix
                 int operator==(const const_iterator& right);
                 int operator!=(const const_iterator& right);
-                //const PhraseDict::const_iterator& operator->(void)const;  // TODO
+                StlPhraseTable::PhraseInfoElement operator*(void);
+                const StlPhraseTable::PhraseInfoElement* operator->(void);  // TODO
         };
 
             // const_iterator related functions
@@ -187,6 +190,9 @@ class StlPhraseTable: public BasePhraseTable
 
             // Returns information related to a given t
         Count getTrgInfo(const std::vector<WordIndex>& t, bool &found);
+
+            // Add target phrase count to the collection
+        void addTrgInfo(const std::vector<WordIndex>& t, Count t_inf);
 
 };
 

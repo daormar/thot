@@ -121,7 +121,7 @@ void StlPhraseTable::addTableEntry(const std::vector<WordIndex>& s,
                                    PhrasePairInfo inf)
 {
     addSrcInfo(s, inf.first.get_c_s());  // src
-    trgPhraseInfo.insert(make_pair(t, inf.second.get_c_s()));  // trg
+    addTrgInfo(t, inf.second.get_c_s());  // trg
     addSrcTrgInfo(s, t, inf.second.get_c_st());  // (src, trg)
 }
 
@@ -129,7 +129,32 @@ void StlPhraseTable::addTableEntry(const std::vector<WordIndex>& s,
 void StlPhraseTable::addSrcInfo(const std::vector<WordIndex>& s,
                                 Count s_inf)
 {
-    srcPhraseInfo.insert(make_pair(s, s_inf));
+    SrcPhraseInfo::iterator iter = srcPhraseInfo.find(s);
+
+    if (iter == srcPhraseInfo.end())  // Check if s exists in collection
+    {
+        srcPhraseInfo.insert(make_pair(s, s_inf));
+    }
+    else
+    {
+        iter->second = s_inf;
+    }
+}
+
+//-------------------------
+void StlPhraseTable::addTrgInfo(const std::vector<WordIndex>& t,
+                                Count t_inf)
+{
+    TrgPhraseInfo::iterator iter = trgPhraseInfo.find(t);
+
+    if (iter == trgPhraseInfo.end())  // Check if t exists in collection
+    {
+        trgPhraseInfo.insert(make_pair(t, t_inf));
+    }
+    else
+    {
+        iter->second = t_inf;
+    }
 }
 
 //-------------------------
@@ -147,7 +172,17 @@ void StlPhraseTable::addSrcTrgInfo(const std::vector<WordIndex>& s,
         exit(1);
     }
 
-    srcTrgPhraseInfo.insert(make_pair(srcTrgKey, st_inf));
+    // Update entry value
+    SrcTrgPhraseInfo::iterator iter = srcTrgPhraseInfo.find(srcTrgKey);
+
+    if (iter == srcTrgPhraseInfo.end())  // Check if (s, t) exists in collection
+    {
+        srcTrgPhraseInfo.insert(make_pair(srcTrgKey, st_inf));
+    }
+    else
+    {
+        iter->second = st_inf;
+    }
 }
 
 //-------------------------
@@ -162,7 +197,7 @@ void StlPhraseTable::incrCountsOfEntry(const std::vector<WordIndex>& s,
 
     // Update counts
     addSrcInfo(s, s_count + c);  // src
-    trgPhraseInfo.insert(make_pair(t, (t_count + c).get_c_s()));  // trg
+    addTrgInfo(t, t_count + c);  // trg
     addSrcTrgInfo(s, t, (src_trg_count + c).get_c_st());  // (src, trg)
 }
 
@@ -428,12 +463,19 @@ int StlPhraseTable::const_iterator::operator!=(const const_iterator& right)
     // TODO
 //   return !((*this)==right);
 }
+
 //--------------------------
-// const StlPhraseDict::const_iterator&
-// StlPhraseTable::const_iterator::operator->(void)const
-// {
-//     // TODO
-// //   return pdIter;
-// }
+StlPhraseTable::PhraseInfoElement StlPhraseTable::const_iterator::operator*(void)
+{
+    return *operator->();
+}
+
+//--------------------------
+const StlPhraseTable::PhraseInfoElement*
+StlPhraseTable::const_iterator::operator->(void)
+{
+   // TODO
+//   return pdIter;
+}
 
 //-------------------------
