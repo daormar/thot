@@ -5,4 +5,5 @@ IncrLexLevelDbTableTest.h IncrLexLevelDbTableTest.cc            \
 IncrLexTableTest.h IncrLexTableTest.cc                          \
 LevelDbNgramTableTest.h LevelDbNgramTableTest.cc                \
 LevelDbPhraseTableTest.h LevelDbPhraseTableTest.cc              \
+StlPhraseTableTest.h StlPhraseTableTest.cc                      \
 MiraChrFTest.h MiraChrFTest.cc

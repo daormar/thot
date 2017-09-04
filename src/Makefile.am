@@ -387,10 +387,10 @@ exper_defs=
 
 testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h          \
 testing/_incrLexTableTest.h testing/_phraseTableTest.h              \
-testing/IncrLexTableTest.h
+testing/IncrLexTableTest.h testing/StlPhraseTableTest.h
 testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc     \
 testing/_incrLexTableTest.cc testing/_phraseTableTest.cc            \
-testing/IncrLexTableTest.cc
+testing/IncrLexTableTest.cc testing/StlPhraseTableTest.cc
 
 if HAVE_LEVELDB_LIB
 leveldb_pm_testing_h= \
