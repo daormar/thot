@@ -44,6 +44,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <iomanip>
 #include "options.h"
+#include "ctimer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -208,12 +209,29 @@ int start_server(thot_server_pars ts_pars,
     }
     if(ts_pars.v_given)
     {
+          // Current date/time based on current system
+      time_t now = time(0);
+          // Convert now to tm struct for local timezone
+      tm* localtm = localtime(&now);
       std::cerr<<"----------------------------------------------------"<<std::endl;
-      std::cerr<<"Server: got connection from "<<inet_ntoa(their_addr.sin_addr)<<std::endl;
+      std::cerr<<"Processing new request..."<<std::endl;
+      std::cerr<<"Current time: "<<asctime(localtm);
+      std::cerr<<"Origin: "<<inet_ntoa(their_addr.sin_addr)<<std::endl;
     }
 
-    process_request(new_fd,ts_pars,tdu_pars,end); 
-  
+        // Process request measuring time
+    double elapsed_prev,elapsed,ucpu,scpu;
+    ctimer(&elapsed_prev,&ucpu,&scpu);
+    
+    process_request(new_fd,ts_pars,tdu_pars,end);
+    
+    ctimer(&elapsed,&ucpu,&scpu);
+
+    if(ts_pars.v_given && !end)
+    {
+      std::cerr<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
+    }
+    
 //    if (!fork())
 //    { // this is the child process
 //    close(sockfd); // The child does not need the descriptor
@@ -256,11 +274,11 @@ int process_request(int s,
 
       // Get request code
   int server_request_code=BasicSocketUtils::recvInt(s);
-  if(verbose) std::cerr<<"Server: request code "<<server_request_code<<std::endl;
+  if(verbose) std::cerr<<"Request code: "<<server_request_code<<std::endl;
 
       // Get user id
   int user_id=BasicSocketUtils::recvInt(s);
-  if(verbose) std::cerr<<"Server: received request from user "<<user_id<<std::endl;
+  if(verbose) std::cerr<<"User identifier: "<<user_id<<std::endl;
   
       // Init user parameters
   retVal=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
