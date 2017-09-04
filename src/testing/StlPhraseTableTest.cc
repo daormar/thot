@@ -69,9 +69,12 @@ void StlPhraseTableTest::testAddSrcTrgInfo()
 
   std::vector<WordIndex> s = getVector("jezioro Skiertag");
   std::vector<WordIndex> t = getVector("Skiertag lake");
+
+  Count c = Count(1);
   
   tab->clear();
-  tab->addSrcTrgInfo(s, t, Count(1));
+  tab->addSrcInfo(s, c);
+  tab->addSrcTrgInfo(s, t, c);
 
   Count src_trg_count = tab->cSrcTrg(s, t);
   Count trg_src_count = tabStl->getSrcTrgInfo(s, t, found);

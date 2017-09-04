@@ -44,17 +44,17 @@ StlPhraseTable::SrcTrgKey StlPhraseTable::getSrcTrgKey(const std::vector<WordInd
     SrcPhraseInfo::iterator srcIter = srcPhraseInfo.find(s);
     TrgPhraseInfo::iterator trgIter = trgPhraseInfo.find(t);
 
-    // Check if s and t exist in collections
-    if (srcIter == srcPhraseInfo.end() || trgIter == trgPhraseInfo.end())
+    // Add missing information to obtain iterator for t phrase
+    if (trgIter == trgPhraseInfo.end())
     {
-        found = false;
-        return SrcTrgKey(srcPhraseInfo.end(), trgPhraseInfo.end());
+        addTrgInfo(t, 0);
+        trgIter = trgPhraseInfo.find(t);
     }
-    else
-    {
-        found = true;
-        return SrcTrgKey(srcIter, trgIter);
-    }
+
+    // Check if s exists in collections
+    found = !(srcIter == srcPhraseInfo.end());
+
+    return SrcTrgKey(srcIter, trgIter);
 }
 
 //-------------------------
