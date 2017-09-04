@@ -110,7 +110,7 @@ void LevelDbPhraseTableTest::testIteratorsLoop()
 
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
-  map<Vector<WordIndex>, pair<int, int> > d;
+  map<std::vector<WordIndex>, pair<int, int> > d;
   d[tabLdb->getSrc(s)] = make_pair(0, 0);
   d[t] = make_pair(0, 0);
   d[tabLdb->getTrgSrc(s, t)] = make_pair(0, 0);
@@ -153,7 +153,7 @@ void LevelDbPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
 
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
-  map<Vector<WordIndex>, pair<int, int> > d;
+  map<std::vector<WordIndex>, pair<int, int> > d;
   d[tabLdb->getSrc(s)] = make_pair(0, 0);
   d[t] = make_pair(0, 0);
   d[tabLdb->getTrgSrc(s, t)] = make_pair(0, 0);

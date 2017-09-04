@@ -33,7 +33,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //---------------------------------------
 std::vector<WordIndex> _phraseTableTest::getVector(string phrase) {
-  Vector<WordIndex> v;
+  std::vector<WordIndex> v;
 
   for(unsigned int i = 0; i < phrase.size(); i++) {
     v.push_back(phrase[i]);
@@ -45,8 +45,8 @@ std::vector<WordIndex> _phraseTableTest::getVector(string phrase) {
 //---------------------------------------
 void _phraseTableTest::testStoreAndRestore()
 {
-  Vector<WordIndex> s1 = getVector("Morag city");
-  Vector<WordIndex> s2 = getVector("Narie lake");
+  std::vector<WordIndex> s1 = getVector("Morag city");
+  std::vector<WordIndex> s2 = getVector("Narie lake");
   Count cs1 = Count(5);
   Count cs2 = Count(2);
   tab->clear();
@@ -64,8 +64,8 @@ void _phraseTableTest::testStoreAndRestore()
 //---------------------------------------
 void _phraseTableTest::testAddTableEntry()
 {
-  Vector<WordIndex> s = getVector("Narie lake");
-  Vector<WordIndex> t = getVector("jezioro Narie");
+  std::vector<WordIndex> s = getVector("Narie lake");
+  std::vector<WordIndex> t = getVector("jezioro Narie");
   Count s_count = Count(3);
   Count t_count = Count(2);
   PhrasePairInfo ppi(s_count, t_count);
@@ -81,8 +81,8 @@ void _phraseTableTest::testAddTableEntry()
 //---------------------------------------
 void _phraseTableTest::testIncCountsOfEntry()
 {
-  Vector<WordIndex> s = getVector("Narie lake");
-  Vector<WordIndex> t = getVector("jezioro Narie");
+  std::vector<WordIndex> s = getVector("Narie lake");
+  std::vector<WordIndex> t = getVector("jezioro Narie");
   Count c_init = Count(3);
   Count c = Count(17);
 
@@ -99,12 +99,12 @@ void _phraseTableTest::testIncCountsOfEntry()
 void _phraseTableTest::testGetEntriesForTarget()
 {
   BasePhraseTable::SrcTableNode node;
-  Vector<WordIndex> s1_1 = getVector("Pasleka river");
-  Vector<WordIndex> s1_2 = getVector("Pasleka");
-  Vector<WordIndex> t1_1 = getVector("rzeka Pasleka");
-  Vector<WordIndex> t1_2 = getVector("Pasleka");
-  Vector<WordIndex> s2 = getVector("river");
-  Vector<WordIndex> t2 = getVector("rzeka");
+  std::vector<WordIndex> s1_1 = getVector("Pasleka river");
+  std::vector<WordIndex> s1_2 = getVector("Pasleka");
+  std::vector<WordIndex> t1_1 = getVector("rzeka Pasleka");
+  std::vector<WordIndex> t1_2 = getVector("Pasleka");
+  std::vector<WordIndex> s2 = getVector("river");
+  std::vector<WordIndex> t2 = getVector("rzeka");
   Count c = Count(1);
 
   tab->clear();
@@ -141,9 +141,9 @@ void _phraseTableTest::testRetrievingSubphrase()
      Accessing element with the subphrase should return count 0
   */
   bool found;
-  Vector<WordIndex> s = getVector("Hello");
-  Vector<WordIndex> t1 = getVector("Buenos Dias");
-  Vector<WordIndex> t2 = getVector("Buenos");
+  std::vector<WordIndex> s = getVector("Hello");
+  std::vector<WordIndex> t1 = getVector("Buenos Dias");
+  std::vector<WordIndex> t2 = getVector("Buenos");
 
   Count c = Count(1);
 
@@ -164,9 +164,9 @@ void _phraseTableTest::testRetrieveNonLeafPhrase()
   */
   bool found;
   BasePhraseTable::SrcTableNode node;
-  Vector<WordIndex> s = getVector("Hello");
-  Vector<WordIndex> t1 = getVector("Buenos Dias");
-  Vector<WordIndex> t2 = getVector("Buenos");
+  std::vector<WordIndex> s = getVector("Hello");
+  std::vector<WordIndex> t1 = getVector("Buenos Dias");
+  std::vector<WordIndex> t2 = getVector("Buenos");
 
   Count c = Count(1);
 
@@ -200,14 +200,14 @@ void _phraseTableTest::testGetEntriesForSource()
   */
   bool found;
   BasePhraseTable::TrgTableNode node;
-  Vector<WordIndex> s1 = getVector("jezioro Narie");
-  Vector<WordIndex> t1_1 = getVector("Narie lake");
-  Vector<WordIndex> t1_2 = getVector("Narie");
-  Vector<WordIndex> s2 = getVector("jezioro Skiertag");
-  Vector<WordIndex> t2_1 = getVector("Skiertag");
-  Vector<WordIndex> s3 = getVector("jezioro Jeziorak");
-  Vector<WordIndex> t3_1 = getVector("Jeziorak lake");
-  Vector<WordIndex> t3_2 = getVector("Jeziorak");
+  std::vector<WordIndex> s1 = getVector("jezioro Narie");
+  std::vector<WordIndex> t1_1 = getVector("Narie lake");
+  std::vector<WordIndex> t1_2 = getVector("Narie");
+  std::vector<WordIndex> s2 = getVector("jezioro Skiertag");
+  std::vector<WordIndex> t2_1 = getVector("Skiertag");
+  std::vector<WordIndex> s3 = getVector("jezioro Jeziorak");
+  std::vector<WordIndex> t3_1 = getVector("Jeziorak lake");
+  std::vector<WordIndex> t3_2 = getVector("Jeziorak");
 
   Count c = Count(1);
 
@@ -247,9 +247,9 @@ void _phraseTableTest::testRetrievingEntriesWithCountEqualZero()
   */
   bool found;
   BasePhraseTable::SrcTableNode node;
-  Vector<WordIndex> s1 = getVector("Palac Dohnow");
-  Vector<WordIndex> s2 = getVector("Palac Dohnow w Moragu");
-  Vector<WordIndex> t = getVector("Dohn's Palace");
+  std::vector<WordIndex> s1 = getVector("Palac Dohnow");
+  std::vector<WordIndex> s2 = getVector("Palac Dohnow w Moragu");
+  std::vector<WordIndex> t = getVector("Dohn's Palace");
 
   tab->clear();
   tab->incrCountsOfEntry(s1, t, Count(1));
@@ -272,11 +272,11 @@ void _phraseTableTest::testGetNbestForTrg()
   NbestTableNode<PhraseTransTableNodeData>::iterator iter;
 
   // Fill phrase table with data
-  Vector<WordIndex> s1 = getVector("city hall");
-  Vector<WordIndex> s2 = getVector("city hall in Morag");
-  Vector<WordIndex> s3 = getVector("town hall");
-  Vector<WordIndex> s4 = getVector("town hall in Morag");
-  Vector<WordIndex> t = getVector("ratusz miejski w Moragu");
+  std::vector<WordIndex> s1 = getVector("city hall");
+  std::vector<WordIndex> s2 = getVector("city hall in Morag");
+  std::vector<WordIndex> s3 = getVector("town hall");
+  std::vector<WordIndex> s4 = getVector("town hall in Morag");
+  std::vector<WordIndex> t = getVector("ratusz miejski w Moragu");
 
   tab->clear();
   tab->incrCountsOfEntry(s1, t, Count(4));
@@ -313,8 +313,8 @@ void _phraseTableTest::testAddSrcTrgInfo()
   */
   bool found;
 
-  Vector<WordIndex> s = getVector("jezioro Skiertag");
-  Vector<WordIndex> t = getVector("Skiertag lake");
+  std::vector<WordIndex> s = getVector("jezioro Skiertag");
+  std::vector<WordIndex> t = getVector("Skiertag lake");
 
   tab->clear();
   tab->addSrcTrgInfo(s, t, Count(1));
@@ -371,14 +371,14 @@ void _phraseTableTest::testSubkeys()
   tab->clear();
 
   // Define vectors
-  Vector<WordIndex> s1 = getVector("Pan Samochodzik");
-  Vector<WordIndex> t1_1 = getVector("Mr Car");
-  Vector<WordIndex> t1_2 = getVector("Pan");
-  Vector<WordIndex> t1_3 = getVector("Mr");
+  std::vector<WordIndex> s1 = getVector("Pan Samochodzik");
+  std::vector<WordIndex> t1_1 = getVector("Mr Car");
+  std::vector<WordIndex> t1_2 = getVector("Pan");
+  std::vector<WordIndex> t1_3 = getVector("Mr");
 
-  Vector<WordIndex> s2 = getVector("Pan");
-  Vector<WordIndex> t2_1 = getVector("Mister");
-  Vector<WordIndex> t2_2 = getVector("Mr");
+  std::vector<WordIndex> s2 = getVector("Pan");
+  std::vector<WordIndex> t2_1 = getVector("Mister");
+  std::vector<WordIndex> t2_2 = getVector("Mr");
 
   // Insert data to phrase table
   tab->incrCountsOfEntry(s1, t1_1, Count(1));
@@ -415,7 +415,7 @@ void _phraseTableTest::test32bitRange()
   */
   tab->clear();
 
-  Vector<WordIndex> minVector, maxVector;
+  std::vector<WordIndex> minVector, maxVector;
 
   minVector.push_back(0);
   maxVector.push_back(0x7FFFFFFE);
@@ -434,7 +434,7 @@ void _phraseTableTest::testByteMax()
   */
   tab->clear();
 
-  Vector<WordIndex> s, t;
+  std::vector<WordIndex> s, t;
   s.push_back(201);
   s.push_back(8);
   t.push_back(255);
