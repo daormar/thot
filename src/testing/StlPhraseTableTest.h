@@ -66,12 +66,12 @@ class StlPhraseTableTest: public _phraseTableTest
     CPPUNIT_TEST( testAddTableEntry );
     CPPUNIT_TEST( testIncCountsOfEntry );
     CPPUNIT_TEST( testStoreAndRestore );
-    // CPPUNIT_TEST( testGetEntriesForTarget );  // Segmentation Fault
+    CPPUNIT_TEST( testGetEntriesForTarget );
     CPPUNIT_TEST( testRetrievingSubphrase );
-    // CPPUNIT_TEST( testRetrieveNonLeafPhrase );
-    // //CPPUNIT_TEST( testGetEntriesForSource );
-    // CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );  // Segmentation Fault
-    // CPPUNIT_TEST( testGetNbestForTrg );
+    CPPUNIT_TEST( testRetrieveNonLeafPhrase );
+    //CPPUNIT_TEST( testGetEntriesForSource );
+    CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );
+    CPPUNIT_TEST( testGetNbestForTrg );
     CPPUNIT_TEST( testAddSrcTrgInfo );
     // CPPUNIT_TEST( testIteratorsLoop );
     // CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );

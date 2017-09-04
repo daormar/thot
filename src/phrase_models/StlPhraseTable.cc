@@ -339,7 +339,7 @@ bool StlPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
     SrcTrgKey srcTrgBegin = getSrcTrgKey(srcPhraseInfo.begin()->first, t, found);
     if (!found) return false;
 
-    SrcTrgKey srcTrgEnd = getSrcTrgKey(srcPhraseInfo.end()->first, t, found);  // Maybe use rbegin
+    SrcTrgKey srcTrgEnd = getSrcTrgKey(srcPhraseInfo.rbegin()->first, t, found);  // Maybe use rbegin
     if (!found) return false;
 
     // Define border elements for searched source phrases
