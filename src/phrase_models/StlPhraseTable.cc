@@ -417,51 +417,86 @@ StlPhraseTable::~StlPhraseTable(void)
 //-------------------------
 StlPhraseTable::const_iterator StlPhraseTable::begin(void)const
 {
-    // TODO
-//   StlPhraseTable::const_iterator iter(this,phraseDict.begin());
-//   return iter;
+    StlPhraseTable::const_iterator iter(
+        this,
+        srcPhraseInfo.begin(),
+        trgPhraseInfo.begin(),
+        srcTrgPhraseInfo.begin()
+    );
+
+    return iter;
 }
 //-------------------------
 StlPhraseTable::const_iterator StlPhraseTable::end(void)const
 {
-    // TODO
-//   StlPhraseTable::const_iterator iter(this,phraseDict.end());
-//   return iter;
+    StlPhraseTable::const_iterator iter(
+        this,
+        srcPhraseInfo.end(),
+        trgPhraseInfo.end(),
+        srcTrgPhraseInfo.end()
+    );
+
+    return iter;
 }
 
 // const_iterator function definitions
 //--------------------------
 bool StlPhraseTable::const_iterator::operator++(void) //prefix
 {
-    // TODO
-//   if(ptPtr!=NULL)
-//   {
-//     ++pdIter;
-//     if(pdIter==ptPtr->phraseDict.end()) return false;
-//     else
-//     {
-//       return true;
-//     }
-//   }
-//   else return false;
+    if (ptPtr != NULL)
+    {
+        if (srcIter != ptPtr->srcPhraseInfo.end())
+        {
+            srcIter++;
+            // Check if there are elements in other collections when reached end
+            return !(  // Not
+                srcIter == ptPtr->srcPhraseInfo.end() &&
+                ptPtr->trgPhraseInfo.empty() &&
+                ptPtr->srcTrgPhraseInfo.empty()
+            );
+        }
+        else if (trgIter != ptPtr->trgPhraseInfo.end())
+        {
+            trgIter++;
+            // Check if there are elements in other collections when reached end
+            return !(trgIter == ptPtr->trgPhraseInfo.end() && ptPtr->srcTrgPhraseInfo.empty());
+        }
+        else if (srcTrgIter != ptPtr->srcTrgPhraseInfo.end())
+        {
+            srcTrgIter++;
+            // Check if reached end of the last collection
+            return srcTrgIter != ptPtr->srcTrgPhraseInfo.end();
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+    else
+    {
+        return false;
+    }
 }
 //--------------------------
 bool StlPhraseTable::const_iterator::operator++(int)  //postfix
 {
-    // TODO
-//   return operator++();
+    return operator++();
 }
 //--------------------------
 int StlPhraseTable::const_iterator::operator==(const const_iterator& right)
 {
-    // TODO
-//   return (ptPtr==right.ptPtr && pdIter==right.pdIter);
+    return (
+        ptPtr == right.ptPtr &&
+        srcIter == right.srcIter &&
+        trgIter == right.trgIter &&
+        srcTrgIter == right.srcTrgIter
+    );
 }
 //--------------------------
 int StlPhraseTable::const_iterator::operator!=(const const_iterator& right)
 {
-    // TODO
-//   return !((*this)==right);
+    return !((*this) == right);
 }
 
 //--------------------------
@@ -474,8 +509,38 @@ StlPhraseTable::PhraseInfoElement StlPhraseTable::const_iterator::operator*(void
 const StlPhraseTable::PhraseInfoElement*
 StlPhraseTable::const_iterator::operator->(void)
 {
-   // TODO
-//   return pdIter;
+    std::vector<WordIndex> s;
+    std::vector<WordIndex> t;
+    int c;
+
+    if (ptPtr != NULL)
+    {
+        if (srcIter != ptPtr->srcPhraseInfo.end())
+        {
+            s = srcIter->first;
+            c = srcIter->second.get_c_s();
+        }
+        else if (trgIter != ptPtr->trgPhraseInfo.end())
+        {
+            t = trgIter->first;
+            c = trgIter->second.get_c_s();
+        }
+        else if (srcTrgIter != ptPtr->srcTrgPhraseInfo.end())
+        {
+            SrcPhraseInfo::iterator _srcIter = srcTrgIter->first.first;  // First element of the pair of iterators (s, t)
+            s = _srcIter->first;
+
+            TrgPhraseInfo::iterator _trgIter = srcTrgIter->first.second;  // Second element of the pair of iterators (s, t)
+            t = _trgIter->first;
+
+            c = srcTrgIter->second.get_c_st();
+        }
+    }
+
+    dataItem.first = make_pair(s, t);
+    dataItem.second = c;
+
+    return &dataItem;
 }
 
 //-------------------------

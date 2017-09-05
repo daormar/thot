@@ -48,17 +48,6 @@ void StlPhraseTableTest::tearDown()
 }
 
 //---------------------------------------
-std::vector<WordIndex> StlPhraseTableTest::getTrgSrc(std::vector<WordIndex>& s,
-                                                     std::vector<WordIndex>& t)
-{
-    std::vector<WordIndex> ts = t;
-    ts.push_back(UNUSED_WORD);
-    ts.insert(ts.end(), s.begin(), s.end());
-
-    return ts;
-}
-
-//---------------------------------------
 void StlPhraseTableTest::testAddSrcTrgInfo()
 {
   /* TEST:
@@ -93,40 +82,44 @@ void StlPhraseTableTest::testIteratorsLoop()
   */
   std::vector<WordIndex> s = getVector("jezioro Skiertag");
   std::vector<WordIndex> t = getVector("Skiertag lake");
+  std::vector<WordIndex> empty;
   
   tab->clear();
   tab->incrCountsOfEntry(s, t, Count(1));
 
   CPPUNIT_ASSERT(tabStl->begin() != tabStl->end());
-  CPPUNIT_ASSERT(tabStl->begin() != tabStl->begin());
+  CPPUNIT_ASSERT(tabStl->begin() == tabStl->begin());
 
   int i = 0;
   const int MAX_ITER = 10;
 
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
-  map<std::vector<WordIndex>, pair<int, int> > d;
-  d[s] = make_pair(0, 0);
-  d[t] = make_pair(0, 0);
-  d[getTrgSrc(s, t)] = make_pair(0, 0);
+  map<StlPhraseTable::PhraseInfoElementKey, pair<int, int> > d;
+  StlPhraseTable::PhraseInfoElementKey s_key = make_pair(s, empty);
+  StlPhraseTable::PhraseInfoElementKey t_key = make_pair(empty, t);
+  StlPhraseTable::PhraseInfoElementKey st_key = make_pair(s, t);
+  d[s_key] = make_pair(0, 0);
+  d[t_key] = make_pair(0, 0);
+  d[st_key] = make_pair(0, 0);
 
   for(StlPhraseTable::const_iterator iter = tabStl->begin();
       iter != tabStl->end() && i < MAX_ITER;
       iter++, i++)
   {
-    pair<std::vector<WordIndex>, int> x = *iter;
+    StlPhraseTable::PhraseInfoElement x = *iter;
     d[x.first].first += x.second;
     d[x.first].second++;  
   }
 
   // Check if element returned by iterator is correct
   CPPUNIT_ASSERT(d.size() == 3);
-  CPPUNIT_ASSERT(d[s].first == 1);
-  CPPUNIT_ASSERT(d[s].second == 1);
-  CPPUNIT_ASSERT(d[t].first == 1);
-  CPPUNIT_ASSERT(d[t].second == 1);
-  CPPUNIT_ASSERT(d[getTrgSrc(s, t)].first == 1);
-  CPPUNIT_ASSERT(d[getTrgSrc(s, t)].second == 1);
+  CPPUNIT_ASSERT(d[s_key].first == 1);
+  CPPUNIT_ASSERT(d[s_key].second == 1);
+  CPPUNIT_ASSERT(d[t_key].first == 1);
+  CPPUNIT_ASSERT(d[t_key].second == 1);
+  CPPUNIT_ASSERT(d[st_key].first == 1);
+  CPPUNIT_ASSERT(d[st_key].second == 1);
 
   CPPUNIT_ASSERT( i == 3 );
 }
@@ -142,23 +135,27 @@ void StlPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
 
   std::vector<WordIndex> s = getVector("zamek krzyzacki w Malborku");
   std::vector<WordIndex> t = getVector("teutonic castle in Malbork");
+  std::vector<WordIndex> empty;
   
   tab->clear();
   tab->incrCountsOfEntry(s, t, Count(2));
 
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
-  map<std::vector<WordIndex>, pair<int, int> > d;
-  d[s] = make_pair(0, 0);
-  d[t] = make_pair(0, 0);
-  d[getTrgSrc(s, t)] = make_pair(0, 0);
+  map<StlPhraseTable::PhraseInfoElementKey, pair<int, int> > d;
+  StlPhraseTable::PhraseInfoElementKey s_key = make_pair(s, empty);
+  StlPhraseTable::PhraseInfoElementKey t_key = make_pair(empty, t);
+  StlPhraseTable::PhraseInfoElementKey st_key = make_pair(s, t);
+  d[s_key] = make_pair(0, 0);
+  d[t_key] = make_pair(0, 0);
+  d[st_key] = make_pair(0, 0);
  
   for(StlPhraseTable::const_iterator iter = tabStl->begin();
       iter != tabStl->end();
       found = (iter++))
   {
     CPPUNIT_ASSERT( found );
-    pair<std::vector<WordIndex>, int> x = *iter;
+    StlPhraseTable::PhraseInfoElement x = *iter;
     d[x.first].first += x.second;
     d[x.first].second++;
   }
@@ -168,12 +165,12 @@ void StlPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
 
   // Check if element returned by iterator is correct
   CPPUNIT_ASSERT(d.size() == 3);
-  CPPUNIT_ASSERT(d[s].first == 2);
-  CPPUNIT_ASSERT(d[s].second == 1);
-  CPPUNIT_ASSERT(d[t].first == 2);
-  CPPUNIT_ASSERT(d[t].second == 1);
-  CPPUNIT_ASSERT(d[getTrgSrc(s, t)].first == 2);
-  CPPUNIT_ASSERT(d[getTrgSrc(s, t)].second == 1);
+  CPPUNIT_ASSERT(d[s_key].first == 2);
+  CPPUNIT_ASSERT(d[s_key].second == 1);
+  CPPUNIT_ASSERT(d[t_key].first == 2);
+  CPPUNIT_ASSERT(d[t_key].second == 1);
+  CPPUNIT_ASSERT(d[st_key].first == 2);
+  CPPUNIT_ASSERT(d[st_key].second == 1);
 }
 
 //---------------------------------------

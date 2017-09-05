@@ -73,9 +73,9 @@ class StlPhraseTableTest: public _phraseTableTest
     CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );
     CPPUNIT_TEST( testGetNbestForTrg );
     CPPUNIT_TEST( testAddSrcTrgInfo );
-    // CPPUNIT_TEST( testIteratorsLoop );
-    // CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
-    // CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
+    CPPUNIT_TEST( testIteratorsLoop );
+    CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
+    CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
     CPPUNIT_TEST( testSize );
     CPPUNIT_TEST( testSubkeys );
     CPPUNIT_TEST( test32bitRange );
@@ -84,8 +84,6 @@ class StlPhraseTableTest: public _phraseTableTest
 
     private:
         StlPhraseTable* tabStl;  // Used for avoiding casting - should point on the same object like tab in parent class
-        std::vector<WordIndex> getTrgSrc(std::vector<WordIndex>& s,
-                                         std::vector<WordIndex>& t);
 
     public:
         void setUp();

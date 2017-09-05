@@ -61,7 +61,8 @@ class StlPhraseTable: public BasePhraseTable
         typedef std::map<std::vector<WordIndex>, Count> SrcPhraseInfo;
         typedef std::map<std::vector<WordIndex>, Count> TrgPhraseInfo;
 
-        typedef std::pair<std::vector<WordIndex>, int> PhraseInfoElement;
+        typedef std::pair<std::vector<WordIndex>, std::vector<WordIndex> > PhraseInfoElementKey;
+        typedef std::pair<PhraseInfoElementKey, int> PhraseInfoElement;
 
         // Implementation of comparator (<) for pair of iterators
         class SrcTrgKey : public pair<SrcPhraseInfo::iterator, TrgPhraseInfo::iterator>
@@ -158,20 +159,25 @@ class StlPhraseTable: public BasePhraseTable
         {
             protected:
                 const StlPhraseTable* ptPtr;
+                SrcPhraseInfo::const_iterator srcIter;
+                TrgPhraseInfo::const_iterator trgIter;
+                SrcTrgPhraseInfo::const_iterator srcTrgIter;
+
                 StlPhraseTable::PhraseInfoElement dataItem;
 
             public:
-                const_iterator(void){ptPtr=NULL;}
-                //    const_iterator(const StlPhraseTable* _ptPtr,
-                //                   PhraseDict::const_iterator iter):ptPtr(_ptPtr),pdIter(iter)  // TODO
-                //      {
-                //      }
-                bool operator++(void); //prefix
+                const_iterator(void) { ptPtr = NULL; }
+                const_iterator(const StlPhraseTable* _ptPtr,
+                               SrcPhraseInfo::const_iterator _srcIter,
+                               TrgPhraseInfo::const_iterator _trgIter,
+                               SrcTrgPhraseInfo::const_iterator _srcTrgIter
+                            ) : ptPtr(_ptPtr), srcIter(_srcIter), trgIter(_trgIter), srcTrgIter(_srcTrgIter) {}
+                bool operator++(void);  //prefix
                 bool operator++(int);  //postfix
                 int operator==(const const_iterator& right);
                 int operator!=(const const_iterator& right);
                 StlPhraseTable::PhraseInfoElement operator*(void);
-                const StlPhraseTable::PhraseInfoElement* operator->(void);  // TODO
+                const StlPhraseTable::PhraseInfoElement* operator->(void);
         };
 
             // const_iterator related functions
