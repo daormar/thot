@@ -227,7 +227,7 @@ int start_server(thot_server_pars ts_pars,
     
     ctimer(&elapsed,&ucpu,&scpu);
 
-    if(ts_pars.v_given && !end)
+    if(ts_pars.v_given)
     {
       std::cerr<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
     }
@@ -242,7 +242,10 @@ int start_server(thot_server_pars ts_pars,
 //    }
     close(new_fd);  
   }
-  
+
+  if(ts_pars.v_given)
+    std::cerr<<"Server: shutting down"<<std::endl;
+
   return THOT_OK;
 }
 
@@ -355,7 +358,6 @@ int process_request(int s,
       break;
 
     case END_SERVER: end=true;
-      if(verbose) std::cerr<<"Server: shutting down"<<std::endl;
       BasicSocketUtils::writeInt(s,1);
       thotDecoderPtr->clearTrans(verbose);
       break;
