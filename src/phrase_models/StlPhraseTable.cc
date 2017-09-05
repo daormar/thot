@@ -59,7 +59,7 @@ StlPhraseTable::SrcTrgKey StlPhraseTable::getSrcTrgKey(const std::vector<WordInd
 
 //-------------------------
 bool StlPhraseTable::getNbestForSrc(const std::vector<WordIndex>& s,
-                                 NbestTableNode<PhraseTransTableNodeData>& nbt)
+                                    NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
     // Not implemented
 }
@@ -365,7 +365,7 @@ bool StlPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
 
 //-------------------------
 bool StlPhraseTable::getEntriesForSource(const std::vector<WordIndex>& s,
-                                      StlPhraseTable::TrgTableNode& trgtn)
+                                         StlPhraseTable::TrgTableNode& trgtn)
 {
     // Not implemented
 }
@@ -393,6 +393,34 @@ Count StlPhraseTable::cTrg(const std::vector<WordIndex>& t)
 }
 
 //-------------------------
+void StlPhraseTable::print(void)
+{
+    for (StlPhraseTable::const_iterator iter = begin(); iter != end(); iter++)
+    {
+        // Extract information about phrase
+        PhraseInfoElement elem = *iter;
+        std::vector<WordIndex> s = elem.first.first;
+        std::vector<WordIndex> t = elem.first.second;
+        Count c = elem.second;
+        // Print on standard output
+        printVector(s);
+        std::cout << "| ";
+        printVector(t);
+        std::cout << "| ";
+        std::cout << c.get_c_s() << std::endl;
+    }
+}
+
+//-------------------------
+void StlPhraseTable::printVector(const std::vector<WordIndex>& vec) const
+{
+    for (size_t i = 0; i < vec.size(); i ++)
+    {
+        std::cout << vec[i] << " ";
+    }
+}
+
+//-------------------------
 size_t StlPhraseTable::size(void)
 {
     size_t srcSize = srcPhraseInfo.size();
@@ -415,7 +443,7 @@ StlPhraseTable::~StlPhraseTable(void)
 }
 
 //-------------------------
-StlPhraseTable::const_iterator StlPhraseTable::begin(void)const
+StlPhraseTable::const_iterator StlPhraseTable::begin(void) const
 {
     StlPhraseTable::const_iterator iter(
         this,
@@ -427,7 +455,7 @@ StlPhraseTable::const_iterator StlPhraseTable::begin(void)const
     return iter;
 }
 //-------------------------
-StlPhraseTable::const_iterator StlPhraseTable::end(void)const
+StlPhraseTable::const_iterator StlPhraseTable::end(void) const
 {
     StlPhraseTable::const_iterator iter(
         this,
@@ -511,7 +539,7 @@ StlPhraseTable::const_iterator::operator->(void)
 {
     std::vector<WordIndex> s;
     std::vector<WordIndex> t;
-    int c;
+    int c = 0;
 
     if (ptPtr != NULL)
     {

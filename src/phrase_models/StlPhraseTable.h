@@ -145,6 +145,9 @@ class StlPhraseTable: public BasePhraseTable
         virtual Count cSrc(const std::vector<WordIndex>& s);
         virtual Count cTrg(const std::vector<WordIndex>& t);
 
+            // print function
+        virtual void print(void);
+
             // size and clear functions
         virtual size_t size(void);
         virtual void clear(void);
@@ -181,8 +184,8 @@ class StlPhraseTable: public BasePhraseTable
         };
 
             // const_iterator related functions
-        StlPhraseTable::const_iterator begin(void)const;
-        StlPhraseTable::const_iterator end(void)const;
+        StlPhraseTable::const_iterator begin(void) const;
+        StlPhraseTable::const_iterator end(void) const;
 
     protected:
         SrcPhraseInfo srcPhraseInfo;
@@ -199,6 +202,8 @@ class StlPhraseTable: public BasePhraseTable
 
             // Add target phrase count to the collection
         void addTrgInfo(const std::vector<WordIndex>& t, Count t_inf);
+
+        void printVector(const std::vector<WordIndex>& vec) const;
 
 };
 
