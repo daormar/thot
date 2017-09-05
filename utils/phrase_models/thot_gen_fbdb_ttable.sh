@@ -136,6 +136,22 @@ extract_trg_phrases()
 }
 
 ########
+remove_prev_files()
+{
+    _files_were_removed=0
+    for ext in ${svcb_ext} ${svcb_ext} ${phrdict_ext}; do
+        if [ -f $out.$ext ]; then
+            rm $out.$ext
+            _files_were_removed=1
+        fi
+    done
+
+    if [ ${_files_were_removed} -eq 1 ]; then
+        echo "Warning: previously existing BDB model files were found and removed"
+    fi
+}
+
+########
 gen_src_vocab()
 {
     # Generate source vocabulary
@@ -173,13 +189,6 @@ gen_vocab_files()
 ########
 gen_fbdb_files()
 {
-    # Remove previously existing files (if any)
-    for ext in srcphr trgphr phrdict; do
-        if [ -f $out.$ext ]; then
-            rm $out.$ext
-        fi
-    done
-
     if [ $debug -eq 1 ]; then
         plain_ttable_to_id $srcv $trgv $table > $out.idttable
     fi
@@ -251,13 +260,20 @@ else
         exit 1
     fi
 
+    # Define file extensions
+    svcb_ext=fbdb_svcb
+    svcb_ext=fbdb_tvcb
+    phrdict_ext=fbdb_phrdict
+    
     # Generate vocabulary file names
-    srcv=$out.fbdb_svcb
-    trgv=$out.fbdb_tvcb
+    srcv=$out.${svcb_ext}
+    trgv=$out.${tvcb_ext}
 
     # Generate fbdb translation table files
     echo "Starting BDB ttable generation..." >&2
 
+    remove_prev_files
+    
     gen_vocab_files
 
     gen_fbdb_files

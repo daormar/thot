@@ -137,6 +137,27 @@ extract_trg_phrases()
 }
 
 ########
+remove_prev_files()
+{
+    _files_were_removed=0
+    for ext in ${svcb_ext} ${svcb_ext}; do
+        if [ -f $out.$ext ]; then
+            rm $out.$ext
+            _files_were_removed=1
+        fi
+    done
+
+    if [ -d ${out}_${phrdict_ext} ]; then
+        rm -rf ${out}_${phrdict_ext}
+        _files_were_removed=1
+    fi
+
+    if [ ${_files_were_removed} -eq 1 ]; then
+        echo "Warning: previously existing leveldb model files were found and removed"
+    fi
+}
+
+########
 gen_src_vocab()
 {
     # Generate source vocabulary
@@ -175,13 +196,7 @@ gen_vocab_files()
 ########
 gen_leveldb_files()
 {
-    # Remove previously existing files (if any)
-    for ext in srcphr trgphr phrdict; do
-        if [ -f $out.$ext ]; then
-            rm $out.$ext
-        fi
-    done
-
+    # Generate new files
     if [ $debug -eq 1 ]; then
         plain_ttable_to_id $srcv $trgv $table > $out.idttable
     fi
@@ -253,12 +268,19 @@ else
         exit 1
     fi
 
+    # Define file extensions
+    svcb_ext=ldb_svcb
+    svcb_ext=ldb_tvcb
+    phrdict_ext=ldb_phrdict
+
     # Generate vocabulary file names
-    srcv=$out.ldb_svcb
-    trgv=$out.ldb_tvcb
+    srcv=$out.${svcb_ext}
+    trgv=$out.${tvcb_ext}
 
     # Generate leveldb translation table
     echo "Starting LevelDB ttable generation..." >&2
+
+    remove_prev_files
     
     gen_vocab_files
 
