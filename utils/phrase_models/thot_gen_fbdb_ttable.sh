@@ -2,7 +2,7 @@
 # *- bash -*
 
 # Generates a binary phrase ttable given source and target vocabularies
-# and a thot ttable obtained with -pc option
+# and a thot ttable
 
 ########
 plain_ttable_to_id()
