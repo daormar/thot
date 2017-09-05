@@ -30,7 +30,7 @@ usage()
         echo "                   [-kenlm]"
     fi
     if [ ! -z "${LEVELDB_LIB}" ]; then
-        echo "                        [-ldb]"
+        echo "                   [-ldb]"
     fi
     echo "                   [-qs <string>] [-tdir <string>] [-sdir <string>]"
     echo "                   [-debug] [--help] [--version]"
@@ -222,6 +222,15 @@ estimate_klm()
 }
 
 ########
+remove_prev_ldb_files()
+{
+    if [ -d $prefix -o -f $prefix ]; then
+        rm -rf $prefix
+        echo "Warning: previously existing leveldb model files were found and removed" >&2
+    fi
+}
+
+########
 estimate_ldb()
 {
     # Determine output directory of native thot language model
@@ -244,6 +253,9 @@ estimate_ldb()
     prefix=$outd/${outsubdir}/trg.lm
     relative_prefix=${outsubdir}/trg.lm
 
+    # Remove previously existing ldb files
+    remove_prev_ldb_files
+    
     # Create leveldb model
     cat ${thotlm_prefix} | ${bindir}/thot_ngram_to_leveldb -o $prefix 2> ${prefix}.ldb_err || return 1
 
