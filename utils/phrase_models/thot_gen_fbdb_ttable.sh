@@ -147,7 +147,7 @@ remove_prev_files()
     done
 
     if [ ${_files_were_removed} -eq 1 ]; then
-        echo "Warning: previously existing BDB model files were found and removed"
+        echo "Warning: previously existing BDB model files were found and removed" >&2
     fi
 }
 

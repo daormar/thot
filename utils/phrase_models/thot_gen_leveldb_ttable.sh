@@ -153,7 +153,7 @@ remove_prev_files()
     fi
 
     if [ ${_files_were_removed} -eq 1 ]; then
-        echo "Warning: previously existing leveldb model files were found and removed"
+        echo "Warning: previously existing leveldb model files were found and removed" >&2
     fi
 }
 
