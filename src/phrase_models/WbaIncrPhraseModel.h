@@ -63,7 +63,7 @@ class WbaIncrPhraseModel: public _wbaIncrPhraseModel
         // Constructor
     WbaIncrPhraseModel(void):_wbaIncrPhraseModel()
       {
-        basePhraseTablePtr=new PhraseTable;
+        basePhraseTablePtr=new StlPhraseTable;
       }
 
         // Destructor

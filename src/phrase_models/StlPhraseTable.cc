@@ -443,6 +443,19 @@ StlPhraseTable::~StlPhraseTable(void)
 }
 
 //-------------------------
+StlPhraseTable::TrgPhraseInfo::const_iterator
+StlPhraseTable::beginTrg(void) const
+{
+    return trgPhraseInfo.begin();
+}
+//-------------------------
+StlPhraseTable::TrgPhraseInfo::const_iterator
+StlPhraseTable::endTrg(void) const
+{
+    return trgPhraseInfo.end();
+}
+
+//-------------------------
 StlPhraseTable::const_iterator StlPhraseTable::begin(void) const
 {
     StlPhraseTable::const_iterator iter(

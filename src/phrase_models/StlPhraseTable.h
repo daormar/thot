@@ -187,6 +187,10 @@ class StlPhraseTable: public BasePhraseTable
         StlPhraseTable::const_iterator begin(void) const;
         StlPhraseTable::const_iterator end(void) const;
 
+            // const_iterator related functions for targets
+        StlPhraseTable::TrgPhraseInfo::const_iterator beginTrg(void) const;
+        StlPhraseTable::TrgPhraseInfo::const_iterator endTrg(void) const;
+
     protected:
         SrcPhraseInfo srcPhraseInfo;
         TrgPhraseInfo trgPhraseInfo;
