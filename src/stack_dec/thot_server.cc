@@ -261,18 +261,6 @@ int process_request(int s,
                     const ThotDecoderUserPars& tdu_pars,
                     bool &end)
 {
-      // Variable declarations
-  std::string stlStr;
-  std::string stlStr1;
-  std::string stlStr2;
-  std::string stlStrSrc;
-  std::string stlStrRef;
-  bool retVal=false;
-  std::string result;
-  std::string bestHypInfo;
-  std::string catResult;
-  std::vector<float> floatVec;
-  RejectedWordsSet emptyRejWordsSet;
   int verbose=ts_pars.v_given;
 
       // Get request code
@@ -284,15 +272,25 @@ int process_request(int s,
   if(verbose) std::cerr<<"User identifier: "<<user_id<<std::endl;
   
       // Init user parameters
-  retVal=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
+  int retVal=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
   if(retVal==THOT_ERROR)
   {
     end=true;
-    if(verbose) std::cerr<<"Server: shutting down"<<std::endl;
     return THOT_ERROR;
   }
 
       // Process request
+  std::string stlStr;
+  std::string stlStr1;
+  std::string stlStr2;
+  std::string stlStrSrc;
+  std::string stlStrRef;
+  std::string result;
+  std::string bestHypInfo;
+  std::string catResult;
+  std::vector<float> floatVec;
+  RejectedWordsSet emptyRejWordsSet;
+
   switch(server_request_code)
   {
     case OL_TRAIN_PAIR:
