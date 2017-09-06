@@ -24,9 +24,9 @@ bool soFileIsExternal(std::string absoluteSoFileName)
 {
   std::string dirName=extractDirName(absoluteSoFileName);
   if(dirName==THOT_LIBDIR)
-    return false;
-  else
     return true;
+  else
+    return false;
 }
 
 //---------------
