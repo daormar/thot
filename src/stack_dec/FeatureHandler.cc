@@ -595,6 +595,12 @@ int FeatureHandler::createDirectPhrModelFeat(std::string featName,
 {
   std::cerr<<"** Creating direct phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
 
+      // Display warning if so file is external
+  if(soFileIsExternal(modelDescEntry.modelType))
+  {
+    std::cerr<<"Warning: so file ("<<modelDescEntry.modelType<<") is external to Thot package, to avoid execution problems ensure that the external file was compiled for the current version of the package"<<std::endl;
+  }
+
       // Create feature pointer and set name
   (*dirPmFeatPtrRef)=new DirectPhraseModelFeat<SmtModel::HypScoreInfo>;
   DirectPhraseModelFeat<SmtModel::HypScoreInfo>* dirPmFeatPtr=*dirPmFeatPtrRef;
@@ -666,6 +672,12 @@ int FeatureHandler::createInversePhrModelFeat(std::string featName,
                                               InversePhraseModelFeat<SmtModel::HypScoreInfo>** invPmFeatPtrRef)
 {
   std::cerr<<"** Creating inverse phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
+
+      // Display warning if so file is external
+  if(soFileIsExternal(modelDescEntry.modelType))
+  {
+    std::cerr<<"Warning: so file ("<<modelDescEntry.modelType<<") is external to Thot package, to avoid execution problems ensure that the external file was compiled for the current version of the package"<<std::endl;
+  }
 
       // Create feature pointer and set name
   (*invPmFeatPtrRef)=new InversePhraseModelFeat<SmtModel::HypScoreInfo>;
@@ -938,6 +950,12 @@ int FeatureHandler::createLangModelFeat(std::string featName,
 {
   std::cerr<<"** Creating language model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
 
+      // Display warning if so file is external
+  if(soFileIsExternal(modelDescEntry.modelType))
+  {
+    std::cerr<<"Warning: so file ("<<modelDescEntry.modelType<<") is external to Thot package, to avoid execution problems ensure that the external file was compiled for the current version of the package"<<std::endl;
+  }
+  
       // Create feature pointer and set name
   (*langModelFeatPtrRef)=new LangModelFeat<SmtModel::HypScoreInfo>;
   LangModelFeat<SmtModel::HypScoreInfo>* langModelFeatPtr=*langModelFeatPtrRef;
@@ -996,7 +1014,7 @@ bool FeatureHandler::process_lm_descriptor(std::string lmDescFile,
     }
 
         // Load word predictor information
-    std::cerr<<"** Loading word predictor information..."<<std::endl;
+    std::cerr<<"* Loading word predictor information..."<<std::endl;
     int ret=loadWordPredInfo(lmDescFile);
     if(ret==THOT_ERROR)
       return THOT_ERROR;
