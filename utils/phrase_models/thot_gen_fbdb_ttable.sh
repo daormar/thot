@@ -139,7 +139,7 @@ extract_trg_phrases()
 remove_prev_files()
 {
     _files_were_removed=0
-    for ext in ${svcb_ext} ${svcb_ext} ${phrdict_ext}; do
+    for ext in ${svcb_ext} ${tvcb_ext} ${phrdict_ext}; do
         if [ -f $out.$ext ]; then
             rm $out.$ext
             _files_were_removed=1
@@ -262,7 +262,7 @@ else
 
     # Define file extensions
     svcb_ext=fbdb_svcb
-    svcb_ext=fbdb_tvcb
+    tvcb_ext=fbdb_tvcb
     phrdict_ext=fbdb_phrdict
     
     # Generate vocabulary file names
