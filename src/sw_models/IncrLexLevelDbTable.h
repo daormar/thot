@@ -85,6 +85,10 @@ class IncrLexLevelDbTable : public _incrLexTable
     string vectorToKey(const std::vector<WordIndex>& vec)const;
     std::vector<WordIndex> keyToVector(const string key)const;
 
+        // Binary and plain text print functions
+    bool printBin(const char* lexNumDenFile);
+    bool printPlainText(const char* lexNumDenFile);
+
     public:
 
             // Constructor and destructor
@@ -122,7 +126,7 @@ class IncrLexLevelDbTable : public _incrLexTable
             // load function
         bool load(const char* lexNumDenFile);
 
-            // print function
+            // print function wrapper for binary or plain text print
         bool print(const char* lexNumDenFile);
 
             // clear() function
