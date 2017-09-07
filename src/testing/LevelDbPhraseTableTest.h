@@ -31,8 +31,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /**
  * @file LevelDbPhraseTableTest.h
  *
- * @brief Declares the LevelDbPhraseTable class implementing unit tests
- * for the LevelDbPhraseTable class.
+ * @brief Declares the LevelDbPhraseTableTest class implementing unit
+ * tests for the LevelDbPhraseTable class.
  */
 
 #ifndef _LevelDbPhraseTableTest_h

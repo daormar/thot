@@ -198,7 +198,6 @@ class LevelDbPhraseTable: public BasePhraseTable
         int operator!=(const const_iterator& right);
         pair<std::vector<WordIndex>, int> operator*(void);
         const pair<std::vector<WordIndex>, int>* operator->(void);
-        /* const PhraseDict::const_iterator& operator->(void)const; */
         ~const_iterator()
         {
           if(internalIter != NULL) {

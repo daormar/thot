@@ -493,21 +493,21 @@ bool _incrPhraseModel::printSegmLengthTable(const char *outputFileName)
 //-------------------------
 void _incrPhraseModel::printTTable(ostream &outS)
 {
-  PhraseTable* ptPtr=0;
+  StlPhraseTable* ptPtr=0;
 
-  ptPtr=dynamic_cast<PhraseTable*>(basePhraseTablePtr);
+  ptPtr=dynamic_cast<StlPhraseTable*>(basePhraseTablePtr);
   
   if(ptPtr) // C++ RTTI
   {
-    PhraseTable::const_iterator phraseTIter;
+    StlPhraseTable::TrgPhraseInfo::const_iterator phraseTIter;
       
         // Set float precision.
     outS.setf( ios::fixed, ios::floatfield );
     outS.precision(8);
-    for(phraseTIter=ptPtr->begin();phraseTIter!=ptPtr->end();++phraseTIter)
+    for(phraseTIter=ptPtr->beginTrg();phraseTIter!=ptPtr->endTrg();++phraseTIter)
     {
-      PhraseTable::SrcTableNode srctn;
-      PhraseTable::SrcTableNode::iterator srctnIter;
+      StlPhraseTable::SrcTableNode srctn;
+      StlPhraseTable::SrcTableNode::iterator srctnIter;
       ptPtr->getEntriesForTarget(phraseTIter->first,srctn);
 
       for(srctnIter=srctn.begin();srctnIter!=srctn.end();++srctnIter)
@@ -528,18 +528,18 @@ void _incrPhraseModel::printTTable(ostream &outS)
 //-------------------------
 void _incrPhraseModel::printTTable(FILE* file)
 {
-  PhraseTable* ptPtr=0;
+  StlPhraseTable* ptPtr=0;
 
-  ptPtr=dynamic_cast<PhraseTable*>(basePhraseTablePtr);
+  ptPtr=dynamic_cast<StlPhraseTable*>(basePhraseTablePtr);
 
   if(ptPtr) // C++ RTTI
   {
-    PhraseTable::const_iterator phraseTIter;
+    StlPhraseTable::TrgPhraseInfo::const_iterator phraseTIter;
       
-    for(phraseTIter=ptPtr->begin();phraseTIter!=ptPtr->end();++phraseTIter)
+    for(phraseTIter=ptPtr->beginTrg();phraseTIter!=ptPtr->endTrg();++phraseTIter)
     {
-      PhraseTable::SrcTableNode srctn;
-      PhraseTable::SrcTableNode::iterator srctnIter;
+      StlPhraseTable::SrcTableNode srctn;
+      StlPhraseTable::SrcTableNode::iterator srctnIter;
       ptPtr->getEntriesForTarget(phraseTIter->first,srctn);
 
       for(srctnIter=srctn.begin();srctnIter!=srctn.end();++srctnIter)

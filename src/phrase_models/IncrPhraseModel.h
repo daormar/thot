@@ -60,7 +60,7 @@ class IncrPhraseModel: public _incrPhraseModel
         // Constructor
     IncrPhraseModel(void):_incrPhraseModel()
       {
-        basePhraseTablePtr=new PhraseTable;
+        basePhraseTablePtr = new StlPhraseTable;
       }
 
         // Destructor

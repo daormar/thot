@@ -199,7 +199,7 @@ std::vector<WordIndex> LevelDbPhraseTable::getSrc(const std::vector<WordIndex>& 
 
 //-------------------------
 std::vector<WordIndex> LevelDbPhraseTable::getSrcTrg(const std::vector<WordIndex>& s,
-                                               const std::vector<WordIndex>& t)
+                                                     const std::vector<WordIndex>& t)
 {
     // Prepare (s,t) vector as (UNUSED_WORD, s, UNUSED_WORD, t)
     std::vector<WordIndex> uw_s_uw_t_vec = getSrc(s);
@@ -211,7 +211,7 @@ std::vector<WordIndex> LevelDbPhraseTable::getSrcTrg(const std::vector<WordIndex
 
 //-------------------------
 std::vector<WordIndex> LevelDbPhraseTable::getTrgSrc(const std::vector<WordIndex>& s,
-                                               const std::vector<WordIndex>& t)
+                                                     const std::vector<WordIndex>& t)
 {
     // Prepare (t,s) vector as (t, UNUSED_WORD, s)
     std::vector<WordIndex> t_uw_s_vec = t;
@@ -223,14 +223,14 @@ std::vector<WordIndex> LevelDbPhraseTable::getTrgSrc(const std::vector<WordIndex
 
 //-------------------------
 bool LevelDbPhraseTable::getNbestForSrc(const std::vector<WordIndex>& s,
-                                       NbestTableNode<PhraseTransTableNodeData>& nbt)
+                                        NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
       // TO-BE-DONE (LOW PRIORITY)
 }
 //-------------------------
 bool LevelDbPhraseTable::getNbestForTrg(const std::vector<WordIndex>& t,
-                                       NbestTableNode<PhraseTransTableNodeData>& nbt,
-                                       int N)
+                                        NbestTableNode<PhraseTransTableNodeData>& nbt,
+                                        int N)
 {
     LevelDbPhraseTable::SrcTableNode::iterator iter;	
 
@@ -279,8 +279,8 @@ bool LevelDbPhraseTable::getNbestForTrg(const std::vector<WordIndex>& t,
 
 //-------------------------
 void LevelDbPhraseTable::addTableEntry(const std::vector<WordIndex>& s,
-                                      const std::vector<WordIndex>& t,
-                                      PhrasePairInfo inf) 
+                                       const std::vector<WordIndex>& t,
+                                       PhrasePairInfo inf)
 {
     addSrcInfo(s, inf.first.get_c_s());  // (USUSED_WORD, s)
     storeData(t, (int) inf.second.get_c_s());  // (t)
@@ -289,23 +289,23 @@ void LevelDbPhraseTable::addTableEntry(const std::vector<WordIndex>& s,
 
 //-------------------------
 void LevelDbPhraseTable::addSrcInfo(const std::vector<WordIndex>& s,
-                                   Count s_inf)
+                                    Count s_inf)
 {
     storeData(getSrc(s), (int) s_inf.get_c_s());
 }
 
 //-------------------------
 void LevelDbPhraseTable::addSrcTrgInfo(const std::vector<WordIndex>& s,
-                                      const std::vector<WordIndex>& t,
-                                      Count st_inf)
+                                       const std::vector<WordIndex>& t,
+                                       Count st_inf)
 {
     storeData(getTrgSrc(s, t), (int) st_inf.get_c_st());  // (t, UNUSED_WORD, s)
 }
 
 //-------------------------
 void LevelDbPhraseTable::incrCountsOfEntry(const std::vector<WordIndex>& s,
-                                          const std::vector<WordIndex>& t,
-                                          Count c) 
+                                           const std::vector<WordIndex>& t,
+                                           Count c)
 {
     // Retrieve previous states
     Count s_count = cSrc(s);
@@ -320,8 +320,8 @@ void LevelDbPhraseTable::incrCountsOfEntry(const std::vector<WordIndex>& s,
 
 //-------------------------
 PhrasePairInfo LevelDbPhraseTable::infSrcTrg(const std::vector<WordIndex>& s,
-                                            const std::vector<WordIndex>& t,
-                                            bool& found) 
+                                             const std::vector<WordIndex>& t,
+                                             bool& found)
 {
     PhrasePairInfo ppi;
 
@@ -340,7 +340,7 @@ PhrasePairInfo LevelDbPhraseTable::infSrcTrg(const std::vector<WordIndex>& s,
 
 //-------------------------
 Count LevelDbPhraseTable::getInfo(const std::vector<WordIndex>& key,
-                                    bool &found)
+                                  bool &found)
 {
     int count;
     found = retrieveData(key, count);
@@ -352,14 +352,14 @@ Count LevelDbPhraseTable::getInfo(const std::vector<WordIndex>& key,
 
 //-------------------------
 Count LevelDbPhraseTable::getSrcInfo(const std::vector<WordIndex>& s,
-                                    bool &found)
+                                     bool &found)
 {
     return getInfo(getSrc(s), found);
 }
 
 //-------------------------
 Count LevelDbPhraseTable::getTrgInfo(const std::vector<WordIndex>& t,
-                                    bool &found)
+                                     bool &found)
 {
     // Retrieve counter state
     return getInfo(t, found);
@@ -367,8 +367,8 @@ Count LevelDbPhraseTable::getTrgInfo(const std::vector<WordIndex>& t,
 
 //-------------------------
 Count LevelDbPhraseTable::getSrcTrgInfo(const std::vector<WordIndex>& s,
-                                       const std::vector<WordIndex>& t,
-                                       bool &found)
+                                        const std::vector<WordIndex>& t,
+                                        bool &found)
 {
     // Retrieve counter state
     return getInfo(getTrgSrc(s, t), found);
@@ -376,7 +376,7 @@ Count LevelDbPhraseTable::getSrcTrgInfo(const std::vector<WordIndex>& s,
 
 //-------------------------
 Prob LevelDbPhraseTable::pTrgGivenSrc(const std::vector<WordIndex>& s,
-                                     const std::vector<WordIndex>& t)
+                                      const std::vector<WordIndex>& t)
 {
     // Calculates p(t|s)=count(s,t)/count(s)
     Count st_count = cSrcTrg(s, t);	
@@ -394,14 +394,14 @@ Prob LevelDbPhraseTable::pTrgGivenSrc(const std::vector<WordIndex>& s,
 
 //-------------------------
 LgProb LevelDbPhraseTable::logpTrgGivenSrc(const std::vector<WordIndex>& s,
-                                          const std::vector<WordIndex>& t)
+                                           const std::vector<WordIndex>& t)
 {
     return log((double) pTrgGivenSrc(s,t));
 }
 
 //-------------------------
 Prob LevelDbPhraseTable::pSrcGivenTrg(const std::vector<WordIndex>& s,
-                                     const std::vector<WordIndex>& t)
+                                      const std::vector<WordIndex>& t)
 {
     // p(s|t)=count(s,t)/count(t)
     Count st_count = cSrcTrg(s, t);
@@ -418,14 +418,14 @@ Prob LevelDbPhraseTable::pSrcGivenTrg(const std::vector<WordIndex>& s,
 
 //-------------------------
 LgProb LevelDbPhraseTable::logpSrcGivenTrg(const std::vector<WordIndex>& s,
-                                          const std::vector<WordIndex>& t)
+                                           const std::vector<WordIndex>& t)
 {
     return log((double) pSrcGivenTrg(s,t));
 }
 
 //-------------------------
 bool LevelDbPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
-                                            LevelDbPhraseTable::SrcTableNode& srctn) 
+                                             LevelDbPhraseTable::SrcTableNode& srctn)
 {
     bool found;
 
@@ -466,14 +466,14 @@ bool LevelDbPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
 
 //-------------------------
 bool LevelDbPhraseTable::getEntriesForSource(const std::vector<WordIndex>& s,
-                                            LevelDbPhraseTable::TrgTableNode& trgtn) 
+                                             LevelDbPhraseTable::TrgTableNode& trgtn)
 {
     // TO-BE-DONE (LOW PRIORITY)
 }
 
 //-------------------------
 Count LevelDbPhraseTable::cSrcTrg(const std::vector<WordIndex>& s,
-                                 const std::vector<WordIndex>& t)
+                                  const std::vector<WordIndex>& t)
 {
     bool found;
     return getSrcTrgInfo(s,t,found);

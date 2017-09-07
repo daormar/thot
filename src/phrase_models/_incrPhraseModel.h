@@ -38,7 +38,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "BaseIncrPhraseModel.h"
-#include "PhraseTable.h"
+#include "StlPhraseTable.h"
 #include "PhraseTableLog.h"
 #include "NbestTransTable.h"
 #include "WordAligMatrix.h"
