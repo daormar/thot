@@ -55,41 +55,48 @@ class StlPhraseTable: public BasePhraseTable
 {
     public:
 
+            // Define custom types for data structures and returned results
+
+            // Returned result types during querying for entries for a given
+            // source or target
         typedef std::map<std::vector<WordIndex>, PhrasePairInfo> SrcTableNode;
         typedef std::map<std::vector<WordIndex>, PhrasePairInfo> TrgTableNode;
 
+            // Data structure for source phrases
         typedef std::map<std::vector<WordIndex>, Count> SrcPhraseInfo;
+            // Data structure for target phrases
         typedef std::map<std::vector<WordIndex>, Count> TrgPhraseInfo;
 
+            // Returned result types by iterator
         typedef std::pair<std::vector<WordIndex>, std::vector<WordIndex> > PhraseInfoElementKey;
         typedef std::pair<PhraseInfoElementKey, int> PhraseInfoElement;
 
-        // Implementation of comparator (<) for pair of iterators
-        class SrcTrgKey : public pair<SrcPhraseInfo::iterator, TrgPhraseInfo::iterator>
-        {
-            public:
-                SrcTrgKey(SrcPhraseInfo::iterator srcIter, TrgPhraseInfo::iterator trgItrer) {
-                    this->first = srcIter;
-                    this->second = trgItrer;
-                }
+            // Defining source-target data structure and its elements
+        typedef pair<SrcPhraseInfo::iterator, TrgPhraseInfo::iterator> SrcTrgKey;
 
-                bool operator<(const SrcTrgKey& other)const
+        struct SrcTrgKeyComparator
+        {
+            /* Implements comparator for keys in (s, t) data structure.
+               The comparator first checks target phrase and the source
+               phrase during detrmining the order. */
+
+            bool operator()(const SrcTrgKey &left, const SrcTrgKey& right)const
+            {
+                /* Compare at the beginning trg phrase and then src phrase
+                   as looking for src phrases for give trg is more common
+                   operation. */
+                if (left.second->first == right.second->first)
                 {
-                    // Compare at the beginning trg phrase and then src phrase
-                    // as looking for src phrases for give trg is more common
-                    // operation
-                    if (this->second->first == other.second->first)
-                    {
-                        return this->first->first < other.first->first;
-                    }
-                    else
-                    {
-                        return this->second->first < other.second->first;
-                    }
+                    return left.first->first < right.first->first;
                 }
+                else
+                {
+                    return left.second->first < right.second->first;
+                }
+            }
         };
 
-        typedef std::map<SrcTrgKey, Count> SrcTrgPhraseInfo;
+        typedef std::map<pair<SrcPhraseInfo::iterator, TrgPhraseInfo::iterator>, Count, SrcTrgKeyComparator> SrcTrgPhraseInfo;
 
             // Constructor
         StlPhraseTable(void);
