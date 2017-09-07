@@ -404,9 +404,9 @@ void StlPhraseTable::print(void)
         Count c = elem.second;
         // Print on standard output
         printVector(s);
-        std::cout << "| ";
+        std::cout << " ||| ";
         printVector(t);
-        std::cout << "| ";
+        std::cout << " ||| ";
         std::cout << c.get_c_s() << std::endl;
     }
 }
