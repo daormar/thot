@@ -96,7 +96,7 @@ class StlPhraseTable: public BasePhraseTable
             }
         };
 
-        typedef std::map<pair<SrcPhraseInfo::iterator, TrgPhraseInfo::iterator>, Count, SrcTrgKeyComparator> SrcTrgPhraseInfo;
+        typedef std::map<SrcTrgKey, Count, SrcTrgKeyComparator> SrcTrgPhraseInfo;
 
             // Constructor
         StlPhraseTable(void);
