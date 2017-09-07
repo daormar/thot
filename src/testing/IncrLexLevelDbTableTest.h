@@ -70,7 +70,8 @@ class IncrLexLevelDbTableTest: public _incrLexTableTest
   CPPUNIT_TEST( testGetSetLexNumer );
   CPPUNIT_TEST( testGetTransForTarget );
   CPPUNIT_TEST( testSetLexNumerDenom );
-  CPPUNIT_TEST( testLoad );
+  CPPUNIT_TEST( testLoadFromBinFile );
+  CPPUNIT_TEST( testLoadFromLevelDb );
   CPPUNIT_TEST_SUITE_END();
 
  private:
@@ -80,7 +81,8 @@ class IncrLexLevelDbTableTest: public _incrLexTableTest
   void setUp();
   void tearDown();
 
-  void testLoad();
+  void testLoadFromBinFile();
+  void testLoadFromLevelDb();
 
 };
 

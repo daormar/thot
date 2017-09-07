@@ -56,20 +56,31 @@ IncrLexLevelDbTable::IncrLexLevelDbTable(void)
 //-------------------------
 bool IncrLexLevelDbTable::init(string levelDbPath)
 {
-    std::cerr << "Initializing LevelDB phrase table" << std::endl;
+    std::cerr << "Initializing LevelDB phrase table in " << levelDbPath << std::endl;
 
+    // Release resources related to old DB if exists
     if(db != NULL)
     {
         delete db;
         db = NULL;
     }
 
-    if(load(levelDbPath.c_str()) != THOT_OK)
+    // Prepare empty DB
+    dbName = levelDbPath;
+    leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
+
+    if (status.ok())
+    {
+        clear();
+
+        return THOT_OK;
+    }
+    else
+    {
+        std::cerr << "Cannot open DB: " << status.ToString() << std::endl;
+
         return THOT_ERROR;
-
-    clear();
-
-    return THOT_OK;
+    }
 }
 
 //-------------------------
@@ -307,13 +318,88 @@ void IncrLexLevelDbTable::setLexNumDen(WordIndex s,
 //-------------------------
 bool IncrLexLevelDbTable::load(const char* lexNumDenFile)
 {
+    struct stat s;
+
+    if (stat(lexNumDenFile, &s) == 0)  // Check if file exists
+    {
+        if (s.st_mode & S_IFDIR)  // Check if file is directory
+        {
+            return loadLevelDb(lexNumDenFile);
+        }
+        else if (s.st_mode & S_IFREG) // Check if file is regular file
+        {
+            return loadBin(lexNumDenFile);
+        }
+        else
+        {
+            std::cerr << "Unsupported type of file. Cannot load lexnd from " << lexNumDenFile << std::endl;
+
+            return THOT_ERROR;
+        }
+    }
+    else
+    {
+        std::cerr << "File not found. Cannot load lexnd from " << lexNumDenFile << std::endl;
+
+        return THOT_ERROR;
+    }
+}
+
+//-------------------------
+bool IncrLexLevelDbTable::loadBin(const char* lexNumDenFile)
+{
+    if(db == NULL)
+    {
+        std::cerr << "DB not initialized" << std::endl;
+
+        return THOT_ERROR;
+    }
+
+    std::cerr << "Loading lexnd in LevelDB format from binary file in " << lexNumDenFile << std::endl;
+
+    ifstream inF (lexNumDenFile, ios::in | ios::binary);
+    if (!inF)
+    {
+        std::cerr << "Error in lexical nd file, file " << lexNumDenFile << " does not exist." << std::endl;
+
+        return THOT_ERROR;
+    }
+    else
+    {
+            // Read register
+        bool end = false;
+        while(!end)
+        {
+            WordIndex s;
+            WordIndex t;
+            float numer;
+            float denom;
+
+            if(inF.read((char*) &s, sizeof(WordIndex)))
+            {
+                inF.read((char*) &t, sizeof(WordIndex));
+                inF.read((char*) &numer, sizeof(float));
+                inF.read((char*) &denom, sizeof(float));
+
+                setLexNumDen(s, t, numer, denom);
+            }
+            else end = true;
+        }
+
+        return THOT_OK;
+    }
+}
+
+//-------------------------
+bool IncrLexLevelDbTable::loadLevelDb(const char* lexNumDenFile)
+{
     if(db != NULL)
     {
         delete db;
         db = NULL;
     }
 
-    std::cerr << "Loading lexnd in LevelDB format from " << lexNumDenFile << std::endl;
+    std::cerr << "Loading lexnd in LevelDB format from DB in " << lexNumDenFile << std::endl;
 
     dbName = lexNumDenFile;
     leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
