@@ -156,32 +156,32 @@ std::vector<WordIndex> IncrLexLevelDbTable::keyToVector(const string key)const
 bool IncrLexLevelDbTable::stringToFloat(const string value_str, float &value)const
 {
     // Decode string representation to float without loosing precision
-    std::vector<WordIndex> vec = stringToVector(value_str);
-    unsigned char *p = reinterpret_cast<unsigned char*>(&value);
-
-    // Cannot retireve value or format is incorrect
-    if (vec.size() != sizeof(value)) return false;
-
-    for (size_t i = 0; i < sizeof(value); i++)
-    {
-        p[i] = vec[i];
+    unsigned int wi = 0;
+    for(size_t i = 0; i < WORD_INDEX_MODULO_BYTES; i++) {
+        int j = WORD_INDEX_MODULO_BYTES - i - 1;
+        wi += (((unsigned char) value_str[i]) - 1) * (unsigned int) pow(WORD_INDEX_MODULO_BASE, j);
     }
 
-    return true;
+    float *p = reinterpret_cast<float*>(&wi);
+    value = *p;
+
+    return true;;
 }
 
 //-------------------------
 string IncrLexLevelDbTable::floatToString(const float value)const
 {
     // Encode float as a string without loosing precision
-    unsigned char const *p = reinterpret_cast<unsigned char const*>(&value);
-    std::vector<WordIndex> vec;
-    for (size_t i = 0; i < sizeof(value); i++)
-    {
-        vec.push_back((WordIndex) p[i]);
+    unsigned int const *p = reinterpret_cast<unsigned int const*>(&value);
+
+    std::vector<WordIndex> str;
+    for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--) {
+        str.push_back(1 + (*p / (unsigned int) pow(WORD_INDEX_MODULO_BASE, j) % WORD_INDEX_MODULO_BASE));
     }
 
-    return vectorToString(vec);
+    string s(str.begin(), str.end());
+
+    return s;
 }
 
 //-------------------------
