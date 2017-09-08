@@ -67,10 +67,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 class IncrLexLevelDbTable : public _incrLexTable
 {
-    const std::string ldbExtension = "_ldb_hmm_lexnd";
-    const std::string binExtension = ".bin_hmm_lexnd";
-    const std::string txtExtension = ".txt_hmm_lexnd";
+    // File extensions
+    std::string ldbExtension;
+    std::string binExtension;
+    std::string txtExtension;
 
+    // DB-related variables
     leveldb::DB* db;
     leveldb::Options options;
     string dbName;

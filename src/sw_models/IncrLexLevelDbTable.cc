@@ -46,6 +46,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //-------------------------
 IncrLexLevelDbTable::IncrLexLevelDbTable(void)
 {
+    // Define extensions
+    ldbExtension = "_ldb_hmm_lexnd";
+    binExtension = ".bin_hmm_lexnd";
+    txtExtension = ".txt_hmm_lexnd";
+
+    // Prepare DB configuration
     options.create_if_missing = true;
     options.filter_policy = leveldb::NewBloomFilterPolicy(10);
     options.block_cache = leveldb::NewLRUCache(10 * 1048576);  // 10 MB for cache
