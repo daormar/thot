@@ -209,10 +209,20 @@ bool extractModelEntryInfo(std::string fileName,
           {
                 // Read entry
             ModelDescriptorEntry modelDescEntry;
-            modelDescEntry.modelInitInfo=awk.dollar(1);
-            modelDescEntry.modelFileName=awk.dollar(2);
-            modelDescEntry.statusStr=awk.dollar(3);
+            
+                // Extract model initialization info
+            for(unsigned int i=1;i<awk.NF-1;++i)
+            {
+              modelDescEntry.modelInitInfo+=awk.dollar(i);
+              if(i!=awk.NF-2)
+                modelDescEntry.modelInitInfo+=" ";
+            }
+                // Extract remaining fields
+            modelDescEntry.modelFileName=awk.dollar(awk.NF-1);
+            modelDescEntry.statusStr=awk.dollar(awk.NF);
             modelDescEntry.absolutizedModelFileName=absolutizeModelFileName(fileName,modelDescEntry.modelFileName);
+
+                // Store entry
             modelDescEntryVec.push_back(modelDescEntry);
           }
         }
