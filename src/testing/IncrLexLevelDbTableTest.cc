@@ -38,7 +38,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( IncrLexLevelDbTableTest );
 void IncrLexLevelDbTableTest::setUp()
 {
   tab = new IncrLexLevelDbTable();
-  ((IncrLexLevelDbTable*) tab)->init(dbName);
+  ((IncrLexLevelDbTable*) tab)->init(dbNamePrefix);
 }
 
 //---------------------------------------
@@ -53,7 +53,6 @@ void IncrLexLevelDbTableTest::testLoadFromBinFile()
 {
     bool found;
     float result;
-    const string binFileName = "/tmp/thot_bin_file_unit_test";
 
     tab->clear();
 
@@ -83,13 +82,14 @@ void IncrLexLevelDbTableTest::testLoadFromBinFile()
     tab->setLexNumDen(s2, t4, s2_t4_num, s2_denom);
 
     // Save data to binary file
-    ((IncrLexLevelDbTable*) tab)->printBin(binFileName.c_str());
+    ((IncrLexLevelDbTable*) tab)->printBin(dbNamePrefix.c_str());
+    // Remove DB directory to prevent loading it
+    ((IncrLexLevelDbTable*) tab)->drop();
 
     // Reload DB
     delete tab;
     tab = new IncrLexLevelDbTable();
-    ((IncrLexLevelDbTable*) tab)->init(dbName);
-    ((IncrLexLevelDbTable*) tab)->load(binFileName.c_str());
+    ((IncrLexLevelDbTable*) tab)->load(dbNamePrefix.c_str());
 
     // Check if loaded results are correct
     // (s1, t1)
@@ -145,7 +145,7 @@ void IncrLexLevelDbTableTest::testLoadFromLevelDb()
     // Reload DB
     delete tab;
     tab = new IncrLexLevelDbTable();
-    tab->load(dbName.c_str());
+    tab->load(dbNamePrefix.c_str());
 
     // Check if loaded results are correct
     // (s1, t1)

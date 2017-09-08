@@ -53,7 +53,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 #include <vector>
 #include <stdlib.h>
-#include <sys/stat.h>
 
 //--------------- Constants ------------------------------------------
 
@@ -68,6 +67,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 class IncrLexLevelDbTable : public _incrLexTable
 {
+    const std::string ldbExtension = "_ldb_hmm_lexnd";
+    const std::string binExtension = ".bin_hmm_lexnd";
+    const std::string txtExtension = ".txt_hmm_lexnd";
+
     leveldb::DB* db;
     leveldb::Options options;
     string dbName;

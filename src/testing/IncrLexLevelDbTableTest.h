@@ -75,7 +75,7 @@ class IncrLexLevelDbTableTest: public _incrLexTableTest
   CPPUNIT_TEST_SUITE_END();
 
  private:
-  string dbName = "/tmp/thot_leveldb_unit_test";
+  string dbNamePrefix = "/tmp/thot_leveldb_unit_test";
 
  public:
   void setUp();

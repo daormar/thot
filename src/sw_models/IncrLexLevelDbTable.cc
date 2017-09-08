@@ -56,7 +56,8 @@ IncrLexLevelDbTable::IncrLexLevelDbTable(void)
 //-------------------------
 bool IncrLexLevelDbTable::init(string levelDbPath)
 {
-    std::cerr << "Initializing LevelDB phrase table in " << levelDbPath << std::endl;
+    dbName = levelDbPath + ldbExtension;
+    std::cerr << "Initializing LevelDB phrase table in " << dbName << std::endl;
 
     // Release resources related to old DB if exists
     if(db != NULL)
@@ -66,7 +67,6 @@ bool IncrLexLevelDbTable::init(string levelDbPath)
     }
 
     // Prepare empty DB
-    dbName = levelDbPath;
     leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
 
     if (status.ok())
@@ -318,49 +318,40 @@ void IncrLexLevelDbTable::setLexNumDen(WordIndex s,
 //-------------------------
 bool IncrLexLevelDbTable::load(const char* lexNumDenFile)
 {
-    struct stat s;
+    bool ret;
 
-    if (stat(lexNumDenFile, &s) == 0)  // Check if file exists
+    // Try to load LevelDB
+    ret = loadLevelDb(lexNumDenFile);
+
+    if (ret == THOT_ERROR)  // Loading DB failed. Look for binary file
     {
-        if (s.st_mode & S_IFDIR)  // Check if file is directory
-        {
-            return loadLevelDb(lexNumDenFile);
-        }
-        else if (s.st_mode & S_IFREG) // Check if file is regular file
-        {
-            return loadBin(lexNumDenFile);
-        }
-        else
-        {
-            std::cerr << "Unsupported type of file. Cannot load lexnd from " << lexNumDenFile << std::endl;
-
-            return THOT_ERROR;
-        }
+        ret = loadBin(lexNumDenFile);
     }
-    else
-    {
-        std::cerr << "File not found. Cannot load lexnd from " << lexNumDenFile << std::endl;
 
-        return THOT_ERROR;
-    }
+    return ret;
 }
 
 //-------------------------
 bool IncrLexLevelDbTable::loadBin(const char* lexNumDenFile)
 {
-    if(db == NULL)
-    {
-        std::cerr << "DB not initialized" << std::endl;
+    const std::string prefixFile = ((std::string) lexNumDenFile);
+    const std::string binFile = prefixFile + binExtension;
 
-        return THOT_ERROR;
+    if(db != NULL)
+    {
+        delete db;
+        db = NULL;
     }
 
-    std::cerr << "Loading lexnd in LevelDB format from binary file in " << lexNumDenFile << std::endl;
+    // Prepare new DB
+    init(prefixFile);
 
-    ifstream inF (lexNumDenFile, ios::in | ios::binary);
+    std::cerr << "Loading lexnd in LevelDB format from binary file in " << binFile << std::endl;
+
+    ifstream inF (binFile.c_str(), ios::in | ios::binary);
     if (!inF)
     {
-        std::cerr << "Error in lexical nd file, file " << lexNumDenFile << " does not exist." << std::endl;
+        std::cerr << "Error in lexical nd file, file " << binFile << " does not exist." << std::endl;
 
         return THOT_ERROR;
     }
@@ -399,10 +390,15 @@ bool IncrLexLevelDbTable::loadLevelDb(const char* lexNumDenFile)
         db = NULL;
     }
 
-    std::cerr << "Loading lexnd in LevelDB format from DB in " << lexNumDenFile << std::endl;
+    dbName = ((std::string) lexNumDenFile) + ldbExtension;
 
-    dbName = lexNumDenFile;
-    leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
+    std::cerr << "Loading lexnd in LevelDB format from DB in " << dbName << std::endl;
+
+    // Configure LevelDB parameters
+    leveldb::Options loadOptions = options;
+    loadOptions.create_if_missing = false;
+
+    leveldb::Status status = leveldb::DB::Open(loadOptions, dbName, &db);
 
     if (status.ok())
     {
@@ -431,7 +427,10 @@ bool IncrLexLevelDbTable::printBin(const char* lexNumDenFile)
 {
     bool found;
     ofstream outF;
-    outF.open(lexNumDenFile, ios::out);
+    const std::string prefixFile = ((std::string) lexNumDenFile);
+    const std::string binFile = prefixFile + binExtension;
+
+    outF.open(binFile.c_str(), ios::out);
 
     if(!outF)
     {
@@ -481,7 +480,10 @@ bool IncrLexLevelDbTable::printPlainText(const char* lexNumDenFile)
 {
     bool found;
     ofstream outF;
-    outF.open(lexNumDenFile, ios::out);
+    const std::string prefixFile = ((std::string) lexNumDenFile);
+    const std::string txtFile = prefixFile + txtExtension;
+
+    outF.open(txtFile.c_str(), ios::out);
 
     if(!outF)
     {
