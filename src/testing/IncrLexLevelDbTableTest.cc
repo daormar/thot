@@ -67,7 +67,7 @@ void IncrLexLevelDbTableTest::testLoadFromBinFile()
     WordIndex t4 = 1024;
 
     // Define numerators and denominators
-    const float s1_t1_num = 0.3;
+    const float s1_t1_num = -0.3;
     const float s1_t2_num = 2.11;
     const float s2_t1_num = 3.66;
     const float s2_t3_num = 7.17;

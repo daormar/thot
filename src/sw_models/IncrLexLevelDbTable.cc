@@ -366,7 +366,7 @@ bool IncrLexLevelDbTable::loadBin(const char* lexNumDenFile)
     }
     else
     {
-            // Read register
+        // Read data stored in binary file and insert them to LevelDB
         bool end = false;
         while(!end)
         {
