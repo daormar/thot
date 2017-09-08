@@ -38,6 +38,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "StlPhraseTable.h"
 #include "_wbaIncrPhraseModel.h"
 #include "PhraseExtractionTable.h"
 
@@ -71,6 +72,8 @@ class WbaIncrPhraseModel: public _wbaIncrPhraseModel
 	
  protected:
 
+        // Functions to print models using standard C library
+    void printTTable(FILE* file);
 };
 
 #endif

@@ -38,8 +38,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "BaseIncrPhraseModel.h"
-#include "StlPhraseTable.h"
-#include "PhraseTableLog.h"
 #include "NbestTransTable.h"
 #include "WordAligMatrix.h"
 #include "SingleWordVocab.h"
@@ -167,8 +165,7 @@ class _incrPhraseModel: public BaseIncrPhraseModel
     bool print(const char* prefix);
         // Prints the whole model
     
-        // Functions to print the translation table in different
-        // formats
+        // Functions to print the model tables
     virtual bool printTTable(const char *outputFileName);
 	bool printSegmLengthTable(const char *outputFileName);
 
@@ -240,13 +237,8 @@ class _incrPhraseModel: public BaseIncrPhraseModel
     
     TrgSegmLenTable trgSegmLenTable;
     
-# ifdef _GLIBCXX_USE_LFS
-        // Functions to print models if C++ "LARGE FILE SYSTEM (LFS)" IS
-        // ENABLED
-    void printTTable(std::ostream &outS);
-# endif
         // Functions to print models using standard C library
-    void printTTable(FILE* file);
+    virtual void printTTable(FILE* file)=0;
 
     void printNbestTransTableNode(NbestTableNode<PhraseTransTableNodeData> tTableNode,
                                   std::ostream &outS);
