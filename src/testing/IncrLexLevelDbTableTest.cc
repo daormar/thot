@@ -57,6 +57,7 @@ void IncrLexLevelDbTableTest::testLoadFromBinFile()
 
     tab->clear();
 
+    // Define word indexes
     WordIndex s1 = 16;
     WordIndex s2 = 32;
 
@@ -65,12 +66,21 @@ void IncrLexLevelDbTableTest::testLoadFromBinFile()
     WordIndex t3 = 512;
     WordIndex t4 = 1024;
 
+    // Define numerators and denominators
+    const float s1_t1_num = 0.3;
+    const float s1_t2_num = 2.11;
+    const float s2_t1_num = 3.66;
+    const float s2_t3_num = 7.17;
+    const float s2_t4_num = 9.9999999;
+    const float s1_denom = 2.3;
+    const float s2_denom = 4.41;
+
     // Fill table with data
-    tab->setLexNumDen(s1, t1, 0.3, 2.3);
-    tab->setLexNumDen(s1, t2, 2.11, 2.3);
-    tab->setLexNumDen(s2, t1, 3.66, 4.41);
-    tab->setLexNumDen(s2, t3, 7.17, 4.41);
-    tab->setLexNumDen(s2, t4, 9.9999999, 4.41);
+    tab->setLexNumDen(s1, t1, s1_t1_num, s1_denom);
+    tab->setLexNumDen(s1, t2, s1_t2_num, s1_denom);
+    tab->setLexNumDen(s2, t1, s2_t1_num, s2_denom);
+    tab->setLexNumDen(s2, t3, s2_t3_num, s2_denom);
+    tab->setLexNumDen(s2, t4, s2_t4_num, s2_denom);
 
     // Save data to binary file
     ((IncrLexLevelDbTable*) tab)->printBin(binFileName.c_str());
@@ -85,32 +95,32 @@ void IncrLexLevelDbTableTest::testLoadFromBinFile()
     // (s1, t1)
     result = tab->getLexNumer(s1, t1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 0.3 );
+    CPPUNIT_ASSERT_EQUAL(s1_t1_num, result);
     result = tab->getLexDenom(s1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 2.3 );
+    CPPUNIT_ASSERT_EQUAL(s1_denom, result);
     // (s1, t2) - denominator has been already checked
     result = tab->getLexNumer(s1, t2, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 2.111 );
+    CPPUNIT_ASSERT_EQUAL(s1_t2_num, result);
     // (s2, t1)
     result = tab->getLexNumer(s2, t1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 3.66 );
+    CPPUNIT_ASSERT_EQUAL(s2_t1_num, result);
     result = tab->getLexDenom(s2, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 4.41 );
+    CPPUNIT_ASSERT_EQUAL(s2_denom, result);
     // (s2, t2) - should not be found
     tab->getLexNumer(s2, t2, found);
     CPPUNIT_ASSERT( !found );
     // (s2, t3)
     result = tab->getLexNumer(s2, t3, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 7.17 );
+    CPPUNIT_ASSERT_EQUAL(s2_t3_num, result);
     // (s2, t4)
     result = tab->getLexNumer(s2, t4, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 9.9999999 );
+    CPPUNIT_ASSERT_EQUAL(s2_t4_num, result);
 }
 
 //---------------------------------------
@@ -141,21 +151,21 @@ void IncrLexLevelDbTableTest::testLoadFromLevelDb()
     // (s1, t1)
     result = tab->getLexNumer(s1, t1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 0.5 );
+    CPPUNIT_ASSERT_EQUAL(0.5f, result);
     result = tab->getLexDenom(s1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 2.5 );
+    CPPUNIT_ASSERT_EQUAL(2.5f, result);
     // (s1, t2) - denominator has been already checked
     result = tab->getLexNumer(s1, t2, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 2.125 );
+    CPPUNIT_ASSERT_EQUAL(2.125f, result);
     // (s2, t1)
     result = tab->getLexNumer(s2, t1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 3.5 );
+    CPPUNIT_ASSERT_EQUAL(3.5f, result);
     result = tab->getLexDenom(s2, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( result == 4.5 );
+    CPPUNIT_ASSERT_EQUAL(4.5f, result);
     // (s2, t2) - should not be found
     tab->getLexNumer(s2, t2, found);
     CPPUNIT_ASSERT( !found );
