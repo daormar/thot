@@ -266,10 +266,10 @@ void ThotDecoder::init_translator_feat_impl(void)
     pbtm_ptr->link_feats_info(tdCommonVars.featureHandler.getFeatureInfoPtr());
 
       // Define feature handler class loaders
-  tdCommonVars.featureHandler.setWordPenModelType(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelSoFileName);
-  tdCommonVars.featureHandler.setDefaultLangModelType(tdCommonVars.dynClassFactoryHandler.baseNgramLMSoFileName);
-  tdCommonVars.featureHandler.setDefaultTransModelType(tdCommonVars.dynClassFactoryHandler.basePhraseModelSoFileName);
-  tdCommonVars.featureHandler.setDefaultSingleWordModelType(tdCommonVars.dynClassFactoryHandler.baseSwAligModelSoFileName);
+  tdCommonVars.featureHandler.setWordPenSoFile(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelSoFileName);
+  tdCommonVars.featureHandler.setDefaultLangSoFile(tdCommonVars.dynClassFactoryHandler.baseNgramLMSoFileName);
+  tdCommonVars.featureHandler.setDefaultTransSoFile(tdCommonVars.dynClassFactoryHandler.basePhraseModelSoFileName);
+  tdCommonVars.featureHandler.setDefaultSingleWordSoFile(tdCommonVars.dynClassFactoryHandler.baseSwAligModelSoFileName);
     
       // Initialize mutexes and conditions
   pthread_mutex_init(&user_id_to_idx_mut,NULL);

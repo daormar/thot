@@ -209,7 +209,7 @@ bool extractModelEntryInfo(std::string fileName,
           {
                 // Read entry
             ModelDescriptorEntry modelDescEntry;
-            modelDescEntry.modelType=awk.dollar(1);
+            modelDescEntry.modelInitInfo=awk.dollar(1);
             modelDescEntry.modelFileName=awk.dollar(2);
             modelDescEntry.statusStr=awk.dollar(3);
             modelDescEntry.absolutizedModelFileName=absolutizeModelFileName(fileName,modelDescEntry.modelFileName);
@@ -241,7 +241,7 @@ bool printModelDescriptor(const std::vector<ModelDescriptorEntry>& modelDescEntr
     outF<<"thot tm descriptor"<<std::endl;
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-      outF<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].modelFileName<<" "<<modelDescEntryVec[i].statusStr<<std::endl;
+      outF<<modelDescEntryVec[i].modelInitInfo<<" "<<modelDescEntryVec[i].modelFileName<<" "<<modelDescEntryVec[i].statusStr<<std::endl;
     }
     outF.close();	
     return THOT_OK;

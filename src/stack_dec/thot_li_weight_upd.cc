@@ -319,8 +319,8 @@ int initPhrModelFeatImpl(std::string phrModelFilePrefix)
 //---------------
 void set_default_models(void)
 {
-  featureHandler.setDefaultTransModelType(dynClassFactoryHandler.basePhraseModelSoFileName);
-  featureHandler.setDefaultSingleWordModelType(dynClassFactoryHandler.baseSwAligModelSoFileName);
+  featureHandler.setDefaultTransSoFile(dynClassFactoryHandler.basePhraseModelSoFileName);
+  featureHandler.setDefaultSingleWordSoFile(dynClassFactoryHandler.baseSwAligModelSoFileName);
 }
 
 //---------------

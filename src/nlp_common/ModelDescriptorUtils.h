@@ -38,7 +38,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 struct ModelDescriptorEntry
 {
-  std::string modelType;
+  std::string modelInitInfo;
   std::string modelFileName;
   std::string statusStr;
   std::string absolutizedModelFileName;

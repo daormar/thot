@@ -75,10 +75,10 @@ class FeatureHandler
                        int verbose=0);
 
       // Functions to specify default model types
-  int setWordPenModelType(std::string modelType);
-  int setDefaultLangModelType(std::string modelType);
-  int setDefaultTransModelType(std::string modelType);
-  int setDefaultSingleWordModelType(std::string modelType);
+  int setWordPenSoFile(std::string soFileName);
+  int setDefaultLangSoFile(std::string soFileName);
+  int setDefaultTransSoFile(std::string soFileName);
+  int setDefaultSingleWordSoFile(std::string soFileName);
 
       // Function to get pointers to features
   FeaturesInfo<SmtModel::HypScoreInfo>* getFeatureInfoPtr(void);
@@ -109,10 +109,10 @@ class FeatureHandler
  private:
 
       // Default model types
-  std::string wpModelType;
-  std::string defaultLangModelType;
-  std::string defaultTransModelType;
-  std::string defaultSingleWordModelType;
+  std::string wpSoFile;
+  std::string defaultLangSoFile;
+  std::string defaultTransSoFile;
+  std::string defaultSingleWordSoFile;
 
       // Model information
   SwModelsInfo swModelsInfo;
@@ -127,7 +127,7 @@ class FeatureHandler
       // Auxiliary functions
 
       // Language model-related functions
-  BaseNgramLM<LM_State>* createLmPtr(std::string modelType);
+  BaseNgramLM<LM_State>* createLmPtr(std::string soFileName);
   int createLangModelFeat(std::string featName,
                           const ModelDescriptorEntry& modelDescEntry,
                           WordPredictor* wordPredPtr,
@@ -139,7 +139,7 @@ class FeatureHandler
   bool loadWordPredInfo(std::string lmFilesPrefix);
 
       // Phrase model-related functions
-  BasePhraseModel* createPmPtr(std::string modelType);
+  BasePhraseModel* createPmPtr(std::string soFileName);
   unsigned int getFeatureIdx(std::string featName);
   DirectPhraseModelFeat<SmtModel::HypScoreInfo>* getDirectPhraseModelFeatPtr(std::string directPhrModelFeatName);
   InversePhraseModelFeat<SmtModel::HypScoreInfo>* getInversePhraseModelFeatPtr(std::string invPhrModelFeatName);

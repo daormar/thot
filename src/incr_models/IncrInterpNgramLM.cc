@@ -62,8 +62,8 @@ bool IncrInterpNgramLM::loadLmEntries(const char *fileName)
   {
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-      std::cerr<<"* Reading LM entry: "<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<" "<<modelDescEntryVec[i].statusStr<<std::endl;
-      int ret=loadLmEntry(modelDescEntryVec[i].modelType,
+      std::cerr<<"* Reading LM entry: "<<modelDescEntryVec[i].modelInitInfo<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<" "<<modelDescEntryVec[i].statusStr<<std::endl;
+      int ret=loadLmEntry(modelDescEntryVec[i].modelInitInfo,
                           modelDescEntryVec[i].absolutizedModelFileName,
                           modelDescEntryVec[i].statusStr);
       if(ret==THOT_ERROR)
@@ -505,9 +505,9 @@ unsigned int IncrInterpNgramLM::getNgramOrder(void)
 }
 
 //-------------------------
-BaseNgramLM<std::vector<WordIndex> >* IncrInterpNgramLM::createLmPtr(std::string tmType)
+BaseNgramLM<std::vector<WordIndex> >* IncrInterpNgramLM::createLmPtr(std::string modelInitInfo)
 {
-  SimpleDynClassLoaderMap::iterator iter=simpleDynClassLoaderMap.find(tmType);
+  SimpleDynClassLoaderMap::iterator iter=simpleDynClassLoaderMap.find(modelInitInfo);
   if(iter!=simpleDynClassLoaderMap.end())
   {
     return iter->second.make_obj("");
@@ -519,9 +519,9 @@ BaseNgramLM<std::vector<WordIndex> >* IncrInterpNgramLM::createLmPtr(std::string
   
         // Open module
     bool verbosity=false;
-    if(!simpleDynClassLoader.open_module(tmType,verbosity))
+    if(!simpleDynClassLoader.open_module(modelInitInfo,verbosity))
     {
-      std::cerr<<"Error: so file ("<<tmType<<") could not be opened"<<std::endl;
+      std::cerr<<"Error: so file ("<<modelInitInfo<<") could not be opened"<<std::endl;
       return NULL;
     }
 
@@ -535,7 +535,7 @@ BaseNgramLM<std::vector<WordIndex> >* IncrInterpNgramLM::createLmPtr(std::string
       return NULL;
     }
         // Store class loader in map
-    simpleDynClassLoaderMap.insert(std::make_pair(tmType,simpleDynClassLoader));
+    simpleDynClassLoaderMap.insert(std::make_pair(modelInitInfo,simpleDynClassLoader));
     
     return tmPtr;
   }
