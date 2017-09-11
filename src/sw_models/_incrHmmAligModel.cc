@@ -1866,6 +1866,12 @@ void _incrHmmAligModel::sustHeurForNotAddedWords(int /*numSrcWordsToBeAdded*/,
 }
 
 //-------------------------
+bool _incrHmmAligModel::init(const char* prefFileName)
+{
+  incrLexTable->init(prefFileName);
+}
+
+//-------------------------
 bool _incrHmmAligModel::load(const char* prefFileName)
 {
   if(prefFileName[0]!=0)

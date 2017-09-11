@@ -38,7 +38,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( IncrLexLevelDbTableTest );
 void IncrLexLevelDbTableTest::setUp()
 {
   tab = new IncrLexLevelDbTable();
-  ((IncrLexLevelDbTable*) tab)->init(dbNamePrefix);
+  ((IncrLexLevelDbTable*) tab)->init(dbNamePrefix.c_str());
 }
 
 //---------------------------------------

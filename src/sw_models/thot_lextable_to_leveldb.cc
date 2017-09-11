@@ -70,9 +70,36 @@ int main(int argc, char *argv[])
 int convert()
 {
     IncrLexLevelDbTable lexTable;
-    lexTable.init(outputPath);
+    lexTable.init(outputPath.c_str());
 
-    return lexTable.load(inputFile.c_str());
+    ifstream inF (inputFile.c_str(), ios::in | ios::binary);
+    if (!inF)
+    {
+        std::cerr << "Error in lexical nd file, file " << inputFile << " does not exist." << std::endl;
+        return THOT_ERROR;
+    }
+    else
+    {
+            // Read binary data from file and fill lexical table
+        bool end = false;
+        while(!end)
+        {
+            WordIndex s;
+            WordIndex t;
+            float numer;
+            float denom;
+            if(inF.read((char*) &s, sizeof(WordIndex)))
+            {
+                inF.read((char*) &t, sizeof(WordIndex));
+                inF.read((char*) &numer, sizeof(float));
+                inF.read((char*) &denom, sizeof(float));
+                lexTable.setLexNumDen(s, t, numer, denom);
+            }
+            else end = true;
+        }
+
+        return THOT_OK;
+    }
 }
 
 //--------------- takeParameters function

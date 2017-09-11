@@ -227,6 +227,13 @@ int processParameters(thot_gen_sw_model_pars pars)
 
   if(pars.s_given)
   {
+        // Initialize model if necessary
+    _incrHmmAligModel* incrHmmAligModelPtr = dynamic_cast<_incrHmmAligModel*>(swAligModelPtr);
+    if(incrHmmAligModelPtr != NULL)
+    {
+      std::cerr << "Initializing model with prefix " << pars.o_str << std::endl;
+      incrHmmAligModelPtr->init(pars.o_str.c_str());
+    }
         // Read sentence pairs
     std::string srctrgcFileName="";
     pair<unsigned int,unsigned int> pui;

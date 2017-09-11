@@ -69,6 +69,7 @@ class IncrLexLevelDbTable : public _incrLexTable
 {
     // File extensions
     std::string ldbExtension;
+    std::string defaultExtension;
     std::string binExtension;
     std::string txtExtension;
 
@@ -102,7 +103,7 @@ class IncrLexLevelDbTable : public _incrLexTable
         ~IncrLexLevelDbTable(void);
 
             // Function for initializing and removing LevelDB
-        bool init(string levelDbPath);
+        bool init(const char* prefFileName);
         bool drop();
 
             // Functions to handle lexNumer

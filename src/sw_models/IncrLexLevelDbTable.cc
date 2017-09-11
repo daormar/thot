@@ -48,6 +48,7 @@ IncrLexLevelDbTable::IncrLexLevelDbTable(void)
 {
     // Define extensions
     ldbExtension = "_ldb_hmm_lexnd";
+    defaultExtension = ".hmm_lexnd";
     binExtension = ".bin_hmm_lexnd";
     txtExtension = ".txt_hmm_lexnd";
 
@@ -60,9 +61,9 @@ IncrLexLevelDbTable::IncrLexLevelDbTable(void)
 }
 
 //-------------------------
-bool IncrLexLevelDbTable::init(string levelDbPath)
+bool IncrLexLevelDbTable::init(const char* prefFileName)
 {
-    dbName = levelDbPath + ldbExtension;
+    dbName = ((std::string) prefFileName) + ldbExtension;
     std::cerr << "Initializing LevelDB phrase table in " << dbName << std::endl;
 
     // Release resources related to old DB if exists
@@ -350,41 +351,48 @@ bool IncrLexLevelDbTable::loadBin(const char* lexNumDenFile)
     }
 
     // Prepare new DB
-    init(prefixFile);
+    init(prefixFile.c_str());
 
     std::cerr << "Loading lexnd in LevelDB format from binary file in " << binFile << std::endl;
 
     ifstream inF (binFile.c_str(), ios::in | ios::binary);
     if (!inF)
     {
-        std::cerr << "Error in lexical nd file, file " << binFile << " does not exist." << std::endl;
+        const std::string defaultFile = prefixFile + defaultExtension;
 
-        return THOT_ERROR;
-    }
-    else
-    {
-        // Read data stored in binary file and insert them to LevelDB
-        bool end = false;
-        while(!end)
+        std::cerr << "Error in lexical nd file, file " << binFile << " does not exist. ";
+        std::cerr << "Trying to open " << defaultFile << std::endl;
+
+        inF.open(defaultFile.c_str(), ios::in | ios::binary);
+
+        if (!inF)
         {
-            WordIndex s;
-            WordIndex t;
-            float numer;
-            float denom;
-
-            if(inF.read((char*) &s, sizeof(WordIndex)))
-            {
-                inF.read((char*) &t, sizeof(WordIndex));
-                inF.read((char*) &numer, sizeof(float));
-                inF.read((char*) &denom, sizeof(float));
-
-                setLexNumDen(s, t, numer, denom);
-            }
-            else end = true;
+            std::cerr << "Error in lexical nd file, file " << defaultFile << " does not exist." << std::endl;
+            return THOT_ERROR;
         }
-
-        return THOT_OK;
     }
+
+    // Read data stored in binary file and insert them to LevelDB
+    bool end = false;
+    while(!end)
+    {
+        WordIndex s;
+        WordIndex t;
+        float numer;
+        float denom;
+
+        if(inF.read((char*) &s, sizeof(WordIndex)))
+        {
+            inF.read((char*) &t, sizeof(WordIndex));
+            inF.read((char*) &numer, sizeof(float));
+            inF.read((char*) &denom, sizeof(float));
+
+            setLexNumDen(s, t, numer, denom);
+        }
+        else end = true;
+    }
+
+    return THOT_OK;
 }
 
 //-------------------------
