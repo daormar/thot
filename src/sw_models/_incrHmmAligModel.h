@@ -192,8 +192,6 @@ class _incrHmmAligModel: public _incrSwAligModel<std::vector<Prob> >
                                  const std::vector<WordIndex>& tSent,
                                  PpInfo& ppInfo);
 
-   // init function
-   bool init(const char* prefFileName);
    // load function
    bool load(const char* prefFileName);
 

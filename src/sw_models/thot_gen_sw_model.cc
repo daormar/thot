@@ -32,6 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "_incrSwAligModel.h"
 #include "IncrHmmP0AligModel.h"
+#include "IncrLevelDbHmmP0AligModel.h"
 #include "BaseStepwiseAligModel.h"
 #include "BaseSwAligModel.h"
 #include "thot_gen_sw_model_pars.h"
@@ -228,11 +229,11 @@ int processParameters(thot_gen_sw_model_pars pars)
   if(pars.s_given)
   {
         // Initialize model if necessary
-    _incrHmmAligModel* incrHmmAligModelPtr = dynamic_cast<_incrHmmAligModel*>(swAligModelPtr);
-    if(incrHmmAligModelPtr != NULL)
+    IncrLevelDbHmmP0AligModel* incrLevelDbHmmP0AligModelPtr = dynamic_cast<IncrLevelDbHmmP0AligModel*>(swAligModelPtr);
+    if(incrLevelDbHmmP0AligModelPtr != NULL)
     {
       std::cerr << "Initializing model with prefix " << pars.o_str << std::endl;
-      incrHmmAligModelPtr->init(pars.o_str.c_str());
+      incrLevelDbHmmP0AligModelPtr->init(pars.o_str.c_str());
     }
         // Read sentence pairs
     std::string srctrgcFileName="";

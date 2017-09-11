@@ -54,9 +54,6 @@ class _incrLexTable
 {
   public:
 
-       // Initialization function placeholder
-   bool init(const char* prefFileName) {};
-
        // Functions to handle lexNumer
    virtual void setLexNumer(WordIndex s,
                             WordIndex t,

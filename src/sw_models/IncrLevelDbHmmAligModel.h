@@ -59,6 +59,9 @@ class IncrLevelDbHmmAligModel : public _incrHmmAligModel
    // Constructor
    IncrLevelDbHmmAligModel();
 
+   // init function
+   bool init(const char* prefFileName);
+
 };
 
 #endif

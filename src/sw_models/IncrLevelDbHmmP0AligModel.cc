@@ -38,3 +38,9 @@ IncrLevelDbHmmP0AligModel::IncrLevelDbHmmP0AligModel() : _incrHmmP0AligModel()
   incrLexTable = new IncrLexLevelDbTable();
   lexNumDenFileExtension = "";  // Extension is set by IncrLexLevelDbTable class
 }
+
+//-------------------------
+bool IncrLevelDbHmmP0AligModel::init(const char* prefFileName)
+{
+  return ((IncrLexLevelDbTable *) incrLexTable)->init(prefFileName);
+}
