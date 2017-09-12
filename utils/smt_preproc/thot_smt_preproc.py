@@ -1722,8 +1722,8 @@ class Tokenizer:
 
         # Preprocessing step to avoid special case of all words concatenared with hyphens
         # adidas-climalite-mens-l-white-black-tank-top-nwt-msrp-basketball
-        if len(text.split()) == 1 and text.count('-') > 1:
-            text = text.replace('-', ' ')
+        # if len(text.split()) == 1 and text.count('-') > 1:
+        #    text = text.replace('-', ' ')
 
 
         # Following is a safeguard that guarantees that concatenating resultant
