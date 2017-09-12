@@ -118,16 +118,24 @@ void _phraseTableTest::testGetEntriesForTarget()
   result = tab->getEntriesForTarget(t1_1, node);
   CPPUNIT_ASSERT( result );
   CPPUNIT_ASSERT( node.size() == 2 );
+  CPPUNIT_ASSERT( node[s1_1].first.get_c_s() == 2 );
+  CPPUNIT_ASSERT( node[s1_1].second.get_c_st() == 1 );
+  CPPUNIT_ASSERT( node[s1_2].first.get_c_s() == 1 );
+  CPPUNIT_ASSERT( node[s1_2].second.get_c_st() == 1 );
 
   // Looking for phrases for which 'Pasleka' is translation
   result = tab->getEntriesForTarget(t1_2, node);
   CPPUNIT_ASSERT( result );
   CPPUNIT_ASSERT( node.size() == 1 );
+  CPPUNIT_ASSERT( node[s1_1].first.get_c_s() == 2);
+  CPPUNIT_ASSERT( node[s1_1].second.get_c_st() == 1 );
 
   // Looking for phrases for which 'rzeka' is translation
   result = tab->getEntriesForTarget(t2, node);
   CPPUNIT_ASSERT( result );
   CPPUNIT_ASSERT( node.size() == 1 );
+  CPPUNIT_ASSERT( node[s2].first.get_c_s() == 1);
+  CPPUNIT_ASSERT( node[s2].second.get_c_st() == 1 );
 
   // 'xyz'' key shoud not be found
   result = tab->getEntriesForTarget(getVector("xyz"), node);
@@ -148,6 +156,7 @@ void _phraseTableTest::testRetrievingSubphrase()
   Count c = Count(1);
 
   tab->clear();
+  tab->addSrcInfo(s, c);
   tab->incrCountsOfEntry(s, t1, c);
   c = tab->getSrcTrgInfo(s, t2, found);
 
@@ -316,8 +325,11 @@ void _phraseTableTest::testAddSrcTrgInfo()
   std::vector<WordIndex> s = getVector("jezioro Skiertag");
   std::vector<WordIndex> t = getVector("Skiertag lake");
 
+  Count c = Count(1);
+
   tab->clear();
-  tab->addSrcTrgInfo(s, t, Count(1));
+  tab->addSrcInfo(s, c);
+  tab->addSrcTrgInfo(s, t, c);
 
   Count src_trg_count = tab->cSrcTrg(s, t);
 

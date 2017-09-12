@@ -39,7 +39,7 @@ FeatureHandler::FeatureHandler()
 int FeatureHandler::addWpFeat(int /*verbose*/)
 {
   std::string featName="wp";
-  std::cerr<<"** Creating word penalty feature ("<<featName<<" "<<wpModelType<<")"<<std::endl;
+  std::cerr<<"** Creating word penalty feature ("<<featName<<" "<<wpSoFile<<")"<<std::endl;
 
       // Create model pointer if necessary
   if(wpModelInfo.wpModelPtr==NULL)
@@ -476,73 +476,73 @@ void FeatureHandler::trainWordPred(std::vector<std::string> strVec)
 
 
 //---------------
-int FeatureHandler::setWordPenModelType(std::string modelType)
+int FeatureHandler::setWordPenSoFile(std::string soFileName)
 {
   int verbosity=false;
-  if(!wpModelInfo.classLoader.open_module(modelType,verbosity))
+  if(!wpModelInfo.classLoader.open_module(soFileName,verbosity))
   {
-    std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
   else
   {
-    wpModelType=modelType;
+    wpSoFile=soFileName;
     return THOT_OK;
   }  
 }
 
 //---------------
-int FeatureHandler::setDefaultLangModelType(std::string modelType)
+int FeatureHandler::setDefaultLangSoFile(std::string soFileName)
 {
   int verbosity=false;
-  if(!langModelsInfo.defaultClassLoader.open_module(modelType,verbosity))
+  if(!langModelsInfo.defaultClassLoader.open_module(soFileName,verbosity))
   {
-    std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
   else
   {
-    defaultLangModelType=modelType;
+    defaultLangSoFile=soFileName;
     return THOT_OK;
   }
 }
 
 //---------------
-int FeatureHandler::setDefaultTransModelType(std::string modelType)
+int FeatureHandler::setDefaultTransSoFile(std::string soFileName)
 {
   int verbosity=false;
-  if(!phraseModelsInfo.defaultClassLoader.open_module(modelType,verbosity))
+  if(!phraseModelsInfo.defaultClassLoader.open_module(soFileName,verbosity))
   {
-    std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
   else
   {
-    defaultTransModelType=modelType;
+    defaultTransSoFile=soFileName;
     return THOT_OK;
   }
 }
 
 //---------------
-int FeatureHandler::setDefaultSingleWordModelType(std::string modelType)
+int FeatureHandler::setDefaultSingleWordSoFile(std::string soFileName)
 {
   int verbosity=false;
-  if(!swModelsInfo.defaultClassLoader.open_module(modelType,verbosity))
+  if(!swModelsInfo.defaultClassLoader.open_module(soFileName,verbosity))
   {
-    std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
   else
   {
-    defaultSingleWordModelType=modelType;
+    defaultSingleWordSoFile=soFileName;
     return THOT_OK;
   }
 }
 
 //--------------------------
-BasePhraseModel* FeatureHandler::createPmPtr(std::string modelType)
+BasePhraseModel* FeatureHandler::createPmPtr(std::string soFileName)
 {
-  if(modelType.empty())
+  if(soFileName.empty())
   {
     std::string initPars;
     BasePhraseModel* basePhrModelPtr=phraseModelsInfo.defaultClassLoader.make_obj(initPars);
@@ -555,9 +555,9 @@ BasePhraseModel* FeatureHandler::createPmPtr(std::string modelType)
   
         // Open module
     bool verbosity=false;
-    if(!simpleDynClassLoader.open_module(modelType,verbosity))
+    if(!simpleDynClassLoader.open_module(soFileName,verbosity))
     {
-      std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
+      std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
       return NULL;
     }
 
@@ -593,12 +593,12 @@ int FeatureHandler::createDirectPhrModelFeat(std::string featName,
                                              const ModelDescriptorEntry& modelDescEntry,
                                              DirectPhraseModelFeat<SmtModel::HypScoreInfo>** dirPmFeatPtrRef)
 {
-  std::cerr<<"** Creating direct phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
+  std::cerr<<"** Creating direct phrase model feature ("<<featName<<" "<<modelDescEntry.modelInitInfo<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
 
       // Display warning if so file is external
-  if(soFileIsExternal(modelDescEntry.modelType))
+  if(soFileIsExternal(modelDescEntry.modelInitInfo))
   {
-    std::cerr<<"Warning: so file ("<<modelDescEntry.modelType<<") is external to Thot package, to avoid execution problems ensure that the external file was compiled for the current version of the package"<<std::endl;
+    std::cerr<<"Warning: so file ("<<modelDescEntry.modelInitInfo<<") is external to Thot package, to avoid execution problems ensure that the external file was compiled for the current version of the package"<<std::endl;
   }
 
       // Create feature pointer and set name
@@ -607,7 +607,7 @@ int FeatureHandler::createDirectPhrModelFeat(std::string featName,
   dirPmFeatPtr->setFeatName(featName);
 
       // Add phrase model pointer
-  BasePhraseModel* basePhraseModelPtr=createPmPtr(modelDescEntry.modelType);
+  BasePhraseModel* basePhraseModelPtr=createPmPtr(modelDescEntry.modelInitInfo);
   if(basePhraseModelPtr==NULL)
     return THOT_ERROR;
   phraseModelsInfo.invPbModelPtrVec.push_back(basePhraseModelPtr);
@@ -671,12 +671,12 @@ int FeatureHandler::createInversePhrModelFeat(std::string featName,
                                               BasePhraseModel* invPbModelPtr,
                                               InversePhraseModelFeat<SmtModel::HypScoreInfo>** invPmFeatPtrRef)
 {
-  std::cerr<<"** Creating inverse phrase model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
+  std::cerr<<"** Creating inverse phrase model feature ("<<featName<<" "<<modelDescEntry.modelInitInfo<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
 
       // Display warning if so file is external
-  if(soFileIsExternal(modelDescEntry.modelType))
+  if(soFileIsExternal(modelDescEntry.modelInitInfo))
   {
-    std::cerr<<"Warning: so file ("<<modelDescEntry.modelType<<") is external to Thot package, to avoid execution problems ensure that the external file was compiled for the current version of the package"<<std::endl;
+    std::cerr<<"Warning: so file ("<<modelDescEntry.modelInitInfo<<") is external to Thot package, to avoid execution problems ensure that the external file was compiled for the current version of the package"<<std::endl;
   }
 
       // Create feature pointer and set name
@@ -857,7 +857,7 @@ bool FeatureHandler::process_tm_files_prefix(std::string tmFilesPrefix,
       // Create model descriptor entry
   ModelDescriptorEntry modelDescEntry;
   modelDescEntry.statusStr="main";
-  modelDescEntry.modelType=defaultTransModelType;
+  modelDescEntry.modelInitInfo=defaultTransSoFile;
   modelDescEntry.modelFileName=tmFilesPrefix;
   modelDescEntry.absolutizedModelFileName=tmFilesPrefix;
 
@@ -905,9 +905,9 @@ bool FeatureHandler::process_tm_files_prefix(std::string tmFilesPrefix,
 }
 
 //---------------
-BaseNgramLM<LM_State>* FeatureHandler::createLmPtr(std::string modelType)
+BaseNgramLM<LM_State>* FeatureHandler::createLmPtr(std::string soFileName)
 {
-  if(modelType.empty())
+  if(soFileName.empty())
   {
     std::string initPars;
     BaseNgramLM<LM_State>* langModelPtr=langModelsInfo.defaultClassLoader.make_obj(initPars);
@@ -920,9 +920,9 @@ BaseNgramLM<LM_State>* FeatureHandler::createLmPtr(std::string modelType)
   
         // Open module
     bool verbosity=false;
-    if(!simpleDynClassLoader.open_module(modelType,verbosity))
+    if(!simpleDynClassLoader.open_module(soFileName,verbosity))
     {
-      std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
+      std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
       return NULL;
     }
 
@@ -948,12 +948,12 @@ int FeatureHandler::createLangModelFeat(std::string featName,
                                         WordPredictor* wordPredPtr,
                                         LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef)
 {
-  std::cerr<<"** Creating language model feature ("<<featName<<" "<<modelDescEntry.modelType<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
+  std::cerr<<"** Creating language model feature ("<<featName<<" "<<modelDescEntry.modelInitInfo<<" "<<modelDescEntry.absolutizedModelFileName<<")"<<std::endl;
 
       // Display warning if so file is external
-  if(soFileIsExternal(modelDescEntry.modelType))
+  if(soFileIsExternal(modelDescEntry.modelInitInfo))
   {
-    std::cerr<<"Warning: so file ("<<modelDescEntry.modelType<<") is external to Thot package, to avoid execution problems ensure that the external file was compiled for the current version of the package"<<std::endl;
+    std::cerr<<"Warning: so file ("<<modelDescEntry.modelInitInfo<<") is external to Thot package, to avoid execution problems ensure that the external file was compiled for the current version of the package"<<std::endl;
   }
   
       // Create feature pointer and set name
@@ -962,7 +962,7 @@ int FeatureHandler::createLangModelFeat(std::string featName,
   langModelFeatPtr->setFeatName(featName);
 
       // Add language model pointer
-  BaseNgramLM<LM_State>* baseNgLmPtr=createLmPtr(modelDescEntry.modelType);
+  BaseNgramLM<LM_State>* baseNgLmPtr=createLmPtr(modelDescEntry.modelInitInfo);
   if(baseNgLmPtr==NULL)
     return THOT_ERROR;
   langModelsInfo.lModelPtrVec.push_back(baseNgLmPtr);
@@ -1039,7 +1039,7 @@ bool FeatureHandler::process_lm_files_prefix(std::string lmFilesPrefix,
         // Create model descriptor entry
   ModelDescriptorEntry modelDescEntry;
   modelDescEntry.statusStr="main";
-  modelDescEntry.modelType=defaultLangModelType;
+  modelDescEntry.modelInitInfo=defaultLangSoFile;
   modelDescEntry.modelFileName=lmFilesPrefix;
   modelDescEntry.absolutizedModelFileName=lmFilesPrefix;
 

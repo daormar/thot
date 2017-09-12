@@ -118,7 +118,7 @@ class IncrInterpNgramLM: public _incrInterpNgramLM
                                        unsigned int entry_index);
   std::string obtainDirNameForLmEntry(const std::string fileDescName,
                                       unsigned int entry_index);
-  BaseNgramLM<std::vector<WordIndex> >* createLmPtr(std::string tmType);
+  BaseNgramLM<std::vector<WordIndex> >* createLmPtr(std::string modelInitInfo);
   void deleteModelPointers(void);
   void closeDynamicModules(void);
 };

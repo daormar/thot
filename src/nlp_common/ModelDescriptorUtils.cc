@@ -209,10 +209,29 @@ bool extractModelEntryInfo(std::string fileName,
           {
                 // Read entry
             ModelDescriptorEntry modelDescEntry;
-            modelDescEntry.modelType=awk.dollar(1);
-            modelDescEntry.modelFileName=awk.dollar(2);
-            modelDescEntry.statusStr=awk.dollar(3);
+
+                // Obtain length of entry excluding comments
+            unsigned int entryLen=awk.NF;
+            for(unsigned int i=1;i<=awk.NF;++i)
+              if(awk.dollar(i)=="#")
+              {
+                entryLen=i-1;
+                break;
+              }
+            
+                // Extract model initialization info
+            for(unsigned int i=1;i<entryLen-1;++i)
+            {
+              modelDescEntry.modelInitInfo+=awk.dollar(i);
+              if(i!=entryLen-2)
+                modelDescEntry.modelInitInfo+=" ";
+            }
+                // Extract remaining fields
+            modelDescEntry.modelFileName=awk.dollar(entryLen-1);
+            modelDescEntry.statusStr=awk.dollar(entryLen);
             modelDescEntry.absolutizedModelFileName=absolutizeModelFileName(fileName,modelDescEntry.modelFileName);
+
+                // Store entry
             modelDescEntryVec.push_back(modelDescEntry);
           }
         }
@@ -241,7 +260,7 @@ bool printModelDescriptor(const std::vector<ModelDescriptorEntry>& modelDescEntr
     outF<<"thot tm descriptor"<<std::endl;
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-      outF<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].modelFileName<<" "<<modelDescEntryVec[i].statusStr<<std::endl;
+      outF<<modelDescEntryVec[i].modelInitInfo<<" "<<modelDescEntryVec[i].modelFileName<<" "<<modelDescEntryVec[i].statusStr<<std::endl;
     }
     outF.close();	
     return THOT_OK;

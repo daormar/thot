@@ -83,13 +83,13 @@ class IncrMuxPhraseModel: public _incrMuxPhraseModel
  protected:
 
     typedef std::map<std::string,SimpleDynClassLoader<BasePhraseModel> > SimpleDynClassLoaderMap;
-    std::vector<std::string> tmTypeVec;
+    std::vector<std::string> modelInitInfoVec;
     std::vector<std::string> modelFileNameVec;
     std::vector<std::string> modelStatusVec;
     SimpleDynClassLoaderMap simpleDynClassLoaderMap;
       
     bool loadTmEntries(const char *fileName);
-    bool loadTmEntry(std::string tmType,
+    bool loadTmEntry(std::string modelInitInfo,
                      std::string modelFileName,
                      std::string statusStr);
     bool printTmEntries(const char *fileName);
@@ -100,7 +100,7 @@ class IncrMuxPhraseModel: public _incrMuxPhraseModel
                                          unsigned int entry_index);
     std::string obtainDirNameForTmEntry(const std::string fileDescName,
                                         unsigned int entry_index);
-    BasePhraseModel* createTmPtr(std::string tmType);
+    BasePhraseModel* createTmPtr(std::string modelInitInfo);
     void deleteModelPointers(void);
     void closeDynamicModules(void);
 };

@@ -80,7 +80,7 @@ int obtain_default_lm_type(std::string& soFileName);
 int process_lm_entry(std::string corpusFile,
                      const ModelDescriptorEntry& modelDescEntry,
                      int verbosity);
-int init_lm(std::string modelType,
+int init_lm(std::string soFileName,
             int verbosity);
 void release_lm(int verbosity);
 int update_lm_weights(std::string corpusFile,
@@ -246,15 +246,15 @@ int process_lm_files_prefix(const thot_lmwu_pars& pars)
   }
 
       // Obtain default model type
-  std::string defaultLangModelType;
-  int ret=obtain_default_lm_type(defaultLangModelType);
+  std::string defaultLangSoFile;
+  int ret=obtain_default_lm_type(defaultLangSoFile);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
   
       // Create model descriptor entry
   ModelDescriptorEntry modelDescEntry;
   modelDescEntry.statusStr="main";
-  modelDescEntry.modelType=defaultLangModelType;
+  modelDescEntry.modelInitInfo=defaultLangSoFile;
   modelDescEntry.modelFileName=pars.langModelFilesPrefix;
   modelDescEntry.absolutizedModelFileName=pars.langModelFilesPrefix;
 
@@ -291,7 +291,7 @@ int process_lm_entry(std::string corpusFile,
                      int verbosity)
 {
       // Initialize language model
-  init_lm(modelDescEntry.modelType,verbosity);
+  init_lm(modelDescEntry.modelInitInfo,verbosity);
 
       // Check if the model has weights to be updated
   incrJelMerLmPtr=dynamic_cast<_incrJelMerNgramLM<Count,Count>* >(lm);
@@ -312,13 +312,13 @@ int process_lm_entry(std::string corpusFile,
 }
 
 //---------------
-int init_lm(std::string modelType,
+int init_lm(std::string soFileName,
             int verbosity)
 {  
       // Open module
-  if(!baseNgramLMDynClassLoader.open_module(modelType,verbosity))
+  if(!baseNgramLMDynClassLoader.open_module(soFileName,verbosity))
   {
-    std::cerr<<"Error: so file ("<<modelType<<") could not be opened"<<std::endl;
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }
 

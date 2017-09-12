@@ -57,8 +57,8 @@ bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
   {
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-      std::cerr<<"* Reading TM entry: "<<modelDescEntryVec[i].modelType<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<" "<<modelDescEntryVec[i].statusStr<<std::endl;
-      int ret=loadTmEntry(modelDescEntryVec[i].modelType,
+      std::cerr<<"* Reading TM entry: "<<modelDescEntryVec[i].modelInitInfo<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<" "<<modelDescEntryVec[i].statusStr<<std::endl;
+      int ret=loadTmEntry(modelDescEntryVec[i].modelInitInfo,
                           modelDescEntryVec[i].absolutizedModelFileName,
                           modelDescEntryVec[i].statusStr);
       if(ret==THOT_ERROR)
@@ -83,12 +83,12 @@ bool IncrMuxPhraseModel::loadTmEntries(const char *fileName)
 }
 
 //-------------------------
-bool IncrMuxPhraseModel::loadTmEntry(std::string tmType,
+bool IncrMuxPhraseModel::loadTmEntry(std::string modelInitInfo,
                                      std::string modelFileName,
                                      std::string statusStr)
 {
       // Create pointer to model
-  BasePhraseModel* tmPtr=createTmPtr(tmType);
+  BasePhraseModel* tmPtr=createTmPtr(modelInitInfo);
   if(tmPtr==NULL)
     return THOT_ERROR;
     
@@ -104,8 +104,8 @@ bool IncrMuxPhraseModel::loadTmEntry(std::string tmType,
   int ret=modelPtrVec.back()->load(modelFileName.c_str());
   if(ret==THOT_ERROR) return THOT_ERROR;
         
-      // Store lm type
-  tmTypeVec.push_back(tmType);
+      // Store tm type
+  modelInitInfoVec.push_back(modelInitInfo);
 
       // Store model file name
   modelFileNameVec.push_back(modelFileName);
@@ -145,11 +145,11 @@ bool IncrMuxPhraseModel::printTmEntries(const char *fileName)
     outF<<"thot tm descriptor"<<std::endl;
 
         // Print pm entries
-    for(unsigned int i=0;i<tmTypeVec.size();++i)
+    for(unsigned int i=0;i<modelInitInfoVec.size();++i)
     {
           // Print descriptor entry
       std::string currModelFileName=obtainFileNameForTmEntry(fileName,i);
-      outF<<tmTypeVec[i]<<" "<<currModelFileName<<" "<<modelStatusVec[i]<<std::endl;
+      outF<<modelInitInfoVec[i]<<" "<<currModelFileName<<" "<<modelStatusVec[i]<<std::endl;
 
           // Print translation model
       bool ret=printTm(fileName,i);
@@ -224,9 +224,9 @@ std::string IncrMuxPhraseModel::obtainDirNameForTmEntry(const std::string fileDe
 }
 
 //-------------------------
-BasePhraseModel* IncrMuxPhraseModel::createTmPtr(std::string tmType)
+BasePhraseModel* IncrMuxPhraseModel::createTmPtr(std::string modelInitInfo)
 {
-  SimpleDynClassLoaderMap::iterator iter=simpleDynClassLoaderMap.find(tmType);
+  SimpleDynClassLoaderMap::iterator iter=simpleDynClassLoaderMap.find(modelInitInfo);
   if(iter!=simpleDynClassLoaderMap.end())
   {
     return iter->second.make_obj("");
@@ -238,9 +238,9 @@ BasePhraseModel* IncrMuxPhraseModel::createTmPtr(std::string tmType)
   
         // Open module
     bool verbosity=false;
-    if(!simpleDynClassLoader.open_module(tmType,verbosity))
+    if(!simpleDynClassLoader.open_module(modelInitInfo,verbosity))
     {
-      std::cerr<<"Error: so file ("<<tmType<<") could not be opened"<<std::endl;
+      std::cerr<<"Error: so file ("<<modelInitInfo<<") could not be opened"<<std::endl;
       return NULL;
     }
 
@@ -254,7 +254,7 @@ BasePhraseModel* IncrMuxPhraseModel::createTmPtr(std::string tmType)
       return NULL;
     }
         // Store class loader in map
-    simpleDynClassLoaderMap.insert(std::make_pair(tmType,simpleDynClassLoader));
+    simpleDynClassLoaderMap.insert(std::make_pair(modelInitInfo,simpleDynClassLoader));
     
     return tmPtr;
   }
@@ -286,7 +286,7 @@ void IncrMuxPhraseModel::clear(void)
   trgGtlDataMapVec.clear();
   modelIndex=INVALID_MUX_PMODEL_INDEX;
   swVocPtr->clear();
-  tmTypeVec.clear();
+  modelInitInfoVec.clear();
   modelFileNameVec.clear();
   modelStatusVec.clear();
   deleteModelPointers();

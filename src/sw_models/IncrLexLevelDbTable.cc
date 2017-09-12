@@ -333,6 +333,17 @@ bool IncrLexLevelDbTable::load(const char* lexNumDenFile)
 //-------------------------
 bool IncrLexLevelDbTable::print(const char* lexNumDenFile)
 {
+#ifdef THOT_ENABLE_LOAD_PRINT_TEXTPARS
+    return printPlainText(lexNumDenFile);
+#else
+    return printBin(lexNumDenFile);
+#endif
+}
+
+//-------------------------
+bool IncrLexLevelDbTable::printBin(const char* lexNumDenFile)
+{
+    bool found;
     ofstream outF;
     outF.open(lexNumDenFile, ios::out);
 
@@ -354,11 +365,71 @@ bool IncrLexLevelDbTable::print(const char* lexNumDenFile)
         for(it->SeekToFirst(); it->Valid(); it->Next()) {
             std::vector<WordIndex> vec = keyToVector(it->key().ToString());
 
-            for(size_t i = 0; i < vec.size(); i++) {
-                outF << vec[i] << " ";
+            // Do not print entries with only source phrase
+            if (vec.size() == 2)
+            {
+                // (s, t) pair is stored in reversed order in the DB
+                WordIndex s = vec[1];
+                WordIndex t = vec[0];
+                // Print data in the following format: s t numerator denominator
+                outF.write((char*) &s, sizeof(WordIndex));
+                outF.write((char*) &t, sizeof(WordIndex));
+                // Numerator
+                float numer;
+                stringToFloat(it->value().ToString(), numer);
+                outF.write((char*) &numer, sizeof(float));
+                // Denominator - get value for s
+                float denom = getLexDenom(vec[1], found);
+                outF.write((char*) &denom, sizeof(float));
             }
+        }
 
-            outF << it->value().ToString() << std::endl;
+        delete it;
+
+        return THOT_OK;
+    }
+}
+
+//-------------------------
+bool IncrLexLevelDbTable::printPlainText(const char* lexNumDenFile)
+{
+    bool found;
+    ofstream outF;
+    outF.open(lexNumDenFile, ios::out);
+
+    if(!outF)
+    {
+        std::cerr << "Error while printing lexical nd file." << std::endl;
+
+        return THOT_ERROR;
+    }
+    else
+    {
+        // Print file with lexical nd values
+        // Disable cache for bulk load
+        leveldb::ReadOptions options;
+        options.fill_cache = false;
+
+        leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions(options));
+
+        for(it->SeekToFirst(); it->Valid(); it->Next()) {
+            std::vector<WordIndex> vec = keyToVector(it->key().ToString());
+
+            // Do not print entries with only source phrase
+            if (vec.size() == 2)
+            {
+                // (s, t) pair is stored in reversed order in the DB
+                WordIndex s = vec[1];
+                WordIndex t = vec[0];
+                // Print data in the following format: s t numerator denominator
+                outF << s << " " << t << " ";
+                // Numerator
+                float numer;
+                stringToFloat(it->value().ToString(), numer);
+                outF << numer << " ";
+                // Denominator - get value for s
+                outF << getLexDenom(vec[1], found) << std::endl;
+            }
         }
 
         delete it;

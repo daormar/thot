@@ -440,21 +440,6 @@ bool _incrPhraseModel::print(const char *prefix)
 //-------------------------
 bool _incrPhraseModel::printTTable(const char *outputFileName)
 {
-# ifdef _GLIBCXX_USE_LFS
-  ofstream outF;
-
-  outF.open(outputFileName,ios::out);
-  if(!outF)
-  {
-    std::cerr<<"Error while printing phrase model to file."<<std::endl;
-    return THOT_ERROR;
-  }
-  else
-  {
-    printTTable(outF);
-    return THOT_OK;
-  }
-# else
   FILE *outf;
 
   outf=fopen(outputFileName,"w");
@@ -468,7 +453,6 @@ bool _incrPhraseModel::printTTable(const char *outputFileName)
     printTTable(outf);
     return THOT_OK;
   }
-# endif
 }
 
 //-------------------------
@@ -487,73 +471,6 @@ bool _incrPhraseModel::printSegmLengthTable(const char *outputFileName)
  outF.close();	
 
  return THOT_OK;
-}
-
-# ifdef _GLIBCXX_USE_LFS
-//-------------------------
-void _incrPhraseModel::printTTable(ostream &outS)
-{
-  PhraseTable* ptPtr=0;
-
-  ptPtr=dynamic_cast<PhraseTable*>(basePhraseTablePtr);
-  
-  if(ptPtr) // C++ RTTI
-  {
-    PhraseTable::const_iterator phraseTIter;
-      
-        // Set float precision.
-    outS.setf( ios::fixed, ios::floatfield );
-    outS.precision(8);
-    for(phraseTIter=ptPtr->begin();phraseTIter!=ptPtr->end();++phraseTIter)
-    {
-      PhraseTable::SrcTableNode srctn;
-      PhraseTable::SrcTableNode::iterator srctnIter;
-      ptPtr->getEntriesForTarget(phraseTIter->first,srctn);
-
-      for(srctnIter=srctn.begin();srctnIter!=srctn.end();++srctnIter)
-      {
-        std::vector<WordIndex>::const_iterator vectorWordIndexIter;
-        for(vectorWordIndexIter=srctnIter->first.begin();vectorWordIndexIter!=srctnIter->first.end();++vectorWordIndexIter)
-          outS<<wordIndexToSrcString(*vectorWordIndexIter)<<" "; 
-        outS<<"|||"; 
-        for(vectorWordIndexIter=phraseTIter->first.begin();vectorWordIndexIter!=phraseTIter->first.end();++vectorWordIndexIter)
-          outS<<" "<<wordIndexToTrgString(*vectorWordIndexIter);
-        outS<<" ||| "<<srctnIter->second.first.get_c_s()<<" "<<srctnIter->second.second.get_c_st()<<std::endl;
-      }
-    }
-  }
-}
-
-#endif
-//-------------------------
-void _incrPhraseModel::printTTable(FILE* file)
-{
-  PhraseTable* ptPtr=0;
-
-  ptPtr=dynamic_cast<PhraseTable*>(basePhraseTablePtr);
-
-  if(ptPtr) // C++ RTTI
-  {
-    PhraseTable::const_iterator phraseTIter;
-      
-    for(phraseTIter=ptPtr->begin();phraseTIter!=ptPtr->end();++phraseTIter)
-    {
-      PhraseTable::SrcTableNode srctn;
-      PhraseTable::SrcTableNode::iterator srctnIter;
-      ptPtr->getEntriesForTarget(phraseTIter->first,srctn);
-
-      for(srctnIter=srctn.begin();srctnIter!=srctn.end();++srctnIter)
-      {
-        std::vector<WordIndex>::const_iterator vectorWordIndexIter;
-        for(vectorWordIndexIter=srctnIter->first.begin();vectorWordIndexIter!=srctnIter->first.end();++vectorWordIndexIter)
-          fprintf(file,"%s ",wordIndexToSrcString(*vectorWordIndexIter).c_str());
-        fprintf(file,"|||"); 
-        for(vectorWordIndexIter=phraseTIter->first.begin();vectorWordIndexIter!=phraseTIter->first.end();++vectorWordIndexIter)
-          fprintf(file," %s",wordIndexToTrgString(*vectorWordIndexIter).c_str());
-        fprintf(file," ||| %.8f %.8f\n",(float)srctnIter->second.first.get_c_s(),(float)srctnIter->second.second.get_c_st());
-      }
-    }
-  }
 }
 
 //-------------------------

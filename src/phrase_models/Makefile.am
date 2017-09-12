@@ -1,30 +1,98 @@
-EXTRA_DIST= WbaIncrPhraseModel.h _wbaIncrPhraseModel.h			\
-WbaIncrPhraseModel.cc _wbaIncrPhraseModel.cc				\
-WbaIncrPhraseModelFactory.cc _incrMuxPhraseModel.h IncrMuxPhraseModel.h	\
-_incrMuxPhraseModel.cc IncrMuxPhraseModel.cc				\
-IncrMuxPhraseModelFactory.cc VecUnsignedIntSortCriterion.h		\
-TrgSegmLenTable.h TrgSegmLenTable.cc TrgCutsTable.h TrgCutsTable.cc	\
-thot_gen_phr_model.cc thot_ttable_to_fbdb.cc    \
-thot_ttable_to_leveldb.cc thot_alig_op.cc		\
-thot_query_pm.cc SrfNodeKey.h SrfNodeKey.cc SrfNodeInfoMap.h		\
-SrfNodeInfoMap.cc SrfNodeInfo.h SrfBisegm.h SrcSegmLenTable.h		\
-SrcSegmLenTable.cc SentSegmentation.h SegLenTable.h SegLenTable.cc	\
-PhraseTransTableNodeData.h PhraseTableLog.h PhraseTableLog.cc		\
-PhraseTable.h PhraseTable.cc PhraseSortCriterion.h PhrasePairInfo.h	\
-PhrasePair.h PhraseId.h PhraseExtractParameters.h			\
-PhraseExtractionTable.h PhraseExtractionTable.cc PhraseExtractionCell.h	\
-PhraseDictLog.h PhraseDictLog.cc PhraseDict.h PhraseDict.cc		\
-PhraseDefs.h PhraseCountsLog.h PhraseCountsLog.cc PhraseCounts.h	\
-PhraseCounts.cc _incrPhraseModel.h IncrPhraseModel.h			\
-_incrPhraseModel.cc IncrPhraseModel.cc IncrPhraseModelFactory.cc	\
-CellID.h CellAlignment.h Cache_lct_.h Cache_lct_.cc Cache_ct_.h		\
-Cache_ct_.cc BpSetInfo.h BpSet.h BpSet.cc Bisegm.h BasePhraseTable.h	\
-BasePhraseModel.h BasePhraseModel.cc BaseIncrPhraseModel.h		\
-BaseIncrPhraseModel.cc BaseCountPhraseModel.h AlignmentExtractor.h	\
-AlignmentExtractor.cc AlignmentContainer.h AlignmentContainer.cc	\
-AligInfo.h BasePhrasePairFilter.h CategPhrasePairFilter.h		\
-CategPhrasePairFilter.cc BdbPhraseTable.h BdbPhraseTable.cc		\
-BdbPhraseModel.h BdbPhraseModel.cc BdbPhraseModelFactory.cc		\
-FastBdbPhraseTable.h FastBdbPhraseTable.cc FastBdbPhraseModel.h		\
-FastBdbPhraseModel.cc FastBdbPhraseModelFactory.cc PhraseExtractUtils.h	\
-PhraseExtractUtils.cc
+EXTRA_DIST=                                     \
+_incrMuxPhraseModel.cc                          \
+_incrMuxPhraseModel.h                           \
+_incrPhraseModel.cc                             \
+_incrPhraseModel.h                              \
+_wbaIncrPhraseModel.cc                          \
+_wbaIncrPhraseModel.h                           \
+AligInfo.h                                      \
+AlignmentContainer.cc                           \
+AlignmentContainer.h                            \
+AlignmentExtractor.cc                           \
+AlignmentExtractor.h                            \
+BaseCountPhraseModel.h                          \
+BaseIncrPhraseModel.cc                          \
+BaseIncrPhraseModel.h                           \
+BasePhraseModel.cc                              \
+BasePhraseModel.h                               \
+BasePhrasePairFilter.h                          \
+BasePhraseTable.h                               \
+BdbPhraseModel.cc                               \
+BdbPhraseModel.h                                \
+BdbPhraseModelFactory.cc                        \
+BdbPhraseTable.cc                               \
+BdbPhraseTable.h                                \
+Bisegm.h                                        \
+BpSet.cc                                        \
+BpSet.h                                         \
+BpSetInfo.h                                     \
+Cache_ct_.cc                                    \
+Cache_ct_.h                                     \
+Cache_lct_.cc                                   \
+Cache_lct_.h                                    \
+CategPhrasePairFilter.cc                        \
+CategPhrasePairFilter.h                         \
+CellAlignment.h                                 \
+CellID.h                                        \
+FastBdbPhraseModel.cc                           \
+FastBdbPhraseModel.h                            \
+FastBdbPhraseModelFactory.cc                    \
+FastBdbPhraseTable.cc                           \
+FastBdbPhraseTable.h                            \
+IncrMuxPhraseModel.cc                           \
+IncrMuxPhraseModel.h                            \
+IncrMuxPhraseModelFactory.cc                    \
+IncrPhraseModel.cc                              \
+IncrPhraseModel.h                               \
+IncrPhraseModelFactory.cc                       \
+PhraseCounts.cc                                 \
+PhraseCounts.h                                  \
+PhraseCountsLog.cc                              \
+PhraseCountsLog.h                               \
+PhraseDefs.h                                    \
+PhraseDict.cc                                   \
+PhraseDict.h                                    \
+PhraseDictLog.cc                                \
+PhraseDictLog.h                                 \
+PhraseExtractionCell.h                          \
+PhraseExtractionTable.cc                        \
+PhraseExtractionTable.h                         \
+PhraseExtractParameters.h                       \
+PhraseExtractUtils.cc                           \
+PhraseExtractUtils.h                            \
+PhraseId.h                                      \
+PhrasePair.h                                    \
+PhrasePairInfo.h                                \
+PhraseSortCriterion.h                           \
+PhraseTable.cc                                  \
+PhraseTable.h                                   \
+PhraseTableLog.cc                               \
+PhraseTableLog.h                                \
+PhraseTransTableNodeData.h                      \
+SegLenTable.cc                                  \
+SegLenTable.h                                   \
+SentSegmentation.h                              \
+SrcSegmLenTable.cc                              \
+SrcSegmLenTable.h                               \
+SrfBisegm.h                                     \
+SrfNodeInfo.h                                   \
+SrfNodeInfoMap.cc                               \
+SrfNodeInfoMap.h                                \
+SrfNodeKey.cc                                   \
+SrfNodeKey.h                                    \
+StlPhraseTable.h                                \
+StlPhraseTable.cc                               \
+thot_alig_op.cc                                 \
+thot_gen_phr_model.cc                           \
+thot_query_pm.cc                                \
+thot_ttable_to_fbdb.cc                          \
+thot_ttable_to_leveldb.cc                       \
+TrgCutsTable.cc                                 \
+TrgCutsTable.h                                  \
+TrgSegmLenTable.cc                              \
+TrgSegmLenTable.h                               \
+VecUnsignedIntSortCriterion.h                   \
+WbaIncrPhraseModel.cc                           \
+WbaIncrPhraseModel.h                            \
+WbaIncrPhraseModelFactory.cc
+
