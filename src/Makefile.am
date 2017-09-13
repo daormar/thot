@@ -22,7 +22,7 @@ endif
 
 AUTOMAKE_OPTIONS = subdir-objects
 
-SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
+SUBDIRS= hat_trie nlp_common incr_models sw_models phrase_models smt_preproc	\
 error_correction downhill_simplex stack_dec exper testing
 
 if CODE_TESTING
@@ -53,7 +53,7 @@ thot_ms_dec thot_ms_alig thot_li_weight_upd thot_ll_weight_upd_nblist	\
 thot_client thot_server thot_scorer thot_calc_bleu $(DB_CXX_PROGS)	\
 $(LEVELDB_PROGS) $(TESTING_PROGS)
 
-lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
+lib_LTLIBRARIES = libhattrie.la libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la incr_jel_mer_leveldb_ngram_lm_factory.la       \
 incr_interp_ngram_lm_factory.la	smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la incr_phrase_model_factory.la		\
@@ -69,7 +69,7 @@ translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
 $(DB_CXX_LIBS) $(LEVELDB_LIBS)
 
 # flags
-AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
+AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/hat_trie -I$(srcdir)/nlp_common			\
 -I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models		\
 -I$(srcdir)/smt_preproc -I$(srcdir)/error_correction				\
 -I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec				\
@@ -84,6 +84,11 @@ $(CPPUNIT) -ldl
 
 # sources
 common_src_h= thot_config.h
+
+hat_trie_h= hat_trie/array_growth_policy.h hat_trie/array_hash.h            \
+hat_trie/array_map.h hat_trie/array_set.h hat_trie/htrie_hash.h             \
+hat_trie/htrie_map.h hat_trie/htrie_set.h
+hat_trie_defs= 
 
 nlp_common_h= nlp_common/WordIndex.h nlp_common/WordAligMatrix.h	\
 nlp_common/uiPairHashF.h nlp_common/uiHashF.h nlp_common/TrieVecs.h	\
@@ -688,6 +693,10 @@ $(downhill_simplex_h) $(stack_dec_h) $(exper_h) $(exper_defs)		\
 $(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
 
 # libraries
+
+##########
+libhattrie_la_SOURCES= $(hat_trie_h) $(hat_trie_defs)
+libhattrie_la_LIBADD=
 
 ##########
 libthot_la_SOURCES= $(thot_sources)
