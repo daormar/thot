@@ -284,7 +284,12 @@ int processParameters(thot_gen_sw_model_pars pars)
     emIters(pars,swAligModelPtr,wholeTrainRange,verbosity);
   
       // Print results
-  swAligModelPtr->print(pars.o_str.c_str());
+  int ret=swAligModelPtr->print(pars.o_str.c_str());
+  if(ret==THOT_ERROR)
+  {
+    release_swm(true);
+    return THOT_ERROR;
+  }
 
       // Delete pointer
   release_swm(true);
