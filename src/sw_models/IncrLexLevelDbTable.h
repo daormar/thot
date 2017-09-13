@@ -70,8 +70,6 @@ class IncrLexLevelDbTable : public _incrLexTable
     // File extensions
     std::string ldbExtension;
     std::string defaultExtension;
-    std::string binExtension;
-    std::string txtExtension;
 
     // DB-related variables
     leveldb::DB* db;

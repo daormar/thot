@@ -49,8 +49,6 @@ IncrLexLevelDbTable::IncrLexLevelDbTable(void)
     // Define extensions
     ldbExtension = "_ldb_hmm_lexnd";
     defaultExtension = ".hmm_lexnd";
-    binExtension = ".bin_hmm_lexnd";
-    txtExtension = ".txt_hmm_lexnd";
 
     // Prepare DB configuration
     options.create_if_missing = true;
@@ -342,7 +340,7 @@ bool IncrLexLevelDbTable::load(const char* lexNumDenFile)
 bool IncrLexLevelDbTable::loadBin(const char* lexNumDenFile)
 {
     const std::string prefixFile = ((std::string) lexNumDenFile);
-    const std::string binFile = prefixFile + binExtension;
+    const std::string binFile = prefixFile + defaultExtension;
 
     if(db != NULL)
     {
@@ -358,18 +356,9 @@ bool IncrLexLevelDbTable::loadBin(const char* lexNumDenFile)
     ifstream inF (binFile.c_str(), ios::in | ios::binary);
     if (!inF)
     {
-        const std::string defaultFile = prefixFile + defaultExtension;
-
         std::cerr << "Error in lexical nd file, file " << binFile << " does not exist. ";
-        std::cerr << "Trying to open " << defaultFile << std::endl;
 
-        inF.open(defaultFile.c_str(), ios::in | ios::binary);
-
-        if (!inF)
-        {
-            std::cerr << "Error in lexical nd file, file " << defaultFile << " does not exist." << std::endl;
-            return THOT_ERROR;
-        }
+        return THOT_ERROR;
     }
 
     // Read data stored in binary file and insert them to LevelDB
@@ -442,7 +431,7 @@ bool IncrLexLevelDbTable::printBin(const char* lexNumDenFile)
     bool found;
     ofstream outF;
     const std::string prefixFile = ((std::string) lexNumDenFile);
-    const std::string binFile = prefixFile + binExtension;
+    const std::string binFile = prefixFile + defaultExtension;
 
     outF.open(binFile.c_str(), ios::out);
 
@@ -495,7 +484,7 @@ bool IncrLexLevelDbTable::printPlainText(const char* lexNumDenFile)
     bool found;
     ofstream outF;
     const std::string prefixFile = ((std::string) lexNumDenFile);
-    const std::string txtFile = prefixFile + txtExtension;
+    const std::string txtFile = prefixFile + defaultExtension;
 
     outF.open(txtFile.c_str(), ios::out);
 
