@@ -128,7 +128,7 @@ get_model_information()
 {
     alig_ext="none"
 
-    for f in `ls ${init_model_pref}*`; do
+    for f in ${init_model_pref}*; do
         bname=$(basename "$f")
         extension="${bname##*.}"
         case ${extension} in
@@ -404,12 +404,15 @@ create_filtered_model()
 {
     # Copy basic initial model files
     if [ ! -f ${filtered_model_dir}/model.src ]; then
-        for f in `ls ${init_model_pref}*`; do
-            bname=$(basename "$f")
-            extension="${bname##*.}"
-            filename="${bname%.*}"
-            if [ $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
-                cp $f ${filtered_model_dir}/model.${extension}
+        for f in ${init_model_pref}*; do
+            # Omit directories
+            if [ -f $f ]; then
+                bname=$(basename "$f")
+                extension="${bname##*.}"
+                filename="${bname%.*}"
+                if [ $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
+                    cp $f ${filtered_model_dir}/model.${extension}
+                fi
             fi
         done
         
@@ -455,12 +458,15 @@ prune_lex_table_bin()
 generate_final_model()
 {
     # Copy basic files
-    for f in `ls ${init_model_pref}*`; do
-        local bname=$(basename "$f")
-        local extension="${bname##*.}"
-        local filename="${bname%.*}"
-        if [ $extension != "slmodel" -a $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
-            cp $f ${output}.${extension}
+    for f in ${init_model_pref}*; do
+        # Omit directories
+        if [ -f $f ]; then
+            local bname=$(basename "$f")
+            local extension="${bname##*.}"
+            local filename="${bname%.*}"
+            if [ $extension != "slmodel" -a $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
+                cp $f ${output}.${extension}
+            fi
         fi
         
         # Create void .src and .trg files
