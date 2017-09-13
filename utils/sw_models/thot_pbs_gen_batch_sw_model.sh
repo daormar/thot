@@ -189,7 +189,7 @@ get_model_information()
 {
     export alig_ext="none"
 
-    for f in `ls ${init_model_dir}/model*`; do
+    for f in ${init_model_dir}/model*; do
         bname=$(basename "$f")
         extension="${bname##*.}"
         case ${extension} in
@@ -308,7 +308,7 @@ proc_chunk()
         for file in ${models_per_chunk_dir}/${out_chunk}*; do
             _ext=`echo $file | $AWK '{printf"%s",substr($1,length($1)-3)}'`
             if [ ${_ext} != ".log" ]; then
-                rm $file
+                rm -rf $file
             fi
         done
     fi
@@ -514,8 +514,12 @@ create_filtered_model()
     # Copy basic files
     if [ ! -f ${chunk_filtered_model_dir}/model.src ]; then
         # Copy void model files
-        cp ${init_model_dir}/model* ${chunk_filtered_model_dir} || \
-        { echo "Error while executing create_filtered_model" >> $SDIR/log ; return 1 ; }
+        for f in ${init_model_dir}/model*; do
+            if [ -f $f ]; then
+                cp $f ${chunk_filtered_model_dir} || \
+                    { echo "Error while executing create_filtered_model" >> $SDIR/log ; return 1 ; }
+            fi
+        done
     fi
 
     # Filter complete lexical model given chunk
@@ -565,13 +569,15 @@ generate_final_model()
     echo "*** Copying final model (started at "`date`")..." >> $SDIR/log
     echo "*** Copying final model (started at "`date`")..." >> ${curr_tables_dir}/generate_final_model.log
 
-    for f in `ls ${init_model_dir}/model*`; do
+    for f in ${init_model_dir}/model*; do
         # Copy basic files
-        bname=$(basename "$f")
-        extension="${bname##*.}"
-        filename="${bname%.*}"
-        cp $f ${output}.${extension} || \
-            { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
+        if [ -f $f ]; then
+            bname=$(basename "$f")
+            extension="${bname##*.}"
+            filename="${bname%.*}"
+            cp $f ${output}.${extension} || \
+                { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
+        fi
     done
     
     # Copy sentence length model
