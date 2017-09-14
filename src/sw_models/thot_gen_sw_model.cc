@@ -32,6 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "_incrSwAligModel.h"
 #include "IncrHmmP0AligModel.h"
+#include "IncrLevelDbHmmP0AligModel.h"
 #include "BaseStepwiseAligModel.h"
 #include "BaseSwAligModel.h"
 #include "thot_gen_sw_model_pars.h"
@@ -227,6 +228,13 @@ int processParameters(thot_gen_sw_model_pars pars)
 
   if(pars.s_given)
   {
+        // Initialize model if necessary
+    IncrLevelDbHmmP0AligModel* incrLevelDbHmmP0AligModelPtr = dynamic_cast<IncrLevelDbHmmP0AligModel*>(swAligModelPtr);
+    if(incrLevelDbHmmP0AligModelPtr != NULL)
+    {
+      std::cerr << "Initializing model with prefix " << pars.o_str << std::endl;
+      incrLevelDbHmmP0AligModelPtr->init(pars.o_str.c_str());
+    }
         // Read sentence pairs
     std::string srctrgcFileName="";
     pair<unsigned int,unsigned int> pui;
@@ -276,7 +284,12 @@ int processParameters(thot_gen_sw_model_pars pars)
     emIters(pars,swAligModelPtr,wholeTrainRange,verbosity);
   
       // Print results
-  swAligModelPtr->print(pars.o_str.c_str());
+  int ret=swAligModelPtr->print(pars.o_str.c_str());
+  if(ret==THOT_ERROR)
+  {
+    release_swm(true);
+    return THOT_ERROR;
+  }
 
       // Delete pointer
   release_swm(true);

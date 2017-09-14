@@ -128,7 +128,7 @@ get_model_information()
 {
     alig_ext="none"
 
-    for f in `ls ${init_model_pref}*`; do
+    for f in ${init_model_pref}*; do
         bname=$(basename "$f")
         extension="${bname##*.}"
         case ${extension} in
@@ -210,7 +210,7 @@ proc_chunk()
         # Estimate model from chunk
         ${bindir}/thot_gen_sw_model -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${init_model_pref} ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl \
-            -o ${models_per_chunk_dir}/${out_chunk} || return 1
+            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}.log || return 1
         if [ ${debug} -ne 0 -a "${file_format}" = "text" ]; then
             echo "Entries in initial table: "`wc -l ${models_per_chunk_dir}/${out_chunk}.${lex_ext} | $AWK '{printf"%s",$1}'` >> $TMP/log
         fi            
@@ -237,7 +237,7 @@ proc_chunk()
 
     # Remove model files for chunk
     if [ ${debug} -eq 0 ]; then
-        rm ${models_per_chunk_dir}/${out_chunk}*
+        rm -rf ${models_per_chunk_dir}/${out_chunk}*
     fi
 
     return 0
@@ -404,12 +404,15 @@ create_filtered_model()
 {
     # Copy basic initial model files
     if [ ! -f ${filtered_model_dir}/model.src ]; then
-        for f in `ls ${init_model_pref}*`; do
-            bname=$(basename "$f")
-            extension="${bname##*.}"
-            filename="${bname%.*}"
-            if [ $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
-                cp $f ${filtered_model_dir}/model.${extension}
+        for f in ${init_model_pref}*; do
+            # Omit directories
+            if [ -f $f ]; then
+                bname=$(basename "$f")
+                extension="${bname##*.}"
+                filename="${bname%.*}"
+                if [ $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
+                    cp $f ${filtered_model_dir}/model.${extension}
+                fi
             fi
         done
         
@@ -455,12 +458,15 @@ prune_lex_table_bin()
 generate_final_model()
 {
     # Copy basic files
-    for f in `ls ${init_model_pref}*`; do
-        local bname=$(basename "$f")
-        local extension="${bname##*.}"
-        local filename="${bname%.*}"
-        if [ $extension != "slmodel" -a $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
-            cp $f ${output}.${extension}
+    for f in ${init_model_pref}*; do
+        # Omit directories
+        if [ -f $f ]; then
+            local bname=$(basename "$f")
+            local extension="${bname##*.}"
+            local filename="${bname%.*}"
+            if [ $extension != "slmodel" -a $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
+                cp $f ${output}.${extension}
+            fi
         fi
         
         # Create void .src and .trg files

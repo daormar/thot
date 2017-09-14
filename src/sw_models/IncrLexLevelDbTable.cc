@@ -46,6 +46,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //-------------------------
 IncrLexLevelDbTable::IncrLexLevelDbTable(void)
 {
+    // Define extensions
+    ldbExtension = "_ldb_hmm_lexnd";
+    defaultExtension = ".hmm_lexnd";
+
+    // Prepare DB configuration
     options.create_if_missing = true;
     options.filter_policy = leveldb::NewBloomFilterPolicy(10);
     options.block_cache = leveldb::NewLRUCache(10 * 1048576);  // 10 MB for cache
@@ -54,22 +59,33 @@ IncrLexLevelDbTable::IncrLexLevelDbTable(void)
 }
 
 //-------------------------
-bool IncrLexLevelDbTable::init(string levelDbPath)
+bool IncrLexLevelDbTable::init(const char* prefFileName)
 {
-    std::cerr << "Initializing LevelDB phrase table" << std::endl;
+    dbName = ((std::string) prefFileName) + ldbExtension;
+    std::cerr << "Initializing LevelDB phrase table in " << dbName << std::endl;
 
+    // Release resources related to old DB if exists
     if(db != NULL)
     {
         delete db;
         db = NULL;
     }
 
-    if(load(levelDbPath.c_str()) != THOT_OK)
+    // Prepare empty DB
+    leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
+
+    if (status.ok())
+    {
+        clear();
+
+        return THOT_OK;
+    }
+    else
+    {
+        std::cerr << "Cannot open DB: " << status.ToString() << std::endl;
+
         return THOT_ERROR;
-
-    clear();
-
-    return THOT_OK;
+    }
 }
 
 //-------------------------
@@ -145,32 +161,32 @@ std::vector<WordIndex> IncrLexLevelDbTable::keyToVector(const string key)const
 bool IncrLexLevelDbTable::stringToFloat(const string value_str, float &value)const
 {
     // Decode string representation to float without loosing precision
-    std::vector<WordIndex> vec = stringToVector(value_str);
-    unsigned char *p = reinterpret_cast<unsigned char*>(&value);
-
-    // Cannot retireve value or format is incorrect
-    if (vec.size() != sizeof(value)) return false;
-
-    for (size_t i = 0; i < sizeof(value); i++)
-    {
-        p[i] = vec[i];
+    unsigned int wi = 0;
+    for(size_t i = 0; i < WORD_INDEX_MODULO_BYTES; i++) {
+        int j = WORD_INDEX_MODULO_BYTES - i - 1;
+        wi += (((unsigned char) value_str[i]) - 1) * (unsigned int) pow(WORD_INDEX_MODULO_BASE, j);
     }
 
-    return true;
+    float *p = reinterpret_cast<float*>(&wi);
+    value = *p;
+
+    return true;;
 }
 
 //-------------------------
 string IncrLexLevelDbTable::floatToString(const float value)const
 {
     // Encode float as a string without loosing precision
-    unsigned char const *p = reinterpret_cast<unsigned char const*>(&value);
-    std::vector<WordIndex> vec;
-    for (size_t i = 0; i < sizeof(value); i++)
-    {
-        vec.push_back((WordIndex) p[i]);
+    unsigned int const *p = reinterpret_cast<unsigned int const*>(&value);
+
+    std::vector<WordIndex> str;
+    for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--) {
+        str.push_back(1 + (*p / (unsigned int) pow(WORD_INDEX_MODULO_BASE, j) % WORD_INDEX_MODULO_BASE));
     }
 
-    return vectorToString(vec);
+    string s(str.begin(), str.end());
+
+    return s;
 }
 
 //-------------------------
@@ -307,16 +323,85 @@ void IncrLexLevelDbTable::setLexNumDen(WordIndex s,
 //-------------------------
 bool IncrLexLevelDbTable::load(const char* lexNumDenFile)
 {
+    bool ret;
+
+    // Try to load LevelDB
+    ret = loadLevelDb(lexNumDenFile);
+
+    if (ret == THOT_ERROR)  // Loading DB failed. Look for binary file
+    {
+        ret = loadBin(lexNumDenFile);
+    }
+
+    return ret;
+}
+
+//-------------------------
+bool IncrLexLevelDbTable::loadBin(const char* lexNumDenFile)
+{
+    const std::string prefixFile = ((std::string) lexNumDenFile);
+    const std::string binFile = prefixFile + defaultExtension;
+
     if(db != NULL)
     {
         delete db;
         db = NULL;
     }
 
-    std::cerr << "Loading lexnd in LevelDB format from " << lexNumDenFile << std::endl;
+    // Prepare new DB
+    init(prefixFile.c_str());
 
-    dbName = lexNumDenFile;
-    leveldb::Status status = leveldb::DB::Open(options, dbName, &db);
+    std::cerr << "Loading lexnd in LevelDB format from binary file in " << binFile << std::endl;
+
+    ifstream inF (binFile.c_str(), ios::in | ios::binary);
+    if (!inF)
+    {
+        std::cerr << "Error in lexical nd file, file " << binFile << " does not exist. ";
+
+        return THOT_ERROR;
+    }
+
+    // Read data stored in binary file and insert them to LevelDB
+    bool end = false;
+    while(!end)
+    {
+        WordIndex s;
+        WordIndex t;
+        float numer;
+        float denom;
+
+        if(inF.read((char*) &s, sizeof(WordIndex)))
+        {
+            inF.read((char*) &t, sizeof(WordIndex));
+            inF.read((char*) &numer, sizeof(float));
+            inF.read((char*) &denom, sizeof(float));
+
+            setLexNumDen(s, t, numer, denom);
+        }
+        else end = true;
+    }
+
+    return THOT_OK;
+}
+
+//-------------------------
+bool IncrLexLevelDbTable::loadLevelDb(const char* lexNumDenFile)
+{
+    if(db != NULL)
+    {
+        delete db;
+        db = NULL;
+    }
+
+    dbName = ((std::string) lexNumDenFile) + ldbExtension;
+
+    std::cerr << "Loading lexnd in LevelDB format from DB in " << dbName << std::endl;
+
+    // Configure LevelDB parameters
+    leveldb::Options loadOptions = options;
+    loadOptions.create_if_missing = false;
+
+    leveldb::Status status = leveldb::DB::Open(loadOptions, dbName, &db);
 
     if (status.ok())
     {
@@ -345,7 +430,10 @@ bool IncrLexLevelDbTable::printBin(const char* lexNumDenFile)
 {
     bool found;
     ofstream outF;
-    outF.open(lexNumDenFile, ios::out);
+    const std::string prefixFile = ((std::string) lexNumDenFile);
+    const std::string binFile = prefixFile + defaultExtension;
+
+    outF.open(binFile.c_str(), ios::out);
 
     if(!outF)
     {
@@ -395,7 +483,10 @@ bool IncrLexLevelDbTable::printPlainText(const char* lexNumDenFile)
 {
     bool found;
     ofstream outF;
-    outF.open(lexNumDenFile, ios::out);
+    const std::string prefixFile = ((std::string) lexNumDenFile);
+    const std::string txtFile = prefixFile + defaultExtension;
+
+    outF.open(txtFile.c_str(), ios::out);
 
     if(!outF)
     {

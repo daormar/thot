@@ -36,5 +36,11 @@ IncrLevelDbHmmAligModel::IncrLevelDbHmmAligModel() : _incrHmmAligModel()
 {
       // Create table with lexical parameters
   incrLexTable = new IncrLexLevelDbTable();
-  lexNumDenFileExtension = "_ldb_hmm_lexnd";
+  lexNumDenFileExtension = "";  // Extension is set by IncrLexLevelDbTable class
+}
+
+//-------------------------
+bool IncrLevelDbHmmAligModel::init(const char* prefFileName)
+{
+  return ((IncrLexLevelDbTable *) incrLexTable)->init(prefFileName);
 }

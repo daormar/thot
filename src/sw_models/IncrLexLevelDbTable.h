@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define _IncrLexLevelDbTable_h
 
 #define WORD_INDEX_MODULO_BASE 254
-#define WORD_INDEX_MODULO_BYTES 3
+#define WORD_INDEX_MODULO_BYTES 5
 
 //--------------- Include files --------------------------------------
 
@@ -67,6 +67,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 class IncrLexLevelDbTable : public _incrLexTable
 {
+    // File extensions
+    std::string ldbExtension;
+    std::string defaultExtension;
+
+    // DB-related variables
     leveldb::DB* db;
     leveldb::Options options;
     string dbName;
@@ -85,9 +90,9 @@ class IncrLexLevelDbTable : public _incrLexTable
     string vectorToKey(const std::vector<WordIndex>& vec)const;
     std::vector<WordIndex> keyToVector(const string key)const;
 
-        // Binary and plain text print functions
-    bool printBin(const char* lexNumDenFile);
-    bool printPlainText(const char* lexNumDenFile);
+        // Binrary and LevelDB load functions
+    bool loadBin(const char* lexNumDenFile);
+    bool loadLevelDb(const char* lexNumDenFile);
 
     public:
 
@@ -96,7 +101,7 @@ class IncrLexLevelDbTable : public _incrLexTable
         ~IncrLexLevelDbTable(void);
 
             // Function for initializing and removing LevelDB
-        bool init(string levelDbPath);
+        bool init(const char* prefFileName);
         bool drop();
 
             // Functions to handle lexNumer
@@ -126,8 +131,10 @@ class IncrLexLevelDbTable : public _incrLexTable
             // load function
         bool load(const char* lexNumDenFile);
 
-            // print function wrapper for binary or plain text print
+            // print functions
         bool print(const char* lexNumDenFile);
+        bool printBin(const char* lexNumDenFile);
+        bool printPlainText(const char* lexNumDenFile);
 
             // clear() function
         void clear(void);

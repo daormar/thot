@@ -70,17 +70,19 @@ class IncrLexLevelDbTableTest: public _incrLexTableTest
   CPPUNIT_TEST( testGetSetLexNumer );
   CPPUNIT_TEST( testGetTransForTarget );
   CPPUNIT_TEST( testSetLexNumerDenom );
-  CPPUNIT_TEST( testLoad );
+  CPPUNIT_TEST( testLoadFromBinFile );
+  CPPUNIT_TEST( testLoadFromLevelDb );
   CPPUNIT_TEST_SUITE_END();
 
  private:
-  string dbName = "/tmp/thot_leveldb_unit_test";
+  string dbNamePrefix = "/tmp/thot_leveldb_unit_test";
 
  public:
   void setUp();
   void tearDown();
 
-  void testLoad();
+  void testLoadFromBinFile();
+  void testLoadFromLevelDb();
 
 };
 
