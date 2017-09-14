@@ -60,12 +60,14 @@ set_tmp_dir()
     init_model_dir=$TMP/init_model
     curr_tables_dir=$TMP/curr_tables
     models_per_chunk_dir=$TMP/models_per_chunk
+    filtering_info_dir=$TMP/filtering_info
     filtered_model_dir=$TMP/filtered_model
     slmodel_dir=$TMP/slmodel
     mkdir ${chunks_dir} || return 1
     mkdir ${init_model_dir} || return 1
     mkdir ${curr_tables_dir} || return 1
     mkdir ${models_per_chunk_dir} || return 1
+    mkdir ${filtering_info_dir} || return 1
     mkdir ${filtered_model_dir} || return 1
     mkdir ${slmodel_dir} || return 1
 
@@ -204,7 +206,7 @@ sort_counts_bin()
 }
 
 proc_chunk()
-{
+{    
     if [ $n -eq 1 ]; then
         # First iteration
         # Estimate model from chunk
@@ -220,13 +222,17 @@ proc_chunk()
         # Create filtered model...
         create_filtered_model
 
+        # Remove previously existing files
+        rm -rf ${models_per_chunk_dir}/${out_chunk}*
+        
         # Estimate model from chunk
         ${bindir}/thot_gen_sw_model -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${filtered_model_dir}/model ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl \
             -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}.log || return 1
     fi
 
-    # Sort counts individually but do not append them
+    # Sort counts individually but do not append them. Results
+    # constitute current tables
     sort_counts || return 1
 
     # Generate information useful for model filtering (required in the
@@ -337,12 +343,12 @@ generate_filter_info()
 
 generate_filter_info_text()
 {
-    $AWK '{printf"%s %s\n",$1,$2}' ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtered_model_dir}/${chunk}_lex_model_info
+    $AWK '{printf"%s %s\n",$1,$2}' ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtering_info_dir}/${chunk}_lex_model_info
 }
 
 generate_filter_info_bin()
 {
-    ${bindir}/thot_gen_bin_lex_filter_info -l ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtered_model_dir}/${chunk}_lex_model_info
+    ${bindir}/thot_gen_bin_lex_filter_info -l ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtering_info_dir}/${chunk}_lex_model_info
 }
 
 filter_lex_table()
@@ -371,7 +377,7 @@ filter_lex_table_text()
 filter_lex_table_text_alt()
 {
     local lextable=${curr_tables_dir}/merged_lex_counts
-    $AWK -v filt_info_file=${filtered_model_dir}/${chunk}_lex_model_info \
+    $AWK -v filt_info_file=${filtering_info_dir}/${chunk}_lex_model_info \
     'BEGIN{
            getline <filt_info_file
            sword=$1
@@ -395,32 +401,35 @@ filter_lex_table_text_alt()
 filter_lex_table_bin()
 {
     local lextable=${curr_tables_dir}/merged_lex_counts
-    local filt_info_file=${filtered_model_dir}/${chunk}_lex_model_info
+    local filt_info_file=${filtering_info_dir}/${chunk}_lex_model_info
 
     ${bindir}/thot_filter_bin_ilextable -l $lextable -f ${filt_info_file} >${filtered_model_dir}/model.${lex_ext}
 }
 
 create_filtered_model()
 {
+    # Remove previous directory content
+    rm -rf ${filtered_model_dir}/*
+    
     # Copy basic initial model files
-    if [ ! -f ${filtered_model_dir}/model.src ]; then
-        for f in ${init_model_pref}*; do
-            # Omit directories
-            if [ -f $f ]; then
-                bname=$(basename "$f")
-                extension="${bname##*.}"
-                filename="${bname%.*}"
-                if [ $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
-                    cp $f ${filtered_model_dir}/model.${extension}
-                fi
+    for f in ${init_model_pref}*; do
+        # Omit directories
+        if [ -f $f ]; then
+            bname=$(basename "$f")
+            extension="${bname##*.}"
+            filename="${bname%.*}"
+            if [ $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
+                cp $f ${filtered_model_dir}/model.${extension}
             fi
-        done
+        fi
+    done
         
-        # Generate void .src and .trg files
-        echo "" > ${filtered_model_dir}/model.src
-        echo "" > ${filtered_model_dir}/model.trg
-    fi
+    # Generate void .src and .trg files
+    echo "" > ${filtered_model_dir}/model.src
+    echo "" > ${filtered_model_dir}/model.trg
 
+    # Generate lexical and alignment files from current tables
+    
     # Filter complete lexical model given chunk
     echo "Filtering lexical table..." >> $TMP/log
     filter_lex_table || return 1
