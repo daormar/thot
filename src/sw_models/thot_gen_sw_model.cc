@@ -232,8 +232,11 @@ int processParameters(thot_gen_sw_model_pars pars)
     IncrLevelDbHmmP0AligModel* incrLevelDbHmmP0AligModelPtr = dynamic_cast<IncrLevelDbHmmP0AligModel*>(swAligModelPtr);
     if(incrLevelDbHmmP0AligModelPtr != NULL)
     {
-      std::cerr << "Initializing model with prefix " << pars.o_str << std::endl;
-      incrLevelDbHmmP0AligModelPtr->init(pars.o_str.c_str());
+      if(!pars.l_given)
+      {
+        std::cerr << "Initializing model with prefix " << pars.o_str << std::endl;
+        incrLevelDbHmmP0AligModelPtr->init(pars.o_str.c_str());
+      }
     }
         // Read sentence pairs
     std::string srctrgcFileName="";
