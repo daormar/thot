@@ -120,8 +120,11 @@ void StlPhraseTable::addTableEntry(const std::vector<WordIndex>& s,
                                    const std::vector<WordIndex>& t,
                                    PhrasePairInfo inf)
 {
+    Count t_count = cTrg(t);
+
     addSrcInfo(s, inf.first.get_c_s());  // src
-    addTrgInfo(t, inf.second.get_c_s());  // trg
+    // Values for target are not summed with the old one thus they have to aggregated here
+    addTrgInfo(t, (t_count + inf.second).get_c_s());  // trg
     addSrcTrgInfo(s, t, inf.second.get_c_st());  // (src, trg)
 }
 
@@ -167,9 +170,26 @@ void StlPhraseTable::addSrcTrgInfo(const std::vector<WordIndex>& s,
 
     if (!found)
     {
-        std::cerr << "Unexpected behaviour: (s, t) key parts cannot be found" << std::endl;
+        std::cerr << "Unexpected behaviour: some (s, t) key parts cannot be found" << std::endl;
+
+        // Add empty source if missing
+        getSrcInfo(s, found);
+        if (!found)
+        {
+            std::cerr << "Cannot find s part" << std::endl;
+            addSrcInfo(s, Count(0));
+        }
+
+        // Add empty target if missing
+        getTrgInfo(t, found);
+        if (!found)
+        {
+            std::cerr << "Cannot find t part" << std::endl;
+            addTrgInfo(t, Count(0));
+        }
+
         std::cerr << "Make sure that entries for s phrase and t phrase are added before adding (s, t) entry" << std::endl;
-        exit(1);
+        std::cerr << "Missing parts have been added with count 0" << std::endl;
     }
 
     // Update entry value
