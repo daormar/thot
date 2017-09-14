@@ -104,6 +104,7 @@ set_shared_dir()
     curr_tables_dir=$SDIR/curr_tables
     models_per_chunk_dir=$SDIR/models_per_chunk
     filtered_model_dir=$SDIR/filtered_model
+    filtering_info_dir=$SDIR/filtering_info
     slmodel_dir=$SDIR/slmodel
     scripts_dir=$SDIR/scripts
     used_scripts_dir=$SDIR/used_scripts
@@ -113,6 +114,7 @@ set_shared_dir()
     mkdir ${curr_tables_dir} || return 1
     mkdir ${models_per_chunk_dir} || return 1
     mkdir ${filtered_model_dir} || return 1
+    mkdir ${filtering_info_dir} || return 1
     mkdir ${slmodel_dir} || return 1
     mkdir ${scripts_dir} || return 1
     mkdir ${used_scripts_dir} || return 1
@@ -240,25 +242,25 @@ sort_counts()
 
 sort_counts_text()
 {
-    ${AWK} -v c=$chunk_id '{printf"%s %s\n",$0,c}' ${models_per_chunk_dir}/${out_chunk}.${lex_ext} | \
+    ${AWK} -v c=$chunk_id '{printf"%s %s\n",$0,c}' ${models_per_chunk_dir}/${out_chunk}/model.${lex_ext} | \
         sort_lex_counts_text > ${curr_tables_dir}/lex_counts_${out_chunk}
     if [ ${alig_ext} != "none" ]; then 
-        ${AWK} -v c=$chunk_id '{printf"%s %s\n",$0,c}' ${models_per_chunk_dir}/${out_chunk}.${alig_ext} | \
+        ${AWK} -v c=$chunk_id '{printf"%s %s\n",$0,c}' ${models_per_chunk_dir}/${out_chunk}/model.${alig_ext} | \
             sort_alig_counts_text > ${curr_tables_dir}/alig_counts_${out_chunk}
     fi
 }
 
 sort_counts_bin()
 {
-    ${bindir}/thot_sort_bin_ilextable -l ${models_per_chunk_dir}/${out_chunk}.${lex_ext} > ${curr_tables_dir}/lex_counts_${out_chunk}
+    ${bindir}/thot_sort_bin_ilextable -l ${models_per_chunk_dir}/${out_chunk}/model.${lex_ext} > ${curr_tables_dir}/lex_counts_${out_chunk}
 
     if [ ${alig_ext} != "none" ]; then 
         case ${alig_ext} in
             "hmm_alignd") ${bindir}/thot_sort_bin_ihmmatable \
-                -a ${models_per_chunk_dir}/${out_chunk}.${alig_ext} > ${curr_tables_dir}/alig_counts_${out_chunk}
+                -a ${models_per_chunk_dir}/${out_chunk}/model.${alig_ext} > ${curr_tables_dir}/alig_counts_${out_chunk}
                 ;;
             "ibm2_alignd") ${bindir}/thot_sort_bin_iibm2atable \
-                -a ${models_per_chunk_dir}/${out_chunk}.${alig_ext} > ${curr_tables_dir}/alig_counts_${out_chunk}
+                -a ${models_per_chunk_dir}/${out_chunk}/model.${alig_ext} > ${curr_tables_dir}/alig_counts_${out_chunk}
                 ;;
         esac
     fi
@@ -266,22 +268,35 @@ sort_counts_bin()
 
 proc_chunk()
 {
+    # Create directory if necessary
+    if [ ! -d ${models_per_chunk_dir}/${out_chunk} ]; then
+        mkdir ${models_per_chunk_dir}/${out_chunk}
+    fi
+
     # Write date to log file
     echo "** Processing chunk ${chunk} (started at "`date`")..." >> $SDIR/log
-    echo "** Processing chunk ${chunk} (started at "`date`")..." >> ${models_per_chunk_dir}/${out_chunk}_proc_n$n.log
+    echo "** Processing chunk ${chunk} (started at "`date`")..." >> ${models_per_chunk_dir}/${out_chunk}/model_proc_n$n.log
 
     if [ $n -eq 1 ]; then
         # First iteration
+
+        # Copy initial model into model directory for chunk
+        for f in ${init_model_dir}/model*; do
+            if [ -f $f ]; then
+                cp $f ${models_per_chunk_dir}/${out_chunk}/
+            fi
+        done
+        
         # Estimate model from chunk
         echo "* Estimate model for chunk ${chunk} (started at "`date`")..." >> $SDIR/log
         ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
-            -l ${init_model_dir}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 -npr ${npr_val} \
+            -l ${models_per_chunk_dir}/${out_chunk}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 -npr ${npr_val} \
             -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}_proc_n$n.log || \
+            -o ${models_per_chunk_dir}/${out_chunk}/model 2>> ${models_per_chunk_dir}/${out_chunk}/model_proc_n$n.log || \
             { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
 
         if [ ${debug} -ne 0 -a "${file_format}" = "text" ]; then
-            echo "Entries in initial table (${chunk}): "`wc -l ${models_per_chunk_dir}/${out_chunk}.${lex_ext} | $AWK '{printf"%s",$1}'` >> $SDIR/log
+            echo "Entries in initial table (${chunk}): "`wc -l ${models_per_chunk_dir}/${out_chunk}/model.${lex_ext} | $AWK '{printf"%s",$1}'` >> $SDIR/log
         fi
     else
         # Second iteration or greater
@@ -291,7 +306,7 @@ proc_chunk()
         ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
             -l ${filtered_model_dir}/${chunk}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 \
             -npr ${npr_val} -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}_proc_n$n.log || \
+            -o ${models_per_chunk_dir}/${out_chunk}/model 2>> ${models_per_chunk_dir}/${out_chunk}/model_proc_n$n.log || \
             { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
 
     fi
@@ -305,7 +320,7 @@ proc_chunk()
 
     # Remove model files for chunk (except the log file)
     if [ ${debug} -eq 0 ]; then
-        for file in ${models_per_chunk_dir}/${out_chunk}*; do
+        for file in ${models_per_chunk_dir}/${out_chunk}/*; do
             _ext=`echo $file | $AWK '{printf"%s",substr($1,length($1)-3)}'`
             if [ ${_ext} != ".log" ]; then
                 rm -rf $file
@@ -436,12 +451,12 @@ generate_filter_info()
 
 generate_filter_info_text()
 {
-    $AWK '{printf"%s %s\n",$1,$2}' ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtered_model_dir}/${chunk}_lex_model_info
+    $AWK '{printf"%s %s\n",$1,$2}' ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtering_info_dir}/${chunk}_lex_model_info
 }
 
 generate_filter_info_bin()
 {
-    ${bindir}/thot_gen_bin_lex_filter_info -l ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtered_model_dir}/${chunk}_lex_model_info
+    ${bindir}/thot_gen_bin_lex_filter_info -l ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtering_info_dir}/${chunk}_lex_model_info
 }
 
 filter_lex_table()
@@ -470,7 +485,7 @@ filter_lex_table_text()
 filter_lex_table_text_alt()
 {
     local lextable=${curr_tables_dir}/merged_lex_counts
-    $AWK -v filt_info_file=${filtered_model_dir}/${chunk}_lex_model_info \
+    $AWK -v filt_info_file=${filtering_info_dir}/${chunk}_lex_model_info \
     'BEGIN{
            getline <filt_info_file
            sword=$1
@@ -494,7 +509,7 @@ filter_lex_table_text_alt()
 filter_lex_table_bin()
 {
     lextable=${curr_tables_dir}/merged_lex_counts
-    filt_info_file=${filtered_model_dir}/${chunk}_lex_model_info
+    filt_info_file=${filtering_info_dir}/${chunk}_lex_model_info
 
     ${bindir}/thot_filter_bin_ilextable -l $lextable -f ${filt_info_file} > ${chunk_filtered_model_dir}/model.${lex_ext}
 }
@@ -509,6 +524,9 @@ create_filtered_model()
     # Create directory if necessary
     if [ ! -d ${chunk_filtered_model_dir} ]; then
         mkdir ${chunk_filtered_model_dir}
+    else
+        # Directory already exists, remove previous content
+        rm -rf ${chunk_filtered_model_dir}/*
     fi
 
     # Copy basic files
@@ -534,7 +552,6 @@ create_filtered_model()
     # Create sync file
     echo "" > ${sync_info_dir}/create_filtered_model_${chunk}
 }
-
 
 prune_lex_table()
 {
@@ -858,9 +875,9 @@ gen_log_err_files()
         nit=1
         while [ $nit -le ${niters} ]; do
             echo "*** EM iteration ${nit} out of $niters" >> ${output}.genswm_err
-            for f in ${models_per_chunk_dir}/*_proc_n${nit}.log; do
-                if [ -f $f ]; then
-                    cat $f >> ${output}.genswm_err
+            for f in ${models_per_chunk_dir}/*; do
+                if [ -f $f/model_proc_n${nit}.log ]; then
+                    cat $f/model_proc_n${nit}.log >> ${output}.genswm_err
                 fi
             done
 
@@ -1103,6 +1120,7 @@ declare init_model_dir=""
 declare curr_tables_dir="" 
 declare models_per_chunk_dir=""
 declare filtered_model_dir="" 
+declare filtering_info_dir
 declare slmodel_dir=""
 declare scripts_dir="" 
 declare used_scripts_dir=""
