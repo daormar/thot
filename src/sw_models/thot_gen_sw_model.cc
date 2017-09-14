@@ -891,8 +891,8 @@ void printParameters(thot_gen_sw_model_pars pars)
 void printUsage(void)
 {
   std::cerr<<"Usage: thot_gen_sw_model {[-s <string> -t <string>] [-l <string>]}\n";
-  std::cerr<<"                      -n <numIter> [-nl]\n";
-  std::cerr<<"                      [-eb | -mb <int> [-lr <type> [<float1>...<floatn>] ] \n";
+  std::cerr<<"                      -n <int> [-nl]\n";
+  std::cerr<<"                      [-eb | -mb <int> [-lr <int> [<float1>...<floatn>] ] \n";
   std::cerr<<"                      | -i [-c] [-r <int> [-in]] ]\n";
   std::cerr<<"                      [-np <float>] [-lf <float>] [-af <float>]\n";
   std::cerr<<"                      -o <string>\n";
@@ -911,7 +911,7 @@ void printUsage(void)
   std::cerr<<"-r <int>              Restrict maximum size of matrix of\n";
   std::cerr<<"                      expected values in the dimension of n.\n";
   std::cerr<<"-mb <int>             Execute mini-batches of length <int>.\n";
-  std::cerr<<"-lr <lrtype> <f1...n> Set learning-rate type. Depending on the lr\n";
+  std::cerr<<"-lr <int> <f1...n>    Set learning-rate type. Depending on the lr\n";
   std::cerr<<"                      type, additional parameters are required.\n";
   std::cerr<<"                      1 -> fixed, <float1> required\n";
   std::cerr<<"                      2 -> liang, <float1> required\n";
