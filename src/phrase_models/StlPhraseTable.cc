@@ -76,7 +76,7 @@ bool StlPhraseTable::getNbestForSrc(const std::vector<WordIndex>& s,
 
     if(found) {
         // Generate transTableNode
-        for(iter = node.begin(); iter != node.end(); iter++)
+        for(iter = node.end(); iter != node.begin(); iter--)
         {
             std::vector<WordIndex> t = iter->first;
             PhrasePairInfo ppi = (PhrasePairInfo) iter->second;
