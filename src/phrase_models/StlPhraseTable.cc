@@ -346,9 +346,9 @@ Prob StlPhraseTable::pTrgGivenSrc(const std::vector<WordIndex>& s,
     Count st_count = cSrcTrg(s, t);
     if ((float) st_count > 0)
     {
-        Count t_count = cTrg(t);
-        if ((float) t_count > 0)
-            return ((float) st_count) / ((float) t_count);
+        Count s_count = cSrc(s);
+        if ((float) s_count > 0)
+            return ((float) st_count) / ((float) s_count);
         else
             return PHRASE_PROB_SMOOTH;
     }
