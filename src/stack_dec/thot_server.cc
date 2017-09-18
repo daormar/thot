@@ -62,10 +62,16 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function Declarations -------------------------------
 
-int process_request(int s,
+int process_request(int sockd,
+                    std::string inet_addr,
                     const thot_server_pars& ts_pars,
                     const ThotDecoderUserPars& tdu_pars,
                     bool &end);
+int process_request_switch(int sockd,
+                           int user_id,
+                           int server_request_code,
+                           bool& end,
+                           int verbose);
 int processParameters(thot_server_pars ts_pars);
 int start_server(thot_server_pars ts_pars,
                  ThotDecoderUserPars tdu_pars);
@@ -160,13 +166,13 @@ int start_server(thot_server_pars ts_pars,
   
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
   {
-    perror("socket");
+    std::cerr<<"socket error"<<std::endl;
     exit(1);
   }
 
   if (setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(int)) == -1)
   {
-    perror("setsockopt");
+    std::cerr<<"setsockopt error"<<std::endl;
     exit(1);
   }
   my_addr.sin_family = AF_INET;          // byte ordering used by the machine
@@ -176,13 +182,13 @@ int start_server(thot_server_pars ts_pars,
 
   if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr))== -1)
   {
-    perror("bind");
+    std::cerr<<"bind error"<<std::endl;
     exit(1);
   }
 
   if (listen(sockfd, BACKLOG) == -1)
   {
-    perror("listen");
+    std::cerr<<"listen error"<<std::endl;
     exit(1);
   }
 
@@ -191,55 +197,33 @@ int start_server(thot_server_pars ts_pars,
   sa.sa_flags = SA_RESTART;
   if (sigaction(SIGCHLD, &sa, NULL) == -1)
   {
-    perror("sigaction");
+    std::cerr<<"sigaction error"<<std::endl;
     exit(1);
   }
 
   std::cerr<<"Listening to port "<< ts_pars.server_port <<"..."<<std::endl;
   
       // main accept() loop
-  
   while(!end)
   {  
     sin_size = sizeof(struct sockaddr_in);
     if ((new_fd = accept(sockfd,(struct sockaddr *)&their_addr,(socklen_t *)&sin_size)) == -1)
     {
-      perror("accept");
+      std::cerr<<"accept error"<<std::endl;
       continue;
     }
-    if(ts_pars.v_given)
-    {
-          // Current date/time based on current system
-      time_t now = time(0);
-          // Convert now to tm struct for local timezone
-      tm* localtm = localtime(&now);
-      std::cerr<<"----------------------------------------------------"<<std::endl;
-      std::cerr<<"Processing new request..."<<std::endl;
-      std::cerr<<"Current time: "<<asctime(localtm);
-      std::cerr<<"Origin: "<<inet_ntoa(their_addr.sin_addr)<<std::endl;
-    }
-
-        // Process request measuring time
-    double elapsed_prev,elapsed,ucpu,scpu;
-    ctimer(&elapsed_prev,&ucpu,&scpu);
     
-    process_request(new_fd,ts_pars,tdu_pars,end);
-    
-    ctimer(&elapsed,&ucpu,&scpu);
-
-    if(ts_pars.v_given)
-    {
-      std::cerr<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
-    }
-    
+    process_request(new_fd,inet_ntoa(their_addr.sin_addr),ts_pars,tdu_pars,end);
+        
 //    if (!fork())
 //    { // this is the child process
 //    close(sockfd); // The child does not need the descriptor
 //    if (send(new_fd, "Hello, world!\n", 14, 0) == -1)
-//      perror("send");
+//      std::cerr<<"send"<<std::endl;
 //      close(new_fd);
 //      exit(0);
 //    }
+
     close(new_fd);  
   }
 
@@ -256,30 +240,65 @@ void sigchld_handler(int /*s*/)
 }
 
 //---------------
-int process_request(int s,
+int process_request(int sockd,
+                    std::string inet_addr,
                     const thot_server_pars& ts_pars,
                     const ThotDecoderUserPars& tdu_pars,
-                    bool &end)
+                    bool& end)
 {
   int verbose=ts_pars.v_given;
 
+  if(verbose)
+  {
+        // Current date/time based on current system
+    time_t now = time(0);
+        // Convert now to tm struct for local timezone
+    tm* localtm = localtime(&now);
+    std::cerr<<"----------------------------------------------------"<<std::endl;
+    std::cerr<<"Processing new request..."<<std::endl;
+    std::cerr<<"Current time: "<<asctime(localtm);
+    std::cerr<<"Origin: "<<inet_addr<<std::endl;
+  }
+
       // Get request code
-  int server_request_code=BasicSocketUtils::recvInt(s);
+  int server_request_code=BasicSocketUtils::recvInt(sockd);
   if(verbose) std::cerr<<"Request code: "<<server_request_code<<std::endl;
 
       // Get user id
-  int user_id=BasicSocketUtils::recvInt(s);
+  int user_id=BasicSocketUtils::recvInt(sockd);
   if(verbose) std::cerr<<"User identifier: "<<user_id<<std::endl;
   
       // Init user parameters
-  int retVal=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
-  if(retVal==THOT_ERROR)
+  int ret=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
+  if(ret==THOT_ERROR)
   {
     end=true;
     return THOT_ERROR;
   }
 
-      // Process request
+      // Process request measuring time
+  double elapsed_prev,elapsed,ucpu,scpu;
+  ctimer(&elapsed_prev,&ucpu,&scpu);
+
+  ret=process_request_switch(sockd,user_id,server_request_code,end,verbose);
+  
+  ctimer(&elapsed,&ucpu,&scpu);
+  
+  if(verbose)
+  {
+    std::cerr<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
+  }
+
+  return ret;
+}
+
+//---------------
+int process_request_switch(int sockd,
+                           int user_id,
+                           int server_request_code,
+                           bool& end,
+                           int verbose)
+{
   std::string stlStr;
   std::string stlStr1;
   std::string stlStr2;
@@ -290,77 +309,79 @@ int process_request(int s,
   std::string catResult;
   std::vector<float> floatVec;
   RejectedWordsSet emptyRejWordsSet;
-
+  int ret=THOT_OK;
+  
   switch(server_request_code)
   {
     case OL_TRAIN_PAIR:
-      BasicSocketUtils::recvStlStr(s,stlStrSrc);
-      BasicSocketUtils::recvStlStr(s,stlStrRef);
-      retVal=thotDecoderPtr->onlineTrainSentPair(user_id,stlStrSrc.c_str(),stlStrRef.c_str(),verbose);
-      BasicSocketUtils::writeInt(s,(int)retVal);
+      BasicSocketUtils::recvStlStr(sockd,stlStrSrc);
+      BasicSocketUtils::recvStlStr(sockd,stlStrRef);
+      ret=thotDecoderPtr->onlineTrainSentPair(user_id,stlStrSrc.c_str(),stlStrRef.c_str(),verbose);
+      BasicSocketUtils::writeInt(sockd,ret);
       break;
 
     case TRAIN_ECM:
-      BasicSocketUtils::recvStlStr(s,stlStr1);
-      BasicSocketUtils::recvStlStr(s,stlStr2);
-      retVal=thotDecoderPtr->trainEcm(user_id,stlStr1.c_str(),stlStr2.c_str(),verbose);
-      BasicSocketUtils::writeInt(s,(int)retVal);
+      BasicSocketUtils::recvStlStr(sockd,stlStr1);
+      BasicSocketUtils::recvStlStr(sockd,stlStr2);
+      ret=thotDecoderPtr->trainEcm(user_id,stlStr1.c_str(),stlStr2.c_str(),verbose);
+      BasicSocketUtils::writeInt(sockd,ret);
       break;
 
     case TRANSLATE_SENT:
-      BasicSocketUtils::recvStlStr(s,stlStr);
+      BasicSocketUtils::recvStlStr(sockd,stlStr);
       thotDecoderPtr->translateSentence(user_id,stlStr.c_str(),result,bestHypInfo,verbose);
-      BasicSocketUtils::writeStr(s,result.c_str());
-      BasicSocketUtils::writeStr(s,bestHypInfo.c_str());
+      BasicSocketUtils::writeStr(sockd,result.c_str());
+      BasicSocketUtils::writeStr(sockd,bestHypInfo.c_str());
       break;
 
     case TRANSLATE_SENT_HYPINFO:
-      BasicSocketUtils::recvStlStr(s,stlStr);
+      BasicSocketUtils::recvStlStr(sockd,stlStr);
       thotDecoderPtr->translateSentence(user_id,stlStr.c_str(),result,bestHypInfo,verbose);
-      BasicSocketUtils::writeStr(s,result.c_str());
-      BasicSocketUtils::writeStr(s,bestHypInfo.c_str());
+      BasicSocketUtils::writeStr(sockd,result.c_str());
+      BasicSocketUtils::writeStr(sockd,bestHypInfo.c_str());
       break;
 
     case VERIFY_COV:
-      BasicSocketUtils::recvStlStr(s,stlStrSrc);
-      BasicSocketUtils::recvStlStr(s,stlStrRef);
-      retVal=thotDecoderPtr->sentPairVerCov(user_id,stlStrSrc.c_str(),stlStrRef.c_str(),result,verbose);
-      BasicSocketUtils::writeStr(s,result.c_str());
+      BasicSocketUtils::recvStlStr(sockd,stlStrSrc);
+      BasicSocketUtils::recvStlStr(sockd,stlStrRef);
+      ret=thotDecoderPtr->sentPairVerCov(user_id,stlStrSrc.c_str(),stlStrRef.c_str(),result,verbose);
+      BasicSocketUtils::writeStr(sockd,result.c_str());
       break;
 
     case START_CAT:
-      BasicSocketUtils::recvStlStr(s,stlStr);
+      BasicSocketUtils::recvStlStr(sockd,stlStr);
       thotDecoderPtr->startCat(user_id,stlStr.c_str(),catResult,verbose);
-      BasicSocketUtils::writeStr(s,catResult.c_str());
+      BasicSocketUtils::writeStr(sockd,catResult.c_str());
       break;
 
     case ADD_STR_TO_PREF:
-      BasicSocketUtils::recvStlStr(s,stlStr);
+      BasicSocketUtils::recvStlStr(sockd,stlStr);
       thotDecoderPtr->addStrToPref(user_id,stlStr.c_str(),emptyRejWordsSet,catResult,verbose);
-      BasicSocketUtils::writeStr(s,catResult.c_str());
+      BasicSocketUtils::writeStr(sockd,catResult.c_str());
       break;
 
     case RESET_PREF:
       thotDecoderPtr->resetPrefix(user_id);
-      BasicSocketUtils::writeInt(s,THOT_OK);
+      BasicSocketUtils::writeInt(sockd,THOT_OK);
       break;
       
     case CLEAR_TRANS:
       thotDecoderPtr->clearTrans(verbose);
-      BasicSocketUtils::writeInt(s,(int)retVal);
+      BasicSocketUtils::writeInt(sockd,THOT_OK);
       break;
 
     case PRINT_MODELS:
-      retVal=thotDecoderPtr->printModels(verbose);
-      BasicSocketUtils::writeInt(s,(int)retVal);
+      ret=thotDecoderPtr->printModels(verbose);
+      BasicSocketUtils::writeInt(sockd,ret);
       break;
 
     case END_SERVER: end=true;
-      BasicSocketUtils::writeInt(s,1);
+      BasicSocketUtils::writeInt(sockd,1);
       thotDecoderPtr->clearTrans(verbose);
       break;
   }
-  return retVal;
+
+  return ret;
 }
 
 //---------------
