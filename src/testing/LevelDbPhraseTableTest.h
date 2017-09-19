@@ -73,11 +73,13 @@ class LevelDbPhraseTableTest: public _phraseTableTest
   CPPUNIT_TEST( testGetEntriesForTarget );
   CPPUNIT_TEST( testRetrievingSubphrase );
   CPPUNIT_TEST( testRetrieveNonLeafPhrase );
-  //CPPUNIT_TEST( testGetEntriesForSource );
+  //CPPUNIT_TEST( testGetEntriesForSource );  // Not implemented yet functionality for LevelDB
   CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );
   CPPUNIT_TEST( testGetNbestForTrg );
   CPPUNIT_TEST( testAddSrcTrgInfo );
   CPPUNIT_TEST( testIteratorsLoop );
+  CPPUNIT_TEST( testPSrcGivenTrg );
+  //CPPUNIT_TEST( testPTrgGivenSrc );  // Not implemented yet functionality for LevelDB
   CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
   CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
   CPPUNIT_TEST( testSize );

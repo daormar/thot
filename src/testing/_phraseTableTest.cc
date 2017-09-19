@@ -338,6 +338,57 @@ void _phraseTableTest::testAddSrcTrgInfo()
 }
 
 //---------------------------------------
+void _phraseTableTest::testPSrcGivenTrg()
+{
+  /* TEST:
+     Check retrieving probabilities for phrases based on stored
+     counts for a given target.
+  */
+  std::vector<WordIndex> s1 = getVector("Morag");
+  std::vector<WordIndex> s2 = getVector("Gdansk");
+  std::vector<WordIndex> t1 = getVector("Candas");
+  std::vector<WordIndex> t2 = getVector("Aviles");
+
+  // Fill phrase table with data
+  tab->incrCountsOfEntry(s1, t1, Count(3));
+  tab->incrCountsOfEntry(s2, t1, Count(7));
+  tab->incrCountsOfEntry(s1, t2, Count(1));
+  tab->incrCountsOfEntry(s2, t2, Count(2));
+
+  // Check probabilities
+  CPPUNIT_ASSERT_EQUAL(0.3f, (float) tab->pSrcGivenTrg(s1, t1));
+  CPPUNIT_ASSERT_EQUAL(0.7f, (float) tab->pSrcGivenTrg(s2, t1));
+  CPPUNIT_ASSERT_EQUAL(1.f / 3.f, (float) tab->pSrcGivenTrg(s1, t2));
+  CPPUNIT_ASSERT_EQUAL(2.f / 3.f, (float) tab->pSrcGivenTrg(s2, t2));
+}
+
+//---------------------------------------
+void _phraseTableTest::testPTrgGivenSrc()
+{
+  /* TEST:
+     Check retrieving probabilities for phrases based on stored
+     counts for a given source.
+  */
+  std::vector<WordIndex> s1 = getVector("Morag");
+  std::vector<WordIndex> s2 = getVector("Gdansk");
+  std::vector<WordIndex> t1 = getVector("Candas");
+  std::vector<WordIndex> t2 = getVector("Aviles");
+
+  // Fill phrase table with data
+  tab->incrCountsOfEntry(s1, t1, Count(10));
+  tab->incrCountsOfEntry(s1, t2, Count(12));
+
+  tab->incrCountsOfEntry(s2, t1, Count(11));
+  tab->incrCountsOfEntry(s2, t2, Count(13));
+
+  // Check probabilities
+  CPPUNIT_ASSERT_EQUAL(10.f / 22.f, (float) tab->pTrgGivenSrc(s1, t1));
+  CPPUNIT_ASSERT_EQUAL(12.f / 22.f, (float) tab->pTrgGivenSrc(s1, t2));
+  CPPUNIT_ASSERT_EQUAL(11.f / 24.f, (float) tab->pTrgGivenSrc(s2, t1));
+  CPPUNIT_ASSERT_EQUAL(13.f / 24.f, (float) tab->pTrgGivenSrc(s2, t2));
+}
+
+//---------------------------------------
 void _phraseTableTest::testSize()
 {
   /* TEST:
