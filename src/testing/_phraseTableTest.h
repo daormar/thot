@@ -82,6 +82,8 @@ class _phraseTableTest: public CppUnit::TestFixture
         void testRetrievingEntriesWithCountEqualZero();
         void testGetNbestForTrg();
         void testAddSrcTrgInfo();
+        void testPSrcGivenTrg();
+        void testPTrgGivenSrc();
         //void testIteratorsLoop();
         //void testIteratorsOperatorsPlusPlusStar();
         //void testIteratorsOperatorsEqualNotEqual();
