@@ -69,10 +69,12 @@ class StlPhraseTableTest: public _phraseTableTest
     CPPUNIT_TEST( testGetEntriesForTarget );
     CPPUNIT_TEST( testRetrievingSubphrase );
     CPPUNIT_TEST( testRetrieveNonLeafPhrase );
-    //CPPUNIT_TEST( testGetEntriesForSource );
+    CPPUNIT_TEST( testGetEntriesForSource );
     CPPUNIT_TEST( testRetrievingEntriesWithCountEqualZero );
     CPPUNIT_TEST( testGetNbestForTrg );
     CPPUNIT_TEST( testAddSrcTrgInfo );
+    CPPUNIT_TEST( testPSrcGivenTrg );
+    CPPUNIT_TEST( testPTrgGivenSrc );
     CPPUNIT_TEST( testIteratorsLoop );
     CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
     CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
