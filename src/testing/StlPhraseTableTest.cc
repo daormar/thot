@@ -79,6 +79,8 @@ void StlPhraseTableTest::testIteratorsLoop()
     /* TEST:
        Check basic implementation of iterators - functions
        begin(), end() and operators (++ postfix, *).
+
+       Note that iterator returns only target elements.
     */
     std::vector<WordIndex> s1 = getVector("Uniwersytet Gdanski");
     std::vector<WordIndex> t1 = getVector("Gdansk University");
@@ -132,6 +134,8 @@ void StlPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
     /* TEST:
       Check basic implementation of iterators - function
       begin() and operators (++ prefix, ++ postfix, *, ->).
+
+      Note that iterator returns only target elements.
     */
     bool found;
 
@@ -180,6 +184,8 @@ void StlPhraseTableTest::testIteratorsOperatorsEqualNotEqual()
 {
     /* TEST:
       Check basic implementation of iterators - operators == and !=
+
+      Note that iterator returns only target elements.
     */
     std::vector<WordIndex> s = getVector("kemping w Kretowinach");
     std::vector<WordIndex> t = getVector("camping Kretowiny");
