@@ -41,9 +41,9 @@ void WbaIncrPhraseModel::printTTable(FILE* file)
 
   if(ptPtr) // C++ RTTI
   {
-    StlPhraseTable::TrgPhraseInfo::const_iterator phraseTIter;
+    StlPhraseTable::const_iterator phraseTIter;
       
-    for(phraseTIter=ptPtr->beginTrg();phraseTIter!=ptPtr->endTrg();++phraseTIter)
+    for(phraseTIter=ptPtr->begin();phraseTIter!=ptPtr->end();++phraseTIter)
     {
       StlPhraseTable::SrcTableNode srctn;
       StlPhraseTable::SrcTableNode::iterator srctnIter;
