@@ -190,7 +190,6 @@ class ThotDecoder
 
       // Mutex- and condition-related functions
   void wait_on_non_atomic_op_cond(void);
-  void unlock_non_atomic_op_mut(void);  
   void increase_non_atomic_ops_running(void);
   void decrease_non_atomic_ops_running(void);
 
