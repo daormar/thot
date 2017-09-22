@@ -79,20 +79,13 @@ void StlPhraseTableTest::testIteratorsLoop()
     /* TEST:
        Check basic implementation of iterators - functions
        begin(), end() and operators (++ postfix, *).
-
-       Note that iterator returns only target elements.
     */
-    std::vector<WordIndex> s1 = getVector("Uniwersytet Gdanski");
-    std::vector<WordIndex> t1 = getVector("Gdansk University");
-    std::vector<WordIndex> s2 = getVector("Politechnika Gdanska");
-    std::vector<WordIndex> t2 = getVector("Gdansk University of Technology");
+    std::vector<WordIndex> s = getVector("jezioro Skiertag");
+    std::vector<WordIndex> t = getVector("Skiertag lake");
     std::vector<WordIndex> empty;
   
     tab->clear();
-    tab->incrCountsOfEntry(s1, t1, Count(40));
-    tab->incrCountsOfEntry(s2, t2, Count(60));
-    tab->incrCountsOfEntry(s1, t2, Count(0));
-    tab->incrCountsOfEntry(s2, t1, Count(1));
+    tab->incrCountsOfEntry(s, t, Count(1));
 
     CPPUNIT_ASSERT(tabStl->begin() != tabStl->end());
     CPPUNIT_ASSERT(tabStl->begin() == tabStl->begin());
@@ -102,30 +95,33 @@ void StlPhraseTableTest::testIteratorsLoop()
 
     // Construct dictionary to record results returned by iterator
     // Dictionary structure: (key, (total count value, number of occurences))
-    map<std::vector<WordIndex>, pair<Count, int> > d;
-    d[t1] = make_pair(0, 0);
-    d[t2] = make_pair(0, 0);
+    map<StlPhraseTable::PhraseInfoElementKey, pair<int, int> > d;
+    StlPhraseTable::PhraseInfoElementKey s_key = make_pair(s, empty);
+    StlPhraseTable::PhraseInfoElementKey t_key = make_pair(empty, t);
+    StlPhraseTable::PhraseInfoElementKey st_key = make_pair(s, t);
+    d[s_key] = make_pair(0, 0);
+    d[t_key] = make_pair(0, 0);
+    d[st_key] = make_pair(0, 0);
 
     for(StlPhraseTable::const_iterator iter = tabStl->begin();
         iter != tabStl->end() && i < MAX_ITER;
         iter++, i++)
     {
         StlPhraseTable::PhraseInfoElement x = *iter;
-
-        CPPUNIT_ASSERT_MESSAGE("Phrase returned by iterator is not the one of expected targets",
-                               x.first == t1 || x.first == t2);
-
         d[x.first].first += x.second;
         d[x.first].second++;
     }
 
     // Check if element returned by iterator is correct
-    CPPUNIT_ASSERT_EQUAL(41, (int) d[t1].first.get_c_s());
-    CPPUNIT_ASSERT_EQUAL(1, d[t1].second);
-    CPPUNIT_ASSERT_EQUAL(60, (int) d[t2].first.get_c_s());
-    CPPUNIT_ASSERT_EQUAL(1, d[t2].second);
+    CPPUNIT_ASSERT(d.size() == 3);
+    CPPUNIT_ASSERT(d[s_key].first == 1);
+    CPPUNIT_ASSERT(d[s_key].second == 1);
+    CPPUNIT_ASSERT(d[t_key].first == 1);
+    CPPUNIT_ASSERT(d[t_key].second == 1);
+    CPPUNIT_ASSERT(d[st_key].first == 1);
+    CPPUNIT_ASSERT(d[st_key].second == 1);
 
-    CPPUNIT_ASSERT_EQUAL(2, i);
+    CPPUNIT_ASSERT( i == 3 );
 }
 
 //---------------------------------------
@@ -134,49 +130,47 @@ void StlPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
     /* TEST:
       Check basic implementation of iterators - function
       begin() and operators (++ prefix, ++ postfix, *, ->).
-
-      Note that iterator returns only target elements.
     */
-    bool found;
+    bool found = true;
 
-    std::vector<WordIndex> s1 = getVector("Uniwersytet Gdanski");
-    std::vector<WordIndex> t1 = getVector("Gdansk University");
-    std::vector<WordIndex> s2 = getVector("Politechnika Gdanska");
-    std::vector<WordIndex> t2 = getVector("Gdansk University of Technology");
-    std::vector<WordIndex> s3 = getVector("Gdanski Uniwersytet Medyczny");
-    std::vector<WordIndex> t3 = getVector("Gdansk Medical University");
+    std::vector<WordIndex> s = getVector("zamek krzyzacki w Malborku");
+    std::vector<WordIndex> t = getVector("teutonic castle in Malbork");
     std::vector<WordIndex> empty;
-  
+
     tab->clear();
-    tab->incrCountsOfEntry(s1, t1, Count(40));
-    tab->incrCountsOfEntry(s2, t2, Count(60));
-    tab->incrCountsOfEntry(s1, t2, Count(0));
-    tab->incrCountsOfEntry(s2, t1, Count(1));
-    tab->incrCountsOfEntry(s3, t3, Count(50));
+    tab->incrCountsOfEntry(s, t, Count(2));
 
-    // Check correctness of iterators
-    CPPUNIT_ASSERT(tabStl->begin() != tabStl->end());
-    CPPUNIT_ASSERT(tabStl->begin() == tabStl->begin());
+    // Construct dictionary to record results returned by iterator
+    // Dictionary structure: (key, (total count value, number of occurences))
+    map<StlPhraseTable::PhraseInfoElementKey, pair<int, int> > d;
+    StlPhraseTable::PhraseInfoElementKey s_key = make_pair(s, empty);
+    StlPhraseTable::PhraseInfoElementKey t_key = make_pair(empty, t);
+    StlPhraseTable::PhraseInfoElementKey st_key = make_pair(s, t);
+    d[s_key] = make_pair(0, 0);
+    d[t_key] = make_pair(0, 0);
+    d[st_key] = make_pair(0, 0);
 
-    // Check if the results returned by iterator are correct
-    // and operators work as expected
-    StlPhraseTable::const_iterator iter = tabStl->begin();
-    CPPUNIT_ASSERT(t2 == iter->first);
-    CPPUNIT_ASSERT_EQUAL(60, (int) iter->second.get_c_s());
+    for(StlPhraseTable::const_iterator iter = tabStl->begin();
+        iter != tabStl->end();
+        found = (iter++))
+    {
+        CPPUNIT_ASSERT( found );
+        StlPhraseTable::PhraseInfoElement x = *iter;
+        d[x.first].first += x.second;
+        d[x.first].second++;
+    }
 
-    found = ++iter;
-    CPPUNIT_ASSERT(found);
-    CPPUNIT_ASSERT(t1 == (*iter).first);
-    CPPUNIT_ASSERT_EQUAL(41, (int) (*iter).second.get_c_s());
+    // Iterating beyond the last element should return FALSE value
+    CPPUNIT_ASSERT( !found );
 
-    found = (iter++);
-    CPPUNIT_ASSERT(found);
-    CPPUNIT_ASSERT(t3 == (*iter).first);
-    CPPUNIT_ASSERT_EQUAL(50, (int) (*iter).second.get_c_s());
-
-    found = ++iter;
-    CPPUNIT_ASSERT(!found);
-    CPPUNIT_ASSERT(iter == tabStl->end());
+    // Check if element returned by iterator is correct
+    CPPUNIT_ASSERT(d.size() == 3);
+    CPPUNIT_ASSERT(d[s_key].first == 2);
+    CPPUNIT_ASSERT(d[s_key].second == 1);
+    CPPUNIT_ASSERT(d[t_key].first == 2);
+    CPPUNIT_ASSERT(d[t_key].second == 1);
+    CPPUNIT_ASSERT(d[st_key].first == 2);
+    CPPUNIT_ASSERT(d[st_key].second == 1);
 }
 
 //---------------------------------------
@@ -184,8 +178,6 @@ void StlPhraseTableTest::testIteratorsOperatorsEqualNotEqual()
 {
     /* TEST:
       Check basic implementation of iterators - operators == and !=
-
-      Note that iterator returns only target elements.
     */
     std::vector<WordIndex> s = getVector("kemping w Kretowinach");
     std::vector<WordIndex> t = getVector("camping Kretowiny");

@@ -37,84 +37,24 @@ StlPhraseTable::StlPhraseTable(void)
 }
 
 //-------------------------
-string StlPhraseTable::vectorToString(const std::vector<WordIndex>& vec)const
+StlPhraseTable::SrcTrgKey StlPhraseTable::getSrcTrgKey(const std::vector<WordIndex>& s,
+                                                       const std::vector<WordIndex>& t,
+                                                       bool &found)
 {
-    std::vector<WordIndex> str;
-    for(size_t i = 0; i < vec.size(); i++) {
-        // Use WORD_INDEX_MODULO_BYTES bytes to encode index
-        for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--) {
-            str.push_back(1 + (vec[i] / (unsigned int) pow(WORD_INDEX_MODULO_BASE, j) % WORD_INDEX_MODULO_BASE));
-        }
-    }
+    SrcPhraseInfo::iterator srcIter = srcPhraseInfo.find(s);
+    TrgPhraseInfo::iterator trgIter = trgPhraseInfo.find(t);
 
-    string s(str.begin(), str.end());
-
-    return s;
-}
-
-//-------------------------
-std::vector<WordIndex> StlPhraseTable::stringToVector(const string s)const
-{
-    std::vector<WordIndex> vec;
-
-    for(size_t i = 0; i < s.size();)  // A string length is WORD_INDEX_MODULO_BYTES * n + 1
+    // Add missing information to obtain iterator for t phrase
+    if (trgIter == trgPhraseInfo.end())
     {
-        unsigned int wi = 0;
-        for(int j = WORD_INDEX_MODULO_BYTES - 1; j >= 0; j--, i++) {
-            wi += (((unsigned char) s[i]) - 1) * (unsigned int) pow(WORD_INDEX_MODULO_BASE, j);
-        }
-
-        vec.push_back(wi);
+        addTrgInfo(t, 0);
+        trgIter = trgPhraseInfo.find(t);
     }
 
-    return vec;
-}
+    // Check if s exists in collections
+    found = !(srcIter == srcPhraseInfo.end());
 
-//-------------------------
-string StlPhraseTable::vectorToKey(const std::vector<WordIndex>& vec)const
-{
-    return vectorToString(vec);
-}
-
-//-------------------------
-std::vector<WordIndex> StlPhraseTable::keyToVector(const string key)const
-{
-    return stringToVector(key);
-}
-
-//-------------------------
-std::vector<WordIndex> StlPhraseTable::getSrc(const std::vector<WordIndex>& s)
-{
-    // Prepare s vector as (UNUSED_WORD, s)
-    std::vector<WordIndex> s_vec;
-    s_vec.push_back(UNUSED_WORD);
-    s_vec.insert(s_vec.end(), s.begin(), s.end());
-
-    return s_vec;
-}
-
-//-------------------------
-std::vector<WordIndex> StlPhraseTable::getSrcTrg(const std::vector<WordIndex>& s,
-                                                 const std::vector<WordIndex>& t)
-{
-    // Prepare (s,t) vector as (UNUSED_WORD, s, UNUSED_WORD, t)
-    std::vector<WordIndex> st_vec = getSrc(s);
-    st_vec.push_back(UNUSED_WORD);
-    st_vec.insert(st_vec.end(), t.begin(), t.end());
-
-    return st_vec;
-}
-
-//-------------------------
-std::vector<WordIndex> StlPhraseTable::getTrgSrc(const std::vector<WordIndex>& s,
-                                                 const std::vector<WordIndex>& t)
-{
-    // Prepare (s,t) vector as (t, UNUSED_WORD, s)
-    std::vector<WordIndex> st_vec = t;
-    st_vec.push_back(UNUSED_WORD);
-    st_vec.insert(st_vec.end(), s.begin(), s.end());
-
-    return st_vec;
+    return SrcTrgKey(srcIter, trgIter);
 }
 
 //-------------------------
@@ -136,8 +76,9 @@ bool StlPhraseTable::getNbestForSrc(const std::vector<WordIndex>& s,
 
     if(found) {
         // Generate transTableNode
-        for(iter = node.begin(); iter != node.end(); iter++)
+        for(iter = node.end(); iter != node.begin();)
         {
+            iter--;
             std::vector<WordIndex> t = iter->first;
             PhrasePairInfo ppi = (PhrasePairInfo) iter->second;
             float c_st = (float) ppi.second.get_c_st();
@@ -229,16 +170,32 @@ void StlPhraseTable::addTableEntry(const std::vector<WordIndex>& s,
 void StlPhraseTable::addSrcInfo(const std::vector<WordIndex>& s,
                                 Count s_inf)
 {
-    std::string srcKey = vectorToKey(getSrc(s));
-    phraseTable[srcKey.c_str()] = s_inf;
+    SrcPhraseInfo::iterator iter = srcPhraseInfo.find(s);
+
+    if (iter == srcPhraseInfo.end())  // Check if s exists in collection
+    {
+        srcPhraseInfo.insert(make_pair(s, s_inf));
+    }
+    else
+    {
+        iter->second = s_inf;
+    }
 }
 
 //-------------------------
 void StlPhraseTable::addTrgInfo(const std::vector<WordIndex>& t,
                                 Count t_inf)
 {
-    std::string trgKey = vectorToKey(t);
-    phraseTable[trgKey.c_str()] = t_inf;
+    TrgPhraseInfo::iterator iter = trgPhraseInfo.find(t);
+
+    if (iter == trgPhraseInfo.end())  // Check if t exists in collection
+    {
+        trgPhraseInfo.insert(make_pair(t, t_inf));
+    }
+    else
+    {
+        iter->second = t_inf;
+    }
 }
 
 //-------------------------
@@ -246,8 +203,44 @@ void StlPhraseTable::addSrcTrgInfo(const std::vector<WordIndex>& s,
                                    const std::vector<WordIndex>& t,
                                    Count st_inf)
 {
-    std::string trgSrcKey = vectorToKey(getTrgSrc(s, t));
-    phraseTable[trgSrcKey.c_str()] = st_inf;
+    bool found;
+    SrcTrgKey srcTrgKey = getSrcTrgKey(s, t, found);
+
+    if (!found)
+    {
+        std::cerr << "Unexpected behaviour: some (s, t) key parts cannot be found" << std::endl;
+
+        // Add empty source if missing
+        getSrcInfo(s, found);
+        if (!found)
+        {
+            std::cerr << "Cannot find s part" << std::endl;
+            addSrcInfo(s, Count(0));
+        }
+
+        // Add empty target if missing
+        getTrgInfo(t, found);
+        if (!found)
+        {
+            std::cerr << "Cannot find t part" << std::endl;
+            addTrgInfo(t, Count(0));
+        }
+
+        std::cerr << "Make sure that entries for s phrase and t phrase are added before adding (s, t) entry" << std::endl;
+        std::cerr << "Missing parts have been added with count 0" << std::endl;
+    }
+
+    // Update entry value
+    SrcTrgPhraseInfo::iterator iter = srcTrgPhraseInfo.find(srcTrgKey);
+
+    if (iter == srcTrgPhraseInfo.end())  // Check if (s, t) exists in collection
+    {
+        srcTrgPhraseInfo.insert(make_pair(srcTrgKey, st_inf));
+    }
+    else
+    {
+        iter->second = st_inf;
+    }
 }
 
 //-------------------------
@@ -290,10 +283,9 @@ PhrasePairInfo StlPhraseTable::infSrcTrg(const std::vector<WordIndex>& s,
 Count StlPhraseTable::getSrcInfo(const std::vector<WordIndex>& s,
                                  bool &found)
 {
-    std::string srcKey = vectorToKey(getSrc(s));
-    PhraseTable::iterator iter = phraseTable.find(srcKey.c_str());
+    SrcPhraseInfo::iterator iter = srcPhraseInfo.find(s);
 
-    if (iter == phraseTable.end())  // Check if s exists in collection
+    if (iter == srcPhraseInfo.end())  // Check if s exists in collection
     {
         found = false;
         return 0;
@@ -301,7 +293,7 @@ Count StlPhraseTable::getSrcInfo(const std::vector<WordIndex>& s,
     else
     {
         found = true;
-        return iter.value();
+        return iter->second;
     }
 }
 
@@ -309,10 +301,9 @@ Count StlPhraseTable::getSrcInfo(const std::vector<WordIndex>& s,
 Count StlPhraseTable::getTrgInfo(const std::vector<WordIndex>& t,
                                  bool &found)
 {
-    std::string trgKey = vectorToKey(t);
-    PhraseTable::iterator iter = phraseTable.find(trgKey.c_str());
+    TrgPhraseInfo::iterator iter = trgPhraseInfo.find(t);
 
-    if (iter == phraseTable.end())  // Check if t exists in collection
+    if (iter == trgPhraseInfo.end())  // Check if t exists in collection
     {
         found = false;
         return 0;
@@ -320,7 +311,7 @@ Count StlPhraseTable::getTrgInfo(const std::vector<WordIndex>& t,
     else
     {
         found = true;
-        return iter.value();
+        return iter->second;
     }
 }
 
@@ -329,11 +320,13 @@ Count StlPhraseTable::getSrcTrgInfo(const std::vector<WordIndex>& s,
                                     const std::vector<WordIndex>& t,
                                     bool &found)
 {
-    std::string trgSrcKey = vectorToKey(getTrgSrc(s, t));
-    PhraseTable::iterator iter = phraseTable.find(trgSrcKey);
+    SrcTrgKey srcTrgKey = getSrcTrgKey(s, t, found);
+    if (!found) return 0;
 
-    // // Check if entry for (s, t) pair exists
-    if (iter == phraseTable.end())
+    SrcTrgPhraseInfo::iterator srcTrgIter = srcTrgPhraseInfo.find(srcTrgKey);
+
+    // Check if entry for (s, t) pair exists
+    if (srcTrgIter == srcTrgPhraseInfo.end())
     {
         found = false;
         return 0;
@@ -341,7 +334,7 @@ Count StlPhraseTable::getSrcTrgInfo(const std::vector<WordIndex>& s,
     else
     {
         found = true;
-        return iter.value();
+        return srcTrgIter->second;
     }
 }
 
@@ -401,19 +394,25 @@ bool StlPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
     srctn.clear();  // Make sure that structure does not keep old values
 
     // Prepare iterators
-    const std::vector<WordIndex> emptyVec;
-    std::vector<WordIndex> trgSrcPrefix = getTrgSrc(emptyVec, t);
-    std::string trgSrcPrefixStr = vectorToKey(trgSrcPrefix);
+    SrcTrgKey srcTrgBegin = getSrcTrgKey(srcPhraseInfo.begin()->first, t, found);
+    if (!found) return false;
 
-    auto prefixIterators = phraseTable.equal_prefix_range(trgSrcPrefixStr);
+    SrcTrgKey srcTrgEnd = getSrcTrgKey(srcPhraseInfo.rbegin()->first, t, found);  // Maybe use rbegin
+    if (!found) return false;
 
-    for(auto iter = prefixIterators.first; iter != prefixIterators.second; iter++)
+    // Define border elements for searched source phrases
+    SrcTrgPhraseInfo::iterator srcTrgIterBegin = srcTrgPhraseInfo.lower_bound(srcTrgBegin);
+    SrcTrgPhraseInfo::iterator srcTrgIterEnd = srcTrgPhraseInfo.upper_bound(srcTrgEnd);
+
+    for (SrcTrgPhraseInfo::iterator srcTrgIter = srcTrgIterBegin; srcTrgIter != srcTrgIterEnd; srcTrgIter++)
     {
-        std::vector<WordIndex> vec = keyToVector(iter.key());
-        std::vector<WordIndex> s(vec.begin() + t.size() + 1, vec.end());
+        SrcPhraseInfo::iterator srcIter = srcTrgIter->first.first;  // First element of the pair of iterators (s, t)
+        std::vector<WordIndex> s = srcIter->first;
+        PhrasePairInfo ppi;
+        ppi.first = srcIter->second;  // s count
+        ppi.second = srcTrgIter->second;  // (s, t) count
 
-        PhrasePairInfo ppi = infSrcTrg(s, t, found);
-        if (!found || (int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
+        if ((int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
             continue;
 
         srctn.insert(pair<std::vector<WordIndex>, PhrasePairInfo>(s, ppi));
@@ -429,30 +428,27 @@ bool StlPhraseTable::getEntriesForSource(const std::vector<WordIndex>& s,
     bool found;
     trgtn.clear();  // Make sure that structure does not keep old values
 
-    std::vector<WordIndex> srcVec = getSrc(s);  // (UNUSED_WORD, s)
-
     // Scan (s, t) collection to find matching elements for a given s
-    for (auto iter = phraseTable.begin(); iter != phraseTable.end(); iter++)
+
+    for (SrcTrgPhraseInfo::iterator srcTrgIter = srcTrgPhraseInfo.begin(); srcTrgIter != srcTrgPhraseInfo.end(); srcTrgIter++)
     {
-        std::vector<WordIndex> phrase = keyToVector(iter.key());
+        SrcPhraseInfo::iterator srcIter = srcTrgIter->first.first;  // First element of the pair of iterators (s, t)
+        std::vector<WordIndex> sPhrase = srcIter->first;
 
-        if (phrase.size() <= srcVec.size())  // Phrase is to short to contain given source and target
-            continue;
+        if (sPhrase == s)
+        {
+            std::vector<WordIndex> tPhrase = srcTrgIter->first.second->first;
+            Count tCount = srcTrgIter->first.second->second;
 
-        std::vector<WordIndex> srcPhrase(phrase.end() - srcVec.size(), phrase.end());
-        if (srcPhrase != srcVec)  // Found source does not match to given source
-            continue;
+            PhrasePairInfo ppi;
+            ppi.first = tCount;  // t count
+            ppi.second = srcTrgIter->second;  // (s, t) count
 
-        std::vector<WordIndex> trgPhrase(phrase.begin(), phrase.end() - srcVec.size());
+            if ((int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
+                continue;
 
-        PhrasePairInfo ppi;
-        ppi.first = cTrg(trgPhrase);  // t count
-        ppi.second = iter.value();  // (s, t) count
-
-        if ((int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
-            continue;
-
-        trgtn.insert(pair<std::vector<WordIndex>, PhrasePairInfo>(trgPhrase, ppi));
+            trgtn.insert(pair<std::vector<WordIndex>, PhrasePairInfo>(tPhrase, ppi));
+        }
     }
 
     return trgtn.size();
@@ -483,31 +479,13 @@ Count StlPhraseTable::cTrg(const std::vector<WordIndex>& t)
 //-------------------------
 void StlPhraseTable::print(void)
 {
-    size_t i;
-
-    for (PhraseTable::iterator iter = phraseTable.begin(); iter != phraseTable.end(); iter++)
+    for (StlPhraseTable::const_iterator iter = begin(); iter != end(); iter++)
     {
-        std::vector<WordIndex> s;
-        std::vector<WordIndex> t;
-        std::vector<WordIndex> phrase = keyToVector(iter.key());
-
-        // Retrieve target
-        for(i = 0; i < phrase.size(); i++)
-        {
-            if (phrase[i] == UNUSED_WORD)
-                break;
-
-            t.push_back(phrase[i]);
-        }
-
-        // Retrieve source
-        // Increase at the begining i by 1 to skip UNUSED_WORD so it will not be included in source phrase
-        for(i += 1; i < phrase.size(); i++)
-        {
-            s.push_back(phrase[i]);
-        }
-
-        Count c = iter.value();
+        // Extract information about phrase
+        PhraseInfoElement elem = *iter;
+        std::vector<WordIndex> s = elem.first.first;
+        std::vector<WordIndex> t = elem.first.second;
+        Count c = elem.second;
         // Print on standard output
         printVector(s);
         std::cout << " ||| ";
@@ -529,24 +507,18 @@ void StlPhraseTable::printVector(const std::vector<WordIndex>& vec) const
 //-------------------------
 size_t StlPhraseTable::size(void)
 {
-    return phraseTable.size();
+    size_t srcSize = srcPhraseInfo.size();
+    size_t trgSize = trgPhraseInfo.size();
+    size_t srcTrgSize = srcTrgPhraseInfo.size();
+
+    return srcSize + trgSize + srcTrgSize;
 }
 //-------------------------
 void StlPhraseTable::clear(void)
 {
-    phraseTable.clear();
-}
-
-//-------------------------
-bool StlPhraseTable::isTargetPhrase(const std::vector<WordIndex>& vec) const
-{
-    for(size_t i = 0; i < vec.size(); i++)
-    {
-        if (vec[i] == UNUSED_WORD)
-            return false;
-    }
-
-    return true;
+    srcPhraseInfo.clear();
+    trgPhraseInfo.clear();
+    srcTrgPhraseInfo.clear();
 }
 
 //-------------------------
@@ -555,23 +527,39 @@ StlPhraseTable::~StlPhraseTable(void)
 }
 
 //-------------------------
+StlPhraseTable::TrgPhraseInfo::const_iterator
+StlPhraseTable::beginTrg(void) const
+{
+    return trgPhraseInfo.begin();
+}
+//-------------------------
+StlPhraseTable::TrgPhraseInfo::const_iterator
+StlPhraseTable::endTrg(void) const
+{
+    return trgPhraseInfo.end();
+}
+
+//-------------------------
 StlPhraseTable::const_iterator StlPhraseTable::begin(void) const
 {
-    // Shift the iterator to the first target phrase
-    PhraseTable::const_iterator iterTrgBegin = phraseTable.begin();
-    while (!isTargetPhrase(keyToVector(iterTrgBegin.key())))
-    {
-        iterTrgBegin++;
-    }
-
-    StlPhraseTable::const_iterator iter(this, iterTrgBegin);
+    StlPhraseTable::const_iterator iter(
+        this,
+        srcPhraseInfo.begin(),
+        trgPhraseInfo.begin(),
+        srcTrgPhraseInfo.begin()
+    );
 
     return iter;
 }
 //-------------------------
 StlPhraseTable::const_iterator StlPhraseTable::end(void) const
 {
-    StlPhraseTable::const_iterator iter(this, phraseTable.end());
+    StlPhraseTable::const_iterator iter(
+        this,
+        srcPhraseInfo.end(),
+        trgPhraseInfo.end(),
+        srcTrgPhraseInfo.end()
+    );
 
     return iter;
 }
@@ -580,17 +568,35 @@ StlPhraseTable::const_iterator StlPhraseTable::end(void) const
 //--------------------------
 bool StlPhraseTable::const_iterator::operator++(void) //prefix
 {
-    if (ptPtr != NULL && trgIter != ptPtr->phraseTable.end())
+    if (ptPtr != NULL)
     {
-        // Shift iterator to the next target phrase
-        do
+        if (srcIter != ptPtr->srcPhraseInfo.end())
+        {
+            srcIter++;
+            // Check if there are elements in other collections when reached end
+            return !(  // Not
+                srcIter == ptPtr->srcPhraseInfo.end() &&
+                ptPtr->trgPhraseInfo.empty() &&
+                ptPtr->srcTrgPhraseInfo.empty()
+            );
+        }
+        else if (trgIter != ptPtr->trgPhraseInfo.end())
         {
             trgIter++;
-            if (trgIter == ptPtr->phraseTable.end())
-                return false;
-        } while(!ptPtr->isTargetPhrase(ptPtr->keyToVector(trgIter.key())) || trgIter.value().get_c_s() == 0);
+            // Check if there are elements in other collections when reached end
+            return !(trgIter == ptPtr->trgPhraseInfo.end() && ptPtr->srcTrgPhraseInfo.empty());
+        }
+        else if (srcTrgIter != ptPtr->srcTrgPhraseInfo.end())
+        {
+            srcTrgIter++;
+            // Check if reached end of the last collection
+            return srcTrgIter != ptPtr->srcTrgPhraseInfo.end();
+        }
+        else
+        {
+            return false;
+        }
 
-        return true;
     }
     else
     {
@@ -607,7 +613,9 @@ int StlPhraseTable::const_iterator::operator==(const const_iterator& right)
 {
     return (
         ptPtr == right.ptPtr &&
-        trgIter == right.trgIter
+        srcIter == right.srcIter &&
+        trgIter == right.trgIter &&
+        srcTrgIter == right.srcTrgIter
     );
 }
 //--------------------------
@@ -626,16 +634,35 @@ StlPhraseTable::PhraseInfoElement StlPhraseTable::const_iterator::operator*(void
 const StlPhraseTable::PhraseInfoElement*
 StlPhraseTable::const_iterator::operator->(void)
 {
+    std::vector<WordIndex> s;
     std::vector<WordIndex> t;
-    Count c = 0;
+    int c = 0;
 
-    if (ptPtr != NULL && trgIter != ptPtr->phraseTable.end())
+    if (ptPtr != NULL)
     {
-        t = ptPtr->keyToVector(trgIter.key());
-        c = trgIter.value();
+        if (srcIter != ptPtr->srcPhraseInfo.end())
+        {
+            s = srcIter->first;
+            c = srcIter->second.get_c_s();
+        }
+        else if (trgIter != ptPtr->trgPhraseInfo.end())
+        {
+            t = trgIter->first;
+            c = trgIter->second.get_c_s();
+        }
+        else if (srcTrgIter != ptPtr->srcTrgPhraseInfo.end())
+        {
+            SrcPhraseInfo::iterator _srcIter = srcTrgIter->first.first;  // First element of the pair of iterators (s, t)
+            s = _srcIter->first;
+
+            TrgPhraseInfo::iterator _trgIter = srcTrgIter->first.second;  // Second element of the pair of iterators (s, t)
+            t = _trgIter->first;
+
+            c = srcTrgIter->second.get_c_st();
+        }
     }
 
-    dataItem.first = t;
+    dataItem.first = make_pair(s, t);
     dataItem.second = c;
 
     return &dataItem;
