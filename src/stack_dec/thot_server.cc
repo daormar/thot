@@ -52,6 +52,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <pthread.h>
 
 //--------------- Constants ------------------------------------------
 
@@ -61,69 +62,78 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #define DEFAULT_USER_ID             0
 
+//--------------- Type definitions ------------------------------------
+
+struct request_data
+{
+  int sockd;
+  struct in_addr sin_addr;
+};
+
 //--------------- Function Declarations -------------------------------
 
-int process_request(int sockd,
-                    std::string inet_addr,
-                    const thot_server_pars& ts_pars,
-                    const ThotDecoderUserPars& tdu_pars,
-                    bool &end);
+void* process_request(void* rdata_ptr);
 int process_request_switch(int sockd,
                            int user_id,
                            int server_request_code,
-                           bool& end,
                            int verbose);
-int processParameters(thot_server_pars ts_pars);
-int start_server(thot_server_pars ts_pars,
-                 ThotDecoderUserPars tdu_pars);
+int processParameters(void);
+int start_server(void);
+bool read_end_server_var(void);
+void set_end_server_var(void);
+void increase_num_threads_var(void);
+void decrease_num_threads_var(void);
+void wait_on_num_threads_var_cond(void);
 void sigchld_handler(int s);
 int handleParameters(int argc,
-                     char *argv[],
-                     thot_server_pars& pars);
+                     char *argv[]);
 int takeParameters(int argc,
-                   const std::vector<std::string>& argv_stl,
-                   thot_server_pars& ts_pars);
-int checkParameters(thot_server_pars& ts_pars);
-void printParameters(thot_server_pars ts_pars);
+                   const std::vector<std::string>& argv_stl);
+int checkParameters(void);
+void printParameters(void);
 void printUsage(void);
 void version(void);
 
-//--------------- Type definitions ------------------------------------
-
-
 //--------------- Global variables ------------------------------------
+
+thot_server_pars ts_pars;
+ThotDecoderUserPars tdu_pars;
 
 ThotDecoder* thotDecoderPtr;
     // NOTE: a pointer is used to avoid early call to class constructor
     // (it is a costly process that otherwise would be executed even if
     // only the help message is to be printed)
 
+    // Mutexes and conditions
+pthread_mutex_t num_threads_var_mut;
+pthread_cond_t num_threads_var_cond;
+int num_threads;
+pthread_mutex_t end_server_var_mut;
+bool end;
+
 //--------------- Function Definitions --------------------------------
 
 
 //---------------
 int main(int argc,char *argv[])
-{
-  thot_server_pars ts_pars;
-
+{ 
   // Ignore broken pipe signal to do not close server
   signal(SIGPIPE, SIG_IGN);
-
-  if(handleParameters(argc,argv,ts_pars)==THOT_ERROR)
+     
+  if(handleParameters(argc,argv)==THOT_ERROR)
   {
     return THOT_ERROR;
   }
   else
   {
-    return processParameters(ts_pars);
+    return processParameters();
   }
 }
 
 //---------------
-int processParameters(thot_server_pars ts_pars)
+int processParameters(void)
 {
       // Process configuration file
-  ThotDecoderUserPars tdu_pars;
   thotDecoderPtr=new ThotDecoder;
   if(ts_pars.i_given)
   {
@@ -149,15 +159,14 @@ int processParameters(thot_server_pars ts_pars)
   else
   {
         // Start server
-    int retCode=start_server(ts_pars,tdu_pars);
+    int retCode=start_server();
     delete thotDecoderPtr;
     return retCode;
   }
 }
 
 //---------------
-int start_server(thot_server_pars ts_pars,
-                 ThotDecoderUserPars tdu_pars)
+int start_server(void)
 {
   int sockfd, new_fd;  // Use sockfd to listen to new connections
                        // through new_fd
@@ -166,7 +175,6 @@ int start_server(thot_server_pars ts_pars,
   int sin_size;
   struct sigaction sa;
   int yes=1;
-  bool end=false;
   
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
   {
@@ -205,10 +213,17 @@ int start_server(thot_server_pars ts_pars,
     exit(1);
   }
 
+      // Initialize mutexes and conditions
+  num_threads=0;
+  pthread_mutex_init(&num_threads_var_mut,NULL);
+  pthread_cond_init(&num_threads_var_cond,NULL);
+  pthread_mutex_init(&end_server_var_mut,NULL);
+
   std::cerr<<"Listening to port "<< ts_pars.server_port <<"..."<<std::endl;
   
       // main accept() loop
-  while(!end)
+  end=false;
+  while(!read_end_server_var())
   {  
     sin_size = sizeof(struct sockaddr_in);
     if ((new_fd = accept(sockfd,(struct sockaddr *)&their_addr,(socklen_t *)&sin_size)) == -1)
@@ -216,23 +231,31 @@ int start_server(thot_server_pars ts_pars,
       std::cerr<<"accept error"<<std::endl;
       continue;
     }
-    
-    process_request(new_fd,inet_ntoa(their_addr.sin_addr),ts_pars,tdu_pars,end);
-        
-//    if (!fork())
-//    { // this is the child process
-//    close(sockfd); // The child does not need the descriptor
-//    if (send(new_fd, "Hello, world!\n", 14, 0) == -1)
-//      std::cerr<<"send"<<std::endl;
-//      close(new_fd);
-//      exit(0);
-//    }
 
-    close(new_fd);  
+        // Prepare request data
+    request_data rdata;
+    rdata.sockd=new_fd;
+    rdata.sin_addr=their_addr.sin_addr;
+
+        // Process request
+    pthread_t      tid;  // thread ID
+    pthread_attr_t attr; // thread attribute
+
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    pthread_create(&tid, &attr, process_request, (void*) &rdata);
   }
 
   if(ts_pars.v_given)
     std::cerr<<"Server: shutting down"<<std::endl;
+
+      // Wait for threads to finish
+  wait_on_num_threads_var_cond();
+  
+      // Destroy mutexes and conditions
+  pthread_mutex_destroy(&num_threads_var_mut);
+  pthread_cond_destroy(&num_threads_var_cond);
+  pthread_mutex_destroy(&end_server_var_mut);
 
   return THOT_OK;
 }
@@ -244,12 +267,81 @@ void sigchld_handler(int /*s*/)
 }
 
 //---------------
-int process_request(int sockd,
-                    std::string inet_addr,
-                    const thot_server_pars& ts_pars,
-                    const ThotDecoderUserPars& tdu_pars,
-                    bool& end)
+bool read_end_server_var(void)
 {
+  pthread_mutex_lock(&end_server_var_mut);
+  /////////// begin of mutex
+  bool result=end;
+  /////////// end of mutex 
+  pthread_mutex_unlock(&end_server_var_mut);
+
+  return result;
+}
+
+//---------------
+void set_end_server_var(void)
+{
+  pthread_mutex_lock(&end_server_var_mut);
+  /////////// begin of mutex
+  end=true;
+  /////////// end of mutex 
+  pthread_mutex_unlock(&end_server_var_mut);
+}
+
+//---------------
+void increase_num_threads_var(void)
+{
+  pthread_mutex_lock(&num_threads_var_mut);
+  /////////// begin of mutex
+  ++num_threads;
+  /////////// end of mutex 
+  pthread_mutex_unlock(&num_threads_var_mut);
+}
+
+//---------------
+void decrease_num_threads_var(void)
+{
+  pthread_mutex_lock(&num_threads_var_mut);
+  /////////// begin of mutex
+  --num_threads;
+
+        // Restart threads waiting on non_atomic_op_cond
+  if(num_threads==0)
+    pthread_cond_broadcast(&num_threads_var_cond);
+      // The pthread_cond_broadcast() function shall unblock all threads
+      // currently blocked on the specified condition variable.
+
+  /////////// end of mutex 
+  pthread_mutex_unlock(&num_threads_var_mut);
+}
+
+//---------------
+void wait_on_num_threads_var_cond(void)
+{
+  pthread_mutex_lock(&num_threads_var_mut);
+  /////////// begin of mutex
+  while(num_threads>0)
+  {
+    pthread_cond_wait(&num_threads_var_cond,&num_threads_var_mut);
+        // The pthread_cond_wait() function is used to block on a
+        // condition variable. It is called with mutex locked by the
+        // calling thread or undefined behaviour will result.
+
+        // This function atomically release mutex and cause the calling
+        // thread to block on the condition variable
+
+        // Upon successful return, the mutex has been locked and is
+        // owned by the calling thread.
+  }
+}
+
+//---------------
+void* process_request(void* rdata_ptr)
+{
+  increase_num_threads_var();
+    
+      // Initialize variables
+  request_data rdata=*(request_data*) rdata_ptr;
   int verbose=ts_pars.v_given;
 
   if(verbose)
@@ -261,30 +353,33 @@ int process_request(int sockd,
     std::cerr<<"----------------------------------------------------"<<std::endl;
     std::cerr<<"Processing new request..."<<std::endl;
     std::cerr<<"Current time: "<<asctime(localtm);
-    std::cerr<<"Origin: "<<inet_addr<<std::endl;
+    std::cerr<<"Origin: "<<inet_ntoa(rdata.sin_addr)<<std::endl;
   }
 
       // Get request code
-  int server_request_code=BasicSocketUtils::recvInt(sockd);
+  int server_request_code=BasicSocketUtils::recvInt(rdata.sockd);
   if(verbose) std::cerr<<"Request code: "<<server_request_code<<std::endl;
 
       // Get user id
-  int user_id=BasicSocketUtils::recvInt(sockd);
+  int user_id=BasicSocketUtils::recvInt(rdata.sockd);
   if(verbose) std::cerr<<"User identifier: "<<user_id<<std::endl;
   
       // Init user parameters
   int ret=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
   if(ret==THOT_ERROR)
   {
-    end=true;
-    return THOT_ERROR;
+    // end=true;
+    if(verbose) std::cerr<<"Error while initializing server parameters"<<std::endl;
+    close(rdata.sockd);
+    decrease_num_threads_var();
+    pthread_exit(NULL);
   }
 
       // Process request measuring time
   double elapsed_prev,elapsed,ucpu,scpu;
   ctimer(&elapsed_prev,&ucpu,&scpu);
 
-  ret=process_request_switch(sockd,user_id,server_request_code,end,verbose);
+  ret=process_request_switch(rdata.sockd,user_id,server_request_code,verbose);
   
   ctimer(&elapsed,&ucpu,&scpu);
   
@@ -292,15 +387,23 @@ int process_request(int sockd,
   {
     std::cerr<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
   }
+  if(ret==THOT_ERROR)
+  {
+    if(verbose) std::cerr<<"Error while processing client request"<<std::endl;
+    close(rdata.sockd);
+    decrease_num_threads_var();
+    pthread_exit(NULL);
+  }
 
-  return ret;
+  close(rdata.sockd);
+  decrease_num_threads_var();
+  pthread_exit(NULL);
 }
 
 //---------------
 int process_request_switch(int sockd,
                            int user_id,
                            int server_request_code,
-                           bool& end,
                            int verbose)
 {
   std::string stlStr;
@@ -379,7 +482,7 @@ int process_request_switch(int sockd,
       BasicSocketUtils::writeInt(sockd,ret);
       break;
 
-    case END_SERVER: end=true;
+    case END_SERVER: set_end_server_var();
       BasicSocketUtils::writeInt(sockd,1);
       thotDecoderPtr->clearTrans(verbose);
       break;
@@ -390,8 +493,7 @@ int process_request_switch(int sockd,
 
 //---------------
 int handleParameters(int argc,
-                     char *argv[],
-                     thot_server_pars& ts_pars)
+                     char *argv[])
 {
   if(argc==1 || readOption(argc,argv,"--version")!=-1)
   {
@@ -405,15 +507,15 @@ int handleParameters(int argc,
   }
   
   std::vector<std::string> argv_stl=argv2argv_stl(argc,argv);
-  if(takeParameters(argc,argv_stl,ts_pars)==THOT_ERROR)
+  if(takeParameters(argc,argv_stl)==THOT_ERROR)
   {
     return THOT_ERROR;
   }
   else
   {
-    if(checkParameters(ts_pars)==THOT_OK)
+    if(checkParameters()==THOT_OK)
     {
-      printParameters(ts_pars);
+      printParameters();
       return THOT_OK;
     }
     else
@@ -425,8 +527,7 @@ int handleParameters(int argc,
 
 //---------------
 int takeParameters(int argc,
-                   const std::vector<std::string>& argv_stl,
-                   thot_server_pars& ts_pars)
+                   const std::vector<std::string>& argv_stl)
 {
   int i=1;
   unsigned int matched;
@@ -502,7 +603,7 @@ int takeParameters(int argc,
 }
 
 //---------------
-int checkParameters(thot_server_pars& ts_pars)
+int checkParameters(void)
 {
   if(!ts_pars.i_given && !ts_pars.c_given)
   {
@@ -520,7 +621,7 @@ int checkParameters(thot_server_pars& ts_pars)
 }
 
 //---------------
-void printParameters(thot_server_pars ts_pars)
+void printParameters(void)
 {
   std::cerr<<"Server port: "<<ts_pars.server_port<<std::endl;
   std::cerr<<"-w: "<<ts_pars.w_given<<std::endl;
