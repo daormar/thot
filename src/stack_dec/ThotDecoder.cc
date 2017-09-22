@@ -912,7 +912,7 @@ bool ThotDecoder::load_tm_legacy_impl(const char* tmFilesPrefix,
     }
   }
       // Unlock non_atomic_op_cond mutex
-  unlock_non_atomic_op_mut();
+  pthread_mutex_unlock(&non_atomic_op_mut);
   
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -945,8 +945,8 @@ bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
   }
   
       // Unlock non_atomic_op_cond mutex
-  unlock_non_atomic_op_mut();
-  
+  pthread_mutex_unlock(&non_atomic_op_mut);
+      
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
 
@@ -1015,7 +1015,7 @@ bool ThotDecoder::load_lm_feat_impl(const char* lmFileName,
   }
   
       // Unlock non_atomic_op_cond mutex
-  unlock_non_atomic_op_mut();
+  pthread_mutex_unlock(&non_atomic_op_mut);
   
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -2530,13 +2530,6 @@ void ThotDecoder::wait_on_non_atomic_op_cond(void)
       // wait for it. Some extra code would be required to force
       // non-atomic ops to end (an extra mutex will be necessary when
       // increasing the non_atomic_ops_running variable).
-}
-
-//--------------------------
-void ThotDecoder::unlock_non_atomic_op_mut(void)
-{
-  /////////// end of mutex 
-  pthread_mutex_unlock(&non_atomic_op_mut);
 }
 
 //--------------------------
