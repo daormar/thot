@@ -327,6 +327,21 @@ if test "$ac_cv_cxx_have_stl" = no; then
   AC_MSG_ERROR(C++ standard template library not present!)
 fi
 
+# Check if C++ 11 is supported by compiler
+AC_LANG(C++)
+for f in -std=c++11
+do
+    AC_MSG_CHECKING(whether ${CXX} supports ${f})
+    saved_cxxflags="${CXXFLAGS}"
+    CXXFLAGS="${CXXFLAGS} ${f}"
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
+                      AC_MSG_RESULT(yes),
+                      AC_MSG_RESULT(no)
+                      CXXFLAGS="${saved_cxxflags}")],[cxx11_supported="yes"; AC_MSG_RESULT(yes)],[cxx11_supported="no"; AC_MSG_RESULT(no)])
+done
+
+AM_CONDITIONAL([HAVE_CXX11_ENABLED], [test x${cxx11_supported} = xyes])
+
 # Checks for lm library
 AC_CHECK_LIB([m], [log])
 

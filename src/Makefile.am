@@ -216,7 +216,7 @@ phrase_models/SrfNodeInfo.h phrase_models/SrfBisegm.h			\
 phrase_models/SrcSegmLenTable.h phrase_models/SentSegmentation.h	\
 phrase_models/SegLenTable.h phrase_models/PhraseTransTableNodeData.h	\
 phrase_models/PhraseTableLog.h phrase_models/PhraseTable.h		\
-phrase_models/HatTriePhraseTable.h phrase_models/StlPhraseTable.h       \
+phrase_models/StlPhraseTable.h       \
 phrase_models/PhraseSortCriterion.h phrase_models/PhrasePairInfo.h	\
 phrase_models/PhrasePair.h phrase_models/PhraseId.h			\
 phrase_models/PhraseExtractParameters.h					\
@@ -244,7 +244,7 @@ phrase_models/TrgSegmLenTable.cc phrase_models/TrgCutsTable.cc		\
 phrase_models/SrfNodeKey.cc phrase_models/SrfNodeInfoMap.cc		\
 phrase_models/SrcSegmLenTable.cc phrase_models/SegLenTable.cc		\
 phrase_models/PhraseTableLog.cc phrase_models/PhraseTable.cc		\
-phrase_models/HatTriePhraseTable.cc phrase_models/StlPhraseTable.cc     \
+phrase_models/StlPhraseTable.cc     \
 phrase_models/PhraseExtractionTable.cc phrase_models/PhraseDictLog.cc	\
 phrase_models/PhraseDict.cc phrase_models/PhraseCountsLog.cc		\
 phrase_models/PhraseCounts.cc phrase_models/_incrPhraseModel.cc		\
@@ -270,6 +270,11 @@ leveldb_pm_h=phrase_models/LevelDbPhraseTable.h	\
 phrase_models/LevelDbPhraseModel.h
 leveldb_pm_defs= phrase_models/LevelDbPhraseTable.cc	\
 phrase_models/LevelDbPhraseModel.cc
+endif
+
+if HAVE_CXX11_ENABLED
+hattrie_pm_h=phrase_models/HatTriePhraseTable.h
+hattrie_pm_defs=phrase_models/HatTriePhraseTable.cc
 endif
 
 smt_preproc_h= smt_preproc/SmtPreprocDefs.h smt_preproc/BasePrePosProcessor.h
@@ -392,13 +397,11 @@ exper_defs=
 
 testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h          \
 testing/_incrLexTableTest.h testing/_phraseTableTest.h              \
-testing/HatTriePhraseTableTest.h testing/IncrLexTableTest.h         \
-testing/StlPhraseTableTest.h
+testing/IncrLexTableTest.h testing/StlPhraseTableTest.h
 
 testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc     \
 testing/_incrLexTableTest.cc testing/_phraseTableTest.cc            \
-testing/HatTriePhraseTableTest.cc testing/IncrLexTableTest.cc       \
-testing/StlPhraseTableTest.cc
+testing/IncrLexTableTest.cc testing/StlPhraseTableTest.cc
 
 
 if HAVE_LEVELDB_LIB
@@ -412,11 +415,17 @@ testing/LevelDbNgramTableTest.cc                               \
 testing/LevelDbPhraseTableTest.cc
 endif
 
+if HAVE_CXX11_ENABLED
+hattrie_pm_testing_h=testing/HatTriePhraseTableTest.h
+hattrie_pm_testing_defs=testing/HatTriePhraseTableTest.cc
+endif
+
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
 $(leveldb_lm_h) $(leveldb_lm_defs)  \
 $(sw_models_h) $(sw_models_defs) $(phrase_models_h)			\
-$(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs) $(leveldb_pm_h)	\
+$(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs)                    \
+$(hattrie_pm_h) $(hattrie_pm_defs) $(leveldb_pm_h)	\
 $(leveldb_pm_defs) $(leveldb_sw_h) $(leveldb_sw_defs) $(smt_preproc_h)	\
 $(smt_preproc_defs) $(error_correction_h) $(error_correction_defs)	\
 $(downhill_simplex_h) $(downhill_simplex_defs) $(stack_dec_h)		\
@@ -684,6 +693,7 @@ thot_calc_bleu_LDFLAGS = libthot.la
 ##########
 if CODE_TESTING
 thot_test_SOURCES = testing/thot_test.cc $(testing_h) $(testing_defs)	\
+$(hattrie_pm_testing_h) $(hattrie_pm_testing_defs)                      \
 $(leveldb_pm_testing_h) $(leveldb_pm_testing_defs)
 thot_test_LDFLAGS = libthot.la
 endif
@@ -691,7 +701,7 @@ endif
 # include headers
 includedir= $(prefix)/include/$(PACKAGE)
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
-$(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h)		\
+$(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h) $(hattrie_pm_h)		\
 $(leveldb_lm_h) $(leveldb_pm_h) $(smt_preproc_h) $(error_correction_h)		\
 $(downhill_simplex_h) $(stack_dec_h) $(exper_h) $(exper_defs)		\
 $(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
@@ -699,8 +709,10 @@ $(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
 # libraries
 
 ##########
+if HAVE_CXX11_ENABLED
 libhattrie_la_SOURCES= $(hat_trie_h) $(hat_trie_defs)
 libhattrie_la_LIBADD=
+endif
 
 ##########
 libthot_la_SOURCES= $(thot_sources)
