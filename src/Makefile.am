@@ -1,5 +1,6 @@
 # general settings
 
+LPTHREAD=@LPTHREAD@
 LGMP=@LGMP@
 ZLIB=@ZLIB@
 BZ2LIB=@BZ2LIB@
@@ -82,7 +83,7 @@ AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			   \
 AM_CFLAGS= $(AM_CXXFLAGS)
 
 LDADD = $(KENLM_LDADD) $(LGMP) $(ZLIB) $(LDB_CXX) $(LEVELDB_LIB)	\
-$(CPPUNIT) -ldl
+$(CPPUNIT) $(LPTHREAD) -ldl
 
 # sources
 common_src_h= thot_config.h
