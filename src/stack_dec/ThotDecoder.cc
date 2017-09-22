@@ -1029,7 +1029,13 @@ void ThotDecoder::set_W(float W_par,
   {
     std::cerr<<"W parameter is set to "<<W_par<<std::endl;
   }
-  tdCommonVars.smtModelPtr->set_W_par(W_par);
+      // Unlock non_atomic_op_cond mutex
+  pthread_mutex_unlock(&non_atomic_op_mut);
+  
+  /////////// end of mutex 
+  pthread_mutex_unlock(&atomic_op_mut);
+
+  return ret;
 }
   
 
@@ -1060,15 +1066,13 @@ void ThotDecoder::set_A(unsigned int A_par,
   tdCommonVars.smtModelPtr->set_A_par(A_par);
 }
   
-//--------------------------
-void ThotDecoder::set_E(unsigned int E_par,
-                        int verbose/*=0*/)
-{
-  if(verbose)
-  {
-    std::cerr<<"E parameter is set to "<<E_par<<std::endl;
-  }
-  tdCommonVars.smtModelPtr->set_E_par(E_par);
+      // Unlock non_atomic_op_cond mutex
+  pthread_mutex_unlock(&non_atomic_op_mut);
+      
+  /////////// end of mutex 
+  pthread_mutex_unlock(&atomic_op_mut);
+
+  return ret;
 }
 
 //--------------------------
@@ -1100,7 +1104,12 @@ bool ThotDecoder::set_G(int user_id,
   {
     std::cerr<<"G parameter is set to "<<G_par<<std::endl;
   }
-  tdPerUserVarsVec[idx].stackDecoderPtr->set_G_par(G_par);
+  
+      // Unlock non_atomic_op_cond mutex
+  pthread_mutex_unlock(&non_atomic_op_mut);
+  
+  /////////// end of mutex 
+  pthread_mutex_unlock(&atomic_op_mut);
 
   return THOT_OK;
 }
@@ -2411,9 +2420,6 @@ void ThotDecoder::wait_on_non_atomic_op_cond(void)
       // wait for it. Some extra code would be required to force
       // non-atomic ops to end (an extra mutex will be necessary when
       // increasing the non_atomic_ops_running variable).
-
-      // NOTE 2: this function does intentionally not release mutex
-}
 
 //--------------------------
 void ThotDecoder::increase_non_atomic_ops_running(void)
