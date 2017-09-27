@@ -2530,6 +2530,9 @@ void ThotDecoder::wait_on_non_atomic_op_cond(void)
       // wait for it. Some extra code would be required to force
       // non-atomic ops to end (an extra mutex will be necessary when
       // increasing the non_atomic_ops_running variable).
+  
+  /////////// end of mutex 
+  pthread_mutex_unlock(&non_atomic_op_mut);
 }
 
 //--------------------------
