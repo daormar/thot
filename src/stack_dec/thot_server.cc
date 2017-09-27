@@ -317,7 +317,7 @@ void decrease_num_threads_var(void)
   /////////// begin of mutex
   --num_threads;
 
-        // Restart threads waiting on non_atomic_op_cond
+      // Restart threads waiting on condition
   if(num_threads==0)
     pthread_cond_broadcast(&num_threads_var_cond);
       // The pthread_cond_broadcast() function shall unblock all threads
@@ -345,6 +345,8 @@ void wait_on_num_threads_var_cond(void)
         // Upon successful return, the mutex has been locked and is
         // owned by the calling thread.
   }
+  /////////// end of mutex 
+  pthread_mutex_unlock(&num_threads_var_mut);
 }
 
 //---------------
