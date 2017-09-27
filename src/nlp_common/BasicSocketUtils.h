@@ -38,6 +38,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <errno.h>
 #include <string.h>
 #include <strings.h>
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include <ErrorDefs.h>
