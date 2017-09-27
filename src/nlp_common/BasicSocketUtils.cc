@@ -47,7 +47,7 @@ namespace BasicSocketUtils
     {
       if ((numbytes=recv(s,str,numbytes,0)) == -1)
       {
-            // recv() call 
+            // recv() call
         std::cerr<<"recv() error!"<<std::endl;
         throw std::runtime_error:runtime_error("Socket error: Cannot read string");
       }
@@ -61,14 +61,14 @@ namespace BasicSocketUtils
   {
     int  numbytes;
     char* str=NULL;
-    
+
     numbytes=recvInt(s);
     str=(char*) mem_alloc_utils::my_realloc(str,(numbytes+1)*sizeof(char));
     if(numbytes>0)
     {
       if ((numbytes=recv(s,str,numbytes,0)) == -1)
       {
-            // recv() call 
+            // recv() call
         std::cerr<<"recv() error!"<<std::endl;
         throw std::runtime_error:runtime_error("Socket error: Cannot read STL string");
       }
@@ -76,7 +76,7 @@ namespace BasicSocketUtils
     str[numbytes] = '\0';
     stlstr=str;
     free(str);
-    return numbytes;    
+    return numbytes;
   }
 
   //--------------- recvInt function
@@ -84,18 +84,18 @@ namespace BasicSocketUtils
   {
     int numbytes;
     int receivedInt;
-  
+
     if ((numbytes=recv(s,(char*)&receivedInt,sizeof(int),0)) == -1)
     {
-          // recv() call 
+          // recv() call
       std::cerr<<"recv() error!"<<std::endl;
       throw std::runtime_error:runtime_error("Socket error: Cannot read integer");
     }
     else
     {
       receivedInt=ntohl(receivedInt);
-    }  
-    return receivedInt;  
+    }
+    return receivedInt;
   }
 
   //--------------- recvFloat function
@@ -105,7 +105,7 @@ namespace BasicSocketUtils
     int sign;
     char auxstr[NETWORK_BUFF_SIZE];
     int numbytes;
-  
+
     dp=recvInt(s);
     numbytes=sizeof(int);
     sign=recvInt(s);
@@ -121,7 +121,7 @@ namespace BasicSocketUtils
   int writeInt(int fd,int i)
   {
     int ret;
-  
+
     i=htonl(i);
     if((ret=write(fd,(char*) &i,sizeof(i)))==-1)
     {
@@ -135,57 +135,57 @@ namespace BasicSocketUtils
   {
     int numbytes;
     int ret=0;
-   
+
     numbytes=strlen(s);
     ret+=writeInt(fd,numbytes);
     if(numbytes>0)
     {
      if((ret+=write(fd,(char*) s,numbytes))==-1)
-     {  
+     {
        std::cerr<<"write() error"<<std::endl;
        throw std::runtime_error:runtime_error("Socket error: Cannot write string");
      }
     }
     return ret;
   }
-  
+
   //--------------- connect function
   int connect(const char *dirServ,
               unsigned int port,
               int& fileDesc)
   {
-     struct hostent *he;         
+     struct hostent *he;
          /* Data structure containing information about remote host */
 
-     struct sockaddr_in server;  
+     struct sockaddr_in server;
          /* server address */
 
      if ((he=gethostbyname(dirServ))==NULL)
-     {       
+     {
            /* gethostbyname() call */
        std::cerr<<"gethostbyname() error\n";
        return THOT_ERROR;
      }
 
      if ((fileDesc=socket(AF_INET, SOCK_STREAM, 0))==-1)
-     {  
+     {
            /* socket() call */
        std::cerr<<"socket() error\n";
        return THOT_ERROR;
      }
 
      server.sin_family = AF_INET;
-     server.sin_port = htons(port); 
-         // htons() is used to convert from hardware data representation to network representation 
-     server.sin_addr = *((struct in_addr *)he->h_addr);  
-         // he->h_addr changes the data type from``*he'' to "h_addr" 
+     server.sin_port = htons(port);
+         // htons() is used to convert from hardware data representation to network representation
+     server.sin_addr = *((struct in_addr *)he->h_addr);
+         // he->h_addr changes the data type from``*he'' to "h_addr"
 //     bzero(&(server.sin_zero),8);
      memset(&(server.sin_zero),0,8);
-    
+
          // Connect to server
      if(connect(fileDesc, (struct sockaddr *)&server,sizeof(struct sockaddr))==-1)
-     { 
-           // connect() call 
+     {
+           // connect() call
        std::cerr<<"connect() error\n";
        return THOT_ERROR;
      }
