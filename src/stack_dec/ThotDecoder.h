@@ -120,11 +120,6 @@ class ThotDecoder
                          std::string& result,
                          std::string& bestHypInfo,
                          int verbose=0);
-  bool translateSentencePrintWg(int user_id,
-                                const char *sentenceToTranslate,
-                                std::string& result,
-                                const char* wgFilename,
-                                int verbose=0);
   bool sentPairVerCov(int user_id,
                       const char *srcSent,
                       const char *refSent,
