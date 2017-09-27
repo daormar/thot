@@ -1,6 +1,6 @@
 /*
 thot package for statistical machine translation
-Copyright (C) 2013 Daniel Ortiz-Mart\'inez
+Copyright (C) 2013-2017 Daniel Ortiz-Mart\'inez, Adam Harasimowicz
  
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
@@ -32,6 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function definitions
 
+#ifndef THOT_HAVE_CXX11
 //-------------------------
 void IncrPhraseModel::printTTable(FILE* file)
 {
@@ -63,38 +64,39 @@ void IncrPhraseModel::printTTable(FILE* file)
   }
 }
 
+#else
 //-------------------------
-// NOTE: Old code for printing translation table using PhraseTable class.
-//
-// void IncrPhraseModel::printTTable(FILE* file)
-// {
-//   PhraseTable* ptPtr=0;
+void IncrPhraseModel::printTTable(FILE* file)
+{
+  HatTriePhraseTable* ptPtr=0;
 
-//   ptPtr=dynamic_cast<PhraseTable*>(basePhraseTablePtr);
+  ptPtr=dynamic_cast<HatTriePhraseTable*>(basePhraseTablePtr);
 
-//   if(ptPtr) // C++ RTTI
-//   {
-//     PhraseTable::const_iterator phraseTIter;
+  if(ptPtr) // C++ RTTI
+  {
+    HatTriePhraseTable::const_iterator phraseTIter;
 
-//     for(phraseTIter=ptPtr->begin();phraseTIter!=ptPtr->end();++phraseTIter)
-//     {
-//       PhraseTable::SrcTableNode srctn;
-//       PhraseTable::SrcTableNode::iterator srctnIter;
-//       ptPtr->getEntriesForTarget(phraseTIter->first,srctn);
+    for(phraseTIter=ptPtr->begin();phraseTIter!=ptPtr->end();++phraseTIter)
+    {
+      HatTriePhraseTable::SrcTableNode srctn;
+      HatTriePhraseTable::SrcTableNode::iterator srctnIter;
+      ptPtr->getEntriesForTarget(phraseTIter->first,srctn);
 
-//       for(srctnIter=srctn.begin();srctnIter!=srctn.end();++srctnIter)
-//       {
-//         std::vector<WordIndex>::const_iterator vectorWordIndexIter;
-//         for(vectorWordIndexIter=srctnIter->first.begin();vectorWordIndexIter!=srctnIter->first.end();++vectorWordIndexIter)
-//           fprintf(file,"%s ",wordIndexToSrcString(*vectorWordIndexIter).c_str());
-//         fprintf(file,"|||");
-//         for(vectorWordIndexIter=phraseTIter->first.begin();vectorWordIndexIter!=phraseTIter->first.end();++vectorWordIndexIter)
-//           fprintf(file," %s",wordIndexToTrgString(*vectorWordIndexIter).c_str());
-//         fprintf(file," ||| %.8f %.8f\n",(float)srctnIter->second.first.get_c_s(),(float)srctnIter->second.second.get_c_st());
-//       }
-//     }
-//   }
-// }
+      for(srctnIter=srctn.begin();srctnIter!=srctn.end();++srctnIter)
+      {
+        std::vector<WordIndex>::const_iterator vectorWordIndexIter;
+        for(vectorWordIndexIter=srctnIter->first.begin();vectorWordIndexIter!=srctnIter->first.end();++vectorWordIndexIter)
+          fprintf(file,"%s ",wordIndexToSrcString(*vectorWordIndexIter).c_str());
+        fprintf(file,"|||");
+        for(vectorWordIndexIter=phraseTIter->first.begin();vectorWordIndexIter!=phraseTIter->first.end();++vectorWordIndexIter)
+          fprintf(file," %s",wordIndexToTrgString(*vectorWordIndexIter).c_str());
+        fprintf(file," ||| %.8f %.8f\n",(float)srctnIter->second.first.get_c_s(),(float)srctnIter->second.second.get_c_st());
+      }
+    }
+  }
+}
+
+#endif
 
 //-------------------------
 IncrPhraseModel::~IncrPhraseModel()

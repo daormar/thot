@@ -341,6 +341,9 @@ do
 done
 
 AM_CONDITIONAL([HAVE_CXX11_ENABLED], [test x${cxx11_supported} = xyes])
+if test x${cxx11_supported} = xyes; then
+  AC_DEFINE(HAVE_CXX11,,[Define if C++11 is supported])
+fi
 
 # Checks for lm library
 AC_CHECK_LIB([m], [log])
