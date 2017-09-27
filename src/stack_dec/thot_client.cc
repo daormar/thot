@@ -26,12 +26,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 /*                                                                  */
 /********************************************************************/
 
-/**
- * @file PhrLocalSwLiTm.h
- *
- * @brief Implements a translator client.
- */
-
 //--------------- Include files --------------------------------------
 
 #if HAVE_CONFIG_H
