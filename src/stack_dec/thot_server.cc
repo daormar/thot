@@ -48,6 +48,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
 #include <string.h>
 #include <sys/wait.h>
 #include <signal.h>
@@ -62,6 +63,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function Declarations -------------------------------
 
+void socket_error_callback_handler(int signum);
 int process_request(int s,
                     const thot_server_pars& ts_pars,
                     const ThotDecoderUserPars& tdu_pars,
@@ -98,6 +100,8 @@ ThotDecoder* thotDecoderPtr;
 int main(int argc,char *argv[])
 {
   thot_server_pars ts_pars;
+
+  signal(SIGPIPE, socket_error_callback_handler);
     
   if(handleParameters(argc,argv,ts_pars)==THOT_ERROR)
   {
@@ -107,6 +111,12 @@ int main(int argc,char *argv[])
   {
     return processParameters(ts_pars);
   }
+}
+
+//---------------
+void socket_error_callback_handler(int signum)
+{
+  std::cerr << "SIGPIPE error: " << signum << std::endl;
 }
 
 //---------------
