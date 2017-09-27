@@ -63,7 +63,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function Declarations -------------------------------
 
-void socket_error_callback_handler(int signum);
 int process_request(int s,
                     const thot_server_pars& ts_pars,
                     const ThotDecoderUserPars& tdu_pars,
@@ -101,8 +100,9 @@ int main(int argc,char *argv[])
 {
   thot_server_pars ts_pars;
 
-  signal(SIGPIPE, socket_error_callback_handler);
-    
+  // Ignore broken pipe signal to do not close server
+  signal(SIGPIPE, SIG_IGN);
+
   if(handleParameters(argc,argv,ts_pars)==THOT_ERROR)
   {
     return THOT_ERROR;
@@ -111,12 +111,6 @@ int main(int argc,char *argv[])
   {
     return processParameters(ts_pars);
   }
-}
-
-//---------------
-void socket_error_callback_handler(int signum)
-{
-  std::cerr << "SIGPIPE error: " << signum << std::endl;
 }
 
 //---------------
