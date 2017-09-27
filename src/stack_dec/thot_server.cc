@@ -83,7 +83,7 @@ bool read_end_server_var(void);
 void set_end_server_var(void);
 void increase_num_threads_var(void);
 void decrease_num_threads_var(void);
-void wait_on_num_threads_var_cond(void);
+void wait_on_num_threads_var_cond_unlock(void);
 void sigchld_handler(int s);
 int handleParameters(int argc,
                      char *argv[]);
@@ -250,7 +250,7 @@ int start_server(void)
     std::cerr<<"Server: shutting down"<<std::endl;
 
       // Wait for threads to finish
-  wait_on_num_threads_var_cond();
+  wait_on_num_threads_var_cond_unlock();
   
       // Destroy mutexes and conditions
   pthread_mutex_destroy(&num_threads_var_mut);
@@ -316,7 +316,7 @@ void decrease_num_threads_var(void)
 }
 
 //---------------
-void wait_on_num_threads_var_cond(void)
+void wait_on_num_threads_var_cond_unlock(void)
 {
   pthread_mutex_lock(&num_threads_var_mut);
   /////////// begin of mutex
