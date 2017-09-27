@@ -49,7 +49,7 @@ namespace BasicSocketUtils
       {
             // recv() call
         std::cerr<<"recv() error!"<<std::endl;
-        throw std::runtime_error:runtime_error("Socket error: Cannot read string");
+        throw std::runtime_error("Socket error: Cannot read string");
       }
     }
     str[numbytes] = '\0';
@@ -70,7 +70,7 @@ namespace BasicSocketUtils
       {
             // recv() call
         std::cerr<<"recv() error!"<<std::endl;
-        throw std::runtime_error:runtime_error("Socket error: Cannot read STL string");
+        throw std::runtime_error("Socket error: Cannot read STL string");
       }
     }
     str[numbytes] = '\0';
@@ -89,7 +89,7 @@ namespace BasicSocketUtils
     {
           // recv() call
       std::cerr<<"recv() error!"<<std::endl;
-      throw std::runtime_error:runtime_error("Socket error: Cannot read integer");
+      throw std::runtime_error("Socket error: Cannot read integer");
     }
     else
     {
@@ -126,7 +126,7 @@ namespace BasicSocketUtils
     if((ret=write(fd,(char*) &i,sizeof(i)))==-1)
     {
       std::cerr<<"write() error"<<std::endl;
-      throw std::runtime_error:runtime_error("Socket error: Cannot write integer");
+      throw std::runtime_error("Socket error: Cannot write integer");
     }
     return ret;
   }
@@ -143,7 +143,7 @@ namespace BasicSocketUtils
      if((ret+=write(fd,(char*) s,numbytes))==-1)
      {
        std::cerr<<"write() error"<<std::endl;
-       throw std::runtime_error:runtime_error("Socket error: Cannot write string");
+       throw std::runtime_error("Socket error: Cannot write string");
      }
     }
     return ret;
