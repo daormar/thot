@@ -84,7 +84,15 @@ int main(int argc,char *argv[])
      ctimer(&elapsed_ant,&ucpu,&scpu);
    }
        // Process request
-   retVal=process_request(tdcPars);
+   try
+   {
+     retVal=process_request(tdcPars);
+   }
+   catch(const std::exception& e)
+   {
+     std::cerr << e.what() << std::endl;
+     return THOT_ERROR;
+   }
    
    if(tdcPars.verbose)
    {

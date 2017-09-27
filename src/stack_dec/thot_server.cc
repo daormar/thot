@@ -223,7 +223,16 @@ int start_server(thot_server_pars ts_pars,
     double elapsed_prev,elapsed,ucpu,scpu;
     ctimer(&elapsed_prev,&ucpu,&scpu);
     
-    process_request(new_fd,ts_pars,tdu_pars,end);
+    try
+    {
+      process_request(new_fd,ts_pars,tdu_pars,end);
+    }
+    catch(const std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+      close(new_fd);
+      continue;
+    }
     
     ctimer(&elapsed,&ucpu,&scpu);
 
