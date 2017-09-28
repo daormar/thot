@@ -240,6 +240,12 @@ int start_server(void)
       continue;
     }
 
+        // Increase variable with number of threads being executed
+        // NOTE: cannot be done inside process_request function.
+        // Otherwise, when waiting for threads to finish during shutting
+        // down, some threads may become blocked
+    increase_num_threads_var();
+
         // Prepare request data (memory is released by thread)
     request_data* rdata_ptr=new request_data;
     rdata_ptr->sockd=new_fd;
@@ -314,12 +320,8 @@ void set_end_server_var(void)
 void* process_request(void* void_ptr)
 {
       // Read request data and release memory
-  request_data* rdata_ptr=(request_data*) void_ptr;
-  request_data rdata=*rdata_ptr;
-  delete rdata_ptr;
-
-      // Increase variable with number of threads being executed
-  increase_num_threads_var();
+  request_data rdata=*(request_data*) void_ptr;
+  delete (request_data*) void_ptr;
     
       // Initialize variables
   int verbose=ts_pars.v_given;
@@ -524,7 +526,8 @@ void wait_on_num_threads_var_cond(void)
 
       // NOTE: num_threads_var_mut mutex is intentionally kept locked at
       // the end of this function, preventing execution of new server
-      // request threads
+      // request threads (however, with current implementation this is
+      // no longer possible)
 }
 
 //---------------
