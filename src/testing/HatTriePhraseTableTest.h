@@ -79,6 +79,7 @@ class HatTriePhraseTableTest: public _phraseTableTest
     CPPUNIT_TEST( testIteratorsLoop );
     CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
     CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
+    CPPUNIT_TEST( testAddingSameSrcAndTrg );
     CPPUNIT_TEST( testSize );
     CPPUNIT_TEST( testSubkeys );
     CPPUNIT_TEST( test32bitRange );

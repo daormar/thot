@@ -387,6 +387,28 @@ void _phraseTableTest::testPTrgGivenSrc()
   CPPUNIT_ASSERT_EQUAL(11.f / 24.f, (float) tab->pTrgGivenSrc(s2, t1));
   CPPUNIT_ASSERT_EQUAL(13.f / 24.f, (float) tab->pTrgGivenSrc(s2, t2));
 }
+//---------------------------------------
+void _phraseTableTest::testAddingSameSrcAndTrg()
+{
+  /* TEST:
+     Check if the results are returned correctly when source
+     and target has the same values.
+  */
+  std::vector<WordIndex> v1 = getVector("Morag");
+  std::vector<WordIndex> v2 = getVector("~ \" ()( -");
+
+  // Fill phrase table with data
+  tab->incrCountsOfEntry(v1, v1, Count(1));
+  tab->incrCountsOfEntry(v1, v2, Count(2));
+  tab->incrCountsOfEntry(v2, v1, Count(4));
+  tab->incrCountsOfEntry(v2, v2, Count(8));
+
+  // Check probabilities
+  CPPUNIT_ASSERT_EQUAL(1 + 2, (int) tab->cSrc(v1).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(1 + 4, (int) tab->cTrg(v1).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(4 + 8, (int) tab->cSrc(v2).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(2 + 8, (int) tab->cTrg(v2).get_c_s());
+}
 
 //---------------------------------------
 void _phraseTableTest::testSize()

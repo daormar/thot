@@ -84,6 +84,7 @@ class _phraseTableTest: public CppUnit::TestFixture
         void testAddSrcTrgInfo();
         void testPSrcGivenTrg();
         void testPTrgGivenSrc();
+        void testAddingSameSrcAndTrg();
         //void testIteratorsLoop();
         //void testIteratorsOperatorsPlusPlusStar();
         //void testIteratorsOperatorsEqualNotEqual();
