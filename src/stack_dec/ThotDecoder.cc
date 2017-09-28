@@ -1344,8 +1344,8 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
   if(tdState.preprocId)
   {
         // Pre/post processing enabled
-    std::string preprocSrcSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(srcSent,tdState.caseconv,false);
-    std::string preprocRefSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(refSent,tdState.caseconv,false);
+    std::string preprocSrcSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,srcSent,tdState.caseconv,false);
+    std::string preprocRefSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,refSent,tdState.caseconv,false);
 
         // Obtain system translation
     SmtModel::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(preprocSrcSent.c_str());
@@ -1553,8 +1553,8 @@ bool ThotDecoder::trainEcm(int user_id,
     
   if(tdState.preprocId)
   {
-    std::string preprocx=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(strx,tdState.caseconv,false);
-    std::string preprocy=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(stry,tdState.caseconv,false);
+    std::string preprocx=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,strx,tdState.caseconv,false);
+    std::string preprocy=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,stry,tdState.caseconv,false);
     if(verbose)
     {
       std::cerr<<" - preproc. string x: "<<preprocx<<std::endl;
@@ -1596,7 +1596,7 @@ bool ThotDecoder::translateSentence(int user_id,
   }
   if(tdState.preprocId)
   {
-    std::string preprocSrcSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(sentenceToTranslate,tdState.caseconv,true);
+    std::string preprocSrcSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,sentenceToTranslate,tdState.caseconv,true);
     if(verbose)
     {
       std::cerr<<" - preproc. source: "<<preprocSrcSent<<std::endl;
@@ -1605,7 +1605,7 @@ bool ThotDecoder::translateSentence(int user_id,
         // Obtain translation using precalculated word-graph or translator
     std::string aux=translateSentenceAux(idx,preprocSrcSent,bestHypInfo);
     
-    result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
+    result=postprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,aux.c_str(),tdState.caseconv);
     if(verbose)
     {
       std::cerr<<" - preproc. target: "<<aux<<std::endl;
@@ -1737,8 +1737,8 @@ bool ThotDecoder::sentPairVerCov(int user_id,
   SmtModel::Hypothesis hyp;
   if(tdState.preprocId)
   {
-    std::string preprocSrcSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(srcSent,tdState.caseconv,false);
-    std::string preprocRefSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(refSent,tdState.caseconv,false);
+    std::string preprocSrcSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,srcSent,tdState.caseconv,false);
+    std::string preprocRefSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,refSent,tdState.caseconv,false);
     if(verbose)
     {
       std::cerr<<" - preproc. source: "<<preprocSrcSent<<std::endl;
@@ -1746,7 +1746,7 @@ bool ThotDecoder::sentPairVerCov(int user_id,
     }
     hyp=tdPerUserVarsVec[idx].stackDecoderPtr->verifyCoverageForRef(preprocSrcSent.c_str(),preprocRefSent.c_str());
     std::string aux=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
-    result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
+    result=postprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,aux.c_str(),tdState.caseconv);
   }
   else
   {
@@ -1797,10 +1797,10 @@ bool ThotDecoder::startCat(int user_id,
   if(tdState.preprocId)
   {
     std::string aux;
-    std::string preprocSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(sentenceToTranslate,tdState.caseconv,true);
+    std::string preprocSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,sentenceToTranslate,tdState.caseconv,true);
     RejectedWordsSet emptyRejWordsSet;
     aux=tdPerUserVarsVec[idx].assistedTransPtr->translateWithPrefix(preprocSent,"",emptyRejWordsSet,verbose);
-    catResult=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
+    catResult=postprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,aux.c_str(),tdState.caseconv);
     if(verbose)
     {
       std::cerr<<"* preprocessed sentence: "<<preprocSent<<std::endl;
@@ -1879,13 +1879,7 @@ void ThotDecoder::addStrToPref(int user_id,
   {    
     std::string trans;
     std::string expLastWord;
-
-    pthread_mutex_lock(&preproc_mut);
-        /////////// begin of preproc mutex 
-    std::string preprocPrefUnexpanded=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(totalPrefixVec[idx],tdState.caseconv,false);
-        /////////// end of preproc mutex 
-    pthread_mutex_unlock(&preproc_mut);
-    
+    std::string preprocPrefUnexpanded=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,totalPrefixVec[idx],tdState.caseconv,false);    
     std::string preprocPref=preprocPrefUnexpanded;
     
     expLastWord=expandLastWord(preprocPref);
@@ -1893,16 +1887,12 @@ void ThotDecoder::addStrToPref(int user_id,
     trans=tdPerUserVarsVec[idx].assistedTransPtr->addStrToPrefix(preprocPref,
                                                                  rejectedWords,
                                                                  verbose);
-    pthread_mutex_lock(&preproc_mut);
-        /////////// begin of preproc mutex 
     catResult=robustObtainFinalOutput(tdPerUserVarsVec[idx].prePosProcessorPtr,
                                       totalPrefixVec[idx],
                                       preprocPrefUnexpanded,
                                       preprocPref,
                                       trans.c_str(),
                                       tdState.caseconv);
-        /////////// end of preproc mutex 
-    pthread_mutex_unlock(&preproc_mut);
     
     if(verbose)
     {
@@ -2505,7 +2495,7 @@ std::string ThotDecoder::postprocWithCriticalError(BasePrePosProcessor* prePosPr
     }
     else
     {
-      std::string postprocPref=prePosProcessorPtr->postprocLine(preprocPref.c_str(),caseconv);
+      std::string postprocPref=postprocLine(prePosProcessorPtr,preprocPref.c_str(),caseconv);
       std::string postprocPrefLastWord=StrProcUtils::getLastWord(postprocPref);
       std::string unpreprocPrefLastWord=StrProcUtils::getLastWord(unpreprocPref);
       lastPrefWordCompletion=getWordCompletion(unpreprocPrefLastWord,postprocPrefLastWord);
@@ -2524,7 +2514,7 @@ std::string ThotDecoder::postprocWithCriticalError(BasePrePosProcessor* prePosPr
   else modifiedTrans=startStr+endPrefMarker+" "+endStr;
   
       // Postprocess translation with the special tag
-  postprocModifiedTrans=prePosProcessorPtr->postprocLine(modifiedTrans.c_str(),caseconv);
+  postprocModifiedTrans=postprocLine(prePosProcessorPtr,modifiedTrans.c_str(),caseconv);
   
       // Search the special tag in the postprocessed translation and
       // retrieve the suffix given by the CAT system
@@ -2739,6 +2729,35 @@ std::string ThotDecoder::getWordCompletion(std::string uncompleteWord,
     }    
     return completion;
   }
+}
+
+//--------------------------
+std::string ThotDecoder::preprocLine(BasePrePosProcessor* prePosProcessorPtr,
+                                     std::string str,
+                                     bool caseconv,
+                                     bool keepPreprocInfo)
+{
+  pthread_mutex_lock(&preproc_mut);
+  /////////// begin of preproc mutex 
+  std::string result=prePosProcessorPtr->preprocLine(str,caseconv,keepPreprocInfo);
+  /////////// end of preproc mutex 
+  pthread_mutex_unlock(&preproc_mut);
+
+  return result;
+}
+
+//--------------------------
+std::string ThotDecoder::postprocLine(BasePrePosProcessor* prePosProcessorPtr,
+                                      std::string str,
+                                      bool caseconv)
+{
+  pthread_mutex_lock(&preproc_mut);
+  /////////// begin of preproc mutex
+  std::string result=prePosProcessorPtr->postprocLine(str,caseconv);
+  /////////// end of preproc mutex 
+  pthread_mutex_unlock(&preproc_mut);
+
+  return result;
 }
 
 //--------------------------
