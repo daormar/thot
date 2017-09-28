@@ -2220,56 +2220,6 @@ bool ThotDecoder::use_caseconv(int user_id,
 }
 
 //--------------------------
-std::string ThotDecoder::preprocStr(int user_id,
-                                    std::string str)
-{
-  pthread_mutex_lock(&atomic_op_mut);
-  /////////// begin of mutex 
-
-  std::string result;
-  
-  if(tdState.preprocId)
-  {
-        // Obtain index vector given user_id
-    size_t idx=get_vecidx_for_user_id(user_id);
-
-    result=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(str,tdState.caseconv,false);
-  }
-  else
-    result=str;
-
-  /////////// end of mutex 
-  pthread_mutex_unlock(&atomic_op_mut);
-
-  return result;
-}
-
-//--------------------------
-std::string ThotDecoder::postprocStr(int user_id,
-                                     std::string str)
-{
-  pthread_mutex_lock(&atomic_op_mut);
-  /////////// begin of mutex 
-
-  std::string result;
-  
-  if(tdState.preprocId)
-  {
-        // Obtain index vector given user_id
-    size_t idx=get_vecidx_for_user_id(user_id);
-
-    result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(str,tdState.caseconv);
-  }
-  else
-    result=str;
-
-  /////////// end of mutex 
-  pthread_mutex_unlock(&atomic_op_mut);
-
-  return result;  
-}
-
-//--------------------------
 void ThotDecoder::clearTrans(int /*verbose*//*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
