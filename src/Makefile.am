@@ -22,8 +22,12 @@ endif
 
 AUTOMAKE_OPTIONS = subdir-objects
 
-SUBDIRS= hat_trie nlp_common incr_models sw_models phrase_models smt_preproc	\
+SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
 error_correction downhill_simplex stack_dec exper testing
+
+if HAVE_CXX11_ENABLED
+SUBDIRS= ${SUBDIRS} hat_trie
+endif
 
 if CODE_TESTING
 TESTING_PROGS= thot_test
@@ -69,13 +73,17 @@ translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
 $(DB_CXX_LIBS) $(LEVELDB_LIBS)
 
 # flags
-AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/hat_trie -I$(srcdir)/nlp_common			\
+AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			\
 -I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models		\
 -I$(srcdir)/smt_preproc -I$(srcdir)/error_correction				\
 -I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec				\
 -DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\"	\
 -DTHOT_LIBDIR=\"$(libdir)\"							\
 -I$(CASMACAT_THOT_SERVER_LIB_HOME)/src/include $(KENLM_CXXFLAGS)
+
+if HAVE_CXX11_ENABLED
+AM_CXXFLAGS= ${AM_CXXFLAGS} -I$(srcdir)/hat_trie
+endif
 
 AM_CFLAGS= $(AM_CXXFLAGS)
 
