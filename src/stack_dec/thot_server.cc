@@ -86,7 +86,7 @@ bool read_end_server_var(void);
 void set_end_server_var(void);
 void increase_num_threads_var(void);
 void decrease_num_threads_var(void);
-void wait_on_num_threads_var_cond_unlock(void);
+void wait_on_num_threads_var_cond(void);
 void sigchld_handler(int s);
 int handleParameters(int argc,
                      char *argv[]);
@@ -262,7 +262,7 @@ int start_server(void)
   pthread_mutex_destroy(&user_set_mut);
 
       // Wait for threads to finish
-  wait_on_num_threads_var_cond_unlock();
+  wait_on_num_threads_var_cond();
   
       // Destroy mutexes and conditions
   pthread_mutex_destroy(&num_threads_var_mut);
@@ -328,7 +328,7 @@ void decrease_num_threads_var(void)
 }
 
 //---------------
-void wait_on_num_threads_var_cond_unlock(void)
+void wait_on_num_threads_var_cond(void)
 {
   pthread_mutex_lock(&num_threads_var_mut);
   /////////// begin of mutex
@@ -345,8 +345,10 @@ void wait_on_num_threads_var_cond_unlock(void)
         // Upon successful return, the mutex has been locked and is
         // owned by the calling thread.
   }
-  /////////// end of mutex 
-  pthread_mutex_unlock(&num_threads_var_mut);
+
+      // NOTE: num_threads_var_mut mutex is intentionally kept locked at
+      // the end of this function, preventing execution of new server
+      // request threads
 }
 
 //---------------
