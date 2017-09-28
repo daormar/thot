@@ -146,12 +146,6 @@ class ThotDecoder
   bool use_caseconv(int user_id,
                     const char *caseConvFile,
                     int verbose=0);
-
-      // Pre/Post-processing functions
-  std::string preprocStr(int user_id,
-                         std::string str);
-  std::string postprocStr(int user_id,
-                         std::string str);
   
       // Clear translator data structures
   void clearTrans(int verbose=0);
