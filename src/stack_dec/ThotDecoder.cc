@@ -1517,8 +1517,8 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
   if(tdState.preprocId)
   {
         // Pre/post processing enabled
-    std::string preprocSrcSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(srcSent,tdState.caseconv,false);
-    std::string preprocRefSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(refSent,tdState.caseconv,false);
+    std::string preprocSrcSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,srcSent,tdState.caseconv,false);
+    std::string preprocRefSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,refSent,tdState.caseconv,false);
 
         // Obtain system translation
     SmtModel::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(preprocSrcSent.c_str());
@@ -1726,8 +1726,8 @@ bool ThotDecoder::trainEcm(int user_id,
     
   if(tdState.preprocId)
   {
-    std::string preprocx=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(strx,tdState.caseconv,false);
-    std::string preprocy=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(stry,tdState.caseconv,false);
+    std::string preprocx=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,strx,tdState.caseconv,false);
+    std::string preprocy=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,stry,tdState.caseconv,false);
     if(verbose)
     {
       std::cerr<<" - preproc. string x: "<<preprocx<<std::endl;
@@ -1769,7 +1769,7 @@ bool ThotDecoder::translateSentence(int user_id,
   }
   if(tdState.preprocId)
   {
-    std::string preprocSrcSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(sentenceToTranslate,tdState.caseconv,true);
+    std::string preprocSrcSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,sentenceToTranslate,tdState.caseconv,true);
     if(verbose)
     {
       std::cerr<<" - preproc. source: "<<preprocSrcSent<<std::endl;
@@ -1778,7 +1778,7 @@ bool ThotDecoder::translateSentence(int user_id,
         // Obtain translation using precalculated word-graph or translator
     std::string aux=translateSentenceAux(idx,preprocSrcSent,bestHypInfo);
     
-    result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
+    result=postprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,aux.c_str(),tdState.caseconv);
     if(verbose)
     {
       std::cerr<<" - preproc. target: "<<aux<<std::endl;
@@ -1910,8 +1910,8 @@ bool ThotDecoder::sentPairVerCov(int user_id,
   SmtModel::Hypothesis hyp;
   if(tdState.preprocId)
   {
-    std::string preprocSrcSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(srcSent,tdState.caseconv,false);
-    std::string preprocRefSent=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(refSent,tdState.caseconv,false);
+    std::string preprocSrcSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,srcSent,tdState.caseconv,false);
+    std::string preprocRefSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,refSent,tdState.caseconv,false);
     if(verbose)
     {
       std::cerr<<" - preproc. source: "<<preprocSrcSent<<std::endl;
@@ -1919,7 +1919,7 @@ bool ThotDecoder::sentPairVerCov(int user_id,
     }
     hyp=tdPerUserVarsVec[idx].stackDecoderPtr->verifyCoverageForRef(preprocSrcSent.c_str(),preprocRefSent.c_str());
     std::string aux=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
-    result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(aux.c_str(),tdState.caseconv);
+    result=postprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,aux.c_str(),tdState.caseconv);
   }
   else
   {
