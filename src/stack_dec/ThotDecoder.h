@@ -302,6 +302,13 @@ class ThotDecoder
                                                          std::string input);
   std::string getWordCompletion(std::string uncompleteWord,
                                 std::string completeWord);
+  std::string preprocLine(BasePrePosProcessor* prePosProcessorPtr,
+                          std::string str,
+                          bool caseconv,
+                          bool keepPreprocInfo);
+  std::string postprocLine(BasePrePosProcessor* prePosProcessorPtr,
+                           std::string str,
+                           bool caseconv);
 
       // Memory handling related functions
   bool instantiate_swm_info(const char* tmFilesPrefix,
