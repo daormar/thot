@@ -26,7 +26,7 @@ SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
 error_correction downhill_simplex stack_dec exper testing
 
 if HAVE_CXX11_ENABLED
-SUBDIRS= ${SUBDIRS} hat_trie
+SUBDIRS+= hat_trie
 endif
 
 if CODE_TESTING
@@ -82,7 +82,7 @@ AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			\
 -I$(CASMACAT_THOT_SERVER_LIB_HOME)/src/include $(KENLM_CXXFLAGS)
 
 if HAVE_CXX11_ENABLED
-AM_CXXFLAGS= ${AM_CXXFLAGS} -I$(srcdir)/hat_trie
+AM_CXXFLAGS+= -I$(srcdir)/hat_trie
 endif
 
 AM_CFLAGS= $(AM_CXXFLAGS)
