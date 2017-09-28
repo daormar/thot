@@ -75,18 +75,20 @@ struct request_data
 
 //--------------- Function Declarations -------------------------------
 
+int processParameters(void);
+int start_server(void);
+bool read_end_server_var(void);
+void set_end_server_var(void);
 void* process_request(void* rdata_ptr);
 int process_request_switch(int sockd,
                            int user_id,
                            int server_request_code,
                            int verbose);
-int processParameters(void);
-int start_server(void);
-bool read_end_server_var(void);
-void set_end_server_var(void);
 void increase_num_threads_var(void);
 void decrease_num_threads_var(void);
 void wait_on_num_threads_var_cond(void);
+bool user_is_new(int user_id);
+void add_user(int user_id);
 void sigchld_handler(int s);
 int handleParameters(int argc,
                      char *argv[]);
@@ -113,6 +115,8 @@ pthread_cond_t num_threads_var_cond;
 int num_threads;
 pthread_mutex_t end_server_var_mut;
 bool end;
+pthread_mutex_t user_set_mut;
+std::set<int> user_set;
 
 //--------------- Function Definitions --------------------------------
 
@@ -221,6 +225,7 @@ int start_server(void)
   pthread_mutex_init(&num_threads_var_mut,NULL);
   pthread_cond_init(&num_threads_var_cond,NULL);
   pthread_mutex_init(&end_server_var_mut,NULL);
+  pthread_mutex_init(&user_set_mut,NULL);
 
   std::cerr<<"Listening to port "<< ts_pars.server_port <<"..."<<std::endl;
   
@@ -235,10 +240,10 @@ int start_server(void)
       continue;
     }
 
-        // Prepare request data
-    request_data rdata;
-    rdata.sockd=new_fd;
-    rdata.sin_addr=their_addr.sin_addr;
+        // Prepare request data (memory is released by thread)
+    request_data* rdata_ptr=new request_data;
+    rdata_ptr->sockd=new_fd;
+    rdata_ptr->sin_addr=their_addr.sin_addr;
 
         // Process request
     pthread_t      tid;  // thread ID
@@ -246,7 +251,11 @@ int start_server(void)
 
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    pthread_create(&tid, &attr, process_request, (void*) &rdata);
+    int thread_err=pthread_create(&tid, &attr, process_request, (void*) rdata_ptr);
+    if(thread_err>0)
+    {
+      std::cerr<<"Warning: call to pthread_create failed"<<std::endl;
+    }
   }
 
   if(ts_pars.v_given)
@@ -268,6 +277,7 @@ int start_server(void)
   pthread_mutex_destroy(&num_threads_var_mut);
   pthread_cond_destroy(&num_threads_var_cond);
   pthread_mutex_destroy(&end_server_var_mut);
+  pthread_mutex_destroy(&user_set_mut);
 
   return THOT_OK;
 }
@@ -301,63 +311,17 @@ void set_end_server_var(void)
 }
 
 //---------------
-void increase_num_threads_var(void)
+void* process_request(void* void_ptr)
 {
-  pthread_mutex_lock(&num_threads_var_mut);
-  /////////// begin of mutex
-  ++num_threads;
-  /////////// end of mutex 
-  pthread_mutex_unlock(&num_threads_var_mut);
-}
+      // Read request data and release memory
+  request_data* rdata_ptr=(request_data*) void_ptr;
+  request_data rdata=*rdata_ptr;
+  delete rdata_ptr;
 
-//---------------
-void decrease_num_threads_var(void)
-{
-  pthread_mutex_lock(&num_threads_var_mut);
-  /////////// begin of mutex
-  --num_threads;
-
-      // Restart threads waiting on condition
-  if(num_threads==0)
-    pthread_cond_broadcast(&num_threads_var_cond);
-      // The pthread_cond_broadcast() function shall unblock all threads
-      // currently blocked on the specified condition variable.
-
-  /////////// end of mutex 
-  pthread_mutex_unlock(&num_threads_var_mut);
-}
-
-//---------------
-void wait_on_num_threads_var_cond(void)
-{
-  pthread_mutex_lock(&num_threads_var_mut);
-  /////////// begin of mutex
-  while(num_threads>0)
-  {
-    pthread_cond_wait(&num_threads_var_cond,&num_threads_var_mut);
-        // The pthread_cond_wait() function is used to block on a
-        // condition variable. It is called with mutex locked by the
-        // calling thread or undefined behaviour will result.
-
-        // This function atomically release mutex and cause the calling
-        // thread to block on the condition variable
-
-        // Upon successful return, the mutex has been locked and is
-        // owned by the calling thread.
-  }
-
-      // NOTE: num_threads_var_mut mutex is intentionally kept locked at
-      // the end of this function, preventing execution of new server
-      // request threads
-}
-
-//---------------
-void* process_request(void* rdata_ptr)
-{
+      // Increase variable with number of threads being executed
   increase_num_threads_var();
     
       // Initialize variables
-  request_data rdata=*(request_data*) rdata_ptr;
   int verbose=ts_pars.v_given;
 
   if(verbose)
@@ -380,22 +344,26 @@ void* process_request(void* rdata_ptr)
   int user_id=BasicSocketUtils::recvInt(rdata.sockd);
   if(verbose) std::cerr<<"User identifier: "<<user_id<<std::endl;
   
-      // Init user parameters
-  int ret=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
-  if(ret==THOT_ERROR)
+      // Init user parameters if necessary
+  if(user_is_new(user_id))
   {
-    // end=true;
-    if(verbose) std::cerr<<"Error while initializing server parameters"<<std::endl;
-    close(rdata.sockd);
-    decrease_num_threads_var();
-    pthread_exit(NULL);
+    add_user(user_id);
+    int ret=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
+    if(ret==THOT_ERROR)
+    {
+          // end=true;
+      if(verbose) std::cerr<<"Error while initializing server parameters"<<std::endl;
+      close(rdata.sockd);
+      decrease_num_threads_var();
+      pthread_exit(NULL);
+    }
   }
-
+  
       // Process request measuring time
   double elapsed_prev,elapsed,ucpu,scpu;
   ctimer(&elapsed_prev,&ucpu,&scpu);
 
-  ret=process_request_switch(rdata.sockd,user_id,server_request_code,verbose);
+  int ret=process_request_switch(rdata.sockd,user_id,server_request_code,verbose);
   
   ctimer(&elapsed,&ucpu,&scpu);
   
@@ -403,6 +371,7 @@ void* process_request(void* rdata_ptr)
   {
     std::cerr<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
   }
+
   if(ret==THOT_ERROR)
   {
     if(verbose) std::cerr<<"Error while processing client request"<<std::endl;
@@ -505,6 +474,88 @@ int process_request_switch(int sockd,
   }
 
   return ret;
+}
+
+//---------------
+void increase_num_threads_var(void)
+{
+  pthread_mutex_lock(&num_threads_var_mut);
+  /////////// begin of mutex
+  ++num_threads;
+  /////////// end of mutex 
+  pthread_mutex_unlock(&num_threads_var_mut);
+}
+
+//---------------
+void decrease_num_threads_var(void)
+{
+  pthread_mutex_lock(&num_threads_var_mut);
+  /////////// begin of mutex
+  --num_threads;
+
+      // Restart threads waiting on condition
+  if(num_threads==0)
+    pthread_cond_broadcast(&num_threads_var_cond);
+      // The pthread_cond_broadcast() function shall unblock all threads
+      // currently blocked on the specified condition variable.
+
+  /////////// end of mutex 
+  pthread_mutex_unlock(&num_threads_var_mut);
+}
+
+//---------------
+void wait_on_num_threads_var_cond(void)
+{
+  pthread_mutex_lock(&num_threads_var_mut);
+  /////////// begin of mutex
+  while(num_threads>0)
+  {
+    pthread_cond_wait(&num_threads_var_cond,&num_threads_var_mut);
+        // The pthread_cond_wait() function is used to block on a
+        // condition variable. It is called with mutex locked by the
+        // calling thread or undefined behaviour will result.
+
+        // This function atomically release mutex and cause the calling
+        // thread to block on the condition variable
+
+        // Upon successful return, the mutex has been locked and is
+        // owned by the calling thread.
+  }
+
+      // NOTE: num_threads_var_mut mutex is intentionally kept locked at
+      // the end of this function, preventing execution of new server
+      // request threads
+}
+
+//---------------
+bool user_is_new(int user_id)
+{
+  bool result;
+  pthread_mutex_lock(&user_set_mut);
+  /////////// begin of mutex
+
+  std::set<int>::const_iterator user_set_iter=user_set.find(user_id);
+  if(user_set_iter==user_set.end())
+    result=false;
+  else
+    result=true;
+  
+  /////////// end of mutex 
+  pthread_mutex_unlock(&user_set_mut);
+
+  return result;
+}
+
+//---------------
+void add_user(int user_id)
+{
+  pthread_mutex_lock(&user_set_mut);
+  /////////// begin of mutex
+
+  user_set.insert(user_id);
+  
+  /////////// end of mutex 
+  pthread_mutex_unlock(&user_set_mut);  
 }
 
 //---------------
