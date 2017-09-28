@@ -1376,11 +1376,6 @@ bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
                                     int verbose/*=0*/)
 {
   int ret;
-  // pthread_mutex_lock(&atomic_op_mut);
-  // /////////// begin of mutex 
-
-  //     // Wait until all non-atomic operations have finished
-  // wait_on_non_atomic_op_cond();
     
   if(strcmp(tdState.tmFilesPrefixGiven.c_str(),tmFilesPrefix)==0)
   {
@@ -1393,13 +1388,7 @@ bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
         // Store tm information
     if(ret==THOT_OK)
       tdState.tmFilesPrefixGiven=tmFilesPrefix;
-  }
-  
-  //     // Unlock non_atomic_op_cond mutex
-  // pthread_mutex_unlock(&non_atomic_op_mut);
-      
-  // /////////// end of mutex 
-  // pthread_mutex_unlock(&atomic_op_mut);
+  }  
 
   return ret;
 }
@@ -1504,6 +1493,9 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
+      // Wait until all non-atomic operations have finished
+  wait_on_non_atomic_op_cond();
+
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
   if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
@@ -1583,6 +1575,9 @@ bool ThotDecoder::onlineTrainSentPair(int user_id,
     ctimer(&elapsedTime,&ucpu,&scpu);
     if(verbose) std::cerr<<"Training time: "<<elapsedTime-prevElapsedTime<<std::endl;
   }
+
+      // Unlock non_atomic_op_cond mutex
+  pthread_mutex_unlock(&non_atomic_op_mut);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -1708,6 +1703,9 @@ bool ThotDecoder::trainEcm(int user_id,
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
+      // Wait until all non-atomic operations have finished
+  wait_on_non_atomic_op_cond();
+
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
   if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
@@ -1735,6 +1733,9 @@ bool ThotDecoder::trainEcm(int user_id,
   {
     ret=tdCommonVars.ecModelPtr->trainStrPair(strx,stry,verbose);
   }
+
+      // Unlock non_atomic_op_cond mutex
+  pthread_mutex_unlock(&non_atomic_op_mut);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
