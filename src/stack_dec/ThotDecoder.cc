@@ -830,6 +830,288 @@ int ThotDecoder::initUserPars(int user_id,
 }
 
 //--------------------------
+void ThotDecoder::setNonMonotonicity(int nomon,
+                                     int verbose/*=0*/)
+{
+  if(verbose)
+  {
+    std::cerr<<"Non-monotonicity is now set to "<<nomon<<std::endl;
+  }
+
+      // Set appropriate model parameters
+  tdCommonVars.smtModelPtr->set_U_par(nomon);
+}
+
+//--------------------------
+void ThotDecoder::set_W(float W_par,
+                        int verbose/*=0*/)
+{
+  if(verbose)
+  {
+    std::cerr<<"W parameter is set to "<<W_par<<std::endl;
+  }
+  tdCommonVars.smtModelPtr->set_W_par(W_par);
+}
+  
+
+//--------------------------
+void ThotDecoder::set_S(int user_id,
+                        unsigned int S_par,
+                        int verbose/*=0*/)
+{
+      // Obtain index vector given user_id
+  size_t idx=get_vecidx_for_user_id(user_id);
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+
+  if(verbose)
+  {
+    std::cerr<<"S parameter is set to "<<S_par<<std::endl;
+  }
+  tdPerUserVarsVec[idx].stackDecoderPtr->set_S_par(S_par);
+}
+  
+//--------------------------
+void ThotDecoder::set_A(unsigned int A_par,
+                        int verbose/*=0*/)
+{
+  if(verbose)
+  {
+    std::cerr<<"A parameter is set to "<<A_par<<std::endl;
+  }
+  tdCommonVars.smtModelPtr->set_A_par(A_par);
+}
+  
+//--------------------------
+void ThotDecoder::set_E(unsigned int E_par,
+                        int verbose/*=0*/)
+{
+  if(verbose)
+  {
+    std::cerr<<"E parameter is set to "<<E_par<<std::endl;
+  }
+  tdCommonVars.smtModelPtr->set_E_par(E_par);
+}
+
+//--------------------------
+void ThotDecoder::set_be(int user_id,
+                         int be_par,
+                         int verbose/*=0*/)
+{
+      // Obtain index vector given user_id
+  size_t idx=get_vecidx_for_user_id(user_id);
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+
+  if(verbose)
+  {
+    std::cerr<<"be parameter is set to "<<be_par<<std::endl;
+  }
+  tdPerUserVarsVec[idx].stackDecoderPtr->set_breadthFirst(!be_par);
+}
+
+//--------------------------
+bool ThotDecoder::set_G(int user_id,
+                        unsigned int G_par,
+                        int verbose/*=0*/)
+{
+      // Obtain index vector given user_id
+  size_t idx=get_vecidx_for_user_id(user_id);
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+
+  if(verbose)
+  {
+    std::cerr<<"G parameter is set to "<<G_par<<std::endl;
+  }
+  tdPerUserVarsVec[idx].stackDecoderPtr->set_G_par(G_par);
+
+  return THOT_OK;
+}
+
+//--------------------------
+void ThotDecoder::set_h(unsigned int h_par,
+                        int verbose/*=0*/)
+{
+  if(verbose)
+  {
+    std::cerr<<"h parameter is set to "<<h_par<<std::endl;
+  }
+      // Set heuristic
+  tdCommonVars.smtModelPtr->setHeuristic(h_par);
+}
+  
+//--------------------------
+bool ThotDecoder::set_np(int user_id,
+                         unsigned int np_par,
+                         int verbose/*=0*/)
+{
+      // Obtain index vector given user_id
+  size_t idx=get_vecidx_for_user_id(user_id);
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+
+  if(verbose)
+  {
+    std::cerr<<"np parameter is set to "<<np_par<<std::endl;
+  }
+      // Set np value
+  bool b;
+  if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
+  {
+    tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr->set_n(np_par);
+    b=THOT_OK;
+  }
+  else
+  {
+    if(verbose)
+      std::cerr<<"warning! np parameter cannot be applied to coupled translators."<<std::endl;
+    b=THOT_ERROR;
+  }
+
+  return b;  
+}
+  
+//--------------------------
+bool ThotDecoder::set_wgp(int user_id,
+                          float wgp_par,
+                          int verbose/*=0*/)
+{
+      // Check if ECM can be used to process word graphs
+  if(!tdCommonVars.curr_ecm_valid_for_wg)
+  {
+    std::cerr<<"Error: EC model is not valid for word-graphs"<<std::endl;
+    return THOT_ERROR;
+  }
+  
+      // Obtain index vector given user_id
+  size_t idx=get_vecidx_for_user_id(user_id);
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+
+  if(verbose)
+  {
+    std::cerr<<"wgp parameter is set to "<<wgp_par<<std::endl;
+  }
+      // Set wgp value
+  if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
+    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->set_wgp(wgp_par);
+  else
+  {
+    std::cerr<<"warning! wgp parameter cannot be applied to translators that do not use word-graphs."<<std::endl;
+  }
+
+  return THOT_OK;
+}
+
+//--------------------------
+void ThotDecoder::set_preproc(int user_id,
+                              unsigned int preprocId_par,
+                              int verbose/*=0*/)
+{
+      // Obtain index vector given user_id
+  size_t idx=get_vecidx_for_user_id(user_id);
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+
+  tdState.preprocId=preprocId_par;
+  if(tdPerUserVarsVec[idx].prePosProcessorPtr!=0)
+    delete tdPerUserVarsVec[idx].prePosProcessorPtr;
+  
+  switch(preprocId_par)
+  {
+    case DISABLE_PREPROC:
+      tdPerUserVarsVec[idx].prePosProcessorPtr=0;
+      if(verbose)
+        std::cerr<<"The Pre/pos-processing steps are disabled."<<std::endl;
+      break;
+#ifndef THOT_DISABLE_PREPROC_CODE
+    case XRCE_PREPROC1: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor1();
+      if(verbose)
+        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 1."<<std::endl;
+      break;
+    case XRCE_PREPROC2: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor2();
+      if(verbose)
+        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 2."<<std::endl;
+      break;
+    case XRCE_PREPROC3: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor3();
+      if(verbose)
+        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 3."<<std::endl;
+      break;
+    case XRCE_PREPROC4: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor4();
+      if(verbose)
+        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 4."<<std::endl;
+      break;
+    case EU_PREPROC1: tdPerUserVarsVec[idx].prePosProcessorPtr=new EU_PrePosProcessor1();
+      if(verbose)
+        std::cerr<<"Pre/pos-processing steps enabled for the EU corpus, version 1."<<std::endl;
+      break;
+    case EU_PREPROC2: tdPerUserVarsVec[idx].prePosProcessorPtr=new EU_PrePosProcessor2();
+      if(verbose)
+        std::cerr<<"Pre/pos-processing steps enabled for the EU corpus, version 2."<<std::endl;
+      break;
+#endif
+    default: tdPerUserVarsVec[idx].prePosProcessorPtr=0;
+      if(verbose)
+        std::cerr<<"Warning! invalid preprocId, the pre/pos-processing steps are disabled"<<std::endl;
+      break;
+  }
+}
+  
+//--------------------------
+void ThotDecoder::set_tmw(std::vector<float> tmwVec_par,
+                          int verbose/*=0*/)
+{
+      // Set translation model weights
+  tdCommonVars.smtModelPtr->setWeights(tmwVec_par);
+    
+  if(verbose)
+  {
+    tdCommonVars.smtModelPtr->printWeights(std::cerr);
+    std::cerr<<std::endl;
+  }
+}
+  
+//--------------------------
+void ThotDecoder::set_ecw(std::vector<float> ecwVec_par,
+                          int verbose/*=0*/)
+{
+      // Set error correcting model weights
+  tdCommonVars.ecModelPtr->setWeights(ecwVec_par);
+    
+  if(verbose)
+  {
+    tdCommonVars.ecModelPtr->printWeights(std::cerr);
+    std::cerr<<std::endl;
+  }
+}
+  
+//--------------------------
+void ThotDecoder::set_catw(int user_id,
+                           std::vector<float> catwVec_par,
+                           int verbose/*=0*/)
+{
+      // Obtain index vector given user_id
+  size_t idx=get_vecidx_for_user_id(user_id);
+  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+
+      // Set cat weights
+  tdPerUserVarsVec[idx].assistedTransPtr->setWeights(catwVec_par);
+    
+  if(verbose)
+  {
+    tdPerUserVarsVec[idx].assistedTransPtr->printWeights(std::cerr);
+    std::cerr<<std::endl;
+  }
+}
+
+//--------------------------
+bool ThotDecoder::set_wgh(const char *wgHandlerFileName,
+                          int verbose/*=0*/)
+{
+  if(verbose)
+    std::cerr<<"Loading worgraph handler information from file "<<wgHandlerFileName<<std::endl;
+  
+  bool ret=tdCommonVars.wgHandlerPtr->load(wgHandlerFileName);
+  
+  return ret;
+}
+
+//--------------------------
 bool ThotDecoder::instantiate_swm_info(const char* tmFilesPrefix,
                                        int /*verbose=0*/)
 {
@@ -1477,288 +1759,6 @@ bool ThotDecoder::sentPairVerCov(int user_id,
   if(!tdPerUserVarsVec[idx].smtModelPtr->isComplete(hyp))
     return THOT_OK;
   else return THOT_ERROR;
-}
-
-//--------------------------
-void ThotDecoder::setNonMonotonicity(int nomon,
-                                     int verbose/*=0*/)
-{
-  if(verbose)
-  {
-    std::cerr<<"Non-monotonicity is now set to "<<nomon<<std::endl;
-  }
-
-      // Set appropriate model parameters
-  tdCommonVars.smtModelPtr->set_U_par(nomon);
-}
-
-//--------------------------
-void ThotDecoder::set_W(float W_par,
-                        int verbose/*=0*/)
-{
-  if(verbose)
-  {
-    std::cerr<<"W parameter is set to "<<W_par<<std::endl;
-  }
-  tdCommonVars.smtModelPtr->set_W_par(W_par);
-}
-  
-
-//--------------------------
-void ThotDecoder::set_S(int user_id,
-                        unsigned int S_par,
-                        int verbose/*=0*/)
-{
-      // Obtain index vector given user_id
-  size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
-  if(verbose)
-  {
-    std::cerr<<"S parameter is set to "<<S_par<<std::endl;
-  }
-  tdPerUserVarsVec[idx].stackDecoderPtr->set_S_par(S_par);
-}
-  
-//--------------------------
-void ThotDecoder::set_A(unsigned int A_par,
-                        int verbose/*=0*/)
-{
-  if(verbose)
-  {
-    std::cerr<<"A parameter is set to "<<A_par<<std::endl;
-  }
-  tdCommonVars.smtModelPtr->set_A_par(A_par);
-}
-  
-//--------------------------
-void ThotDecoder::set_E(unsigned int E_par,
-                        int verbose/*=0*/)
-{
-  if(verbose)
-  {
-    std::cerr<<"E parameter is set to "<<E_par<<std::endl;
-  }
-  tdCommonVars.smtModelPtr->set_E_par(E_par);
-}
-
-//--------------------------
-void ThotDecoder::set_be(int user_id,
-                         int be_par,
-                         int verbose/*=0*/)
-{
-      // Obtain index vector given user_id
-  size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
-  if(verbose)
-  {
-    std::cerr<<"be parameter is set to "<<be_par<<std::endl;
-  }
-  tdPerUserVarsVec[idx].stackDecoderPtr->set_breadthFirst(!be_par);
-}
-
-//--------------------------
-bool ThotDecoder::set_G(int user_id,
-                        unsigned int G_par,
-                        int verbose/*=0*/)
-{
-      // Obtain index vector given user_id
-  size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
-  if(verbose)
-  {
-    std::cerr<<"G parameter is set to "<<G_par<<std::endl;
-  }
-  tdPerUserVarsVec[idx].stackDecoderPtr->set_G_par(G_par);
-
-  return THOT_OK;
-}
-
-//--------------------------
-void ThotDecoder::set_h(unsigned int h_par,
-                        int verbose/*=0*/)
-{
-  if(verbose)
-  {
-    std::cerr<<"h parameter is set to "<<h_par<<std::endl;
-  }
-      // Set heuristic
-  tdCommonVars.smtModelPtr->setHeuristic(h_par);
-}
-  
-//--------------------------
-bool ThotDecoder::set_np(int user_id,
-                         unsigned int np_par,
-                         int verbose/*=0*/)
-{
-      // Obtain index vector given user_id
-  size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
-  if(verbose)
-  {
-    std::cerr<<"np parameter is set to "<<np_par<<std::endl;
-  }
-      // Set np value
-  bool b;
-  if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
-  {
-    tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr->set_n(np_par);
-    b=THOT_OK;
-  }
-  else
-  {
-    if(verbose)
-      std::cerr<<"warning! np parameter cannot be applied to coupled translators."<<std::endl;
-    b=THOT_ERROR;
-  }
-
-  return b;  
-}
-  
-//--------------------------
-bool ThotDecoder::set_wgp(int user_id,
-                          float wgp_par,
-                          int verbose/*=0*/)
-{
-      // Check if ECM can be used to process word graphs
-  if(!tdCommonVars.curr_ecm_valid_for_wg)
-  {
-    std::cerr<<"Error: EC model is not valid for word-graphs"<<std::endl;
-    return THOT_ERROR;
-  }
-  
-      // Obtain index vector given user_id
-  size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
-  if(verbose)
-  {
-    std::cerr<<"wgp parameter is set to "<<wgp_par<<std::endl;
-  }
-      // Set wgp value
-  if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
-    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->set_wgp(wgp_par);
-  else
-  {
-    std::cerr<<"warning! wgp parameter cannot be applied to translators that do not use word-graphs."<<std::endl;
-  }
-
-  return THOT_OK;
-}
-
-//--------------------------
-void ThotDecoder::set_preproc(int user_id,
-                              unsigned int preprocId_par,
-                              int verbose/*=0*/)
-{
-      // Obtain index vector given user_id
-  size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
-  tdState.preprocId=preprocId_par;
-  if(tdPerUserVarsVec[idx].prePosProcessorPtr!=0)
-    delete tdPerUserVarsVec[idx].prePosProcessorPtr;
-  
-  switch(preprocId_par)
-  {
-    case DISABLE_PREPROC:
-      tdPerUserVarsVec[idx].prePosProcessorPtr=0;
-      if(verbose)
-        std::cerr<<"The Pre/pos-processing steps are disabled."<<std::endl;
-      break;
-#ifndef THOT_DISABLE_PREPROC_CODE
-    case XRCE_PREPROC1: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor1();
-      if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 1."<<std::endl;
-      break;
-    case XRCE_PREPROC2: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor2();
-      if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 2."<<std::endl;
-      break;
-    case XRCE_PREPROC3: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor3();
-      if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 3."<<std::endl;
-      break;
-    case XRCE_PREPROC4: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor4();
-      if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 4."<<std::endl;
-      break;
-    case EU_PREPROC1: tdPerUserVarsVec[idx].prePosProcessorPtr=new EU_PrePosProcessor1();
-      if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the EU corpus, version 1."<<std::endl;
-      break;
-    case EU_PREPROC2: tdPerUserVarsVec[idx].prePosProcessorPtr=new EU_PrePosProcessor2();
-      if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the EU corpus, version 2."<<std::endl;
-      break;
-#endif
-    default: tdPerUserVarsVec[idx].prePosProcessorPtr=0;
-      if(verbose)
-        std::cerr<<"Warning! invalid preprocId, the pre/pos-processing steps are disabled"<<std::endl;
-      break;
-  }
-}
-  
-//--------------------------
-void ThotDecoder::set_tmw(std::vector<float> tmwVec_par,
-                          int verbose/*=0*/)
-{
-      // Set translation model weights
-  tdCommonVars.smtModelPtr->setWeights(tmwVec_par);
-    
-  if(verbose)
-  {
-    tdCommonVars.smtModelPtr->printWeights(std::cerr);
-    std::cerr<<std::endl;
-  }
-}
-  
-//--------------------------
-void ThotDecoder::set_ecw(std::vector<float> ecwVec_par,
-                          int verbose/*=0*/)
-{
-      // Set error correcting model weights
-  tdCommonVars.ecModelPtr->setWeights(ecwVec_par);
-    
-  if(verbose)
-  {
-    tdCommonVars.ecModelPtr->printWeights(std::cerr);
-    std::cerr<<std::endl;
-  }
-}
-  
-//--------------------------
-void ThotDecoder::set_catw(int user_id,
-                           std::vector<float> catwVec_par,
-                           int verbose/*=0*/)
-{
-      // Obtain index vector given user_id
-  size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
-      // Set cat weights
-  tdPerUserVarsVec[idx].assistedTransPtr->setWeights(catwVec_par);
-    
-  if(verbose)
-  {
-    tdPerUserVarsVec[idx].assistedTransPtr->printWeights(std::cerr);
-    std::cerr<<std::endl;
-  }
-}
-
-//--------------------------
-bool ThotDecoder::set_wgh(const char *wgHandlerFileName,
-                          int verbose/*=0*/)
-{
-  if(verbose)
-    std::cerr<<"Loading worgraph handler information from file "<<wgHandlerFileName<<std::endl;
-  
-  bool ret=tdCommonVars.wgHandlerPtr->load(wgHandlerFileName);
-  
-  return ret;
 }
 
 //--------------------------
