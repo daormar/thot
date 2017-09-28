@@ -337,7 +337,7 @@ do
     AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
                       AC_MSG_RESULT(yes),
                       AC_MSG_RESULT(no)
-                      )],[cxx11_supported="yes"; AC_MSG_RESULT(yes)],[CXXFLAGS="${saved_cxxflags}", cxx11_supported="no"; AC_MSG_RESULT(no)])
+                      )],[cxx11_supported="yes"; AC_MSG_RESULT(yes)],[CXXFLAGS="${saved_cxxflags}"; cxx11_supported="no"; AC_MSG_RESULT(no)])
 done
 
 AM_CONDITIONAL([HAVE_CXX11_ENABLED], [test x${cxx11_supported} = xyes])
