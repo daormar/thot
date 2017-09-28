@@ -797,6 +797,9 @@ int ThotDecoder::initUserPars(int user_id,
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
+      // Wait until all non-atomic operations have finished
+  wait_on_non_atomic_op_cond();
+
       // Set S parameter
   set_S(user_id,tdup.S,verbose);
 
@@ -822,6 +825,9 @@ int ThotDecoder::initUserPars(int user_id,
 
       // Set cat weights
   set_catw(user_id,tdup.catWeightsVec,verbose);
+
+      // Unlock non_atomic_op_cond mutex
+  pthread_mutex_unlock(&non_atomic_op_mut);
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -2036,7 +2042,8 @@ std::string ThotDecoder::preprocStr(int user_id,
 
     result=tdPerUserVarsVec[idx].prePosProcessorPtr->preprocLine(str,tdState.caseconv,false);
   }
-  else result=str;
+  else
+    result=str;
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
@@ -2060,7 +2067,8 @@ std::string ThotDecoder::postprocStr(int user_id,
 
     result=tdPerUserVarsVec[idx].prePosProcessorPtr->postprocLine(str,tdState.caseconv);
   }
-  else result=str;
+  else
+    result=str;
 
   /////////// end of mutex 
   pthread_mutex_unlock(&atomic_op_mut);
