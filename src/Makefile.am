@@ -85,10 +85,12 @@ $(CPPUNIT) -ldl
 # sources
 common_src_h= thot_config.h
 
+if HAVE_CXX11_ENABLED
 hat_trie_h= hat_trie/array_growth_policy.h hat_trie/array_hash.h            \
 hat_trie/array_map.h hat_trie/array_set.h hat_trie/htrie_hash.h             \
 hat_trie/htrie_map.h hat_trie/htrie_set.h
 hat_trie_defs= 
+endif
 
 nlp_common_h= nlp_common/WordIndex.h nlp_common/WordAligMatrix.h	\
 nlp_common/uiPairHashF.h nlp_common/uiHashF.h nlp_common/TrieVecs.h	\
