@@ -255,7 +255,7 @@ class ThotDecoder
   bool set_wgh(const char *wgHandlerFileName,
                int verbose=0);
 
-      // Functions to initialize variables for each user
+      // Functions to handle variables for each user
   size_t get_vecidx_for_user_id(int user_id);
   int init_idx_data(size_t idx);
   void release_idx_data(size_t idx);

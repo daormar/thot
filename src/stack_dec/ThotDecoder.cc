@@ -150,18 +150,8 @@ void ThotDecoder::init_translator_legacy_impl(void)
     exit(THOT_ERROR);
   }
 
-  tdCommonVars.trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
-  if(tdCommonVars.trConstraintsPtr==NULL)
-  {
-    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
-    exit(THOT_ERROR);
-  }
-
       // Instantiate smt model
   tdCommonVars.smtModelPtr=new SmtModel();
-
-      // Link translation constraints
-  tdCommonVars.smtModelPtr->link_trans_constraints(tdCommonVars.trConstraintsPtr);
   
       // Link language model, phrase model and single word model if
       // appliable
@@ -247,18 +237,8 @@ void ThotDecoder::init_translator_feat_impl(void)
     exit(THOT_ERROR);
   }
 
-  tdCommonVars.trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
-  if(tdCommonVars.trConstraintsPtr==NULL)
-  {
-    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
-    exit(THOT_ERROR);
-  }
-
       // Instantiate smt model
   tdCommonVars.smtModelPtr=new SmtModel();
-
-      // Link translation constraints
-  tdCommonVars.smtModelPtr->link_trans_constraints(tdCommonVars.trConstraintsPtr);
   
       // Link features information if appliable 
   _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
@@ -1583,9 +1563,13 @@ bool ThotDecoder::translateSentence(int user_id,
                                     std::string& bestHypInfo,
                                     int verbose/*=0*/)
 {
-  pthread_mutex_lock(&atomic_op_mut);
-  /////////// begin of mutex 
+  // pthread_mutex_lock(&atomic_op_mut);
+  // /////////// begin of mutex 
 
+      // Increase non_atomic_ops_running variable
+  increase_non_atomic_ops_running();
+
+  
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
   if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
@@ -1621,8 +1605,11 @@ bool ThotDecoder::translateSentence(int user_id,
     }
   }
 
-      /////////// end of mutex 
-  pthread_mutex_unlock(&atomic_op_mut);
+      // Decrease non_atomic_ops_running variable
+  decrease_non_atomic_ops_running();
+
+  //     /////////// end of mutex 
+  // pthread_mutex_unlock(&atomic_op_mut);
 
   return THOT_OK;
 }
@@ -2193,7 +2180,18 @@ int ThotDecoder::init_idx_data(size_t idx)
       // cloned from the main one)
   BaseSmtModel<SmtModel::Hypothesis>* baseSmtModelPtr=tdCommonVars.smtModelPtr->clone();
   tdPerUserVarsVec[idx].smtModelPtr=dynamic_cast<BasePbTransModel<SmtModel::Hypothesis>* >(baseSmtModelPtr);
-  
+
+      // Create translation constraints object
+  tdPerUserVarsVec[idx].trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
+  if(tdPerUserVarsVec[idx].trConstraintsPtr==NULL)
+  {
+    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
+    return THOT_ERROR;
+  }
+
+      // Link translation constraints
+  tdPerUserVarsVec[idx].smtModelPtr->link_trans_constraints(tdPerUserVarsVec[idx].trConstraintsPtr);
+
       // Link statistical machine translation model
   int ret=tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
   if(ret==THOT_ERROR)
@@ -2316,7 +2314,6 @@ void ThotDecoder::increase_non_atomic_ops_running(void)
 {
   pthread_mutex_lock(&non_atomic_op_mut);
   /////////// begin of mutex
-      // Increase variable
   ++non_atomic_ops_running;
   /////////// end of mutex 
   pthread_mutex_unlock(&non_atomic_op_mut);
@@ -2359,6 +2356,7 @@ void ThotDecoder::release_idx_data(size_t idx)
     if(tdPerUserVarsVec[idx].prePosProcessorPtr!=NULL)
       delete tdPerUserVarsVec[idx].prePosProcessorPtr;
     tdPerUserVarsVec[idx].prePosProcessorPtr=NULL;
+    delete tdPerUserVarsVec[idx].trConstraintsPtr;
 
         // Register idx data as deleted
     idxDataReleased[idx]=true;
@@ -2780,7 +2778,6 @@ void ThotDecoder::destroy_feat_impl(void)
   delete tdCommonVars.smtModelPtr;
   delete tdCommonVars.ecModelPtr;
   delete tdCommonVars.llWeightUpdaterPtr;
-  delete tdCommonVars.trConstraintsPtr;
   delete tdCommonVars.scorerPtr;
   
       // Release class factory handler
@@ -2813,7 +2810,6 @@ void ThotDecoder::destroy_legacy_impl(void)
   delete tdCommonVars.smtModelPtr;
   delete tdCommonVars.ecModelPtr;
   delete tdCommonVars.llWeightUpdaterPtr;
-  delete tdCommonVars.trConstraintsPtr;
   delete tdCommonVars.scorerPtr;
 
       // Release class factory handler
