@@ -30,7 +30,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                          // variable (default value: SmtModel.h)
 #include "OnlineTrainingPars.h"
 #include "FeatureHandler.h"
-#include "BaseTranslationConstraints.h"
 #include "BaseLogLinWeightUpdater.h"
 #include "BaseScorer.h"
 #include "BasePbTransModel.h"
@@ -57,7 +56,6 @@ class ThotDecoderCommonVars
   bool curr_ecm_valid_for_wg;
   BaseScorer* scorerPtr;
   BaseLogLinWeightUpdater* llWeightUpdaterPtr;
-  BaseTranslationConstraints* trConstraintsPtr;
 
       // Variables related to feature-based implementation
   bool featureBasedImplEnabled;
