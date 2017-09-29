@@ -2119,6 +2119,12 @@ void ThotDecoder::addStrToPrefAux(size_t idx,
         // Enable best score pruning
     tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
   }
+
+      // Decrease non_atomic_ops_running variable
+  decrease_non_atomic_ops_running();
+
+  /////////// end of user mutex 
+  pthread_mutex_unlock(&per_user_mut[idx]);
 }
 
 //--------------------------
