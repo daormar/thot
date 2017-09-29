@@ -303,6 +303,199 @@ void ThotDecoder::release_user_data(int user_id)
 }
 
 //--------------------------
+int ThotDecoder::init_idx_data(size_t idx)
+{    
+      // Create a translator instance
+  tdPerUserVarsVec[idx].stackDecoderPtr=tdCommonVars.dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseStackDecoderInitPars);
+  if(tdPerUserVarsVec[idx].stackDecoderPtr==NULL)
+  {
+    std::cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<std::endl;
+    return THOT_ERROR;
+  }
+
+      // Set breadthFirst flag
+  tdPerUserVarsVec[idx].stackDecoderPtr->set_breadthFirst(false);
+
+      // Create statistical machine translation model instance (it is
+      // cloned from the main one)
+  BaseSmtModel<SmtModel::Hypothesis>* baseSmtModelPtr=tdCommonVars.smtModelPtr->clone();
+  tdPerUserVarsVec[idx].smtModelPtr=dynamic_cast<BasePbTransModel<SmtModel::Hypothesis>* >(baseSmtModelPtr);
+
+      // Create translation constraints object
+  tdPerUserVarsVec[idx].trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
+  if(tdPerUserVarsVec[idx].trConstraintsPtr==NULL)
+  {
+    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
+    return THOT_ERROR;
+  }
+
+      // Link translation constraints
+  tdPerUserVarsVec[idx].smtModelPtr->link_trans_constraints(tdPerUserVarsVec[idx].trConstraintsPtr);
+
+      // Link statistical machine translation model
+  int ret=tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
+  if(ret==THOT_ERROR)
+  {
+    std::cerr<<"Error while linking smt model to decoder, revise master.ini file"<<std::endl;
+    return THOT_ERROR;
+  }
+
+      // Enable best score pruning
+  tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
+
+      // Determine if the translator incorporates hypotheses recombination
+  tdPerUserVarsVec[idx].stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<SmtModel>*>(tdPerUserVarsVec[idx].stackDecoderPtr);
+  
+      // Create error correcting model for uncoupled cat instance
+  tdPerUserVarsVec[idx].ecModelForNbUcatPtr=tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatInitPars);
+  if(tdPerUserVarsVec[idx].ecModelForNbUcatPtr==NULL)
+  {
+    std::cerr<<"Error: BaseEcModelForNbUcat pointer could not be instantiated"<<std::endl;
+    return THOT_ERROR;
+  }
+  
+      // Link ecm for ucat with ecm
+  tdPerUserVarsVec[idx].ecModelForNbUcatPtr->link_ecm(tdCommonVars.ecModelPtr);
+
+      // Create assisted translator instance
+  tdPerUserVarsVec[idx].assistedTransPtr=tdCommonVars.dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseAssistedTransInitPars);
+  if(tdPerUserVarsVec[idx].assistedTransPtr==NULL)
+  {
+    std::cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<std::endl;
+    return THOT_ERROR;
+  }
+  
+      // Link translator with the assisted translator
+  ret=tdPerUserVarsVec[idx].assistedTransPtr->link_stack_trans(tdPerUserVarsVec[idx].stackDecoderPtr);
+
+      // Check if assistedTransPtr points to an uncoupled assisted
+      // translator
+  tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr=dynamic_cast<_nbUncoupledAssistedTrans<SmtModel>*>(tdPerUserVarsVec[idx].assistedTransPtr);
+  if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
+  {
+        // Execute specific actions for uncoupled assisted translators
+      
+        // Link error correcting model with the assisted translator if it
+        // is an uncoupled tranlator
+    tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr->link_cat_ec_model(tdPerUserVarsVec[idx].ecModelForNbUcatPtr);
+      
+        // Set the default size of n-best translations list used in
+        // uncoupled assisted translation
+    tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr->set_n(TD_USER_NP_DEFAULT);
+  }
+
+      // Check if assistedTransPtr points to an uncoupled assisted
+      // translator based on word-graphs
+  if(tdCommonVars.curr_ecm_valid_for_wg)
+  {
+        // Create word-graph processor instance
+    tdPerUserVarsVec[idx].wgpPtr=tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpInitPars);
+    if(tdPerUserVarsVec[idx].wgpPtr==NULL)
+    {
+      std::cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<std::endl;
+      return THOT_ERROR;
+    }
+    
+    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<SmtModel>*>(tdPerUserVarsVec[idx].assistedTransPtr);
+    if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
+    {
+          // Execute specific actions for uncoupled assisted translators
+          // based on word-graphs
+      
+          // Link ecm for word-graphs to word-graph processor
+      tdPerUserVarsVec[idx].wgpPtr->link_ecm_wg(tdCommonVars.ecModelPtr);
+      
+          // Link word-graph processor to uncoupled assisted translator
+      tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->link_wgp(tdPerUserVarsVec[idx].wgpPtr);
+
+          // Link word-graph handler to uncoupled assisted translator
+      tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->link_wgh(tdCommonVars.wgHandlerPtr);
+
+          // Set the default word-graph pruning threshold used in coupled
+          // assisted translation
+      tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->set_wgp(TD_USER_WGP_DEFAULT);
+    }
+  }
+      // Initialize prePosProcessorPtr for idx
+  tdPerUserVarsVec[idx].prePosProcessorPtr=NULL;
+
+  return THOT_OK;
+}
+
+//--------------------------
+void ThotDecoder::release_idx_data(size_t idx)
+{
+      // Check if data is already released
+  if(!idxDataReleased[idx])
+  {
+    delete tdPerUserVarsVec[idx].smtModelPtr;
+    delete tdPerUserVarsVec[idx].stackDecoderPtr;
+    delete tdPerUserVarsVec[idx].ecModelForNbUcatPtr;
+    if(tdCommonVars.curr_ecm_valid_for_wg)
+    {
+      delete tdPerUserVarsVec[idx].wgpPtr;
+    }
+    delete tdPerUserVarsVec[idx].assistedTransPtr;
+
+    if(tdPerUserVarsVec[idx].prePosProcessorPtr!=NULL)
+      delete tdPerUserVarsVec[idx].prePosProcessorPtr;
+    tdPerUserVarsVec[idx].prePosProcessorPtr=NULL;
+    delete tdPerUserVarsVec[idx].trConstraintsPtr;
+
+        // Register idx data as deleted
+    idxDataReleased[idx]=true;
+  }
+}
+
+//--------------------------
+size_t ThotDecoder::get_vecidx_for_user_id(int user_id)
+{
+  pthread_mutex_lock(&user_id_to_idx_mut);
+  /////////// begin of mutex 
+  size_t idx;
+  std::map<int,size_t>::iterator mapIter;
+  
+      // Obtain idx
+  mapIter=userIdToIdx.find(user_id);
+  if(mapIter!=userIdToIdx.end())
+  {
+    idx=mapIter->second;
+  }
+  else
+  {
+    idx=tdPerUserVarsVec.size();
+    userIdToIdx[user_id]=idx;
+  }
+
+      // Initialize per user variables
+  while(tdPerUserVarsVec.size()<=idx)
+  {
+    idxDataReleased.push_back(false);
+    ThotDecoderPerUserVars tdPerUserVars;
+    tdPerUserVarsVec.push_back(tdPerUserVars);
+    int ret=init_idx_data(tdPerUserVarsVec.size()-1);
+    if(ret==THOT_ERROR)
+      exit(1);
+    
+    std::string totalPrefix;
+    totalPrefixVec.push_back(totalPrefix);
+  }
+
+      // Initialize per user mutexes
+  while(per_user_mut.size()<=idx)
+  {
+    pthread_mutex_t user_mut;
+    pthread_mutex_init(&user_mut,NULL);
+    per_user_mut.push_back(user_mut);
+  }
+  
+  /////////// end of mutex 
+  pthread_mutex_unlock(&user_id_to_idx_mut);
+   
+  return idx;
+}
+
+//--------------------------
 int ThotDecoder::initUsingCfgFile(std::string cfgFile,
                                   ThotDecoderUserPars& tdup,
                                   int verbose)
@@ -1563,16 +1756,15 @@ bool ThotDecoder::translateSentence(int user_id,
                                     std::string& bestHypInfo,
                                     int verbose/*=0*/)
 {
-  // pthread_mutex_lock(&atomic_op_mut);
-  // /////////// begin of mutex 
-
       // Increase non_atomic_ops_running variable
   increase_non_atomic_ops_running();
-
   
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
   if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+
+  pthread_mutex_lock(&per_user_mut[idx]);
+  /////////// begin of user mutex
 
   if(verbose)
   {
@@ -1605,11 +1797,11 @@ bool ThotDecoder::translateSentence(int user_id,
     }
   }
 
+  /////////// end of user mutex 
+  pthread_mutex_unlock(&per_user_mut[idx]);
+
       // Decrease non_atomic_ops_running variable
   decrease_non_atomic_ops_running();
-
-  //     /////////// end of mutex 
-  // pthread_mutex_unlock(&atomic_op_mut);
 
   return THOT_OK;
 }
@@ -2163,126 +2355,6 @@ int ThotDecoder::printModelWeights(void)
 }
 
 //--------------------------
-int ThotDecoder::init_idx_data(size_t idx)
-{    
-      // Create a translator instance
-  tdPerUserVarsVec[idx].stackDecoderPtr=tdCommonVars.dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseStackDecoderInitPars);
-  if(tdPerUserVarsVec[idx].stackDecoderPtr==NULL)
-  {
-    std::cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<std::endl;
-    return THOT_ERROR;
-  }
-
-      // Set breadthFirst flag
-  tdPerUserVarsVec[idx].stackDecoderPtr->set_breadthFirst(false);
-
-      // Create statistical machine translation model instance (it is
-      // cloned from the main one)
-  BaseSmtModel<SmtModel::Hypothesis>* baseSmtModelPtr=tdCommonVars.smtModelPtr->clone();
-  tdPerUserVarsVec[idx].smtModelPtr=dynamic_cast<BasePbTransModel<SmtModel::Hypothesis>* >(baseSmtModelPtr);
-
-      // Create translation constraints object
-  tdPerUserVarsVec[idx].trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
-  if(tdPerUserVarsVec[idx].trConstraintsPtr==NULL)
-  {
-    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
-    return THOT_ERROR;
-  }
-
-      // Link translation constraints
-  tdPerUserVarsVec[idx].smtModelPtr->link_trans_constraints(tdPerUserVarsVec[idx].trConstraintsPtr);
-
-      // Link statistical machine translation model
-  int ret=tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
-  if(ret==THOT_ERROR)
-  {
-    std::cerr<<"Error while linking smt model to decoder, revise master.ini file"<<std::endl;
-    return THOT_ERROR;
-  }
-
-      // Enable best score pruning
-  tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
-
-      // Determine if the translator incorporates hypotheses recombination
-  tdPerUserVarsVec[idx].stackDecoderRecPtr=dynamic_cast<_stackDecoderRec<SmtModel>*>(tdPerUserVarsVec[idx].stackDecoderPtr);
-  
-      // Create error correcting model for uncoupled cat instance
-  tdPerUserVarsVec[idx].ecModelForNbUcatPtr=tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatInitPars);
-  if(tdPerUserVarsVec[idx].ecModelForNbUcatPtr==NULL)
-  {
-    std::cerr<<"Error: BaseEcModelForNbUcat pointer could not be instantiated"<<std::endl;
-    return THOT_ERROR;
-  }
-  
-      // Link ecm for ucat with ecm
-  tdPerUserVarsVec[idx].ecModelForNbUcatPtr->link_ecm(tdCommonVars.ecModelPtr);
-
-      // Create assisted translator instance
-  tdPerUserVarsVec[idx].assistedTransPtr=tdCommonVars.dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseAssistedTransInitPars);
-  if(tdPerUserVarsVec[idx].assistedTransPtr==NULL)
-  {
-    std::cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<std::endl;
-    return THOT_ERROR;
-  }
-  
-      // Link translator with the assisted translator
-  ret=tdPerUserVarsVec[idx].assistedTransPtr->link_stack_trans(tdPerUserVarsVec[idx].stackDecoderPtr);
-
-      // Check if assistedTransPtr points to an uncoupled assisted
-      // translator
-  tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr=dynamic_cast<_nbUncoupledAssistedTrans<SmtModel>*>(tdPerUserVarsVec[idx].assistedTransPtr);
-  if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
-  {
-        // Execute specific actions for uncoupled assisted translators
-      
-        // Link error correcting model with the assisted translator if it
-        // is an uncoupled tranlator
-    tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr->link_cat_ec_model(tdPerUserVarsVec[idx].ecModelForNbUcatPtr);
-      
-        // Set the default size of n-best translations list used in
-        // uncoupled assisted translation
-    tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr->set_n(TD_USER_NP_DEFAULT);
-  }
-
-      // Check if assistedTransPtr points to an uncoupled assisted
-      // translator based on word-graphs
-  if(tdCommonVars.curr_ecm_valid_for_wg)
-  {
-        // Create word-graph processor instance
-    tdPerUserVarsVec[idx].wgpPtr=tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpInitPars);
-    if(tdPerUserVarsVec[idx].wgpPtr==NULL)
-    {
-      std::cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<std::endl;
-      return THOT_ERROR;
-    }
-    
-    tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<SmtModel>*>(tdPerUserVarsVec[idx].assistedTransPtr);
-    if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
-    {
-          // Execute specific actions for uncoupled assisted translators
-          // based on word-graphs
-      
-          // Link ecm for word-graphs to word-graph processor
-      tdPerUserVarsVec[idx].wgpPtr->link_ecm_wg(tdCommonVars.ecModelPtr);
-      
-          // Link word-graph processor to uncoupled assisted translator
-      tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->link_wgp(tdPerUserVarsVec[idx].wgpPtr);
-
-          // Link word-graph handler to uncoupled assisted translator
-      tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->link_wgh(tdCommonVars.wgHandlerPtr);
-
-          // Set the default word-graph pruning threshold used in coupled
-          // assisted translation
-      tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->set_wgp(TD_USER_WGP_DEFAULT);
-    }
-  }
-      // Initialize prePosProcessorPtr for idx
-  tdPerUserVarsVec[idx].prePosProcessorPtr=NULL;
-
-  return THOT_OK;
-}
-
-//--------------------------
 void ThotDecoder::wait_on_non_atomic_op_cond(void)
 {
   pthread_mutex_lock(&non_atomic_op_mut);
@@ -2336,71 +2408,6 @@ void ThotDecoder::decrease_non_atomic_ops_running(void)
   
   /////////// end of mutex 
   pthread_mutex_unlock(&non_atomic_op_mut);
-}
-
-//--------------------------
-void ThotDecoder::release_idx_data(size_t idx)
-{
-      // Check if data is already released
-  if(!idxDataReleased[idx])
-  {
-    delete tdPerUserVarsVec[idx].smtModelPtr;
-    delete tdPerUserVarsVec[idx].stackDecoderPtr;
-    delete tdPerUserVarsVec[idx].ecModelForNbUcatPtr;
-    if(tdCommonVars.curr_ecm_valid_for_wg)
-    {
-      delete tdPerUserVarsVec[idx].wgpPtr;
-    }
-    delete tdPerUserVarsVec[idx].assistedTransPtr;
-
-    if(tdPerUserVarsVec[idx].prePosProcessorPtr!=NULL)
-      delete tdPerUserVarsVec[idx].prePosProcessorPtr;
-    tdPerUserVarsVec[idx].prePosProcessorPtr=NULL;
-    delete tdPerUserVarsVec[idx].trConstraintsPtr;
-
-        // Register idx data as deleted
-    idxDataReleased[idx]=true;
-  }
-}
-
-//--------------------------
-size_t ThotDecoder::get_vecidx_for_user_id(int user_id)
-{
-  pthread_mutex_lock(&user_id_to_idx_mut);
-  /////////// begin of mutex 
-  size_t idx;
-  std::map<int,size_t>::iterator mapIter;
-  
-      // Obtain idx
-  mapIter=userIdToIdx.find(user_id);
-  if(mapIter!=userIdToIdx.end())
-  {
-    idx=mapIter->second;
-  }
-  else
-  {
-    idx=tdPerUserVarsVec.size();
-    userIdToIdx[user_id]=idx;
-  }
-
-      // Initialize vectors
-  while(tdPerUserVarsVec.size()<=idx)
-  {
-    idxDataReleased.push_back(false);
-    ThotDecoderPerUserVars tdPerUserVars;
-    tdPerUserVarsVec.push_back(tdPerUserVars);
-    int ret=init_idx_data(tdPerUserVarsVec.size()-1);
-    if(ret==THOT_ERROR)
-      exit(1);
-    
-    std::string totalPrefix;
-    totalPrefixVec.push_back(totalPrefix);
-  }
-  
-  /////////// end of mutex 
-  pthread_mutex_unlock(&user_id_to_idx_mut);
-   
-  return idx;
 }
 
 //--------------------------
@@ -2789,7 +2796,8 @@ void ThotDecoder::destroy_feat_impl(void)
   pthread_mutex_destroy(&non_atomic_op_mut);
   pthread_mutex_destroy(&preproc_mut);
   pthread_cond_destroy(&non_atomic_op_cond);
-
+  for(unsigned int i=0;i<per_user_mut.size();++i)
+    pthread_mutex_destroy(&per_user_mut[i]);
 }
 
 //--------------------------
@@ -2821,6 +2829,8 @@ void ThotDecoder::destroy_legacy_impl(void)
   pthread_mutex_destroy(&non_atomic_op_mut);
   pthread_mutex_destroy(&preproc_mut);
   pthread_cond_destroy(&non_atomic_op_cond);
+  for(unsigned int i=0;i<per_user_mut.size();++i)
+    pthread_mutex_destroy(&per_user_mut[i]);
 }
 
 //--------------------------
