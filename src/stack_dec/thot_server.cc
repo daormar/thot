@@ -239,13 +239,6 @@ int start_server(void)
       std::cerr<<"accept error"<<std::endl;
       continue;
     }
-
-        // Increase variable with number of threads being executed
-        // NOTE: cannot be done inside process_request function.
-        // Otherwise, when waiting for threads to finish during shutting
-        // down, some threads may become blocked
-    increase_num_threads_var();
-
         // Prepare request data (memory is released by thread)
     request_data* rdata_ptr=new request_data;
     rdata_ptr->sockd=new_fd;
@@ -261,6 +254,16 @@ int start_server(void)
     if(thread_err>0)
     {
       std::cerr<<"Warning: call to pthread_create failed"<<std::endl;
+    }
+    else
+    {
+          // Thread created successfully
+
+          // Increase variable with number of threads being executed
+          // NOTE: this cannot be done inside process_request function.
+          // Otherwise, when waiting for threads to finish during shutting
+          // down, some threads may become blocked
+      increase_num_threads_var();
     }
   }
 
