@@ -2018,26 +2018,15 @@ void ThotDecoder::addStrToPref(int user_id,
                                std::string &catResult,
                                int verbose/*=0*/)
 {
-// NOTE: this operation can only be executed as a non-atomic operation
-// for wordgraph-based assisted translators. In addition to this, the
-// pre/pos-processing code is not reentrant (it is internally based on
-// non-reentrant flex code), because of this, a specific mutex has been
-// added.
+      // Increase non_atomic_ops_running variable
+  increase_non_atomic_ops_running();
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
   if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
-  if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
-  {  
-    pthread_mutex_lock(&atomic_op_mut);
-        /////////// begin of mutex
-  }
-  else
-  {
-        // Increase non_atomic_ops_running variable
-    increase_non_atomic_ops_running();
-  }
+  pthread_mutex_lock(&per_user_mut[idx]);
+  /////////// begin of user mutex
   
   if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
   {
@@ -2109,16 +2098,11 @@ void ThotDecoder::addStrToPref(int user_id,
     tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
   }
 
-  if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
-  {  
-        /////////// end of mutex 
-    pthread_mutex_unlock(&atomic_op_mut);
-  }
-  else
-  {
-        // Decrease non_atomic_ops_running variable
-    decrease_non_atomic_ops_running();
-  }
+      // Decrease non_atomic_ops_running variable
+  decrease_non_atomic_ops_running();
+
+  /////////// end of user mutex 
+  pthread_mutex_unlock(&per_user_mut[idx]);
 }
 
 //--------------------------
