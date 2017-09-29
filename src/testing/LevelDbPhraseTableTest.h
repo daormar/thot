@@ -89,6 +89,7 @@ class LevelDbPhraseTableTest: public _phraseTableTest
   CPPUNIT_TEST( testSubkeys );
   CPPUNIT_TEST( test32bitRange );
   CPPUNIT_TEST( testByteMax );
+  CPPUNIT_TEST( testByteMin );
   CPPUNIT_TEST_SUITE_END();
 
  private:

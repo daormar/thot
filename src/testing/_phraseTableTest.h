@@ -92,6 +92,7 @@ class _phraseTableTest: public CppUnit::TestFixture
         void testSubkeys();
         void test32bitRange();
         void testByteMax();
+        void testByteMin();
 };
 
 #endif

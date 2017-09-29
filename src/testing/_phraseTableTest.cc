@@ -515,7 +515,7 @@ void _phraseTableTest::test32bitRange()
 void _phraseTableTest::testByteMax()
 {
   /* TEST:
-     Check if items with maximum byte value are added correctly
+     Check if items with maximum byte values are added correctly
   */
   tab->clear();
 
@@ -528,4 +528,43 @@ void _phraseTableTest::testByteMax()
   tab->incrCountsOfEntry(s, t, Count(1));
   CPPUNIT_ASSERT_EQUAL(3, (int) tab->size());
   CPPUNIT_ASSERT_EQUAL(1, (int) tab->cSrcTrg(s, t).get_c_st());
+}
+
+//---------------------------------------
+void _phraseTableTest::testByteMin()
+{
+  /* TEST:
+     Check if items with minimum byte values are added correctly
+  */
+  tab->clear();
+
+  std::vector<WordIndex> s1, s2, t1, t2;
+  // s1
+  s1.push_back(4);
+  // s2
+  s2.push_back(0);
+  s2.push_back(1);
+  s2.push_back(0);
+  // t1
+  t1.push_back(0);
+  t1.push_back(3);
+  // t2
+  t2.push_back(0);
+  t2.push_back(3);
+  t2.push_back(0);
+
+  // Insert data and check their correctness
+  tab->incrCountsOfEntry(s1, t1, Count(1));
+  tab->incrCountsOfEntry(s2, t2, Count(1));
+  CPPUNIT_ASSERT_EQUAL(6, (int) tab->size());
+  CPPUNIT_ASSERT_EQUAL(1, (int) tab->cSrcTrg(s2, t2).get_c_st());
+
+  bool found;
+  BasePhraseTable::SrcTableNode node;
+  found = tab->getEntriesForTarget(t2, node);
+
+  CPPUNIT_ASSERT( found );
+  CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
+  CPPUNIT_ASSERT_EQUAL(1, (int) node[s2].first.get_c_s());
+  CPPUNIT_ASSERT_EQUAL(1, (int) node[s2].second.get_c_s());
 }
