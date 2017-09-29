@@ -176,7 +176,8 @@ class ThotDecoder
   pthread_mutex_t preproc_mut;
   pthread_cond_t non_atomic_op_cond;
   unsigned int non_atomic_ops_running;
-
+  std::vector<pthread_mutex_t> per_user_mut;
+  
       // Mutex- and condition-related functions
   void wait_on_non_atomic_op_cond(void);
   void increase_non_atomic_ops_running(void);
