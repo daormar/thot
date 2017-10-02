@@ -37,10 +37,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#ifndef THOT_HAVE_CXX11
-#  include "StlPhraseTable.h"
-#else
+#ifdef THOT_HAVE_CXX11
 #  include "HatTriePhraseTable.h"
+#else
+#  include "StlPhraseTable.h"
 #endif
 
 #include "PhraseTable.h"
@@ -68,10 +68,10 @@ class IncrPhraseModel: public _incrPhraseModel
     IncrPhraseModel(void):_incrPhraseModel()
       {
 
-#ifndef THOT_HAVE_CXX11
-        basePhraseTablePtr = new StlPhraseTable;
-#else
+#ifdef THOT_HAVE_CXX11
         basePhraseTablePtr = new HatTriePhraseTable;
+#else
+        basePhraseTablePtr = new StlPhraseTable;
 #endif
 
       }
