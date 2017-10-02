@@ -149,7 +149,7 @@ void StlPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
     d[s_key] = make_pair(0, 0);
     d[t_key] = make_pair(0, 0);
     d[st_key] = make_pair(0, 0);
-  
+
     for(StlPhraseTable::const_iterator iter = tabStl->begin();
         iter != tabStl->end();
         found = (iter++))

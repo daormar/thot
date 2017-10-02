@@ -18,24 +18,25 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: StlPhraseTableTest                                       */
+/* Module: HatTriePhraseTableTest                                   */
 /*                                                                  */
-/* Prototypes file: StlPhraseTableTest.h                            */
+/* Prototypes file: HatTriePhraseTableTest.h                        */
 /*                                                                  */
-/* Description: Declares the StlPhraseTableTest class implementing  */
-/*               unit tests for the StlPhraseTable class.           */
+/* Description: Declares the HatTriePhraseTableTest class           */
+/*              implementing unit tests for the HatTriePhraseTable  */
+/*              class.                                              */
 /*                                                                  */
 /********************************************************************/
 
 /**
- * @file StlPhraseTableTest.h
+ * @file HatTriePhraseTableTest.h
  *
- * @brief Declares the StlPhraseTableTest class implementing unit tests
- * for the StlPhraseTable class.
+ * @brief Declares the HatTriePhraseTableTest class implementing
+ * unit tests for the HatTriePhraseTable class.
  */
 
-#ifndef _StlPhraseTableTest_h
-#define _StlPhraseTableTest_h
+#ifndef _HatTriePhraseTableTest_h
+#define _HatTriePhraseTableTest_h
 
 //--------------- Include files --------------------------------------
 
@@ -46,7 +47,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_phraseTableTest.h"
-#include "StlPhraseTable.h"
+#include "HatTriePhraseTable.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -54,15 +55,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- StlPhraseTable template class
+//--------------- HatTriePhraseTable template class
 
 /**
- * @brief Class implementing tests for StlPhraseTable.
+ * @brief Class implementing tests for HatTriePhraseTable.
  */
 
-class StlPhraseTableTest: public _phraseTableTest
+class HatTriePhraseTableTest: public _phraseTableTest
 {
-    CPPUNIT_TEST_SUITE( StlPhraseTableTest );
+    CPPUNIT_TEST_SUITE( HatTriePhraseTableTest );
     CPPUNIT_TEST( testAddTableEntry );
     CPPUNIT_TEST( testIncCountsOfEntry );
     CPPUNIT_TEST( testStoreAndRestore );
@@ -87,7 +88,7 @@ class StlPhraseTableTest: public _phraseTableTest
     CPPUNIT_TEST_SUITE_END();
 
     private:
-        StlPhraseTable* tabStl;  // Used for avoiding casting - should point on the same object like tab in parent class
+        HatTriePhraseTable* tabHatTrie;  // Used for avoiding casting - should point on the same object like tab in parent class
 
     public:
         void setUp();
@@ -99,4 +100,4 @@ class StlPhraseTableTest: public _phraseTableTest
         void testIteratorsOperatorsEqualNotEqual();
 };
 
-#endif 
+#endif

@@ -82,12 +82,14 @@ class LevelDbPhraseTableTest: public _phraseTableTest
   //CPPUNIT_TEST( testPTrgGivenSrc );  // Not implemented yet functionality for LevelDB
   CPPUNIT_TEST( testIteratorsOperatorsPlusPlusStar );
   CPPUNIT_TEST( testIteratorsOperatorsEqualNotEqual );
+  CPPUNIT_TEST( testAddingSameSrcAndTrg );
   CPPUNIT_TEST( testSize );
   CPPUNIT_TEST( testLoadingLevelDb );
   CPPUNIT_TEST( testLoadedDataCorrectness );
   CPPUNIT_TEST( testSubkeys );
   CPPUNIT_TEST( test32bitRange );
   CPPUNIT_TEST( testByteMax );
+  CPPUNIT_TEST( testByteMin );
   CPPUNIT_TEST_SUITE_END();
 
  private:

@@ -18,16 +18,21 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: StlPhraseTable                                           */
+/* Module: HatTriePhraseTable                                       */
 /*                                                                  */
-/* Prototype file: StlPhraseTable                                   */
+/* Prototype file: HatTriePhraseTable                               */
 /*                                                                  */
 /* Description: Implements a bilingual phrase table.                */
 /*                                                                  */
 /********************************************************************/
 
-#ifndef _StlPhraseTable
-#define _StlPhraseTable
+#ifndef _HatTriePhraseTable
+#define _HatTriePhraseTable
+
+#define WORD_INDEX_MODULO_BASE 254
+// Increase this parameter if you have more word in dictionary than
+// WORD_INDEX_MODULO_BASE ^ WORD_INDEX_MODULO_BYTES (by default 254^3)
+#define WORD_INDEX_MODULO_BYTES 3
 
 //--------------- Include files --------------------------------------
 
@@ -36,6 +41,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "BasePhraseTable.h"
+#include "hat_trie/htrie_map.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -49,9 +55,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Classes --------------------------------------------
 
 
-//--------------- StlPhraseTable class
+//--------------- HatTriePhraseTable class
 
-class StlPhraseTable: public BasePhraseTable
+class HatTriePhraseTable: public BasePhraseTable
 {
     public:
 
@@ -62,44 +68,14 @@ class StlPhraseTable: public BasePhraseTable
         typedef std::map<std::vector<WordIndex>, PhrasePairInfo> SrcTableNode;
         typedef std::map<std::vector<WordIndex>, PhrasePairInfo> TrgTableNode;
 
-            // Data structure for source phrases
-        typedef std::map<std::vector<WordIndex>, Count> SrcPhraseInfo;
-            // Data structure for target phrases
-        typedef std::map<std::vector<WordIndex>, Count> TrgPhraseInfo;
+            // Data structure for storing phrase counts
+        typedef tsl::htrie_map<char, Count> PhraseTable;
 
             // Returned result types by iterator
-        typedef std::pair<std::vector<WordIndex>, std::vector<WordIndex> > PhraseInfoElementKey;
-        typedef std::pair<PhraseInfoElementKey, int> PhraseInfoElement;
-
-            // Define source-target data structure and its elements
-        typedef pair<SrcPhraseInfo::iterator, TrgPhraseInfo::iterator> SrcTrgKey;
-
-        struct SrcTrgKeyComparator
-        {
-            /* Implements comparator for keys in (s, t) data structure.
-               The comparator first checks target phrase and the source
-               phrase during detrmining the order. */
-
-            bool operator()(const SrcTrgKey &left, const SrcTrgKey& right)const
-            {
-                /* Compare at the beginning trg phrase and then src phrase
-                   as looking for src phrases for give trg is more common
-                   operation. */
-                if (left.second->first == right.second->first)
-                {
-                    return left.first->first < right.first->first;
-                }
-                else
-                {
-                    return left.second->first < right.second->first;
-                }
-            }
-        };
-
-        typedef std::map<SrcTrgKey, Count, SrcTrgKeyComparator> SrcTrgPhraseInfo;
+        typedef std::pair<std::vector<WordIndex>, Count> PhraseInfoElement;
 
             // Constructor
-        StlPhraseTable(void);
+        HatTriePhraseTable(void);
 
             // Abstract function definitions
         virtual void addTableEntry(const std::vector<WordIndex>& s,
@@ -159,8 +135,15 @@ class StlPhraseTable: public BasePhraseTable
         virtual size_t size(void);
         virtual void clear(void);
 
+        // Get keys
+        std::vector<WordIndex> getSrc(const std::vector<WordIndex> &s);
+        std::vector<WordIndex> getSrcTrg(const std::vector<WordIndex> &s,
+                                         const std::vector<WordIndex> &t);
+        std::vector<WordIndex> getTrgSrc(const std::vector<WordIndex> &s,
+                                         const std::vector<WordIndex> &t);
+
             // Destructor
-        virtual ~StlPhraseTable();
+        virtual ~HatTriePhraseTable();
 
             // const_iterator
         class const_iterator;
@@ -168,45 +151,33 @@ class StlPhraseTable: public BasePhraseTable
         class const_iterator
         {
             protected:
-                const StlPhraseTable* ptPtr;
-                SrcPhraseInfo::const_iterator srcIter;
-                TrgPhraseInfo::const_iterator trgIter;
-                SrcTrgPhraseInfo::const_iterator srcTrgIter;
+                const HatTriePhraseTable* ptPtr;
+                PhraseTable::const_iterator trgIter;
 
-                StlPhraseTable::PhraseInfoElement dataItem;
+                HatTriePhraseTable::PhraseInfoElement dataItem;
 
             public:
                 const_iterator(void) { ptPtr = NULL; }
-                const_iterator(const StlPhraseTable* _ptPtr,
-                               SrcPhraseInfo::const_iterator _srcIter,
-                               TrgPhraseInfo::const_iterator _trgIter,
-                               SrcTrgPhraseInfo::const_iterator _srcTrgIter
-                            ) : ptPtr(_ptPtr), srcIter(_srcIter), trgIter(_trgIter), srcTrgIter(_srcTrgIter) {}
+                const_iterator(const HatTriePhraseTable* _ptPtr,
+                               PhraseTable::const_iterator _trgIter
+                            ) : ptPtr(_ptPtr), trgIter(_trgIter) {}
                 bool operator++(void);  //prefix
                 bool operator++(int);  //postfix
                 int operator==(const const_iterator& right);
                 int operator!=(const const_iterator& right);
-                StlPhraseTable::PhraseInfoElement operator*(void);
-                const StlPhraseTable::PhraseInfoElement* operator->(void);
+                HatTriePhraseTable::PhraseInfoElement operator*(void);
+                const HatTriePhraseTable::PhraseInfoElement* operator->(void);
         };
 
             // const_iterator related functions
-        StlPhraseTable::const_iterator begin(void) const;
-        StlPhraseTable::const_iterator end(void) const;
-
-            // const_iterator related functions for targets
-        StlPhraseTable::TrgPhraseInfo::const_iterator beginTrg(void) const;
-        StlPhraseTable::TrgPhraseInfo::const_iterator endTrg(void) const;
+        HatTriePhraseTable::const_iterator begin(void) const;
+        HatTriePhraseTable::const_iterator end(void) const;
 
     protected:
-        SrcPhraseInfo srcPhraseInfo;
-        TrgPhraseInfo trgPhraseInfo;
-        SrcTrgPhraseInfo srcTrgPhraseInfo;
+        PhraseTable phraseTable;
 
-            // Restore iterators from src and trg collections to create key object for (src, trg)
-        StlPhraseTable::SrcTrgKey getSrcTrgKey(const std::vector<WordIndex>& s,
-                                               const std::vector<WordIndex>& t,
-                                               bool &found);
+            // Check type of phrase in vector
+        bool isTargetPhrase(const std::vector<WordIndex>& vec) const;
 
             // Returns information related to a given t
         Count getTrgInfo(const std::vector<WordIndex>& t, bool &found);
@@ -215,6 +186,12 @@ class StlPhraseTable: public BasePhraseTable
         void addTrgInfo(const std::vector<WordIndex>& t, Count t_inf);
 
         void printVector(const std::vector<WordIndex>& vec) const;
+
+            // Key converters
+        virtual string vectorToKey(const std::vector<WordIndex>& vec)const;
+        virtual std::vector<WordIndex> keyToVector(const string key)const;
+        virtual string vectorToString(const std::vector<WordIndex>& vec)const;
+        virtual std::vector<WordIndex> stringToVector(const string s)const;
 
 };
 

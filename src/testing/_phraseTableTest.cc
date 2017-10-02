@@ -57,8 +57,8 @@ void _phraseTableTest::testStoreAndRestore()
   Count s1_count = tab->getSrcInfo(s1, found);
   Count s2_count = tab->getSrcInfo(s2, found);
 
-  CPPUNIT_ASSERT( (int) s1_count.get_c_s() == 5 );
-  CPPUNIT_ASSERT( (int) s2_count.get_c_s() == 2 );
+  CPPUNIT_ASSERT_EQUAL(5, (int) s1_count.get_c_s());
+  CPPUNIT_ASSERT_EQUAL(2, (int) s2_count.get_c_s());
 }
 
 //---------------------------------------
@@ -73,9 +73,9 @@ void _phraseTableTest::testAddTableEntry()
   tab->clear();
   tab->addTableEntry(s, t, ppi);
 
-  CPPUNIT_ASSERT( (int) tab->cSrc(s).get_c_s() == 3 );
-  CPPUNIT_ASSERT( (int) tab->cTrg(t).get_c_s() == 2 );
-  CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t).get_c_st() == 2 );
+  CPPUNIT_ASSERT_EQUAL(3, (int) tab->cSrc(s).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(2, (int) tab->cTrg(t).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(2, (int) tab->cSrcTrg(s, t).get_c_st());
 }
 
 //---------------------------------------
@@ -90,9 +90,9 @@ void _phraseTableTest::testIncCountsOfEntry()
   tab->addSrcInfo(s, c_init);
   tab->incrCountsOfEntry(s, t, c);
 
-  CPPUNIT_ASSERT( (int) tab->cSrc(s).get_c_s() == 20 );
-  CPPUNIT_ASSERT( (int) tab->cTrg(t).get_c_s() == 17 );
-  CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t).get_c_st() == 17 );
+  CPPUNIT_ASSERT_EQUAL(20, (int) tab->cSrc(s).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(17, (int) tab->cTrg(t).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(17, (int) tab->cSrcTrg(s, t).get_c_st());
 }
 
 //---------------------------------------
@@ -161,7 +161,7 @@ void _phraseTableTest::testRetrievingSubphrase()
   c = tab->getSrcTrgInfo(s, t2, found);
 
   CPPUNIT_ASSERT( !found );
-  CPPUNIT_ASSERT( (int) c.get_c_s() == 0);
+  CPPUNIT_ASSERT_EQUAL(0, (int) c.get_c_s());
 }
 
 //---------------------------------------
@@ -188,17 +188,17 @@ void _phraseTableTest::testRetrieveNonLeafPhrase()
   c = tab->getSrcTrgInfo(s, t1, found);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( (int) c.get_c_s() == 1);
+  CPPUNIT_ASSERT_EQUAL(1, (int) c.get_c_s());
   // Phrase pair 2
   c = tab->getSrcTrgInfo(s, t2, found);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( (int) c.get_c_s() == 1);
+  CPPUNIT_ASSERT_EQUAL(1, (int) c.get_c_s());
 
   // Looking for phrases for which 'Buenos' is translation
   found = tab->getEntriesForTarget(t2, node);
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( node.size() == 1 );
+  CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
 }
 
 //---------------------------------------
@@ -236,15 +236,15 @@ void _phraseTableTest::testGetEntriesForSource()
   found = tab->getEntriesForSource(s1, node);
   cout << node.size();  // TODO: Remove line
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( node.size() == 2 );
+  CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
   // Skiertag phrases
   found = tab->getEntriesForSource(s2, node);
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( node.size() == 1 );
+  CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
   // Jeziorak phrases
   found = tab->getEntriesForSource(s3, node);
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( node.size() == 2 );
+  CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
 }
 
 //---------------------------------------
@@ -267,7 +267,7 @@ void _phraseTableTest::testRetrievingEntriesWithCountEqualZero()
   found = tab->getEntriesForTarget(t, node);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( node.size() == 1 );
+  CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
 }
 
 //---------------------------------------
@@ -298,14 +298,14 @@ void _phraseTableTest::testGetNbestForTrg()
   found = tab->getNbestForTrg(t, node, 10);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( node.size() == 3 );
+  CPPUNIT_ASSERT_EQUAL(3, (int) node.size());
 
   // If there are more available elements, only elements
   // with the highest score should be returned
   found = tab->getNbestForTrg(t, node, 2);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( node.size() == 2 );
+  CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
 
   iter = node.begin();
   CPPUNIT_ASSERT( iter->second == s1 );
@@ -334,7 +334,7 @@ void _phraseTableTest::testAddSrcTrgInfo()
   Count src_trg_count = tab->cSrcTrg(s, t);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( (int) src_trg_count.get_c_s() == 1 );
+  CPPUNIT_ASSERT_EQUAL(1, (int) src_trg_count.get_c_s());
 }
 
 //---------------------------------------
@@ -387,6 +387,28 @@ void _phraseTableTest::testPTrgGivenSrc()
   CPPUNIT_ASSERT_EQUAL(11.f / 24.f, (float) tab->pTrgGivenSrc(s2, t1));
   CPPUNIT_ASSERT_EQUAL(13.f / 24.f, (float) tab->pTrgGivenSrc(s2, t2));
 }
+//---------------------------------------
+void _phraseTableTest::testAddingSameSrcAndTrg()
+{
+  /* TEST:
+     Check if the results are returned correctly when source
+     and target has the same values.
+  */
+  std::vector<WordIndex> v1 = getVector("Morag");
+  std::vector<WordIndex> v2 = getVector("~ \" ()( -");
+
+  // Fill phrase table with data
+  tab->incrCountsOfEntry(v1, v1, Count(1));
+  tab->incrCountsOfEntry(v1, v2, Count(2));
+  tab->incrCountsOfEntry(v2, v1, Count(4));
+  tab->incrCountsOfEntry(v2, v2, Count(8));
+
+  // Check probabilities
+  CPPUNIT_ASSERT_EQUAL(1 + 2, (int) tab->cSrc(v1).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(1 + 4, (int) tab->cTrg(v1).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(4 + 8, (int) tab->cSrc(v2).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(2 + 8, (int) tab->cTrg(v2).get_c_s());
+}
 
 //---------------------------------------
 void _phraseTableTest::testSize()
@@ -395,23 +417,23 @@ void _phraseTableTest::testSize()
      Check if number of elements in the phrase table is returned correctly
   */
   tab->clear();
-  CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
+  CPPUNIT_ASSERT_EQUAL(0, (int) tab->size());  // Collection after cleaning should be empty
 
   // Fill phrase table with data
   tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping Kretowiny"), Count(1));
   tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping in Kretowiny"), Count(2));
 
-  CPPUNIT_ASSERT( tab->size() == 5 );
+  CPPUNIT_ASSERT_EQUAL(5, (int) tab->size());
 
   tab->clear();
-  CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
+  CPPUNIT_ASSERT_EQUAL(0, (int) tab->size());  // Collection after cleaning should be empty
 
   tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Car"), Count(1));
   tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Pan Samochodzik"), Count(4));
   tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mister Automobile"), Count(20));
   tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Automobile"), Count(24));
 
-  CPPUNIT_ASSERT( tab->size() == 9 );
+  CPPUNIT_ASSERT_EQUAL(9, (int) tab->size());
 
   tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
                          getVector("First Adventure of Mister Automobile"), Count(5));
@@ -419,7 +441,7 @@ void _phraseTableTest::testSize()
                          getVector("First Adventure of Pan Samochodzik"), Count(7));
 
 
-  CPPUNIT_ASSERT( tab->size() == 9 + 5 );
+  CPPUNIT_ASSERT_EQUAL(9 + 5, (int) tab->size());
 
 }
 
@@ -452,22 +474,22 @@ void _phraseTableTest::testSubkeys()
   tab->incrCountsOfEntry(s2, t2_2, Count(16));
 
 
-  CPPUNIT_ASSERT( tab->size() == 11 );
+  CPPUNIT_ASSERT_EQUAL(11, (int) tab->size());
 
   // Check count values
-  CPPUNIT_ASSERT( tab->cSrc(s1).get_c_s() == 1 + 2 + 4 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_1).get_c_s() == 1 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_2).get_c_s() == 2 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_3).get_c_s() == 4 + 16 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_1).get_c_st() == 1 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_2).get_c_st() == 2 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_3).get_c_st() == 4 );
+  CPPUNIT_ASSERT_EQUAL(1 + 2 + 4, (int) tab->cSrc(s1).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(1, (int) tab->cTrg(t1_1).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(2, (int) tab->cTrg(t1_2).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(4 + 16, (int) tab->cTrg(t1_3).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(1, (int) tab->cSrcTrg(s1, t1_1).get_c_st());
+  CPPUNIT_ASSERT_EQUAL(2, (int) tab->cSrcTrg(s1, t1_2).get_c_st());
+  CPPUNIT_ASSERT_EQUAL(4, (int) tab->cSrcTrg(s1, t1_3).get_c_st());
 
-  CPPUNIT_ASSERT( tab->cSrc(s2).get_c_s() == 8 + 16 );
-  CPPUNIT_ASSERT( tab->cTrg(t2_1).get_c_s() == 8 );
-  CPPUNIT_ASSERT( tab->cTrg(t2_2).get_c_s() == 4 + 16 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_1).get_c_st() == 8 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_2).get_c_st() == 16 );
+  CPPUNIT_ASSERT_EQUAL(8 + 16, (int) tab->cSrc(s2).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(8, (int) tab->cTrg(t2_1).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(4 + 16, (int) tab->cTrg(t2_2).get_c_s());
+  CPPUNIT_ASSERT_EQUAL(8, (int) tab->cSrcTrg(s2, t2_1).get_c_st());
+  CPPUNIT_ASSERT_EQUAL(16, (int) tab->cSrcTrg(s2, t2_2).get_c_st());
 }
 
 //---------------------------------------
@@ -485,15 +507,15 @@ void _phraseTableTest::test32bitRange()
 
   // Insert data to phrase table and check their correctness
   tab->incrCountsOfEntry(minVector, maxVector, Count(20));
-  CPPUNIT_ASSERT( tab->size() == 3 );
-  CPPUNIT_ASSERT( (int) tab->cSrcTrg(minVector, maxVector).get_c_st() == 20 );
+  CPPUNIT_ASSERT_EQUAL(3, (int) tab->size());
+  CPPUNIT_ASSERT_EQUAL(20, (int) tab->cSrcTrg(minVector, maxVector).get_c_st());
 }
 
 //---------------------------------------
 void _phraseTableTest::testByteMax()
 {
   /* TEST:
-     Check if items with maximum byte value are added correctly
+     Check if items with maximum byte values are added correctly
   */
   tab->clear();
 
@@ -504,6 +526,45 @@ void _phraseTableTest::testByteMax()
 
   // Insert data and check their correctness
   tab->incrCountsOfEntry(s, t, Count(1));
-  CPPUNIT_ASSERT( tab->size() == 3 );
-  CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t).get_c_st() == 1 );
+  CPPUNIT_ASSERT_EQUAL(3, (int) tab->size());
+  CPPUNIT_ASSERT_EQUAL(1, (int) tab->cSrcTrg(s, t).get_c_st());
+}
+
+//---------------------------------------
+void _phraseTableTest::testByteMin()
+{
+  /* TEST:
+     Check if items with minimum byte values are added correctly
+  */
+  tab->clear();
+
+  std::vector<WordIndex> s1, s2, t1, t2;
+  // s1
+  s1.push_back(4);
+  // s2
+  s2.push_back(0);
+  s2.push_back(1);
+  s2.push_back(0);
+  // t1
+  t1.push_back(0);
+  t1.push_back(3);
+  // t2
+  t2.push_back(0);
+  t2.push_back(3);
+  t2.push_back(0);
+
+  // Insert data and check their correctness
+  tab->incrCountsOfEntry(s1, t1, Count(1));
+  tab->incrCountsOfEntry(s2, t2, Count(1));
+  CPPUNIT_ASSERT_EQUAL(6, (int) tab->size());
+  CPPUNIT_ASSERT_EQUAL(1, (int) tab->cSrcTrg(s2, t2).get_c_st());
+
+  bool found;
+  BasePhraseTable::SrcTableNode node;
+  found = tab->getEntriesForTarget(t2, node);
+
+  CPPUNIT_ASSERT( found );
+  CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
+  CPPUNIT_ASSERT_EQUAL(1, (int) node[s2].first.get_c_s());
+  CPPUNIT_ASSERT_EQUAL(1, (int) node[s2].second.get_c_s());
 }

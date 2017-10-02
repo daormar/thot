@@ -1,6 +1,6 @@
 /*
 thot package for statistical machine translation
-Copyright (C) 2013 Daniel Ortiz-Mart\'inez
+Copyright (C) 2013-2017 Daniel Ortiz-Mart\'inez, Adam Harasimowicz
  
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
@@ -38,7 +38,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "StlPhraseTable.h"
+#ifdef THOT_HAVE_CXX11
+#  include "HatTriePhraseTable.h"
+#else
+#  include "StlPhraseTable.h"
+#endif
+
 #include "_wbaIncrPhraseModel.h"
 #include "PhraseExtractionTable.h"
 
@@ -64,7 +69,12 @@ class WbaIncrPhraseModel: public _wbaIncrPhraseModel
         // Constructor
     WbaIncrPhraseModel(void):_wbaIncrPhraseModel()
       {
-        basePhraseTablePtr=new StlPhraseTable;
+
+#ifdef THOT_HAVE_CXX11
+        basePhraseTablePtr = new HatTriePhraseTable;
+#else
+        basePhraseTablePtr = new StlPhraseTable;
+#endif
       }
 
         // Destructor

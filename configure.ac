@@ -327,6 +327,25 @@ if test "$ac_cv_cxx_have_stl" = no; then
   AC_MSG_ERROR(C++ standard template library not present!)
 fi
 
+# Check if C++ 11 is supported by compiler
+AC_LANG(C++)
+for f in -std=c++11
+do
+    AC_MSG_CHECKING(whether ${CXX} supports ${f})
+    saved_cxxflags="${CXXFLAGS}"
+    CXXFLAGS="${CXXFLAGS} ${f}"
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
+                      AC_MSG_RESULT(yes),
+                      AC_MSG_RESULT(no)
+                      )],[cxx11_supported="yes"; AC_MSG_RESULT(yes)],[CXXFLAGS="${saved_cxxflags}"; cxx11_supported="no"; AC_MSG_RESULT(no)])
+done
+
+AM_CONDITIONAL([HAVE_CXX11_ENABLED], [test x${cxx11_supported} = xyes])
+if test x${cxx11_supported} = xyes; then
+  AC_DEFINE(HAVE_CXX11,,[Define if C++11 is supported])
+  hat_trie_makefile=src/hat_trie/Makefile
+fi
+
 # Checks for lm library
 AC_CHECK_LIB([m], [log])
 
@@ -657,4 +676,4 @@ fi
 AC_DEFINE_UNQUOTED(SMTMODEL_H,"${SMTMODEL_H}",[File name with SmtModel type definition])
 
 #AC_CONFIG_FILES([Makefile])
-AC_OUTPUT(Makefile doc/Makefile m4/Makefile src/Makefile src/nlp_common/Makefile src/incr_models/Makefile src/sw_models/Makefile src/phrase_models/Makefile src/smt_preproc/Makefile src/error_correction/Makefile src/downhill_simplex/Makefile src/stack_dec/Makefile src/exper/Makefile src/testing/Makefile utils/Makefile utils/nlp_common/Makefile utils/incr_models/Makefile utils/sw_models/Makefile utils/phrase_models/Makefile utils/smt_preproc/Makefile utils/error_correction/Makefile utils/downhill_simplex/Makefile utils/stack_dec/Makefile utils/exper/Makefile examples/Makefile examples/cfg_templates/Makefile examples/toy_corpus/Makefile examples/ini_files/Makefile)
+AC_OUTPUT(Makefile doc/Makefile m4/Makefile src/Makefile ${hat_trie_makefile} src/nlp_common/Makefile src/incr_models/Makefile src/sw_models/Makefile src/phrase_models/Makefile src/smt_preproc/Makefile src/error_correction/Makefile src/downhill_simplex/Makefile src/stack_dec/Makefile src/exper/Makefile src/testing/Makefile utils/Makefile utils/nlp_common/Makefile utils/incr_models/Makefile utils/sw_models/Makefile utils/phrase_models/Makefile utils/smt_preproc/Makefile utils/error_correction/Makefile utils/downhill_simplex/Makefile utils/stack_dec/Makefile utils/exper/Makefile examples/Makefile examples/cfg_templates/Makefile examples/toy_corpus/Makefile examples/ini_files/Makefile)
