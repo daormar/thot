@@ -119,7 +119,8 @@ nlp_common/ErrorDefs.h nlp_common/ctimer.h nlp_common/Count.h		\
 nlp_common/ClassDic.h nlp_common/Bitset.h nlp_common/BasicSocketUtils.h	\
 nlp_common/BaseNgramLM.h nlp_common/BaseIncrNgramLM.h			\
 nlp_common/BackoffNode.h nlp_common/awkInputStream.h			\
-nlp_common/DynClassFileHandler.h nlp_common/SimpleDynClassLoader.h
+nlp_common/DynClassFileHandler.h nlp_common/SimpleDynClassLoader.h      \
+nlp_common/ThreadSafePrint.h nlp_common/LogSafe.h
 nlp_common_defs= nlp_common/WordAligMatrix.cc			\
 nlp_common/StrProcUtils.cc nlp_common/ModelDescriptorUtils.cc	\
 nlp_common/SingleWordVocab.cc nlp_common/Prob.cc		\
