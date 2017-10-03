@@ -1902,12 +1902,15 @@ bool ThotDecoder::sentPairVerCov(int user_id,
                                  std::string& result,
                                  int verbose/*=0*/)
 {
-  pthread_mutex_lock(&atomic_op_mut);
-  /////////// begin of mutex 
+      // Increase non_atomic_ops_running variable
+  increase_non_atomic_ops_running();
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
   if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+
+  pthread_mutex_lock(&per_user_mut[idx]);
+  /////////// begin of user mutex
 
   if(verbose)
   {
@@ -1939,12 +1942,13 @@ bool ThotDecoder::sentPairVerCov(int user_id,
       std::cerr<<"No coverage for sentence pair!"<<std::endl;
   }
 
-  /////////// end of mutex 
-  pthread_mutex_unlock(&atomic_op_mut);
+  /////////// end of user mutex 
+  pthread_mutex_unlock(&per_user_mut[idx]);
 
-  if(!tdPerUserVarsVec[idx].smtModelPtr->isComplete(hyp))
-    return THOT_OK;
-  else return THOT_ERROR;
+      // Decrease non_atomic_ops_running variable
+  decrease_non_atomic_ops_running();
+
+  return THOT_OK;
 }
 
 //--------------------------
@@ -1953,13 +1957,16 @@ bool ThotDecoder::startCat(int user_id,
                            std::string &catResult,
                            int verbose/*=0*/)
 {
-  pthread_mutex_lock(&atomic_op_mut);
-  /////////// begin of mutex 
+      // Increase non_atomic_ops_running variable
+  increase_non_atomic_ops_running();
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
   if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-  
+
+  pthread_mutex_lock(&per_user_mut[idx]);
+  /////////// begin of user mutex
+
   if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
   {
         // Execute specific actions for uncoupled assisted translators
@@ -2005,8 +2012,11 @@ bool ThotDecoder::startCat(int user_id,
     tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
   }
 
-  /////////// end of mutex 
-  pthread_mutex_unlock(&atomic_op_mut);
+  /////////// end of user mutex 
+  pthread_mutex_unlock(&per_user_mut[idx]);
+
+      // Decrease non_atomic_ops_running variable
+  decrease_non_atomic_ops_running();
 
   return THOT_OK;
 }
@@ -2028,6 +2038,22 @@ void ThotDecoder::addStrToPref(int user_id,
   pthread_mutex_lock(&per_user_mut[idx]);
   /////////// begin of user mutex
   
+  addStrToPrefAux(idx,strToAddToPref,rejectedWords,catResult,verbose);
+  
+  /////////// end of user mutex 
+  pthread_mutex_unlock(&per_user_mut[idx]);
+
+      // Decrease non_atomic_ops_running variable
+  decrease_non_atomic_ops_running();
+}
+
+//--------------------------
+void ThotDecoder::addStrToPrefAux(size_t idx,
+                                  const char *strToAddToPref,
+                                  const RejectedWordsSet& rejectedWords,
+                                  std::string &catResult,
+                                  int verbose/*=0*/)
+{
   if(tdPerUserVarsVec[idx]._nbUncoupledAssistedTransPtr)
   {
         // Execute specific actions for uncoupled assisted translators
@@ -2097,12 +2123,6 @@ void ThotDecoder::addStrToPref(int user_id,
         // Enable best score pruning
     tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
   }
-
-  /////////// end of user mutex 
-  pthread_mutex_unlock(&per_user_mut[idx]);
-
-      // Decrease non_atomic_ops_running variable
-  decrease_non_atomic_ops_running();
 }
 
 //--------------------------
@@ -2112,8 +2132,14 @@ void ThotDecoder::setPref(int user_id,
                           std::string &catResult,
                           int verbose/*=0*/)
 {
+      // Increase non_atomic_ops_running variable
+  increase_non_atomic_ops_running();
+
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
+
+  pthread_mutex_lock(&per_user_mut[idx]);
+  /////////// begin of user mutex
 
   std::string strToAddToPref;
   
@@ -2126,27 +2152,51 @@ void ThotDecoder::setPref(int user_id,
   }
   else
   {
-        // Old prefix is not a prefix of the new one
-    resetPrefix(user_id,verbose);
+        // Old prefix is not a prefix of the new one, reset it
+    resetPrefixAux(idx);
     strToAddToPref=prefStr;
   }
-      // Invoke addStrToPref() function
-  addStrToPref(user_id,strToAddToPref.c_str(),rejectedWords,catResult,verbose);
+
+  addStrToPrefAux(idx,strToAddToPref.c_str(),rejectedWords,catResult,verbose);
+
+  /////////// end of user mutex 
+  pthread_mutex_unlock(&per_user_mut[idx]);
+  
+      // Decrease non_atomic_ops_running variable
+  decrease_non_atomic_ops_running();
 }
 
 //--------------------------
 void ThotDecoder::resetPrefix(int user_id,
                               int verbose/*=0*/)
 {
+      // Increase non_atomic_ops_running variable
+  increase_non_atomic_ops_running();
+
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
   if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+
+  pthread_mutex_lock(&per_user_mut[idx]);
+  /////////// begin of user mutex
 
   if(verbose)
   {
     std::cerr<<"Reset prefix"<<std::endl;
   }
 
+  resetPrefixAux(idx);
+
+  /////////// end of user mutex 
+  pthread_mutex_unlock(&per_user_mut[idx]);
+
+      // Decrease non_atomic_ops_running variable
+  decrease_non_atomic_ops_running();
+}
+
+//--------------------------
+void ThotDecoder::resetPrefixAux(size_t idx)
+{
   totalPrefixVec[idx]="";
   tdPerUserVarsVec[idx].assistedTransPtr->resetPrefix();
 }
