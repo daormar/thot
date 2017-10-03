@@ -111,7 +111,7 @@ pthread_mutex_t num_threads_var_mut;
 pthread_cond_t num_threads_var_cond;
 int num_threads;
 pthread_mutex_t end_server_var_mut;
-bool end;
+bool end_server;
 pthread_mutex_t user_set_mut;
 std::set<int> user_set;
 
@@ -224,7 +224,7 @@ int start_server(void)
   std::cerr<<"Listening to port "<< ts_pars.server_port <<"..."<<std::endl;
   
       // main accept() loop
-  end=false;
+  end_server=false;
   while(!read_end_server_var())
   {  
     sin_size = sizeof(struct sockaddr_in);
@@ -287,7 +287,7 @@ bool read_end_server_var(void)
 {
   pthread_mutex_lock(&end_server_var_mut);
   /////////// begin of mutex
-  bool result=end;
+  bool result=end_server;
   /////////// end of mutex 
   pthread_mutex_unlock(&end_server_var_mut);
 
@@ -299,7 +299,7 @@ void set_end_server_var(void)
 {
   pthread_mutex_lock(&end_server_var_mut);
   /////////// begin of mutex
-  end=true;
+  end_server=true;
   /////////// end of mutex 
   pthread_mutex_unlock(&end_server_var_mut);
 }
