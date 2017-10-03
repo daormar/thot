@@ -18,27 +18,27 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: ThreadSafePrint.h                                        */
+/* Module: LogSafe.h                                                */
 /*                                                                  */
-/* Prototypes file: ThreadSafePrint.h                               */
+/* Prototypes file: LogSafe.h                                       */
 /*                                                                  */
-/* Description: Declares the ThreadSafePrint class for logging      */
-/*              in thread-safe manner to avoid racing. It uses      */
-/*              singleton pattern to provide mutual exclusive       */
-/*              printing.                                           */
+/* Description: Declares the LogSafe class which wraps              */
+/*              ThreadSafePrint class to allow printing with <<     */
+/*              operator like in standard library.                  */
 /*                                                                  */
 /********************************************************************/
 
 /**
- * @file ThreadSafePrint.h
- *
- * @brief Declares the ThreadSafePrint class for logging in thread-safe
- * manner to avoid racing. It uses singleton pattern to provide mutual
- * exclusive printing.
+ * @file LogSafe.h
+ *p
+ * @brief Declares the LogSafe class which wraps ThreadSafePrint class
+ * to allow printing with << operator like in standard library.
  */
 
-#ifndef _ThreadSafePrint_h
-#define _ThreadSafePrint_h
+#ifndef _LogSafe_h
+#define _LogSafe_h
+
+#define ErrLog LogSafe{}
 
 //--------------- Include files --------------------------------------
 
@@ -46,9 +46,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <iostream>
-#include <pthread.h>
-#include <string>
+#include "ThreadSafePrint.h"
+#include <sstream>
 
 //--------------- Constants ------------------------------------------
 
@@ -58,45 +57,21 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- ThreadSafePrint template class
+//--------------- LogSafe template class
 
 /**
  * @brief Class implementing thread-safe printing
  */
 
-class ThreadSafePrint
+class LogSafe : public std::ostringstream
 {
 public:
-    static ThreadSafePrint& getInstance()
+    LogSafe() = default;
+
+    ~LogSafe()
     {
-        static ThreadSafePrint instance;
-
-        return instance;
+        ThreadSafePrint::getInstance().print(this->str());
     }
-
-    void print(std::string s)
-    {
-        pthread_mutex_lock(&mutex);
-        std::cerr << s;
-        pthread_mutex_unlock(&mutex);
-    }
-
-private:
-    pthread_mutex_t mutex;
-    ThreadSafePrint()
-    {
-        pthread_mutex_init(&mutex, NULL);
-    }
-
-    ~ThreadSafePrint()
-    {
-        pthread_mutex_destroy(&mutex);
-    }
-
-    // Block possibility to create copy of this class
-    // by hiding following methods
-    ThreadSafePrint(ThreadSafePrint const&);
-    void operator=(ThreadSafePrint const&);
 };
 
 #endif
