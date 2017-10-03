@@ -1902,12 +1902,15 @@ bool ThotDecoder::sentPairVerCov(int user_id,
                                  std::string& result,
                                  int verbose/*=0*/)
 {
-  pthread_mutex_lock(&atomic_op_mut);
-  /////////// begin of mutex 
+      // Increase non_atomic_ops_running variable
+  increase_non_atomic_ops_running();
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
   if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+
+  pthread_mutex_lock(&per_user_mut[idx]);
+  /////////// begin of user mutex
 
   if(verbose)
   {
@@ -1939,12 +1942,13 @@ bool ThotDecoder::sentPairVerCov(int user_id,
       std::cerr<<"No coverage for sentence pair!"<<std::endl;
   }
 
-  /////////// end of mutex 
-  pthread_mutex_unlock(&atomic_op_mut);
+  /////////// end of user mutex 
+  pthread_mutex_unlock(&per_user_mut[idx]);
 
-  if(!tdPerUserVarsVec[idx].smtModelPtr->isComplete(hyp))
-    return THOT_OK;
-  else return THOT_ERROR;
+      // Decrease non_atomic_ops_running variable
+  decrease_non_atomic_ops_running();
+
+  return THOT_OK;
 }
 
 //--------------------------
@@ -2119,12 +2123,6 @@ void ThotDecoder::addStrToPrefAux(size_t idx,
         // Enable best score pruning
     tdPerUserVarsVec[idx].stackDecoderPtr->useBestScorePruning(true);
   }
-
-  /////////// end of user mutex 
-  pthread_mutex_unlock(&per_user_mut[idx]);
-
-      // Decrease non_atomic_ops_running variable
-  decrease_non_atomic_ops_running();
 }
 
 //--------------------------
