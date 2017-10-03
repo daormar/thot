@@ -33,6 +33,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "LogSafe.h"
 #include "ThotDecoder.h"
 #include <ErrorDefs.h>
 #include <StrProcUtils.h>
@@ -179,13 +180,13 @@ int start_server(void)
   
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
   {
-    std::cerr<<"socket error"<<std::endl;
+    ErrLog<<"socket error"<<std::endl;
     exit(1);
   }
 
   if (setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(int)) == -1)
   {
-    std::cerr<<"setsockopt error"<<std::endl;
+    ErrLog<<"setsockopt error"<<std::endl;
     exit(1);
   }
   my_addr.sin_family = AF_INET;          // byte ordering used by the machine
@@ -195,13 +196,13 @@ int start_server(void)
 
   if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr))== -1)
   {
-    std::cerr<<"bind error"<<std::endl;
+    ErrLog<<"bind error"<<std::endl;
     exit(1);
   }
 
   if (listen(sockfd, BACKLOG) == -1)
   {
-    std::cerr<<"listen error"<<std::endl;
+    ErrLog<<"listen error"<<std::endl;
     exit(1);
   }
 
@@ -210,7 +211,7 @@ int start_server(void)
   sa.sa_flags = SA_RESTART;
   if (sigaction(SIGCHLD, &sa, NULL) == -1)
   {
-    std::cerr<<"sigaction error"<<std::endl;
+    ErrLog<<"sigaction error"<<std::endl;
     exit(1);
   }
 
@@ -221,7 +222,7 @@ int start_server(void)
   pthread_mutex_init(&end_server_var_mut,NULL);
   pthread_mutex_init(&user_set_mut,NULL);
 
-  std::cerr<<"Listening to port "<< ts_pars.server_port <<"..."<<std::endl;
+  ErrLog<<"Listening to port "<< ts_pars.server_port <<"..."<<std::endl;
   
       // main accept() loop
   end_server=false;
@@ -230,7 +231,7 @@ int start_server(void)
     sin_size = sizeof(struct sockaddr_in);
     if ((new_fd = accept(sockfd,(struct sockaddr *)&their_addr,(socklen_t *)&sin_size)) == -1)
     {
-      std::cerr<<"accept error"<<std::endl;
+      ErrLog<<"accept error"<<std::endl;
       continue;
     }
         // Prepare request data (memory is released by thread)
@@ -247,7 +248,7 @@ int start_server(void)
     int thread_err=pthread_create(&tid, &attr, process_request, (void*) rdata_ptr);
     if(thread_err>0)
     {
-      std::cerr<<"Warning: call to pthread_create failed"<<std::endl;
+      ErrLog<<"Warning: call to pthread_create failed"<<std::endl;
     }
     else
     {
@@ -262,7 +263,7 @@ int start_server(void)
   }
 
   if(ts_pars.v_given)
-    std::cerr<<"Server: shutting down"<<std::endl;
+    ErrLog<<"Server: shutting down"<<std::endl;
 
       // Wait for threads to finish
   wait_on_num_threads_var_cond();
@@ -320,19 +321,19 @@ void* process_request(void* void_ptr)
     time_t now = time(0);
         // Convert now to tm struct for local timezone
     tm* localtm = localtime(&now);
-    std::cerr<<"----------------------------------------------------"<<std::endl;
-    std::cerr<<"Processing new request..."<<std::endl;
-    std::cerr<<"Current time: "<<asctime(localtm);
-    std::cerr<<"Origin: "<<inet_ntoa(rdata.sin_addr)<<std::endl;
+    ErrLog<<"----------------------------------------------------"<<std::endl;
+    ErrLog<<"Processing new request..."<<std::endl;
+    ErrLog<<"Current time: "<<asctime(localtm);
+    ErrLog<<"Origin: "<<inet_ntoa(rdata.sin_addr)<<std::endl;
   }
 
       // Get request code
   int server_request_code=BasicSocketUtils::recvInt(rdata.sockd);
-  if(verbose) std::cerr<<"Request code: "<<server_request_code<<std::endl;
+  if(verbose) ErrLog<<"Request code: "<<server_request_code<<std::endl;
 
       // Get user id
   int user_id=BasicSocketUtils::recvInt(rdata.sockd);
-  if(verbose) std::cerr<<"User identifier: "<<user_id<<std::endl;
+  if(verbose) ErrLog<<"User identifier: "<<user_id<<std::endl;
   
       // Init user parameters if necessary
   if(user_is_new(user_id))
@@ -342,7 +343,7 @@ void* process_request(void* void_ptr)
     if(ret==THOT_ERROR)
     {
           // end=true;
-      if(verbose) std::cerr<<"Error while initializing server parameters"<<std::endl;
+      if(verbose) ErrLog<<"Error while initializing server parameters"<<std::endl;
       close(rdata.sockd);
       decrease_num_threads_var();
       pthread_exit(NULL);
@@ -359,12 +360,12 @@ void* process_request(void* void_ptr)
   
   if(verbose)
   {
-    std::cerr<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
+    ErrLog<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
   }
 
   if(ret==THOT_ERROR)
   {
-    if(verbose) std::cerr<<"Error while processing client request"<<std::endl;
+    if(verbose) ErrLog<<"Error while processing client request"<<std::endl;
     close(rdata.sockd);
     decrease_num_threads_var();
     pthread_exit(NULL);
@@ -607,7 +608,7 @@ int takeParameters(int argc,
       ts_pars.c_given=true;
       if(i==argc-1)
       {
-        std::cerr<<"Error: no value for -c parameter."<<std::endl;
+        ErrLog<<"Error: no value for -c parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
@@ -624,7 +625,7 @@ int takeParameters(int argc,
       ts_pars.p_given=true;
       if(i==argc-1)
       {
-        std::cerr<<"Error: no value for -h parameter."<<std::endl;
+        ErrLog<<"Error: no value for -h parameter."<<std::endl;
         return THOT_ERROR;
       }
       else
@@ -652,7 +653,7 @@ int takeParameters(int argc,
         // Check if current parameter is not valid
     if(matched==0)
     {
-      std::cerr<<"Error: parameter "<<argv_stl[i]<<" not valid."<<std::endl;
+      ErrLog<<"Error: parameter "<<argv_stl[i]<<" not valid."<<std::endl;
       return THOT_ERROR;
     }
     ++i;
@@ -665,13 +666,13 @@ int checkParameters(void)
 {
   if(!ts_pars.i_given && !ts_pars.c_given)
   {
-    std::cerr<<"Error: either -c or -i parameter should be given!"<<std::endl;
+    ErrLog<<"Error: either -c or -i parameter should be given!"<<std::endl;
     return THOT_ERROR;
   }
 
   if(ts_pars.i_given && ts_pars.w_given)
   {
-    std::cerr<<"Error: -i and -w parameters cannot be given simultaneously!"<<std::endl;
+    ErrLog<<"Error: -i and -w parameters cannot be given simultaneously!"<<std::endl;
     return THOT_ERROR;
   }
   
@@ -681,30 +682,30 @@ int checkParameters(void)
 //---------------
 void printParameters(void)
 {
-  std::cerr<<"Server port: "<<ts_pars.server_port<<std::endl;
-  std::cerr<<"-w: "<<ts_pars.w_given<<std::endl;
-  std::cerr<<"-v: "<<ts_pars.v_given<<std::endl;
+  ErrLog<<"Server port: "<<ts_pars.server_port<<std::endl;
+  ErrLog<<"-w: "<<ts_pars.w_given<<std::endl;
+  ErrLog<<"-v: "<<ts_pars.v_given<<std::endl;
 }
 
 //---------------
 void printUsage(void)
 {
-  std::cerr<<"Usage: thot_server    -i | -c <string>"<<std::endl;
-  std::cerr<<"                      [-p <int>] [ -w ] [ -v ] [--help] [--version]"<<std::endl;
-  std::cerr<<std::endl;  
-  std::cerr<<"-i <string>    Test server initialization and exit"<<std::endl<<std::endl;  
-  std::cerr<<"-c <string>    Configuration file"<<std::endl<<std::endl;  
-  std::cerr<<"-p <int>       Port used by the server"<<std::endl<<std::endl;  
-  std::cerr<<"-w             Print model weights and exit"<<std::endl<<std::endl;  
-  std::cerr<<"-v             Verbose mode"<<std::endl<<std::endl;
-  std::cerr<<"--help         Print this help and exit"<<std::endl<<std::endl;
-  std::cerr<<"--version      Output version information and exit"<<std::endl<<std::endl;
+  ErrLog<<"Usage: thot_server    -i | -c <string>"<<std::endl;
+  ErrLog<<"                      [-p <int>] [ -w ] [ -v ] [--help] [--version]"<<std::endl;
+  ErrLog<<std::endl;
+  ErrLog<<"-i <string>    Test server initialization and exit"<<std::endl<<std::endl;
+  ErrLog<<"-c <string>    Configuration file"<<std::endl<<std::endl;
+  ErrLog<<"-p <int>       Port used by the server"<<std::endl<<std::endl;
+  ErrLog<<"-w             Print model weights and exit"<<std::endl<<std::endl;
+  ErrLog<<"-v             Verbose mode"<<std::endl<<std::endl;
+  ErrLog<<"--help         Print this help and exit"<<std::endl<<std::endl;
+  ErrLog<<"--version      Output version information and exit"<<std::endl<<std::endl;
 }
 
 //---------------
 void version(void)
 {
-  std::cerr<<"thot_server is part of the thot package "<<std::endl;
-  std::cerr<<"thot version "<<THOT_VERSION<<std::endl;
-  std::cerr<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
+  ErrLog<<"thot_server is part of the thot package "<<std::endl;
+  ErrLog<<"thot version "<<THOT_VERSION<<std::endl;
+  ErrLog<<"thot is GNU software written by Daniel Ortiz"<<std::endl;
 }
