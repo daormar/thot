@@ -279,6 +279,14 @@ class ThotDecoder
                                 const char *refSent,
                                 int verbose=0);
   
+      // Auxiliary functions for assisted translation
+  void resetPrefixAux(size_t idx);
+  void addStrToPrefAux(size_t idx,
+                       const char *strToAddToPref,
+                       const RejectedWordsSet& rejectedWords,
+                       std::string &catResult,
+                       int verbose=0);
+
       // Pre-posprocessing related functions
   std::string robustObtainFinalOutput(BasePrePosProcessor* prePosProcessorPtr,
                                       std::string unpreprocPref,
