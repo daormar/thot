@@ -33,6 +33,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "StdCerrThreadSafePrint.h"
 #include "StdCerrThreadSafeTidPrint.h"
 #include "ThotDecoder.h"
 #include <ErrorDefs.h>
@@ -180,13 +181,13 @@ int start_server(void)
   
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
   {
-    StdCerrThreadSafeTid<<"socket error"<<std::endl;
+    StdCerrThreadSafe<<"socket error"<<std::endl;
     exit(1);
   }
 
   if (setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(int)) == -1)
   {
-    StdCerrThreadSafeTid<<"setsockopt error"<<std::endl;
+    StdCerrThreadSafe<<"setsockopt error"<<std::endl;
     exit(1);
   }
   my_addr.sin_family = AF_INET;          // byte ordering used by the machine
@@ -196,13 +197,13 @@ int start_server(void)
 
   if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr))== -1)
   {
-    StdCerrThreadSafeTid<<"bind error"<<std::endl;
+    StdCerrThreadSafe<<"bind error"<<std::endl;
     exit(1);
   }
 
   if (listen(sockfd, BACKLOG) == -1)
   {
-    StdCerrThreadSafeTid<<"listen error"<<std::endl;
+    StdCerrThreadSafe<<"listen error"<<std::endl;
     exit(1);
   }
 
@@ -211,7 +212,7 @@ int start_server(void)
   sa.sa_flags = SA_RESTART;
   if (sigaction(SIGCHLD, &sa, NULL) == -1)
   {
-    StdCerrThreadSafeTid<<"sigaction error"<<std::endl;
+    StdCerrThreadSafe<<"sigaction error"<<std::endl;
     exit(1);
   }
 
@@ -222,7 +223,7 @@ int start_server(void)
   pthread_mutex_init(&end_server_var_mut,NULL);
   pthread_mutex_init(&user_set_mut,NULL);
 
-  StdCerrThreadSafeTid<<"Listening to port "<< ts_pars.server_port <<"..."<<std::endl;
+  StdCerrThreadSafe<<"Listening to port "<< ts_pars.server_port <<"..."<<std::endl;
   
       // main accept() loop
   end_server=false;
@@ -231,7 +232,7 @@ int start_server(void)
     sin_size = sizeof(struct sockaddr_in);
     if ((new_fd = accept(sockfd,(struct sockaddr *)&their_addr,(socklen_t *)&sin_size)) == -1)
     {
-      StdCerrThreadSafeTid<<"accept error"<<std::endl;
+      StdCerrThreadSafe<<"accept error"<<std::endl;
       continue;
     }
         // Prepare request data (memory is released by thread)
@@ -248,7 +249,7 @@ int start_server(void)
     int thread_err=pthread_create(&tid, &attr, process_request, (void*) rdata_ptr);
     if(thread_err>0)
     {
-      StdCerrThreadSafeTid<<"Warning: call to pthread_create failed"<<std::endl;
+      StdCerrThreadSafe<<"Warning: call to pthread_create failed"<<std::endl;
     }
     else
     {
@@ -263,7 +264,7 @@ int start_server(void)
   }
 
   if(ts_pars.v_given)
-    StdCerrThreadSafeTid<<"Server: shutting down"<<std::endl;
+    StdCerrThreadSafe<<"Server: shutting down"<<std::endl;
 
       // Wait for threads to finish
   wait_on_num_threads_var_cond();
