@@ -85,6 +85,7 @@ public:
 
     void printWithThreadId(std::string s)
     {
+        // Make thread id convertion before entering to critical section
         std::string tid = selfThreadIdToStr();
         pthread_mutex_lock(&mutex);
         std::cerr << tid << "\t" << s;
@@ -100,6 +101,9 @@ private:
 
     std::string selfThreadIdToStr(void)
     {
+        // Convert pthread_t structure to string by encoding its content in hex
+        // format. Such representation should be portable among different
+        // platforms.
         pthread_t pt = pthread_self();
         std::stringstream ss;
 
