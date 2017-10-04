@@ -18,27 +18,28 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: ThreadSafePrint.h                                        */
+/* Module: StdCerrThreadSafePrint.h                                 */
 /*                                                                  */
-/* Prototypes file: ThreadSafePrint.h                               */
+/* Prototypes file: StdCerrThreadSafePrint.h                        */
 /*                                                                  */
-/* Description: Declares the ThreadSafePrint class for logging      */
-/*              in thread-safe manner to avoid racing. It uses      */
-/*              singleton pattern to provide mutual exclusive       */
-/*              printing.                                           */
+/* Description: Declares the StdCerrThreadSafePrint class which     */
+/*              wraps ThreadSafePrint class to allow printing with  */
+/*              << operator like in standard library.               */
 /*                                                                  */
 /********************************************************************/
 
 /**
- * @file ThreadSafePrint.h
- *
- * @brief Declares the ThreadSafePrint class for logging in thread-safe
- * manner to avoid racing. It uses singleton pattern to provide mutual
- * exclusive printing.
+ * @file StdCerrThreadSafePrint.h
+ *p
+ * @brief Declares the StdCerrThreadSafePrint class which wraps
+ * ThreadSafePrint class to allow printing with << operator like
+ * in standard library.
  */
 
-#ifndef _ThreadSafePrint_h
-#define _ThreadSafePrint_h
+#ifndef _StdCerrThreadSafePrint_h
+#define _StdCerrThreadSafePrint_h
+
+#define StdCerrThreadSafe StdCerrThreadSafePrint{}
 
 //--------------- Include files --------------------------------------
 
@@ -46,9 +47,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <iostream>
-#include <pthread.h>
-#include <string>
+#include "ThreadSafePrint.h"
+#include <sstream>
 
 //--------------- Constants ------------------------------------------
 
@@ -58,45 +58,21 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- ThreadSafePrint template class
+//--------------- StdCerrThreadSafePrint template class
 
 /**
  * @brief Class implementing thread-safe printing
  */
 
-class ThreadSafePrint
+class StdCerrThreadSafePrint : public std::ostringstream
 {
 public:
-    static ThreadSafePrint& getInstance()
+    StdCerrThreadSafePrint() = default;
+
+    ~StdCerrThreadSafePrint()
     {
-        static ThreadSafePrint instance;
-
-        return instance;
+        ThreadSafePrint::getInstance().print(this->str());
     }
-
-    void print(std::string s)
-    {
-        pthread_mutex_lock(&mutex);
-        std::cerr << s;
-        pthread_mutex_unlock(&mutex);
-    }
-
-private:
-    pthread_mutex_t mutex;
-    ThreadSafePrint()
-    {
-        pthread_mutex_init(&mutex, NULL);
-    }
-
-    ~ThreadSafePrint()
-    {
-        pthread_mutex_destroy(&mutex);
-    }
-
-    // Block possibility to create copy of this class
-    // by hiding following methods
-    ThreadSafePrint(ThreadSafePrint const&);
-    void operator=(ThreadSafePrint const&);
 };
 
 #endif
