@@ -47,6 +47,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "WeightUpdateUtils.h"
 
 // Types defining decoder architecture
+#include "StdCerrThreadSafePrint.h"
+#include "StdCerrThreadSafeTidPrint.h"
 #include "SmtModelUtils.h"
 #include "_pbTransModel.h"
 #include "_phraseBasedTransModel.h"
