@@ -72,12 +72,12 @@ translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
 $(DB_CXX_LIBS) $(LEVELDB_LIBS)
 
 # flags
-AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			   \
--I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models	   \
--I$(srcdir)/smt_preproc -I$(srcdir)/error_correction			   \
+AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
+-I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models		\
+-I$(srcdir)/print_utils -I$(srcdir)/smt_preproc -I$(srcdir)/error_correction    \
 -I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec -I$(srcdir)/hat_trie	   \
--DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\" \
--DTHOT_LIBDIR=\"$(libdir)\"						   \
+-DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\"	\
+-DTHOT_LIBDIR=\"$(libdir)\"							\
 -I$(CASMACAT_THOT_SERVER_LIB_HOME)/src/include $(KENLM_CXXFLAGS)
 
 AM_CFLAGS= $(AM_CXXFLAGS)
@@ -94,6 +94,10 @@ hat_trie/array_map.h hat_trie/array_set.h hat_trie/htrie_hash.h             \
 hat_trie/htrie_map.h hat_trie/htrie_set.h
 hat_trie_defs= 
 endif
+print_utils_h= print_utils/ThreadSafePrint.h                \
+print_utils/StdCerrThreadSafeTidPrint.h                     \
+print_utils/StdCerrThreadSafePrint.h
+print_utils_defs=
 
 nlp_common_h= nlp_common/WordIndex.h nlp_common/WordAligMatrix.h	\
 nlp_common/uiPairHashF.h nlp_common/uiHashF.h nlp_common/TrieVecs.h	\
@@ -113,8 +117,7 @@ nlp_common/ErrorDefs.h nlp_common/ctimer.h nlp_common/Count.h		\
 nlp_common/ClassDic.h nlp_common/Bitset.h nlp_common/BasicSocketUtils.h	\
 nlp_common/BaseNgramLM.h nlp_common/BaseIncrNgramLM.h			\
 nlp_common/BackoffNode.h nlp_common/awkInputStream.h			\
-nlp_common/DynClassFileHandler.h nlp_common/SimpleDynClassLoader.h      \
-nlp_common/ThreadSafePrint.h nlp_common/LogSafe.h
+nlp_common/DynClassFileHandler.h nlp_common/SimpleDynClassLoader.h
 nlp_common_defs= nlp_common/WordAligMatrix.cc			\
 nlp_common/StrProcUtils.cc nlp_common/ModelDescriptorUtils.cc	\
 nlp_common/SingleWordVocab.cc nlp_common/Prob.cc		\
@@ -428,7 +431,7 @@ endif
 
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
-$(leveldb_lm_h) $(leveldb_lm_defs)  \
+$(print_utils_h) $(print_utils_defs) $(leveldb_lm_h) $(leveldb_lm_defs)  \
 $(sw_models_h) $(sw_models_defs) $(phrase_models_h)			\
 $(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs)                    \
 $(hattrie_pm_h) $(hattrie_pm_defs) $(leveldb_pm_h)	\
@@ -707,7 +710,7 @@ endif
 # include headers
 includedir= $(prefix)/include/$(PACKAGE)
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
-$(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h) $(hattrie_pm_h)		\
+$(print_utils_h) $(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h) $(hattrie_pm_h)	\
 $(leveldb_lm_h) $(leveldb_pm_h) $(smt_preproc_h) $(error_correction_h)		\
 $(downhill_simplex_h) $(stack_dec_h) $(exper_h) $(exper_defs)		\
 $(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
