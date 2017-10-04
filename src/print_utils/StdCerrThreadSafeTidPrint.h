@@ -18,27 +18,28 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 /********************************************************************/
 /*                                                                  */
-/* Module: LogSafe.h                                                */
+/* Module: StdCerrThreadSafeTidPrint.h                              */
 /*                                                                  */
-/* Prototypes file: LogSafe.h                                       */
+/* Prototypes file: StdCerrThreadSafeTidPrint.h                     */
 /*                                                                  */
-/* Description: Declares the LogSafe class which wraps              */
-/*              ThreadSafePrint class to allow printing with <<     */
-/*              operator like in standard library.                  */
+/* Description: Declares the StdCerrThreadSafeTidPrint class which  */
+/*              wraps ThreadSafePrint class to allow printing with  */
+/*              << operator like in standard library.               */
 /*                                                                  */
 /********************************************************************/
 
 /**
- * @file LogSafe.h
+ * @file StdCerrThreadSafeTidPrint.h
  *p
- * @brief Declares the LogSafe class which wraps ThreadSafePrint class
- * to allow printing with << operator like in standard library.
+ * @brief Declares the StdCerrThreadSafeTidPrint class which wraps
+ * ThreadSafePrint class to allow printing with << operator like
+ * in standard library.
  */
 
-#ifndef _LogSafe_h
-#define _LogSafe_h
+#ifndef _StdCerrThreadSafeTidPrint_h
+#define _StdCerrThreadSafeTidPrint_h
 
-#define ErrLog LogSafe{}
+#define StdCerrThreadSafeTid StdCerrThreadSafeTidPrint{}
 
 //--------------- Include files --------------------------------------
 
@@ -57,20 +58,20 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- LogSafe template class
+//--------------- StdCerrThreadSafeTidPrint template class
 
 /**
  * @brief Class implementing thread-safe printing
  */
 
-class LogSafe : public std::ostringstream
+class StdCerrThreadSafeTidPrint : public std::ostringstream
 {
 public:
-    LogSafe() = default;
+    StdCerrThreadSafeTidPrint() = default;
 
-    ~LogSafe()
+    ~StdCerrThreadSafeTidPrint()
     {
-        ThreadSafePrint::getInstance().print(this->str());
+        ThreadSafePrint::getInstance().printWithThreadId(this->str());
     }
 };
 
