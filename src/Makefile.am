@@ -74,7 +74,7 @@ $(DB_CXX_LIBS) $(LEVELDB_LIBS)
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
 -I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models		\
--I$(srcdir)/print_utils -I$(srcdir)/smt_preproc -I$(srcdir)/error_correction    \
+-I$(srcdir)/smt_preproc -I$(srcdir)/error_correction    \
 -I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec -I$(srcdir)/hat_trie	   \
 -DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\"	\
 -DTHOT_LIBDIR=\"$(libdir)\"							\
@@ -113,7 +113,9 @@ nlp_common/ErrorDefs.h nlp_common/ctimer.h nlp_common/Count.h		\
 nlp_common/ClassDic.h nlp_common/Bitset.h nlp_common/BasicSocketUtils.h	\
 nlp_common/BaseNgramLM.h nlp_common/BaseIncrNgramLM.h			\
 nlp_common/BackoffNode.h nlp_common/awkInputStream.h			\
-nlp_common/DynClassFileHandler.h nlp_common/SimpleDynClassLoader.h
+nlp_common/DynClassFileHandler.h nlp_common/SimpleDynClassLoader.h  \
+nlp_common/ThreadSafePrint.h nlp_common/StdCerrThreadSafeTidPrint.h \
+nlp_common/StdCerrThreadSafePrint.h
 nlp_common_defs= nlp_common/WordAligMatrix.cc			\
 nlp_common/StrProcUtils.cc nlp_common/ModelDescriptorUtils.cc	\
 nlp_common/SingleWordVocab.cc nlp_common/Prob.cc		\
@@ -427,7 +429,7 @@ endif
 
 thot_sources= $(common_src_h) $(nlp_common_h) $(nlp_common_defs)	\
 $(incr_models_h) $(incr_models_defs) $(kenlm_h) $(kenlm_defs)		\
-$(print_utils_h) $(print_utils_defs) $(leveldb_lm_h) $(leveldb_lm_defs)  \
+$(leveldb_lm_h) $(leveldb_lm_defs)  \
 $(sw_models_h) $(sw_models_defs) $(phrase_models_h)			\
 $(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs)                    \
 $(hattrie_pm_h) $(hattrie_pm_defs) $(leveldb_pm_h)	\

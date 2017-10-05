@@ -39,7 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef _StdCerrThreadSafePrint_h
 #define _StdCerrThreadSafePrint_h
 
-#define StdCerrThreadSafe *(StdCerrThreadSafePrint().ssPtr)
+#define StdCerrThreadSafe StdCerrThreadSafePrint{}
 
 //--------------- Include files --------------------------------------
 
@@ -64,21 +64,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  * @brief Class implementing thread-safe printing
  */
 
-class StdCerrThreadSafePrint
+class StdCerrThreadSafePrint : public std::ostringstream
 {
 public:
-    StdCerrThreadSafePrint()
-    {
-        ssPtr = new std::stringstream;
-    };
+    StdCerrThreadSafePrint() {};
 
     ~StdCerrThreadSafePrint()
     {
-        ThreadSafePrint::getInstance().print(ssPtr->str());
-        delete ssPtr;
+        ThreadSafePrint::getInstance().print(this->str());
     }
-
-    std::stringstream* ssPtr;
 };
 
 #endif
