@@ -83,11 +83,10 @@ int process_request_switch(int sockd,
                            int user_id,
                            int server_request_code,
                            int verbose);
+int init_user_pars_if_required(int user_id);
 void increase_num_threads_var(void);
 void decrease_num_threads_var(void);
 void wait_on_num_threads_var_cond(void);
-bool user_is_new(int user_id);
-void add_user(int user_id);
 void sigchld_handler(int s);
 int handleParameters(int argc,
                      char *argv[]);
@@ -336,26 +335,22 @@ void* process_request(void* void_ptr)
   int user_id=BasicSocketUtils::recvInt(rdata.sockd);
   if(verbose) StdCerrThreadSafeTid<<"User identifier: "<<user_id<<std::endl;
   
-      // Init user parameters if necessary
-  if(user_is_new(user_id))
+      // Init user parameters if required
+  int ret=init_user_pars_if_required(user_id);
+  if(ret==THOT_ERROR)
   {
-    add_user(user_id);
-    int ret=thotDecoderPtr->initUserPars(user_id,tdu_pars,verbose);
-    if(ret==THOT_ERROR)
-    {
-          // end=true;
-      if(verbose) StdCerrThreadSafeTid<<"Error while initializing server parameters"<<std::endl;
-      close(rdata.sockd);
-      decrease_num_threads_var();
-      pthread_exit(NULL);
-    }
+        // end=true;
+    if(verbose) StdCerrThreadSafeTid<<"Error while initializing server parameters"<<std::endl;
+    close(rdata.sockd);
+    decrease_num_threads_var();
+    pthread_exit(NULL);
   }
   
       // Process request measuring time
   double elapsed_prev,elapsed,ucpu,scpu;
   ctimer(&elapsed_prev,&ucpu,&scpu);
 
-  int ret=process_request_switch(rdata.sockd,user_id,server_request_code,verbose);
+  ret=process_request_switch(rdata.sockd,user_id,server_request_code,verbose);
   
   ctimer(&elapsed,&ucpu,&scpu);
   
@@ -469,6 +464,31 @@ int process_request_switch(int sockd,
 }
 
 //---------------
+int init_user_pars_if_required(int user_id)
+{
+  pthread_mutex_lock(&user_set_mut);
+  /////////// begin of mutex
+
+  int ret=THOT_OK;
+  std::set<int>::const_iterator user_set_iter=user_set.find(user_id);
+  if(user_set_iter==user_set.end())
+  {
+        // User is new
+
+        // Store user
+    user_set.insert(user_id);
+
+        // Initialize parameters
+    ret=thotDecoderPtr->initUserPars(user_id,tdu_pars,ts_pars.v_given);
+  }
+
+  /////////// end of mutex 
+  pthread_mutex_unlock(&user_set_mut);
+
+  return ret;
+}
+
+//---------------
 void increase_num_threads_var(void)
 {
   pthread_mutex_lock(&num_threads_var_mut);
@@ -518,37 +538,6 @@ void wait_on_num_threads_var_cond(void)
       // the end of this function, preventing execution of new server
       // request threads (however, with current implementation this is
       // no longer possible)
-}
-
-//---------------
-bool user_is_new(int user_id)
-{
-  bool result;
-  pthread_mutex_lock(&user_set_mut);
-  /////////// begin of mutex
-
-  std::set<int>::const_iterator user_set_iter=user_set.find(user_id);
-  if(user_set_iter==user_set.end())
-    result=false;
-  else
-    result=true;
-  
-  /////////// end of mutex 
-  pthread_mutex_unlock(&user_set_mut);
-
-  return result;
-}
-
-//---------------
-void add_user(int user_id)
-{
-  pthread_mutex_lock(&user_set_mut);
-  /////////// begin of mutex
-
-  user_set.insert(user_id);
-  
-  /////////// end of mutex 
-  pthread_mutex_unlock(&user_set_mut);  
 }
 
 //---------------
