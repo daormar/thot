@@ -36,7 +36,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SrcPhraseLenFeat.h"
 #include "InversePhraseModelFeat.h"
 #include "DirectPhraseModelFeat.h"
-#include "_incrInterpNgramLM.h"
 #include "_incrJelMerNgramLM.h"
 #include "LangModelFeat.h"
 #include "WordPenaltyFeat.h"

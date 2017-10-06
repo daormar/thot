@@ -57,7 +57,6 @@ $(LEVELDB_PROGS) $(TESTING_PROGS)
 lib_LTLIBRARIES = libhattrie.la libthot.la				\
 word_penalty_model_factory.la incr_jel_mer_ngram_lm_factory.la		\
 incr_jel_mer_leveldb_ngram_lm_factory.la				\
-incr_interp_ngram_lm_factory.la						\
 smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la incr_phrase_model_factory.la		\
 wba_incr_phrase_model_factory.la incr_mux_phrase_model_factory.la	\
@@ -129,8 +128,7 @@ incr_models_h= incr_models/vecx_x_incr_enc.h				\
 incr_models/vecx_x_incr_ecpm.h incr_models/vecx_x_incr_cptable.h	\
 incr_models/lm_ienc.h incr_models/IncrNgramLM.h				\
 incr_models/_incrNgramLM.h incr_models/IncrJelMerNgramLM.h		\
-incr_models/_incrJelMerNgramLM.h incr_models/IncrInterpNgramLM.h	\
-incr_models/_incrInterpNgramLM.h incr_models/IncrEncoder.h		\
+incr_models/_incrJelMerNgramLM.h incr_models/IncrEncoder.h		\
 incr_models/_incrEncCondProbModel.h incr_models/IncrCondProbTable.h	\
 incr_models/im_pair.h incr_models/BaseIncrEncoder.h			\
 incr_models/BaseIncrEncCondProbModel.h					\
@@ -138,8 +136,7 @@ incr_models/BaseIncrCondProbTable.h incr_models/BaseIncrCondProbModel.h	\
 incr_models/BaseWordPenaltyModel.h incr_models/WordPenaltyModel.h      \
 incr_models/WordPredictor.h
 incr_models_defs= incr_models/lm_ienc.cc incr_models/IncrNgramLM.cc	\
-incr_models/IncrJelMerNgramLM.cc incr_models/_incrInterpNgramLM.cc	\
-incr_models/IncrInterpNgramLM.cc incr_models/WordPenaltyModel.cc       \
+incr_models/IncrJelMerNgramLM.cc incr_models/WordPenaltyModel.cc	\
 incr_models/WordPredictor.cc
 
 if KENLM_LIB_ENABLED
@@ -456,11 +453,6 @@ incr_jel_mer_leveldb_ngram_lm_factory_defs=		\
 incr_models/IncrJelMerLevelDbNgramLMFactory.cc
 
 ##########
-incr_interp_ngram_lm_factory_h=
-incr_interp_ngram_lm_factory_defs=		\
-incr_models/IncrInterpNgramLMFactory.cc
-
-##########
 kenlm_factory_h=
 kenlm_factory_defs= nlp_common/KenLmFactory.cc
 
@@ -744,12 +736,6 @@ $(incr_jel_mer_leveldb_ngram_lm_factory_h)		\
 $(incr_jel_mer_leveldb_ngram_lm_factory_defs)
 incr_jel_mer_leveldb_ngram_lm_factory_la_LIBADD= libthot.la
 incr_jel_mer_leveldb_ngram_lm_factory_la_LDFLAGS= -module
-
-##########
-incr_interp_ngram_lm_factory_la_SOURCES=				\
-$(incr_interp_ngram_lm_factory_h) $(incr_interp_ngram_lm_factory_defs)
-incr_interp_ngram_lm_factory_la_LIBADD= libthot.la $(KENLM_LIBADD)
-incr_interp_ngram_lm_factory_la_LDFLAGS= -module
 
 ##########
 if KENLM_LIB_ENABLED
