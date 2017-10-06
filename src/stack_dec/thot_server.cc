@@ -331,41 +331,52 @@ void* process_request(void* void_ptr)
     StdCerrThreadSafeTid<<"Origin: "<<inet_ntoa(rdata.sin_addr)<<std::endl;
   }
 
-      // Get request code
-  int server_request_code=BasicSocketUtils::recvInt(rdata.sockd);
-  if(verbose) StdCerrThreadSafeTid<<"Request code: "<<server_request_code<<std::endl;
-
-      // Get user id
-  int user_id=BasicSocketUtils::recvInt(rdata.sockd);
-  if(verbose) StdCerrThreadSafeTid<<"User identifier: "<<user_id<<std::endl;
-  
-      // Init user parameters if required
-  int ret=init_user_pars_if_required(user_id);
-  if(ret==THOT_ERROR)
+  try
   {
-        // end=true;
-    if(verbose) StdCerrThreadSafeTid<<"Error while initializing server parameters"<<std::endl;
-    close(rdata.sockd);
-    decrease_num_threads_var();
-    pthread_exit(NULL);
+        // Get request code
+    int server_request_code=BasicSocketUtils::recvInt(rdata.sockd);
+    if(verbose) StdCerrThreadSafeTid<<"Request code: "<<server_request_code<<std::endl;
+
+        // Get user id
+    int user_id=BasicSocketUtils::recvInt(rdata.sockd);
+    if(verbose) StdCerrThreadSafeTid<<"User identifier: "<<user_id<<std::endl;
+
+        // Init user parameters if required
+    int ret=init_user_pars_if_required(user_id);
+    if(ret==THOT_ERROR)
+    {
+          // end=true;
+      if(verbose) StdCerrThreadSafeTid<<"Error while initializing server parameters"<<std::endl;
+      close(rdata.sockd);
+      decrease_num_threads_var();
+      pthread_exit(NULL);
+    }
+
+        // Process request measuring time
+    double elapsed_prev,elapsed,ucpu,scpu;
+    ctimer(&elapsed_prev,&ucpu,&scpu);
+
+    ret=process_request_switch(rdata.sockd,user_id,server_request_code,verbose);
+
+    ctimer(&elapsed,&ucpu,&scpu);
+
+    if(verbose)
+    {
+      StdCerrThreadSafeTid<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
+    }
+
+    if(ret==THOT_ERROR)
+    {
+      if(verbose) StdCerrThreadSafeTid<<"Error while processing client request"<<std::endl;
+      close(rdata.sockd);
+      decrease_num_threads_var();
+      pthread_exit(NULL);
+    }
   }
-  
-      // Process request measuring time
-  double elapsed_prev,elapsed,ucpu,scpu;
-  ctimer(&elapsed_prev,&ucpu,&scpu);
-
-  ret=process_request_switch(rdata.sockd,user_id,server_request_code,verbose);
-  
-  ctimer(&elapsed,&ucpu,&scpu);
-  
-  if(verbose)
+  catch(const std::exception& e)
   {
-    StdCerrThreadSafeTid<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
-  }
-
-  if(ret==THOT_ERROR)
-  {
-    if(verbose) StdCerrThreadSafeTid<<"Error while processing client request"<<std::endl;
+        // Clean after failure
+    if(verbose) StdCerrThreadSafeTid << e.what() << std::endl;
     close(rdata.sockd);
     decrease_num_threads_var();
     pthread_exit(NULL);
