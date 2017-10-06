@@ -124,16 +124,6 @@ int FeatureHandler::updateLinWeightsForLmPtr(BaseNgramLM<LM_State>* lModelPtr,
     return THOT_OK;
   }
     
-  _incrInterpNgramLM* incrInterpNgramLmPtr=dynamic_cast<_incrInterpNgramLM* >(lModelPtr);
-  if(incrInterpNgramLmPtr)
-  {
-    int ret=incrInterpNgramLmPtr->updateModelWeights(trgCorpusFileName.c_str(),verbose);
-    if(ret==THOT_ERROR)
-      return THOT_ERROR;
-
-    return THOT_OK;
-  }
-
       // Model did not have weights to be updated
   if(verbose)
     std::cerr<<"Warning, current model does not have weights to be updated"<<std::endl;

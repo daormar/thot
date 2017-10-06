@@ -43,7 +43,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include THOT_LM_STATE_H // Define LM_State type. It is set in
                          // configure by checking LM_STATE_H
                          // variable (default value: LM_State.h)
-#include "_incrInterpNgramLM.h"
 #include "_incrJelMerNgramLM.h"
 #include "BaseNgramLM.h"
 #include "SimpleDynClassLoader.h"
@@ -89,9 +88,6 @@ int update_lm_weights(std::string corpusFile,
 int update_lm_weights_jel_mer(std::string corpusFile,
                               std::string modelFile,
                               int verbosity);
-int update_lm_weights_interp(std::string corpusFile,
-                             std::string modelFile,
-                             int verbosity);
 void printUsage(void);
 void version(void);
 
@@ -100,7 +96,6 @@ void version(void);
 DynClassFileHandler dynClassFileHandler;
 SimpleDynClassLoader<BaseNgramLM<std::vector<WordIndex> > > baseNgramLMDynClassLoader;
 BaseNgramLM<std::vector<WordIndex> >* lm;
-_incrInterpNgramLM* incrInterpNgramLmPtr;
 _incrJelMerNgramLM<Count,Count>* incrJelMerLmPtr;
 
 //--------------- Function Definitions -------------------------------
@@ -295,8 +290,7 @@ int process_lm_entry(std::string corpusFile,
 
       // Check if the model has weights to be updated
   incrJelMerLmPtr=dynamic_cast<_incrJelMerNgramLM<Count,Count>* >(lm);
-  incrInterpNgramLmPtr=dynamic_cast<_incrInterpNgramLM* >(lm);
-  if(!incrJelMerLmPtr && !incrInterpNgramLmPtr)
+  if(!incrJelMerLmPtr)
   {
     std::cerr<<"Current model does not have weights to be updated"<<std::endl;
     release_lm(verbosity);
@@ -352,12 +346,7 @@ int update_lm_weights(std::string corpusFile,
   }
   else
   {
-    if(incrInterpNgramLmPtr)
-    {
-      return update_lm_weights_interp(corpusFile,modelFile,verbosity);
-    }
-    else
-      return THOT_OK;
+    return THOT_OK;
   }
 }
 
@@ -382,29 +371,6 @@ int update_lm_weights_jel_mer(std::string corpusFile,
     return THOT_ERROR;
   
   return THOT_OK;  
-}
-
-//---------------
-int update_lm_weights_interp(std::string corpusFile,
-                             std::string modelFile,
-                             int verbosity)
-{
-      // Load model
-  int retVal=incrInterpNgramLmPtr->load(modelFile.c_str());
-  if(retVal==THOT_ERROR)
-    return THOT_ERROR;
-      
-      // Update weights
-  retVal=incrInterpNgramLmPtr->updateModelWeights(corpusFile.c_str(),verbosity);
-  if(retVal==THOT_ERROR)
-    return THOT_ERROR;
-      
-      // Print updated weights
-  retVal=incrInterpNgramLmPtr->printWeights(modelFile.c_str());
-  if(retVal==THOT_ERROR)
-    return THOT_ERROR;
-      
-  return THOT_OK;     
 }
 
 //--------------------------------

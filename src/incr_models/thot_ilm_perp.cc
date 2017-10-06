@@ -37,7 +37,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
   // before including any STL header files to avoid conflicts.
 
 #include "IncrJelMerNgramLM.h"
-#include "IncrInterpNgramLM.h"
 #include "ctimer.h"
 #include "options.h"
 #include <math.h>
@@ -86,8 +85,6 @@ int main(int argc,char *argv[])
         // Load language model
     switch(lmType)
     {
-      case INTERP_LM: lm=new IncrInterpNgramLM;
-        break;
       case JEL_MER_LM: lm=new IncrJelMerNgramLM;
         break;
       default: lm=new IncrJelMerNgramLM;
@@ -202,12 +199,11 @@ int TakeParameters(int argc,char *argv[])
 void printUsage(void)
 {
  printf("Usage: thot_ilm_perp -c <string> -lm <string> -n <int>\n");
- printf("                     {-i | -jm | -cjm} \n");
+ printf("                     {-jm | -cjm} \n");
  printf("                     [-v|-v1]\n");
  printf("-c <string>          Corpus file to be processed.\n\n"); 
  printf("-lm <string>         Language model file name.\n\n");
  printf("-n <int>             Order of the n-grams.\n\n");
- printf("-i                   Use interpolated model.\n\n");
  printf("-jm                  Use Jelinek-Mercer n-gram models.\n\n");
  printf("-cjm                 Use cache-based Jelinek-Mercer n-grams models.\n\n");
  printf("-v|-v1               Verbose modes.\n\n");
