@@ -72,12 +72,12 @@ translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
 $(DB_CXX_LIBS) $(LEVELDB_LIBS)
 
 # flags
-AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common				\
--I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models		\
--I$(srcdir)/smt_preproc -I$(srcdir)/error_correction    \
+AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			   \
+-I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models	   \
+-I$(srcdir)/smt_preproc -I$(srcdir)/error_correction			   \
 -I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec -I$(srcdir)/hat_trie	   \
--DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\"	\
--DTHOT_LIBDIR=\"$(libdir)\"							\
+-DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\" \
+-DTHOT_LIBDIR=\"$(libdir)\"						   \
 -I$(CASMACAT_THOT_SERVER_LIB_HOME)/src/include $(KENLM_CXXFLAGS)
 
 AM_CFLAGS= $(AM_CXXFLAGS)
