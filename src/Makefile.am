@@ -23,11 +23,7 @@ endif
 AUTOMAKE_OPTIONS = subdir-objects
 
 SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
-error_correction downhill_simplex stack_dec exper testing
-
-if HAVE_CXX11_ENABLED
-SUBDIRS+= hat_trie
-endif
+error_correction downhill_simplex stack_dec exper testing hat_trie
 
 if CODE_TESTING
 TESTING_PROGS= thot_test
@@ -57,9 +53,11 @@ thot_ms_dec thot_ms_alig thot_li_weight_upd thot_ll_weight_upd_nblist	\
 thot_client thot_server thot_scorer thot_calc_bleu $(DB_CXX_PROGS)	\
 $(LEVELDB_PROGS) $(TESTING_PROGS)
 
-lib_LTLIBRARIES = libhattrie.la libthot.la word_penalty_model_factory.la		\
-incr_jel_mer_ngram_lm_factory.la incr_jel_mer_leveldb_ngram_lm_factory.la       \
-incr_interp_ngram_lm_factory.la	smoothed_incr_ibm2_alig_model_factory.la				\
+lib_LTLIBRARIES = libhattrie.la libthot.la				\
+word_penalty_model_factory.la incr_jel_mer_ngram_lm_factory.la		\
+incr_jel_mer_leveldb_ngram_lm_factory.la				\
+incr_interp_ngram_lm_factory.la						\
+smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la incr_phrase_model_factory.la		\
 wba_incr_phrase_model_factory.la incr_mux_phrase_model_factory.la	\
 pfsm_ecm_for_wg_factory.la non_pb_ec_model_for_nb_ucat_factory.la	\
@@ -73,17 +71,13 @@ translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
 $(DB_CXX_LIBS) $(LEVELDB_LIBS)
 
 # flags
-AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			\
--I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models		\
--I$(srcdir)/smt_preproc -I$(srcdir)/error_correction				\
--I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec				\
--DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\"	\
--DTHOT_LIBDIR=\"$(libdir)\"							\
+AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			   \
+-I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models	   \
+-I$(srcdir)/smt_preproc -I$(srcdir)/error_correction			   \
+-I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec -I$(srcdir)/hat_trie	   \
+-DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\" \
+-DTHOT_LIBDIR=\"$(libdir)\"						   \
 -I$(CASMACAT_THOT_SERVER_LIB_HOME)/src/include $(KENLM_CXXFLAGS)
-
-if HAVE_CXX11_ENABLED
-AM_CXXFLAGS+= -I$(srcdir)/hat_trie
-endif
 
 AM_CFLAGS= $(AM_CXXFLAGS)
 
