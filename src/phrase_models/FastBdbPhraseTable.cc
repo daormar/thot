@@ -112,7 +112,7 @@ bool FastBdbPhraseTable::init(const char *fileName)
 
   std::string outputFilesPrefix=fileName;
 
-#ifndef THOT_ENABLE_BDBENV
+#ifdef THOT_ENABLE_BDBENV
       // create environment
   envPtr=new DbEnv(0);
   std::string envName=extractDirName(outputFilesPrefix);
@@ -124,7 +124,7 @@ bool FastBdbPhraseTable::init(const char *fileName)
   envPtr=NULL;
 #endif
       // open databases
-  u_int32_t o_flags = DB_CREATE|DB_NOMMAP; // Open flags
+  u_int32_t o_flags = DB_CREATE|DB_NOMMAP|DB_THREAD; // Open flags
   
   std::string phrDictDbName=outputFilesPrefix+".fbdb_phrdict";
   phrDictDb=new Db(envPtr,0);

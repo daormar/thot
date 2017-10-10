@@ -125,7 +125,7 @@ bool BdbPhraseTable::init(const char *fileName)
 #endif
   
       // open databases
-  u_int32_t o_flags = DB_CREATE; // Open flags
+  u_int32_t o_flags = DB_CREATE|DB_NOMMAP|DB_THREAD; // Open flags
   
   std::string phrDictDbName=outputFilesPrefix+".bdb_phrdict";
   phrDictDb=new Db(envPtr,0);
