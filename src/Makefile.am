@@ -17,8 +17,11 @@ endif
 endif
 
 if HAVE_LEVELDB_LIB
-LEVELDB_PROGS=thot_ngram_to_leveldb thot_ttable_to_leveldb thot_lextable_to_leveldb
-LEVELDB_LIBS=leveldb_phrase_model_factory.la incr_leveldb_hmm_p0_alig_model_factory.la
+LEVELDB_PROGS=thot_ngram_to_leveldb thot_ttable_to_leveldb	\
+thot_lextable_to_leveldb
+LEVELDB_LIBS=incr_jel_mer_leveldb_ngram_lm_factory.la	\
+leveldb_phrase_model_factory.la				\
+incr_leveldb_hmm_p0_alig_model_factory.la
 endif
 
 AUTOMAKE_OPTIONS = subdir-objects
@@ -56,7 +59,6 @@ $(LEVELDB_PROGS) $(TESTING_PROGS)
 
 lib_LTLIBRARIES = libthot.la				\
 word_penalty_model_factory.la incr_jel_mer_ngram_lm_factory.la		\
-incr_jel_mer_leveldb_ngram_lm_factory.la				\
 smoothed_incr_ibm2_alig_model_factory.la				\
 incr_hmm_p0_alig_model_factory.la incr_phrase_model_factory.la		\
 wba_incr_phrase_model_factory.la incr_mux_phrase_model_factory.la	\
