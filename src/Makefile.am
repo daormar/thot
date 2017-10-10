@@ -53,7 +53,7 @@ thot_ms_dec thot_ms_alig thot_li_weight_upd thot_ll_weight_upd_nblist	\
 thot_client thot_server thot_scorer thot_calc_bleu $(DB_CXX_PROGS)	\
 $(LEVELDB_PROGS) $(TESTING_PROGS)
 
-lib_LTLIBRARIES = libhattrie.la libthot.la				\
+lib_LTLIBRARIES = libthot.la				\
 word_penalty_model_factory.la incr_jel_mer_ngram_lm_factory.la		\
 incr_jel_mer_leveldb_ngram_lm_factory.la				\
 incr_interp_ngram_lm_factory.la						\
@@ -711,12 +711,6 @@ $(downhill_simplex_h) $(stack_dec_h) $(exper_h) $(exper_defs)		\
 $(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
 
 # libraries
-
-##########
-if HAVE_CXX11_ENABLED
-libhattrie_la_SOURCES= $(hat_trie_h) $(hat_trie_defs)
-libhattrie_la_LIBADD=
-endif
 
 ##########
 libthot_la_SOURCES= $(thot_sources)
