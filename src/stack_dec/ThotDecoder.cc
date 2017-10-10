@@ -1482,10 +1482,10 @@ bool ThotDecoder::load_ecm(const char* ecmFilesPrefix,
 }
 
 //--------------------------
-bool ThotDecoder::onlineTrainSentPair(int user_id,
-                                      const char *srcSent,
-                                      const char *refSent,
-                                      int verbose/*=0*/)
+int ThotDecoder::onlineTrainSentPair(int user_id,
+                                     const char *srcSent,
+                                     const char *refSent,
+                                     int verbose/*=0*/)
 {
   int ret;
 
@@ -1700,10 +1700,10 @@ void ThotDecoder::setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
 }
 
 //--------------------------
-bool ThotDecoder::trainEcm(int user_id,
-                           const char *strx,
-                           const char *stry,
-                           int verbose/*=0*/)
+int ThotDecoder::trainEcm(int user_id,
+                          const char *strx,
+                          const char *stry,
+                          int verbose/*=0*/)
 {
   int ret;
   pthread_mutex_lock(&atomic_op_mut);
@@ -1750,7 +1750,7 @@ bool ThotDecoder::trainEcm(int user_id,
 }
 
 //--------------------------
-bool ThotDecoder::translateSentence(int user_id,
+void ThotDecoder::translateSentence(int user_id,
                                     const char *sentenceToTranslate,
                                     std::string& result,
                                     std::string& bestHypInfo,
@@ -1802,8 +1802,6 @@ bool ThotDecoder::translateSentence(int user_id,
 
       // Decrease non_atomic_ops_running variable
   decrease_non_atomic_ops_running();
-
-  return THOT_OK;
 }
 
 //--------------------------
@@ -1896,7 +1894,7 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
 }
 
 //--------------------------
-bool ThotDecoder::sentPairVerCov(int user_id,
+void ThotDecoder::sentPairVerCov(int user_id,
                                  const char *srcSent,
                                  const char *refSent,
                                  std::string& result,
@@ -1947,12 +1945,10 @@ bool ThotDecoder::sentPairVerCov(int user_id,
 
       // Decrease non_atomic_ops_running variable
   decrease_non_atomic_ops_running();
-
-  return THOT_OK;
 }
 
 //--------------------------
-bool ThotDecoder::startCat(int user_id,
+void ThotDecoder::startCat(int user_id,
                            const char *sentenceToTranslate,
                            std::string &catResult,
                            int verbose/*=0*/)
@@ -2017,8 +2013,6 @@ bool ThotDecoder::startCat(int user_id,
 
       // Decrease non_atomic_ops_running variable
   decrease_non_atomic_ops_running();
-
-  return THOT_OK;
 }
   
 //--------------------------

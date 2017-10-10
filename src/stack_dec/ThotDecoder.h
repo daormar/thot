@@ -104,32 +104,32 @@ class ThotDecoder
                    int verbose);
 
       // Functions to train models
-  bool onlineTrainSentPair(int user_id,
-                           const char *srcSent,
-                           const char *refSent,
-                           int verbose=0);
+  int onlineTrainSentPair(int user_id,
+                          const char *srcSent,
+                          const char *refSent,
+                          int verbose=0);
   void updateLogLinearWeights(std::string refSent,
                               WordGraph* wgPtr,
                               int verbose=0);
-  bool trainEcm(int user_id,
-                const char *strx,
-                const char *stry,
-                int verbose=0);
+  int trainEcm(int user_id,
+               const char *strx,
+               const char *stry,
+               int verbose=0);
 
       // Functions to translate sentences
-  bool translateSentence(int user_id,
+  void translateSentence(int user_id,
                          const char *sentenceToTranslate,
                          std::string& result,
                          std::string& bestHypInfo,
                          int verbose=0);
-  bool sentPairVerCov(int user_id,
+  void sentPairVerCov(int user_id,
                       const char *srcSent,
                       const char *refSent,
                       std::string& result,
                       int verbose=0);
   
       // CAT-related functions
-  bool startCat(int user_id,
+  void startCat(int user_id,
                 const char *sentenceToTranslate,
                 std::string &catResult,
                 int verbose=0);
