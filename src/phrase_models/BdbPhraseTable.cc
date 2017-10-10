@@ -116,8 +116,8 @@ bool BdbPhraseTable::init(const char *fileName)
       // create environment
   envPtr=new DbEnv(0);
   std::string envName=extractDirName(outputFilesPrefix);
-  u_int32_t env_o_flags = DB_CREATE|DB_INIT_MPOOL;
-  u_int32_t env_cachesize=256 *1024;
+  u_int32_t env_o_flags = DB_CREATE|DB_INIT_MPOOL|DB_THREAD;
+  u_int32_t env_cachesize=8*1024;
   envPtr->open(envName.c_str(),env_o_flags,0);
   envPtr->set_cachesize(0,env_cachesize,1);
 #else
