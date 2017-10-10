@@ -30,9 +30,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Include files ---------------------------------------
 
-#include "_incrSwAligModel.h"
-#include "IncrHmmP0AligModel.h"
+#if HAVE_CONFIG_H
+#  include <thot_config.h>
+#endif /* HAVE_CONFIG_H */
+
+#ifdef THOT_HAVE_LEVELDB_LIB 
 #include "IncrLevelDbHmmP0AligModel.h"
+#endif
+#include "IncrHmmP0AligModel.h"
+#include "_incrSwAligModel.h"
 #include "BaseStepwiseAligModel.h"
 #include "BaseSwAligModel.h"
 #include "thot_gen_sw_model_pars.h"
