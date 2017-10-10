@@ -438,7 +438,7 @@ int process_request_switch(int sockd,
     case VERIFY_COV:
       BasicSocketUtils::recvStlStr(sockd,stlStrSrc);
       BasicSocketUtils::recvStlStr(sockd,stlStrRef);
-      ret=thotDecoderPtr->sentPairVerCov(user_id,stlStrSrc.c_str(),stlStrRef.c_str(),result,verbose);
+      thotDecoderPtr->sentPairVerCov(user_id,stlStrSrc.c_str(),stlStrRef.c_str(),result,verbose);
       BasicSocketUtils::writeStr(sockd,result.c_str());
       break;
 
