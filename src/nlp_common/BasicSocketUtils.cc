@@ -70,6 +70,7 @@ namespace BasicSocketUtils
       {
             // recv() call
         std::cerr<<"recv() error!"<<std::endl;
+        free(str);
         throw std::runtime_error("Socket error: Cannot read STL string");
       }
     }
