@@ -234,6 +234,7 @@ int processParameters(thot_gen_sw_model_pars pars)
 
   if(pars.s_given)
   {
+#ifdef THOT_HAVE_LEVELDB_LIB 
         // Initialize model if necessary
     IncrLevelDbHmmP0AligModel* incrLevelDbHmmP0AligModelPtr = dynamic_cast<IncrLevelDbHmmP0AligModel*>(swAligModelPtr);
     if(incrLevelDbHmmP0AligModelPtr != NULL)
@@ -244,6 +245,7 @@ int processParameters(thot_gen_sw_model_pars pars)
         incrLevelDbHmmP0AligModelPtr->init(pars.o_str.c_str());
       }
     }
+#endif
         // Read sentence pairs
     std::string srctrgcFileName="";
     pair<unsigned int,unsigned int> pui;
