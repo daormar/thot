@@ -226,7 +226,7 @@ update_best_quality()
         best_quality=${quality}
         best_llweights=${llweights}
     else
-        curr_best_quality_worse=`echo ${best_quality} ${quality} | $AWK '{printf"%d",$1<$2}'`
+        curr_best_quality_worse=`echo ${best_quality} ${quality} | $AWK '{printf"%d",($1 < $2)}'`
         if [ ${curr_best_quality_worse} -eq 1 ]; then
             best_quality=${quality}
             best_llweights=${llweights}
