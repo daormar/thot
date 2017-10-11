@@ -488,11 +488,6 @@ int process_request_switch(int sockd,
       BasicSocketUtils::writeInt(sockd,THOT_OK);
       break;
       
-    case CLEAR_TRANS:
-      thotDecoderPtr->clearTrans(verbose);
-      BasicSocketUtils::writeInt(sockd,THOT_OK);
-      break;
-
     case PRINT_MODELS:
       ret=thotDecoderPtr->printModels(verbose);
       BasicSocketUtils::writeInt(sockd,ret);

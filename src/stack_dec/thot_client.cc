@@ -175,10 +175,6 @@ int process_request(const thot_client_pars& tdcPars)
       ctimer(&elapsed,&ucpu,&scpu);
       if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
       break;
-    case CLEAR_TRANS: retVal=thotDecoderClient.sendClearRequest(tdcPars.user_id);
-      ctimer(&elapsed,&ucpu,&scpu);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
-      break;
     case PRINT_MODELS: retVal=thotDecoderClient.sendPrintRequest(tdcPars.user_id);
       ctimer(&elapsed,&ucpu,&scpu);
       if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
@@ -321,14 +317,6 @@ int TakeParameters(int argc,
    return THOT_OK;
  }
 
-     /* Verify clear option */
- err=readOption(argc,argv, "-clear");
- if(err==0)
- {
-   tdcPars.server_request_code=CLEAR_TRANS;
-   return THOT_OK;
- }
-
       /* Verify print option */
  err=readOption(argc,argv, "-pr");
  if(err==0)
@@ -365,7 +353,7 @@ void printUsage(void)
   std::cerr<<"                             | -t <string> | -th <string> |\n";
   std::cerr<<"                             | -c <srcstring> <refstring> |\n";
   std::cerr<<"                             | -sc <string> | -ap <string> | -rp |\n";
-  std::cerr<<"                             | -clear | -o <string> | -e } [ -v ]\n";
+  std::cerr<<"                             | -o <string> | -e } [ -v ]\n";
   std::cerr<<"                             [--help] [--version]\n\n";
   std::cerr<<"-i <string>                  Set IP address of the server.\n";
   std::cerr<<"-p <int>                     Server port.\n";
@@ -380,7 +368,6 @@ void printUsage(void)
   std::cerr<<"                             the null string as prefix.\n";
   std::cerr<<"-ap <string>                 Add string to prefix.\n";
   std::cerr<<"-rp <string>                 Reset prefix.\n";
-  std::cerr<<"-clear                       Clear loaded models.\n";
   std::cerr<<"-pr                          Print models.\n";
   std::cerr<<"-e                           End server.\n";
   std::cerr<<"-v                           Verbose mode.\n";
