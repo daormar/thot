@@ -61,6 +61,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ThotDecoderUserPars.h"
 #include "ModelDescriptorUtils.h"
 
+#include "StdCerrThreadSafeTidPrint.h"
 #include <options.h>
 #include <pthread.h>
 #include <sstream>
@@ -145,7 +146,7 @@ class ThotDecoder
                int verbose=0);
   void resetPrefix(int user_id,
                    int verbose=0);
-  bool use_caseconv(int user_id,
+  int use_caseconv(int user_id,
                     const char *caseConvFile,
                     int verbose=0);
   
@@ -153,7 +154,7 @@ class ThotDecoder
   void clearTrans(int verbose=0);
 
       // Function to print the models
-  bool printModels(int verbose=0);
+  int printModels(int verbose=0);
 
       // Model weights related functions
   int printModelWeights(void);
@@ -212,8 +213,8 @@ class ThotDecoder
                 int verbose=0);
 
       // Functions to print models
-  bool printModelsLegacyImpl(int verbose=0);
-  bool printModelsFeatImpl(int verbose=0);
+  int printModelsLegacyImpl(int verbose=0);
+  int printModelsFeatImpl(int verbose=0);
 
       // Training-related functions
   void setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,

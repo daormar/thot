@@ -309,7 +309,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].stackDecoderPtr=tdCommonVars.dynClassFactoryHandler.baseStackDecoderDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseStackDecoderInitPars);
   if(tdPerUserVarsVec[idx].stackDecoderPtr==NULL)
   {
-    std::cerr<<"Error: BaseStackDecoder pointer could not be instantiated"<<std::endl;
+    StdCerrThreadSafe<<"Error: BaseStackDecoder pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -325,7 +325,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
   if(tdPerUserVarsVec[idx].trConstraintsPtr==NULL)
   {
-    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
+    StdCerrThreadSafe<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -336,7 +336,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   int ret=tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
   if(ret==THOT_ERROR)
   {
-    std::cerr<<"Error while linking smt model to decoder, revise master.ini file"<<std::endl;
+    StdCerrThreadSafe<<"Error while linking smt model to decoder, revise master.ini file"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -350,7 +350,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].ecModelForNbUcatPtr=tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseEcModelForNbUcatInitPars);
   if(tdPerUserVarsVec[idx].ecModelForNbUcatPtr==NULL)
   {
-    std::cerr<<"Error: BaseEcModelForNbUcat pointer could not be instantiated"<<std::endl;
+    StdCerrThreadSafe<<"Error: BaseEcModelForNbUcat pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
   
@@ -361,7 +361,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   tdPerUserVarsVec[idx].assistedTransPtr=tdCommonVars.dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseAssistedTransInitPars);
   if(tdPerUserVarsVec[idx].assistedTransPtr==NULL)
   {
-    std::cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<std::endl;
+    StdCerrThreadSafe<<"Error: BaseAssistedTrans pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
   
@@ -392,7 +392,7 @@ int ThotDecoder::init_idx_data(size_t idx)
     tdPerUserVarsVec[idx].wgpPtr=tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseWgProcessorForAnlpInitPars);
     if(tdPerUserVarsVec[idx].wgpPtr==NULL)
     {
-      std::cerr<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<std::endl;
+      StdCerrThreadSafe<<"Error: BaseWgProcessorForAnlp pointer could not be instantiated"<<std::endl;
       return THOT_ERROR;
     }
     
@@ -969,9 +969,12 @@ int ThotDecoder::initUserPars(int user_id,
 {
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
-
+  
       // Wait until all non-atomic operations have finished
   wait_on_non_atomic_op_cond();
+
+  if(verbose)
+    StdCerrThreadSafe<<"Initializing parameters for user "<<user_id<<" ..."<<std::endl;
 
       // Set S parameter
   set_S(user_id,tdup.S,verbose);
@@ -1014,7 +1017,7 @@ void ThotDecoder::setNonMonotonicity(int nomon,
 {
   if(verbose)
   {
-    std::cerr<<"Non-monotonicity is now set to "<<nomon<<std::endl;
+    StdCerrThreadSafe<<"Non-monotonicity is now set to "<<nomon<<std::endl;
   }
 
       // Set appropriate model parameters
@@ -1027,7 +1030,7 @@ void ThotDecoder::set_W(float W_par,
 {
   if(verbose)
   {
-    std::cerr<<"W parameter is set to "<<W_par<<std::endl;
+    StdCerrThreadSafe<<"W parameter is set to "<<W_par<<std::endl;
   }
   tdCommonVars.smtModelPtr->set_W_par(W_par);
 }
@@ -1040,11 +1043,9 @@ void ThotDecoder::set_S(int user_id,
 {
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
   if(verbose)
   {
-    std::cerr<<"S parameter is set to "<<S_par<<std::endl;
+    StdCerrThreadSafe<<"user_id: "<<user_id<<", S parameter is set to "<<S_par<<std::endl;
   }
   tdPerUserVarsVec[idx].stackDecoderPtr->set_S_par(S_par);
 }
@@ -1055,7 +1056,7 @@ void ThotDecoder::set_A(unsigned int A_par,
 {
   if(verbose)
   {
-    std::cerr<<"A parameter is set to "<<A_par<<std::endl;
+    StdCerrThreadSafe<<"A parameter is set to "<<A_par<<std::endl;
   }
   tdCommonVars.smtModelPtr->set_A_par(A_par);
 }
@@ -1066,7 +1067,7 @@ void ThotDecoder::set_E(unsigned int E_par,
 {
   if(verbose)
   {
-    std::cerr<<"E parameter is set to "<<E_par<<std::endl;
+    StdCerrThreadSafe<<"E parameter is set to "<<E_par<<std::endl;
   }
   tdCommonVars.smtModelPtr->set_E_par(E_par);
 }
@@ -1078,11 +1079,9 @@ void ThotDecoder::set_be(int user_id,
 {
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
   if(verbose)
   {
-    std::cerr<<"be parameter is set to "<<be_par<<std::endl;
+    StdCerrThreadSafe<<"user_id: "<<user_id<<", be parameter is set to "<<be_par<<std::endl;
   }
   tdPerUserVarsVec[idx].stackDecoderPtr->set_breadthFirst(!be_par);
 }
@@ -1094,11 +1093,9 @@ bool ThotDecoder::set_G(int user_id,
 {
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
   if(verbose)
   {
-    std::cerr<<"G parameter is set to "<<G_par<<std::endl;
+    StdCerrThreadSafe<<"user_id: "<<user_id<<", G parameter is set to "<<G_par<<std::endl;
   }
   tdPerUserVarsVec[idx].stackDecoderPtr->set_G_par(G_par);
 
@@ -1111,7 +1108,7 @@ void ThotDecoder::set_h(unsigned int h_par,
 {
   if(verbose)
   {
-    std::cerr<<"h parameter is set to "<<h_par<<std::endl;
+    StdCerrThreadSafe<<"h parameter is set to "<<h_par<<std::endl;
   }
       // Set heuristic
   tdCommonVars.smtModelPtr->setHeuristic(h_par);
@@ -1124,11 +1121,9 @@ bool ThotDecoder::set_np(int user_id,
 {
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
   if(verbose)
   {
-    std::cerr<<"np parameter is set to "<<np_par<<std::endl;
+    StdCerrThreadSafe<<"user_id: "<<user_id<<", np parameter is set to "<<np_par<<std::endl;
   }
       // Set np value
   bool b;
@@ -1140,7 +1135,7 @@ bool ThotDecoder::set_np(int user_id,
   else
   {
     if(verbose)
-      std::cerr<<"warning! np parameter cannot be applied to coupled translators."<<std::endl;
+      StdCerrThreadSafe<<"user_id: "<<user_id<<", warning! np parameter cannot be applied to coupled translators."<<std::endl;
     b=THOT_ERROR;
   }
 
@@ -1155,24 +1150,22 @@ bool ThotDecoder::set_wgp(int user_id,
       // Check if ECM can be used to process word graphs
   if(!tdCommonVars.curr_ecm_valid_for_wg)
   {
-    std::cerr<<"Error: EC model is not valid for word-graphs"<<std::endl;
+    StdCerrThreadSafe<<"Error: EC model is not valid for word-graphs"<<std::endl;
     return THOT_ERROR;
   }
   
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
-
   if(verbose)
   {
-    std::cerr<<"wgp parameter is set to "<<wgp_par<<std::endl;
+    StdCerrThreadSafe<<"user_id: "<<user_id<<", wgp parameter is set to "<<wgp_par<<std::endl;
   }
       // Set wgp value
   if(tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr)
     tdPerUserVarsVec[idx].wgUncoupledAssistedTransPtr->set_wgp(wgp_par);
   else
   {
-    std::cerr<<"warning! wgp parameter cannot be applied to translators that do not use word-graphs."<<std::endl;
+    StdCerrThreadSafe<<"Warning! wgp parameter cannot be applied to translators that do not use word-graphs."<<std::endl;
   }
 
   return THOT_OK;
@@ -1185,7 +1178,6 @@ void ThotDecoder::set_preproc(int user_id,
 {
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   tdState.preprocId=preprocId_par;
   if(tdPerUserVarsVec[idx].prePosProcessorPtr!=0)
@@ -1196,37 +1188,37 @@ void ThotDecoder::set_preproc(int user_id,
     case DISABLE_PREPROC:
       tdPerUserVarsVec[idx].prePosProcessorPtr=0;
       if(verbose)
-        std::cerr<<"The Pre/pos-processing steps are disabled."<<std::endl;
+        StdCerrThreadSafe<<"user_id: "<<user_id<<", pre/pos-processing steps are disabled."<<std::endl;
       break;
 #ifndef THOT_DISABLE_PREPROC_CODE
     case XRCE_PREPROC1: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor1();
       if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 1."<<std::endl;
+        StdCerrThreadSafe<<"user_id: "<<user_id<<", pre/pos-processing steps enabled for the XRCE corpus, version 1."<<std::endl;
       break;
     case XRCE_PREPROC2: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor2();
       if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 2."<<std::endl;
+        StdCerrThreadSafe<<"user_id: "<<user_id<<", pre/pos-processing steps enabled for the XRCE corpus, version 2."<<std::endl;
       break;
     case XRCE_PREPROC3: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor3();
       if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 3."<<std::endl;
+        StdCerrThreadSafe<<"user_id: "<<user_id<<", pre/pos-processing steps enabled for the XRCE corpus, version 3."<<std::endl;
       break;
     case XRCE_PREPROC4: tdPerUserVarsVec[idx].prePosProcessorPtr=new XRCE_PrePosProcessor4();
       if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the XRCE corpus, version 4."<<std::endl;
+        StdCerrThreadSafe<<"user_id: "<<user_id<<", pre/pos-processing steps enabled for the XRCE corpus, version 4."<<std::endl;
       break;
     case EU_PREPROC1: tdPerUserVarsVec[idx].prePosProcessorPtr=new EU_PrePosProcessor1();
       if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the EU corpus, version 1."<<std::endl;
+        StdCerrThreadSafe<<"user_id: "<<user_id<<", pre/pos-processing steps enabled for the EU corpus, version 1."<<std::endl;
       break;
     case EU_PREPROC2: tdPerUserVarsVec[idx].prePosProcessorPtr=new EU_PrePosProcessor2();
       if(verbose)
-        std::cerr<<"Pre/pos-processing steps enabled for the EU corpus, version 2."<<std::endl;
+        StdCerrThreadSafe<<"user_id: "<<user_id<<", pre/pos-processing steps enabled for the EU corpus, version 2."<<std::endl;
       break;
 #endif
     default: tdPerUserVarsVec[idx].prePosProcessorPtr=0;
       if(verbose)
-        std::cerr<<"Warning! invalid preprocId, the pre/pos-processing steps are disabled"<<std::endl;
+        StdCerrThreadSafe<<"user_id: "<<user_id<<", warning! invalid preprocId, the pre/pos-processing steps are disabled"<<std::endl;
       break;
   }
 }
@@ -1240,8 +1232,8 @@ void ThotDecoder::set_tmw(std::vector<float> tmwVec_par,
     
   if(verbose)
   {
-    tdCommonVars.smtModelPtr->printWeights(std::cerr);
-    std::cerr<<std::endl;
+    tdCommonVars.smtModelPtr->printWeights(StdCerrThreadSafe);
+    StdCerrThreadSafe<<std::endl;
   }
 }
   
@@ -1254,8 +1246,8 @@ void ThotDecoder::set_ecw(std::vector<float> ecwVec_par,
     
   if(verbose)
   {
-    tdCommonVars.ecModelPtr->printWeights(std::cerr);
-    std::cerr<<std::endl;
+    tdCommonVars.ecModelPtr->printWeights(StdCerrThreadSafe);
+    StdCerrThreadSafe<<std::endl;
   }
 }
   
@@ -1266,15 +1258,15 @@ void ThotDecoder::set_catw(int user_id,
 {
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
       // Set cat weights
   tdPerUserVarsVec[idx].assistedTransPtr->setWeights(catwVec_par);
     
   if(verbose)
   {
-    tdPerUserVarsVec[idx].assistedTransPtr->printWeights(std::cerr);
-    std::cerr<<std::endl;
+    StdCerrThreadSafe<<"user_id: "<<user_id<<", ";
+    tdPerUserVarsVec[idx].assistedTransPtr->printWeights(StdCerrThreadSafe);
+    StdCerrThreadSafe<<std::endl;
   }
 }
 
@@ -1283,7 +1275,7 @@ bool ThotDecoder::set_wgh(const char *wgHandlerFileName,
                           int verbose/*=0*/)
 {
   if(verbose)
-    std::cerr<<"Loading worgraph handler information from file "<<wgHandlerFileName<<std::endl;
+    StdCerrThreadSafe<<"Loading worgraph handler information from file "<<wgHandlerFileName<<std::endl;
   
   bool ret=tdCommonVars.wgHandlerPtr->load(wgHandlerFileName);
   
@@ -1492,7 +1484,7 @@ int ThotDecoder::onlineTrainSentPair(int user_id,
       // Check if input sentences are empty
   if(strlen(srcSent)==0 || strlen(refSent)==0)
   {
-    std::cerr<<"Error: one or both of the input sentences to be trained are empty"<<std::endl;
+    StdCerrThreadSafeTid<<"Error: one or both of the input sentences to be trained are empty"<<std::endl;
     return THOT_ERROR;
   }
     
@@ -1504,13 +1496,13 @@ int ThotDecoder::onlineTrainSentPair(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+  if(verbose) StdCerrThreadSafeTid<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(verbose)
   {
-    std::cerr<<"Training sentence pair:"<<std::endl;
-    std::cerr<<" - source: "<<srcSent<<std::endl;
-    std::cerr<<" - reference: "<<refSent<<std::endl;
+    StdCerrThreadSafeTid<<"Training sentence pair:"<<std::endl;
+    StdCerrThreadSafeTid<<" - source: "<<srcSent<<std::endl;
+    StdCerrThreadSafeTid<<" - reference: "<<refSent<<std::endl;
   }
 
       // Check if pre/post processing is enabled
@@ -1526,14 +1518,14 @@ int ThotDecoder::onlineTrainSentPair(int user_id,
 
     if(verbose)
     {
-      std::cerr<<" - preproc. source: "<<preprocSrcSent<<std::endl;
-      std::cerr<<" - preproc. reference: "<<preprocRefSent<<std::endl;
-      std::cerr<<" - preproc. sys translation: "<<preprocSysSent<<std::endl;
+      StdCerrThreadSafeTid<<" - preproc. source: "<<preprocSrcSent<<std::endl;
+      StdCerrThreadSafeTid<<" - preproc. reference: "<<preprocRefSent<<std::endl;
+      StdCerrThreadSafeTid<<" - preproc. sys translation: "<<preprocSysSent<<std::endl;
     }
         // Add sentence to word-predictor
     addSentenceToWordPred(preprocRefSent,verbose);
 
-    if(verbose) std::cerr<<"Training models..."<<std::endl;
+    if(verbose) StdCerrThreadSafeTid<<"Training models..."<<std::endl;
 
         // Measure training time
     double prevElapsedTime,elapsedTime,ucpu,scpu;
@@ -1545,8 +1537,8 @@ int ThotDecoder::onlineTrainSentPair(int user_id,
     ctimer(&elapsedTime,&ucpu,&scpu);
     if(verbose)
     {
-      std::cerr<<"Training process ended."<<std::endl;
-      std::cerr<<"Training time: "<<elapsedTime-prevElapsedTime<<std::endl;
+      StdCerrThreadSafeTid<<"Training process ended."<<std::endl;
+      StdCerrThreadSafeTid<<"Training time: "<<elapsedTime-prevElapsedTime<<std::endl;
     }
   }
   else
@@ -1563,7 +1555,7 @@ int ThotDecoder::onlineTrainSentPair(int user_id,
         // Add sentence to word-predictor
     addSentenceToWordPred(refSent,verbose);
 
-    if(verbose) std::cerr<<"Training models..."<<std::endl;
+    if(verbose) StdCerrThreadSafeTid<<"Training models..."<<std::endl;
 
         // Measure training time
     double prevElapsedTime,elapsedTime,ucpu,scpu;
@@ -1579,7 +1571,7 @@ int ThotDecoder::onlineTrainSentPair(int user_id,
     ret=onlineTrainFeats(srcSent,refSent,sysSent,verbose);
    
     ctimer(&elapsedTime,&ucpu,&scpu);
-    if(verbose) std::cerr<<"Training time: "<<elapsedTime-prevElapsedTime<<std::endl;
+    if(verbose) StdCerrThreadSafeTid<<"Training time: "<<elapsedTime-prevElapsedTime<<std::endl;
   }
 
       // Unlock non_atomic_op_cond mutex
@@ -1681,14 +1673,14 @@ void ThotDecoder::setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
 {
   if(verbose)
   {
-    std::cerr<<"Setting online training pars..."<<std::endl;
+    StdCerrThreadSafe<<"Setting online training pars..."<<std::endl;
 
-    std::cerr<<"onlineLearningAlgorithm= "<<onlineTrainingPars.onlineLearningAlgorithm<<" ; ";
-    std::cerr<<"learningRatePolicy= "<<onlineTrainingPars.learningRatePolicy<<" ; ";
-    std::cerr<<"learnStepSize= "<<onlineTrainingPars.learnStepSize<<" ; ";
-    std::cerr<<"emIters= "<<onlineTrainingPars.emIters<<" ; ";
-    std::cerr<<"E_par= "<<onlineTrainingPars.E_par<<" ; ";
-    std::cerr<<"R_par= "<<onlineTrainingPars.R_par<<std::endl;
+    StdCerrThreadSafe<<"onlineLearningAlgorithm= "<<onlineTrainingPars.onlineLearningAlgorithm<<" ; ";
+    StdCerrThreadSafe<<"learningRatePolicy= "<<onlineTrainingPars.learningRatePolicy<<" ; ";
+    StdCerrThreadSafe<<"learnStepSize= "<<onlineTrainingPars.learnStepSize<<" ; ";
+    StdCerrThreadSafe<<"emIters= "<<onlineTrainingPars.emIters<<" ; ";
+    StdCerrThreadSafe<<"E_par= "<<onlineTrainingPars.E_par<<" ; ";
+    StdCerrThreadSafe<<"R_par= "<<onlineTrainingPars.R_par<<std::endl;
   }
 
   tdCommonVars.onlineTrainingPars=onlineTrainingPars;
@@ -1714,14 +1706,14 @@ int ThotDecoder::trainEcm(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+  if(verbose) StdCerrThreadSafeTid<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   
   if(verbose)
   {
-    std::cerr<<"Training ecm for string pair:"<<std::endl;
-    std::cerr<<" - string x: "<<strx<<std::endl;
-    std::cerr<<" - string y: "<<stry<<std::endl;
+    StdCerrThreadSafeTid<<"Training ecm for string pair:"<<std::endl;
+    StdCerrThreadSafeTid<<" - string x: "<<strx<<std::endl;
+    StdCerrThreadSafeTid<<" - string y: "<<stry<<std::endl;
   }
     
   if(tdState.preprocId)
@@ -1730,8 +1722,8 @@ int ThotDecoder::trainEcm(int user_id,
     std::string preprocy=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,stry,tdState.caseconv,false);
     if(verbose)
     {
-      std::cerr<<" - preproc. string x: "<<preprocx<<std::endl;
-      std::cerr<<" - preproc. string y: "<<preprocy<<std::endl;
+      StdCerrThreadSafeTid<<" - preproc. string x: "<<preprocx<<std::endl;
+      StdCerrThreadSafeTid<<" - preproc. string y: "<<preprocy<<std::endl;
     }
     ret=tdCommonVars.ecModelPtr->trainStrPair(preprocx.c_str(),preprocy.c_str(),verbose);
   }
@@ -1761,21 +1753,21 @@ void ThotDecoder::translateSentence(int user_id,
   
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+  if(verbose) StdCerrThreadSafeTid<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   pthread_mutex_lock(&per_user_mut[idx]);
   /////////// begin of user mutex
 
   if(verbose)
   {
-    std::cerr<<"Translating sentence: "<<sentenceToTranslate<<std::endl;
+    StdCerrThreadSafeTid<<"Translating sentence: "<<sentenceToTranslate<<std::endl;
   }
   if(tdState.preprocId)
   {
     std::string preprocSrcSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,sentenceToTranslate,tdState.caseconv,true);
     if(verbose)
     {
-      std::cerr<<" - preproc. source: "<<preprocSrcSent<<std::endl;
+      StdCerrThreadSafeTid<<" - preproc. source: "<<preprocSrcSent<<std::endl;
     }
 
         // Obtain translation using precalculated word-graph or translator
@@ -1784,8 +1776,8 @@ void ThotDecoder::translateSentence(int user_id,
     result=postprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,aux.c_str(),tdState.caseconv);
     if(verbose)
     {
-      std::cerr<<" - preproc. target: "<<aux<<std::endl;
-      std::cerr<<" - posproc. target: "<<result<<std::endl;     
+      StdCerrThreadSafeTid<<" - preproc. target: "<<aux<<std::endl;
+      StdCerrThreadSafeTid<<" - posproc. target: "<<result<<std::endl;     
     }
   }
   else
@@ -1793,7 +1785,7 @@ void ThotDecoder::translateSentence(int user_id,
     result=translateSentenceAux(idx,sentenceToTranslate,bestHypInfo,verbose);
     if(verbose)
     {
-      std::cerr<<"- target translation: "<<result<<std::endl;
+      StdCerrThreadSafeTid<<"- target translation: "<<result<<std::endl;
     }
   }
 
@@ -1833,10 +1825,10 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
         // Print component weight info to the error output
     if(verbose)
     {
-      std::cerr<<"Original word graph component vector:";
+      StdCerrThreadSafeTid<<"Original word graph component vector:";
       for(unsigned int i=0;i<originalWgCompWeights.size();++i)
-        std::cerr<<" "<<originalWgCompWeights[i].first<<": "<<originalWgCompWeights[i].second<<";";
-      std::cerr<<std::endl;
+        StdCerrThreadSafeTid<<" "<<originalWgCompWeights[i].first<<": "<<originalWgCompWeights[i].second<<";";
+      StdCerrThreadSafeTid<<std::endl;
     }
 
         // Set current component weights (this operation causes a
@@ -1849,10 +1841,10 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
         // Print component weight info to the error output
     if(verbose)
     {
-      std::cerr<<"New word graph component vector:";
+      StdCerrThreadSafeTid<<"New word graph component vector:";
       for(unsigned int i=0;i<currCompWeights.size();++i)
-        std::cerr<<" "<<currCompWeights[i].first<<": "<<currCompWeights[i].second<<";";
-      std::cerr<<std::endl;
+        StdCerrThreadSafeTid<<" "<<currCompWeights[i].first<<": "<<currCompWeights[i].second<<";";
+      StdCerrThreadSafeTid<<std::endl;
     }
     
         // Obtain best path
@@ -1878,10 +1870,10 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
     SmtModel::Hypothesis hyp=tdPerUserVarsVec[idx].stackDecoderPtr->translate(sentenceToTranslate.c_str());
     if(verbose)
     {
-      std::cerr<<"- source sentence without constraint information: ";
-      std::cerr<<tdPerUserVarsVec[idx].smtModelPtr->getCurrentSrcSent()<<std::endl;
-      std::cerr<<"- best hypothesis: "<<std::endl;
-      tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,std::cerr);
+      StdCerrThreadSafeTid<<"- source sentence without constraint information: ";
+      StdCerrThreadSafeTid<<tdPerUserVarsVec[idx].smtModelPtr->getCurrentSrcSent()<<std::endl;
+      StdCerrThreadSafeTid<<"- best hypothesis: "<<std::endl;
+      tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,StdCerrThreadSafeTid);
     }
     std::string result=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
     std::ostringstream stream;
@@ -1905,14 +1897,14 @@ void ThotDecoder::sentPairVerCov(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+  if(verbose) StdCerrThreadSafeTid<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   pthread_mutex_lock(&per_user_mut[idx]);
   /////////// begin of user mutex
 
   if(verbose)
   {
-    std::cerr<<"Verifying model coverage for sentence pair: "<<srcSent<<" ||| "<<refSent<<std::endl;
+    StdCerrThreadSafeTid<<"Verifying model coverage for sentence pair: "<<srcSent<<" ||| "<<refSent<<std::endl;
   }
   SmtModel::Hypothesis hyp;
   if(tdState.preprocId)
@@ -1921,8 +1913,8 @@ void ThotDecoder::sentPairVerCov(int user_id,
     std::string preprocRefSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,refSent,tdState.caseconv,false);
     if(verbose)
     {
-      std::cerr<<" - preproc. source: "<<preprocSrcSent<<std::endl;
-      std::cerr<<" - preproc. reference: "<<preprocRefSent<<std::endl;
+      StdCerrThreadSafeTid<<" - preproc. source: "<<preprocSrcSent<<std::endl;
+      StdCerrThreadSafeTid<<" - preproc. reference: "<<preprocRefSent<<std::endl;
     }
     hyp=tdPerUserVarsVec[idx].stackDecoderPtr->verifyCoverageForRef(preprocSrcSent.c_str(),preprocRefSent.c_str());
     std::string aux=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
@@ -1935,9 +1927,9 @@ void ThotDecoder::sentPairVerCov(int user_id,
   }
   if(verbose)
   {
-    tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,std::cerr);
+    tdPerUserVarsVec[idx].smtModelPtr->printHyp(hyp,StdCerrThreadSafeTid);
     if(!tdPerUserVarsVec[idx].smtModelPtr->isComplete(hyp))
-      std::cerr<<"No coverage for sentence pair!"<<std::endl;
+      StdCerrThreadSafeTid<<"No coverage for sentence pair!"<<std::endl;
   }
 
   /////////// end of user mutex 
@@ -1958,7 +1950,7 @@ void ThotDecoder::startCat(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+  if(verbose) StdCerrThreadSafeTid<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   pthread_mutex_lock(&per_user_mut[idx]);
   /////////// begin of user mutex
@@ -1973,7 +1965,7 @@ void ThotDecoder::startCat(int user_id,
   totalPrefixVec[idx]="";
   if(verbose)
   {
-    std::cerr<<"***** Translating sentence: "<<sentenceToTranslate<<std::endl;
+    StdCerrThreadSafeTid<<"***** Translating sentence: "<<sentenceToTranslate<<std::endl;
   }
   
   if(tdState.preprocId)
@@ -1985,9 +1977,9 @@ void ThotDecoder::startCat(int user_id,
     catResult=postprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,aux.c_str(),tdState.caseconv);
     if(verbose)
     {
-      std::cerr<<"* preprocessed sentence: "<<preprocSent<<std::endl;
-      std::cerr<<"* translation: "<<aux<<std::endl;
-      std::cerr<<"* postprocessed translation: "<<catResult<<std::endl;
+      StdCerrThreadSafeTid<<"* preprocessed sentence: "<<preprocSent<<std::endl;
+      StdCerrThreadSafeTid<<"* translation: "<<aux<<std::endl;
+      StdCerrThreadSafeTid<<"* postprocessed translation: "<<catResult<<std::endl;
     }
   }
   else
@@ -1997,7 +1989,7 @@ void ThotDecoder::startCat(int user_id,
     catResult=tdPerUserVarsVec[idx].assistedTransPtr->translateWithPrefix(sentenceToTranslate,"",emptyRejWordsSet,verbose);
     if(verbose)
     {
-      std::cerr<<"* translation: "<<catResult<<std::endl;
+      StdCerrThreadSafeTid<<"* translation: "<<catResult<<std::endl;
     }
   }
 
@@ -2027,7 +2019,7 @@ void ThotDecoder::addStrToPref(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+  if(verbose) StdCerrThreadSafeTid<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   pthread_mutex_lock(&per_user_mut[idx]);
   /////////// begin of user mutex
@@ -2060,8 +2052,8 @@ void ThotDecoder::addStrToPrefAux(size_t idx,
   
   if(verbose)
   {
-    std::cerr<<"Add string to prefix: "<<strToAddToPref<<"|"<<std::endl;
-    std::cerr<<"Total prefix (not preprocessed): "<<totalPrefixVec[idx]<<"|"<<std::endl;
+    StdCerrThreadSafeTid<<"Add string to prefix: "<<strToAddToPref<<"|"<<std::endl;
+    StdCerrThreadSafeTid<<"Total prefix (not preprocessed): "<<totalPrefixVec[idx]<<"|"<<std::endl;
   }
   if(tdState.preprocId)
   {    
@@ -2084,10 +2076,10 @@ void ThotDecoder::addStrToPrefAux(size_t idx,
     
     if(verbose)
     {
-      std::cerr<<"Preprocessed prefix: "<<preprocPrefUnexpanded<<"|"<<std::endl;
-      std::cerr<<"Expanded preprocessed prefix: "<<preprocPref<<"|"<<std::endl;
-      std::cerr<<"Translation: "<<trans<<"|"<<std::endl;
-      std::cerr<<"Postproc. trans. with user pref.: "<<catResult<<"|"<<std::endl;
+      StdCerrThreadSafeTid<<"Preprocessed prefix: "<<preprocPrefUnexpanded<<"|"<<std::endl;
+      StdCerrThreadSafeTid<<"Expanded preprocessed prefix: "<<preprocPref<<"|"<<std::endl;
+      StdCerrThreadSafeTid<<"Translation: "<<trans<<"|"<<std::endl;
+      StdCerrThreadSafeTid<<"Postproc. trans. with user pref.: "<<catResult<<"|"<<std::endl;
     }
   }
   else
@@ -2105,9 +2097,9 @@ void ThotDecoder::addStrToPrefAux(size_t idx,
     
     if(verbose)
     {
-      std::cerr<<"Expanded prefix: "<<expPref<<"|"<<std::endl;
-      std::cerr<<"Translation: "<<trans<<"|"<<std::endl;
-      std::cerr<<"Final output: "<<catResult<<"|"<<std::endl;
+      StdCerrThreadSafeTid<<"Expanded prefix: "<<expPref<<"|"<<std::endl;
+      StdCerrThreadSafeTid<<"Translation: "<<trans<<"|"<<std::endl;
+      StdCerrThreadSafeTid<<"Final output: "<<catResult<<"|"<<std::endl;
     }
   }
 
@@ -2169,14 +2161,14 @@ void ThotDecoder::resetPrefix(int user_id,
 
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+  if(verbose) StdCerrThreadSafeTid<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   pthread_mutex_lock(&per_user_mut[idx]);
   /////////// begin of user mutex
 
   if(verbose)
   {
-    std::cerr<<"Reset prefix"<<std::endl;
+    StdCerrThreadSafeTid<<"Reset prefix"<<std::endl;
   }
 
   resetPrefixAux(idx);
@@ -2196,15 +2188,15 @@ void ThotDecoder::resetPrefixAux(size_t idx)
 }
 
 //--------------------------
-bool ThotDecoder::use_caseconv(int user_id,
-                               const char *caseConvFile,
-                               int verbose/*=0*/)
+int ThotDecoder::use_caseconv(int user_id,
+                              const char *caseConvFile,
+                              int verbose/*=0*/)
 {
   int ret;
   
       // Obtain index vector given user_id
   size_t idx=get_vecidx_for_user_id(user_id);
-  if(verbose) std::cerr<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
+  if(verbose) StdCerrThreadSafeTid<<"user_id: "<<user_id<<", idx: "<<idx<<std::endl;
 
   if(tdState.preprocId)
   {
@@ -2216,7 +2208,7 @@ bool ThotDecoder::use_caseconv(int user_id,
   }
   else
   {
-    std::cerr<<"Warning! case conversion cannot be activated because pre/pos-processing steps are disabled."<<std::endl;
+    StdCerrThreadSafeTid<<"Warning! case conversion cannot be activated because pre/pos-processing steps are disabled."<<std::endl;
     ret=THOT_OK;
   }
 
@@ -2254,7 +2246,7 @@ void ThotDecoder::clearTrans(int /*verbose*//*=0*/)
 }
 
 //--------------------------
-bool ThotDecoder::printModels(int verbose/*=0*/)
+int ThotDecoder::printModels(int verbose/*=0*/)
 {
   if(tdCommonVars.featureBasedImplEnabled)
     return printModelsFeatImpl(verbose);
@@ -2263,14 +2255,14 @@ bool ThotDecoder::printModels(int verbose/*=0*/)
 }
 
 //--------------------------
-bool ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
+int ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
   if(verbose)
   {
-    std::cerr<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<std::endl;
+    StdCerrThreadSafeTid<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<std::endl;
   }
 
   int ret;
@@ -2291,14 +2283,14 @@ bool ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
 }
 
 //--------------------------
-bool ThotDecoder::printModelsLegacyImpl(int verbose/*=0*/)
+int ThotDecoder::printModelsLegacyImpl(int verbose/*=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
 
   if(verbose)
   {
-    std::cerr<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<std::endl;
+    StdCerrThreadSafeTid<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<std::endl;
   }
 
   int ret;
@@ -2342,7 +2334,7 @@ int ThotDecoder::printModelWeights(void)
   BaseAssistedTrans<SmtModel>* assistedTransPtr=tdCommonVars.dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseAssistedTransInitPars);
   if(assistedTransPtr==NULL)
   {
-    std::cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<std::endl;
+    StdCerrThreadSafeTid<<"Error: BaseAssistedTrans pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
