@@ -198,7 +198,7 @@ int start_server(void)
   my_addr.sin_addr.s_addr = INADDR_ANY;  // fill with IP address
   memset(&(my_addr.sin_zero), '\0', 8);  // reset the rest of the data structure
 
-  if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr))== -1)
+  if (::bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr))== -1)
   {
     StdCerrThreadSafe<<"bind error"<<std::endl;
     exit(1);
