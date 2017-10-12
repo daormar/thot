@@ -303,6 +303,9 @@ fi
 
 echo ""
 
+# Use trap command to ensure that server is ended on exit
+trap "end_thot_server" EXIT
+
 # Check thot_server initialization
 echo "**** Checking thot_server initialization..."
 echo ""
@@ -321,9 +324,6 @@ else
 fi
 
 echo ""
-
-# Use trap command to ensure that server is ended on exit
-trap "end_thot_server" EXIT
 
 # Check translation using thot_server
 echo "**** Checking translation using thot_server..."
