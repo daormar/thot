@@ -8,24 +8,41 @@ wait_until_server_is_listening()
     num_retries=0
     max_num_retries=3
     while [ $end -eq 0 ]; do
+
+        # Check if maximum number of retries has been reached
+        if [ ${num_retries} -ge ${max_num_retries} ]; then
+            echo "Error: server has terminated unexpectedly before start listening to port ${PORT}" >&2
+            return 1
+        fi
+
         # Ensure server is being executed
         line=`${PS} aux | ${GREP} "thot_server" | ${GREP} ${PORT}`
-
-        if [ -z "${line}" ]; then
-            num_retries=`expr ${num_retries} + 1`
-            if [ ${num_retries} -eq ${max_num_retries} ]; then
-                echo "Error: server has terminated unexpectedly before start listening to port ${PORT}" >&2
-                return 1
-            fi
+        if [ ! -z "${line}" ]; then
+            server_executed="yes"
+        else
+            server_executed="no"
         fi
 
         # Check if server is listening
         line=`${NETSTAT} -ln | ${GREP} ":${PORT} "`
         if [ ! -z "${line}" ]; then
-            end=1
+            server_listening="yes"
+        else
+            server_listening="no"
         fi
-        sleep 5
+
+        if [ ${server_executed} = "yes" -a ${server_listening} = "yes" ]; then
+            end=1
+        else
+            sleep 5
+        fi
+
+        # Increase number of retries
+        num_retries=`expr ${num_retries} + 1`
+
     done
+
+    return 0
 }
 
 ########
