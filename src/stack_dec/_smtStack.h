@@ -167,7 +167,7 @@ void _smtStack<HYPOTHESIS>::clear(void)
 
 //---------------------------------------
 template<class HYPOTHESIS> 
-void _smtStack<HYPOTHESIS>::truncateQueue(unsigned int maxNumOfHyps)
+void _smtStack<HYPOTHESIS>::truncateQueue(unsigned int /*maxNumOfHyps*/)
 {
   typename Container::iterator pos;  
 	
