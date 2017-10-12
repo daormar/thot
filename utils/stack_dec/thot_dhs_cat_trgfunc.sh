@@ -71,23 +71,12 @@ wait_until_server_is_listening()
             return 1
         fi
 
-        # Ensure server is being executed
-        line=`${PS} aux | ${GREP} "thot_server" | ${GREP} ${PORT}`
-        if [ ! -z "${line}" ]; then
-            server_executed="yes"
-        else
-            server_executed="no"
-        fi
-
         # Check if server is listening
-        line=`${NETSTAT} -ln | ${GREP} ":${PORT} "`
-        if [ ! -z "${line}" ]; then
-            server_listening="yes"
-        else
-            server_listening="no"
-        fi
+        server_listening="yes"
+        ${bindir}/thot_client -i 127.0.0.1 -t "testing" -p ${PORT} >/dev/null 2>&1 || server_listening="no"
 
-        if [ ${server_executed} = "yes" -a ${server_listening} = "yes" ]; then
+        # End function if server is listening
+        if [ ${server_listening} = "yes" ]; then
             end=1
         else
             sleep 5
