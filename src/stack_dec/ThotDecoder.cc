@@ -2261,7 +2261,7 @@ int ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
 
   if(verbose)
   {
-    StdCerrThreadSafeTid<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<std::endl;
+    StdCerrThreadSafeTid<<"Printing models stored by the system (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.ecmFilesPrefixGiven<<")"<<std::endl;
   }
 
   int ret;
@@ -2289,7 +2289,7 @@ int ThotDecoder::printModelsLegacyImpl(int verbose/*=0*/)
 
   if(verbose)
   {
-    StdCerrThreadSafeTid<<"Printing models stored by the translator (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.lmfileLoaded<<")"<<std::endl;
+    StdCerrThreadSafeTid<<"Printing models stored by the system (tm files prefix: "<<tdState.tmFilesPrefixGiven<<" , lm files prefix: "<<tdState.lmfileLoaded<<" , ecm files prefix: "<<tdState.ecmFilesPrefixGiven<<")"<<std::endl;
   }
 
   int ret;
