@@ -71,7 +71,7 @@ struct request_data
 {
   int sockd;
   struct in_addr sin_addr;
-  int request_id;
+  int request_type;
   int user_id;
 };
 
@@ -79,14 +79,14 @@ struct request_data
 
 int processParameters(void);
 int start_server(void);
-int get_request_id(int sockd,
-                   int& request_id);
+int get_request_type(int sockd,
+                   int& request_type);
 int get_user_id(int sockd,
                 int& user_id);
 void* process_request(void* rdata_ptr);
 int process_request_switch(int sockd,
                            int user_id,
-                           int server_request_id,
+                           int server_request_type,
                            int verbose);
 int init_user_pars_if_required(int user_id);
 void increase_num_threads_var(void);
@@ -242,18 +242,18 @@ int start_server(void)
       continue;
     }
 
-        // Obtain request identifier
-    int request_id;
-    int ret=get_request_id(new_fd,request_id);
+        // Obtain request type
+    int request_type;
+    int ret=get_request_type(new_fd,request_type);
     if(ret==THOT_ERROR)
     {
-      StdCerrThreadSafe<<"Error while obtaining request identifier"<<std::endl;
+      StdCerrThreadSafe<<"Error while obtaining request type"<<std::endl;
       close(new_fd);
       continue;
     }
 
         // Check if server should be finished
-    if(request_id==END_SERVER)
+    if(request_type==END_SERVER)
       end_server=true;
       
         // Obtain user identifier
@@ -279,7 +279,7 @@ int start_server(void)
     request_data* rdata_ptr=new request_data;
     rdata_ptr->sockd=new_fd;
     rdata_ptr->sin_addr=their_addr.sin_addr;
-    rdata_ptr->request_id=request_id;
+    rdata_ptr->request_type=request_type;
     rdata_ptr->user_id=user_id;
     
         // Process request
@@ -325,12 +325,12 @@ void sigchld_handler(int /*s*/)
 }
 
 //---------------
-int get_request_id(int sockd,
-                   int& request_id)
+int get_request_type(int sockd,
+                   int& request_type)
 {
   try
   {
-    request_id=BasicSocketUtils::recvInt(sockd);
+    request_type=BasicSocketUtils::recvInt(sockd);
   }
   catch(const std::exception& e)
   {
@@ -376,7 +376,7 @@ void* process_request(void* void_ptr)
     StdCerrThreadSafeTid<<"Processing new request..."<<std::endl;
     StdCerrThreadSafeTid<<"Current time: "<<asctime(localtm);
     StdCerrThreadSafeTid<<"Origin: "<<inet_ntoa(rdata.sin_addr)<<std::endl;
-    StdCerrThreadSafeTid<<"Request id: "<<rdata.request_id<<std::endl;
+    StdCerrThreadSafeTid<<"Request type: "<<rdata.request_type<<std::endl;
   }
 
   try
@@ -385,7 +385,7 @@ void* process_request(void* void_ptr)
     double elapsed_prev,elapsed,ucpu,scpu;
     ctimer(&elapsed_prev,&ucpu,&scpu);
 
-    int ret=process_request_switch(rdata.sockd,rdata.user_id,rdata.request_id,verbose);
+    int ret=process_request_switch(rdata.sockd,rdata.user_id,rdata.request_type,verbose);
 
     ctimer(&elapsed,&ucpu,&scpu);
 
@@ -419,7 +419,7 @@ void* process_request(void* void_ptr)
 //---------------
 int process_request_switch(int sockd,
                            int user_id,
-                           int server_request_id,
+                           int server_request_type,
                            int verbose)
 {
   std::string stlStr;
@@ -434,7 +434,7 @@ int process_request_switch(int sockd,
   RejectedWordsSet emptyRejWordsSet;
   int ret=THOT_OK;
   
-  switch(server_request_id)
+  switch(server_request_type)
   {
     case OL_TRAIN_PAIR:
       BasicSocketUtils::recvStlStr(sockd,stlStrSrc);
