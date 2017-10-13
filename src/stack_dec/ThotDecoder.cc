@@ -1523,7 +1523,7 @@ int ThotDecoder::onlineTrainSentPair(int user_id,
       StdCerrThreadSafeTid<<" - preproc. sys translation: "<<preprocSysSent<<std::endl;
     }
         // Add sentence to word-predictor
-    addSentenceToWordPred(preprocRefSent,verbose);
+    addSentenceToWordPred(preprocRefSent,decreaseVerbosity(verbose));
 
     if(verbose) StdCerrThreadSafeTid<<"Training models..."<<std::endl;
 
@@ -1532,7 +1532,7 @@ int ThotDecoder::onlineTrainSentPair(int user_id,
     ctimer(&prevElapsedTime,&ucpu,&scpu);
     
         // Train generative models
-    ret=onlineTrainFeats(preprocSrcSent,preprocRefSent,preprocSysSent,verbose);
+    ret=onlineTrainFeats(preprocSrcSent,preprocRefSent,preprocSysSent,decreaseVerbosity(verbose));
 
     ctimer(&elapsedTime,&ucpu,&scpu);
     if(verbose)
@@ -1553,7 +1553,7 @@ int ThotDecoder::onlineTrainSentPair(int user_id,
     std::string sysSent=tdPerUserVarsVec[idx].smtModelPtr->getTransInPlainText(hyp);
 
         // Add sentence to word-predictor
-    addSentenceToWordPred(refSent,verbose);
+    addSentenceToWordPred(refSent,decreaseVerbosity(verbose));
 
     if(verbose) StdCerrThreadSafeTid<<"Training models..."<<std::endl;
 
@@ -1563,12 +1563,12 @@ int ThotDecoder::onlineTrainSentPair(int user_id,
 
 #ifdef THOT_ENABLE_UPDATE_LLWEIGHTS
 
-    onlineTrainLogLinWeights(srcSent,refSent,verbose);
+    onlineTrainLogLinWeights(srcSent,refSent,decreaseVerbosity(verbose));
   
 #endif
 
         // Train generative models
-    ret=onlineTrainFeats(srcSent,refSent,sysSent,verbose);
+    ret=onlineTrainFeats(srcSent,refSent,sysSent,decreaseVerbosity(verbose));
    
     ctimer(&elapsedTime,&ucpu,&scpu);
     if(verbose) StdCerrThreadSafeTid<<"Training time: "<<elapsedTime-prevElapsedTime<<std::endl;
@@ -1725,11 +1725,11 @@ int ThotDecoder::trainEcm(int user_id,
       StdCerrThreadSafeTid<<" - preproc. string x: "<<preprocx<<std::endl;
       StdCerrThreadSafeTid<<" - preproc. string y: "<<preprocy<<std::endl;
     }
-    ret=tdCommonVars.ecModelPtr->trainStrPair(preprocx.c_str(),preprocy.c_str(),verbose);
+    ret=tdCommonVars.ecModelPtr->trainStrPair(preprocx.c_str(),preprocy.c_str(),decreaseVerbosity(verbose));
   }
   else
   {
-    ret=tdCommonVars.ecModelPtr->trainStrPair(strx,stry,verbose);
+    ret=tdCommonVars.ecModelPtr->trainStrPair(strx,stry,decreaseVerbosity(verbose));
   }
 
       // Unlock non_atomic_op_cond mutex
@@ -1964,7 +1964,7 @@ void ThotDecoder::startCat(int user_id,
   totalPrefixVec[idx]="";
   if(verbose)
   {
-    StdCerrThreadSafeTid<<"***** Translating sentence: "<<sentenceToTranslate<<std::endl;
+    StdCerrThreadSafeTid<<"Translating sentence: "<<sentenceToTranslate<<std::endl;
   }
   
   if(tdState.preprocId)
@@ -1972,23 +1972,29 @@ void ThotDecoder::startCat(int user_id,
     std::string aux;
     std::string preprocSent=preprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,sentenceToTranslate,tdState.caseconv,true);
     RejectedWordsSet emptyRejWordsSet;
-    aux=tdPerUserVarsVec[idx].assistedTransPtr->translateWithPrefix(preprocSent,"",emptyRejWordsSet,verbose);
+    aux=tdPerUserVarsVec[idx].assistedTransPtr->translateWithPrefix(preprocSent,
+                                                                    "",
+                                                                    emptyRejWordsSet,
+                                                                    decreaseVerbosity(verbose));
     catResult=postprocLine(tdPerUserVarsVec[idx].prePosProcessorPtr,aux.c_str(),tdState.caseconv);
     if(verbose)
     {
-      StdCerrThreadSafeTid<<"* preprocessed sentence: "<<preprocSent<<std::endl;
-      StdCerrThreadSafeTid<<"* translation: "<<aux<<std::endl;
-      StdCerrThreadSafeTid<<"* postprocessed translation: "<<catResult<<std::endl;
+      StdCerrThreadSafeTid<<"Preprocessed sentence: "<<preprocSent<<std::endl;
+      StdCerrThreadSafeTid<<"Translation: "<<aux<<std::endl;
+      StdCerrThreadSafeTid<<"Postprocessed translation: "<<catResult<<std::endl;
     }
   }
   else
   {
         // No pre/post-processing steps are applied
     RejectedWordsSet emptyRejWordsSet;
-    catResult=tdPerUserVarsVec[idx].assistedTransPtr->translateWithPrefix(sentenceToTranslate,"",emptyRejWordsSet,verbose);
+    catResult=tdPerUserVarsVec[idx].assistedTransPtr->translateWithPrefix(sentenceToTranslate,
+                                                                          "",
+                                                                          emptyRejWordsSet,
+                                                                          decreaseVerbosity(verbose));
     if(verbose)
     {
-      StdCerrThreadSafeTid<<"* translation: "<<catResult<<std::endl;
+      StdCerrThreadSafeTid<<"Translation: "<<catResult<<std::endl;
     }
   }
 
@@ -2065,7 +2071,7 @@ void ThotDecoder::addStrToPrefAux(size_t idx,
     tdPerUserVarsVec[idx].assistedTransPtr->resetPrefix();
     trans=tdPerUserVarsVec[idx].assistedTransPtr->addStrToPrefix(preprocPref,
                                                                  rejectedWords,
-                                                                 verbose);
+                                                                 decreaseVerbosity(verbose));
     catResult=robustObtainFinalOutput(tdPerUserVarsVec[idx].prePosProcessorPtr,
                                       totalPrefixVec[idx],
                                       preprocPrefUnexpanded,
@@ -2091,7 +2097,9 @@ void ThotDecoder::addStrToPrefAux(size_t idx,
     expPref=totalPrefixVec[idx];
     expLastWord=expandLastWord(expPref);
     tdPerUserVarsVec[idx].assistedTransPtr->resetPrefix();
-    trans=tdPerUserVarsVec[idx].assistedTransPtr->addStrToPrefix(expPref,rejectedWords,verbose);
+    trans=tdPerUserVarsVec[idx].assistedTransPtr->addStrToPrefix(expPref,
+                                                                 rejectedWords,
+                                                                 decreaseVerbosity(verbose));
     catResult=robustMergeTransWithUserPref(trans,expPref);
     
     if(verbose)
@@ -2215,7 +2223,7 @@ int ThotDecoder::use_caseconv(int user_id,
 }
 
 //--------------------------
-void ThotDecoder::clearTrans(int /*verbose*//*=0*/)
+void ThotDecoder::clearTrans(int /*verbose=0*/)
 {
   pthread_mutex_lock(&atomic_op_mut);
   /////////// begin of mutex 
@@ -2850,6 +2858,15 @@ void ThotDecoder::destroy_legacy_impl(void)
   pthread_cond_destroy(&non_atomic_op_cond);
   for(unsigned int i=0;i<per_user_mut.size();++i)
     pthread_mutex_destroy(&per_user_mut[i]);
+}
+
+//--------------------------
+int ThotDecoder::decreaseVerbosity(int verbosity)
+{
+  if(verbosity==0)
+    return 0;
+  else
+    return verbosity-1;
 }
 
 //--------------------------

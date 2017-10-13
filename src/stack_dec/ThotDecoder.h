@@ -328,6 +328,8 @@ class ThotDecoder
   void deleteSwModelPtrs(void);
   void destroy_feat_impl(void);
   void destroy_legacy_impl(void);
-    
+
+      // Verbose output-related functions
+  int decreaseVerbosity(int verbosity);
 };
 #endif
