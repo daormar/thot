@@ -59,7 +59,11 @@ class IncrJelMerLevelDbNgramLM: public _incrJelMerNgramLM<Count,Count>
 {
     private:
 
-        // Loading LM model components
+        std::string ngramTableFileNameLoaded;
+            // Variable used to store name of ngram table currently
+            // loaded
+
+            // Loading LM model components
         bool loadVocab(const char *fileName);
         bool loadNgramTable(const char *fileName);
 
@@ -68,20 +72,20 @@ class IncrJelMerLevelDbNgramLM: public _incrJelMerNgramLM<Count,Count>
         typedef _incrJelMerNgramLM<Count,Count>::SrcTableNode SrcTableNode;
         typedef _incrJelMerNgramLM<Count,Count>::TrgTableNode TrgTableNode;
 
-        //LevelDbNgramTable* tablePtr;
-
           // Constructor
         IncrJelMerLevelDbNgramLM():_incrJelMerNgramLM<Count,Count>()
         {
               // Set new pointer to table
-            //this->tablePtr = new LevelDbNgramTable();
             tablePtr = new LevelDbNgramTable();
         }
 
-          // Load model files and dictionary
+            // Functions to load and print the model (including model weights)
         bool load(const char *fileName);
+        bool print(const char *fileName);
 
-          // Destructor
+        void clear(void);
+
+            // Destructor
         ~IncrJelMerLevelDbNgramLM();
 };
 
