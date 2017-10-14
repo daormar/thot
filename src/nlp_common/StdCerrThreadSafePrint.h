@@ -40,6 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define _StdCerrThreadSafePrint_h
 
 #define StdCerrThreadSafe *(StdCerrThreadSafePrint().ssPtr)
+#define StdCerrThreadSafeCond(x) *(StdCerrThreadSafePrint(x).ssPtr)
 
 //--------------- Include files --------------------------------------
 
@@ -70,14 +71,25 @@ public:
     StdCerrThreadSafePrint()
     {
         ssPtr = new std::stringstream;
+        printTid=false;
+    };
+
+    StdCerrThreadSafePrint(bool _printTid)
+    {
+        ssPtr = new std::stringstream;
+        printTid=_printTid;
     };
 
     ~StdCerrThreadSafePrint()
     {
+      if(printTid)
+        ThreadSafePrint::getInstance().printWithThreadId(ssPtr->str());
+      else
         ThreadSafePrint::getInstance().print(ssPtr->str());
-        delete ssPtr;
+      delete ssPtr;
     }
 
+    bool printTid;
     std::stringstream* ssPtr;
 };
 
