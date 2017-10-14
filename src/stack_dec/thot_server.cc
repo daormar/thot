@@ -748,7 +748,8 @@ void printUsage(void)
   std::cerr<<"-w             Print model weights and exit"<<std::endl<<std::endl;
   std::cerr<<"-v             Verbose mode"<<std::endl<<std::endl;
   std::cerr<<"-vd            Verbose mode for debugging. This mode displays more information"<<std::endl;
-  std::cerr<<"               than -v option but it is not designed to work concurrently"<<std::endl<<std::endl;
+  std::cerr<<"               than -v option but it is not designed to work for concurrent"<<std::endl;
+  std::cerr<<"               server queries"<<std::endl<<std::endl;
   std::cerr<<"--help         Print this help and exit"<<std::endl<<std::endl;
   std::cerr<<"--version      Output version information and exit"<<std::endl<<std::endl;
 }
