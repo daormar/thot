@@ -80,6 +80,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                                            // a word using the word
                                            // predictor
 
+#define THOTDEC_NON_VERBOSE_MODE              0
+#define THOTDEC_NORMAL_VERBOSE_MODE           1
+#define THOTDEC_DEBUG_VERBOSE_MODE            2
+
 //--------------- Classes --------------------------------------------
 
 //--------------- ThotDecoder class
@@ -329,6 +333,6 @@ class ThotDecoder
   void destroy_legacy_impl(void);
 
       // Verbose output-related functions
-  int decreaseVerbosity(int verbosity);
+  int externalFuncVerbosity(int verbosity);
 };
 #endif
