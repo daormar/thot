@@ -364,19 +364,27 @@ void* process_request(void* void_ptr)
   delete (request_data*) void_ptr;
     
       // Initialize variables
-  int verbose=ts_pars.v_given;
-
+  int verbose;
+  if(ts_pars.v_given)
+    verbose=THOTDEC_NORMAL_VERBOSE_MODE;
+  if(ts_pars.vd_given)
+    verbose=THOTDEC_DEBUG_VERBOSE_MODE;
+  
+  bool printTid=true;
+  if(verbose==THOTDEC_DEBUG_VERBOSE_MODE)
+    printTid=false;
+  
   if(verbose)
   {
         // Current date/time based on current system
     time_t now = time(0);
         // Convert now to tm struct for local timezone
     tm* localtm = localtime(&now);
-    StdCerrThreadSafeTid<<"----------------------------------------------------"<<std::endl;
-    StdCerrThreadSafeTid<<"Processing new request..."<<std::endl;
-    StdCerrThreadSafeTid<<"Current time: "<<asctime(localtm);
-    StdCerrThreadSafeTid<<"Origin: "<<inet_ntoa(rdata.sin_addr)<<std::endl;
-    StdCerrThreadSafeTid<<"Request type: "<<rdata.request_type<<std::endl;
+    StdCerrThreadSafeCond(printTid)<<"----------------------------------------------------"<<std::endl;
+    StdCerrThreadSafeCond(printTid)<<"Processing new request..."<<std::endl;
+    StdCerrThreadSafeCond(printTid)<<"Current time: "<<asctime(localtm);
+    StdCerrThreadSafeCond(printTid)<<"Origin: "<<inet_ntoa(rdata.sin_addr)<<std::endl;
+    StdCerrThreadSafeCond(printTid)<<"Request type: "<<rdata.request_type<<std::endl;
   }
 
   try
@@ -391,12 +399,12 @@ void* process_request(void* void_ptr)
 
     if(verbose)
     {
-      StdCerrThreadSafeTid<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
+      StdCerrThreadSafeCond(printTid)<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
     }
 
     if(ret==THOT_ERROR)
     {
-      if(verbose) StdCerrThreadSafeTid<<"Error while processing client request"<<std::endl;
+      if(verbose) StdCerrThreadSafeCond(printTid)<<"Error while processing client request"<<std::endl;
       close(rdata.sockd);
       decrease_num_threads_var();
       pthread_exit(NULL);
@@ -405,7 +413,7 @@ void* process_request(void* void_ptr)
   catch(const std::exception& e)
   {
         // Clean after failure
-    if(verbose) StdCerrThreadSafeTid << e.what() << std::endl;
+    if(verbose) StdCerrThreadSafeCond(printTid) << e.what() << std::endl;
     close(rdata.sockd);
     decrease_num_threads_var();
     pthread_exit(NULL);
@@ -675,6 +683,13 @@ int takeParameters(int argc,
       ++matched;
     }
 
+        // -vd parameter
+    if(argv_stl[i]=="-vd" && !matched)
+    {
+      ts_pars.vd_given=true;
+      ++matched;
+    }
+
         // Check if current parameter is not valid
     if(matched==0)
     {
@@ -700,29 +715,40 @@ int checkParameters(void)
     std::cerr<<"Error: -i and -w parameters cannot be given simultaneously!"<<std::endl;
     return THOT_ERROR;
   }
-  
+
+  if(ts_pars.v_given && ts_pars.vd_given)
+  {
+    std::cerr<<"Error: -v and -vd parameters cannot be given simultaneously!"<<std::endl;
+    return THOT_ERROR;
+  }
+
   return THOT_OK;
 }
 
 //---------------
 void printParameters(void)
 {
-  std::cerr<<"Server port: "<<ts_pars.server_port<<std::endl;
+  std::cerr<<"-i: "<<ts_pars.i_given<<std::endl;
+  std::cerr<<"-c: "<<ts_pars.c_given<<std::endl;
+  std::cerr<<"-p: "<<ts_pars.server_port<<std::endl;
   std::cerr<<"-w: "<<ts_pars.w_given<<std::endl;
   std::cerr<<"-v: "<<ts_pars.v_given<<std::endl;
+  std::cerr<<"-vd: "<<ts_pars.vd_given<<std::endl;
 }
 
 //---------------
 void printUsage(void)
 {
   std::cerr<<"Usage: thot_server    -i | -c <string>"<<std::endl;
-  std::cerr<<"                      [-p <int>] [ -w ] [ -v ] [--help] [--version]"<<std::endl;
+  std::cerr<<"                      [-p <int>] [ -w ] [ -v | -vd ] [--help] [--version]"<<std::endl;
   std::cerr<<std::endl;
-  std::cerr<<"-i <string>    Test server initialization and exit"<<std::endl<<std::endl;
+  std::cerr<<"-i             Test server initialization and exit"<<std::endl<<std::endl;
   std::cerr<<"-c <string>    Configuration file"<<std::endl<<std::endl;
   std::cerr<<"-p <int>       Port used by the server"<<std::endl<<std::endl;
   std::cerr<<"-w             Print model weights and exit"<<std::endl<<std::endl;
   std::cerr<<"-v             Verbose mode"<<std::endl<<std::endl;
+  std::cerr<<"-vd            Verbose mode for debugging. This mode displays more information"<<std::endl;
+  std::cerr<<"               than -v option but it is not designed to work concurrently"<<std::endl<<std::endl;
   std::cerr<<"--help         Print this help and exit"<<std::endl<<std::endl;
   std::cerr<<"--version      Output version information and exit"<<std::endl<<std::endl;
 }

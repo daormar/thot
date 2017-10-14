@@ -38,6 +38,7 @@ struct thot_server_pars
   unsigned int server_port;
   bool w_given;
   bool v_given;
+  bool vd_given;
 
   thot_server_pars()
     {
@@ -52,6 +53,7 @@ struct thot_server_pars
       server_port=DEFAULT_SERVER_PORT;
       w_given=false;
       v_given=false;
+      vd_given=false;
     }
 };
 
