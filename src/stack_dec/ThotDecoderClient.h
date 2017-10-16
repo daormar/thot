@@ -61,32 +61,32 @@ class ThotDecoderClient
     
     // Basic functions
     ThotDecoderClient(void);
-    int connectToTransServer(const char *dirServ,
+    void connectToTransServer(const char *dirServ,
                              unsigned int _port);
-    bool sendSentPairForOlTrain(int user_id,
+    void sendSentPairForOlTrain(int user_id,
                                 const char *srcSent,
                                 const char *refSent);
-    bool sendStrPairForTrainEcm(int user_id,
+    void sendStrPairForTrainEcm(int user_id,
                                 const char *strx,
                                 const char *stry);
-    bool sendSentToTranslate(int user_id,
+    void sendSentToTranslate(int user_id,
                              const char *sentenceToTranslate,
                              std::string& translatedSentence,
                              std::string& bestHypInfo);
-    bool sendSentPairVerCov(int user_id,
+    void sendSentPairVerCov(int user_id,
                             const char *srcSent,
                             const char *refSent,
                             std::string &translatedSentence);
-    bool startCat(int user_id,
+    void startCat(int user_id,
                   const char *sentenceToTranslate,
                   std::string &translatedSentence);
-    bool addStrToPref(int user_id,
+    void addStrToPref(int user_id,
                       const char* strToAddToPref,
                       std::string &translatedSentence);
-    bool resetPref(int user_id);
-    bool sendPrintRequest(int user_id);
+    void resetPref(int user_id);
+    void sendPrintRequest(int user_id);
+    void sendEndServerRequest(int user_id);
     void disconnect(int user_id);
-    bool sendEndServerRequest(int user_id);
     
  private:
 

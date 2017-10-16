@@ -46,35 +46,28 @@ ThotDecoderClient::ThotDecoderClient(void)
 }
 
 //--------------------------
-int ThotDecoderClient::connectToTransServer(const char *dirServ,
-                                            unsigned int _port)
+void ThotDecoderClient::connectToTransServer(const char *dirServ,
+                                             unsigned int _port)
 {
  if(!connected)
  {
    int fd;
-   int retVal=BasicSocketUtils::connect(dirServ,_port,fd);
-   if(retVal==THOT_OK)
-   {
-         // Set data member values    
-     connected=true;
-     port=_port;
-     serverName=dirServ;   
-     fileDesc=fd;
+   BasicSocketUtils::connect(dirServ,_port,fd);
 
-     return THOT_OK;
-   }
-   else
-     return THOT_ERROR;
+       // Set data member values    
+   connected=true;
+   port=_port;
+   serverName=dirServ;   
+   fileDesc=fd;
  }
  else
  {
-   std::cerr<<"Client already connected!"<<std::endl;
-   return THOT_ERROR;
+   throw std::runtime_error("Client already connected");        
  }
 }
 
 //--------------------------
-bool ThotDecoderClient::sendSentPairForOlTrain(int user_id,
+void ThotDecoderClient::sendSentPairForOlTrain(int user_id,
                                                const char *srcSent,
                                                const char *refSent)
 {
@@ -84,19 +77,18 @@ bool ThotDecoderClient::sendSentPairForOlTrain(int user_id,
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,srcSent);
     BasicSocketUtils::writeStr(fileDesc,refSent);
-
-    int retVal=BasicSocketUtils::recvInt(fileDesc);
-    return retVal;
+    int ret=BasicSocketUtils::recvInt(fileDesc);
+    if(ret==THOT_ERROR)
+      throw std::runtime_error("Online training request failed");
   }
   else
   {
-    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
-    return THOT_ERROR;
+    throw std::runtime_error("ThotDecoderClient not connected");        
   }
 }
 
 //--------------------------
-bool ThotDecoderClient::sendStrPairForTrainEcm(int user_id,
+void ThotDecoderClient::sendStrPairForTrainEcm(int user_id,
                                                const char *strx,
                                                const char *stry)
 {
@@ -106,19 +98,18 @@ bool ThotDecoderClient::sendStrPairForTrainEcm(int user_id,
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,strx);
     BasicSocketUtils::writeStr(fileDesc,stry);
-
-    int retVal=BasicSocketUtils::recvInt(fileDesc);
-    return retVal;
+    int ret=BasicSocketUtils::recvInt(fileDesc);
+    if(ret==THOT_ERROR)
+      throw std::runtime_error("Error correction model training request failed");
   }
   else
   {
-    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
-    return THOT_ERROR;
+    throw std::runtime_error("ThotDecoderClient not connected");        
   }
 }
 
 //--------------------------
-bool ThotDecoderClient::sendSentToTranslate(int user_id,
+void ThotDecoderClient::sendSentToTranslate(int user_id,
                                             const char *sentenceToTranslate,
                                             std::string &translatedSentence,
                                             std::string& bestHypInfo)
@@ -128,20 +119,17 @@ bool ThotDecoderClient::sendSentToTranslate(int user_id,
     BasicSocketUtils::writeInt(fileDesc,TRANSLATE_SENT);
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,sentenceToTranslate);
-
     BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
     BasicSocketUtils::recvStlStr(fileDesc,bestHypInfo);
-    return THOT_OK;
   }
   else
   {
-    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
-    return THOT_ERROR;
+    throw std::runtime_error("ThotDecoderClient not connected");        
   }    
 }
 
 //--------------------------
-bool ThotDecoderClient::sendSentPairVerCov(int user_id,
+void ThotDecoderClient::sendSentPairVerCov(int user_id,
                                            const char *srcSent,
                                            const char *refSent,
                                            std::string &translatedSentence)
@@ -152,19 +140,16 @@ bool ThotDecoderClient::sendSentPairVerCov(int user_id,
     BasicSocketUtils::writeInt(fileDesc,user_id);
     BasicSocketUtils::writeStr(fileDesc,srcSent);
     BasicSocketUtils::writeStr(fileDesc,refSent);
-
     BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
-    return THOT_OK;
   }
   else
   {
-    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
-    return THOT_ERROR;
+    throw std::runtime_error("ThotDecoderClient not connected");        
   }
 }
 
 //--------------------------
-bool ThotDecoderClient::startCat(int user_id,
+void ThotDecoderClient::startCat(int user_id,
                                  const char *sentenceToTranslate,
                                  std::string &translatedSentence)
 {
@@ -172,20 +157,17 @@ bool ThotDecoderClient::startCat(int user_id,
   {
     BasicSocketUtils::writeInt(fileDesc,START_CAT);
     BasicSocketUtils::writeInt(fileDesc,user_id);
-    BasicSocketUtils::writeStr(fileDesc,sentenceToTranslate);
-    
+    BasicSocketUtils::writeStr(fileDesc,sentenceToTranslate);    
     BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
-    return THOT_OK;
   }
   else
   {
-    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
-    return THOT_ERROR;
+    throw std::runtime_error("ThotDecoderClient not connected");        
   }
 }
 
 //--------------------------
-bool ThotDecoderClient::addStrToPref(int user_id,
+void ThotDecoderClient::addStrToPref(int user_id,
                                      const char* strToAddToPref,
                                      std::string &translatedSentence)
 {
@@ -193,53 +175,60 @@ bool ThotDecoderClient::addStrToPref(int user_id,
   {
     BasicSocketUtils::writeInt(fileDesc,ADD_STR_TO_PREF);
     BasicSocketUtils::writeInt(fileDesc,user_id);
-    BasicSocketUtils::writeStr(fileDesc,strToAddToPref);
-    
+    BasicSocketUtils::writeStr(fileDesc,strToAddToPref);    
     BasicSocketUtils::recvStlStr(fileDesc,translatedSentence);
-    return THOT_OK;
   }
   else
   {
-    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
-    return THOT_ERROR;
+    throw std::runtime_error("ThotDecoderClient not connected");        
   }
 }
 
 //--------------------------
-bool ThotDecoderClient::resetPref(int user_id)
+void ThotDecoderClient::resetPref(int user_id)
 {    
   if(connected)
   {
-    int retVal;
-
     BasicSocketUtils::writeInt(fileDesc,RESET_PREF);
     BasicSocketUtils::writeInt(fileDesc,user_id);
-    retVal=BasicSocketUtils::recvInt(fileDesc);
-    return retVal;
+    BasicSocketUtils::recvInt(fileDesc);
   }
   else
   {
-    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
-    return THOT_ERROR;
+    throw std::runtime_error("ThotDecoderClient not connected");        
   }        
 }
 
 //--------------------------
-bool ThotDecoderClient::sendPrintRequest(int user_id)
+void ThotDecoderClient::sendPrintRequest(int user_id)
 {
   if(connected)
   {
     BasicSocketUtils::writeInt(fileDesc,PRINT_MODELS);
     BasicSocketUtils::writeInt(fileDesc,user_id);
-
-    int retVal=BasicSocketUtils::recvInt(fileDesc);
-    return retVal;
+    int ret=BasicSocketUtils::recvInt(fileDesc);
+    if(ret==THOT_ERROR)
+      throw std::runtime_error("Print request failed");
   }
   else
   {
-    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
-    return THOT_ERROR;
+    throw std::runtime_error("ThotDecoderClient not connected");        
   }    
+}
+
+//--------------------------
+void ThotDecoderClient::sendEndServerRequest(int user_id)
+{
+  if(connected)
+  {
+    BasicSocketUtils::writeInt(fileDesc,END_SERVER);
+    BasicSocketUtils::writeInt(fileDesc,user_id);
+    BasicSocketUtils::recvInt(fileDesc);
+  }
+  else
+  {
+    throw std::runtime_error("ThotDecoderClient not connected");        
+  }
 }
 
 //--------------------------
@@ -252,24 +241,4 @@ void ThotDecoderClient::disconnect(int user_id)
   close(fileDesc); 
   connected=false;   
  }
-}
-
-//--------------------------
-bool ThotDecoderClient::sendEndServerRequest(int user_id)
-{
-  if(connected)
-  {
-    BasicSocketUtils::writeInt(fileDesc,END_SERVER);
-    BasicSocketUtils::writeInt(fileDesc,user_id);
-  
-    int retVal=BasicSocketUtils::recvInt(fileDesc);
-    close(fileDesc); 
-    connected=false;
-    return retVal;
-  }
-  else
-  {
-    std::cerr<<"ThotDecoderClient not connected!"<<std::endl;
-    return THOT_ERROR;
-  }
 }
