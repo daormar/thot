@@ -308,7 +308,7 @@ int start_server(void)
       // Wait for threads to finish
   wait_on_num_threads_var_cond();
 
-  if(ts_pars.v_given)
+  if(ts_pars.v_given || ts_pars.vd_given)
     StdCerrThreadSafe<<"Server: shutting down"<<std::endl;
 
       // Destroy mutexes and conditions
