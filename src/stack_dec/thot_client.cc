@@ -49,7 +49,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function Declarations ------------------------------
 
-int process_request(const thot_client_pars& tdcPars);
+void process_request(const thot_client_pars& tdcPars);
 int TakeParameters(int argc,
                    char *argv[],
                    thot_client_pars& tdcPars);
@@ -70,12 +70,11 @@ int main(int argc,char *argv[])
   if(TakeParameters(argc,argv,tdcPars)==THOT_OK)
   {
         // Parameters ok
-    bool retVal;
-
+    
         // Process request
     try
     {
-      retVal=process_request(tdcPars);
+      process_request(tdcPars);
     }
     catch(const std::exception& e)
     {
@@ -83,20 +82,19 @@ int main(int argc,char *argv[])
       return THOT_ERROR;
     }
     
-    return retVal;
- } 
- else return THOT_ERROR;  
+    return THOT_OK;
+  } 
+  else return THOT_ERROR;  
 }
 
 //---------------
-int process_request(const thot_client_pars& tdcPars)
+void process_request(const thot_client_pars& tdcPars)
 {
   std::string s;
   std::vector<std::string> v;
   std::string translatedSentence;
   std::string bestHypInfo;
   ThotDecoderClient thotDecoderClient;
-  int retVal=THOT_OK;
   double elapsed_ant,elapsed,ucpu,scpu;
   double connection_latency,request_latency;
 
@@ -109,9 +107,8 @@ int process_request(const thot_client_pars& tdcPars)
     ctimer(&elapsed_ant,&ucpu,&scpu);
   }
 
-  retVal=thotDecoderClient.connectToTransServer(tdcPars.serverIP.c_str(),
-                                                tdcPars.server_port);
-  if(retVal==THOT_ERROR) return THOT_ERROR;
+  thotDecoderClient.connectToTransServer(tdcPars.serverIP.c_str(),
+                                         tdcPars.server_port);
 
       // Print connection latency information
   if(tdcPars.verbose)
@@ -132,41 +129,31 @@ int process_request(const thot_client_pars& tdcPars)
 
   switch(tdcPars.server_request_code)
   {
-    case OL_TRAIN_PAIR: retVal=thotDecoderClient.sendSentPairForOlTrain(tdcPars.user_id,tdcPars.stlStringSrc.c_str(),tdcPars.stlStringRef.c_str());
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case OL_TRAIN_PAIR: thotDecoderClient.sendSentPairForOlTrain(tdcPars.user_id,tdcPars.stlStringSrc.c_str(),tdcPars.stlStringRef.c_str());
       break;
-    case TRAIN_ECM: retVal=thotDecoderClient.sendStrPairForTrainEcm(tdcPars.user_id,tdcPars.stlString1.c_str(),tdcPars.stlString2.c_str());
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case TRAIN_ECM: thotDecoderClient.sendStrPairForTrainEcm(tdcPars.user_id,tdcPars.stlString1.c_str(),tdcPars.stlString2.c_str());
       break;
-    case TRANSLATE_SENT: retVal=thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence,bestHypInfo);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case TRANSLATE_SENT: thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence,bestHypInfo);
       std::cout<<translatedSentence<<std::endl;
       break;
-    case TRANSLATE_SENT_HYPINFO: retVal=thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence,bestHypInfo);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case TRANSLATE_SENT_HYPINFO: thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence,bestHypInfo);
       std::cout<<bestHypInfo<<std::endl;
       std::cout<<translatedSentence<<std::endl;
       break;
-    case VERIFY_COV: retVal=thotDecoderClient.sendSentPairVerCov(tdcPars.user_id,tdcPars.stlStringSrc.c_str(),tdcPars.stlStringRef.c_str(),translatedSentence);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case VERIFY_COV: thotDecoderClient.sendSentPairVerCov(tdcPars.user_id,tdcPars.stlStringSrc.c_str(),tdcPars.stlStringRef.c_str(),translatedSentence);
       std::cout<<translatedSentence<<std::endl;
       break;
-    case START_CAT: retVal=thotDecoderClient.startCat(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case START_CAT: thotDecoderClient.startCat(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence);
       std::cout<<translatedSentence<<std::endl;
       break;
-    case ADD_STR_TO_PREF: retVal=thotDecoderClient.addStrToPref(tdcPars.user_id,tdcPars.strToAddToPref.c_str(),translatedSentence);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case ADD_STR_TO_PREF: thotDecoderClient.addStrToPref(tdcPars.user_id,tdcPars.strToAddToPref.c_str(),translatedSentence);
       std::cout<<translatedSentence<<std::endl;
       break;
-    case RESET_PREF: retVal=thotDecoderClient.resetPref(tdcPars.user_id);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case RESET_PREF: thotDecoderClient.resetPref(tdcPars.user_id);
       break;
-    case PRINT_MODELS: retVal=thotDecoderClient.sendPrintRequest(tdcPars.user_id);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case PRINT_MODELS: thotDecoderClient.sendPrintRequest(tdcPars.user_id);
       break;
-    case END_SERVER: retVal=thotDecoderClient.sendEndServerRequest(tdcPars.user_id);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case END_SERVER: thotDecoderClient.sendEndServerRequest(tdcPars.user_id);
       break;
     default:
       break;
@@ -181,7 +168,6 @@ int process_request(const thot_client_pars& tdcPars)
 
       //thotDecoderClient.disconnect(); // (disconnect is not required since the server only
       //                                   dispatch one request per client execution)
-  return retVal;
 }
 
 //---------------
