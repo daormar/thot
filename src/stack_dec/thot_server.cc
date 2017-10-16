@@ -84,10 +84,10 @@ int get_request_type(int sockd,
 int get_user_id(int sockd,
                 int& user_id);
 void* process_request(void* rdata_ptr);
-int process_request_switch(int sockd,
-                           int user_id,
-                           int server_request_type,
-                           int verbose);
+void process_request_switch(int sockd,
+                            int user_id,
+                            int server_request_type,
+                            int verbose);
 int init_user_pars_if_required(int user_id);
 void increase_num_threads_var(void);
 void decrease_num_threads_var(void);
@@ -393,21 +393,13 @@ void* process_request(void* void_ptr)
     double elapsed_prev,elapsed,ucpu,scpu;
     ctimer(&elapsed_prev,&ucpu,&scpu);
 
-    int ret=process_request_switch(rdata.sockd,rdata.user_id,rdata.request_type,verbose);
+    process_request_switch(rdata.sockd,rdata.user_id,rdata.request_type,verbose);
 
     ctimer(&elapsed,&ucpu,&scpu);
 
     if(verbose)
     {
       StdCerrThreadSafeCond(printTid)<<"Elapsed time: " << elapsed-elapsed_prev << " secs\n";
-    }
-
-    if(ret==THOT_ERROR)
-    {
-      if(verbose) StdCerrThreadSafeCond(printTid)<<"Error while processing client request"<<std::endl;
-      close(rdata.sockd);
-      decrease_num_threads_var();
-      pthread_exit(NULL);
     }
   }
   catch(const std::exception& e)
@@ -425,10 +417,10 @@ void* process_request(void* void_ptr)
 }
 
 //---------------
-int process_request_switch(int sockd,
-                           int user_id,
-                           int server_request_type,
-                           int verbose)
+void process_request_switch(int sockd,
+                            int user_id,
+                            int server_request_type,
+                            int verbose)
 {
   std::string stlStr;
   std::string stlStr1;
@@ -440,7 +432,7 @@ int process_request_switch(int sockd,
   std::string catResult;
   std::vector<float> floatVec;
   RejectedWordsSet emptyRejWordsSet;
-  int ret=THOT_OK;
+  int ret;
   
   switch(server_request_type)
   {
@@ -449,6 +441,8 @@ int process_request_switch(int sockd,
       BasicSocketUtils::recvStlStr(sockd,stlStrRef);
       ret=thotDecoderPtr->onlineTrainSentPair(user_id,stlStrSrc.c_str(),stlStrRef.c_str(),verbose);
       BasicSocketUtils::writeInt(sockd,ret);
+      if(ret==THOT_ERROR)
+        throw std::runtime_error("Online training request failed");
       break;
 
     case TRAIN_ECM:
@@ -456,6 +450,8 @@ int process_request_switch(int sockd,
       BasicSocketUtils::recvStlStr(sockd,stlStr2);
       ret=thotDecoderPtr->trainEcm(user_id,stlStr1.c_str(),stlStr2.c_str(),verbose);
       BasicSocketUtils::writeInt(sockd,ret);
+      if(ret==THOT_ERROR)
+        throw std::runtime_error("Error correction model training request failed");
       break;
 
     case TRANSLATE_SENT:
@@ -499,6 +495,8 @@ int process_request_switch(int sockd,
     case PRINT_MODELS:
       ret=thotDecoderPtr->printModels(verbose);
       BasicSocketUtils::writeInt(sockd,ret);
+      if(ret==THOT_ERROR)
+        throw std::runtime_error("Printing request failed");
       break;
 
     case END_SERVER: // NOTE: this request only involves sending
@@ -509,8 +507,6 @@ int process_request_switch(int sockd,
       BasicSocketUtils::writeInt(sockd,THOT_OK);
       break;
   }
-
-  return ret;
 }
 
 //---------------
