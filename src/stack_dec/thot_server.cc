@@ -505,8 +505,8 @@ int process_request_switch(int sockd,
                      // acknowledgement message to client and clearing
                      // data structures, end_server variable is not
                      // modified from here
-      BasicSocketUtils::writeInt(sockd,1);
       thotDecoderPtr->clearTrans(verbose);
+      BasicSocketUtils::writeInt(sockd,THOT_OK);
       break;
   }
 
