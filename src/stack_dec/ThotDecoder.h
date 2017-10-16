@@ -333,6 +333,7 @@ class ThotDecoder
   void destroy_legacy_impl(void);
 
       // Verbose output-related functions
+  bool threadIdShouldBePrinted(int verbosity);
   int externalFuncVerbosity(int verbosity);
 };
 #endif
