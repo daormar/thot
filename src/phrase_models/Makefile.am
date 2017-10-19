@@ -1,6 +1,4 @@
 EXTRA_DIST=                                     \
-_incrMuxPhraseModel.cc                          \
-_incrMuxPhraseModel.h                           \
 _incrPhraseModel.cc                             \
 _incrPhraseModel.h                              \
 _wbaIncrPhraseModel.cc                          \
@@ -39,9 +37,6 @@ FastBdbPhraseModel.h                            \
 FastBdbPhraseModelFactory.cc                    \
 FastBdbPhraseTable.cc                           \
 FastBdbPhraseTable.h                            \
-IncrMuxPhraseModel.cc                           \
-IncrMuxPhraseModel.h                            \
-IncrMuxPhraseModelFactory.cc                    \
 IncrPhraseModel.cc                              \
 IncrPhraseModel.h                               \
 IncrPhraseModelFactory.cc                       \
