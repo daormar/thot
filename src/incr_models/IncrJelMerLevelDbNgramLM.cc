@@ -50,7 +50,7 @@ bool IncrJelMerLevelDbNgramLM::load(const char *fileName)
       // Load LevelDB ngram table
   retval = loadNgramTable(fileName);
   if (retval == THOT_ERROR) return THOT_ERROR;
-
+    
       // Load weights
   retval = loadWeights(fileName);
   if (retval == THOT_ERROR) return THOT_ERROR;
@@ -85,22 +85,56 @@ bool IncrJelMerLevelDbNgramLM::loadVocab(const char *fileName)
 //------------------------------
 bool IncrJelMerLevelDbNgramLM::loadNgramTable(const char *fileName)
 {
-  const char *ngramTableFileName;
-
-      // Load LevelDB ngram table
+      // Obtain file name storing ngram table
+  std::string ngramTableFileName;
   std::string mainFileName;
   if(fileIsDescriptor(fileName, mainFileName))
   {
     std::string descFileName = fileName;
     std::string absolutizedMainFileName = absolutizeModelFileName(descFileName, mainFileName);
-    ngramTableFileName = absolutizedMainFileName.c_str();
+    ngramTableFileName = absolutizedMainFileName;
   }
   else
   {
     ngramTableFileName = fileName;
   }
 
-  return this->tablePtr->load(ngramTableFileName);
+      // Load ngram table
+  int ret=tablePtr->load(ngramTableFileName.c_str());
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
+
+      // If load was successful, store file name
+  ngramTableFileNameLoaded=ngramTableFileName;
+  
+  return THOT_OK;
+}
+
+//------------------------------
+bool IncrJelMerLevelDbNgramLM::print(const char *fileName)
+{
+  std::string fileNameStl = fileName;
+  if(ngramTableFileNameLoaded == fileNameStl)
+  {
+        // Print weights
+    int ret=printWeights(fileName);
+    if(ret==THOT_ERROR)
+      return THOT_ERROR;
+
+    return THOT_OK;
+  }
+  else
+  {
+    std::cerr << "Warning: print() function not implemented for this model" << std::endl;
+    return THOT_ERROR;
+  }
+}
+
+//------------------------------
+void IncrJelMerLevelDbNgramLM::clear(void)
+{
+  _incrJelMerNgramLM<Count,Count>::clear();
+  ngramTableFileNameLoaded.clear();
 }
 
 //------------------------------

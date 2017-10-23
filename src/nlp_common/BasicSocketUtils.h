@@ -69,9 +69,9 @@ namespace BasicSocketUtils
   int recvInt(int s);
   int writeInt(int fd,int i);
   int writeStr(int fd,const char* s);
-  int connect(const char *dirServ,
-              unsigned int port,
-              int& fileDesc);
+  void connect(const char *dirServ,
+               unsigned int port,
+               int& fileDesc);
   void clean(void);
 }
 

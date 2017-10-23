@@ -21,7 +21,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 namespace BasicSocketUtils
 {
-  //--------------- init function
+  //---------------
   int init(void)
   {
 #ifdef THOT_MINGW
@@ -37,7 +37,7 @@ namespace BasicSocketUtils
 #endif
   }
 
-  //--------------- recvStr function
+  //---------------
   int recvStr(int s,char *str)
   {
     int  numbytes;
@@ -56,7 +56,7 @@ namespace BasicSocketUtils
     return numbytes;
   }
 
-  //--------------- recvStlStr function
+  //---------------
   int recvStlStr(int s,std::string& stlstr)
   {
     int  numbytes;
@@ -70,6 +70,7 @@ namespace BasicSocketUtils
       {
             // recv() call
         std::cerr<<"recv() error!"<<std::endl;
+        free(str);
         throw std::runtime_error("Socket error: Cannot read STL string");
       }
     }
@@ -79,7 +80,7 @@ namespace BasicSocketUtils
     return numbytes;
   }
 
-  //--------------- recvInt function
+  //---------------
   int recvInt(int s)
   {
     int numbytes;
@@ -98,7 +99,7 @@ namespace BasicSocketUtils
     return receivedInt;
   }
 
-  //--------------- recvFloat function
+  //---------------
   int recvFloat(int s,float& f)
   {
     int dp;
@@ -149,10 +150,10 @@ namespace BasicSocketUtils
     return ret;
   }
 
-  //--------------- connect function
-  int connect(const char *dirServ,
-              unsigned int port,
-              int& fileDesc)
+  //---------------
+  void connect(const char *dirServ,
+               unsigned int port,
+               int& fileDesc)
   {
      struct hostent *he;
          /* Data structure containing information about remote host */
@@ -162,16 +163,14 @@ namespace BasicSocketUtils
 
      if ((he=gethostbyname(dirServ))==NULL)
      {
-           /* gethostbyname() call */
        std::cerr<<"gethostbyname() error\n";
-       return THOT_ERROR;
+       throw std::runtime_error("Error while establishing connection");
      }
 
      if ((fileDesc=socket(AF_INET, SOCK_STREAM, 0))==-1)
      {
-           /* socket() call */
        std::cerr<<"socket() error\n";
-       return THOT_ERROR;
+       throw std::runtime_error("Error while establishing connection");
      }
 
      server.sin_family = AF_INET;
@@ -185,15 +184,12 @@ namespace BasicSocketUtils
          // Connect to server
      if(connect(fileDesc, (struct sockaddr *)&server,sizeof(struct sockaddr))==-1)
      {
-           // connect() call
        std::cerr<<"connect() error\n";
-       return THOT_ERROR;
+       throw std::runtime_error("Error while establishing connection");
      }
-
-     return THOT_OK;
   }
 
-  //--------------- clean function
+  //---------------
   void clean(void)
   {
 #ifdef THOT_MINGW

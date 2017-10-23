@@ -59,6 +59,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ThotDecoderUserPars.h"
 #include "ModelDescriptorUtils.h"
 
+#include "StdCerrThreadSafePrint.h"
+#include "StdCerrThreadSafeTidPrint.h"
 #include <options.h>
 #include <pthread.h>
 #include <sstream>
@@ -77,6 +79,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                                            // is required to expand a
                                            // a word using the word
                                            // predictor
+
+#define THOTDEC_NON_VERBOSE_MODE              0
+#define THOTDEC_NORMAL_VERBOSE_MODE           1
+#define THOTDEC_DEBUG_VERBOSE_MODE            2
 
 //--------------- Classes --------------------------------------------
 
@@ -102,37 +108,32 @@ class ThotDecoder
                    int verbose);
 
       // Functions to train models
-  bool onlineTrainSentPair(int user_id,
-                           const char *srcSent,
-                           const char *refSent,
-                           int verbose=0);
+  int onlineTrainSentPair(int user_id,
+                          const char *srcSent,
+                          const char *refSent,
+                          int verbose=0);
   void updateLogLinearWeights(std::string refSent,
                               WordGraph* wgPtr,
                               int verbose=0);
-  bool trainEcm(int user_id,
-                const char *strx,
-                const char *stry,
-                int verbose=0);
+  int trainEcm(int user_id,
+               const char *strx,
+               const char *stry,
+               int verbose=0);
 
       // Functions to translate sentences
-  bool translateSentence(int user_id,
+  void translateSentence(int user_id,
                          const char *sentenceToTranslate,
                          std::string& result,
                          std::string& bestHypInfo,
                          int verbose=0);
-  bool translateSentencePrintWg(int user_id,
-                                const char *sentenceToTranslate,
-                                std::string& result,
-                                const char* wgFilename,
-                                int verbose=0);
-  bool sentPairVerCov(int user_id,
+  void sentPairVerCov(int user_id,
                       const char *srcSent,
                       const char *refSent,
                       std::string& result,
                       int verbose=0);
   
       // CAT-related functions
-  bool startCat(int user_id,
+  void startCat(int user_id,
                 const char *sentenceToTranslate,
                 std::string &catResult,
                 int verbose=0);
@@ -148,21 +149,15 @@ class ThotDecoder
                int verbose=0);
   void resetPrefix(int user_id,
                    int verbose=0);
-  bool use_caseconv(int user_id,
+  int use_caseconv(int user_id,
                     const char *caseConvFile,
                     int verbose=0);
-
-      // Pre/Post-processing functions
-  std::string preprocStr(int user_id,
-                         std::string str);
-  std::string postprocStr(int user_id,
-                         std::string str);
   
       // Clear translator data structures
   void clearTrans(int verbose=0);
 
       // Function to print the models
-  bool printModels(int verbose=0);
+  int printModels(int verbose=0);
 
       // Model weights related functions
   int printModelWeights(void);
@@ -187,10 +182,10 @@ class ThotDecoder
   pthread_mutex_t preproc_mut;
   pthread_cond_t non_atomic_op_cond;
   unsigned int non_atomic_ops_running;
-
+  std::vector<pthread_mutex_t> per_user_mut;
+  
       // Mutex- and condition-related functions
   void wait_on_non_atomic_op_cond(void);
-  void unlock_non_atomic_op_mut(void);  
   void increase_non_atomic_ops_running(void);
   void decrease_non_atomic_ops_running(void);
 
@@ -221,8 +216,8 @@ class ThotDecoder
                 int verbose=0);
 
       // Functions to print models
-  bool printModelsLegacyImpl(int verbose=0);
-  bool printModelsFeatImpl(int verbose=0);
+  int printModelsLegacyImpl(int verbose=0);
+  int printModelsFeatImpl(int verbose=0);
 
       // Training-related functions
   void setOnlineTrainPars(OnlineTrainingPars onlineTrainingPars,
@@ -267,7 +262,7 @@ class ThotDecoder
   bool set_wgh(const char *wgHandlerFileName,
                int verbose=0);
 
-      // Functions to initialize variables for each user
+      // Functions to handle variables for each user
   size_t get_vecidx_for_user_id(int user_id);
   int init_idx_data(size_t idx);
   void release_idx_data(size_t idx);
@@ -290,6 +285,14 @@ class ThotDecoder
                                 const char *refSent,
                                 int verbose=0);
   
+      // Auxiliary functions for assisted translation
+  void resetPrefixAux(size_t idx);
+  void addStrToPrefAux(size_t idx,
+                       const char *strToAddToPref,
+                       const RejectedWordsSet& rejectedWords,
+                       std::string &catResult,
+                       int verbose=0);
+
       // Pre-posprocessing related functions
   std::string robustObtainFinalOutput(BasePrePosProcessor* prePosProcessorPtr,
                                       std::string unpreprocPref,
@@ -314,6 +317,13 @@ class ThotDecoder
                                                          std::string input);
   std::string getWordCompletion(std::string uncompleteWord,
                                 std::string completeWord);
+  std::string preprocLine(BasePrePosProcessor* prePosProcessorPtr,
+                          std::string str,
+                          bool caseconv,
+                          bool keepPreprocInfo);
+  std::string postprocLine(BasePrePosProcessor* prePosProcessorPtr,
+                           std::string str,
+                           bool caseconv);
 
       // Memory handling related functions
   bool instantiate_swm_info(const char* tmFilesPrefix,
@@ -321,6 +331,9 @@ class ThotDecoder
   void deleteSwModelPtrs(void);
   void destroy_feat_impl(void);
   void destroy_legacy_impl(void);
-    
+
+      // Verbose output-related functions
+  bool threadIdShouldBePrinted(int verbosity);
+  int externalFuncVerbosity(int verbosity);
 };
 #endif

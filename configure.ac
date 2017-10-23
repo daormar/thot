@@ -348,6 +348,18 @@ fi
 # Checks for lm library
 AC_CHECK_LIB([m], [log])
 
+# Checks for pthread library
+LPTHREAD=""
+libaux=${LIBS}
+AC_CHECK_LIB([pthread], [pthread_create])
+if test $ac_cv_lib_pthread_pthread_create = yes; then
+   LPTHREAD="-lpthread"
+   AC_DEFINE(HAVE_PTHREAD,,[Define if the pthread library is present])
+fi
+AC_SUBST(LPTHREAD)
+LIBS=${libaux}
+
+
 # Checks for gmp library
 LGMP=""
 libaux=${LIBS}

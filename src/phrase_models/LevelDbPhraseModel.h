@@ -39,7 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "LevelDbPhraseTable.h"
-#include "BaseCountPhraseModel.h"
+#include "BaseIncrPhraseModel.h"
 #include "NbestTransTable.h"
 #include "SingleWordVocab.h"
 #include "printAligFuncs.h"
@@ -68,7 +68,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- LevelDbPhraseModel class
 
-class LevelDbPhraseModel: public BaseCountPhraseModel
+class LevelDbPhraseModel: public BaseIncrPhraseModel
 {
  public:
 
@@ -77,6 +77,20 @@ class LevelDbPhraseModel: public BaseCountPhraseModel
 
         // Constructor
     LevelDbPhraseModel(void);
+
+        // Functions to extend or modify the model
+    void strAddTableEntry(const std::vector<string>& s,
+                          const std::vector<string>& t,
+                          PhrasePairInfo inf);
+    void addTableEntry(const std::vector<WordIndex>& s,
+                       const std::vector<WordIndex>& t,
+                       PhrasePairInfo inf);
+	void strIncrCountsOfEntry(const std::vector<string>& s,
+                              const std::vector<string>& t,
+                              Count count=1);
+    void incrCountsOfEntry(const std::vector<WordIndex>& s,
+                           const std::vector<WordIndex>& t,
+                           Count count=1);
 
         // Counts-related functions
     Count cSrcTrg(const std::vector<WordIndex>& s,

@@ -45,7 +45,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "BasePbTransModel.h"
-#include "_incrMuxPhraseModel.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
 #include "SourceSegmentation.h"
@@ -179,8 +178,7 @@ class _phraseBasedTransModel: public BasePbTransModel<HYPOTHESIS>
   
       // Phrase model members
   PhraseModelInfo* phrModelInfoPtr;
-      // Auxiliary variable to handle phrase model multiplexers
-  _incrMuxPhraseModel* incrInvMuxPmPtr;
+
       // Members useful for caching data
   PhrasePairVecScore cachedDirectPhrScoreVecs;
   PhrasePairVecScore cachedInversePhrScoreVecs;
@@ -460,26 +458,11 @@ void _phraseBasedTransModel<HYPOTHESIS>::link_lm_info(LangModelInfo* _langModelI
 template<class HYPOTHESIS>
 void _phraseBasedTransModel<HYPOTHESIS>::instantiateWeightVectors(void)
 {
-  if(incrInvMuxPmPtr)
-  {
-    phrModelInfoPtr->phraseModelPars.ptsWeightVec.clear();
-    phrModelInfoPtr->phraseModelPars.pstWeightVec.clear();
-    
-    unsigned int nmodels=incrInvMuxPmPtr->getNumModels();
-    for(unsigned int i=0;i<nmodels;++i)
-    {
-      phrModelInfoPtr->phraseModelPars.ptsWeightVec.push_back(DEFAULT_PTS_WEIGHT);
-      phrModelInfoPtr->phraseModelPars.pstWeightVec.push_back(DEFAULT_PST_WEIGHT);
-    }
-  }
-  else
-  {
-    phrModelInfoPtr->phraseModelPars.ptsWeightVec.clear();
-    phrModelInfoPtr->phraseModelPars.pstWeightVec.clear();
+  phrModelInfoPtr->phraseModelPars.ptsWeightVec.clear();
+  phrModelInfoPtr->phraseModelPars.pstWeightVec.clear();
 
-    phrModelInfoPtr->phraseModelPars.ptsWeightVec.push_back(DEFAULT_PTS_WEIGHT);
-    phrModelInfoPtr->phraseModelPars.pstWeightVec.push_back(DEFAULT_PST_WEIGHT);
-  }
+  phrModelInfoPtr->phraseModelPars.ptsWeightVec.push_back(DEFAULT_PTS_WEIGHT);
+  phrModelInfoPtr->phraseModelPars.pstWeightVec.push_back(DEFAULT_PST_WEIGHT);
 }
 
 //---------------------------------
@@ -487,8 +470,6 @@ template<class HYPOTHESIS>
 void _phraseBasedTransModel<HYPOTHESIS>::link_pm_info(PhraseModelInfo* _phrModelInfoPtr)
 {
   phrModelInfoPtr=_phrModelInfoPtr;
-      // Obtain pointer to multiplexer phrase model if appliable
-  incrInvMuxPmPtr=dynamic_cast<_incrMuxPhraseModel* > (_phrModelInfoPtr->invPbModelPtr);
 }
 
 //---------------------------------
@@ -693,27 +674,11 @@ std::vector<Score> _phraseBasedTransModel<HYPOTHESIS>::phrScoreVec_s_t_(const st
   else
   {
         // Score has not been cached previously
-        // Check whether a mux phrase model is being used
-    if(incrInvMuxPmPtr)
-    {
-      std::vector<Score> scoreVec;
-      unsigned int nmodels=incrInvMuxPmPtr->getNumModels();
-      for(unsigned int i=0;i<nmodels;++i)
-      {
-        Score score=this->phrModelInfoPtr->phraseModelPars.pstWeightVec[i] * (double)incrInvMuxPmPtr->idxLogpt_s_(i,t_,s_);
-        scoreVec.push_back(score);
-      }
-      cachedInversePhrScoreVecs[make_pair(s_,t_)]=scoreVec;
-      return scoreVec;
-    }
-    else
-    {
-      std::vector<Score> scoreVec;
-      Score score=this->phrModelInfoPtr->phraseModelPars.pstWeightVec[0] * (double)this->phrModelInfoPtr->invPbModelPtr->logpt_s_(t_,s_);
-      scoreVec.push_back(score);
-      cachedInversePhrScoreVecs[make_pair(s_,t_)]=scoreVec;
-      return scoreVec;
-    }
+    std::vector<Score> scoreVec;
+    Score score=this->phrModelInfoPtr->phraseModelPars.pstWeightVec[0] * (double)this->phrModelInfoPtr->invPbModelPtr->logpt_s_(t_,s_);
+    scoreVec.push_back(score);
+    cachedInversePhrScoreVecs[make_pair(s_,t_)]=scoreVec;
+    return scoreVec;
   }
 }
 
@@ -740,27 +705,11 @@ std::vector<Score> _phraseBasedTransModel<HYPOTHESIS>::phrScoreVec_t_s_(const st
   else
   {
         // Score has not been cached previously
-        // Check whether a mux phrase model is being used
-    if(incrInvMuxPmPtr)
-    {
-      std::vector<Score> scoreVec;
-      unsigned int nmodels=incrInvMuxPmPtr->getNumModels();
-      for(unsigned int i=0;i<nmodels;++i)
-      {
-        Score score=this->phrModelInfoPtr->phraseModelPars.ptsWeightVec[i] * (double)incrInvMuxPmPtr->idxLogps_t_(i,t_,s_);
-        scoreVec.push_back(score);
-      }
-      cachedDirectPhrScoreVecs[make_pair(s_,t_)]=scoreVec;
-      return scoreVec;
-    }
-    else
-    {
-      std::vector<Score> scoreVec;
-      Score score=this->phrModelInfoPtr->phraseModelPars.ptsWeightVec[0] * (double)this->phrModelInfoPtr->invPbModelPtr->logps_t_(t_,s_);
-      scoreVec.push_back(score);
-      cachedDirectPhrScoreVecs[make_pair(s_,t_)]=scoreVec;
-      return scoreVec;
-    }
+    std::vector<Score> scoreVec;
+    Score score=this->phrModelInfoPtr->phraseModelPars.ptsWeightVec[0] * (double)this->phrModelInfoPtr->invPbModelPtr->logps_t_(t_,s_);
+    scoreVec.push_back(score);
+    cachedDirectPhrScoreVecs[make_pair(s_,t_)]=scoreVec;
+    return scoreVec;
   }
 }
 
@@ -768,13 +717,7 @@ std::vector<Score> _phraseBasedTransModel<HYPOTHESIS>::phrScoreVec_t_s_(const st
 template<class HYPOTHESIS>
 Score _phraseBasedTransModel<HYPOTHESIS>::srcJumpScore(unsigned int offset)
 {
-      // Check whether a mux phrase model is being used
-    if(incrInvMuxPmPtr)
-    {
-      return this->phrModelInfoPtr->phraseModelPars.srcJumpWeight * (double)incrInvMuxPmPtr->idxTrgCutsLgProb(MAIN_MUX_PMODEL_INDEX,offset);
-    }
-    else
-      return this->phrModelInfoPtr->phraseModelPars.srcJumpWeight * (double)this->phrModelInfoPtr->invPbModelPtr->trgCutsLgProb(offset);
+  return this->phrModelInfoPtr->phraseModelPars.srcJumpWeight * (double)this->phrModelInfoPtr->invPbModelPtr->trgCutsLgProb(offset);
 }
 
 //---------------------------------------
@@ -784,13 +727,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::srcSegmLenScore(unsigned int k,
                                                           unsigned int srcLen,
                                                           unsigned int lastTrgSegmLen)
 {
-      // Check whether a mux phrase model is being used
-  if(incrInvMuxPmPtr)
-  {
-    return this->phrModelInfoPtr->phraseModelPars.srcSegmLenWeight * (double)incrInvMuxPmPtr->idxTrgSegmLenLgProb(MAIN_MUX_PMODEL_INDEX,k,srcSegm,srcLen,lastTrgSegmLen);
-  }
-  else
-    return this->phrModelInfoPtr->phraseModelPars.srcSegmLenWeight * (double)this->phrModelInfoPtr->invPbModelPtr->trgSegmLenLgProb(k,srcSegm,srcLen,lastTrgSegmLen);
+  return this->phrModelInfoPtr->phraseModelPars.srcSegmLenWeight * (double)this->phrModelInfoPtr->invPbModelPtr->trgSegmLenLgProb(k,srcSegm,srcLen,lastTrgSegmLen);
 }
 
 //---------------------------------
@@ -799,13 +736,7 @@ Score _phraseBasedTransModel<HYPOTHESIS>::trgSegmLenScore(unsigned int x_k,
                                                           unsigned int x_km1,
                                                           unsigned int trgLen)
 {
-      // Check whether a mux phrase model is being used
-  if(incrInvMuxPmPtr)
-  {
-    return this->phrModelInfoPtr->phraseModelPars.trgSegmLenWeight * (double)incrInvMuxPmPtr->idxSrcSegmLenLgProb(MAIN_MUX_PMODEL_INDEX,x_k,x_km1,trgLen);
-  }
-  else
-    return this->phrModelInfoPtr->phraseModelPars.trgSegmLenWeight * (double)this->phrModelInfoPtr->invPbModelPtr->srcSegmLenLgProb(x_k,x_km1,trgLen);
+  return this->phrModelInfoPtr->phraseModelPars.trgSegmLenWeight * (double)this->phrModelInfoPtr->invPbModelPtr->srcSegmLenLgProb(x_k,x_km1,trgLen);
 }
 
 //---------------------------------
@@ -2535,39 +2466,18 @@ template<class HYPOTHESIS>
 bool _phraseBasedTransModel<HYPOTHESIS>::getTransForInvPbModel(const std::vector<WordIndex>& s_,
                                                                std::set<std::vector<WordIndex> >& transSet)
 {
-  if(incrInvMuxPmPtr)
+      // Obtain translation options vector for model
+  BasePhraseModel::SrcTableNode srctn;
+  bool ret=this->phrModelInfoPtr->invPbModelPtr->getTransFor_t_(s_,srctn);
+  
+      // Create translation options data structure
+  transSet.clear();
+  for(BasePhraseModel::SrcTableNode::iterator iter=srctn.begin(); iter!=srctn.end(); ++iter)
   {
-        // Obtain translation options vector for multiplexed models
-    std::vector<BasePhraseModel::SrcTableNode> srctnVec;
-    bool ret=incrInvMuxPmPtr->getTransVecFor_t_(s_,srctnVec);
-
-        // Create translation options data structure
-    transSet.clear();
-    for(unsigned int i=0;i<srctnVec.size();++i)
-    {
-      for(BasePhraseModel::SrcTableNode::iterator iter=srctnVec[i].begin(); iter!=srctnVec[i].end(); ++iter)
-      {
-            // Add new entry
-        transSet.insert(iter->first);
-      }
-    }
-    return ret;
+        // Add new entry
+    transSet.insert(iter->first);
   }
-  else
-  {
-        // Obtain translation options vector for model
-    BasePhraseModel::SrcTableNode srctn;
-    bool ret=this->phrModelInfoPtr->invPbModelPtr->getTransFor_t_(s_,srctn);
-    
-        // Create translation options data structure
-    transSet.clear();
-    for(BasePhraseModel::SrcTableNode::iterator iter=srctn.begin(); iter!=srctn.end(); ++iter)
-    {
-          // Add new entry
-      transSet.insert(iter->first);
-    }
-    return ret;
-  }
+  return ret;
 }
 
 //---------------------------------

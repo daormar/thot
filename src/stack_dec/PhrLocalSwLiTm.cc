@@ -494,22 +494,8 @@ bool PhrLocalSwLiTm::isCompleteHypData(const HypDataType& hypd)const
 //---------------------------------
 void PhrLocalSwLiTm::setPmWeights(std::vector<float> wVec)
 {
-  if(this->incrInvMuxPmPtr)
-  {
-    unsigned int nmodels=this->incrInvMuxPmPtr->getNumModels();
-    if(wVec.size()>=PTS+nmodels*2)
-    {
-      for(unsigned int i=0;i<nmodels;++i)
-        phrModelInfoPtr->phraseModelPars.ptsWeightVec[i]=this->smoothLlWeight(wVec[PTS+i]);
-      for(unsigned int i=0;i<nmodels;++i)
-        phrModelInfoPtr->phraseModelPars.pstWeightVec[i]=this->smoothLlWeight(wVec[PTS+nmodels+i]);
-    }
-  }
-  else
-  {
-    if(wVec.size()>PTS) this->phrModelInfoPtr->phraseModelPars.ptsWeightVec[0]=this->smoothLlWeight(wVec[PTS]);
-    if(wVec.size()>PST) this->phrModelInfoPtr->phraseModelPars.pstWeightVec[0]=this->smoothLlWeight(wVec[PST]);
-  }
+  if(wVec.size()>PTS) this->phrModelInfoPtr->phraseModelPars.ptsWeightVec[0]=this->smoothLlWeight(wVec[PTS]);
+  if(wVec.size()>PST) this->phrModelInfoPtr->phraseModelPars.pstWeightVec[0]=this->smoothLlWeight(wVec[PST]);
 }
 
 //---------------------------------
@@ -527,35 +513,15 @@ void PhrLocalSwLiTm::setWeights(std::vector<float> wVec)
 //---------------------------------
 void PhrLocalSwLiTm::getPmWeights(std::vector<pair<std::string,float> >& compWeights)
 {
-  if(this->incrInvMuxPmPtr)
-  {
-    unsigned int nmodels=this->incrInvMuxPmPtr->getNumModels();
-    pair<std::string,float> compWeight;    
-    for(unsigned int i=0;i<nmodels;++i)
-    {
-      compWeight.first="ptsw_"+this->incrInvMuxPmPtr->getModelStatus(i);
-      compWeight.second=this->phrModelInfoPtr->phraseModelPars.ptsWeightVec[i];
-      compWeights.push_back(compWeight);
-    }
-    for(unsigned int i=0;i<nmodels;++i)
-    {
-      compWeight.first="pstw_"+this->incrInvMuxPmPtr->getModelStatus(i);
-      compWeight.second=this->phrModelInfoPtr->phraseModelPars.pstWeightVec[i];
-      compWeights.push_back(compWeight);
-    }
-  }
-  else
-  {
-    pair<std::string,float> compWeight;
+  pair<std::string,float> compWeight;
     
-    compWeight.first="ptsw";
-    compWeight.second=this->phrModelInfoPtr->phraseModelPars.ptsWeightVec[0];
-    compWeights.push_back(compWeight);
-
-    compWeight.first="pstw";
-    compWeight.second=this->phrModelInfoPtr->phraseModelPars.pstWeightVec[0];
-    compWeights.push_back(compWeight);
-  }
+  compWeight.first="ptsw";
+  compWeight.second=this->phrModelInfoPtr->phraseModelPars.ptsWeightVec[0];
+  compWeights.push_back(compWeight);
+  
+  compWeight.first="pstw";
+  compWeight.second=this->phrModelInfoPtr->phraseModelPars.pstWeightVec[0];
+  compWeights.push_back(compWeight);
 }
 
 //---------------------------------
@@ -595,46 +561,15 @@ void PhrLocalSwLiTm::getWeights(std::vector<pair<std::string,float> >& compWeigh
 //---------------------------------
 void PhrLocalSwLiTm::printPmWeights(ostream &outS)
 {
-  if(this->incrInvMuxPmPtr)
-  {
-    if(phrModelInfoPtr->phraseModelPars.ptsWeightVec.empty())
-    {
-      outS<<"<ptsw>: "<<DEFAULT_PTS_WEIGHT<<" , ";
-    }
-    else
-    {
-      for(unsigned int i=0;i<phrModelInfoPtr->phraseModelPars.ptsWeightVec.size();++i)
-      {
-        outS<<"ptsw_"<<incrInvMuxPmPtr->getModelStatus(i)<<": "<<phrModelInfoPtr->phraseModelPars.ptsWeightVec[i]<<" , ";
-      }
-    }
-
-    if(phrModelInfoPtr->phraseModelPars.pstWeightVec.empty())
-    {
-      outS<<"<pstw>: "<<DEFAULT_PST_WEIGHT;
-    }
-    else
-    {
-      for(unsigned int i=0;i<phrModelInfoPtr->phraseModelPars.pstWeightVec.size();++i)
-      {
-        outS<<"pstw_"<<incrInvMuxPmPtr->getModelStatus(i)<<": "<<phrModelInfoPtr->phraseModelPars.pstWeightVec[i];
-        if(i<phrModelInfoPtr->phraseModelPars.pstWeightVec.size()-1)
-          outS<<" , ";
-      }
-    }
-  }
+  if(!phrModelInfoPtr->phraseModelPars.ptsWeightVec.empty())
+    outS<<"ptsw: "<<phrModelInfoPtr->phraseModelPars.ptsWeightVec[0] <<" , ";
   else
-  {
-    if(!phrModelInfoPtr->phraseModelPars.ptsWeightVec.empty())
-      outS<<"ptsw: "<<phrModelInfoPtr->phraseModelPars.ptsWeightVec[0] <<" , ";
-    else
-      outS<<"ptsw: "<<DEFAULT_PTS_WEIGHT<<" , ";
+    outS<<"ptsw: "<<DEFAULT_PTS_WEIGHT<<" , ";
     
-    if(!phrModelInfoPtr->phraseModelPars.pstWeightVec.empty())
-      outS<<"pstw: "<<phrModelInfoPtr->phraseModelPars.pstWeightVec[0];
-    else
-      outS<<"pstw: "<<DEFAULT_PST_WEIGHT;
-  }
+  if(!phrModelInfoPtr->phraseModelPars.pstWeightVec.empty())
+    outS<<"pstw: "<<phrModelInfoPtr->phraseModelPars.pstWeightVec[0];
+  else
+    outS<<"pstw: "<<DEFAULT_PST_WEIGHT;
 }
 
 //---------------------------------
@@ -653,13 +588,7 @@ void PhrLocalSwLiTm::printWeights(ostream &outS)
 //---------------------------------
 unsigned int PhrLocalSwLiTm::getNumWeights(void)
 {
-  if(this->incrInvMuxPmPtr)
-  {
-    unsigned int nmodels=this->incrInvMuxPmPtr->getNumModels();
-    return 6+nmodels*2;
-  }
-  else
-    return 8;
+  return 8;
 }
 
 //---------------------------------
@@ -1375,31 +1304,6 @@ Score PhrLocalSwLiTm::smoothedPhrScore_s_t_(const std::vector<WordIndex>& s_,
 }
 
 //---------------------------------------
-Score PhrLocalSwLiTm::muxPmSmoothedPhrScore_s_t_(int idx,
-                                                 const std::vector<WordIndex>& s_,
-                                                 const std::vector<WordIndex>& t_)
-{
-  if(swModelInfoPtr->lambda_invswm==1.0)
-  {
-    return phrModelInfoPtr->phraseModelPars.pstWeightVec[idx] * (double)incrInvMuxPmPtr->idxLogpt_s_(idx,t_,s_);
-  }
-  else
-  {
-    float sum1=log(swModelInfoPtr->lambda_invswm)+(float)incrInvMuxPmPtr->idxLogpt_s_(idx,t_,s_);
-    if(sum1<=log(PHRASE_PROB_SMOOTH))
-      sum1=PHRSWLITM_LGPROB_SMOOTH;
-    std::vector<WordIndex> swVoc_s_;
-    obtainSrcSwVocWordIdxVec(s_,swVoc_s_);
-    std::vector<WordIndex> swVoc_t_;
-    obtainTrgSwVocWordIdxVec(t_,swVoc_t_);
-    float sum2=log(1.0-swModelInfoPtr->lambda_invswm)+(float)invSwLgProb(idx,swVoc_s_,swVoc_t_);
-    float interp=MathFuncs::lns_sumlog(sum1,sum2);
-      
-    return phrModelInfoPtr->phraseModelPars.pstWeightVec[idx] * (double)interp;
-  }
-}
-
-//---------------------------------------
 Score PhrLocalSwLiTm::regularSmoothedPhrScore_s_t_(const std::vector<WordIndex>& s_,
                                                    const std::vector<WordIndex>& t_)
 {
@@ -1421,25 +1325,12 @@ Score PhrLocalSwLiTm::regularSmoothedPhrScore_s_t_(const std::vector<WordIndex>&
 
 //---------------------------------------
 std::vector<Score> PhrLocalSwLiTm::smoothedPhrScoreVec_s_t_(const std::vector<WordIndex>& s_,
-                                                       const std::vector<WordIndex>& t_)
+                                                            const std::vector<WordIndex>& t_)
 {
-  if(incrInvMuxPmPtr)
-  {
-    std::vector<Score> scoreVec;
-    for(int i=0;i<incrInvMuxPmPtr->getNumModels();++i)
-    {
-      Score score=muxPmSmoothedPhrScore_s_t_(i,s_,t_);
-      scoreVec.push_back(score);
-    }
-    return scoreVec;
-  }
-  else
-  {
-    std::vector<Score> scoreVec;
-    Score score=regularSmoothedPhrScore_s_t_(s_,t_);
-    scoreVec.push_back(score);
-    return scoreVec;
-  }
+  std::vector<Score> scoreVec;
+  Score score=regularSmoothedPhrScore_s_t_(s_,t_);
+  scoreVec.push_back(score);
+  return scoreVec;
 }
 
 //---------------------------------------
@@ -1476,30 +1367,6 @@ void PhrLocalSwLiTm::obtainTrgSwVocWordIdxVec(const std::vector<WordIndex>& t_,
 }
 
 //---------------------------------------
-Score PhrLocalSwLiTm::muxPmSmoothedPhrScore_t_s_(int idx,
-                                                 const std::vector<WordIndex>& s_,
-                                                 const std::vector<WordIndex>& t_)
-{
-  if(swModelInfoPtr->lambda_swm==1.0)
-  {
-    return phrModelInfoPtr->phraseModelPars.ptsWeightVec[idx] * (double)incrInvMuxPmPtr->idxLogps_t_(idx,t_,s_);
-  }
-  else
-  {
-    float sum1=log(swModelInfoPtr->lambda_swm)+(float)incrInvMuxPmPtr->idxLogps_t_(idx,t_,s_);
-    if(sum1<=log(PHRASE_PROB_SMOOTH))
-      sum1=PHRSWLITM_LGPROB_SMOOTH;
-    std::vector<WordIndex> swVoc_s_;
-    obtainSrcSwVocWordIdxVec(s_,swVoc_s_);
-    std::vector<WordIndex> swVoc_t_;
-    obtainTrgSwVocWordIdxVec(t_,swVoc_t_);
-    float sum2=log(1.0-swModelInfoPtr->lambda_swm)+(float)swLgProb(idx,swVoc_s_,swVoc_t_);
-    float interp=MathFuncs::lns_sumlog(sum1,sum2);
-    return phrModelInfoPtr->phraseModelPars.ptsWeightVec[idx] * (double)interp;
-  }
-}
-
-//---------------------------------------
 Score PhrLocalSwLiTm::regularSmoothedPhrScore_t_s_(const std::vector<WordIndex>& s_,
                                                    const std::vector<WordIndex>& t_)
 {
@@ -1522,23 +1389,10 @@ Score PhrLocalSwLiTm::regularSmoothedPhrScore_t_s_(const std::vector<WordIndex>&
 std::vector<Score> PhrLocalSwLiTm::smoothedPhrScoreVec_t_s_(const std::vector<WordIndex>& s_,
                                                        const std::vector<WordIndex>& t_)
 {
-  if(incrInvMuxPmPtr)
-  {
-    std::vector<Score> scoreVec;
-    for(int i=0;i<incrInvMuxPmPtr->getNumModels();++i)
-    {
-      Score score=muxPmSmoothedPhrScore_t_s_(i,s_,t_);
-      scoreVec.push_back(score);
-    }
-    return scoreVec;
-  }
-  else
-  {
-    std::vector<Score> scoreVec;
-    Score score=regularSmoothedPhrScore_t_s_(s_,t_);
-    scoreVec.push_back(score);
-    return scoreVec;
-  }
+  std::vector<Score> scoreVec;
+  Score score=regularSmoothedPhrScore_t_s_(s_,t_);
+  scoreVec.push_back(score);
+  return scoreVec;
 }
 
 //---------------------------------------

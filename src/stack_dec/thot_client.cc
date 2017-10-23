@@ -49,7 +49,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function Declarations ------------------------------
 
-int process_request(const thot_client_pars& tdcPars);
+void process_request(const thot_client_pars& tdcPars);
 int TakeParameters(int argc,
                    char *argv[],
                    thot_client_pars& tdcPars);
@@ -70,135 +70,104 @@ int main(int argc,char *argv[])
   if(TakeParameters(argc,argv,tdcPars)==THOT_OK)
   {
         // Parameters ok
-   double elapsed_ant,elapsed,ucpu,scpu;
-   bool retVal;
-
-   if(tdcPars.verbose)
-   {
-     ctimer(&elapsed_ant,&ucpu,&scpu);
-   }
-       // Process request
-   try
-   {
-     retVal=process_request(tdcPars);
-   }
-   catch(const std::exception& e)
-   {
-     std::cerr << e.what() << std::endl;
-     return THOT_ERROR;
-   }
-   
-   if(tdcPars.verbose)
-   {
-     ctimer(&elapsed,&ucpu,&scpu);
-     std::cerr<<"Elapsed time: " << elapsed-elapsed_ant << " secs\n";
-   }
-   return retVal;
- } 
- else return THOT_ERROR;  
+    
+        // Process request
+    try
+    {
+      process_request(tdcPars);
+    }
+    catch(const std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+      return THOT_ERROR;
+    }
+    
+    return THOT_OK;
+  } 
+  else return THOT_ERROR;  
 }
 
 //---------------
-int process_request(const thot_client_pars& tdcPars)
+void process_request(const thot_client_pars& tdcPars)
 {
   std::string s;
   std::vector<std::string> v;
   std::string translatedSentence;
   std::string bestHypInfo;
   ThotDecoderClient thotDecoderClient;
-  int retVal=THOT_OK;
   double elapsed_ant,elapsed,ucpu,scpu;
+  double connection_latency,request_latency;
 
       // Connect to translation server
   if(tdcPars.verbose)
   {
     std::cerr<<"----------------------------------------------------"<<std::endl;
-    std::cerr<<"User ID: "<<tdcPars.user_id<<std::endl;
+    std::cerr<<"User id: "<<tdcPars.user_id<<std::endl;
     std::cerr<<"Connecting to server..."<<std::endl;
     ctimer(&elapsed_ant,&ucpu,&scpu);
   }
 
-  retVal=thotDecoderClient.connectToTransServer(tdcPars.serverIP.c_str(),
-                                                tdcPars.server_port);
-  if(retVal==THOT_ERROR) return THOT_ERROR;
+  thotDecoderClient.connectToTransServer(tdcPars.serverIP.c_str(),
+                                         tdcPars.server_port);
 
       // Print connection latency information
   if(tdcPars.verbose)
   {
     ctimer(&elapsed,&ucpu,&scpu);
-    std::cerr<<"Connection latency: " << elapsed-elapsed_ant << " secs\n";
+    connection_latency=elapsed-elapsed_ant;
+    std::cerr<<"Connection latency: " << connection_latency << " secs\n";
   }
 
       // Send request to the translation server
   if(tdcPars.verbose)
   {
-    std::cerr<<"Client: sending request to the server, request code "<<tdcPars.server_request_code<<std::endl;
+    std::cerr<<"Client: sending request to the server, request type "<<tdcPars.server_request_code<<std::endl;
   }
       // Get time
-  ctimer(&elapsed_ant,&ucpu,&scpu);
+  if(tdcPars.verbose)
+    ctimer(&elapsed_ant,&ucpu,&scpu);
 
   switch(tdcPars.server_request_code)
   {
-    case OL_TRAIN_PAIR: retVal=thotDecoderClient.sendSentPairForOlTrain(tdcPars.user_id,tdcPars.stlStringSrc.c_str(),tdcPars.stlStringRef.c_str());
-      ctimer(&elapsed,&ucpu,&scpu);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case OL_TRAIN_PAIR: thotDecoderClient.sendSentPairForOlTrain(tdcPars.user_id,tdcPars.stlStringSrc.c_str(),tdcPars.stlStringRef.c_str());
       break;
-    case TRAIN_ECM: retVal=thotDecoderClient.sendStrPairForTrainEcm(tdcPars.user_id,tdcPars.stlString1.c_str(),tdcPars.stlString2.c_str());
-      ctimer(&elapsed,&ucpu,&scpu);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case TRAIN_ECM: thotDecoderClient.sendStrPairForTrainEcm(tdcPars.user_id,tdcPars.stlString1.c_str(),tdcPars.stlString2.c_str());
       break;
-    case TRANSLATE_SENT: retVal=thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence,bestHypInfo);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case TRANSLATE_SENT: thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence,bestHypInfo);
       std::cout<<translatedSentence<<std::endl;
       break;
-    case TRANSLATE_SENT_HYPINFO: retVal=thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence,bestHypInfo);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case TRANSLATE_SENT_HYPINFO: thotDecoderClient.sendSentToTranslate(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence,bestHypInfo);
       std::cout<<bestHypInfo<<std::endl;
       std::cout<<translatedSentence<<std::endl;
       break;
-    case VERIFY_COV: retVal=thotDecoderClient.sendSentPairVerCov(tdcPars.user_id,tdcPars.stlStringSrc.c_str(),tdcPars.stlStringRef.c_str(),translatedSentence);
-      ctimer(&elapsed,&ucpu,&scpu);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case VERIFY_COV: thotDecoderClient.sendSentPairVerCov(tdcPars.user_id,tdcPars.stlStringSrc.c_str(),tdcPars.stlStringRef.c_str(),translatedSentence);
       std::cout<<translatedSentence<<std::endl;
       break;
-    case START_CAT: retVal=thotDecoderClient.startCat(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence);
-      ctimer(&elapsed,&ucpu,&scpu);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case START_CAT: thotDecoderClient.startCat(tdcPars.user_id,tdcPars.sentenceToTranslate.c_str(),translatedSentence);
       std::cout<<translatedSentence<<std::endl;
       break;
-    case ADD_STR_TO_PREF: retVal=thotDecoderClient.addStrToPref(tdcPars.user_id,tdcPars.strToAddToPref.c_str(),translatedSentence);
-      ctimer(&elapsed,&ucpu,&scpu);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case ADD_STR_TO_PREF: thotDecoderClient.addStrToPref(tdcPars.user_id,tdcPars.strToAddToPref.c_str(),translatedSentence);
       std::cout<<translatedSentence<<std::endl;
       break;
-    case RESET_PREF: retVal=thotDecoderClient.resetPref(tdcPars.user_id);
-      ctimer(&elapsed,&ucpu,&scpu);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case RESET_PREF: thotDecoderClient.resetPref(tdcPars.user_id);
       break;
-    case CLEAR_TRANS: retVal=thotDecoderClient.sendClearRequest(tdcPars.user_id);
-      ctimer(&elapsed,&ucpu,&scpu);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case PRINT_MODELS: thotDecoderClient.sendPrintRequest(tdcPars.user_id);
       break;
-    case PRINT_MODELS: retVal=thotDecoderClient.sendPrintRequest(tdcPars.user_id);
-      ctimer(&elapsed,&ucpu,&scpu);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
-      break;
-    case END_SERVER: retVal=thotDecoderClient.sendEndServerRequest(tdcPars.user_id);
-      ctimer(&elapsed,&ucpu,&scpu);
-      if(tdcPars.verbose) std::cerr<<"Client: return value= "<<retVal<<std::endl;
+    case END_SERVER: thotDecoderClient.sendEndServerRequest(tdcPars.user_id);
       break;
     default:
-      ctimer(&elapsed,&ucpu,&scpu);
       break;
   }
   if(tdcPars.verbose)
   {
-    std::cerr<<"Request latency: " << elapsed-elapsed_ant << " secs\n";
+    ctimer(&elapsed,&ucpu,&scpu);
+    request_latency=elapsed-elapsed_ant;
+    std::cerr<<"Request latency: " << request_latency << " secs\n";
+    std::cerr<<"Elapsed time (connection + request latencies): " << connection_latency+request_latency << " secs\n";
   }
 
       //thotDecoderClient.disconnect(); // (disconnect is not required since the server only
       //                                   dispatch one request per client execution)
-  return retVal;
 }
 
 //---------------
@@ -321,14 +290,6 @@ int TakeParameters(int argc,
    return THOT_OK;
  }
 
-     /* Verify clear option */
- err=readOption(argc,argv, "-clear");
- if(err==0)
- {
-   tdcPars.server_request_code=CLEAR_TRANS;
-   return THOT_OK;
- }
-
       /* Verify print option */
  err=readOption(argc,argv, "-pr");
  if(err==0)
@@ -365,7 +326,7 @@ void printUsage(void)
   std::cerr<<"                             | -t <string> | -th <string> |\n";
   std::cerr<<"                             | -c <srcstring> <refstring> |\n";
   std::cerr<<"                             | -sc <string> | -ap <string> | -rp |\n";
-  std::cerr<<"                             | -clear | -o <string> | -e } [ -v ]\n";
+  std::cerr<<"                             | -o <string> | -e } [ -v ]\n";
   std::cerr<<"                             [--help] [--version]\n\n";
   std::cerr<<"-i <string>                  Set IP address of the server.\n";
   std::cerr<<"-p <int>                     Server port.\n";
@@ -380,7 +341,6 @@ void printUsage(void)
   std::cerr<<"                             the null string as prefix.\n";
   std::cerr<<"-ap <string>                 Add string to prefix.\n";
   std::cerr<<"-rp <string>                 Reset prefix.\n";
-  std::cerr<<"-clear                       Clear loaded models.\n";
   std::cerr<<"-pr                          Print models.\n";
   std::cerr<<"-e                           End server.\n";
   std::cerr<<"-v                           Verbose mode.\n";

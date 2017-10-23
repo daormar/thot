@@ -187,9 +187,6 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
       // Phrase model scoring functions
   Score smoothedPhrScore_s_t_(const std::vector<WordIndex>& s_,
                               const std::vector<WordIndex>& t_);
-  Score muxPmSmoothedPhrScore_s_t_(int idx,
-                                   const std::vector<WordIndex>& s_,
-                                   const std::vector<WordIndex>& t_);
   Score regularSmoothedPhrScore_s_t_(const std::vector<WordIndex>& s_,
                                      const std::vector<WordIndex>& t_);
   std::vector<Score> smoothedPhrScoreVec_s_t_(const std::vector<WordIndex>& s_,
@@ -197,9 +194,6 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
 
   Score smoothedPhrScore_t_s_(const std::vector<WordIndex>& s_,
                               const std::vector<WordIndex>& t_);
-  Score muxPmSmoothedPhrScore_t_s_(int idx,
-                                   const std::vector<WordIndex>& s_,
-                                   const std::vector<WordIndex>& t_);
   Score regularSmoothedPhrScore_t_s_(const std::vector<WordIndex>& s_,
                                      const std::vector<WordIndex>& t_);
   std::vector<Score> smoothedPhrScoreVec_t_s_(const std::vector<WordIndex>& s_,

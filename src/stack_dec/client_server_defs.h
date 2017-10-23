@@ -49,9 +49,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define START_CAT                 6
 #define ADD_STR_TO_PREF           7
 #define RESET_PREF                8
-#define CLEAR_TRANS               9
-#define PRINT_MODELS             10
-#define END_CLIENT_DIALOG        11
-#define END_SERVER               12
+#define PRINT_MODELS              9
+#define END_CLIENT_DIALOG        10
+#define END_SERVER               11
 
 #endif

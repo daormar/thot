@@ -40,8 +40,50 @@ LevelDbPhraseModel::LevelDbPhraseModel(void)
 }
 
 //-------------------------
+void LevelDbPhraseModel::strAddTableEntry(const std::vector<string>& s,
+                                          const std::vector<string>& t,
+                                          PhrasePairInfo inf)
+{
+  std::vector<WordIndex> wordIndex_t,wordIndex_s;
+ 
+  wordIndex_s=strVectorToSrcIndexVector(s);	
+  wordIndex_t=strVectorToTrgIndexVector(t);
+ 
+  addTableEntry(wordIndex_s,wordIndex_t,inf);
+}
+
+//-------------------------
+void LevelDbPhraseModel::addTableEntry(const std::vector<WordIndex>& s,
+                                       const std::vector<WordIndex>& t,
+                                       PhrasePairInfo inf)
+{
+  levelDbPhraseTable.addTableEntry(s,t,inf);  
+}
+
+//-------------------------
+void LevelDbPhraseModel::strIncrCountsOfEntry(const std::vector<string>& s,
+                                              const std::vector<string>& t,
+                                              Count count/*=1*/)
+{
+  std::vector<WordIndex> wordIndex_t,wordIndex_s;
+  
+  wordIndex_s=strVectorToSrcIndexVector(s);
+  wordIndex_t=strVectorToTrgIndexVector(t);
+  
+  incrCountsOfEntry(wordIndex_s,wordIndex_t,count);	  
+}
+
+//-------------------------
+void LevelDbPhraseModel::incrCountsOfEntry(const std::vector<WordIndex>& s,
+                                           const std::vector<WordIndex>& t,
+                                           Count count/*=1*/)
+{
+  levelDbPhraseTable.incrCountsOfEntry(s,t,count);	 
+}
+
+//-------------------------
 Count LevelDbPhraseModel::cSrcTrg(const std::vector<WordIndex>& s,
-                                 const std::vector<WordIndex>& t)
+                                  const std::vector<WordIndex>& t)
 {
   bool found;
   return levelDbPhraseTable.getSrcTrgInfo(s, t, found);
@@ -63,7 +105,7 @@ Count LevelDbPhraseModel::cTrg(const std::vector<WordIndex>& t)
 
 //-------------------------
 Count LevelDbPhraseModel::cHSrcHTrg(const std::vector<std::string>& hs,
-                                   const std::vector<std::string>& ht)
+                                    const std::vector<std::string>& ht)
 {
   std::vector<WordIndex> s;
   std::vector<WordIndex> t;
@@ -125,8 +167,8 @@ Count LevelDbPhraseModel::cHTrg(const std::vector<std::string>& ht)
 
 //-------------------------
 PhrasePairInfo LevelDbPhraseModel::infSrcTrg(const std::vector<WordIndex>& s,
-                                            const std::vector<WordIndex>& t,
-                                            bool& found)
+                                             const std::vector<WordIndex>& t,
+                                             bool& found)
 {
   PhrasePairInfo ppInfo;
   ppInfo.first = levelDbPhraseTable.getSrcInfo(s, found);
@@ -149,8 +191,8 @@ Prob LevelDbPhraseModel::pk_tlen(unsigned int tlen,
 
 //-------------------------
 LgProb LevelDbPhraseModel::srcSegmLenLgProb(unsigned int x_k,
-                                           unsigned int x_km1,
-                                           unsigned int srcLen)
+                                            unsigned int x_km1,
+                                            unsigned int srcLen)
 {
   return srcSegmLenTable.srcSegmLenLgProb(x_k, x_km1, srcLen);
 }
@@ -163,16 +205,16 @@ LgProb LevelDbPhraseModel::trgCutsLgProb(int offset)
 
 //-------------------------
 LgProb LevelDbPhraseModel::trgSegmLenLgProb(unsigned int k,
-                                           const SentSegmentation& trgSegm,
-                                           unsigned int trgLen,
-                                           unsigned int lastSrcSegmLen)
+                                            const SentSegmentation& trgSegm,
+                                            unsigned int trgLen,
+                                            unsigned int lastSrcSegmLen)
 {
   return trgSegmLenTable.trgSegmLenLgProb(k, trgSegm, trgLen, lastSrcSegmLen);
 }
 
 //-------------------------
 LgProb LevelDbPhraseModel::logpt_s_(const std::vector<WordIndex>& s,
-                                   const std::vector<WordIndex>& t)
+                                    const std::vector<WordIndex>& t)
 {
   LgProb lp = levelDbPhraseTable.logpTrgGivenSrc(s, t);
 
@@ -184,7 +226,7 @@ LgProb LevelDbPhraseModel::logpt_s_(const std::vector<WordIndex>& s,
 
 //-------------------------
 LgProb LevelDbPhraseModel::logps_t_(const std::vector<WordIndex>& s,
-                                   const std::vector<WordIndex>& t)
+                                    const std::vector<WordIndex>& t)
 {
   LgProb lp = levelDbPhraseTable.logpSrcGivenTrg(s, t);
   
@@ -196,7 +238,7 @@ LgProb LevelDbPhraseModel::logps_t_(const std::vector<WordIndex>& s,
 
 //-------------------------
 bool LevelDbPhraseModel::getTransFor_s_(const std::vector<WordIndex>& /*s*/,
-                                       LevelDbPhraseModel::TrgTableNode& trgtn)
+                                        LevelDbPhraseModel::TrgTableNode& trgtn)
 {
   trgtn.clear();
   std::cerr << "Warning: getTransFor_s_() function not implemented for this class" << std::endl;
@@ -205,14 +247,14 @@ bool LevelDbPhraseModel::getTransFor_s_(const std::vector<WordIndex>& /*s*/,
 
 //-------------------------
 bool LevelDbPhraseModel::getTransFor_t_(const std::vector<WordIndex>& t,
-                                       LevelDbPhraseModel::SrcTableNode& srctn)
+                                        LevelDbPhraseModel::SrcTableNode& srctn)
 {
   return levelDbPhraseTable.getEntriesForTarget(t, srctn);
 }
 
 //-------------------------
 bool LevelDbPhraseModel::getNbestTransFor_s_(const std::vector<WordIndex>& /*s*/,
-                                            NbestTableNode<PhraseTransTableNodeData>& nbt)
+                                             NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
   nbt.clear();
   std::cerr << "Warning: getNbestTransFor_s_() function not implemented for this class" << std::endl;
