@@ -43,7 +43,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include "StlPhraseTable.h"
 #endif
 
-#include "PhraseTable.h"
 #include "_incrPhraseModel.h"
 
 //--------------- Constants ------------------------------------------
