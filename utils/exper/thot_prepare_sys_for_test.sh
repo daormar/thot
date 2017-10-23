@@ -53,6 +53,8 @@ usage()
     echo "                        NOTES:"
     echo "                         a) give absolute paths when using pbs clusters"
     echo "                         b) ensure there is enough disk space in the partition"
+    echo "-debug                  After ending, do not delete temporary files"
+    echo "                        (for debugging purposes)"
     echo "--help                  Display this help and exit."
     echo "--version               Output version information and exit."
 }
@@ -316,7 +318,7 @@ filter_ttable()
     _basetmfile=`basename ${_tmfile}`
     _outd=$2
     ${bindir}/thot_pbs_filter_ttable -t ${_tmfile}.ttable \
-             -c ${tcorpus_wo_annot} -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${_outd}/${_basetmfile}.ttable
+             -c ${tcorpus_wo_annot} -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${_outd}/${_basetmfile}.ttable ${debug_opt}
 }
 
 ########
@@ -374,6 +376,7 @@ tdir_given=0
 tdir="/tmp"
 sdir_given=0
 sdir=$HOME
+debug=0
 
 while [ $# -ne 0 ]; do
     case $1 in
@@ -421,6 +424,9 @@ while [ $# -ne 0 ]; do
                 sdir=$1
                 sdir_given=1
             fi
+            ;;
+        "-debug") debug=1
+            debug_opt="-debug"
             ;;
     esac
     shift
