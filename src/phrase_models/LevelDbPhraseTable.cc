@@ -222,10 +222,12 @@ std::vector<WordIndex> LevelDbPhraseTable::getTrgSrc(const std::vector<WordIndex
 }
 
 //-------------------------
-bool LevelDbPhraseTable::getNbestForSrc(const std::vector<WordIndex>& s,
-                                        NbestTableNode<PhraseTransTableNodeData>& nbt)
+bool LevelDbPhraseTable::getNbestForSrc(const std::vector<WordIndex>& /*s*/,
+                                        NbestTableNode<PhraseTransTableNodeData>& /*nbt*/)
 {
-      // TO-BE-DONE (LOW PRIORITY)
+      // TO-BE-DONE
+  std::cerr<<"Warning: getNbestForSrc function not implemented"<<std::endl;
+  return false;
 }
 //-------------------------
 bool LevelDbPhraseTable::getNbestForTrg(const std::vector<WordIndex>& t,
@@ -465,10 +467,12 @@ bool LevelDbPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
 }
 
 //-------------------------
-bool LevelDbPhraseTable::getEntriesForSource(const std::vector<WordIndex>& s,
-                                             LevelDbPhraseTable::TrgTableNode& trgtn)
+bool LevelDbPhraseTable::getEntriesForSource(const std::vector<WordIndex>& /*s*/,
+                                             LevelDbPhraseTable::TrgTableNode& /*trgtn*/)
 {
-    // TO-BE-DONE (LOW PRIORITY)
+    // TO-BE-DONE
+  std::cerr<<"Warning: getEntriesForSource function not implemented"<<std::endl;
+  return false;
 }
 
 //-------------------------
