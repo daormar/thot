@@ -487,7 +487,7 @@ fi
 # Prepare system to translate test corpus
 echo "**** Preparing system to translate test corpus" >&2
 ${bindir}/thot_prepare_sys_for_test -c ${cfgfile_before_filt} -t ${test_corpus}  \
-    -o ${thot_auto_smt_dir}/filtered_models/${base_tc} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
+    -o ${thot_auto_smt_dir}/filtered_models/${base_tc} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
 echo "" >&2
 
 # Obtain current date

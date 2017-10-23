@@ -469,7 +469,7 @@ process_pars()
         if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
             echo "**** Preparing system to translate test corpus" >&2
             ${bindir}/thot_prepare_sys_for_test -c $outd/smt_tune/tuned_for_dev.cfg -t ${scorpus_test}  \
-                     -o $outd/filtered_models/${base_sct} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir || exit 1
+                     -o $outd/filtered_models/${base_sct} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
             echo "" >&2
         fi
 
