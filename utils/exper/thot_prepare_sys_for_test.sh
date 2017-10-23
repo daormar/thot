@@ -119,7 +119,7 @@ process_files_for_individual_lm()
     # Check availability of lm files
     nlines=`ls ${_lmfile}* 2>/dev/null | $WC -l`
     if [ $nlines -eq 0 ]; then
-        echo "Error! language model files could not be found: ${_lmfile}"
+        echo "Error! language model files could not be found: ${_lmfile}" >&2
         return 1
     fi
     
@@ -224,7 +224,7 @@ process_files_for_individual_tm()
     # Check availability of tm files
     nlines=`ls ${_tmfile}* 2>/dev/null | $WC -l`
     if [ $nlines -eq 0 ]; then
-        echo "Error! translation model files could not be found: ${_tmfile}"
+        echo "Error! translation model files could not be found: ${_tmfile}" >&2
         return 1
     fi
 
@@ -257,7 +257,7 @@ create_tm_files()
 
     # Check that tm file could be obtained
     if [ -z "$tmfile" ]; then
-        echo "Error! configuration file seems to be wrong"
+        echo "Error! configuration file seems to be wrong" >&2
         return 1
     fi
 
