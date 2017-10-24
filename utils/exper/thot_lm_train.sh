@@ -46,7 +46,7 @@ usage()
         echo "-kenlm             Generate on-disk language model in KenLM format."
     fi
     if [ ! -z "${LEVELDB_LIB}" ]; then
-        echo "-ldb                    Generate on-disk language model in LevelDB format."
+        echo "-ldb               Generate on-disk language model in LevelDB format."
     fi
     echo "-qs <string>       Specific options to be given to the qsub command"
     echo "                   (example: -qs \"-l pmem=1gb\")."
