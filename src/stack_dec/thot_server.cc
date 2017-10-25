@@ -59,7 +59,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
-#define BACKLOG                    10     // Maximum number of pending
+#define BACKLOG                   100     // Maximum number of pending
                                           // connections that can be
                                           // queued
 
