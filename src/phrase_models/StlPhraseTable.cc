@@ -425,7 +425,6 @@ bool StlPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
 bool StlPhraseTable::getEntriesForSource(const std::vector<WordIndex>& s,
                                          StlPhraseTable::TrgTableNode& trgtn)
 {
-    bool found;
     trgtn.clear();  // Make sure that structure does not keep old values
 
     // Scan (s, t) collection to find matching elements for a given s

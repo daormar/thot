@@ -426,7 +426,6 @@ bool HatTriePhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
 bool HatTriePhraseTable::getEntriesForSource(const std::vector<WordIndex>& s,
                                              HatTriePhraseTable::TrgTableNode& trgtn)
 {
-    bool found;
     trgtn.clear();  // Make sure that structure does not keep old values
 
     std::vector<WordIndex> srcVec = getSrc(s);  // (UNUSED_WORD, s)

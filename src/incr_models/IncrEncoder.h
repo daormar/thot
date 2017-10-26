@@ -208,7 +208,7 @@ bool IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::Trg_to_HighTrg(const TRGDAT
 
 //---------------
 template<class HSRCDATA,class HTRGDATA,class SRCDATA,class TRGDATA>
-SRCDATA IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::genHSrcCode(const HSRCDATA &hs)
+  SRCDATA IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::genHSrcCode(const HSRCDATA &/*hs*/)
 {
   ++srcd;
   return srcd;
@@ -216,7 +216,7 @@ SRCDATA IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::genHSrcCode(const HSRCDA
 
 //---------------
 template<class HSRCDATA,class HTRGDATA,class SRCDATA,class TRGDATA>
-TRGDATA IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::genHTrgCode(const HTRGDATA &ht)
+  TRGDATA IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::genHTrgCode(const HTRGDATA &/*ht*/)
 {
   ++trgd;
   return trgd;

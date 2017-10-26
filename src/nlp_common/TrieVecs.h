@@ -125,7 +125,7 @@ class TrieVecs
    Children children;
    void height(unsigned int i,unsigned int& r)const;
    void branchingFactor(unsigned int i,std::vector<unsigned long>& r)const;
-   void countSparseNodes(size_t& sp,bool isFirst)const; 
+   void countSparseNodes(size_t& sp)const; 
 };
 
 //--------------- Template method definitions
@@ -279,7 +279,7 @@ size_t TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::countSparseNodes(void)const
 }
 //---------------
 template<class KEY,class DATA_TYPE,class KEY_SORT_CRITERION>
-void TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::countSparseNodes(size_t& sp,bool isFirst)const
+void TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::countSparseNodes(size_t& sp)const
 {
   typename Children::const_iterator childrenPos;
 	

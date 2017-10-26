@@ -299,7 +299,7 @@ namespace MathFuncs
   //-------------------------
   LgProb log_geom_cdf(double p,unsigned int n)
   {
-    return (double)log((double)log_geom_cdf(p,n));
+    return (double)log((double)geom_cdf(p,n));
   }
 
   //-------------------------
