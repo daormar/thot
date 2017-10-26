@@ -36,8 +36,10 @@ dic_patt = u"(<%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<%s>)(.+?)(<\/%s>)[ ]*(<\/%s>)" %
 len_ann = "length_limit"
 len_patt = u"(<%s>)[ ]*(\d+)[ ]*(</%s>)" % (len_ann, len_ann)
 
+forbidw_ann = "forbidden_words"
+forbidw_patt = u"(<%s>)[ ]*(.+?)[ ]*(</%s>)" % (forbidw_ann, forbidw_ann)
 
-_annotation = re.compile(dic_patt + "|" + len_patt)
+_annotation = re.compile(dic_patt + "|" + len_patt + "|" + forbidw_patt)
 
 ##################################################
 class TransModel:
@@ -800,13 +802,13 @@ def areCategsPaired(categ_src_ann_words_array,categ_trg_ann_words_array):
 
 ##################################################
 def categ_src_trg_annotation(src_ann_words,trg_ann_words):
-    # Obtain array with source words (with a without categorization)
+    # Obtain array with source words (with and without categorization)
     src_ann_words_array=src_ann_words.split()
     categ_src_ann_words_array=[]
     for i in range(len(src_ann_words_array)):
         categ_src_ann_words_array.append(categorize_word(src_ann_words_array[i]))
 
-    # Obtain array with target words (with a without categorization)
+    # Obtain array with target words (with and without categorization)
     trg_ann_words_array=trg_ann_words.split()
     categ_trg_ann_words_array=[]
     for i in range(len(trg_ann_words_array)):
@@ -846,7 +848,6 @@ def categorize(sentence):
             elif(word=='</'+src_ann+'>'):
                 curr_xml_tag=None
             elif(word=='</'+trg_ann+'>'):
-                curr_xml_tag=None
                 categ_src_words,categ_trg_words=categ_src_trg_annotation(src_ann_words,trg_ann_words)
                 # Add source phrase
                 categ_word_array.append('<'+src_ann+'>')
@@ -858,6 +859,18 @@ def categorize(sentence):
                 for i in range(len(categ_trg_words)):
                     categ_word_array.append(categ_trg_words[i])
                 categ_word_array.append('</'+trg_ann+'>')
+                curr_xml_tag=None
+            elif(word=='<'+forbidw_ann+'>'):
+                categ_word_array.append(word)
+                curr_xml_tag="forbidw_ann"
+            elif(word=='</'+forbidw_ann+'>'):
+                # Add forbidden words
+                forbidw_ann_words_array=forbidw_ann_words.split()
+                for i in range(len(forbidw_ann_words_array)):
+                    categ_word_array.append(forbidw_ann_words_array[i])
+                # Add xml tag
+                categ_word_array.append(word)
+                curr_xml_tag=None
         else:
             # Categorize group of words
             if(curr_xml_tag==None):
@@ -872,6 +885,8 @@ def categorize(sentence):
                 src_ann_words=word
             elif(curr_xml_tag=="trg_ann"):
                 trg_ann_words=word
+            elif(curr_xml_tag=="forbidw_ann"):
+                forbidw_ann_words=word
 
     return u' '.join(categ_word_array)
 
@@ -1341,7 +1356,7 @@ class Decoder:
             if(empty):
                 end=True
             else:
-                # Expand hypothesis
+                # Hypothesis in top of stack was extracted
                 if(verbose==True):
                     print >> sys.stderr, "** niter:",niter," ; lp:",hyp.score,";",str(hyp.data)
                 # Stop if the hypothesis is complete
@@ -1717,10 +1732,10 @@ class Tokenizer:
     def tokenize(self, text):
         """Tokenizes text :: string -> [strings].
 
-        Concatenation of returned tokens should yields.
+        Concatenation of returned tokens should yield original text.
         """
 
-        # Preprocessing step to avoid special case of all words concatenared with hyphens
+        # Preprocessing step to avoid special case of all words concatenated with hyphens
         # adidas-climalite-mens-l-white-black-tank-top-nwt-msrp-basketball
         # if len(text.split()) == 1 and text.count('-') > 1:
         #    text = text.replace('-', ' ')
@@ -1810,6 +1825,7 @@ def annotated_string_to_xml_skeleton(annotated):
         g = m.groups()
         dic_g = filter(None, g[0:8])
         len_g = filter(None, g[8:11])
+        forb_g = filter(None, g[11:14])
         ann = None
         if dic_g:
             ann = [[True, dic_g[0]],
@@ -1818,6 +1834,8 @@ def annotated_string_to_xml_skeleton(annotated):
                    [True, dic_g[7]]]
         elif len_g:
             ann = [[True, len_g[0]], [False, len_g[1]], [True, len_g[2]]]
+        elif forb_g:
+            ann = [[True, forb_g[0]], [False, forb_g[1]], [True, forb_g[2]]]
         else:
             sys.stderr.write('WARNING:\n - s: %s\n - g: %s\n' % (annotated,g))
         if ann is not None:
@@ -1828,7 +1846,7 @@ def annotated_string_to_xml_skeleton(annotated):
 
 ##################################################
 def remove_xml_annotations(annotated):
-    xml_tags = set(['<'+src_ann+'>', '</'+len_ann+'>', '</'+grp_ann+'>'])
+    xml_tags = set(['<'+src_ann+'>', '</'+len_ann+'>', '</'+grp_ann+'>', '</'+forbidw_ann+'>'])
     skeleton = annotated_string_to_xml_skeleton(annotated)
     tokens = list()
     for i in range(len(skeleton)):
