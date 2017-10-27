@@ -23,7 +23,7 @@ from concurrent threads and make it more readable.
 
 import argparse
 import re
-from collections import defaultdict
+from collections import defaultdict, deque
 
 
 def extract_thread_id(line):
@@ -39,6 +39,12 @@ def extract_thread_id(line):
         return None
 
 
+def is_first_request_line(line):
+    match = re.search('0x[0-9a-f]+\t-{52}', line)
+
+    return match is not None
+
+
 def is_last_request_line(line):
     match = re.search('0x[0-9a-f]+\tElapsed time: [0-9]+\.[0-9]+ secs', line)
 
@@ -46,7 +52,15 @@ def is_last_request_line(line):
 
 
 def group_thread_output(logFileName):
-    groupedOutput = defaultdict(list)
+    # Buffer request logs until they are not complete
+    # For each TID we store list of printed lines in the log
+    unfinished_output_buf = defaultdict(list)
+    # Records the order of request arriving
+    request_order = deque()
+    # Buffer for complete request logs
+    # For each TID we store list of completed request outputs
+    # Single request output contains many lines
+    finished_output_buf = defaultdict(deque)
 
     with open(logFileName, 'r') as f:
         for line in f:
@@ -54,18 +68,28 @@ def group_thread_output(logFileName):
             if tid is None:
                 print line,
             else:
-                groupedOutput[tid].append(line)
+                unfinished_output_buf[tid].append(line)
 
-                # Print request if it is the last line
+                # Add request TID to the queue to remember order of arriving
+                if is_first_request_line(line):
+                    request_order.append(tid)
+
+                # Move request to buffer with complete logs if it is finished
                 if is_last_request_line(line):
-                    for tl in groupedOutput[tid]:
-                        print tl,
-                    del groupedOutput[tid]
+                    request_log = ''.join(unfinished_output_buf[tid])
+                    finished_output_buf[tid].append(request_log)
+                    del unfinished_output_buf[tid]
+
+                # Check if the request from the queue head is ready to print
+                if request_order[0] == tid and len(finished_output_buf[tid]) > 0:
+                    request_log = finished_output_buf[tid].pop()
+                    print request_log,
+                    request_order.pop()
 
     # Print not complete requests
-    if len(groupedOutput) > 0:
+    if len(unfinished_output_buf) > 0:
         print 'WARNING: Some uncompleted information about requests left'
-        for _, l in groupedOutput.items():
+        for _, l in unfinished_output_buf.items():
             print l
 
 
