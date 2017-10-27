@@ -70,4 +70,9 @@ def group_thread_output(logFileName):
 
 
 if __name__ == '__main__':
-    group_thread_output('/home/adam/thot_server.out')
+    # Parse input arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('logfile', help='Path to log file to convert')
+    args = parser.parse_args()
+
+    group_thread_output(args.logfile)
