@@ -74,16 +74,28 @@ class IncrCondProbTable: public BaseIncrCondProbTable<SRCDATA,TRGDATA,SRCTRG_INF
   im_pair<SRC_INFO,SRCTRG_INFO> infSrcTrg(const SRCDATA& s,
                                           const TRGDATA& t,
                                           bool& found);
-  SRC_INFO getSrcInfo(const SRCDATA& s,bool& found);
-  SRCTRG_INFO getSrcTrgInfo(const SRCDATA& s,const TRGDATA& t,bool& found);
-  Prob pTrgGivenSrc(const SRCDATA& s,const TRGDATA& t);
-  LgProb logpTrgGivenSrc(const SRCDATA& s,const TRGDATA& t);
-  Prob pSrcGivenTrg(const SRCDATA& s,const TRGDATA& t);
-  LgProb logpSrcGivenTrg(const SRCDATA& s,const TRGDATA& t);
-  bool getEntriesForTarget(const TRGDATA& t,SrcTableNode& tnode);
-  bool getEntriesForSource(const SRCDATA& s,TrgTableNode& trgtn);
-  bool getNbestForSrc(const SRCDATA& s,NbestTableNode<TRGDATA>& nbt);
-  bool getNbestForTrg(const TRGDATA& t,NbestTableNode<SRCDATA>& nbt,int N=-1);
+  SRC_INFO getSrcInfo(const SRCDATA& s,
+                      bool& found);
+  SRCTRG_INFO getSrcTrgInfo(const SRCDATA& s,
+                            const TRGDATA& t,
+                            bool& found);
+  Prob pTrgGivenSrc(const SRCDATA& s,
+                    const TRGDATA& t);
+  LgProb logpTrgGivenSrc(const SRCDATA& s,
+                         const TRGDATA& t);
+  Prob pSrcGivenTrg(const SRCDATA& s,
+                    const TRGDATA& t);
+  LgProb logpSrcGivenTrg(const SRCDATA& s,
+                         const TRGDATA& t);
+  bool getEntriesForTarget(const TRGDATA& t,
+                           SrcTableNode& tnode);
+  bool getEntriesForSource(const SRCDATA& s,
+                           TrgTableNode& trgtn);
+  bool getNbestForSrc(const SRCDATA& s,
+                      NbestTableNode<TRGDATA>& nbt);
+  bool getNbestForTrg(const TRGDATA& t,
+                      NbestTableNode<SRCDATA>& nbt,
+                      int N=-1);
 
        // Count-related functions
   LogCount lcSrcTrg(const SRCDATA& s,const TRGDATA& t);
@@ -307,7 +319,8 @@ im_pair<SRC_INFO,SRCTRG_INFO> IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_
 
 //-------------------------
 template<class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
-SRC_INFO IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getSrcInfo(const SRCDATA& s,bool& found)
+SRC_INFO IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getSrcInfo(const SRCDATA& s,
+                                                                             bool& found)
 {
  SRC_INFO sinfo;
  typename SrcDataInfo::const_iterator sdcIter;
@@ -330,7 +343,9 @@ SRC_INFO IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getSrcInfo(con
 
 //-------------------------
 template<class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
-SRCTRG_INFO IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getSrcTrgInfo(const SRCDATA& s,const TRGDATA& t,bool& found)
+SRCTRG_INFO IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getSrcTrgInfo(const SRCDATA& s,
+                                                                                   const TRGDATA& t,
+                                                                                   bool& found)
 {
  typename TrgSrcInfo::const_iterator trgSrcInfoIter;
  typename TrgSrcInfoNode::const_iterator trgSrcNodeIter;
@@ -363,13 +378,15 @@ SRCTRG_INFO IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getSrcTrgIn
 
 //-------------------------
 template<class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
-Prob IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::pTrgGivenSrc(const SRCDATA& s,const TRGDATA& t)
+Prob IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::pTrgGivenSrc(const SRCDATA& s,
+                                                                           const TRGDATA& t)
 {
   return logpTrgGivenSrc(s,t).get_p();
 }
 //-------------------------
 template<class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
-LgProb IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::logpTrgGivenSrc(const SRCDATA& s,const TRGDATA& t)
+LgProb IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::logpTrgGivenSrc(const SRCDATA& s,
+                                                                                const TRGDATA& t)
 {
   im_pair<SRC_INFO,SRCTRG_INFO> psst;
   bool found;
@@ -391,14 +408,16 @@ LgProb IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::logpTrgGivenSrc(
 
 //-------------------------
 template<class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
-Prob IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::pSrcGivenTrg(const SRCDATA& s,const TRGDATA& t)
+Prob IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::pSrcGivenTrg(const SRCDATA& s,
+                                                                           const TRGDATA& t)
 {
   return logpSrcGivenTrg(s,t).get_p();    
 }
 
 //-------------------------
 template<class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
-LgProb IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::logpSrcGivenTrg(const SRCDATA& s,const TRGDATA& t)
+LgProb IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::logpSrcGivenTrg(const SRCDATA& s,
+                                                                                const TRGDATA& t)
 {
   LogCount lc_st;
   LogCount lc_t;
@@ -418,7 +437,8 @@ LgProb IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::logpSrcGivenTrg(
 //-------------------------
 template<class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
 bool
-IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getEntriesForTarget(const TRGDATA& t,typename IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::SrcTableNode& tnode)
+IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getEntriesForTarget(const TRGDATA& t,
+                                                                             typename IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::SrcTableNode& tnode)
 {
  typename TrgSrcInfo::const_iterator trgSrcInfoIter;
  TrgSrcInfoNode trgSrcInfoNode;
@@ -449,7 +469,8 @@ IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getEntriesForTarget(con
 
 //-------------------------
 template<class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
-bool IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getEntriesForSource(const SRCDATA& s,typename IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::TrgTableNode& trgtn)
+bool IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getEntriesForSource(const SRCDATA& s,
+                                                                                  typename IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::TrgTableNode& trgtn)
 {
   typename TrgSrcInfo::const_iterator trgSrcInfoIter;
   typename TrgSrcInfoNode::const_iterator trgSrcNodeIter;
@@ -477,7 +498,8 @@ bool IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getEntriesForSourc
 
 //-------------------------
 template<class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
-bool IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getNbestForSrc(const SRCDATA& s,NbestTableNode<TRGDATA>& nbt)
+bool IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getNbestForSrc(const SRCDATA& s,
+                                                                             NbestTableNode<TRGDATA>& nbt)
 {
   TrgTableNode tnode;
   typename TrgTableNode::const_iterator tNodeIter;
@@ -497,7 +519,9 @@ bool IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getNbestForSrc(con
 
 //-------------------------
 template<class SRCDATA,class TRGDATA,class SRC_INFO,class SRCTRG_INFO>
-bool IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getNbestForTrg(const TRGDATA& t,NbestTableNode<SRCDATA>& nbt,int N)
+bool IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getNbestForTrg(const TRGDATA& t,
+                                                                             NbestTableNode<SRCDATA>& nbt,
+                                                                             int N)
 {
   SrcTableNode tnode;
   typename SrcTableNode::const_iterator tNodeIter;
@@ -512,6 +536,13 @@ bool IncrCondProbTable<SRCDATA,TRGDATA,SRC_INFO,SRCTRG_INFO>::getNbestForTrg(con
     srcDataInfoIter=srcDataInfo.find(tNodeIter->first);
     nbt.insert((float)tNodeIter->second.second.get_c_st()-(float)srcDataInfoIter->second.get_c_s(),tNodeIter->first);
   }
+
+      // Prune N-best options if necessary
+  while(nbt.size()>(unsigned int)N && N>=0)
+  {
+    nbt.removeLastElement();
+  }
+
   return ret;
 }
 
