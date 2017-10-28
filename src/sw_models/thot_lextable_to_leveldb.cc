@@ -72,7 +72,7 @@ int convert()
     IncrLexLevelDbTable lexTable;
     lexTable.init(outputPath.c_str());
 
-    ifstream inF (inputFile.c_str(), ios::in | ios::binary);
+    std::ifstream inF (inputFile.c_str(), std::ios::in | std::ios::binary);
     if (!inF)
     {
         std::cerr << "Error in lexical nd file, file " << inputFile << " does not exist." << std::endl;

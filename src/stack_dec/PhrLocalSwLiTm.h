@@ -129,7 +129,7 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
 
       // Model weights functions
   void setWeights(std::vector<float> wVec);
-  void getWeights(std::vector<pair<std::string,float> >& compWeights);
+  void getWeights(std::vector<std::pair<std::string,float> >& compWeights);
   unsigned int getNumWeights(void);
   void printWeights(std::ostream &outS);
 
@@ -155,7 +155,7 @@ class PhrLocalSwLiTm: public _phrSwTransModel<PhrLocalSwLiTmHypRec<HypEqClassF> 
 
       // Weight auxiliary functions
   void setPmWeights(std::vector<float> wVec);
-  void getPmWeights(std::vector<pair<std::string,float> >& compWeights);
+  void getPmWeights(std::vector<std::pair<std::string,float> >& compWeights);
   void printPmWeights(std::ostream &outS);
 
       // Functions related to linear interpolation weights updating

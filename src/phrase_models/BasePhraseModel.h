@@ -90,38 +90,38 @@ class BasePhraseModel
         // obtains the log-probability for the length of a target
         // segment log(p(z_k|y_k,x_k-x_{k-1},trgLen))
 
-	virtual Prob strPt_s_(const std::vector<string>& s,
-                          const std::vector<string>& t);
-	virtual LgProb strLogpt_s_(const std::vector<string>& s,
-                               const std::vector<string>& t);
+	virtual Prob strPt_s_(const std::vector<std::string>& s,
+                          const std::vector<std::string>& t);
+	virtual LgProb strLogpt_s_(const std::vector<std::string>& s,
+                               const std::vector<std::string>& t);
     virtual Prob pt_s_(const std::vector<WordIndex>& s,
                        const std::vector<WordIndex>& t);
 	virtual LgProb logpt_s_(const std::vector<WordIndex>& s,
                             const std::vector<WordIndex>& t)=0;
 	
-	virtual Prob strPs_t_(const std::vector<string>& s,
-                          const std::vector<string>& t);
-	virtual LgProb strLogps_t_(const std::vector<string>& s,
-                               const std::vector<string>& t);
+	virtual Prob strPs_t_(const std::vector<std::string>& s,
+                          const std::vector<std::string>& t);
+	virtual LgProb strLogps_t_(const std::vector<std::string>& s,
+                               const std::vector<std::string>& t);
     virtual Prob ps_t_(const std::vector<WordIndex>& s,
                        const std::vector<WordIndex>& t);
 	virtual LgProb logps_t_(const std::vector<WordIndex>& s,
                             const std::vector<WordIndex>& t)=0;
     
         // Functions to obtain translations for source or target phrases
-    virtual bool strGetTransFor_s_(const std::vector<string>& s,
+    virtual bool strGetTransFor_s_(const std::vector<std::string>& s,
                                    TrgTableNode& trgtn);
     virtual bool getTransFor_s_(const std::vector<WordIndex>& s,
                                 TrgTableNode& trgtn)=0;
-    virtual bool strGetTransFor_t_(const std::vector<string>& t,
+    virtual bool strGetTransFor_t_(const std::vector<std::string>& t,
                                    SrcTableNode& srctn);
     virtual bool getTransFor_t_(const std::vector<WordIndex>& t,
                                 SrcTableNode& srctn)=0;
-    virtual bool strGetNbestTransFor_s_(const std::vector<string>& s,
+    virtual bool strGetNbestTransFor_s_(const std::vector<std::string>& s,
                                         NbestTableNode<PhraseTransTableNodeData>& nbt);
 	virtual bool getNbestTransFor_s_(const std::vector<WordIndex>& s,
                                      NbestTableNode<PhraseTransTableNodeData>& nbt)=0;
-	virtual bool strGetNbestTransFor_t_(const std::vector<string>& t,
+	virtual bool strGetNbestTransFor_t_(const std::vector<std::string>& t,
                                         NbestTableNode<PhraseTransTableNodeData>& nbt,
                                         int N=-1);
 	virtual bool getNbestTransFor_t_(const std::vector<WordIndex>& t,
@@ -148,10 +148,10 @@ class BasePhraseModel
         // Source vocabulary functions
     virtual size_t getSrcVocabSize(void)const=0;
         // Returns the source vocabulary size
-    virtual WordIndex stringToSrcWordIndex(string s)const=0;
-    virtual string wordIndexToSrcString(WordIndex w)const=0;
-	virtual bool existSrcSymbol(string s)const=0;
-	virtual WordIndex addSrcSymbol(string s)=0;
+    virtual WordIndex stringToSrcWordIndex(std::string s)const=0;
+    virtual std::string wordIndexToSrcString(WordIndex w)const=0;
+	virtual bool existSrcSymbol(std::string s)const=0;
+	virtual WordIndex addSrcSymbol(std::string s)=0;
 	virtual bool loadSrcVocab(const char *srcInputVocabFileName)=0;
         // loads source vocabulary, returns non-zero if error
 	virtual bool printSrcVocab(const char *outputFileName)=0;
@@ -159,10 +159,10 @@ class BasePhraseModel
         // Target vocabulary functions
     virtual size_t getTrgVocabSize(void)const=0;
         // Returns the target vocabulary size
-    virtual WordIndex stringToTrgWordIndex(string t)const=0;
-    virtual string wordIndexToTrgString(WordIndex w)const=0;
-    virtual bool existTrgSymbol(string t)const=0;
-    virtual WordIndex addTrgSymbol(string t)=0;
+    virtual WordIndex stringToTrgWordIndex(std::string t)const=0;
+    virtual std::string wordIndexToTrgString(WordIndex w)const=0;
+    virtual bool existTrgSymbol(std::string t)const=0;
+    virtual WordIndex addTrgSymbol(std::string t)=0;
     virtual bool loadTrgVocab(const char *trgInputVocabFileName)=0;
         // loads target vocabulary, returns non-zero if error
     virtual bool printTrgVocab(const char *outputFileName)=0;

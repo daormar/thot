@@ -188,10 +188,10 @@ class HatTriePhraseTable: public BasePhraseTable
         void printVector(const std::vector<WordIndex>& vec) const;
 
             // Key converters
-        virtual string vectorToKey(const std::vector<WordIndex>& vec)const;
-        virtual std::vector<WordIndex> keyToVector(const string key)const;
-        virtual string vectorToString(const std::vector<WordIndex>& vec)const;
-        virtual std::vector<WordIndex> stringToVector(const string s)const;
+        virtual std::string vectorToKey(const std::vector<WordIndex>& vec)const;
+        virtual std::vector<WordIndex> keyToVector(const std::string key)const;
+        virtual std::string vectorToStdString(const std::vector<WordIndex>& vec)const;
+        virtual std::vector<WordIndex> stringToVector(const std::string s)const;
 
 };
 

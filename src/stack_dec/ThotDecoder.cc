@@ -1636,7 +1636,7 @@ void ThotDecoder::onlineTrainLogLinWeights(size_t idx,
           // Obtain new weights
       WordGraph wg;
       wg.load(wgPathStr.c_str());
-      std::vector<pair<std::string,float> > compWeights;
+      std::vector<std::pair<std::string,float> > compWeights;
       tdCommonVars.smtModelPtr->getWeights(compWeights);
       std::vector<float> newWeights;
       WeightUpdateUtils::updateLogLinearWeights(refSent,
@@ -1651,7 +1651,7 @@ void ThotDecoder::onlineTrainLogLinWeights(size_t idx,
     else
     {
           // Obtain new weights
-      std::vector<pair<std::string,float> > compWeights;
+      std::vector<std::pair<std::string,float> > compWeights;
       tdCommonVars.smtModelPtr->getWeights(compWeights);
       std::vector<float> newWeights;
       WordGraph* wgPtr=tdPerUserVarsVec[idx].stackDecoderRecPtr->getWordGraphPtr();
@@ -1824,7 +1824,7 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
     wg.load(wgPathStr.c_str());
 
         // Obtain original word graph component weights
-    std::vector<pair<std::string,float> > originalWgCompWeights;
+    std::vector<std::pair<std::string,float> > originalWgCompWeights;
     wg.getCompWeights(originalWgCompWeights);
 
         // Print component weight info to the error output
@@ -1839,7 +1839,7 @@ std::string ThotDecoder::translateSentenceAux(size_t idx,
         // Set current component weights (this operation causes a
         // complete re-scoring of the word graph arcs if there exist
         // score component information for them)
-    std::vector<pair<std::string,float> > currCompWeights;
+    std::vector<std::pair<std::string,float> > currCompWeights;
     tdCommonVars.smtModelPtr->getWeights(currCompWeights);
     wg.setCompWeights(currCompWeights);
 
@@ -2361,9 +2361,9 @@ int ThotDecoder::printModelWeights(void)
   /////////// begin of mutex 
 
       // Print smt model weights
-  cout<<"- SMT model weights= ";
-  tdCommonVars.smtModelPtr->printWeights(cout);
-  cout<<std::endl;
+  std::cout<<"- SMT model weights= ";
+  tdCommonVars.smtModelPtr->printWeights(std::cout);
+  std::cout<<std::endl;
 
       // Print assisted translator weights
   BaseAssistedTrans<SmtModel>* assistedTransPtr=tdCommonVars.dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseAssistedTransInitPars);
@@ -2376,21 +2376,21 @@ int ThotDecoder::printModelWeights(void)
   WgUncoupledAssistedTrans<SmtModel>* wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<SmtModel>*>(assistedTransPtr);
   if(!wgUncoupledAssistedTransPtr)
   {
-    cout<<"- Assisted translator weights= ";
-    assistedTransPtr->printWeights(cout);
-    cout << std::endl;
+    std::cout<<"- Assisted translator weights= ";
+    assistedTransPtr->printWeights(std::cout);
+    std::cout << std::endl;
   }
   else
   {
     if(tdCommonVars.curr_ecm_valid_for_wg)
     {
-      cout<<"- Assisted translator weights= ";
-      assistedTransPtr->printWeights(cout);
-      cout << std::endl;
+      std::cout<<"- Assisted translator weights= ";
+      assistedTransPtr->printWeights(std::cout);
+      std::cout << std::endl;
     }
     else
     {
-      cout<<"Warning: current error correcting model cannot be combined with word-graph based assisted translators"<<std::endl;
+      std::cout<<"Warning: current error correcting model cannot be combined with word-graph based assisted translators"<<std::endl;
     }
   }
 
@@ -2398,9 +2398,9 @@ int ThotDecoder::printModelWeights(void)
   delete assistedTransPtr;
   
       // Print error correction model weights
-  cout<<"- Error correction model weights= ";
-  tdCommonVars.ecModelPtr->printWeights(cout);
-  cout<<std::endl;
+  std::cout<<"- Error correction model weights= ";
+  tdCommonVars.ecModelPtr->printWeights(std::cout);
+  std::cout<<std::endl;
 
   
   /////////// end of mutex 
@@ -2713,7 +2713,7 @@ std::string ThotDecoder::expandLastWord(std::string& partialSent)
     else
     {
           // predict last word
-      pair<Count,std::string> pcs;
+      std::pair<Count,std::string> pcs;
       std::vector<std::string> strVec=StrProcUtils::stringToStringVector(partialSent);
       std::vector<std::string> hist;
 
@@ -2732,7 +2732,7 @@ std::string ThotDecoder::expandLastWord(std::string& partialSent)
 }
 
 //--------------------------
-pair<Count,std::string> ThotDecoder::getBestSuffixGivenHist(std::vector<std::string> hist,
+std::pair<Count,std::string> ThotDecoder::getBestSuffixGivenHist(std::vector<std::string> hist,
                                                             std::string input)
 {
   if(tdCommonVars.featureBasedImplEnabled)
@@ -2746,7 +2746,7 @@ pair<Count,std::string> ThotDecoder::getBestSuffixGivenHist(std::vector<std::str
 }
 
 //--------------------------
-pair<Count,std::string> ThotDecoder::getBestSuffixGivenHistFeatImpl(std::vector<std::string> hist,
+std::pair<Count,std::string> ThotDecoder::getBestSuffixGivenHistFeatImpl(std::vector<std::string> hist,
                                                                     std::string input)
 {
       // Obtain pointer to features info
@@ -2758,7 +2758,7 @@ pair<Count,std::string> ThotDecoder::getBestSuffixGivenHistFeatImpl(std::vector<
       // Obtain best suffix using first available language model feature
   if(langModelFeatsVec.empty())
   {
-    pair<Count,std::string> pcs;
+    std::pair<Count,std::string> pcs;
     pcs.first=0;
     return pcs;
   }

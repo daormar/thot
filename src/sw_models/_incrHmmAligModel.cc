@@ -59,7 +59,7 @@ unsigned int _incrHmmAligModel::numSentPairs(void)
 }
 
 //-------------------------
-void _incrHmmAligModel::trainSentPairRange(pair<unsigned int,unsigned int> sentPairRange,
+void _incrHmmAligModel::trainSentPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                            int verbosity)
 {
       // Train sentence length model
@@ -78,11 +78,11 @@ void _incrHmmAligModel::trainSentPairRange(pair<unsigned int,unsigned int> sentP
 //-------------------------
 void _incrHmmAligModel::trainAllSents(int verbosity)
 {
-  trainSentPairRange(make_pair(0,numSentPairs()-1),verbosity);
+  trainSentPairRange(std::make_pair(0,numSentPairs()-1),verbosity);
 }
 
 //-------------------------
-void _incrHmmAligModel::efficientBatchTrainingForRange(pair<unsigned int,unsigned int> sentPairRange,
+void _incrHmmAligModel::efficientBatchTrainingForRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                                        int verbosity/*=0*/)
 {
       // Set maximum size of the matrices of expected values to zero
@@ -104,7 +104,7 @@ void _incrHmmAligModel::efficientBatchTrainingForRange(pair<unsigned int,unsigne
 }
 
 //-------------------------
-pair<double,double> _incrHmmAligModel::loglikelihoodForPairRange(pair<unsigned int,unsigned int> sentPairRange,
+std::pair<double,double> _incrHmmAligModel::loglikelihoodForPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                                                  int verbosity/*=0*/)
 {
   double loglikelihood=0;
@@ -122,11 +122,11 @@ pair<double,double> _incrHmmAligModel::loglikelihoodForPairRange(pair<unsigned i
       ++numSents;
     }
   }
-  return make_pair(loglikelihood,loglikelihood/(double) numSents);
+  return std::make_pair(loglikelihood,loglikelihood/(double) numSents);
 }
 
 //-------------------------
-pair<double,double> _incrHmmAligModel::vitLoglikelihoodForPairRange(pair<unsigned int,unsigned int> sentPairRange,
+std::pair<double,double> _incrHmmAligModel::vitLoglikelihoodForPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                                                     int verbosity/*=0*/)
 {
   double vitLoglikelihood=0;
@@ -145,7 +145,7 @@ pair<double,double> _incrHmmAligModel::vitLoglikelihoodForPairRange(pair<unsigne
       ++numSents;
     }
   }
-  return make_pair(vitLoglikelihood,vitLoglikelihood/(double) numSents);
+  return std::make_pair(vitLoglikelihood,vitLoglikelihood/(double) numSents);
 }
 
 //-------------------------
@@ -450,8 +450,8 @@ bool _incrHmmAligModel::loadLexSmIntFactor(const char* lexSmIntFactorFile)
 //-------------------------
 bool _incrHmmAligModel::printLexSmIntFactor(const char* lexSmIntFactorFile)
 {
-  ofstream outF;
-  outF.open(lexSmIntFactorFile,ios::out);
+  std::ofstream outF;
+  outF.open(lexSmIntFactorFile,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing file with lexical smoothing interpolation factor."<<std::endl;
@@ -503,8 +503,8 @@ bool _incrHmmAligModel::loadAlSmIntFactor(const char* alSmIntFactorFile)
 //-------------------------
 bool _incrHmmAligModel::printAlSmIntFactor(const char* alSmIntFactorFile)
 {
-  ofstream outF;
-  outF.open(alSmIntFactorFile,ios::out);
+  std::ofstream outF;
+  outF.open(alSmIntFactorFile,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing file with alignment smoothing interpolation factor."<<std::endl;
@@ -539,7 +539,7 @@ void _incrHmmAligModel::initCachedLexicalLps(const std::vector<WordIndex>& nSrcS
 }
 
 //-------------------------
-void _incrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sentPairRange,
+void _incrHmmAligModel::calcNewLocalSuffStats(std::pair<unsigned int,unsigned int> sentPairRange,
                                               int verbosity)
 {
       // Iterate over the training samples
@@ -592,7 +592,7 @@ void _incrHmmAligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> se
 }
 
 //-------------------------
-void _incrHmmAligModel::calcNewLocalSuffStatsVit(pair<unsigned int,unsigned int> sentPairRange,
+void _incrHmmAligModel::calcNewLocalSuffStatsVit(std::pair<unsigned int,unsigned int> sentPairRange,
                                                  int verbosity)
 {
       // Define variable to cache alignment log probs
@@ -874,7 +874,7 @@ void _incrHmmAligModel::fillEmAuxVarsLex(unsigned int mapped_n,
   }
   else
   {
-    lexAuxVar[s][t]=make_pair(weighted_curr_lanji,weighted_new_lanji);
+    lexAuxVar[s][t]=std::make_pair(weighted_curr_lanji,weighted_new_lanji);
   }
 }
 
@@ -1120,7 +1120,7 @@ void _incrHmmAligModel::fillEmAuxVarsAlig(unsigned int mapped_n,
   asHmm.slen=slen;
 
       // Gather local suff. statistics
-  AligAuxVar::iterator aligAuxVarIter=aligAuxVar.find(make_pair(asHmm,i));
+  AligAuxVar::iterator aligAuxVarIter=aligAuxVar.find(std::make_pair(asHmm,i));
   if(aligAuxVarIter!=aligAuxVar.end())
   {
     if(weighted_curr_lanjm1ip_anji!=SMALL_LG_NUM)
@@ -1129,7 +1129,7 @@ void _incrHmmAligModel::fillEmAuxVarsAlig(unsigned int mapped_n,
   }
   else
   {
-    aligAuxVar[make_pair(asHmm,i)]=make_pair(weighted_curr_lanjm1ip_anji,weighted_new_lanjm1ip_anji);
+    aligAuxVar[std::make_pair(asHmm,i)]=std::make_pair(weighted_curr_lanjm1ip_anji,weighted_new_lanjm1ip_anji);
   }
 }
 
@@ -1892,7 +1892,7 @@ bool _incrHmmAligModel::load(const char* prefFileName)
     trgsFile=trgsFile+".trg";
     std::string srctrgcFile=prefFileName;
     srctrgcFile=srctrgcFile+".srctrgc";
-    pair<unsigned int,unsigned int> pui;
+    std::pair<unsigned int,unsigned int> pui;
     retVal=readSentencePairs(srcsFile.c_str(),trgsFile.c_str(),srctrgcFile.c_str(),pui);
     if(retVal==THOT_ERROR) return THOT_ERROR;
 

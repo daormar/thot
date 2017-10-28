@@ -77,8 +77,6 @@ bool operator> (const Bitset<N> &left,const Bitset<N> &right)
 #include <iomanip>
 #include <fstream>
 
-using namespace std;
-
 //--------------- Constants ------------------------------------------
 
 #define NUM_BYTES_INT sizeof(unsigned int)

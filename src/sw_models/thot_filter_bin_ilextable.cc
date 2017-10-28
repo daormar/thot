@@ -44,12 +44,12 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function Declarations ------------------------------
 
-int readTableRecord(ifstream& inF,
+int readTableRecord(std::ifstream& inF,
                     WordIndex& s,
                     WordIndex& t,
                     float& numer,
                     float& denom);
-int readFiltInfoRecord(ifstream& inF,
+int readFiltInfoRecord(std::ifstream& inF,
                        WordIndex& s,
                        WordIndex& t);
 int TakeParameters(int argc,char *argv[]);
@@ -71,14 +71,14 @@ int main(int argc,char *argv[])
   if(TakeParameters(argc,argv)==THOT_OK)
   {
         // Try to open file with lexical table  
-    ifstream lexTableInF (ilextableFileName.c_str(), ios::in | ios::binary);
+    std::ifstream lexTableInF (ilextableFileName.c_str(), std::ios::in | std::ios::binary);
     if (!lexTableInF)
     {
       std::cerr<<"Error in file with incremental lexical table, file "<<ilextableFileName<<" does not exist.\n";
       return THOT_ERROR;    
     }
 
-    ifstream filtInfoInf (filterInfoFileName.c_str(), ios::in | ios::binary);
+    std::ifstream filtInfoInf (filterInfoFileName.c_str(), std::ios::in | std::ios::binary);
     if (!filtInfoInf)
     {
       std::cerr<<"Error in file with filtering information, file "<<filterInfoFileName<<" does not exist.\n";
@@ -110,10 +110,10 @@ int main(int argc,char *argv[])
         if(s==sFilt && t==tFilt)
         {
 //          printf("%d %d %g %g\n",s,t,numer,denom);
-          cout.write((char*)&s,sizeof(WordIndex));
-          cout.write((char*)&t,sizeof(WordIndex));
-          cout.write((char*)&numer,sizeof(float));
-          cout.write((char*)&denom,sizeof(float));
+          std::cout.write((char*)&s,sizeof(WordIndex));
+          std::cout.write((char*)&t,sizeof(WordIndex));
+          std::cout.write((char*)&numer,sizeof(float));
+          std::cout.write((char*)&denom,sizeof(float));
 
           int ret=readFiltInfoRecord(filtInfoInf,sFilt,tFilt);
           if(ret==NO_RECORDS_LEFT)
@@ -132,7 +132,7 @@ int main(int argc,char *argv[])
 }
 
 //--------------- readTableRecord function
-int readFiltInfoRecord(ifstream& inF,
+int readFiltInfoRecord(std::ifstream& inF,
                        WordIndex& s,
                        WordIndex& t)
 {
@@ -145,7 +145,7 @@ int readFiltInfoRecord(ifstream& inF,
 }
 
 //--------------- readTableRecord function
-int readTableRecord(ifstream& inF,
+int readTableRecord(std::ifstream& inF,
                     WordIndex& s,
                     WordIndex& t,
                     float& numer,

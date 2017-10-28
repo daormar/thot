@@ -92,7 +92,7 @@ class SmtMultiStackRec: public _smtMultiStack<HYPOTHESIS_REC>
     int operator!=(const iterator& right); 
     typename MultiContainer::iterator&
       operator->(void);
-    pair<EqClassType,SmtStack<HYPOTHESIS_REC> >
+    std::pair<EqClassType,SmtStack<HYPOTHESIS_REC> >
       operator*(void)const;
 
     friend void SmtMultiStackRec<HYPOTHESIS_REC>::remove(SmtMultiStackRec<HYPOTHESIS_REC>::iterator iter);
@@ -145,15 +145,15 @@ SmtMultiStackRec<HYPOTHESIS_REC>::pushIter(const HYPOTHESIS_REC& hyp)
         // key not found, create new sub-stack
     SmtStack<HYPOTHESIS_REC> smtStack;
     smtStack.setMaxStackSize(this->maxStackSize);
-    pos=this->multiContainer.insert(make_pair(key,smtStack)).first;
-    this->sortedStacksMap.insert(make_pair(key,pos));
+    pos=this->multiContainer.insert(std::make_pair(key,smtStack)).first;
+    this->sortedStacksMap.insert(std::make_pair(key,pos));
   }
   prev_size=pos->second.size();
     
   if(pushOnSmtStack(pos,hyp))
   {
     if(prev_size==0)
-      this->sortedStacksMap.insert(make_pair(key,pos));
+      this->sortedStacksMap.insert(std::make_pair(key,pos));
     typename SmtMultiStackRec<HYPOTHESIS_REC>::iterator ret(this,pos);
     return ret;
   }
@@ -486,7 +486,7 @@ SmtMultiStackRec<HYPOTHESIS_REC>::iterator::operator->(void)
 
 //--------------------------
 template<class HYPOTHESIS_REC>
-pair<typename SmtMultiStackRec<HYPOTHESIS_REC>::EqClassType,SmtStack<HYPOTHESIS_REC> >
+std::pair<typename SmtMultiStackRec<HYPOTHESIS_REC>::EqClassType,SmtStack<HYPOTHESIS_REC> >
 SmtMultiStackRec<HYPOTHESIS_REC>::iterator::operator*(void)const
 {
    return *mcIter;

@@ -85,7 +85,7 @@ class TrieBid
     {
       protected:
        std::vector<const TrieBid<KEY,DATA_TYPE>* > vecTriePtr;
-       pair<std::vector<KEY>,DATA_TYPE> vecKeyDataPair;
+       std::pair<std::vector<KEY>,DATA_TYPE> vecKeyDataPair;
            
       public:
        const_iterator(void)
@@ -117,8 +117,8 @@ class TrieBid
        bool operator++(int);  //postfix
        int operator==(const const_iterator& right);
        int operator!=(const const_iterator& right);
-       const pair<std::vector<KEY>,DATA_TYPE>* operator->(void)const;
-       pair<std::vector<KEY>,DATA_TYPE> operator*(void)const;
+       const std::pair<std::vector<KEY>,DATA_TYPE>* operator->(void)const;
+       std::pair<std::vector<KEY>,DATA_TYPE> operator*(void)const;
     };
  
       // const_iterator functions for the trie class
@@ -787,17 +787,17 @@ int TrieBid<KEY,DATA_TYPE>::const_iterator::operator!=(const const_iterator& rig
 }
 //--------------------------
 template<class KEY,class DATA_TYPE>
-const pair<std::vector<KEY>,DATA_TYPE>* TrieBid<KEY,DATA_TYPE>::const_iterator::operator->(void)const
+const std::pair<std::vector<KEY>,DATA_TYPE>* TrieBid<KEY,DATA_TYPE>::const_iterator::operator->(void)const
 {
   if(vecTriePtr.size()==1 && vecTriePtr[0]==NULL)
   {
     return NULL;
   }
-  else  return (const pair<std::vector<KEY>,DATA_TYPE>*) &(vecKeyDataPair);
+  else  return (const std::pair<std::vector<KEY>,DATA_TYPE>*) &(vecKeyDataPair);
 }
 //--------------------------
 template<class KEY,class DATA_TYPE>
-pair<std::vector<KEY>,DATA_TYPE> TrieBid<KEY,DATA_TYPE>::const_iterator::operator*(void)const
+std::pair<std::vector<KEY>,DATA_TYPE> TrieBid<KEY,DATA_TYPE>::const_iterator::operator*(void)const
 {
   return vecKeyDataPair;
 }

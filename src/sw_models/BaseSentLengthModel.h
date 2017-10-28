@@ -69,7 +69,7 @@ class BaseSentLengthModel
   virtual LgProb sumSentLenLgProb(unsigned int slen,unsigned int tlen)=0;
 
       // Functions to train the sentence length model
-  virtual void trainSentPairRange(pair<unsigned int,unsigned int> sentPairRange,
+  virtual void trainSentPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                   int verbosity=0)=0;
   virtual void trainSentPair(std::vector<std::string> srcSentVec,
                              std::vector<std::string> trgSentVec,

@@ -112,7 +112,7 @@ bool IncrLexLevelDbTable::drop()
 }
 
 //-------------------------
-string IncrLexLevelDbTable::vectorToString(const std::vector<WordIndex>& vec)const
+std::string IncrLexLevelDbTable::vectorToString(const std::vector<WordIndex>& vec)const
 {
     std::vector<WordIndex> str;
     for(size_t i = 0; i < vec.size(); i++) {
@@ -122,13 +122,13 @@ string IncrLexLevelDbTable::vectorToString(const std::vector<WordIndex>& vec)con
         }
     }
 
-    string s(str.begin(), str.end());
+    std::string s(str.begin(), str.end());
 
     return s;
 }
 
 //-------------------------
-std::vector<WordIndex> IncrLexLevelDbTable::stringToVector(const string s)const
+std::vector<WordIndex> IncrLexLevelDbTable::stringToVector(const std::string s)const
 {
     std::vector<WordIndex> vec;
 
@@ -146,19 +146,19 @@ std::vector<WordIndex> IncrLexLevelDbTable::stringToVector(const string s)const
 }
 
 //-------------------------
-string IncrLexLevelDbTable::vectorToKey(const std::vector<WordIndex>& vec)const
+std::string IncrLexLevelDbTable::vectorToKey(const std::vector<WordIndex>& vec)const
 {
     return vectorToString(vec);
 }
 
 //-------------------------
-std::vector<WordIndex> IncrLexLevelDbTable::keyToVector(const string key)const
+std::vector<WordIndex> IncrLexLevelDbTable::keyToVector(const std::string key)const
 {
     return stringToVector(key);
 }
 
 //-------------------------
-bool IncrLexLevelDbTable::stringToFloat(const string value_str, float &value)const
+bool IncrLexLevelDbTable::stringToFloat(const std::string value_str, float &value)const
 {
     // Decode string representation to float without loosing precision
     unsigned int wi = 0;
@@ -174,7 +174,7 @@ bool IncrLexLevelDbTable::stringToFloat(const string value_str, float &value)con
 }
 
 //-------------------------
-string IncrLexLevelDbTable::floatToString(const float value)const
+std::string IncrLexLevelDbTable::floatToString(const float value)const
 {
     // Encode float as a string without loosing precision
     unsigned int const *p = reinterpret_cast<unsigned int const*>(&value);
@@ -184,7 +184,7 @@ string IncrLexLevelDbTable::floatToString(const float value)const
         str.push_back(1 + (*p / (unsigned int) pow(WORD_INDEX_MODULO_BASE, j) % WORD_INDEX_MODULO_BASE));
     }
 
-    string s(str.begin(), str.end());
+    std::string s(str.begin(), str.end());
 
     return s;
 }
@@ -192,9 +192,9 @@ string IncrLexLevelDbTable::floatToString(const float value)const
 //-------------------------
 bool IncrLexLevelDbTable::retrieveData(const std::vector<WordIndex>& phrase, float &value)const
 {
-    string value_str;
+    std::string value_str;
     value = 0;
-    string key = vectorToString(phrase);
+    std::string key = vectorToString(phrase);
 
     leveldb::Status result = db->Get(leveldb::ReadOptions(), key, &value_str);
 
@@ -208,7 +208,7 @@ bool IncrLexLevelDbTable::retrieveData(const std::vector<WordIndex>& phrase, flo
 //-------------------------
 bool IncrLexLevelDbTable::storeData(const std::vector<WordIndex>& phrase, float value)const
 {
-    string value_str = floatToString(value);
+    std::string value_str = floatToString(value);
 
     leveldb::WriteBatch batch;
     batch.Put(vectorToString(phrase), value_str);
@@ -284,8 +284,8 @@ bool IncrLexLevelDbTable::getTransForTarget(WordIndex t,
     std::vector<WordIndex> end_vec;
     end_vec.push_back(t + 1);
 
-    string start_str = vectorToKey(start_vec);
-    string end_str = vectorToKey(end_vec);
+    std::string start_str = vectorToKey(start_vec);
+    std::string end_str = vectorToKey(end_vec);
 
     leveldb::Slice start = start_str;
     leveldb::Slice end = end_str;
@@ -353,7 +353,7 @@ bool IncrLexLevelDbTable::loadBin(const char* lexNumDenFile)
 
     std::cerr << "Loading lexnd in LevelDB format from binary file in " << binFile << std::endl;
 
-    ifstream inF (binFile.c_str(), ios::in | ios::binary);
+    std::ifstream inF (binFile.c_str(), std::ios::in | std::ios::binary);
     if (!inF)
     {
         std::cerr << "Error in lexical nd file, file " << binFile << " does not exist. ";
@@ -429,11 +429,11 @@ bool IncrLexLevelDbTable::print(const char* lexNumDenFile)
 bool IncrLexLevelDbTable::printBin(const char* lexNumDenFile)
 {
     bool found;
-    ofstream outF;
+    std::ofstream outF;
     const std::string prefixFile = ((std::string) lexNumDenFile);
     const std::string binFile = prefixFile + defaultExtension;
 
-    outF.open(binFile.c_str(), ios::out);
+    outF.open(binFile.c_str(), std::ios::out);
 
     if(!outF)
     {
@@ -482,11 +482,11 @@ bool IncrLexLevelDbTable::printBin(const char* lexNumDenFile)
 bool IncrLexLevelDbTable::printPlainText(const char* lexNumDenFile)
 {
     bool found;
-    ofstream outF;
+    std::ofstream outF;
     const std::string prefixFile = ((std::string) lexNumDenFile);
     const std::string txtFile = prefixFile + defaultExtension;
 
-    outF.open(txtFile.c_str(), ios::out);
+    outF.open(txtFile.c_str(), std::ios::out);
 
     if(!outF)
     {

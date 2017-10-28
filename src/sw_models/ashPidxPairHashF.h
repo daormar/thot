@@ -28,7 +28,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 class ashPidxPairHashF
 {
  public:
-  size_t operator() (const pair<aSourceHmm,PositionIndex>&  a1) const
+  size_t operator() (const std::pair<aSourceHmm,PositionIndex>&  a1) const
   {
     return (size_t) (a1.second*16384)+(256*a1.first.prev_i)+a1.first.slen;
   }

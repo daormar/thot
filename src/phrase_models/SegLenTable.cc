@@ -144,7 +144,7 @@ bool SegLenTable::load_seglentable(const char *segmLengthTableFileName)
 }
 
 //-------------------------
-void SegLenTable::printSegmLengthTable(ostream &outS)
+void SegLenTable::printSegmLengthTable(std::ostream &outS)
 {
  unsigned int i,j;
 

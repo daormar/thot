@@ -82,11 +82,11 @@ class AlignmentContainer
 	bool growDiagFinal(const char *_GizaAligFileName,
                        bool transpose=0);
 	std::vector<unsigned int>
-      vecString2VecUnsigInt(std::vector<string> vStr,
-                            map<string,unsigned int> & vocab,
-                            std::vector<string> & vocabInv)const;
-	std::vector<string> vecUnsigInt2VecString(std::vector<unsigned int> vInt,
-                                              const std::vector<string> & vocabInv)const;
+      vecString2VecUnsigInt(std::vector<std::string> vStr,
+                            std::map<std::string,unsigned int> & vocab,
+                            std::vector<std::string> & vocabInv)const;
+	std::vector<std::string> vecUnsigInt2VecString(std::vector<unsigned int> vInt,
+                                              const std::vector<std::string> & vocabInv)const;
 	void clear(void);
 	bool printNoCompact(std::ostream &outS);
     bool printNoCompact(FILE *file);
@@ -95,11 +95,11 @@ class AlignmentContainer
 
  protected:
 
-    map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion> aligCont;
-	map<string,unsigned int> sVocab;
-	map<string,unsigned int> tVocab;
-	std::vector<string> sVocabInv;
-	std::vector<string> tVocabInv;
+    std::map<std::vector<unsigned int>,std::vector<AligInfo>,VecUnsignedIntSortCriterion> aligCont;
+	std::map<std::string,unsigned int> sVocab;
+	std::map<std::string,unsigned int> tVocab;
+	std::vector<std::string> sVocabInv;
+	std::vector<std::string> tVocabInv;
     char GizaAligFileName[256];	
 	unsigned long numAlignments;
 };

@@ -92,8 +92,8 @@ class _wbaIncrPhraseModel: public _incrPhraseModel
         // AlignmentExtractor object.
     virtual void extModelFromPairAligVec(PhraseExtractParameters phePars,
                                          bool pseudoML,
-                                         std::vector<std::vector<string> > sVec,
-                                         std::vector<std::vector<string> > tVec,
+                                         std::vector<std::vector<std::string> > sVec,
+                                         std::vector<std::vector<std::string> > tVec,
                                          std::vector<WordAligMatrix> waMatrixVec,
                                          float numReps,
                                          int verbose=0);
@@ -101,16 +101,16 @@ class _wbaIncrPhraseModel: public _incrPhraseModel
         // corresponding alignment matrix.
     virtual void extendModelFromPairPlusAlig(PhraseExtractParameters phePars,
                                              bool pseudoML,
-                                             std::vector<string> ns,
-                                             std::vector<string> t,
+                                             std::vector<std::string> ns,
+                                             std::vector<std::string> t,
                                              WordAligMatrix waMatrix,
                                              float numReps,
                                              int verbose=0);
         // Extends the model given a sentence pair and its corresponding
         // alignment matrix.
     void extractPhrasesFromPairPlusAlig(PhraseExtractParameters phePars,
-                                        std::vector<string> ns,
-                                        std::vector<string> t,
+                                        std::vector<std::string> ns,
+                                        std::vector<std::string> t,
                                         WordAligMatrix waMatrix,
                                         std::vector<PhrasePair>& vecPhPair,
                                         int /*verbose=0*/);

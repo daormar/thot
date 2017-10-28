@@ -59,12 +59,12 @@ void IncrHmmAligTable::setAligNumer(aSourceHmm asHmm,
   while(aligNumer.size()<=i)
     aligNumer.push_back(aligNumerElem);
 
-  std::vector<pair<bool,float> > bdpVec;
+  std::vector<std::pair<bool,float> > bdpVec;
   while(aligNumer[i].size()<=asHmm.prev_i)
     aligNumer[i].push_back(bdpVec);
   while(aligNumer[i][asHmm.prev_i].size()<=asHmm.slen)
-    aligNumer[i][asHmm.prev_i].push_back(make_pair(false,0));
-  aligNumer[i][asHmm.prev_i][asHmm.slen]=make_pair(true,f);
+    aligNumer[i][asHmm.prev_i].push_back(std::make_pair(false,0));
+  aligNumer[i][asHmm.prev_i][asHmm.slen]=std::make_pair(true,f);
 }
 
 //-------------------------   
@@ -105,12 +105,12 @@ float IncrHmmAligTable::getAligNumer(aSourceHmm asHmm,
 void IncrHmmAligTable::setAligDenom(aSourceHmm asHmm,
                                     float f)
 {
-  std::vector<pair<bool,float> > bdpVec;
+  std::vector<std::pair<bool,float> > bdpVec;
   while(aligDenom.size()<=asHmm.prev_i)
     aligDenom.push_back(bdpVec);
   while(aligDenom[asHmm.prev_i].size()<=asHmm.slen)
-    aligDenom[asHmm.prev_i].push_back(make_pair(false,0));
-  aligDenom[asHmm.prev_i][asHmm.slen]=make_pair(true,f);
+    aligDenom[asHmm.prev_i].push_back(std::make_pair(false,0));
+  aligDenom[asHmm.prev_i][asHmm.slen]=std::make_pair(true,f);
 }
 
 //-------------------------   
@@ -199,7 +199,7 @@ bool IncrHmmAligTable::loadBin(const char* aligNumDenFile)
   std::cerr<<"Loading alignd file in binary format from "<<aligNumDenFile<<std::endl;
 
       // Try to open file  
-  ifstream inF (aligNumDenFile, ios::in | ios::binary);
+  std::ifstream inF (aligNumDenFile, std::ios::in | std::ios::binary);
   if(!inF)
   {
     std::cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
@@ -242,8 +242,8 @@ bool IncrHmmAligTable::print(const char* aligNumDenFile)
 //-------------------------
 bool IncrHmmAligTable::printBin(const char* aligNumDenFile)
 {
-  ofstream outF;
-  outF.open(aligNumDenFile,ios::out);
+  std::ofstream outF;
+  outF.open(aligNumDenFile,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing alignment nd file."<<std::endl;
@@ -281,8 +281,8 @@ bool IncrHmmAligTable::printBin(const char* aligNumDenFile)
 //-------------------------
 bool IncrHmmAligTable::printPlainText(const char* aligNumDenFile)
 {
-  ofstream outF;
-  outF.open(aligNumDenFile,ios::out);
+  std::ofstream outF;
+  outF.open(aligNumDenFile,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing alignment nd file."<<std::endl;

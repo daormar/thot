@@ -60,7 +60,7 @@ NonPbEcModelForNbUcat::correct(const std::vector<std::string>& outputSentVec,
 
   for(nbestIter=monolingSegmNbest.begin();nbestIter!=monolingSegmNbest.end();++nbestIter)
   {
-    result.insert(make_pair(nbestIter->first,correctedSent(nbestIter->second)));
+    result.insert(std::make_pair(nbestIter->first,correctedSent(nbestIter->second)));
   }
   return result;
 }
@@ -153,7 +153,7 @@ NonPbEcModelForNbUcat::obtainVectorWithSegms(std::vector<std::string> sentVec,
 void NonPbEcModelForNbUcat::addSegm(LgProb lp,
                                     PrefAlignInfo& prefAlignInfo)
 {
-  monolingSegmNbest.insert(pair<float,PrefAlignInfo>(lp,prefAlignInfo));
+  monolingSegmNbest.insert(std::pair<float,PrefAlignInfo>(lp,prefAlignInfo));
   if(monolingSegmNbest.size()>maxMapSize)
     removeLastFromMonolingSegmNbest();
 }

@@ -123,7 +123,7 @@ int main(int argc,char *argv[])
                                              trgSent.c_str(),
                                              waMatrix,
                                              verbosity); 
-    cout<<"Single-word model logProbability= "<<lp<<std::endl;      
+    std::cout<<"Single-word model logProbability= "<<lp<<std::endl;      
    }
    else
    {
@@ -134,7 +134,7 @@ int main(int argc,char *argv[])
        lp=swAligModelPtr->calcLgProbChar(srcSent.c_str(),
                                          trgSent.c_str(),
                                          verbosity);  
-       cout<<"Single-word model logprob sum for each alignment= "<<lp<<std::endl;
+       std::cout<<"Single-word model logprob sum for each alignment= "<<lp<<std::endl;
      }
      else
      {
@@ -144,7 +144,7 @@ int main(int argc,char *argv[])
        lp=swAligModelPtr->obtainBestAlignmentChar(srcSent.c_str(),
                                                   trgSent.c_str(),
                                                   waMatrix);  
-       cout<<"Single-word model logprob for the best alignment= "<<lp<<std::endl;
+       std::cout<<"Single-word model logprob for the best alignment= "<<lp<<std::endl;
      }
    }
   }
@@ -292,7 +292,7 @@ int processPairAligFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
                                       waMatrix,
                                       verbosity);
    
-   cout<<awk.dollar(0)<<" ||| "<<lp<<std::endl;
+   std::cout<<awk.dollar(0)<<" ||| "<<lp<<std::endl;
  }   
  return THOT_OK;   
 }
@@ -373,7 +373,7 @@ int processSentPairFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
          // Print alignment in GIZA format
      char header[256];
      sprintf(header,"# Alignment probability= %f",(double)lp);
-     printAlignmentInGIZAFormat(cout,swAligModelPtr->addNullWordToStrVec(srcSentVec),trgSentVec,waMatrix,header);
+     printAlignmentInGIZAFormat(std::cout,swAligModelPtr->addNullWordToStrVec(srcSentVec),trgSentVec,waMatrix,header);
    }
    else
    {
@@ -381,7 +381,7 @@ int processSentPairFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
      lp=swAligModelPtr->calcLgProbVecStr(srcSentVec,
                                          trgSentVec,
                                          verbosity);
-     cout<<awk.dollar(0)<<" ||| "<<lp<<std::endl;
+     std::cout<<awk.dollar(0)<<" ||| "<<lp<<std::endl;
    }
  }
  

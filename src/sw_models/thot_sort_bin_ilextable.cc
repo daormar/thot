@@ -103,7 +103,7 @@ int main(int argc,char *argv[])
   if(TakeParameters(argc,argv)==THOT_OK)
   {
         // Try to open file  
-    ifstream inF (ilextableFileName.c_str(), ios::in | ios::binary);
+    std::ifstream inF (ilextableFileName.c_str(), std::ios::in | std::ios::binary);
     if (!inF)
     {
       std::cerr<<"Error in file with incremental lexical table, file "<<ilextableFileName<<" does not exist.\n";
@@ -142,10 +142,10 @@ int main(int argc,char *argv[])
       for(unsigned int i=0;i<entryVec.size();++i)
       {
 //        printf("%d %d %g %g\n",entryVec[i].s,entryVec[i].t,entryVec[i].numer,entryVec[i].denom);
-        cout.write((char*)&entryVec[i].s,sizeof(WordIndex));
-        cout.write((char*)&entryVec[i].t,sizeof(WordIndex));
-        cout.write((char*)&entryVec[i].numer,sizeof(float));
-        cout.write((char*)&entryVec[i].denom,sizeof(float));
+        std::cout.write((char*)&entryVec[i].s,sizeof(WordIndex));
+        std::cout.write((char*)&entryVec[i].t,sizeof(WordIndex));
+        std::cout.write((char*)&entryVec[i].numer,sizeof(float));
+        std::cout.write((char*)&entryVec[i].denom,sizeof(float));
       }
       
       return THOT_OK;

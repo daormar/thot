@@ -38,7 +38,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Classes ---------------------------------------------
 
 //-------------------------
-ostream& operator << (ostream &outS,const aSource &aSrc)
+std::ostream& operator << (std::ostream &outS,const aSource &aSrc)
 {
  outS<<aSrc.j<<" "<<aSrc.slen<<" "<<aSrc.tlen;	 
     

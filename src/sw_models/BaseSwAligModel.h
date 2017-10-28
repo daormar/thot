@@ -79,11 +79,11 @@ class BaseSwAligModel
 	virtual bool readSentencePairs(const char *srcFileName,
                                    const char *trgFileName,
                                    const char *sentCountsFile,
-                                   pair<unsigned int,unsigned int>& sentRange)=0;
+                                   std::pair<unsigned int,unsigned int>& sentRange)=0;
     virtual void addSentPair(std::vector<std::string> srcSentStr,
                              std::vector<std::string> trgSentStr,
                              Count c,
-                             pair<unsigned int,unsigned int>& sentRange)=0;
+                             std::pair<unsigned int,unsigned int>& sentRange)=0;
     virtual unsigned int numSentPairs(void)=0;
         // NOTE: the whole valid range in a given moment is
         // [ 0 , numSentPairs() )
@@ -98,16 +98,16 @@ class BaseSwAligModel
                                 const char *sentCountsFile)=0;
 
     // Functions to train model
-    virtual void trainSentPairRange(pair<unsigned int,unsigned int> sentPairRange,
+    virtual void trainSentPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                     int verbosity=0);
         // train model for range [uint,uint]
     virtual void trainAllSents(int verbosity=0);
-    virtual pair<double,double> loglikelihoodForPairRange(pair<unsigned int,unsigned int> sentPairRange,
+    virtual std::pair<double,double> loglikelihoodForPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                                           int verbosity=0);
         // Returns log-likelihood. The first double contains the
         // loglikelihood for all sentences, and the second one, the same
         // loglikelihood normalized by the number of sentences
-    virtual pair<double,double> loglikelihoodForAllSents(int verbosity=0);
+    virtual std::pair<double,double> loglikelihoodForAllSents(int verbosity=0);
         // Returns log-likelihood. The first double contains the
         // loglikelihood for all sentences, and the second one, the same
         // loglikelihood normalized by the number of sentences
@@ -263,7 +263,7 @@ BaseSwAligModel<PPINFO>::BaseSwAligModel(void)
 
 //-------------------------
 template<class PPINFO>
-void BaseSwAligModel<PPINFO>::trainSentPairRange(pair<unsigned int,unsigned int> /*sentPairRange*/,
+void BaseSwAligModel<PPINFO>::trainSentPairRange(std::pair<unsigned int,unsigned int> /*sentPairRange*/,
                                                  int /*verbosity*/)
 {
   std::cerr<<"Warning: training for sentence pair range not implemented!"<<std::endl;
@@ -285,18 +285,18 @@ void BaseSwAligModel<PPINFO>::clearInfoAboutSentRange(void)
 
 //-------------------------
 template<class PPINFO>
-pair<double,double> BaseSwAligModel<PPINFO>::loglikelihoodForPairRange(pair<unsigned int,unsigned int> /*sentPairRange*/,
+std::pair<double,double> BaseSwAligModel<PPINFO>::loglikelihoodForPairRange(std::pair<unsigned int,unsigned int> /*sentPairRange*/,
                                                                        int /*verbosity*//*=0*/)
 {
   std::cerr<<"Warning: loglikelihoodForAllSents() functionality not implemented!"<<std::endl;
-  return make_pair(0.0,0.0);  
+  return std::make_pair(0.0,0.0);  
 }
 
 //-------------------------
 template<class PPINFO>
-pair<double,double> BaseSwAligModel<PPINFO>::loglikelihoodForAllSents(int verbosity/*=0*/)
+std::pair<double,double> BaseSwAligModel<PPINFO>::loglikelihoodForAllSents(int verbosity/*=0*/)
 {
-  pair<unsigned int,unsigned int> sentPairRange=make_pair(0,numSentPairs()-1);
+  std::pair<unsigned int,unsigned int> sentPairRange=std::make_pair(0,numSentPairs()-1);
   return loglikelihoodForPairRange(sentPairRange,verbosity);
 }
 
@@ -420,9 +420,9 @@ bool BaseSwAligModel<PPINFO>::obtainBestAlignments(const char *sourceTestFileNam
  awkInputStream srcTest,trgTest;
  std::vector<PositionIndex> bestAlig;
  LgProb bestLgProb;
- ofstream outF;
+ std::ofstream outF;
 
- outF.open(outFileName,ios::out);
+ outF.open(outFileName,std::ios::out);
  if(!outF)
  {
    std::cerr<<"Error while opening output file."<<std::endl;

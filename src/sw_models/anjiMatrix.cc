@@ -182,7 +182,7 @@ bool anjiMatrix::load_anji_values(const char* anjiFile)
   std::cerr<<"Loading file with anji values from "<<anjiFile<<std::endl;
 
       // Try to open file  
-  ifstream inF (anjiFile, ios::in | ios::binary);
+  std::ifstream inF (anjiFile, std::ios::in | std::ios::binary);
   if (!inF)
   {
     std::cerr<<"File with anji values "<<anjiFile<<" does not exist.\n";
@@ -238,8 +238,8 @@ bool anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
         unsigned int np=atoi(awk.dollar(1).c_str());
         unsigned int n=atoi(awk.dollar(2).c_str());
         
-        update_np_to_n_vector(np,make_pair(true,n));
-        update_n_to_np_vector(n,make_pair(true,np));
+        update_np_to_n_vector(np,std::make_pair(true,n));
+        update_n_to_np_vector(n,std::make_pair(true,np));
       }
     }
   }
@@ -269,8 +269,8 @@ bool anjiMatrix::print(const char* prefFileName)
 //-------------------------
 bool anjiMatrix::print_anji_values(const char* anjiFile)
 {
-  ofstream outF;
-  outF.open(anjiFile,ios::out|ios::binary);
+  std::ofstream outF;
+  outF.open(anjiFile,std::ios::out|std::ios::binary);
   if(!outF)
   {
     std::cerr<<"Error while printing anji file."<<std::endl;
@@ -299,8 +299,8 @@ bool anjiMatrix::print_anji_values(const char* anjiFile)
 //-------------------------   
 bool anjiMatrix::print_maxnsize_data(const char* maxnsizeDataFile)
 {
-  ofstream outF;
-  outF.open(maxnsizeDataFile,ios::out);
+  std::ofstream outF;
+  outF.open(maxnsizeDataFile,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing file with anji maximum size data."<<std::endl;
@@ -453,7 +453,7 @@ bool anjiMatrix::n_is_mapped_in_matrix(unsigned int n,
   else
   {
         // Size of anji is restricted
-    pair<bool,unsigned int> pbui=read_n_to_np_vector(n);
+    std::pair<bool,unsigned int> pbui=read_n_to_np_vector(n);
     np=pbui.second;
     return pbui.first;
   }
@@ -482,66 +482,66 @@ void anjiMatrix::map_n_in_matrix(unsigned int n,
         anji_pointer=0;
 
           // Update info for old index
-      pair<bool,unsigned int> pbui=read_np_to_n_vector(np);
+      std::pair<bool,unsigned int> pbui=read_np_to_n_vector(np);
       if(pbui.first)
       {
             // np'th entry of anji was in use
 
             // Update old n to np correspondence
-        update_n_to_np_vector(pbui.second,make_pair(false,0));
+        update_n_to_np_vector(pbui.second,std::make_pair(false,0));
             // Clear anji entry for old index
         anji[np].clear();
       }
       
           // Update np to n mapping
-      update_np_to_n_vector(np,make_pair(true,n));
+      update_np_to_n_vector(np,std::make_pair(true,n));
       
           // Update n to np mapping
-      update_n_to_np_vector(n,make_pair(true,np));
+      update_n_to_np_vector(n,std::make_pair(true,np));
     }
   }
 }
 
 //-------------------------
-pair<bool,unsigned int> anjiMatrix::read_np_to_n_vector(unsigned int np)
+std::pair<bool,unsigned int> anjiMatrix::read_np_to_n_vector(unsigned int np)
 {
   if(np<np_to_n_vector.size())
   {
     return np_to_n_vector[np];
   }
-  else return make_pair(false,0);
+  else return std::make_pair(false,0);
 }
 
 //-------------------------
-pair<bool,unsigned int> anjiMatrix::read_n_to_np_vector(unsigned int n)
+std::pair<bool,unsigned int> anjiMatrix::read_n_to_np_vector(unsigned int n)
 {
   if(n<n_to_np_vector.size())
   {
     return n_to_np_vector[n];
   }
-  else return make_pair(false,0);  
+  else return std::make_pair(false,0);  
 }
 
 //-------------------------
 void anjiMatrix::update_np_to_n_vector(unsigned int np,
-                                       pair<bool,unsigned int> pbui)
+                                       std::pair<bool,unsigned int> pbui)
 {
       // grow np_to_n_vector
   while(np>=np_to_n_vector.size())
   {
-    np_to_n_vector.push_back(make_pair(false,0));
+    np_to_n_vector.push_back(std::make_pair(false,0));
   }
   np_to_n_vector[np]=pbui;
 }
 
 //-------------------------
 void anjiMatrix::update_n_to_np_vector(unsigned int n,
-                                       pair<bool,unsigned int> pbui)
+                                       std::pair<bool,unsigned int> pbui)
 {
       // grow n_to_np_vector
   while(n>=n_to_np_vector.size())
   {
-    n_to_np_vector.push_back(make_pair(false,0));
+    n_to_np_vector.push_back(std::make_pair(false,0));
   }
   n_to_np_vector[n]=pbui;
 }

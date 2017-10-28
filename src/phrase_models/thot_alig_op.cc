@@ -106,9 +106,9 @@ int main(int argc,char *argv[])
        }
 
 #      ifdef _GLIBCXX_USE_LFS
-       ofstream outF;
+       std::ofstream outF;
        sprintf(outputFileName,"%s.A3.final",outputFilesPrefix); 
-       outF.open(outputFileName,ios::out);
+       outF.open(outputFileName,std::ios::out);
 #      else
        FILE *outF;
        outF=fopen(outputFileName,"w");

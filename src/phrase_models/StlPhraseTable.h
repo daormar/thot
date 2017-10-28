@@ -72,7 +72,7 @@ class StlPhraseTable: public BasePhraseTable
         typedef std::pair<PhraseInfoElementKey, int> PhraseInfoElement;
 
             // Define source-target data structure and its elements
-        typedef pair<SrcPhraseInfo::iterator, TrgPhraseInfo::iterator> SrcTrgKey;
+        typedef std::pair<SrcPhraseInfo::iterator, TrgPhraseInfo::iterator> SrcTrgKey;
 
         struct SrcTrgKeyComparator
         {

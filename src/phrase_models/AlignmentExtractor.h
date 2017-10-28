@@ -54,8 +54,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 struct aligOpDescription
 {
- string aligOperator;
- string GizaAligFile;
+  std::string aligOperator;
+  std::string GizaAligFile;
 };
 
 //--------------- Classes -----------------------------------------------
@@ -88,9 +88,9 @@ class AlignmentExtractor
 	bool getNextAlignment(void);
 
         // Functions to access alignment information
-    std::vector<string> get_ns(void);
-    std::vector<string> get_s(void);
-    std::vector<string> get_t(void);
+    std::vector<std::string> get_ns(void);
+    std::vector<std::string> get_s(void);
+    std::vector<std::string> get_t(void);
     WordAligMatrix get_wamatrix(void);
     float get_numReps(void);
 
@@ -130,8 +130,8 @@ class AlignmentExtractor
 	~AlignmentExtractor();
 	
  private:
-    std::vector<string> ns;
-    std::vector<string> t;
+    std::vector<std::string> ns;
+    std::vector<std::string> t;
     WordAligMatrix wordAligMatrix;	
     float numReps;
     unsigned int fileFormat;

@@ -116,7 +116,7 @@ unsigned int PfsmEcm::getNumWeights(void)
 }
 
 //---------------------------------------
-void PfsmEcm::printWeights(ostream &outS)
+void PfsmEcm::printWeights(std::ostream &outS)
 {
   if(ecModelPars.size()==5)
   {

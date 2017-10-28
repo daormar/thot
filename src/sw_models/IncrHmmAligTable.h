@@ -95,9 +95,9 @@ class IncrHmmAligTable
   protected:
 
        // Alignment model types
-   typedef std::vector<std::vector<pair<bool,float> > > AligNumerElem;
+   typedef std::vector<std::vector<std::pair<bool,float> > > AligNumerElem;
    typedef std::vector<AligNumerElem> AligNumer;
-   typedef std::vector<std::vector<pair<bool,float> > > AligDenom;
+   typedef std::vector<std::vector<std::pair<bool,float> > > AligDenom;
    
    AligNumer aligNumer;
    AligDenom aligDenom;

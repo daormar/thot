@@ -59,7 +59,7 @@ class NbestTableNode
  public:
   
   void insert(Score s,NODEDATA v);
-  void insert(pair<Score,NODEDATA > scoreDataPair);
+  void insert(std::pair<Score,NODEDATA > scoreDataPair);
   NODEDATA getBestElem(void);
   Score getScoreOfBestElem(void);
   void removeLastElement(void);
@@ -75,11 +75,11 @@ class NbestTableNode
   {
    protected:
 	   NbestTableNode<NODEDATA>* nttnodePtr;
-	   typename multimap<Score,NODEDATA,greaterScore >::iterator mmapIter;
+	   typename std::multimap<Score,NODEDATA,greaterScore >::iterator mmapIter;
    public:
 	   iterator(void){nttnodePtr=NULL;}
 	   iterator(NbestTableNode<NODEDATA>* nttnode,
-	            typename multimap<Score,NODEDATA,greaterScore >::iterator iter):nttnodePtr(nttnode)
+	            typename std::multimap<Score,NODEDATA,greaterScore >::iterator iter):nttnodePtr(nttnode)
        {
          mmapIter=iter;
        }  
@@ -87,7 +87,7 @@ class NbestTableNode
        bool operator++(int);  //postfix
 	   int operator==(const iterator& right); 
 	   int operator!=(const iterator& right); 
-	   typename multimap<Score,NODEDATA,greaterScore >::iterator&
+	   typename std::multimap<Score,NODEDATA,greaterScore >::iterator&
          operator->(void);
   };
  
@@ -96,7 +96,7 @@ class NbestTableNode
   iterator end(void);
    
  protected:
-  multimap<Score,NODEDATA,greaterScore > tableNodeMultiMap;
+  std::multimap<Score,NODEDATA,greaterScore > tableNodeMultiMap;
 };
 
 //--------------- Template function definitions
@@ -105,7 +105,7 @@ class NbestTableNode
 template<class NODEDATA>
 void NbestTableNode<NODEDATA>::insert(Score s,NODEDATA v)
 {
- pair<Score,NODEDATA > scoreDataPair;
+ std::pair<Score,NODEDATA > scoreDataPair;
 	
  scoreDataPair.first=s;
  scoreDataPair.second=v;	
@@ -113,7 +113,7 @@ void NbestTableNode<NODEDATA>::insert(Score s,NODEDATA v)
 }
 //--------------------------
 template<class NODEDATA>
-void NbestTableNode<NODEDATA>::insert(pair<Score,NODEDATA > scoreDataPair)
+void NbestTableNode<NODEDATA>::insert(std::pair<Score,NODEDATA > scoreDataPair)
 {
  tableNodeMultiMap.insert(scoreDataPair);	
 }
@@ -121,7 +121,7 @@ void NbestTableNode<NODEDATA>::insert(pair<Score,NODEDATA > scoreDataPair)
 template<class NODEDATA>
 NODEDATA NbestTableNode<NODEDATA>::getBestElem(void)
 {
- typename multimap<Score,NODEDATA,greaterScore >::iterator tableNodeIter;
+ typename std::multimap<Score,NODEDATA,greaterScore >::iterator tableNodeIter;
  NODEDATA n;	
 
  tableNodeIter=tableNodeMultiMap.begin();
@@ -135,7 +135,7 @@ NODEDATA NbestTableNode<NODEDATA>::getBestElem(void)
 template<class NODEDATA>
 Score NbestTableNode<NODEDATA>::getScoreOfBestElem(void)
 {
- typename multimap<Score,NODEDATA,greaterScore >::iterator tableNodeIter;
+ typename std::multimap<Score,NODEDATA,greaterScore >::iterator tableNodeIter;
  	
  tableNodeIter=tableNodeMultiMap.begin();
  if(tableNodeIter!=tableNodeMultiMap.end()) return tableNodeIter->first;
@@ -145,7 +145,7 @@ Score NbestTableNode<NODEDATA>::getScoreOfBestElem(void)
 template<class NODEDATA>
 void NbestTableNode<NODEDATA>::removeLastElement(void)
 {
- typename multimap<Score,NODEDATA,greaterScore >::iterator tableNodeIter;
+ typename std::multimap<Score,NODEDATA,greaterScore >::iterator tableNodeIter;
 	
  tableNodeIter=tableNodeMultiMap.end();
  --tableNodeIter;
@@ -156,7 +156,7 @@ void NbestTableNode<NODEDATA>::removeLastElement(void)
 template<class NODEDATA>
 void NbestTableNode<NODEDATA>::pruneGivenThreshold(Score threshold)
 {
- typename multimap<Score,NODEDATA,greaterScore >::iterator tableNodeIter;
+ typename std::multimap<Score,NODEDATA,greaterScore >::iterator tableNodeIter;
 
  if(tableNodeMultiMap.size()>0)
  {
@@ -175,9 +175,9 @@ void NbestTableNode<NODEDATA>::pruneGivenThreshold(Score threshold)
 template<class NODEDATA>
 void NbestTableNode<NODEDATA>::stableSort(void)
 {
- typename multimap<Score,NODEDATA,greaterScore >::iterator tableNodeIter;
- std::vector<pair<Score,NODEDATA> > vp;
- pair<Score,NODEDATA> p;
+ typename std::multimap<Score,NODEDATA,greaterScore >::iterator tableNodeIter;
+ std::vector<std::pair<Score,NODEDATA> > vp;
+ std::pair<Score,NODEDATA> p;
  unsigned int i;
  
  for(tableNodeIter=tableNodeMultiMap.begin();tableNodeIter!=tableNodeMultiMap.end();++tableNodeIter)
@@ -260,7 +260,7 @@ int NbestTableNode<NODEDATA>::iterator::operator!=(const iterator& right)
 }
 //--------------------------
 template<class NODEDATA>
-typename multimap<Score,NODEDATA,greaterScore >::iterator&
+typename std::multimap<Score,NODEDATA,greaterScore >::iterator&
 NbestTableNode<NODEDATA>::iterator::operator->(void)
 {
   return mmapIter;

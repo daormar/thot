@@ -55,7 +55,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- typedefs -------------------------------------------
 
-typedef pair<unsigned int,unsigned int> uint_pair;
+typedef std::pair<unsigned int,unsigned int> uint_pair;
 
 //--------------- Classes --------------------------------------------
 
@@ -356,7 +356,7 @@ LgProb _phrSwTransModel<HYPOTHESIS>::swLgProb(int idx,
                                               const std::vector<WordIndex>& t_)
 {
   PhrasePairCacheTable::iterator ppctIter;
-  ppctIter=cSwmScoreVec[idx].find(make_pair(s_,t_));
+  ppctIter=cSwmScoreVec[idx].find(std::make_pair(s_,t_));
   if(ppctIter!=cSwmScoreVec[idx].end())
   {
         // Score was previously stored in the cache table
@@ -366,7 +366,7 @@ LgProb _phrSwTransModel<HYPOTHESIS>::swLgProb(int idx,
   {
         // Score is not stored in the cache table
     LgProb lp=swModelInfoPtr->swAligModelPtrVec[idx]->calcLgProbPhr(s_,t_);
-    cSwmScoreVec[idx][make_pair(s_,t_)]=lp;
+    cSwmScoreVec[idx][std::make_pair(s_,t_)]=lp;
     return lp;
   }
 }
@@ -378,7 +378,7 @@ LgProb _phrSwTransModel<HYPOTHESIS>::invSwLgProb(int idx,
                                                  const std::vector<WordIndex>& t_)
 {
   PhrasePairCacheTable::iterator ppctIter;
-  ppctIter=cInvSwmScoreVec[idx].find(make_pair(s_,t_));
+  ppctIter=cInvSwmScoreVec[idx].find(std::make_pair(s_,t_));
   if(ppctIter!=cInvSwmScoreVec[idx].end())
   {
         // Score was previously stored in the cache table
@@ -388,7 +388,7 @@ LgProb _phrSwTransModel<HYPOTHESIS>::invSwLgProb(int idx,
   {
         // Score is not stored in the cache table
     LgProb lp=swModelInfoPtr->invSwAligModelPtrVec[idx]->calcLgProbPhr(t_,s_);
-    cInvSwmScoreVec[idx][make_pair(s_,t_)]=lp;
+    cInvSwmScoreVec[idx][std::make_pair(s_,t_)]=lp;
     return lp;
   }
 }
@@ -503,7 +503,7 @@ template<class HYPOTHESIS>
 uint_pair _phrSwTransModel<HYPOTHESIS>::obtainLengthRangeForGaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey)
 {
   unsigned int J;
-  std::vector<pair<PositionIndex,PositionIndex> > gaps;
+  std::vector<std::pair<PositionIndex,PositionIndex> > gaps;
   uint_pair result;
   
   J=this->pbtmInputVars.srcSentVec.size();
@@ -538,7 +538,7 @@ void _phrSwTransModel<HYPOTHESIS>::initLenRangeForGapsVec(int maxSrcPhraseLength
   J=this->pbtmInputVars.nsrcSentIdVec.size()-1;
   lenRangeForGaps.clear();
       // Initialize row vector    
-  for(unsigned int j=0;j<J;++j) row.push_back(make_pair(0,0));
+  for(unsigned int j=0;j<J;++j) row.push_back(std::make_pair(0,0));
       // Insert rows into lenRangeForGaps     
   for(unsigned int j=0;j<J;++j) lenRangeForGaps.push_back(row);
      

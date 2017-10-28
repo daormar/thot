@@ -56,7 +56,7 @@ struct SwModelInfo
   SwModelPars invSwModelPars;
 
       // Confidence interval for length model
-  pair<float,float> lenModelConfInterv;
+  std::pair<float,float> lenModelConfInterv;
 
       // Maximum interval size for length range
   unsigned int maxIntervalSize;  

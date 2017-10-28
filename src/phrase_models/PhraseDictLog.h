@@ -85,7 +85,7 @@ class PhraseDictLog
     NbestTableNode<PhraseTransTableNodeData>
       getTranslationsFor_s_(PhraseCountLogState pls_state);
     PhraseTableNodeLog* getTranslationsFor_t_(const std::vector<WordIndex>& t);
-    pair<bool,PhraseTableNodeLog*>
+    std::pair<bool,PhraseTableNodeLog*>
       nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t);
     void addTrgIfNotExist(const std::vector<WordIndex>& t);
     

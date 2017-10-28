@@ -53,7 +53,7 @@ void _sentLengthModel::linkSentPairInfo(BaseSentenceHandler* _sentenceHandlerPtr
 }
 
 //-------------------------
-void _sentLengthModel::trainSentPairRange(pair<unsigned int,unsigned int> sentPairRange,
+void _sentLengthModel::trainSentPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                           int /*verbosity=0*/)
 {
       // Iterate over the training samples

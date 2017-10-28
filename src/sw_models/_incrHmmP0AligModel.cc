@@ -120,8 +120,8 @@ bool _incrHmmP0AligModel::loadHmmP0(const char *hmmP0FileName)
 //-------------------------
 bool _incrHmmP0AligModel::printHmmP0(const char *hmmP0FileName)
 {
-  ofstream outF;
-  outF.open(hmmP0FileName,ios::out);
+  std::ofstream outF;
+  outF.open(hmmP0FileName,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing file with hmm p0 value."<<std::endl;

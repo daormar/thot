@@ -121,7 +121,7 @@ void release_translator_legacy_impl(void);
 void release_translator_feat_impl(void);
 void release_translator(void);
 int translate_corpus(const thot_ms_dec_pars& tdp);
-std::vector<string> stringToStringVector(string s);
+std::vector<std::string> stringToStringVector(std::string s);
 void version(void);
 int handleParameters(int argc,
                      char *argv[],
@@ -599,13 +599,13 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
   int sentNo=0;    
   double elapsed_ant,elapsed,ucpu,scpu,total_time=0;
       
-  ifstream testCorpusFile;                // Test corpus file stream
-  string srcSentenceString,s;
+  std::ifstream testCorpusFile;                // Test corpus file stream
+  std::string srcSentenceString,s;
   
     
       // Open test corpus file
   testCorpusFile.open(tdp.sourceSentencesFile.c_str());    
-  testCorpusFile.seekg(0, ios::beg);
+  testCorpusFile.seekg(0, std::ios::beg);
 
   std::cerr<<"\n- Translating test corpus sentences...\n\n";
 
@@ -617,10 +617,10 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
   else
   {
         // Open output file if required
-    ofstream outS;
+    std::ofstream outS;
     if(!tdp.outFile.empty())
     {
-      outS.open(tdp.outFile.c_str(),ios::out);
+      outS.open(tdp.outFile.c_str(),std::ios::out);
       if(!outS) std::cerr<<"Error while opening output file."<<std::endl;
     }
     
@@ -648,7 +648,7 @@ int translate_corpus(const thot_ms_dec_pars& tdp)
       if(tdp.verbosity) ctimer(&elapsed,&ucpu,&scpu);
 
       if(tdp.outFile.empty())
-        cout<<smtModelPtr->getTransInPlainText(result)<<std::endl;
+        std::cout<<smtModelPtr->getTransInPlainText(result)<<std::endl;
       else
         outS<<smtModelPtr->getTransInPlainText(result)<<std::endl;
           
@@ -944,10 +944,10 @@ void printParameters(const thot_ms_dec_pars& tdp)
 }
 
 //---------------
-std::vector<string> stringToStringVector(string s)
+std::vector<std::string> stringToStringVector(std::string s)
 {
- std::vector<string> vs;	
- string aux="";
+ std::vector<std::string> vs;	
+ std::string aux="";
  unsigned int i;	
 
  for(i=0;i<s.size();++i)

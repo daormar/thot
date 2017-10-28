@@ -102,7 +102,7 @@ class NonPbEcModelForNbUcat: public BaseEcModelForNbUcat
   
  protected:
 
-  typedef std::multimap<LgProb,PrefAlignInfo,greater<LgProb> > MonolingSegmNbest;
+  typedef std::multimap<LgProb,PrefAlignInfo,std::greater<LgProb> > MonolingSegmNbest;
 
   std::vector<std::string> outputSentVec;
   std::vector<unsigned int> sourceCuts;

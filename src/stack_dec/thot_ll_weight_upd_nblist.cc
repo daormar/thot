@@ -57,7 +57,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 struct thot_llwu_nblist_pars
 {
   std::vector<float> llWeightVec;
-  std::vector<string> includeVarStr;
+  std::vector<std::string> includeVarStr;
   std::vector<bool> includeVarBool;
   std::string fileWithNbestLists;
   std::string fileWithReferences;
@@ -80,7 +80,7 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
                                          std::vector<std::string>& nblist,
                                          std::vector<std::vector<double> >& scoreComps);
 int obtain_nblists_and_scr_comps(const thot_llwu_nblist_pars& pars,
-                                 std::vector<std::vector<string> >& nblistVec,
+                                 std::vector<std::vector<std::string> >& nblistVec,
                                  std::vector<std::vector<std::vector<double> > >& scoreCompsVec);
 int update_ll_weights(const thot_llwu_nblist_pars& pars);
 void printUsage(void);
@@ -347,7 +347,7 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
 
 //--------------------------------
 int obtain_nblists_and_scr_comps(const thot_llwu_nblist_pars& pars,
-                                 std::vector<std::vector<string> >& nblistVec,
+                                 std::vector<std::vector<std::string> >& nblistVec,
                                  std::vector<std::vector<std::vector<double> > >& scoreCompsVec)
 {
       // Clear output variables
@@ -394,7 +394,7 @@ int update_ll_weights(const thot_llwu_nblist_pars& pars)
 {
   int retVal;
   std::vector<std::string> referenceVec;
-  std::vector<std::vector<string> > nblistVec;
+  std::vector<std::vector<std::string> > nblistVec;
   std::vector<std::vector<std::vector<double> > > scoreCompsVec;
   
       // Obtain references
@@ -428,12 +428,12 @@ int update_ll_weights(const thot_llwu_nblist_pars& pars)
                                          currWeightsVec,
                                          newWeightsVec);
       // Print result
-  cout<<"Updated weights:";
+  std::cout<<"Updated weights:";
   if(pars.includeVarBool.empty())
   {
     for(unsigned int i=0;i<newWeightsVec.size();++i)
-      cout<<" "<<newWeightsVec[i];
-    cout<<std::endl;
+      std::cout<<" "<<newWeightsVec[i];
+    std::cout<<std::endl;
   }
   else
   {
@@ -444,7 +444,7 @@ int update_ll_weights(const thot_llwu_nblist_pars& pars)
       {
         if(j<newWeightsVec.size())
         {
-          cout<<" "<<newWeightsVec[j];
+          std::cout<<" "<<newWeightsVec[j];
           ++j;
         }
         else
@@ -453,9 +453,9 @@ int update_ll_weights(const thot_llwu_nblist_pars& pars)
         }
       }
       else
-        cout<<" 0";
+        std::cout<<" 0";
     }
-    cout<<std::endl;
+    std::cout<<std::endl;
   }
   
   return THOT_OK;

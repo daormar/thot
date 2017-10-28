@@ -185,7 +185,7 @@ class PhraseTableLog: public BasePhraseTable
         // Get log(c(s,t))
 
     
-    pair<bool,PhraseTableNodeLog*>
+    std::pair<bool,PhraseTableNodeLog*>
       nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t);
         // Returns true if the target phrase t has one translation or
         // more and a pointer to the corresponding translations

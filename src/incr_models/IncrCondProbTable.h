@@ -147,7 +147,7 @@ class IncrCondProbTable: public BaseIncrCondProbTable<SRCDATA,TRGDATA,SRCTRG_INF
     {
       return tmIter;
     }
-    pair<TRGDATA,TrgSrcInfoNode> operator*(void)const
+    std::pair<TRGDATA,TrgSrcInfoNode> operator*(void)const
     {
       return *tmIter;
     }

@@ -163,7 +163,7 @@ class PhraseTable: public BasePhraseTable
         // The same as the public getEntriesforTarget() function but a
         // pointer to a PhraseTableNode object is given (which is
         // provided by the nodeForTrgHasOneTransOrMore function)
-    pair<bool,PhraseTableNode*>
+    std::pair<bool,PhraseTableNode*>
       nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t);
         // Returns true if the target phrase t has one translation or
         // more and a pointer to the corresponding translations

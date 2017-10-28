@@ -60,7 +60,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  * allows to search elements with logarithmic cost.
  */
 
-template<class KEY,class DATA,class KEY_ORDER_REL=less<KEY> >
+template<class KEY,class DATA,class KEY_ORDER_REL=std::less<KEY> >
 class OrderedVector
 {
  public:
@@ -76,7 +76,7 @@ class OrderedVector
 	DATA* push(const KEY& k,const DATA &d);
     DATA* insert(const KEY& k,const DATA &d);
 	void pop(void);
-    const pair<KEY,DATA>& top(void);
+    const std::pair<KEY,DATA>& top(void);
     DATA* findPtr(const KEY& k);
     iterator find(const KEY& k);
     DATA& operator[](const KEY& k);
@@ -89,8 +89,8 @@ class OrderedVector
     {
       public:
         KEY_ORDER_REL kOrderRel;
-        bool operator() (const pair<KEY,DATA>& a,
-                         const pair<KEY,DATA>& b)
+        bool operator() (const std::pair<KEY,DATA>& a,
+                         const std::pair<KEY,DATA>& b)
         {
           return kOrderRel(a.first,b.first);
         }
@@ -99,21 +99,21 @@ class OrderedVector
     class const_iterator
     {
      protected:
-      pair<KEY,DATA>* currVecPtr;
-      pair<KEY,DATA>* endVecPtr;
+      std::pair<KEY,DATA>* currVecPtr;
+      std::pair<KEY,DATA>* endVecPtr;
 	   
      public:
       const_iterator(void){currVecPtr=NULL; endVecPtr=NULL;}
-      const_iterator(pair<KEY,DATA>* _currVecPtr,
-                     pair<KEY,DATA>* _endVecPtr):currVecPtr(_currVecPtr),endVecPtr(_endVecPtr)
+      const_iterator(std::pair<KEY,DATA>* _currVecPtr,
+                     std::pair<KEY,DATA>* _endVecPtr):currVecPtr(_currVecPtr),endVecPtr(_endVecPtr)
         {
         }  
       bool operator++(void); //prefix
       bool operator++(int);  //postfix
       int operator==(const const_iterator& right); 
       int operator!=(const const_iterator& right); 
-      const pair<const KEY,DATA>* operator->(void)const;
-      pair<KEY,DATA> operator*(void)const;
+      const std::pair<const KEY,DATA>* operator->(void)const;
+      std::pair<KEY,DATA> operator*(void)const;
     };
 
    // Constant iterator functions for the OrderedVector class
@@ -129,14 +129,14 @@ class OrderedVector
      iterator(void):const_iterator()
        {
        }
-     iterator(pair<KEY,DATA>* _currVecPtr,
-              pair<KEY,DATA>* _endVecPtr):const_iterator(_currVecPtr,_endVecPtr)
+     iterator(std::pair<KEY,DATA>* _currVecPtr,
+              std::pair<KEY,DATA>* _endVecPtr):const_iterator(_currVecPtr,_endVecPtr)
        {
        }  
      bool operator++(void); //prefix
      bool operator++(int);  //postfix
-     pair<const KEY,DATA>* operator->(void);
-     pair<KEY,DATA> operator*(void)const;
+     std::pair<const KEY,DATA>* operator->(void);
+     std::pair<KEY,DATA> operator*(void)const;
     };
 
    // Iterator functions for the OrderedVector class
@@ -145,7 +145,7 @@ class OrderedVector
 
  protected:
 
-   pair<KEY,DATA> *vec;
+   std::pair<KEY,DATA> *vec;
  
    size_t sizeVec;
 
@@ -206,6 +206,7 @@ void OrderedVector<KEY,DATA,KEY_ORDER_REL>::alloc(size_t newSize)
     {
       for(i=0;i<sizeVec;++i)
       {
+        using std::pair;
         vec[i].~pair<KEY,DATA>();
       }
       sizeVec=0;  
@@ -219,10 +220,11 @@ void OrderedVector<KEY,DATA,KEY_ORDER_REL>::alloc(size_t newSize)
         // for the objects that will be eliminated
     for(i=newSize;i<sizeVec;++i)
     {
+      using std::pair;
       vec[i].~pair<KEY,DATA>();
     }
         // Reallocate Vector memory      
-    vec=(pair<KEY,DATA>*)realloc(vec,sizeof(pair<KEY,DATA>)*newSize);	
+    vec=(std::pair<KEY,DATA>*)realloc(vec,sizeof(std::pair<KEY,DATA>)*newSize);	
     if(!vec) 
     {
       printf("Out of memory\n");
@@ -232,7 +234,7 @@ void OrderedVector<KEY,DATA,KEY_ORDER_REL>::alloc(size_t newSize)
     {// Call constructor for the new objects      
       for(i=sizeVec;i<newSize;++i)
       {
-        new(vec+i) pair<KEY,DATA>;
+        new(vec+i) std::pair<KEY,DATA>;
       }
           // Set the new capacity   
       sizeVec=newSize;
@@ -246,7 +248,7 @@ template<class KEY,class DATA,class KEY_ORDER_REL>
 DATA* OrderedVector<KEY,DATA,KEY_ORDER_REL>::push(const KEY& k,
                                                   const DATA& d)
 {
-  pair<KEY,DATA> pkd;
+  std::pair<KEY,DATA> pkd;
   bool found;
   size_t index;
   
@@ -270,9 +272,9 @@ DATA* OrderedVector<KEY,DATA,KEY_ORDER_REL>::push(const KEY& k,
     else
     {
       alloc(size()+1);
-      memmove((pair<KEY,DATA> *)&vec[index+1],(pair<KEY,DATA> *)&vec[index],(size()-index-1)*sizeof(pair<KEY,DATA>));
-      memset((pair<KEY,DATA> *)&vec[index],0,sizeof(pair<KEY,DATA>));
-      new(vec+index) pair<KEY,DATA>;
+      memmove((std::pair<KEY,DATA> *)&vec[index+1],(std::pair<KEY,DATA> *)&vec[index],(size()-index-1)*sizeof(std::pair<KEY,DATA>));
+      memset((std::pair<KEY,DATA> *)&vec[index],0,sizeof(std::pair<KEY,DATA>));
+      new(vec+index) std::pair<KEY,DATA>;
           // The vec[index] object is invalid, since it has been copied
           // to vec[index+1], create a new object in this address.
       vec[index]=pkd;
@@ -300,9 +302,9 @@ void OrderedVector<KEY,DATA,KEY_ORDER_REL>::pop(void)
 
 //-------------------------
 template<class KEY,class DATA,class KEY_ORDER_REL>
-const pair<KEY,DATA>& OrderedVector<KEY,DATA,KEY_ORDER_REL>::top(void)
+const std::pair<KEY,DATA>& OrderedVector<KEY,DATA,KEY_ORDER_REL>::top(void)
 {
-  return (const pair<KEY,DATA>&) vec[size()-1];
+  return (const std::pair<KEY,DATA>&) vec[size()-1];
 }
 
 //-------------------------
@@ -501,14 +503,14 @@ int OrderedVector<KEY,DATA,KEY_ORDER_REL>::const_iterator::operator!=(const cons
 }
 //--------------------------
 template<class KEY,class DATA,class KEY_ORDER_REL>
-const pair<const KEY,DATA>*
+const std::pair<const KEY,DATA>*
 OrderedVector<KEY,DATA,KEY_ORDER_REL>::const_iterator::operator->(void)const
 {
-  return (pair<const KEY,DATA>*) currVecPtr;
+  return (std::pair<const KEY,DATA>*) currVecPtr;
 }
 //--------------------------
 template<class KEY,class DATA,class KEY_ORDER_REL>
-pair<KEY,DATA> OrderedVector<KEY,DATA,KEY_ORDER_REL>::const_iterator::operator*(void)const
+std::pair<KEY,DATA> OrderedVector<KEY,DATA,KEY_ORDER_REL>::const_iterator::operator*(void)const
 {
  return *currVecPtr;
 }
@@ -543,14 +545,14 @@ bool OrderedVector<KEY,DATA,KEY_ORDER_REL>::iterator::operator++(int)
 }
 //--------------------------
 template<class KEY,class DATA,class KEY_ORDER_REL>
-pair<const KEY,DATA>*
+std::pair<const KEY,DATA>*
 OrderedVector<KEY,DATA,KEY_ORDER_REL>::iterator::operator->(void)
 {
-  return (pair<const KEY,DATA>*) this->currVecPtr;
+  return (std::pair<const KEY,DATA>*) this->currVecPtr;
 }
 //--------------------------
 template<class KEY,class DATA,class KEY_ORDER_REL>
-pair<KEY,DATA> OrderedVector<KEY,DATA,KEY_ORDER_REL>::iterator::operator*(void)const
+std::pair<KEY,DATA> OrderedVector<KEY,DATA,KEY_ORDER_REL>::iterator::operator*(void)const
 {
  return *this->currVecPtr;
 }

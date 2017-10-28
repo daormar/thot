@@ -100,8 +100,8 @@ void IncrLexTable::setLexDenom(WordIndex s,
                                float d)
 {
   while(lexDenom.size()<=s)
-    lexDenom.push_back(make_pair(false,0));
-  lexDenom[s]=make_pair(true,d);  
+    lexDenom.push_back(std::make_pair(false,0));
+  lexDenom[s]=std::make_pair(true,d);  
 }
 
 //-------------------------   
@@ -169,7 +169,7 @@ bool IncrLexTable::loadBin(const char* lexNumDenFile)
   std::cerr<<"Loading lexnd file in binary format from "<<lexNumDenFile<<std::endl;
 
       // Try to open file  
-  ifstream inF (lexNumDenFile, ios::in | ios::binary);
+  std::ifstream inF (lexNumDenFile, std::ios::in | std::ios::binary);
   if (!inF)
   {
     std::cerr<<"Error in lexical nd file, file "<<lexNumDenFile<<" does not exist.\n";
@@ -243,8 +243,8 @@ bool IncrLexTable::print(const char* lexNumDenFile)
 //-------------------------
 bool IncrLexTable::printBin(const char* lexNumDenFile)
 {
-  ofstream outF;
-  outF.open(lexNumDenFile,ios::out);
+  std::ofstream outF;
+  outF.open(lexNumDenFile,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing lexical nd file."<<std::endl;
@@ -273,8 +273,8 @@ bool IncrLexTable::printBin(const char* lexNumDenFile)
 //-------------------------
 bool IncrLexTable::printPlainText(const char* lexNumDenFile)
 {
-  ofstream outF;
-  outF.open(lexNumDenFile,ios::out);
+  std::ofstream outF;
+  outF.open(lexNumDenFile,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing lexical nd file."<<std::endl;

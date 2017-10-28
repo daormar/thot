@@ -82,7 +82,7 @@ class _incrHmmAligModel: public _incrSwAligModel<std::vector<Prob> >
   public:
 
    typedef _incrSwAligModel<std::vector<Prob> >::PpInfo PpInfo;
-   typedef map<WordIndex,Prob> SrcTableNode;
+   typedef std::map<WordIndex,Prob> SrcTableNode;
 
    // Constructor
    _incrHmmAligModel();
@@ -95,18 +95,18 @@ class _incrHmmAligModel: public _incrSwAligModel<std::vector<Prob> >
    unsigned int numSentPairs(void);
 
    // Functions to train model
-   void trainSentPairRange(pair<unsigned int,unsigned int> sentPairRange,
+   void trainSentPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                            int verbosity=0);
        // train model for range [uint,uint]
    void trainAllSents(int verbosity=0);
-   void efficientBatchTrainingForRange(pair<unsigned int,unsigned int> sentPairRange,
+   void efficientBatchTrainingForRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                        int verbosity=0);
-   pair<double,double> loglikelihoodForPairRange(pair<unsigned int,unsigned int> sentPairRange,
+   std::pair<double,double> loglikelihoodForPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                                  int verbosity=0);
        // Returns log-likelihood. The first double contains the
        // loglikelihood for all sentences, and the second one, the same
        // loglikelihood normalized by the number of sentences
-   pair<double,double> vitLoglikelihoodForPairRange(pair<unsigned int,unsigned int> sentPairRange,
+   std::pair<double,double> vitLoglikelihoodForPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                                     int verbosity=0);
        // The same as the previous one, but Viterbi alignments are
        // computed
@@ -224,7 +224,7 @@ class _incrHmmAligModel: public _incrSwAligModel<std::vector<Prob> >
    std::vector<std::vector<double> > cachedLexLogProbs;
        // EM algorithm auxiliary variables
 
-   typedef hash_map<pair<aSourceHmm,PositionIndex>,pair<float,float>,ashPidxPairHashF> AligAuxVar;
+   typedef hash_map<std::pair<aSourceHmm,PositionIndex>,std::pair<float,float>,ashPidxPairHashF> AligAuxVar;
    AligAuxVar aligAuxVar;
    CachedHmmAligLgProb cachedAligLogProbs;
        // EM algorithm auxiliary variables
@@ -332,9 +332,9 @@ class _incrHmmAligModel: public _incrSwAligModel<std::vector<Prob> >
                         int verbose);
 
    // EM-related functions
-   void calcNewLocalSuffStats(pair<unsigned int,unsigned int> sentPairRange,
+   void calcNewLocalSuffStats(std::pair<unsigned int,unsigned int> sentPairRange,
                               int verbosity=0);
-   void calcNewLocalSuffStatsVit(pair<unsigned int,unsigned int> sentPairRange,
+   void calcNewLocalSuffStatsVit(std::pair<unsigned int,unsigned int> sentPairRange,
                                  int verbosity=0);
    void calcAlphaMatrix(unsigned int n,
                         const std::vector<WordIndex>& nsrcSent,

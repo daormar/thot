@@ -147,16 +147,16 @@ class BdbPhraseModel: public BaseCountPhraseModel
         // Source vocabulary functions
 	size_t getSrcVocabSize(void)const;
         // Returns the source vocabulary size
-    WordIndex stringToSrcWordIndex(string s)const;
-    string wordIndexToSrcString(WordIndex w)const;
-    bool existSrcSymbol(string s)const;
-    std::vector<WordIndex> strVectorToSrcIndexVector(const std::vector<string>& s);
+    WordIndex stringToSrcWordIndex(std::string s)const;
+    std::string wordIndexToSrcString(WordIndex w)const;
+    bool existSrcSymbol(std::string s)const;
+    std::vector<WordIndex> strVectorToSrcIndexVector(const std::vector<std::string>& s);
         //converts a string vector into a source word index vector, this
         //function automatically handles the source vocabulary,
         //increasing and modifying it if necessary
-    std::vector<string> srcIndexVectorToStrVector(const std::vector<WordIndex>& s);
+    std::vector<std::string> srcIndexVectorToStrVector(const std::vector<WordIndex>& s);
         //Inverse operation
-    WordIndex addSrcSymbol(string s);
+    WordIndex addSrcSymbol(std::string s);
     bool loadSrcVocab(const char *srcInputVocabFileName);
         // loads source vocabulary, returns non-zero if error
     bool printSrcVocab(const char *outputFileName);
@@ -164,22 +164,22 @@ class BdbPhraseModel: public BaseCountPhraseModel
         // Target vocabulary functions
     size_t getTrgVocabSize(void)const;
         // Returns the target vocabulary size
-    WordIndex stringToTrgWordIndex(string t)const;
-    string wordIndexToTrgString(WordIndex w)const;
-    bool existTrgSymbol(string t)const;
-    std::vector<WordIndex> strVectorToTrgIndexVector(const std::vector<string>& t);
+    WordIndex stringToTrgWordIndex(std::string t)const;
+    std::string wordIndexToTrgString(WordIndex w)const;
+    bool existTrgSymbol(std::string t)const;
+    std::vector<WordIndex> strVectorToTrgIndexVector(const std::vector<std::string>& t);
         //converts a string vector into a target word index vector, this
         //function automatically handles the target vocabulary,
         //increasing and modifying it if necessary
-    std::vector<string> trgIndexVectorToStrVector(const std::vector<WordIndex>& t);
+    std::vector<std::string> trgIndexVectorToStrVector(const std::vector<WordIndex>& t);
         //Inverse operation
-    WordIndex addTrgSymbol(string t);
+    WordIndex addTrgSymbol(std::string t);
     bool loadTrgVocab(const char *trgInputVocabFileName);
         // loads target vocabulary, returns non-zero if error
     bool printTrgVocab(const char *outputFileName);
 	
-	std::vector<string> stringToStringVector(string s);
-	std::vector<string> extractCharItemsToVector(char *ch)const;
+	std::vector<std::string> stringToStringVector(std::string s);
+	std::vector<std::string> extractCharItemsToVector(char *ch)const;
         // Extracts the words in the string 'ch' with the form "w1
         // ... wn" to a string Vector
 

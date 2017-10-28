@@ -60,7 +60,7 @@ int main(int argc,char *argv[])
   if(TakeParameters(argc,argv)==THOT_OK)
   {
         // Try to open file  
-    ifstream inF (lexTableFileName.c_str(), ios::in | ios::binary);
+    std::ifstream inF (lexTableFileName.c_str(), std::ios::in | std::ios::binary);
     if (!inF)
     {
       std::cerr<<"Error in file with incremental lexical table, file "<<lexTableFileName<<" does not exist.\n";
@@ -84,8 +84,8 @@ int main(int argc,char *argv[])
           inF.read((char*)&denom,sizeof(float));
 
 //                     printf("%d %d\n",s,t);
-          cout.write((char*)&s,sizeof(WordIndex));
-          cout.write((char*)&t,sizeof(WordIndex));
+          std::cout.write((char*)&s,sizeof(WordIndex));
+          std::cout.write((char*)&t,sizeof(WordIndex));
         }
         else end=true;
       }

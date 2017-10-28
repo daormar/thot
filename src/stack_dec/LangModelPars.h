@@ -23,7 +23,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 struct LangModelPars
 {
-  string languageModelFileName;
+  std::string languageModelFileName;
   float wpScaleFactor;
   float lmScaleFactor;
 

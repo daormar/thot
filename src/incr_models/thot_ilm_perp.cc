@@ -73,7 +73,7 @@ int main(int argc,char *argv[])
 {
   LgProb total_logp=0;	
   std::string s;
-  vector<string> v;	
+  std::vector<std::string> v;	
   unsigned int sentenceNo=0,numWords=0;
   double perp;
   double total_time=0,elapsed_ant,elapsed,ucpu,scpu;
@@ -114,12 +114,12 @@ int main(int argc,char *argv[])
       total_time+=elapsed-elapsed_ant;
 
           // Print results
-      cout<<"* Number of sentences: "<<sentenceNo<<std::endl;
-      cout<<"* Number of words: "<<numWords<<std::endl;	  
-      cout<<"* Total log10 prob: "<<total_logp<<std::endl;
-      cout<<"* Average-Log10-Likelihood (total_log10_prob/num_ngrams): "<<(float)total_logp/(numWords+sentenceNo)<<std::endl;
-      cout<<"* Perplexity: "<<perp<<std::endl;
-      cout<<"* Retrieving time: "<<total_time<<std::endl; 	   
+      std::cout<<"* Number of sentences: "<<sentenceNo<<std::endl;
+      std::cout<<"* Number of words: "<<numWords<<std::endl;	  
+      std::cout<<"* Total log10 prob: "<<total_logp<<std::endl;
+      std::cout<<"* Average-Log10-Likelihood (total_log10_prob/num_ngrams): "<<(float)total_logp/(numWords+sentenceNo)<<std::endl;
+      std::cout<<"* Perplexity: "<<perp<<std::endl;
+      std::cout<<"* Retrieving time: "<<total_time<<std::endl; 	   
 
       delete lm;
    

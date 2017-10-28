@@ -53,7 +53,7 @@ int extractEntryInfo(awkInputStream& awk,
                      std::vector<WordIndex>& src,
                      WordIndex& trg,
                      LogCount& logJointCount,
-                     map<string, WordIndex>& vocab);
+                     std::map<std::string, WordIndex>& vocab);
 int process_ttable(void);
 
 //--------------- Type definitions -----------------------------------
@@ -75,14 +75,14 @@ int main(int argc, char *argv[])
 }
 
 //---------------
-void saveVocabulary(map<string, WordIndex>& vocab)
+void saveVocabulary(std::map<std::string, WordIndex>& vocab)
 {
     // Save vocabulary
     std::ofstream vocabFile;
     std::string vocabFileName = outputFile + ".ldb_vcb";
     vocabFile.open(vocabFileName.c_str());
 
-    for (map<string, WordIndex>::iterator it = vocab.begin(); it != vocab.end(); it++)
+    for (std::map<std::string, WordIndex>::iterator it = vocab.begin(); it != vocab.end(); it++)
     {
         vocabFile << it->first << " " << it->second << std::endl;
     }
@@ -91,9 +91,9 @@ void saveVocabulary(map<string, WordIndex>& vocab)
 }
 
 //---------------
-WordIndex getSymbolId(map<string, WordIndex> &vocab, string symbol)
+WordIndex getSymbolId(std::map<std::string, WordIndex> &vocab, std::string symbol)
 {
-    map<string, WordIndex>::iterator it = vocab.find(symbol);
+    std::map<std::string, WordIndex>::iterator it = vocab.find(symbol);
 
     WordIndex wi = -1;
 
@@ -112,7 +112,7 @@ int extractEntryInfo(awkInputStream& awk,
                      std::vector<WordIndex>& src,
                      WordIndex& trg,
                      im_pair<Count, Count>& inf,
-                     map<string, WordIndex>& vocab)
+                     std::map<std::string, WordIndex>& vocab)
 {
     if (awk.NF < 3)
         return THOT_ERROR;
@@ -149,7 +149,7 @@ int process_ttable(void)
     {
         LevelDbNgramTable levelDbNt;
         int ret;
-        map<string, WordIndex> vocab;
+        std::map<std::string, WordIndex> vocab;
 
         if(levelDbNt.init(outputFile) == THOT_ERROR)
         {

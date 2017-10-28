@@ -22,7 +22,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "Count.h"
 #include <utility>
 
-typedef pair<Count,Count> PhrasePairInfo;
+typedef std::pair<Count,Count> PhrasePairInfo;
 // PhrasePairInfo stores two counts:
 // first: count of the source phrase
 // second: count of the source and target phrases

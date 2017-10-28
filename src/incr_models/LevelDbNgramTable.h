@@ -66,17 +66,17 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<std::vector<WordIndex>, Wo
 {
         leveldb::DB* db;
         leveldb::Options options;
-        string dbName;
-        string dbNullKey;
+        std::string dbName;
+        std::string dbNullKey;
 
             // Converters
-        string vectorToString(const std::vector<WordIndex>& vec)const;
-        std::vector<WordIndex> stringToVector(const string s)const;
+        std::string vectorToString(const std::vector<WordIndex>& vec)const;
+        std::vector<WordIndex> stringToVector(const std::string s)const;
         
             // Read and write data
-        bool retrieveData(const string key, float &count)const;
+        bool retrieveData(const std::string key, float &count)const;
         bool retrieveData(const std::vector<WordIndex>& phrase, float &count)const;
-        bool storeData(const string key, float count);
+        bool storeData(const std::string key, float count);
         bool storeData(const std::vector<WordIndex>& phrase, float count);
 
             // Returns information related to a given key.
@@ -92,16 +92,16 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<std::vector<WordIndex>, Wo
         LevelDbNgramTable(void);
 
             // Key converter and getter
-        string vectorToKey(const std::vector<WordIndex>& vec)const;
-        std::vector<WordIndex> keyToVector(const string key)const;
+        std::string vectorToKey(const std::vector<WordIndex>& vec)const;
+        std::vector<WordIndex> keyToVector(const std::string key)const;
 
           // Wrapper for initializing levelDB
-        bool init(string levelDbPath);
+        bool init(std::string levelDbPath);
             // Wrapper for removing levelDB
         bool drop();
             // Wrapper for loading existing levelDB
         bool load(const char *fileName);
-        //bool load(string fileName);
+        //bool load(std::string fileName);
 
           // Basic functions
           // TODO Ordering by n-gram value
@@ -153,7 +153,7 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<std::vector<WordIndex>, Wo
             protected:
                 const LevelDbNgramTable* ptPtr;
                 leveldb::Iterator* internalIter;
-                pair<std::vector<WordIndex>, Count> dataItem;
+                std::pair<std::vector<WordIndex>, Count> dataItem;
               
             public:
                 const_iterator(void)
@@ -170,8 +170,8 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<std::vector<WordIndex>, Wo
                 bool operator++(int);  //postfix
                 int operator==(const const_iterator& right); 
                 int operator!=(const const_iterator& right);
-                pair<std::vector<WordIndex>, Count> operator*(void);
-                const pair<std::vector<WordIndex>, Count>* operator->(void);
+                std::pair<std::vector<WordIndex>, Count> operator*(void);
+                const std::pair<std::vector<WordIndex>, Count>* operator->(void);
 
                 ~const_iterator()
                 {
@@ -188,7 +188,7 @@ class LevelDbNgramTable: public BaseIncrCondProbTable<std::vector<WordIndex>, Wo
         Count srcInfoNull;
 
         // Key and getter for nullInfo
-        string getDbNullKey(void)const;
+        std::string getDbNullKey(void)const;
         std::vector<WordIndex> getVectorDbNullKey(void)const;
 
 };

@@ -123,10 +123,10 @@ class anjiMatrix
    std::vector<std::vector<std::vector<float> > > anji;
        // Use simple precission floating-point numbers for expected
        // values
-   std::vector<pair<bool,unsigned int> > np_to_n_vector;
+   std::vector<std::pair<bool,unsigned int> > np_to_n_vector;
        // For each index of anji stores if it is already used and the
        // real index of the sample
-   std::vector<pair<bool,unsigned int> > n_to_np_vector;
+   std::vector<std::pair<bool,unsigned int> > n_to_np_vector;
        // For each sample n stores if it is mapped in anji, and its
        // corresponding index
        
@@ -140,12 +140,12 @@ class anjiMatrix
                         unsigned int &np);
        // Return index for n in anji, the index is created if it does
        // not exist
-   pair<bool,unsigned int> read_np_to_n_vector(unsigned int np);
-   pair<bool,unsigned int> read_n_to_np_vector(unsigned int n);
+   std::pair<bool,unsigned int> read_np_to_n_vector(unsigned int np);
+   std::pair<bool,unsigned int> read_n_to_np_vector(unsigned int n);
    void update_np_to_n_vector(unsigned int np,
-                              pair<bool,unsigned int> pbui);
+                              std::pair<bool,unsigned int> pbui);
    void update_n_to_np_vector(unsigned int n,
-                              pair<bool,unsigned int> pbui);
+                              std::pair<bool,unsigned int> pbui);
 
        // Functions to load and print anji matrices
    bool load_anji_values(const char* anjiFile);   

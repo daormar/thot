@@ -205,7 +205,7 @@ bool _stackDecoderRec<SMT_MODEL>::printWordGraph(const char* filename)
   {
         // Set weights of the components in the wordgraph (this may be
         // misplaced)
-    std::vector<pair<std::string,float> > compWeights;
+    std::vector<std::pair<std::string,float> > compWeights;
     this->smtm_ptr->getWeights(compWeights);
     wordGraphPtr->setCompWeights(compWeights);
   }
@@ -348,9 +348,9 @@ HypStateIndex _stackDecoderRec<SMT_MODEL>::getHypStateIndex(const Hypothesis& hy
 template<class SMT_MODEL> 
 bool _stackDecoderRec<SMT_MODEL>::printHypStateIdxInfo(const char* filename)
 {
-  ofstream outS;
+  std::ofstream outS;
 
-  outS.open(filename,ios::out);
+  outS.open(filename,std::ios::out);
   if(!outS)
   {
     std::cerr<<"Error while printing hypothesis state info file."<<std::endl;

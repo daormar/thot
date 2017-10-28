@@ -70,11 +70,11 @@ class _swAligModel: public BaseSwAligModel<PPINFO>
 	bool readSentencePairs(const char *srcFileName,
                            const char *trgFileName,
                            const char *sentCountsFile,
-                           pair<unsigned int,unsigned int>& sentRange);
+                           std::pair<unsigned int,unsigned int>& sentRange);
     void addSentPair(std::vector<std::string> srcSentStr,
                      std::vector<std::string> trgSentStr,
                      Count c,
-                     pair<unsigned int,unsigned int>& sentRange);
+                     std::pair<unsigned int,unsigned int>& sentRange);
     unsigned int numSentPairs(void);
         // NOTE: the whole valid range in a given moment is
         // [ 0 , numSentPairs() )
@@ -141,7 +141,7 @@ template<class PPINFO>
 bool _swAligModel<PPINFO>::readSentencePairs(const char *srcFileName,
                                              const char *trgFileName,
                                              const char *sentCountsFile,
-                                             pair<unsigned int,unsigned int>& sentRange)
+                                             std::pair<unsigned int,unsigned int>& sentRange)
 {
   return sentenceHandler.readSentencePairs(srcFileName,trgFileName,sentCountsFile,sentRange);
 }
@@ -151,7 +151,7 @@ template<class PPINFO>
 void _swAligModel<PPINFO>::addSentPair(std::vector<std::string> srcSentStr,
                                        std::vector<std::string> trgSentStr,
                                        Count c,
-                                       pair<unsigned int,unsigned int>& sentRange)
+                                       std::pair<unsigned int,unsigned int>& sentRange)
 {
   sentenceHandler.addSentPair(srcSentStr,trgSentStr,c,sentRange);
 }

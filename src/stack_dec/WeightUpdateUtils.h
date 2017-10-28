@@ -65,7 +65,7 @@ namespace WeightUpdateUtils
   void updateLogLinearWeights(std::string refSent,
                               WordGraph* wgPtr,
                               BaseLogLinWeightUpdater* llWeightUpdaterPtr,
-                              const std::vector<pair<std::string,float> >& compWeights,
+                              const std::vector<std::pair<std::string,float> >& compWeights,
                               std::vector<float>& newWeights,
                               int verbose=0);
   int updatePmLinInterpWeights(std::string srcCorpusFileName,

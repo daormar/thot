@@ -23,7 +23,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "NbestTransTable.h"
 #include "PhraseTransTableNodeData.h"
 
-typedef NbestTransTable<pair<PositionIndex,PositionIndex>,PhraseTransTableNodeData> PhrNbestTransTable;
+typedef NbestTransTable<std::pair<PositionIndex,PositionIndex>,PhraseTransTableNodeData> PhrNbestTransTable;
 
 
 #endif

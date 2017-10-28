@@ -71,7 +71,7 @@ std::string phrase;
 void process_phrase(BasePhraseModel* pbModelPtr,
                     std::vector<std::string> phraseVec);
 void print_trans_for_phrase(BasePhraseModel* pbModelPtr,
-                            std::vector<string> phraseVec);
+                            std::vector<std::string> phraseVec);
 int p_option(BasePhraseModel* pbModelPtr);
 int q_option(BasePhraseModel* pbModelPtr);
 int f_option(BasePhraseModel* pbModelPtr);
@@ -150,15 +150,15 @@ void process_phrase(BasePhraseModel* pbModelPtr,
   {
     for(unsigned int j=i;j<phraseVec.size();++j)
     {
-      std::vector<string> subPhraseVec;
-      cout<<"* Translations for: \"";
+      std::vector<std::string> subPhraseVec;
+      std::cout<<"* Translations for: \"";
       for(unsigned int k=i;k<=j;++k)
       {
         subPhraseVec.push_back(phraseVec[k]);
-        if(k!=i) cout<<" ";
-        cout<<phraseVec[k];
+        if(k!=i) std::cout<<" ";
+        std::cout<<phraseVec[k];
       }
-      cout<<"\""<<std::endl;
+      std::cout<<"\""<<std::endl;
       
       print_trans_for_phrase(pbModelPtr,subPhraseVec);
     }
@@ -167,7 +167,7 @@ void process_phrase(BasePhraseModel* pbModelPtr,
 
 //---------------
 void print_trans_for_phrase(BasePhraseModel* pbModelPtr,
-                            std::vector<string> phraseVec)
+                            std::vector<std::string> phraseVec)
 {
   NbestTableNode<PhraseTransTableNodeData> ttableNode;
   NbestTableNode<PhraseTransTableNodeData>::iterator ttableNodeIter;
@@ -181,8 +181,8 @@ void print_trans_for_phrase(BasePhraseModel* pbModelPtr,
     for(ttableNodeIter=ttableNode.begin();ttableNodeIter!=ttableNode.end();++ttableNodeIter)	 
     {
       for(vecWordIndexIter=ttableNodeIter->second.begin();vecWordIndexIter!=ttableNodeIter->second.end();++vecWordIndexIter)
-        cout<<pbModelPtr->wordIndexToSrcString(*vecWordIndexIter)<<" ";  	 
-      cout<<"||| "<< (float) ttableNodeIter->first<<std::endl;
+        std::cout<<pbModelPtr->wordIndexToSrcString(*vecWordIndexIter)<<" ";  	 
+      std::cout<<"||| "<< (float) ttableNodeIter->first<<std::endl;
     }
   }
   else
@@ -193,8 +193,8 @@ void print_trans_for_phrase(BasePhraseModel* pbModelPtr,
     for(ttableNodeIter=ttableNode.begin();ttableNodeIter!=ttableNode.end();++ttableNodeIter)	 
     {
       for(vecWordIndexIter=ttableNodeIter->second.begin();vecWordIndexIter!=ttableNodeIter->second.end();++vecWordIndexIter)
-        cout<<pbModelPtr->wordIndexToTrgString(*vecWordIndexIter)<<" ";  	 
-      cout<<"||| "<< (float) ttableNodeIter->first<<std::endl;
+        std::cout<<pbModelPtr->wordIndexToTrgString(*vecWordIndexIter)<<" ";  	 
+      std::cout<<"||| "<< (float) ttableNodeIter->first<<std::endl;
     }
   }
 }
@@ -257,7 +257,7 @@ int q_option(BasePhraseModel* pbModelPtr)
         for(unsigned int i=1;i<=awk.NF;++i)
           wordVec.push_back(awk.dollar(i)); 
 
-        cout<<"***** Processing line "<<awk.FNR<<std::endl;
+        std::cout<<"***** Processing line "<<awk.FNR<<std::endl;
         
             // Generate all subphrases and obtain translation options for
             // each of them
@@ -319,7 +319,7 @@ int f_option(BasePhraseModel* pbModelPtr)
         {
           lp=pbModelPtr->strLogpt_s_(srcWordVec,trgWordVec);     
         }
-        cout<<awk.dollar(0)<<" ||| "<<lp<<std::endl;
+        std::cout<<awk.dollar(0)<<" ||| "<<lp<<std::endl;
         std::cerr<<awk.dollar(0)<<" ||| "<<lp.get_p()<<std::endl;
       }
     } 

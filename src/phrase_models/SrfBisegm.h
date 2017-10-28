@@ -37,7 +37,7 @@ class SrfBisegm
   public:
 
    std::vector<PositionIndex> srcCuts;
-   std::vector<pair<PositionIndex,PositionIndex> > trgCuts;
+   std::vector<std::pair<PositionIndex,PositionIndex> > trgCuts;
 };
 
 #endif

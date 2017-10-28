@@ -66,7 +66,7 @@ void _wbaIncrPhraseModel::extendModelFromAlignments(PhraseExtractParameters pheP
                                                     AlignmentExtractor &outAlignments,
                                                     int verbose/*=0*/)
 {
- std::vector<string> ns,t;
+ std::vector<std::string> ns,t;
  WordAligMatrix waMatrix;	
  float numReps;
     
@@ -88,8 +88,8 @@ void _wbaIncrPhraseModel::extendModelFromAlignments(PhraseExtractParameters pheP
 //-------------------------
 void _wbaIncrPhraseModel::extModelFromPairAligVec(PhraseExtractParameters phePars,
                                                   bool BRF,
-                                                  std::vector<std::vector<string> > sVec,
-                                                  std::vector<std::vector<string> > tVec,
+                                                  std::vector<std::vector<std::string> > sVec,
+                                                  std::vector<std::vector<std::string> > tVec,
                                                   std::vector<WordAligMatrix> waMatrixVec,
                                                   float numReps,
                                                   int verbose/*=0*/)
@@ -108,8 +108,8 @@ void _wbaIncrPhraseModel::extModelFromPairAligVec(PhraseExtractParameters phePar
 //-------------------------
 void _wbaIncrPhraseModel::extendModelFromPairPlusAlig(PhraseExtractParameters phePars,
                                                       bool BRF,
-                                                      std::vector<string> ns,
-                                                      std::vector<string> t,
+                                                      std::vector<std::string> ns,
+                                                      std::vector<std::string> t,
                                                       WordAligMatrix waMatrix,
                                                       float numReps,
                                                       int verbose/*=0*/)
@@ -165,8 +165,8 @@ void _wbaIncrPhraseModel::extendModelFromPairPlusAlig(PhraseExtractParameters ph
 
 //-------------------------
 void _wbaIncrPhraseModel::extractPhrasesFromPairPlusAlig(PhraseExtractParameters phePars,
-                                                         std::vector<string> ns,
-                                                         std::vector<string> t,
+                                                         std::vector<std::string> ns,
+                                                         std::vector<std::string> t,
                                                          WordAligMatrix waMatrix,
                                                          std::vector<PhrasePair>& vecPhPair,
                                                          int /*verbose=0*/)
@@ -186,7 +186,7 @@ void _wbaIncrPhraseModel::storePhrasePairs(const std::vector<PhrasePair>& vecPhP
                                            float numReps,
                                            int verbose/*=0*/)
 {
- std::vector<string> t_,s_;
+ std::vector<std::string> t_,s_;
 
  for(unsigned int x=0;x<vecPhPair.size();++x)
  {
@@ -215,9 +215,9 @@ bool _wbaIncrPhraseModel::existRowOfNulls(unsigned int j1,
 }
 
 //-------------------------
-ostream& _wbaIncrPhraseModel::printPars(ostream &outS,
-                                        PhraseExtractParameters phePars,
-                                        bool BRF)
+std::ostream& _wbaIncrPhraseModel::printPars(std::ostream &outS,
+                                             PhraseExtractParameters phePars,
+                                             bool BRF)
 {
  outS<<"* Monotone mode: "<<phePars.monotone<<std::endl;
  outS<<"* Estimation mode: ";

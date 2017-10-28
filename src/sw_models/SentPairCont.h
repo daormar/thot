@@ -34,7 +34,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- typedefs -------------------------------------------
 
 typedef std::vector<WordIndex> Sentence;
-typedef std::vector<pair<Sentence,Sentence> > SentPairCont;
+typedef std::vector<std::pair<Sentence,Sentence> > SentPairCont;
 
 //---------------
 

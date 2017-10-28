@@ -87,7 +87,7 @@ int main(int argc,char *argv[])
   if(TakeParameters(argc,argv)==THOT_OK)
   {
         // Try to open file  
-    ifstream inF (ilextableFileName.c_str(), ios::in | ios::binary);
+    std::ifstream inF (ilextableFileName.c_str(), std::ios::in | std::ios::binary);
     if (!inF)
     {
       std::cerr<<"Error in file with incremental lexical table, file "<<ilextableFileName<<" does not exist.\n";
@@ -197,10 +197,10 @@ void printCounts(WordIndex firstSrc,
   for(unsigned int n=0;n<numFiltTrgWords;++n)
   {
 //    printf("%d %d %g %g %g\n",firstSrc,trgWordLogCountVec[n].trgWidx,trgWordLogCountVec[n].lcSrcTrg,newLcSrc,exp(trgWordLogCountVec[n].lcSrcTrg-newLcSrc));
-    cout.write((char*)&firstSrc,sizeof(WordIndex));
-    cout.write((char*)&trgWordLogCountVec[n].trgWidx,sizeof(WordIndex));
-    cout.write((char*)&trgWordLogCountVec[n].lcSrcTrg,sizeof(float));
-    cout.write((char*)&newLcSrc,sizeof(float));
+    std::cout.write((char*)&firstSrc,sizeof(WordIndex));
+    std::cout.write((char*)&trgWordLogCountVec[n].trgWidx,sizeof(WordIndex));
+    std::cout.write((char*)&trgWordLogCountVec[n].lcSrcTrg,sizeof(float));
+    std::cout.write((char*)&newLcSrc,sizeof(float));
   }
 }
 

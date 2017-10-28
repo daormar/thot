@@ -303,25 +303,25 @@ bool BdbPhraseModel::loadTrgVocab(const char *trgInputVocabFileName)
 }
 
 //-------------------------
-WordIndex BdbPhraseModel::stringToSrcWordIndex(string s)const
+WordIndex BdbPhraseModel::stringToSrcWordIndex(std::string s)const
 {	
  return singleWordVocab.stringToSrcWordIndex(s);
 }
 
 //-------------------------
-string BdbPhraseModel::wordIndexToSrcString(WordIndex w)const
+std::string BdbPhraseModel::wordIndexToSrcString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToSrcString(w);
 }
 
 //-------------------------
-bool BdbPhraseModel::existSrcSymbol(string s)const
+bool BdbPhraseModel::existSrcSymbol(std::string s)const
 {
  return singleWordVocab.existSrcSymbol(s);
 }
 
 //-------------------------
-std::vector<WordIndex> BdbPhraseModel::strVectorToSrcIndexVector(const std::vector<string>& s)
+std::vector<WordIndex> BdbPhraseModel::strVectorToSrcIndexVector(const std::vector<std::string>& s)
 {
   std::vector<WordIndex> swVec;
   
@@ -332,9 +332,9 @@ std::vector<WordIndex> BdbPhraseModel::strVectorToSrcIndexVector(const std::vect
 }
 
 //-------------------------
-std::vector<string> BdbPhraseModel::srcIndexVectorToStrVector(const std::vector<WordIndex>& s)
+std::vector<std::string> BdbPhraseModel::srcIndexVectorToStrVector(const std::vector<WordIndex>& s)
 {
- std::vector<string> vStr;
+ std::vector<std::string> vStr;
  unsigned int i;
 
  for(i=0;i<s.size();++i)
@@ -343,7 +343,7 @@ std::vector<string> BdbPhraseModel::srcIndexVectorToStrVector(const std::vector<
  return vStr;
 }
 //-------------------------
-WordIndex BdbPhraseModel::addSrcSymbol(string s)
+WordIndex BdbPhraseModel::addSrcSymbol(std::string s)
 {
  return singleWordVocab.addSrcSymbol(s);
 }
@@ -361,25 +361,25 @@ size_t BdbPhraseModel::getTrgVocabSize(void)const
 }
 
 //-------------------------
-WordIndex BdbPhraseModel::stringToTrgWordIndex(string t)const
+WordIndex BdbPhraseModel::stringToTrgWordIndex(std::string t)const
 {
  return singleWordVocab.stringToTrgWordIndex(t);
 }
 
 //-------------------------
-string BdbPhraseModel::wordIndexToTrgString(WordIndex w)const
+std::string BdbPhraseModel::wordIndexToTrgString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToTrgString(w);
 }
 
 //-------------------------
-bool BdbPhraseModel::existTrgSymbol(string t)const
+bool BdbPhraseModel::existTrgSymbol(std::string t)const
 {
  return singleWordVocab.existTrgSymbol(t);
 }
 
 //-------------------------
-std::vector<WordIndex> BdbPhraseModel::strVectorToTrgIndexVector(const std::vector<string>& t)
+std::vector<WordIndex> BdbPhraseModel::strVectorToTrgIndexVector(const std::vector<std::string>& t)
 {
   std::vector<WordIndex> twVec;
   
@@ -389,9 +389,9 @@ std::vector<WordIndex> BdbPhraseModel::strVectorToTrgIndexVector(const std::vect
   return twVec;
 }
 //-------------------------
-std::vector<string> BdbPhraseModel::trgIndexVectorToStrVector(const std::vector<WordIndex>& t)
+std::vector<std::string> BdbPhraseModel::trgIndexVectorToStrVector(const std::vector<WordIndex>& t)
 {
- std::vector<string> vStr;
+ std::vector<std::string> vStr;
  unsigned int i;
 
  for(i=0;i<t.size();++i)
@@ -400,7 +400,7 @@ std::vector<string> BdbPhraseModel::trgIndexVectorToStrVector(const std::vector<
  return vStr;
 }
 //-------------------------
-WordIndex BdbPhraseModel::addTrgSymbol(string t)
+WordIndex BdbPhraseModel::addTrgSymbol(std::string t)
 {
  return singleWordVocab.addTrgSymbol(t);
 }
@@ -411,10 +411,10 @@ bool BdbPhraseModel::printTrgVocab(const char *outputFileName)
 }
 
 //-------------------------
-std::vector<string> BdbPhraseModel::stringToStringVector(string s)
+std::vector<std::string> BdbPhraseModel::stringToStringVector(std::string s)
 {
- std::vector<string> vs;	
- string aux;
+ std::vector<std::string> vs;	
+ std::string aux;
  unsigned int i=0;	
  bool end=false;
 	
@@ -435,11 +435,11 @@ std::vector<string> BdbPhraseModel::stringToStringVector(string s)
 }
 
 //-------------------------
-std::vector<string> BdbPhraseModel::extractCharItemsToVector(char *ch)const
+std::vector<std::string> BdbPhraseModel::extractCharItemsToVector(char *ch)const
 {
  unsigned int i=0;
- string s;	
- std::vector<string> v,u;
+ std::string s;	
+ std::vector<std::string> v,u;
 
  while(ch[i]!=0)
  {

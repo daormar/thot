@@ -103,7 +103,7 @@ void PhraseDict::addSrcTrgPair(PhraseCountState ps_state,
 {
   PhraseTableNode* phraseTableNodePtr;
   PhraseTableNode phraseTableNode;
-  pair<PhraseCountState,Count> ppc;
+  std::pair<PhraseCountState,Count> ppc;
   Count *cptr;
   
   if(cache_ct_.t_present(t))
@@ -140,7 +140,7 @@ void PhraseDict::incrSrcTrgCount(PhraseCountState ps_state,
 {
   PhraseTableNode* phraseTableNodePtr;
   PhraseTableNode phraseTableNode;
-  pair<PhraseCountState,Count> ppc;
+  std::pair<PhraseCountState,Count> ppc;
   Count *cptr;
 
   if(cache_ct_.t_present(t))
@@ -177,7 +177,7 @@ std::map<std::vector<WordIndex>,PhrasePairInfo> PhraseDict::getEntriesFor_s(Phra
   std::map<std::vector<WordIndex>,PhrasePairInfo> map_vecw_phpinfo;
   Dict::const_iterator phraseTableIter;
   PhraseTableNode::const_iterator phraseTableNodeIter;
-  pair<std::vector<WordIndex>,PhrasePairInfo> vecw_phpinfo;
+  std::pair<std::vector<WordIndex>,PhrasePairInfo> vecw_phpinfo;
 	
   for(phraseTableIter=dict.begin();phraseTableIter!=dict.end();++phraseTableIter)
   {
@@ -203,7 +203,7 @@ NbestTableNode<PhraseTransTableNodeData> PhraseDict::getTranslationsFor_s_(Phras
   NbestTableNode<PhraseTransTableNodeData> transTableNode; 
   Dict::const_iterator phraseTableIter;
   PhraseTableNode::const_iterator phraseTableNodeIter;
-  pair<LgProb,std::vector<WordIndex> > lgProbVecPair;
+  std::pair<LgProb,std::vector<WordIndex> > lgProbVecPair;
 	
   for(phraseTableIter=dict.begin();phraseTableIter!=dict.end();++phraseTableIter)
   {
@@ -228,9 +228,9 @@ PhraseTableNode* PhraseDict::getTranslationsFor_t_(const std::vector<WordIndex>&
   return dict.find(t);
 }
 //-------------------------
-pair<bool,PhraseTableNode*> PhraseDict::nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t)
+std::pair<bool,PhraseTableNode*> PhraseDict::nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t)
 {
-  pair<bool,PhraseTableNode*> p_bool_ptnode;
+  std::pair<bool,PhraseTableNode*> p_bool_ptnode;
   
   p_bool_ptnode.second=dict.find(t);
   if(p_bool_ptnode.second!=NULL)

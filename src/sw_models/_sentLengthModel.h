@@ -61,7 +61,7 @@ class _sentLengthModel: public BaseSentLengthModel
 
     void linkVocabPtr(SingleWordVocab* _swVocabPtr);
     void linkSentPairInfo(BaseSentenceHandler* _sentenceHandlerPtr);
-    void trainSentPairRange(pair<unsigned int,unsigned int> sentPairRange,
+    void trainSentPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                             int verbosity=0);
     int nthSentPair(unsigned int n,
                     std::vector<std::string>& srcSentStr,

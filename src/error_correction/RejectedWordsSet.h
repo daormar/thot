@@ -30,6 +30,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- typedefs -------------------------------------------
 
-typedef std::set<pair<std::string,std::string> > RejectedWordsSet;
+typedef std::set<std::pair<std::string,std::string> > RejectedWordsSet;
 
 #endif

@@ -29,8 +29,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- PhrasePair struct
 struct PhrasePair
 {
-  std::vector<string> s_;
-  std::vector<string> t_;
+  std::vector<std::string> s_;
+  std::vector<std::string> t_;
   float weight;
 };
 

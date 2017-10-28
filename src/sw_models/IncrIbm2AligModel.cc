@@ -40,7 +40,7 @@ IncrIbm2AligModel::IncrIbm2AligModel():IncrIbm1AligModel()
 }
 
 //-------------------------
-void IncrIbm2AligModel::efficientBatchTrainingForRange(pair<unsigned int,unsigned int> sentPairRange,
+void IncrIbm2AligModel::efficientBatchTrainingForRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                                        int verbosity/*=0*/)
 {
       // Set maximum size of the matrices of expected values to zero
@@ -150,7 +150,7 @@ void IncrIbm2AligModel::fillEmAuxVarsAlig(unsigned int mapped_n,
   float weighted_new_lanji=log(weighted_new_anji);
 
       // Store contributions
-  AligAuxVar::iterator aligAuxVarIter=aligAuxVar.find(make_pair(as,i));
+  AligAuxVar::iterator aligAuxVarIter=aligAuxVar.find(std::make_pair(as,i));
   if(aligAuxVarIter!=aligAuxVar.end())
   {
     if(weighted_curr_lanji!=SMALL_LG_NUM)
@@ -159,7 +159,7 @@ void IncrIbm2AligModel::fillEmAuxVarsAlig(unsigned int mapped_n,
   }
   else
   {
-    aligAuxVar[make_pair(as,i)]=make_pair(weighted_curr_lanji,weighted_new_lanji);
+    aligAuxVar[std::make_pair(as,i)]=std::make_pair(weighted_curr_lanji,weighted_new_lanji);
   }
 }
 

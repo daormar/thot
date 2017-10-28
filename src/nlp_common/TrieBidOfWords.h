@@ -106,7 +106,7 @@ class TrieBidOfWords
        int operator==(const const_iterator& right);
        int operator!=(const const_iterator& right);
        const typename TrieBid<WordIndex,DATA_TYPE>::const_iterator& operator->(void)const;
-       pair<std::vector<WordIndex>,DATA_TYPE> operator*(void)const;
+       std::pair<std::vector<WordIndex>,DATA_TYPE> operator*(void)const;
     };
 
       // const_iterator functions for the trie class
@@ -412,7 +412,7 @@ TrieBidOfWords<DATA_TYPE>::const_iterator::operator->(void)const
 
 //--------------------------
 template<class DATA_TYPE>
-pair<std::vector<WordIndex>,DATA_TYPE> TrieBidOfWords<DATA_TYPE>::const_iterator::operator*(void)const
+std::pair<std::vector<WordIndex>,DATA_TYPE> TrieBidOfWords<DATA_TYPE>::const_iterator::operator*(void)const
 {
   return *trieIter;
 }

@@ -121,8 +121,8 @@ namespace PhraseExtractUtils
 
   //---------------
   void extractPhrasesFromPairPlusAlig(PhraseExtractParameters phePars,
-                                      std::vector<string> ns,
-                                      std::vector<string> t,
+                                      std::vector<std::string> ns,
+                                      std::vector<std::string> t,
                                       WordAligMatrix waMatrix,
                                       std::vector<PhrasePair>& vecPhrPair,
                                       int /*verbose=0*/)
@@ -141,8 +141,8 @@ namespace PhraseExtractUtils
 
   //---------------
   void extractPhrasesFromPairPlusAligBrf(PhraseExtractParameters phePars,
-                                         std::vector<string> ns,
-                                         std::vector<string> t,
+                                         std::vector<std::string> ns,
+                                         std::vector<std::string> t,
                                          WordAligMatrix waMatrix,
                                          std::vector<PhrasePair>& vecPhrPair,
                                          int /*verbose=0*/)

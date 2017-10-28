@@ -55,7 +55,7 @@ unsigned int IncrIbm1AligModel::numSentPairs(void)
 }
 
 //-------------------------
-void IncrIbm1AligModel::trainSentPairRange(pair<unsigned int,unsigned int> sentPairRange,
+void IncrIbm1AligModel::trainSentPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                            int verbosity)
 {
       // Train sentence length model
@@ -69,11 +69,11 @@ void IncrIbm1AligModel::trainSentPairRange(pair<unsigned int,unsigned int> sentP
 //-------------------------   
 void IncrIbm1AligModel::trainAllSents(int verbosity)
 {
-  trainSentPairRange(make_pair(0,numSentPairs()-1),verbosity);
+  trainSentPairRange(std::make_pair(0,numSentPairs()-1),verbosity);
 }
 
 //-------------------------
-void IncrIbm1AligModel::efficientBatchTrainingForRange(pair<unsigned int,unsigned int> sentPairRange,
+void IncrIbm1AligModel::efficientBatchTrainingForRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                                        int verbosity/*=0*/)
 {
       // Set maximum size of the matrices of expected values to zero
@@ -89,7 +89,7 @@ void IncrIbm1AligModel::efficientBatchTrainingForRange(pair<unsigned int,unsigne
 }
 
 //-------------------------
-pair<double,double> IncrIbm1AligModel::loglikelihoodForPairRange(pair<unsigned int,unsigned int> sentPairRange,
+std::pair<double,double> IncrIbm1AligModel::loglikelihoodForPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                                                  int verbosity/*=0*/)
 {
   double loglikelihood=0;
@@ -107,7 +107,7 @@ pair<double,double> IncrIbm1AligModel::loglikelihoodForPairRange(pair<unsigned i
       ++numSents;
     }
   }
-  return make_pair(loglikelihood,loglikelihood/(double) numSents);
+  return std::make_pair(loglikelihood,loglikelihood/(double) numSents);
 }
 
 //-------------------------
@@ -169,7 +169,7 @@ bool IncrIbm1AligModel::sentenceLengthIsOk(const std::vector<WordIndex> sentence
 }
 
 //-------------------------   
-void IncrIbm1AligModel::calcNewLocalSuffStats(pair<unsigned int,unsigned int> sentPairRange,
+void IncrIbm1AligModel::calcNewLocalSuffStats(std::pair<unsigned int,unsigned int> sentPairRange,
                                               int verbosity)
 {
       // Iterate over the training samples
@@ -331,7 +331,7 @@ void IncrIbm1AligModel::fillEmAuxVars(unsigned int mapped_n,
   }
   else
   {
-    lexAuxVar[s][t]=make_pair(weighted_curr_lanji,weighted_new_lanji);
+    lexAuxVar[s][t]=std::make_pair(weighted_curr_lanji,weighted_new_lanji);
   }
 }
 
@@ -759,7 +759,7 @@ LgProb IncrIbm1AligModel::lgProbOfBestTransForTrgWord(WordIndex t)
 {
   BestLgProbForTrgWord::iterator tnIter;
 
-  tnIter=bestLgProbForTrgWord.find(make_pair(0,t));
+  tnIter=bestLgProbForTrgWord.find(std::make_pair(0,t));
   if(tnIter==bestLgProbForTrgWord.end())
   {
     IncrIbm1AligModel::SrcTableNode tNode;    
@@ -775,12 +775,12 @@ LgProb IncrIbm1AligModel::lgProbOfBestTransForTrgWord(WordIndex t)
           bestProb=ctnIter->second;
         }
       }
-      bestLgProbForTrgWord[make_pair(0,t)]=log((double)bestProb);
+      bestLgProbForTrgWord[std::make_pair(0,t)]=log((double)bestProb);
       return log((double)bestProb);
     }
     else
     {
-      bestLgProbForTrgWord[make_pair(0,t)]=-FLT_MAX;
+      bestLgProbForTrgWord[std::make_pair(0,t)]=-FLT_MAX;
       return -FLT_MAX;
     }
   }
@@ -814,7 +814,7 @@ bool IncrIbm1AligModel::load(const char* prefFileName)
     trgsFile=trgsFile+".trg";
     std::string srctrgcFile=prefFileName;
     srctrgcFile=srctrgcFile+".srctrgc";
-    pair<unsigned int,unsigned int> pui;
+    std::pair<unsigned int,unsigned int> pui;
     retVal=readSentencePairs(srcsFile.c_str(),trgsFile.c_str(),srctrgcFile.c_str(),pui);
     if(retVal==THOT_ERROR) return THOT_ERROR;
 

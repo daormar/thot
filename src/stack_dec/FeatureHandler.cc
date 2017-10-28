@@ -282,7 +282,7 @@ int FeatureHandler::trainAligModel(BasePhraseModel* invPbModelPtr,
   updateAligModelsTrgVoc(invPbModelPtr,swAligModelPtr,invSwAligModelPtr,refSentStrVec);
 
       // Add sentence pair to the single word models
-  pair<unsigned int,unsigned int> sentRange;
+  std::pair<unsigned int,unsigned int> sentRange;
   swAligModelPtr->addSentPair(srcSentStrVec,refSentStrVec,onlineTrainingPars.learnStepSize,sentRange);
   invSwAligModelPtr->addSentPair(refSentStrVec,srcSentStrVec,onlineTrainingPars.learnStepSize,sentRange);
 
@@ -300,11 +300,11 @@ int FeatureHandler::trainAligModel(BasePhraseModel* invPbModelPtr,
 
           // Train sw model
       if(verbose) std::cerr<<"Training single-word model..."<<std::endl;
-      swAligModelPtr->trainSentPairRange(make_pair(n,n),verbose);
+      swAligModelPtr->trainSentPairRange(std::make_pair(n,n),verbose);
 
           // Train inverse sw model
       if(verbose) std::cerr<<"Training inverse single-word model..."<<std::endl;
-      invSwAligModelPtr->trainSentPairRange(make_pair(n,n),verbose);
+      invSwAligModelPtr->trainSentPairRange(std::make_pair(n,n),verbose);
 
           // Add new translation options
       if(verbose) std::cerr<<"Adding new translation options..."<<std::endl;

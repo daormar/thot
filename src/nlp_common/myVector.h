@@ -49,8 +49,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #define Vector vector
 
-using namespace std;
-
 #endif
 
 #ifdef USE_MY_STL_VECTOR
@@ -58,8 +56,6 @@ using namespace std;
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-
-using namespace std;
 
 //--------------- Constants ------------------------------------------
 

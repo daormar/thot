@@ -65,7 +65,7 @@ class IncrIbm1AligModel: public _incrSwAligModel<std::vector<Prob> >
   public:
 
    typedef _incrSwAligModel<std::vector<Prob> >::PpInfo PpInfo;
-   typedef map<WordIndex,Prob> SrcTableNode;
+   typedef std::map<WordIndex,Prob> SrcTableNode;
   
    // Constructor
    IncrIbm1AligModel();
@@ -78,13 +78,13 @@ class IncrIbm1AligModel: public _incrSwAligModel<std::vector<Prob> >
    unsigned int numSentPairs(void);
 
    // Functions to train model
-   void trainSentPairRange(pair<unsigned int,unsigned int> sentPairRange,
+   void trainSentPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                            int verbosity=0);
        // train model for range [uint,uint]. Returns log-likelihood
    void trainAllSents(int verbosity=0);
-   void efficientBatchTrainingForRange(pair<unsigned int,unsigned int> sentPairRange,
+   void efficientBatchTrainingForRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                        int verbosity=0);
-   pair<double,double> loglikelihoodForPairRange(pair<unsigned int,unsigned int> sentPairRange,
+   std::pair<double,double> loglikelihoodForPairRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                                  int verbosity=0);
         // Returns log-likelihood. The first double contains the
         // loglikelihood for all sentences, and the second one, the same
@@ -225,7 +225,7 @@ class IncrIbm1AligModel: public _incrSwAligModel<std::vector<Prob> >
        // Returns log(p(t|s)) without smoothing
 
    // EM-related functions
-   void calcNewLocalSuffStats(pair<unsigned int,unsigned int> sentPairRange,
+   void calcNewLocalSuffStats(std::pair<unsigned int,unsigned int> sentPairRange,
                               int verbosity=0);
    void calc_anji(unsigned int n,
                   const std::vector<WordIndex>& nsrcSent,
@@ -248,7 +248,7 @@ class IncrIbm1AligModel: public _incrSwAligModel<std::vector<Prob> >
                                       float lLocalSuffStatNew);
    
    // Functions to update log-likelihood
-   void update_loglikelihood(pair<unsigned int,unsigned int> sentPairRange,
+   void update_loglikelihood(std::pair<unsigned int,unsigned int> sentPairRange,
                              int verbosity=0);
 
    // Partial prob. auxiliary functions

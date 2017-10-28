@@ -121,7 +121,7 @@ class vecx_x_incr_cptable: public BaseIncrCondProbTable<std::vector<X>,X,SRC_INF
     int operator==(const const_iterator& right);
     int operator!=(const const_iterator& right);
     const typename SrcTrgInfo::const_iterator& operator->(void)const;
-    pair<std::vector<X>,SRCTRG_INFO> operator*(void)const;
+    std::pair<std::vector<X>,SRCTRG_INFO> operator*(void)const;
     ~const_iterator(){}
   };
       // const_iterator-related functions
@@ -437,7 +437,7 @@ bool vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getEntriesForSource(const std:
 {
   typename SrcTrgInfo::const_iterator titer;
   unsigned int i;
-  pair<X,im_pair<SRC_INFO,SRCTRG_INFO> > pdp;
+  std::pair<X,im_pair<SRC_INFO,SRCTRG_INFO> > pdp;
   std::vector<X> vecx;
   SRC_INFO* siPtr;
 
@@ -476,7 +476,7 @@ vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::getEntriesForTarget(const X& t,type
 {
   typename SrcTrgInfo::const_iterator titer;
   unsigned int i;
-  pair<std::vector<X>,im_pair<SRC_INFO,SRCTRG_INFO> > pdp;
+  std::pair<std::vector<X>,im_pair<SRC_INFO,SRCTRG_INFO> > pdp;
 
   tnode.clear();
   for(titer=srcTrgInfo.begin();titer!=srcTrgInfo.end();++titer)
@@ -736,7 +736,7 @@ vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::const_iterator::operator->(void)con
 }
 //---------------
 template<class X,class SRC_INFO,class SRCTRG_INFO>
-pair<std::vector<X>,SRCTRG_INFO > vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::const_iterator::operator*(void)const
+std::pair<std::vector<X>,SRCTRG_INFO > vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::const_iterator::operator*(void)const
 {
   return *srcTrgInfoIter;
 }

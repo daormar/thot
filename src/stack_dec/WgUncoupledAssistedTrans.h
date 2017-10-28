@@ -282,7 +282,7 @@ WgUncoupledAssistedTrans<SMT_MODEL>::obtainWgUsingWgHandler(std::string s,
     wg_ptr->load(wgPathStr.c_str());
 
         // Obtain original word graph component weights
-    std::vector<pair<std::string,float> > originalWgCompWeights;
+    std::vector<std::pair<std::string,float> > originalWgCompWeights;
     wg_ptr->getCompWeights(originalWgCompWeights);
 
         // Print component weight info to the error output
@@ -297,7 +297,7 @@ WgUncoupledAssistedTrans<SMT_MODEL>::obtainWgUsingWgHandler(std::string s,
         // Set current component weights (this operation causes a
         // complete re-scoring of the word graph arcs if there exist
         // score component information for them)
-    std::vector<pair<std::string,float> > currCompWeights;
+    std::vector<std::pair<std::string,float> > currCompWeights;
     SMT_MODEL* smtm_ptr=sdr_ptr->get_smt_model_ptr();
     smtm_ptr->getWeights(currCompWeights);
     wg_ptr->setCompWeights(currCompWeights);

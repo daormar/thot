@@ -287,7 +287,7 @@ void PbTransModel<EQCLASS_FUNC>::extendHypDataIdx(PositionIndex srcLeft,
                                                   const std::vector<WordIndex>& trgPhraseIdx,
                                                   HypDataType& hypd)
 {
-  pair<PositionIndex,PositionIndex> sourceSegm;
+  std::pair<PositionIndex,PositionIndex> sourceSegm;
   
         // Add trgPhraseIdx to the target vector
   for(unsigned int i=0;i<trgPhraseIdx.size();++i)

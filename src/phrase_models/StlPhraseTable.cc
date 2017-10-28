@@ -174,7 +174,7 @@ void StlPhraseTable::addSrcInfo(const std::vector<WordIndex>& s,
 
     if (iter == srcPhraseInfo.end())  // Check if s exists in collection
     {
-        srcPhraseInfo.insert(make_pair(s, s_inf));
+        srcPhraseInfo.insert(std::make_pair(s, s_inf));
     }
     else
     {
@@ -190,7 +190,7 @@ void StlPhraseTable::addTrgInfo(const std::vector<WordIndex>& t,
 
     if (iter == trgPhraseInfo.end())  // Check if t exists in collection
     {
-        trgPhraseInfo.insert(make_pair(t, t_inf));
+        trgPhraseInfo.insert(std::make_pair(t, t_inf));
     }
     else
     {
@@ -235,7 +235,7 @@ void StlPhraseTable::addSrcTrgInfo(const std::vector<WordIndex>& s,
 
     if (iter == srcTrgPhraseInfo.end())  // Check if (s, t) exists in collection
     {
-        srcTrgPhraseInfo.insert(make_pair(srcTrgKey, st_inf));
+        srcTrgPhraseInfo.insert(std::make_pair(srcTrgKey, st_inf));
     }
     else
     {
@@ -415,7 +415,7 @@ bool StlPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
         if ((int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
             continue;
 
-        srctn.insert(pair<std::vector<WordIndex>, PhrasePairInfo>(s, ppi));
+        srctn.insert(std::pair<std::vector<WordIndex>, PhrasePairInfo>(s, ppi));
     }
 
     return srctn.size();
@@ -446,7 +446,7 @@ bool StlPhraseTable::getEntriesForSource(const std::vector<WordIndex>& s,
             if ((int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
                 continue;
 
-            trgtn.insert(pair<std::vector<WordIndex>, PhrasePairInfo>(tPhrase, ppi));
+            trgtn.insert(std::pair<std::vector<WordIndex>, PhrasePairInfo>(tPhrase, ppi));
         }
     }
 
@@ -661,7 +661,7 @@ StlPhraseTable::const_iterator::operator->(void)
         }
     }
 
-    dataItem.first = make_pair(s, t);
+    dataItem.first = std::make_pair(s, t);
     dataItem.second = c;
 
     return &dataItem;

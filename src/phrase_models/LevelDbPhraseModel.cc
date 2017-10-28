@@ -40,8 +40,8 @@ LevelDbPhraseModel::LevelDbPhraseModel(void)
 }
 
 //-------------------------
-void LevelDbPhraseModel::strAddTableEntry(const std::vector<string>& s,
-                                          const std::vector<string>& t,
+void LevelDbPhraseModel::strAddTableEntry(const std::vector<std::string>& s,
+                                          const std::vector<std::string>& t,
                                           PhrasePairInfo inf)
 {
   std::vector<WordIndex> wordIndex_t,wordIndex_s;
@@ -61,8 +61,8 @@ void LevelDbPhraseModel::addTableEntry(const std::vector<WordIndex>& s,
 }
 
 //-------------------------
-void LevelDbPhraseModel::strIncrCountsOfEntry(const std::vector<string>& s,
-                                              const std::vector<string>& t,
+void LevelDbPhraseModel::strIncrCountsOfEntry(const std::vector<std::string>& s,
+                                              const std::vector<std::string>& t,
                                               Count count/*=1*/)
 {
   std::vector<WordIndex> wordIndex_t,wordIndex_s;
@@ -396,25 +396,25 @@ bool LevelDbPhraseModel::loadTrgVocab(const char *trgInputVocabFileName)
 }
 
 //-------------------------
-WordIndex LevelDbPhraseModel::stringToSrcWordIndex(string s)const
+WordIndex LevelDbPhraseModel::stringToSrcWordIndex(std::string s)const
 {	
  return singleWordVocab.stringToSrcWordIndex(s);
 }
 
 //-------------------------
-string LevelDbPhraseModel::wordIndexToSrcString(WordIndex w)const
+std::string LevelDbPhraseModel::wordIndexToSrcString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToSrcString(w);
 }
 
 //-------------------------
-bool LevelDbPhraseModel::existSrcSymbol(string s)const
+bool LevelDbPhraseModel::existSrcSymbol(std::string s)const
 {
  return singleWordVocab.existSrcSymbol(s);
 }
 
 //-------------------------
-std::vector<WordIndex> LevelDbPhraseModel::strVectorToSrcIndexVector(const std::vector<string>& s)
+std::vector<WordIndex> LevelDbPhraseModel::strVectorToSrcIndexVector(const std::vector<std::string>& s)
 {
   std::vector<WordIndex> swVec;
   
@@ -425,9 +425,9 @@ std::vector<WordIndex> LevelDbPhraseModel::strVectorToSrcIndexVector(const std::
 }
 
 //-------------------------
-std::vector<string> LevelDbPhraseModel::srcIndexVectorToStrVector(const std::vector<WordIndex>& s)
+std::vector<std::string> LevelDbPhraseModel::srcIndexVectorToStrVector(const std::vector<WordIndex>& s)
 {
- std::vector<string> vStr;
+ std::vector<std::string> vStr;
  unsigned int i;
 
  for(i = 0; i < s.size(); ++i)
@@ -436,7 +436,7 @@ std::vector<string> LevelDbPhraseModel::srcIndexVectorToStrVector(const std::vec
  return vStr;
 }
 //-------------------------
-WordIndex LevelDbPhraseModel::addSrcSymbol(string s)
+WordIndex LevelDbPhraseModel::addSrcSymbol(std::string s)
 {
  return singleWordVocab.addSrcSymbol(s);
 }
@@ -454,25 +454,25 @@ size_t LevelDbPhraseModel::getTrgVocabSize(void)const
 }
 
 //-------------------------
-WordIndex LevelDbPhraseModel::stringToTrgWordIndex(string t)const
+WordIndex LevelDbPhraseModel::stringToTrgWordIndex(std::string t)const
 {
  return singleWordVocab.stringToTrgWordIndex(t);
 }
 
 //-------------------------
-string LevelDbPhraseModel::wordIndexToTrgString(WordIndex w)const
+std::string LevelDbPhraseModel::wordIndexToTrgString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToTrgString(w);
 }
 
 //-------------------------
-bool LevelDbPhraseModel::existTrgSymbol(string t)const
+bool LevelDbPhraseModel::existTrgSymbol(std::string t)const
 {
  return singleWordVocab.existTrgSymbol(t);
 }
 
 //-------------------------
-std::vector<WordIndex> LevelDbPhraseModel::strVectorToTrgIndexVector(const std::vector<string>& t)
+std::vector<WordIndex> LevelDbPhraseModel::strVectorToTrgIndexVector(const std::vector<std::string>& t)
 {
   std::vector<WordIndex> twVec;
   
@@ -483,9 +483,9 @@ std::vector<WordIndex> LevelDbPhraseModel::strVectorToTrgIndexVector(const std::
 }
       
 //-------------------------
-std::vector<string> LevelDbPhraseModel::trgIndexVectorToStrVector(const std::vector<WordIndex>& t)
+std::vector<std::string> LevelDbPhraseModel::trgIndexVectorToStrVector(const std::vector<WordIndex>& t)
 {
- std::vector<string> vStr;
+ std::vector<std::string> vStr;
  unsigned int i;
 
  for(i = 0; i < t.size(); ++i)
@@ -495,7 +495,7 @@ std::vector<string> LevelDbPhraseModel::trgIndexVectorToStrVector(const std::vec
 }
   
 //-------------------------
-WordIndex LevelDbPhraseModel::addTrgSymbol(string t)
+WordIndex LevelDbPhraseModel::addTrgSymbol(std::string t)
 {
  return singleWordVocab.addTrgSymbol(t);
 }

@@ -31,6 +31,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Typedefs -------------------------------------------
 
-typedef std::vector<pair<PositionIndex,PositionIndex> > SentSegmentation;
+typedef std::vector<std::pair<PositionIndex,PositionIndex> > SentSegmentation;
 
 #endif

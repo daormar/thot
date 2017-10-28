@@ -65,7 +65,7 @@ int phr_dict_cmp_func(Db* /*db*/,
   key2.getPhrPair(srcPhr2,trgPhr2);
 
       // Compare target phrases
-  for(unsigned int i=0;i<min(trgPhr1.size(),trgPhr2.size());++i)
+  for(unsigned int i=0;i<std::min(trgPhr1.size(),trgPhr2.size());++i)
   {
     if(trgPhr1[i]<trgPhr2[i])
       return -1;
@@ -78,7 +78,7 @@ int phr_dict_cmp_func(Db* /*db*/,
     return 1;
 
       // Compare source phrases
-  for(unsigned int i=0;i<min(srcPhr1.size(),srcPhr2.size());++i)
+  for(unsigned int i=0;i<std::min(srcPhr1.size(),srcPhr2.size());++i)
   {
     if(srcPhr1[i]<srcPhr2[i])
       return -1;
@@ -361,7 +361,7 @@ bool BdbPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
       if(!curr_s.empty())
       {
             // Store translation option
-        pair<std::vector<WordIndex>,PhrasePairInfo> pVecPhinfo;
+        std::pair<std::vector<WordIndex>,PhrasePairInfo> pVecPhinfo;
         pVecPhinfo.first=curr_s;
         pVecPhinfo.second.first=trgPhrCount;
         pVecPhinfo.second.second=phrDictValue.count;

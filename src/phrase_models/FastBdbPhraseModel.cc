@@ -321,25 +321,25 @@ bool FastBdbPhraseModel::loadTrgVocab(const char *trgInputVocabFileName)
 }
 
 //-------------------------
-WordIndex FastBdbPhraseModel::stringToSrcWordIndex(string s)const
+WordIndex FastBdbPhraseModel::stringToSrcWordIndex(std::string s)const
 {	
  return singleWordVocab.stringToSrcWordIndex(s);
 }
 
 //-------------------------
-string FastBdbPhraseModel::wordIndexToSrcString(WordIndex w)const
+std::string FastBdbPhraseModel::wordIndexToSrcString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToSrcString(w);
 }
 
 //-------------------------
-bool FastBdbPhraseModel::existSrcSymbol(string s)const
+bool FastBdbPhraseModel::existSrcSymbol(std::string s)const
 {
  return singleWordVocab.existSrcSymbol(s);
 }
 
 //-------------------------
-std::vector<WordIndex> FastBdbPhraseModel::strVectorToSrcIndexVector(const std::vector<string>& s)
+std::vector<WordIndex> FastBdbPhraseModel::strVectorToSrcIndexVector(const std::vector<std::string>& s)
 {
   std::vector<WordIndex> swVec;
   
@@ -350,9 +350,9 @@ std::vector<WordIndex> FastBdbPhraseModel::strVectorToSrcIndexVector(const std::
 }
 
 //-------------------------
-std::vector<string> FastBdbPhraseModel::srcIndexVectorToStrVector(const std::vector<WordIndex>& s)
+std::vector<std::string> FastBdbPhraseModel::srcIndexVectorToStrVector(const std::vector<WordIndex>& s)
 {
- std::vector<string> vStr;
+ std::vector<std::string> vStr;
  unsigned int i;
 
  for(i=0;i<s.size();++i)
@@ -361,7 +361,7 @@ std::vector<string> FastBdbPhraseModel::srcIndexVectorToStrVector(const std::vec
  return vStr;
 }
 //-------------------------
-WordIndex FastBdbPhraseModel::addSrcSymbol(string s)
+WordIndex FastBdbPhraseModel::addSrcSymbol(std::string s)
 {
  return singleWordVocab.addSrcSymbol(s);
 }
@@ -379,25 +379,25 @@ size_t FastBdbPhraseModel::getTrgVocabSize(void)const
 }
 
 //-------------------------
-WordIndex FastBdbPhraseModel::stringToTrgWordIndex(string t)const
+WordIndex FastBdbPhraseModel::stringToTrgWordIndex(std::string t)const
 {
  return singleWordVocab.stringToTrgWordIndex(t);
 }
 
 //-------------------------
-string FastBdbPhraseModel::wordIndexToTrgString(WordIndex w)const
+std::string FastBdbPhraseModel::wordIndexToTrgString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToTrgString(w);
 }
 
 //-------------------------
-bool FastBdbPhraseModel::existTrgSymbol(string t)const
+bool FastBdbPhraseModel::existTrgSymbol(std::string t)const
 {
  return singleWordVocab.existTrgSymbol(t);
 }
 
 //-------------------------
-std::vector<WordIndex> FastBdbPhraseModel::strVectorToTrgIndexVector(const std::vector<string>& t)
+std::vector<WordIndex> FastBdbPhraseModel::strVectorToTrgIndexVector(const std::vector<std::string>& t)
 {
   std::vector<WordIndex> twVec;
   
@@ -407,9 +407,9 @@ std::vector<WordIndex> FastBdbPhraseModel::strVectorToTrgIndexVector(const std::
   return twVec;
 }
 //-------------------------
-std::vector<string> FastBdbPhraseModel::trgIndexVectorToStrVector(const std::vector<WordIndex>& t)
+std::vector<std::string> FastBdbPhraseModel::trgIndexVectorToStrVector(const std::vector<WordIndex>& t)
 {
- std::vector<string> vStr;
+ std::vector<std::string> vStr;
  unsigned int i;
 
  for(i=0;i<t.size();++i)
@@ -418,7 +418,7 @@ std::vector<string> FastBdbPhraseModel::trgIndexVectorToStrVector(const std::vec
  return vStr;
 }
 //-------------------------
-WordIndex FastBdbPhraseModel::addTrgSymbol(string t)
+WordIndex FastBdbPhraseModel::addTrgSymbol(std::string t)
 {
  return singleWordVocab.addTrgSymbol(t);
 }
@@ -429,10 +429,10 @@ bool FastBdbPhraseModel::printTrgVocab(const char *outputFileName)
 }
 
 //-------------------------
-std::vector<string> FastBdbPhraseModel::stringToStringVector(string s)
+std::vector<std::string> FastBdbPhraseModel::stringToStringVector(std::string s)
 {
- std::vector<string> vs;	
- string aux;
+ std::vector<std::string> vs;	
+ std::string aux;
  unsigned int i=0;	
  bool end=false;
 	
@@ -453,11 +453,11 @@ std::vector<string> FastBdbPhraseModel::stringToStringVector(string s)
 }
 
 //-------------------------
-std::vector<string> FastBdbPhraseModel::extractCharItemsToVector(char *ch)const
+std::vector<std::string> FastBdbPhraseModel::extractCharItemsToVector(char *ch)const
 {
  unsigned int i=0;
- string s;	
- std::vector<string> v,u;
+ std::string s;	
+ std::vector<std::string> v,u;
 
  while(ch[i]!=0)
  {

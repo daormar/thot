@@ -60,7 +60,7 @@ void release_swm(int verbosity);
 int processParameters(thot_gen_sw_model_pars pars);
 void emIters(thot_gen_sw_model_pars& pars,
              BaseSwAligModel<std::vector<Prob> >* swAligModelPtr,
-             pair<unsigned int,unsigned int> wholeTrainRange,
+             std::pair<unsigned int,unsigned int> wholeTrainRange,
              int verbosity);
 float obtainLr(const thot_gen_sw_model_pars& pars,
                unsigned int stepNum);
@@ -248,7 +248,7 @@ int processParameters(thot_gen_sw_model_pars pars)
 #endif
         // Read sentence pairs
     std::string srctrgcFileName="";
-    pair<unsigned int,unsigned int> pui;
+    std::pair<unsigned int,unsigned int> pui;
     int ret=swAligModelPtr->readSentencePairs(pars.s_str.c_str(),
                                               pars.t_str.c_str(),
                                               srctrgcFileName.c_str(),
@@ -276,14 +276,14 @@ int processParameters(thot_gen_sw_model_pars pars)
     swAligModelPtr->trainAllSents(verbosity);
     if(!pars.nl_given)
     {
-      pair<double,double> pdd=swAligModelPtr->loglikelihoodForAllSents(false);    
+      std::pair<double,double> pdd=swAligModelPtr->loglikelihoodForAllSents(false);    
       std::cerr<<"Iter: "<<0<<" , log-likelihood= "<<pdd.first<<" , norm-ll= "<<pdd.second<<std::endl;
     }
     else std::cerr<<"Iter "<<0<<" completed"<<std::endl;
   }
 
       // Initialize range of sentences to train
-  pair<unsigned int,unsigned int> wholeTrainRange;
+  std::pair<unsigned int,unsigned int> wholeTrainRange;
   wholeTrainRange.first=0;
   if(swAligModelPtr->numSentPairs()>0)
     wholeTrainRange.second=swAligModelPtr->numSentPairs()-1;
@@ -311,7 +311,7 @@ int processParameters(thot_gen_sw_model_pars pars)
 //--------------- emIters function
 void emIters(thot_gen_sw_model_pars& pars,
              BaseSwAligModel<std::vector<Prob> >* swAligModelPtr,
-             pair<unsigned int,unsigned int> wholeTrainRange,
+             std::pair<unsigned int,unsigned int> wholeTrainRange,
              int verbosity)
 {
       // Execute EM iterations
@@ -325,13 +325,13 @@ void emIters(thot_gen_sw_model_pars& pars,
         int n=j-(i*(pars.r/pars.numIter));
         if(n>=0 && (unsigned int)n<=wholeTrainRange.second)
         {
-          swAligModelPtr->trainSentPairRange(make_pair(n,n),verbosity);
+          swAligModelPtr->trainSentPairRange(std::make_pair(n,n),verbosity);
         }
       }
     }
     if(!pars.nl_given)
     {
-      pair<double,double> pdd=swAligModelPtr->loglikelihoodForPairRange(wholeTrainRange,false);    
+      std::pair<double,double> pdd=swAligModelPtr->loglikelihoodForPairRange(wholeTrainRange,false);    
       std::cerr<<"log-likelihood= "<<pdd.first<<" , norm-ll= "<<pdd.second<<std::endl;
     }
   }
@@ -345,7 +345,7 @@ void emIters(thot_gen_sw_model_pars& pars,
       unsigned int rangeId=0;
       unsigned int nIter=1;
       unsigned int stepNum=0;
-      pair<unsigned int,unsigned int> trainRange;
+      std::pair<unsigned int,unsigned int> trainRange;
       
       while(!end)
       {        
@@ -376,7 +376,7 @@ void emIters(thot_gen_sw_model_pars& pars,
         {
           if(!pars.nl_given)
           {
-            pair<double,double> pdd=swAligModelPtr->loglikelihoodForPairRange(wholeTrainRange,false);
+            std::pair<double,double> pdd=swAligModelPtr->loglikelihoodForPairRange(wholeTrainRange,false);
             std::cerr<<"Iter: "<<nIter<<" , log-likelihood= "<<pdd.first<<" , norm-ll= "<<pdd.second<<std::endl;
           }
           else std::cerr<<"Iter "<<nIter<<" completed"<<std::endl;
@@ -401,11 +401,11 @@ void emIters(thot_gen_sw_model_pars& pars,
               // Execute incremental training
           for(unsigned int j=wholeTrainRange.first;j<=wholeTrainRange.second;++j)
           {
-            swAligModelPtr->trainSentPairRange(make_pair(j,j),verbosity);
+            swAligModelPtr->trainSentPairRange(std::make_pair(j,j),verbosity);
           }
           if(!pars.nl_given)
           {
-            pair<double,double> pdd=swAligModelPtr->loglikelihoodForPairRange(wholeTrainRange,false);    
+            std::pair<double,double> pdd=swAligModelPtr->loglikelihoodForPairRange(wholeTrainRange,false);    
             std::cerr<<"Iter: "<<i+1<<" , log-likelihood= "<<pdd.first<<" , norm-ll= "<<pdd.second<<std::endl;
           }
           else std::cerr<<"Iter "<<i+1<<" completed"<<std::endl;
@@ -419,7 +419,7 @@ void emIters(thot_gen_sw_model_pars& pars,
             _incrSwAligModelPtr->efficientBatchTrainingForRange(wholeTrainRange,verbosity);
             if(!pars.nl_given)
             {
-              pair<double,double> pdd=_incrSwAligModelPtr->loglikelihoodForPairRange(wholeTrainRange,false);    
+              std::pair<double,double> pdd=_incrSwAligModelPtr->loglikelihoodForPairRange(wholeTrainRange,false);    
               std::cerr<<"Iter: "<<i+1<<" , log-likelihood= "<<pdd.first<<" , norm-ll= "<<pdd.second<<std::endl;
             }
             else std::cerr<<"Iter "<<i+1<<" completed"<<std::endl;
@@ -430,7 +430,7 @@ void emIters(thot_gen_sw_model_pars& pars,
             swAligModelPtr->trainSentPairRange(wholeTrainRange,verbosity);
             if(!pars.nl_given)
             {
-              pair<double,double> pdd=swAligModelPtr->loglikelihoodForPairRange(wholeTrainRange,false);    
+              std::pair<double,double> pdd=swAligModelPtr->loglikelihoodForPairRange(wholeTrainRange,false);    
               std::cerr<<"Iter: "<<i+1<<" , log-likelihood= "<<pdd.first<<" , norm-ll= "<<pdd.second<<std::endl;
             }
             else std::cerr<<"Iter "<<i+1<<" completed"<<std::endl;

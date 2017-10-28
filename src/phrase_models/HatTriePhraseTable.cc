@@ -37,7 +37,7 @@ HatTriePhraseTable::HatTriePhraseTable(void)
 }
 
 //-------------------------
-string HatTriePhraseTable::vectorToString(const std::vector<WordIndex>& vec)const
+std::string HatTriePhraseTable::vectorToStdString(const std::vector<WordIndex>& vec)const
 {
     std::vector<WordIndex> str;
     for(size_t i = 0; i < vec.size(); i++) {
@@ -47,13 +47,13 @@ string HatTriePhraseTable::vectorToString(const std::vector<WordIndex>& vec)cons
         }
     }
 
-    string s(str.begin(), str.end());
+    std::string s(str.begin(), str.end());
 
     return s;
 }
 
 //-------------------------
-std::vector<WordIndex> HatTriePhraseTable::stringToVector(const string s)const
+std::vector<WordIndex> HatTriePhraseTable::stringToVector(const std::string s)const
 {
     std::vector<WordIndex> vec;
 
@@ -71,13 +71,13 @@ std::vector<WordIndex> HatTriePhraseTable::stringToVector(const string s)const
 }
 
 //-------------------------
-string HatTriePhraseTable::vectorToKey(const std::vector<WordIndex>& vec)const
+std::string HatTriePhraseTable::vectorToKey(const std::vector<WordIndex>& vec)const
 {
-    return vectorToString(vec);
+    return vectorToStdString(vec);
 }
 
 //-------------------------
-std::vector<WordIndex> HatTriePhraseTable::keyToVector(const string key)const
+std::vector<WordIndex> HatTriePhraseTable::keyToVector(const std::string key)const
 {
     return stringToVector(key);
 }
@@ -416,7 +416,7 @@ bool HatTriePhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
         if (!found || (int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
             continue;
 
-        srctn.insert(pair<std::vector<WordIndex>, PhrasePairInfo>(s, ppi));
+        srctn.insert(std::pair<std::vector<WordIndex>, PhrasePairInfo>(s, ppi));
     }
 
     return srctn.size();
@@ -451,7 +451,7 @@ bool HatTriePhraseTable::getEntriesForSource(const std::vector<WordIndex>& s,
         if ((int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
             continue;
 
-        trgtn.insert(pair<std::vector<WordIndex>, PhrasePairInfo>(trgPhrase, ppi));
+        trgtn.insert(std::pair<std::vector<WordIndex>, PhrasePairInfo>(trgPhrase, ppi));
     }
 
     return trgtn.size();

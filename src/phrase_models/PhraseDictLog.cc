@@ -104,7 +104,7 @@ void PhraseDictLog::addSrcTrgPair(PhraseCountLogState pls_state,
 {
   PhraseTableNodeLog* ptNodeLogPtr;
   PhraseTableNodeLog ptNodeLog;
-  pair<PhraseCountLogState,LogCount> ppc;
+  std::pair<PhraseCountLogState,LogCount> ppc;
   LogCount *lcptr;
   
   if(cache_lct_.t_present(t))
@@ -141,7 +141,7 @@ void PhraseDictLog::incrSrcTrgLogCount(PhraseCountLogState pls_state,
 {
   PhraseTableNodeLog* ptNodeLogPtr;
   PhraseTableNodeLog ptNodeLog;
-  pair<PhraseCountLogState,LogCount> ppc;
+  std::pair<PhraseCountLogState,LogCount> ppc;
   LogCount *lcptr;
 
   if(cache_lct_.t_present(t))
@@ -178,7 +178,7 @@ std::map<std::vector<WordIndex>,PhrasePairInfo> PhraseDictLog::getEntriesFor_s(P
   std::map<std::vector<WordIndex>,PhrasePairInfo> map_vecw_phpinfo;
   DictLog::const_iterator phraseTableIter;
   PhraseTableNodeLog::const_iterator ptNodeLogIter;
-  pair<std::vector<WordIndex>,PhrasePairInfo> vecw_phpinfo;
+  std::pair<std::vector<WordIndex>,PhrasePairInfo> vecw_phpinfo;
 	
   for(phraseTableIter=dictLog.begin();phraseTableIter!=dictLog.end();++phraseTableIter)
   {
@@ -204,7 +204,7 @@ NbestTableNode<PhraseTransTableNodeData> PhraseDictLog::getTranslationsFor_s_(Ph
   NbestTableNode<PhraseTransTableNodeData> transTableNode; 
   DictLog::const_iterator phraseTableIter;
   PhraseTableNodeLog::const_iterator ptNodeLogIter;
-  pair<LgProb,std::vector<WordIndex> > lgProbVecPair;
+  std::pair<LgProb,std::vector<WordIndex> > lgProbVecPair;
 	
   for(phraseTableIter=dictLog.begin();phraseTableIter!=dictLog.end();++phraseTableIter)
   {
@@ -229,9 +229,9 @@ PhraseTableNodeLog* PhraseDictLog::getTranslationsFor_t_(const std::vector<WordI
   return dictLog.find(t);
 }
 //-------------------------
-pair<bool,PhraseTableNodeLog*> PhraseDictLog::nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t)
+std::pair<bool,PhraseTableNodeLog*> PhraseDictLog::nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t)
 {
-  pair<bool,PhraseTableNodeLog*> p_bool_ptnode;
+  std::pair<bool,PhraseTableNodeLog*> p_bool_ptnode;
   
   p_bool_ptnode.second=dictLog.find(t);
   if(p_bool_ptnode.second!=NULL)

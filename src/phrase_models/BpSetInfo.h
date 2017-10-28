@@ -42,7 +42,7 @@ class BpSetInfo
        lc=SMALL_LG_NUM;
      }
   
-   pair<PositionIndex,PositionIndex> tpair;
+   std::pair<PositionIndex,PositionIndex> tpair;
    double lc;
 
   private:

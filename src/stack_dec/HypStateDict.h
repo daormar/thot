@@ -140,7 +140,7 @@ HypStateDict<HYPOTHESIS_REC>::createDictEntry(const HYPOTHESIS_REC& hyp)
     hypStateDictData.coverage=hyp.getKey();
     hypStateDictData.score=hyp.getScore();
     
-    hsddIter=hypStateDictDataMap.insert(make_pair(hypState,hypStateDictData)).first;
+    hsddIter=hypStateDictDataMap.insert(std::make_pair(hypState,hypStateDictData)).first;
   }
   else
   {

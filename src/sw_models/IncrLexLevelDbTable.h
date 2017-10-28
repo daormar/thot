@@ -74,21 +74,21 @@ class IncrLexLevelDbTable : public _incrLexTable
     // DB-related variables
     leveldb::DB* db;
     leveldb::Options options;
-    string dbName;
+    std::string dbName;
 
         // Converters
-    string vectorToString(const std::vector<WordIndex>& vec)const;
-    std::vector<WordIndex> stringToVector(const string s)const;
-    bool stringToFloat(const string value_str, float &value)const;
-    string floatToString(const float value)const;
+    std::string vectorToString(const std::vector<WordIndex>& vec)const;
+    std::vector<WordIndex> stringToVector(const std::string s)const;
+    bool stringToFloat(const std::string value_str, float &value)const;
+    std::string floatToString(const float value)const;
 
         // Read and write data
     bool retrieveData(const std::vector<WordIndex>& phrase, float &value)const;
     bool storeData(const std::vector<WordIndex>& phrase, float value)const;
 
         // Key converters
-    string vectorToKey(const std::vector<WordIndex>& vec)const;
-    std::vector<WordIndex> keyToVector(const string key)const;
+    std::string vectorToKey(const std::vector<WordIndex>& vec)const;
+    std::vector<WordIndex> keyToVector(const std::string key)const;
 
         // Binrary and LevelDB load functions
     bool loadBin(const char* lexNumDenFile);

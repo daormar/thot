@@ -64,14 +64,14 @@ class LightSentenceHandler: public BaseSentenceHandler
    bool readSentencePairs(const char *srcFileName,
                           const char *trgFileName,
                           const char *sentCountsFile,
-                          pair<unsigned int,unsigned int>& sentRange);
+                          std::pair<unsigned int,unsigned int>& sentRange);
        // NOTE: when function readSentencePairs() is invoked, previously
        //       seen sentence pairs are removed
 
    void addSentPair(std::vector<std::string> srcSentStr,
                     std::vector<std::string> trgSentStr,
                     Count c,
-                    pair<unsigned int,unsigned int>& sentRange);
+                    std::pair<unsigned int,unsigned int>& sentRange);
    unsigned int numSentPairs(void);
        // NOTE: the whole valid range in a given moment is
        // [ 0 , numSentPairs() )
@@ -104,7 +104,7 @@ class LightSentenceHandler: public BaseSentenceHandler
    size_t nsPairsInFiles;
    size_t currFileSentIdx;
    
-   std::vector<pair<std::vector<std::string>,std::vector<std::string> > > sentPairCont;
+   std::vector<std::pair<std::vector<std::string>,std::vector<std::string> > > sentPairCont;
    std::vector<Count> sentPairCount;
 
    void rewindFiles(void);

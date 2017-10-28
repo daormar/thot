@@ -91,8 +91,8 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                          std::vector<Score>& cumulativeScoreVec);
 
       // Word predictor related functions
-  pair<Count,std::string> getBestSuffix(std::string input);
-  pair<Count,std::string> getBestSuffixGivenHist(std::vector<std::string> hist,
+  std::pair<Count,std::string> getBestSuffix(std::string input);
+  std::pair<Count,std::string> getBestSuffixGivenHist(std::vector<std::string> hist,
                                                  std::string input);
   
       // Link pointers
@@ -178,7 +178,7 @@ Score LangModelFeat<SCORE_INFO>::scoreTrgSentence(const std::vector<std::string>
 
 //---------------------------------
 template<class SCORE_INFO>
-pair<Count,std::string>
+std::pair<Count,std::string>
 LangModelFeat<SCORE_INFO>::getBestSuffix(std::string input)
 {
   return wordPredPtr->getBestSuffix(input);
@@ -186,7 +186,7 @@ LangModelFeat<SCORE_INFO>::getBestSuffix(std::string input)
 
 //---------------------------------
 template<class SCORE_INFO>
-pair<Count,std::string>
+std::pair<Count,std::string>
 LangModelFeat<SCORE_INFO>::getBestSuffixGivenHist(std::vector<std::string> hist,
                                                   std::string input)
 {
@@ -194,14 +194,14 @@ LangModelFeat<SCORE_INFO>::getBestSuffixGivenHist(std::vector<std::string> hist,
   WordPredictor::SuffixList::iterator suffixListIter;
   LgProb lp;
   LgProb maxlp=-FLT_MAX;
-  pair<Count,std::string> bestCountSuffix;
+  std::pair<Count,std::string> bestCountSuffix;
 
       // Get suffix list for input
   wordPredPtr->getSuffixList(input,suffixList);
   if(suffixList.size()==0)
   {
         // There are not any suffix
-    return make_pair(0,"");
+    return std::make_pair(0,"");
   }
   else
   {

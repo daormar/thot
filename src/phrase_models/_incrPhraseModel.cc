@@ -39,8 +39,8 @@ _incrPhraseModel::_incrPhraseModel(void)
 }
 
 //-------------------------
-void _incrPhraseModel::strAddTableEntry(const std::vector<string>& s,
-                                        const std::vector<string>& t,
+void _incrPhraseModel::strAddTableEntry(const std::vector<std::string>& s,
+                                        const std::vector<std::string>& t,
                                         PhrasePairInfo inf)
 {
   std::vector<WordIndex> wordIndex_t,wordIndex_s;
@@ -60,8 +60,8 @@ void _incrPhraseModel::addTableEntry(const std::vector<WordIndex>& s,
 }
 
 //-------------------------
-void _incrPhraseModel::strIncrCountsOfEntry(const std::vector<string>& s,
-                                            const std::vector<string>& t,
+void _incrPhraseModel::strIncrCountsOfEntry(const std::vector<std::string>& s,
+                                            const std::vector<std::string>& t,
                                             Count count)
 {
  std::vector<WordIndex> wordIndex_t,wordIndex_s;
@@ -338,7 +338,7 @@ bool _incrPhraseModel::load_ttable(const char *_incrPhraseModelFileName)
 bool _incrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
 {
  unsigned int i;
- std::vector<string> s,t;
+ std::vector<std::string> s,t;
  awkInputStream awk;
  PhrasePairInfo phpinfo; 
  Count count_s_;
@@ -458,9 +458,9 @@ bool _incrPhraseModel::printTTable(const char *outputFileName)
 //-------------------------
 bool _incrPhraseModel::printSegmLengthTable(const char *outputFileName)
 {
- ofstream outF;
+ std::ofstream outF;
 
- outF.open(outputFileName,ios::out);
+ outF.open(outputFileName,std::ios::out);
  if(!outF)
  {
    std::cerr<<"Error while printing segmentation length table."<<std::endl;
@@ -475,7 +475,7 @@ bool _incrPhraseModel::printSegmLengthTable(const char *outputFileName)
 
 //-------------------------
 void _incrPhraseModel::printNbestTransTableNode(NbestTableNode<PhraseTransTableNodeData> tTableNode,
-                                               ostream &outS)
+                                                std::ostream &outS)
 {
  NbestTableNode<PhraseTransTableNodeData>::iterator transTableNodeIter;
  std::vector<WordIndex>::iterator VectorWordIndexIter;
@@ -489,7 +489,7 @@ void _incrPhraseModel::printNbestTransTableNode(NbestTableNode<PhraseTransTableN
 }
 
 //-------------------------
-void _incrPhraseModel::printSegmLengthTable(ostream &outS)
+void _incrPhraseModel::printSegmLengthTable(std::ostream &outS)
 {
   return segLenTable.printSegmLengthTable(outS);
 }
@@ -513,25 +513,25 @@ bool _incrPhraseModel::loadTrgVocab(const char *trgInputVocabFileName)
 }
 
 //-------------------------
-WordIndex _incrPhraseModel::stringToSrcWordIndex(string s)const
+WordIndex _incrPhraseModel::stringToSrcWordIndex(std::string s)const
 {	
  return singleWordVocab.stringToSrcWordIndex(s);
 }
 
 //-------------------------
-string _incrPhraseModel::wordIndexToSrcString(WordIndex w)const
+std::string _incrPhraseModel::wordIndexToSrcString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToSrcString(w);
 }
 
 //-------------------------
-bool _incrPhraseModel::existSrcSymbol(string s)const
+bool _incrPhraseModel::existSrcSymbol(std::string s)const
 {
  return singleWordVocab.existSrcSymbol(s);
 }
 
 //-------------------------
-std::vector<WordIndex> _incrPhraseModel::strVectorToSrcIndexVector(const std::vector<string>& s)
+std::vector<WordIndex> _incrPhraseModel::strVectorToSrcIndexVector(const std::vector<std::string>& s)
 {
   std::vector<WordIndex> swVec;
   
@@ -542,9 +542,9 @@ std::vector<WordIndex> _incrPhraseModel::strVectorToSrcIndexVector(const std::ve
 }
 
 //-------------------------
-std::vector<string> _incrPhraseModel::srcIndexVectorToStrVector(const std::vector<WordIndex>& s)
+std::vector<std::string> _incrPhraseModel::srcIndexVectorToStrVector(const std::vector<WordIndex>& s)
 {
- std::vector<string> vStr;
+ std::vector<std::string> vStr;
  unsigned int i;
 
  for(i=0;i<s.size();++i)
@@ -553,7 +553,7 @@ std::vector<string> _incrPhraseModel::srcIndexVectorToStrVector(const std::vecto
  return vStr;
 }
 //-------------------------
-WordIndex _incrPhraseModel::addSrcSymbol(string s)
+WordIndex _incrPhraseModel::addSrcSymbol(std::string s)
 {
  return singleWordVocab.addSrcSymbol(s);
 }
@@ -571,25 +571,25 @@ size_t _incrPhraseModel::getTrgVocabSize(void)const
 }
 
 //-------------------------
-WordIndex _incrPhraseModel::stringToTrgWordIndex(string t)const
+WordIndex _incrPhraseModel::stringToTrgWordIndex(std::string t)const
 {
  return singleWordVocab.stringToTrgWordIndex(t);
 }
 
 //-------------------------
-string _incrPhraseModel::wordIndexToTrgString(WordIndex w)const
+std::string _incrPhraseModel::wordIndexToTrgString(WordIndex w)const
 {
  return singleWordVocab.wordIndexToTrgString(w);
 }
 
 //-------------------------
-bool _incrPhraseModel::existTrgSymbol(string t)const
+bool _incrPhraseModel::existTrgSymbol(std::string t)const
 {
  return singleWordVocab.existTrgSymbol(t);
 }
 
 //-------------------------
-std::vector<WordIndex> _incrPhraseModel::strVectorToTrgIndexVector(const std::vector<string>& t)
+std::vector<WordIndex> _incrPhraseModel::strVectorToTrgIndexVector(const std::vector<std::string>& t)
 {
   std::vector<WordIndex> twVec;
   
@@ -599,9 +599,9 @@ std::vector<WordIndex> _incrPhraseModel::strVectorToTrgIndexVector(const std::ve
   return twVec;
 }
 //-------------------------
-std::vector<string> _incrPhraseModel::trgIndexVectorToStrVector(const std::vector<WordIndex>& t)
+std::vector<std::string> _incrPhraseModel::trgIndexVectorToStrVector(const std::vector<WordIndex>& t)
 {
- std::vector<string> vStr;
+ std::vector<std::string> vStr;
  unsigned int i;
 
  for(i=0;i<t.size();++i)
@@ -610,7 +610,7 @@ std::vector<string> _incrPhraseModel::trgIndexVectorToStrVector(const std::vecto
  return vStr;
 }
 //-------------------------
-WordIndex _incrPhraseModel::addTrgSymbol(string t)
+WordIndex _incrPhraseModel::addTrgSymbol(std::string t)
 {
  return singleWordVocab.addTrgSymbol(t);
 }
@@ -621,10 +621,10 @@ bool _incrPhraseModel::printTrgVocab(const char *outputFileName)
 }
 
 //-------------------------
-std::vector<string> _incrPhraseModel::stringToStringVector(string s)
+std::vector<std::string> _incrPhraseModel::stringToStringVector(std::string s)
 {
- std::vector<string> vs;	
- string aux;
+ std::vector<std::string> vs;	
+ std::string aux;
  unsigned int i=0;	
  bool end=false;
 	
@@ -645,11 +645,11 @@ std::vector<string> _incrPhraseModel::stringToStringVector(string s)
 }
 
 //-------------------------
-std::vector<string> _incrPhraseModel::extractCharItemsToVector(char *ch)const
+std::vector<std::string> _incrPhraseModel::extractCharItemsToVector(char *ch)const
 {
  unsigned int i=0;
- string s;	
- std::vector<string> v,u;
+ std::string s;	
+ std::vector<std::string> v,u;
 
  while(ch[i]!=0)
  {

@@ -109,9 +109,9 @@ class WgProcessorForAnlp: public BaseWgProcessorForAnlp
 
   typedef typename ECM_FOR_WG::EcmScoreInfo EcmScoreInfo;
   typedef std::vector<EcmScoreInfo> EcmScrInfoForArc;
-  typedef std::multimap<float,HypStateIndex,greater<float> > NbestHypStates;
-  typedef pair<WordGraphArcId,unsigned int> HypSubStateIdx;
-  typedef std::multimap<float,HypSubStateIdx,greater<float> > NbestHypSubStates;
+  typedef std::multimap<float,HypStateIndex,std::greater<float> > NbestHypStates;
+  typedef std::pair<WordGraphArcId,unsigned int> HypSubStateIdx;
+  typedef std::multimap<float,HypSubStateIdx,std::greater<float> > NbestHypSubStates;
   typedef std::set<HypStateIndex> StatesInvolvedInArcs;
     
   std::vector<std::string> previousPrefixVec;
@@ -413,7 +413,7 @@ template<class ECM_FOR_WG>
 void WgProcessorForAnlp<ECM_FOR_WG>::initWgpInfoForArcs(unsigned int verbose/*=0*/)
 {
         // Obtain arc range
-  pair<WordGraphArcId,WordGraphArcId> arcIdxRange=wg_ptr->getArcIndexRange();
+  std::pair<WordGraphArcId,WordGraphArcId> arcIdxRange=wg_ptr->getArcIndexRange();
 
       // Iterate over the arcs of the word-graph (IMPORTANT: it is
       // assumed that the arcs of the word-graph are topologically
@@ -522,7 +522,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::procWgGivenPrefDiff(std::vector<std::string
       // Declare and initialize variables
          
       // Obtain arc range
-  pair<WordGraphArcId,WordGraphArcId> arcIdxRange=wg_ptr->getArcIndexRange();
+  std::pair<WordGraphArcId,WordGraphArcId> arcIdxRange=wg_ptr->getArcIndexRange();
   
       // Process initial state
   if(prefixDiffVec.size()!=0)
@@ -600,7 +600,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestHypStates(unsigned int n,
 
           // Insert state in the n-best list
       Score score=bestScoresForState[hsIdx].back()+(wgWeight*restScore);
-      nbestHypStates.insert(make_pair(score,hsIdx));
+      nbestHypStates.insert(std::make_pair(score,hsIdx));
     
           // Prune list if necessary
       if(nbestHypStates.size()>n)
@@ -623,7 +623,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestHypSubStates(unsigned int n,
   NbestHypSubStates nbestHypSubStates;
 
       // Obtain arc range
-  pair<WordGraphArcId,WordGraphArcId> arcIdxRange=wg_ptr->getArcIndexRange();
+  std::pair<WordGraphArcId,WordGraphArcId> arcIdxRange=wg_ptr->getArcIndexRange();
 
       // Process sub-states
   for(WordGraphArcId wgArcId=arcIdxRange.first;wgArcId<=arcIdxRange.second;++wgArcId)
@@ -668,7 +668,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestHypSubStates(unsigned int n,
             hssIdx.first=wgArcId;
             hssIdx.second=w;
                 // Insert sub-state in the n-best list
-            nbestHypSubStates.insert(make_pair(score,hssIdx));
+            nbestHypSubStates.insert(std::make_pair(score,hssIdx));
             
                 // Prune list if necessary
             if(nbestHypSubStates.size()>n)
@@ -903,7 +903,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestCorrections(std::vector<std::string> 
     std::vector<std::string> correction=obtainCorrForHypState(prefixVec,hypStateIndex,rejectedWords,verbose);
        
         // Insert correction
-    nbestCorrections.insert(make_pair(nbestHypStatesIter->first,correction));
+    nbestCorrections.insert(std::make_pair(nbestHypStatesIter->first,correction));
         // Prune n-best corrections if necessary
     if(nbestCorrections.size()>n)
       removeLastFromNbestCorrs(nbestCorrections);
@@ -919,7 +919,7 @@ WgProcessorForAnlp<ECM_FOR_WG>::obtainNbestCorrections(std::vector<std::string> 
     std::vector<std::string> correction=obtainCorrForHypSubState(prefixVec,hypSubStateIdx,verbose);
 
         // Insert correction
-    nbestCorrections.insert(make_pair(nbestHypSubStatesIter->first,correction));
+    nbestCorrections.insert(std::make_pair(nbestHypSubStatesIter->first,correction));
 
         // Prune n-best corrections if necessary
     if(nbestCorrections.size()>n)
@@ -1357,7 +1357,7 @@ template<class ECM_FOR_WG>
 void WgProcessorForAnlp<ECM_FOR_WG>::genListOfStatesInvolvedInArcs(StatesInvolvedInArcs& stInvInArcs)const
 {
   stInvInArcs.clear();
-  pair<WordGraphArcId,WordGraphArcId> arcIdxRange=wg_ptr->getArcIndexRange();
+  std::pair<WordGraphArcId,WordGraphArcId> arcIdxRange=wg_ptr->getArcIndexRange();
   for(unsigned int aIdx=arcIdxRange.first;aIdx<=arcIdxRange.second;++aIdx)
   {    
         // Update info for arcs
@@ -1412,9 +1412,9 @@ void WgProcessorForAnlp<ECM_FOR_WG>::updateSizeOfVars(const std::vector<std::str
 template<class ECM_FOR_WG>
 bool WgProcessorForAnlp<ECM_FOR_WG>::print(const char* filename)const
 {
-  ofstream outS;
+  std::ofstream outS;
 
-  outS.open(filename,ios::out);
+  outS.open(filename,std::ios::out);
   if(!outS)
   {
     std::cerr<<"Error while printing word-graph processing information to file."<<std::endl;
@@ -1566,7 +1566,7 @@ void WgProcessorForAnlp<ECM_FOR_WG>::printInfoForSubStates(std::ostream &outS)co
   outS<<"# Sub-state info..."<<std::endl;
 
       // Obtain arc range
-  pair<WordGraphArcId,WordGraphArcId> arcIdxRange=wg_ptr->getArcIndexRange();
+  std::pair<WordGraphArcId,WordGraphArcId> arcIdxRange=wg_ptr->getArcIndexRange();
   
       // Iterate over the sub-states of the word-graph
   for(WordGraphArcId wgArcId=arcIdxRange.first;wgArcId<=arcIdxRange.second;++wgArcId)

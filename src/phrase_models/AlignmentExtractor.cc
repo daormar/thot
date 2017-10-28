@@ -114,22 +114,22 @@ bool AlignmentExtractor::rewind(void)
 }
 
 //-------------------------
-std::vector<string> AlignmentExtractor::get_ns(void)
+std::vector<std::string> AlignmentExtractor::get_ns(void)
 {
   return ns;
 }
 
 //-------------------------
-std::vector<string> AlignmentExtractor::get_s(void)
+std::vector<std::string> AlignmentExtractor::get_s(void)
 {
-  std::vector<string> s;
+  std::vector<std::string> s;
   for(unsigned int i=1;i<ns.size();++i)
     s.push_back(ns[i]);
   return s;
 }
 
 //-------------------------
-std::vector<string> AlignmentExtractor::get_t(void)
+std::vector<std::string> AlignmentExtractor::get_t(void)
 {
   return t;
 }
@@ -294,7 +294,7 @@ bool AlignmentExtractor::getNextAlignInAlignOpFormat(void)
 //-------------------------
 void AlignmentExtractor::transposeAlig(void)
 {
- std::vector<string> aux;
+ std::vector<std::string> aux;
  unsigned int i;
  std::string nullw;
  
@@ -324,8 +324,8 @@ bool AlignmentExtractor::join(const char *GizaAligFileName,
  unsigned int numSent=0;
  
 #ifdef _GLIBCXX_USE_LFS
- ofstream outF;
- outF.open(outFileName,ios::out);
+ std::ofstream outF;
+ outF.open(outFileName,std::ios::out);
  if(!outF)
  {
    std::cerr<<"Error while opening output file."<<std::endl;
@@ -381,8 +381,8 @@ bool AlignmentExtractor::intersect(const char *GizaAligFileName,
  unsigned int numSent=0;
 
 #ifdef _GLIBCXX_USE_LFS
- ofstream outF;
- outF.open(outFileName,ios::out);
+ std::ofstream outF;
+ outF.open(outFileName,std::ios::out);
  if(!outF)
  {
    std::cerr<<"Error while opening output file."<<std::endl;
@@ -439,8 +439,8 @@ bool AlignmentExtractor::sum(const char *GizaAligFileName,
  unsigned int numSent=0;
 
 #ifdef _GLIBCXX_USE_LFS
- ofstream outF;
- outF.open(outFileName,ios::out);
+ std::ofstream outF;
+ outF.open(outFileName,std::ios::out);
  if(!outF)
  {
    std::cerr<<"Error while opening output file."<<std::endl;
@@ -497,8 +497,8 @@ bool AlignmentExtractor::symmetr1(const char *GizaAligFileName,
  unsigned int numSent=0;
 
 #ifdef _GLIBCXX_USE_LFS
- ofstream outF;
- outF.open(outFileName,ios::out);
+ std::ofstream outF;
+ outF.open(outFileName,std::ios::out);
  if(!outF)
  {
    std::cerr<<"Error while opening output file."<<std::endl;
@@ -556,8 +556,8 @@ bool AlignmentExtractor::symmetr2(const char *GizaAligFileName,
  unsigned int numSent=0;
 
 #ifdef _GLIBCXX_USE_LFS
- ofstream outF;
- outF.open(outFileName,ios::out);
+ std::ofstream outF;
+ outF.open(outFileName,std::ios::out);
  if(!outF)
  {
    std::cerr<<"Error while opening output file."<<std::endl;
@@ -615,8 +615,8 @@ bool AlignmentExtractor::growDiagFinal(const char *GizaAligFileName,
  unsigned int numSent=0;
 
 #ifdef _GLIBCXX_USE_LFS
- ofstream outF;
- outF.open(outFileName,ios::out);
+ std::ofstream outF;
+ outF.open(outFileName,std::ios::out);
  if(!outF)
  {
    std::cerr<<"Error while opening output file."<<std::endl;
@@ -671,7 +671,7 @@ AlignmentExtractor::~AlignmentExtractor()
 }
 
 //-------------------------
-ostream& operator << (ostream &outS,AlignmentExtractor &ae)
+std::ostream& operator << (std::ostream &outS,AlignmentExtractor &ae)
 {
  char cad[128];
  

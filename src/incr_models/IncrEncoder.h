@@ -261,7 +261,7 @@ bool IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::loadSrc(const char *fileNam
 {
   SRCDATA s;
   HSRCDATA hs;
-  ifstream srcFile;
+  std::ifstream srcFile;
 
   srcFile.open(fileName);
   if(!srcFile)
@@ -287,7 +287,7 @@ bool IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::loadTrg(const char *fileNam
 {
   TRGDATA t;
   HTRGDATA ht;
-  ifstream trgFile;
+  std::ifstream trgFile;
 
   trgFile.open(fileName);
   if(!trgFile)
@@ -331,9 +331,9 @@ template<class HSRCDATA,class HTRGDATA,class SRCDATA,class TRGDATA>
 bool IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::printSrc(const char *fileName)
 {
   typename std::map<HSRCDATA,SRCDATA>::iterator iter;
-  ofstream srcFile;
+  std::ofstream srcFile;
 
-  srcFile.open(fileName,ios::out);
+  srcFile.open(fileName,std::ios::out);
   if(!srcFile)
   {
     std::cerr<< "Error while opening source vocabulary file "<<fileName<<std::endl;
@@ -354,9 +354,9 @@ template<class HSRCDATA,class HTRGDATA,class SRCDATA,class TRGDATA>
 bool IncrEncoder<HSRCDATA,HTRGDATA,SRCDATA,TRGDATA>::printTrg(const char *fileName)
 {
   typename std::map<HTRGDATA,TRGDATA>::iterator iter;
-  ofstream trgFile;
+  std::ofstream trgFile;
 
-  trgFile.open(fileName,ios::out);
+  trgFile.open(fileName,std::ios::out);
   if(!trgFile)
   {
     std::cerr<< "Error while opening target vocabulary file "<<fileName<<std::endl;

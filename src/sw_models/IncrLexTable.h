@@ -122,7 +122,7 @@ class IncrLexTable : public _incrLexTable
 #endif
    
    typedef std::vector<LexNumerElem> LexNumer;
-   typedef std::vector<pair<bool,float> >LexDenom;
+   typedef std::vector<std::pair<bool,float> >LexDenom;
 
    LexNumer lexNumer;
    LexDenom lexDenom;

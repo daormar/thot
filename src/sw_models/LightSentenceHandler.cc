@@ -55,7 +55,7 @@ LightSentenceHandler::LightSentenceHandler(void)
 bool LightSentenceHandler::readSentencePairs(const char *srcFileName,
                                              const char *trgFileName,
                                              const char *sentCountsFile,
-                                             pair<unsigned int,unsigned int>& sentRange)
+                                             std::pair<unsigned int,unsigned int>& sentRange)
 {
       // Clear sentence handler
  std::cerr<<"Initializing sentence handler..."<<std::endl;
@@ -151,13 +151,13 @@ void LightSentenceHandler::rewindFiles(void)
 void LightSentenceHandler::addSentPair(std::vector<std::string> srcSentStr,
                                        std::vector<std::string> trgSentStr,
                                        Count c,
-                                       pair<unsigned int,unsigned int>& sentRange)
+                                       std::pair<unsigned int,unsigned int>& sentRange)
 {
       // Fill sentRange information
   sentRange.first=nsPairsInFiles+sentPairCont.size();
   sentRange.second=sentRange.first;
       // add to sentPairCont
-  sentPairCont.push_back(make_pair(srcSentStr,trgSentStr));
+  sentPairCont.push_back(std::make_pair(srcSentStr,trgSentStr));
       // add to sentPairCount
   sentPairCount.push_back(c);
 
@@ -315,12 +315,12 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
                                           const char *trgSentFile,
                                           const char *sentCountsFile)
 {
-  ofstream srcOutF;
-  ofstream trgOutF;
-  ofstream countsOutF;
+  std::ofstream srcOutF;
+  std::ofstream trgOutF;
+  std::ofstream countsOutF;
 
       // Open file with source sentences
-  srcOutF.open(srcSentFile,ios::out);
+  srcOutF.open(srcSentFile,std::ios::out);
   if(!srcOutF)
   {
     std::cerr<<"Error while printing file with source sentences."<<std::endl;
@@ -328,7 +328,7 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
   }
 
       // Open file with target sentences
-  trgOutF.open(trgSentFile,ios::out);
+  trgOutF.open(trgSentFile,std::ios::out);
   if(!trgOutF)
   {
     std::cerr<<"Error while printing file with target sentences."<<std::endl;
@@ -336,7 +336,7 @@ bool LightSentenceHandler::printSentPairs(const char *srcSentFile,
   }
 
       // Open file with sentence counts
-  countsOutF.open(sentCountsFile,ios::out);
+  countsOutF.open(sentCountsFile,std::ios::out);
   if(!countsOutF)
   {
     std::cerr<<"Error while printing file with sentence counts."<<std::endl;

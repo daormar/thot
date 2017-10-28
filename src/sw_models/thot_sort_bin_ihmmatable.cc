@@ -90,7 +90,7 @@ int main(int argc,char *argv[])
   if(TakeParameters(argc,argv)==THOT_OK)
   {
         // Try to open file  
-    ifstream inF (ihmmatableFileName.c_str(), ios::in | ios::binary);
+    std::ifstream inF (ihmmatableFileName.c_str(), std::ios::in | std::ios::binary);
     if (!inF)
     {
       std::cerr<<"Error in file with incremental hmm alignment table, file "<<ihmmatableFileName<<" does not exist.\n";
@@ -127,11 +127,11 @@ int main(int argc,char *argv[])
       for(unsigned int i=0;i<entryVec.size();++i)
       {
 //        printf("%d %d %d %g %g\n",entryVec[i].asHmm.prev_i,entryVec[i].asHmm.slen,entryVec[i].i,entryVec[i].numer,entryVec[i].denom);
-        cout.write((char*)&entryVec[i].asHmm.prev_i,sizeof(PositionIndex));
-        cout.write((char*)&entryVec[i].asHmm.slen,sizeof(PositionIndex));
-        cout.write((char*)&entryVec[i].i,sizeof(PositionIndex));
-        cout.write((char*)&entryVec[i].numer,sizeof(float));
-        cout.write((char*)&entryVec[i].denom,sizeof(float));            
+        std::cout.write((char*)&entryVec[i].asHmm.prev_i,sizeof(PositionIndex));
+        std::cout.write((char*)&entryVec[i].asHmm.slen,sizeof(PositionIndex));
+        std::cout.write((char*)&entryVec[i].i,sizeof(PositionIndex));
+        std::cout.write((char*)&entryVec[i].numer,sizeof(float));
+        std::cout.write((char*)&entryVec[i].denom,sizeof(float));            
       }
       
       return THOT_OK;

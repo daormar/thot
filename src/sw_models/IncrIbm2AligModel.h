@@ -66,7 +66,7 @@ class IncrIbm2AligModel: public IncrIbm1AligModel
    IncrIbm2AligModel();
 
        // Functions to train model
-   void efficientBatchTrainingForRange(pair<unsigned int,unsigned int> sentPairRange,
+   void efficientBatchTrainingForRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                        int verbosity=0);
 
    // Functions to access model parameters
@@ -135,7 +135,7 @@ class IncrIbm2AligModel: public IncrIbm1AligModel
    
    IncrIbm2AligTable incrIbm2AligTable;
 
-   typedef std::map<pair<aSource,PositionIndex>,pair<float,float> > AligAuxVar;
+   typedef std::map<std::pair<aSource,PositionIndex>,std::pair<float,float> > AligAuxVar;
    AligAuxVar aligAuxVar;
        // EM algorithm auxiliary variables
 

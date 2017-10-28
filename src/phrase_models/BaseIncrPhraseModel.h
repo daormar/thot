@@ -61,14 +61,14 @@ class BaseIncrPhraseModel: public BaseCountPhraseModel
     typedef BaseCountPhraseModel::TrgTableNode TrgTableNode;
 
         // Functions to extend or modify the model
-    virtual void strAddTableEntry(const std::vector<string>& s,
-                                  const std::vector<string>& t,
+    virtual void strAddTableEntry(const std::vector<std::string>& s,
+                                  const std::vector<std::string>& t,
                                   PhrasePairInfo inf)=0;
     virtual void addTableEntry(const std::vector<WordIndex>& s,
                                const std::vector<WordIndex>& t,
                                PhrasePairInfo inf)=0;
-	virtual void strIncrCountsOfEntry(const std::vector<string>& s,
-                                      const std::vector<string>& t,
+	virtual void strIncrCountsOfEntry(const std::vector<std::string>& s,
+                                      const std::vector<std::string>& t,
                                       Count count=1)=0;
 	virtual void incrCountsOfEntry(const std::vector<WordIndex>& s,
                                    const std::vector<WordIndex>& t,

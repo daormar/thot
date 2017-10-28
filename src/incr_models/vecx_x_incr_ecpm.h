@@ -132,9 +132,9 @@ bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
 template<class HX,class X,class SRC_INFO,class SRCTRG_INFO>
 bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
 {
-  ofstream outF;
+  std::ofstream outF;
 
-  outF.open(fileName,ios::out);
+  outF.open(fileName,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing model to file."<<std::endl;
@@ -165,7 +165,7 @@ std::ostream& vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::print(std::ostream &o
     typename vecx_x_incr_cptable<X,SRC_INFO,SRCTRG_INFO>::const_iterator tableIter;
       
         // Set float precision.
-    outS.setf( ios::fixed, ios::floatfield );
+    outS.setf( std::ios::fixed, std::ios::floatfield );
     outS.precision(8);
       
     for(tableIter=tableCptPtr->begin();tableIter!=tableCptPtr->end();++tableIter)

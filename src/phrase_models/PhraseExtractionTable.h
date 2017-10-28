@@ -78,19 +78,19 @@ class PhraseExtractionTable
 	PhraseExtractionCell& cell(unsigned int x,
                                unsigned int y);
 	void extractConsistentPhrases(PhraseExtractParameters phePars,
-                                  const std::vector<string> &_ns,
-                                  const std::vector<string> &_t,
+                                  const std::vector<std::string> &_ns,
+                                  const std::vector<std::string> &_t,
                                   const WordAligMatrix &_alig,
                                   std::vector<PhrasePair>& outvph);
     double segmBasedExtraction(PhraseExtractParameters phePars,
-                               const std::vector<string> &_ns,
-                               const std::vector<string> &_t,
+                               const std::vector<std::string> &_ns,
+                               const std::vector<std::string> &_t,
                                const WordAligMatrix &_alig,
                                std::vector<PhrasePair>& outvph,
                                int verbose=0);
 	Bisegm& obtainPossibleSegmentations(PhraseExtractParameters phePars,
-                                        const std::vector<string> &_ns,
-                                        const std::vector<string> &_t,
+                                        const std::vector<std::string> &_ns,
+                                        const std::vector<std::string> &_t,
                                         const WordAligMatrix &_alig);
     
 	std::vector<PhrasePair> getPhrasesFromSegmentation(std::vector<CellID>& comb);
@@ -142,8 +142,8 @@ class PhraseExtractionTable
 
             // Iterator-related functions
     iterator getSegmIter(PhraseExtractParameters phePars,
-                         const std::vector<string> &_ns,
-                         const std::vector<string> &_t,
+                         const std::vector<std::string> &_ns,
+                         const std::vector<std::string> &_t,
                          const WordAligMatrix &_alig);
 
  private:
@@ -154,8 +154,8 @@ class PhraseExtractionTable
     std::vector<std::vector<PhraseExtractionCell> > pecMatrix;
     std::vector<std::vector<iterator> > iterMatrix;
     
-    std::vector<string> ns;
-	std::vector<string> t;
+    std::vector<std::string> ns;
+	std::vector<std::string> t;
 	WordAligMatrix alig;
 	unsigned int nslen;
 	unsigned int tlen;
@@ -169,13 +169,13 @@ class PhraseExtractionTable
 	unsigned int maxNumbOfCombsInTable;
 
     void extractConsistentPhrasesOld(PhraseExtractParameters phePars,
-                                     const std::vector<string> &_ns,
-                                     const std::vector<string> &_t,
+                                     const std::vector<std::string> &_ns,
+                                     const std::vector<std::string> &_t,
                                      const WordAligMatrix &_alig,
                                      std::vector<PhrasePair>& outvph);
     void extractConsistentPhrasesOch(PhraseExtractParameters phePars,
-                                     const std::vector<string> &_ns,
-                                     const std::vector<string> &_t,
+                                     const std::vector<std::string> &_ns,
+                                     const std::vector<std::string> &_t,
                                      const WordAligMatrix &_alig,
                                      std::vector<PhrasePair>& outvph);
     double gen01RandNum(void);

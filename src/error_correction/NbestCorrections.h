@@ -31,6 +31,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Typedefs -------------------------------------------
 
-typedef std::multimap<float,std::vector<std::string>,greater<float> > NbestCorrections;
+typedef std::multimap<float,std::vector<std::string>,std::greater<float> > NbestCorrections;
 
 #endif

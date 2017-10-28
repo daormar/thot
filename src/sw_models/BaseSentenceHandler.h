@@ -61,14 +61,14 @@ class BaseSentenceHandler
    virtual bool readSentencePairs(const char *srcFileName,
                                   const char *trgFileName,
                                   const char *sentCountsFile,
-                                  pair<unsigned int,unsigned int>& sentRange)=0;
+                                  std::pair<unsigned int,unsigned int>& sentRange)=0;
        // NOTE: when function readSentencePairs() is invoked, previously
        //       seen sentence pairs are removed
    
    virtual void addSentPair(std::vector<std::string> srcSentStr,
                             std::vector<std::string> trgSentStr,
                             Count c,
-                            pair<unsigned int,unsigned int>& sentRange)=0;
+                            std::pair<unsigned int,unsigned int>& sentRange)=0;
    virtual unsigned int numSentPairs(void)=0;
        // NOTE: the whole valid range in a given moment is
        // [ 0 , numSentPairs() )

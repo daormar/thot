@@ -93,7 +93,7 @@ void printCounts(aSource firstSrc,
                  float lcSrc,
                  const std::vector<float>& lcSrcTrgVec);
 void clear();
-int readTableRecord(ifstream& inF,
+int readTableRecord(std::ifstream& inF,
                     aSource& asIbm2,
                     PositionIndex& i,
                     float& numer,
@@ -105,7 +105,7 @@ void printDesc(void);
 //--------------- Global variables -----------------------------------
 
 std::vector<std::string> fileNameVec;
-std::vector<ifstream*> ifstreamPtrVec;
+std::vector<std::ifstream*> ifstreamPtrVec;
 std::vector<bool> eofFlagVec;
 
 //--------------- Function Definitions -------------------------------
@@ -200,9 +200,9 @@ int openFiles(void)
   for(unsigned int i=0;i<fileNameVec.size();++i)
   {
         // Create file stream
-    ifstream* ifstreamPtr=new ifstream;
+    std::ifstream* ifstreamPtr=new std::ifstream;
     ifstreamPtrVec.push_back(ifstreamPtr);
-    ifstreamPtrVec[i]->open(fileNameVec[i].c_str(), ios::in | ios::binary);
+    ifstreamPtrVec[i]->open(fileNameVec[i].c_str(), std::ios::in | std::ios::binary);
     if(! *ifstreamPtrVec[i])
     {
       std::cerr<<"Error in file with incremental lexical table, file "<<fileNameVec[i]<<" does not exist.\n";
@@ -283,12 +283,12 @@ void printCounts(aSource firstSrc,
     {
           // Print count for current target phrase
 //      printf("%d %d %d %d %g %g\n",firstSrc.j,firstSrc.slen,firstSrc.tlen,firstTrg,glcSrcTrg,lcSrc);
-      cout.write((char*)&firstSrc.j,sizeof(PositionIndex));
-      cout.write((char*)&firstSrc.slen,sizeof(PositionIndex));
-      cout.write((char*)&firstSrc.tlen,sizeof(PositionIndex));
-      cout.write((char*)&firstTrg,sizeof(PositionIndex));
-      cout.write((char*)&glcSrcTrg,sizeof(float));
-      cout.write((char*)&lcSrc,sizeof(float));            
+      std::cout.write((char*)&firstSrc.j,sizeof(PositionIndex));
+      std::cout.write((char*)&firstSrc.slen,sizeof(PositionIndex));
+      std::cout.write((char*)&firstSrc.tlen,sizeof(PositionIndex));
+      std::cout.write((char*)&firstTrg,sizeof(PositionIndex));
+      std::cout.write((char*)&glcSrcTrg,sizeof(float));
+      std::cout.write((char*)&lcSrc,sizeof(float));            
  
           // Initialize variables for next target phrase
       firstTrg=trgPosVec[n];
@@ -297,12 +297,12 @@ void printCounts(aSource firstSrc,
   }
       // Print last target phrase
 //  printf("%d %d %d %d %g %g\n",firstSrc.j,firstSrc.slen,firstSrc.tlen,firstTrg,glcSrcTrg,lcSrc);
-  cout.write((char*)&firstSrc.j,sizeof(PositionIndex));
-  cout.write((char*)&firstSrc.slen,sizeof(PositionIndex));
-  cout.write((char*)&firstSrc.tlen,sizeof(PositionIndex));
-  cout.write((char*)&firstTrg,sizeof(PositionIndex));
-  cout.write((char*)&glcSrcTrg,sizeof(float));
-  cout.write((char*)&lcSrc,sizeof(float));            
+  std::cout.write((char*)&firstSrc.j,sizeof(PositionIndex));
+  std::cout.write((char*)&firstSrc.slen,sizeof(PositionIndex));
+  std::cout.write((char*)&firstSrc.tlen,sizeof(PositionIndex));
+  std::cout.write((char*)&firstTrg,sizeof(PositionIndex));
+  std::cout.write((char*)&glcSrcTrg,sizeof(float));
+  std::cout.write((char*)&lcSrc,sizeof(float));            
 }
 
 //--------------- clear() function
@@ -316,7 +316,7 @@ void clear(void)
 }
 
 //--------------- readTableRecord() function
-int readTableRecord(ifstream& inF,
+int readTableRecord(std::ifstream& inF,
                     aSource& asIbm2,
                     PositionIndex& i,
                     float& numer,

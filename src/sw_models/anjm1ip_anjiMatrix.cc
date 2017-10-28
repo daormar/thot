@@ -312,7 +312,7 @@ bool anjm1ip_anjiMatrix::n_is_mapped_in_matrix(unsigned int n,
   else
   {
         // Size of anjm1ip_anji is restricted
-    pair<bool,unsigned int> pbui=read_n_to_np_vector(n);
+    std::pair<bool,unsigned int> pbui=read_n_to_np_vector(n);
     np=pbui.second;
     return pbui.first;
   }
@@ -341,66 +341,66 @@ void anjm1ip_anjiMatrix::map_n_in_matrix(unsigned int n,
         anjm1ip_anji_pointer=0;
 
           // Update info for old index
-      pair<bool,unsigned int> pbui=read_np_to_n_vector(np);
+      std::pair<bool,unsigned int> pbui=read_np_to_n_vector(np);
       if(pbui.first)
       {
             // np'th entry of anji was in use
 
             // Update old n to np correspondence
-        update_n_to_np_vector(pbui.second,make_pair(false,0));
+        update_n_to_np_vector(pbui.second,std::make_pair(false,0));
             // Clear anji entry for old index
         anjm1ip_anji[np].clear();
       }
       
           // Update np to n mapping
-      update_np_to_n_vector(np,make_pair(true,n));
+      update_np_to_n_vector(np,std::make_pair(true,n));
       
           // Update n to np mapping
-      update_n_to_np_vector(n,make_pair(true,np));
+      update_n_to_np_vector(n,std::make_pair(true,np));
     }
   }
 }
 
 //-------------------------
-pair<bool,unsigned int> anjm1ip_anjiMatrix::read_np_to_n_vector(unsigned int np)
+std::pair<bool,unsigned int> anjm1ip_anjiMatrix::read_np_to_n_vector(unsigned int np)
 {
   if(np<np_to_n_vector.size())
   {
     return np_to_n_vector[np];
   }
-  else return make_pair(false,0);
+  else return std::make_pair(false,0);
 }
 
 //-------------------------
-pair<bool,unsigned int> anjm1ip_anjiMatrix::read_n_to_np_vector(unsigned int n)
+std::pair<bool,unsigned int> anjm1ip_anjiMatrix::read_n_to_np_vector(unsigned int n)
 {
   if(n<n_to_np_vector.size())
   {
     return n_to_np_vector[n];
   }
-  else return make_pair(false,0);  
+  else return std::make_pair(false,0);  
 }
 
 //-------------------------
 void anjm1ip_anjiMatrix::update_np_to_n_vector(unsigned int np,
-                                               pair<bool,unsigned int> pbui)
+                                               std::pair<bool,unsigned int> pbui)
 {
       // grow np_to_n_vector
   while(np>=np_to_n_vector.size())
   {
-    np_to_n_vector.push_back(make_pair(false,0));
+    np_to_n_vector.push_back(std::make_pair(false,0));
   }
   np_to_n_vector[np]=pbui;
 }
 
 //-------------------------
 void anjm1ip_anjiMatrix::update_n_to_np_vector(unsigned int n,
-                                               pair<bool,unsigned int> pbui)
+                                               std::pair<bool,unsigned int> pbui)
 {
       // grow n_to_np_vector
   while(n>=n_to_np_vector.size())
   {
-    n_to_np_vector.push_back(make_pair(false,0));
+    n_to_np_vector.push_back(std::make_pair(false,0));
   }
   n_to_np_vector[n]=pbui;
 }
@@ -434,7 +434,7 @@ bool anjm1ip_anjiMatrix::load_matrix_values(const char* matrixFile)
 {
   std::cerr<<"Loading file with anjm1ip_anji values from "<<matrixFile<<std::endl;
       // Try to open file  
-  ifstream inF(matrixFile, ios::in | ios::binary);
+  std::ifstream inF(matrixFile, std::ios::in | std::ios::binary);
   if (!inF)
   {
     std::cerr<<"File with anjm1ip_anji values "<<matrixFile<<" does not exist.\n";
@@ -492,8 +492,8 @@ bool anjm1ip_anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
         unsigned int np=atoi(awk.dollar(1).c_str());
         unsigned int n=atoi(awk.dollar(2).c_str());
         
-        update_np_to_n_vector(np,make_pair(true,n));
-        update_n_to_np_vector(n,make_pair(true,np));
+        update_np_to_n_vector(np,std::make_pair(true,n));
+        update_n_to_np_vector(n,std::make_pair(true,np));
       }
     }
   }
@@ -523,8 +523,8 @@ bool anjm1ip_anjiMatrix::print(const char* prefFileName)
 //-------------------------
 bool anjm1ip_anjiMatrix::print_matrix_values(const char* matrixFile)
 {
-  ofstream outF;
-  outF.open(matrixFile,ios::out);
+  std::ofstream outF;
+  outF.open(matrixFile,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing anji file."<<std::endl;
@@ -557,8 +557,8 @@ bool anjm1ip_anjiMatrix::print_matrix_values(const char* matrixFile)
 //-------------------------   
 bool anjm1ip_anjiMatrix::print_maxnsize_data(const char* maxnsizeDataFile)
 {
-  ofstream outF;
-  outF.open(maxnsizeDataFile,ios::out);
+  std::ofstream outF;
+  outF.open(maxnsizeDataFile,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing file with anji maximum size data."<<std::endl;

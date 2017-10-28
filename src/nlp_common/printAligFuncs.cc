@@ -33,9 +33,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 
 //-------------------------
-void printAlignmentInGIZAFormat(ostream &outS,
-                                const std::vector<string> &ns,
-                                const std::vector<string> &t,
+void printAlignmentInGIZAFormat(std::ostream &outS,
+                                const std::vector<std::string> &ns,
+                                const std::vector<std::string> &t,
                                 WordAligMatrix waMatrix,
                                 const char *header)
 {
@@ -72,9 +72,9 @@ void printAlignmentInGIZAFormat(ostream &outS,
 }
 
 //-------------------------
-void printAlignmentInMyFormat(ostream &outS,
-                              const std::vector<string> &ns,
-                              const std::vector<string> &t,
+void printAlignmentInMyFormat(std::ostream &outS,
+                              const std::vector<std::string> &ns,
+                              const std::vector<std::string> &t,
                               WordAligMatrix waMatrix,
                               unsigned int numReps/*=1*/)
 {
@@ -97,8 +97,8 @@ void printAlignmentInMyFormat(ostream &outS,
 }
 //-------------------------
 void printAlignmentInGIZAFormat(FILE* outf,
-                                const std::vector<string> &ns,
-                                const std::vector<string> &t,
+                                const std::vector<std::string> &ns,
+                                const std::vector<std::string> &t,
                                 WordAligMatrix waMatrix,
                                 const char *header)
 {
@@ -135,8 +135,8 @@ void printAlignmentInGIZAFormat(FILE* outf,
 }
 //-------------------------
 void printAlignmentInMyFormat(FILE* outf,
-                              const std::vector<string> &ns,
-                              const std::vector<string> &t,
+                              const std::vector<std::string> &ns,
+                              const std::vector<std::string> &t,
                               WordAligMatrix waMatrix,
                               unsigned int numReps/*=1*/)
 {

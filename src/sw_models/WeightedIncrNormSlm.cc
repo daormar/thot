@@ -80,9 +80,9 @@ bool WeightedIncrNormSlm::load(const char *filename)
 //-------------------------
 bool WeightedIncrNormSlm::print(const char* filename)
 {
-  ofstream outF;
+  std::ofstream outF;
 
-  outF.open(filename,ios::out);
+  outF.open(filename,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing sentence length model."<<std::endl;
@@ -97,7 +97,7 @@ bool WeightedIncrNormSlm::print(const char* filename)
 }
 
 //-------------------------
-ostream& WeightedIncrNormSlm::print(ostream &outS)
+std::ostream& WeightedIncrNormSlm::print(std::ostream &outS)
 {
       // print header
   outS<<"Weighted incr. gaussian sentence length model...\n";
@@ -105,7 +105,7 @@ ostream& WeightedIncrNormSlm::print(ostream &outS)
   outS<<"numsents: "<<numSents<<" ; slensum: "<<slenSum<<" ; tlensum: "<<tlenSum<<std::endl;
 
       // Set float precision.
-  outS.setf( ios::fixed, ios::floatfield );
+  outS.setf( std::ios::fixed, std::ios::floatfield );
   outS.precision(8);
 
       // Print values for each source sentence length

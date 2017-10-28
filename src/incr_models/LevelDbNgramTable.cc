@@ -47,12 +47,12 @@ LevelDbNgramTable::LevelDbNgramTable(void)
         null_vec.push_back(WORD_INDEX_MODULO_BASE);
     }
 
-    string null_str(null_vec.begin(), null_vec.end());
+    std::string null_str(null_vec.begin(), null_vec.end());
     dbNullKey = null_str;
 }
 
 //-------------------------
-string LevelDbNgramTable::vectorToString(const std::vector<WordIndex>& vec)const
+std::string LevelDbNgramTable::vectorToString(const std::vector<WordIndex>& vec)const
 {
     std::vector<WordIndex> str;
     str.push_back(vec.size() + 1);  // Add 1 to avoid string with leading \0
@@ -65,13 +65,13 @@ string LevelDbNgramTable::vectorToString(const std::vector<WordIndex>& vec)const
         }
     }
 
-    string s(str.begin(), str.end());
+    std::string s(str.begin(), str.end());
 
     return s;
 }
 
 //-------------------------
-std::vector<WordIndex> LevelDbNgramTable::stringToVector(const string s)const
+std::vector<WordIndex> LevelDbNgramTable::stringToVector(const std::string s)const
 {
     std::vector<WordIndex> vec;
 
@@ -91,7 +91,7 @@ std::vector<WordIndex> LevelDbNgramTable::stringToVector(const string s)const
     return vec;
 }
 //-------------------------
-string LevelDbNgramTable::getDbNullKey(void)const
+std::string LevelDbNgramTable::getDbNullKey(void)const
 {
     return dbNullKey;
 }
@@ -103,21 +103,21 @@ std::vector<WordIndex> LevelDbNgramTable::getVectorDbNullKey(void)const
 }
 
 //-------------------------
-string LevelDbNgramTable::vectorToKey(const std::vector<WordIndex>& vec)const
+std::string LevelDbNgramTable::vectorToKey(const std::vector<WordIndex>& vec)const
 {
     return vectorToString(vec);
 }
 
 //-------------------------
-std::vector<WordIndex> LevelDbNgramTable::keyToVector(const string key)const
+std::vector<WordIndex> LevelDbNgramTable::keyToVector(const std::string key)const
 {
     return stringToVector(key);
 }
 
 //-------------------------
-bool LevelDbNgramTable::retrieveData(const string key, float &count)const
+bool LevelDbNgramTable::retrieveData(const std::string key, float &count)const
 {
-    string value_str;
+    std::string value_str;
     count = 0;
 
     leveldb::Status result = db->Get(leveldb::ReadOptions(), key, &value_str);  // Read stored src value
@@ -144,17 +144,17 @@ bool LevelDbNgramTable::retrieveData(const std::vector<WordIndex>& phrase, float
     }
     else
     {
-        string key = vectorToString(phrase);
+        std::string key = vectorToString(phrase);
         return retrieveData(key, count);
     }
 }
 
 //-------------------------
-bool LevelDbNgramTable::storeData(const string key, float count)
+bool LevelDbNgramTable::storeData(const std::string key, float count)
 {
-    stringstream ss;
+    std::stringstream ss;
     ss << count;
-    string count_str = ss.str();
+    std::string count_str = ss.str();
 
     leveldb::WriteBatch batch;
     batch.Put(key, count_str);
@@ -169,7 +169,7 @@ bool LevelDbNgramTable::storeData(const string key, float count)
 //-------------------------
 bool LevelDbNgramTable::storeData(const std::vector<WordIndex>& phrase, float count)
 {
-    string key;
+    std::string key;
 
     if (phrase.size() == 0)
     {
@@ -185,7 +185,7 @@ bool LevelDbNgramTable::storeData(const std::vector<WordIndex>& phrase, float co
 }
 
 //-------------------------
-bool LevelDbNgramTable::init(string levelDbPath)
+bool LevelDbNgramTable::init(std::string levelDbPath)
 {
     std::cerr << "Initializing LevelDB phrase table" << std::endl;
 
@@ -229,7 +229,7 @@ bool LevelDbNgramTable::drop()
 //-------------------------
 bool LevelDbNgramTable::load(const char *fileName)
 {
-    string levelDbPath(fileName);
+    std::string levelDbPath(fileName);
 
     if(db != NULL)
     {
@@ -472,13 +472,13 @@ bool LevelDbNgramTable::getEntriesForTarget(const WordIndex& t,
 {
     // Method shouldn't be widely used as it requires to
     // iterate over the whole database
-    pair<std::vector<WordIndex>, im_pair<Count, Count> > pdp;
+    std::pair<std::vector<WordIndex>, im_pair<Count, Count> > pdp;
 
     tnode.clear();  // Make sure that structure does not keep old values
     
     for(LevelDbNgramTable::const_iterator iter = begin(); iter != end(); iter++)
     {
-        pair<std::vector<WordIndex>, Count> x = *iter;
+        std::pair<std::vector<WordIndex>, Count> x = *iter;
 
         if (x.first.size() > 1 && x.first.back() == t)
         {
@@ -500,7 +500,7 @@ bool LevelDbNgramTable::getEntriesForSource(const std::vector<WordIndex>& s,
                                             LevelDbNgramTable::TrgTableNode& trgtn) 
 {
     bool found;
-    pair<WordIndex, im_pair<Count, Count> > pdp;  // Data structure format: (t, (count(s), count(s, t)))
+    std::pair<WordIndex, im_pair<Count, Count> > pdp;  // Data structure format: (t, (count(s), count(s, t)))
 
     Count s_count = cSrc(s);  // Retrieve count(s)
 
@@ -512,8 +512,8 @@ bool LevelDbNgramTable::getEntriesForSource(const std::vector<WordIndex>& s,
     end_vec[end_vec.size() - 1] += 1;
     end_vec.push_back(0);
 
-    string start_str = vectorToKey(start_vec);
-    string end_str = vectorToKey(end_vec);
+    std::string start_str = vectorToKey(start_vec);
+    std::string end_str = vectorToKey(end_vec);
 
     leveldb::Slice start = start_str;
     leveldb::Slice end = end_str;
@@ -572,7 +572,7 @@ Count LevelDbNgramTable::cTrg(const WordIndex& t)
 
     for(LevelDbNgramTable::const_iterator iter = begin(); iter != end(); iter++)
     {
-        pair<std::vector<WordIndex>, Count> x = *iter;
+        std::pair<std::vector<WordIndex>, Count> x = *iter;
 
         if (x.first.size() > 1 && x.first.back() == t)
         {
@@ -619,18 +619,18 @@ size_t LevelDbNgramTable::size(void)
 //-------------------------
 void LevelDbNgramTable::print(bool printString)
 {
-    cout << "levelDB content:" << std::endl;
+    std::cout << "levelDB content:" << std::endl;
     for(LevelDbNgramTable::const_iterator iter = begin(); iter != end(); iter++)
     {
-        pair<std::vector<WordIndex>, Count> x = *iter;
+        std::pair<std::vector<WordIndex>, Count> x = *iter;
         if (printString) {
             for(size_t i = 0; i < x.first.size(); i++)
-                cout << x.first[i] << " ";
+              std::cout << x.first[i] << " ";
         } else {
-            cout << vectorToKey(x.first);
+          std::cout << vectorToKey(x.first);
         }
         
-        cout << ":\t" << x.second.get_c_s() << std::endl;
+        std::cout << ":\t" << x.second.get_c_s() << std::endl;
     }
 }
 
@@ -750,16 +750,16 @@ int LevelDbNgramTable::const_iterator::operator!=(const const_iterator& right)
 }
 
 //--------------------------
-pair<std::vector<WordIndex>, Count> LevelDbNgramTable::const_iterator::operator*(void)
+std::pair<std::vector<WordIndex>, Count> LevelDbNgramTable::const_iterator::operator*(void)
 {
     return *operator->();
 }
 
 //--------------------------
-const pair<std::vector<WordIndex>, Count>*
+const std::pair<std::vector<WordIndex>, Count>*
 LevelDbNgramTable::const_iterator::operator->(void)
 {
-    string key = internalIter->key().ToString();
+    std::string key = internalIter->key().ToString();
     std::vector<WordIndex> key_vec = ptPtr->keyToVector(key);
 
     float count = atof(internalIter->value().ToString().c_str());

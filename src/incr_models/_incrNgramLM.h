@@ -99,11 +99,11 @@ class _incrNgramLM: public _incrEncCondProbModel<std::vector<std::string>,std::s
   LgProb getNgramLgProb(WordIndex w,const std::vector<WordIndex>& vu);
       // returns the probability of a n-gram uv[0] stores the n-1'th
       // word of the n-gram, uv[1] the n-2'th one and so on
-  LgProb getNgramLgProbStr(string s,const std::vector<string>& rq);
+  LgProb getNgramLgProbStr(std::string s,const std::vector<std::string>& rq);
       // returns the probability of a n-gram. Each string represents a
       // single word
   LgProb getLgProbEnd(const std::vector<WordIndex>& vu);
-  LgProb getLgProbEndStr(const std::vector<string>& rq);
+  LgProb getLgProbEndStr(const std::vector<std::string>& rq);
 
       // Probability functions using states
   bool getStateForWordSeq(const std::vector<WordIndex>& wordSeq,
@@ -116,11 +116,11 @@ class _incrNgramLM: public _incrEncCondProbModel<std::vector<std::string>,std::s
   LgProb getLgProbEndGivenState(std::vector<WordIndex> &state);
    
       // encoding-related functions
-  bool existSymbol(string s)const;
-  WordIndex addSymbol(string s);
+  bool existSymbol(std::string s)const;
+  WordIndex addSymbol(std::string s);
   unsigned int getVocabSize(void);
-  WordIndex stringToWordIndex(string s)const;
-  string wordIndexToString(WordIndex w)const;
+  WordIndex stringToWordIndex(std::string s)const;
+  std::string wordIndexToString(WordIndex w)const;
   WordIndex getBosId(bool &found)const;
   WordIndex getEosId(bool &found)const;
   bool loadVocab(const char *prefixFileName);
@@ -258,8 +258,8 @@ LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProb(WordIndex w,
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProbStr(string s,
-                                                             const std::vector<string>& rq)
+LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getNgramLgProbStr(std::string s,
+                                                             const std::vector<std::string>& rq)
 {
   return _incrNgramLM<SRC_INFO,SRCTRG_INFO>::logpHTrgGivenHSrc(rq,s);    
 }
@@ -274,7 +274,7 @@ LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEnd(const std::vector<WordIn
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEndStr(const std::vector<string>& rq)
+LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEndStr(const std::vector<std::string>& rq)
 {
   return _incrNgramLM<SRC_INFO,SRCTRG_INFO>::logpHTrgGivenHSrc(rq,EOS_STR);    
 }
@@ -350,7 +350,7 @@ LgProb _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getLgProbEndGivenState(std::vector<Wo
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::existSymbol(string s)const
+bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::existSymbol(std::string s)const
 {
   WordIndex w;
   
@@ -373,7 +373,7 @@ unsigned int _incrNgramLM<SRC_INFO,SRCTRG_INFO>::getVocabSize(void)
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-WordIndex _incrNgramLM<SRC_INFO,SRCTRG_INFO>::stringToWordIndex(string s)const
+WordIndex _incrNgramLM<SRC_INFO,SRCTRG_INFO>::stringToWordIndex(std::string s)const
 {
   WordIndex w;
   
@@ -385,7 +385,7 @@ WordIndex _incrNgramLM<SRC_INFO,SRCTRG_INFO>::stringToWordIndex(string s)const
 
 //---------------
 template<class SRC_INFO,class SRCTRG_INFO>
-string _incrNgramLM<SRC_INFO,SRCTRG_INFO>::wordIndexToString(WordIndex w)const
+std::string _incrNgramLM<SRC_INFO,SRCTRG_INFO>::wordIndexToString(WordIndex w)const
 {
   std::string s;
   
@@ -537,8 +537,8 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(const char *fileName)
     lmFileName=fileName;
   }
   
-  ofstream outF;
-  outF.open(lmFileName.c_str(),ios::out);
+  std::ofstream outF;
+  outF.open(lmFileName.c_str(),std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing model to file."<<std::endl;
@@ -569,7 +569,7 @@ std::ostream& _incrNgramLM<SRC_INFO,SRCTRG_INFO>::print(std::ostream &outS)
     typename vecx_x_incr_cptable<WordIndex,SRC_INFO,SRCTRG_INFO>::const_iterator tableIter;
       
         // Set float precision.
-    outS.setf( ios::fixed, ios::floatfield );
+    outS.setf( std::ios::fixed, std::ios::floatfield );
     outS.precision(8);
 
     for(tableIter=tableCptPtr->begin();tableIter!=tableCptPtr->end();++tableIter)

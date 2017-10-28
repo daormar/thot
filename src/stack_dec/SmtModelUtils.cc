@@ -179,9 +179,9 @@ namespace SmtModelUtils
                        float lambda_swm,
                        float lambda_invswm)
   {
-    ofstream outF;
+    std::ofstream outF;
 
-    outF.open(lambdaFileName,ios::out);
+    outF.open(lambdaFileName,std::ios::out);
     if(!outF)
     {
       std::cerr<<"Error while printing file with lambda values."<<std::endl;

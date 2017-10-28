@@ -126,7 +126,7 @@ void release_translator_legacy_impl(void);
 void release_translator_feat_impl(void);
 void release_translator(void);
 int align_corpus(const thot_ms_alig_pars& tap);
-std::vector<string> stringToStringVector(string s);
+std::vector<std::string> stringToStringVector(std::string s);
 void version(void);
 void print_alig_a3_final(std::string srcstr,
                          std::string trgstr,
@@ -611,9 +611,9 @@ int align_corpus(const thot_ms_alig_pars& tap)
   int sentNo=0;    
   double elapsed_ant,elapsed,ucpu,scpu,total_time=0;
       
-  ifstream testCorpusFile;                // Test corpus file stream
-  ifstream refCorpusFile;                 // reference corpus file stream
-  string srcSentenceString,trgSentenceString,s;
+  std::ifstream testCorpusFile;                // Test corpus file stream
+  std::ifstream refCorpusFile;                 // reference corpus file stream
+  std::string srcSentenceString,trgSentenceString,s;
   
 
       // Open test corpus file
@@ -623,7 +623,7 @@ int align_corpus(const thot_ms_alig_pars& tap)
     std::cerr<<"Error while opening file with test sentences "<<tap.sourceSentencesFile<<std::endl;
     return THOT_ERROR;
   }
-  testCorpusFile.seekg(0, ios::beg);
+  testCorpusFile.seekg(0, std::ios::beg);
 
       // Open ref corpus file
   refCorpusFile.open(tap.refSentencesFile.c_str());
@@ -632,7 +632,7 @@ int align_corpus(const thot_ms_alig_pars& tap)
     std::cerr<<"Error while opening file with references "<<tap.refSentencesFile<<std::endl;
     return THOT_ERROR;
   }
-  refCorpusFile.seekg(0, ios::beg);
+  refCorpusFile.seekg(0, std::ios::beg);
 
   std::cerr<<"\n- Processing corpora...\n\n";
 
@@ -748,9 +748,9 @@ void print_alig_a3_final(std::string srcstr,
   sysTrgVec=smtModelPtr->getTransInPlainTextVec(hyp);
   trgVec=stringToStringVector(trgstr);
   dataType=hyp.getData();
-  cout<<"# "<<sentNo <<" ; Align. score= "<<hyp.getScore()<<std::endl;
-  cout<<srcstr<<std::endl;
-  cout<<"NULL ({ })";
+  std::cout<<"# "<<sentNo <<" ; Align. score= "<<hyp.getScore()<<std::endl;
+  std::cout<<srcstr<<std::endl;
+  std::cout<<"NULL ({ })";
   if(sysTrgVec!=trgVec && !tap.p_option)
   {
         // If the alignment is incomplete, align each target word with
@@ -758,11 +758,11 @@ void print_alig_a3_final(std::string srcstr,
     unsigned int srcsize=stringToStringVector(srcstr).size();
     for(unsigned int i=0;i<trgVec.size();++i)
     {
-      cout<<" "<<trgVec[i]<<" ({ ";
-      for(unsigned int j=1;j<=srcsize;++j) cout<<j<<" ";
-      cout<<"})";
+      std::cout<<" "<<trgVec[i]<<" ({ ";
+      for(unsigned int j=1;j<=srcsize;++j) std::cout<<j<<" ";
+      std::cout<<"})";
     }
-    cout<<std::endl;
+    std::cout<<std::endl;
   }
   else
   {
@@ -772,15 +772,15 @@ void print_alig_a3_final(std::string srcstr,
     {
       for(;i<=dataType.targetSegmentCuts[k];++i)
       {
-        cout<<" "<<sysTrgVec[i-1]<<" ({ ";
+        std::cout<<" "<<sysTrgVec[i-1]<<" ({ ";
         for(unsigned int j=dataType.sourceSegmentation[k].first;j<=dataType.sourceSegmentation[k].second;++j)
         {
-          cout<<j<<" ";
+          std::cout<<j<<" ";
         }
-        cout<<"})";
+        std::cout<<"})";
       }
     }
-    cout<<std::endl;
+    std::cout<<std::endl;
   }
 }
 
@@ -1053,10 +1053,10 @@ void printParameters(const thot_ms_alig_pars& tap)
 }
 
 //---------------
-std::vector<string> stringToStringVector(string s)
+std::vector<std::string> stringToStringVector(std::string s)
 {
- std::vector<string> vs;	
- string aux="";
+ std::vector<std::string> vs;	
+ std::string aux="";
  unsigned int i;	
 
  for(i=0;i<s.size();++i)

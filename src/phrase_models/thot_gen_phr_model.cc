@@ -179,8 +179,8 @@ void extendModelFromAlignments(PhraseExtractParameters phePars,
       std::cerr<<"Processing sent. pair #"<<numSent<<"..."<<std::endl;
 
         // Obtain alignment information
-    std::vector<string> t=alignmentExtractor.get_t();
-    std::vector<string> ns=alignmentExtractor.get_ns();	
+    std::vector<std::string> t=alignmentExtractor.get_t();
+    std::vector<std::string> ns=alignmentExtractor.get_ns();	
     WordAligMatrix waMatrix=alignmentExtractor.get_wamatrix();
     float numReps=alignmentExtractor.get_numReps();
 

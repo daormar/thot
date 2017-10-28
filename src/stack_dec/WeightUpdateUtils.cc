@@ -40,18 +40,18 @@ namespace WeightUpdateUtils
   void updateLogLinearWeights(std::string refSent,
                               WordGraph* wgPtr,
                               BaseLogLinWeightUpdater* llWeightUpdaterPtr,
-                              const std::vector<pair<std::string,float> >& compWeights,
+                              const std::vector<std::pair<std::string,float> >& compWeights,
                               std::vector<float>& newWeights,
                               int verbose/*=0*/)
   {
         // Obtain n-best list
     unsigned int len=NBLIST_SIZE_FOR_LLWEIGHT_UPDATE;
-    std::vector<pair<Score,std::string> > nblist;
+    std::vector<std::pair<Score,std::string> > nblist;
     std::vector<std::vector<double> > scoreCompsVec;
     wgPtr->obtainNbestList(len,nblist,scoreCompsVec);
 
         // Obtain current weights
-    vector<double> currentWeights;
+    std::vector<double> currentWeights;
     for(unsigned int i=0;i<compWeights.size();++i)
       currentWeights.push_back(compWeights[i].second);
   
@@ -76,7 +76,7 @@ namespace WeightUpdateUtils
           // Invoke weight update engine
       std::vector<double> newWeightsDouble;
       std::string reference=refSent;
-      vector<string> nblistWithNoScr;
+      std::vector<std::string> nblistWithNoScr;
       for(unsigned int i=0;i<nblist.size();++i) nblistWithNoScr.push_back(nblist[i].second);
       llWeightUpdaterPtr->update(reference,
                                  nblistWithNoScr,

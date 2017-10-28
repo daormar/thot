@@ -267,7 +267,7 @@ LgProb PhraseTable::logpSrcGivenTrg(const std::vector<WordIndex>& s,
 bool PhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
                                       PhraseTable::SrcTableNode& srctn) 
 {
-  pair<bool,PhraseTableNode*> p_bool_ptnode;
+  std::pair<bool,PhraseTableNode*> p_bool_ptnode;
 
   p_bool_ptnode=nodeForTrgHasOneTransOrMore(t);
   if(p_bool_ptnode.first)
@@ -351,14 +351,14 @@ Count PhraseTable::cTrg(const std::vector<WordIndex>& t)
 //-------------------------
 bool PhraseTable::nodeForTrgHasAtLeastOneTrans(const std::vector<WordIndex>& t)
 {
-  pair<bool,PhraseTableNode*> pbp;
+  std::pair<bool,PhraseTableNode*> pbp;
 
   pbp=nodeForTrgHasOneTransOrMore(t);
   return pbp.first;
 }
 
 //-------------------------
-pair<bool,PhraseTableNode*> PhraseTable::nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t)
+std::pair<bool,PhraseTableNode*> PhraseTable::nodeForTrgHasOneTransOrMore(const std::vector<WordIndex>& t)
 {
   return phraseDict.nodeForTrgHasOneTransOrMore(t);
 }

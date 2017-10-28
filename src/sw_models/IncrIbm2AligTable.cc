@@ -183,7 +183,7 @@ bool IncrIbm2AligTable::loadBin(const char* aligNumDenFile)
   std::cerr<<"Loading alignd file in binary format from "<<aligNumDenFile<<std::endl;
 
       // Try to open file  
-  ifstream inF (aligNumDenFile, ios::in | ios::binary);
+  std::ifstream inF (aligNumDenFile, std::ios::in | std::ios::binary);
   if(!inF)
   {
     std::cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";
@@ -227,8 +227,8 @@ bool IncrIbm2AligTable::print(const char* aligNumDenFile)
 //-------------------------
 bool IncrIbm2AligTable::printPlainText(const char* aligNumDenFile)
 {
-  ofstream outF;
-  outF.open(aligNumDenFile,ios::out);
+  std::ofstream outF;
+  outF.open(aligNumDenFile,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing alignment nd file."<<std::endl;
@@ -259,8 +259,8 @@ bool IncrIbm2AligTable::printPlainText(const char* aligNumDenFile)
 //-------------------------
 bool IncrIbm2AligTable::printBin(const char* aligNumDenFile)
 {
-  ofstream outF;
-  outF.open(aligNumDenFile,ios::out);
+  std::ofstream outF;
+  outF.open(aligNumDenFile,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing alignment nd file."<<std::endl;

@@ -47,7 +47,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- TrieVecs class
 
-template<class KEY,class DATA_TYPE,class KEY_SORT_CRITERION=less<KEY> >
+template<class KEY,class DATA_TYPE,class KEY_SORT_CRITERION=std::less<KEY> >
 class TrieVecs 
 {
  public:
@@ -80,7 +80,7 @@ class TrieVecs
      protected:
       std::vector<const TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>* > vecTrieVecsPtr;
       std::vector<typename Children::const_iterator> childrenIterVec;
-      pair<std::vector<KEY>,DATA_TYPE> vecKeyDataPair;
+      std::pair<std::vector<KEY>,DATA_TYPE> vecKeyDataPair;
            
      public:
       const_iterator(void)
@@ -112,8 +112,8 @@ class TrieVecs
       bool operator++(int);  //postfix
       int operator==(const const_iterator& right);
       int operator!=(const const_iterator& right);
-      const pair<std::vector<KEY>,DATA_TYPE>* operator->(void)const;
-      pair<std::vector<KEY>,DATA_TYPE> operator*(void)const;
+      const std::pair<std::vector<KEY>,DATA_TYPE>* operator->(void)const;
+      std::pair<std::vector<KEY>,DATA_TYPE> operator*(void)const;
    };
 
      // const_iterator functions for the TrieVecs class
@@ -160,7 +160,7 @@ TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::insert(const std::vector<KEY>& keySe
     
     if(childrenPos==NULL)
     {
-      pair<KEY,TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION> > p;
+      std::pair<KEY,TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION> > p;
       p.first=k;
       t=t->children.push(p.first,p.second);
     }	
@@ -402,18 +402,18 @@ int TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::const_iterator::operator!=(const
 }
 //--------------------------
 template<class KEY,class DATA_TYPE,class KEY_SORT_CRITERION>
-const pair<std::vector<KEY>,DATA_TYPE>*
+const std::pair<std::vector<KEY>,DATA_TYPE>*
 TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::const_iterator::operator->(void)const
 {
   if(vecTrieVecsPtr.size()==1 && vecTrieVecsPtr[0]==NULL)
   {
     return NULL;
   }
-  else  return (pair<std::vector<KEY>,DATA_TYPE>*) &(vecKeyDataPair);
+  else  return (std::pair<std::vector<KEY>,DATA_TYPE>*) &(vecKeyDataPair);
 }
 //--------------------------
 template<class KEY,class DATA_TYPE,class KEY_SORT_CRITERION>
-pair<std::vector<KEY>,DATA_TYPE> TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::const_iterator::operator*(void)const
+std::pair<std::vector<KEY>,DATA_TYPE> TrieVecs<KEY,DATA_TYPE,KEY_SORT_CRITERION>::const_iterator::operator*(void)const
 {
   return vecKeyDataPair;
 }

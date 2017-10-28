@@ -311,10 +311,10 @@ class ThotDecoder
   std::string robustMergePostProcTransWithUserPref(std::string postproctrans,
                                                    std::string totalPrefix);
   std::string expandLastWord(std::string& partialSent);
-  pair<Count,std::string> getBestSuffixGivenHist(std::vector<std::string> hist,
-                                                 std::string input);
-  pair<Count,std::string> getBestSuffixGivenHistFeatImpl(std::vector<std::string> hist,
-                                                         std::string input);
+  std::pair<Count,std::string> getBestSuffixGivenHist(std::vector<std::string> hist,
+                                                      std::string input);
+  std::pair<Count,std::string> getBestSuffixGivenHistFeatImpl(std::vector<std::string> hist,
+                                                              std::string input);
   std::string getWordCompletion(std::string uncompleteWord,
                                 std::string completeWord);
   std::string preprocLine(BasePrePosProcessor* prePosProcessorPtr,

@@ -23,6 +23,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "Prob.h"
 #include <utility>
 
-typedef std::map<pair<unsigned int,WordIndex>,LgProb> BestLgProbForTrgWord;
+typedef std::map<std::pair<unsigned int,WordIndex>,LgProb> BestLgProbForTrgWord;
 
 #endif

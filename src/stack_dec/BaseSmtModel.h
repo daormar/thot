@@ -150,7 +150,7 @@ class BaseSmtModel
 
       // Model weights functions
   virtual void setWeights(std::vector<float> wVec)=0;
-  virtual void getWeights(std::vector<pair<std::string,float> >& compWeights);
+  virtual void getWeights(std::vector<std::pair<std::string,float> >& compWeights);
   virtual unsigned int getNumWeights(void)=0;
   virtual void printWeights(std::ostream &outS)=0;
   virtual std::vector<Score> scoreCompsForHyp(const Hypothesis& hyp)=0;
@@ -175,10 +175,10 @@ class BaseSmtModel
   virtual void addSentenceToWordPred(std::vector<std::string> strVec,
                                      int verbose=0);
       // Add a new sentence to the word predictor
-  virtual pair<Count,std::string> getBestSuffix(std::string input);
+  virtual std::pair<Count,std::string> getBestSuffix(std::string input);
       // Returns a suffix that completes the input string. This function
       // is required for assisted translation purposes
-  virtual pair<Count,std::string> getBestSuffixGivenHist(std::vector<std::string> hist,
+  virtual std::pair<Count,std::string> getBestSuffixGivenHist(std::vector<std::string> hist,
                                                          std::string input);
       // The same as the previous function, but the suffix is generated
       // taking into account a vector of prefix words that goes before
@@ -195,7 +195,7 @@ class BaseSmtModel
 
 //---------------------------------
 template<class HYPOTHESIS>
-void BaseSmtModel<HYPOTHESIS>::getWeights(std::vector<pair<std::string,float> >& /*compWeights*/)
+void BaseSmtModel<HYPOTHESIS>::getWeights(std::vector<std::pair<std::string,float> >& /*compWeights*/)
 {
   std::cerr<<"Warning: the functionality provided by getWeights() is not implemented in this class"<<std::endl;
 }
@@ -268,18 +268,18 @@ void BaseSmtModel<HYPOTHESIS>::addSentenceToWordPred(std::vector<std::string> /*
 
 //---------------------------------
 template<class HYPOTHESIS>
-pair<Count,std::string> BaseSmtModel<HYPOTHESIS>::getBestSuffix(std::string /*input*/)
+std::pair<Count,std::string> BaseSmtModel<HYPOTHESIS>::getBestSuffix(std::string /*input*/)
 {
-  return make_pair(0,"");
+  return std::make_pair(0,"");
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
-pair<Count,std::string>
+std::pair<Count,std::string>
 BaseSmtModel<HYPOTHESIS>::getBestSuffixGivenHist(std::vector<std::string> /*hist*/,
                                                  std::string /*input*/)
 {
-  return make_pair(0,"");
+  return std::make_pair(0,"");
 }
 
 #endif

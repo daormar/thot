@@ -98,7 +98,7 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
       // Misc. operations with hypothesis
   unsigned int distToNullHyp(const Hypothesis& hyp);
   virtual void aligMatrix(const Hypothesis& hyp,
-                          std::vector<pair<PositionIndex,PositionIndex> >& amatrix);
+                          std::vector<std::pair<PositionIndex,PositionIndex> >& amatrix);
       // Returns an alignment matrix for 'hyp' hypothesis
 
       // Printing functions and data conversion
@@ -116,7 +116,7 @@ class BasePbTransModel: public _smtModel<HYPOTHESIS>
   void setVerbosity(int _verbosity);
 
       // Utility functions
-  void getPhraseAlignment(const std::vector<pair<PositionIndex,PositionIndex> >& amatrix,
+  void getPhraseAlignment(const std::vector<std::pair<PositionIndex,PositionIndex> >& amatrix,
                           SourceSegmentation& sourceSegmentation,
                           std::vector<PositionIndex>& targetSegmentCuts);
   std::vector<std::vector<std::string> > getSrcPhrases(const std::vector<std::string>& srcSentVec,
@@ -159,7 +159,7 @@ BasePbTransModel<HYPOTHESIS>::BasePbTransModel(void):_smtModel<HYPOTHESIS>()
 
 //---------------------------------
 template<class HYPOTHESIS>
-void BasePbTransModel<HYPOTHESIS>::getPhraseAlignment(const std::vector<pair<PositionIndex,PositionIndex> >& amatrix,
+void BasePbTransModel<HYPOTHESIS>::getPhraseAlignment(const std::vector<std::pair<PositionIndex,PositionIndex> >& amatrix,
                                                       SourceSegmentation& sourceSegmentation,
                                                       std::vector<PositionIndex>& targetSegmentCuts)
 {
@@ -168,15 +168,15 @@ void BasePbTransModel<HYPOTHESIS>::getPhraseAlignment(const std::vector<pair<Pos
   
   if(amatrix.size()>0)
   {
-    std::vector<pair<PositionIndex,PositionIndex> > temp;
-    pair<PositionIndex,PositionIndex> pip;
+    std::vector<std::pair<PositionIndex,PositionIndex> > temp;
+    std::pair<PositionIndex,PositionIndex> pip;
 
         // Create temporary data structure 'temp' from 'amatrix'
     for(unsigned int i=0;i<amatrix.size();++i)
     {
       unsigned int j=amatrix[i].second;
       while(temp.size()<=j)
-        temp.push_back(make_pair(MAX_SENTENCE_LENGTH_ALLOWED+1,0));
+        temp.push_back(std::make_pair(MAX_SENTENCE_LENGTH_ALLOWED+1,0));
       if(temp[j].first>amatrix[i].first)
         temp[j].first=amatrix[i].first;
       if(temp[j].second<amatrix[i].first)
@@ -210,7 +210,7 @@ template<class HYPOTHESIS>
 std::vector<std::vector<std::string> > BasePbTransModel<HYPOTHESIS>::getSrcPhrases(const std::vector<std::string>& srcSentVec,
                                                                          const Hypothesis& hyp)
 {
-  std::vector<pair<PositionIndex,PositionIndex> > amatrix;
+  std::vector<std::pair<PositionIndex,PositionIndex> > amatrix;
   SourceSegmentation sourceSegmentation;
   std::vector<PositionIndex> targetSegmentCuts;
   std::vector<std::vector<std::string> > srcPhrases;
@@ -237,7 +237,7 @@ std::vector<std::vector<std::string> > BasePbTransModel<HYPOTHESIS>::getSrcPhras
 template<class HYPOTHESIS>
 std::vector<std::vector<std::string> > BasePbTransModel<HYPOTHESIS>::getTrgPhrases(const Hypothesis& hyp)
 {
-  std::vector<pair<PositionIndex,PositionIndex> > amatrix;
+  std::vector<std::pair<PositionIndex,PositionIndex> > amatrix;
   SourceSegmentation sourceSegmentation;
   std::vector<PositionIndex> targetSegmentCuts;
   std::vector<std::vector<std::string> > trgPhrases;
@@ -315,7 +315,7 @@ BasePbTransModel<HYPOTHESIS>::~BasePbTransModel()
 //---------------------------------
 template<class HYPOTHESIS>
 void BasePbTransModel<HYPOTHESIS>::aligMatrix(const Hypothesis& hyp,
-                                              std::vector<pair<PositionIndex,PositionIndex> >& amatrix)
+                                              std::vector<std::pair<PositionIndex,PositionIndex> >& amatrix)
 {
   Hypothesis nullHyp=this->nullHypothesis();
   unsigned int numSrcWords=numberOfUncoveredSrcWords(nullHyp);
@@ -327,7 +327,7 @@ void BasePbTransModel<HYPOTHESIS>::aligMatrix(const Hypothesis& hyp,
     for(unsigned int j=0;j<=numTrgWords;++j)
     {
       if(hyp.areAligned(i,j))
-        amatrix.push_back(make_pair(i,j));
+        amatrix.push_back(std::make_pair(i,j));
     }
   }
 }

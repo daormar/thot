@@ -115,8 +115,8 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Word prediction functions
   void addSentenceToWordPred(std::vector<std::string> strVec,
                              int verbose=0);
-  pair<Count,std::string> getBestSuffix(std::string input);
-  pair<Count,std::string> getBestSuffixGivenHist(std::vector<std::string> hist,
+  std::pair<Count,std::string> getBestSuffix(std::string input);
+  std::pair<Count,std::string> getBestSuffixGivenHist(std::vector<std::string> hist,
                                                  std::string input);
 
   ////// Hypothesis-related functions
@@ -151,7 +151,7 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       
       // Model weights functions
   void setWeights(std::vector<float> wVec);
-  void getWeights(std::vector<pair<std::string,float> >& compWeights);
+  void getWeights(std::vector<std::pair<std::string,float> >& compWeights);
   void printWeights(std::ostream &outS);
   unsigned int getNumWeights(void);
   void getUnweightedComps(const std::vector<Score>& scrComps,
@@ -201,9 +201,9 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
 
       // Expansion-related functions
   void extract_gaps(const Hypothesis& hyp,
-                    std::vector<pair<PositionIndex,PositionIndex> >& gaps);
+                    std::vector<std::pair<PositionIndex,PositionIndex> >& gaps);
   void extract_gaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey,
-                    std::vector<pair<PositionIndex,PositionIndex> >& gaps);
+                    std::vector<std::pair<PositionIndex,PositionIndex> >& gaps);
   unsigned int get_num_gaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey);
 
       // Misc. operations with hypothesis
@@ -642,29 +642,29 @@ void _pbTransModel<HYPOTHESIS>::addSentenceToWordPred(std::vector<std::string> /
 
 //---------------------------------
 template<class HYPOTHESIS>
-pair<Count,std::string>
+std::pair<Count,std::string>
   _pbTransModel<HYPOTHESIS>::getBestSuffix(std::string /*input*/)
 {
   std::cerr<<"Warning, getBestSuffix function intentionally not implemented for this class"<<std::endl;
-  pair<Count,std::string> result;
+  std::pair<Count,std::string> result;
   return result;
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
-pair<Count,std::string>
+std::pair<Count,std::string>
   _pbTransModel<HYPOTHESIS>::getBestSuffixGivenHist(std::vector<std::string> /*hist*/,
                                                     std::string /*input*/)
 {
   std::cerr<<"Warning, getBestSuffixGivenHist function intentionally not implemented for this class"<<std::endl;
-  pair<Count,std::string> result;
+  std::pair<Count,std::string> result;
   return result;
 }
 
 //---------------------------------
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::extract_gaps(const Hypothesis& hyp,
-                                             std::vector<pair<PositionIndex,PositionIndex> >& gaps)
+                                             std::vector<std::pair<PositionIndex,PositionIndex> >& gaps)
 {
   extract_gaps(hyp.getKey(),gaps);
 }
@@ -672,10 +672,10 @@ void _pbTransModel<HYPOTHESIS>::extract_gaps(const Hypothesis& hyp,
 //---------------------------------
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::extract_gaps(const Bitset<MAX_SENTENCE_LENGTH_ALLOWED>& hypKey,
-                                             std::vector<pair<PositionIndex,PositionIndex> >& gaps)
+                                             std::vector<std::pair<PositionIndex,PositionIndex> >& gaps)
 {
       // Extract all uncovered gaps
-  pair<PositionIndex,PositionIndex> gap;
+  std::pair<PositionIndex,PositionIndex> gap;
   unsigned int srcSentLen=this->numberOfUncoveredSrcWordsHypData(this->nullHypothesisHypData());
   unsigned int j;
   
@@ -758,7 +758,7 @@ void _pbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
                                        std::vector<Hypothesis>& hypVec,
                                        std::vector<std::vector<Score> >& scrCompVec)
 {
-  std::vector<pair<PositionIndex,PositionIndex> > gaps;
+  std::vector<std::pair<PositionIndex,PositionIndex> > gaps;
   std::vector<WordIndex> srcPhrase;
   Hypothesis extHyp;
   std::vector<HypDataType> hypDataVec;
@@ -788,7 +788,7 @@ void _pbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
         {
           unsigned int segmRightMostj=gaps[k].first+y;
           unsigned int segmLeftMostj=gaps[k].first+x;
-          bool srcPhraseIsAffectedByConstraint=this->trConstraintsPtr->srcPhrAffectedByConstraint(make_pair(segmLeftMostj,segmRightMostj));
+          bool srcPhraseIsAffectedByConstraint=this->trConstraintsPtr->srcPhrAffectedByConstraint(std::make_pair(segmLeftMostj,segmRightMostj));
               // Verify that the source phrase length does not exceed
               // the limit. The limit can be exceeded when the source
               // phrase is affected by a translation constraint
@@ -804,7 +804,7 @@ void _pbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
               this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
                   // Obtain information about hypothesis extension
               std::vector<std::string> targetWordVec=this->getTransInPlainTextVec(extHyp);
-              std::vector<pair<PositionIndex,PositionIndex> > aligPos;
+              std::vector<std::pair<PositionIndex,PositionIndex> > aligPos;
               this->aligMatrix(extHyp,aligPos);
                   // Check if translation constraints are satisfied
               if(this->trConstraintsPtr->translationSatisfiesConstraints(targetWordVec,aligPos))
@@ -826,7 +826,7 @@ void _pbTransModel<HYPOTHESIS>::expand_ref(const Hypothesis& hyp,
                                            std::vector<Hypothesis>& hypVec,
                                            std::vector<std::vector<Score> >& scrCompVec)
 {
-  std::vector<pair<PositionIndex,PositionIndex> > gaps;
+  std::vector<std::pair<PositionIndex,PositionIndex> > gaps;
   std::vector<WordIndex> srcPhrase;
   Hypothesis extHyp;
   std::vector<HypDataType> hypDataVec;
@@ -879,7 +879,7 @@ void _pbTransModel<HYPOTHESIS>::expand_ver(const Hypothesis& hyp,
                                            std::vector<Hypothesis>& hypVec,
                                            std::vector<std::vector<Score> >& scrCompVec)
 {
-  std::vector<pair<PositionIndex,PositionIndex> > gaps;
+  std::vector<std::pair<PositionIndex,PositionIndex> > gaps;
   std::vector<WordIndex> srcPhrase;
   Hypothesis extHyp;
   std::vector<HypDataType> hypDataVec;
@@ -932,7 +932,7 @@ void _pbTransModel<HYPOTHESIS>::expand_prefix(const Hypothesis& hyp,
                                               std::vector<Hypothesis>& hypVec,
                                               std::vector<std::vector<Score> >& scrCompVec)
 {
-  std::vector<pair<PositionIndex,PositionIndex> > gaps;
+  std::vector<std::pair<PositionIndex,PositionIndex> > gaps;
   std::vector<WordIndex> srcPhrase;
   Hypothesis extHyp;
   std::vector<HypDataType> hypDataVec;
@@ -1394,7 +1394,7 @@ Score _pbTransModel<HYPOTHESIS>::getLocalTmHeurScore(const Hypothesis& hyp)
 {
   Score result=0;  
   unsigned int J=pbtmInputVars.srcSentVec.size();
-  std::vector<pair<PositionIndex,PositionIndex> > gaps;
+  std::vector<std::pair<PositionIndex,PositionIndex> > gaps;
   this->extract_gaps(hyp,gaps);
   for(unsigned int i=0;i<gaps.size();++i)
   {
@@ -1410,7 +1410,7 @@ Score _pbTransModel<HYPOTHESIS>::getDistortionHeurScore(const Hypothesis& hyp)
 {
       // Initialize variables
   Score result=0;  
-  std::vector<pair<PositionIndex,PositionIndex> > gaps;
+  std::vector<std::pair<PositionIndex,PositionIndex> > gaps;
   this->extract_gaps(hyp,gaps);
   PositionIndex lastSrcPosCovered=getLastSrcPosCovered(hyp);
 
@@ -1474,7 +1474,7 @@ void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
       // Obtain phrase alignment
   SourceSegmentation sourceSegmentation;
   std::vector<PositionIndex> targetSegmentCuts;
-  std::vector<pair<PositionIndex,PositionIndex> > amatrix;
+  std::vector<std::pair<PositionIndex,PositionIndex> > amatrix;
   this->aligMatrix(hyp,amatrix);
   this->getPhraseAlignment(amatrix,sourceSegmentation,targetSegmentCuts);
 
@@ -1553,8 +1553,8 @@ std::vector<std::string> _pbTransModel<HYPOTHESIS>::getTransInPlainTextVecTs(con
       // Replace unknown words affected by constraints
 
       // Iterate over constraints
-  std::set<pair<PositionIndex,PositionIndex> > srcPhrSet=this->trConstraintsPtr->getConstrainedSrcPhrases();
-  std::set<pair<PositionIndex,PositionIndex> >::const_iterator const_iter;
+  std::set<std::pair<PositionIndex,PositionIndex> > srcPhrSet=this->trConstraintsPtr->getConstrainedSrcPhrases();
+  std::set<std::pair<PositionIndex,PositionIndex> >::const_iterator const_iter;
   for(const_iter=srcPhrSet.begin();const_iter!=srcPhrSet.end();++const_iter)
   {
         // Obtain target translation for constraint
@@ -1706,12 +1706,12 @@ void _pbTransModel<HYPOTHESIS>::setWeights(std::vector<float> wVec)
 
 //---------------------------------
 template<class HYPOTHESIS>
-void _pbTransModel<HYPOTHESIS>::getWeights(std::vector<pair<std::string,float> >& compWeights)
+void _pbTransModel<HYPOTHESIS>::getWeights(std::vector<std::pair<std::string,float> >& compWeights)
 {
   compWeights.clear();
   for(unsigned int i=0;i<featuresInfoPtr->featPtrVec.size();++i)
   {
-    pair<std::string,float> str_float;
+    std::pair<std::string,float> str_float;
     std::string weightName=featuresInfoPtr->featPtrVec[i]->getFeatName();
     weightName+="w";
     str_float.first=weightName;
@@ -1724,7 +1724,7 @@ void _pbTransModel<HYPOTHESIS>::getWeights(std::vector<pair<std::string,float> >
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::printWeights(std::ostream &outS)
 {
-  std::vector<pair<std::string,float> > compWeights;
+  std::vector<std::pair<std::string,float> > compWeights;
   getWeights(compWeights);
   for(unsigned int i=0;i<compWeights.size();++i)
   {
@@ -2025,7 +2025,7 @@ bool _pbTransModel<HYPOTHESIS>::getNbestTransForSrcPhraseCached(PositionIndex sr
                                                                 NbestTableNode<PhraseTransTableNodeData>& nbt,
                                                                 float N)
 {
-  NbestTableNode<PhraseTransTableNodeData>* transTableNodePtr=nbTransCacheData.cPhrNbestTransTable.getTranslationsForKey(make_pair(srcLeft,srcRight));
+  NbestTableNode<PhraseTransTableNodeData>* transTableNodePtr=nbTransCacheData.cPhrNbestTransTable.getTranslationsForKey(std::make_pair(srcLeft,srcRight));
   if(transTableNodePtr!=NULL)
   {
         // translation present in the cache translation table
@@ -2042,7 +2042,7 @@ bool _pbTransModel<HYPOTHESIS>::getNbestTransForSrcPhraseCached(PositionIndex sr
       srcPhrase.push_back(pbtmInputVars.nsrcSentIdVec[i]);
     }
     getNbestTransForSrcPhrase(srcPhrase,nbt,N);
-    nbTransCacheData.cPhrNbestTransTable.insertEntry(make_pair(srcLeft,srcRight),nbt);
+    nbTransCacheData.cPhrNbestTransTable.insertEntry(std::make_pair(srcLeft,srcRight),nbt);
     if(nbt.size()==0) return false;
     else return true;
   }
@@ -2096,10 +2096,10 @@ bool _pbTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis& /*hyp*/
                                                        float N)
 {
         // Check if gap is affected by translation constraints
-  if(this->trConstraintsPtr->srcPhrAffectedByConstraint(make_pair(srcLeft,srcRight)))
+  if(this->trConstraintsPtr->srcPhrAffectedByConstraint(std::make_pair(srcLeft,srcRight)))
   {
         // Obtain constrained target translation for gap (if any)
-    std::vector<std::string> trgWordVec=this->trConstraintsPtr->getTransForSrcPhr(make_pair(srcLeft,srcRight));
+    std::vector<std::string> trgWordVec=this->trConstraintsPtr->getTransForSrcPhr(std::make_pair(srcLeft,srcRight));
     if(trgWordVec.size()>0)
     {
           // Convert string vector to WordIndex vector
@@ -2505,7 +2505,7 @@ Score _pbTransModel<HYPOTHESIS>::nbestTransScoreCached(const std::vector<WordInd
                                                        const std::vector<WordIndex>& trgPhrase)
 {
   PhrasePairCacheTable::iterator ppctIter;
-  ppctIter=nbTransCacheData.cnbestTransScore.find(make_pair(srcPhrase,trgPhrase));
+  ppctIter=nbTransCacheData.cnbestTransScore.find(std::make_pair(srcPhrase,trgPhrase));
   if(ppctIter!=nbTransCacheData.cnbestTransScore.end())
   {
         // Score was previously stored in the cache table
@@ -2515,7 +2515,7 @@ Score _pbTransModel<HYPOTHESIS>::nbestTransScoreCached(const std::vector<WordInd
   {
         // Score is not stored in the cache table
     Score scr=nbestTransScore(srcPhrase,trgPhrase);
-    nbTransCacheData.cnbestTransScore[make_pair(srcPhrase,trgPhrase)]=scr;
+    nbTransCacheData.cnbestTransScore[std::make_pair(srcPhrase,trgPhrase)]=scr;
     return scr;
   }
 }
@@ -2526,7 +2526,7 @@ Score _pbTransModel<HYPOTHESIS>::nbestTransScoreLastCached(const std::vector<Wor
                                                            const std::vector<WordIndex>& trgPhrase)
 {
   PhrasePairCacheTable::iterator ppctIter;
-  ppctIter=nbTransCacheData.cnbestTransScoreLast.find(make_pair(srcPhrase,trgPhrase));
+  ppctIter=nbTransCacheData.cnbestTransScoreLast.find(std::make_pair(srcPhrase,trgPhrase));
   if(ppctIter!=nbTransCacheData.cnbestTransScoreLast.end())
   {
         // Score was previously stored in the cache table
@@ -2536,7 +2536,7 @@ Score _pbTransModel<HYPOTHESIS>::nbestTransScoreLastCached(const std::vector<Wor
   {
         // Score is not stored in the cache table
     Score scr=nbestTransScoreLast(srcPhrase,trgPhrase);
-    nbTransCacheData.cnbestTransScoreLast[make_pair(srcPhrase,trgPhrase)]=scr;
+    nbTransCacheData.cnbestTransScoreLast[std::make_pair(srcPhrase,trgPhrase)]=scr;
     return scr;
   }
 }

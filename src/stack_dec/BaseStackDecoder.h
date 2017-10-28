@@ -105,7 +105,7 @@ class BaseStackDecoder
       // decoder filters those translations of s that are compatible
       // with ref. The resulting hypothesis won't be complete if the
       // model can't generate the reference
-  virtual Hypothesis translateWithSuggestion(string s,
+  virtual Hypothesis translateWithSuggestion(std::string s,
                                              typename Hypothesis::DataType sug)=0;
       // Translates string s using hypothesis sug as suggestion instead
       // of using the null hypothesis
@@ -143,9 +143,9 @@ class BaseStackDecoder
 template<class SMT_MODEL>
 bool BaseStackDecoder<SMT_MODEL>::printSearchGraph(const char* filename)
 {
-  ofstream outS;
+  std::ofstream outS;
 
-  outS.open(filename,ios::out);
+  outS.open(filename,std::ios::out);
   if(!outS)
   {
     std::cerr<<"Error while printing search graph to file."<<std::endl;

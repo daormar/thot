@@ -67,24 +67,24 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- function declarations ------------------------------
 
 void printAlignmentInGIZAFormat(std::ostream &outS,
-                                const std::vector<string> &ns,
-                                const std::vector<string> &t,
+                                const std::vector<std::string> &ns,
+                                const std::vector<std::string> &t,
                                 WordAligMatrix waMatrix,
                                 const char *header);
 void printAlignmentInMyFormat(std::ostream &outS,
-                              const std::vector<string> &ns,
-                              const std::vector<string> &t,
+                              const std::vector<std::string> &ns,
+                              const std::vector<std::string> &t,
                               WordAligMatrix waMatrix,
                               unsigned int numReps=1);
 
 void printAlignmentInGIZAFormat(FILE* outf,
-                                const std::vector<string> &ns,
-                                const std::vector<string> &t,
+                                const std::vector<std::string> &ns,
+                                const std::vector<std::string> &t,
                                 WordAligMatrix waMatrix,
                                 const char *header);
 void printAlignmentInMyFormat(FILE* outf,
-                              const std::vector<string> &ns,
-                              const std::vector<string> &t,
+                              const std::vector<std::string> &ns,
+                              const std::vector<std::string> &t,
                               WordAligMatrix waMatrix,
                               unsigned int numReps=1);
 

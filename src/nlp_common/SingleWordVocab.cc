@@ -32,8 +32,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Function definitions
 
 //-------------------------
-ostream& operator << (ostream &outS,
-                      SingleWordVocab::StrToIdxVocab const &vocab)
+std::ostream& operator << (std::ostream &outS,
+                           SingleWordVocab::StrToIdxVocab const &vocab)
 {
  SingleWordVocab::StrToIdxVocab::const_iterator vocabIter;
  
@@ -189,9 +189,9 @@ bool SingleWordVocab::loadGIZASrcVocab(const char *srcInputVocabFileName)
 //-------------------------
 bool SingleWordVocab::printGIZASrcVocab(const char *outputFileName)
 {
- ofstream outF;
+ std::ofstream outF;
 	
- outF.open(outputFileName,ios::out);
+ outF.open(outputFileName,std::ios::out);
  if(!outF)
  {
    std::cerr<<"Error while printing source vocabulary."<<std::endl;
@@ -339,9 +339,9 @@ bool SingleWordVocab::loadGIZATrgVocab(const char *trgInputVocabFileName)
 //-------------------------
 bool SingleWordVocab::printGIZATrgVocab(const char *outputFileName)
 {
- ofstream outF;
+ std::ofstream outF;
 	
- outF.open(outputFileName,ios::out);
+ outF.open(outputFileName,std::ios::out);
  if(!outF)
  {
    std::cerr<<"Error while printing target vocabulary."<<std::endl;

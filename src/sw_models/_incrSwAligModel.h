@@ -65,7 +65,7 @@ class _incrSwAligModel: public _swAligModel<PPINFO>
       // Function to set a maximum size for the vector of expected
       // values anji (by default the size is not restricted)
 
-  virtual void efficientBatchTrainingForRange(pair<unsigned int,unsigned int> sentPairRange,
+  virtual void efficientBatchTrainingForRange(std::pair<unsigned int,unsigned int> sentPairRange,
                                               int verbosity=0);
   void efficientBatchTrainingForAllSents(int verbosity=0);
 };
@@ -74,7 +74,7 @@ class _incrSwAligModel: public _swAligModel<PPINFO>
 
 //-------------------------
 template<class PPINFO>
-void _incrSwAligModel<PPINFO>::efficientBatchTrainingForRange(pair<unsigned int,unsigned int> /*sentPairRange*/,
+void _incrSwAligModel<PPINFO>::efficientBatchTrainingForRange(std::pair<unsigned int,unsigned int> /*sentPairRange*/,
                                                               int/* verbosity=0*/)
 {
   std::cerr<<"Warning: efficient batch training not implemented for this class.\n";
@@ -84,7 +84,7 @@ void _incrSwAligModel<PPINFO>::efficientBatchTrainingForRange(pair<unsigned int,
 template<class PPINFO>
 void _incrSwAligModel<PPINFO>::efficientBatchTrainingForAllSents(int verbosity/*=0*/)
 {
-  efficientBatchTrainingForRange(make_pair(0,this->numSentPairs()-1),verbosity);
+  efficientBatchTrainingForRange(std::make_pair(0,this->numSentPairs()-1),verbosity);
 }
 
 //-------------------------

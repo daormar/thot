@@ -79,7 +79,7 @@ class _smtMultiStack: public BaseSmtMultiStack<HYPOTHESIS>
   typedef typename EqClassFunc::EqClassType EqClassType;
   typedef typename EqClassFunc::EqClassTypeHashF EqClassTypeHashF;  
   typedef hash_map<EqClassType,SmtStack<HYPOTHESIS>,EqClassTypeHashF> MultiContainer;
-  typedef map<EqClassType,typename MultiContainer::iterator,less<EqClassType> > SortedStacksMap;
+  typedef std::map<EqClassType,typename MultiContainer::iterator,std::less<EqClassType> > SortedStacksMap;
 
       // constructor
   _smtMultiStack(void);

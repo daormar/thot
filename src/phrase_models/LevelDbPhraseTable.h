@@ -67,11 +67,11 @@ class LevelDbPhraseTable: public BasePhraseTable
 {
     leveldb::DB* db;
     leveldb::Options options;
-    string dbName;
+    std::string dbName;
 
         // Converters
-    virtual string vectorToString(const std::vector<WordIndex>& vec)const;
-    virtual std::vector<WordIndex> stringToVector(const string s)const;
+    virtual std::string vectorToString(const std::vector<WordIndex>& vec)const;
+    virtual std::vector<WordIndex> stringToVector(const std::string s)const;
     
         // Read and write data
     virtual bool retrieveData(const std::vector<WordIndex>& phrase, int &count)const;
@@ -87,15 +87,15 @@ class LevelDbPhraseTable: public BasePhraseTable
     LevelDbPhraseTable(void);
 
         // Key converters
-    virtual string vectorToKey(const std::vector<WordIndex>& vec)const;
-    virtual std::vector<WordIndex> keyToVector(const string key)const;
+    virtual std::string vectorToKey(const std::vector<WordIndex>& vec)const;
+    virtual std::vector<WordIndex> keyToVector(const std::string key)const;
 
         // Wrapper for initializing levelDB
-    virtual bool init(string levelDbPath);
+    virtual bool init(std::string levelDbPath);
         // Wrapper for removing levelDB
     virtual bool drop();
         // Wrapper for loading existing levelDB
-    virtual bool load(string levelDbPath);
+    virtual bool load(std::string levelDbPath);
         // Returns s as (UNUSED_WORD, s)
     virtual std::vector<WordIndex> getSrc(const std::vector<WordIndex>& s);
         // Returns concatenated s and t as (UNUSED_WORD, s, UNUSED_WORD, t)
@@ -179,7 +179,7 @@ class LevelDbPhraseTable: public BasePhraseTable
       protected:
         const LevelDbPhraseTable* ptPtr;
         leveldb::Iterator* internalIter;
-        pair<std::vector<WordIndex>, int> dataItem;
+        std::pair<std::vector<WordIndex>, int> dataItem;
            
       public:
         const_iterator(void)
@@ -196,8 +196,8 @@ class LevelDbPhraseTable: public BasePhraseTable
         bool operator++(int);  //postfix
         int operator==(const const_iterator& right); 
         int operator!=(const const_iterator& right);
-        pair<std::vector<WordIndex>, int> operator*(void);
-        const pair<std::vector<WordIndex>, int>* operator->(void);
+        std::pair<std::vector<WordIndex>, int> operator*(void);
+        const std::pair<std::vector<WordIndex>, int>* operator->(void);
         ~const_iterator()
         {
           if(internalIter != NULL) {

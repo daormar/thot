@@ -511,9 +511,9 @@ void PhrLocalSwLiTm::setWeights(std::vector<float> wVec)
 }
 
 //---------------------------------
-void PhrLocalSwLiTm::getPmWeights(std::vector<pair<std::string,float> >& compWeights)
+void PhrLocalSwLiTm::getPmWeights(std::vector<std::pair<std::string,float> >& compWeights)
 {
-  pair<std::string,float> compWeight;
+  std::pair<std::string,float> compWeight;
     
   compWeight.first="ptsw";
   compWeight.second=this->phrModelInfoPtr->phraseModelPars.ptsWeightVec[0];
@@ -525,11 +525,11 @@ void PhrLocalSwLiTm::getPmWeights(std::vector<pair<std::string,float> >& compWei
 }
 
 //---------------------------------
-void PhrLocalSwLiTm::getWeights(std::vector<pair<std::string,float> >& compWeights)
+void PhrLocalSwLiTm::getWeights(std::vector<std::pair<std::string,float> >& compWeights)
 {
   compWeights.clear();
   
-  pair<std::string,float> compWeight;
+  std::pair<std::string,float> compWeight;
 
   compWeight.first="wpw";
   compWeight.second=langModelInfoPtr->langModelPars.wpScaleFactor;
@@ -559,7 +559,7 @@ void PhrLocalSwLiTm::getWeights(std::vector<pair<std::string,float> >& compWeigh
 }
 
 //---------------------------------
-void PhrLocalSwLiTm::printPmWeights(ostream &outS)
+void PhrLocalSwLiTm::printPmWeights(std::ostream &outS)
 {
   if(!phrModelInfoPtr->phraseModelPars.ptsWeightVec.empty())
     outS<<"ptsw: "<<phrModelInfoPtr->phraseModelPars.ptsWeightVec[0] <<" , ";
@@ -573,7 +573,7 @@ void PhrLocalSwLiTm::printPmWeights(ostream &outS)
 }
 
 //---------------------------------
-void PhrLocalSwLiTm::printWeights(ostream &outS)
+void PhrLocalSwLiTm::printWeights(std::ostream &outS)
 {
   outS<<"wpw: "<<langModelInfoPtr->langModelPars.wpScaleFactor<<" , ";
   outS<<"lmw: "<<langModelInfoPtr->langModelPars.lmScaleFactor<<" , ";
@@ -652,7 +652,7 @@ int PhrLocalSwLiTm::incrTrainFeatsSentPair(const char *srcSent,
   int ret;
   std::vector<std::string> srcSentStrVec=StrProcUtils::charItemsToVector(srcSent);
   std::vector<std::string> refSentStrVec=StrProcUtils::charItemsToVector(refSent);
-  pair<unsigned int,unsigned int> sentRange;
+  std::pair<unsigned int,unsigned int> sentRange;
 
       // Train language model
   if(verbose) std::cerr<<"Training language model..."<<std::endl;
@@ -680,11 +680,11 @@ int PhrLocalSwLiTm::incrTrainFeatsSentPair(const char *srcSent,
 
           // Train sw model
       if(verbose) std::cerr<<"Training single-word model..."<<std::endl;
-      swModelInfoPtr->swAligModelPtrVec[0]->trainSentPairRange(make_pair(n,n),verbose);
+      swModelInfoPtr->swAligModelPtrVec[0]->trainSentPairRange(std::make_pair(n,n),verbose);
 
           // Train inverse sw model
       if(verbose) std::cerr<<"Training inverse single-word model..."<<std::endl;
-      swModelInfoPtr->invSwAligModelPtrVec[0]->trainSentPairRange(make_pair(n,n),verbose);
+      swModelInfoPtr->invSwAligModelPtrVec[0]->trainSentPairRange(std::make_pair(n,n),verbose);
 
           // Add new translation options
       if(verbose) std::cerr<<"Adding new translation options..."<<std::endl;
@@ -728,7 +728,7 @@ int PhrLocalSwLiTm::minibatchTrainFeatsSentPair(const char *srcSent,
      (vecSrcSent.size()%minibatchSize)==0)
   {    
     std::vector<WordAligMatrix> invWaMatrixVec;
-    pair<unsigned int,unsigned int> sentRange;
+    std::pair<unsigned int,unsigned int> sentRange;
     float learningRate=calculateNewLearningRate(verbose);
        
     for(unsigned int n=0;n<vecSrcSent.size();++n)
@@ -743,7 +743,7 @@ int PhrLocalSwLiTm::minibatchTrainFeatsSentPair(const char *srcSent,
     }
 
         // Initialize minibatchSentRange variable
-    pair<unsigned int,unsigned int> minibatchSentRange;
+    std::pair<unsigned int,unsigned int> minibatchSentRange;
     minibatchSentRange.first=sentRange.second-minibatchSize+1;
     minibatchSentRange.second=sentRange.second;
 
@@ -844,7 +844,7 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
      (vecSrcSent.size()%batchSize)==0)
   {    
     std::vector<WordAligMatrix> invWaMatrixVec;
-    pair<unsigned int,unsigned int> sentRange;
+    std::pair<unsigned int,unsigned int> sentRange;
     float learningRate=1;
       
         // Batch learning is being performed, clear models
@@ -866,7 +866,7 @@ int PhrLocalSwLiTm::batchRetrainFeatsSentPair(const char *srcSent,
     }
 
         // Initialize batchSentRange variable
-    pair<unsigned int,unsigned int> batchSentRange;
+    std::pair<unsigned int,unsigned int> batchSentRange;
     batchSentRange.first=0;
     batchSentRange.second=sentRange.second;
 
@@ -1153,9 +1153,9 @@ bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
 //---------------------------------
 bool PhrLocalSwLiTm::print_lambdas(const char* lambdaFileName)
 {
-  ofstream outF;
+  std::ofstream outF;
 
-  outF.open(lambdaFileName,ios::out);
+  outF.open(lambdaFileName,std::ios::out);
   if(!outF)
   {
     std::cerr<<"Error while printing file with lambda values."<<std::endl;
@@ -1170,7 +1170,7 @@ bool PhrLocalSwLiTm::print_lambdas(const char* lambdaFileName)
 }
 
 //-------------------------
-ostream& PhrLocalSwLiTm::print_lambdas(ostream &outS)
+std::ostream& PhrLocalSwLiTm::print_lambdas(std::ostream &outS)
 {
   outS<<swModelInfoPtr->lambda_swm<<" "<<swModelInfoPtr->lambda_invswm<<std::endl;
   return outS;
@@ -1427,7 +1427,7 @@ void PhrLocalSwLiTm::extendHypDataIdx(PositionIndex srcLeft,
                                       const std::vector<WordIndex>& trgPhraseIdx,
                                       HypDataType& hypd)
 {
-  pair<PositionIndex,PositionIndex> sourceSegm;
+  std::pair<PositionIndex,PositionIndex> sourceSegm;
   
         // Add trgPhraseIdx to the target vector
   for(unsigned int i=0;i<trgPhraseIdx.size();++i)

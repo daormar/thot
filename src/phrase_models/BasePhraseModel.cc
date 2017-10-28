@@ -33,15 +33,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 
 //-------------------------
-Prob BasePhraseModel::strPt_s_(const std::vector<string>& s,
-                               const std::vector<string>& t)
+Prob BasePhraseModel::strPt_s_(const std::vector<std::string>& s,
+                               const std::vector<std::string>& t)
 {
   return exp((double)strLogpt_s_(s,t));
 }
 
 //-------------------------
-LgProb BasePhraseModel::strLogpt_s_(const std::vector<string>& s,
-                                    const std::vector<string>& t)
+LgProb BasePhraseModel::strLogpt_s_(const std::vector<std::string>& s,
+                                    const std::vector<std::string>& t)
 {
   std::vector<WordIndex> wIndex_s,wIndex_t;
 
@@ -62,15 +62,15 @@ Prob BasePhraseModel::pt_s_(const std::vector<WordIndex>& s,
 }
 
 //-------------------------
-Prob BasePhraseModel::strPs_t_(const std::vector<string>& s,
-                               const std::vector<string>& t)
+Prob BasePhraseModel::strPs_t_(const std::vector<std::string>& s,
+                               const std::vector<std::string>& t)
 {
   return exp((double)strLogps_t_(s,t));
 }
 
 //-------------------------
-LgProb BasePhraseModel::strLogps_t_(const std::vector<string>& s,
-                                    const std::vector<string>& t)
+LgProb BasePhraseModel::strLogps_t_(const std::vector<std::string>& s,
+                                    const std::vector<std::string>& t)
 {
   std::vector<WordIndex> wIndex_s,wIndex_t;
 
@@ -91,7 +91,7 @@ Prob BasePhraseModel::ps_t_(const std::vector<WordIndex>& s,
 }
     
 //-------------------------
-bool BasePhraseModel::strGetTransFor_s_(const std::vector<string>& s,
+bool BasePhraseModel::strGetTransFor_s_(const std::vector<std::string>& s,
                                         TrgTableNode& trgtn)
 {
   std::vector<WordIndex> wIndex_s;
@@ -103,7 +103,7 @@ bool BasePhraseModel::strGetTransFor_s_(const std::vector<string>& s,
 }
 
 //-------------------------
-bool BasePhraseModel::strGetTransFor_t_(const std::vector<string>& t,
+bool BasePhraseModel::strGetTransFor_t_(const std::vector<std::string>& t,
                                         SrcTableNode& srctn)
 {
   std::vector<WordIndex> wIndex_t;
@@ -115,7 +115,7 @@ bool BasePhraseModel::strGetTransFor_t_(const std::vector<string>& t,
 }
 
 //-------------------------
-bool BasePhraseModel::strGetNbestTransFor_s_(const std::vector<string>& s,
+bool BasePhraseModel::strGetNbestTransFor_s_(const std::vector<std::string>& s,
                                              NbestTableNode<PhraseTransTableNodeData>& nbt)
 {
   std::vector<WordIndex> wIndex_s;
@@ -127,7 +127,7 @@ bool BasePhraseModel::strGetNbestTransFor_s_(const std::vector<string>& s,
 }
 
 //-------------------------
-bool BasePhraseModel::strGetNbestTransFor_t_(const std::vector<string>& t,
+bool BasePhraseModel::strGetNbestTransFor_t_(const std::vector<std::string>& t,
                                              NbestTableNode<PhraseTransTableNodeData>& nbt,
                                              int N/*=-1*/)
 {
