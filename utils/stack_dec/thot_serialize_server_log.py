@@ -31,10 +31,10 @@ def extract_thread_id(line):
     Look for thread ID in passed log line. If there is not the ID
     then it returns None.
     """
-    match = re.match('0x[0-9a-f]+\t', line)
+    match = re.match('(0x[0-9a-f]+)\t', line)
 
     if match:
-        return match.group(0)
+        return match.group(1)
     else:
         return None
 
@@ -49,6 +49,34 @@ def is_last_request_line(line):
     match = re.search('0x[0-9a-f]+\tElapsed time: [0-9]+\.[0-9]+ secs', line)
 
     return match is not None
+
+
+def check_if_buffers_empty(unfinished_output_buf, finished_output_buf,
+                           request_order):
+    """
+    Check if all buffered requests have been printed. If not then the most
+    likely there is an error in code as the program should only reorder
+    an original output so all information should be present.
+    """
+    empty = True
+
+    if len(unfinished_output_buf):
+        print 'ERROR: Some uncompleted information about requests left'
+        empty = False
+        for _, l in unfinished_output_buf.items():
+            print l
+    if len(finished_output_buf):
+        print 'ERROR: Some completed requests have not been printed'
+        empty = False
+        for _, l in finished_output_buf.items():
+            print l
+    if len(request_order):
+        print 'ERROR: Request queue is not empty'
+        empty = False
+        for r in request_order:
+            print r
+
+    return empty
 
 
 def group_thread_output(logFileName):
@@ -81,16 +109,21 @@ def group_thread_output(logFileName):
                     del unfinished_output_buf[tid]
 
                 # Check if the request from the queue head is ready to print
-                if request_order[0] == tid and len(finished_output_buf[tid]) > 0:
-                    request_log = finished_output_buf[tid].pop()
-                    print request_log,
-                    request_order.pop()
+                while len(request_order) > 0:
+                    head_tid = request_order[0]
+                    if head_tid in finished_output_buf:
+                        # Request is ready to print
+                        request_order.popleft()
+                        request_log = finished_output_buf[head_tid].popleft()
+                        print request_log,
+                        # Remove key is all elements printed for TID
+                        if len(finished_output_buf[head_tid]) == 0:
+                            del finished_output_buf[head_tid]
+                    else:
+                        break  # The first request is the queue is not ready to print yet
 
-    # Print not complete requests
-    if len(unfinished_output_buf) > 0:
-        print 'WARNING: Some uncompleted information about requests left'
-        for _, l in unfinished_output_buf.items():
-            print l
+    return check_if_buffers_empty(unfinished_output_buf, finished_output_buf,
+                                  request_order)
 
 
 if __name__ == '__main__':
@@ -99,4 +132,5 @@ if __name__ == '__main__':
     parser.add_argument('logfile', help='Path to log file to convert')
     args = parser.parse_args()
 
-    group_thread_output(args.logfile)
+    if not group_thread_output(args.logfile):
+        exit(1)  # Error
