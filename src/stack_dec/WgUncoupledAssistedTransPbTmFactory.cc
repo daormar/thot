@@ -34,13 +34,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function definitions
 
-extern "C" BaseAssistedTrans<PbTransModel<PhrHypNumcovJumps01EqClassF> >* create(std::string /*str*/)
+extern "C" BaseAssistedTrans<PbTransModel<PhrHypNumcovJumps01EqClassF> >* create(const char* /*str*/)
 {
   return new WgUncoupledAssistedTrans<PbTransModel<PhrHypNumcovJumps01EqClassF> >;
 }
 
 //---------------
-extern "C" std::string type_id(void)
+extern "C" const char* type_id(void)
 {
   return "WgUncoupledAssistedTrans<PbTransModel<PhrHypNumcovJumps01EqClassF> >";
 }

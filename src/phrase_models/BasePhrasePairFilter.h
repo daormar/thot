@@ -58,8 +58,8 @@ class BasePhrasePairFilter
  public:
 
         // Declarations related to dynamic class loading
-    typedef BasePhrasePairFilter* create_t(std::string);
-    typedef std::string type_id_t(void);
+    typedef BasePhrasePairFilter* create_t(const char*);
+    typedef const char* type_id_t(void);
 
     virtual bool phrasePairIsOk(std::vector<std::string> s_,
                                 std::vector<std::string> t_)=0;

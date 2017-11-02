@@ -50,8 +50,8 @@ class BaseScorer
  public:
 
       // Declarations related to dynamic class loading
-  typedef BaseScorer* create_t(std::string);
-  typedef std::string type_id_t(void);
+  typedef BaseScorer* create_t(const char*);
+  typedef const char* type_id_t(void);
 
     // Score for corpus
   virtual void corpusScore(const std::vector<std::string>& candidates,

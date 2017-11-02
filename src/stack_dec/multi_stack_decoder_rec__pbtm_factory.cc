@@ -34,13 +34,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function definitions
 
-extern "C" BaseStackDecoder<PbTransModel<PhrHypNumcovJumps01EqClassF> >* create(std::string /*str*/)
+extern "C" BaseStackDecoder<PbTransModel<PhrHypNumcovJumps01EqClassF> >* create(const char* /*str*/)
 {
   return new multi_stack_decoder_rec<PbTransModel<PhrHypNumcovJumps01EqClassF> >;
 }
 
 //---------------
-extern "C" std::string type_id(void)
+extern "C" const char* type_id(void)
 {
   return "multi_stack_decoder_rec<PbTransModel>";
 }

@@ -55,8 +55,8 @@ class BaseWordPenaltyModel
  public:
 
       // Declarations related to dynamic class loading
-  typedef BaseWordPenaltyModel* create_t(std::string);
-  typedef std::string type_id_t(void);
+  typedef BaseWordPenaltyModel* create_t(const char*);
+  typedef const char* type_id_t(void);
 
       // returns log(wp(tl=len(strVec)))
   virtual LgProb wordPenaltyScoreStr(std::vector<std::string> strVec){return wordPenaltyScore(strVec.size());};

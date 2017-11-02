@@ -32,13 +32,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function definitions
 
-extern "C" BasePhraseModel* create(std::string /*str*/)
+extern "C" BasePhraseModel* create(const char* /*str*/)
 {
   return new BdbPhraseModel;
 }
 
 //---------------
-extern "C" std::string type_id(void)
+extern "C" const char* type_id(void)
 {
   return "BdbPhraseModel";
 }

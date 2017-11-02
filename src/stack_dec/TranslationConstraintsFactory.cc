@@ -32,13 +32,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function definitions
 
-extern "C" BaseTranslationConstraints* create(std::string /*str*/)
+extern "C" BaseTranslationConstraints* create(const char* /*str*/)
 {
   return new TranslationConstraints;
 }
 
 //---------------
-extern "C" std::string type_id(void)
+extern "C" const char* type_id(void)
 {
   return "TranslationConstraints";
 }

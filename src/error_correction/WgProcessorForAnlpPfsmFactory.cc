@@ -33,13 +33,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function definitions
 
-extern "C" BaseWgProcessorForAnlp* create(std::string /*str*/)
+extern "C" BaseWgProcessorForAnlp* create(const char* /*str*/)
 {
   return new WgProcessorForAnlp<PfsmEcmForWg>;
 }
 
 //---------------
-extern "C" std::string type_id(void)
+extern "C" const char* type_id(void)
 {
   return "WgProcessorForAnlp<PfsmEcmForWg>";
 }

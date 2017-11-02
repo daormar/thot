@@ -75,8 +75,8 @@ class BaseStackDecoder
   typedef typename SMT_MODEL::Hypothesis Hypothesis;
 
       // Declarations related to dynamic class loading
-  typedef BaseStackDecoder* create_t(std::string);
-  typedef std::string type_id_t(void);
+  typedef BaseStackDecoder* create_t(const char*);
+  typedef const char* type_id_t(void);
 
       // Link statistical translation model with the decoder
   virtual bool link_smt_model(BaseSmtModel<Hypothesis>* _smtm_ptr)=0;

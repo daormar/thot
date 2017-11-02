@@ -45,8 +45,8 @@ class BaseTranslationConstraints
  public:
 
       // Declarations related to dynamic class loading
-  typedef BaseTranslationConstraints* create_t(std::string);
-  typedef std::string type_id_t(void);
+  typedef BaseTranslationConstraints* create_t(const char*);
+  typedef const char* type_id_t(void);
 
       // Services
   virtual void obtainTransConstraints(std::string rawSrcSent,
