@@ -23,6 +23,7 @@ from concurrent threads and make it more readable.
 
 import argparse
 import re
+
 from collections import defaultdict, deque
 
 
@@ -116,11 +117,11 @@ def group_thread_output(logFileName):
                         request_order.popleft()
                         request_log = finished_output_buf[head_tid].popleft()
                         print request_log,
-                        # Remove key is all elements printed for TID
+                        # Remove key if all elements printed for TID
                         if len(finished_output_buf[head_tid]) == 0:
                             del finished_output_buf[head_tid]
                     else:
-                        break  # The first request is the queue is not ready to print yet
+                        break  # The first request in the queue is not ready to print yet
 
     return check_if_buffers_empty(unfinished_output_buf, finished_output_buf,
                                   request_order)
