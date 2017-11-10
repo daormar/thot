@@ -93,8 +93,7 @@ nlp_common_h= nlp_common/WordIndex.h nlp_common/WordAligMatrix.h	\
 nlp_common/uiPairHashF.h nlp_common/uiHashF.h nlp_common/TrieVecs.h	\
 nlp_common/Trie.h nlp_common/StrProcUtils.h				\
 nlp_common/ModelDescriptorUtils.h nlp_common/StatModelDefs.h		\
-nlp_common/SingleWordVocab.h nlp_common/SimpleTrie.h			\
-nlp_common/_simpleTrie.h nlp_common/Score.h nlp_common/Prob.h		\
+nlp_common/SingleWordVocab.h nlp_common/Score.h nlp_common/Prob.h	\
 nlp_common/printAligFuncs.h nlp_common/PositionIndex.h			\
 nlp_common/OrderedVector.h nlp_common/options.h				\
 nlp_common/NbestTransTable.h nlp_common/NbestTableNode.h		\
@@ -220,7 +219,7 @@ phrase_models/PhraseExtractionCell.h phrase_models/PhraseDefs.h		\
 phrase_models/_incrPhraseModel.h phrase_models/IncrPhraseModel.h	\
 phrase_models/CellID.h phrase_models/CellAlignment.h			\
 phrase_models/Cache_lct_.h phrase_models/Cache_ct_.h			\
-phrase_models/BpSetInfo.h phrase_models/BpSet.h phrase_models/Bisegm.h	\
+phrase_models/BpSetInfo.h phrase_models/BpSet.h				\
 phrase_models/BasePhraseTable.h phrase_models/BasePhraseModel.h		\
 phrase_models/BaseIncrPhraseModel.h					\
 phrase_models/BaseCountPhraseModel.h phrase_models/AlignmentExtractor.h	\

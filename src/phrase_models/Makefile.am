@@ -5,8 +5,8 @@ AlignmentExtractor.h BaseCountPhraseModel.h BaseIncrPhraseModel.cc	\
 BaseIncrPhraseModel.h BasePhraseModel.cc BasePhraseModel.h		\
 BasePhrasePairFilter.h BasePhraseTable.h BdbPhraseModel.cc		\
 BdbPhraseModel.h BdbPhraseModelFactory.cc BdbPhraseTable.cc		\
-BdbPhraseTable.h Bisegm.h BpSet.cc BpSet.h BpSetInfo.h Cache_ct_.cc	\
-Cache_ct_.h Cache_lct_.cc Cache_lct_.h CategPhrasePairFilter.cc		\
+BdbPhraseTable.h BpSet.cc BpSet.h BpSetInfo.h Cache_ct_.cc Cache_ct_.h	\
+Cache_lct_.cc Cache_lct_.h CategPhrasePairFilter.cc			\
 CategPhrasePairFilter.h CellAlignment.h CellID.h FastBdbPhraseModel.cc	\
 FastBdbPhraseModel.h FastBdbPhraseModelFactory.cc FastBdbPhraseTable.cc	\
 FastBdbPhraseTable.h IncrPhraseModel.cc IncrPhraseModel.h		\
