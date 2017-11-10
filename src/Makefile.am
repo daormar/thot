@@ -141,8 +141,10 @@ kenlm_defs=
 endif
 
 if HAVE_LEVELDB_LIB
-leveldb_lm_h= incr_models/LevelDbNgramTable.h incr_models/IncrJelMerLevelDbNgramLM.h
-leveldb_lm_defs= incr_models/LevelDbNgramTable.cc incr_models/IncrJelMerLevelDbNgramLM.cc
+leveldb_lm_h= incr_models/LevelDbNgramTable.h	\
+incr_models/IncrJelMerLevelDbNgramLM.h
+leveldb_lm_defs= incr_models/LevelDbNgramTable.cc	\
+incr_models/IncrJelMerLevelDbNgramLM.cc
 endif
 
 sw_models_h= sw_models/WeightedIncrNormSlm.h sw_models/SwDefs.h		\
@@ -676,10 +678,11 @@ endif
 # include headers
 includedir= $(prefix)/include/$(PACKAGE)
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
-$(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h) $(hattrie_pm_h)	\
-$(leveldb_lm_h) $(leveldb_pm_h) $(smt_preproc_h) $(error_correction_h)		\
-$(downhill_simplex_h) $(stack_dec_h) $(exper_h) $(exper_defs)		\
-$(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
+$(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h)		\
+$(hattrie_pm_h) $(leveldb_lm_h) $(leveldb_pm_h) $(smt_preproc_h)	\
+$(error_correction_h) $(downhill_simplex_h) $(stack_dec_h) $(exper_h)	\
+$(exper_defs) $(casmacat_engines_h) $(casmacat_aligner_h)		\
+$(casmacat_confid_h)
 
 # libraries
 
@@ -764,8 +767,8 @@ fast_bdb_phrase_model_factory_la_LIBADD= libthot.la
 fast_bdb_phrase_model_factory_la_LDFLAGS= -module
 
 ##########
-leveldb_phrase_model_factory_la_SOURCES= $(leveldb_phrase_model_factory_h)	\
-$(leveldb_phrase_model_factory_defs)
+leveldb_phrase_model_factory_la_SOURCES=				\
+$(leveldb_phrase_model_factory_h) $(leveldb_phrase_model_factory_defs)
 leveldb_phrase_model_factory_la_LIBADD= libthot.la
 leveldb_phrase_model_factory_la_LDFLAGS= -module
 
