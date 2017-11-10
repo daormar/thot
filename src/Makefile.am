@@ -101,12 +101,11 @@ nlp_common/mem_alloc_utils.h nlp_common/MathFuncs.h			\
 nlp_common/MathDefs.h nlp_common/lt_op_vec.h nlp_common/LogCount.h	\
 nlp_common/LM_Defs.h nlp_common/SmtDefs.h nlp_common/ins_op_pair.h	\
 nlp_common/getline.h nlp_common/getdelim.h nlp_common/ErrorDefs.h	\
-nlp_common/ctimer.h nlp_common/Count.h nlp_common/ClassDic.h		\
-nlp_common/Bitset.h nlp_common/BasicSocketUtils.h			\
-nlp_common/BaseNgramLM.h nlp_common/BaseIncrNgramLM.h			\
-nlp_common/AwkInputStream.h nlp_common/DynClassFileHandler.h		\
-nlp_common/SimpleDynClassLoader.h nlp_common/ThreadSafePrint.h		\
-nlp_common/StdCerrThreadSafeTidPrint.h					\
+nlp_common/ctimer.h nlp_common/Count.h nlp_common/Bitset.h		\
+nlp_common/BasicSocketUtils.h nlp_common/BaseNgramLM.h			\
+nlp_common/BaseIncrNgramLM.h nlp_common/AwkInputStream.h		\
+nlp_common/DynClassFileHandler.h nlp_common/SimpleDynClassLoader.h	\
+nlp_common/ThreadSafePrint.h nlp_common/StdCerrThreadSafeTidPrint.h	\
 nlp_common/StdCerrThreadSafePrint.h
 nlp_common_defs= nlp_common/WordAligMatrix.cc			\
 nlp_common/StrProcUtils.cc nlp_common/ModelDescriptorUtils.cc	\
@@ -114,8 +113,8 @@ nlp_common/SingleWordVocab.cc nlp_common/Prob.cc		\
 nlp_common/printAligFuncs.cc nlp_common/options.cc		\
 nlp_common/mem_alloc_utils.cc nlp_common/MathFuncs.cc		\
 nlp_common/getline.c nlp_common/getdelim.c nlp_common/ctimer.c	\
-nlp_common/ClassDic.cc nlp_common/BasicSocketUtils.cc		\
-nlp_common/AwkInputStream.cc nlp_common/DynClassFileHandler.cc
+nlp_common/BasicSocketUtils.cc nlp_common/AwkInputStream.cc	\
+nlp_common/DynClassFileHandler.cc
 
 incr_models_h= incr_models/vecx_x_incr_enc.h				\
 incr_models/vecx_x_incr_ecpm.h incr_models/vecx_x_incr_cptable.h	\
