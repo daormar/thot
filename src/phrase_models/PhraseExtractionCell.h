@@ -27,21 +27,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "PhraseDefs.h"
 #include "CellAlignment.h"
-#include "Bisegm.h"
-#include "Bitset.h"
 #include <vector>
 
 //--------------- typedefs and structs  ------------------------------
 
-//--------------- Bisegm type
-
-typedef SimpleTrie<CellID> Bisegm;
-
-//--------------- PhraseExtractionCell struct
 struct PhraseExtractionCell
 {
   std::vector<CellAlignment> cellAligs;
-  Bisegm combs;
 };
 
 #endif

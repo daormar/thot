@@ -39,6 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "PhraseExtractionCell.h"
+#include "CellID.h"
 #include "WordAligMatrix.h"
 #include "PhraseDefs.h"
 #include "PhraseExtractParameters.h"
@@ -72,11 +73,7 @@ class PhraseExtractionTable
 {
  public:
 	 	
-	PhraseExtractionTable(void);
-    PhraseExtractionTable& operator= (const PhraseExtractionTable &right);
-        
-	PhraseExtractionCell& cell(unsigned int x,
-                               unsigned int y);
+	PhraseExtractionTable(void);        
 	void extractConsistentPhrases(PhraseExtractParameters phePars,
                                   const std::vector<std::string> &_ns,
                                   const std::vector<std::string> &_t,
@@ -88,71 +85,12 @@ class PhraseExtractionTable
                                const WordAligMatrix &_alig,
                                std::vector<PhrasePair>& outvph,
                                int verbose=0);
-	Bisegm& obtainPossibleSegmentations(PhraseExtractParameters phePars,
-                                        const std::vector<std::string> &_ns,
-                                        const std::vector<std::string> &_t,
-                                        const WordAligMatrix &_alig);
-    
-	std::vector<PhrasePair> getPhrasesFromSegmentation(std::vector<CellID>& comb);
-	PhrasePair getPhrasePairFromCellID(CellID& cid);
-	unsigned int leftMostPosInCell(unsigned int x,
-                                   unsigned int y);
-	unsigned int rightMostPosInCell(unsigned int x,
-                                    unsigned int y);
-	Bitset<MAX_SENTENCE_LENGTH> getCoverageForCellID(CellID& cid);
-	unsigned int get_nslen(void);
-	unsigned int get_tlen(void);
 	void clear(void);
 	~PhraseExtractionTable();
 
-        // Iterator class
-    class iterator;
-    friend class iterator;
-    class iterator
-      {
-        public:
-            iterator(void);
-            static void initTablePointer(PhraseExtractionTable* _petPtr);
-            void init(unsigned int x,
-                      unsigned int y);
-            void set_x_y(unsigned int _x,
-                         unsigned int _y);
-            bool operator++(void);
-            bool end(void)const;
-            void reset(void);
-            void clear(void);
-            std::vector<CellID> operator*(void)const;
-            const std::vector<CellID>& getCidVec(void)const;
-            ~iterator();
-            
-        private:
-            static PhraseExtractionTable* petPtr;
-            static std::vector<CellID> cidVec;
-            unsigned int x;
-            unsigned int y;
-            unsigned int z;
-            unsigned int i;
-            unsigned int first;
-            iterator* iter;
-
-            bool iterate(void);
-            bool searchFirstValidCell(void);
-            bool searchFirstValid_i(void);
-      };
-
-            // Iterator-related functions
-    iterator getSegmIter(PhraseExtractParameters phePars,
-                         const std::vector<std::string> &_ns,
-                         const std::vector<std::string> &_t,
-                         const WordAligMatrix &_alig);
-
  private:
 
-    bool pruneWasApplied;
-	unsigned long numSegmentationPrunings;
-
     std::vector<std::vector<PhraseExtractionCell> > pecMatrix;
-    std::vector<std::vector<iterator> > iterMatrix;
     
     std::vector<std::string> ns;
 	std::vector<std::string> t;
@@ -166,7 +104,6 @@ class PhraseExtractionTable
     int maxSrcPhraseLength;
     bool countSpurious;
 	bool monotone;
-	unsigned int maxNumbOfCombsInTable;
 
     void extractConsistentPhrasesOld(PhraseExtractParameters phePars,
                                      const std::vector<std::string> &_ns,
@@ -235,6 +172,10 @@ class PhraseExtractionTable
 	Bitset<MAX_SENTENCE_LENGTH> spuriousWordsBitset(WordAligMatrix &waMatrix);
 	bool existCellAlig(const std::vector<CellAlignment> &cellAligs,
                        CellAlignment calig);
+	unsigned int leftMostPosInCell(unsigned int x,
+                                   unsigned int y);
+	unsigned int rightMostPosInCell(unsigned int x,
+                                    unsigned int y);
 	bool sourcePosInCell(unsigned int j,
                          unsigned int x,
                          unsigned int y);
@@ -244,15 +185,6 @@ class PhraseExtractionTable
       trgPhraseLengthInCellNonSpurious(unsigned int x,
                                        unsigned int y,
                                        Bitset<MAX_SENTENCE_LENGTH>& spurBits);
-	unsigned int getDiagNumber(unsigned int x,
-                               unsigned int y);
-	unsigned int trgPhraseLengthInComb(const std::vector<CellID> &cidVec);
-    unsigned int maxTrgPhraseLengthInComb(const std::vector<CellID> &cidVec,
-                                          unsigned int first=0);
-	unsigned int
-      maxTrgPhraseLengthInCombNonSpurious(const std::vector<CellID> &cidVec,
-                                          Bitset<MAX_SENTENCE_LENGTH>& spurBits,
-                                          unsigned int first=0);
 };
 
 #endif
