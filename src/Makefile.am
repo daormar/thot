@@ -97,12 +97,12 @@ nlp_common/SingleWordVocab.h nlp_common/Score.h nlp_common/Prob.h	\
 nlp_common/printAligFuncs.h nlp_common/PositionIndex.h			\
 nlp_common/OrderedVector.h nlp_common/options.h				\
 nlp_common/NbestTransTable.h nlp_common/NbestTableNode.h		\
-nlp_common/myVector.h nlp_common/mem_alloc_utils.h			\
-nlp_common/MathFuncs.h nlp_common/MathDefs.h nlp_common/lt_op_vec.h	\
-nlp_common/LogCount.h nlp_common/LM_Defs.h nlp_common/SmtDefs.h		\
-nlp_common/ins_op_pair.h nlp_common/getline.h nlp_common/getdelim.h	\
-nlp_common/ErrorDefs.h nlp_common/ctimer.h nlp_common/Count.h		\
-nlp_common/ClassDic.h nlp_common/Bitset.h nlp_common/BasicSocketUtils.h	\
+nlp_common/mem_alloc_utils.h nlp_common/MathFuncs.h			\
+nlp_common/MathDefs.h nlp_common/lt_op_vec.h nlp_common/LogCount.h	\
+nlp_common/LM_Defs.h nlp_common/SmtDefs.h nlp_common/ins_op_pair.h	\
+nlp_common/getline.h nlp_common/getdelim.h nlp_common/ErrorDefs.h	\
+nlp_common/ctimer.h nlp_common/Count.h nlp_common/ClassDic.h		\
+nlp_common/Bitset.h nlp_common/BasicSocketUtils.h			\
 nlp_common/BaseNgramLM.h nlp_common/BaseIncrNgramLM.h			\
 nlp_common/BackoffNode.h nlp_common/AwkInputStream.h			\
 nlp_common/DynClassFileHandler.h nlp_common/SimpleDynClassLoader.h	\
