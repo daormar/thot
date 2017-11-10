@@ -7,7 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include "ErrorDefs.h"
 #include "StrProcUtils.h"
 

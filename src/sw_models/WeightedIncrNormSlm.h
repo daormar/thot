@@ -37,7 +37,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "_sentLengthModel.h"
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include "MathFuncs.h"
 #include <map>
 #include <utility>

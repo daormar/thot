@@ -45,7 +45,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <db_cxx.h>
 #include <db.h>
 #include <algorithm>
-#include <awkInputStream.h>
+#include <AwkInputStream.h>
 #include <string.h>
 #include <map>
 #include <vector>

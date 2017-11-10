@@ -468,7 +468,7 @@ bool anjm1ip_anjiMatrix::load_matrix_values(const char* matrixFile)
 //-------------------------
 bool anjm1ip_anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
 
       // Try to open file  
   if(awk.open(maxnsizeDataFile)==THOT_ERROR)

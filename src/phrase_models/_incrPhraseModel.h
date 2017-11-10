@@ -49,7 +49,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "AlignmentExtractor.h"
 #include "ModelDescriptorUtils.h"
 #include "Bitset.h"
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include <stdlib.h>
 #include <float.h>
 #include <math.h>

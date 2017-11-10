@@ -40,7 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <_incrLexTable.h>
 #include <ErrorDefs.h>
 #include <fstream>
-#include <awkInputStream.h>
+#include <AwkInputStream.h>
 #include <StatModelDefs.h>
 #include <set>
 #include <vector>

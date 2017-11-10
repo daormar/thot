@@ -41,7 +41,7 @@ bool DynClassFileHandler::load(std::string _fileName,int verbose/*=1*/)
 {
   fileName=_fileName;
   
-  awkInputStream awk;
+  AwkInputStream awk;
   
   if(awk.open(fileName.c_str())==THOT_ERROR)
   {

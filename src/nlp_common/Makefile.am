@@ -9,7 +9,7 @@ MathFuncs.cc MathDefs.h lt_op_vec.h LogCount.h LM_Defs.h SmtDefs.h	\
 ins_op_pair.h getline.h getline.c getdelim.h getdelim.c ErrorDefs.h	\
 ctimer.h ctimer.c Count.h ClassDic.h ClassDic.cc Bitset.h		\
 BasicSocketUtils.h BasicSocketUtils.cc BaseNgramLM.h BaseIncrNgramLM.h	\
-BackoffNode.h awkInputStream.h awkInputStream.cc DynClassFileHandler.h	\
+BackoffNode.h AwkInputStream.h AwkInputStream.cc DynClassFileHandler.h	\
 DynClassFileHandler.cc SimpleDynClassLoader.h KenLm.h KenLm.cc		\
 KenLmFactory.cc StdCerrThreadSafePrint.h StdCerrThreadSafeTidPrint.h	\
 ThreadSafePrint.h

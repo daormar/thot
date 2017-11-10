@@ -37,7 +37,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include "WordAligMatrix.h"
 #include "printAligFuncs.h"
 
@@ -136,7 +136,7 @@ class AlignmentExtractor
     float numReps;
     unsigned int fileFormat;
     FILE* fileStream;
-    awkInputStream awkInpStrm;
+    AwkInputStream awkInpStrm;
     
     bool getNextAlignInGIZAFormat(void);
     bool getNextAlignInAlignOpFormat(void);

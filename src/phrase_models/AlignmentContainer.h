@@ -41,7 +41,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "PhraseDefs.h"
 #include "AligInfo.h"
 #include <printAligFuncs.h>
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include <map>
 #include <vector>
 

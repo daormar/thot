@@ -367,7 +367,7 @@ bool _incrJelMerNgramLM<SRC_INFO,SRCTRG_INFO>::loadWeights(const char *prefixOfL
   }
 
       // load weights
-  awkInputStream awk;
+  AwkInputStream awk;
   weights.clear();
   if(awk.open(weightFileName.c_str())==THOT_ERROR)
   {

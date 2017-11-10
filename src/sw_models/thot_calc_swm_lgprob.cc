@@ -234,7 +234,7 @@ int processPairAligFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
                         const char *pairPlusAligFile)
 {
  bool ret;
- awkInputStream awk;
+ AwkInputStream awk;
  std::vector<std::string> fileSrcSentVec;
  std::vector<std::string> fileTrgSentVec;
  std::vector<PositionIndex> fileAligVec;
@@ -303,7 +303,7 @@ int processSentPairFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
 {
       // Define variables
  bool ret;
- awkInputStream awk;
+ AwkInputStream awk;
  std::vector<std::string> srcSentVec;
  std::vector<std::string> trgSentVec;
  LgProb lp;

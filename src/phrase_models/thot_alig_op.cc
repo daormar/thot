@@ -163,7 +163,7 @@ bool parseAlignOpsFile(AlignmentContainer& alignmentContainer,
                        char * alignOperationsFile,
                        bool verbose)
 {
- awkInputStream awk;
+ AwkInputStream awk;
  int transpose;
 	
  if(awk.open(alignOperationsFile)==THOT_ERROR)
@@ -245,7 +245,7 @@ bool parseAlignOpsFile(AlignmentExtractor& alignmentExtractor,
                        char * alignOperationsFile,
                        bool verbose)
 {
- awkInputStream awk;
+ AwkInputStream awk;
  int transpose;
  char outputFileName[512];
  FILE *out_file=0;

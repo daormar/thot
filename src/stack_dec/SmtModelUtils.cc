@@ -133,7 +133,7 @@ namespace SmtModelUtils
                       float& lambda_swm,
                       float& lambda_invswm)
   {
-    awkInputStream awk;
+    AwkInputStream awk;
   
     if(awk.open(lambdaFileName.c_str())==THOT_ERROR)
     {

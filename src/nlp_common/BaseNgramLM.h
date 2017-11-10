@@ -36,7 +36,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "LM_Defs.h"
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include <string>
 #include <vector>
 #include <math.h>
@@ -242,7 +242,7 @@ int BaseNgramLM<LM_STATE>::perplexity(const char *corpusFileName,
 {
   LgProb logp;
   totalLogProb=0;	
-  awkInputStream awk;
+  AwkInputStream awk;
   std::vector<std::string> v;	
   numWords=0;
   numOfSentences=0;

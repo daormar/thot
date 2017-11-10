@@ -39,7 +39,7 @@ WgHandler::WgHandler(void)
 //---------------------------------------
 bool WgHandler::load(const char * filename)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
   
   if(awk.open(filename)==THOT_ERROR)
   {

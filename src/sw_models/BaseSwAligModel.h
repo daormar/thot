@@ -41,7 +41,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include <float.h>
 #include <string>
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include "SwDefs.h"
 #include <ErrorDefs.h>
 #include <StrProcUtils.h>
@@ -417,7 +417,7 @@ bool BaseSwAligModel<PPINFO>::obtainBestAlignments(const char *sourceTestFileNam
                                                    const char *targetTestFilename,
                                                    const char *outFileName)
 {
- awkInputStream srcTest,trgTest;
+ AwkInputStream srcTest,trgTest;
  std::vector<PositionIndex> bestAlig;
  LgProb bestLgProb;
  std::ofstream outF;

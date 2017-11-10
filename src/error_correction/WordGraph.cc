@@ -1208,7 +1208,7 @@ void WordGraph::obtainUsefulStates(std::vector<bool>& stateIsUsefulVec,
 //---------------------------------------
 bool WordGraph::load(const char * filename)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
   
   if(awk.open(filename)==THOT_ERROR)
   {

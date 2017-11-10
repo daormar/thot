@@ -214,7 +214,7 @@ bool anjiMatrix::load_anji_values(const char* anjiFile)
 //-------------------------
 bool anjiMatrix::load_maxnsize_data(const char* maxnsizeDataFile)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
 
       // Try to open file  
   if(awk.open(maxnsizeDataFile)==THOT_ERROR)

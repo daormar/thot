@@ -416,7 +416,7 @@ bool _incrHmmAligModel::loadLexSmIntFactor(const char* lexSmIntFactorFile)
 {
   std::cerr<<"Loading file with lexical smoothing interpolation factor from "<<lexSmIntFactorFile<<std::endl;
 
-  awkInputStream awk;
+  AwkInputStream awk;
 
   if(awk.open(lexSmIntFactorFile)==THOT_ERROR)
   {
@@ -469,7 +469,7 @@ bool _incrHmmAligModel::loadAlSmIntFactor(const char* alSmIntFactorFile)
 {
   std::cerr<<"Loading file with alignment smoothing interpolation factor from "<<alSmIntFactorFile<<std::endl;
 
-  awkInputStream awk;
+  AwkInputStream awk;
 
   if(awk.open(alSmIntFactorFile)==THOT_ERROR)
   {

@@ -33,8 +33,8 @@ namespace PhraseExtractUtils
         // options. This can be achieved using the well-known phrase-extract
         // algorithm.
   
-    awkInputStream srcStream;
-    awkInputStream trgStream;
+    AwkInputStream srcStream;
+    AwkInputStream trgStream;
 
         // Open files
     if(srcStream.open(srcCorpusFileName.c_str())==THOT_ERROR)

@@ -252,8 +252,8 @@ int PhrLocalSwLiTm::extractPhrPairsFromDevCorpus(std::string srcDevCorpusFileNam
 // options. This can be achieved using the well-known phrase-extract
 // algorithm.
   
-  awkInputStream srcDevStream;
-  awkInputStream trgDevStream;
+  AwkInputStream srcDevStream;
+  AwkInputStream trgDevStream;
 
       // Open files
   if(srcDevStream.open(srcDevCorpusFileName.c_str())==THOT_ERROR)
@@ -1107,7 +1107,7 @@ int PhrLocalSwLiTm::addNewTransOpts(unsigned int n,
 //---------------------------------
 bool PhrLocalSwLiTm::load_lambdas(const char* lambdaFileName)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
   
   if(awk.open(lambdaFileName)==THOT_ERROR)
   {

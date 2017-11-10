@@ -466,7 +466,7 @@ bool _incrNgramLM<SRC_INFO,SRCTRG_INFO>::load_ngrams(const char *fileName)
   std::vector<std::string> hs;
   std::string ht;
   im_pair<SRC_INFO,SRCTRG_INFO> inf;
-  awkInputStream awk;
+  AwkInputStream awk;
   unsigned int i;
   unsigned int ngramOrderAux=ngramOrder;
     

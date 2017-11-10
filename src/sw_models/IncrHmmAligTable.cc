@@ -165,7 +165,7 @@ bool IncrHmmAligTable::loadPlainText(const char* aligNumDenFile)
 
   std::cerr<<"Loading alignd file in plain text format from "<<aligNumDenFile<<std::endl;
 
-  awkInputStream awk;
+  AwkInputStream awk;
   if(awk.open(aligNumDenFile)==THOT_ERROR)
   {
     std::cerr<<"Error in alignment nd file, file "<<aligNumDenFile<<" does not exist.\n";

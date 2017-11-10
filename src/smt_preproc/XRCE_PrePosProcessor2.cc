@@ -197,7 +197,7 @@ std::string XRCE_PrePosProcessor2::capitalize(std::string str)
 //---------------------------------------
 bool XRCE_PrePosProcessor2::loadCapitOptions(const char* filename)
 {
-  awkInputStream capitInfoStream;
+  AwkInputStream capitInfoStream;
 
       // Open file
   if(capitInfoStream.open(filename)==THOT_ERROR)

@@ -150,7 +150,7 @@ bool SingleWordVocab::printSrcVocab(const char *outputFileName)
 //-------------------------
 bool SingleWordVocab::loadGIZASrcVocab(const char *srcInputVocabFileName)
 {
- awkInputStream awk;
+ AwkInputStream awk;
 
  if(awk.open(srcInputVocabFileName)==THOT_ERROR)
  {
@@ -301,7 +301,7 @@ bool SingleWordVocab::printTrgVocab(const char *outputFileName)
 //-------------------------
 bool SingleWordVocab::loadGIZATrgVocab(const char *trgInputVocabFileName)
 {
- awkInputStream awk;
+ AwkInputStream awk;
 
  if(awk.open(trgInputVocabFileName)==THOT_ERROR)
  {

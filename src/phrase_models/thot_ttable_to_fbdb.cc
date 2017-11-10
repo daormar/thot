@@ -39,7 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include <fstream>
 #include "options.h"
-#include <awkInputStream.h>
+#include <AwkInputStream.h>
 
 //--------------- Constants ------------------------------------------
 
@@ -48,7 +48,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 int TakeParameters(int argc,char *argv[]);
 void printUsage(void);
-int extractEntryInfo(awkInputStream& awk,
+int extractEntryInfo(AwkInputStream& awk,
                      std::vector<WordIndex>& srcPhr,
                      std::vector<WordIndex>& trgPhr,
                      Count& jointCount);
@@ -74,7 +74,7 @@ int main(int argc,char *argv[])
 }
 
 //---------------
-int extractEntryInfo(awkInputStream& awk,
+int extractEntryInfo(AwkInputStream& awk,
                      std::vector<WordIndex>& srcPhr,
                      std::vector<WordIndex>& trgPhr,
                      Count& jointCount)
@@ -116,7 +116,7 @@ int extractEntryInfo(awkInputStream& awk,
 int process_ttable(void)
 {
       // Read standard input
-  awkInputStream awk;
+  AwkInputStream awk;
   if(awk.open_stream(stdin)==THOT_ERROR)
   {
     std::cerr<<"Error while reading from standard input!\n";

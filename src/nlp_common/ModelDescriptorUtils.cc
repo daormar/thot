@@ -95,7 +95,7 @@ std::string extractDirName(std::string filePath)
 //---------------
 bool fileIsDescriptor(std::string fileName)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
   if(awk.open(fileName.c_str())==THOT_ERROR)
     return false;
   else
@@ -128,7 +128,7 @@ bool fileIsDescriptor(std::string fileName)
 bool fileIsDescriptor(std::string fileName,
                       std::string& mainFileName)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
   if(awk.open(fileName.c_str())==THOT_ERROR)
     return false;
   else
@@ -189,7 +189,7 @@ bool extractModelEntryInfo(std::string fileName,
   std::string mainFileName;
   if(fileIsDescriptor(fileName,mainFileName))
   {
-    awkInputStream awk;
+    AwkInputStream awk;
     if(awk.open(fileName.c_str())==THOT_ERROR)
     {
       return THOT_ERROR;

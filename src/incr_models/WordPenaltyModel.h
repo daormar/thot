@@ -38,7 +38,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "BaseWordPenaltyModel.h"
 #include <string.h>
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include "ErrorDefs.h"
 #include "LM_Defs.h"
 #include "SmtDefs.h"

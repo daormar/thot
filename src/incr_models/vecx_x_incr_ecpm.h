@@ -39,7 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "vecx_x_incr_cptable.h"
 #include "vecx_x_incr_enc.h"
 #include "_incrEncCondProbModel.h"
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -90,7 +90,7 @@ bool vecx_x_incr_ecpm<HX,X,SRC_INFO,SRCTRG_INFO>::load(const char *fileName)
   std::vector<HX> hs;
   HX ht;
   im_pair<SRC_INFO,SRCTRG_INFO> inf;
-  awkInputStream awk;
+  AwkInputStream awk;
   unsigned int i;
 
   if(awk.open(fileName)==THOT_ERROR)

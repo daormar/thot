@@ -37,7 +37,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include <fstream>
 #include <string.h>
 #include "BaseSentenceHandler.h"
@@ -96,9 +96,9 @@ class LightSentenceHandler: public BaseSentenceHandler
    
   protected:
 
-   awkInputStream awkSrc;
-   awkInputStream awkTrg;
-   awkInputStream awkSrcTrgC;
+   AwkInputStream awkSrc;
+   AwkInputStream awkTrg;
+   AwkInputStream awkSrcTrgC;
 
    bool countFileExists;
    size_t nsPairsInFiles;

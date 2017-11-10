@@ -53,7 +53,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include "ErrorDefs.h"
 #include "StrProcUtils.h"
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include "preprocess.h"
 #include "postprocess.h"
 #include <IncrJelMerNgramLM.h>

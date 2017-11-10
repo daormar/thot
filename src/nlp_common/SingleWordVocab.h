@@ -51,7 +51,7 @@ using __gnu_cxx::hash_map;
 #endif
 
 #include "StatModelDefs.h"
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include <string>
 #include <vector>
 

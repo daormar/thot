@@ -60,8 +60,8 @@ int calc_bleuf(FILE *reff,
                std::vector<float>& bleu_n,
                int verbosity)
 {
-  awkInputStream refStream;
-  awkInputStream sysStream;
+  AwkInputStream refStream;
+  AwkInputStream sysStream;
   unsigned int numSents=0;
   unsigned int refWords=0;
   unsigned int sysWords=0;

@@ -118,7 +118,7 @@ LgProb TrgSegmLenTable::trgSegmLenLgProbGeom(unsigned int k,
 //-------------------------
 bool TrgSegmLenTable::load(const char *segmLengthTableFileName)
 {
- awkInputStream awk;
+ AwkInputStream awk;
 	
  std::cerr<<"Loading target segment length table from file "<<segmLengthTableFileName<<std::endl;
  if(awk.open(segmLengthTableFileName)==THOT_ERROR)
@@ -163,7 +163,7 @@ bool TrgSegmLenTable::load(const char *segmLengthTableFileName)
 //-------------------------
 bool TrgSegmLenTable::readAvgSegmLen(const char *avgSegmLenFileName)
 {
- awkInputStream awk;
+ AwkInputStream awk;
 
  std::cerr<<"Reading average segment length file from: "<<avgSegmLenFileName<<std::endl;
  if(awk.open(avgSegmLenFileName)==THOT_ERROR)

@@ -206,7 +206,7 @@ bool IncrLexTable::loadPlainText(const char* lexNumDenFile)
 
   std::cerr<<"Loading lexnd file in plain text format from "<<lexNumDenFile<<std::endl;
 
-  awkInputStream awk;
+  AwkInputStream awk;
   if(awk.open(lexNumDenFile)==THOT_ERROR)
   {
     std::cerr<<"Error in file with lexical parameters, file "<<lexNumDenFile<<" does not exist.\n";

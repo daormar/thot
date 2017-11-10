@@ -40,7 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BasePhraseTable.h"
 #include "PhraseDefs.h"
 #include "ErrorDefs.h"
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include <string>
 #include <vector>
 

@@ -56,7 +56,7 @@ bool WordPredictor::load(const char *fileName)
 //---------------------------------------
 bool WordPredictor::loadFileWithSents(const char *fileName)
 {
-  awkInputStream fileStream;
+  AwkInputStream fileStream;
 
       // Open files
   if(fileStream.open(fileName)==THOT_ERROR)
@@ -87,7 +87,7 @@ bool WordPredictor::loadFileWithSents(const char *fileName)
 //---------------------------------------
 bool WordPredictor::loadFileWithAdditionalInfo(const char *fileName)
 {
-  awkInputStream fileStream;
+  AwkInputStream fileStream;
 
       // Open files
   if(fileStream.open(fileName)==THOT_ERROR)

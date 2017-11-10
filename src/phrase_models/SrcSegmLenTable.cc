@@ -84,7 +84,7 @@ LgProb SrcSegmLenTable::srcSegmLenLgProbGeom(unsigned int x_k,
 //-------------------------
 bool SrcSegmLenTable::load(const char *segmLengthTableFileName)
 {
- awkInputStream awk;
+ AwkInputStream awk;
 	
  std::cerr<<"Loading source segment length table from file "<<segmLengthTableFileName<<std::endl;
  if(awk.open(segmLengthTableFileName)==THOT_ERROR)

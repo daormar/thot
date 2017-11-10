@@ -43,7 +43,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BaseScorer.h"
 
 #include "DynClassFactoryHandler.h"
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include "ErrorDefs.h"
 #include "options.h"
 #include <math.h>
@@ -192,7 +192,7 @@ int obtain_references(const thot_scorer_pars& pars,
   referenceVec.clear();
 
       // Fill output variable
-  awkInputStream awk;
+  AwkInputStream awk;
 
   if(awk.open(pars.fileWithReferences.c_str())==THOT_ERROR)
   {
@@ -216,7 +216,7 @@ int obtain_sys_sentences(const thot_scorer_pars& pars,
   sysSentVec.clear();
 
       // Fill output variable
-  awkInputStream awk;
+  AwkInputStream awk;
 
   if(awk.open(pars.fileWithSysSents.c_str())==THOT_ERROR)
   {

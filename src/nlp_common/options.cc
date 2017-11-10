@@ -568,7 +568,7 @@ bool extractParsFromFile(const char* filename,
                          std::vector<std::string>& argv_stl,
                          std::string comment)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
   
   argc=1;
   argv_stl.clear();

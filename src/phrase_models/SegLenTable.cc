@@ -109,7 +109,7 @@ void SegLenTable::incrCountOf_tlen(unsigned int tlen)
 //-------------------------
 bool SegLenTable::load_seglentable(const char *segmLengthTableFileName)
 {
- awkInputStream awk;
+ AwkInputStream awk;
 	
  std::cerr<<"Loading segmentation length table from file "<<segmLengthTableFileName<<std::endl;
  if(awk.open(segmLengthTableFileName)==THOT_ERROR)

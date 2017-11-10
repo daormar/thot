@@ -42,7 +42,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include "Prob.h"
 
 //--------------- Constants ------------------------------------------

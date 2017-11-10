@@ -58,8 +58,8 @@ int calculate_chrf_file(FILE *reff,
                         std::vector<double>& chrf_n,
                         int verbosity)
 {
-    awkInputStream refStream;
-    awkInputStream sysStream;
+    AwkInputStream refStream;
+    AwkInputStream sysStream;
     unsigned int numSents=0;
     unsigned int refChars=0;
     unsigned int sysChars=0;

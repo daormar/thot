@@ -29,7 +29,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "ErrorDefs.h"
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include <stdio.h>
 #include <string>
 #include <vector>

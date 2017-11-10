@@ -303,7 +303,7 @@ bool _incrPhraseModel::load_given_prefix(const char *prefix)
 //-------------------------
 bool _incrPhraseModel::load_ttable(const char *_incrPhraseModelFileName)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
   
   if(awk.open(_incrPhraseModelFileName)==THOT_ERROR)
   {
@@ -339,7 +339,7 @@ bool _incrPhraseModel::loadPlainTextTTable(const char *phraseTTableFileName)
 {
  unsigned int i;
  std::vector<std::string> s,t;
- awkInputStream awk;
+ AwkInputStream awk;
  PhrasePairInfo phpinfo; 
  Count count_s_;
  Count count_s_t_;

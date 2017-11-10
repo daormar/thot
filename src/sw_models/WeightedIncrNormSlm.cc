@@ -48,7 +48,7 @@ WeightedIncrNormSlm::WeightedIncrNormSlm(void)
 //-------------------------
 bool WeightedIncrNormSlm::load(const char *filename)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
 
   clear();
   
@@ -207,7 +207,7 @@ bool WeightedIncrNormSlm::get_mean_stddev(unsigned int slen,
 //-------------------------
 bool WeightedIncrNormSlm::readNormalPars(const char *normParsFileName)
 {
- awkInputStream awk;
+ AwkInputStream awk;
 
  std::cerr<<"Reading sentence length model file from: "<<normParsFileName<<" , using a weighted incremental normal distribution"<<std::endl;
  if(awk.open(normParsFileName)==THOT_ERROR)

@@ -85,7 +85,7 @@ bool _incrHmmP0AligModel::loadHmmP0(const char *hmmP0FileName)
 {
   std::cerr<<"Loading file with hmm p0 value from "<<hmmP0FileName<<std::endl;
 
-  awkInputStream awk;
+  AwkInputStream awk;
 
   if(awk.open(hmmP0FileName)==THOT_ERROR)
   {

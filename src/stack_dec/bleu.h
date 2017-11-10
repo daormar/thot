@@ -28,7 +28,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 #include <utility>
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include "ErrorDefs.h"
 
 #define MAX_N 4

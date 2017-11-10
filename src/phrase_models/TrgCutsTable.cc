@@ -50,7 +50,7 @@ LgProb TrgCutsTable::trgCutsLgProb(int offset)
 //-------------------------
 bool TrgCutsTable::load(const char *trgCutsTableFileName)
 {
- awkInputStream awk;
+ AwkInputStream awk;
 	
  std::cerr<<"Loading model for target sentence cuts from file "<<trgCutsTableFileName<<std::endl;
  if(awk.open(trgCutsTableFileName)==THOT_ERROR)

@@ -53,7 +53,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include "Count.h"
 #include "ErrorDefs.h"
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include "Trie.h"
 
 //--------------- Constants ------------------------------------------

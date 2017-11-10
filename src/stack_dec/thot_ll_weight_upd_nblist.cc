@@ -44,7 +44,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BaseLogLinWeightUpdater.h"
 
 #include "DynClassFactoryHandler.h"
-#include "awkInputStream.h"
+#include "AwkInputStream.h"
 #include "ErrorDefs.h"
 #include "options.h"
 #include <math.h>
@@ -256,7 +256,7 @@ int obtain_references(const thot_llwu_nblist_pars& pars,
   referenceVec.clear();
 
       // Fill output variable
-  awkInputStream awk;
+  AwkInputStream awk;
 
   if(awk.open(pars.fileWithReferences.c_str())==THOT_ERROR)
   {
@@ -283,7 +283,7 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
   scoreComps.clear();
 
         // Fill output variables
-  awkInputStream awk;
+  AwkInputStream awk;
 
   if(awk.open(nbfile.c_str())==THOT_ERROR)
   {
@@ -355,7 +355,7 @@ int obtain_nblists_and_scr_comps(const thot_llwu_nblist_pars& pars,
   scoreCompsVec.clear();
 
       // Fill output variables
-  awkInputStream awk;
+  AwkInputStream awk;
 
   if(awk.open(pars.fileWithNbestLists.c_str())==THOT_ERROR)
   {

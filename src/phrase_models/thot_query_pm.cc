@@ -233,7 +233,7 @@ int p_option(BasePhraseModel* pbModelPtr)
 //---------------
 int q_option(BasePhraseModel* pbModelPtr)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
 
       // Open input file
   if(awk.open(phraseFileName.c_str())==THOT_ERROR)
@@ -275,7 +275,7 @@ int q_option(BasePhraseModel* pbModelPtr)
 //---------------
 int f_option(BasePhraseModel* pbModelPtr)
 {
-  awkInputStream awk;
+  AwkInputStream awk;
 
       // Open input file
   if(awk.open(phrasePairsFileName.c_str())==THOT_ERROR)
