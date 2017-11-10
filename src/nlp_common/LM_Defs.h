@@ -53,7 +53,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Count.h>
 #include "WordIndex.h"
 #include "Prob.h"
-#include "BackoffNode.h"
 #include <lt_op_vec.h> // provides an ordering relationship for vectors
 #include <vector>
 
