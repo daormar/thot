@@ -91,8 +91,7 @@ common_src_h= thot_config.h
 
 nlp_common_h= nlp_common/WordIndex.h nlp_common/WordAligMatrix.h	\
 nlp_common/uiPairHashF.h nlp_common/uiHashF.h nlp_common/TrieVecs.h	\
-nlp_common/TrieOfWords.h nlp_common/Trie.h nlp_common/TrieBidOfWords.h	\
-nlp_common/TrieBid.h nlp_common/StrProcUtils.h				\
+nlp_common/Trie.h nlp_common/StrProcUtils.h				\
 nlp_common/ModelDescriptorUtils.h nlp_common/StatModelDefs.h		\
 nlp_common/SingleWordVocab.h nlp_common/SimpleTrie.h			\
 nlp_common/_simpleTrie.h nlp_common/Score.h nlp_common/Prob.h		\
@@ -107,8 +106,8 @@ nlp_common/ErrorDefs.h nlp_common/ctimer.h nlp_common/Count.h		\
 nlp_common/ClassDic.h nlp_common/Bitset.h nlp_common/BasicSocketUtils.h	\
 nlp_common/BaseNgramLM.h nlp_common/BaseIncrNgramLM.h			\
 nlp_common/BackoffNode.h nlp_common/awkInputStream.h			\
-nlp_common/DynClassFileHandler.h nlp_common/SimpleDynClassLoader.h  \
-nlp_common/ThreadSafePrint.h nlp_common/StdCerrThreadSafeTidPrint.h \
+nlp_common/DynClassFileHandler.h nlp_common/SimpleDynClassLoader.h	\
+nlp_common/ThreadSafePrint.h nlp_common/StdCerrThreadSafeTidPrint.h	\
 nlp_common/StdCerrThreadSafePrint.h
 nlp_common_defs= nlp_common/WordAligMatrix.cc			\
 nlp_common/StrProcUtils.cc nlp_common/ModelDescriptorUtils.cc	\
@@ -213,14 +212,11 @@ phrase_models/SrfNodeKey.h phrase_models/SrfNodeInfoMap.h		\
 phrase_models/SrfNodeInfo.h phrase_models/SrfBisegm.h			\
 phrase_models/SrcSegmLenTable.h phrase_models/SentSegmentation.h	\
 phrase_models/SegLenTable.h phrase_models/PhraseTransTableNodeData.h	\
-phrase_models/PhraseTableLog.h phrase_models/PhraseTable.h		\
 phrase_models/StlPhraseTable.h phrase_models/PhraseSortCriterion.h	\
 phrase_models/PhrasePairInfo.h phrase_models/PhrasePair.h		\
 phrase_models/PhraseId.h phrase_models/PhraseExtractParameters.h	\
 phrase_models/PhraseExtractionTable.h					\
-phrase_models/PhraseExtractionCell.h phrase_models/PhraseDictLog.h	\
-phrase_models/PhraseDict.h phrase_models/PhraseDefs.h			\
-phrase_models/PhraseCountsLog.h phrase_models/PhraseCounts.h		\
+phrase_models/PhraseExtractionCell.h phrase_models/PhraseDefs.h		\
 phrase_models/_incrPhraseModel.h phrase_models/IncrPhraseModel.h	\
 phrase_models/CellID.h phrase_models/CellAlignment.h			\
 phrase_models/Cache_lct_.h phrase_models/Cache_ct_.h			\
@@ -236,14 +232,12 @@ phrase_models_defs= phrase_models/WbaIncrPhraseModel.cc			\
 phrase_models/_wbaIncrPhraseModel.cc phrase_models/TrgSegmLenTable.cc	\
 phrase_models/TrgCutsTable.cc phrase_models/SrfNodeKey.cc		\
 phrase_models/SrfNodeInfoMap.cc phrase_models/SrcSegmLenTable.cc	\
-phrase_models/SegLenTable.cc phrase_models/PhraseTableLog.cc		\
-phrase_models/PhraseTable.cc phrase_models/StlPhraseTable.cc		\
-phrase_models/PhraseExtractionTable.cc phrase_models/PhraseDictLog.cc	\
-phrase_models/PhraseDict.cc phrase_models/PhraseCountsLog.cc		\
-phrase_models/PhraseCounts.cc phrase_models/_incrPhraseModel.cc		\
-phrase_models/IncrPhraseModel.cc phrase_models/Cache_lct_.cc		\
-phrase_models/Cache_ct_.cc phrase_models/BpSet.cc			\
-phrase_models/BasePhraseModel.cc phrase_models/BaseIncrPhraseModel.cc	\
+phrase_models/SegLenTable.cc phrase_models/StlPhraseTable.cc		\
+phrase_models/PhraseExtractionTable.cc					\
+phrase_models/_incrPhraseModel.cc phrase_models/IncrPhraseModel.cc	\
+phrase_models/Cache_lct_.cc phrase_models/Cache_ct_.cc			\
+phrase_models/BpSet.cc phrase_models/BasePhraseModel.cc			\
+phrase_models/BaseIncrPhraseModel.cc					\
 phrase_models/AlignmentExtractor.cc phrase_models/AlignmentContainer.cc	\
 phrase_models/CategPhrasePairFilter.cc					\
 phrase_models/PhraseExtractUtils.cc
