@@ -91,7 +91,7 @@ common_src_h= thot_config.h
 
 nlp_common_h= nlp_common/WordIndex.h nlp_common/WordAligMatrix.h	\
 nlp_common/uiPairHashF.h nlp_common/uiHashF.h nlp_common/TrieVecs.h	\
-nlp_common/Trie.h nlp_common/StrProcUtils.h				\
+nlp_common/Trie.h nlp_common/BidTrie.h nlp_common/StrProcUtils.h	\
 nlp_common/ModelDescriptorUtils.h nlp_common/StatModelDefs.h		\
 nlp_common/SingleWordVocab.h nlp_common/Score.h nlp_common/Prob.h	\
 nlp_common/printAligFuncs.h nlp_common/PositionIndex.h			\
