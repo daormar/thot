@@ -412,6 +412,13 @@ bool TranslationConstraints::translationSatisfiesConstraints(const std::vector<s
 }
 
 //---------------------------------------
+bool TranslationConstraints::phraseTranslationIsValid(const std::vector<std::string>& /*sourceWordVec*/,
+                                                      const std::vector<std::string>& /*targetWordVec*/)const
+{
+  return true;
+}
+
+//---------------------------------------
 void TranslationConstraints::clear(void)
 {
   xmlTagSet.clear();

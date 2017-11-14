@@ -325,6 +325,8 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Functions to generate translation lists
   bool getTransForSrcPhrase(const std::vector<WordIndex>& srcPhrase,
                             std::set<std::vector<WordIndex> >& transSet);
+  bool getTransForSrcPhraseStr(const std::vector<std::string>& srcPhrase,
+                               std::set<std::vector<std::string> >& transSet);
 
       // Functions to score n-best translations lists
   Score nbestTransScore(const std::vector<WordIndex>& srcPhrase,
@@ -367,8 +369,10 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
 
       // Functions related to pre_trans_actions
   virtual void clearTempVars(void);
-  void verifyDictCoverageForSentence(std::vector<std::string>& sentenceVec,
+  void verifyDictCoverageForSentence(const std::vector<std::string>& sentenceVec,
                                      int maxSrcPhraseLength=MAX_SENTENCE_LENGTH_ALLOWED);
+  bool srcPhrHasAtLeastOneValidTranslation(const std::vector<std::string> srcPhraseStr,
+                                           const std::set<std::vector<std::string> >& transSetStr);
   void manageUnseenSrcWord(std::string srcw);
   bool unseenSrcWord(std::string srcw);
   bool unseenSrcWordGivenPosition(unsigned int srcPos);
@@ -1016,23 +1020,41 @@ void _pbTransModel<HYPOTHESIS>::clearTempVars(void)
 
 //---------------------------------------
 template<class HYPOTHESIS>
-void _pbTransModel<HYPOTHESIS>::verifyDictCoverageForSentence(std::vector<std::string>& sentenceVec,
+void _pbTransModel<HYPOTHESIS>::verifyDictCoverageForSentence(const std::vector<std::string>& sentenceVec,
                                                               int /*maxSrcPhraseLength*/)
 {
       // Manage source words without translation options
   for(unsigned int j=0;j<sentenceVec.size();++j)
   {
+        // Obtain translation options
     NbestTableNode<PhraseTransTableNodeData> ttNode;
     std::string s=sentenceVec[j];
-    std::vector<WordIndex> srcPhrase;
-    srcPhrase.push_back(stringToSrcWordIndex(s));
-    std::set<std::vector<WordIndex> > transSet;
-    getTransForSrcPhrase(srcPhrase,transSet);
-    if(transSet.size()==0)
+    std::vector<std::string> srcPhraseStr;
+    srcPhraseStr.push_back(s);
+    std::set<std::vector<std::string> > transSetStr;
+    getTransForSrcPhraseStr(srcPhraseStr,transSetStr);
+
+        // Check if word has at least one valid translation
+    if(!srcPhrHasAtLeastOneValidTranslation(srcPhraseStr,transSetStr))
     {
       manageUnseenSrcWord(s);
     }
   }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+bool _pbTransModel<HYPOTHESIS>::srcPhrHasAtLeastOneValidTranslation(const std::vector<std::string> srcPhraseStr,
+                                                                    const std::set<std::vector<std::string> >& transSetStr)
+{
+      // Iterate over set of translations
+  std::set<std::vector<std::string> >::const_iterator iter;
+  for(iter=transSetStr.begin();iter!=transSetStr.end();++iter)
+  {
+    if(this->trConstraintsPtr->phraseTranslationIsValid(srcPhraseStr,*iter))
+      return true;
+  }
+  return false;
 }
 
 //---------------------------------
@@ -1971,7 +1993,30 @@ bool _pbTransModel<HYPOTHESIS>::getTransForSrcPhrase(const std::vector<WordIndex
   
       // Obtain string vector
   std::vector<std::string> srcPhraseStr=srcIndexVectorToStrVector(srcPhrase);
+  std::set<std::vector<std::string> > transSetStr;
   
+      // Obtain translation options for each feature
+  getTransForSrcPhraseStr(srcPhraseStr,transSetStr);
+
+      // Convert strings to words
+  std::set<std::vector<std::string> >::const_iterator iter;
+  for(iter=transSetStr.begin();iter!=transSetStr.end();++iter)
+    transSet.insert(strVectorToTrgIndexVector(*iter));
+
+  if(transSet.empty())
+    return false;
+  else
+    return true;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+bool _pbTransModel<HYPOTHESIS>::getTransForSrcPhraseStr(const std::vector<std::string>& srcPhraseStr,
+                                                        std::set<std::vector<std::string> >& transSetStr)
+{
+      // Clear data structures
+  transSetStr.clear();
+    
       // Obtain translation options for each feature
   for(unsigned int i=0;i<this->featuresInfoPtr->featPtrVec.size();++i)
   {
@@ -1981,13 +2026,13 @@ bool _pbTransModel<HYPOTHESIS>::getTransForSrcPhrase(const std::vector<WordIndex
 
         // Add options to set
     for(unsigned int j=0;j<transOptVec.size();++j)
-      transSet.insert(strVectorToTrgIndexVector(transOptVec[j]));
+      transSetStr.insert(transOptVec[j]);
   }
 
-  if(transSet.empty())
+  if(transSetStr.empty())
     return false;
   else
-    return true;
+    return true;  
 }
 
 //---------------------------------
