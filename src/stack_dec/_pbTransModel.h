@@ -808,10 +808,7 @@ void _pbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
               this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
                   // Obtain information about hypothesis extension
               std::vector<std::string> targetWordVec=this->getTransInPlainTextVec(extHyp);
-              std::vector<std::pair<PositionIndex,PositionIndex> > aligPos;
-              this->aligMatrix(extHyp,aligPos);
-                  // Check if translation constraints are satisfied
-              if(this->trConstraintsPtr->translationSatisfiesConstraints(targetWordVec,aligPos))
+              if(this->trConstraintsPtr->translationSatisfiesConstraints(targetWordVec))
               {
                 hypVec.push_back(extHyp);
                 scrCompVec.push_back(scoreComponents);
