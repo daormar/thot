@@ -275,7 +275,8 @@ int start_server(void)
       continue;
     }
     
-        // Prepare request data (memory is released by thread)
+        // Prepare request data (memory is released by thread provided
+        // it is sucessfully created)
     request_data* rdata_ptr=new request_data;
     rdata_ptr->sockd=new_fd;
     rdata_ptr->sin_addr=their_addr.sin_addr;
@@ -291,6 +292,9 @@ int start_server(void)
     int thread_err=pthread_create(&tid, &attr, process_request, (void*) rdata_ptr);
     if(thread_err>0)
     {
+          // Release memory since thread was not created
+      delete rdata_ptr;
+      
       StdCerrThreadSafe<<"Warning: call to pthread_create failed"<<std::endl;
     }
     else
@@ -364,7 +368,7 @@ void* process_request(void* void_ptr)
   delete (request_data*) void_ptr;
     
       // Initialize variables
-  int verbose;
+  int verbose=THOTDEC_NON_VERBOSE_MODE;
   if(ts_pars.v_given)
     verbose=THOTDEC_NORMAL_VERBOSE_MODE;
   if(ts_pars.vd_given)
