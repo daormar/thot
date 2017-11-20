@@ -405,8 +405,14 @@ bool TranslationConstraints::constraintFound(std::vector<std::string> tokRawSrcS
 }
 
 //---------------------------------------
-bool TranslationConstraints::translationSatisfiesConstraints(const std::vector<std::string>& /*targetWordVec*/,
-                                                             const std::vector<std::pair<PositionIndex,PositionIndex> >& /*alignedPositions*/)const
+bool TranslationConstraints::translationSatisfiesConstraints(const std::vector<std::string>& /*targetWordVec*/)const
+{
+  return true;
+}
+
+//---------------------------------------
+bool TranslationConstraints::phraseTranslationIsValid(const std::vector<std::string>& /*sourceWordVec*/,
+                                                      const std::vector<std::string>& /*targetWordVec*/)const
 {
   return true;
 }

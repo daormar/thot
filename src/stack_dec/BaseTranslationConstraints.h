@@ -55,12 +55,12 @@ class BaseTranslationConstraints
   virtual std::vector<std::string> getTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhr)const=0;
   virtual std::set<std::pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const=0;
   virtual bool srcPhrAffectedByConstraint(std::pair<PositionIndex,PositionIndex> srcPhr)const=0;
-  virtual bool translationSatisfiesConstraints(const std::vector<std::string>& targetWordVec,
-                                               const std::vector<std::pair<PositionIndex,PositionIndex> >& alignedPositions)const=0;
-      // NOTE: alignedPositions is a vector representing alignments
-      // between source and target words.  The first index corresponds
-      // to source word positions and the second one to target word
-      // positions
+  virtual bool translationSatisfiesConstraints(const std::vector<std::string>& targetWordVec)const=0;
+      // This function verifies if a sentence translation satisfies
+      // constraints. It is applied over complete translations or
+      // partial ones built from left to right.
+  virtual bool phraseTranslationIsValid(const std::vector<std::string>& sourceWordVec,
+                                        const std::vector<std::string>& targetWordVec)const=0;
   
   virtual void clear(void)=0;
 
