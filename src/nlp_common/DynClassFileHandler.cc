@@ -81,7 +81,7 @@ bool DynClassFileHandler::load(std::string _fileName,int verbose/*=1*/)
               // Extract entry information
           std::vector<std::string> strVec;
           std::string baseClassName=awk.dollar(1);
-          std::string soFileName=awk.dollar(3);
+          std::string soFileName=StrProcUtils::expandLibDirIfFound(awk.dollar(3));
           std::string initPars;
           for(unsigned int i=5;i<=awk.NF-1;++i)
           {
