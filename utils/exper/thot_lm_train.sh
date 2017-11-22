@@ -134,12 +134,12 @@ create_desc_files()
 {
     # Determine model type
     if [ ${KENLM_BUILD_DIR} != "no" -a ${kenlm_given} -eq 1 ]; then
-        modeltype=${libdir}/kenlm_factory.so
+        modeltype="\$(${LIBDIR_VARNAME})/kenlm_factory.so"
     else
         if [ ! -z "${LEVELDB_LIB}" -a ${ldb_given} -eq 1 ]; then
-            modeltype=${libdir}/incr_jel_mer_leveldb_ngram_lm_factory.so
+            modeltype="\$(${LIBDIR_VARNAME})/incr_jel_mer_leveldb_ngram_lm_factory.so"
         else
-            modeltype=${libdir}/incr_jel_mer_ngram_lm_factory.so
+            modeltype="\$(${LIBDIR_VARNAME})/incr_jel_mer_ngram_lm_factory.so"
         fi
     fi
 
