@@ -101,6 +101,7 @@ SUFFIXES= .sh .pl .py .awk
 	echo "bindir="$(bindir)/ >> $@
 	echo "libdir="$(libdir)/ >> $@
 	echo "datadir="$(datadir)/$(PACKAGE_NAME) >> $@
+	echo "LIBDIR_VARNAME="$(LIBDIR_VARNAME) >> $@
 	echo "PYTHON_VERSION=\""$(PYTHON_VERSION)"\"" >> $@
 	echo "AWK="$(AWK) >> $@
 	echo "SORT="$(SORT) >> $@
