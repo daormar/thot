@@ -36,35 +36,9 @@ get_absolute_path()
 }
 
 ########
-obtain_lm_file_path()
-{
-    local_lmfile=`$HEAD -2 ${lm_desc} | $TAIL -1 | $AWK '{printf"%s",$2}'`
-    get_absolute_path ${local_lmfile} ${lm_desc_dir}
-}
-
-########
-obtain_tm_file_path()
-{
-    local_tmfile=`$HEAD -2 ${tm_desc} | $TAIL -1 | $AWK '{printf"%s",$1}'`
-    get_absolute_path ${local_tmfile} ${tm_desc_dir}
-}
-
-########
-put_lm_string()
-{
-    $SED "s@<lm_file_path>@${lmfile}@"
-}
-
-########
 put_lm_desc_string()
 {
     $SED "s@<lm_file_path>@${lm_desc}@"
-}
-
-########
-put_tm_string()
-{
-    $SED "s@<tm_file_path>@${tmfile}@"
 }
 
 ########
@@ -95,12 +69,6 @@ else
         echo "Error! file with language model descriptor, ${lm_desc}, does not exist" >&2 
         exit 1
     fi
-
-    # Obtain lm file path
-    lmfile=`obtain_lm_file_path`
-
-    # Obtain tm file path
-    tmfile=`obtain_tm_file_path`
 
     # Generate configuration file
     cat ${datadir}/cfg_templates/thot_basic.cfg | \
