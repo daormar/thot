@@ -5,7 +5,7 @@ EXTRA_DIST= $(inifiles_DATA)
 
 install-data-hook:
 	for file in $(inifiles_DATA); do \
-          $(SED) s'|THOT_LIBDIR|${libdir}|' $$file > $(inifilesdir)/$$file; \
+          cp $$file $(inifilesdir)/$$file; \
 	done
 	if [ "${ENABLE_IBM2_ALIG}" = "yes" ]; then \
 	  cp $(inifilesdir)/ibm2.ini $(inifilesdir)/master.ini; \
