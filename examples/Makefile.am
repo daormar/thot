@@ -16,6 +16,7 @@ SUFFIXES= .sh .pl
 	echo "bugreport=\""$(PACKAGE_BUGREPORT)"\"" >> $@
 	echo "bindir="$(bindir)/ >> $@
 	echo "libdir="$(libdir)/ >> $@
+	echo "ALT_LIBDIR="$(ALT_LIBDIR)/ >> $@
 	echo "datadir="$(datadir)/$(PACKAGE_NAME) >> $@
 	echo "LIBDIR_VARNAME="$(LIBDIR_VARNAME) >> $@
 	echo "PYTHON_VERSION=\""$(PYTHON_VERSION)"\"" >> $@
