@@ -225,7 +225,7 @@ namespace StrProcUtils
             // libDirVarName contained in soFileName
         
             // Expand soFileName
-        std::string expandedSoFileName=THOT_LIBDIR;
+        std::string expandedSoFileName=getLibDir();
         expandedSoFileName+=soFileName.substr(libDirVarNameVal.size(),soFileName.size()-libDirVarNameVal.size());
         
         return expandedSoFileName;
@@ -236,6 +236,15 @@ namespace StrProcUtils
         return soFileName;
       }
     }
+  }
+
+  //---------------
+  std::string getLibDir(void)
+  {
+    if(strlen(THOT_ALT_LIBDIR)>0)
+      return THOT_ALT_LIBDIR;
+    else
+      return THOT_LIBDIR;
   }
 
   //---------------
