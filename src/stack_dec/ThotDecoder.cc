@@ -34,6 +34,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------------------
 ThotDecoder::ThotDecoder()
 {
+      // Print library directory path for so files
+  std::cerr<<StrProcUtils::getLibDirVarNameValue()<<" = "<<THOT_LIBDIR<<std::endl;
+
       // Determine which implementation is being used
   tdCommonVars.featureBasedImplEnabled=featureBasedImplIsEnabled();
 
