@@ -211,24 +211,22 @@ namespace StrProcUtils
   std::string expandLibDirIfFound(std::string soFileName)
   {
         // Store variable name
-    std::string libDirVarName="$(";
-    libDirVarName+=THOT_LIBDIR_VARNAME;
-    libDirVarName+=")";
+    std::string libDirVarNameVal=getLibDirVarNameValue();
     
-    if(soFileName.size()<libDirVarName.size())
+    if(soFileName.size()<libDirVarNameVal.size())
     {
           // soFileName is shorter that libDirVarName, so it does not contain it
       return soFileName;
     }
     else
     {
-      if(libDirVarName==soFileName.substr(0,libDirVarName.size()))
+      if(libDirVarNameVal==soFileName.substr(0,libDirVarNameVal.size()))
       {
             // libDirVarName contained in soFileName
         
             // Expand soFileName
         std::string expandedSoFileName=THOT_LIBDIR;
-        expandedSoFileName+=soFileName.substr(libDirVarName.size(),soFileName.size()-libDirVarName.size());
+        expandedSoFileName+=soFileName.substr(libDirVarNameVal.size(),soFileName.size()-libDirVarNameVal.size());
         
         return expandedSoFileName;
       }
@@ -238,6 +236,16 @@ namespace StrProcUtils
         return soFileName;
       }
     }
+  }
+
+  //---------------
+  std::string getLibDirVarNameValue(void)
+  {
+    std::string libDirVarNameVal="$(";
+    libDirVarNameVal+=THOT_LIBDIR_VARNAME;
+    libDirVarNameVal+=")";
+
+    return libDirVarNameVal;
   }
   
 }

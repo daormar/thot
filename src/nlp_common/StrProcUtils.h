@@ -55,7 +55,7 @@ namespace StrProcUtils
   std::vector<float> strVecToFloatVec(std::vector<std::string> strVec);
       // Convert string vector into a float vector
   std::string expandLibDirIfFound(std::string soFileName);
-
+  std::string getLibDirVarNameValue(void);
 }
 
 #endif
