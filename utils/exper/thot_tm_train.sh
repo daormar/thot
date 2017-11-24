@@ -134,12 +134,12 @@ create_desc_file()
 {
     # Determine model type
     if [ ! -z "${LDB_CXX}" -a ${bdb_given} -eq 1 ]; then
-        modeltype=${libdir}/fast_bdb_phrase_model_factory.so
+        modeltype="\$(${LIBDIR_VARNAME})/fast_bdb_phrase_model_factory.so"
     else
         if [ ! -z "${LEVELDB_LIB}" -a ${ldb_given} -eq 1 ]; then
-            modeltype=${libdir}/leveldb_phrase_model_factory.so
+            modeltype="\$(${LIBDIR_VARNAME})/leveldb_phrase_model_factory.so"
         else
-            modeltype=${libdir}/incr_phrase_model_factory.so
+            modeltype="\$(${LIBDIR_VARNAME})/incr_phrase_model_factory.so"
         fi
     fi
 

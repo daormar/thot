@@ -1,5 +1,5 @@
 /*
-error_correction package for statistical machine translation
+thot package for statistical machine translation
 Copyright (C) 2013 Daniel Ortiz-Mart\'inez
  
 This library is free software; you can redistribute it and/or
@@ -44,6 +44,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "StrProcUtils.h"
 #include "AwkInputStream.h"
 #include "ErrorDefs.h"
 #include <algorithm>

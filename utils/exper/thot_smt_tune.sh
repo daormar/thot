@@ -213,7 +213,7 @@ create_lm_files()
         echo "thot lm descriptor" > ${outd}/lm/lm_desc
 
         # Create files for individual language model
-        process_files_for_individual_lm ${libdir}/incr_jel_mer_ngram_lm_factory.so ${lmfile} "main" || return 1
+        process_files_for_individual_lm "\$(${LIBDIR_VARNAME})/incr_jel_mer_ngram_lm_factory.so ${lmfile}" "main" || return 1
 
         # Obtain new lm file name
         baselmfile=`basename $lmfile`

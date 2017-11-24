@@ -200,7 +200,7 @@ bool extractModelEntryInfo(std::string fileName,
           // descriptor)
       awk.getln();
     
-          // Read entries for each language model
+          // Read entries for each model
       while(awk.getln())
       {
         if(awk.dollar(1)!="#")
@@ -222,7 +222,7 @@ bool extractModelEntryInfo(std::string fileName,
                 // Extract model initialization info
             for(unsigned int i=1;i<entryLen-1;++i)
             {
-              modelDescEntry.modelInitInfo+=awk.dollar(i);
+              modelDescEntry.modelInitInfo+=StrProcUtils::expandLibDirIfFound(awk.dollar(i));
               if(i!=entryLen-2)
                 modelDescEntry.modelInitInfo+=" ";
             }

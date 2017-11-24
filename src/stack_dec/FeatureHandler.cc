@@ -987,7 +987,7 @@ bool FeatureHandler::process_lm_descriptor(std::string lmDescFile,
     std::cerr<<"Processing language model descriptor: "<<lmDescFile<<std::endl;
   }
 
-      // Obtain info about translation model entries
+      // Obtain info about language model entries
   std::vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(lmDescFile,modelDescEntryVec)==THOT_OK)
   {
