@@ -27,7 +27,8 @@ endif
 AUTOMAKE_OPTIONS = subdir-objects
 
 SUBDIRS= nlp_common incr_models sw_models phrase_models smt_preproc	\
-error_correction downhill_simplex stack_dec exper testing hat_trie
+error_correction downhill_simplex stack_dec exper testing hat_trie	\
+picojson
 
 if CODE_TESTING
 TESTING_PROGS= thot_test
@@ -77,6 +78,7 @@ AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			   \
 -I$(srcdir)/incr_models -I$(srcdir)/sw_models -I$(srcdir)/phrase_models	   \
 -I$(srcdir)/smt_preproc -I$(srcdir)/error_correction			   \
 -I$(srcdir)/downhill_simplex -I$(srcdir)/stack_dec -I$(srcdir)/hat_trie	   \
+-I$(srcdir)/picojson							   \
 -DTHOT_MASTER_INI_PATH=\"$(datadir)/$(PACKAGE_NAME)/ini_files/master.ini\" \
 -DTHOT_LIBDIR=\"$(libdir)\"						   \
 -I$(CASMACAT_THOT_SERVER_LIB_HOME)/src/include $(KENLM_CXXFLAGS)
