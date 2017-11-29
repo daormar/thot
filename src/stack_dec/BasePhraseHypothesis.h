@@ -47,6 +47,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "BaseHypothesis.h"
+#include "SourceSegmentation.h"
 #include "WordIndex.h"
 
 //--------------- Constants ------------------------------------------
@@ -74,6 +75,8 @@ class BasePhraseHypothesis: public BaseHypothesis<SCORE_INFO,DATA_TYPE,EQCLASS_F
       // Specific functions
   virtual bool isAligned(PositionIndex srcPos)const=0;
   virtual bool areAligned(PositionIndex srcPos,PositionIndex trgPos)const=0;
+  virtual void getPhraseAlign(SourceSegmentation& sourceSegmentation,
+                              std::vector<PositionIndex>& targetSegmentCuts)const=0;
   virtual Bitset<MAX_SENTENCE_LENGTH_ALLOWED> getKey(void)const=0;
   virtual std::vector<WordIndex> getPartialTrans(void)const=0;
   virtual unsigned int partialTransLength(void)const=0;

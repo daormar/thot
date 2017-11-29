@@ -79,6 +79,8 @@ class _phraseHypothesis: public BasePhraseHypothesis<SCORE_INFO,PhrHypData,EQCLA
       // Specific functions
   bool isAligned(PositionIndex j)const;
   bool areAligned(PositionIndex j,PositionIndex i)const;
+  void getPhraseAlign(SourceSegmentation& sourceSegmentation,
+                      std::vector<PositionIndex>& targetSegmentCuts)const;
   Bitset<MAX_SENTENCE_LENGTH_ALLOWED> getKey(void)const;
   std::vector<WordIndex> getPartialTrans(void)const;
   unsigned int partialTransLength(void)const;
@@ -180,6 +182,15 @@ bool _phraseHypothesis<SCORE_INFO,EQCLASS_FUNC>::areAligned(PositionIndex srcPos
     }
   }
   return false;
+}
+
+//---------------------------------------
+template<class SCORE_INFO,class EQCLASS_FUNC>
+void _phraseHypothesis<SCORE_INFO,EQCLASS_FUNC>::getPhraseAlign(SourceSegmentation& sourceSegmentation,
+                                                                std::vector<PositionIndex>& targetSegmentCuts)const
+{
+  sourceSegmentation=data.sourceSegmentation;
+  targetSegmentCuts=data.targetSegmentCuts;
 }
 
 //---------------------------------------

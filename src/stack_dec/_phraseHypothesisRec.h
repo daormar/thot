@@ -80,6 +80,8 @@ class _phraseHypothesisRec: public BasePhraseHypothesisRec<SCORE_INFO,PhrHypData
       // Specific functions
   bool isAligned(PositionIndex i)const;
   bool areAligned(PositionIndex i,PositionIndex j)const;
+  void getPhraseAlign(SourceSegmentation& sourceSegmentation,
+                      std::vector<PositionIndex>& targetSegmentCuts)const;
   Bitset<MAX_SENTENCE_LENGTH_ALLOWED> getKey(void)const;
   std::vector<WordIndex> getPartialTrans(void)const;
   unsigned int partialTransLength(void)const;
@@ -181,6 +183,15 @@ bool _phraseHypothesisRec<SCORE_INFO,EQCLASS_FUNC,HYPSTATE>::areAligned(Position
     }
   }
   return false;
+}
+
+//---------------------------------------
+template<class SCORE_INFO,class EQCLASS_FUNC,class HYPSTATE>
+void _phraseHypothesisRec<SCORE_INFO,EQCLASS_FUNC,HYPSTATE>::getPhraseAlign(SourceSegmentation& sourceSegmentation,
+                                                                            std::vector<PositionIndex>& targetSegmentCuts)const
+{
+  sourceSegmentation=data.sourceSegmentation;
+  targetSegmentCuts=data.targetSegmentCuts;
 }
 
 //---------------------------------------
