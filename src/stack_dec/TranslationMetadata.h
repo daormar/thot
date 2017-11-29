@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-#ifndef _TranslationConstraints_h
-#define _TranslationConstraints_h
+#ifndef _TranslationMetadata_h
+#define _TranslationMetadata_h
 
 //--------------- Include files --------------------------------------
 
@@ -25,7 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "BaseTranslationConstraints.h"
+#include "BaseTranslationMetadata.h"
 
 //--------------- Constants ------------------------------------------
 
@@ -35,17 +35,21 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Typedefs -------------------------------------------
 
-class TranslationConstraints: public BaseTranslationConstraints
+class TranslationMetadata: public BaseTranslationMetadata
 {
  public:
 
       // Constructor
-  TranslationConstraints(void);
+  TranslationMetadata(void);
 
       // Services
+
+      // Initialization and source sentence extraction
   void obtainTransConstraints(std::string rawSrcSent,
                               int verbosity=0);
   std::vector<std::string> getSrcSentVec(void)const;
+
+      // Constraint-related functions
   std::vector<std::string> getTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhr)const;
   std::set<std::pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const;
   bool srcPhrAffectedByConstraint(std::pair<PositionIndex,PositionIndex> srcPhr)const;

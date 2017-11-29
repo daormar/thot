@@ -11,15 +11,14 @@ ThotDecoderClient.cc ThotDecoder.cc thot_ms_dec.cc thot_client_pars.h	\
 thot_client.cc thot_scorer.cc thot_calc_bleu.cc thot_ms_alig.cc		\
 SwModelPars.h SwModelInfo.h _stack_decoder_statistics.h			\
 _stackDecoderRec.h _stackDecoder.h SourceSegmentation.h			\
-BaseTranslationConstraints.h TranslationConstraints.h			\
-TranslationConstraints.cc SmtStack.h _smtStack.h SmtMultiStackRec.h	\
-_smtMultiStack.h WeightUpdateUtils.h WeightUpdateUtils.cc		\
-BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc BaseScorer.h	\
-BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraGtm.h MiraGtm.cc MiraWer.h	\
-MiraWer.cc MiraChrF.h MiraChrF.cc thot_li_weight_upd.cc			\
-thot_ll_weight_upd_nblist.cc _smtModel.h ScoreCompDefs.h		\
-_phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc			\
-PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc			\
+BaseTranslationMetadata.h TranslationMetadata.h TranslationMetadata.cc	\
+SmtStack.h _smtStack.h SmtMultiStackRec.h _smtMultiStack.h		\
+WeightUpdateUtils.h WeightUpdateUtils.cc BaseLogLinWeightUpdater.h	\
+KbMiraLlWu.h KbMiraLlWu.cc BaseScorer.h BaseMiraScorer.h MiraBleu.h	\
+MiraBleu.cc MiraGtm.h MiraGtm.cc MiraWer.h MiraWer.cc MiraChrF.h	\
+MiraChrF.cc thot_li_weight_upd.cc thot_ll_weight_upd_nblist.cc		\
+_smtModel.h ScoreCompDefs.h _phrSwTransModel.h PhrScoreInfo.h		\
+PhrScoreInfo.cc PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc	\
 PhrNbestTransTableRef.h PhrNbestTransTablePrefKey.h			\
 PhrNbestTransTablePrefKey.cc PhrNbestTransTablePref.h			\
 PhrNbestTransTable.h PhraseBasedTmHyp.h PhraseBasedTmHypRec.h		\

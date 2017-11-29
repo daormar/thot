@@ -168,22 +168,22 @@ int DynClassFactoryHandler::init_smt(std::string fileName,
       // Store init parameters for BaseLogLinWeightUpdater
   baseLogLinWeightUpdaterInitPars=initPars;
 
-      ///////////// Obtain info for BaseTranslationConstraints class
-  baseClassName="BaseTranslationConstraints";
+      ///////////// Obtain info for BaseTranslationMetadata class
+  baseClassName="BaseTranslationMetadata";
   if(dynClassFileHandler.getInfoForBaseClass(baseClassName,soFileName,initPars)==THOT_ERROR)
   {
     std::cerr<<"Error: ini file does not contain information about "<<baseClassName<<" class"<<std::endl;
     std::cerr<<"Please check content of master.ini file or execute \"thot_handle_ini_files -r\" to reset it"<<std::endl;
     return THOT_ERROR;
   }   
-      // Load class derived from BaseTranslationConstraints dynamically
-  if(!baseTranslationConstraintsDynClassLoader.open_module(soFileName,verbose))
+      // Load class derived from BaseTranslationMetadata dynamically
+  if(!baseTranslationMetadataDynClassLoader.open_module(soFileName,verbose))
   {
     std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
     return THOT_ERROR;
   }     
-      // Store init parameters for BaseTranslationConstraints
-  baseTranslationConstraintsInitPars=initPars;
+      // Store init parameters for BaseTranslationMetadata
+  baseTranslationMetadataInitPars=initPars;
 
       ///////////// Obtain info for BaseStackDecoder class
   baseClassName="BaseStackDecoder";
@@ -215,7 +215,7 @@ void DynClassFactoryHandler::release_smt(int verbose/*=1*/)
   basePhraseModelDynClassLoader.close_module(verbose);
   baseScorerDynClassLoader.close_module(verbose);
   baseLogLinWeightUpdaterDynClassLoader.close_module(verbose);
-  baseTranslationConstraintsDynClassLoader.close_module(verbose);
+  baseTranslationMetadataDynClassLoader.close_module(verbose);
   baseStackDecoderDynClassLoader.close_module(verbose);
 }
 

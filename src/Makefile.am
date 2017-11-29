@@ -70,7 +70,7 @@ kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
 wg_uncoupled_assisted_trans__swli_factory.la				\
 multi_stack_decoder_rec__pbtm_factory.la				\
 wg_uncoupled_assisted_trans__pbtm_factory.la				\
-translation_constraints_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
+translation_metadata_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
 $(DB_CXX_LIBS) $(LEVELDB_LIBS)
 
 # flags
@@ -304,8 +304,8 @@ stack_dec/ThotDecoderPerUserVars.h stack_dec/ThotDecoder.h		\
 stack_dec/ThotDecoderCommonVars.h stack_dec/ThotDecoderClient.h		\
 stack_dec/SwModelPars.h stack_dec/_stack_decoder_statistics.h		\
 stack_dec/_stackDecoderRec.h stack_dec/_stackDecoder.h			\
-stack_dec/SourceSegmentation.h stack_dec/BaseTranslationConstraints.h	\
-stack_dec/TranslationConstraints.h stack_dec/SmtStack.h			\
+stack_dec/SourceSegmentation.h stack_dec/BaseTranslationMetadata.h	\
+stack_dec/TranslationMetadata.h stack_dec/SmtStack.h			\
 stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h			\
 stack_dec/_smtMultiStack.h stack_dec/WeightUpdateUtils.h		\
 stack_dec/BaseLogLinWeightUpdater.h stack_dec/KbMiraLlWu.h		\
@@ -349,7 +349,7 @@ stack_dec/BaseHypothesis.h stack_dec/HypDebugData.h			\
 stack_dec/BaseAssistedTrans.h stack_dec/_assistedTrans.h		\
 stack_dec/SmtModelUtils.h
 stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
-stack_dec/TranslationConstraints.cc stack_dec/WeightUpdateUtils.cc	\
+stack_dec/TranslationMetadata.cc stack_dec/WeightUpdateUtils.cc		\
 stack_dec/KbMiraLlWu.cc stack_dec/MiraBleu.cc stack_dec/MiraWer.cc	\
 stack_dec/MiraGtm.cc stack_dec/MiraChrF.cc				\
 stack_dec/ThotDecoderClient.cc stack_dec/ThotDecoder.cc			\
@@ -511,9 +511,9 @@ kb_mira_ll_wu_factory_defs=		\
 stack_dec/KbMiraLlWuFactory.cc
 
 ##########
-translation_constraints_factory_h= 
-translation_constraints_factory_defs=		\
-stack_dec/TranslationConstraintsFactory.cc
+translation_metadata_factory_h= 
+translation_metadata_factory_defs=		\
+stack_dec/TranslationMetadataFactory.cc
 
 ##########
 multi_stack_decoder_rec__swli_factory_h= 
@@ -822,11 +822,11 @@ kb_mira_ll_wu_factory_la_LIBADD= libthot.la
 kb_mira_ll_wu_factory_la_LDFLAGS= -module
 
 ##########
-translation_constraints_factory_la_SOURCES=	\
-$(translation_constraints_factory_h)		\
-$(translation_constraints_factory_defs)
-translation_constraints_factory_la_LIBADD= libthot.la
-translation_constraints_factory_la_LDFLAGS= -module
+translation_metadata_factory_la_SOURCES=	\
+$(translation_metadata_factory_h)		\
+$(translation_metadata_factory_defs)
+translation_metadata_factory_la_LIBADD= libthot.la
+translation_metadata_factory_la_LDFLAGS= -module
 
 ##########
 multi_stack_decoder_rec__swli_factory_la_SOURCES=	\
