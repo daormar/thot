@@ -198,6 +198,9 @@ int main(int argc, char *argv[])
 //---------------
 int init_translator(const thot_ms_alig_pars& tap)
 {
+      // Print library directory path for so files
+  std::cerr<<StrProcUtils::getLibDirVarNameValue()<<" = "<<StrProcUtils::getLibDir()<<std::endl;
+
       // Determine which implementation is being used
   featureBasedImplEnabled=featureBasedImplIsEnabled();
 
