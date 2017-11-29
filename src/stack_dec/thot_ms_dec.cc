@@ -47,7 +47,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "SwModelInfo.h"
 #include "PhraseModelInfo.h"
 #include "LangModelInfo.h"
-#include "BaseTranslationConstraints.h"
+#include "BaseTranslationMetadata.h"
 #include "BaseLogLinWeightUpdater.h"
 #include "ModelDescriptorUtils.h"
 #include "DynClassFactoryHandler.h"
@@ -144,7 +144,7 @@ DynClassFactoryHandler dynClassFactoryHandler;
 LangModelInfo* langModelInfoPtr;
 PhraseModelInfo* phrModelInfoPtr;
 SwModelInfo* swModelInfoPtr;
-BaseTranslationConstraints* trConstraintsPtr;
+BaseTranslationMetadata* trMetadataPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
 BaseStackDecoder<SmtModel>* stackDecoderPtr;
@@ -293,10 +293,10 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
     return THOT_ERROR;
   }
 
-  trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
-  if(trConstraintsPtr==NULL)
+  trMetadataPtr=dynClassFactoryHandler.baseTranslationMetadataDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationMetadataInitPars);
+  if(trMetadataPtr==NULL)
   {
-    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
+    std::cerr<<"Error: BaseTranslationMetadata pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -304,7 +304,7 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
   smtModelPtr=new SmtModel();
   
       // Link translation constraints
-  smtModelPtr->link_trans_constraints(trConstraintsPtr);
+  smtModelPtr->link_trans_constraints(trMetadataPtr);
 
       // Link language model, phrase model and single word model if
       // appliable
@@ -456,10 +456,10 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
     return THOT_ERROR;
   }
 
-  trConstraintsPtr=dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationConstraintsInitPars);
-  if(trConstraintsPtr==NULL)
+  trMetadataPtr=dynClassFactoryHandler.baseTranslationMetadataDynClassLoader.make_obj(dynClassFactoryHandler.baseTranslationMetadataInitPars);
+  if(trMetadataPtr==NULL)
   {
-    std::cerr<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
+    std::cerr<<"Error: BaseTranslationMetadata pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
@@ -467,7 +467,7 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
   smtModelPtr=new SmtModel();
   
       // Link translation constraints
-  smtModelPtr->link_trans_constraints(trConstraintsPtr);
+  smtModelPtr->link_trans_constraints(trMetadataPtr);
 
       // Link features information
   _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
@@ -569,7 +569,7 @@ void release_translator_legacy_impl(void)
   delete swModelInfoPtr;
   delete stackDecoderPtr;
   delete llWeightUpdaterPtr;
-  delete trConstraintsPtr;
+  delete trMetadataPtr;
   delete smtModelPtr;
 
       // Release class factory handler
@@ -581,7 +581,7 @@ void release_translator_feat_impl(void)
 {
   delete stackDecoderPtr;
   delete llWeightUpdaterPtr;
-  delete trConstraintsPtr;
+  delete trMetadataPtr;
   delete smtModelPtr;
 
       // Delete features information

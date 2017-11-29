@@ -1314,8 +1314,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
   state=MODEL_TRANS_STATE;
   
       // Store source sentence to be translated
-  this->trConstraintsPtr->obtainTransConstraints(srcsent,this->verbosity);
-  pbtmInputVars.srcSentVec=this->trConstraintsPtr->getSrcSentVec();
+  this->trMetadataPtr->obtainTransConstraints(srcsent,this->verbosity);
+  pbtmInputVars.srcSentVec=this->trMetadataPtr->getSrcSentVec();
   
       // Verify coverage for source
   if(this->verbosity>0)
@@ -1683,7 +1683,7 @@ void _phraseBasedTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
         {
           unsigned int segmRightMostj=gaps[k].first+y;
           unsigned int segmLeftMostj=gaps[k].first+x;
-          bool srcPhraseIsAffectedByConstraint=this->trConstraintsPtr->srcPhrAffectedByConstraint(std::make_pair(segmLeftMostj,segmRightMostj));
+          bool srcPhraseIsAffectedByConstraint=this->trMetadataPtr->srcPhrAffectedByConstraint(std::make_pair(segmLeftMostj,segmRightMostj));
               // Verify that the source phrase length does not exceed
               // the limit. The limit can be exceeded when the source
               // phrase is affected by a translation constraint
@@ -1702,8 +1702,8 @@ void _phraseBasedTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
               /* std::vector<std::pair<PositionIndex,PositionIndex> > aligPos; */
               /* this->aligMatrix(extHyp,aligPos); */
                   // Check if translation constraints are satisfied
-              /* if(this->trConstraintsPtr->translationSatisfiesConstraints(targetWordVec,aligPos)) */
-              if(this->trConstraintsPtr->translationSatisfiesConstraints(targetWordVec))
+              /* if(this->trMetadataPtr->translationSatisfiesConstraints(targetWordVec,aligPos)) */
+              if(this->trMetadataPtr->translationSatisfiesConstraints(targetWordVec))
               {
                 hypVec.push_back(extHyp);
                 scrCompVec.push_back(scoreComponents);
@@ -2167,10 +2167,10 @@ bool _phraseBasedTransModel<HYPOTHESIS>::getTransForHypUncovGap(const Hypothesis
                                                                 float N)
 {
       // Check if gap is affected by translation constraints
-  if(this->trConstraintsPtr->srcPhrAffectedByConstraint(std::make_pair(srcLeft,srcRight)))
+  if(this->trMetadataPtr->srcPhrAffectedByConstraint(std::make_pair(srcLeft,srcRight)))
   {
         // Obtain constrained target translation for gap (if any)
-    std::vector<std::string> trgWordVec=this->trConstraintsPtr->getTransForSrcPhr(std::make_pair(srcLeft,srcRight));
+    std::vector<std::string> trgWordVec=this->trMetadataPtr->getTransForSrcPhr(std::make_pair(srcLeft,srcRight));
     if(trgWordVec.size()>0)
     {
           // Convert string vector to WordIndex vector
@@ -2823,12 +2823,12 @@ std::vector<std::string> _phraseBasedTransModel<HYPOTHESIS>::getTransInPlainText
       // Replace unknown words affected by constraints
 
       // Iterate over constraints
-  std::set<std::pair<PositionIndex,PositionIndex> > srcPhrSet=this->trConstraintsPtr->getConstrainedSrcPhrases();
+  std::set<std::pair<PositionIndex,PositionIndex> > srcPhrSet=this->trMetadataPtr->getConstrainedSrcPhrases();
   std::set<std::pair<PositionIndex,PositionIndex> >::const_iterator const_iter;
   for(const_iter=srcPhrSet.begin();const_iter!=srcPhrSet.end();++const_iter)
   {
         // Obtain target translation for constraint
-    std::vector<std::string> trgPhr=this->trConstraintsPtr->getTransForSrcPhr(*const_iter);
+    std::vector<std::string> trgPhr=this->trMetadataPtr->getTransForSrcPhr(*const_iter);
     
         // Find first aligned target word
     for(unsigned int i=0;i<trgVecStr.size();++i)

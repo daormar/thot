@@ -18,22 +18,22 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: TranslationConstraints                                   */
+/* Module: TranslationMetadata                                      */
 /*                                                                  */
-/* Definitions file: TranslationConstraints.cc                      */
+/* Definitions file: TranslationMetadata.cc                         */
 /*                                                                  */
 /********************************************************************/
 
 
 //--------------- Include files --------------------------------------
 
-#include "TranslationConstraints.h"
+#include "TranslationMetadata.h"
 
-//--------------- TranslationConstraints class functions
+//--------------- TranslationMetadata class functions
 //
 
 //---------------------------------------
-TranslationConstraints::TranslationConstraints(void)
+TranslationMetadata::TranslationMetadata(void)
 {
   std::string tag;
 
@@ -55,7 +55,7 @@ TranslationConstraints::TranslationConstraints(void)
 }
 
 //---------------------------------------
-void TranslationConstraints::obtainTransConstraints(std::string rawSrcSent,int verbosity/*=0*/)
+void TranslationMetadata::obtainTransConstraints(std::string rawSrcSent,int verbosity/*=0*/)
 {
   if(rawSrcSent.empty())
   {
@@ -150,13 +150,13 @@ void TranslationConstraints::obtainTransConstraints(std::string rawSrcSent,int v
 }
 
 //---------------------------------------
-std::vector<std::string> TranslationConstraints::getSrcSentVec(void)const
+std::vector<std::string> TranslationMetadata::getSrcSentVec(void)const
 {
   return srcSentVec;
 }
 
 //---------------------------------------
-std::vector<std::string> TranslationConstraints::getTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhr)const
+std::vector<std::string> TranslationMetadata::getTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhr)const
 {
       // Find translation for source phrase if it exists
   std::map<std::pair<PositionIndex,PositionIndex>,std::vector<std::string> >::const_iterator const_iter;
@@ -174,7 +174,7 @@ std::vector<std::string> TranslationConstraints::getTransForSrcPhr(std::pair<Pos
 }
 
 //---------------------------------------
-std::set<std::pair<PositionIndex,PositionIndex> > TranslationConstraints::getConstrainedSrcPhrases(void)const
+std::set<std::pair<PositionIndex,PositionIndex> > TranslationMetadata::getConstrainedSrcPhrases(void)const
 {
       // Initialize variables
   std::set<std::pair<PositionIndex,PositionIndex> > result;
@@ -191,7 +191,7 @@ std::set<std::pair<PositionIndex,PositionIndex> > TranslationConstraints::getCon
 }
 
 //---------------------------------------
-bool TranslationConstraints::srcPhrAffectedByConstraint(std::pair<PositionIndex,PositionIndex> srcPhr)const
+bool TranslationMetadata::srcPhrAffectedByConstraint(std::pair<PositionIndex,PositionIndex> srcPhr)const
 {
       // Iterate over constraints
   std::map<std::pair<PositionIndex,PositionIndex>,std::vector<std::string> >::const_iterator const_iter;
@@ -207,7 +207,7 @@ bool TranslationConstraints::srcPhrAffectedByConstraint(std::pair<PositionIndex,
 }
 
 //---------------------------------------
-std::string TranslationConstraints::tokenizeSrcSentence(std::string srcSent)const
+std::string TranslationMetadata::tokenizeSrcSentence(std::string srcSent)const
 {
   std::string result;
   
@@ -243,7 +243,7 @@ std::string TranslationConstraints::tokenizeSrcSentence(std::string srcSent)cons
 }
 
 //---------------------------------------
-std::string TranslationConstraints::obtainStartTag(std::string tagName)const
+std::string TranslationMetadata::obtainStartTag(std::string tagName)const
 {
   std::string tag="<";
   tag+=tagName;
@@ -252,7 +252,7 @@ std::string TranslationConstraints::obtainStartTag(std::string tagName)const
 }
 
 //---------------------------------------
-std::string TranslationConstraints::obtainEndTag(std::string tagName)const
+std::string TranslationMetadata::obtainEndTag(std::string tagName)const
 {
   std::string tag="</";
   tag+=tagName;
@@ -261,9 +261,9 @@ std::string TranslationConstraints::obtainEndTag(std::string tagName)const
 }
 
 //---------------------------------------
-bool TranslationConstraints::xmlTag(std::string srcSent,
-                                    unsigned int initialPos,
-                                    unsigned int& endTagPos)const
+bool TranslationMetadata::xmlTag(std::string srcSent,
+                                 unsigned int initialPos,
+                                 unsigned int& endTagPos)const
 {
   if(srcSent[initialPos]=='<')
   {
@@ -313,11 +313,11 @@ bool TranslationConstraints::xmlTag(std::string srcSent,
 }
 
 //---------------------------------------
-bool TranslationConstraints::constraintFound(std::vector<std::string> tokRawSrcSentVec,
-                                             unsigned int currPos,
-                                             std::vector<std::string>& srcPhrase,
-                                             std::vector<std::string>& trgPhrase,
-                                             unsigned int& finalPos)const
+bool TranslationMetadata::constraintFound(std::vector<std::string> tokRawSrcSentVec,
+                                          unsigned int currPos,
+                                          std::vector<std::string>& srcPhrase,
+                                          std::vector<std::string>& trgPhrase,
+                                          unsigned int& finalPos)const
 {
       // Initialize variables
   unsigned int i=currPos;
@@ -405,20 +405,20 @@ bool TranslationConstraints::constraintFound(std::vector<std::string> tokRawSrcS
 }
 
 //---------------------------------------
-bool TranslationConstraints::translationSatisfiesConstraints(const std::vector<std::string>& /*targetWordVec*/)const
+bool TranslationMetadata::translationSatisfiesConstraints(const std::vector<std::string>& /*targetWordVec*/)const
 {
   return true;
 }
 
 //---------------------------------------
-bool TranslationConstraints::phraseTranslationIsValid(const std::vector<std::string>& /*sourceWordVec*/,
-                                                      const std::vector<std::string>& /*targetWordVec*/)const
+bool TranslationMetadata::phraseTranslationIsValid(const std::vector<std::string>& /*sourceWordVec*/,
+                                                   const std::vector<std::string>& /*targetWordVec*/)const
 {
   return true;
 }
 
 //---------------------------------------
-void TranslationConstraints::clear(void)
+void TranslationMetadata::clear(void)
 {
   xmlTagSet.clear();
   srcSentVec.clear();
