@@ -53,7 +53,9 @@ class TranslationMetadata: public BaseTranslationMetadata
   std::vector<std::string> getTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhr)const;
   std::set<std::pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const;
   bool srcPhrAffectedByConstraint(std::pair<PositionIndex,PositionIndex> srcPhr)const;
-  bool translationSatisfiesConstraints(const std::vector<std::string>& targetWordVec)const;
+  bool translationSatisfiesConstraints(const SourceSegmentation& sourceSegmentation,
+                                       const std::vector<PositionIndex>& targetSegmentCuts,
+                                       const std::vector<std::string>& targetWordVec)const;
       // This function verifies if a sentence translation satisfies
       // constraints. It is applied over complete translations or
       // partial ones built from left to right.
@@ -81,6 +83,14 @@ class TranslationMetadata: public BaseTranslationMetadata
                        std::vector<std::string>& srcPhrase,
                        std::vector<std::string>& trgPhrase,
                        unsigned int& finalPos)const;
+  bool transViolatesSrcPhrConstraints(const SourceSegmentation& sourceSegmentation,
+                                      const std::vector<PositionIndex>& targetSegmentCuts,
+                                      const std::vector<std::string>& targetWordVec)const;
+  bool transViolatesSrcPhrConstraint(std::pair<PositionIndex,PositionIndex> constrainedSrcSegm,
+                                     std::vector<std::string> constrainedTrans,
+                                     const SourceSegmentation& sourceSegmentation,
+                                     const std::vector<PositionIndex>& targetSegmentCuts,
+                                     const std::vector<std::string>& targetWordVec)const;
 };
 
 #endif

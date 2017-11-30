@@ -1698,12 +1698,12 @@ void _phraseBasedTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
                   // Create hypothesis extension
               this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
                   // Obtain information about hypothesis extension
+              SourceSegmentation srcSegm;
+              std::vector<PositionIndex> trgSegmCuts;
+              extHyp.getPhraseAlign(srcSegm,trgSegmCuts);
               std::vector<std::string> targetWordVec=this->getTransInPlainTextVec(extHyp);
-              /* std::vector<std::pair<PositionIndex,PositionIndex> > aligPos; */
-              /* this->aligMatrix(extHyp,aligPos); */
                   // Check if translation constraints are satisfied
-              /* if(this->trMetadataPtr->translationSatisfiesConstraints(targetWordVec,aligPos)) */
-              if(this->trMetadataPtr->translationSatisfiesConstraints(targetWordVec))
+              if(this->trMetadataPtr->translationSatisfiesConstraints(srcSegm,trgSegmCuts,targetWordVec))
               {
                 hypVec.push_back(extHyp);
                 scrCompVec.push_back(scoreComponents);

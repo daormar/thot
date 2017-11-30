@@ -25,6 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "SourceSegmentation.h"
 #include "PositionIndex.h"
 #include "ErrorDefs.h"
 #include "StrProcUtils.h"
@@ -59,10 +60,9 @@ class BaseTranslationMetadata
   virtual std::vector<std::string> getTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhr)const=0;
   virtual std::set<std::pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const=0;
   virtual bool srcPhrAffectedByConstraint(std::pair<PositionIndex,PositionIndex> srcPhr)const=0;
-  /* virtual bool translationSatisfiesConstraints(const SourceSegmentation& sourceSegmentation, */
-  /*                                              const std::vector<PositionIndex>& targetSegmentCuts, */
-  /*                                              const std::vector<std::string>& targetWordVec)const=0; */
-  virtual bool translationSatisfiesConstraints(const std::vector<std::string>& targetWordVec)const=0;
+  virtual bool translationSatisfiesConstraints(const SourceSegmentation& sourceSegmentation,
+                                               const std::vector<PositionIndex>& targetSegmentCuts,
+                                               const std::vector<std::string>& targetWordVec)const=0;
       // This function verifies if a sentence translation satisfies
       // constraints. It is applied over complete translations or
       // partial ones built from left to right.

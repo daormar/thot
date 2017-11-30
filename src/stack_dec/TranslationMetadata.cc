@@ -405,8 +405,13 @@ bool TranslationMetadata::constraintFound(std::vector<std::string> tokRawSrcSent
 }
 
 //---------------------------------------
-bool TranslationMetadata::translationSatisfiesConstraints(const std::vector<std::string>& /*targetWordVec*/)const
+bool TranslationMetadata::translationSatisfiesConstraints(const SourceSegmentation& sourceSegmentation,
+                                                          const std::vector<PositionIndex>& targetSegmentCuts,
+                                                          const std::vector<std::string>& targetWordVec)const
 {
+  if(transViolatesSrcPhrConstraints(sourceSegmentation,targetSegmentCuts,targetWordVec))
+    return false;
+  
   return true;
 }
 
@@ -415,6 +420,76 @@ bool TranslationMetadata::phraseTranslationIsValid(const std::vector<std::string
                                                    const std::vector<std::string>& /*targetWordVec*/)const
 {
   return true;
+}
+
+//---------------------------------------
+bool TranslationMetadata::transViolatesSrcPhrConstraints(const SourceSegmentation& sourceSegmentation,
+                                                         const std::vector<PositionIndex>& targetSegmentCuts,
+                                                         const std::vector<std::string>& targetWordVec)const
+{
+      // Iterate over all of the source phrase constraints
+  std::map<std::pair<PositionIndex,PositionIndex>,std::vector<std::string> >::const_iterator iter;
+  for(iter=srcPhrTransMap.begin();iter!=srcPhrTransMap.end();++iter)
+  {
+    if(transViolatesSrcPhrConstraint(iter->first,
+                                     iter->second,
+                                     sourceSegmentation,
+                                     targetSegmentCuts,
+                                     targetWordVec))
+      return true;
+  }
+
+  return false;
+}
+
+//---------------------------------------
+bool TranslationMetadata::transViolatesSrcPhrConstraint(std::pair<PositionIndex,PositionIndex> constrainedSrcSegm,
+                                                        std::vector<std::string> constrainedTrans,
+                                                        const SourceSegmentation& sourceSegmentation,
+                                                        const std::vector<PositionIndex>& targetSegmentCuts,
+                                                        const std::vector<std::string>& targetWordVec)const
+{
+      // Look for source segments in translation that are related to
+      // the constrained one
+  std::pair<PositionIndex,PositionIndex> relatedSrcSegm;
+  std::pair<PositionIndex,PositionIndex> relatedTrgSegm;
+  bool foundSrcSegmRelatedToConstraint=false;
+  for(unsigned int i=0;i<sourceSegmentation.size();++i)
+  {
+    if(constrainedSrcSegm.first>=sourceSegmentation[i].first && constrainedSrcSegm.first<=sourceSegmentation[i].second)
+    {
+      foundSrcSegmRelatedToConstraint=true;
+      relatedSrcSegm=sourceSegmentation[i];
+      if(i==0)
+        relatedTrgSegm.first=1;
+      else
+        relatedTrgSegm.first=targetSegmentCuts[i-1]+1;
+      relatedTrgSegm.second=targetSegmentCuts[i];
+      break;
+    }
+  }
+      // Check if no related source segment has been covered yet in
+      // translation
+  if(!foundSrcSegmRelatedToConstraint)
+    return false;
+      
+      // Check if related source phrase is the same as that affected
+      // by constraint
+  if(constrainedSrcSegm==relatedSrcSegm)
+  {
+        // Check if translation is equal to the constrained one
+    if(constrainedTrans.size()!=relatedTrgSegm.second-relatedTrgSegm.first+1)
+      return true;
+    for(unsigned int j=0;j<constrainedTrans.size();++j)
+    {
+      if(constrainedTrans[j]!=targetWordVec[relatedTrgSegm.first+j-1])
+        return true;
+    }
+        // Translation is equal to the constrained one
+    return false;
+  }
+  else
+    return true;
 }
 
 //---------------------------------------
