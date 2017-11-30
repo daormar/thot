@@ -807,8 +807,11 @@ void _pbTransModel<HYPOTHESIS>::expand(const Hypothesis& hyp,
                   // Create hypothesis extension
               this->incrScore(hyp,hypDataVec[i],extHyp,scoreComponents);
                   // Obtain information about hypothesis extension
+              SourceSegmentation srcSegm;
+              std::vector<PositionIndex> trgSegmCuts;
+              extHyp.getPhraseAlign(srcSegm,trgSegmCuts);
               std::vector<std::string> targetWordVec=this->getTransInPlainTextVec(extHyp);
-              if(this->trMetadataPtr->translationSatisfiesConstraints(targetWordVec))
+              if(this->trMetadataPtr->translationSatisfiesConstraints(srcSegm,trgSegmCuts,targetWordVec))
               {
                 hypVec.push_back(extHyp);
                 scrCompVec.push_back(scoreComponents);
