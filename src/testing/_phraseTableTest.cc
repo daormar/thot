@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- _phraseTableTest class functions
 
 //---------------------------------------
-std::vector<WordIndex> _phraseTableTest::getVector(string phrase) {
+std::vector<WordIndex> _phraseTableTest::getVector(std::string phrase) {
   std::vector<WordIndex> v;
 
   for(unsigned int i = 0; i < phrase.size(); i++) {
@@ -234,7 +234,6 @@ void _phraseTableTest::testGetEntriesForSource()
   // Looking for translations
   // Narie phrases
   found = tab->getEntriesForSource(s1, node);
-  cout << node.size();  // TODO: Remove line
   CPPUNIT_ASSERT( found );
   CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
   // Skiertag phrases

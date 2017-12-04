@@ -66,7 +66,7 @@ class _phraseTableTest: public CppUnit::TestFixture
     protected:
         BasePhraseTable *tab;
 
-        std::vector<WordIndex> getVector(string phrase);
+        std::vector<WordIndex> getVector(std::string phrase);
 
     public:
         virtual void setUp() = 0;

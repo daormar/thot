@@ -102,9 +102,9 @@ void HatTriePhraseTableTest::testIteratorsLoop()
 
     // Construct dictionary to record results returned by iterator
     // Dictionary structure: (key, (total count value, number of occurences))
-    map<std::vector<WordIndex>, pair<Count, int> > d;
-    d[t1] = make_pair(0, 0);
-    d[t2] = make_pair(0, 0);
+    std::map<std::vector<WordIndex>, std::pair<Count, int> > d;
+    d[t1] = std::make_pair(0, 0);
+    d[t2] = std::make_pair(0, 0);
 
     for(HatTriePhraseTable::const_iterator iter = tabHatTrie->begin();
         iter != tabHatTrie->end() && i < MAX_ITER;

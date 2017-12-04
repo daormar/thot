@@ -50,7 +50,7 @@ void LevelDbNgramTableTest::tearDown()
 }
 
 //---------------------------------------
-std::vector<WordIndex> LevelDbNgramTableTest::getVector(string phrase) {
+std::vector<WordIndex> LevelDbNgramTableTest::getVector(std::string phrase) {
     std::vector<WordIndex> v;
 
     for(unsigned int i = 0; i < phrase.size(); i++) {
@@ -543,14 +543,14 @@ void LevelDbNgramTableTest::testIteratorsLoop()
 
     // Construct dictionary to record results returned by iterator
     // Dictionary structure: (key, (total count value, number of occurences))
-    map<std::vector<WordIndex>, pair<Count, Count> > d;
-    d[s1] = make_pair(Count(0), Count(0));
-    d[tab->getSrcTrg(s1, t1)] = make_pair(Count(0), Count(0));
-    d[tab->getSrcTrg(s2, t2)] = make_pair(Count(0), Count(0));
+    std::map<std::vector<WordIndex>, std::pair<Count, Count> > d;
+    d[s1] = std::make_pair(Count(0), Count(0));
+    d[tab->getSrcTrg(s1, t1)] = std::make_pair(Count(0), Count(0));
+    d[tab->getSrcTrg(s2, t2)] = std::make_pair(Count(0), Count(0));
 
     for(LevelDbNgramTable::const_iterator iter = tab->begin(); iter != tab->end() && i < MAX_ITER; iter++, i++)
     {
-        pair<std::vector<WordIndex>, Count> x = *iter;
+        std::pair<std::vector<WordIndex>, Count> x = *iter;
         d[x.first].first += x.second;
         d[x.first].second += 1;
     }
@@ -587,14 +587,14 @@ void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
 
     // Construct dictionary to record results returned by iterator
     // Dictionary structure: (key, (total count value, number of occurences))
-    map<std::vector<WordIndex>, pair<Count, int> > d;
-    d[s] = make_pair(Count(), 0);
-    d[tab->getSrcTrg(s, t)] = make_pair(Count(), 0);
+    std::map<std::vector<WordIndex>, std::pair<Count, int> > d;
+    d[s] = std::make_pair(Count(), 0);
+    d[tab->getSrcTrg(s, t)] = std::make_pair(Count(), 0);
   
     for(LevelDbNgramTable::const_iterator iter = tab->begin(); iter != tab->end(); found = (iter++))
     {
         CPPUNIT_ASSERT( found );
-        pair<std::vector<WordIndex>, Count> x = *iter;
+        std::pair<std::vector<WordIndex>, Count> x = *iter;
         d[x.first].first += x.second;
         d[x.first].second++;
     }

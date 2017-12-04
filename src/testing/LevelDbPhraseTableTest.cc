@@ -113,16 +113,16 @@ void LevelDbPhraseTableTest::testIteratorsLoop()
 
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
-  map<std::vector<WordIndex>, pair<int, int> > d;
-  d[tabLdb->getSrc(s)] = make_pair(0, 0);
-  d[t] = make_pair(0, 0);
-  d[tabLdb->getTrgSrc(s, t)] = make_pair(0, 0);
+  std::map<std::vector<WordIndex>, std::pair<int, int> > d;
+  d[tabLdb->getSrc(s)] = std::make_pair(0, 0);
+  d[t] = std::make_pair(0, 0);
+  d[tabLdb->getTrgSrc(s, t)] = std::make_pair(0, 0);
 
   for(LevelDbPhraseTable::const_iterator iter = tabLdb->begin();
       iter != tabLdb->end() && i < MAX_ITER;
       iter++, i++)
   {
-    pair<std::vector<WordIndex>, int> x = *iter;
+    std::pair<std::vector<WordIndex>, int> x = *iter;
     d[x.first].first += x.second;
     d[x.first].second++;  
   }
@@ -156,17 +156,17 @@ void LevelDbPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
 
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
-  map<std::vector<WordIndex>, pair<int, int> > d;
-  d[tabLdb->getSrc(s)] = make_pair(0, 0);
-  d[t] = make_pair(0, 0);
-  d[tabLdb->getTrgSrc(s, t)] = make_pair(0, 0);
+  std::map<std::vector<WordIndex>, std::pair<int, int> > d;
+  d[tabLdb->getSrc(s)] = std::make_pair(0, 0);
+  d[t] = std::make_pair(0, 0);
+  d[tabLdb->getTrgSrc(s, t)] = std::make_pair(0, 0);
  
   for(LevelDbPhraseTable::const_iterator iter = tabLdb->begin();
       iter != tabLdb->end();
       found = (iter++))
   {
     CPPUNIT_ASSERT( found );
-    pair<std::vector<WordIndex>, int> x = *iter;
+    std::pair<std::vector<WordIndex>, int> x = *iter;
     d[x.first].first += x.second;
     d[x.first].second++;
   }

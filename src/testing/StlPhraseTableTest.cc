@@ -95,13 +95,13 @@ void StlPhraseTableTest::testIteratorsLoop()
 
     // Construct dictionary to record results returned by iterator
     // Dictionary structure: (key, (total count value, number of occurences))
-    map<StlPhraseTable::PhraseInfoElementKey, pair<int, int> > d;
-    StlPhraseTable::PhraseInfoElementKey s_key = make_pair(s, empty);
-    StlPhraseTable::PhraseInfoElementKey t_key = make_pair(empty, t);
-    StlPhraseTable::PhraseInfoElementKey st_key = make_pair(s, t);
-    d[s_key] = make_pair(0, 0);
-    d[t_key] = make_pair(0, 0);
-    d[st_key] = make_pair(0, 0);
+    std::map<StlPhraseTable::PhraseInfoElementKey, std::pair<int, int> > d;
+    StlPhraseTable::PhraseInfoElementKey s_key = std::make_pair(s, empty);
+    StlPhraseTable::PhraseInfoElementKey t_key = std::make_pair(empty, t);
+    StlPhraseTable::PhraseInfoElementKey st_key = std::make_pair(s, t);
+    d[s_key] = std::make_pair(0, 0);
+    d[t_key] = std::make_pair(0, 0);
+    d[st_key] = std::make_pair(0, 0);
 
     for(StlPhraseTable::const_iterator iter = tabStl->begin();
         iter != tabStl->end() && i < MAX_ITER;
@@ -142,13 +142,13 @@ void StlPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
 
     // Construct dictionary to record results returned by iterator
     // Dictionary structure: (key, (total count value, number of occurences))
-    map<StlPhraseTable::PhraseInfoElementKey, pair<int, int> > d;
-    StlPhraseTable::PhraseInfoElementKey s_key = make_pair(s, empty);
-    StlPhraseTable::PhraseInfoElementKey t_key = make_pair(empty, t);
-    StlPhraseTable::PhraseInfoElementKey st_key = make_pair(s, t);
-    d[s_key] = make_pair(0, 0);
-    d[t_key] = make_pair(0, 0);
-    d[st_key] = make_pair(0, 0);
+    std::map<StlPhraseTable::PhraseInfoElementKey, std::pair<int, int> > d;
+    StlPhraseTable::PhraseInfoElementKey s_key = std::make_pair(s, empty);
+    StlPhraseTable::PhraseInfoElementKey t_key = std::make_pair(empty, t);
+    StlPhraseTable::PhraseInfoElementKey st_key = std::make_pair(s, t);
+    d[s_key] = std::make_pair(0, 0);
+    d[t_key] = std::make_pair(0, 0);
+    d[st_key] = std::make_pair(0, 0);
 
     for(StlPhraseTable::const_iterator iter = tabStl->begin();
         iter != tabStl->end();

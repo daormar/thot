@@ -92,9 +92,9 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
 
     private:
         LevelDbNgramTable *tab;
-        string dbName = "/tmp/thot_leveldb_unit_test";
+        std::string dbName = "/tmp/thot_leveldb_unit_test";
   
-        std::vector<WordIndex> getVector(string phrase);
+        std::vector<WordIndex> getVector(std::string phrase);
 
     public:
         void setUp();
