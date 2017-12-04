@@ -305,8 +305,8 @@ stack_dec/ThotDecoderCommonVars.h stack_dec/ThotDecoderClient.h		\
 stack_dec/SwModelPars.h stack_dec/_stack_decoder_statistics.h		\
 stack_dec/_stackDecoderRec.h stack_dec/_stackDecoder.h			\
 stack_dec/SourceSegmentation.h stack_dec/BaseTranslationMetadata.h	\
-stack_dec/TranslationMetadata.h stack_dec/SmtStack.h			\
-stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h			\
+stack_dec/TranslationMetadata.h stack_dec/JsonTranslationMetadata.h \
+stack_dec/SmtStack.h stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h			\
 stack_dec/_smtMultiStack.h stack_dec/WeightUpdateUtils.h		\
 stack_dec/BaseLogLinWeightUpdater.h stack_dec/KbMiraLlWu.h		\
 stack_dec/BaseScorer.h stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h	\
@@ -349,6 +349,7 @@ stack_dec/BaseHypothesis.h stack_dec/HypDebugData.h			\
 stack_dec/BaseAssistedTrans.h stack_dec/_assistedTrans.h		\
 stack_dec/SmtModelUtils.h
 stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
+stack_dec/JsonTranslationMetadata.cc                        \
 stack_dec/TranslationMetadata.cc stack_dec/WeightUpdateUtils.cc		\
 stack_dec/KbMiraLlWu.cc stack_dec/MiraBleu.cc stack_dec/MiraWer.cc	\
 stack_dec/MiraGtm.cc stack_dec/MiraChrF.cc				\

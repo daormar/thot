@@ -12,6 +12,7 @@ thot_client.cc thot_scorer.cc thot_calc_bleu.cc thot_ms_alig.cc		\
 SwModelPars.h SwModelInfo.h _stack_decoder_statistics.h			\
 _stackDecoderRec.h _stackDecoder.h SourceSegmentation.h			\
 BaseTranslationMetadata.h TranslationMetadata.h TranslationMetadata.cc	\
+JsonTranslationMetadata.h JsonTranslationMetadata.cc            \
 SmtStack.h _smtStack.h SmtMultiStackRec.h _smtMultiStack.h		\
 WeightUpdateUtils.h WeightUpdateUtils.cc BaseLogLinWeightUpdater.h	\
 KbMiraLlWu.h KbMiraLlWu.cc BaseScorer.h BaseMiraScorer.h MiraBleu.h	\
