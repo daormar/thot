@@ -30,6 +30,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
+#define JSON_TEX_SEGMENTATION "tex_segmentation"
 
 //--------------- Typedefs -------------------------------------------
 
@@ -48,9 +49,9 @@ class JsonTranslationMetadata: public BaseTranslationMetadata
   std::vector<std::string> getSrcSentVec(void)const;
 
       // Constraint-related functions
-  std::vector<std::string> getTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhr)const;
+  std::vector<std::string> getTransForSrcPhr(std::pair<PositionIndex, PositionIndex> srcPhr)const;
   std::set<std::pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const;
-  bool srcPhrAffectedByConstraint(std::pair<PositionIndex,PositionIndex> srcPhr)const;
+  bool srcPhrAffectedByConstraint(std::pair<PositionIndex, PositionIndex> srcPhr)const;
   bool translationSatisfiesConstraints(const SourceSegmentation& sourceSegmentation,
                                        const std::vector<PositionIndex>& targetSegmentCuts,
                                        const std::vector<std::string>& targetWordVec)const;
@@ -64,6 +65,28 @@ class JsonTranslationMetadata: public BaseTranslationMetadata
 
       // Destructor
   ~JsonTranslationMetadata(){};
+
+ private:
+
+      // Data members
+  std::vector<std::string> srcSentVec;
+  std::map<std::pair<PositionIndex,PositionIndex>,std::vector<std::string> > srcPhrTransMap;
+
+      // Check if string is empty or contains only whitespace characters
+  bool containsOnlyWhitespaces(std::string phrase);
+      // Check if phrase is in source sentence at given position
+  bool isPhraseInSentence(std::vector<std::string>& phrase, unsigned int startPosition);
+      // Map translation on their positions in source sentence
+  void addTranslations(std::vector<std::pair<std::string, std::string> >& translations);
+      // Check if translation violates constraints
+  bool transViolatesSrcPhrConstraints(const SourceSegmentation& sourceSegmentation,
+                                      const std::vector<PositionIndex>& targetSegmentCuts,
+                                      const std::vector<std::string>& targetWordVec)const;
+  bool transViolatesSrcPhrConstraint(std::pair<PositionIndex,PositionIndex> constrainedSrcSegm,
+                                     std::vector<std::string> constrainedTrans,
+                                     const SourceSegmentation& sourceSegmentation,
+                                     const std::vector<PositionIndex>& targetSegmentCuts,
+                                     const std::vector<std::string>& targetWordVec)const;
 };
 
 #endif
