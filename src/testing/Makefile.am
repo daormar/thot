@@ -6,4 +6,5 @@ IncrLexTableTest.h IncrLexTableTest.cc                          \
 LevelDbNgramTableTest.h LevelDbNgramTableTest.cc                \
 LevelDbPhraseTableTest.h LevelDbPhraseTableTest.cc              \
 StlPhraseTableTest.h StlPhraseTableTest.cc                      \
+JsonTranslationMetadataTest.h JsonTranslationMetadataTest.cc    \
 MiraChrFTest.h MiraChrFTest.cc

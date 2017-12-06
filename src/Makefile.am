@@ -384,10 +384,12 @@ exper_h=
 exper_defs=
 
 testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h          \
+testing/JsonTranslationMetadataTest.h                               \
 testing/_incrLexTableTest.h testing/_phraseTableTest.h              \
 testing/IncrLexTableTest.h testing/StlPhraseTableTest.h
 
 testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc     \
+testing/JsonTranslationMetadataTest.cc                              \
 testing/_incrLexTableTest.cc testing/_phraseTableTest.cc            \
 testing/IncrLexTableTest.cc testing/StlPhraseTableTest.cc
 
