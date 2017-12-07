@@ -148,16 +148,23 @@ int processParameters(void)
     return THOT_OK;
   }
   
-  int ret=thotDecoderPtr->initUsingCfgFile(ts_pars.c_str,tdu_pars,ts_pars.v_given);
-  if(ret==THOT_ERROR)
-  {
-    delete thotDecoderPtr;
-    return THOT_ERROR;
-  }
-
       // Parameters ok
   if(ts_pars.w_given)
   {
+    int ret=thotDecoderPtr->initUsingCfgFile(ts_pars.c_str,tdu_pars,ts_pars.v_given);
+    if(ret==THOT_ERROR)
+    {
+      delete thotDecoderPtr;
+      return THOT_ERROR;
+    }
+        // NOTE: user pars are initialized so as to correctly set
+        // computer assisted translation weights
+    ret=thotDecoderPtr->initUserPars(DEFAULT_USER_ID,tdu_pars,ts_pars.v_given);
+    if(ret==THOT_ERROR)
+    {
+      delete thotDecoderPtr;
+      return THOT_ERROR;
+    }
         // Print weights
     thotDecoderPtr->printModelWeights();
     delete thotDecoderPtr;
@@ -165,10 +172,30 @@ int processParameters(void)
   }
   else
   {
-        // Start server
-    int retCode=start_server();
-    delete thotDecoderPtr;
-    return retCode;
+    if(ts_pars.t_given)
+    {
+      int ret=thotDecoderPtr->testModelDescriptors(ts_pars.c_str,ts_pars.v_given);
+      if(ret==THOT_ERROR)
+      {
+        delete thotDecoderPtr;
+        return THOT_ERROR;
+      }
+      delete thotDecoderPtr;
+      return THOT_OK;
+    }
+    else
+    {
+      int ret=thotDecoderPtr->initUsingCfgFile(ts_pars.c_str,tdu_pars,ts_pars.v_given);
+      if(ret==THOT_ERROR)
+      {
+        delete thotDecoderPtr;
+        return THOT_ERROR;
+      }
+          // Start server
+      int retCode=start_server();
+      delete thotDecoderPtr;
+      return retCode;
+    }
   }
 }
 
@@ -676,6 +703,13 @@ int takeParameters(int argc,
       ++matched;
     }
 
+        // -t parameter
+    if(argv_stl[i]=="-t" && !matched)
+    {
+      ts_pars.t_given=true;
+      ++matched;
+    }
+
         // -v parameter
     if(argv_stl[i]=="-v" && !matched)
     {
@@ -716,6 +750,18 @@ int checkParameters(void)
     return THOT_ERROR;
   }
 
+  if(ts_pars.i_given && ts_pars.t_given)
+  {
+    std::cerr<<"Error: -i and -t parameters cannot be given simultaneously!"<<std::endl;
+    return THOT_ERROR;
+  }
+
+  if(ts_pars.w_given && ts_pars.t_given)
+  {
+    std::cerr<<"Error: -w and -t parameters cannot be given simultaneously!"<<std::endl;
+    return THOT_ERROR;
+  }
+
   if(ts_pars.v_given && ts_pars.vd_given)
   {
     std::cerr<<"Error: -v and -vd parameters cannot be given simultaneously!"<<std::endl;
@@ -740,12 +786,13 @@ void printParameters(void)
 void printUsage(void)
 {
   std::cerr<<"Usage: thot_server    -i | -c <string>"<<std::endl;
-  std::cerr<<"                      [-p <int>] [ -w ] [ -v | -vd ] [--help] [--version]"<<std::endl;
+  std::cerr<<"                      [-p <int>] [ -w | -t ] [ -v | -vd ] [--help] [--version]"<<std::endl;
   std::cerr<<std::endl;
-  std::cerr<<"-i             Test server initialization and exit"<<std::endl<<std::endl;
+  std::cerr<<"-i             Test server initialization using master.ini and exit"<<std::endl<<std::endl;
   std::cerr<<"-c <string>    Configuration file"<<std::endl<<std::endl;
   std::cerr<<"-p <int>       Port used by the server"<<std::endl<<std::endl;
   std::cerr<<"-w             Print model weights and exit"<<std::endl<<std::endl;
+  std::cerr<<"-t             Test model descriptors and exit"<<std::endl<<std::endl;
   std::cerr<<"-v             Verbose mode"<<std::endl<<std::endl;
   std::cerr<<"-vd            Verbose mode for debugging. This mode displays more information"<<std::endl;
   std::cerr<<"               than -v option but it is not designed to work for concurrent"<<std::endl;
