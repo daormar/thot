@@ -75,6 +75,9 @@ class BaseSwAligModel
     // Constructor
 	BaseSwAligModel(void);
 
+    // Thread/Process safety related functions
+    virtual bool modelReadsAreProcessSafe(void);
+    
     // Functions to read and add sentence pairs
 	virtual bool readSentencePairs(const char *srcFileName,
                                    const char *trgFileName,
@@ -259,6 +262,16 @@ class BaseSwAligModel
 template<class PPINFO>
 BaseSwAligModel<PPINFO>::BaseSwAligModel(void)
 {
+}
+
+//-------------------------
+template<class PPINFO>
+bool BaseSwAligModel<PPINFO>::modelReadsAreProcessSafe(void)
+{
+      // By default it will be assumed that model reads are thread safe,
+      // those unsafe classes will override this method returning false
+      // instead
+  return true;
 }
 
 //-------------------------
