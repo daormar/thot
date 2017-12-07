@@ -174,7 +174,7 @@ int processParameters(void)
   {
     if(ts_pars.t_given)
     {
-      int ret=thotDecoderPtr->testModelDescriptors(ts_pars.c_str,ts_pars.v_given);
+      int ret=thotDecoderPtr->testSoftwareModulesForModels(ts_pars.c_str,ts_pars.v_given);
       if(ret==THOT_ERROR)
       {
         delete thotDecoderPtr;
@@ -792,7 +792,7 @@ void printUsage(void)
   std::cerr<<"-c <string>    Configuration file"<<std::endl<<std::endl;
   std::cerr<<"-p <int>       Port used by the server"<<std::endl<<std::endl;
   std::cerr<<"-w             Print model weights and exit"<<std::endl<<std::endl;
-  std::cerr<<"-t             Test model descriptors and exit"<<std::endl<<std::endl;
+  std::cerr<<"-t             Test software modules implementing statistical models and exit"<<std::endl<<std::endl;
   std::cerr<<"-v             Verbose mode"<<std::endl<<std::endl;
   std::cerr<<"-vd            Verbose mode for debugging. This mode displays more information"<<std::endl;
   std::cerr<<"               than -v option but it is not designed to work for concurrent"<<std::endl;

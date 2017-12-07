@@ -108,8 +108,8 @@ class ThotDecoder
                    int verbose);
 
       // Functions to test decoder configuration
-  int testModelDescriptors(std::string cfgFile,
-                           int verbose);
+  int testSoftwareModulesForModels(std::string cfgFile,
+                                   int verbose);
   
       // Functions to train models
   int onlineTrainSentPair(int user_id,
@@ -221,13 +221,13 @@ class ThotDecoder
                 int verbose=0);
 
       // Functions to test model descriptors
-  bool test_tm_desc(const char* tmDescFileName,
-                    int verbose=0);
-  int test_lm_comp(std::string soFileName,
+  int testModulesInTmDesc(const char* tmDescFileName,
+                           int verbose=0);
+  int testTmModule(std::string soFileName,
                    int verbose=0);
-  bool test_lm_desc(const char* lmDescFileName,
-                    int verbose=0);
-  int test_tm_comp(std::string soFileName,
+  int testModulesInLmDesc(const char* lmDescFileName,
+                          int verbose=0);
+  int testLmModule(std::string soFileName,
                    int verbose=0);
   
       // Functions to print models

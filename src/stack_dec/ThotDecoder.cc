@@ -1015,8 +1015,8 @@ int ThotDecoder::initUserPars(int user_id,
 }
 
 //--------------------------
-int ThotDecoder::testModelDescriptors(std::string cfgFile,
-                                      int verbose)
+int ThotDecoder::testSoftwareModulesForModels(std::string cfgFile,
+                                              int verbose)
 {
   int ret;
   int argc;
@@ -1076,26 +1076,26 @@ int ThotDecoder::testModelDescriptors(std::string cfgFile,
     ++i;
   }
   
-  // Test model descriptors
+  // Test software modules
 
-      // Test language model descriptor
+  std::cerr<<"** Testing software modules provided in language model descriptor"<<std::endl;
   if(tdCommonVars.featureBasedImplEnabled)
   {
     if(fileIsDescriptor(lm_str.c_str()))
     {
-      ret=test_lm_desc(lm_str.c_str(),verbose);
+      ret=testModulesInLmDesc(lm_str.c_str(),verbose);
       if(ret==THOT_ERROR) return THOT_ERROR;
     }
     else
       std::cerr<<"Warning: -lm parameter is not a model descriptor so it could not be tested"<<std::endl;
   }
 
-      // Test translation model descriptor
+  std::cerr<<"** Testing software modules provided in translation model descriptor"<<std::endl;
   if(tdCommonVars.featureBasedImplEnabled)
   {
-    if(fileIsDescriptor(lm_str.c_str()))
+    if(fileIsDescriptor(tm_str.c_str()))
     {
-      ret=test_tm_desc(tm_str.c_str(),verbose);
+      ret=testModulesInTmDesc(tm_str.c_str(),verbose);
       if(ret==THOT_ERROR) return THOT_ERROR;
     }
     else
@@ -1568,8 +1568,8 @@ bool ThotDecoder::load_ecm(const char* ecmFilesPrefix,
 }
 
 //--------------------------
-bool ThotDecoder::test_tm_desc(const char* tmDescFileName,
-                               int verbose/*=0*/)
+int ThotDecoder::testModulesInTmDesc(const char* tmDescFileName,
+                                      int verbose/*=0*/)
 {
       // Obtain info about language model entries
   std::vector<ModelDescriptorEntry> modelDescEntryVec;
@@ -1578,16 +1578,16 @@ bool ThotDecoder::test_tm_desc(const char* tmDescFileName,
         // Process descriptor entries
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-      std::cerr<<"** Testing translation model component ("<<modelDescEntryVec[i].modelInitInfo<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<")"<<std::endl;
-      int ret=test_tm_comp(modelDescEntryVec[i].modelInitInfo,verbose);
+      std::cerr<<"* Testing module implementing translation model ("<<modelDescEntryVec[i].modelInitInfo<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<")"<<std::endl;
+      int ret=testTmModule(modelDescEntryVec[i].modelInitInfo,verbose);
       if(ret==THOT_ERROR)
       {
-        std::cerr<<"Translation model component is not correct"<<std::endl;
+        std::cerr<<"Module implementing translation model is not correct"<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        std::cerr<<"Translation model component is correct"<<std::endl;
+        std::cerr<<"Module implementing translation model is correct"<<std::endl;
       }
     }
     return THOT_OK;
@@ -1599,7 +1599,7 @@ bool ThotDecoder::test_tm_desc(const char* tmDescFileName,
 }
 
 //--------------------------
-int ThotDecoder::test_tm_comp(std::string soFileName,
+int ThotDecoder::testTmModule(std::string soFileName,
                               int /*verbose=0*/)
 {
       // Declare dynamic class loader instance
@@ -1628,8 +1628,8 @@ int ThotDecoder::test_tm_comp(std::string soFileName,
 }
 
 //--------------------------
-bool ThotDecoder::test_lm_desc(const char* lmDescFileName,
-                               int verbose/*=0*/)
+int ThotDecoder::testModulesInLmDesc(const char* lmDescFileName,
+                                      int verbose/*=0*/)
 {
       // Obtain info about language model entries
   std::vector<ModelDescriptorEntry> modelDescEntryVec;
@@ -1638,16 +1638,16 @@ bool ThotDecoder::test_lm_desc(const char* lmDescFileName,
         // Process descriptor entries
     for(unsigned int i=0;i<modelDescEntryVec.size();++i)
     {
-      std::cerr<<"** Testing language model component ("<<modelDescEntryVec[i].modelInitInfo<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<")"<<std::endl;
-      int ret=test_lm_comp(modelDescEntryVec[i].modelInitInfo,verbose);
+      std::cerr<<"* Testing module implementing language model ("<<modelDescEntryVec[i].modelInitInfo<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<")"<<std::endl;
+      int ret=testLmModule(modelDescEntryVec[i].modelInitInfo,verbose);
       if(ret==THOT_ERROR)
       {
-        std::cerr<<"Language model component is not correct"<<std::endl;
+        std::cerr<<"Module implementing language model is not correct"<<std::endl;
         return THOT_ERROR;
       }
       else
       {
-        std::cerr<<"Language model component is correct"<<std::endl;
+        std::cerr<<"Module implementing language model is correct"<<std::endl;
       }
     }
     return THOT_OK;
@@ -1659,7 +1659,7 @@ bool ThotDecoder::test_lm_desc(const char* lmDescFileName,
 }
 
 //--------------------------
-int ThotDecoder::test_lm_comp(std::string soFileName,
+int ThotDecoder::testLmModule(std::string soFileName,
                               int /*verbose=0*/)
 {
       // Declare dynamic class loader instance
