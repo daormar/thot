@@ -107,6 +107,10 @@ class ThotDecoder
                    const ThotDecoderUserPars& tdup,
                    int verbose);
 
+      // Functions to test decoder configuration
+  int testModelDescriptors(std::string cfgFile,
+                           int verbose);
+  
       // Functions to train models
   int onlineTrainSentPair(int user_id,
                           const char *srcSent,
@@ -161,7 +165,8 @@ class ThotDecoder
 
       // Model weights related functions
   int printModelWeights(void);
-  
+  int printCatWeights(void);
+
       // Destructor
   ~ThotDecoder();
 
@@ -201,7 +206,7 @@ class ThotDecoder
   bool process_tm_files_prefix(std::string tmFilesPrefix,
                                int verbose/*=0*/);
   bool load_tm_legacy_impl(const char* tmFilesPrefix,
-               int verbose=0);
+                           int verbose=0);
   bool load_tm_feat_impl(const char* tmFilesPrefix,
                          int verbose=0);
   BaseNgramLM<LM_State>* createLmPtr(std::string modelType);
@@ -209,12 +214,22 @@ class ThotDecoder
                           const ModelDescriptorEntry& modelDescEntry,
                           LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef);
   bool load_lm_legacy_impl(const char* lmFileName,
-               int verbose=0);
+                           int verbose=0);
   bool load_lm_feat_impl(const char* lmFileName,
                          int verbose=0);
   bool load_ecm(const char* ecmFilesPrefix,
                 int verbose=0);
 
+      // Functions to test model descriptors
+  bool test_tm_desc(const char* tmDescFileName,
+                    int verbose=0);
+  int test_lm_comp(std::string soFileName,
+                   int verbose=0);
+  bool test_lm_desc(const char* lmDescFileName,
+                    int verbose=0);
+  int test_tm_comp(std::string soFileName,
+                   int verbose=0);
+  
       // Functions to print models
   int printModelsLegacyImpl(int verbose=0);
   int printModelsFeatImpl(int verbose=0);
