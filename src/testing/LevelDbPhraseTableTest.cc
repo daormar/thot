@@ -88,8 +88,8 @@ void LevelDbPhraseTableTest::testAddSrcTrgInfo()
   Count trg_src_count = tabLdb->getInfo(tabLdb->getTrgSrc(s, t), found);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT( (int) src_trg_count.get_c_s() == 1 );
-  CPPUNIT_ASSERT( (int) src_trg_count.get_c_s() == (int) trg_src_count.get_c_s() );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(src_trg_count.get_c_s(), trg_src_count.get_c_s(), DELTA);
 }
 
 //---------------------------------------
@@ -128,15 +128,15 @@ void LevelDbPhraseTableTest::testIteratorsLoop()
   }
 
   // Check if element returned by iterator is correct
-  CPPUNIT_ASSERT(d.size() == 3);
-  CPPUNIT_ASSERT(d[tabLdb->getSrc(s)].first == 1);
-  CPPUNIT_ASSERT(d[tabLdb->getSrc(s)].second == 1);
-  CPPUNIT_ASSERT(d[t].first == 1);
-  CPPUNIT_ASSERT(d[t].second == 1);
-  CPPUNIT_ASSERT(d[tabLdb->getTrgSrc(s, t)].first == 1);
-  CPPUNIT_ASSERT(d[tabLdb->getTrgSrc(s, t)].second == 1);
+  CPPUNIT_ASSERT_EQUAL((size_t) 3, d.size());
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getSrc(s)].first);
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getSrc(s)].second);
+  CPPUNIT_ASSERT_EQUAL(1, d[t].first);
+  CPPUNIT_ASSERT_EQUAL(1, d[t].second);
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getTrgSrc(s, t)].first);
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getTrgSrc(s, t)].second);
 
-  CPPUNIT_ASSERT( i == 3 );
+  CPPUNIT_ASSERT_EQUAL(3, i);
 }
 
 //---------------------------------------
@@ -175,13 +175,13 @@ void LevelDbPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
   CPPUNIT_ASSERT( !found );
 
   // Check if element returned by iterator is correct
-  CPPUNIT_ASSERT(d.size() == 3);
-  CPPUNIT_ASSERT(d[tabLdb->getSrc(s)].first == 2);
-  CPPUNIT_ASSERT(d[tabLdb->getSrc(s)].second == 1);
-  CPPUNIT_ASSERT(d[t].first == 2);
-  CPPUNIT_ASSERT(d[t].second == 1);
-  CPPUNIT_ASSERT(d[tabLdb->getTrgSrc(s, t)].first == 2);
-  CPPUNIT_ASSERT(d[tabLdb->getTrgSrc(s, t)].second == 1);
+  CPPUNIT_ASSERT_EQUAL((size_t) 3, d.size());
+  CPPUNIT_ASSERT_EQUAL(2, d[tabLdb->getSrc(s)].first);
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getSrc(s)].second);
+  CPPUNIT_ASSERT_EQUAL(2, d[t].first);
+  CPPUNIT_ASSERT_EQUAL(1, d[t].second);
+  CPPUNIT_ASSERT_EQUAL(2, d[tabLdb->getTrgSrc(s, t)].first);
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getTrgSrc(s, t)].second);
 }
 
 //---------------------------------------
@@ -229,12 +229,12 @@ void LevelDbPhraseTableTest::testLoadingLevelDb()
   tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
                          getVector("First Adventure of Pan Samochodzik"), Count(7));
 
-  unsigned int original_size = tab->size();
+  const size_t original_size = tab->size();
    
   // Load structure
   result = tabLdb->load(dbName);
   CPPUNIT_ASSERT( result == THOT_OK);
-  CPPUNIT_ASSERT( tab->size() == original_size );
+  CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 }
 
 //---------------------------------------
@@ -276,36 +276,36 @@ void LevelDbPhraseTableTest::testLoadedDataCorrectness()
   tab->incrCountsOfEntry(s3, t3_1, Count(64));
   tab->incrCountsOfEntry(s3, t3_2, Count(128));
 
-  unsigned int original_size = tab->size();
+  const size_t original_size = tab->size();
    
   // Load structure
   result = tabLdb->load(dbName);
   CPPUNIT_ASSERT( result == THOT_OK );
-  CPPUNIT_ASSERT( tab->size() == original_size );
+  CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 
   // Check count values
-  CPPUNIT_ASSERT( tab->cSrc(s1).get_c_s() == 1 + 2 + 4 + 8 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_1).get_c_s() == 1 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_2).get_c_s() == 2 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_3).get_c_s() == 4 );
-  CPPUNIT_ASSERT( tab->cTrg(t1_4).get_c_s() == 8 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_1).get_c_st() == 1 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_2).get_c_st() == 2 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_3).get_c_st() == 4 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_4).get_c_st() == 8 );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 2 + 4 + 8, tab->cSrc(s1).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cTrg(t1_1).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cTrg(t1_2).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4, tab->cTrg(t1_3).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cTrg(t1_4).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s1, t1_1).get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cSrcTrg(s1, t1_2).get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4, tab->cSrcTrg(s1, t1_3).get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cSrcTrg(s1, t1_4).get_c_st(), DELTA);
 
-  CPPUNIT_ASSERT( tab->cSrc(s2).get_c_s() == 16 + 32 );
-  CPPUNIT_ASSERT( tab->cTrg(t2_1).get_c_s() == 16 );
-  CPPUNIT_ASSERT( tab->cTrg(t2_2).get_c_s() == 32 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_1).get_c_st() == 16 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_2).get_c_st() == 32 );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(16 + 32, tab->cSrc(s2).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(16, tab->cTrg(t2_1).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(32, tab->cTrg(t2_2).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(16, tab->cSrcTrg(s2, t2_1).get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(32, tab->cSrcTrg(s2, t2_2).get_c_st(), DELTA);
 
-  CPPUNIT_ASSERT( tab->cSrc(s3).get_c_s() == 64 + 128 );
-  CPPUNIT_ASSERT( tab->cTrg(t3_1).get_c_s() == 64 );
-  CPPUNIT_ASSERT( tab->cTrg(t3_2).get_c_s() == 128 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s3, t3_1).get_c_st() == 64 );
-  CPPUNIT_ASSERT( tab->cSrcTrg(s3, t3_2).get_c_st() == 128 );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(64 + 128, tab->cSrc(s3).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(64, tab->cTrg(t3_1).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(128, tab->cTrg(t3_2).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(64, tab->cSrcTrg(s3, t3_1).get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(128, tab->cSrcTrg(s3, t3_2).get_c_st(), DELTA);
 
   tab->clear();  // Remove data
-  CPPUNIT_ASSERT( tab->size() == 0 );
+  CPPUNIT_ASSERT_EQUAL((size_t) 0, tab->size());
 }
