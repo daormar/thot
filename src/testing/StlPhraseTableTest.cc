@@ -69,8 +69,8 @@ void StlPhraseTableTest::testAddSrcTrgInfo()
     Count trg_src_count = tabStl->getSrcTrgInfo(s, t, found);
 
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( (int) src_trg_count.get_c_s() == 1 );
-    CPPUNIT_ASSERT( (int) src_trg_count.get_c_s() == (int) trg_src_count.get_c_s() );
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(src_trg_count.get_c_s(), trg_src_count.get_c_s(), DELTA);
 }
 
 //---------------------------------------
@@ -113,15 +113,15 @@ void StlPhraseTableTest::testIteratorsLoop()
     }
 
     // Check if element returned by iterator is correct
-    CPPUNIT_ASSERT(d.size() == 3);
-    CPPUNIT_ASSERT(d[s_key].first == 1);
-    CPPUNIT_ASSERT(d[s_key].second == 1);
-    CPPUNIT_ASSERT(d[t_key].first == 1);
-    CPPUNIT_ASSERT(d[t_key].second == 1);
-    CPPUNIT_ASSERT(d[st_key].first == 1);
-    CPPUNIT_ASSERT(d[st_key].second == 1);
+    CPPUNIT_ASSERT_EQUAL((size_t) 3, d.size());
+    CPPUNIT_ASSERT_EQUAL(1, d[s_key].first);
+    CPPUNIT_ASSERT_EQUAL(1, d[s_key].second);
+    CPPUNIT_ASSERT_EQUAL(1, d[t_key].first);
+    CPPUNIT_ASSERT_EQUAL(1, d[t_key].second);
+    CPPUNIT_ASSERT_EQUAL(1, d[st_key].first);
+    CPPUNIT_ASSERT_EQUAL(1, d[st_key].second);
 
-    CPPUNIT_ASSERT( i == 3 );
+    CPPUNIT_ASSERT_EQUAL(3, i);
 }
 
 //---------------------------------------
@@ -164,13 +164,13 @@ void StlPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
     CPPUNIT_ASSERT( !found );
 
     // Check if element returned by iterator is correct
-    CPPUNIT_ASSERT(d.size() == 3);
-    CPPUNIT_ASSERT(d[s_key].first == 2);
-    CPPUNIT_ASSERT(d[s_key].second == 1);
-    CPPUNIT_ASSERT(d[t_key].first == 2);
-    CPPUNIT_ASSERT(d[t_key].second == 1);
-    CPPUNIT_ASSERT(d[st_key].first == 2);
-    CPPUNIT_ASSERT(d[st_key].second == 1);
+    CPPUNIT_ASSERT_EQUAL((size_t) 3, d.size());
+    CPPUNIT_ASSERT_EQUAL(2, d[s_key].first);
+    CPPUNIT_ASSERT_EQUAL(1, d[s_key].second);
+    CPPUNIT_ASSERT_EQUAL(2, d[t_key].first);
+    CPPUNIT_ASSERT_EQUAL(1, d[t_key].second);
+    CPPUNIT_ASSERT_EQUAL(2, d[st_key].first);
+    CPPUNIT_ASSERT_EQUAL(1, d[st_key].second);
 }
 
 //---------------------------------------
