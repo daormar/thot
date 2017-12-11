@@ -70,8 +70,8 @@ kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
 wg_uncoupled_assisted_trans__swli_factory.la				\
 multi_stack_decoder_rec__pbtm_factory.la				\
 wg_uncoupled_assisted_trans__pbtm_factory.la				\
-translation_metadata_factory.la $(CASMACAT_LIB) $(KENLM_LIB)		\
-$(DB_CXX_LIBS) $(LEVELDB_LIBS)
+translation_metadata_factory.la json_translation_metadata_factory.la    \
+$(CASMACAT_LIB) $(KENLM_LIB) $(DB_CXX_LIBS) $(LEVELDB_LIBS)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			   \
@@ -519,6 +519,11 @@ translation_metadata_factory_defs=		\
 stack_dec/TranslationMetadataFactory.cc
 
 ##########
+json_translation_metadata_factory_h= 
+json_translation_metadata_factory_defs=		\
+stack_dec/JsonTranslationMetadataFactory.cc
+
+##########
 multi_stack_decoder_rec__swli_factory_h= 
 multi_stack_decoder_rec__swli_factory_defs=		\
 stack_dec/multi_stack_decoder_rec__swli_factory.cc
@@ -831,6 +836,13 @@ $(translation_metadata_factory_h)		\
 $(translation_metadata_factory_defs)
 translation_metadata_factory_la_LIBADD= libthot.la
 translation_metadata_factory_la_LDFLAGS= -module
+
+##########
+json_translation_metadata_factory_la_SOURCES=	\
+$(json_translation_metadata_factory_h)		\
+$(json_translation_metadata_factory_defs)
+json_translation_metadata_factory_la_LIBADD= libthot.la
+json_translation_metadata_factory_la_LDFLAGS= -module
 
 ##########
 multi_stack_decoder_rec__swli_factory_la_SOURCES=	\
