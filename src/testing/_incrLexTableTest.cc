@@ -47,7 +47,7 @@ void _incrLexTableTest::testGetSetLexDenom()
     tab->setLexDenom(s, denom);
     float restoredDenom = tab->getLexDenom(s, found);
     CPPUNIT_ASSERT( found );  // Element should be found
-    CPPUNIT_ASSERT( denom == restoredDenom);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(denom, restoredDenom, DELTA);
 }
 
 //---------------------------------------
@@ -66,7 +66,7 @@ void _incrLexTableTest::testGetSetLexNumer()
     tab->setLexNumer(s, t, numer);
     float restoredNumer = tab->getLexNumer(s, t, found);
     CPPUNIT_ASSERT( found );  // Element should be found
-    CPPUNIT_ASSERT( numer == restoredNumer);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(numer, restoredNumer, DELTA);
 }
 
 //---------------------------------------
@@ -89,11 +89,11 @@ void _incrLexTableTest::testSetLexNumerDenom()
 
     float restoredNumer = tab->getLexNumer(s, t, found);
     CPPUNIT_ASSERT( found );  // Element should be found
-    CPPUNIT_ASSERT( numer == restoredNumer);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(numer, restoredNumer, DELTA);
 
     float restoredDenom = tab->getLexDenom(s, found);
     CPPUNIT_ASSERT( found );  // Element should be found
-    CPPUNIT_ASSERT( denom == restoredDenom);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(denom, restoredDenom, DELTA);
 }
 
 //---------------------------------------
@@ -125,7 +125,7 @@ void _incrLexTableTest::testGetTransForTarget()
 
     found = tab->getTransForTarget(t1, transSet);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( transSet.size() == 2 );
+    CPPUNIT_ASSERT_EQUAL((size_t) 2, transSet.size());
     CPPUNIT_ASSERT( transSet == t1Set);
 
     // t2
@@ -134,6 +134,6 @@ void _incrLexTableTest::testGetTransForTarget()
 
     found = tab->getTransForTarget(t2, transSet);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( transSet.size() == 1 );
+    CPPUNIT_ASSERT_EQUAL((size_t) 1, transSet.size());
     CPPUNIT_ASSERT( transSet == t2Set);
 }
