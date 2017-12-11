@@ -690,7 +690,8 @@ $(casmacat_confid_h)
 
 ##########
 libthot_la_SOURCES= $(thot_sources)
-libthot_la_LIBADD= $(ZLIB) $(LGMP)
+libthot_la_LIBADD= $(KENLM_LDADD) $(LGMP) $(ZLIB) $(LDB_CXX)	\
+$(LEVELDB_LIB) $(CPPUNIT) $(LPTHREAD) -ldl
 
 ##########
 word_penalty_model_factory_la_SOURCES= $(word_penalty_model_factory_h)	\
