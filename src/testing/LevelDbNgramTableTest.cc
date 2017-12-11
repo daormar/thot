@@ -75,12 +75,12 @@ void LevelDbNgramTableTest::testAddTrgWithEmptySrc()
     tab->incrCountsOfEntryLog(s, t, lc);
     Count tc = tab->cSrc(t_vec);
 
-    CPPUNIT_ASSERT( (int) tc.get_c_s() == 5 );
+    CPPUNIT_ASSERT_EQUAL(5, (int) tc.get_c_s());
 
     tab->incrCountsOfEntryLog(s, t, lc);
     tc = tab->cSrc(t_vec);
 
-    CPPUNIT_ASSERT( (int) tc.get_c_s() == 10 );
+    CPPUNIT_ASSERT_EQUAL(10, (int) tc.get_c_s());
 }
 
 //---------------------------------------
@@ -118,8 +118,8 @@ void LevelDbNgramTableTest::testCTrg()
     Count tc2 = tab->cTrg(t2);
     
     // Validate results
-    CPPUNIT_ASSERT( (int) tc1.get_c_s() == 47 );
-    CPPUNIT_ASSERT( (int) tc2.get_c_s() == 24 );
+    CPPUNIT_ASSERT_EQUAL(47, (int) tc1.get_c_s());
+    CPPUNIT_ASSERT_EQUAL(24, (int) tc2.get_c_s());
 }
 
 
@@ -162,14 +162,14 @@ void LevelDbNgramTableTest::testLogCountRetrieving()
     LogCount stc2 = tab->lcSrcTrg(s2, t2);
     
     // Validate results
-    CPPUNIT_ASSERT( (int) sc1.get_c_s() == 47 );
-    CPPUNIT_ASSERT( (int) sc2.get_c_s() == 24 );
+    CPPUNIT_ASSERT_EQUAL(47, (int) sc1.get_c_s());
+    CPPUNIT_ASSERT_EQUAL(24, (int) sc2.get_c_s());
 
-    CPPUNIT_ASSERT( (int) tc1.get_c_s() == 47 );
-    CPPUNIT_ASSERT( (int) tc2.get_c_s() == 24 );
+    CPPUNIT_ASSERT_EQUAL(47, (int) tc1.get_c_s());
+    CPPUNIT_ASSERT_EQUAL(24, (int) tc2.get_c_s());
     
-    CPPUNIT_ASSERT( (int) stc1.get_c_st() == 46 );
-    CPPUNIT_ASSERT( (int) stc2.get_c_st() == 23 );
+    CPPUNIT_ASSERT_EQUAL(46, (int) stc1.get_c_st());
+    CPPUNIT_ASSERT_EQUAL(23, (int) stc2.get_c_st());
 }
 
 //---------------------------------------
@@ -191,8 +191,8 @@ void LevelDbNgramTableTest::testStoreFloatValues()
     Count s_count = tab->cSrc(s);
     Count st_count = tab->cSrcTrg(s, t);
 
-    CPPUNIT_ASSERT( s_count.get_c_s() == s_count_val );
-    CPPUNIT_ASSERT( st_count.get_c_st() == st_count_val );
+    CPPUNIT_ASSERT_EQUAL(s_count_val, s_count.get_c_s());
+    CPPUNIT_ASSERT_EQUAL(st_count_val, st_count.get_c_st());
 }
 
 //---------------------------------------
@@ -210,8 +210,8 @@ void LevelDbNgramTableTest::testStoreAndRestoreSrcInfo()
     Count s1_count = tab->getSrcInfo(s1, found);
     Count s2_count = tab->getSrcInfo(s2, found);
 
-    CPPUNIT_ASSERT( (int) s1_count.get_c_s() == 1 );
-    CPPUNIT_ASSERT( (int) s2_count.get_c_s() == 23 );
+    CPPUNIT_ASSERT_EQUAL(1, (int) s1_count.get_c_s());
+    CPPUNIT_ASSERT_EQUAL(23, (int) s2_count.get_c_s());
 }
 
 //---------------------------------------
@@ -243,8 +243,8 @@ void LevelDbNgramTableTest::testAddTableEntry()
     tab->clear();
     tab->addTableEntry(s, t, ppi);
 
-    CPPUNIT_ASSERT( (int) tab->cSrc(s).get_c_s() == 7 );
-    CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t).get_c_st() == 5 );
+    CPPUNIT_ASSERT_EQUAL(7, (int) tab->cSrc(s).get_c_s());
+    CPPUNIT_ASSERT_EQUAL(5, (int) tab->cSrcTrg(s, t).get_c_st());
 }
 
 //---------------------------------------
@@ -260,8 +260,8 @@ void LevelDbNgramTableTest::testIncrCountsOfEntryLog()
     tab->incrCountsOfEntryLog(s, t1, c_init);
     tab->incrCountsOfEntryLog(s, t2, c);
 
-    CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t1).get_c_st() == 3 );
-    CPPUNIT_ASSERT( (int) tab->cSrcTrg(s, t2).get_c_st() == 17 );
+    CPPUNIT_ASSERT_EQUAL(3, (int) tab->cSrcTrg(s, t1).get_c_st());
+    CPPUNIT_ASSERT_EQUAL(17, (int) tab->cSrcTrg(s, t2).get_c_st());
 }
 
 //---------------------------------------
@@ -290,17 +290,17 @@ void LevelDbNgramTableTest::testGetEntriesForTarget()
     // Looking for phrases with 1 as a target
     result = tab->getEntriesForTarget(t1_1, node);
     CPPUNIT_ASSERT( result );
-    CPPUNIT_ASSERT( node.size() == 2 );
+    CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
 
     // Looking for phrases with 5 as a target
     result = tab->getEntriesForTarget(t1_2, node);
     CPPUNIT_ASSERT( result );
-    CPPUNIT_ASSERT( node.size() == 1 );
+    CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
 
     // Looking for phrases with 2 as a target
     result = tab->getEntriesForTarget(t2, node);
     CPPUNIT_ASSERT( result );
-    CPPUNIT_ASSERT( node.size() == 1 );
+    CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
 
     // '9' key shoud not be found
     result = tab->getEntriesForTarget(9, node);
@@ -328,18 +328,18 @@ void LevelDbNgramTableTest::testRetrievingSubphrase()
     Count c = tab->getSrcTrgInfo(s2, t2, found);
 
     CPPUNIT_ASSERT( !found );
-    CPPUNIT_ASSERT( (int) c.get_c_s() == 0);
+    CPPUNIT_ASSERT_EQUAL(0,  (int) c.get_c_s());
 
     tab->incrCountsOfEntryLog(s2, t2, LogCount(log(3)));
     c = tab->getSrcTrgInfo(s2, t2, found);
 
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( (int) c.get_c_s() == 3);
+    CPPUNIT_ASSERT_EQUAL(3, (int) c.get_c_s());
 
     c = tab->getSrcInfo(s1, found);
 
     CPPUNIT_ASSERT( !found );
-    CPPUNIT_ASSERT( (int) c.get_c_s() == 0);
+    CPPUNIT_ASSERT_EQUAL(0, (int) c.get_c_s());
 }
 
 //---------------------------------------
@@ -380,15 +380,15 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
     // Narie phrases
     found = tab->getEntriesForSource(s1, node);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( node.size() == 2 );
+    CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
     // Krzywe phrases
     found = tab->getEntriesForSource(s2, node);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( node.size() == 1 );
+    CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
     // Jeziorak phrases
     found = tab->getEntriesForSource(s3, node);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( node.size() == 2 );
+    CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
 }
 
 //---------------------------------------
@@ -413,7 +413,7 @@ void LevelDbNgramTableTest::testRetrievingEntriesWithCountEqualZero()
     found = tab->getEntriesForTarget(t, node);
 
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( node.size() == 2 );
+    CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
 }
 
 //---------------------------------------
@@ -453,13 +453,13 @@ void LevelDbNgramTableTest::testGetNbestForSrc()
     // If there are more available elements, at the beginning
     // the most frequent targets should be returned
     iter = node.begin();
-    CPPUNIT_ASSERT( iter->second == t1 );
+    CPPUNIT_ASSERT_EQUAL(t1, iter->second);
     iter++;
-    CPPUNIT_ASSERT( iter->second == t3 );
+    CPPUNIT_ASSERT_EQUAL(t3, iter->second);
     iter++;
-    CPPUNIT_ASSERT( iter->second == t2 );
+    CPPUNIT_ASSERT_EQUAL(t2, iter->second);
     iter++;
-    CPPUNIT_ASSERT( iter->second == t4 );
+    CPPUNIT_ASSERT_EQUAL(t4, iter->second);
 }
 
 //---------------------------------------
@@ -500,11 +500,11 @@ void LevelDbNgramTableTest::testGetNbestForTrg()
     // in the structure or given threshold
     found = tab->getNbestForTrg(t1, node);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( node.size() == 4 );
+    CPPUNIT_ASSERT_EQUAL(4, (int) node.size());
 
     found = tab->getNbestForTrg(t1, node, 2);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT( node.size() == 2 );
+    CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
 
     // If there are more available elements, at the beginning
     // the most frequent targets should be returned
@@ -556,15 +556,15 @@ void LevelDbNgramTableTest::testIteratorsLoop()
     }
 
     // Check if element returned by iterator is correct
-    CPPUNIT_ASSERT(d.size() == 3);
-    CPPUNIT_ASSERT(d[s1].first.get_c_s() == 2);
-    CPPUNIT_ASSERT(d[s1].second.get_c_s() == 1);
-    CPPUNIT_ASSERT(d[tab->getSrcTrg(s1, t1)].first.get_c_st() == 2);
-    CPPUNIT_ASSERT(d[tab->getSrcTrg(s1, t1)].second.get_c_s() == 1);
-    CPPUNIT_ASSERT(d[tab->getSrcTrg(s2, t2)].first.get_c_st() == 1);
-    CPPUNIT_ASSERT(d[tab->getSrcTrg(s2, t2)].second.get_c_s() == 1);
+    CPPUNIT_ASSERT_EQUAL(3, (int) d.size());
+    CPPUNIT_ASSERT_EQUAL(2.0f, d[s1].first.get_c_s());
+    CPPUNIT_ASSERT_EQUAL(1.0f, d[s1].second.get_c_s());
+    CPPUNIT_ASSERT_EQUAL(2.0f, d[tab->getSrcTrg(s1, t1)].first.get_c_st());
+    CPPUNIT_ASSERT_EQUAL(1.0f, d[tab->getSrcTrg(s1, t1)].second.get_c_s());
+    CPPUNIT_ASSERT_EQUAL(1.0f, d[tab->getSrcTrg(s2, t2)].first.get_c_st());
+    CPPUNIT_ASSERT_EQUAL(1.0f, d[tab->getSrcTrg(s2, t2)].second.get_c_s());
 
-    CPPUNIT_ASSERT( i == 3 );
+    CPPUNIT_ASSERT_EQUAL(3, i);
 }
 
 //---------------------------------------
@@ -603,11 +603,11 @@ void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
     CPPUNIT_ASSERT( !found );
 
     // Check if element returned by iterator is correct
-    CPPUNIT_ASSERT(d.size() == 2);
-    CPPUNIT_ASSERT(d[s].first.get_c_s() == 2);
-    CPPUNIT_ASSERT(d[s].second == 1);
-    CPPUNIT_ASSERT(d[tab->getSrcTrg(s, t)].first.get_c_st() == 2);
-    CPPUNIT_ASSERT(d[tab->getSrcTrg(s, t)].second == 1);
+    CPPUNIT_ASSERT_EQUAL(2, (int) d.size());
+    CPPUNIT_ASSERT_EQUAL(2.0f, d[s].first.get_c_s());
+    CPPUNIT_ASSERT_EQUAL(1, d[s].second);
+    CPPUNIT_ASSERT_EQUAL(2.0f, d[tab->getSrcTrg(s, t)].first.get_c_st());
+    CPPUNIT_ASSERT_EQUAL(1, d[tab->getSrcTrg(s, t)].second);
 }
 
 //---------------------------------------
@@ -661,26 +661,26 @@ void LevelDbNgramTableTest::testSize()
     tab->incrCountsOfEntryLog(s1, t1, LogCount(log(1)));
     tab->incrCountsOfEntryLog(s1, t2, LogCount(log(2)));
 
-    CPPUNIT_ASSERT( tab->size() == 2 );
+    CPPUNIT_ASSERT_EQUAL(2, (int) tab->size());
 
     tab->clear();
-    CPPUNIT_ASSERT( tab->size() == 0 );  // Collection after cleaning should be empty
+    CPPUNIT_ASSERT_EQUAL(0, (int) tab->size());  // Collection after cleaning should be empty
 
     tab->incrCountsOfEntryLog(s2, t1, LogCount(log(1)));
     tab->incrCountsOfEntryLog(s2, t1, LogCount(log(2)));
     tab->incrCountsOfEntryLog(s2, t2, LogCount(log(1)));
     tab->incrCountsOfEntryLog(s3, t2, LogCount(log(2)));
 
-    CPPUNIT_ASSERT( tab->size() == 3 );
+    CPPUNIT_ASSERT_EQUAL(3, (int) tab->size());
 
     tab->incrCountsOfEntryLog(s3, t1, LogCount(log(5)));
     tab->incrCountsOfEntryLog(s4, t2, LogCount(log(7)));
 
-    CPPUNIT_ASSERT( tab->size() == 3 + 2 );
+    CPPUNIT_ASSERT_EQUAL(3 + 2, (int) tab->size());
 
     tab->addSrcInfo(s4, Count(17));
 
-    CPPUNIT_ASSERT( tab->size() == 3 + 2 );
+    CPPUNIT_ASSERT_EQUAL(3 + 2, (int) tab->size());
 }
 
 //---------------------------------------
@@ -709,7 +709,7 @@ void LevelDbNgramTableTest::testLoadingLevelDb()
     // Load structure
     result = tab->load(dbName.c_str());
     CPPUNIT_ASSERT( result == THOT_OK);
-    CPPUNIT_ASSERT( tab->size() == original_size );
+    CPPUNIT_ASSERT_EQUAL(original_size, (unsigned int) tab->size());
 }
 
 //---------------------------------------
@@ -762,22 +762,22 @@ void LevelDbNgramTableTest::testLoadedDataCorrectness()
     // Load structure
     result = tab->load(dbName.c_str());
     CPPUNIT_ASSERT( result == THOT_OK );
-    CPPUNIT_ASSERT( tab->size() == original_size );
+    CPPUNIT_ASSERT_EQUAL(original_size, (unsigned int) tab->size());
 
     // Check count values
-    CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_1).get_c_st() == 1 );
-    CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_2).get_c_st() == 2 );
-    CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_3).get_c_st() == 4 );
-    CPPUNIT_ASSERT( tab->cSrcTrg(s1, t1_4).get_c_st() == 8 );
+    CPPUNIT_ASSERT_EQUAL(1.0f, tab->cSrcTrg(s1, t1_1).get_c_st());
+    CPPUNIT_ASSERT_EQUAL(2.0f, tab->cSrcTrg(s1, t1_2).get_c_st());
+    CPPUNIT_ASSERT_EQUAL(4.0f, tab->cSrcTrg(s1, t1_3).get_c_st());
+    CPPUNIT_ASSERT_EQUAL(8.0f, tab->cSrcTrg(s1, t1_4).get_c_st());
 
-    CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_1).get_c_st() == 16 );
-    CPPUNIT_ASSERT( tab->cSrcTrg(s2, t2_2).get_c_st() == 32 );
+    CPPUNIT_ASSERT_EQUAL(16.0f, tab->cSrcTrg(s2, t2_1).get_c_st());
+    CPPUNIT_ASSERT_EQUAL(32.0f, tab->cSrcTrg(s2, t2_2).get_c_st());
 
-    CPPUNIT_ASSERT( tab->cSrcTrg(s3, t3_1).get_c_st() == 64 );
-    CPPUNIT_ASSERT( tab->cSrcTrg(s3, t3_2).get_c_st() == 128 );
+    CPPUNIT_ASSERT_EQUAL(64.0f, tab->cSrcTrg(s3, t3_1).get_c_st());
+    CPPUNIT_ASSERT_EQUAL(128.0f, tab->cSrcTrg(s3, t3_2).get_c_st());
 
     tab->clear();  // Remove data
-    CPPUNIT_ASSERT( tab->size() == 0 );
+    CPPUNIT_ASSERT_EQUAL(0, (int) tab->size());
 }
 
 //---------------------------------------
@@ -817,8 +817,8 @@ void LevelDbNgramTableTest::testLoadedDataNullCount()
     // Load structure
     result = tab->load(dbName.c_str());
     CPPUNIT_ASSERT( result == THOT_OK );
-    CPPUNIT_ASSERT( tab->size() == original_size );
+    CPPUNIT_ASSERT_EQUAL(original_size, (unsigned int) tab->size());
 
     // Check count values
-    CPPUNIT_ASSERT( tab->cSrc(s3).get_c_st() == 16 );
+    CPPUNIT_ASSERT_EQUAL(16.0f, tab->cSrc(s3).get_c_st());
 }
