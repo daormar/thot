@@ -57,8 +57,8 @@ void _phraseTableTest::testStoreAndRestore()
   Count s1_count = tab->getSrcInfo(s1, found);
   Count s2_count = tab->getSrcInfo(s2, found);
 
-  CPPUNIT_ASSERT_EQUAL(5, (int) s1_count.get_c_s());
-  CPPUNIT_ASSERT_EQUAL(2, (int) s2_count.get_c_s());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(5, s1_count.get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, s2_count.get_c_s(), DELTA);
 }
 
 //---------------------------------------
@@ -73,9 +73,9 @@ void _phraseTableTest::testAddTableEntry()
   tab->clear();
   tab->addTableEntry(s, t, ppi);
 
-  CPPUNIT_ASSERT_EQUAL(3, (int) tab->cSrc(s).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(2, (int) tab->cTrg(t).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(2, (int) tab->cSrcTrg(s, t).get_c_st());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(3, tab->cSrc(s).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cTrg(t).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cSrcTrg(s, t).get_c_st(), DELTA);
 }
 
 //---------------------------------------
@@ -90,9 +90,9 @@ void _phraseTableTest::testIncCountsOfEntry()
   tab->addSrcInfo(s, c_init);
   tab->incrCountsOfEntry(s, t, c);
 
-  CPPUNIT_ASSERT_EQUAL(20, (int) tab->cSrc(s).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(17, (int) tab->cTrg(t).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(17, (int) tab->cSrcTrg(s, t).get_c_st());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(20, tab->cSrc(s).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(17, tab->cTrg(t).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(17, tab->cSrcTrg(s, t).get_c_st(), DELTA);
 }
 
 //---------------------------------------
@@ -117,25 +117,25 @@ void _phraseTableTest::testGetEntriesForTarget()
   // Looking for phrases for which 'rzeka Pasleka' is translation
   result = tab->getEntriesForTarget(t1_1, node);
   CPPUNIT_ASSERT( result );
-  CPPUNIT_ASSERT( node.size() == 2 );
-  CPPUNIT_ASSERT( node[s1_1].first.get_c_s() == 2 );
-  CPPUNIT_ASSERT( node[s1_1].second.get_c_st() == 1 );
-  CPPUNIT_ASSERT( node[s1_2].first.get_c_s() == 1 );
-  CPPUNIT_ASSERT( node[s1_2].second.get_c_st() == 1 );
+  CPPUNIT_ASSERT_EQUAL((size_t) 2, node.size());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, node[s1_1].first.get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_1].second.get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_2].first.get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_2].second.get_c_st(), DELTA);
 
   // Looking for phrases for which 'Pasleka' is translation
   result = tab->getEntriesForTarget(t1_2, node);
   CPPUNIT_ASSERT( result );
-  CPPUNIT_ASSERT( node.size() == 1 );
-  CPPUNIT_ASSERT( node[s1_1].first.get_c_s() == 2);
-  CPPUNIT_ASSERT( node[s1_1].second.get_c_st() == 1 );
+  CPPUNIT_ASSERT_EQUAL((size_t) 1, node.size());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, node[s1_1].first.get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_1].second.get_c_st(), DELTA);
 
   // Looking for phrases for which 'rzeka' is translation
   result = tab->getEntriesForTarget(t2, node);
   CPPUNIT_ASSERT( result );
-  CPPUNIT_ASSERT( node.size() == 1 );
-  CPPUNIT_ASSERT( node[s2].first.get_c_s() == 1);
-  CPPUNIT_ASSERT( node[s2].second.get_c_st() == 1 );
+  CPPUNIT_ASSERT_EQUAL((size_t) 1, node.size());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].first.get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].second.get_c_st(), DELTA);
 
   // 'xyz'' key shoud not be found
   result = tab->getEntriesForTarget(getVector("xyz"), node);
@@ -161,7 +161,7 @@ void _phraseTableTest::testRetrievingSubphrase()
   c = tab->getSrcTrgInfo(s, t2, found);
 
   CPPUNIT_ASSERT( !found );
-  CPPUNIT_ASSERT_EQUAL(0, (int) c.get_c_s());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0, c.get_c_s(), DELTA);
 }
 
 //---------------------------------------
@@ -188,17 +188,17 @@ void _phraseTableTest::testRetrieveNonLeafPhrase()
   c = tab->getSrcTrgInfo(s, t1, found);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_EQUAL(1, (int) c.get_c_s());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, c.get_c_s(), DELTA);
   // Phrase pair 2
   c = tab->getSrcTrgInfo(s, t2, found);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_EQUAL(1, (int) c.get_c_s());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, c.get_c_s(), DELTA);
 
   // Looking for phrases for which 'Buenos' is translation
   found = tab->getEntriesForTarget(t2, node);
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node.size(), DELTA);
 }
 
 //---------------------------------------
@@ -235,15 +235,15 @@ void _phraseTableTest::testGetEntriesForSource()
   // Narie phrases
   found = tab->getEntriesForSource(s1, node);
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
+  CPPUNIT_ASSERT_EQUAL((size_t) 2, node.size());
   // Skiertag phrases
   found = tab->getEntriesForSource(s2, node);
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
+  CPPUNIT_ASSERT_EQUAL((size_t) 1, node.size());
   // Jeziorak phrases
   found = tab->getEntriesForSource(s3, node);
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
+  CPPUNIT_ASSERT_EQUAL((size_t) 2, node.size());
 }
 
 //---------------------------------------
@@ -266,7 +266,7 @@ void _phraseTableTest::testRetrievingEntriesWithCountEqualZero()
   found = tab->getEntriesForTarget(t, node);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
+  CPPUNIT_ASSERT_EQUAL((size_t) 1, node.size());
 }
 
 //---------------------------------------
@@ -297,14 +297,14 @@ void _phraseTableTest::testGetNbestForTrg()
   found = tab->getNbestForTrg(t, node, 10);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_EQUAL(3, (int) node.size());
+  CPPUNIT_ASSERT_EQUAL((unsigned int) 3, node.size());
 
   // If there are more available elements, only elements
   // with the highest score should be returned
   found = tab->getNbestForTrg(t, node, 2);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_EQUAL(2, (int) node.size());
+  CPPUNIT_ASSERT_EQUAL((unsigned int) 2, node.size());
 
   iter = node.begin();
   CPPUNIT_ASSERT( iter->second == s1 );
@@ -333,7 +333,7 @@ void _phraseTableTest::testAddSrcTrgInfo()
   Count src_trg_count = tab->cSrcTrg(s, t);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_EQUAL(1, (int) src_trg_count.get_c_s());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), DELTA);
 }
 
 //---------------------------------------
@@ -355,10 +355,10 @@ void _phraseTableTest::testPSrcGivenTrg()
   tab->incrCountsOfEntry(s2, t2, Count(2));
 
   // Check probabilities
-  CPPUNIT_ASSERT_EQUAL(0.3f, (float) tab->pSrcGivenTrg(s1, t1));
-  CPPUNIT_ASSERT_EQUAL(0.7f, (float) tab->pSrcGivenTrg(s2, t1));
-  CPPUNIT_ASSERT_EQUAL(1.f / 3.f, (float) tab->pSrcGivenTrg(s1, t2));
-  CPPUNIT_ASSERT_EQUAL(2.f / 3.f, (float) tab->pSrcGivenTrg(s2, t2));
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.3, tab->pSrcGivenTrg(s1, t1), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.7, tab->pSrcGivenTrg(s2, t1), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1. / 3., tab->pSrcGivenTrg(s1, t2), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2. / 3., tab->pSrcGivenTrg(s2, t2), DELTA);
 }
 
 //---------------------------------------
@@ -381,10 +381,10 @@ void _phraseTableTest::testPTrgGivenSrc()
   tab->incrCountsOfEntry(s2, t2, Count(13));
 
   // Check probabilities
-  CPPUNIT_ASSERT_EQUAL(10.f / 22.f, (float) tab->pTrgGivenSrc(s1, t1));
-  CPPUNIT_ASSERT_EQUAL(12.f / 22.f, (float) tab->pTrgGivenSrc(s1, t2));
-  CPPUNIT_ASSERT_EQUAL(11.f / 24.f, (float) tab->pTrgGivenSrc(s2, t1));
-  CPPUNIT_ASSERT_EQUAL(13.f / 24.f, (float) tab->pTrgGivenSrc(s2, t2));
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(10. / 22., tab->pTrgGivenSrc(s1, t1), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(12. / 22., tab->pTrgGivenSrc(s1, t2), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(11. / 24., tab->pTrgGivenSrc(s2, t1), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(13. / 24., tab->pTrgGivenSrc(s2, t2), DELTA);
 }
 //---------------------------------------
 void _phraseTableTest::testAddingSameSrcAndTrg()
@@ -403,10 +403,10 @@ void _phraseTableTest::testAddingSameSrcAndTrg()
   tab->incrCountsOfEntry(v2, v2, Count(8));
 
   // Check probabilities
-  CPPUNIT_ASSERT_EQUAL(1 + 2, (int) tab->cSrc(v1).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(1 + 4, (int) tab->cTrg(v1).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(4 + 8, (int) tab->cSrc(v2).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(2 + 8, (int) tab->cTrg(v2).get_c_s());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 2, tab->cSrc(v1).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 4, tab->cTrg(v1).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4 + 8, tab->cSrc(v2).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2 + 8, tab->cTrg(v2).get_c_s(), DELTA);
 }
 
 //---------------------------------------
@@ -416,23 +416,23 @@ void _phraseTableTest::testSize()
      Check if number of elements in the phrase table is returned correctly
   */
   tab->clear();
-  CPPUNIT_ASSERT_EQUAL(0, (int) tab->size());  // Collection after cleaning should be empty
+  CPPUNIT_ASSERT_EQUAL((size_t) 0, tab->size());  // Collection after cleaning should be empty
 
   // Fill phrase table with data
   tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping Kretowiny"), Count(1));
   tab->incrCountsOfEntry(getVector("kemping w Kretowinach"), getVector("camping in Kretowiny"), Count(2));
 
-  CPPUNIT_ASSERT_EQUAL(5, (int) tab->size());
+  CPPUNIT_ASSERT_EQUAL((size_t) 5, tab->size());
 
   tab->clear();
-  CPPUNIT_ASSERT_EQUAL(0, (int) tab->size());  // Collection after cleaning should be empty
+  CPPUNIT_ASSERT_EQUAL((size_t) 0, tab->size());  // Collection after cleaning should be empty
 
   tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Car"), Count(1));
   tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Pan Samochodzik"), Count(4));
   tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mister Automobile"), Count(20));
   tab->incrCountsOfEntry(getVector("Pan Samochodzik"), getVector("Mr Automobile"), Count(24));
 
-  CPPUNIT_ASSERT_EQUAL(9, (int) tab->size());
+  CPPUNIT_ASSERT_EQUAL((size_t) 9, tab->size());
 
   tab->incrCountsOfEntry(getVector("Pierwsza przygoda Pana Samochodzika"),
                          getVector("First Adventure of Mister Automobile"), Count(5));
@@ -440,7 +440,7 @@ void _phraseTableTest::testSize()
                          getVector("First Adventure of Pan Samochodzik"), Count(7));
 
 
-  CPPUNIT_ASSERT_EQUAL(9 + 5, (int) tab->size());
+  CPPUNIT_ASSERT_EQUAL((size_t) (9 + 5), tab->size());
 
 }
 
@@ -473,22 +473,22 @@ void _phraseTableTest::testSubkeys()
   tab->incrCountsOfEntry(s2, t2_2, Count(16));
 
 
-  CPPUNIT_ASSERT_EQUAL(11, (int) tab->size());
+  CPPUNIT_ASSERT_EQUAL((size_t) 11, tab->size());
 
   // Check count values
-  CPPUNIT_ASSERT_EQUAL(1 + 2 + 4, (int) tab->cSrc(s1).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(1, (int) tab->cTrg(t1_1).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(2, (int) tab->cTrg(t1_2).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(4 + 16, (int) tab->cTrg(t1_3).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(1, (int) tab->cSrcTrg(s1, t1_1).get_c_st());
-  CPPUNIT_ASSERT_EQUAL(2, (int) tab->cSrcTrg(s1, t1_2).get_c_st());
-  CPPUNIT_ASSERT_EQUAL(4, (int) tab->cSrcTrg(s1, t1_3).get_c_st());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 2 + 4, tab->cSrc(s1).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cTrg(t1_1).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cTrg(t1_2).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4 + 16, tab->cTrg(t1_3).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s1, t1_1).get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cSrcTrg(s1, t1_2).get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4, tab->cSrcTrg(s1, t1_3).get_c_st(), DELTA);
 
-  CPPUNIT_ASSERT_EQUAL(8 + 16, (int) tab->cSrc(s2).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(8, (int) tab->cTrg(t2_1).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(4 + 16, (int) tab->cTrg(t2_2).get_c_s());
-  CPPUNIT_ASSERT_EQUAL(8, (int) tab->cSrcTrg(s2, t2_1).get_c_st());
-  CPPUNIT_ASSERT_EQUAL(16, (int) tab->cSrcTrg(s2, t2_2).get_c_st());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8 + 16, tab->cSrc(s2).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cTrg(t2_1).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4 + 16, tab->cTrg(t2_2).get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cSrcTrg(s2, t2_1).get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(16, tab->cSrcTrg(s2, t2_2).get_c_st(), DELTA);
 }
 
 //---------------------------------------
@@ -506,8 +506,8 @@ void _phraseTableTest::test32bitRange()
 
   // Insert data to phrase table and check their correctness
   tab->incrCountsOfEntry(minVector, maxVector, Count(20));
-  CPPUNIT_ASSERT_EQUAL(3, (int) tab->size());
-  CPPUNIT_ASSERT_EQUAL(20, (int) tab->cSrcTrg(minVector, maxVector).get_c_st());
+  CPPUNIT_ASSERT_EQUAL((size_t) 3, tab->size());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(20, tab->cSrcTrg(minVector, maxVector).get_c_st(), DELTA);
 }
 
 //---------------------------------------
@@ -525,8 +525,8 @@ void _phraseTableTest::testByteMax()
 
   // Insert data and check their correctness
   tab->incrCountsOfEntry(s, t, Count(1));
-  CPPUNIT_ASSERT_EQUAL(3, (int) tab->size());
-  CPPUNIT_ASSERT_EQUAL(1, (int) tab->cSrcTrg(s, t).get_c_st());
+  CPPUNIT_ASSERT_EQUAL((size_t) 3, tab->size());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s, t).get_c_st(), DELTA);
 }
 
 //---------------------------------------
@@ -555,15 +555,15 @@ void _phraseTableTest::testByteMin()
   // Insert data and check their correctness
   tab->incrCountsOfEntry(s1, t1, Count(1));
   tab->incrCountsOfEntry(s2, t2, Count(1));
-  CPPUNIT_ASSERT_EQUAL(6, (int) tab->size());
-  CPPUNIT_ASSERT_EQUAL(1, (int) tab->cSrcTrg(s2, t2).get_c_st());
+  CPPUNIT_ASSERT_EQUAL((size_t) 6, tab->size());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s2, t2).get_c_st(), DELTA);
 
   bool found;
   BasePhraseTable::SrcTableNode node;
   found = tab->getEntriesForTarget(t2, node);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_EQUAL(1, (int) node.size());
-  CPPUNIT_ASSERT_EQUAL(1, (int) node[s2].first.get_c_s());
-  CPPUNIT_ASSERT_EQUAL(1, (int) node[s2].second.get_c_s());
+  CPPUNIT_ASSERT_EQUAL((size_t) 1, node.size());
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].first.get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].second.get_c_s(), DELTA);
 }
