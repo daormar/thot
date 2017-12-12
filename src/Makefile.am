@@ -380,6 +380,8 @@ casmacat_engines_h=
 casmacat_engines_defs=
 endif
 
+picojson_h=picojson/picojson.h
+
 exper_h=
 exper_defs=
 
@@ -417,8 +419,8 @@ $(phrase_models_h) $(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs)	\
 $(hattrie_pm_h) $(hattrie_pm_defs) $(leveldb_pm_h) $(leveldb_pm_defs)	\
 $(leveldb_sw_h) $(leveldb_sw_defs) $(smt_preproc_h) $(smt_preproc_defs)	\
 $(error_correction_h) $(error_correction_defs) $(downhill_simplex_h)	\
-$(downhill_simplex_defs) $(stack_dec_h) $(stack_dec_defs) $(exper_h)	\
-$(exper_defs)
+$(downhill_simplex_defs) $(stack_dec_h) $(stack_dec_defs) $(picojson_h)	\
+$(exper_h) $(exper_defs)
 
 # Class factories
 
@@ -687,9 +689,9 @@ includedir= $(prefix)/include/$(PACKAGE)
 include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
 $(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h)		\
 $(hattrie_pm_h) $(leveldb_lm_h) $(leveldb_pm_h) $(smt_preproc_h)	\
-$(error_correction_h) $(downhill_simplex_h) $(stack_dec_h) $(exper_h)	\
-$(exper_defs) $(casmacat_engines_h) $(casmacat_aligner_h)		\
-$(casmacat_confid_h)
+$(error_correction_h) $(downhill_simplex_h) $(stack_dec_h)		\
+$(picojson_h) $(exper_h) $(exper_defs) $(casmacat_engines_h)		\
+$(casmacat_aligner_h) $(casmacat_confid_h)
 
 # libraries
 
