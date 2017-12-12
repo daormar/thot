@@ -65,7 +65,10 @@ class BasePhraseModel
         // Declarations related to dynamic class loading
     typedef BasePhraseModel* create_t(const char*);
     typedef const char* type_id_t(void);
-    
+
+        // Thread/Process safety related functions
+    virtual bool modelReadsAreProcessSafe(void);
+
         // Functions to access model probabilities
 
     virtual Prob pk_tlen(unsigned int tlen,unsigned int k)=0;

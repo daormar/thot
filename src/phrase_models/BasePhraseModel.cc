@@ -32,6 +32,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Function definitions
 
 
+//---------------
+bool BasePhraseModel::modelReadsAreProcessSafe(void)
+{
+      // By default it will be assumed that model reads are thread safe,
+      // those unsafe classes will override this method returning false
+      // instead
+  return true;
+}
+
 //-------------------------
 Prob BasePhraseModel::strPt_s_(const std::vector<std::string>& s,
                                const std::vector<std::string>& t)
