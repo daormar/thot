@@ -413,7 +413,7 @@ bool HatTriePhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
         std::vector<WordIndex> s(vec.begin() + t.size() + 1, vec.end());
 
         PhrasePairInfo ppi = infSrcTrg(s, t, found);
-        if (!found || (int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
+        if (!found || abs(ppi.first.get_c_s()) < 1e-5 || abs(ppi.second.get_c_s()) < 1e-5)
             continue;
 
         srctn.insert(std::pair<std::vector<WordIndex>, PhrasePairInfo>(s, ppi));

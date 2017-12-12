@@ -285,15 +285,15 @@ void LevelDbPhraseTable::addTableEntry(const std::vector<WordIndex>& s,
                                        PhrasePairInfo inf)
 {
     addSrcInfo(s, inf.first.get_c_s());  // (USUSED_WORD, s)
-    storeData(t, (int) inf.second.get_c_s());  // (t)
-    addSrcTrgInfo(s, t, (int) inf.second.get_c_st()); // (t, UNUSED_WORD, s)
+    storeData(t, (int) round(inf.second.get_c_s()));  // (t)
+    addSrcTrgInfo(s, t, (int) round(inf.second.get_c_st())); // (t, UNUSED_WORD, s)
 }
 
 //-------------------------
 void LevelDbPhraseTable::addSrcInfo(const std::vector<WordIndex>& s,
                                     Count s_inf)
 {
-    storeData(getSrc(s), (int) s_inf.get_c_s());
+    storeData(getSrc(s), (int) round(s_inf.get_c_s()));
 }
 
 //-------------------------
@@ -301,7 +301,7 @@ void LevelDbPhraseTable::addSrcTrgInfo(const std::vector<WordIndex>& s,
                                        const std::vector<WordIndex>& t,
                                        Count st_inf)
 {
-    storeData(getTrgSrc(s, t), (int) st_inf.get_c_st());  // (t, UNUSED_WORD, s)
+    storeData(getTrgSrc(s, t), (int) round(st_inf.get_c_st()));  // (t, UNUSED_WORD, s)
 }
 
 //-------------------------
@@ -316,7 +316,7 @@ void LevelDbPhraseTable::incrCountsOfEntry(const std::vector<WordIndex>& s,
 
     // Update counts
     addSrcInfo(s, s_count + c);  // (USUSED_WORD, s)
-    storeData(t, (int) (t_count + c).get_c_s());  // (t)
+    storeData(t, (int) round((t_count + c).get_c_s()));  // (t)
     addSrcTrgInfo(s, t, (src_trg_count + c).get_c_st());
 }
 
@@ -453,7 +453,7 @@ bool LevelDbPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
         std::vector<WordIndex> src(vec.begin() + start_vec.size(), vec.end());
 
         PhrasePairInfo ppi = infSrcTrg(src, t, found);
-        if (!found || (int) ppi.first.get_c_s() == 0 || (int) ppi.second.get_c_s() == 0)
+        if (!found || abs(ppi.first.get_c_s()) < 1e-5 || abs(ppi.second.get_c_s()) < 1e-5)
             continue;
 
         srctn.insert(std::pair<std::vector<WordIndex>, PhrasePairInfo>(src, ppi));
