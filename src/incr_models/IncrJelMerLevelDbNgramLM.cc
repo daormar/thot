@@ -39,6 +39,15 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Classes --------------------------------------------
 
 //------------------------------
+bool IncrJelMerLevelDbNgramLM::modelReadsAreProcessSafe(void)
+{
+      // Reads are not process safe in LevelDB based models since the
+      // first process opening LevelDB database locks it (LevelDB reads
+      // are thread-safe but not process-safe)
+  return false;
+}
+
+//------------------------------
 bool IncrJelMerLevelDbNgramLM::load(const char *fileName)
 {
   std::cerr << "Loading LevelDB language model (input: " << fileName << ")" << std::endl;

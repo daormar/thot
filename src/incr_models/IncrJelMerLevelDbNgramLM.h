@@ -79,6 +79,9 @@ class IncrJelMerLevelDbNgramLM: public _incrJelMerNgramLM<Count,Count>
             tablePtr = new LevelDbNgramTable();
         }
 
+            // Thread/Process safety related functions
+        bool modelReadsAreProcessSafe(void);
+
             // Functions to load and print the model (including model weights)
         bool load(const char *fileName);
         bool print(const char *fileName);
