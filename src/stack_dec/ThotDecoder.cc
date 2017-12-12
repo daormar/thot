@@ -1622,6 +1622,10 @@ int ThotDecoder::testTmModule(std::string soFileName,
   }
   else
   {
+    if(!tmPtr->modelReadsAreProcessSafe())
+    {
+      std::cerr<<"Warning: model reads are not process-safe for this module"<<std::endl;
+    }
     delete tmPtr;
     return THOT_OK;
   }  
@@ -1629,7 +1633,7 @@ int ThotDecoder::testTmModule(std::string soFileName,
 
 //--------------------------
 int ThotDecoder::testModulesInLmDesc(const char* lmDescFileName,
-                                      int verbose/*=0*/)
+                                     int verbose/*=0*/)
 {
       // Obtain info about language model entries
   std::vector<ModelDescriptorEntry> modelDescEntryVec;
@@ -1682,6 +1686,10 @@ int ThotDecoder::testLmModule(std::string soFileName,
   }
   else
   {
+    if(!lmPtr->modelReadsAreProcessSafe())
+    {
+      std::cerr<<"Warning: model reads are not process-safe for this module"<<std::endl;
+    }
     delete lmPtr;
     return THOT_OK;
   }  
