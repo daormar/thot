@@ -45,6 +45,22 @@ ThotDecoder::ThotDecoder()
     init_translator_feat_impl();
   else
     init_translator_legacy_impl();
+
+      // Execute checkings for software modules
+  testSoftwareModulesInMasterIni();
+}
+
+//--------------------------
+void ThotDecoder::testSoftwareModulesInMasterIni(void)
+{
+  std::cerr<<"Checking software modules in master.ini..."<<std::endl;
+
+      // Test module for single word models
+  int ret=testSwModelModule(tdCommonVars.dynClassFactoryHandler.baseSwAligModelSoFileName);
+  if(ret==THOT_ERROR)
+    exit(THOT_ERROR);
+  
+  std::cerr<<"Checking completed"<<std::endl;
 }
 
 //--------------------------
@@ -1015,8 +1031,8 @@ int ThotDecoder::initUserPars(int user_id,
 }
 
 //--------------------------
-int ThotDecoder::testSoftwareModulesForModels(std::string cfgFile,
-                                              int verbose)
+int ThotDecoder::testSoftwareModulesInModelDescriptors(std::string cfgFile,
+                                                       int verbose)
 {
   int ret;
   int argc;
@@ -1076,7 +1092,7 @@ int ThotDecoder::testSoftwareModulesForModels(std::string cfgFile,
     ++i;
   }
   
-  // Test software modules
+  // Test software modules incorporated in model descriptors
 
   std::cerr<<"** Testing software modules provided in language model descriptor"<<std::endl;
   if(tdCommonVars.featureBasedImplEnabled)
@@ -1102,11 +1118,7 @@ int ThotDecoder::testSoftwareModulesForModels(std::string cfgFile,
       std::cerr<<"Warning: -tm parameter is not a model descriptor so it could not be tested"<<std::endl;
   }
 
-  std::cerr<<"** Testing software module implementing single word models ("<<tdCommonVars.dynClassFactoryHandler.baseSwAligModelSoFileName<<")"<<std::endl;
-  ret=testSwModelModule();
-  if(ret==THOT_ERROR) return THOT_ERROR;
-  
-  return THOT_OK;  
+  return THOT_OK;
 }
 
 //--------------------------
@@ -1628,7 +1640,7 @@ int ThotDecoder::testTmModule(std::string soFileName,
   {
     if(!tmPtr->modelReadsAreProcessSafe())
     {
-      std::cerr<<"Warning: model reads are not process-safe for this module"<<std::endl;
+      std::cerr<<"Warning: model reads are not process-safe for module "<<soFileName<<std::endl;
     }
     delete tmPtr;
     return THOT_OK;
@@ -1692,7 +1704,7 @@ int ThotDecoder::testLmModule(std::string soFileName,
   {
     if(!lmPtr->modelReadsAreProcessSafe())
     {
-      std::cerr<<"Warning: model reads are not process-safe for this module"<<std::endl;
+      std::cerr<<"Warning: model reads are not process-safe for module "<<soFileName<<std::endl;
     }
     delete lmPtr;
     return THOT_OK;
@@ -1700,9 +1712,21 @@ int ThotDecoder::testLmModule(std::string soFileName,
 }
 
 //--------------------------
-int ThotDecoder::testSwModelModule(int /*verbose=0*/)
+int ThotDecoder::testSwModelModule(std::string soFileName,
+                                   int /*verbose=0*/)
 {
-  BaseSwAligModel<PpInfo>* swmPtr=tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj("");
+      // Declare dynamic class loader instance
+  SimpleDynClassLoader<BaseSwAligModel<PpInfo> > simpleDynClassLoader;
+  
+      // Open module
+  bool verbosity=false;
+  if(!simpleDynClassLoader.open_module(soFileName,verbosity))
+  {
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
+    return THOT_ERROR;
+  }
+
+  BaseSwAligModel<PpInfo>* swmPtr=simpleDynClassLoader.make_obj("");
   if(swmPtr==NULL)
   {
     std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;    
@@ -1712,10 +1736,9 @@ int ThotDecoder::testSwModelModule(int /*verbose=0*/)
   {
     if(!swmPtr->modelReadsAreProcessSafe())
     {
-      std::cerr<<"Warning: model reads are not process-safe for this module"<<std::endl;
+      std::cerr<<"Warning: model reads are not process-safe for module "<<soFileName<<std::endl;
     }
     delete swmPtr;
-    std::cerr<<"Module implementing single word models is correct"<<std::endl;
     return THOT_OK;
   }
 }

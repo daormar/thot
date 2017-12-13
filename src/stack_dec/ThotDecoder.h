@@ -108,8 +108,8 @@ class ThotDecoder
                    int verbose);
 
       // Functions to test decoder configuration
-  int testSoftwareModulesForModels(std::string cfgFile,
-                                   int verbose);
+  int testSoftwareModulesInModelDescriptors(std::string cfgFile,
+                                            int verbose);
   
       // Functions to train models
   int onlineTrainSentPair(int user_id,
@@ -220,7 +220,8 @@ class ThotDecoder
   bool load_ecm(const char* ecmFilesPrefix,
                 int verbose=0);
 
-      // Functions to test model descriptors
+      // Functions to test software modules
+  void testSoftwareModulesInMasterIni(void);
   int testModulesInTmDesc(const char* tmDescFileName,
                            int verbose=0);
   int testTmModule(std::string soFileName,
@@ -229,7 +230,8 @@ class ThotDecoder
                           int verbose=0);
   int testLmModule(std::string soFileName,
                    int verbose=0);
-  int testSwModelModule(int verbose=0);
+  int testSwModelModule(std::string soFileName,
+                        int verbose=0);
     
       // Functions to print models
   int printModelsLegacyImpl(int verbose=0);
