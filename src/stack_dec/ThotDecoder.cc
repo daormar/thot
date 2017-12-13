@@ -1102,6 +1102,10 @@ int ThotDecoder::testSoftwareModulesForModels(std::string cfgFile,
       std::cerr<<"Warning: -tm parameter is not a model descriptor so it could not be tested"<<std::endl;
   }
 
+  std::cerr<<"** Testing software module implementing single word models ("<<tdCommonVars.dynClassFactoryHandler.baseSwAligModelSoFileName<<")"<<std::endl;
+  ret=testSwModelModule();
+  if(ret==THOT_ERROR) return THOT_ERROR;
+  
   return THOT_OK;  
 }
 
@@ -1693,6 +1697,27 @@ int ThotDecoder::testLmModule(std::string soFileName,
     delete lmPtr;
     return THOT_OK;
   }  
+}
+
+//--------------------------
+int ThotDecoder::testSwModelModule(int /*verbose=0*/)
+{
+  BaseSwAligModel<PpInfo>* swmPtr=tdCommonVars.dynClassFactoryHandler.baseSwAligModelDynClassLoader.make_obj("");
+  if(swmPtr==NULL)
+  {
+    std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;    
+    return THOT_ERROR;
+  }
+  else
+  {
+    if(!swmPtr->modelReadsAreProcessSafe())
+    {
+      std::cerr<<"Warning: model reads are not process-safe for this module"<<std::endl;
+    }
+    delete swmPtr;
+    std::cerr<<"Module implementing single word models is correct"<<std::endl;
+    return THOT_OK;
+  }
 }
 
 //--------------------------

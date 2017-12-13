@@ -80,9 +80,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                                            // a word using the word
                                            // predictor
 
-#define THOTDEC_NON_VERBOSE_MODE              0
-#define THOTDEC_NORMAL_VERBOSE_MODE           1
-#define THOTDEC_DEBUG_VERBOSE_MODE            2
+#define THOTDEC_NON_VERBOSE_MODE      0
+#define THOTDEC_NORMAL_VERBOSE_MODE   1
+#define THOTDEC_DEBUG_VERBOSE_MODE    2
 
 //--------------- Classes --------------------------------------------
 
@@ -229,7 +229,8 @@ class ThotDecoder
                           int verbose=0);
   int testLmModule(std::string soFileName,
                    int verbose=0);
-  
+  int testSwModelModule(int verbose=0);
+    
       // Functions to print models
   int printModelsLegacyImpl(int verbose=0);
   int printModelsFeatImpl(int verbose=0);
