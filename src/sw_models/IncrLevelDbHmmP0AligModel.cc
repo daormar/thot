@@ -40,6 +40,15 @@ IncrLevelDbHmmP0AligModel::IncrLevelDbHmmP0AligModel() : _incrHmmP0AligModel()
 }
 
 //-------------------------
+bool IncrLevelDbHmmP0AligModel::modelReadsAreProcessSafe(void)
+{
+      // Reads are not process safe in LevelDB based models since the
+      // first process opening LevelDB database locks it (LevelDB reads
+      // are thread-safe but not process-safe)
+  return false;
+}
+
+//-------------------------
 bool IncrLevelDbHmmP0AligModel::init(const char* prefFileName)
 {
   return ((IncrLexLevelDbTable *) incrLexTable)->init(prefFileName);
