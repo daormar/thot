@@ -58,6 +58,10 @@ int TakeParameters(int argc,char *argv[]);
 void printUsage(void);
 int init_swm(void);
 void release_swm(void);
+int process_parameters(void);
+LgProb calcLgProbGivenAlig(std::string srcSent,
+                           std::string trgSent,
+                           int verbosity);
 int processPairAligFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
                         const char *pairPlusAligFile);
 int processSentPairFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
@@ -71,11 +75,10 @@ void version(void);
 
 SimpleDynClassLoader<BaseSwAligModel<std::vector<Prob> > > baseSwAligModelDynClassLoader;
 BaseSwAligModel<std::vector<Prob> >* swAligModelPtr;
-
-char swFilePrefix[512];
-char outputFilesPrefix[512];
-char pairPlusAligFile[512];
-char sentPairFile[512];
+std::string swFilePrefix;
+std::string outputFilesPrefix;
+std::string pairPlusAligFile;
+std::string sentPairFile;
 std::string srcSent;
 std::string trgSent;
 std::string alig;
@@ -89,94 +92,114 @@ int verbosity;
 //---------------
 int main(int argc,char *argv[])
 {
- LgProb lp;
- bool ret;
- 
  if(TakeParameters(argc,argv)==THOT_OK)
  {
        // Create model instance
   if(init_swm()==THOT_ERROR)
     return THOT_ERROR;
 
+  int ret=process_parameters();
+
+      // Release model instance
+  release_swm();
+
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
+ }
+ 
+ return THOT_OK;
+}
+
+//---------------
+int process_parameters(void)
+{
   if(pairPlusAligFile[0]==0 && sentPairFile[0]==0)
   {         
-   std::cerr<<"s: "<<srcSent <<std::endl;
-   std::cerr<<"t: "<<trgSent <<std::endl;   
-   ret=swAligModelPtr->load(swFilePrefix);
-   if(ret==THOT_ERROR)
-   {
-     release_swm();
-     return THOT_ERROR;
-   }
-   if(alig_given) 
-   {
-         // Calculate log-prob given alignment
-    std::vector<std::string> aligVec=StrProcUtils::stringToStringVector(alig);
-    std::vector<PositionIndex> aligIndexVec;
-    for(unsigned int i=0;i<alig.size();++i)
-      aligIndexVec.push_back(atoi(aligVec[i].c_str()));
-    WordAligMatrix waMatrix;
-    waMatrix.putAligVec(aligIndexVec);
-    
-    std::cerr<<"a: "<<alig <<std::endl;
-    lp=swAligModelPtr->calcLgProbForAligChar(srcSent.c_str(),
-                                             trgSent.c_str(),
-                                             waMatrix,
-                                             verbosity); 
-    std::cout<<"Single-word model logProbability= "<<lp<<std::endl;      
-   }
-   else
-   {
-         // Calculate log-prob without any alignment
-     if(!max_opt)
-     {
-           // -max option was not given
-       lp=swAligModelPtr->calcLgProbChar(srcSent.c_str(),
-                                         trgSent.c_str(),
-                                         verbosity);  
-       std::cout<<"Single-word model logprob sum for each alignment= "<<lp<<std::endl;
-     }
-     else
-     {
-           // -max option was given
-       WordAligMatrix waMatrix;
-       
-       lp=swAligModelPtr->obtainBestAlignmentChar(srcSent.c_str(),
-                                                  trgSent.c_str(),
-                                                  waMatrix);  
-       std::cout<<"Single-word model logprob for the best alignment= "<<lp<<std::endl;
-     }
-   }
+    std::cerr<<"s: "<<srcSent <<std::endl;
+    std::cerr<<"t: "<<trgSent <<std::endl;   
+    int ret=swAligModelPtr->load(swFilePrefix.c_str());
+    if(ret==THOT_ERROR)
+    {
+      release_swm();
+      return THOT_ERROR;
+    }
+    if(alig_given) 
+    {
+          // Calculate log-prob given alignment
+      std::cerr<<"a: "<<alig<<std::endl;
+      LgProb lp=calcLgProbGivenAlig(srcSent,trgSent,verbosity);
+      std::cout<<"Single-word model logprob= "<<lp<<std::endl;
+      return THOT_OK;
+    }
+    else
+    {
+          // Calculate log-prob without any alignment
+      if(!max_opt)
+      {
+            // -max option was not given
+        LgProb lp=swAligModelPtr->calcLgProbChar(srcSent.c_str(),
+                                                 trgSent.c_str(),
+                                                 verbosity);  
+        std::cout<<"Single-word model logprob sum for each alignment= "<<lp<<std::endl;
+        return THOT_OK;
+      }
+      else
+      {
+            // -max option was given
+        WordAligMatrix waMatrix;
+        
+        LgProb lp=swAligModelPtr->obtainBestAlignmentChar(srcSent.c_str(),
+                                                          trgSent.c_str(),
+                                                          waMatrix);  
+        std::cout<<"Single-word model logprob for the best alignment= "<<lp<<std::endl;
+        return THOT_OK;
+      }
+    }
   }
   else
   {
     if(pairPlusAligFile[0]!=0)
     {
           // Process sentence pair + alignment file
-      ret=processPairAligFile(swAligModelPtr,pairPlusAligFile);
+      int ret=processPairAligFile(swAligModelPtr,pairPlusAligFile.c_str());
       if(ret==THOT_ERROR)
       {
         release_swm();
         return THOT_ERROR;
       }
+      else return THOT_OK;
     }
     else
     {
           // Process sentence pair file
-      ret=processSentPairFile(swAligModelPtr,sentPairFile);
+      int ret=processSentPairFile(swAligModelPtr,sentPairFile.c_str());
       if(ret==THOT_ERROR)
       {
         release_swm();
         return THOT_ERROR;
       }
+      else return THOT_OK;
     }
   }
+}
 
-      // Release model instance
-  release_swm();
- }
- 
- return THOT_OK;
+//---------------
+LgProb calcLgProbGivenAlig(std::string srcSent,
+                           std::string trgSent,
+                           int verbosity)
+{
+  std::vector<std::string> aligVec=StrProcUtils::stringToStringVector(alig);
+  std::vector<PositionIndex> aligIndexVec;
+  for(unsigned int i=0;i<alig.size();++i)
+    aligIndexVec.push_back(atoi(aligVec[i].c_str()));
+  WordAligMatrix waMatrix;
+  waMatrix.putAligVec(aligIndexVec);
+  
+  std::cerr<<"a: "<<alig <<std::endl;
+  return swAligModelPtr->calcLgProbForAligChar(srcSent.c_str(),
+                                               trgSent.c_str(),
+                                               waMatrix,
+                                               verbosity);
 }
 
 //---------------
@@ -256,7 +279,7 @@ int processPairAligFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
    }
  }
      // Load model
- ret=swAligModelPtr->load(swFilePrefix);
+ ret=swAligModelPtr->load(swFilePrefix.c_str());
  if(ret==THOT_ERROR) return THOT_ERROR;
 
      // Process input
@@ -328,7 +351,7 @@ int processSentPairFile(BaseSwAligModel<std::vector<Prob> > *swAligModelPtr,
    }
  }
      // Load model
- ret=swAligModelPtr->load(swFilePrefix);
+ ret=swAligModelPtr->load(swFilePrefix.c_str());
  if(ret==THOT_ERROR) return THOT_ERROR;
 
      // Process input
@@ -407,7 +430,7 @@ int TakeParameters(int argc,char *argv[])
  }      
 
  // Take the giza files prefix 
- err=readString(argc,argv, "-sw", swFilePrefix);
+ err=readSTLstring(argc,argv, "-sw", &swFilePrefix);
  if(err==-1)
  {
    swFilePrefix[0]=0;
@@ -425,12 +448,12 @@ int TakeParameters(int argc,char *argv[])
  sentPairFile[0]=0;
 
  // Get pairPlusAlig file
- err=readString(argc,argv, "-F", pairPlusAligFile);
+ err=readSTLstring(argc,argv, "-F", &pairPlusAligFile);
  if(err==-1 || argc<2)
  {
 
        // If pairPlusAlig file not given, get sentPairFile
-   err=readString(argc,argv, "-P", sentPairFile);
+   err=readSTLstring(argc,argv, "-P", &sentPairFile);
    if(err==-1 || argc<2)
    {  
          // If sentPair file not given, get single pair with its
