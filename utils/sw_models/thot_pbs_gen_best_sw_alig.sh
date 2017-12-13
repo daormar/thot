@@ -57,6 +57,16 @@ usage()
     echo "--version          : Output version information and exit."
 }
 
+model_access_is_process_safe()
+{
+    nlines=`${bindir}/thot_server -i 2>&1 | $GREP 'model reads are not process-safe for swm module' | $WC -l | $AWK '{print $1}'`
+    if [ $nlines -eq 0 ]; then
+        echo 'yes'
+    else
+        echo 'no'
+    fi
+}
+
 disabled_pipe_fail()
 {
     return $?
@@ -567,6 +577,14 @@ if [ ${pr_given} -eq 0 ]; then
     # invalid parameters 
     echo "Error: number of processors must be given" >&2
     exit 1
+fi
+
+process_safety=`model_access_is_process_safe`
+if [ ${process_safety} = "no" ]; then
+    if [ ${num_procs} -gt 1 ]; then
+        echo "Warning: only one processor will be used since single word model module is not process-safe" >&2
+        pr_val=1
+    fi
 fi
 
 # parameters are ok
