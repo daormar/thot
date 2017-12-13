@@ -1640,7 +1640,7 @@ int ThotDecoder::testTmModule(std::string soFileName,
   {
     if(!tmPtr->modelReadsAreProcessSafe())
     {
-      std::cerr<<"Warning: model reads are not process-safe for module "<<soFileName<<std::endl;
+      std::cerr<<"Warning: model reads are not process-safe for tm module "<<soFileName<<std::endl;
     }
     delete tmPtr;
     return THOT_OK;
@@ -1704,7 +1704,7 @@ int ThotDecoder::testLmModule(std::string soFileName,
   {
     if(!lmPtr->modelReadsAreProcessSafe())
     {
-      std::cerr<<"Warning: model reads are not process-safe for module "<<soFileName<<std::endl;
+      std::cerr<<"Warning: model reads are not process-safe for lm module "<<soFileName<<std::endl;
     }
     delete lmPtr;
     return THOT_OK;
@@ -1736,7 +1736,7 @@ int ThotDecoder::testSwModelModule(std::string soFileName,
   {
     if(!swmPtr->modelReadsAreProcessSafe())
     {
-      std::cerr<<"Warning: model reads are not process-safe for module "<<soFileName<<std::endl;
+      std::cerr<<"Warning: model reads are not process-safe for swm module "<<soFileName<<std::endl;
     }
     delete swmPtr;
     return THOT_OK;
