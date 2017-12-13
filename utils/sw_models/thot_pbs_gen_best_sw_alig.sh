@@ -581,7 +581,7 @@ fi
 
 process_safety=`model_access_is_process_safe`
 if [ ${process_safety} = "no" ]; then
-    if [ ${num_procs} -gt 1 ]; then
+    if [ ${pr_val} -gt 1 ]; then
         echo "Warning: only one processor will be used since single word model module is not process-safe" >&2
         pr_val=1
     fi
