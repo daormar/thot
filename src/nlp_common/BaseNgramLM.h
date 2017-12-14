@@ -64,7 +64,10 @@ class BaseNgramLM
       // Declarations related to dynamic class loading
   typedef BaseNgramLM* create_t(const char*);
   typedef const char* type_id_t(void);
-  
+
+      // Thread/Process safety related functions
+  virtual bool modelReadsAreProcessSafe(void);
+
       // Probability functions
   virtual LgProb getNgramLgProb(WordIndex w,const std::vector<WordIndex>& vu)=0;
       // returns the probability of an n-gram, uv[0] stores the n-1'th
@@ -148,6 +151,15 @@ class BaseNgramLM
 
 //--------------- Template function definitions
 
+//---------------
+template<class LM_STATE>
+bool BaseNgramLM<LM_STATE>::modelReadsAreProcessSafe(void)
+{
+      // By default it will be assumed that model reads are thread safe,
+      // those unsafe classes will override this method returning false
+      // instead
+  return true;
+}
 
 //---------------
 template<class LM_STATE>

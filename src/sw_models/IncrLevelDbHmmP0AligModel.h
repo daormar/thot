@@ -56,8 +56,11 @@ class IncrLevelDbHmmP0AligModel : public _incrHmmP0AligModel
 {
   public:
 
-      // Constructor
+   // Constructor
    IncrLevelDbHmmP0AligModel();
+
+   // Thread safety related functions
+   bool modelReadsAreProcessSafe(void);
 
    // init function
    bool init(const char* prefFileName);
