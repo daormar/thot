@@ -412,7 +412,7 @@ bool StlPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
         ppi.first = srcIter->second;  // s count
         ppi.second = srcTrgIter->second;  // (s, t) count
 
-        if (fabs(ppi.first.get_c_s()) < FLT_EPSILON || fabs(ppi.second.get_c_s()) < FLT_EPSILON)
+        if (fabs(ppi.first.get_c_s()) < EPSILON || fabs(ppi.second.get_c_s()) < EPSILON)
             continue;
 
         srctn.insert(std::pair<std::vector<WordIndex>, PhrasePairInfo>(s, ppi));
@@ -443,7 +443,7 @@ bool StlPhraseTable::getEntriesForSource(const std::vector<WordIndex>& s,
             ppi.first = tCount;  // t count
             ppi.second = srcTrgIter->second;  // (s, t) count
 
-            if (fabs(ppi.first.get_c_s()) < FLT_EPSILON || fabs(ppi.second.get_c_s()) < FLT_EPSILON)
+            if (fabs(ppi.first.get_c_s()) < EPSILON || fabs(ppi.second.get_c_s()) < EPSILON)
                 continue;
 
             trgtn.insert(std::pair<std::vector<WordIndex>, PhrasePairInfo>(tPhrase, ppi));

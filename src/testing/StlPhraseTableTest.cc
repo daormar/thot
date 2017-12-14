@@ -69,8 +69,8 @@ void StlPhraseTableTest::testAddSrcTrgInfo()
     Count trg_src_count = tabStl->getSrcTrgInfo(s, t, found);
 
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), FLT_EPSILON);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(src_trg_count.get_c_s(), trg_src_count.get_c_s(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(src_trg_count.get_c_s(), trg_src_count.get_c_s(), EPSILON);
 }
 
 //---------------------------------------

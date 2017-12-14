@@ -57,8 +57,8 @@ void _phraseTableTest::testStoreAndRestore()
   Count s1_count = tab->getSrcInfo(s1, found);
   Count s2_count = tab->getSrcInfo(s2, found);
 
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(5, s1_count.get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, s2_count.get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(5, s1_count.get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, s2_count.get_c_s(), EPSILON);
 }
 
 //---------------------------------------
@@ -73,9 +73,9 @@ void _phraseTableTest::testAddTableEntry()
   tab->clear();
   tab->addTableEntry(s, t, ppi);
 
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(3, tab->cSrc(s).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cTrg(t).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cSrcTrg(s, t).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(3, tab->cSrc(s).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cTrg(t).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cSrcTrg(s, t).get_c_st(), EPSILON);
 }
 
 //---------------------------------------
@@ -90,9 +90,9 @@ void _phraseTableTest::testIncCountsOfEntry()
   tab->addSrcInfo(s, c_init);
   tab->incrCountsOfEntry(s, t, c);
 
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(20, tab->cSrc(s).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(17, tab->cTrg(t).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(17, tab->cSrcTrg(s, t).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(20, tab->cSrc(s).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(17, tab->cTrg(t).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(17, tab->cSrcTrg(s, t).get_c_st(), EPSILON);
 }
 
 //---------------------------------------
@@ -118,24 +118,24 @@ void _phraseTableTest::testGetEntriesForTarget()
   result = tab->getEntriesForTarget(t1_1, node);
   CPPUNIT_ASSERT( result );
   CPPUNIT_ASSERT_EQUAL((size_t) 2, node.size());
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, node[s1_1].first.get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_1].second.get_c_st(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_2].first.get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_2].second.get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, node[s1_1].first.get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_1].second.get_c_st(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_2].first.get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_2].second.get_c_st(), EPSILON);
 
   // Looking for phrases for which 'Pasleka' is translation
   result = tab->getEntriesForTarget(t1_2, node);
   CPPUNIT_ASSERT( result );
   CPPUNIT_ASSERT_EQUAL((size_t) 1, node.size());
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, node[s1_1].first.get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_1].second.get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, node[s1_1].first.get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s1_1].second.get_c_st(), EPSILON);
 
   // Looking for phrases for which 'rzeka' is translation
   result = tab->getEntriesForTarget(t2, node);
   CPPUNIT_ASSERT( result );
   CPPUNIT_ASSERT_EQUAL((size_t) 1, node.size());
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].first.get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].second.get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].first.get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].second.get_c_st(), EPSILON);
 
   // 'xyz'' key shoud not be found
   result = tab->getEntriesForTarget(getVector("xyz"), node);
@@ -161,7 +161,7 @@ void _phraseTableTest::testRetrievingSubphrase()
   c = tab->getSrcTrgInfo(s, t2, found);
 
   CPPUNIT_ASSERT( !found );
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(0, c.get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0, c.get_c_s(), EPSILON);
 }
 
 //---------------------------------------
@@ -188,17 +188,17 @@ void _phraseTableTest::testRetrieveNonLeafPhrase()
   c = tab->getSrcTrgInfo(s, t1, found);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, c.get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, c.get_c_s(), EPSILON);
   // Phrase pair 2
   c = tab->getSrcTrgInfo(s, t2, found);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, c.get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, c.get_c_s(), EPSILON);
 
   // Looking for phrases for which 'Buenos' is translation
   found = tab->getEntriesForTarget(t2, node);
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node.size(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node.size(), EPSILON);
 }
 
 //---------------------------------------
@@ -333,7 +333,7 @@ void _phraseTableTest::testAddSrcTrgInfo()
   Count src_trg_count = tab->cSrcTrg(s, t);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), EPSILON);
 }
 
 //---------------------------------------
@@ -355,10 +355,10 @@ void _phraseTableTest::testPSrcGivenTrg()
   tab->incrCountsOfEntry(s2, t2, Count(2));
 
   // Check probabilities
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.3, tab->pSrcGivenTrg(s1, t1), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.7, tab->pSrcGivenTrg(s2, t1), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1. / 3., tab->pSrcGivenTrg(s1, t2), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(2. / 3., tab->pSrcGivenTrg(s2, t2), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.3, tab->pSrcGivenTrg(s1, t1), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.7, tab->pSrcGivenTrg(s2, t1), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1. / 3., tab->pSrcGivenTrg(s1, t2), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2. / 3., tab->pSrcGivenTrg(s2, t2), EPSILON);
 }
 
 //---------------------------------------
@@ -381,10 +381,10 @@ void _phraseTableTest::testPTrgGivenSrc()
   tab->incrCountsOfEntry(s2, t2, Count(13));
 
   // Check probabilities
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(10. / 22., tab->pTrgGivenSrc(s1, t1), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(12. / 22., tab->pTrgGivenSrc(s1, t2), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(11. / 24., tab->pTrgGivenSrc(s2, t1), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(13. / 24., tab->pTrgGivenSrc(s2, t2), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(10. / 22., tab->pTrgGivenSrc(s1, t1), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(12. / 22., tab->pTrgGivenSrc(s1, t2), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(11. / 24., tab->pTrgGivenSrc(s2, t1), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(13. / 24., tab->pTrgGivenSrc(s2, t2), EPSILON);
 }
 //---------------------------------------
 void _phraseTableTest::testAddingSameSrcAndTrg()
@@ -403,10 +403,10 @@ void _phraseTableTest::testAddingSameSrcAndTrg()
   tab->incrCountsOfEntry(v2, v2, Count(8));
 
   // Check probabilities
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 2, tab->cSrc(v1).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 4, tab->cTrg(v1).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(4 + 8, tab->cSrc(v2).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(2 + 8, tab->cTrg(v2).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 2, tab->cSrc(v1).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 4, tab->cTrg(v1).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4 + 8, tab->cSrc(v2).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2 + 8, tab->cTrg(v2).get_c_s(), EPSILON);
 }
 
 //---------------------------------------
@@ -476,19 +476,19 @@ void _phraseTableTest::testSubkeys()
   CPPUNIT_ASSERT_EQUAL((size_t) 11, tab->size());
 
   // Check count values
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 2 + 4, tab->cSrc(s1).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cTrg(t1_1).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cTrg(t1_2).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(4 + 16, tab->cTrg(t1_3).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s1, t1_1).get_c_st(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cSrcTrg(s1, t1_2).get_c_st(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(4, tab->cSrcTrg(s1, t1_3).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 2 + 4, tab->cSrc(s1).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cTrg(t1_1).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cTrg(t1_2).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4 + 16, tab->cTrg(t1_3).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s1, t1_1).get_c_st(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cSrcTrg(s1, t1_2).get_c_st(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4, tab->cSrcTrg(s1, t1_3).get_c_st(), EPSILON);
 
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(8 + 16, tab->cSrc(s2).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cTrg(t2_1).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(4 + 16, tab->cTrg(t2_2).get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cSrcTrg(s2, t2_1).get_c_st(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(16, tab->cSrcTrg(s2, t2_2).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8 + 16, tab->cSrc(s2).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cTrg(t2_1).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4 + 16, tab->cTrg(t2_2).get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cSrcTrg(s2, t2_1).get_c_st(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(16, tab->cSrcTrg(s2, t2_2).get_c_st(), EPSILON);
 }
 
 //---------------------------------------
@@ -507,7 +507,7 @@ void _phraseTableTest::test32bitRange()
   // Insert data to phrase table and check their correctness
   tab->incrCountsOfEntry(minVector, maxVector, Count(20));
   CPPUNIT_ASSERT_EQUAL((size_t) 3, tab->size());
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(20, tab->cSrcTrg(minVector, maxVector).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(20, tab->cSrcTrg(minVector, maxVector).get_c_st(), EPSILON);
 }
 
 //---------------------------------------
@@ -526,7 +526,7 @@ void _phraseTableTest::testByteMax()
   // Insert data and check their correctness
   tab->incrCountsOfEntry(s, t, Count(1));
   CPPUNIT_ASSERT_EQUAL((size_t) 3, tab->size());
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s, t).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s, t).get_c_st(), EPSILON);
 }
 
 //---------------------------------------
@@ -556,7 +556,7 @@ void _phraseTableTest::testByteMin()
   tab->incrCountsOfEntry(s1, t1, Count(1));
   tab->incrCountsOfEntry(s2, t2, Count(1));
   CPPUNIT_ASSERT_EQUAL((size_t) 6, tab->size());
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s2, t2).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s2, t2).get_c_st(), EPSILON);
 
   bool found;
   BasePhraseTable::SrcTableNode node;
@@ -564,6 +564,6 @@ void _phraseTableTest::testByteMin()
 
   CPPUNIT_ASSERT( found );
   CPPUNIT_ASSERT_EQUAL((size_t) 1, node.size());
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].first.get_c_s(), FLT_EPSILON);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].second.get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].first.get_c_s(), EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, node[s2].second.get_c_s(), EPSILON);
 }

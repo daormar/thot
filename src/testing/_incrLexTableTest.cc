@@ -47,7 +47,7 @@ void _incrLexTableTest::testGetSetLexDenom()
     tab->setLexDenom(s, denom);
     float restoredDenom = tab->getLexDenom(s, found);
     CPPUNIT_ASSERT( found );  // Element should be found
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(denom, restoredDenom, FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(denom, restoredDenom, EPSILON);
 }
 
 //---------------------------------------
@@ -66,7 +66,7 @@ void _incrLexTableTest::testGetSetLexNumer()
     tab->setLexNumer(s, t, numer);
     float restoredNumer = tab->getLexNumer(s, t, found);
     CPPUNIT_ASSERT( found );  // Element should be found
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(numer, restoredNumer, FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(numer, restoredNumer, EPSILON);
 }
 
 //---------------------------------------
@@ -89,11 +89,11 @@ void _incrLexTableTest::testSetLexNumerDenom()
 
     float restoredNumer = tab->getLexNumer(s, t, found);
     CPPUNIT_ASSERT( found );  // Element should be found
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(numer, restoredNumer, FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(numer, restoredNumer, EPSILON);
 
     float restoredDenom = tab->getLexDenom(s, found);
     CPPUNIT_ASSERT( found );  // Element should be found
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(denom, restoredDenom, FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(denom, restoredDenom, EPSILON);
 }
 
 //---------------------------------------
