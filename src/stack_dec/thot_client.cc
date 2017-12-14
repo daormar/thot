@@ -96,7 +96,7 @@ void process_request(const thot_client_pars& tdcPars)
   std::string bestHypInfo;
   ThotDecoderClient thotDecoderClient;
   double elapsed_ant,elapsed,ucpu,scpu;
-  double connection_latency,request_latency;
+  double connection_latency=0;
 
       // Connect to translation server
   if(tdcPars.verbose)
@@ -161,7 +161,7 @@ void process_request(const thot_client_pars& tdcPars)
   if(tdcPars.verbose)
   {
     ctimer(&elapsed,&ucpu,&scpu);
-    request_latency=elapsed-elapsed_ant;
+    double request_latency=elapsed-elapsed_ant;
     std::cerr<<"Request latency: " << request_latency << " secs\n";
     std::cerr<<"Elapsed time (connection + request latencies): " << connection_latency+request_latency << " secs\n";
   }
