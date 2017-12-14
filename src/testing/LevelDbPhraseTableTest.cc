@@ -88,8 +88,8 @@ void LevelDbPhraseTableTest::testAddSrcTrgInfo()
   Count trg_src_count = tabLdb->getInfo(tabLdb->getTrgSrc(s, t), found);
 
   CPPUNIT_ASSERT( found );
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(src_trg_count.get_c_s(), trg_src_count.get_c_s(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(src_trg_count.get_c_s(), trg_src_count.get_c_s(), FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -284,27 +284,27 @@ void LevelDbPhraseTableTest::testLoadedDataCorrectness()
   CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 
   // Check count values
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 2 + 4 + 8, tab->cSrc(s1).get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cTrg(t1_1).get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cTrg(t1_2).get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(4, tab->cTrg(t1_3).get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cTrg(t1_4).get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s1, t1_1).get_c_st(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cSrcTrg(s1, t1_2).get_c_st(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(4, tab->cSrcTrg(s1, t1_3).get_c_st(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cSrcTrg(s1, t1_4).get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1 + 2 + 4 + 8, tab->cSrc(s1).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cTrg(t1_1).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cTrg(t1_2).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4, tab->cTrg(t1_3).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cTrg(t1_4).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1, tab->cSrcTrg(s1, t1_1).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2, tab->cSrcTrg(s1, t1_2).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4, tab->cSrcTrg(s1, t1_3).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8, tab->cSrcTrg(s1, t1_4).get_c_st(), FLT_EPSILON);
 
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(16 + 32, tab->cSrc(s2).get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(16, tab->cTrg(t2_1).get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(32, tab->cTrg(t2_2).get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(16, tab->cSrcTrg(s2, t2_1).get_c_st(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(32, tab->cSrcTrg(s2, t2_2).get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(16 + 32, tab->cSrc(s2).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(16, tab->cTrg(t2_1).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(32, tab->cTrg(t2_2).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(16, tab->cSrcTrg(s2, t2_1).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(32, tab->cSrcTrg(s2, t2_2).get_c_st(), FLT_EPSILON);
 
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(64 + 128, tab->cSrc(s3).get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(64, tab->cTrg(t3_1).get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(128, tab->cTrg(t3_2).get_c_s(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(64, tab->cSrcTrg(s3, t3_1).get_c_st(), DELTA);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(128, tab->cSrcTrg(s3, t3_2).get_c_st(), DELTA);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(64 + 128, tab->cSrc(s3).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(64, tab->cTrg(t3_1).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(128, tab->cTrg(t3_2).get_c_s(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(64, tab->cSrcTrg(s3, t3_1).get_c_st(), FLT_EPSILON);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(128, tab->cSrcTrg(s3, t3_2).get_c_st(), FLT_EPSILON);
 
   tab->clear();  // Remove data
   CPPUNIT_ASSERT_EQUAL((size_t) 0, tab->size());

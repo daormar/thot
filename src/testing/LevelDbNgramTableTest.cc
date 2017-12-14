@@ -75,12 +75,12 @@ void LevelDbNgramTableTest::testAddTrgWithEmptySrc()
     tab->incrCountsOfEntryLog(s, t, lc);
     Count tc = tab->cSrc(t_vec);
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(5.0, tc.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(5.0, tc.get_c_s(), FLT_EPSILON);
 
     tab->incrCountsOfEntryLog(s, t, lc);
     tc = tab->cSrc(t_vec);
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(10.0, tc.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(10.0, tc.get_c_s(), FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -118,8 +118,8 @@ void LevelDbNgramTableTest::testCTrg()
     Count tc2 = tab->cTrg(t2);
     
     // Validate results
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(47.0, tc1.get_c_s(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(24.0, tc2.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(47.0, tc1.get_c_s(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(24.0, tc2.get_c_s(), FLT_EPSILON);
 }
 
 
@@ -162,14 +162,14 @@ void LevelDbNgramTableTest::testLogCountRetrieving()
     LogCount stc2 = tab->lcSrcTrg(s2, t2);
     
     // Validate results
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(47.0, sc1.get_c_s(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(24.0, sc2.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(47.0, sc1.get_c_s(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(24.0, sc2.get_c_s(), FLT_EPSILON);
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(47.0, tc1.get_c_s(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(24.0, tc2.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(47.0, tc1.get_c_s(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(24.0, tc2.get_c_s(), FLT_EPSILON);
     
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(46.0, stc1.get_c_st(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(23.0, stc2.get_c_st(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(46.0, stc1.get_c_st(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(23.0, stc2.get_c_st(), FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -191,8 +191,8 @@ void LevelDbNgramTableTest::testStoreFloatValues()
     Count s_count = tab->cSrc(s);
     Count st_count = tab->cSrcTrg(s, t);
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(s_count_val, s_count.get_c_s(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(st_count_val, st_count.get_c_st(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(s_count_val, s_count.get_c_s(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(st_count_val, st_count.get_c_st(), FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -210,8 +210,8 @@ void LevelDbNgramTableTest::testStoreAndRestoreSrcInfo()
     Count s1_count = tab->getSrcInfo(s1, found);
     Count s2_count = tab->getSrcInfo(s2, found);
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, s1_count.get_c_s(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(23.0, s2_count.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, s1_count.get_c_s(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(23.0, s2_count.get_c_s(), FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -243,8 +243,8 @@ void LevelDbNgramTableTest::testAddTableEntry()
     tab->clear();
     tab->addTableEntry(s, t, ppi);
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(7.0, tab->cSrc(s).get_c_s(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(5.0, tab->cSrcTrg(s, t).get_c_st(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(7.0, tab->cSrc(s).get_c_s(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(5.0, tab->cSrcTrg(s, t).get_c_st(), FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -260,8 +260,8 @@ void LevelDbNgramTableTest::testIncrCountsOfEntryLog()
     tab->incrCountsOfEntryLog(s, t1, c_init);
     tab->incrCountsOfEntryLog(s, t2, c);
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0, tab->cSrcTrg(s, t1).get_c_st(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(17.0, tab->cSrcTrg(s, t2).get_c_st(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0, tab->cSrcTrg(s, t1).get_c_st(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(17.0, tab->cSrcTrg(s, t2).get_c_st(), FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -328,18 +328,18 @@ void LevelDbNgramTableTest::testRetrievingSubphrase()
     Count c = tab->getSrcTrgInfo(s2, t2, found);
 
     CPPUNIT_ASSERT( !found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, c.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, c.get_c_s(), FLT_EPSILON);
 
     tab->incrCountsOfEntryLog(s2, t2, LogCount(log(3)));
     c = tab->getSrcTrgInfo(s2, t2, found);
 
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0, c.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0, c.get_c_s(), FLT_EPSILON);
 
     c = tab->getSrcInfo(s1, found);
 
     CPPUNIT_ASSERT( !found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, c.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, c.get_c_s(), FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -380,15 +380,15 @@ void LevelDbNgramTableTest::testGetEntriesForSource()
     // Narie phrases
     found = tab->getEntriesForSource(s1, node);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, node.size(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, node.size(), FLT_EPSILON);
     // Krzywe phrases
     found = tab->getEntriesForSource(s2, node);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, node.size(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, node.size(), FLT_EPSILON);
     // Jeziorak phrases
     found = tab->getEntriesForSource(s3, node);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, node.size(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, node.size(), FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -413,7 +413,7 @@ void LevelDbNgramTableTest::testRetrievingEntriesWithCountEqualZero()
     found = tab->getEntriesForTarget(t, node);
 
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, node.size(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, node.size(), FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -453,13 +453,13 @@ void LevelDbNgramTableTest::testGetNbestForSrc()
     // If there are more available elements, at the beginning
     // the most frequent targets should be returned
     iter = node.begin();
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(t1, iter->second, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(t1, iter->second, FLT_EPSILON);
     iter++;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(t3, iter->second, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(t3, iter->second, FLT_EPSILON);
     iter++;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(t2, iter->second, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(t2, iter->second, FLT_EPSILON);
     iter++;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(t4, iter->second, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(t4, iter->second, FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -557,12 +557,12 @@ void LevelDbNgramTableTest::testIteratorsLoop()
 
     // Check if element returned by iterator is correct
     CPPUNIT_ASSERT_EQUAL((size_t) 3, d.size());
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, d[s1].first.get_c_s(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, d[s1].second.get_c_s(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, d[tab->getSrcTrg(s1, t1)].first.get_c_st(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, d[tab->getSrcTrg(s1, t1)].second.get_c_s(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, d[tab->getSrcTrg(s2, t2)].first.get_c_st(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, d[tab->getSrcTrg(s2, t2)].second.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, d[s1].first.get_c_s(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, d[s1].second.get_c_s(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, d[tab->getSrcTrg(s1, t1)].first.get_c_st(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, d[tab->getSrcTrg(s1, t1)].second.get_c_s(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, d[tab->getSrcTrg(s2, t2)].first.get_c_st(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, d[tab->getSrcTrg(s2, t2)].second.get_c_s(), FLT_EPSILON);
 
     CPPUNIT_ASSERT_EQUAL(3, i);
 }
@@ -604,9 +604,9 @@ void LevelDbNgramTableTest::testIteratorsOperatorsPlusPlusStar()
 
     // Check if element returned by iterator is correct
     CPPUNIT_ASSERT_EQUAL((size_t) 2, d.size());
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0f, d[s].first.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0f, d[s].first.get_c_s(), FLT_EPSILON);
     CPPUNIT_ASSERT_EQUAL(1, d[s].second);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, d[tab->getSrcTrg(s, t)].first.get_c_st(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, d[tab->getSrcTrg(s, t)].first.get_c_st(), FLT_EPSILON);
     CPPUNIT_ASSERT_EQUAL(1, d[tab->getSrcTrg(s, t)].second);
 }
 
@@ -765,16 +765,16 @@ void LevelDbNgramTableTest::testLoadedDataCorrectness()
     CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 
     // Check count values
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, tab->cSrcTrg(s1, t1_1).get_c_st(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, tab->cSrcTrg(s1, t1_2).get_c_st(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0, tab->cSrcTrg(s1, t1_3).get_c_st(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(8.0, tab->cSrcTrg(s1, t1_4).get_c_st(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, tab->cSrcTrg(s1, t1_1).get_c_st(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, tab->cSrcTrg(s1, t1_2).get_c_st(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0, tab->cSrcTrg(s1, t1_3).get_c_st(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(8.0, tab->cSrcTrg(s1, t1_4).get_c_st(), FLT_EPSILON);
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(16.0, tab->cSrcTrg(s2, t2_1).get_c_st(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(32.0, tab->cSrcTrg(s2, t2_2).get_c_st(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(16.0, tab->cSrcTrg(s2, t2_1).get_c_st(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(32.0, tab->cSrcTrg(s2, t2_2).get_c_st(), FLT_EPSILON);
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(64.0, tab->cSrcTrg(s3, t3_1).get_c_st(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(128.0, tab->cSrcTrg(s3, t3_2).get_c_st(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(64.0, tab->cSrcTrg(s3, t3_1).get_c_st(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(128.0, tab->cSrcTrg(s3, t3_2).get_c_st(), FLT_EPSILON);
 
     tab->clear();  // Remove data
     CPPUNIT_ASSERT_EQUAL((size_t) 0, tab->size());
@@ -820,5 +820,5 @@ void LevelDbNgramTableTest::testLoadedDataNullCount()
     CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 
     // Check count values
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(16.0, tab->cSrc(s3).get_c_st(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(16.0, tab->cSrc(s3).get_c_st(), FLT_EPSILON);
 }

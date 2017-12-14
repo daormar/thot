@@ -453,7 +453,7 @@ bool LevelDbPhraseTable::getEntriesForTarget(const std::vector<WordIndex>& t,
         std::vector<WordIndex> src(vec.begin() + start_vec.size(), vec.end());
 
         PhrasePairInfo ppi = infSrcTrg(src, t, found);
-        if (!found || abs(ppi.first.get_c_s()) < 1e-5 || abs(ppi.second.get_c_s()) < 1e-5)
+        if (!found || fabs(ppi.first.get_c_s()) < FLT_EPSILON || fabs(ppi.second.get_c_s()) < FLT_EPSILON)
             continue;
 
         srctn.insert(std::pair<std::vector<WordIndex>, PhrasePairInfo>(src, ppi));

@@ -69,8 +69,8 @@ void HatTriePhraseTableTest::testAddSrcTrgInfo()
     Count trg_src_count = tabHatTrie->getSrcTrgInfo(s, t, found);
 
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), DELTA);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(src_trg_count.get_c_s(), trg_src_count.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), FLT_EPSILON);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(src_trg_count.get_c_s(), trg_src_count.get_c_s(), FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -120,9 +120,9 @@ void HatTriePhraseTableTest::testIteratorsLoop()
     }
 
     // Check if element returned by iterator is correct
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(41, d[t1].first.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(41, d[t1].first.get_c_s(), FLT_EPSILON);
     CPPUNIT_ASSERT_EQUAL(1, d[t1].second);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(60, d[t2].first.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(60, d[t2].first.get_c_s(), FLT_EPSILON);
     CPPUNIT_ASSERT_EQUAL(1, d[t2].second);
 
     CPPUNIT_ASSERT_EQUAL(2, i);
@@ -162,17 +162,17 @@ void HatTriePhraseTableTest::testIteratorsOperatorsPlusPlusStar()
     // and operators work as expected
     HatTriePhraseTable::const_iterator iter = tabHatTrie->begin();
     CPPUNIT_ASSERT(t2 == iter->first);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(60, iter->second.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(60, iter->second.get_c_s(), FLT_EPSILON);
 
     found = ++iter;
     CPPUNIT_ASSERT(found);
     CPPUNIT_ASSERT(t1 == (*iter).first);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(41, (*iter).second.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(41, (*iter).second.get_c_s(), FLT_EPSILON);
 
     found = (iter++);
     CPPUNIT_ASSERT(found);
     CPPUNIT_ASSERT(t3 == (*iter).first);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(50, (*iter).second.get_c_s(), DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(50, (*iter).second.get_c_s(), FLT_EPSILON);
 
     found = ++iter;
     CPPUNIT_ASSERT(!found);

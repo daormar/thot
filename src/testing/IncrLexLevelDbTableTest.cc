@@ -95,32 +95,32 @@ void IncrLexLevelDbTableTest::testLoadFromBinFile()
     // (s1, t1)
     result = tab->getLexNumer(s1, t1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(s1_t1_num, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(s1_t1_num, result, FLT_EPSILON);
     result = tab->getLexDenom(s1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(s1_denom, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(s1_denom, result, FLT_EPSILON);
     // (s1, t2) - denominator has been already checked
     result = tab->getLexNumer(s1, t2, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(s1_t2_num, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(s1_t2_num, result, FLT_EPSILON);
     // (s2, t1)
     result = tab->getLexNumer(s2, t1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(s2_t1_num, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(s2_t1_num, result, FLT_EPSILON);
     result = tab->getLexDenom(s2, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(s2_denom, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(s2_denom, result, FLT_EPSILON);
     // (s2, t2) - should not be found
     tab->getLexNumer(s2, t2, found);
     CPPUNIT_ASSERT( !found );
     // (s2, t3)
     result = tab->getLexNumer(s2, t3, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(s2_t3_num, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(s2_t3_num, result, FLT_EPSILON);
     // (s2, t4)
     result = tab->getLexNumer(s2, t4, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(s2_t4_num, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(s2_t4_num, result, FLT_EPSILON);
 }
 
 //---------------------------------------
@@ -151,21 +151,21 @@ void IncrLexLevelDbTableTest::testLoadFromLevelDb()
     // (s1, t1)
     result = tab->getLexNumer(s1, t1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, result, FLT_EPSILON);
     result = tab->getLexDenom(s1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.5, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.5, result, FLT_EPSILON);
     // (s1, t2) - denominator has been already checked
     result = tab->getLexNumer(s1, t2, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.125, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(2.125, result, FLT_EPSILON);
     // (s2, t1)
     result = tab->getLexNumer(s2, t1, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(3.5, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(3.5, result, FLT_EPSILON);
     result = tab->getLexDenom(s2, found);
     CPPUNIT_ASSERT( found );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(4.5, result, DELTA);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(4.5, result, FLT_EPSILON);
     // (s2, t2) - should not be found
     tab->getLexNumer(s2, t2, found);
     CPPUNIT_ASSERT( !found );
