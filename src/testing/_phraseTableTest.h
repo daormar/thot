@@ -41,6 +41,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Include files --------------------------------------
 
 #include "ErrorDefs.h"
+#include "MathDefs.h"
 
 #if HAVE_CONFIG_H
 #  include <thot_config.h>

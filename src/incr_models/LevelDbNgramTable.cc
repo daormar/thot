@@ -533,7 +533,7 @@ bool LevelDbNgramTable::getEntriesForSource(const std::vector<WordIndex>& s,
             pdp.second.first = s_count;  // count(s)
             pdp.second.second = Count(atof(it->value().ToString().c_str()));  // sount(s, t)
 
-            if (fabs(pdp.second.second.get_c_st()) < FLT_EPSILON)  // Compare to 0
+            if (fabs(pdp.second.second.get_c_st()) < EPSILON)  // Compare to 0
                 continue;
 
             trgtn.insert(pdp);
