@@ -76,6 +76,29 @@ usage()
     echo "      provided by -tm and -lm options if given."
 }
 
+model_access_is_process_safe()
+{
+    if [ ${c_given} -eq 1 ]; then
+        model_access_is_process_safe_given_cfgfile $cfgfile
+    else
+        tmpcfgfile=`$MKTEMP`
+        ${bindir}/thot $lm $tm > ${tmpcfgfile}
+        model_access_is_process_safe_given_cfgfile ${tmpcfgfile}
+        rm ${tmpcfgfile}
+    fi
+}
+
+model_access_is_process_safe_given_cfgfile()
+{
+    _cfgfile=$1
+    nlines=`${bindir}/thot_server -c ${_cfgfile} -t 2>&1 | $GREP 'model reads are not process-safe' | $WC -l | $AWK '{print $1}'`
+    if [ $nlines -eq 0 ]; then
+        echo 'yes'
+    else
+        echo 'no'
+    fi
+}
+
 str_is_option()
 {
     echo "" | ${AWK} -v s=$1 '{if(!match(s,"-[a-zA-Z]")) print "0"; else print "1"}' 
@@ -490,6 +513,14 @@ if [ ${o_given} -eq 0 ];then
     exit 1
 fi
 
+process_safety=`model_access_is_process_safe`
+if [ ${process_safety} = "no" ]; then
+    if [ ${num_procs} -gt 1 ]; then
+        echo "Warning: only one processor will be used since there are non-process-safe modules" >&2
+        num_procs=1
+    fi
+fi
+
 # parameters are ok
 
 # create shared directory
@@ -500,11 +531,6 @@ if [ ! -d ${sdir} ]; then
 fi
 
 SDIR=`${MKTEMP} -d ${sdir}/thot_decoder_XXXXXX`
-
-#### OLD CODE (NOT SAFE WHEN DIRECTORIES CREATED BY OTHER INSTANCES
-####           OF THIS SCRIPT ARE NOT REMOVED)
-# SDIR="${sdir}/thot_decoder_$$"
-# mkdir $SDIR || { echo "Error: shared directory cannot be created" ; exit 1; }
 
 # remove temp directories on exit
 if [ "$debug" != "-debug" ]; then
@@ -532,7 +558,7 @@ echo "">> $SDIR/log
 # process input
 
 # fragment input
-input_size=`wc ${sents} 2>/dev/null | ${AWK} '{printf"%d",$(1)}'`
+input_size=`$WC ${sents} 2>/dev/null | ${AWK} '{printf"%d",$(1)}'`
 if [ ${input_size} -eq 0 ]; then
     echo "Error: input file ${sents} is empty" >&2
     exit 1

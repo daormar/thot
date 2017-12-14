@@ -45,6 +45,22 @@ ThotDecoder::ThotDecoder()
     init_translator_feat_impl();
   else
     init_translator_legacy_impl();
+
+      // Execute checkings for software modules
+  testSoftwareModulesInMasterIni();
+}
+
+//--------------------------
+void ThotDecoder::testSoftwareModulesInMasterIni(void)
+{
+  std::cerr<<"Checking software modules in master.ini..."<<std::endl;
+
+      // Test module for single word models
+  int ret=testSwModelModule(tdCommonVars.dynClassFactoryHandler.baseSwAligModelSoFileName);
+  if(ret==THOT_ERROR)
+    exit(THOT_ERROR);
+  
+  std::cerr<<"Checking completed"<<std::endl;
 }
 
 //--------------------------
@@ -1015,6 +1031,97 @@ int ThotDecoder::initUserPars(int user_id,
 }
 
 //--------------------------
+int ThotDecoder::testSoftwareModulesInModelDescriptors(std::string cfgFile,
+                                                       int verbose)
+{
+  int ret;
+  int argc;
+  std::vector<std::string> argv_stl;
+  std::string comment="#";
+
+      // Extract parameters from file
+  ret=extractParsFromFile(cfgFile.c_str(),argc,argv_stl,comment);
+  if(ret==THOT_ERROR)
+  {
+    return THOT_ERROR;
+  }
+  std::cerr<<"Processing configuration file ("<<cfgFile<<")..."<<std::endl;
+  
+      // Set default values for parameters
+  std::string tm_str="/home/dortiz/traduccion/corpus/Xerox/en_es/v14may2003/simplified2/TM/my_ef";
+  std::string lm_str="/home/dortiz/traduccion/corpus/Xerox/en_es/v14may2003/simplified2/LM/e_i3_c.lm";
+  
+      // Process parameters
+  int i=1;
+  unsigned int matched;
+  while(i<argc)
+  {
+    matched=0;
+        // -tm parameter
+    if(argv_stl[i]=="-tm" && !matched)
+    {
+      if(i==argc-1)
+      {
+        std::cerr<<"Error: no value for -tm parameter."<<std::endl;
+        return THOT_ERROR;
+      }
+      else
+      {
+        std::cerr<<"-tm parameter changed from \""<<tm_str<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
+        tm_str=argv_stl[i+1];
+        ++matched;
+        ++i;
+      }
+    }
+        // -lm parameter
+    if(argv_stl[i]=="-lm" && !matched)
+    {
+      if(i==argc-1)
+      {
+        std::cerr<<"Error: no value for -lm parameter."<<std::endl;
+        return THOT_ERROR;
+      }
+      else
+      {
+        std::cerr<<"-lm parameter changed from \""<<lm_str<<"\" to \""<<argv_stl[i+1]<<"\""<<std::endl;
+        lm_str=argv_stl[i+1];
+        ++matched;
+        ++i;
+      }
+    }
+    ++i;
+  }
+  
+  // Test software modules incorporated in model descriptors
+
+  std::cerr<<"** Testing software modules provided in language model descriptor"<<std::endl;
+  if(tdCommonVars.featureBasedImplEnabled)
+  {
+    if(fileIsDescriptor(lm_str.c_str()))
+    {
+      ret=testModulesInLmDesc(lm_str.c_str(),verbose);
+      if(ret==THOT_ERROR) return THOT_ERROR;
+    }
+    else
+      std::cerr<<"Warning: -lm parameter is not a model descriptor so it could not be tested"<<std::endl;
+  }
+
+  std::cerr<<"** Testing software modules provided in translation model descriptor"<<std::endl;
+  if(tdCommonVars.featureBasedImplEnabled)
+  {
+    if(fileIsDescriptor(tm_str.c_str()))
+    {
+      ret=testModulesInTmDesc(tm_str.c_str(),verbose);
+      if(ret==THOT_ERROR) return THOT_ERROR;
+    }
+    else
+      std::cerr<<"Warning: -tm parameter is not a model descriptor so it could not be tested"<<std::endl;
+  }
+
+  return THOT_OK;
+}
+
+//--------------------------
 void ThotDecoder::setNonMonotonicity(int nomon,
                                      int verbose/*=0*/)
 {
@@ -1474,6 +1581,166 @@ bool ThotDecoder::load_ecm(const char* ecmFilesPrefix,
   }
 
   return ret;
+}
+
+//--------------------------
+int ThotDecoder::testModulesInTmDesc(const char* tmDescFileName,
+                                      int verbose/*=0*/)
+{
+      // Obtain info about language model entries
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
+  if(extractModelEntryInfo(tmDescFileName,modelDescEntryVec)==THOT_OK)
+  {
+        // Process descriptor entries
+    for(unsigned int i=0;i<modelDescEntryVec.size();++i)
+    {
+      std::cerr<<"* Testing module implementing translation model ("<<modelDescEntryVec[i].modelInitInfo<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<")"<<std::endl;
+      int ret=testTmModule(modelDescEntryVec[i].modelInitInfo,verbose);
+      if(ret==THOT_ERROR)
+      {
+        std::cerr<<"Module implementing translation model is not correct"<<std::endl;
+        return THOT_ERROR;
+      }
+      else
+      {
+        std::cerr<<"Module implementing translation model is correct"<<std::endl;
+      }
+    }
+    return THOT_OK;
+  }
+  else
+  {
+    return THOT_ERROR;
+  }
+}
+
+//--------------------------
+int ThotDecoder::testTmModule(std::string soFileName,
+                              int /*verbose=0*/)
+{
+      // Declare dynamic class loader instance
+  SimpleDynClassLoader<BasePhraseModel> simpleDynClassLoader;
+  
+      // Open module
+  bool verbosity=false;
+  if(!simpleDynClassLoader.open_module(soFileName,verbosity))
+  {
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
+    return THOT_ERROR;
+  }
+
+      // Create tm file pointer
+  BasePhraseModel* tmPtr=simpleDynClassLoader.make_obj("");
+  if(tmPtr==NULL)
+  {
+    std::cerr<<"Error: BasePhraseModel pointer could not be instantiated"<<std::endl;    
+    return THOT_ERROR;
+  }
+  else
+  {
+    if(!tmPtr->modelReadsAreProcessSafe())
+    {
+      std::cerr<<"Warning: model reads are not process-safe for tm module "<<soFileName<<std::endl;
+    }
+    delete tmPtr;
+    return THOT_OK;
+  }  
+}
+
+//--------------------------
+int ThotDecoder::testModulesInLmDesc(const char* lmDescFileName,
+                                     int verbose/*=0*/)
+{
+      // Obtain info about language model entries
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
+  if(extractModelEntryInfo(lmDescFileName,modelDescEntryVec)==THOT_OK)
+  {
+        // Process descriptor entries
+    for(unsigned int i=0;i<modelDescEntryVec.size();++i)
+    {
+      std::cerr<<"* Testing module implementing language model ("<<modelDescEntryVec[i].modelInitInfo<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<")"<<std::endl;
+      int ret=testLmModule(modelDescEntryVec[i].modelInitInfo,verbose);
+      if(ret==THOT_ERROR)
+      {
+        std::cerr<<"Module implementing language model is not correct"<<std::endl;
+        return THOT_ERROR;
+      }
+      else
+      {
+        std::cerr<<"Module implementing language model is correct"<<std::endl;
+      }
+    }
+    return THOT_OK;
+  }
+  else
+  {
+    return THOT_ERROR;
+  }
+}
+
+//--------------------------
+int ThotDecoder::testLmModule(std::string soFileName,
+                              int /*verbose=0*/)
+{
+      // Declare dynamic class loader instance
+  SimpleDynClassLoader<BaseNgramLM<LM_State> > simpleDynClassLoader;
+  
+      // Open module
+  bool verbosity=false;
+  if(!simpleDynClassLoader.open_module(soFileName,verbosity))
+  {
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
+    return THOT_ERROR;
+  }
+
+      // Create lm file pointer
+  BaseNgramLM<LM_State>* lmPtr=simpleDynClassLoader.make_obj("");
+  if(lmPtr==NULL)
+  {
+    std::cerr<<"Error: BaseNgramLM pointer could not be instantiated"<<std::endl;    
+    return THOT_ERROR;
+  }
+  else
+  {
+    if(!lmPtr->modelReadsAreProcessSafe())
+    {
+      std::cerr<<"Warning: model reads are not process-safe for lm module "<<soFileName<<std::endl;
+    }
+    delete lmPtr;
+    return THOT_OK;
+  }  
+}
+
+//--------------------------
+int ThotDecoder::testSwModelModule(std::string soFileName,
+                                   int /*verbose=0*/)
+{
+      // Declare dynamic class loader instance
+  SimpleDynClassLoader<BaseSwAligModel<PpInfo> > simpleDynClassLoader;
+  
+      // Open module
+  bool verbosity=false;
+  if(!simpleDynClassLoader.open_module(soFileName,verbosity))
+  {
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
+    return THOT_ERROR;
+  }
+
+  BaseSwAligModel<PpInfo>* swmPtr=simpleDynClassLoader.make_obj("");
+  if(swmPtr==NULL)
+  {
+    std::cerr<<"Error: BaseSwAligModel pointer could not be instantiated"<<std::endl;    
+    return THOT_ERROR;
+  }
+  else
+  {
+    if(!swmPtr->modelReadsAreProcessSafe())
+    {
+      std::cerr<<"Warning: model reads are not process-safe for swm module "<<soFileName<<std::endl;
+    }
+    delete swmPtr;
+    return THOT_OK;
+  }
 }
 
 //--------------------------
@@ -2368,24 +2635,41 @@ int ThotDecoder::printModelWeights(void)
   tdCommonVars.smtModelPtr->printWeights(std::cout);
   std::cout<<std::endl;
 
-      // Print assisted translator weights
-  BaseAssistedTrans<SmtModel>* assistedTransPtr=tdCommonVars.dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseAssistedTransInitPars);
-  if(assistedTransPtr==NULL)
-  {
-    std::cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<std::endl;
-    return THOT_ERROR;
-  }
+  printCatWeights();
 
-  WgUncoupledAssistedTrans<SmtModel>* wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<SmtModel>*>(assistedTransPtr);
-  if(!wgUncoupledAssistedTransPtr)
+      // Print error correction model weights
+  std::cout<<"- Error correction model weights= ";
+  tdCommonVars.ecModelPtr->printWeights(std::cout);
+  std::cout<<std::endl;
+  
+  /////////// end of mutex 
+  pthread_mutex_unlock(&atomic_op_mut);
+
+  return THOT_OK;
+}
+
+//--------------------------
+int ThotDecoder::printCatWeights(void)
+{
+      // Check if an assisted translator has been previously instantiated
+  if(!tdPerUserVarsVec.empty())
   {
     std::cout<<"- Assisted translator weights= ";
-    assistedTransPtr->printWeights(std::cout);
+    tdPerUserVarsVec[0].assistedTransPtr->printWeights(std::cout);
     std::cout << std::endl;
   }
   else
   {
-    if(tdCommonVars.curr_ecm_valid_for_wg)
+        // No assisted translator was previously instantiated
+    BaseAssistedTrans<SmtModel>* assistedTransPtr=tdCommonVars.dynClassFactoryHandler.baseAssistedTransDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseAssistedTransInitPars);
+    if(assistedTransPtr==NULL)
+    {
+      std::cerr<<"Error: BaseAssistedTrans pointer could not be instantiated"<<std::endl;
+      return THOT_ERROR;
+    }
+  
+    WgUncoupledAssistedTrans<SmtModel>* wgUncoupledAssistedTransPtr=dynamic_cast<WgUncoupledAssistedTrans<SmtModel>*>(assistedTransPtr);
+    if(!wgUncoupledAssistedTransPtr)
     {
       std::cout<<"- Assisted translator weights= ";
       assistedTransPtr->printWeights(std::cout);
@@ -2393,21 +2677,20 @@ int ThotDecoder::printModelWeights(void)
     }
     else
     {
-      std::cout<<"Warning: current error correcting model cannot be combined with word-graph based assisted translators"<<std::endl;
+      if(tdCommonVars.curr_ecm_valid_for_wg)
+      {
+        std::cout<<"- Assisted translator weights= ";
+        assistedTransPtr->printWeights(std::cout);
+        std::cout << std::endl;
+      }
+      else
+      {
+        std::cout<<"Warning: current error correcting model cannot be combined with word-graph based assisted translators"<<std::endl;
+      }
     }
+        // Release memory
+    delete assistedTransPtr;
   }
-
-      // Release memory
-  delete assistedTransPtr;
-  
-      // Print error correction model weights
-  std::cout<<"- Error correction model weights= ";
-  tdCommonVars.ecModelPtr->printWeights(std::cout);
-  std::cout<<std::endl;
-
-  
-  /////////// end of mutex 
-  pthread_mutex_unlock(&atomic_op_mut);
 
   return THOT_OK;
 }

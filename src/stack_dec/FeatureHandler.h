@@ -55,12 +55,12 @@ class FeatureHandler
       // Constructor
   FeatureHandler();
   
-      // Functions to incorporate new features
+      // Functions to incorporate features
   int addWpFeat(int verbose);
   int addLmFeats(std::string lmFileName,
-                  int verbose);
+                 int verbose);
   int addTmFeats(std::string tmFilesPrefix,
-                  int verbose);
+                 int verbose);
 
       // Functions to print features
   bool print(std::string tmFileName,

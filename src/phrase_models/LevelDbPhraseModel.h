@@ -78,6 +78,9 @@ class LevelDbPhraseModel: public BaseIncrPhraseModel
         // Constructor
     LevelDbPhraseModel(void);
 
+        // Thread/Process safety related functions
+    bool modelReadsAreProcessSafe(void);
+
         // Functions to extend or modify the model
     void strAddTableEntry(const std::vector<std::string>& s,
                           const std::vector<std::string>& t,
