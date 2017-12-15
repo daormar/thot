@@ -82,7 +82,7 @@ void JsonTranslationMetadataTest::testGetSrcSentVec()
 void JsonTranslationMetadataTest::testGetTransForSrcPhr()
 {
     metadata->obtainTransConstraints(jsonStr, 0);
-    std::vector<std::string> translation = metadata->getTransForSrcPhr(std::make_pair(0, 0));
+    std::vector<std::string> translation = metadata->getTransForSrcPhr(std::make_pair(1, 1));
 
     std::vector<std::string> expectedTranslation;
     expectedTranslation.push_back("premier");
@@ -95,11 +95,11 @@ void JsonTranslationMetadataTest::testGetConstrainedSrcPhrases()
 {
     // Prepare expected data structure
     std::set<std::pair<PositionIndex,PositionIndex> > expectedConstraints;
-    expectedConstraints.insert(std::make_pair(0, 0));
-    expectedConstraints.insert(std::make_pair(3, 4));
-    expectedConstraints.insert(std::make_pair(5, 5));
+    expectedConstraints.insert(std::make_pair(1, 1));
+    expectedConstraints.insert(std::make_pair(4, 5));
     expectedConstraints.insert(std::make_pair(6, 6));
     expectedConstraints.insert(std::make_pair(7, 7));
+    expectedConstraints.insert(std::make_pair(8, 8));
 
     // Obtain constraints for a given JSON
     metadata->obtainTransConstraints(jsonStr, 0);
@@ -115,19 +115,19 @@ void JsonTranslationMetadataTest::testSrcPhrAffectedByConstraint()
     // Extract constraints
     metadata->obtainTransConstraints(jsonStr, 0);
 
-    isConstrained = metadata->srcPhrAffectedByConstraint(std::make_pair(0, 0));
-    CPPUNIT_ASSERT_EQUAL(true, isConstrained);
-
-    isConstrained = metadata->srcPhrAffectedByConstraint(std::make_pair(0, 1));
-    CPPUNIT_ASSERT_EQUAL(true, isConstrained);
-
     isConstrained = metadata->srcPhrAffectedByConstraint(std::make_pair(1, 1));
+    CPPUNIT_ASSERT_EQUAL(true, isConstrained);
+
+    isConstrained = metadata->srcPhrAffectedByConstraint(std::make_pair(1, 2));
+    CPPUNIT_ASSERT_EQUAL(true, isConstrained);
+
+    isConstrained = metadata->srcPhrAffectedByConstraint(std::make_pair(2, 2));
     CPPUNIT_ASSERT_EQUAL(false, isConstrained);
 
-    isConstrained = metadata->srcPhrAffectedByConstraint(std::make_pair(4, 6));
+    isConstrained = metadata->srcPhrAffectedByConstraint(std::make_pair(5, 7));
     CPPUNIT_ASSERT_EQUAL(true, isConstrained);
 
-    isConstrained = metadata->srcPhrAffectedByConstraint(std::make_pair(5, 7));
+    isConstrained = metadata->srcPhrAffectedByConstraint(std::make_pair(6, 8));
     CPPUNIT_ASSERT_EQUAL(true, isConstrained);
 }
 
@@ -139,12 +139,12 @@ void JsonTranslationMetadataTest::testTranslationSatisfiesConstraints()
 
     // Prepare parameters
     SourceSegmentation sourceSegmentation;
-    sourceSegmentation.push_back(std::make_pair(0, 0));
-    sourceSegmentation.push_back(std::make_pair(1, 2));
-    sourceSegmentation.push_back(std::make_pair(3, 4));
-    sourceSegmentation.push_back(std::make_pair(5, 5));
+    sourceSegmentation.push_back(std::make_pair(1, 1));
+    sourceSegmentation.push_back(std::make_pair(2, 3));
+    sourceSegmentation.push_back(std::make_pair(4, 5));
     sourceSegmentation.push_back(std::make_pair(6, 6));
     sourceSegmentation.push_back(std::make_pair(7, 7));
+    sourceSegmentation.push_back(std::make_pair(8, 8));
 
     std::vector<PositionIndex> targetSegmentCuts;
     targetSegmentCuts.push_back(1);

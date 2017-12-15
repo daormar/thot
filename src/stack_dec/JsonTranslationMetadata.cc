@@ -207,11 +207,11 @@ bool JsonTranslationMetadata::containsOnlyWhitespaces(std::string phrase)
 //---------------------------------------
 bool JsonTranslationMetadata::isPhraseInSentence(std::vector<std::string>& phrase, unsigned int startPosition)
 {
-    if(startPosition + phrase.size() > srcSentVec.size())
+    if(startPosition + phrase.size() - 1 > srcSentVec.size())
         return false;  // Sentence is too short to contain phrase
 
     for(unsigned int i = 0; i < phrase.size(); i++)
-        if(srcSentVec[startPosition + i] != phrase[i])
+        if(srcSentVec[startPosition + i - 1] != phrase[i])
             return false;  // Phrase does not match
 
     return true;
@@ -220,10 +220,10 @@ bool JsonTranslationMetadata::isPhraseInSentence(std::vector<std::string>& phras
 //---------------------------------------
 void JsonTranslationMetadata::addTranslations(std::vector<std::pair<std::string, std::string> >& translations)
 {
-    unsigned int sIdx = 0;  // Source token index
+    unsigned int sIdx = 1;  // Source token index
     unsigned int tpIdx = 0;  // Translation pair index
 
-    while(sIdx < srcSentVec.size() && tpIdx < translations.size())
+    while(sIdx <= srcSentVec.size() && tpIdx < translations.size())
     {
         std::pair<std::string, std::string> tp = translations[tpIdx];
         std::vector<std::string> srcPhraseVec = StrProcUtils::stringToStringVector(tp.first);
