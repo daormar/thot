@@ -43,6 +43,7 @@ struct thot_client_pars
   std::string sentenceToTranslate;
   std::string strToAddToPref;
   std::string serverIP;
+  std::string jsonFileName;
   std::vector<float> floatVec;
   int user_id;
   int server_request_code;

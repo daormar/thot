@@ -40,6 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "client_server_defs.h"
 #include "thot_client_pars.h"
 #include <math.h>
+#include "AwkInputStream.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -50,6 +51,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Function Declarations ------------------------------
 
 void process_request(const thot_client_pars& tdcPars);
+int extractJsonFileContent(std::string jsonFileName,
+                           std::string& jsonFileContent);
 int TakeParameters(int argc,
                    char *argv[],
                    thot_client_pars& tdcPars);
@@ -70,6 +73,14 @@ int main(int argc,char *argv[])
   if(TakeParameters(argc,argv,tdcPars)==THOT_OK)
   {
         // Parameters ok
+
+        // Process json file if it was given
+    if(!tdcPars.jsonFileName.empty())
+    {
+      int ret=extractJsonFileContent(tdcPars.jsonFileName,tdcPars.sentenceToTranslate);
+      if(ret==THOT_ERROR)
+        return THOT_ERROR;
+    }
     
         // Process request
     try
@@ -171,6 +182,27 @@ void process_request(const thot_client_pars& tdcPars)
 }
 
 //---------------
+int extractJsonFileContent(std::string jsonFileName,
+                           std::string& jsonFileContent)
+{
+  AwkInputStream awk;
+  if(awk.open(jsonFileName.c_str())==THOT_ERROR)
+  {
+    std::cerr<<"Error while opening json file "<<jsonFileName<<std::endl;
+    return THOT_ERROR;
+  }
+  else
+  {
+    jsonFileContent.clear();
+    while(awk.getln())
+    {
+      jsonFileContent+=awk.dollar(0);
+    }
+    return THOT_OK;
+  }
+}
+
+//---------------
 int TakeParameters(int argc,
                    char *argv[],
                    thot_client_pars& tdcPars)
@@ -257,6 +289,14 @@ int TakeParameters(int argc,
    return THOT_OK;
  }
 
+     /* Take the name of the json file */
+ err=readSTLstring(argc,argv, "-j", &tdcPars.jsonFileName);
+ if(err==0)
+ {
+   tdcPars.server_request_code=TRANSLATE_SENT;
+   return THOT_OK;
+ }
+
      /* Take the sentence pair for coverage verifying */
  err=readTwoSTLstrings(argc,argv, "-c", &tdcPars.stlStringSrc,&tdcPars.stlStringRef);
  if(err==0)
@@ -321,9 +361,9 @@ void printDesc(void)
 void printUsage(void)
 {
   std::cerr<<"Usage: thot_client           -i <string> [-p <int>] [-uid <int>]\n";
-  std::cerr<<"                             { -tr <srcstring> <refstring> | \n";
-  // std::cerr<<"                          | -tre <srcstring> <refstring> | \n";
-  std::cerr<<"                             | -t <string> | -th <string> |\n";
+  std::cerr<<"                             { -tr <srcstring> <refstring> |\n";
+  // std::cerr<<"                          | -tre <srcstring> <refstring> |\n";
+  std::cerr<<"                             | -t <string> | -th <string> | -j <string> |\n";
   std::cerr<<"                             | -c <srcstring> <refstring> |\n";
   std::cerr<<"                             | -sc <string> | -ap <string> | -rp |\n";
   std::cerr<<"                             | -o <string> | -e } [ -v ]\n";
@@ -336,6 +376,10 @@ void printUsage(void)
   std::cerr<<"-t <string>                  Translate sentence.\n";
   std::cerr<<"-th <string>                 Translate sentence (returns hypothesis\n";
   std::cerr<<"                             information).\n";
+  std::cerr<<"-j <string>                  Translate sentence given in a file in json format.\n";  
+  std::cerr<<"                             The file contains the source sentence plus metadata.\n";
+  std::cerr<<"                             NOTE: only servers loading modules that support json\n";
+  std::cerr<<"                             format will work with this option\n";
   std::cerr<<"-c <srcstring> <refstring>   Verify model coverage for reference sentence.\n";
   std::cerr<<"-sc <string>                 Start CAT system for the given sentence, using\n";
   std::cerr<<"                             the null string as prefix.\n";
