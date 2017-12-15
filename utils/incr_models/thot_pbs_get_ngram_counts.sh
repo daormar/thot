@@ -20,7 +20,7 @@ version()
 usage()
 {
     echo "thot_pbs_get_ngram_counts -pr <int>"
-    echo "                          -c <string> -o <string> -n <int> [-unk]"
+    echo "                          -c <string> -o <string> -n <int> [-f <int>] [-unk]"
     echo "                          [-qs <string>] [-tdir <string>] [-sdir <string>]"
     echo "                          [--sync-dep] [-debug] [--help] [--version]"
     echo ""
@@ -29,6 +29,8 @@ usage()
     echo "                     using pbs clusters)."
     echo "-o <string>        : Prefix of output files."
     echo "-n <int>           : Order of the n-grams."
+    echo "-f <int>           : Size in lines of the fragments in which the corpus"
+    echo "                     is divided when performing map-reduce (50K by default)."
     echo "-unk               : Reserve probability mass for the unknown word."
     echo "-qs <string>       : Specific options to be given to the qsub command"
     echo "                     (example: -qs \"-l pmem=1gb\")."
@@ -85,13 +87,13 @@ set_shared_dir()
     mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
 
     # Create temporary subdirectories
-    chunks_dir=$SDIR/chunks
+    fragms_dir=$SDIR/fragms
     scripts_dir=$SDIR/scripts
-    counts_per_chunk_dir=$SDIR/counts_per_chunk
+    counts_per_fragm_dir=$SDIR/counts_per_fragm
     sync_info_dir=$SDIR/sync
-    mkdir ${chunks_dir} || return 1
+    mkdir ${fragms_dir} || return 1
     mkdir ${scripts_dir} || return 1
-    mkdir ${counts_per_chunk_dir} || return 1
+    mkdir ${counts_per_fragm_dir} || return 1
     mkdir ${sync_info_dir} || return 1
 
     # Function executed correctly
@@ -146,11 +148,11 @@ split_input()
         echo "Error: problem too small"
         exit 1
     fi
-    local chunk_size=`expr ${input_size} / ${pr_val}`
-    local chunk_size=`expr ${chunk_size} + 1`
+    _fragm_size=`expr ${input_size} / ${pr_val}`
+    _fragm_size=`expr ${_fragm_size} + 1`
 
     # Split input 
-    ${SPLIT} -l ${chunk_size} ${proc_corpus} ${chunks_dir}/chunk\_ || return 1
+    ${SPLIT} -l ${_fragm_size} ${proc_corpus} ${fragms_dir}/fragm\_ || return 1
 }
 
 remove_temp()
@@ -388,28 +390,28 @@ sort_counts()
     LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars}
 }
 
-add_chunk_id()
+add_fragm_id()
 {
-    ${AWK} -v c=${chunk_id} '{printf"%s %s\n",$0,c}'    
+    ${AWK} -v c=${fragm_id} '{printf"%s %s\n",$0,c}'    
 }
 
-proc_chunk()
+proc_fragm()
 {
     # Write date to log file
-    echo "** Processing chunk ${chunk} (started at "`date`")..." >> $SDIR/log
-    echo "** Processing chunk ${chunk} (started at "`date`")..." > ${counts_per_chunk_dir}/${chunk}_sorted_counts.log
+    echo "** Processing fragm ${fragm} (started at "`date`")..." >> $SDIR/log
+    echo "** Processing fragm ${fragm} (started at "`date`")..." > ${counts_per_fragm_dir}/${fragm}_sorted_counts.log
 
-    # Extract counts from chunk and sort them
-    $bindir/thot_get_ngram_counts_mr -c ${chunks_dir}/${chunk} -n ${n_val} -tdir $TMP | add_length_col | \
-        sort_counts | add_chunk_id 2>> ${counts_per_chunk_dir}/${chunk}_sorted_counts.log \
-        > ${counts_per_chunk_dir}/${chunk}_sorted_counts ; ${PIPE_FAIL} || \
-        { echo "Error while executing proc_chunk for ${chunks_dir}/${chunk}" >> $SDIR/log ; return 1 ; }
+    # Extract counts from fragm and sort them
+    $bindir/thot_get_ngram_counts_mr -c ${fragms_dir}/${fragm} -n ${n_val} -f ${fragm_size} -tdir $TMP | add_length_col | \
+        sort_counts | add_fragm_id 2>> ${counts_per_fragm_dir}/${fragm}_sorted_counts.log \
+        > ${counts_per_fragm_dir}/${fragm}_sorted_counts ; ${PIPE_FAIL} || \
+        { echo "Error while executing proc_fragm for ${fragms_dir}/${fragm}" >> $SDIR/log ; return 1 ; }
 
     # Write date to log file
-    echo "Processing of chunk ${chunk} finished ("`date`")" >> $SDIR/log 
+    echo "Processing of fragm ${fragm} finished ("`date`")" >> $SDIR/log 
 
     # Create sync file
-    echo "" > ${sync_info_dir}/proc_chunk_${chunk}
+    echo "" > ${sync_info_dir}/proc_fragm_${fragm}
 
     return 0
 }
@@ -425,14 +427,14 @@ merge_sort()
         SORT_TMP=""
     fi
 
-    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} -m ${counts_per_chunk_dir}/*_sorted_counts
+    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} -m ${counts_per_fragm_dir}/*_sorted_counts
 }
 
 generate_counts_file()
 {
     # Write date to log file
     echo "** Generating counts file (started at "`date`")..." >> $SDIR/log
-    echo "** Generating counts file (started at "`date`")..." > ${counts_per_chunk_dir}/gen_counts.log
+    echo "** Generating counts file (started at "`date`")..." > ${counts_per_fragm_dir}/gen_counts.log
 
     # Delete output file if exists
     if [ -f ${output} ]; then
@@ -440,9 +442,9 @@ generate_counts_file()
     fi
 
     # Merge count files
-    merge_sort 2>> ${counts_per_chunk_dir}/gen_counts.log | \
-        remove_length_col 2>> ${counts_per_chunk_dir}/gen_counts.log | \
-        ${bindir}/thot_merge_ngram_counts 2>> ${counts_per_chunk_dir}/gen_counts.log \
+    merge_sort 2>> ${counts_per_fragm_dir}/gen_counts.log | \
+        remove_length_col 2>> ${counts_per_fragm_dir}/gen_counts.log | \
+        ${bindir}/thot_merge_ngram_counts 2>> ${counts_per_fragm_dir}/gen_counts.log \
         > ${output} ; ${PIPE_FAIL} || \
         { echo "Error while executing generate_counts_file" >> $SDIR/log ; return 1 ; }
 
@@ -465,11 +467,11 @@ gen_log_err_files()
             rm ${output}.getng_err
         fi
 
-        for f in ${counts_per_chunk_dir}/*_sorted_counts.log; do
+        for f in ${counts_per_fragm_dir}/*_sorted_counts.log; do
             cat $f >> ${output}.getng_err
         done
 
-        if [ -f ${counts_per_chunk_dir}/gen_counts.log ]; then
+        if [ -f ${counts_per_fragm_dir}/gen_counts.log ]; then
             cat $f >> ${output}.getng_err
         fi
     fi
@@ -502,9 +504,10 @@ sdir=$HOME
 qs_given=0
 c_given=0
 n_given=0
+f_given=0
+fragm_size=50000
 o_given=0
 tdir="/tmp"
-# sync_sleep=0
 sync_sleep=1
 debug=0
 
@@ -546,6 +549,14 @@ while [ $# -ne 0 ]; do
                 n_given=1
             else
                 n_given=0
+            fi
+            ;;
+        "-f") shift
+            if [ $# -ne 0 ]; then
+                fragm_size=$1
+                f_given=1
+            else
+                f_given=0
             fi
             ;;
         "-o") shift
@@ -618,8 +629,8 @@ fi
 set_tmp_dir || exit 1
 
 # Set shared directory (global variables are declared)
-declare chunks_dir="" 
-declare counts_per_chunk_dir="" 
+declare fragms_dir="" 
+declare counts_per_fragm_dir="" 
 declare scripts_dir="" 
 
 set_shared_dir || exit 1
@@ -630,28 +641,28 @@ echo "**** Parallel process started at: "`date` > $SDIR/log
 # Process -unk option
 process_unk_opt || exit 1
 
-# Split shuffled input into chunks and process them separately...
+# Split shuffled input into fragms and process them separately...
 # job_deps=""
 split_input || exit 1
 
 # Declare job id list variable
 declare job_id_list=""
 
-# Extract counts from chunk
-chunk_id=0
-for i in `ls ${chunks_dir}/chunk\_*`; do
+# Extract counts from fragm
+fragm_id=0
+for i in `ls ${fragms_dir}/fragm\_*`; do
     # Initialize variables
-    chunk=`${BASENAME} $i`
-    chunk_id=`expr $chunk_id + 1`
+    fragm=`${BASENAME} $i`
+    fragm_id=`expr $fragm_id + 1`
         
-    # Process chunk
+    # Process fragment
     job_deps=""
-    launch "${job_deps}" proc_chunk "_${chunk_id}" job_id || exit 1
+    launch "${job_deps}" proc_fragm "_${fragm_id}" job_id || exit 1
     pc_job_ids=${job_id}" "${pc_job_ids}
 done
 
 # Extract counts synchronization
-sync "${pc_job_ids}" "proc_chunk" || { gen_log_err_files ; report_errors ; exit 1; }
+sync "${pc_job_ids}" "proc_fragm" || { gen_log_err_files ; report_errors ; exit 1; }
 
 # Generate counts file
 job_deps=${pc_job_ids}
