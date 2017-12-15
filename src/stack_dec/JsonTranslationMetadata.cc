@@ -57,6 +57,10 @@ void JsonTranslationMetadata::obtainTransConstraints(std::string rawSrcSent,int 
         {
             std::cerr << "Processing constraints in JSON format failed: " << err << std::endl;
         }
+        else if(!json.is<picojson::object>())  // Loaded data are not valid JSON
+        {
+            std::cerr << "Received data are not a valid JSON: " << rawSrcSent << std::endl;
+        }
         else  // JSON parsed correctly
         {
             // Retrieve source sentence
