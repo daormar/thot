@@ -495,7 +495,6 @@ bool TranslationMetadata::transViolatesSrcPhrConstraint(std::pair<PositionIndex,
 //---------------------------------------
 void TranslationMetadata::clear(void)
 {
-  xmlTagSet.clear();
   srcSentVec.clear();
   srcPhrTransMap.clear();
 }
