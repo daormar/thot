@@ -385,15 +385,16 @@ picojson_h=picojson/picojson.h
 exper_h=
 exper_defs=
 
-testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h          \
-testing/JsonTranslationMetadataTest.h                               \
-testing/_incrLexTableTest.h testing/_phraseTableTest.h              \
+testing_h= testing/KbMiraLlWuTest.h testing/MiraChrFTest.h		\
+testing/TranslationMetadataTest.h testing/JsonTranslationMetadataTest.h	\
+testing/_incrLexTableTest.h testing/_phraseTableTest.h			\
 testing/IncrLexTableTest.h testing/StlPhraseTableTest.h
 
-testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc     \
-testing/JsonTranslationMetadataTest.cc                              \
-testing/_incrLexTableTest.cc testing/_phraseTableTest.cc            \
-testing/IncrLexTableTest.cc testing/StlPhraseTableTest.cc
+testing_defs= testing/KbMiraLlWuTest.cc testing/MiraChrFTest.cc		\
+testing/TranslationMetadataTest.cc					\
+testing/JsonTranslationMetadataTest.cc testing/_incrLexTableTest.cc	\
+testing/_phraseTableTest.cc testing/IncrLexTableTest.cc			\
+testing/StlPhraseTableTest.cc
 
 
 if HAVE_LEVELDB_LIB
