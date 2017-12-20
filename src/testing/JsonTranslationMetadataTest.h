@@ -56,7 +56,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
-//--------------- JsonTranslationMetadata template class
+//--------------- JsonTranslationMetadata class
 
 /**
  * @brief Class implementing tests for JsonTranslationMetadata.

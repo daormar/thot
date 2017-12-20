@@ -34,6 +34,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Typedefs -------------------------------------------
 
+//--------------- Classes --------------------------------------------
+
 class JsonTranslationMetadata: public BaseTranslationMetadata
 {
  public:
