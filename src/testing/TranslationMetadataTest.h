@@ -70,7 +70,7 @@ class TranslationMetadataTest: public CppUnit::TestFixture
   CPPUNIT_TEST( testGetTransForSrcPhr );
   CPPUNIT_TEST( testGetConstrainedSrcPhrases );
   CPPUNIT_TEST( testSrcPhrAffectedByConstraint );
-  CPPUNIT_TEST( testTranslationSatisfiesConstraints );
+  CPPUNIT_TEST( testTranslationSatisfiesSrcPhrConstraints );
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -82,11 +82,10 @@ class TranslationMetadataTest: public CppUnit::TestFixture
   void testGetTransForSrcPhr();
   void testGetConstrainedSrcPhrases();
   void testSrcPhrAffectedByConstraint();
-  void testTranslationSatisfiesConstraints();
+  void testTranslationSatisfiesSrcPhrConstraints();
 
  private:
   TranslationMetadata* metadata;
-  void testTranslationSatisfiesSrcPhrConstraints();
   void testTranslationSatisfyingSrcPhrConstraints();
   void testTranslationViolatingSrcSegmentationConstraints();
   void testTranslationViolatingTrgSegmentationConstraints();

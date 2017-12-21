@@ -132,12 +132,6 @@ void JsonTranslationMetadataTest::testSrcPhrAffectedByConstraint()
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::testTranslationSatisfiesConstraints()
-{
-  testTranslationSatisfiesSrcPhrConstraints();
-}
-
-//---------------------------------------
 void JsonTranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints()
 {
   testTranslationSatisfyingSrcPhrConstraints();

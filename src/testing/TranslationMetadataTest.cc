@@ -132,12 +132,6 @@ void TranslationMetadataTest::testSrcPhrAffectedByConstraint()
 }
 
 //---------------------------------------
-void TranslationMetadataTest::testTranslationSatisfiesConstraints()
-{
-  testTranslationSatisfiesSrcPhrConstraints();
-}
-
-//---------------------------------------
 void TranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints()
 {
   testTranslationSatisfyingSrcPhrConstraints();
