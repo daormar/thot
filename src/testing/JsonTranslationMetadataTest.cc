@@ -36,19 +36,19 @@ CPPUNIT_TEST_SUITE_REGISTRATION( JsonTranslationMetadataTest );
 //
 
 //---------------------------------------
-void JsonTranslationMetadataTest::setUp()
+void JsonTranslationMetadataTest::setUp(void)
 {
     metadata = new JsonTranslationMetadata();
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::tearDown()
+void JsonTranslationMetadataTest::tearDown(void)
 {
     delete metadata;
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::testSafeRecallingObtainTransConstraints()
+void JsonTranslationMetadataTest::testSafeRecallingObtainTransConstraints(void)
 {
     metadata->clear();
 
@@ -64,7 +64,7 @@ void JsonTranslationMetadataTest::testSafeRecallingObtainTransConstraints()
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::testGetSrcSentVec()
+void JsonTranslationMetadataTest::testGetSrcSentVec(void)
 {
     // Prepare expected answer
     const std::string expectedSrcSent = "First and only T-shirt with logo 22.9cm 2x5";
@@ -79,7 +79,7 @@ void JsonTranslationMetadataTest::testGetSrcSentVec()
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::testGetTransForSrcPhr()
+void JsonTranslationMetadataTest::testGetTransForSrcPhr(void)
 {
     metadata->obtainTransConstraints(jsonStr, 0);
     std::vector<std::string> translation = metadata->getTransForSrcPhr(std::make_pair(1, 1));
@@ -91,7 +91,7 @@ void JsonTranslationMetadataTest::testGetTransForSrcPhr()
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::testGetConstrainedSrcPhrases()
+void JsonTranslationMetadataTest::testGetConstrainedSrcPhrases(void)
 {
     // Prepare expected data structure
     std::set<std::pair<PositionIndex,PositionIndex> > expectedConstraints;
@@ -109,7 +109,7 @@ void JsonTranslationMetadataTest::testGetConstrainedSrcPhrases()
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::testSrcPhrAffectedByConstraint()
+void JsonTranslationMetadataTest::testSrcPhrAffectedByConstraint(void)
 {
     bool isConstrained;
     // Extract constraints
@@ -132,7 +132,7 @@ void JsonTranslationMetadataTest::testSrcPhrAffectedByConstraint()
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints()
+void JsonTranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints(void)
 {
   testTranslationSatisfyingSrcPhrConstraints();
   testTranslationViolatingSrcSegmentationConstraints();
@@ -141,7 +141,7 @@ void JsonTranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints()
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::testTranslationSatisfyingSrcPhrConstraints()
+void JsonTranslationMetadataTest::testTranslationSatisfyingSrcPhrConstraints(void)
 {
     // Extract constraints
     metadata->obtainTransConstraints(jsonStr, 0);
@@ -179,7 +179,7 @@ void JsonTranslationMetadataTest::testTranslationSatisfyingSrcPhrConstraints()
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::testTranslationViolatingSrcSegmentationConstraints()
+void JsonTranslationMetadataTest::testTranslationViolatingSrcSegmentationConstraints(void)
 {
     // Extract constraints
     metadata->obtainTransConstraints(jsonStr, 0);
@@ -217,7 +217,7 @@ void JsonTranslationMetadataTest::testTranslationViolatingSrcSegmentationConstra
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::testTranslationViolatingTrgSegmentationConstraints()
+void JsonTranslationMetadataTest::testTranslationViolatingTrgSegmentationConstraints(void)
 {
     // Extract constraints
     metadata->obtainTransConstraints(jsonStr, 0);
@@ -255,7 +255,7 @@ void JsonTranslationMetadataTest::testTranslationViolatingTrgSegmentationConstra
 }
 
 //---------------------------------------
-void JsonTranslationMetadataTest::testTranslationViolatingWordSelectionConstraints()
+void JsonTranslationMetadataTest::testTranslationViolatingWordSelectionConstraints(void)
 {
     // Extract constraints
     metadata->obtainTransConstraints(jsonStr, 0);

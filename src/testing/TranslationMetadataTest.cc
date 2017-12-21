@@ -141,7 +141,7 @@ void TranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints()
 }
 
 //---------------------------------------
-void TranslationMetadataTest::testTranslationSatisfyingSrcPhrConstraints()
+void TranslationMetadataTest::testTranslationSatisfyingSrcPhrConstraints(void)
 {
     // Extract constraints
     metadata->obtainTransConstraints(xmlStr, 0);
@@ -179,7 +179,7 @@ void TranslationMetadataTest::testTranslationSatisfyingSrcPhrConstraints()
 }
 
 //---------------------------------------
-void TranslationMetadataTest::testTranslationViolatingSrcSegmentationConstraints()
+void TranslationMetadataTest::testTranslationViolatingSrcSegmentationConstraints(void)
 {
     // Extract constraints
     metadata->obtainTransConstraints(xmlStr, 0);
@@ -217,7 +217,7 @@ void TranslationMetadataTest::testTranslationViolatingSrcSegmentationConstraints
 }
 
 //---------------------------------------
-void TranslationMetadataTest::testTranslationViolatingTrgSegmentationConstraints()
+void TranslationMetadataTest::testTranslationViolatingTrgSegmentationConstraints(void)
 {
     // Extract constraints
     metadata->obtainTransConstraints(xmlStr, 0);
@@ -255,7 +255,7 @@ void TranslationMetadataTest::testTranslationViolatingTrgSegmentationConstraints
 }
 
 //---------------------------------------
-void TranslationMetadataTest::testTranslationViolatingWordSelectionConstraints()
+void TranslationMetadataTest::testTranslationViolatingWordSelectionConstraints(void)
 {
     // Extract constraints
     metadata->obtainTransConstraints(xmlStr, 0);

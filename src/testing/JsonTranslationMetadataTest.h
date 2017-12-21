@@ -74,22 +74,22 @@ class JsonTranslationMetadataTest: public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE_END();
 
  public:
-  void setUp();
-  void tearDown();
+  void setUp(void);
+  void tearDown(void);
 
-  void testSafeRecallingObtainTransConstraints();
-  void testGetSrcSentVec();
-  void testGetTransForSrcPhr();
-  void testGetConstrainedSrcPhrases();
-  void testSrcPhrAffectedByConstraint();
-  void testTranslationSatisfiesSrcPhrConstraints();
+  void testSafeRecallingObtainTransConstraints(void);
+  void testGetSrcSentVec(void);
+  void testGetTransForSrcPhr(void);
+  void testGetConstrainedSrcPhrases(void);
+  void testSrcPhrAffectedByConstraint(void);
+  void testTranslationSatisfiesSrcPhrConstraints(void);
 
  private:
   JsonTranslationMetadata* metadata;
-  void testTranslationSatisfyingSrcPhrConstraints();
-  void testTranslationViolatingSrcSegmentationConstraints();
-  void testTranslationViolatingTrgSegmentationConstraints();
-  void testTranslationViolatingWordSelectionConstraints();
+  void testTranslationSatisfyingSrcPhrConstraints(void);
+  void testTranslationViolatingSrcSegmentationConstraints(void);
+  void testTranslationViolatingTrgSegmentationConstraints(void);
+  void testTranslationViolatingWordSelectionConstraints(void);
 
   const std::string jsonStr = "{"
     "	\"src_title\" : {"
