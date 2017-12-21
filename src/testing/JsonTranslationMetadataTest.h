@@ -88,6 +88,10 @@ class JsonTranslationMetadataTest: public CppUnit::TestFixture
  private:
   JsonTranslationMetadata* metadata;
   void testTranslationSatisfiesSrcPhrConstraints();
+  void testTranslationSatisfyingSrcPhrConstraints();
+  void testTranslationViolatingSrcSegmentationConstraints();
+  void testTranslationViolatingTrgSegmentationConstraints();
+  void testTranslationViolatingWordSelectionConstraints();
 
   const std::string jsonStr = "{"
     "	\"src_title\" : {"

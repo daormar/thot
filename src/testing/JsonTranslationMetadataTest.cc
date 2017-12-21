@@ -140,6 +140,15 @@ void JsonTranslationMetadataTest::testTranslationSatisfiesConstraints()
 //---------------------------------------
 void JsonTranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints()
 {
+  testTranslationSatisfyingSrcPhrConstraints();
+  testTranslationViolatingSrcSegmentationConstraints();
+  testTranslationViolatingTrgSegmentationConstraints();
+  testTranslationViolatingWordSelectionConstraints();
+}
+
+//---------------------------------------
+void JsonTranslationMetadataTest::testTranslationSatisfyingSrcPhrConstraints()
+{
     // Extract constraints
     metadata->obtainTransConstraints(jsonStr, 0);
 
@@ -173,11 +182,118 @@ void JsonTranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints()
     // Valid translation - respects all constraints
     bool isSatisfied = metadata->translationSatisfiesConstraints(sourceSegmentation, targetSegmentCuts, targetWordVec);
     CPPUNIT_ASSERT_EQUAL(true, isSatisfied);
+}
 
-    // Wrong cut which violates constraints
-    targetSegmentCuts[2] -= 1;
+//---------------------------------------
+void JsonTranslationMetadataTest::testTranslationViolatingSrcSegmentationConstraints()
+{
+    // Extract constraints
+    metadata->obtainTransConstraints(jsonStr, 0);
 
-    // Invalid translation - do not respect one constraint
-    isSatisfied = metadata->translationSatisfiesConstraints(sourceSegmentation, targetSegmentCuts, targetWordVec);
+    // Prepare parameters
+    SourceSegmentation sourceSegmentation;
+    sourceSegmentation.push_back(std::make_pair(1, 2));
+    sourceSegmentation.push_back(std::make_pair(3, 3));
+    sourceSegmentation.push_back(std::make_pair(4, 5));
+    sourceSegmentation.push_back(std::make_pair(6, 6));
+    sourceSegmentation.push_back(std::make_pair(7, 7));
+    sourceSegmentation.push_back(std::make_pair(8, 8));
+
+    std::vector<PositionIndex> targetSegmentCuts;
+    targetSegmentCuts.push_back(1);
+    targetSegmentCuts.push_back(3);
+    targetSegmentCuts.push_back(5);
+    targetSegmentCuts.push_back(6);
+    targetSegmentCuts.push_back(7);
+    targetSegmentCuts.push_back(8);
+
+    std::vector<std::string> targetWordVec;
+    targetWordVec.push_back("premier");
+    targetWordVec.push_back("et");
+    targetWordVec.push_back("Only");
+    targetWordVec.push_back("t-shirt");
+    targetWordVec.push_back("avec");
+    targetWordVec.push_back("Logo");
+    targetWordVec.push_back("22.9cm");
+    targetWordVec.push_back("2x5");
+
+    // Valid translation - respects all constraints
+    bool isSatisfied = metadata->translationSatisfiesConstraints(sourceSegmentation, targetSegmentCuts, targetWordVec);
     CPPUNIT_ASSERT_EQUAL(false, isSatisfied);
+}
+
+//---------------------------------------
+void JsonTranslationMetadataTest::testTranslationViolatingTrgSegmentationConstraints()
+{
+    // Extract constraints
+    metadata->obtainTransConstraints(jsonStr, 0);
+
+    // Prepare parameters
+    SourceSegmentation sourceSegmentation;
+    sourceSegmentation.push_back(std::make_pair(1, 1));
+    sourceSegmentation.push_back(std::make_pair(2, 3));
+    sourceSegmentation.push_back(std::make_pair(4, 5));
+    sourceSegmentation.push_back(std::make_pair(6, 6));
+    sourceSegmentation.push_back(std::make_pair(7, 7));
+    sourceSegmentation.push_back(std::make_pair(8, 8));
+
+    std::vector<PositionIndex> targetSegmentCuts;
+    targetSegmentCuts.push_back(2);
+    targetSegmentCuts.push_back(3);
+    targetSegmentCuts.push_back(5);
+    targetSegmentCuts.push_back(6);
+    targetSegmentCuts.push_back(7);
+    targetSegmentCuts.push_back(8);
+
+    std::vector<std::string> targetWordVec;
+    targetWordVec.push_back("premier");
+    targetWordVec.push_back("et");
+    targetWordVec.push_back("Only");
+    targetWordVec.push_back("t-shirt");
+    targetWordVec.push_back("avec");
+    targetWordVec.push_back("Logo");
+    targetWordVec.push_back("22.9cm");
+    targetWordVec.push_back("2x5");
+
+    // Valid translation - respects all constraints
+    bool isSatisfied = metadata->translationSatisfiesConstraints(sourceSegmentation, targetSegmentCuts, targetWordVec);
+    CPPUNIT_ASSERT_EQUAL(false, isSatisfied);
+}
+
+//---------------------------------------
+void JsonTranslationMetadataTest::testTranslationViolatingWordSelectionConstraints()
+{
+    // Extract constraints
+    metadata->obtainTransConstraints(jsonStr, 0);
+
+    // Prepare parameters
+    SourceSegmentation sourceSegmentation;
+    sourceSegmentation.push_back(std::make_pair(1, 1));
+    sourceSegmentation.push_back(std::make_pair(2, 3));
+    sourceSegmentation.push_back(std::make_pair(4, 5));
+    sourceSegmentation.push_back(std::make_pair(6, 6));
+    sourceSegmentation.push_back(std::make_pair(7, 7));
+    sourceSegmentation.push_back(std::make_pair(8, 8));
+
+    std::vector<PositionIndex> targetSegmentCuts;
+    targetSegmentCuts.push_back(1);
+    targetSegmentCuts.push_back(3);
+    targetSegmentCuts.push_back(5);
+    targetSegmentCuts.push_back(6);
+    targetSegmentCuts.push_back(7);
+    targetSegmentCuts.push_back(8);
+
+    std::vector<std::string> targetWordVec;
+    targetWordVec.push_back("premier");
+    targetWordVec.push_back("XXXXXXXX");
+    targetWordVec.push_back("Only");
+    targetWordVec.push_back("t-shirt");
+    targetWordVec.push_back("avec");
+    targetWordVec.push_back("Logo");
+    targetWordVec.push_back("22.9cm");
+    targetWordVec.push_back("2x5");
+
+    // Valid translation - respects all constraints
+    bool isSatisfied = metadata->translationSatisfiesConstraints(sourceSegmentation, targetSegmentCuts, targetWordVec);
+    CPPUNIT_ASSERT_EQUAL(true, isSatisfied);
 }
