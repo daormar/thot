@@ -86,12 +86,15 @@ class TranslationMetadataTest: public CppUnit::TestFixture
 
  private:
   TranslationMetadata* metadata;
+
+      // Input data generators
+  std::string getXmlString(void);
+
+      // Auxiliary functions to test source phrase constraints
   void testTranslationSatisfyingSrcPhrConstraints(void);
   void testTranslationViolatingSrcSegmentationConstraints(void);
   void testTranslationViolatingTrgSegmentationConstraints(void);
   void testTranslationViolatingWordSelectionConstraints(void);
-
-  const std::string xmlStr = "<phr_pair_annot><src_segm>First</src_segm><trg_segm>premier</trg_segm></phr_pair_annot> and only <phr_pair_annot><src_segm>T-shirt with</src_segm><trg_segm>t-shirt avec</trg_segm></phr_pair_annot> <phr_pair_annot><src_segm>logo</src_segm><trg_segm>Logo</trg_segm></phr_pair_annot> <phr_pair_annot><src_segm>22.9cm</src_segm><trg_segm>22.9cm</trg_segm></phr_pair_annot> <phr_pair_annot><src_segm>2x5</src_segm><trg_segm>2x5</trg_segm></phr_pair_annot>";
 
 };
 

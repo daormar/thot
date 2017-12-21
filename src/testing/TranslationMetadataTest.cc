@@ -53,11 +53,11 @@ void TranslationMetadataTest::testSafeRecallingObtainTransConstraints()
     metadata->clear();
 
     // Call
-    metadata->obtainTransConstraints(xmlStr, 0);
+    metadata->obtainTransConstraints(getXmlString(), 0);
     std::vector<std::string> srcSentVec1 = metadata->getSrcSentVec();
 
     // Call again without cleaning
-    metadata->obtainTransConstraints(xmlStr, 0);
+    metadata->obtainTransConstraints(getXmlString(), 0);
     std::vector<std::string> srcSentVec2 = metadata->getSrcSentVec();
 
     CPPUNIT_ASSERT( srcSentVec1 == srcSentVec2);
@@ -70,7 +70,7 @@ void TranslationMetadataTest::testGetSrcSentVec()
     const std::string expectedSrcSent = "First and only T-shirt with logo 22.9cm 2x5";
 
     metadata->clear();
-    metadata->obtainTransConstraints(xmlStr, 0);
+    metadata->obtainTransConstraints(getXmlString(), 0);
 
     std::vector<std::string> srcSentVec = metadata->getSrcSentVec();
 
@@ -81,7 +81,7 @@ void TranslationMetadataTest::testGetSrcSentVec()
 //---------------------------------------
 void TranslationMetadataTest::testGetTransForSrcPhr()
 {
-    metadata->obtainTransConstraints(xmlStr, 0);
+    metadata->obtainTransConstraints(getXmlString(), 0);
     std::vector<std::string> translation = metadata->getTransForSrcPhr(std::make_pair(1, 1));
 
     std::vector<std::string> expectedTranslation;
@@ -102,7 +102,7 @@ void TranslationMetadataTest::testGetConstrainedSrcPhrases()
     expectedConstraints.insert(std::make_pair(8, 8));
 
     // Obtain constraints for a given xml string
-    metadata->obtainTransConstraints(xmlStr, 0);
+    metadata->obtainTransConstraints(getXmlString(), 0);
     std::set<std::pair<PositionIndex,PositionIndex> > constraints = metadata->getConstrainedSrcPhrases();
 
     CPPUNIT_ASSERT(expectedConstraints == constraints);
@@ -113,7 +113,7 @@ void TranslationMetadataTest::testSrcPhrAffectedByConstraint()
 {
     bool isConstrained;
     // Extract constraints
-    metadata->obtainTransConstraints(xmlStr, 0);
+    metadata->obtainTransConstraints(getXmlString(), 0);
 
     isConstrained = metadata->srcPhrAffectedByConstraint(std::make_pair(1, 1));
     CPPUNIT_ASSERT_EQUAL(true, isConstrained);
@@ -132,7 +132,7 @@ void TranslationMetadataTest::testSrcPhrAffectedByConstraint()
 }
 
 //---------------------------------------
-void TranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints()
+void TranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints(void)
 {
   testTranslationSatisfyingSrcPhrConstraints();
   testTranslationViolatingSrcSegmentationConstraints();
@@ -144,7 +144,7 @@ void TranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints()
 void TranslationMetadataTest::testTranslationSatisfyingSrcPhrConstraints(void)
 {
     // Extract constraints
-    metadata->obtainTransConstraints(xmlStr, 0);
+    metadata->obtainTransConstraints(getXmlString(), 0);
 
     // Prepare parameters
     SourceSegmentation sourceSegmentation;
@@ -182,7 +182,7 @@ void TranslationMetadataTest::testTranslationSatisfyingSrcPhrConstraints(void)
 void TranslationMetadataTest::testTranslationViolatingSrcSegmentationConstraints(void)
 {
     // Extract constraints
-    metadata->obtainTransConstraints(xmlStr, 0);
+    metadata->obtainTransConstraints(getXmlString(), 0);
 
     // Prepare parameters
     SourceSegmentation sourceSegmentation;
@@ -220,7 +220,7 @@ void TranslationMetadataTest::testTranslationViolatingSrcSegmentationConstraints
 void TranslationMetadataTest::testTranslationViolatingTrgSegmentationConstraints(void)
 {
     // Extract constraints
-    metadata->obtainTransConstraints(xmlStr, 0);
+    metadata->obtainTransConstraints(getXmlString(), 0);
 
     // Prepare parameters
     SourceSegmentation sourceSegmentation;
@@ -258,7 +258,7 @@ void TranslationMetadataTest::testTranslationViolatingTrgSegmentationConstraints
 void TranslationMetadataTest::testTranslationViolatingWordSelectionConstraints(void)
 {
     // Extract constraints
-    metadata->obtainTransConstraints(xmlStr, 0);
+    metadata->obtainTransConstraints(getXmlString(), 0);
 
     // Prepare parameters
     SourceSegmentation sourceSegmentation;
@@ -290,4 +290,10 @@ void TranslationMetadataTest::testTranslationViolatingWordSelectionConstraints(v
     // Valid translation - respects all constraints
     bool isSatisfied = metadata->translationSatisfiesConstraints(sourceSegmentation, targetSegmentCuts, targetWordVec);
     CPPUNIT_ASSERT_EQUAL(true, isSatisfied);
+}
+
+//---------------------------------------
+std::string TranslationMetadataTest::getXmlString(void)
+{
+  return "<phr_pair_annot><src_segm>First</src_segm><trg_segm>premier</trg_segm></phr_pair_annot> and only <phr_pair_annot><src_segm>T-shirt with</src_segm><trg_segm>t-shirt avec</trg_segm></phr_pair_annot> <phr_pair_annot><src_segm>logo</src_segm><trg_segm>Logo</trg_segm></phr_pair_annot> <phr_pair_annot><src_segm>22.9cm</src_segm><trg_segm>22.9cm</trg_segm></phr_pair_annot> <phr_pair_annot><src_segm>2x5</src_segm><trg_segm>2x5</trg_segm></phr_pair_annot>";
 }
