@@ -86,27 +86,15 @@ class JsonTranslationMetadataTest: public CppUnit::TestFixture
 
  private:
   JsonTranslationMetadata* metadata;
+
+      // Input data generators
+  std::string getJsonString(void);
+
+      // Auxiliary functions to test source phrase constraints
   void testTranslationSatisfyingSrcPhrConstraints(void);
   void testTranslationViolatingSrcSegmentationConstraints(void);
   void testTranslationViolatingTrgSegmentationConstraints(void);
   void testTranslationViolatingWordSelectionConstraints(void);
-
-  const std::string jsonStr = "{"
-    "	\"src_title\" : {"
-    "		\"preprocessed\" : \"First and only T-shirt with logo 22.9cm 2x5\","
-    "		\"original\" : \"First and only T-shirt with logo 9\\\" 2x5 718$/L\""
-    "	},"
-    "	\"tex_segmentation\" : ["
-    "		{ \"translation\" : \"premier\", \"original\" : \"First\" },"
-    "		{ \"translation\" : \"\", \"original\" : \"and only\" },"
-    "		{ \"translation\" : \"<should-not-appear>\", \"original\" : \" \" },"
-    "		{ \"translation\" : \"t-shirt avec\", \"original\" : \"T-shirt with\" },"
-    "		{ \"translation\" : \"Logo\", \"original\" : \"logo\" },"
-    "		{ \"translation\" : \"22.9cm\", \"original\" : \"22.9cm\" },"
-    "		{ \"translation\" : \"2x5\", \"original\" : \"2x5\" }"
-    "	]"
-    "}";
-
 };
 
 #endif

@@ -53,11 +53,11 @@ void JsonTranslationMetadataTest::testSafeRecallingObtainTransConstraints(void)
     metadata->clear();
 
     // Call
-    metadata->obtainTransConstraints(jsonStr, 0);
+    metadata->obtainTransConstraints(getJsonString(), 0);
     std::vector<std::string> srcSentVec1 = metadata->getSrcSentVec();
 
     // Call again without cleaning
-    metadata->obtainTransConstraints(jsonStr, 0);
+    metadata->obtainTransConstraints(getJsonString(), 0);
     std::vector<std::string> srcSentVec2 = metadata->getSrcSentVec();
 
     CPPUNIT_ASSERT( srcSentVec1 == srcSentVec2);
@@ -70,7 +70,7 @@ void JsonTranslationMetadataTest::testGetSrcSentVec(void)
     const std::string expectedSrcSent = "First and only T-shirt with logo 22.9cm 2x5";
 
     metadata->clear();
-    metadata->obtainTransConstraints(jsonStr, 0);
+    metadata->obtainTransConstraints(getJsonString(), 0);
 
     std::vector<std::string> srcSentVec = metadata->getSrcSentVec();
 
@@ -81,7 +81,7 @@ void JsonTranslationMetadataTest::testGetSrcSentVec(void)
 //---------------------------------------
 void JsonTranslationMetadataTest::testGetTransForSrcPhr(void)
 {
-    metadata->obtainTransConstraints(jsonStr, 0);
+    metadata->obtainTransConstraints(getJsonString(), 0);
     std::vector<std::string> translation = metadata->getTransForSrcPhr(std::make_pair(1, 1));
 
     std::vector<std::string> expectedTranslation;
@@ -102,7 +102,7 @@ void JsonTranslationMetadataTest::testGetConstrainedSrcPhrases(void)
     expectedConstraints.insert(std::make_pair(8, 8));
 
     // Obtain constraints for a given JSON
-    metadata->obtainTransConstraints(jsonStr, 0);
+    metadata->obtainTransConstraints(getJsonString(), 0);
     std::set<std::pair<PositionIndex,PositionIndex> > constraints = metadata->getConstrainedSrcPhrases();
 
     CPPUNIT_ASSERT(expectedConstraints == constraints);
@@ -113,7 +113,7 @@ void JsonTranslationMetadataTest::testSrcPhrAffectedByConstraint(void)
 {
     bool isConstrained;
     // Extract constraints
-    metadata->obtainTransConstraints(jsonStr, 0);
+    metadata->obtainTransConstraints(getJsonString(), 0);
 
     isConstrained = metadata->srcPhrAffectedByConstraint(std::make_pair(1, 1));
     CPPUNIT_ASSERT_EQUAL(true, isConstrained);
@@ -144,7 +144,7 @@ void JsonTranslationMetadataTest::testTranslationSatisfiesSrcPhrConstraints(void
 void JsonTranslationMetadataTest::testTranslationSatisfyingSrcPhrConstraints(void)
 {
     // Extract constraints
-    metadata->obtainTransConstraints(jsonStr, 0);
+    metadata->obtainTransConstraints(getJsonString(), 0);
 
     // Prepare parameters
     SourceSegmentation sourceSegmentation;
@@ -182,7 +182,7 @@ void JsonTranslationMetadataTest::testTranslationSatisfyingSrcPhrConstraints(voi
 void JsonTranslationMetadataTest::testTranslationViolatingSrcSegmentationConstraints(void)
 {
     // Extract constraints
-    metadata->obtainTransConstraints(jsonStr, 0);
+    metadata->obtainTransConstraints(getJsonString(), 0);
 
     // Prepare parameters
     SourceSegmentation sourceSegmentation;
@@ -220,7 +220,7 @@ void JsonTranslationMetadataTest::testTranslationViolatingSrcSegmentationConstra
 void JsonTranslationMetadataTest::testTranslationViolatingTrgSegmentationConstraints(void)
 {
     // Extract constraints
-    metadata->obtainTransConstraints(jsonStr, 0);
+    metadata->obtainTransConstraints(getJsonString(), 0);
 
     // Prepare parameters
     SourceSegmentation sourceSegmentation;
@@ -258,7 +258,7 @@ void JsonTranslationMetadataTest::testTranslationViolatingTrgSegmentationConstra
 void JsonTranslationMetadataTest::testTranslationViolatingWordSelectionConstraints(void)
 {
     // Extract constraints
-    metadata->obtainTransConstraints(jsonStr, 0);
+    metadata->obtainTransConstraints(getJsonString(), 0);
 
     // Prepare parameters
     SourceSegmentation sourceSegmentation;
@@ -290,4 +290,24 @@ void JsonTranslationMetadataTest::testTranslationViolatingWordSelectionConstrain
     // Valid translation - respects all constraints
     bool isSatisfied = metadata->translationSatisfiesConstraints(sourceSegmentation, targetSegmentCuts, targetWordVec);
     CPPUNIT_ASSERT_EQUAL(true, isSatisfied);
+}
+
+//---------------------------------------
+std::string JsonTranslationMetadataTest::getJsonString(void)
+{
+  return "{"
+    "	\"src_title\" : {"
+    "		\"preprocessed\" : \"First and only T-shirt with logo 22.9cm 2x5\","
+    "		\"original\" : \"First and only T-shirt with logo 9\\\" 2x5 718$/L\""
+    "	},"
+    "	\"tex_segmentation\" : ["
+    "		{ \"translation\" : \"premier\", \"original\" : \"First\" },"
+    "		{ \"translation\" : \"\", \"original\" : \"and only\" },"
+    "		{ \"translation\" : \"<should-not-appear>\", \"original\" : \" \" },"
+    "		{ \"translation\" : \"t-shirt avec\", \"original\" : \"T-shirt with\" },"
+    "		{ \"translation\" : \"Logo\", \"original\" : \"logo\" },"
+    "		{ \"translation\" : \"22.9cm\", \"original\" : \"22.9cm\" },"
+    "		{ \"translation\" : \"2x5\", \"original\" : \"2x5\" }"
+    "	]"
+    "}";
 }
