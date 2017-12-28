@@ -49,7 +49,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
                        // (default value: PpInfo.h)
 #include "BaseSwAligModel.h"
 #include "BasePhraseModel.h"
-#include "PhraseBasedTmHypRec.h"
+#include "PhrScoreInfo.h"
 #include "BasePbTransModelFeature.h"
 
 //--------------- Constants ------------------------------------------

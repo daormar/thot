@@ -44,6 +44,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "PhraseBasedTmHypRec.h"
 #include "PhrHypDataStr.h"
 #include "_pbTransModel.h"
 
