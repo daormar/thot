@@ -470,11 +470,16 @@ generate_final_model()
     for f in ${init_model_pref}*; do
         # Omit directories
         if [ -f $f ]; then
-            local bname=$(basename "$f")
-            local extension="${bname##*.}"
-            local filename="${bname%.*}"
+            bname=$(basename "$f")
+            extension="${bname##*.}"
+            filename="${bname%.*}"
             if [ $extension != "slmodel" -a $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
-                cp $f ${output}.${extension}
+                # Check if when copying files source and target names
+                # are equal (this happens if -l and -o parameters were
+                # the same)
+                if [ $f != ${output}.${extension} ]; then
+                    cp $f ${output}.${extension}
+                fi
             fi
         fi
         
