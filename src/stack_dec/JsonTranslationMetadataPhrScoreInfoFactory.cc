@@ -1,6 +1,6 @@
 /*
 thot package for statistical machine translation
-Copyright (C) 2013 Daniel Ortiz-Mart\'inez
+Copyright (C) 2017 Adam Harasimowicz
  
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License
@@ -18,26 +18,27 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: TranslationMetadataFactory                               */
+/* Module: JsonTranslationMetadataPhrScoreInfoFactory               */
 /*                                                                  */
-/* Definitions file: TranslationMetadataFactory.cc                  */
+/* Definitions file: JsonTranslationMetadataPhrScoreInfoFactory.cc  */
 /*                                                                  */
 /********************************************************************/
 
 
 //--------------- Include files --------------------------------------
 
-#include "TranslationMetadata.h"
+#include "PhrScoreInfo.h"
+#include "JsonTranslationMetadata.h"
 
 //--------------- Function definitions
 
-extern "C" BaseTranslationMetadata* create(const char* /*str*/)
+extern "C" BaseTranslationMetadata<PhrScoreInfo>* create(const char* /*str*/)
 {
-  return new TranslationMetadata;
+  return new JsonTranslationMetadata<PhrScoreInfo>;
 }
 
 //---------------
 extern "C" const char* type_id(void)
 {
-  return "TranslationMetadata";
+  return "JsonTranslationMetadata";
 }

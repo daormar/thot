@@ -25,6 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "BasePbTransModelFeature.h"
 #include "SourceSegmentation.h"
 #include "PositionIndex.h"
 #include "ErrorDefs.h"
@@ -44,6 +45,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
+template<class SCORE_INFO>
 class BaseTranslationMetadata
 {
  public:
@@ -72,10 +74,13 @@ class BaseTranslationMetadata
   virtual bool phraseTranslationIsValid(const std::vector<std::string>& sourceWordVec,
                                         const std::vector<std::string>& targetWordVec)const=0;
 
-  /*     // Functions related to log-linear model features */
-  /* virtual unsigned int numberOfFeatures(void)=0; */
-  /* virtual void obtainFeatures(std::vector<BasePbTransModelFeat*>& featVec)=0; */
-  
+      // Functions related to on-the-fly log-linear features
+  std::vector<BasePbTransModelFeature<SCORE_INFO>*> getOnTheFlyModelFeatures(void)const
+  {
+    std::vector<BasePbTransModelFeature<SCORE_INFO>*> emptyVec;
+    return emptyVec;
+  }
+
   virtual void clear(void)=0;
 
       // Destructor

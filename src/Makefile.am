@@ -70,8 +70,9 @@ kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
 wg_uncoupled_assisted_trans__swli_factory.la				\
 multi_stack_decoder_rec__pbtm_factory.la				\
 wg_uncoupled_assisted_trans__pbtm_factory.la				\
-translation_metadata_factory.la json_translation_metadata_factory.la    \
-$(CASMACAT_LIB) $(KENLM_LIB) $(DB_CXX_LIBS) $(LEVELDB_LIBS)
+translation_metadata__phrscoreinfo_factory.la				\
+json_translation_metadata__phrscoreinfo_factory.la $(CASMACAT_LIB)	\
+$(KENLM_LIB) $(DB_CXX_LIBS) $(LEVELDB_LIBS)
 
 # flags
 AM_CXXFLAGS= -W -Wno-deprecated -I$(srcdir)/nlp_common			   \
@@ -305,8 +306,8 @@ stack_dec/ThotDecoderCommonVars.h stack_dec/ThotDecoderClient.h		\
 stack_dec/SwModelPars.h stack_dec/_stack_decoder_statistics.h		\
 stack_dec/_stackDecoderRec.h stack_dec/_stackDecoder.h			\
 stack_dec/SourceSegmentation.h stack_dec/BaseTranslationMetadata.h	\
-stack_dec/TranslationMetadata.h stack_dec/JsonTranslationMetadata.h \
-stack_dec/SmtStack.h stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h			\
+stack_dec/TranslationMetadata.h stack_dec/JsonTranslationMetadata.h	\
+stack_dec/SmtStack.h stack_dec/_smtStack.h stack_dec/SmtMultiStackRec.h	\
 stack_dec/_smtMultiStack.h stack_dec/WeightUpdateUtils.h		\
 stack_dec/BaseLogLinWeightUpdater.h stack_dec/KbMiraLlWu.h		\
 stack_dec/BaseScorer.h stack_dec/BaseMiraScorer.h stack_dec/MiraBleu.h	\
@@ -349,16 +350,15 @@ stack_dec/BaseHypothesis.h stack_dec/HypDebugData.h			\
 stack_dec/BaseAssistedTrans.h stack_dec/_assistedTrans.h		\
 stack_dec/SmtModelUtils.h
 stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
-stack_dec/JsonTranslationMetadata.cc                        \
-stack_dec/TranslationMetadata.cc stack_dec/WeightUpdateUtils.cc		\
-stack_dec/KbMiraLlWu.cc stack_dec/MiraBleu.cc stack_dec/MiraWer.cc	\
-stack_dec/MiraGtm.cc stack_dec/MiraChrF.cc				\
-stack_dec/ThotDecoderClient.cc stack_dec/ThotDecoder.cc			\
-stack_dec/FeatureHandler.cc stack_dec/WordPenaltyFeat.cc		\
-stack_dec/LangModelFeat.cc stack_dec/DirectPhraseModelFeat.cc		\
-stack_dec/InversePhraseModelFeat.cc stack_dec/SrcPhraseLenFeat.cc	\
-stack_dec/TrgPhraseLenFeat.cc stack_dec/SrcPosJumpFeat.cc		\
-stack_dec/PhrScoreInfo.cc stack_dec/PhrNbestTransTableRefKey.cc		\
+stack_dec/WeightUpdateUtils.cc stack_dec/KbMiraLlWu.cc			\
+stack_dec/MiraBleu.cc stack_dec/MiraWer.cc stack_dec/MiraGtm.cc		\
+stack_dec/MiraChrF.cc stack_dec/ThotDecoderClient.cc			\
+stack_dec/ThotDecoder.cc stack_dec/FeatureHandler.cc			\
+stack_dec/WordPenaltyFeat.cc stack_dec/LangModelFeat.cc			\
+stack_dec/DirectPhraseModelFeat.cc stack_dec/InversePhraseModelFeat.cc	\
+stack_dec/SrcPhraseLenFeat.cc stack_dec/TrgPhraseLenFeat.cc		\
+stack_dec/SrcPosJumpFeat.cc stack_dec/PhrScoreInfo.cc			\
+stack_dec/PhrNbestTransTableRefKey.cc					\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\
@@ -513,18 +513,17 @@ mira_chrf_factory_defs= stack_dec/MiraChrFFactory.cc
 
 ##########
 kb_mira_ll_wu_factory_h= 
-kb_mira_ll_wu_factory_defs=		\
-stack_dec/KbMiraLlWuFactory.cc
+kb_mira_ll_wu_factory_defs= stack_dec/KbMiraLlWuFactory.cc
 
 ##########
-translation_metadata_factory_h= 
-translation_metadata_factory_defs=		\
-stack_dec/TranslationMetadataFactory.cc
+translation_metadata__phrscoreinfo_factory_h= 
+translation_metadata__phrscoreinfo_factory_defs=			\
+stack_dec/TranslationMetadataPhrScoreInfoFactory.cc
 
 ##########
-json_translation_metadata_factory_h= 
-json_translation_metadata_factory_defs=		\
-stack_dec/JsonTranslationMetadataFactory.cc
+json_translation_metadata__phrscoreinfo_factory_h= 
+json_translation_metadata__phrscoreinfo_factory_defs=			\
+stack_dec/JsonTranslationMetadataPhrScoreInfoFactory.cc
 
 ##########
 multi_stack_decoder_rec__swli_factory_h= 
@@ -834,18 +833,18 @@ kb_mira_ll_wu_factory_la_LIBADD= libthot.la
 kb_mira_ll_wu_factory_la_LDFLAGS= -module
 
 ##########
-translation_metadata_factory_la_SOURCES=	\
-$(translation_metadata_factory_h)		\
-$(translation_metadata_factory_defs)
-translation_metadata_factory_la_LIBADD= libthot.la
-translation_metadata_factory_la_LDFLAGS= -module
+translation_metadata__phrscoreinfo_factory_la_SOURCES=	\
+$(translation_metadata__phrscoreinfo_factory_h)		\
+$(translation_metadata__phrscoreinfo_factory_defs)
+translation_metadata__phrscoreinfo_factory_la_LIBADD= libthot.la
+translation_metadata__phrscoreinfo_factory_la_LDFLAGS= -module
 
 ##########
-json_translation_metadata_factory_la_SOURCES=	\
-$(json_translation_metadata_factory_h)		\
-$(json_translation_metadata_factory_defs)
-json_translation_metadata_factory_la_LIBADD= libthot.la
-json_translation_metadata_factory_la_LDFLAGS= -module
+json_translation_metadata__phrscoreinfo_factory_la_SOURCES=	\
+$(json_translation_metadata__phrscoreinfo_factory_h)				\
+$(json_translation_metadata__phrscoreinfo_factory_defs)
+json_translation_metadata__phrscoreinfo_factory_la_LIBADD= libthot.la
+json_translation_metadata__phrscoreinfo_factory_la_LDFLAGS= -module
 
 ##########
 multi_stack_decoder_rec__swli_factory_la_SOURCES=	\
