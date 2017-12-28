@@ -93,7 +93,7 @@ struct DynClassFactoryHandler
   SimpleDynClassLoader<BaseLogLinWeightUpdater> baseLogLinWeightUpdaterDynClassLoader;
   std::string baseLogLinWeightUpdaterInitPars;
 
-  SimpleDynClassLoader<BaseTranslationMetadata> baseTranslationMetadataDynClassLoader;
+  SimpleDynClassLoader<BaseTranslationMetadata<SmtModel::HypScoreInfo> > baseTranslationMetadataDynClassLoader;
   std::string baseTranslationMetadataInitPars;
 
   SimpleDynClassLoader<BaseStackDecoder<SmtModel> > baseStackDecoderDynClassLoader;

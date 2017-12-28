@@ -45,6 +45,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "JsonTranslationMetadata.h"
+#include "PhrScoreInfo.h"
 #include "StrProcUtils.h"
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -85,7 +86,7 @@ class JsonTranslationMetadataTest: public CppUnit::TestFixture
   void testTranslationSatisfiesSrcPhrConstraints(void);
 
  private:
-  JsonTranslationMetadata* metadata;
+  JsonTranslationMetadata<PhrScoreInfo>* metadata;
 
       // Input data generators
   std::string getJsonString(void);

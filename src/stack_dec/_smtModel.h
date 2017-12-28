@@ -77,7 +77,7 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
   _smtModel(void);
 
       // Link translation constraints with model
-  void link_trans_constraints(BaseTranslationMetadata* _trConstraintsPtr);
+  void link_trans_constraints(BaseTranslationMetadata<HypScoreInfo> * _trConstraintsPtr);
       
       // Actions to be executed before the translation and before using
       // hypotheses-related functions
@@ -142,7 +142,7 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
 
   OnlineTrainingPars onlineTrainingPars;
 
-  BaseTranslationMetadata* trMetadataPtr;
+  BaseTranslationMetadata<HypScoreInfo>* trMetadataPtr;
     
       // Scoring functions
   virtual Score incrScore(const Hypothesis& prev_hyp,
@@ -166,7 +166,7 @@ _smtModel<HYPOTHESIS>::_smtModel(void)
 
 //---------------------------------
 template<class HYPOTHESIS>
-void _smtModel<HYPOTHESIS>::link_trans_constraints(BaseTranslationMetadata* _trMetadataPtr)
+void _smtModel<HYPOTHESIS>::link_trans_constraints(BaseTranslationMetadata<HypScoreInfo>* _trMetadataPtr)
 {
   trMetadataPtr=_trMetadataPtr;
 }

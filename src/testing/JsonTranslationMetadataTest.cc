@@ -38,7 +38,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( JsonTranslationMetadataTest );
 //---------------------------------------
 void JsonTranslationMetadataTest::setUp(void)
 {
-    metadata = new JsonTranslationMetadata();
+    metadata = new JsonTranslationMetadata<PhrScoreInfo>();
 }
 
 //---------------------------------------

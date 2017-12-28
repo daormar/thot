@@ -51,7 +51,7 @@ class ThotDecoderPerUserVars
   _nbUncoupledAssistedTrans<SmtModel>* _nbUncoupledAssistedTransPtr;
   WgUncoupledAssistedTrans<SmtModel>* wgUncoupledAssistedTransPtr;
   BaseWgProcessorForAnlp* wgpPtr;
-  BaseTranslationMetadata* trMetadataPtr;
+  BaseTranslationMetadata<SmtModel::HypScoreInfo>* trMetadataPtr;
 };
 
 #endif

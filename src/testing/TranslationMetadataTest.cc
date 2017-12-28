@@ -38,7 +38,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( TranslationMetadataTest );
 //---------------------------------------
 void TranslationMetadataTest::setUp()
 {
-    metadata = new TranslationMetadata();
+    metadata = new TranslationMetadata<PhrScoreInfo>();
 }
 
 //---------------------------------------

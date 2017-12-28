@@ -45,6 +45,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "TranslationMetadata.h"
+#include "PhrScoreInfo.h"
 #include "StrProcUtils.h"
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -85,7 +86,7 @@ class TranslationMetadataTest: public CppUnit::TestFixture
   void testTranslationSatisfiesSrcPhrConstraints(void);
 
  private:
-  TranslationMetadata* metadata;
+  TranslationMetadata<PhrScoreInfo>* metadata;
 
       // Input data generators
   std::string getXmlString(void);

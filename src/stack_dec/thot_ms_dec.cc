@@ -144,7 +144,7 @@ DynClassFactoryHandler dynClassFactoryHandler;
 LangModelInfo* langModelInfoPtr;
 PhraseModelInfo* phrModelInfoPtr;
 SwModelInfo* swModelInfoPtr;
-BaseTranslationMetadata* trMetadataPtr;
+BaseTranslationMetadata<SmtModel::HypScoreInfo> * trMetadataPtr;
 BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
 BaseStackDecoder<SmtModel>* stackDecoderPtr;
