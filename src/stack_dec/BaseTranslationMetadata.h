@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-#ifndef _BaseTranslationConstraints_h
-#define _BaseTranslationConstraints_h
+#ifndef _BaseTranslationMetadata_h
+#define _BaseTranslationMetadata_h
 
 //--------------- Include files --------------------------------------
 
@@ -25,6 +25,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "BasePbTransModelFeature.h"
+#include "SourceSegmentation.h"
 #include "PositionIndex.h"
 #include "ErrorDefs.h"
 #include "StrProcUtils.h"
@@ -40,32 +42,49 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Typedefs -------------------------------------------
 
-class BaseTranslationConstraints
+
+//--------------- Classes --------------------------------------------
+
+template<class SCORE_INFO>
+class BaseTranslationMetadata
 {
  public:
 
       // Declarations related to dynamic class loading
-  typedef BaseTranslationConstraints* create_t(const char*);
+  typedef BaseTranslationMetadata* create_t(const char*);
   typedef const char* type_id_t(void);
 
       // Services
+
+      // Initialization and source sentence extraction
   virtual void obtainTransConstraints(std::string rawSrcSent,
                                       int verbosity=0)=0;
   virtual std::vector<std::string> getSrcSentVec(void)const=0;
+
+      // Constraint-related functions
   virtual std::vector<std::string> getTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhr)const=0;
   virtual std::set<std::pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const=0;
   virtual bool srcPhrAffectedByConstraint(std::pair<PositionIndex,PositionIndex> srcPhr)const=0;
-  virtual bool translationSatisfiesConstraints(const std::vector<std::string>& targetWordVec)const=0;
+  virtual bool translationSatisfiesConstraints(const SourceSegmentation& sourceSegmentation,
+                                               const std::vector<PositionIndex>& targetSegmentCuts,
+                                               const std::vector<std::string>& targetWordVec)const=0;
       // This function verifies if a sentence translation satisfies
       // constraints. It is applied over complete translations or
       // partial ones built from left to right.
   virtual bool phraseTranslationIsValid(const std::vector<std::string>& sourceWordVec,
                                         const std::vector<std::string>& targetWordVec)const=0;
-  
+
+      // Functions related to on-the-fly log-linear features
+  std::vector<BasePbTransModelFeature<SCORE_INFO>*> getOnTheFlyModelFeatures(void)const
+  {
+    std::vector<BasePbTransModelFeature<SCORE_INFO>*> emptyVec;
+    return emptyVec;
+  }
+
   virtual void clear(void)=0;
 
       // Destructor
-  virtual ~BaseTranslationConstraints(){};
+  virtual ~BaseTranslationMetadata(){};
 };
 
 #endif

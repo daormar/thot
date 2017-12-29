@@ -11,8 +11,8 @@ ThotDecoderClient.cc ThotDecoder.cc thot_ms_dec.cc thot_client_pars.h	\
 thot_client.cc thot_scorer.cc thot_calc_bleu.cc thot_ms_alig.cc		\
 SwModelPars.h SwModelInfo.h _stack_decoder_statistics.h			\
 _stackDecoderRec.h _stackDecoder.h SourceSegmentation.h			\
-BaseTranslationConstraints.h TranslationConstraints.h			\
-TranslationConstraints.cc SmtStack.h _smtStack.h SmtMultiStackRec.h	\
+BaseTranslationMetadata.h TranslationMetadata.h				\
+JsonTranslationMetadata.h SmtStack.h _smtStack.h SmtMultiStackRec.h	\
 _smtMultiStack.h WeightUpdateUtils.h WeightUpdateUtils.cc		\
 BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc BaseScorer.h	\
 BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraGtm.h MiraGtm.cc MiraWer.h	\
@@ -42,13 +42,16 @@ LangModelFeat.h LangModelFeat.cc DirectPhraseModelFeat.h		\
 DirectPhraseModelFeat.cc InversePhraseModelFeat.h			\
 InversePhraseModelFeat.cc SrcPhraseLenFeat.h SrcPhraseLenFeat.cc	\
 TrgPhraseLenFeat.h TrgPhraseLenFeat.cc SrcPosJumpFeat.h			\
-SrcPosJumpFeat.cc BaseSmtModel.h BasePhraseHypothesisRec.h		\
-BasePhraseHypothesis.h BasePbTransModelStats.h BasePbTransModel.h	\
-BaseHypState.h BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h	\
-HypDebugData.h BaseAssistedTrans.h _assistedTrans.h			\
-KbMiraLlWuFactory.cc multi_stack_decoder_rec__pbtm_factory.cc		\
+SrcPosJumpFeat.cc OnTheFlyDictFeat.h OnTheFlyDictFeat.cc BaseSmtModel.h	\
+BasePhraseHypothesisRec.h BasePhraseHypothesis.h			\
+BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
+BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h HypDebugData.h	\
+BaseAssistedTrans.h _assistedTrans.h KbMiraLlWuFactory.cc		\
+multi_stack_decoder_rec__pbtm_factory.cc				\
 multi_stack_decoder_rec__swli_factory.cc				\
 WgUncoupledAssistedTransPbTmFactory.cc					\
 WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc		\
 MiraGtmFactory.cc MiraWerFactory.cc MiraChrFFactory.cc			\
-TranslationConstraintsFactory.cc SmtModelUtils.h SmtModelUtils.cc
+TranslationMetadataPhrScoreInfoFactory.cc				\
+JsonTranslationMetadataPhrScoreInfoFactory.cc SmtModelUtils.h		\
+SmtModelUtils.cc

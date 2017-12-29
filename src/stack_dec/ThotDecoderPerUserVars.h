@@ -25,7 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include "BaseTranslationConstraints.h"
+#include "BaseTranslationMetadata.h"
 #include "CatDefs.h"
 #include "_nbUncoupledAssistedTrans.h"
 #include "WgUncoupledAssistedTrans.h"
@@ -51,7 +51,7 @@ class ThotDecoderPerUserVars
   _nbUncoupledAssistedTrans<SmtModel>* _nbUncoupledAssistedTransPtr;
   WgUncoupledAssistedTrans<SmtModel>* wgUncoupledAssistedTransPtr;
   BaseWgProcessorForAnlp* wgpPtr;
-  BaseTranslationConstraints* trConstraintsPtr;
+  BaseTranslationMetadata<SmtModel::HypScoreInfo>* trMetadataPtr;
 };
 
 #endif

@@ -28,7 +28,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "WgUncoupledAssistedTrans.h"
 #include "BaseAssistedTrans.h"
 #include "BaseStackDecoder.h"
-#include "BaseTranslationConstraints.h"
+#include "BaseTranslationMetadata.h"
 #include "BaseLogLinWeightUpdater.h"
 #include "BaseScorer.h"
 #include "BaseWgProcessorForAnlp.h"
@@ -93,8 +93,8 @@ struct DynClassFactoryHandler
   SimpleDynClassLoader<BaseLogLinWeightUpdater> baseLogLinWeightUpdaterDynClassLoader;
   std::string baseLogLinWeightUpdaterInitPars;
 
-  SimpleDynClassLoader<BaseTranslationConstraints> baseTranslationConstraintsDynClassLoader;
-  std::string baseTranslationConstraintsInitPars;
+  SimpleDynClassLoader<BaseTranslationMetadata<SmtModel::HypScoreInfo> > baseTranslationMetadataDynClassLoader;
+  std::string baseTranslationMetadataInitPars;
 
   SimpleDynClassLoader<BaseStackDecoder<SmtModel> > baseStackDecoderDynClassLoader;
   std::string baseStackDecoderInitPars;

@@ -47,6 +47,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include "PhrHypDataStr.h"
+#include "Score.h"
 #include <set>
 #include <string>
 

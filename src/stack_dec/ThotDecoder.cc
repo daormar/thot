@@ -340,16 +340,16 @@ int ThotDecoder::init_idx_data(size_t idx)
   BaseSmtModel<SmtModel::Hypothesis>* baseSmtModelPtr=tdCommonVars.smtModelPtr->clone();
   tdPerUserVarsVec[idx].smtModelPtr=dynamic_cast<BasePbTransModel<SmtModel::Hypothesis>* >(baseSmtModelPtr);
 
-      // Create translation constraints object
-  tdPerUserVarsVec[idx].trConstraintsPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationConstraintsInitPars);
-  if(tdPerUserVarsVec[idx].trConstraintsPtr==NULL)
+      // Create translation metadata object
+  tdPerUserVarsVec[idx].trMetadataPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationMetadataDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationMetadataInitPars);
+  if(tdPerUserVarsVec[idx].trMetadataPtr==NULL)
   {
-    StdCerrThreadSafe<<"Error: BaseTranslationConstraints pointer could not be instantiated"<<std::endl;
+    StdCerrThreadSafe<<"Error: BaseTranslationMetadata pointer could not be instantiated"<<std::endl;
     return THOT_ERROR;
   }
 
-      // Link translation constraints
-  tdPerUserVarsVec[idx].smtModelPtr->link_trans_constraints(tdPerUserVarsVec[idx].trConstraintsPtr);
+      // Link translation metadata
+  tdPerUserVarsVec[idx].smtModelPtr->link_trans_constraints(tdPerUserVarsVec[idx].trMetadataPtr);
 
       // Link statistical machine translation model
   int ret=tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
@@ -459,7 +459,7 @@ void ThotDecoder::release_idx_data(size_t idx)
     if(tdPerUserVarsVec[idx].prePosProcessorPtr!=NULL)
       delete tdPerUserVarsVec[idx].prePosProcessorPtr;
     tdPerUserVarsVec[idx].prePosProcessorPtr=NULL;
-    delete tdPerUserVarsVec[idx].trConstraintsPtr;
+    delete tdPerUserVarsVec[idx].trMetadataPtr;
 
         // Register idx data as deleted
     idxDataReleased[idx]=true;

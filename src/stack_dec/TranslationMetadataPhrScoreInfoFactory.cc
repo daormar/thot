@@ -18,27 +18,27 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /********************************************************************/
 /*                                                                  */
-/* Module: TranslationConstraintsFactory                            */
+/* Module: TranslationMetadataPhrScoreInfoFactory                   */
 /*                                                                  */
-/* Definitions file: TranslationConstraintsFactory.cc               */
+/* Definitions file: TranslationMetadataPhrScoreInfoFactory.cc      */
 /*                                                                  */
 /********************************************************************/
 
 
 //--------------- Include files --------------------------------------
 
-#include "TranslationConstraints.h"
-#include <string>
+#include "PhrScoreInfo.h"
+#include "TranslationMetadata.h"
 
 //--------------- Function definitions
 
-extern "C" BaseTranslationConstraints* create(const char* /*str*/)
+extern "C" BaseTranslationMetadata<PhrScoreInfo>* create(const char* /*str*/)
 {
-  return new TranslationConstraints;
+  return new TranslationMetadata<PhrScoreInfo>;
 }
 
 //---------------
 extern "C" const char* type_id(void)
 {
-  return "TranslationConstraints";
+  return "TranslationMetadata";
 }
