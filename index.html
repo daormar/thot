@@ -73,6 +73,7 @@ contributors</a> have joined the project.</p>
 <li>Added functionality to use multiple language and translation models</li>  
 <li>Added tool to create empty models useful to perform online learning from scratch</li>  
 <li>Portability increased</li>
+<li>Growing suite of unit and integration tests</li>
 <li>The Thot manual has been extended and revised</li>
 </ul>
 
@@ -197,6 +198,12 @@ library was installed. See more information below.</li>
 configuration required for the CasMaCat Workbench. <code>&ltDIR></code>
 is the absolute path where the CasMaCat library was installed. See more
 information below.</li>
+
+<li> <b><code>--enable-testing=&ltDIR></code></b>: this option enables
+the execution of unit tests using the <code>thot_test</code> tool. Using
+this option requires the installation of the CppUnit library. For more
+information, see the third party software Section below.</li>
+
 </ul>
 
 <h4>
@@ -252,9 +259,7 @@ as <code>/usr/local</code>) before the <code>configure</code> script is
 executed. In systems providing the <code>apt</code> tool, this can be
 easily achieved with the following command:</p>
 
-<pre><code>$ ./reconf
-$ sudo apt install libdb++-dev
-</code></pre>
+<pre><code>$ sudo apt install libdb++-dev</code></pre>
 
 For additional information about how to use this functionality, see
 the <a href="http://daormar.github.io/thot/docsupport/thot_manual.pdf">Thot
@@ -266,6 +271,19 @@ manual</a>.
 being developed in the project of the same
 name. <a href="http://www.casmacat.eu/index.php?n=Workbench.Workbench">See
 this webpage</a> to get the specific installation instructions.</p>
+
+<h5>CppUnit</h5>
+
+<p><a href="https://freedesktop.org/wiki/Software/cppunit/">CppUnit</a>
+is a C++ framework for unit testing. The <code>thot_test</code> tool
+internally uses CppUnit to execute a growing set of unit tests.</p>
+
+<p>CppUnit should be installed in a standard OS directory before
+executing <code>configure</code>. If the <code>apt</code> tool is
+available in your operating system, CppUnit can be installed by
+executing the following command:</p>
+
+<pre><code>$ sudo apt install libcppunit-dev</code></pre>
 
 <h4 id="checking-package-installation">Checking Package Installation</h4>
 
@@ -465,7 +483,7 @@ project</a> that belonged to the prestigious CONSOLIDER programme</a>.</p>
     <li><a href="http://www.upv.es"><img src="http://daormar.github.io/thot/images/logo-upv-hor.png" alt="UPV" height="50" /></a></li>
   </ul>
 
-<p>Last updated: 10 December 2017</p>
+<p>Last updated: 2 January 2018</p>
       </section>
     </div>
     <script src="javascripts/scale.fix.js"></script>
