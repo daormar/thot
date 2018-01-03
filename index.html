@@ -214,15 +214,37 @@ Party Software</h4>
 <p>Thot can be combined with third party software, extending its
 functionality. Currently supported software is listed below.</p>
 
+<h5>LevelDB</h5>
+<p><a href="https://github.com/google/leveldb">LevelDB</a> is a
+key-value storage library providing an ordered mapping from string keys
+to string values. LevelDB is used into Thot to handle language and
+translation model parameters from disk. The advantage of doing this is a
+reduction of main memory requirements and loading times for both kinds
+of models to virtually zero, at the cost of a small time overhead
+incurred by disk usage.</p>
+
+<p>One interesting aspect of using LevelDB to access models parameters
+that is not present in other solutions implemented in the toolkit,
+including those based on the KenLM and Berkeley DB libraries described
+below, is that LevelDB allows to modify model parameters dynamically, in
+contrast to the static models implemented by means of the alternative
+libraries.</p>
+
+<p>To enable LevelDB in Thot it is necessary to install the library in a
+standard path before executing <code>configure</code>. In operating
+systems where the <code>apt</code> tool is available, LevelDB can be
+installed by means of the following command:</p> </p>
+
+<pre><code>$ sudo apt install libleveldb-dev</code></pre>
+
 <h5>KenLM</h5>
 
 <p>The <a href="https://kheafield.com/code/kenlm/">KenLM library</a>
 provides software to estimate, filter and query language models. KenLM
-has been incorporated into Thot so as to enable access of language
-model parameters from disk. The advantage of doing this is a reduction
-of main memory requirements and loading times for language models to
-virtually zero, at the cost of a small time overhead incurred by disk
-usage.</p>
+has been incorporated into Thot so as to enable access of language model
+parameters from disk in a similar way to that described for the LevelDB
+library. However, KenLM language models are static in contrast to the
+dynamic language models implemented by means of LevelDB.</p>
 
 <p>KenLM library should be downloaded, compiled and installed before
 executing Thot's <code>configure</code> script. <code>configure</code>
@@ -240,10 +262,10 @@ $ make
 $ make install    # Installs the library in the "kenlm" directory
 </code></pre>
 
-For more information about how to use this functionality, please refer
+<p>For more information about how to use this functionality, please refer
 to
 the <a href="http://daormar.github.io/thot/docsupport/thot_manual.pdf">Thot
-manual</a>.
+manual</a>.</p>
 
 <h5>Berkeley DB Library</h5>
 
@@ -261,9 +283,9 @@ easily achieved with the following command:</p>
 
 <pre><code>$ sudo apt install libdb++-dev</code></pre>
 
-For additional information about how to use this functionality, see
+<p>For additional information about how to use this functionality, see
 the <a href="http://daormar.github.io/thot/docsupport/thot_manual.pdf">Thot
-manual</a>.
+manual</a>.</p>
 
 <h5>Casmacat Workbench</h5>
 
