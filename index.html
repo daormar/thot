@@ -226,9 +226,10 @@ incurred by disk usage.</p>
 <p>One interesting aspect of using LevelDB to access models parameters
 that is not present in other solutions implemented in the toolkit,
 including those based on the KenLM and Berkeley DB libraries described
-below, is that LevelDB allows to modify model parameters dynamically, in
-contrast to the static models implemented by means of the alternative
-libraries.</p>
+below, is that LevelDB allows to modify model parameters in a very
+efficient way, in contrast to the models implemented by means of the
+alternative libraries, where modifications are slow or simply not
+allowed.</p>
 
 <p>To enable LevelDB in Thot it is necessary to install the library in a
 standard path before executing <code>configure</code>. In operating
