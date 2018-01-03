@@ -38,7 +38,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( IncrLexLevelDbTableTest );
 void IncrLexLevelDbTableTest::setUp()
 {
   tab = new IncrLexLevelDbTable();
-  ((IncrLexLevelDbTable*) tab)->init(dbNamePrefix.c_str());
+  ((IncrLexLevelDbTable*) tab)->init(getDbNamePrefix().c_str());
 }
 
 //---------------------------------------
@@ -82,14 +82,14 @@ void IncrLexLevelDbTableTest::testLoadFromBinFile()
     tab->setLexNumDen(s2, t4, s2_t4_num, s2_denom);
 
     // Save data to binary file
-    ((IncrLexLevelDbTable*) tab)->printBin(dbNamePrefix.c_str());
+    ((IncrLexLevelDbTable*) tab)->printBin(getDbNamePrefix().c_str());
     // Remove DB directory to prevent loading it
     ((IncrLexLevelDbTable*) tab)->drop();
 
     // Reload DB
     delete tab;
     tab = new IncrLexLevelDbTable();
-    ((IncrLexLevelDbTable*) tab)->load(dbNamePrefix.c_str());
+    ((IncrLexLevelDbTable*) tab)->load(getDbNamePrefix().c_str());
 
     // Check if loaded results are correct
     // (s1, t1)
@@ -145,7 +145,7 @@ void IncrLexLevelDbTableTest::testLoadFromLevelDb()
     // Reload DB
     delete tab;
     tab = new IncrLexLevelDbTable();
-    tab->load(dbNamePrefix.c_str());
+    tab->load(getDbNamePrefix().c_str());
 
     // Check if loaded results are correct
     // (s1, t1)
@@ -169,4 +169,10 @@ void IncrLexLevelDbTableTest::testLoadFromLevelDb()
     // (s2, t2) - should not be found
     tab->getLexNumer(s2, t2, found);
     CPPUNIT_ASSERT( !found );
+}
+
+//---------------------------------------
+std::string IncrLexLevelDbTableTest::getDbNamePrefix(void)
+{
+  return "/tmp/thot_leveldb_unit_test";
 }

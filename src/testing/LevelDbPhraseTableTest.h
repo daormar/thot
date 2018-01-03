@@ -93,8 +93,9 @@ class LevelDbPhraseTableTest: public _phraseTableTest
   CPPUNIT_TEST_SUITE_END();
 
  private:
-  std::string dbName = "/tmp/thot_leveldb_unit_test";
   LevelDbPhraseTable* tabLdb;  // Used for avoiding casting - should point on the same object like tab in parent class
+
+  std::string getDbName(void);
 
  public:
   void setUp();

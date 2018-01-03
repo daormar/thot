@@ -75,7 +75,7 @@ class IncrLexLevelDbTableTest: public _incrLexTableTest
   CPPUNIT_TEST_SUITE_END();
 
  private:
-  std::string dbNamePrefix = "/tmp/thot_leveldb_unit_test";
+  std::string getDbNamePrefix(void);
 
  public:
   void setUp();

@@ -41,7 +41,7 @@ void LevelDbPhraseTableTest::setUp()
   tabLdb = new LevelDbPhraseTable();
   tab = tabLdb;
 
-  tabLdb->init(dbName);
+  tabLdb->init(getDbName());
 }
 
 //---------------------------------------
@@ -232,7 +232,7 @@ void LevelDbPhraseTableTest::testLoadingLevelDb()
   const size_t original_size = tab->size();
    
   // Load structure
-  result = tabLdb->load(dbName);
+  result = tabLdb->load(getDbName());
   CPPUNIT_ASSERT( result == THOT_OK);
   CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 }
@@ -279,7 +279,7 @@ void LevelDbPhraseTableTest::testLoadedDataCorrectness()
   const size_t original_size = tab->size();
    
   // Load structure
-  result = tabLdb->load(dbName);
+  result = tabLdb->load(getDbName());
   CPPUNIT_ASSERT( result == THOT_OK );
   CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 
@@ -308,4 +308,10 @@ void LevelDbPhraseTableTest::testLoadedDataCorrectness()
 
   tab->clear();  // Remove data
   CPPUNIT_ASSERT_EQUAL((size_t) 0, tab->size());
+}
+
+//---------------------------------------
+std::string LevelDbPhraseTableTest::getDbName(void)
+{
+  return "/tmp/thot_leveldb_unit_test";
 }
