@@ -173,7 +173,8 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   unsigned int state;
 
       // Feature vector information
-  FeaturesInfo<HypScoreInfo>* featuresInfoPtr;
+  FeaturesInfo<HypScoreInfo>* standardFeaturesInfoPtr;
+  FeaturesInfo<HypScoreInfo> onTheFlyFeaturesInfo;
 
       // Vocabulary handler
   SingleWordVocab singleWordVocab;
@@ -399,7 +400,7 @@ _pbTransModel<HYPOTHESIS>::_pbTransModel(void):BasePbTransModel<HYPOTHESIS>()
   state=MODEL_IDLE_STATE;
 
       // Initialize feature information pointer
-  featuresInfoPtr=NULL;
+  standardFeaturesInfoPtr=NULL;
   
       // Initially, no heuristic is used
   heuristicId=NO_HEURISTIC;
@@ -407,9 +408,9 @@ _pbTransModel<HYPOTHESIS>::_pbTransModel(void):BasePbTransModel<HYPOTHESIS>()
 
 //---------------------------------
 template<class HYPOTHESIS>
-void _pbTransModel<HYPOTHESIS>::link_feats_info(FeaturesInfo<HypScoreInfo>* _featuresInfoPtr)
+void _pbTransModel<HYPOTHESIS>::link_feats_info(FeaturesInfo<HypScoreInfo>* _standardFeaturesInfoPtr)
 {
-  featuresInfoPtr=_featuresInfoPtr;
+  standardFeaturesInfoPtr=_standardFeaturesInfoPtr;
 }
 
 //---------------------------------
@@ -420,7 +421,7 @@ void _pbTransModel<HYPOTHESIS>::clear(void)
   state=MODEL_IDLE_STATE;
 
       // Initialize feature information pointer
-  featuresInfoPtr=NULL;
+  standardFeaturesInfoPtr=NULL;
 
       // Initially, no heuristic is used
   heuristicId=NO_HEURISTIC;
@@ -445,6 +446,9 @@ void _pbTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
       // Store source sentence to be translated
   this->trMetadataPtr->obtainTransConstraints(srcsent,this->verbosity);
   pbtmInputVars.srcSentVec=this->trMetadataPtr->getSrcSentVec();
+
+      // Obtain on-the-fly features
+  onTheFlyFeaturesInfo.featPtrVec=this->trMetadataPtr->getOnTheFlyModelFeatures();
   
       // Verify coverage for source
   if(this->verbosity>0)
@@ -1222,7 +1226,7 @@ Score _pbTransModel<HYPOTHESIS>::heurDirectPmScoreLt(const std::vector<WordIndex
   
       // Obtain direct phrase model feature pointers 
   Score scr=0;
-  std::vector<DirectPhraseModelFeat<HypScoreInfo>* > directPhraseModelFeatPtrs=featuresInfoPtr->getDirectPhraseModelFeatPtrs();
+  std::vector<DirectPhraseModelFeat<HypScoreInfo>* > directPhraseModelFeatPtrs=standardFeaturesInfoPtr->getDirectPhraseModelFeatPtrs();
   for(unsigned int i=0;i<directPhraseModelFeatPtrs.size();++i)
   {
     scr+=directPhraseModelFeatPtrs[i]->scorePhrasePair(srcPhraseStr,trgPhraseStr);
@@ -1241,7 +1245,7 @@ Score _pbTransModel<HYPOTHESIS>::heurInversePmScoreLt(const std::vector<WordInde
 
       // Obtain inverse phrase model feature pointers 
   Score scr=0;
-  std::vector<InversePhraseModelFeat<HypScoreInfo>* > inversePhraseModelFeatPtrs=featuresInfoPtr->getInversePhraseModelFeatPtrs();
+  std::vector<InversePhraseModelFeat<HypScoreInfo>* > inversePhraseModelFeatPtrs=standardFeaturesInfoPtr->getInversePhraseModelFeatPtrs();
   for(unsigned int i=0;i<inversePhraseModelFeatPtrs.size();++i)
   {
     scr+=inversePhraseModelFeatPtrs[i]->scorePhrasePair(srcPhraseStr,trgPhraseStr);
@@ -1258,7 +1262,7 @@ Score _pbTransModel<HYPOTHESIS>::heurLmScoreLtNoAdmiss(const std::vector<WordInd
 
       // Obtain language model feature pointers 
   Score scr=0;
-  std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=featuresInfoPtr->getLangModelFeatPtrs();
+  std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=standardFeaturesInfoPtr->getLangModelFeatPtrs();
   for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
   {
     std::vector<std::string> emptyPhraseStr;
@@ -1318,7 +1322,7 @@ Score _pbTransModel<HYPOTHESIS>::calcRefLmHeurScore(const _pbTransModel::Hypothe
 {
   if(refHeurLmLgProb.empty())
   {
-    std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=featuresInfoPtr->getLangModelFeatPtrs();
+    std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=standardFeaturesInfoPtr->getLangModelFeatPtrs();
     for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
     {
           // Obtain scores
@@ -1348,7 +1352,7 @@ Score _pbTransModel<HYPOTHESIS>::calcPrefLmHeurScore(const _pbTransModel::Hypoth
 {
   if(prefHeurLmLgProb.empty())
   {
-    std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=featuresInfoPtr->getLangModelFeatPtrs();
+    std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=standardFeaturesInfoPtr->getLangModelFeatPtrs();
     for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
     {
           // Obtain scores
@@ -1437,7 +1441,7 @@ Score _pbTransModel<HYPOTHESIS>::getDistortionHeurScore(const Hypothesis& hyp)
   PositionIndex lastSrcPosCovered=getLastSrcPosCovered(hyp);
 
       // Obtain score
-  std::vector<SrcPosJumpFeat<HypScoreInfo>* > srcPosJumpFeatPtrs=featuresInfoPtr->getSrcPosJumpFeatPtrs();
+  std::vector<SrcPosJumpFeat<HypScoreInfo>* > srcPosJumpFeatPtrs=standardFeaturesInfoPtr->getSrcPosJumpFeatPtrs();
   for(unsigned int i=0;i<srcPosJumpFeatPtrs.size();++i)
   {
     result+=srcPosJumpFeatPtrs[i]->calcHeurScore(gaps,lastSrcPosCovered);
@@ -1719,10 +1723,19 @@ std::vector<std::string> _pbTransModel<HYPOTHESIS>::getTransInPlainTextVecTvs(co
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::setWeights(std::vector<float> wVec)
 {
-  for(unsigned int i=0;i<featuresInfoPtr->featPtrVec.size();++i)
+      // Set weights of standard features
+  for(unsigned int i=0;i<standardFeaturesInfoPtr->featPtrVec.size();++i)
   {
     if(i<wVec.size())
-      featuresInfoPtr->featPtrVec[i]->setWeight(wVec[i]);
+      standardFeaturesInfoPtr->featPtrVec[i]->setWeight(wVec[i]);
+  }
+
+      // Set weights of on-the-fly features
+  int numStdWeights=standardFeaturesInfoPtr->featPtrVec.size();
+  for(unsigned int i=0;i<onTheFlyFeaturesInfo.featPtrVec.size();++i)
+  {
+    if(numStdWeights+i<wVec.size())
+      onTheFlyFeaturesInfo.featPtrVec[i]->setWeight(wVec[numStdWeights+i]);
   }
 }
 
@@ -1731,13 +1744,25 @@ template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::getWeights(std::vector<std::pair<std::string,float> >& compWeights)
 {
   compWeights.clear();
-  for(unsigned int i=0;i<featuresInfoPtr->featPtrVec.size();++i)
+      // Obtain weight info for standard features
+  for(unsigned int i=0;i<standardFeaturesInfoPtr->featPtrVec.size();++i)
   {
     std::pair<std::string,float> str_float;
-    std::string weightName=featuresInfoPtr->featPtrVec[i]->getFeatName();
+    std::string weightName=standardFeaturesInfoPtr->featPtrVec[i]->getFeatName();
     weightName+="w";
     str_float.first=weightName;
-    str_float.second=featuresInfoPtr->featPtrVec[i]->getWeight();
+    str_float.second=standardFeaturesInfoPtr->featPtrVec[i]->getWeight();
+    compWeights.push_back(str_float);
+  }
+  
+      // Obtain weight info for on-the-fly features
+  for(unsigned int i=0;i<onTheFlyFeaturesInfo.featPtrVec.size();++i)
+  {
+    std::pair<std::string,float> str_float;
+    std::string weightName=onTheFlyFeaturesInfo.featPtrVec[i]->getFeatName();
+    weightName+="w";
+    str_float.first=weightName;
+    str_float.second=onTheFlyFeaturesInfo.featPtrVec[i]->getWeight();
     compWeights.push_back(str_float);
   }
 }
@@ -1760,7 +1785,7 @@ void _pbTransModel<HYPOTHESIS>::printWeights(std::ostream &outS)
 template<class HYPOTHESIS>
 unsigned int _pbTransModel<HYPOTHESIS>::getNumWeights(void)
 {
-  return featuresInfoPtr->featPtrVec.size();
+  return standardFeaturesInfoPtr->featPtrVec.size();
 }
 
 //---------------------------------
@@ -2017,12 +2042,24 @@ bool _pbTransModel<HYPOTHESIS>::getTransForSrcPhraseStr(const std::vector<std::s
       // Clear data structures
   transSetStr.clear();
     
-      // Obtain translation options for each feature
-  for(unsigned int i=0;i<this->featuresInfoPtr->featPtrVec.size();++i)
+      // Obtain translation options for each standard feature
+  for(unsigned int i=0;i<this->standardFeaturesInfoPtr->featPtrVec.size();++i)
   {
         // Obtain options
     std::vector<std::vector<std::string> > transOptVec;
-    this->featuresInfoPtr->featPtrVec[i]->obtainTransOptions(srcPhraseStr,transOptVec);
+    this->standardFeaturesInfoPtr->featPtrVec[i]->obtainTransOptions(srcPhraseStr,transOptVec);
+
+        // Add options to set
+    for(unsigned int j=0;j<transOptVec.size();++j)
+      transSetStr.insert(transOptVec[j]);
+  }
+
+      // Obtain translation options for each on-the-fly feature
+  for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
+  {
+        // Obtain options
+    std::vector<std::vector<std::string> > transOptVec;
+    this->onTheFlyFeaturesInfo.featPtrVec[i]->obtainTransOptions(srcPhraseStr,transOptVec);
 
         // Add options to set
     for(unsigned int j=0;j<transOptVec.size();++j)
@@ -2046,10 +2083,16 @@ Score _pbTransModel<HYPOTHESIS>::nbestTransScore(const std::vector<WordIndex>& s
   std::vector<std::string> srcPhraseStr=srcIndexVectorToStrVector(srcPhrase);
   std::vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
   
-      // Obtain translation options for each feature
-  for(unsigned int i=0;i<this->featuresInfoPtr->featPtrVec.size();++i)
+      // Obtain score for each standard feature
+  for(unsigned int i=0;i<this->standardFeaturesInfoPtr->featPtrVec.size();++i)
   {
-    result+=this->featuresInfoPtr->featPtrVec[i]->scorePhrasePair(srcPhraseStr,trgPhraseStr);
+    result+=this->standardFeaturesInfoPtr->featPtrVec[i]->scorePhrasePair(srcPhraseStr,trgPhraseStr);
+  }
+
+      // Obtain score for each on-the-fly feature
+  for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
+  {
+    result+=this->onTheFlyFeaturesInfo.featPtrVec[i]->scorePhrasePair(srcPhraseStr,trgPhraseStr);
   }
 
   return result;

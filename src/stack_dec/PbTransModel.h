@@ -146,14 +146,22 @@ Score PbTransModel<EQCLASS_FUNC>::nullHypothesisScrComps(Hypothesis& nullHyp,
       // Init scoreComponents
   scoreComponents.clear();
 
-      // Obtain score for components
-  for(unsigned int i=0;i<this->featuresInfoPtr->featPtrVec.size();++i)
+      // Obtain score for standard features
+  for(unsigned int i=0;i<this->standardFeaturesInfoPtr->featPtrVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->featuresInfoPtr->featPtrVec[i]->nullHypScore(hypScoreInfo,unweightedScore);
+    hypScoreInfo=this->standardFeaturesInfoPtr->featPtrVec[i]->nullHypScore(hypScoreInfo,unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
-    
+
+      // Obtain score for on-the-fly features
+  for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
+  {
+    Score unweightedScore;
+    hypScoreInfo=this->onTheFlyFeaturesInfo.featPtrVec[i]->nullHypScore(hypScoreInfo,unweightedScore);
+    scoreComponents.push_back(unweightedScore);
+  }
+
   nullHyp.setScoreInfo(hypScoreInfo);
   nullHyp.setData(dataType);
 
@@ -256,14 +264,22 @@ Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
       // Init scoreComponents
   scoreComponents.clear();
 
-      // Obtain score for components
-  for(unsigned int i=0;i<this->featuresInfoPtr->featPtrVec.size();++i)
+      // Obtain score for standard features
+  for(unsigned int i=0;i<this->standardFeaturesInfoPtr->featPtrVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->featuresInfoPtr->featPtrVec[i]->extensionScore(this->pbtmInputVars.srcSentVec,hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
+    hypScoreInfo=this->standardFeaturesInfoPtr->featPtrVec[i]->extensionScore(this->pbtmInputVars.srcSentVec,hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
-    
+
+      // Obtain score for on-the-fly features
+  for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
+  {
+    Score unweightedScore;
+    hypScoreInfo=this->onTheFlyFeaturesInfo.featPtrVec[i]->extensionScore(this->pbtmInputVars.srcSentVec,hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
+    scoreComponents.push_back(unweightedScore);
+  }
+
   new_hyp.setScoreInfo(hypScoreInfo);
   new_hyp.setData(new_hypd);
   
