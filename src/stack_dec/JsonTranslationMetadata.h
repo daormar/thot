@@ -31,11 +31,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Constants ------------------------------------------
 
 #define JSON_TEX_SEGMENTATION "tex_segmentation"
-#define JSON_SELLER_TERMS "seller_term_dict"
-#define JSON_APPROVED_TERMS "approved_term_dict"
-#define JSON_FORBIDDEN_TERMS "forbidden_terms"
-#define JSON_BRANDS "brands"
-#define JSON_UNTRANSLATABLE_TERMS "untranslatable_terms"
 
 //--------------- Typedefs -------------------------------------------
 
@@ -75,36 +70,10 @@ class JsonTranslationMetadata: public BaseTranslationMetadata<SCORE_INFO>
   ~JsonTranslationMetadata(){};
 
  private:
-      // Data structures
-  typedef struct {
-    std::string dstText;
-    std::string srcLang;
-    std::string dstLang;
-    unsigned int freq;
-  } SellerTerm;
-
-  typedef struct {
-    std::string dstText;
-    int category;
-    unsigned int freq;
-    float changeProb;
-  } ApprovedTerm;
-
-  typedef struct {
-    std::string dstText;
-    int category;
-    std::string source;
-  } Brand;
 
       // Data members
   std::vector<std::string> srcSentVec;
-  int productCategory;
-  std::multimap<std::string, SellerTerm> sellerTerms;
-  std::multimap<std::string, ApprovedTerm> approvedTerms;
-  std::multimap<std::string, Brand> brandTerms;
-  std::vector<std::string> untranslatableTerms;
-
-  std::map<std::pair<PositionIndex,PositionIndex>,std::vector<std::string> > srcPhrTransMap;  // TODO: Remove and replace with specialized data members for different types of the terms
+  std::map<std::pair<PositionIndex,PositionIndex>,std::vector<std::string> > srcPhrTransMap;
 
       // Check if string is empty or contains only whitespace characters
   bool containsOnlyWhitespaces(std::string phrase);
@@ -163,79 +132,6 @@ void JsonTranslationMetadata<SCORE_INFO>::obtainTransConstraints(std::string raw
             std::string srcSent = json.get("src_title").get("preprocessed").get<std::string>();
             // Convert raw source sentence into a string vector
             srcSentVec = StrProcUtils::stringToStringVector(srcSent);
-
-            // Read item category
-            productCategory = (int) json.get("category").get<double>();
-
-            // Retrieve seller terms
-            if(json.get(JSON_SELLER_TERMS).is<picojson::array>())
-            {
-                picojson::array seller = json.get(JSON_SELLER_TERMS).get<picojson::array>();
-                for(picojson::array::iterator iter = seller.begin(); iter != seller.end(); iter++)
-                {
-                    SellerTerm term;
-                    term.dstText = (*iter).get("dst_text").get<std::string>();
-                    term.srcLang = (*iter).get("src_lang").get<std::string>();
-                    term.dstLang = (*iter).get("dst_lang").get<std::string>();
-                    term.freq = (float) (*iter).get("frequency").get<double>();
-
-                    std::string srcText = (*iter).get("src_text").get<std::string>();
-
-                    sellerTerms.insert(std::make_pair(srcText, term));
-                }
-            }
-
-            // Retrieve approved terms
-            if(json.get(JSON_APPROVED_TERMS).is<picojson::array>())
-            {
-                picojson::array approved = json.get(JSON_APPROVED_TERMS).get<picojson::array>();
-                for(picojson::array::iterator iter = approved.begin(); iter != approved.end(); iter++)
-                {
-                    ApprovedTerm term;
-                    term.dstText = (*iter).get("dst_text").get<std::string>();
-                    term.category = (int) (*iter).get("category").get<double>();
-                    term.freq = (float) (*iter).get("frequency").get<double>();
-                    term.changeProb = (float) (*iter).get("change_probability").get<double>();
-
-                    std::string srcText = (*iter).get("src_text").get<std::string>();
-
-                    approvedTerms.insert(std::make_pair(srcText, term));
-                }
-            }
-
-            // Retrieve brands
-            if(json.get(JSON_BRANDS).is<picojson::array>())
-            {
-                picojson::array brands = json.get(JSON_BRANDS).get<picojson::array>();
-                for(picojson::array::iterator iter = brands.begin(); iter != brands.end(); iter++)
-                {
-                    Brand brand;
-                    brand.dstText = (*iter).get("dst_text").get<std::string>();
-                    if((*iter).get("category").is<double>())
-                    {
-                        brand.category = (int) (*iter).get("category").get<double>();
-                    }
-                    else
-                    {
-                        brand.category = -1;  // Empty category values
-                    }
-                    brand.source = (*iter).get("source").get<std::string>();
-
-                    std::string srcText = (*iter).get("src_text").get<std::string>();
-                    brandTerms.insert(std::make_pair(srcText, brand));
-                }
-            }
-
-            // Retrieve untranslatable terms
-            if(json.get(JSON_UNTRANSLATABLE_TERMS).is<picojson::array>())
-            {
-                picojson::array untranslatable = json.get(JSON_UNTRANSLATABLE_TERMS).get<picojson::array>();
-                for(picojson::array::iterator iter = untranslatable.begin(); iter != untranslatable.end(); iter++)
-                {
-                    std::string srcText = (*iter).get("src_text").get<std::string>();
-                    untranslatableTerms.push_back(srcText);
-                }
-            }
 
             // Retrieve translations based on tags assigned by annotator in TEX
             picojson::array tags = json.get(JSON_TEX_SEGMENTATION).get<picojson::array>();
@@ -353,7 +249,7 @@ bool JsonTranslationMetadata<SCORE_INFO>::translationSatisfiesConstraints(const 
 //---------------------------------------
 template<class SCORE_INFO>
 bool JsonTranslationMetadata<SCORE_INFO>::phraseTranslationIsValid(const std::vector<std::string>& /*sourceWordVec*/,
-                                                       const std::vector<std::string>& /*targetWordVec*/)const
+                                                                   const std::vector<std::string>& /*targetWordVec*/)const
 {
     // TODO: It is good for now when JSON format has to be compatible with XML
     // Later it should be improved.
