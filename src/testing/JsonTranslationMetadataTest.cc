@@ -292,6 +292,35 @@ void JsonTranslationMetadataTest::testTranslationViolatingWordSelectionConstrain
     CPPUNIT_ASSERT_EQUAL(true, isSatisfied);
 }
 
+void JsonTranslationMetadataTest::testHandlingConstraintsForRepetitions(void)
+{
+    // Extract constraints
+    metadata->obtainTransConstraints(getJsonStringWithRepetitions(), 1);
+
+    // Prepare parameters
+    SourceSegmentation sourceSegmentation;
+    sourceSegmentation.push_back(std::make_pair(1, 1));
+    sourceSegmentation.push_back(std::make_pair(3, 3));
+    sourceSegmentation.push_back(std::make_pair(4, 4));
+    sourceSegmentation.push_back(std::make_pair(5, 5));
+
+    std::vector<PositionIndex> targetSegmentCuts;
+    targetSegmentCuts.push_back(1);
+    targetSegmentCuts.push_back(2);
+    targetSegmentCuts.push_back(3);
+    targetSegmentCuts.push_back(4);
+
+    std::vector<std::string> targetWordVec;
+    targetWordVec.push_back("premier");
+    targetWordVec.push_back("premier");
+    targetWordVec.push_back("t-shirt");
+    targetWordVec.push_back("polo");
+
+    // Valid translation - respects all constraints
+    bool isSatisfied = metadata->translationSatisfiesConstraints(sourceSegmentation, targetSegmentCuts, targetWordVec);
+    CPPUNIT_ASSERT_EQUAL(true, isSatisfied);
+}
+
 //---------------------------------------
 std::string JsonTranslationMetadataTest::getJsonString(void)
 {
@@ -308,6 +337,23 @@ std::string JsonTranslationMetadataTest::getJsonString(void)
     "           { \"translation\" : \"Logo\", \"original\" : \"logo\" },"
     "           { \"translation\" : \"22.9cm\", \"original\" : \"22.9cm\" },"
     "           { \"translation\" : \"2x5\", \"original\" : \"2x5\" }"
+    "   ]"
+    "}";
+}
+
+//---------------------------------------
+std::string JsonTranslationMetadataTest::getJsonStringWithRepetitions(void)
+{
+  return "{"
+    "   \"src_title\" : {"
+    "           \"preprocessed\" : \"first and first T-shirt T-shirt\","
+    "           \"original\" : \"first and first T-shirt T-shirt\""
+    "   },"
+    "   \"tex_segmentation\" : ["
+    "           { \"translation\" : \"premier\", \"original\" : \"first\" },"
+    "           { \"translation\" : \"premier\", \"original\" : \"first\" },"
+    "           { \"translation\" : \"t-shirt\", \"original\" : \"T-shirt\" },"
+    "           { \"translation\" : \"polo\", \"original\" : \"T-shirt\" }"
     "   ]"
     "}";
 }

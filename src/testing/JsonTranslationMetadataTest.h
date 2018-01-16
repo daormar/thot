@@ -72,6 +72,7 @@ class JsonTranslationMetadataTest: public CppUnit::TestFixture
   CPPUNIT_TEST( testGetConstrainedSrcPhrases );
   CPPUNIT_TEST( testSrcPhrAffectedByConstraint );
   CPPUNIT_TEST( testTranslationSatisfiesSrcPhrConstraints );
+  CPPUNIT_TEST( testHandlingConstraintsForRepetitions );
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -84,12 +85,14 @@ class JsonTranslationMetadataTest: public CppUnit::TestFixture
   void testGetConstrainedSrcPhrases(void);
   void testSrcPhrAffectedByConstraint(void);
   void testTranslationSatisfiesSrcPhrConstraints(void);
+  void testHandlingConstraintsForRepetitions(void);
 
  private:
   JsonTranslationMetadata<PhrScoreInfo>* metadata;
 
       // Input data generators
   std::string getJsonString(void);
+  std::string getJsonStringWithRepetitions(void);
 
       // Auxiliary functions to test source phrase constraints
   void testTranslationSatisfyingSrcPhrConstraints(void);
