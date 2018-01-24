@@ -75,7 +75,7 @@ class BaseTranslationMetadata
                                         const std::vector<std::string>& targetWordVec)const=0;
 
       // Functions related to on-the-fly log-linear features
-  virtual std::vector<BasePbTransModelFeature<SCORE_INFO>*> getOnTheFlyModelFeatures(void)const
+  virtual std::vector<BasePbTransModelFeature<SCORE_INFO>*> getOnTheFlyModelFeatures(void)
   {
     std::vector<BasePbTransModelFeature<SCORE_INFO>*> emptyVec;
     return emptyVec;
