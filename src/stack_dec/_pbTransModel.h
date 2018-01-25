@@ -93,6 +93,9 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Constructor
   _pbTransModel();
 
+      // Link translation constraints with model
+  void link_trans_metadata(BaseTranslationMetadata<HypScoreInfo> * _trMetadataPtr);
+
       // Link features information
   void link_feats_info(FeaturesInfo<HypScoreInfo>* _featuresInfoPtr);
 
@@ -197,7 +200,10 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
 
       // Data used to cache n-best translation data
   NbestTransCacheData nbTransCacheData;
-  
+
+      // Functions related to on-the-fly model features
+  void initOnTheFlyModelFeatsPreservingWeights();
+
   ////// Hypotheses-related functions
 
       // Expansion-related functions
@@ -408,6 +414,43 @@ _pbTransModel<HYPOTHESIS>::_pbTransModel(void):BasePbTransModel<HYPOTHESIS>()
 
 //---------------------------------
 template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::link_trans_metadata(BaseTranslationMetadata<HypScoreInfo> * _trMetadataPtr)
+{
+      // Link pointer
+  this->trMetadataPtr=_trMetadataPtr;
+  
+      // On-the-fly features are initialized at this point so as to be
+      // able to correctly know the features that are available to the
+      // decoder from the very beginning
+  initOnTheFlyModelFeatsPreservingWeights();
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::initOnTheFlyModelFeatsPreservingWeights()
+{
+      // Get previous weights if any
+  std::vector<float> weightVec;
+  for(unsigned int i=0;i<onTheFlyFeaturesInfo.featPtrVec.size();++i)
+  {
+    weightVec.push_back(onTheFlyFeaturesInfo.featPtrVec[i]->getWeight());
+  }
+      
+      // Get on-the-fly features
+  onTheFlyFeaturesInfo.featPtrVec=this->trMetadataPtr->getOnTheFlyModelFeatures();
+
+      // Restore previous weights
+  if(weightVec.size()==onTheFlyFeaturesInfo.featPtrVec.size())
+  {
+    for(unsigned int i=0;i<onTheFlyFeaturesInfo.featPtrVec.size();++i)
+    {
+      onTheFlyFeaturesInfo.featPtrVec[i]->setWeight(weightVec[i]);
+    }
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::link_feats_info(FeaturesInfo<HypScoreInfo>* _standardFeaturesInfoPtr)
 {
   standardFeaturesInfoPtr=_standardFeaturesInfoPtr;
@@ -447,8 +490,8 @@ void _pbTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
   this->trMetadataPtr->obtainTransConstraints(srcsent,this->verbosity);
   pbtmInputVars.srcSentVec=this->trMetadataPtr->getSrcSentVec();
 
-      // Obtain on-the-fly features
-  onTheFlyFeaturesInfo.featPtrVec=this->trMetadataPtr->getOnTheFlyModelFeatures();
+      // Initialize on-the-fly features
+  initOnTheFlyModelFeatsPreservingWeights();
   
       // Verify coverage for source
   if(this->verbosity>0)
