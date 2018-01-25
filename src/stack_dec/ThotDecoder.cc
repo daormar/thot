@@ -183,7 +183,18 @@ void ThotDecoder::init_translator_legacy_impl(void)
   _phrSwTransModel<SmtModel::Hypothesis>* base_pbswtm_ptr=dynamic_cast<_phrSwTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
   if(base_pbswtm_ptr)
     base_pbswtm_ptr->link_swm_info(tdCommonVars.swModelInfoPtr);
-    
+  
+      // Create translation metadata object
+  tdCommonVars.trMetadataPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationMetadataDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationMetadataInitPars);
+  if(tdCommonVars.trMetadataPtr==NULL)
+  {
+    std::cerr<<"Error: BaseTranslationMetadata pointer could not be instantiated"<<std::endl;
+    exit(THOT_ERROR);
+  }
+
+      // Link translation metadata
+  tdCommonVars.smtModelPtr->link_trans_metadata(tdCommonVars.trMetadataPtr);
+
       // Initialize mutexes and conditions
   pthread_mutex_init(&user_id_to_idx_mut,NULL);
   pthread_mutex_init(&atomic_op_mut,NULL);
@@ -269,7 +280,22 @@ void ThotDecoder::init_translator_feat_impl(void)
   tdCommonVars.featureHandler.setDefaultLangSoFile(tdCommonVars.dynClassFactoryHandler.baseNgramLMSoFileName);
   tdCommonVars.featureHandler.setDefaultTransSoFile(tdCommonVars.dynClassFactoryHandler.basePhraseModelSoFileName);
   tdCommonVars.featureHandler.setDefaultSingleWordSoFile(tdCommonVars.dynClassFactoryHandler.baseSwAligModelSoFileName);
-    
+
+      // Create translation metadata object
+      // 
+      // NOTE: metadata objects are defined per user, however, one is
+      // defined here so as to be able to appropriately initialize model
+      // weights in smt model
+  tdCommonVars.trMetadataPtr=tdCommonVars.dynClassFactoryHandler.baseTranslationMetadataDynClassLoader.make_obj(tdCommonVars.dynClassFactoryHandler.baseTranslationMetadataInitPars);
+  if(tdCommonVars.trMetadataPtr==NULL)
+  {
+    std::cerr<<"Error: BaseTranslationMetadata pointer could not be instantiated"<<std::endl;
+    exit(THOT_ERROR);
+  }
+
+      // Link translation metadata
+  tdCommonVars.smtModelPtr->link_trans_metadata(tdCommonVars.trMetadataPtr);
+
       // Initialize mutexes and conditions
   pthread_mutex_init(&user_id_to_idx_mut,NULL);
   pthread_mutex_init(&atomic_op_mut,NULL);
@@ -3124,6 +3150,7 @@ void ThotDecoder::destroy_feat_impl(void)
       // Delete pointers
   delete tdCommonVars.wgHandlerPtr;
   delete tdCommonVars.smtModelPtr;
+  delete tdCommonVars.trMetadataPtr;
   delete tdCommonVars.ecModelPtr;
   delete tdCommonVars.llWeightUpdaterPtr;
   delete tdCommonVars.scorerPtr;
@@ -3157,6 +3184,7 @@ void ThotDecoder::destroy_legacy_impl(void)
   delete tdCommonVars.swModelInfoPtr;
   delete tdCommonVars.wgHandlerPtr;
   delete tdCommonVars.smtModelPtr;
+  delete tdCommonVars.trMetadataPtr;
   delete tdCommonVars.ecModelPtr;
   delete tdCommonVars.llWeightUpdaterPtr;
   delete tdCommonVars.scorerPtr;

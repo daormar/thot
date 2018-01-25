@@ -25,9 +25,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include THOT_SMTMODEL_H // Define SmtModel type. It is set in
-                         // configure by checking SMTMODEL_H
-                         // variable (default value: SmtModel.h)
+#include "BaseTranslationMetadata.h"
 #include "OnlineTrainingPars.h"
 #include "FeatureHandler.h"
 #include "BaseLogLinWeightUpdater.h"
@@ -40,29 +38,38 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "BaseWordPenaltyModel.h"
 #include "WgHandler.h"
 #include "DynClassFactoryHandler.h"
+#include THOT_SMTMODEL_H // Define SmtModel type. It is set in
+                         // configure by checking SMTMODEL_H
+                         // variable (default value: SmtModel.h)
 
 //--------------- Classes --------------------------------------------
 
 class ThotDecoderCommonVars
 {
  public:
-  
+
+      // Variables related to decoder elements
   SwModelInfo* swModelInfoPtr;
   PhraseModelInfo* phrModelInfoPtr;
   LangModelInfo* langModelInfoPtr;
   WgHandler* wgHandlerPtr;
-  BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
   BaseErrorCorrectionModel* ecModelPtr;
   bool curr_ecm_valid_for_wg;
   BaseScorer* scorerPtr;
   BaseLogLinWeightUpdater* llWeightUpdaterPtr;
 
+      // Auxiliary decoder variables
+  BasePbTransModel<SmtModel::Hypothesis>* smtModelPtr;
+  BaseTranslationMetadata<SmtModel::HypScoreInfo>* trMetadataPtr;
+
       // Variables related to feature-based implementation
   bool featureBasedImplEnabled;
   FeatureHandler featureHandler;
-  
+
+      // Handler of dynamic classes
   DynClassFactoryHandler dynClassFactoryHandler;
 
+      // Parameters for online training
   OnlineTrainingPars onlineTrainingPars;
 };
 
