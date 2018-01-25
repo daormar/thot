@@ -77,7 +77,7 @@ class _smtModel: public BaseSmtModel<HYPOTHESIS>
   _smtModel(void);
 
       // Link translation constraints with model
-  void link_trans_metadata(BaseTranslationMetadata<HypScoreInfo> * _trConstraintsPtr);
+  virtual void link_trans_metadata(BaseTranslationMetadata<HypScoreInfo> * _trMetadataPtr);
       
       // Actions to be executed before the translation and before using
       // hypotheses-related functions
