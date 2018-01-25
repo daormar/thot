@@ -307,7 +307,7 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
   smtModelPtr=new SmtModel();
   
       // Link translation constraints
-  smtModelPtr->link_trans_constraints(trMetadataPtr);
+  smtModelPtr->link_trans_metadata(trMetadataPtr);
 
       // Link language model, phrase model and single word model if
       // appliable
@@ -470,7 +470,7 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
   smtModelPtr=new SmtModel();
   
       // Link translation constraints
-  smtModelPtr->link_trans_constraints(trMetadataPtr);
+  smtModelPtr->link_trans_metadata(trMetadataPtr);
 
       // Link features information
   _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);

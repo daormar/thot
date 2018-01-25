@@ -349,7 +349,7 @@ int ThotDecoder::init_idx_data(size_t idx)
   }
 
       // Link translation metadata
-  tdPerUserVarsVec[idx].smtModelPtr->link_trans_constraints(tdPerUserVarsVec[idx].trMetadataPtr);
+  tdPerUserVarsVec[idx].smtModelPtr->link_trans_metadata(tdPerUserVarsVec[idx].trMetadataPtr);
 
       // Link statistical machine translation model
   int ret=tdPerUserVarsVec[idx].stackDecoderPtr->link_smt_model(tdPerUserVarsVec[idx].smtModelPtr);
