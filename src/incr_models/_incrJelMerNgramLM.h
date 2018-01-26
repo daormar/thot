@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: _incrJelMerNgramLM                                       */
-/*                                                                  */
-/* Prototype file: _incrJelMerNgramLM.h                             */
-/*                                                                  */
-/* Description: Base class to manage encoded incremental            */
-/*              Jelinek-Mercer n-gram language                      */
-/*              models p(x|std::vector<x>).                         */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file _incrJelMerNgramLM.h
+ * 
+ * @brief Base class to manage encoded incremental Jelinek-Mercer n-gram
+ * language models p(x|std::vector<x>).
+ */
 
 #ifndef __incrJelMerNgramLM
 #define __incrJelMerNgramLM

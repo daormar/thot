@@ -16,24 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/*********************************************************************/
-/*                                                                   */
-/* Module: WordPenaltyModel                                          */
-/*                                                                   */
-/* Definitions file: WordPenaltyModel.cc                             */
-/*                                                                   */
-/*********************************************************************/
-
+/**
+ * @file WordPenaltyModel.cc
+ * 
+ * @brief Definitions file for WordPenaltyModel.h
+ */
 
 //--------------- Include files ---------------------------------------
 
 #include "WordPenaltyModel.h"
-
-//--------------- Global variables ------------------------------------
-
-//--------------- Function declarations 
-
-//--------------- Constants
 
 //--------------- Classes ---------------------------------------------
 

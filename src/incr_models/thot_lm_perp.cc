@@ -16,18 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_lm_perp.cc                                          */
-/*                                                                  */
-/* Definitions file: thot_lm_perp.cc                                */
-/*                                                                  */
-/* Description: Calculates the perplexity of a                      */
-/*              language model given a test corpus containing       */
-/*              one sentence per line.                              */
-/*                                                                  */   
-/********************************************************************/
-
+/**
+ * @file thot_lm_weight_upd.cc
+ *
+ * @brief Calculates the perplexity of a language model given a test
+ * corpus containing one sentence per line.
+ */
 
 //--------------- Include files --------------------------------------
 

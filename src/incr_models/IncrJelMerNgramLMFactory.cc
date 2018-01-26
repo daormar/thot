@@ -15,15 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrJelMerNgramLMFactory                                 */
-/*                                                                  */
-/* Definitions file: IncrJelMerNgramLMFactory.cc                    */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file IncrJelMerNgramLMFactory.cc
+ * 
+ * @brief Definitions file for IncrJelMerNgramLMFactory.h
+ */
 
 //--------------- Include files --------------------------------------
 

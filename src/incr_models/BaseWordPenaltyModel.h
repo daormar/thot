@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseWordPenaltyModel                                     */
-/*                                                                  */
-/* Prototype file: BaseWordPenaltyModel.h                           */
-/*                                                                  */
-/* Description: BaseWordPenaltyModel is a base class to implement   */
-/*              word penalty models.                                */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BaseWordPenaltyModel.h
+ * 
+ * @brief BaseWordPenaltyModel is a base class to implement word penalty
+ * models.
+ */
 
 #ifndef _BaseWordPenaltyModel
 #define _BaseWordPenaltyModel

@@ -16,25 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrJelMerNgramLM                                        */
-/*                                                                  */
-/* Definitions file: IncrJelMerNgramLM.cc                           */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file IncrJelMerNgramLM.cc
+ * 
+ * @brief Definitions file for IncrJelMerNgramLM.h
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "IncrJelMerNgramLM.h"
-
-//--------------- Global variables -----------------------------------
-
-//--------------- Function declarations 
-
-//--------------- Constants
-
 
 //--------------- Classes --------------------------------------------
 

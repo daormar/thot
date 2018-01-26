@@ -15,29 +15,18 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrNgramLM                                              */
-/*                                                                  */
-/* Definitions file: IncrNgramLM.cc                                 */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file IncrNgramLM.cc
+ * 
+ * @brief Definitions file for IncrNgramLM.h
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "IncrNgramLM.h"
 
-//--------------- Global variables -----------------------------------
-
-//--------------- Function declarations 
-
-//--------------- Constants
-
-
 //--------------- Classes --------------------------------------------
-
 
 //---------------
 Prob IncrNgramLM::pHTrgGivenHSrc(const std::vector<std::string>& hs,const std::string& ht)

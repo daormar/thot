@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: vecx_x_incr_cptable                                      */
-/*                                                                  */
-/* Prototype file: vecx_x_incr_cptable                              */
-/*                                                                  */
-/* Description: Class to manage incremental conditional probability */
-/*              tables of the form p(x|std::vector<x>) (Note: x is  */
-/*              a data type)                                        */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file vecx_x_incr_cptable.h
+ * 
+ * @brief Class to manage incremental conditional probability tables of
+ * the form p(x|std::vector<x>) (Note: x is a data type).
+ */
 
 #ifndef _vecx_x_incr_cptable
 #define _vecx_x_incr_cptable

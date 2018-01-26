@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseIncrEncoder                                          */
-/*                                                                  */
-/* Prototype file: BaseIncrEncoder                                  */
-/*                                                                  */
-/* Description: Abstract class to encode high level source and      */
-/*              target data.                                        */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BaseIncrEncoder.h
+ * 
+ * @brief Abstract class to encode high level source and target data.
+ */
 
 #ifndef _BaseIncrEncoder
 #define _BaseIncrEncoder

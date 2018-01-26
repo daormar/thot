@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrNgramLM                                              */
-/*                                                                  */
-/* Prototype file: IncrNgramLM.h                                    */
-/*                                                                  */
-/* Description: Class to manage incremental encoded ngram language  */
-/*              models p(x|std::vector<x>).                         */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file IncrNgramLM.h
+ * 
+ * @brief Class to manage incremental encoded ngram language models
+ * p(x|std::vector<x>).
+ */
 
 #ifndef _IncrNgramLM
 #define _IncrNgramLM

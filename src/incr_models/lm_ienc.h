@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: lm_ienc                                                  */
-/*                                                                  */
-/* Prototype file: lm_ienc                                          */
-/*                                                                  */
-/* Description: Encoder for incremental language models.            */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file lm_ienc.h
+ * 
+ * @brief Encoder for incremental language models.
+ */
 
 #ifndef _lm_ienc
 #define _lm_ienc
