@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: XRCE_PrePosProcessor4                                    */
-/*                                                                  */
-/* Prototypes file: XRCE_PrePosProcessor4.h                         */
-/*                                                                  */
-/* Description: Declares the XRCE_PrePosProcessor4 class,           */
-/*              this class implements a light pre/pos-processing    */
-/*              module for the XRCE corpus                          */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file XRCE_PrePosProcessor4.h
  * 

@@ -15,15 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: EU_PrePosProcessor1                                      */
-/*                                                                  */
-/* Definitions file: EU_PrePosProcessor1.cc                         */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file EU_PrePosProcessor1.cc
+ * 
+ * @brief Definitions file for EU_PrePosProcessor1.h
+ */
 
 //--------------- Include files --------------------------------------
 

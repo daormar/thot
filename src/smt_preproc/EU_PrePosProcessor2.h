@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: EU_PrePosProcessor2                                      */
-/*                                                                  */
-/* Prototypes file: EU_PrePosProcessor2.h                           */
-/*                                                                  */
-/* Description: Declares the EU_PrePosProcessor2 class,             */
-/*              this class implements a pre/pos-processing module   */
-/*              for the EU corpus (the one used in the TT2 project  */
-/*              plus an extra tokenization step)                    */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file EU_PrePosProcessor2.h
  * 
