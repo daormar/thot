@@ -17,21 +17,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
 USA.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_dhs_step_by_step_min.cc                             */
-/*                                                                  */
-/* Definitions file: thot_dhs_step_by_step_min.cc                   */
-/*                                                                  */
-/* Description: thot_dhs_step_by_step_min is a program to minimize  */
-/*              a given target function by means of a series of     */
-/*              steps, thot_dhs_step_by_step_min uses a downhill    */
-/*              simplex optimization algorithm that can be freely   */
-/*              distributed.                                        */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file thot_dhs_step_by_step_min.cc
+ * 
+ * @brief thot_dhs_step_by_step_min is a program to minimize a given
+ * target function by means of a series of steps,
+ * thot_dhs_step_by_step_min uses a downhill simplex optimization
+ * algorithm that can be freely distributed.
+ */
 
 //--------------- Include files --------------------------------------
 
