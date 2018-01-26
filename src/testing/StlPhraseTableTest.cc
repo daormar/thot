@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: StlPhraseTableTest                                       */
-/*                                                                  */
-/* Definitions file: StlPhraseTableTest.cc                          */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file StlPhraseTableTest.cc
+ * 
+ * @brief Definitions file for StlPhraseTableTest.h
+ */
 
 //--------------- Include files --------------------------------------
 

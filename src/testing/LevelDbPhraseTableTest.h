@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: LevelDbPhraseTableTest                                   */
-/*                                                                  */
-/* Prototypes file: LevelDbPhraseTableTest.h                        */
-/*                                                                  */
-/* Description: Declares the LevelDbPhraseTableTest class           */
-/*              implementing unit tests for the LevelDbPhraseTable  */
-/*              class.                                              */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file LevelDbPhraseTableTest.h
  *

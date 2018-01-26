@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: JsonTranslationMetadataTest                              */
-/*                                                                  */
-/* Prototypes file: JsonTranslationMetadataTest.h                   */
-/*                                                                  */
-/* Description: Declares the JsonTranslationMetadataTest class      */
-/*              implementing unit tests for                         */
-/*              the JsonTranslationMetadata class.                  */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file JsonTranslationMetadataTest.h
  *

@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: _incrLexTableTest                                        */
-/*                                                                  */
-/* Definitions file: _incrLexTableTest.cc                           */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file _incrLexTableTest.cc
+ * 
+ * @brief Definitions file for _incrLexTableTest.h
+ */
 
 //--------------- Include files --------------------------------------
 

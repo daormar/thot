@@ -16,17 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: StlPhraseTableTest                                       */
-/*                                                                  */
-/* Prototypes file: StlPhraseTableTest.h                            */
-/*                                                                  */
-/* Description: Declares the StlPhraseTableTest class implementing  */
-/*               unit tests for the StlPhraseTable class.           */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file StlPhraseTableTest.h
  *

@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: LevelDbPhraseTableTest                                   */
-/*                                                                  */
-/* Definitions file: LevelDbPhraseTableTest.cc                      */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file LevelDbPhraseTableTest.cc
+ * 
+ * @brief Definitions file for LevelDbPhraseTableTest.h
+ */
 
 //--------------- Include files --------------------------------------
 

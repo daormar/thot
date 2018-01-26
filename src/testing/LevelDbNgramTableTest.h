@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: LevelDbNgramTableTest                                    */
-/*                                                                  */
-/* Prototypes file: LevelDbNgramTableTest.h                         */
-/*                                                                  */
-/* Description: Declares the LevelDbNgramTableTest class            */
-/*              implementing unit tests for the LevelDbNgramTable   */
-/*              class.                                              */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file LevelDbNgramTableTest.h
  *

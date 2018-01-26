@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: _incrLexTableTest                                        */
-/*                                                                  */
-/* Prototypes file: _incrLexTableTest.h                             */
-/*                                                                  */
-/* Description: Declares the _incrLexTableTest abstract class       */
-/*              implementing unit tests for the incremental         */
-/*              lexical table classes.  */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _incrLexTableTest.h
  *
