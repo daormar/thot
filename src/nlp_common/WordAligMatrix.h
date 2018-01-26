@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: WordAligMatrix                                           */
-/*                                                                  */
-/* Prototype file: WordAligMatrix                                   */
-/*                                                                  */
-/* Description: Defines the WordAligMatrix class for store a        */
-/*              word-level alignment matrix.                        */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file WordAligMatrix.h
+ * 
+ * @brief Defines the WordAligMatrix class to a store a word-level
+ * alignment matrix.
+ */
 
 #ifndef _wordAligMatrix_h
 #define _wordAligMatrix_h

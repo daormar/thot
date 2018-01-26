@@ -15,22 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: printAligFuncs                                           */
-/*                                                                  */
-/* Definitions file: printAligFuncs.cc                              */
-/*                                                                  */
-/********************************************************************/
 
-
-//--------------- Include files -------------------------------------
+/**
+ * @file printAligFuncs.cc
+ * 
+ * @brief Definitions file for printAligFuncs.h
+ */
 
 #include "printAligFuncs.h"
-
-//--------------- Function definitions
-
 
 //-------------------------
 void printAlignmentInGIZAFormat(std::ostream &outS,

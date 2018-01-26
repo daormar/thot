@@ -15,13 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/* ------------------------------------------ */
-/*                                            */
-/* AwkInputStream class                       */
-/*                                            */
-/* Daniel Ortiz <dortiz@iti.upv.es>, May 2006 */
-/* ------------------------------------------ */
+
+/**
+ * @file AwkInputStream.h
+ * 
+ * @brief AWK-like input stream.
+ */
 
 #ifndef _awk_input_stream_h
 #define _awk_input_stream_h

@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: printAligFuncs                                           */
-/*                                                                  */
-/* Prototype file: printAligFuncs                                   */
-/*                                                                  */
-/* Description: functions to print alignments                       */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file printAligFuncs.h
+ * 
+ * @brief Functions to print alignments.
+ */
 
 #ifndef _printAligFuncs
 #define _printAligFuncs

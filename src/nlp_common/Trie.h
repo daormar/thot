@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: Trie                                                     */
-/*                                                                  */
-/* Prototype file: Trie.h                                           */
-/*                                                                  */
-/* Description: Implements the Trie data structure                  */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file Trie.h
+ * 
+ * @brief Implements a trie data structure.
+ */
 
 #ifndef _Trie_h
 #define _Trie_h

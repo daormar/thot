@@ -15,7 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file BasicSocketUtils.cc
+ * 
+ * @brief Definitions file for BasicSocketUtils.h
+ */
 
 #include "BasicSocketUtils.h"
 

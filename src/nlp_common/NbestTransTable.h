@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: NbestTransTable                                          */
-/*                                                                  */
-/* Prototype file: NbestTransTable                                  */
-/*                                                                  */
-/* Description: Stores and manages a n-best translation table.      */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file NbestTransTable.h
+ * 
+ * @brief Stores and manages a n-best translation table.
+ */
 
 #ifndef _NbestTransTable
 #define _NbestTransTable

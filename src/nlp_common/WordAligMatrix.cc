@@ -15,29 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: WordAligMatrix                                           */
-/*                                                                  */
-/* Definitions file: WordAligMatrix.cc                              */
-/*                                                                  */
-/********************************************************************/
 
-
-//--------------- Include files --------------------------------------
+/**
+ * @file WordAligMatrix.cc
+ * 
+ * @brief Definitions file for WordAligMatrix.h
+ */
 
 #include "WordAligMatrix.h"
-
-//--------------- Global variables -----------------------------------
-
-//--------------- Function declarations 
-
-//--------------- Constants
-
-
-//--------------- Classes --------------------------------------------
-
 
 //-------------------------
 WordAligMatrix::WordAligMatrix(void)

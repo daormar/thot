@@ -15,7 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file Count.h
+ * 
+ * @brief Defines the Count class to work with counts.
+ */
+
 #ifndef _Count_h
 #define _Count_h
 

@@ -16,22 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: ThreadSafePrint.h                                        */
-/*                                                                  */
-/* Prototypes file: ThreadSafePrint.h                               */
-/*                                                                  */
-/* Description: Declares the ThreadSafePrint class for logging      */
-/*              in thread-safe manner to avoid racing. It uses      */
-/*              singleton pattern to provide mutual exclusive       */
-/*              printing.                                           */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file ThreadSafePrint.h
- *
+ * 
  * @brief Declares the ThreadSafePrint class for logging in thread-safe
  * manner to avoid racing. It uses singleton pattern to provide mutual
  * exclusive printing.

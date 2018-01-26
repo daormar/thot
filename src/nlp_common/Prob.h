@@ -15,7 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file Prob.h
+ * 
+ * @brief Defines the Prob and LgProb classes to store probabilities and
+ * log-probabilities respectively.
+ */
+
 #ifndef _Prob_h
 #define _Prob_h
 

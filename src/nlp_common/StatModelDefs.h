@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: StatModelDefs.h                                          */
-/*                                                                  */
-/* Prototype file: StatModelDefs                                    */
-/*                                                                  */
-/* Description: Constants, typedefs and basic classes for           */
-/*              statistical models.                                 */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file StatModelDefs.h
+ * 
+ * @brief Constants, typedefs and basic classes for statistical models.
+ */
 
 #ifndef _StatModelDefs_h
 #define _StatModelDefs_h

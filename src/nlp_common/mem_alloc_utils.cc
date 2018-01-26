@@ -16,6 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
+/**
+ * @file mem_alloc_utils.cc
+ * 
+ * @brief Definitions file for mem_alloc_utils.h
+ */
 
 #include "mem_alloc_utils.h"
 
