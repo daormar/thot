@@ -16,15 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: _incrLexTable                                            */
-/*                                                                  */
-/* Prototype file: _incrLexTable.h                                  */
-/*                                                                  */
-/* Description: Defines interface for incremental lexical table.    */
-/*                                                                  */
-/********************************************************************/
+/**
+ * @file _incrLexTable.h
+ * 
+ * @brief Defines interface for incremental lexical table.
+ * 
+ */
 
 #ifndef __incrLexTable_h
 #define __incrLexTable_h

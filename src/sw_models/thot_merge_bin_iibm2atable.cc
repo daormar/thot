@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_merge_bin_iibm2atable.cc                            */
-/*                                                                  */
-/* Definitions file: thot_merge_bin_iibm2atable.cc                  */
-/*                                                                  */
-/* Description: Merges counts given in a set of sorted incremental  */
-/*              ibm2 alignment tables.                              */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file thot_merge_bin_iibm2atable.cc
+ * 
+ * @brief Merges counts given in a set of sorted incremental ibm2
+ * alignment tables.
+ */
 
 //--------------- Include files --------------------------------------
 

@@ -16,30 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrIbm2AligTable                                        */
-/*                                                                  */
-/* Definitions file: IncrIbm2AligTable.cc                           */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file IncrIbm2AligTable.cc
+ * 
+ * @brief Definitions file for IncrIbm2AligTable.h
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "IncrIbm2AligTable.h"
-
-//--------------- Global variables -----------------------------------
-
-
-//--------------- Function declarations 
-
-
-//--------------- Constants
-
-
-//--------------- Classes --------------------------------------------
-
 
 //--------------- IncrIbm2AligTable class function definitions
 

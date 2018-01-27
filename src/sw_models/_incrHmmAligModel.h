@@ -16,20 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: _incrHmmAligModel                                        */
-/*                                                                  */
-/* Prototype file: _incrHmmAligModel.h                              */
-/*                                                                  */
-/* Description: Defines the _incrHmmAligModel class.                */
-/*              _incrHmmAligModel class allows to generate and      */
-/*              access to the data of an Hmm statistical            */
-/*              alignment model.                                    */
-/*                                                                  */
-/* Notes: 100% AC-DC powered                                        */
-/*                                                                  */
-/********************************************************************/
+/**
+ * @file _incrHmmAligModel.h
+ * 
+ * @brief Defines the _incrHmmAligModel class.  _incrHmmAligModel class
+ * allows to generate and access to the data of an Hmm statistical
+ * alignment model. (100% AC-DC powered)
+ * 
+ */
 
 #ifndef __incrHmmAligModel_h
 #define __incrHmmAligModel_h

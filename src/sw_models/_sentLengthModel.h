@@ -15,18 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: _sentLengthModel                                         */
-/*                                                                  */
-/* Prototype file: _sentLengthModel.h                               */
-/*                                                                  */
-/* Description: Defines the _sentLengthModel class.                 */
-/*              _sentLengthModel is a predecessor class for         */
-/*              derivating sentence length models.                  */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file _sentLengthModel.h
+ * 
+ * @brief Defines the _sentLengthModel class.  _sentLengthModel is a
+ * predecessor class for derivating sentence length models.
+ * 
+ */
 
 #ifndef __sentLengthModel_h
 #define __sentLengthModel_h

@@ -15,18 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: LightSentenceHandler                                     */
-/*                                                                  */
-/* Prototype file: LightSentenceHandler.h                           */
-/*                                                                  */
-/* Description: Defines the LightSentenceHandler class.             */
-/*              LightSentenceHandler class allow to access a set of */
-/*              sentence pairs.                                     */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file LightSentenceHandler.h
+ * 
+ * @brief Defines the LightSentenceHandler class.  LightSentenceHandler
+ * class allow to access a set of sentence pairs.
+ * 
+ */
 
 #ifndef _LightSentenceHandler_h
 #define _LightSentenceHandler_h

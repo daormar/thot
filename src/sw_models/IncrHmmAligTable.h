@@ -15,18 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrHmmAligTable                                         */
-/*                                                                  */
-/* Prototype file: IncrHmmAligTable.h                               */
-/*                                                                  */
-/* Description: Defines the IncrHmmAligTable class.                 */
-/*              IncrHmmAligTable class stores an incremental        */
-/*              HMM alignment table.                                */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file IncrHmmAligTable.h
+ * 
+ * @brief Defines the IncrHmmAligTable class. IncrHmmAligTable class
+ * stores an incremental HMM alignment table.
+ * 
+ */
 
 #ifndef _IncrHmmAligTable_h
 #define _IncrHmmAligTable_h

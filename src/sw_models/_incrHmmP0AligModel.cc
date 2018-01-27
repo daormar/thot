@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: _incrHmmP0AligModel                                      */
-/*                                                                  */
-/* Definitions file: _incrHmmP0AligModel.cc                         */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file _incrHmmP0AligModel.cc
+ * 
+ * @brief Definitions file for _incrHmmP0AligModel.h
+ */
 
 //--------------- Include files --------------------------------------
 

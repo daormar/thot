@@ -15,31 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: SmoothedIncrIbm1AligModel                                */
-/*                                                                  */
-/* Definitions file: SmoothedIncrIbm1AligModel.cc                   */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file SmoothedIncrIbm1AligModel.cc
+ * 
+ * @brief Definitions file for SmoothedIncrIbm1AligModel.h
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "SmoothedIncrIbm1AligModel.h"
-
-//--------------- Global variables -----------------------------------
-
-
-//--------------- Function declarations 
-
-
-//--------------- Constants
-
-
-//--------------- Classes --------------------------------------------
-
 
 //--------------- SmoothedIncrIbm1AligModel class function definitions
 

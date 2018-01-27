@@ -15,18 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_prune_bin_ilextable.cc                              */
-/*                                                                  */
-/* Definitions file: thot_prune_bin_ilextable.cc                    */
-/*                                                                  */
-/* Description: Prunes lexical parameters given a cutoff            */
-/*              probability value.                                  */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file thot_prune_bin_ilextable.cc
+ * 
+ * @brief Prunes lexical parameters given a cutoff probability value.
+ */
 
 //--------------- Include files --------------------------------------
 
@@ -38,9 +32,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include <fstream>
 #include "SwDefs.h"
-
-//--------------- Constants ------------------------------------------
-
 
 //--------------- Function Declarations ------------------------------
 
@@ -79,7 +70,6 @@ unsigned int n_val;
 float c_val;
 
 //--------------- Function Definitions -------------------------------
-
 
 //--------------- main function
 int main(int argc,char *argv[])

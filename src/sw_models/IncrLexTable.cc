@@ -15,31 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrLexTable                                             */
-/*                                                                  */
-/* Definitions file: IncrLexTable.cc                                */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file IncrLexTable.cc
+ * 
+ * @brief Definitions file for IncrLexTable.h
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "IncrLexTable.h"
-
-//--------------- Global variables -----------------------------------
-
-
-//--------------- Function declarations 
-
-
-//--------------- Constants
-
-
-//--------------- Classes --------------------------------------------
-
 
 //--------------- IncrLexTable class function definitions
 

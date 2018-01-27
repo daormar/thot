@@ -15,18 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrLexTable                                             */
-/*                                                                  */
-/* Prototype file: IncrLexTable.h                                   */
-/*                                                                  */
-/* Description: Defines the IncrLexTable class.                     */
-/*              IncrLexTable class stores an incremental            */
-/*              lexical table.                                      */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file IncrLexTable.h
+ * 
+ * @brief Defines the IncrLexTable class. IncrLexTable class stores an
+ * incremental lexical table.
+ * 
+ */
 
 #ifndef _IncrLexTable_h
 #define _IncrLexTable_h

@@ -15,27 +15,18 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/*********************************************************************/
-/*                                                                   */
-/* Module: WeightedIncrNormSlm                                       */
-/*                                                                   */
-/* Definitions file: WeightedIncrNormSlm.cc                          */
-/*                                                                   */
-/*********************************************************************/
 
+/**
+ * @file WeightedIncrNormSlm.cc
+ * 
+ * @brief Definitions file for WeightedIncrNormSlm.h
+ */
 
 //--------------- Include files ---------------------------------------
 
 #include "WeightedIncrNormSlm.h"
 
-//--------------- Global variables ------------------------------------
-
-//--------------- Function declarations 
-
-//--------------- Constants
-
-//--------------- Classes ---------------------------------------------
+//--------------- WeightedIncrNormSlm class function definitions
 
 //-------------------------
 WeightedIncrNormSlm::WeightedIncrNormSlm(void)

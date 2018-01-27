@@ -16,18 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrIbm2AligModel                                        */
-/*                                                                  */
-/* Prototype file: IncrIbm2AligModel.h                              */
-/*                                                                  */
-/* Description: Defines the IncrIbm2AligModel class.                */
-/*              IncrIbm2AligModel class allows to generate and      */
-/*              access to the data of an IBM 2 statistical          */
-/*              alignment model.                                    */
-/*                                                                  */
-/********************************************************************/
+/**
+ * @file IncrIbm2AligModel.h
+ * 
+ * @brief Defines the IncrIbm2AligModel class.  IncrIbm2AligModel class
+ * allows to generate and access to the data of an IBM 2 statistical
+ * alignment model.
+ * 
+ */
 
 #ifndef _IncrIbm2AligModel_h
 #define _IncrIbm2AligModel_h

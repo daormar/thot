@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/*********************************************************************/
-/*                                                                   */
-/* Module: thot_calc_swm_lgprob.cc                                   */
-/*                                                                   */
-/* Definitions file: thot_calc_swm_lgprob.cc                         */
-/*                                                                   */
-/* Description: Calculates the log-prob of a sentence pair using a   */
-/*              single word alignment model.                         */
-/*                                                                   */   
-/*********************************************************************/
 
+/**
+ * @file thot_calc_swm_lgprob.cc
+ * 
+ * @brief Calculates the log-prob of a sentence pair using a single word
+ * alignment model.
+ */
 
 //--------------- Include files ---------------------------------------
 

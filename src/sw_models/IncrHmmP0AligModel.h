@@ -16,18 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrHmmP0AligModel                                       */
-/*                                                                  */
-/* Prototype file: IncrHmmP0AligModel.h                             */
-/*                                                                  */
-/* Description: Defines the IncrHmmP0AligModel class.               */
-/*              IncrHmmP0AligModel class allows to generate and     */
-/*              access to the data of a Hmm statistical             */
-/*              alignment model with fixed p0 probability.          */
-/*                                                                  */
-/********************************************************************/
+/**
+ * @file IncrHmmP0AligModel.h
+ * 
+ * @brief Defines the IncrHmmP0AligModel class.  IncrHmmP0AligModel
+ * class allows to generate and access to the data of a Hmm statistical
+ * alignment model with fixed p0 probability.
+ */
 
 #ifndef _IncrHmmP0AligModel_h
 #define _IncrHmmP0AligModel_h

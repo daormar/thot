@@ -15,27 +15,18 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/*********************************************************************/
-/*                                                                   */
-/* Module: DoubleMatrix                                              */
-/*                                                                   */
-/* Definitions file: DoubleMatrix.cc                                 */
-/*                                                                   */
-/*********************************************************************/
 
+/**
+ * @file DoubleMatrix.cc
+ * 
+ * @brief Definitions file for DoubleMatrix.h
+ */
 
 //--------------- Include files ---------------------------------------
 
 #include "DoubleMatrix.h"
 
-//--------------- Global variables ------------------------------------
-
-//--------------- Function declarations 
-
-//--------------- Constants
-
-//--------------- Classes ---------------------------------------------
+//--------------- DoubleMatrix class function definitions
 
 //-------------------------
 void DoubleMatrix::set(unsigned int i,

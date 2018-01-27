@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseSentLengthModel                                      */
-/*                                                                  */
-/* Prototype file: BaseSentLengthModel.h                            */
-/*                                                                  */
-/* Description: The BaseSentLengthModel class implements the        */
-/*              interface of sentence length models                 */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BaseSentLengthModel.h
+ * 
+ * @brief The BaseSentLengthModel class implements the interface of
+ * sentence length models.
+ */
 
 #ifndef _BaseSentLengthModel
 #define _BaseSentLengthModel

@@ -15,18 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/*********************************************************************/
-/*                                                                   */
-/* Module: thot_gen_sw_model.cc                                      */
-/*                                                                   */
-/* Definitions file: thot_gen_sw_model.cc                            */
-/*                                                                   */
-/* Description: Generates a single-word model from bilingual         */
-/*              corpora.                                             */
-/*                                                                   */   
-/*********************************************************************/
 
+/**
+ * @file thot_gen_sw_model.cc
+ * 
+ * @brief Generates a single-word model from bilingual corpora.
+ */
 
 //--------------- Include files ---------------------------------------
 
@@ -80,11 +74,7 @@ void version(void);
 SimpleDynClassLoader<BaseSwAligModel<std::vector<Prob> > > baseSwAligModelDynClassLoader;
 BaseSwAligModel<std::vector<Prob> >* swAligModelPtr;
 
-//--------------- Global variables ------------------------------------
-
-
 //--------------- Function Definitions --------------------------------
-
 
 //--------------- main function
 int main(int argc,char *argv[])

@@ -15,18 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/*********************************************************************/
-/*                                                                   */
-/* Module: thot_lextable_to_leveldb.cc                               */
-/*                                                                   */
-/* Definitions file: thot_lextable_to_leveldb.cc                     */
-/*                                                                   */
-/* Description: Convert lex table file in binary format to           */
-/*              LevelDB format.                                      */
-/*                                                                   */   
-/*********************************************************************/
 
+/**
+ * @file thot_lextable_to_leveldb.cc
+ * 
+ * @brief Convert lex table file in binary format to LevelDB format.
+ */
 
 //--------------- Include files ---------------------------------------
 
@@ -36,8 +30,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include "options.h"
 
-//--------------- Constants -------------------------------------------
-
 //--------------- Function Declarations -------------------------------
 
 int convert(void);
@@ -45,16 +37,12 @@ int takeParameters(int argc, char *argv[]);
 void printUsage(void);
 void printVersion(void);
 
-//--------------- Type definitions ------------------------------------
-
-
 //--------------- Global variables ------------------------------------
 
 std::string inputFile;
 std::string outputPath;
 
 //--------------- Function Definitions --------------------------------
-
 
 //--------------- main function
 int main(int argc, char *argv[])

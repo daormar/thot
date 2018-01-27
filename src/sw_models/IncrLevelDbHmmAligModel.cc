@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrLevelDbHmmAligModel                                  */
-/*                                                                  */
-/* Definitions file: IncrLevelDbHmmAligModel.cc                     */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file IncrLevelDbHmmAligModel.cc
+ * 
+ * @brief Definitions file for IncrLevelDbHmmAligModel.h
+ */
 
 //--------------- Include files --------------------------------------
 

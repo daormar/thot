@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: test_casmacat_alig.cc                                    */
-/*                                                                  */
-/* Definitions file: test_casmacat_alig.cc                          */
-/*                                                                  */
-/* Description: tests the casmacat aligner classes.                 */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file test_casmacat_alig.cc
+ * 
+ * @brief Tests the casmacat aligner classes.
+ */
 
 //--------------- Include files --------------------------------------
 
@@ -33,20 +28,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ThotHmmAlignerFactory.h"
 #include <iostream>
 #include <iomanip>
-
-//--------------- Constants ------------------------------------------
-
-
-
-//--------------- Function Declarations ------------------------------
-
-
-//--------------- Type definitions -----------------------------------
-
-
-//--------------- Global variables -----------------------------------
-
-
 
 //--------------- Function Definitions -------------------------------
 

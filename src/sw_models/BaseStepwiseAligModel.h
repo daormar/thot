@@ -15,19 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseStepwiseAligModel                                    */
-/*                                                                  */
-/* Prototype file: BaseStepwiseAligModel.h                          */
-/*                                                                  */
-/* Description: Defines the BaseStepwiseAligModel class.            */
-/*              BaseStepwiseAligModel is a base class for           */
-/*              derivating single-word statistical alignment models */
-/*              using stepwise EM.                                  */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BaseStepwiseAligModel.h
+ * 
+ * @brief Defines the BaseStepwiseAligModel class.
+ * BaseStepwiseAligModel is a base class for derivating single-word
+ * statistical alignment models using stepwise EM.
+ */
 
 #ifndef _BaseStepwiseAligModel_h
 #define _BaseStepwiseAligModel_h
