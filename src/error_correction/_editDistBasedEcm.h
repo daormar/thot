@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: _editDistBasedEcm                                        */
-/*                                                                  */
-/* Prototypes file: _editDistBasedEcm.h                             */
-/*                                                                  */
-/* Description: Declares the _editDistBasedEcm class,               */
-/*              this class is a base class for error correcting     */
-/*              models based on edit distance.                      */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _editDistBasedEcm.h
  * 

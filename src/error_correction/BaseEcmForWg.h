@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseEcmForWg                                             */
-/*                                                                  */
-/* Prototypes file: BaseEcmForWg.h                                  */
-/*                                                                  */
-/* Description: Declares the BaseEcmForWg class,                    */
-/*              this class is a base class for implementing error   */
-/*              correcting models for word-graphs                   */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file BaseEcmForWg.h
  * 

@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: PfsmEcm                                                  */
-/*                                                                  */
-/* Prototypes file: PfsmEcm.h                                       */
-/*                                                                  */
-/* Description: Declares the PfsmEcm class,                         */
-/*              this class implements a statistical error           */
-/*              correcting model for strings which uses             */
-/*              a probabilistic finite state machine.               */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file PfsmEcm.h
  * 

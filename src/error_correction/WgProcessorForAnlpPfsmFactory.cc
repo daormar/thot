@@ -15,15 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: WgProcessorForAnlpPfsmFactory                            */
-/*                                                                  */
-/* Definitions file: WgProcessorForAnlpPfsmFactory.cc               */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file WgProcessorForAnlpPfsmFactory.cc
+ * 
+ * @brief Definitions file for WgProcessorForAnlpPfsmFactory.h
+ */
 
 //--------------- Include files --------------------------------------
 

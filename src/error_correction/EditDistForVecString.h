@@ -15,22 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: EditDistForVecString                                     */
-/*                                                                  */
-/* Prototypes file: EditDistForVecString.h                          */
-/*                                                                  */
-/* Description: Defines the EditDistForVec class that calculates    */
-/*              the edit distance between vectors of strings.       */
-/*              Such edit distance is the same that can be          */
-/*              calculated by means of the EditDistForStr class,    */
-/*              but here the words are the smallest units to be     */
-/*              used in edit operations. Blank characters are       */
-/*              appended at the right side of each word             */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file EditDistForVecString.h
+ * 
+ * @brief Defines the EditDistForVec class that calculates the edit
+ * distance between vectors of strings.  Such edit distance is the same
+ * that can be calculated by means of the EditDistForStr class, but here
+ * the words are the smallest units to be used in edit operations. Blank
+ * characters are appended at the right side of each word.
+ */
 
 #ifndef _EditDistForVecString_h
 #define _EditDistForVecString_h

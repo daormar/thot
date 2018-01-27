@@ -15,9 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-#include "EditDistForVecString.h"
 
+/**
+ * @file EditDistForVecString.cc
+ * 
+ * @brief Definitions file for EditDistForVecString.h
+ */
+
+//--------------- Include files --------------------------------------
+
+#include "EditDistForVecString.h"
 
 //--------------- EditDistForVecString function definitions
 

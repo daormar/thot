@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/*********************************************************************/
-/*                                                                   */
-/* Module: thot_wg_proc.cc                                           */
-/*                                                                   */
-/* Definitions file: thot_wg_proc.cc                                 */
-/*                                                                   */
-/* Description: process a wordgraph stored in a file.                */
-/*                                                                   */   
-/*********************************************************************/
 
+/**
+ * @file thot_wg_proc.cc
+ * 
+ * @brief Processes a wordgraph stored in a file.
+ */
 
 //--------------- Include files ---------------------------------------
 
