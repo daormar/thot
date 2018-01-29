@@ -15,23 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_scorer.cc                                           */
-/*                                                                  */
-/* Definitions file: thot_scorer.cc                                 */
-/*                                                                  */
-/* Description: Calculates the scoring function implemented by the  */
-/*              module given in master.ini                          */
-/*                                                                  */
-/********************************************************************/
 
 /**
  * @file thot_scorer.cc
- *
+ * 
  * @brief Calculates the scoring function implemented by the module
- * given in master.ini.
+ * given in master.ini
  */
 
 //--------------- Include files --------------------------------------

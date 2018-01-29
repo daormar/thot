@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: _phraseHypothesis                                        */
-/*                                                                  */
-/* Prototypes file: _phraseHypothesis.h                             */
-/*                                                                  */
-/* Description: Declares the _phraseHypothesis template class,      */
-/*              this class is derived from the BaseHypothesis       */
-/*              class.                                              */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _phraseHypothesis.h
  * 

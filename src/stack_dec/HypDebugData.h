@@ -15,16 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: HypDebugData                                             */
-/*                                                                  */
-/* Prototypes file: HypDebugData.h                                  */
-/*                                                                  */
-/* Description: Class for debugging purposes.                       */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file HypDebugData.h
+ * 
+ * @brief class for storing debugging information of each operation made
+ * during the expansion process.
+ */
 
 #ifndef _HypDebugData_h
 #define _HypDebugData_h
@@ -44,9 +41,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Classes --------------------------------------------
 
 
-//--------------- HypDebugData class: class for storing debugging
-//                                    information of each operation
-//                                    made during the expansion process
+//--------------- HypDebugData class
 
 class HypDebugData
 {

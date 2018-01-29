@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: ThotDecoderClient.h                                      */
-/*                                                                  */
-/* Prototype file: ThotDecoderClient.h                              */
-/*                                                                  */
-/* Description: Client of the stack_trans_server.                   */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file ThotDecoderClient.h
+ * 
+ * @brief Client for thot_server tool.
+ */
 
 #ifndef _ThotDecoderClient_h
 #define _ThotDecoderClient_h

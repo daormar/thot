@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: WgUncoupledAssistedTrans                                 */
-/*                                                                  */
-/* Prototypes file: WgUncoupledAssistedTrans.h                      */
-/*                                                                  */
-/* Description: Declares the WgUncoupledAssistedTrans template      */
-/*              class, this class implements uncoupled assisted     */
-/*              translators based on word-graphs.                   */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file WgUncoupledAssistedTrans.h
  *

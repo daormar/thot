@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: SrcPosJumpFeat                                           */
-/*                                                                  */
-/* Prototypes file: SrcPosJumpFeat.h                                */
-/*                                                                  */
-/* Description: Declares the SrcPosJumpFeat template                */
-/*              class. This class implements a source phrase        */
-/*              length feature.                                     */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file SrcPosJumpFeat.h
  * 

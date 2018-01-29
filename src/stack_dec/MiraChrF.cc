@@ -15,6 +15,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file MiraChrF.cc
+ * 
+ * @brief Definitions file for MiraChrF.h
+ */
+
 //--------------- Include files --------------------------------------
 
 #include "chrf.h"

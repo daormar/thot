@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_client.cc                                           */
-/*                                                                  */
-/* Definitions file: thot_client.cc                                 */
-/*                                                                  */
-/* Description: Implements a translator client                      */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file thot_client.cc
+ * 
+ * @brief Implements a client for thot_server tool.
+ */
 
 //--------------- Include files --------------------------------------
 

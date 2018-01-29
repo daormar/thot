@@ -16,6 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file JsonTranslationMetadata.h 
+ * 
+ * @brief Class to handle translation metadata in JSON format.
+ */
+
 #ifndef _JsonTranslationMetadata_h
 #define _JsonTranslationMetadata_h
 

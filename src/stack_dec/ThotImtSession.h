@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: ThotImtSession.h                                         */
-/*                                                                  */
-/* Prototype file: ThotImtEngine.h                                  */
-/*                                                                  */
-/* Description: thot imt session.                                   */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file ThotImtSession.h
+ * 
+ * @brief Session for CASMACAT Workbench' IMT engine.
+ */
 
 #ifndef _ThotImtSession_h
 #define _ThotImtSession_h

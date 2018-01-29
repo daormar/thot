@@ -15,18 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_calc_bleu                                           */
-/*                                                                  */
-/* Definitions file: thot_calc_bleu.cc                              */
-/*                                                                  */
-/* Description: Calculates the translation quality measure called   */
-/*              "bleu"                                              */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file thot_calc_bleu.cc
+ * 
+ * @brief Calculates the translation quality measure called "bleu".
+ */
 
 //--------------- Include files --------------------------------------
 

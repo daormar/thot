@@ -15,7 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file bleu.h
+ *
+ * @brief Code useful to calculate BLEU score.
+ */
+
 #ifndef _bleu_h
 #define _bleu_h
 

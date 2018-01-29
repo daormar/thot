@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: ThotImtFactory.h                                         */
-/*                                                                  */
-/* Prototype file: ThotImtFactory.h                                 */
-/*                                                                  */
-/* Description: thot imt factory.                                   */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file ThotImtFactory.h
+ * 
+ * @brief Factory of IMT engines for CASMACAT Workbench.
+ */
 
 #ifndef _ThotImtFactory_h
 #define _ThotImtFactory_h

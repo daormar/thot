@@ -16,21 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: PhrLocalSwLiTm                                           */
-/*                                                                  */
-/* Prototypes file: PhrLocalSwLiTm.h                                */
-/*                                                                  */
-/* Description: Declares the PhrLocalSwLiTm class                   */
-/*              This class implements a statistical machine         */
-/*              translation model which combines a phrase model     */
-/*              and a local single word model via linear            */
-/*              interpolation. Training of new samples is carried   */
-/*              out using an interlaced training scheme.            */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file PhrLocalSwLiTm.h
  *

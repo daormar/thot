@@ -15,7 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file PbTransModelInputVars.h
+ * 
+ * @brief Class to store input variables for phrase-based translation
+ * model classes.
+ */
+
 #ifndef _PbTransModelInputVars_h
 #define _PbTransModelInputVars_h
 

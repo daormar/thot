@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_ms_alig                                             */
-/*                                                                  */
-/* Definitions file: thot_ms_alig.cc                                */
-/*                                                                  */
-/* Description: Implements a phrase-based alignment system          */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file thot_ms_alig.cc
+ * 
+ * @brief Implements a phrase-based alignment system.
+ */
 
 //--------------- Include files --------------------------------------
 

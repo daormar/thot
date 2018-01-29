@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: UserNameToUserIdMap                                      */
-/*                                                                  */
-/* Prototype file: UserNameToUserIdMap.h                            */
-/*                                                                  */
-/* Description: The UserNameToUserIdMap class maps user names       */
-/*              to user identifiers.                                */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file UserNameToUserIdMap.h
+ * 
+ * @brief The UserNameToUserIdMap class maps user names to user
+ * identifiers.
+ */
 
 #ifndef _UserNameToUserIdMap
 #define _UserNameToUserIdMap

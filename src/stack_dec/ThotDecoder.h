@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: ThotDecoder.h                                            */
-/*                                                                  */
-/* Prototype file: ThotDecoder.h                                    */
-/*                                                                  */
-/* Description: thot decoder class.                                 */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file ThotDecoder.h
+ * 
+ * @brief Class implementing a whole range of decoding services.
+ */
 
 #ifndef _ThotDecoder_h
 #define _ThotDecoder_h

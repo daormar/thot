@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: PhrHypNumcovJumps01EqClassF                              */
-/*                                                                  */
-/* Prototypes file: PhrHypNumcovJumps01EqClassF.h                   */
-/*                                                                  */
-/* Description: Declares the PhrHypNumcovJumps01EqClassF template   */
-/*              class, this class is a function object that for     */
-/*              each hypothesis returns its equivalence class.      */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file PhrHypNumcovJumps01EqClassF.h
  * 

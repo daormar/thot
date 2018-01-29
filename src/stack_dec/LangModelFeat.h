@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: LangModelFeat                                            */
-/*                                                                  */
-/* Prototypes file: LangModelFeat.h                                 */
-/*                                                                  */
-/* Description: Declares the LangModelFeat template                 */
-/*              class. This class implements a language model       */
-/*              feature.                                            */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file LangModelFeat.h
  * 

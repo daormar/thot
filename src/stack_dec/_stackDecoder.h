@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: _stackDecoder                                            */
-/*                                                                  */
-/* Prototypes file: _stackDecoder.h                                 */
-/*                                                                  */
-/* Description: Declares the _stackDecoder abstract template        */
-/*              class, this class is derived from the               */
-/*              BaseStackDecoder class and serves as a first step   */
-/*              in the implementation of other stack-based decoders.*/
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _stackDecoder.h
  *

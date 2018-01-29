@@ -15,6 +15,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file MiraGtm.h
+ * 
+ * @brief Class implementing GTM-based scorer for MIRA.
+ */
+
 #ifndef _MiraGtm_h
 #define _MiraGtm_h
 

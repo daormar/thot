@@ -16,17 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseHypState                                             */
-/*                                                                  */
-/* Prototypes file: BaseHypState.h                                  */
-/*                                                                  */
-/* Description: The BaseHypState class is an abstract class for     */
-/*              implementing the state of the hypotheses.           */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file BaseHypState.h
  * 

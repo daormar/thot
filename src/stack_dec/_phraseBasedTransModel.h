@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: _phraseBasedTransModel                                   */
-/*                                                                  */
-/* Prototypes file: _phraseBasedTransModel.h                        */
-/*                                                                  */
-/* Description: Declares the _phraseBasedTransModel class.          */
-/*              This class is a succesor of the BasePbTransModel    */
-/*              class.                                              */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _phraseBasedTransModel.h
  *

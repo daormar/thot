@@ -15,7 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file OnlineTrainingPars.h
+ * 
+ * @brief Class to store online training parameters.
+ */
+
 #ifndef _OnlineTrainingPars_h
 #define _OnlineTrainingPars_h
 

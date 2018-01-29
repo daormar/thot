@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: OnTheFlyDictFeat                                         */
-/*                                                                  */
-/* Prototypes file: OnTheFlyDictFeat.h                              */
-/*                                                                  */
-/* Description: Declares the OnTheFlyDictFeat template              */
-/*              class. This class implements a dictionary feature   */
-/*              created on-the-fly.                                 */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file OnTheFlyDictFeat.h
  * 

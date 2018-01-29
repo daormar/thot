@@ -15,6 +15,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file BaseMiraScorer.h
+ * 
+ * @brief Base class defining the interface of MIRA scorers.
+ */
+
 #ifndef _BaseMiraScorer_h
 #define _BaseMiraScorer_h
 

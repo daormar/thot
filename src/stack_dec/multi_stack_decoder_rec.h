@@ -15,20 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: multi_stack_decoder_rec                                  */
-/*                                                                  */
-/* Prototypes file: multi_stack_decoder_rec.h                       */
-/*                                                                  */
-/* Description: Declares the multi_stack_decoder_rec template       */
-/*              class, this class is derived from the               */
-/*              _stackDecoderRec class and implements a             */
-/*              multiple-stack decoder with hypothesis              */
-/*              recombination.                                      */
-/*                                                                  */
-/********************************************************************/
 
 /**
  * @file multi_stack_decoder_rec.h
@@ -55,13 +41,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Classes --------------------------------------------
 
+//--------------- multi_stack_decoder_rec template class
+
 /**
  * @brief The multi_stack_decoder_rec template class is derived from the
  * _stackDecoderRec class and implements a multiple-stack decoder with
  * hypothesis recombination.
  */
-
-//--------------- multi_stack_decoder_rec template class
 
 template<class SMT_MODEL>
 class multi_stack_decoder_rec: public _stackDecoderRec<SMT_MODEL>
