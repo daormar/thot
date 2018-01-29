@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: PhraseDefs                                               */
-/*                                                                  */
-/* Prototype file: PhraseDefs                                       */
-/*                                                                  */
-/* Description: Constants, typedefs and basic classes used in the   */
-/*              phrase-model classes.                               */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file PhraseDefs.h
+ * 
+ * @brief Constants, typedefs and basic classes used in the phrase-model
+ * classes.
+ */
 
 #ifndef _PhraseDefs
 #define _PhraseDefs

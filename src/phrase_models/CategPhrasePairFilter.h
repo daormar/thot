@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: CategPhrasePairFilter                                    */
-/*                                                                  */
-/* Prototype file: CategPhrasePairFilter                            */
-/*                                                                  */
-/* Description: Defines the CategPhrasePairFilter class.            */
-/*              It is intended to filter phrase pairs containing    */
-/*              unpaired category tags.                             */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file CategPhrasePairFilter.h
+ * 
+ * @brief Defines the CategPhrasePairFilter class.  It is intended to
+ * filter phrase pairs containing unpaired category tags.
+ */
 
 #ifndef _CategPhrasePairFilter_h
 #define _CategPhrasePairFilter_h

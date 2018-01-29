@@ -15,19 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BasePhrasePairFilter                                     */
-/*                                                                  */
-/* Prototype file: BasePhrasePairFilter                             */
-/*                                                                  */
-/* Description: Defines the BasePhrasePairFilter abstract base      */
-/*              class. Phrase pair filters are intended to be       */
-/*              used to discard bad phrase table entries when       */
-/*              executing phrase extract.                           */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BasePhrasePairFilter.h
+ * 
+ * @brief Defines the BasePhrasePairFilter abstract base class. Phrase
+ * pair filters are intended to be used to discard bad phrase table
+ * entries when executing phrase extract.
+ */
 
 #ifndef _BasePhrasePairFilter_h
 #define _BasePhrasePairFilter_h

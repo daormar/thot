@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrPhraseModel                                          */
-/*                                                                  */
-/* Prototype file: IncrPhraseModel.h                                */
-/*                                                                  */
-/* Description: Defines the IncrPhraseModel class.                  */
-/*              IncrPhraseModel implements a phrase model derived   */
-/*              from _incrPhraseModel class.                        */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file IncrPhraseModel.h
+ * 
+ * @brief Defines the IncrPhraseModel class. IncrPhraseModel implements
+ * a phrase model derived from _incrPhraseModel class.
+ */
 
 #ifndef _IncrPhraseModel_h
 #define _IncrPhraseModel_h

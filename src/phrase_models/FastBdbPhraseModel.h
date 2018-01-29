@@ -15,19 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: FastBdbPhraseModel                                       */
-/*                                                                  */
-/* Prototype file: FastBdbPhraseModel                               */
-/*                                                                  */
-/* Description: Defines the FastBdbPhraseModel base class.          */
-/*              FastBdbPhraseModel is derived from the abstract     */
-/*              class BasePhraseModel and implements a phrase model */
-/*              stored and accessed using Berkeley databases.       */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file FastBdbPhraseModel.cc
+ * 
+ * @brief Defines the FastBdbPhraseModel base class.  FastBdbPhraseModel
+ * is derived from the abstract class BasePhraseModel and implements a
+ * phrase model stored and accessed using Berkeley databases.
+ */
 
 #ifndef _FastBdbPhraseModel_h
 #define _FastBdbPhraseModel_h

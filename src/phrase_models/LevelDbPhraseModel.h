@@ -15,19 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: LevelDbPhraseModel                                       */
-/*                                                                  */
-/* Prototype file: LevelDbPhraseModel                               */
-/*                                                                  */
-/* Description: Defines the LevelDbPhraseModel base class.          */
-/*              LevelDbPhraseModel is derived from the abstract     */
-/*              class BasePhraseModel and implements a phrase       */
-/*              model stored and accessed using Berkeley databases. */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file LevelDbPhraseModel.cc
+ * 
+ * @brief Defines the LevelDbPhraseModel base class.  LevelDbPhraseModel
+ * is derived from the abstract class BasePhraseModel and implements a
+ * phrase model stored and accessed using Berkeley databases.
+ */
 
 #ifndef _LevelDbPhraseModel_h
 #define _LevelDbPhraseModel_h

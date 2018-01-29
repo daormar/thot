@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: SrfNodeInfoMap                                           */
-/*                                                                  */
-/* Prototype file: SrfNodeInfoMap.h                                 */
-/*                                                                  */
-/* Description: Defines the SrfNodeInfoMap class, which stores a    */
-/*              set of indices corresponding to consistent          */
-/*              bilingual phrase pairs.                             */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file SrfNodeInfoMap.h
+ * 
+ * @brief Defines the SrfNodeInfoMap class, which stores a set of
+ * indices corresponding to consistent bilingual phrase pairs.
+ */
 
 #ifndef _SrfNodeInfoMap_h
 #define _SrfNodeInfoMap_h

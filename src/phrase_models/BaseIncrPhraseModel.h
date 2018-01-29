@@ -15,20 +15,15 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseIncrPhraseModel                                      */
-/*                                                                  */
-/* Prototype file: BaseIncrPhraseModel                              */
-/*                                                                  */
-/* Description: Defines the BaseIncrPhraseModel abstract base class.*/
-/*              BaseIncrPhraseModel class derives from              */
-/*              BasePhraseModel, and incorporates some extra        */
-/*              functionality that allows to extend the phrase      */
-/*              model.                                              */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BaseIncrPhraseModel.h
+ * 
+ * @brief Defines the BaseIncrPhraseModel abstract base class.
+ * BaseIncrPhraseModel class derives from BasePhraseModel, and
+ * incorporates some extra functionality that allows to extend the
+ * phrase model.
+ */
 
 #ifndef _BaseIncrPhraseModel_h
 #define _BaseIncrPhraseModel_h

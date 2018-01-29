@@ -14,16 +14,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: LevelDbPhraseTable                                       */
-/*                                                                  */
-/* Prototype file: LevelDbPhraseTable                               */
-/*                                                                  */
-/* Description: Implements a bilingual phrase table using leveldb   */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file LevelDbPhraseTable.h
+ * 
+ * @brief Implements a bilingual phrase table using leveldb.
+ */
 
 #ifndef _LevelDbPhraseTable
 #define _LevelDbPhraseTable

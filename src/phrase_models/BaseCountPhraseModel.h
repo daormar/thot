@@ -15,20 +15,15 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseCountPhraseModel                                     */
-/*                                                                  */
-/* Prototype file: BaseCountPhraseModel                             */
-/*                                                                  */
-/* Description: Defines the BaseCountPhraseModel abstract base      */
-/*              class. BaseCountPhraseModel class derives from      */
-/*              BasePhraseModel, and incorporates some extra        */
-/*              functionality that allows to work with phrase       */
-/*              counts.                                             */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BaseCountPhraseModel.h
+ * 
+ * @brief Defines the BaseCountPhraseModel abstract base
+ * class. BaseCountPhraseModel class derives from BasePhraseModel, and
+ * incorporates some extra functionality that allows to work with phrase
+ * counts.
+ */
 
 #ifndef _BaseCountPhraseModel_h
 #define _BaseCountPhraseModel_h

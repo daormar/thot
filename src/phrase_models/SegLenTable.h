@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: SegLenTable                                              */
-/*                                                                  */
-/* Prototype file: SegLenTable.h                                    */
-/*                                                                  */
-/* Description: Defines the SegLenTable class, which stores a       */
-/*              probability table for the segmentation length of    */
-/*              a sentence pair.                                    */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file SegLenTable.h
+ * 
+ * @brief Defines the SegLenTable class, which stores a probability
+ * table for the segmentation length of a sentence pair.
+ */
 
 #ifndef _SegLenTable_h
 #define _SegLenTable_h

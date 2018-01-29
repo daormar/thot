@@ -15,22 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: TrgCutsTable                                             */
-/*                                                                  */
-/* Definitions file: TrgCutsTable.cc                                */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file TrgCutsTable.cc
+ * 
+ * @brief Definitions file for TrgCutsTable.h
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "TrgCutsTable.h"
-
-//--------------- Global variables -----------------------------------
-
 
 //--------------- TrgCutsTable class function definitions
 

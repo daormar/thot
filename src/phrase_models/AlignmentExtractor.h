@@ -15,12 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/* ------------------------------------------ */
-/*                                            */
-/* AlignmentExtractor class                   */
-/*                                            */
-/* ------------------------------------------ */
+
+/**
+ * @file AlignmentExtractor
+ * 
+ * @brief Class to extract alignments from files.
+ */
 
 #ifndef _AlignmentExtractor_h
 #define _AlignmentExtractor_h
