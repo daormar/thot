@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseSmtMultiStack                                        */
-/*                                                                  */
-/* Prototypes file: BaseSmtMultiStack.h                             */
-/*                                                                  */
-/* Description: The BaseSmtMultiStack abstract class is a           */
-/*              base class for other container types that use       */
-/*              multiple stacks.                                    */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file BaseSmtMultiStack.h
  * 

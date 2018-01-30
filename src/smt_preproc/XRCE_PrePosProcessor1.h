@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: XRCE_PrePosProcessor1                                    */
-/*                                                                  */
-/* Prototypes file: XRCE_PrePosProcessor1.h                         */
-/*                                                                  */
-/* Description: Declares the XRCE_PrePosProcessor1 class,           */
-/*              this class implements a pre/pos-processing module   */
-/*              for the XRCE corpus (the one used in the TT2        */
-/*              project)                                            */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file XRCE_PrePosProcessor1.h
  * 

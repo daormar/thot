@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseErrorCorrectionModel                                 */
-/*                                                                  */
-/* Prototypes file: BaseErrorCorrectionModel.h                      */
-/*                                                                  */
-/* Description: Declares the BaseErrorCorrectionModel class,        */
-/*              this class is a base class for implementing error   */
-/*              correction models for strings                       */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file BaseErrorCorrectionModel.h
  * 

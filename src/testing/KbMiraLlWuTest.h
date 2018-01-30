@@ -16,17 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: KbMiraLlWuTest                                           */
-/*                                                                  */
-/* Prototypes file: KbMiraLlWuTest.h                                */
-/*                                                                  */
-/* Description: Declares the KbMiraLlWuTest class implementing      */
-/*              unit tests for the KbMiraLlWu class.                */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file KbMiraLlWuTest.h
  *

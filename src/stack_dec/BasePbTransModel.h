@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: BasePbTransModel                                         */
-/*                                                                  */
-/* Prototypes file: BasePbTransModel.h                              */
-/*                                                                  */
-/* Description: Declares the BasePbTransModel class.                */
-/*              This class is a predecessor of the                  */
-/*              _phraseBasedTransModel class.                       */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file BasePbTransModel.h
  *

@@ -15,23 +15,17 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: KenLm                                                    */
-/*                                                                  */
-/* Definitions file: KenLm.cc                                       */
-/*                                                                  */
-/********************************************************************/
 
-
-//--------------- Include files --------------------------------------
+/**
+ * @file KenLmFactory.cc
+ * 
+ * @brief Factory of KenLm objects.
+ */
 
 #include "KenLm.h"
 #include <string>
 
-//--------------- Function definitions
-
+//---------------
 extern "C" BaseNgramLM<std::vector<WordIndex> >* create(const char* /*str*/)
 {
   return new KenLm;

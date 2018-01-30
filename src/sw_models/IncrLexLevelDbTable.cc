@@ -16,30 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrLexLevelDbTable                                      */
-/*                                                                  */
-/* Definitions file: IncrLexLevelDbTable.cc                         */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file IncrLexLevelDbTable.cc
+ * 
+ * @brief Definitions file for IncrLexLevelDbTable.h
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "IncrLexLevelDbTable.h"
-
-//--------------- Global variables -----------------------------------
-
-
-//--------------- Function declarations
-
-
-//--------------- Constants
-
-
-//--------------- Classes --------------------------------------------
-
 
 //--------------- IncrLexLevelDbTable class function definitions
 

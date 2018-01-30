@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: PhraseBasedTmHyp                                         */
-/*                                                                  */
-/* Prototypes file: PhraseBasedTmHyp.h                              */
-/*                                                                  */
-/* Description: Declares the PhraseBasedTmHyp class,                */
-/*              this class is derived from the _hypothesis          */
-/*              class.                                              */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file PhraseBasedTmHyp.h
  * 

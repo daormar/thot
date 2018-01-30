@@ -15,19 +15,15 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: SmoothedIncrIbm1AligModel                                */
-/*                                                                  */
-/* Prototype file: SmoothedIncrIbm1AligModel.h                      */
-/*                                                                  */
-/* Description: Defines the SmoothedIncrIbm1AligModel class.        */
-/*              SmoothedIncrIbm1AligModel class inherits from the   */
-/*              IncrIbm1AligModel class and incorporates a simple   */
-/*              smoothing technique.                                */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file SmoothedIncrIbm1AligModel.h
+ * 
+ * @brief Defines the SmoothedIncrIbm1AligModel class.
+ * SmoothedIncrIbm1AligModel class inherits from the IncrIbm1AligModel
+ * class and incorporates a simple smoothing technique.
+ * 
+ */
 
 #ifndef _SmoothedIncrIbm1AligModel_h
 #define _SmoothedIncrIbm1AligModel_h

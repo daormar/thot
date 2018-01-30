@@ -16,12 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ThotIbmMaxConfidFactory.cc
+ * 
+ * @brief Definitions file for ThotIbmMaxConfidFactory.h
+ */
+
 //--------------- Include files --------------------------------------
 
 #include "ThotIbmMaxConfidFactory.h"
 
 //--------------- ThotIbmMaxConfidFactory class function definitions
-
 
 //-------------------------
 int ThotIbmMaxConfidFactory::init(int argc, char *argv[], Context *context /*= 0*/)

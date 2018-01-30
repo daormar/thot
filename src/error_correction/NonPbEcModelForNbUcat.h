@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: NonPbEcModelForNbUcat                                    */
-/*                                                                  */
-/* Prototypes file: NonPbEcModelForNbUcat.h                         */
-/*                                                                  */
-/* Description: Declares the NonPbEcModelForNbUcat class,           */
-/*              this class implements a non phrase-based error      */
-/*              correcting model for uncoupled computer assisted    */
-/*              translation based on n-best lists.                  */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file NonPbEcModelForNbUcat.h
  * 

@@ -15,18 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BasePhraseModel                                          */
-/*                                                                  */
-/* Prototype file: BasePhraseModel                                  */
-/*                                                                  */
-/* Description: Defines the BasePhraseModel abstract base class.    */
-/*              BasePhraseModel class provides basic functionality  */
-/*              to be extended in specific phrase models.           */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BasePhraseModel.h
+ * 
+ * @brief Defines the BasePhraseModel abstract base class.
+ * BasePhraseModel class provides basic functionality to be extended in
+ * specific phrase models.
+ */
 
 #ifndef _BasePhraseModel_h
 #define _BasePhraseModel_h

@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: _smtStack                                                */
-/*                                                                  */
-/* Prototypes file: _smtStack.h                                     */
-/*                                                                  */
-/* Description: The _smtStack class is a predecessor class for      */
-/*              implementing a stack to be used in stack            */
-/*              decoding.                                           */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _smtStack.h
  *

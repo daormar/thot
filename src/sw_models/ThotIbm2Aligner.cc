@@ -16,6 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file hotIbm2Aligner.cc
+ * 
+ * @brief Definitions file for hotIbm2Aligner.h
+ */
+
 //--------------- Include files --------------------------------------
 
 #include "ThotIbm2Aligner.h"

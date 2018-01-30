@@ -16,19 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrLevelDbHmmP0AligModel                                */
-/*                                                                  */
-/* Prototype file: IncrLevelDbHmmP0AligModel.h                      */
-/*                                                                  */
-/* Description: Defines the IncrLevelDbHmmP0AligModel class.        */
-/*              IncrLevelDbHmmP0AligModel class allows to generate  */
-/*              and access to the data of a HMM statistical         */
-/*              alignment model with fixed p0 probability.          */
-/*              Model uses LevelDB as a back-end data structure.    */
-/*                                                                  */
-/********************************************************************/
+/**
+ * @file IncrLevelDbHmmP0AligModel.h
+ * 
+ * @brief Defines the IncrLevelDbHmmP0AligModel class.
+ * IncrLevelDbHmmP0AligModel class allows to generate and access to the
+ * data of a HMM statistical alignment model with fixed p0 probability.
+ * Model uses LevelDB as a back-end data structure.
+ * 
+ */
 
 #ifndef _IncrLevelDbHmmP0AligModel_h
 #define _IncrLevelDbHmmP0AligModel_h

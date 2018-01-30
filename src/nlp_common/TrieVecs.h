@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: TrieVecs                                                 */
-/*                                                                  */
-/* Prototype file: TrieVecs.h                                       */
-/*                                                                  */
-/* Description: Implements the trie data structure using ordered    */
-/*              vectors                                             */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file TrieVec.h
+ * 
+ * @brief Implements a trie data structure using ordered vectors.
+ */
 
 #ifndef _TrieVecs_h
 #define _TrieVecs_h

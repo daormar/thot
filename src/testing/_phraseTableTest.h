@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: _phraseTableTest                                         */
-/*                                                                  */
-/* Prototypes file: _phraseTableTest.h                              */
-/*                                                                  */
-/* Description: Declares the _phraseTableTest abstract class        */
-/*              implementing common unit tests for the phrase       */
-/*              table classes.                                      */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _phraseTableTest.h
  *

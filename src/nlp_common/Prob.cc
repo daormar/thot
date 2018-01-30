@@ -15,30 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: Prob                                                     */
-/*                                                                  */
-/* Definitions file: Prob.cc                                        */
-/*                                                                  */
-/********************************************************************/
 
-
-//--------------- Include files --------------------------------------
+/**
+ * @file Prob.cc
+ * 
+ * @brief Definitions file for Prob.h
+ */
 
 #include "Prob.h"
 
-//--------------- Global variables -----------------------------------
-
-//--------------- Function declarations 
-
-//--------------- Classes --------------------------------------------
-
-
-//--------------- Prob class methods
-//
-
+//---------------
 LgProb Prob::get_lp(void)const
 {
   LgProb lp(log(x));

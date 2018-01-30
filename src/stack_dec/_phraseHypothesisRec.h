@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: _phraseHypothesisRec                                     */
-/*                                                                  */
-/* Prototypes file: _phraseHypothesisRec.h                          */
-/*                                                                  */
-/* Description: Declares the _phraseHypothesisRec abstract template */
-/*              class, this class is derived from the               */
-/*              BaseHypothesisRec class.                            */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _phraseHypothesisRec.h
  * 

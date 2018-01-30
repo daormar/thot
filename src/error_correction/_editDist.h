@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: _editDist                                                */
-/*                                                                  */
-/* Prototypes file: _editDist.h                                     */
-/*                                                                  */
-/* Description: Defines the _editDist class, a predecessor class    */
-/*              for derivating clases for calculating edit distance.*/
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file _editDist.h
+ * 
+ * @brief Defines the _editDist class, a predecessor class for
+ * derivating clases for calculating edit distance.
+ */
 
 #ifndef __editDist_h
 #define __editDist_h

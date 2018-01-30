@@ -30,8 +30,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Constants --------------------------------------------------
 
 
-//--------------- _stack_decoder_statistics class: class for calculating statistics of
-//                                                 the _stack_decoder class
+//--------------- _stack_decoder_statistics class
 
 class _stack_decoder_statistics
 {

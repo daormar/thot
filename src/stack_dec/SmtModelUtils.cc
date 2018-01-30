@@ -16,6 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
+/**
+ * @file SmtModelUtils.cc
+ * 
+ * @brief Definitions file for SmtModelUtils.h
+ */
 
 #include "SmtModelUtils.h"
 

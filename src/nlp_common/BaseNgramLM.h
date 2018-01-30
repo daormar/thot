@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseNgramLM                                              */
-/*                                                                  */
-/* Prototype file: BaseNgramLM.h                                    */
-/*                                                                  */
-/* Description: Abstract class to manage n-gram language models     */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BaseNgramLM.h
+ * 
+ * @brief Abstract class to manage n-gram language models.
+ */
 
 #ifndef _BaseNgramLM
 #define _BaseNgramLM

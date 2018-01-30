@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: _phrSwTransModel                                         */
-/*                                                                  */
-/* Prototypes file: _phrSwTransModel.h                              */
-/*                                                                  */
-/* Description: Declares the _phrSwTransModel class.                */
-/*              This class is a base class for deriving translation */
-/*              models that combine phrase based models and sw      */
-/*              models.                                             */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _phrSwTransModel.h
  *

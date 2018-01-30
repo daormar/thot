@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: lm_ienc                                                  */
-/*                                                                  */
-/* Definitions file: lm_ienc.cc                                     */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file lm_ienc.cc
+ * 
+ * @brief Definitions file for lm_ienc.h
+ */
 
 //--------------- Include files --------------------------------------
 

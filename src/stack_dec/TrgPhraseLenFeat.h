@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: TrgPhraseLenFeat                                         */
-/*                                                                  */
-/* Prototypes file: TrgPhraseLenFeat.h                              */
-/*                                                                  */
-/* Description: Declares the TrgPhraseLenFeat template              */
-/*              class. This class implements a target phrase        */
-/*              length feature.                                     */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file TrgPhraseLenFeat.h
  * 

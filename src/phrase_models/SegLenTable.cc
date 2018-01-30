@@ -15,15 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: SegLenTable                                              */
-/*                                                                  */
-/* Definitions file: SegLenTable.cc                                 */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file SegLenTable.cc
+ * 
+ * @brief Definitions file for SegLenTable.h
+ */
 
 //--------------- Include files --------------------------------------
 

@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_ms_dec                                              */
-/*                                                                  */
-/* Definitions file: thot_ms_dec.cc                                 */
-/*                                                                  */
-/* Description: Implements a translation system which translates a  */
-/*              test corpus using a multiple-stack decoder          */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file thot_ms_dec.cc
+ * 
+ * @brief Implements a translation system which translates a test corpus
+ * using a multiple-stack decoder.
+ */
 
 //--------------- Include files --------------------------------------
 

@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseIncrNgramLM                                          */
-/*                                                                  */
-/* Prototype file: BaseIncrNgramLM.h                                */
-/*                                                                  */
-/* Description: Abstract class to manage incremental n-gram         */
-/*              language models                                     */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BaseIncrNgramLM.h
+ * 
+ * @brief Abstract class to manage incremental n-gram language models
+ */
 
 #ifndef _BaseIncrNgramLM
 #define _BaseIncrNgramLM

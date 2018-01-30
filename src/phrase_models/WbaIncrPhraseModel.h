@@ -15,19 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: WbaIncrPhraseModel                                       */
-/*                                                                  */
-/* Prototype file: WbaIncrPhraseModel.h                             */
-/*                                                                  */
-/* Description: Defines the WbaIncrPhraseModel class.               */
-/*              WbaIncrPhraseModel implements a phrase model which  */
-/*              use word-based alignments (as those obtained with   */
-/*              the GIZA++ tool).                                   */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file WbaIncrPhraseModel.h
+ * 
+ * @brief Defines the WbaIncrPhraseModel class.  WbaIncrPhraseModel
+ * implements a phrase model which use word-based alignments (as those
+ * obtained with the GIZA++ tool).
+ */
 
 #ifndef _WbaIncrPhraseModel_h
 #define _WbaIncrPhraseModel_h

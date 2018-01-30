@@ -16,17 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrLexLevelDbTable                                      */
-/*                                                                  */
-/* Prototype file: IncrLexLevelDbTable.h                            */
-/*                                                                  */
-/* Description: Defines the IncrLexLevelDbTable class.              */
-/*              IncrLexLevelDbTable class stores an incremental     */
-/*              lexical table.                                      */
-/*                                                                  */
-/********************************************************************/
+/**
+ * @file IncrLexLevelDbTable.h
+ * 
+ * @brief Defines the IncrLexLevelDbTable class.  IncrLexLevelDbTable
+ * class stores an incremental lexical table.
+ * 
+ */
 
 #ifndef _IncrLexLevelDbTable_h
 #define _IncrLexLevelDbTable_h

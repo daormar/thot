@@ -15,19 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseAssistedTrans                                        */
-/*                                                                  */
-/* Prototypes file: BaseAssistedTrans.h                             */
-/*                                                                  */
-/* Description: Declares the BaseAssistedTrans abstract             */
-/*              template class, this is a base class useful to      */
-/*              derive new classes that implement assisted          */
-/*              translators.                                        */
-/*                                                                  */
-/********************************************************************/
 
 /**
  * @file BaseAssistedTrans.h

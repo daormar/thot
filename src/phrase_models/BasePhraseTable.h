@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BasePhraseTable                                          */
-/*                                                                  */
-/* Prototype file: BasePhraseTable                                  */
-/*                                                                  */
-/* Description: Implements a bilingual phrase dictionary (Abstract  */
-/*              class)                                              */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BasePhraseTable.h
+ * 
+ * @brief Implements a bilingual phrase dictionary (Abstract class).
+ */
 
 #ifndef _BasePhraseTable
 #define _BasePhraseTable

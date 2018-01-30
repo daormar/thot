@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_client.cc                                           */
-/*                                                                  */
-/* Definitions file: thot_client.cc                                 */
-/*                                                                  */
-/* Description: Implements a translator client                      */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file thot_client.cc
+ * 
+ * @brief Implements a client for thot_server tool.
+ */
 
 //--------------- Include files --------------------------------------
 
@@ -377,9 +373,10 @@ void printUsage(void)
   std::cerr<<"-th <string>                 Translate sentence (returns hypothesis\n";
   std::cerr<<"                             information).\n";
   std::cerr<<"-j <string>                  Translate sentence given in a file in json format.\n";  
-  std::cerr<<"                             The file contains the source sentence plus metadata.\n";
-  std::cerr<<"                             NOTE: only servers loading modules that support json\n";
-  std::cerr<<"                             format will work with this option\n";
+  std::cerr<<"                             The file contains the source sentence plus\n";
+  std::cerr<<"                             metadata.\n";
+  std::cerr<<"                             NOTE: only servers loading modules that support\n";
+  std::cerr<<"                             json format will work with this option\n";
   std::cerr<<"-c <srcstring> <refstring>   Verify model coverage for reference sentence.\n";
   std::cerr<<"-sc <string>                 Start CAT system for the given sentence, using\n";
   std::cerr<<"                             the null string as prefix.\n";

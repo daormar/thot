@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrIbm2AligTable                                        */
-/*                                                                  */
-/* Prototype file: IncrIbm2AligTable.h                              */
-/*                                                                  */
-/* Description: Defines the IncrIbm2AligTable class.                */
-/*              IncrIbm2AligTable class stores an incremental       */
-/*              IBM 2 alignment table.                              */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file IncrIbm2AligTable.h
+ * 
+ * @brief Defines the IncrIbm2AligTable class.  IncrIbm2AligTable class
+ * stores an incremental IBM 2 alignment table.
+ */
 
 #ifndef _IncrIbm2AligTable_h
 #define _IncrIbm2AligTable_h

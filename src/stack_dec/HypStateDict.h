@@ -16,17 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: HypStateDict                                             */
-/*                                                                  */
-/* Prototypes file: HypStateDict.h                                  */
-/*                                                                  */
-/* Description: The HypStateDict class implements a state           */
-/*              dictionary for being used in stack decoding.        */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file HypStateDict.h
  *

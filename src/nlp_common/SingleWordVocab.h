@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/*********************************************************************/
-/*                                                                   */
-/* Module: SingleWordVocab                                           */
-/*                                                                   */
-/* Prototype file: SingleWordVocab.h                                 */
-/*                                                                   */
-/* Description: Manages a single-word vocabulary.                    */
-/*                                                                   */
-/*********************************************************************/
+
+/**
+ * @file SingleWordVocab.h
+ * 
+ * @brief Manages a single-word vocabulary.
+ */
 
 #ifndef _SingleWordVocab
 #define _SingleWordVocab

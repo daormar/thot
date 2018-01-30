@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: WordPenaltyModel                                         */
-/*                                                                  */
-/* Prototype file: WordPenaltyModel.h                               */
-/*                                                                  */
-/* Description: The WordPenaltyModel class implements a model for   */
-/*              the word insertion penalty.                         */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file WordPenaltyModel.h
+ * 
+ * @brief The WordPenaltyModel class implements a model for the word
+ * insertion penalty.
+ */
 
 #ifndef _WordPenaltyModel
 #define _WordPenaltyModel

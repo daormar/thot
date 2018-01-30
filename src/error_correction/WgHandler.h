@@ -16,17 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: WgHandler                                                */
-/*                                                                  */
-/* Prototypes file: WgHandler.h                                     */
-/*                                                                  */
-/* Description: The WgHandler class is used to associate            */
-/*              a set of source sentences with a set of wordgraphs. */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file WgHandler.h
  *

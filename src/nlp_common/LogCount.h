@@ -15,7 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file LogCount.h
+ * 
+ * @brief Defines the LogCount class to work with logarithms of counts.
+ */
+
 #ifndef _LogCount_h
 #define _LogCount_h
 

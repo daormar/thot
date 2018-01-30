@@ -1,9 +1,4 @@
 /*
-thot package
-
-*/
-
-/*
  * Code based on the implementation of the Nelder-Mead simplex method by
  * Michael F. Hutt.
  *

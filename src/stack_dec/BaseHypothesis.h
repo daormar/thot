@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseHypothesis                                           */
-/*                                                                  */
-/* Prototypes file: BaseHypothesis.h                                */
-/*                                                                  */
-/* Description: Declares the BaseHypothesis abstract template       */
-/*              class this class is a base class for implementing   */
-/*              different kinds of hypotheses to be used            */
-/*              in stack decoders.                                  */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file BaseHypothesis.h
  * 

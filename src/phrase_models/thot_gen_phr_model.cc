@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_gen_phr_model                                       */
-/*                                                                  */
-/* Definitions file: thot_gen_phr_model.cc                          */
-/*                                                                  */
-/* Description: Main functionality of the Thot toolkit.             */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file thot_gen_phr_model.cc
+ * 
+ * @brief Main functionality of the Thot toolkit.
+ */
 
 //--------------- Include files --------------------------------------
 

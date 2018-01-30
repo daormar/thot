@@ -15,7 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file FeatureHandler.h
+ * 
+ * @brief Class to handle log-linear model features.
+ */
+
 #ifndef _FeatureHandler_h
 #define _FeatureHandler_h
 

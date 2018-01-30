@@ -16,24 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: StdCerrThreadSafePrint.h                                 */
-/*                                                                  */
-/* Prototypes file: StdCerrThreadSafePrint.h                        */
-/*                                                                  */
-/* Description: Declares the StdCerrThreadSafePrint class which     */
-/*              wraps ThreadSafePrint class to allow printing with  */
-/*              << operator like in standard library.               */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file StdCerrThreadSafePrint.h
- *p
+ *
  * @brief Declares the StdCerrThreadSafePrint class which wraps
- * ThreadSafePrint class to allow printing with << operator like
- * in standard library.
+ * ThreadSafePrint class to allow printing with << operator like in
+ * standard library.
  */
 
 #ifndef _StdCerrThreadSafePrint_h

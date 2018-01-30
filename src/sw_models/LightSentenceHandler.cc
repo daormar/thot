@@ -15,31 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: LightSentenceHandler                                     */
-/*                                                                  */
-/* Definitions file: LightSentenceHandler.cc                        */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file LightSentenceHandler.cc
+ * 
+ * @brief Definitions file for LightSentenceHandler.h
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "LightSentenceHandler.h"
-
-//--------------- Global variables -----------------------------------
-
-
-//--------------- Function declarations 
-
-
-//--------------- Constants
-
-
-//--------------- Classes --------------------------------------------
-
 
 //--------------- LightSentenceHandler class function definitions
 

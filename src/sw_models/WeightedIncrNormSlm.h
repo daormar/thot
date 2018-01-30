@@ -15,17 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: WeightedIncrNormSlm                                      */
-/*                                                                  */
-/* Prototype file: WeightedIncrNormSlm.h                            */
-/*                                                                  */
-/* Description: The WeightedIncrNormSlm class implements a weighted */
-/*              incremental gaussian sentence length model.         */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file WeightedIncrNormSlm.h
+ * 
+ * @brief The WeightedIncrNormSlm class implements a weighted
+ * incremental gaussian sentence length model.
+ * 
+ */
 
 #ifndef _WeightedIncrNormSlm
 #define _WeightedIncrNormSlm

@@ -16,15 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: StlPhraseTable                                           */
-/*                                                                  */
-/* Prototype file: StlPhraseTable                                   */
-/*                                                                  */
-/* Description: Implements a bilingual phrase table.                */
-/*                                                                  */
-/********************************************************************/
+/**
+ * @file StlPhraseTable.h
+ * 
+ * @brief Implements a bilingual phrase table using the STL.
+ */
 
 #ifndef _StlPhraseTable
 #define _StlPhraseTable

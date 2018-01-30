@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: _nbUncoupledAssistedTrans                                */
-/*                                                                  */
-/* Prototypes file: _nbUncoupledAssistedTrans.h                     */
-/*                                                                  */
-/* Description: Declares the _nbUncoupledAssistedTrans abstract     */
-/*              template class, this is a base class useful to      */
-/*              derive new classes that implement uncoupled         */
-/*              assisted translators based on n-best lists.         */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _nbUncoupledAssistedTrans.h
  *

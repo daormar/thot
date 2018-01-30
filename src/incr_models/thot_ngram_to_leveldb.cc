@@ -16,16 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_ngram_to_leveldb.cc                                 */
-/*                                                                  */
-/* Definitions file: thot_ngram_to_leveldb.cc                       */
-/*                                                                  */
-/* Description: Converts a ngram data to leveldb format.            */
-/*                                                                  */   
-/********************************************************************/
-
+/**
+ * @file thot_ngram_to_leveldb.cc
+ *
+ * @brief Converts a ngram data to leveldb format.
+ */
 
 //--------------- Include files --------------------------------------
 
@@ -42,9 +37,6 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "options.h"
 #include <AwkInputStream.h>
 
-//--------------- Constants ------------------------------------------
-
-
 //--------------- Function Declarations ------------------------------
 
 int TakeParameters(int argc, char *argv[]);
@@ -55,9 +47,6 @@ int extractEntryInfo(AwkInputStream& awk,
                      LogCount& logJointCount,
                      std::map<std::string, WordIndex>& vocab);
 int process_ttable(void);
-
-//--------------- Type definitions -----------------------------------
-
 
 //--------------- Global variables -----------------------------------
 

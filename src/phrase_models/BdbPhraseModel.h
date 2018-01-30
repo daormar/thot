@@ -15,19 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BdbPhraseModel                                           */
-/*                                                                  */
-/* Prototype file: BdbPhraseModel                                   */
-/*                                                                  */
-/* Description: Defines the BdbPhraseModel base class.              */
-/*              BdbPhraseModel is derived from the abstract class   */
-/*              BasePhraseModel and implements a phrase model       */
-/*              stored and accessed using Berkeley databases.       */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BdbPhraseModel.h
+ * 
+ * @brief Defines the BdbPhraseModel base class.  BdbPhraseModel is
+ * derived from the abstract class BasePhraseModel and implements a
+ * phrase model stored and accessed using Berkeley databases.
+ */
 
 #ifndef _BdbPhraseModel_h
 #define _BdbPhraseModel_h

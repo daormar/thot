@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: _stackDecoderRec                                         */
-/*                                                                  */
-/* Prototypes file: _stackDecoderRec.h                              */
-/*                                                                  */
-/* Description: Declares the _stackDecoderRec abstract              */
-/*              template class, this class is derived from the      */
-/*              _stackDecoder class and implements a base class     */
-/*              for obtaining stack decoders with recombination.    */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _stackDecoderRec.h
  *

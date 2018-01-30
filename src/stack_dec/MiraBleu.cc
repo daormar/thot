@@ -15,12 +15,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file MiraBleu.cc
+ * 
+ * @brief Definitions file for MiraBleu.h
+ */
+
 //--------------- Include files --------------------------------------
 
 #include "bleu.h"
 #include "MiraBleu.h"
 #include "StrProcUtils.h"
-
 
 //--------------- MiraBleu class functions
 

@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: NbSearchStack                                            */
-/*                                                                  */
-/* Prototypes file: NbSearchStack.h                                 */
-/*                                                                  */
-/* Description: The NbSearchStack class implements a stack to be    */
-/*              used when obtaining n-best lists for a given        */
-/*              wordgraph.                                          */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file NbSearchStack.h
  *

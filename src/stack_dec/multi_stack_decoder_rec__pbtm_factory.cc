@@ -15,15 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: multi_stack_decoder_rec__pbtm_factory                    */
-/*                                                                  */
-/* Definitions file: multi_stack_decoder_rec__pbtm_factory.cc       */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file multi_stack_decoder_rec__pbtm_factory
+ * 
+ * @brief Factory for multi_stack_decoder_rec objects.
+ */
 
 //--------------- Include files --------------------------------------
 

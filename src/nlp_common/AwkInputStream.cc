@@ -15,23 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: AwkInputStream                                           */
-/*                                                                  */
-/* Definitions file: AwkInputStream.cc                              */
-/*                                                                  */
-/********************************************************************/
 
-
-//--------------- Include files --------------------------------------
+/**
+ * @file AwkInputStream.cc
+ * 
+ * @brief Definitions file for AwkInputStream.h
+ */
 
 #include "AwkInputStream.h"
 
-//--------------- AwkInputStream class functions
-//
-
+//----------
 AwkInputStream::AwkInputStream(void)
 {
  FS=0;

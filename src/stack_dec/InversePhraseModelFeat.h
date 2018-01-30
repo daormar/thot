@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: InversePhraseModelFeat                                   */
-/*                                                                  */
-/* Prototypes file: InversePhraseModelFeat.h                        */
-/*                                                                  */
-/* Description: Declares the InversePhraseModelFeat template        */
-/*              class. This class implements a inverse phrase model */
-/*              feature.                                            */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file InversePhraseModelFeat.h
  * 

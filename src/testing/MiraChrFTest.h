@@ -16,17 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: MiraChrFTest                                             */
-/*                                                                  */
-/* Prototypes file: MiraChrFTest.h                                  */
-/*                                                                  */
-/* Description: Declares the MiraChrFTest class implementing        */
-/*              unit tests for the MiraChfr class.                  */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file MiraChrFTest.h
  *

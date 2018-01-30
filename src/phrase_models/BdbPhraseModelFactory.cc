@@ -15,15 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BdbPhraseModelFactory                                    */
-/*                                                                  */
-/* Definitions file: BdbPhraseModelFactory.cc                       */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file BdbPhraseModelFactory.cc
+ * 
+ * @brief Definitions file for BdbPhraseModelFactory.h
+ */
 
 //--------------- Include files --------------------------------------
 

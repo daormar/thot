@@ -15,22 +15,10 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_li_weight_upd.cc                                    */
-/*                                                                  */
-/* Definitions file: thot_li_weight_upd.cc                          */
-/*                                                                  */
-/* Description: Implements a linear interpolation weight updater    */
-/*              for phrase-based models given a development         */
-/*              corpus.                                             */
-/*                                                                  */
-/********************************************************************/
 
 /**
  * @file thot_li_weight_upd.cc
- *
+ * 
  * @brief Implements a linear interpolation weight updater for
  * phrase-based models given a development corpus.
  */

@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: FastBdbPhraseTable                                       */
-/*                                                                  */
-/* Prototype file: FastBdbPhraseTable                               */
-/*                                                                  */
-/* Description: Implements a phrase table stored in files with      */
-/*              fast search capabilities                            */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file FastBdbPhraseTable.cc
+ * 
+ * @brief Implements a phrase table stored in files with fast search
+ * capabilities.
+ */
 
 #ifndef _FastBdbPhraseTable
 #define _FastBdbPhraseTable

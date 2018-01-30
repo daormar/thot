@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: WordPenaltyFeat                                          */
-/*                                                                  */
-/* Prototypes file: WordPenaltyFeat.h                               */
-/*                                                                  */
-/* Description: Declares the WordPenaltyFeat template               */
-/*              class. This class implements a word penalty         */
-/*              feature.                                            */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file WordPenaltyFeat.h
  * 

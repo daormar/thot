@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: TranslationMetadataTest                                  */
-/*                                                                  */
-/* Prototypes file: TranslationMetadataTest.h                       */
-/*                                                                  */
-/* Description: Declares the TranslationMetadataTest class          */
-/*              implementing unit tests for                         */
-/*              the TranslationMetadata class.                      */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file TranslationMetadataTest.h
  *

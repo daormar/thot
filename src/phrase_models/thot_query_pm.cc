@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_query_pm.cc                                         */
-/*                                                                  */
-/* Definitions file: thot_query_pm.cc                               */
-/*                                                                  */
-/* Description: Executes queries against a given phrase model.      */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file thot_query_pm.cc
+ * 
+ * @brief Executes queries against a given phrase model.
+ */
 
 //--------------- Include files --------------------------------------
 

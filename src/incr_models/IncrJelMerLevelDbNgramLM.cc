@@ -16,25 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrJelMerLevelDbNgramLM                                 */
-/*                                                                  */
-/* Definitions file: IncrJelMerLevelDbNgramLM.cc                    */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file IncrJelMerLevelDbNgramLM.cc
+ * 
+ * @brief Definitions file for IncrJelMerLevelDbNgramLM.h
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "IncrJelMerLevelDbNgramLM.h"
-
-//--------------- Global variables -----------------------------------
-
-//--------------- Function declarations 
-
-//--------------- Constants
-
 
 //--------------- Classes --------------------------------------------
 

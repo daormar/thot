@@ -15,19 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: PhraseExtractionTable                                    */
-/*                                                                  */
-/* Prototype file: PhraseExtractionTable                            */
-/*                                                                  */
-/* Description: Defines the PhraseExtractionTable class for         */
-/*              extracting all consistent phrases from valid        */
-/*              segmentations given a phrase pair and its word      */
-/*              alignment matrix.                                   */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file PhraseExtractionTable.h
+ * 
+ * @brief Defines the PhraseExtractionTable class for extracting all
+ * consistent phrases from valid segmentations given a phrase pair and
+ * its word alignment matrix.
+ */
 
 #ifndef _PhraseExtractionTable
 #define _PhraseExtractionTable

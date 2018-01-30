@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: WgProcessorForAnlp                                       */
-/*                                                                  */
-/* Prototypes file: WgProcessorForAnlp.h                            */
-/*                                                                  */
-/* Description: Declares the WgProcessorForAnlp class. This class   */
-/*              implements a word-graph processor for assisted      */
-/*              natural language processing.                        */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file WgProcessorForAnlp.h
  *

@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: vecx_x_incr_enc                                          */
-/*                                                                  */
-/* Prototype file: vecx_x_incr_enc                                  */
-/*                                                                  */
-/* Description: class to encode high level source and target data.  */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file vecx_x_incr_enc.h
+ * 
+ * @brief class to encode high level source and target data.
+ */
 
 #ifndef _vecx_x_incr_enc
 #define _vecx_x_incr_enc

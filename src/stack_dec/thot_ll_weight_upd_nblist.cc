@@ -15,17 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_ll_weight_upd_nblist.cc                             */
-/*                                                                  */
-/* Definitions file: thot_ll_weight_upd_nblist.cc                   */
-/*                                                                  */
-/* Description: Implements a log-linear weight updater given a set  */
-/*              of n-best lists.                                    */
-/*                                                                  */
-/********************************************************************/
 
 /**
  * @file thot_ll_weight_upd_nblist.cc

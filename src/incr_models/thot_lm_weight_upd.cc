@@ -16,17 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_lm_weight_upd.cc                                    */
-/*                                                                  */
-/* Definitions file: thot_lm_weight_upd.cc                          */
-/*                                                                  */
-/* Description: Implements a language model weight updater given a  */
-/*              development corpus.                                 */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file thot_lm_weight_upd.cc
  *
@@ -54,7 +43,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <iomanip>
 
-//--------------- Constants ------------------------------------------
+//--------------- Type definitions -----------------------------------
 
 struct thot_lmwu_pars
 {

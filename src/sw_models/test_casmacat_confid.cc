@@ -15,36 +15,18 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: test_casmacat_alig.cc                                    */
-/*                                                                  */
-/* Definitions file: test_casmacat_alig.cc                          */
-/*                                                                  */
-/* Description: tests the casmacat confidence measures classes.     */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file test_casmacat_alig.cc
+ * 
+ * @brief Tests the casmacat confidence measures classes.
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "ThotIbmMaxConfidFactory.h"
 #include <iostream>
 #include <iomanip>
-
-//--------------- Constants ------------------------------------------
-
-
-//--------------- Function Declarations ------------------------------
-
-
-//--------------- Type definitions -----------------------------------
-
-
-//--------------- Global variables -----------------------------------
-
-
 
 //--------------- Function Definitions -------------------------------
 

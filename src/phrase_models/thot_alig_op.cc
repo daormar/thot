@@ -15,18 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_alig_op.cc                                          */
-/*                                                                  */
-/* Definitions file: thot_alig_op.cc                                */
-/*                                                                  */
-/* Description: performs operations over GIZA++ alignment files.    */
-/*                                                                  */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file thot_alig_op.cc
+ * 
+ * @brief Performs operations over GIZA++ alignment files.
+ */
 
 //--------------- Include files --------------------------------------
 

@@ -15,15 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: anjm1ip_anjiMatrix                                       */
-/*                                                                  */
-/* Definitions file: anjm1ip_anjiMatrix.cc                          */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file anjm1ip_anjiMatrix.cc
+ * 
+ * @brief Definitions file for anjm1ip_anjiMatrix.h
+ */
 
 //--------------- Include files --------------------------------------
 

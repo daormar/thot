@@ -15,22 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrIbm1AligModel                                        */
-/*                                                                  */
-/* Definitions file: IncrIbm1AligModel.cc                           */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file IncrIbm1AligModel.cc
+ * 
+ * @brief Definitions file for IncrIbm1AligModel.h
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "IncrIbm1AligModel.h"
-
-//--------------- Classes --------------------------------------------
-
 
 //--------------- IncrIbm1AligModel class function definitions
 

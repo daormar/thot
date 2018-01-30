@@ -15,19 +15,15 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: _incrSwAligModel                                         */
-/*                                                                  */
-/* Prototype file: _incrSwAligModel.h                               */
-/*                                                                  */
-/* Description: Defines the _incrSwAligModel class.                 */
-/*              _incrSwAligModel is a predecessor class for         */
-/*              derivating single-word incremental statistical      */
-/*              alignment models.                                   */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file _incrSwAligModel.h
+ * 
+ * @brief Defines the _incrSwAligModel class.  _incrSwAligModel is a
+ * predecessor class for derivating single-word incremental statistical
+ * alignment models.
+ * 
+ */
 
 #ifndef __incrSwAligModel_h
 #define __incrSwAligModel_h

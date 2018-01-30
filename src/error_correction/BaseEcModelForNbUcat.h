@@ -15,20 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseEcModelForNbUcat                                     */
-/*                                                                  */
-/* Prototypes file: BaseEcModelForNbUcat.h                          */
-/*                                                                  */
-/* Description: Declares the BaseEcModelForNbUcat abstract          */
-/*              template class, this is a base class useful to      */
-/*              derive new classes that implement error correcting  */
-/*              models for computer assisted translation based on   */
-/*              n-best lists.                                       */
-/*                                                                  */
-/********************************************************************/
 
 /**
  * @file BaseEcModelForNbUcat.h

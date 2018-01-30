@@ -15,19 +15,15 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: anjm1ip_anjiMatrix                                       */
-/*                                                                  */
-/* Prototype file: anjm1ip_anjiMatrix.h                             */
-/*                                                                  */
-/* Description: Defines the anjm1ip_anjiMatrix class.               */
-/*              anjm1ip_anjiMatrix class stores expected values     */
-/*              used in the estimation of HMM statistical           */
-/*              alignment models.                                   */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file anjm1ip_anjiMatrix.h
+ * 
+ * @brief Defines the anjm1ip_anjiMatrix class.  anjm1ip_anjiMatrix
+ * class stores expected values used in the estimation of HMM
+ * statistical alignment models.
+ * 
+ */
 
 #ifndef _anjm1ip_anjiMatrix_h
 #define _anjm1ip_anjiMatrix_h

@@ -15,7 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file FeaturesInfo.h
+ * 
+ * @brief Class to store information about log-linear model features.
+ */
+
 #ifndef _FeaturesInfo_h
 #define _FeaturesInfo_h
 

@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrLevelDbHmmP0AligModelFactory                         */
-/*                                                                  */
-/* Definitions file: IncrLevelDbHmmP0AligModelFactory.cc            */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file IncrLevelDbHmmP0AligModelFactory.cc
+ *
+ * @brief Definitions file for IncrLevelDbHmmP0AligModelFactory.h
+ */
 
 //--------------- Include files --------------------------------------
 

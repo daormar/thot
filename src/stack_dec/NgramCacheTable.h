@@ -15,7 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file NgramCacheTable.h
+ * 
+ * @brief Class for caching information related to n-gram language
+ * model.
+ */
+
 #ifndef _NgramCacheTable_h
 #define _NgramCacheTable_h
 
@@ -26,8 +33,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #endif /* HAVE_CONFIG_H */
 
 #include THOT_LM_STATE_H // Define LM_State type. It is set in
-                              // configure by checking LM_STATE_H
-                              // variable (default value: LM_State.h)
+                         // configure by checking LM_STATE_H
+                         // variable (default value: LM_State.h)
 #include <Score.h>
 #include <utility>
 #include <map>

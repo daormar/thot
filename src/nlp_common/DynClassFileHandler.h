@@ -15,24 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: DynClassFileHandler                                      */
-/*                                                                  */
-/* Prototypes file: DynClassFileHandler.h                           */
-/*                                                                  */
-/* Description: The DynClassFileHandler class is used to read       */
-/*              files with information for dynamic class loading.   */
-/*                                                                  */
-/********************************************************************/
 
 /**
  * @file DynClassFileHandler.h
- *
- * @brief Declares the DynClassFileHandler class. The
- * DynClassFileHandler class is used to read files with information for
- * dynamic class loading.
+ * 
+ * @brief The DynClassFileHandler class is used to read files with
+ * information for dynamic class loading.
  */
 
 #ifndef _DynClassFileHandler_h

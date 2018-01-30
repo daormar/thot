@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: LevelDbNgramTable                                        */
-/*                                                                  */
-/* Prototype file: LevelDbNgramTable                                */
-/*                                                                  */
-/* Description: Class to manage incremental conditional probability */
-/*              tables of the form                                  */
-/*              p(WordIndex|std::vector<WordIndex>)                 */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file LevelDbNgramTable.h
+ * 
+ * @brief Class to manage incremental conditional probability tables of
+ * the form p(WordIndex|std::vector<WordIndex>).
+ */
 
 #ifndef _LevelDbNgramTable
 #define _LevelDbNgramTable

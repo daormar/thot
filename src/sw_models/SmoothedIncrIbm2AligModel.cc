@@ -15,15 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: SmoothedIncrIbm2AligModel                                */
-/*                                                                  */
-/* Definitions file: SmoothedIncrIbm2AligModel.cc                   */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file SmoothedIncrIbm2AligModel.cc
+ * 
+ * @brief Definitions file for SmoothedIncrIbm2AligModel.h
+ */
 
 //--------------- Include files --------------------------------------
 

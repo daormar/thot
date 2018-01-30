@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_server.cc                                           */
-/*                                                                  */
-/* Definitions file: thot_server.cc                                 */
-/*                                                                  */
-/* Description: Implements a translation server                     */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file thot_server.cc
+ * 
+ * @brief Implements a translation server.
+ */
 
 //--------------- Include files --------------------------------------
 

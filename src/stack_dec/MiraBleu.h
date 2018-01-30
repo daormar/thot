@@ -15,6 +15,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file MiraBleu.h
+ * 
+ * @brief Class implementing BLEU-based scorer for MIRA.
+ */
+
 #ifndef _MiraBleu_h
 #define _MiraBleu_h
 

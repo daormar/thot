@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseSentenceHandler                                      */
-/*                                                                  */
-/* Prototype file: BaseSentenceHandler.h                            */
-/*                                                                  */
-/* Description: Defines the BaseSentenceHandler class.              */
-/*              BaseSentenceHandler class provides a general        */
-/*              interface for sentence handlers.                    */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BaseSentenceHandler.h
+ * 
+ * @brief Defines the BaseSentenceHandler class.  BaseSentenceHandler
+ * class provides a general interface for sentence handlers.
+ */
 
 #ifndef _BaseSentenceHandler_h
 #define _BaseSentenceHandler_h

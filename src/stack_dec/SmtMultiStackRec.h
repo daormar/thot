@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: SmtMultiStackRec                                         */
-/*                                                                  */
-/* Prototypes file: SmtMultiStackRec.h                              */
-/*                                                                  */
-/* Description: The SmtMultiStackRec class implements a multiple    */
-/*              stack with hypothesis recombination to              */
-/*              be used in stack decoding.                          */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file SmtMultiStackRec.h
  * 

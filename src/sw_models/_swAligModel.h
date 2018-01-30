@@ -15,18 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: _swAligModel                                             */
-/*                                                                  */
-/* Prototype file: _swAligModel.h                                   */
-/*                                                                  */
-/* Description: Defines the _swAligModel class. _swAligModel is a   */
-/*              predecessor class for derivating single-word        */
-/*              statistical alignment models.                       */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file _swAligModel.h
+ * 
+ * @brief Defines the _swAligModel class. _swAligModel is a predecessor
+ * class for derivating single-word statistical alignment models.
+ * 
+ */
 
 #ifndef __swAligModel_h
 #define __swAligModel_h

@@ -15,16 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrEncoder                                              */
-/*                                                                  */
-/* Prototype file: IncrEncoder                                      */
-/*                                                                  */
-/* Description: class to encode high level source and target data.  */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file IncrEncoder.h
+ * 
+ * @brief class to encode high level source and target data.
+ */
 
 #ifndef _IncrEncoder
 #define _IncrEncoder

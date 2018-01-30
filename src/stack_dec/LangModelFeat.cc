@@ -15,15 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: LangModelFeat                                            */
-/*                                                                  */
-/* Definitions file: LangModelFeat.cc                               */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file LangModelFeat.cc
+ * 
+ * @brief Definitions file for LangModelFeat.h
+ */
 
 //--------------- Include files --------------------------------------
 

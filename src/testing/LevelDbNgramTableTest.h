@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: LevelDbNgramTableTest                                    */
-/*                                                                  */
-/* Prototypes file: LevelDbNgramTableTest.h                         */
-/*                                                                  */
-/* Description: Declares the LevelDbNgramTableTest class            */
-/*              implementing unit tests for the LevelDbNgramTable   */
-/*              class.                                              */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file LevelDbNgramTableTest.h
  *
@@ -92,8 +80,8 @@ class LevelDbNgramTableTest: public CppUnit::TestFixture
 
     private:
         LevelDbNgramTable *tab;
-        std::string dbName = "/tmp/thot_leveldb_unit_test";
   
+        std::string getDbName(void);
         std::vector<WordIndex> getVector(std::string phrase);
 
     public:

@@ -15,26 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: WordPredictor                                            */
-/*                                                                  */
-/* Prototypes file: WordPredictor.h                                 */
-/*                                                                  */
-/* Description: Declares the WordPredictor class,                   */
-/*              this class tries to predict the ending of           */
-/*              incomplete words, and is intended to be used in a   */
-/*              CAT scenario                                        */
-/*                                                                  */
-/********************************************************************/
 
 /**
  * @file WordPredictor.h
  * 
- * @brief Defines the WordPredictor class, this class tries to predict
+ * @brief Declares the WordPredictor class, this class tries to predict
  * the ending of incomplete words, and is intended to be used in a CAT
- * scenario
+ * scenario.
  */
 
 #ifndef _WordPredictor_h

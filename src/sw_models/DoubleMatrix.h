@@ -15,7 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file DoubleMatrix.h
+ * 
+ * @brief Implements a matrix of doubles.
+ * 
+ */
+
 #ifndef _DoubleMatrix_h
 #define _DoubleMatrix_h
 

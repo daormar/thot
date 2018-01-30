@@ -15,16 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: CachedHmmAligLgProb.h                                    */
-/*                                                                  */
-/* Prototype file: CachedHmmAligLgProb                              */
-/*                                                                  */
-/* Description: Manages an IBM translation table.                   */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file CachedHmmAligLgProb.h
+ * 
+ * @brief Manages an IBM translation table.
+ * 
+ */
 
 #ifndef _CachedHmmAligLgProb
 #define _CachedHmmAligLgProb

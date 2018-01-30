@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: _smtModel                                                */
-/*                                                                  */
-/* Prototypes file: _smtModel.h                                     */
-/*                                                                  */
-/* Description: Declares the _smtModel abstract template            */
-/*              class, this class is a predecessor class for        */
-/*              implementing different kinds of statistical machine */
-/*              translation models.                                 */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file _smtModel.h
  *

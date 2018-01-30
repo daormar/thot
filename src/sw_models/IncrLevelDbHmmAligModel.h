@@ -16,19 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrLevelDbHmmAligModel                                  */
-/*                                                                  */
-/* Prototype file: IncrLevelDbHmmAligModel.h                        */
-/*                                                                  */
-/* Description: Defines the IncrLevelDbHmmAligModel class.          */
-/*              IncrLevelDbHmmAligModel class allows to generate    */
-/*              and access the data of an HMM statistical           */
-/*              alignment model which uses LevelDb as a table       */
-/*              lexical parameters.                                 */
-/*                                                                  */
-/********************************************************************/
+/**
+ * @file IncrLevelDbHmmAligModel.h
+ * 
+ * @brief Defines the IncrLevelDbHmmAligModel class.
+ * IncrLevelDbHmmAligModel class allows to generate and access the data
+ * of an HMM statistical alignment model which uses LevelDb as a table
+ * lexical parameters.
+ * 
+ */
 
 #ifndef _IncrLevelDbHmmAligModel_h
 #define _IncrLevelDbHmmAligModel_h

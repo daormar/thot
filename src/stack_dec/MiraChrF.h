@@ -15,6 +15,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file MiraChrF.h
+ * 
+ * @brief Class implementing ChrF-based scorer for MIRA.
+ */
+
 #ifndef _MiraChrF_h
 #define _MiraChrF_h
 

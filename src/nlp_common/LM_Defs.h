@@ -15,7 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+/**
+ * @file LM_Defs.h
+ * 
+ * @brief Definitions related to n-gram language models.
+ */
+
 #ifndef _LM_Defs_h
 #define _LM_Defs_h
 

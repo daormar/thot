@@ -16,15 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: HatTriePhraseTable                                       */
-/*                                                                  */
-/* Prototype file: HatTriePhraseTable                               */
-/*                                                                  */
-/* Description: Implements a bilingual phrase table.                */
-/*                                                                  */
-/********************************************************************/
+/**
+ * @file HatTriePhraseTable.cc
+ * 
+ * @brief Implements a bilingual phrase table.
+ */
 
 #ifndef _HatTriePhraseTable
 #define _HatTriePhraseTable

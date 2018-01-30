@@ -16,6 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ThotHmmAlignerFactory.cc
+ * 
+ * @brief Definitions file for ThotHmmAlignerFactory.h
+ */
+
 //--------------- Include files --------------------------------------
 
 #include "ThotHmmAlignerFactory.h"

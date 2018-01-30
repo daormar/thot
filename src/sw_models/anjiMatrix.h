@@ -15,19 +15,15 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: anjiMatrix                                               */
-/*                                                                  */
-/* Prototype file: anjiMatrix.h                                     */
-/*                                                                  */
-/* Description: Defines the anjiMatrix class.                       */
-/*              anjiMatrix class stores expected values used        */
-/*              in the estimation of IBM 1 and IBM 2 statistical    */
-/*              alignment model.                                    */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file anjiMatrix.h
+ * 
+ * @brief Defines the anjiMatrix class.  anjiMatrix class stores
+ * expected values used in the estimation of IBM 1 and IBM 2 statistical
+ * alignment model.
+ * 
+ */
 
 #ifndef _anjiMatrix_h
 #define _anjiMatrix_h

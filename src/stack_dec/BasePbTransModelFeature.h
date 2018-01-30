@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: BasePbTransModelFeature                                  */
-/*                                                                  */
-/* Prototypes file: BasePbTransModelFeature.h                       */
-/*                                                                  */
-/* Description: Declares the BasePbTransModelFeature abstract       */
-/*              template class this class is a base class for       */
-/*              implementing different kinds of features to be used */
-/*              in SMT models.                                      */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file BasePbTransModelFeature.h
  * 

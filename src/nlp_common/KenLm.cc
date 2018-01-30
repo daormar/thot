@@ -15,24 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: KenLm                                                    */
-/*                                                                  */
-/* Definitions file: KenLm.cc                                       */
-/*                                                                  */
-/********************************************************************/
 
-
-//--------------- Include files --------------------------------------
+/**
+ * @file KenLm.cc
+ * 
+ * @brief Definitions file for KenLm.h
+ */
 
 #include "KenLm.h"
-
-//--------------- Global variables -----------------------------------
-
-
-//--------------- KenLm class function definitions
 
 //-------------------------
 KenLm::KenLm(void)

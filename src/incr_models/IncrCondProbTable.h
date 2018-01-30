@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrCondProbTable                                        */
-/*                                                                  */
-/* Prototype file: IncrCondProbTable                                */
-/*                                                                  */
-/* Description: Generic class to manage incremental conditional     */
-/*              probability tables p(t|s).                          */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file IncrCondProbTable.h
+ * 
+ * @brief Generic class to manage incremental conditional probability
+ * tables p(t|s).
+ */
 
 #ifndef _IncrCondProbTable
 #define _IncrCondProbTable

@@ -15,15 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: PhrHypState                                              */
-/*                                                                  */
-/* Definitions file: PhrHypState.cc                                 */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file PhrHypState.cc
+ * 
+ * @brief Definitions file for PhrHypState.h
+ */
 
 //--------------- Include files --------------------------------------
 

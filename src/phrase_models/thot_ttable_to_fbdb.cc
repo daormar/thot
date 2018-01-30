@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_ttable_to_fastbdb.cc                                */
-/*                                                                  */
-/* Definitions file: thot_ttable_to_fastbdb.cc                      */
-/*                                                                  */
-/* Description: Converts a translation table to BDB format.         */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file thot_ttable_to_fastbdb.cc
+ * 
+ * @brief Converts a translation table to BDB format.
+ */
 
 //--------------- Include files --------------------------------------
 

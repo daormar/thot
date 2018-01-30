@@ -15,31 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: IncrHmmAligTable                                         */
-/*                                                                  */
-/* Definitions file: IncrHmmAligTable.cc                            */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file IncrHmmAligTable.cc
+ * 
+ * @brief Definitions file for IncrHmmAligTable.h
+ */
 
 //--------------- Include files --------------------------------------
 
 #include "IncrHmmAligTable.h"
-
-//--------------- Global variables -----------------------------------
-
-
-//--------------- Function declarations 
-
-
-//--------------- Constants
-
-
-//--------------- Classes --------------------------------------------
-
 
 //--------------- IncrHmmAligTable class function definitions
 

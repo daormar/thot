@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: LevelDbPhraseTableTest                                   */
-/*                                                                  */
-/* Definitions file: LevelDbPhraseTableTest.cc                      */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file LevelDbPhraseTableTest.cc
+ * 
+ * @brief Definitions file for LevelDbPhraseTableTest.h
+ */
 
 //--------------- Include files --------------------------------------
 
@@ -41,7 +38,7 @@ void LevelDbPhraseTableTest::setUp()
   tabLdb = new LevelDbPhraseTable();
   tab = tabLdb;
 
-  tabLdb->init(dbName);
+  tabLdb->init(getDbName());
 }
 
 //---------------------------------------
@@ -232,7 +229,7 @@ void LevelDbPhraseTableTest::testLoadingLevelDb()
   const size_t original_size = tab->size();
    
   // Load structure
-  result = tabLdb->load(dbName);
+  result = tabLdb->load(getDbName());
   CPPUNIT_ASSERT( result == THOT_OK);
   CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 }
@@ -279,7 +276,7 @@ void LevelDbPhraseTableTest::testLoadedDataCorrectness()
   const size_t original_size = tab->size();
    
   // Load structure
-  result = tabLdb->load(dbName);
+  result = tabLdb->load(getDbName());
   CPPUNIT_ASSERT( result == THOT_OK );
   CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 
@@ -308,4 +305,10 @@ void LevelDbPhraseTableTest::testLoadedDataCorrectness()
 
   tab->clear();  // Remove data
   CPPUNIT_ASSERT_EQUAL((size_t) 0, tab->size());
+}
+
+//---------------------------------------
+std::string LevelDbPhraseTableTest::getDbName(void)
+{
+  return "/tmp/thot_leveldb_unit_test";
 }

@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: SrcSegmLenTable                                          */
-/*                                                                  */
-/* Prototype file: SrcSegmLenTable.h                                */
-/*                                                                  */
-/* Description: Defines the SrcSegmLenTable class, which stores a   */
-/*              probability table for the length of a source        */
-/*              phrase.                                             */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file SrcSegmLenTable.h
+ * 
+ * @brief Defines the SrcSegmLenTable class, which stores a probability
+ * table for the length of a source phrase.
+ */
 
 #ifndef _SrcSegmLenTable_h
 #define _SrcSegmLenTable_h

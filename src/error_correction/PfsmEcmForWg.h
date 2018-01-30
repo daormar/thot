@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: PfsmEcmForWg                                             */
-/*                                                                  */
-/* Prototypes file: PfsmEcmForWg.h                                  */
-/*                                                                  */
-/* Description: Declares the PfsmEcmForWg class,                    */
-/*              this class specializes the PfsmEcm class for        */
-/*              implementing the interface given by the             */
-/*              BaseEcmForWg class.                                 */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file PfsmEcmForWg.h
  * 

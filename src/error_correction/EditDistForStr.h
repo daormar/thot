@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: EditDistForStr                                           */
-/*                                                                  */
-/* Prototypes file: EditDistForStr.h                                */
-/*                                                                  */
-/* Description: Defines the EditDistForStr class that calculates    */
-/*              the edit distance between strings.                  */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file EditDistForStr.h
+ * 
+ * @brief Defines the EditDistForStr class that calculates the edit
+ * distance between strings.
+ */
 
 #ifndef _EditDistForStr_h
 #define _EditDistForStr_h

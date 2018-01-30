@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: vecx_x_incr_ecpm                                         */
-/*                                                                  */
-/* Prototype file: vecx_x_incr_ecpm                                 */
-/*                                                                  */
-/* Description: Class to manage incremental encoded conditional     */
-/*              probability models p(x|std::vector<x>).             */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file vecx_x_incr_ecpm.h
+ * 
+ * @brief Class to manage incremental encoded conditional probability
+ * models p(x|std::vector<x>).
+ */
 
 #ifndef _vecx_x_incr_ecpm
 #define _vecx_x_incr_ecpm

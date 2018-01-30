@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_gen_bin_lex_filter_info.cc                          */
-/*                                                                  */
-/* Definitions file: thot_gen_bin_lex_filter_info.cc                */
-/*                                                                  */
-/* Description: Extracts information to filter lexical parameters   */
-/*              in binary format.                                   */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file thot_gen_bin_lex_filter_info.cc
+ * 
+ * @brief Extracts information to filter lexical parameters in binary
+ * format.
+ */
 
 //--------------- Include files --------------------------------------
 
@@ -36,17 +31,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "options.h"
 #include "SwDefs.h"
 
-//--------------- Constants ------------------------------------------
-
-
 //--------------- Function Declarations ------------------------------
 
 int TakeParameters(int argc,char *argv[]);
 void printUsage(void);
 void printDesc(void);
-
-//--------------- Type definitions -----------------------------------
-
 
 //--------------- Global variables -----------------------------------
 

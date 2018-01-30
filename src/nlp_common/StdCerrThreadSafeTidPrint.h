@@ -16,21 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: StdCerrThreadSafeTidPrint.h                              */
-/*                                                                  */
-/* Prototypes file: StdCerrThreadSafeTidPrint.h                     */
-/*                                                                  */
-/* Description: Declares the StdCerrThreadSafeTidPrint class which  */
-/*              wraps ThreadSafePrint class to allow printing with  */
-/*              << operator like in standard library.               */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file StdCerrThreadSafeTidPrint.h
- *p
+ *
  * @brief Declares the StdCerrThreadSafeTidPrint class which wraps
  * ThreadSafePrint class to allow printing with << operator like
  * in standard library.

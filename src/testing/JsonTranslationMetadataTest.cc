@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: JsonTranslationMetadataTest                              */
-/*                                                                  */
-/* Definitions file: JsonTranslationMetadataTest.cc                 */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file JsonTranslationMetadataTest.cc
+ * 
+ * @brief Definitions file for JsonTranslationMetadataTest.h
+ */
 
 //--------------- Include files --------------------------------------
 

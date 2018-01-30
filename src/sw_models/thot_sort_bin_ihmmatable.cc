@@ -15,18 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_sort_bin_ihmmatable.cc                              */
-/*                                                                  */
-/* Definitions file: thot_sort_bin_ihmmatable.cc                    */
-/*                                                                  */
-/* Description: Sorts the parameters of a incremental hmm           */
-/*              alignment table.                                    */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file thot_sort_bin_ihmmatable.cc
+ * 
+ * @brief Sorts the parameters of a incremental hmm alignment table.
+ */
 
 //--------------- Include files --------------------------------------
 

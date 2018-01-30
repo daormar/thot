@@ -15,15 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: PhrHypEqClassF                                           */
-/*                                                                  */
-/* Definitions file: PhrHypEqClassF.cc                              */
-/*                                                                  */
-/********************************************************************/
 
+/**
+ * @file PhrHypEqClassF.cc
+ * 
+ * @brief Definitions file for PhrHypEqClassF.h
+ */
 
 //--------------- Include files --------------------------------------
 

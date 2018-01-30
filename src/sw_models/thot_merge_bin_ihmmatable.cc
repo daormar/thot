@@ -15,18 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: thot_merge_bin_ihmmatable.cc                             */
-/*                                                                  */
-/* Definitions file: thot_merge_bin_ihmmatable.cc                   */
-/*                                                                  */
-/* Description: Merges counts given in a set of sorted incremental  */
-/*              hmm alignment tables.                               */
-/*                                                                  */   
-/********************************************************************/
 
+/**
+ * @file thot_merge_bin_ihmmatable.cc
+ * 
+ * @brief Merges counts given in a set of sorted incremental hmm
+ * alignment tables.
+ */
 
 //--------------- Include files --------------------------------------
 

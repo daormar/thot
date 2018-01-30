@@ -15,17 +15,13 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
- 
-/********************************************************************/
-/*                                                                  */
-/* Module: BaseIncrCondProbModel                                    */
-/*                                                                  */
-/* Prototype file: BaseIncrCondProbModel                            */
-/*                                                                  */
-/* Description: Abstract base class to manage incremental           */
-/*              conditional probability models p(t|s).              */
-/*                                                                  */
-/********************************************************************/
+
+/**
+ * @file BaseIncrCondProbModel.h
+ * 
+ * @brief Abstract base class to manage incremental conditional
+ * probability models p(t|s).
+ */
 
 #ifndef _BaseIncrCondProbModel
 #define _BaseIncrCondProbModel

@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
-/********************************************************************/
-/*                                                                  */
-/* Module: LevelDbNgramTableTest                                    */
-/*                                                                  */
-/* Definitions file: LevelDbNgramTableTest.cc                       */
-/*                                                                  */
-/********************************************************************/
-
+/**
+ * @file LevelDbNgramTableTest.cc
+ * 
+ * @brief Definitions file for LevelDbNgramTableTest.h
+ */
 
 //--------------- Include files --------------------------------------
 
@@ -39,7 +36,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( LevelDbNgramTableTest );
 void LevelDbNgramTableTest::setUp()
 {
     tab = new LevelDbNgramTable();
-    tab->init(dbName);
+    tab->init(getDbName());
 }
 
 //---------------------------------------
@@ -708,7 +705,7 @@ void LevelDbNgramTableTest::testLoadingLevelDb()
     size_t original_size = tab->size();
     
     // Load structure
-    result = tab->load(dbName.c_str());
+    result = tab->load(getDbName().c_str());
     CPPUNIT_ASSERT( result == THOT_OK);
     CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 }
@@ -761,7 +758,7 @@ void LevelDbNgramTableTest::testLoadedDataCorrectness()
     size_t original_size = tab->size();
     
     // Load structure
-    result = tab->load(dbName.c_str());
+    result = tab->load(getDbName().c_str());
     CPPUNIT_ASSERT( result == THOT_OK );
     CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 
@@ -816,10 +813,16 @@ void LevelDbNgramTableTest::testLoadedDataNullCount()
     size_t original_size = tab->size();
 
     // Load structure
-    result = tab->load(dbName.c_str());
+    result = tab->load(getDbName().c_str());
     CPPUNIT_ASSERT( result == THOT_OK );
     CPPUNIT_ASSERT_EQUAL(original_size, tab->size());
 
     // Check count values
     CPPUNIT_ASSERT_DOUBLES_EQUAL(16.0, tab->cSrc(s3).get_c_st(), EPSILON);
+}
+
+//---------------------------------------
+std::string LevelDbNgramTableTest::getDbName(void)
+{
+  return "/tmp/thot_leveldb_unit_test";
 }

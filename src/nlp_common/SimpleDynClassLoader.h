@@ -1,6 +1,7 @@
 // Author: Kyle Nusbaum
 // 
-// Code extracted and modified from: https://github.com/knusbaum/CPP-Dynamic-Class-Loading
+// Code extracted and modified by Daniel Ortiz from:
+// https://github.com/knusbaum/CPP-Dynamic-Class-Loading
 //
 
 #ifndef _SimpleDynClassLoader_H

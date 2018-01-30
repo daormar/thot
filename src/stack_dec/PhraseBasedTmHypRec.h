@@ -16,18 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
  
-/********************************************************************/
-/*                                                                  */
-/* Module: PhraseBasedTmHypRec                                      */
-/*                                                                  */
-/* Prototypes file: PhraseBasedTmHypRec.h                           */
-/*                                                                  */
-/* Description: Declares the PhraseBasedTmHypRec template class,    */
-/*              this class is derived from the _phraseHypothesisRec */
-/*              class.                                              */
-/*                                                                  */
-/********************************************************************/
-
 /**
  * @file PhraseBasedTmHypRec.h
  * 
