@@ -37,6 +37,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- Constants ------------------------------------------
 
 #define JSON_TEX_SEGMENTATION "tex_segmentation"
+#define JSON_SRCTITLE "src_title"
 
 //--------------- Typedefs -------------------------------------------
 
@@ -134,32 +135,41 @@ void JsonTranslationMetadata<SCORE_INFO>::obtainTransConstraints(std::string raw
         }
         else  // JSON parsed correctly
         {
-            // Retrieve source sentence
-            std::string srcSent = json.get("src_title").get("preprocessed").get<std::string>();
-            // Convert raw source sentence into a string vector
-            srcSentVec = StrProcUtils::stringToStringVector(srcSent);
+              // Retrieve source sentence
+          srcSentVec.clear();
+          if(json.get(JSON_SRCTITLE).is<picojson::object>())
+          {
+            if(json.get(JSON_SRCTITLE).get("preprocessed").is<std::string>())
+            {
+              std::string srcSent = json.get(JSON_SRCTITLE).get("preprocessed").get<std::string>();
+                    // Convert raw source sentence into a string vector
+              srcSentVec = StrProcUtils::stringToStringVector(srcSent);
+            }
+          }
 
-            // Retrieve translations based on tags assigned by annotator in TEX
+              // Retrieve translations based on tags assigned by annotator in TEX
+          if(json.get(JSON_TEX_SEGMENTATION).is<picojson::array>())
+          {
+                // Retrieve translations
             picojson::array tags = json.get(JSON_TEX_SEGMENTATION).get<picojson::array>();
             std::vector<std::pair<std::string, std::string> > translations;
-
             for(picojson::array::iterator iter = tags.begin(); iter != tags.end(); iter++)
             {
-                // Check if translation field exists
-                if((*iter).get("translation").is<std::string>())
-                {
-                    std::string original = (*iter).get("original").get<std::string>();
-                    std::string translation = (*iter).get("translation").get<std::string>();
+                  // Check if translation field exists
+              if((*iter).get("translation").is<std::string>())
+              {
+                std::string original = (*iter).get("original").get<std::string>();
+                std::string translation = (*iter).get("translation").get<std::string>();
                     // Check if original (source) and translation (target) phrases contains different charaters than whitespaces
-                    if(!containsOnlyWhitespaces(original) && !containsOnlyWhitespaces(translation))
-                    {
-                        translations.push_back(std::make_pair(original, translation));
-                    }
+                if(!containsOnlyWhitespaces(original) && !containsOnlyWhitespaces(translation))
+                {
+                  translations.push_back(std::make_pair(original, translation));
                 }
+              }
             }
-
-            // Encode translations based on occurences in source sentence
+                // Encode translations based on occurences in source sentence
             addTranslations(translations);
+          }
         }
 
         if(verbosity > 0)
@@ -287,20 +297,25 @@ bool JsonTranslationMetadata<SCORE_INFO>::containsOnlyWhitespaces(std::string ph
 template<class SCORE_INFO>
 bool JsonTranslationMetadata<SCORE_INFO>::isPhraseInSentence(std::vector<std::string>& phrase, unsigned int startPosition)
 {
-    if(startPosition + phrase.size() - 1 > srcSentVec.size())
-        return false;  // Sentence is too short to contain phrase
-
-    for(unsigned int i = 0; i < phrase.size(); i++)
-        if(srcSentVec[startPosition + i - 1] != phrase[i])
-            return false;  // Phrase does not match
-
+  if(phrase.empty())
     return true;
+
+  if(startPosition + phrase.size() - 1 > srcSentVec.size())
+    return false;  // Sentence is too short to contain phrase
+  
+  for(unsigned int i = 0; i < phrase.size(); i++)
+    if(srcSentVec[startPosition + i] != phrase[i])
+      return false;  // Phrase does not match
+  
+  return true;
 }
 
 //---------------------------------------
 template<class SCORE_INFO>
 void JsonTranslationMetadata<SCORE_INFO>::addTranslations(std::vector<std::pair<std::string, std::string> >& translations)
 {
+  if(!translations.empty())
+  {
     unsigned int sIdx = 1;  // Source token index
     unsigned int tpIdx = 0;  // Translation pair index
 
@@ -310,17 +325,21 @@ void JsonTranslationMetadata<SCORE_INFO>::addTranslations(std::vector<std::pair<
         std::vector<std::string> srcPhraseVec = StrProcUtils::stringToStringVector(tp.first);
         std::vector<std::string> trgPhraseVec = StrProcUtils::stringToStringVector(tp.second);
 
-        if(isPhraseInSentence(srcPhraseVec, sIdx)) {
+        if(isPhraseInSentence(srcPhraseVec, sIdx))
+        {
             std::pair<PositionIndex, PositionIndex> tPos = std::make_pair(sIdx, sIdx + srcPhraseVec.size() - 1);
             srcPhrTransMap[tPos] = trgPhraseVec;
             // Look for the next translation pair
             tpIdx++;
             // Omit tokens which belongs to the found phrase
             sIdx += srcPhraseVec.size();
-        } else {
+        }
+        else
+        {
             sIdx++;  // Go to the next token in sentence
         }
     }
+  }
 }
 
 //---------------------------------------
