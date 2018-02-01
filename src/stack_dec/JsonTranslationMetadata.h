@@ -316,10 +316,10 @@ void JsonTranslationMetadata<SCORE_INFO>::addTranslations(std::vector<std::pair<
 {
   if(!translations.empty())
   {
-    unsigned int sIdx = 1;  // Source token index
+    unsigned int sIdx = 0;  // Source token index
     unsigned int tpIdx = 0;  // Translation pair index
 
-    while(sIdx <= srcSentVec.size() && tpIdx < translations.size())
+    while(sIdx < srcSentVec.size() && tpIdx < translations.size())
     {
         std::pair<std::string, std::string> tp = translations[tpIdx];
         std::vector<std::string> srcPhraseVec = StrProcUtils::stringToStringVector(tp.first);
@@ -327,7 +327,7 @@ void JsonTranslationMetadata<SCORE_INFO>::addTranslations(std::vector<std::pair<
 
         if(isPhraseInSentence(srcPhraseVec, sIdx))
         {
-            std::pair<PositionIndex, PositionIndex> tPos = std::make_pair(sIdx, sIdx + srcPhraseVec.size() - 1);
+            std::pair<PositionIndex, PositionIndex> tPos = std::make_pair(sIdx+1, sIdx + srcPhraseVec.size());
             srcPhrTransMap[tPos] = trgPhraseVec;
             // Look for the next translation pair
             tpIdx++;
