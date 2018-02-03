@@ -493,10 +493,6 @@ filter_ttable()
 ########
 filter_ttables()
 {
-    # Extract source sentences from file
-    scorpus_wo_metadata=${outd}/src_corpus_without_metadata
-    ${bindir}/thot_get_srcsents_from_metadata -f ${scorpus} > ${scorpus_wo_metadata}
-
     # Check if tm file is a descriptor
     is_desc=`check_if_file_is_desc ${tmfile}`
 
@@ -618,7 +614,7 @@ loglin_upd()
 ########
 linear_interp_upd()
 {
-    ${bindir}/thot_li_weight_upd -tm ${newtmdevfile} -t $scorpus -r $tcorpus -v \
+    ${bindir}/thot_li_weight_upd -tm ${newtmdevfile} -t ${scorpus_wo_metadata} -r $tcorpus -v \
         2> ${outd}/liweights_tune.log || return 1
 }
 
@@ -667,6 +663,10 @@ tune_tm()
 
     # Create initial tm_dev files
     create_tm_dev_files || return 1
+
+    # Extract source sentences from file
+    scorpus_wo_metadata=${outd}/src_corpus_without_metadata
+    ${bindir}/thot_get_srcsents_from_metadata -f ${scorpus} > ${scorpus_wo_metadata}
 
     # Filter translation table
     echo "" >&2
