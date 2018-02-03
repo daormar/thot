@@ -305,10 +305,10 @@ create_tm_files()
 }
 
 ########
-remove_xml_annots_from_test()
+get_srcsents_from_test()
 {
-    tcorpus_wo_annot=${outd}/test_corpus_without_xml_annotations
-    ${bindir}/thot_remove_xml_annotations < ${tcorpus} > ${tcorpus_wo_annot}
+    tcorpus_wo_metadata=${outd}/test_corpus_without_metadata
+    ${bindir}/thot_get_srcsents_from_metadata -f ${tcorpus} > ${tcorpus_wo_metadata}
 }
 
 ########
@@ -318,7 +318,7 @@ filter_ttable()
     _basetmfile=`basename ${_tmfile}`
     _outd=$2
     ${bindir}/thot_pbs_filter_ttable -t ${_tmfile}.ttable \
-             -c ${tcorpus_wo_annot} -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${_outd}/${_basetmfile}.ttable ${debug_opt}
+             -c ${tcorpus_wo_metadata} -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${_outd}/${_basetmfile}.ttable ${debug_opt}
 }
 
 ########
@@ -494,8 +494,8 @@ create_lm_files || exit 1
 # Create tm files
 create_tm_files || exit 1
 
-# Remove xml annotations from test corpus
-remove_xml_annots_from_test || exit 1
+# Get source sentences from test corpus
+get_srcsents_from_test || exit 1
 
 # Filter tm model
 filter_ttables || exit 1

@@ -479,16 +479,24 @@ create_tm_files()
 ########
 filter_ttable()
 {
+    # Define input variables
     _tmfile=$1
     _basetmfile=`basename ${_tmfile}`
-    _filt_outd=$2
+    _scorpus_wo_metadata=$2
+    _filt_outd=$3
+    
+    # Filter table
     ${bindir}/thot_pbs_filter_ttable -t ${_tmfile}.ttable \
-        -c $scorpus -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${_filt_outd}/${_basetmfile}.ttable
+        -c ${_scorpus_wo_metadata} -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${_filt_outd}/${_basetmfile}.ttable
 }
 
 ########
 filter_ttables()
 {
+    # Extract source sentences from file
+    scorpus_wo_metadata=${outd}/src_corpus_without_metadata
+    ${bindir}/thot_get_srcsents_from_metadata -f ${scorpus} > ${scorpus_wo_metadata}
+
     # Check if tm file is a descriptor
     is_desc=`check_if_file_is_desc ${tmfile}`
 
@@ -500,10 +508,10 @@ filter_ttables()
             curr_tmfile=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$2}'`
             curr_status=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$3}'`
             curr_tmfile_dirname=`$DIRNAME $curr_tmfile`
-            filter_ttable ${tmdesc_dirname}/${curr_tmfile} ${outd}/tm_dev/${curr_tmfile_dirname}
+            filter_ttable ${tmdesc_dirname}/${curr_tmfile} ${scorpus_wo_metadata} ${outd}/tm_dev/${curr_tmfile_dirname}
         done
     else
-        filter_ttable ${tmfile} ${outd}/tm_dev/main
+        filter_ttable ${tmfile} ${scorpus_wo_metadata} ${outd}/tm_dev/main
     fi
 }
 

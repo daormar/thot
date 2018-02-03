@@ -197,7 +197,7 @@ decateg_output()
       
     # Define uncategorized source data file
     uncateg_src=`mktemp $tdir/uncateg_src.XXXXX`
-    ${bindir}/thot_remove_xml_annotations -f ${test_corpus_for_decat} > ${uncateg_src} 2>/dev/null
+    ${bindir}/thot_get_srcsents_from_metadata -f ${test_corpus_for_decat} > ${uncateg_src} 2>/dev/null
 
     # Obtain alignment information
     alig_info_file=${thot_auto_smt_dir}/output/${transoutd}/hyp_alig_info.txt
