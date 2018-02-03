@@ -40,7 +40,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <iomanip>
 
-//--------------- Constants ------------------------------------------
+//--------------- Type definitions -----------------------------------
 
 struct thot_scorer_pars
 {
@@ -60,6 +60,8 @@ int checkParameters(thot_scorer_pars& pars);
 
 int obtain_references(const thot_scorer_pars& pars,
                       std::vector<std::string>& referenceVec);
+int obtain_sys_sentences(const thot_scorer_pars& pars,
+                         std::vector<std::string>& sysSentVec);
 int calc_score(const thot_scorer_pars& pars);
 void printUsage(void);
 void version(void);
