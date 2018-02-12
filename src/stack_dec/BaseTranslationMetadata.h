@@ -72,6 +72,7 @@ class BaseTranslationMetadata
   virtual std::vector<std::string> getTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhr)const=0;
   virtual std::set<std::pair<PositionIndex,PositionIndex> > getConstrainedSrcPhrases(void)const=0;
   virtual bool srcPhrAffectedByConstraint(std::pair<PositionIndex,PositionIndex> srcPhr)const=0;
+  virtual std::string getConstraintTypeForSrcPhr(std::pair<PositionIndex,PositionIndex> /*srcPhr*/)const{return "";};
   virtual bool translationSatisfiesConstraints(const SourceSegmentation& sourceSegmentation,
                                                const std::vector<PositionIndex>& targetSegmentCuts,
                                                const std::vector<std::string>& targetWordVec)const=0;
