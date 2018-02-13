@@ -913,49 +913,73 @@ def is_categ(word):
 
 ##################################################
 def extract_alig_info(hyp_word_array):
+    
+    srcsegms=obtain_source_segments(hyp_word_array)
+    trgcuts=obtain_target_cuts(hyp_word_array)
+    
+    return (srcsegms,trgcuts)
+
+##################################################
+def obtain_source_segments(hyp_word_array):
+
     # Initialize output variables
     srcsegms=[]
-    trgcuts=[]
 
-    # Scan hypothesis information
+    # Obtain source segments
     info_found=False
-    for i in range(len(hyp_word_array)):
-        if(hyp_word_array[i]=="hypkey:" and hyp_word_array[i-1]=="|"):
+    for i in range(2,len(hyp_word_array)):
+        if(hyp_word_array[i]=="Segmentation:" and hyp_word_array[i-1]=="Source" and hyp_word_array[i-2]=="|"):
             info_found=True
-            i-=2
+            i+=1
             break;
-
+        
+    srcsegms_found=False
     if(info_found):
-        # Obtain target segment cuts
-        trgcuts_found=False
-        while i>0:
+        while i<len(hyp_word_array):
             if(hyp_word_array[i]!="|"):
-                trgcuts.append(int(hyp_word_array[i]))
-                i-=1
+                if(i+3<len(hyp_word_array)):
+                    srcsegms.append((int(hyp_word_array[i+1]),int(hyp_word_array[i+3])))
+                i+=8
             else:
-                trgcuts_found=True
-                i-=1
+                srcsegms_found=True
                 break
-        trgcuts.reverse()
-
-        if(trgcuts_found):
-            # Obtain source segments
-            srcsegms_found=False
-            while i>0:
-                if(hyp_word_array[i]!="|"):
-                    if(i>3):
-                        srcsegms.append((int(hyp_word_array[i-3]),int(hyp_word_array[i-1])))
-                    i-=5
-                else:
-                    srcsegms_found=True
-                    break
-            srcsegms.reverse()
-
+            
     # Return result
     if(srcsegms_found):
-        return (srcsegms,trgcuts)
+        return srcsegms
     else:
-        return ([],[])
+        return []
+
+##################################################
+def obtain_target_cuts(hyp_word_array):
+
+    # Initialize output variables
+    trgcuts=[]
+
+    # Obtain target segment cuts
+    info_found=False
+    for i in range(2,len(hyp_word_array)):
+        if(hyp_word_array[i]=="Segmentation:" and hyp_word_array[i-1]=="Target" and hyp_word_array[i-2]=="|"):
+            info_found=True
+            i+=1
+            break;
+
+    trgcuts_found=False
+    if(info_found):
+        while i<len(hyp_word_array):
+            if(hyp_word_array[i]!="|"):
+                trgcuts.append(int(hyp_word_array[i]))
+                i+=1
+            else:
+                trgcuts_found=True
+                i+=1
+                break
+
+    # Return result
+    if(trgcuts_found):
+        return trgcuts
+    else:
+        return []
 
 ##################################################
 def extract_categ_words_of_segm(word_array,left,right):
@@ -979,6 +1003,10 @@ def decategorize(sline,tline,iline):
     # Extract alignment information
     srcsegms,trgcuts=extract_alig_info(hyp_word_array)
 
+    # Check that alignment extraction was successful
+    if(not srcsegms or not trgcuts or not len(srcsegms)==len(trgcuts)):
+        return tline
+    
     # Iterate over target words
     output=""
     for trgpos in range(len(trg_word_array)):
