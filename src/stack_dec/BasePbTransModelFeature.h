@@ -85,8 +85,6 @@ class BasePbTransModelFeature
   virtual void obtainTransOptions(const std::vector<std::string>& wordVec,
                                   std::vector<std::vector<std::string> >& transOptVec);
 
-      
-
       // Destructor
   virtual ~BasePbTransModelFeature(){};
 
