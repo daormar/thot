@@ -2687,26 +2687,22 @@ void _phraseBasedTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
                                                   std::ostream &outS,
                                                   int verbose)
 {
-  std::vector<std::string> trgStrVec;
-  std::vector<WordIndex> trans=hyp.getPartialTrans();
-  SourceSegmentation sourceSegmentation;
-  std::vector<PositionIndex> targetSegmentCuts;
-  std::vector<std::pair<PositionIndex,PositionIndex> > amatrix;
-  HypDataType hypDataType;
-  Hypothesis auxHyp;
-  std::vector<Score> scoreComponents;
-  
       // Obtain target string vector
-  trgStrVec=trgIndexVectorToStrVector(hyp.getPartialTrans());
+  std::vector<std::string> trgStrVec=trgIndexVectorToStrVector(hyp.getPartialTrans());
 
       // Print score
   outS <<"Score: "<<hyp.getScore()<<" ; ";
+  
       // Print weights
   this->printWeights(outS);
   outS <<" ; ";
+
       // Obtain score components
-  hypDataType=hyp.getData();
+  Hypothesis auxHyp;
+  std::vector<Score> scoreComponents;
+  HypDataType hypDataType=hyp.getData();
   this->incrScore(this->nullHypothesis(),hypDataType,auxHyp,scoreComponents);
+
       // Print score components
   for(unsigned int i=0;i<scoreComponents.size();++i)
     outS<<scoreComponents[i]<<" ";
@@ -2719,17 +2715,32 @@ void _phraseBasedTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
   if(!this->isComplete(hyp)) outS<< "; Incomplete_alignment!";
 
       // Obtain phrase alignment
+  SourceSegmentation sourceSegmentation;
+  std::vector<PositionIndex> targetSegmentCuts;
+  std::vector<std::pair<PositionIndex,PositionIndex> > amatrix;
   this->aligMatrix(hyp,amatrix);
   this->getPhraseAlignment(amatrix,sourceSegmentation,targetSegmentCuts);
 
-      // Print alignment information
+      // Print target translation
   outS<<" | ";
   for(unsigned int i=1;i<trgStrVec.size();++i)
     outS<<trgStrVec[i]<<" ";
-  outS << "| ";
+
+      // Print source segmentation
+  outS << "| Source Segmentation: ";
   for(unsigned int k=0;k<sourceSegmentation.size();k++)
- 	outS<<"( "<<sourceSegmentation[k].first<<" , "<<sourceSegmentation[k].second<<" ) "; 
-  outS<< "| "; 
+  {
+    std::string constrType=this->trMetadataPtr->getConstraintTypeForSrcPhr(sourceSegmentation[k]);
+    outS<<"( "<<sourceSegmentation[k].first<<" , "<<sourceSegmentation[k].second<<" ; type: ";
+    if(constrType.empty())
+      outS<<"RegularPhrTableEntry";
+    else
+      outS<<constrType;
+    outS<<" ) ";
+  }
+
+      // Print target segmentation
+  outS<< "| Target Segmentation: ";
   for (unsigned int j=0; j<targetSegmentCuts.size(); j++)
     outS << targetSegmentCuts[j] << " ";
   

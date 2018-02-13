@@ -1499,6 +1499,7 @@ void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
 
       // Print score
   outS <<"Score: "<<hyp.getScore()<<" ; ";
+
       // Print weights
   this->printWeights(outS);
   outS <<" ; ";
@@ -1516,10 +1517,7 @@ void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
 
       // Print score components
   for(unsigned int i=0;i<extScoreComponents.size();++i)
-  {
     outS<<nullHypScoreComponents[i]+extScoreComponents[i]<<" ";
-//    outS<<extScoreComponents[i]<<" ";
-  }
 
       // Print score + heuristic
   addHeuristicToHyp(auxHyp);
@@ -1535,14 +1533,26 @@ void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
   this->aligMatrix(hyp,amatrix);
   this->getPhraseAlignment(amatrix,sourceSegmentation,targetSegmentCuts);
 
-      // Print alignment information
+      // Print target translation
   outS<<" | ";
   for(unsigned int i=1;i<trgStrVec.size();++i)
     outS<<trgStrVec[i]<<" ";
-  outS << "| ";
+
+      // Print source segmentation
+  outS << "| Source Segmentation: ";
   for(unsigned int k=0;k<sourceSegmentation.size();k++)
- 	outS<<"( "<<sourceSegmentation[k].first<<" , "<<sourceSegmentation[k].second<<" ) ";
-  outS<< "| ";
+  {
+    std::string constrType=this->trMetadataPtr->getConstraintTypeForSrcPhr(sourceSegmentation[k]);
+    outS<<"( "<<sourceSegmentation[k].first<<" , "<<sourceSegmentation[k].second<<" ; type: ";
+    if(constrType.empty())
+      outS<<"RegularPhrTableEntry";
+    else
+      outS<<constrType;
+    outS<<" ) ";
+  }
+
+      // Print target segmentation
+  outS<< "| Target Segmentation: ";
   for (unsigned int j=0; j<targetSegmentCuts.size(); j++)
     outS << targetSegmentCuts[j] << " ";
   
