@@ -322,6 +322,10 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
                             std::set<std::vector<WordIndex> >& transSet);
   bool getTransForSrcPhraseStr(const std::vector<std::string>& srcPhrase,
                                std::set<std::vector<std::string> >& transSet);
+  std::string getLogLinFeatNamesForPhrTransStr(std::pair<PositionIndex,PositionIndex> pidxPair,
+                                               std::vector<std::string> trgPhr);
+  std::vector<std::string> getLogLinFeatNamesForPhrTrans(std::pair<PositionIndex,PositionIndex> pidxPair,
+                                                         std::vector<std::string> trgPhr);
 
       // Functions to score n-best translations lists
   Score nbestTransScore(const std::vector<WordIndex>& srcPhrase,
@@ -1491,8 +1495,8 @@ PositionIndex _pbTransModel<HYPOTHESIS>::getLastSrcPosCovered(const Hypothesis& 
 //---------------------------------
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
-                                        std::ostream &outS,
-                                        int verbose)
+                                         std::ostream &outS,
+                                         int verbose)
 {
       // Obtain target string vector
   std::vector<std::string> trgStrVec=trgIndexVectorToStrVector(hyp.getPartialTrans());
@@ -1544,8 +1548,16 @@ void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
   {
     std::string constrType=this->trMetadataPtr->getConstraintTypeForSrcPhr(sourceSegmentation[k]);
     outS<<"( "<<sourceSegmentation[k].first<<" , "<<sourceSegmentation[k].second<<" ; type: ";
+        // Print translation type for source segment
     if(constrType.empty())
-      outS<<"RegularPhrTableEntry";
+    {
+      std::pair<PositionIndex,PositionIndex> pidxPair;
+      pidxPair.first=sourceSegmentation[k].first;
+      pidxPair.second=sourceSegmentation[k].second;
+      std::vector<WordIndex> trgPhr;
+      hyp.getTrgTransForSrcPhr(pidxPair,trgPhr);
+      outS<<getLogLinFeatNamesForPhrTransStr(pidxPair,trgIndexVectorToStrVector(trgPhr));
+    }
     else
       outS<<constrType;
     outS<<" ) ";
@@ -2111,6 +2123,79 @@ bool _pbTransModel<HYPOTHESIS>::getTransForSrcPhraseStr(const std::vector<std::s
     return false;
   else
     return true;  
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+std::string _pbTransModel<HYPOTHESIS>::getLogLinFeatNamesForPhrTransStr(std::pair<PositionIndex,PositionIndex> pidxPair,
+                                                                        std::vector<std::string> trgPhr)
+{
+      // Obtain vector of log linear feature names
+  std::vector<std::string> strVec=getLogLinFeatNamesForPhrTrans(pidxPair,trgPhr);
+
+      // Compose output string
+  if(strVec.empty())
+    return UNK_WORD_STR;
+  else
+  {
+    std::string result;
+    for(unsigned int i=0;i<strVec.size();++i)
+    {
+      result+=strVec[i];
+      if(i<strVec.size()-1)
+        result+=",";
+    }
+    
+    return result;
+  }
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+std::vector<std::string> _pbTransModel<HYPOTHESIS>::getLogLinFeatNamesForPhrTrans(std::pair<PositionIndex,PositionIndex> pidxPair,
+                                                                                  std::vector<std::string> trgPhr)
+{
+      // Clear data structures
+  std::vector<std::string> featNames;
+
+      // Obtain source phrase
+  std::vector<std::string> srcPhraseStr;
+  for(unsigned int j=pidxPair.first;j<=pidxPair.second;++j)
+    srcPhraseStr.push_back(pbtmInputVars.srcSentVec[j-1]);
+
+      // Obtain translation options for each standard feature
+  for(unsigned int i=0;i<this->standardFeaturesInfoPtr->featPtrVec.size();++i)
+  {
+        // Obtain options
+    std::vector<std::vector<std::string> > transOptVec;
+    this->standardFeaturesInfoPtr->featPtrVec[i]->obtainTransOptions(srcPhraseStr,transOptVec);
+
+        // Add featName to result if appropriate
+    std::vector<std::vector<std::string> >::const_iterator iter;
+    iter=find(transOptVec.begin(),transOptVec.end(),trgPhr);
+    if(iter!=transOptVec.end())
+    {
+      featNames.push_back(this->standardFeaturesInfoPtr->featPtrVec[i]->getFeatName());
+    }
+  }
+
+      // Obtain translation options for each on-the-fly feature
+  for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
+  {
+        // Obtain options
+    std::vector<std::vector<std::string> > transOptVec;
+    this->onTheFlyFeaturesInfo.featPtrVec[i]->obtainTransOptions(srcPhraseStr,transOptVec);
+
+        // Add featName to result if appropriate
+    std::vector<std::vector<std::string> >::const_iterator iter;
+    iter=find(transOptVec.begin(),transOptVec.end(),trgPhr);
+    if(iter!=transOptVec.end())
+    {
+      featNames.push_back(this->onTheFlyFeaturesInfo.featPtrVec[i]->getFeatName());
+    }
+  }
+
+  return featNames;
 }
 
 //---------------------------------
