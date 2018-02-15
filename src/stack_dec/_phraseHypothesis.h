@@ -69,6 +69,8 @@ class _phraseHypothesis: public BasePhraseHypothesis<SCORE_INFO,PhrHypData,EQCLA
   bool areAligned(PositionIndex j,PositionIndex i)const;
   void getPhraseAlign(SourceSegmentation& sourceSegmentation,
                       std::vector<PositionIndex>& targetSegmentCuts)const;
+  void getTrgTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhrPos,
+                            std::vector<WordIndex>& trgPhr)const;
   Bitset<MAX_SENTENCE_LENGTH_ALLOWED> getKey(void)const;
   std::vector<WordIndex> getPartialTrans(void)const;
   unsigned int partialTransLength(void)const;
@@ -179,6 +181,41 @@ void _phraseHypothesis<SCORE_INFO,EQCLASS_FUNC>::getPhraseAlign(SourceSegmentati
 {
   sourceSegmentation=data.sourceSegmentation;
   targetSegmentCuts=data.targetSegmentCuts;
+}
+
+//---------------------------------------
+template<class SCORE_INFO,class EQCLASS_FUNC>
+void _phraseHypothesis<SCORE_INFO,EQCLASS_FUNC>::getTrgTransForSrcPhr(std::pair<PositionIndex,PositionIndex> srcPhrPos,
+                                                                      std::vector<WordIndex>& trgPhr)const
+{
+      // Search source phrase in segmentation
+  unsigned int k;
+  bool srcPhrFound=false;
+  for(unsigned int i=0;i<data.sourceSegmentation.size();++i)
+  {
+    if(srcPhrPos==data.sourceSegmentation[i])
+    {
+      k=i;
+      srcPhrFound=true;
+    }
+  }
+
+      // Obtain target translation
+  if(srcPhrFound)
+  {
+    trgPhr.clear();
+    unsigned int i=0;
+    if(k>0)
+      i=data.targetSegmentCuts[k-1];
+    for(;i<data.targetSegmentCuts[k];++i)
+    {
+      trgPhr.push_back(data.ntarget[i+1]);
+    }
+  }
+  else
+  {
+    trgPhr.clear();
+  }
 }
 
 //---------------------------------------
