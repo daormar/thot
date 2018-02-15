@@ -7,7 +7,6 @@ import sys, codecs, math, re, Queue
 import itertools
 from heapq import heappush, heappop
 
-
 # global variables
 _global_n=2
 _global_lm_interp_prob=0.5
@@ -932,17 +931,19 @@ def obtain_source_segments(hyp_word_array):
             info_found=True
             i+=1
             break;
-        
+
     srcsegms_found=False
     if(info_found):
         while i<len(hyp_word_array):
-            if(hyp_word_array[i]!="|"):
+            if(hyp_word_array[i]=="("):
                 if(i+3<len(hyp_word_array)):
                     srcsegms.append((int(hyp_word_array[i+1]),int(hyp_word_array[i+3])))
-                i+=8
-            else:
+                i+=1
+            elif(hyp_word_array[i]=="|"):
                 srcsegms_found=True
                 break
+            else:
+                i+=1
             
     # Return result
     if(srcsegms_found):
