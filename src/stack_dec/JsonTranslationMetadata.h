@@ -115,9 +115,8 @@ void JsonTranslationMetadata<SCORE_INFO>::obtainTransConstraints(std::string raw
 {
     // TODO: How parsing errors should be handled
 
-    // Initialize data structures
-    srcSentVec.clear();
-    srcPhrTransMap.clear();
+    // Clear data structures
+    clear();
 
     if(!rawSrcSent.empty())
     {
@@ -125,13 +124,19 @@ void JsonTranslationMetadata<SCORE_INFO>::obtainTransConstraints(std::string raw
         picojson::value json;
         std::string err = picojson::parse(json, rawSrcSent);
 
-        if(!err.empty())  // Parsing JSON failed
+        if(!err.empty())  // Parsing JSON failed (raw source sentence is
+                          // set as the source sentence)
         {
             std::cerr << "Processing constraints in JSON format failed: " << err << std::endl;
+            srcSentVec=StrProcUtils::stringToStringVector(rawSrcSent);
         }
-        else if(!json.is<picojson::object>())  // Loaded data are not valid JSON
+        else if(!json.is<picojson::object>())  // Loaded data are not
+                                               // valid JSON (raw source
+                                               // sentence is set as the
+                                               // source sentence)
         {
             std::cerr << "Received data are not a valid JSON: " << rawSrcSent << std::endl;
+            srcSentVec=StrProcUtils::stringToStringVector(rawSrcSent);
         }
         else  // JSON parsed correctly
         {
