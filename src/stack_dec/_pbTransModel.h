@@ -1546,9 +1546,9 @@ void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
   outS << "| Source Segmentation: ";
   for(unsigned int k=0;k<sourceSegmentation.size();k++)
   {
-    std::string constrType=this->trMetadataPtr->getConstraintTypeForSrcPhr(sourceSegmentation[k]);
     outS<<"( "<<sourceSegmentation[k].first<<" , "<<sourceSegmentation[k].second<<" ; type: ";
         // Print translation type for source segment
+    std::string constrType=this->trMetadataPtr->getConstraintTypeForSrcPhr(sourceSegmentation[k]);
     if(constrType.empty())
     {
       std::pair<PositionIndex,PositionIndex> pidxPair;
