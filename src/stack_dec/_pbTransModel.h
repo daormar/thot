@@ -1548,8 +1548,15 @@ void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
   {
     outS<<"( "<<sourceSegmentation[k].first<<" , "<<sourceSegmentation[k].second<<" ; type: ";
         // Print translation type for source segment
-    std::string constrType=this->trMetadataPtr->getConstraintTypeForSrcPhr(sourceSegmentation[k]);
-    if(constrType.empty())
+    if(this->trMetadataPtr->srcPhrAffectedByConstraint(sourceSegmentation[k]))
+    {
+      std::string constrType=this->trMetadataPtr->getConstraintTypeForSrcPhr(sourceSegmentation[k]);
+      if(constrType.empty())
+        outS<<"Constraint";
+      else
+        outS<<constrType;
+    }
+    else
     {
       std::pair<PositionIndex,PositionIndex> pidxPair;
       pidxPair.first=sourceSegmentation[k].first;
@@ -1558,8 +1565,6 @@ void _pbTransModel<HYPOTHESIS>::printHyp(const Hypothesis& hyp,
       hyp.getTrgTransForSrcPhr(pidxPair,trgPhr);
       outS<<getLogLinFeatNamesForPhrTransStr(pidxPair,trgIndexVectorToStrVector(trgPhr));
     }
-    else
-      outS<<constrType;
     outS<<" ) ";
   }
 
