@@ -113,8 +113,6 @@ JsonTranslationMetadata<SCORE_INFO>::JsonTranslationMetadata(void)
 template<class SCORE_INFO>
 void JsonTranslationMetadata<SCORE_INFO>::obtainTransConstraints(std::string rawSrcSent,int verbosity/*=0*/)
 {
-    // TODO: How parsing errors should be handled
-
     // Clear data structures
     clear();
 
@@ -160,17 +158,31 @@ void JsonTranslationMetadata<SCORE_INFO>::obtainTransConstraints(std::string raw
             std::vector<std::pair<std::string, std::string> > translations;
             for(picojson::array::iterator iter = tags.begin(); iter != tags.end(); iter++)
             {
+              bool success=true;
+              
                   // Check if translation field exists
+              std::string translation;
               if((*iter).get("translation").is<std::string>())
+                translation = (*iter).get("translation").get<std::string>();
+              else
+                success=false;
+
+              std::string original;
+              if((*iter).get("original").is<std::string>())
+                original = (*iter).get("original").get<std::string>();
+              else
+                success=false;
+              
+              if(success)
               {
-                std::string original = (*iter).get("original").get<std::string>();
-                std::string translation = (*iter).get("translation").get<std::string>();
-                    // Check if original (source) and translation (target) phrases contains different charaters than whitespaces
+                    // Check if original (source) and translation
+                    // (target) phrases contains different characters
+                    // than whitespaces
                 if(!containsOnlyWhitespaces(original) && !containsOnlyWhitespaces(translation))
-                {
                   translations.push_back(std::make_pair(original, translation));
-                }
               }
+              else
+                std::cerr<<"Error while parsing segmentation constraint"<<std::endl;
             }
                 // Encode translations based on occurences in source sentence
             addTranslations(translations);
@@ -192,7 +204,6 @@ void JsonTranslationMetadata<SCORE_INFO>::obtainTransConstraints(std::string raw
                 std::cerr << StrProcUtils::stringVectorToString(const_iter->second) << ";";
             }
             std::cerr<<std::endl;
-
         }
     }
 }
