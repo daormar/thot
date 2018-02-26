@@ -308,7 +308,7 @@ create_tm_files()
 get_srcsents_from_test()
 {
     tcorpus_wo_metadata=${outd}/test_corpus_without_metadata
-    ${bindir}/thot_get_srcsents_from_metadata -f ${tcorpus} > ${tcorpus_wo_metadata}
+    ${bindir}/thot_get_srcsents_from_metadata -f ${tcorpus} > ${tcorpus_wo_metadata} 2>/dev/null
 }
 
 ########
@@ -495,7 +495,7 @@ create_lm_files || exit 1
 create_tm_files || exit 1
 
 # Get source sentences from test corpus
-get_srcsents_from_test || exit 1
+get_srcsents_from_test 2>/dev/null || exit 1
 
 # Filter tm model
 filter_ttables || exit 1

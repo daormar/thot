@@ -666,7 +666,7 @@ tune_tm()
 
     # Extract source sentences from file
     scorpus_wo_metadata=${outd}/src_corpus_without_metadata
-    ${bindir}/thot_get_srcsents_from_metadata -f ${scorpus} > ${scorpus_wo_metadata}
+    ${bindir}/thot_get_srcsents_from_metadata -f ${scorpus} > ${scorpus_wo_metadata} 2>/dev/null
 
     # Filter translation table
     echo "" >&2
