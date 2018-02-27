@@ -44,6 +44,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 struct input_pars
 {
   std::string srcSentsFile;
+  int verbosity;
 };
 
 //--------------- Function Declarations ------------------------------
@@ -89,7 +90,7 @@ int main(int argc,char *argv[])
       return THOT_ERROR;
     }
 
-        // Calculate score
+        // Get source sentences
     int retVal=get_srcsents(pars);
 
         // Release pointers
@@ -143,6 +144,11 @@ int takeParameters(int argc,
   if(err==THOT_ERROR)
     return THOT_ERROR;
 
+  if(readOption(argc,argv,"-v")==THOT_OK)
+    pars.verbosity=true;
+  else
+    pars.verbosity=false;
+
   return THOT_OK;
 }
 
@@ -169,9 +175,13 @@ int get_srcsents(input_pars pars)
     std::cerr<<"Error while opening file "<<pars.srcSentsFile<<std::endl;
     return THOT_ERROR;
   }  
-  
+
   while(awk.getln())
   {
+    if(pars.verbosity)
+    {
+      std::cerr<<"Processing sentence "<<awk.FNR<<" ..."<<std::endl;
+    }
         // Obtain translation constraints
     int verbosity=false;
     baseTransMetadataPtr->obtainTransConstraints(awk.dollar(0),verbosity);
@@ -194,10 +204,11 @@ int get_srcsents(input_pars pars)
 //--------------------------------
 void printUsage(void)
 {
-  std::cerr<<"thot_get_srcsents_from_metadata -f <string>"<<std::endl;
+  std::cerr<<"thot_get_srcsents_from_metadata -f <string> [-v]"<<std::endl;
   std::cerr<<"                                [--help] [--version]"<<std::endl;
   std::cerr<<std::endl;
   std::cerr<<"-f <string>                     File with metadata for sentences."<<std::endl;
+  std::cerr<<"-v                              Enable verbose mode."<<std::endl;
   std::cerr<<"--help                          Display this help and exit."<<std::endl;
   std::cerr<<"--version                       Output version information and exit."<<std::endl;
 }
