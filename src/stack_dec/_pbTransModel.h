@@ -59,6 +59,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #define MODEL_TRANSREF_STATE    3
 #define MODEL_TRANSVER_STATE    4
 #define MODEL_TRANSPREFIX_STATE 5
+#define DEFAULT_LOGLIN_WEIGHT   1
 
 //--------------- Classes --------------------------------------------
 
@@ -164,9 +165,14 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   unsigned int state;
 
       // Feature vector information
+  std::vector<float> defaultFeatWeights;
+  
   FeaturesInfo<HypScoreInfo>* standardFeaturesInfoPtr;
+  std::vector<float> standardFeaturesWeights;
+  
   FeaturesInfo<HypScoreInfo> onTheFlyFeaturesInfo;
-
+  std::vector<float> onTheFlyFeaturesWeights;
+  
       // Vocabulary handler
   SingleWordVocab singleWordVocab;
 
@@ -189,9 +195,11 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
       // Data used to cache n-best translation data
   NbestTransCacheData nbTransCacheData;
 
-      // Functions related to on-the-fly model features
-  void initOnTheFlyModelFeatsPreservingWeights();
-
+  ////// Weight-related functions
+  void initFeatWeights(std::vector<float> wVec);
+  float getStdFeatWeight(unsigned int i);
+  float getOnTheFlyFeatWeight(unsigned int i);
+  
   ////// Hypotheses-related functions
 
       // Expansion-related functions
@@ -414,31 +422,7 @@ void _pbTransModel<HYPOTHESIS>::link_trans_metadata(BaseTranslationMetadata<HypS
       // On-the-fly features are initialized at this point so as to be
       // able to correctly know the features that are available to the
       // decoder from the very beginning
-  initOnTheFlyModelFeatsPreservingWeights();
-}
-
-//---------------------------------
-template<class HYPOTHESIS>
-void _pbTransModel<HYPOTHESIS>::initOnTheFlyModelFeatsPreservingWeights()
-{
-      // Get previous weights if any
-  std::vector<float> weightVec;
-  for(unsigned int i=0;i<onTheFlyFeaturesInfo.featPtrVec.size();++i)
-  {
-    weightVec.push_back(onTheFlyFeaturesInfo.featPtrVec[i]->getWeight());
-  }
-      
-      // Get on-the-fly features
   onTheFlyFeaturesInfo.featPtrVec=this->trMetadataPtr->getOnTheFlyModelFeatures();
-
-      // Restore previous weights
-  if(weightVec.size()==onTheFlyFeaturesInfo.featPtrVec.size())
-  {
-    for(unsigned int i=0;i<onTheFlyFeaturesInfo.featPtrVec.size();++i)
-    {
-      onTheFlyFeaturesInfo.featPtrVec[i]->setWeight(weightVec[i]);
-    }
-  }
 }
 
 //---------------------------------
@@ -458,6 +442,11 @@ void _pbTransModel<HYPOTHESIS>::clear(void)
       // Initialize feature information pointer
   standardFeaturesInfoPtr=NULL;
 
+      // Clear weight information for features
+  defaultFeatWeights.clear();
+  standardFeaturesWeights.clear();
+  onTheFlyFeaturesWeights.clear();
+  
       // Initially, no heuristic is used
   heuristicId=NO_HEURISTIC;
 
@@ -483,7 +472,7 @@ void _pbTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
   pbtmInputVars.srcSentVec=this->trMetadataPtr->getSrcSentVec();
 
       // Initialize on-the-fly features
-  initOnTheFlyModelFeatsPreservingWeights();
+  onTheFlyFeaturesInfo.featPtrVec=this->trMetadataPtr->getOnTheFlyModelFeatures();
   
       // Verify coverage for source
   if(this->verbosity>0)
@@ -702,6 +691,26 @@ std::pair<Count,std::string>
   std::cerr<<"Warning, getBestSuffixGivenHist function intentionally not implemented for this class"<<std::endl;
   std::pair<Count,std::string> result;
   return result;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+float _pbTransModel<HYPOTHESIS>::getStdFeatWeight(unsigned int i)
+{
+  if(i<standardFeaturesWeights.size())
+    return standardFeaturesWeights[i];
+  else
+    return DEFAULT_LOGLIN_WEIGHT;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+float _pbTransModel<HYPOTHESIS>::getOnTheFlyFeatWeight(unsigned int i)
+{
+  if(i<onTheFlyFeaturesWeights.size())
+    return onTheFlyFeaturesWeights[i];
+  else
+    return DEFAULT_LOGLIN_WEIGHT;  
 }
 
 //---------------------------------
@@ -1255,18 +1264,21 @@ template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::heurDirectPmScoreLt(const std::vector<WordIndex>& srcPhrase,
                                                      const std::vector<WordIndex>& trgPhrase)
 {
+      // TO-BE-DONE
+
       // Obtain string vector
   std::vector<std::string> srcPhraseStr=srcIndexVectorToStrVector(srcPhrase);
   std::vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
   
       // Obtain direct phrase model feature pointers 
   Score scr=0;
-  std::vector<DirectPhraseModelFeat<HypScoreInfo>* > directPhraseModelFeatPtrs=standardFeaturesInfoPtr->getDirectPhraseModelFeatPtrs();
+  std::vector<unsigned int> featIndexVec;
+  std::vector<DirectPhraseModelFeat<HypScoreInfo>* > directPhraseModelFeatPtrs=standardFeaturesInfoPtr->getDirectPhraseModelFeatPtrs(featIndexVec);
   for(unsigned int i=0;i<directPhraseModelFeatPtrs.size();++i)
   {
-    scr+=directPhraseModelFeatPtrs[i]->scorePhrasePair(srcPhraseStr,trgPhraseStr);
+    scr+=getStdFeatWeight(featIndexVec[i]) * directPhraseModelFeatPtrs[i]->scorePhrasePairUnweighted(srcPhraseStr,trgPhraseStr);
   }
-  return scr;  
+  return scr;
 }
 
 //---------------------------------
@@ -1274,16 +1286,19 @@ template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::heurInversePmScoreLt(const std::vector<WordIndex>& srcPhrase,
                                                       const std::vector<WordIndex>& trgPhrase)
 {
+      // TO-BE-DONE
+
       // Obtain string vector
   std::vector<std::string> srcPhraseStr=srcIndexVectorToStrVector(srcPhrase);
   std::vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
 
       // Obtain inverse phrase model feature pointers 
   Score scr=0;
-  std::vector<InversePhraseModelFeat<HypScoreInfo>* > inversePhraseModelFeatPtrs=standardFeaturesInfoPtr->getInversePhraseModelFeatPtrs();
+  std::vector<unsigned int> featIndexVec;
+  std::vector<InversePhraseModelFeat<HypScoreInfo>* > inversePhraseModelFeatPtrs=standardFeaturesInfoPtr->getInversePhraseModelFeatPtrs(featIndexVec);
   for(unsigned int i=0;i<inversePhraseModelFeatPtrs.size();++i)
   {
-    scr+=inversePhraseModelFeatPtrs[i]->scorePhrasePair(srcPhraseStr,trgPhraseStr);
+    scr+=getStdFeatWeight(featIndexVec[i]) * inversePhraseModelFeatPtrs[i]->scorePhrasePairUnweighted(srcPhraseStr,trgPhraseStr);
   }
   return scr;
 }
@@ -1292,16 +1307,19 @@ Score _pbTransModel<HYPOTHESIS>::heurInversePmScoreLt(const std::vector<WordInde
 template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::heurLmScoreLtNoAdmiss(const std::vector<WordIndex>& trgPhrase)
 {
+      // TO-BE-DONE
+
       // Obtain string vector
   std::vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
 
       // Obtain language model feature pointers 
   Score scr=0;
-  std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=standardFeaturesInfoPtr->getLangModelFeatPtrs();
+  std::vector<unsigned int> featIndexVec;
+  std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=standardFeaturesInfoPtr->getLangModelFeatPtrs(featIndexVec);
   for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
   {
     std::vector<std::string> emptyPhraseStr;
-    scr+=langModelFeatPtrs[i]->scorePhrasePair(emptyPhraseStr,trgPhraseStr);
+    scr+=getStdFeatWeight(featIndexVec[i]) * langModelFeatPtrs[i]->scorePhrasePairUnweighted(emptyPhraseStr,trgPhraseStr);
   }
   return scr;
 }
@@ -1355,14 +1373,18 @@ Score _pbTransModel<HYPOTHESIS>::calcHeuristicScore(const _pbTransModel::Hypothe
 template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::calcRefLmHeurScore(const _pbTransModel::Hypothesis& hyp)
 {
+      // TO-BE-DONE
+  
   if(refHeurLmLgProb.empty())
   {
-    std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=standardFeaturesInfoPtr->getLangModelFeatPtrs();
+    std::vector<unsigned int> featIndexVec;
+    std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=standardFeaturesInfoPtr->getLangModelFeatPtrs(featIndexVec);
     for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
     {
           // Obtain scores
       std::vector<Score> cumulativeScoreVec;
-      langModelFeatPtrs[i]->scoreTrgSentence(pbtmInputVars.refSentVec,cumulativeScoreVec);
+      langModelFeatPtrs[i]->scoreTrgSentence(pbtmInputVars.refSentVec,getStdFeatWeight(featIndexVec[i]),cumulativeScoreVec);
+      
           // Update refHeurLmLgProb
       for(unsigned int j=0;j<cumulativeScoreVec.size();++j)
       {
@@ -1385,14 +1407,18 @@ Score _pbTransModel<HYPOTHESIS>::calcRefLmHeurScore(const _pbTransModel::Hypothe
 template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::calcPrefLmHeurScore(const _pbTransModel::Hypothesis& hyp)
 {
+      // TO-BE-DONE
+  
   if(prefHeurLmLgProb.empty())
   {
-    std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=standardFeaturesInfoPtr->getLangModelFeatPtrs();
+    std::vector<unsigned int> featIndexVec;
+    std::vector<LangModelFeat<HypScoreInfo>* > langModelFeatPtrs=standardFeaturesInfoPtr->getLangModelFeatPtrs(featIndexVec);
     for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
     {
           // Obtain scores
       std::vector<Score> cumulativeScoreVec;
-      langModelFeatPtrs[i]->scoreTrgSentence(pbtmInputVars.prefSentVec,cumulativeScoreVec);
+      langModelFeatPtrs[i]->scoreTrgSentence(pbtmInputVars.prefSentVec,getStdFeatWeight(featIndexVec[i]),cumulativeScoreVec);
+
           // Update prefHeurLmLgProb
       for(unsigned int j=0;j<cumulativeScoreVec.size();++j)
       {
@@ -1476,7 +1502,8 @@ Score _pbTransModel<HYPOTHESIS>::getDistortionHeurScore(const Hypothesis& hyp)
   PositionIndex lastSrcPosCovered=getLastSrcPosCovered(hyp);
 
       // Obtain score
-  std::vector<SrcPosJumpFeat<HypScoreInfo>* > srcPosJumpFeatPtrs=standardFeaturesInfoPtr->getSrcPosJumpFeatPtrs();
+  std::vector<unsigned int> featIndexVec;
+  std::vector<SrcPosJumpFeat<HypScoreInfo>* > srcPosJumpFeatPtrs=standardFeaturesInfoPtr->getSrcPosJumpFeatPtrs(featIndexVec);
   for(unsigned int i=0;i<srcPosJumpFeatPtrs.size();++i)
   {
     result+=srcPosJumpFeatPtrs[i]->calcHeurScore(gaps,lastSrcPosCovered);
@@ -1781,11 +1808,30 @@ std::vector<std::string> _pbTransModel<HYPOTHESIS>::getTransInPlainTextVecTvs(co
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::setWeights(std::vector<float> wVec)
 {
+      // TO-BE-DONE
+
+      // Initialize variables
+  defaultFeatWeights=wVec;
+
+      // Initialize weights
+  initFeatWeights(wVec);
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::initFeatWeights(std::vector<float> wVec)
+{
+      // Clear weight vectors
+  standardFeaturesWeights.clear();
+  onTheFlyFeaturesWeights.clear();
+  
       // Set weights of standard features
   for(unsigned int i=0;i<standardFeaturesInfoPtr->featPtrVec.size();++i)
   {
     if(i<wVec.size())
-      standardFeaturesInfoPtr->featPtrVec[i]->setWeight(wVec[i]);
+      standardFeaturesWeights.push_back(wVec[i]);
+    else
+      standardFeaturesWeights.push_back(DEFAULT_LOGLIN_WEIGHT);
   }
 
       // Set weights of on-the-fly features
@@ -1793,7 +1839,9 @@ void _pbTransModel<HYPOTHESIS>::setWeights(std::vector<float> wVec)
   for(unsigned int i=0;i<onTheFlyFeaturesInfo.featPtrVec.size();++i)
   {
     if(numStdWeights+i<wVec.size())
-      onTheFlyFeaturesInfo.featPtrVec[i]->setWeight(wVec[numStdWeights+i]);
+      onTheFlyFeaturesWeights.push_back(wVec[numStdWeights+i]);
+    else
+      onTheFlyFeaturesWeights.push_back(DEFAULT_LOGLIN_WEIGHT);
   }
 }
 
@@ -1809,7 +1857,10 @@ void _pbTransModel<HYPOTHESIS>::getWeights(std::vector<std::pair<std::string,flo
     std::string weightName=standardFeaturesInfoPtr->featPtrVec[i]->getFeatName();
     weightName+="w";
     str_float.first=weightName;
-    str_float.second=standardFeaturesInfoPtr->featPtrVec[i]->getWeight();
+    if(i<standardFeaturesWeights.size())
+      str_float.second=standardFeaturesWeights[i];
+    else
+      str_float.second=DEFAULT_LOGLIN_WEIGHT;
     compWeights.push_back(str_float);
   }
   
@@ -1820,7 +1871,10 @@ void _pbTransModel<HYPOTHESIS>::getWeights(std::vector<std::pair<std::string,flo
     std::string weightName=onTheFlyFeaturesInfo.featPtrVec[i]->getFeatName();
     weightName+="w";
     str_float.first=weightName;
-    str_float.second=onTheFlyFeaturesInfo.featPtrVec[i]->getWeight();
+    if(i<onTheFlyFeaturesWeights.size())
+      str_float.second=onTheFlyFeaturesWeights[i];
+    else
+      str_float.second=DEFAULT_LOGLIN_WEIGHT;
     compWeights.push_back(str_float);
   }
 }
@@ -2208,6 +2262,8 @@ template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::nbestTransScore(const std::vector<WordIndex>& srcPhrase,
                                                  const std::vector<WordIndex>& trgPhrase)
 {
+      // TO-BE-DONE
+  
   Score result=0;
   
       // Obtain string vectors
@@ -2217,13 +2273,13 @@ Score _pbTransModel<HYPOTHESIS>::nbestTransScore(const std::vector<WordIndex>& s
       // Obtain score for each standard feature
   for(unsigned int i=0;i<this->standardFeaturesInfoPtr->featPtrVec.size();++i)
   {
-    result+=this->standardFeaturesInfoPtr->featPtrVec[i]->scorePhrasePair(srcPhraseStr,trgPhraseStr);
+    result+=getStdFeatWeight(i) * this->standardFeaturesInfoPtr->featPtrVec[i]->scorePhrasePairUnweighted(srcPhraseStr,trgPhraseStr);
   }
 
       // Obtain score for each on-the-fly feature
   for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
   {
-    result+=this->onTheFlyFeaturesInfo.featPtrVec[i]->scorePhrasePair(srcPhraseStr,trgPhraseStr);
+    result+=getOnTheFlyFeatWeight(i) * this->onTheFlyFeaturesInfo.featPtrVec[i]->scorePhrasePairUnweighted(srcPhraseStr,trgPhraseStr);
   }
 
   return result;
