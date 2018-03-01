@@ -473,6 +473,13 @@ void _pbTransModel<HYPOTHESIS>::pre_trans_actions(std::string srcsent)
 
       // Initialize on-the-fly features
   onTheFlyFeaturesInfo.featPtrVec=this->trMetadataPtr->getOnTheFlyModelFeatures();
+
+      // Set log-linear weights for sentence if available
+  std::vector<float> wVec=this->trMetadataPtr->getLogLinearModelWeightsForSrcSent();
+  if(wVec.empty())
+    initFeatWeights(defaultFeatWeights);
+  else
+    initFeatWeights(wVec);
   
       // Verify coverage for source
   if(this->verbosity>0)
