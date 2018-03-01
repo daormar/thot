@@ -34,6 +34,7 @@ SrcPosJumpFeat<PhrScoreInfo>::extensionScore(const std::vector<std::string>& /*s
                                              const HypScoreInfo& predHypScrInf,
                                              const PhrHypDataStr& predHypDataStr,
                                              const PhrHypDataStr& newHypDataStr,
+                                             float weight,
                                              Score& unweightedScore)
 {
       // Obtain score for hypothesis extension

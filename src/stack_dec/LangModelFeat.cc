@@ -31,6 +31,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 template<>
 LangModelFeat<PhrScoreInfo>::HypScoreInfo
 LangModelFeat<PhrScoreInfo>::nullHypScore(const HypScoreInfo& predHypScrInf,
+                                          float weight,
                                           Score& unweightedScore)
 {
   unweightedScore=0;
@@ -49,6 +50,7 @@ LangModelFeat<PhrScoreInfo>::extensionScore(const std::vector<std::string>& srcS
                                             const HypScoreInfo& predHypScrInf,
                                             const PhrHypDataStr& predHypDataStr,
                                             const PhrHypDataStr& newHypDataStr,
+                                            float weight,
                                             Score& unweightedScore)
 {
       // Obtain score for hypothesis extension

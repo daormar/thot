@@ -66,6 +66,7 @@ class SrcPhraseLenFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
+                              float weight,
                               Score& unweightedScore);
   Score scorePhrasePairUnweighted(const std::vector<std::string>& srcPhrase,
                                   const std::vector<std::string>& trgPhrase);
@@ -89,7 +90,6 @@ class SrcPhraseLenFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 SrcPhraseLenFeat<SCORE_INFO>::SrcPhraseLenFeat()
 {
-  this->weight=1;
 }
 
 //---------------------------------

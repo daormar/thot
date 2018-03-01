@@ -63,11 +63,13 @@ class WordPenaltyFeat: public BasePbTransModelFeature<SCORE_INFO>
 
       // Scoring functions
   HypScoreInfo nullHypScore(const HypScoreInfo& predHypScrInf,
+                            float weight,
                             Score& unweightedScore);
   HypScoreInfo extensionScore(const std::vector<std::string>& srcSent,
                               const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
+                              float weight,
                               Score& unweightedScore);
   Score scorePhrasePairUnweighted(const std::vector<std::string>& srcPhrase,
                                   const std::vector<std::string>& trgPhrase);
@@ -86,7 +88,6 @@ class WordPenaltyFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 WordPenaltyFeat<SCORE_INFO>::WordPenaltyFeat()
 {
-  this->weight=0.000001;
 }
 
 //---------------------------------

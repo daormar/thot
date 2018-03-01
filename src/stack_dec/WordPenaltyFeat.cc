@@ -31,6 +31,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 template<>
 WordPenaltyFeat<PhrScoreInfo>::HypScoreInfo
 WordPenaltyFeat<PhrScoreInfo>::nullHypScore(const HypScoreInfo& predHypScrInf,
+                                            float weight,
                                             Score& unweightedScore)
 {
       // Obtain score for null hypothesis
@@ -47,6 +48,7 @@ WordPenaltyFeat<PhrScoreInfo>::extensionScore(const std::vector<std::string>& sr
                                               const HypScoreInfo& predHypScrInf,
                                               const PhrHypDataStr& predHypDataStr,
                                               const PhrHypDataStr& newHypDataStr,
+                                              float weight,
                                               Score& unweightedScore)
 {
       // Obtain score for hypothesis extension
