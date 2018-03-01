@@ -89,6 +89,13 @@ class BaseTranslationMetadata
     return emptyVec;
   }
 
+      // Functions related to log-linear weights setting
+  virtual std::vector<float> getLogLinearModelWeightsForSrcSent(void)
+  {
+    std::vector<float> emptyWeightVec;
+    return emptyWeightVec;
+  } 
+  
   virtual void clear(void)=0;
 
       // Destructor
