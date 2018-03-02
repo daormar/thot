@@ -175,7 +175,8 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
     
   void addgToHyp(Hypothesis& hyp);
   void subtractgToHyp(Hypothesis& hyp);
-  
+
+      // Actions previous to decoding
   int pre_trans_actions(std::string srcsent);
   void pre_trans_actions_ref(std::string srcsent,
                              std::string refsent);
@@ -183,7 +184,7 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
                              std::string refsent);
   void pre_trans_actions_prefix(std::string srcsent,
                                 std::string prefix);
-
+  
   void suggest(const Hypothesis& sug);
       // Inserts a hypothesis into the stack
   void suggestNullHyp(void);
@@ -214,18 +215,6 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
 
       // Puts the decoder in the initial state
   void init_state(void);
-
-      ////////////////////////////////////////////////////////////
-      // PURE VIRTUAL FUNCTIONS
-      ////////////////////////////////////////////////////////////
-
-  virtual void specific_pre_trans_actions(std::string srcsent)=0;
-  virtual void specific_pre_trans_actions_ref(std::string srcsent,
-                                              std::string refsent)=0;
-  virtual void specific_pre_trans_actions_ver(std::string srcsent,
-                                              std::string refsent)=0;
-  virtual void specific_pre_trans_actions_prefix(std::string srcsent,
-                                                 std::string prefix)=0;
 
       // Utilities
   Score testHeuristic(std::string sentence,
@@ -323,8 +312,7 @@ template<class SMT_MODEL>
 typename _stackDecoder<SMT_MODEL>::Hypothesis
 _stackDecoder<SMT_MODEL>::translate(std::string s)
 {
-  return translateWithSuggestion(s,
-                                 smtm_ptr->nullHypothesisHypData());
+  return translateWithSuggestion(s, smtm_ptr->nullHypothesisHypData());
 }
 
 //---------------------------------------
@@ -406,7 +394,9 @@ _stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
         // Translate sentence
     if(verbosity>0)
       std::cerr<<"Decoding input..."<<std::endl;
-    return decode();
+    Hypothesis result=decode();
+
+    return result;
   }
 }
 
@@ -668,7 +658,7 @@ int _stackDecoder<SMT_MODEL>::pre_trans_actions(std::string srcsent)
 
       // Verify sentence length (it is done after calling
       // pre_trans_actions for the smt model, since translation
-      // constraints information may affect the length)
+      // metadata information may affect the length)
   std::string modelSrcSent=smtm_ptr->getCurrentSrcSent();
   unsigned int srcSize=StrProcUtils::stringToStringVector(modelSrcSent).size();
   if(srcSize==0 || srcSize>=MAX_SENTENCE_LENGTH_ALLOWED)
@@ -680,7 +670,6 @@ int _stackDecoder<SMT_MODEL>::pre_trans_actions(std::string srcsent)
     return THOT_ERROR;
   }
 
-  specific_pre_trans_actions(srcsent);
   bestCompleteHypScore=worstScoreAllowed;
   bestCompleteHyp=smtm_ptr->nullHypothesis();
   return THOT_OK;
@@ -696,7 +685,6 @@ void _stackDecoder<SMT_MODEL>::pre_trans_actions_ref(std::string srcsent,
   srcSentence=srcsent;
   refSentence=refsent;
   smtm_ptr->pre_trans_actions_ref(srcsent,refsent);
-  specific_pre_trans_actions_ref(srcsent,refsent);
   bestCompleteHypScore=worstScoreAllowed;
   bestCompleteHyp=smtm_ptr->nullHypothesis();
 }
@@ -711,7 +699,6 @@ void _stackDecoder<SMT_MODEL>::pre_trans_actions_ver(std::string srcsent,
   srcSentence=srcsent;
   refSentence=refsent;
   smtm_ptr->pre_trans_actions_ver(srcsent,refsent);
-  specific_pre_trans_actions_ver(srcsent,refsent);
   bestCompleteHypScore=worstScoreAllowed;
   bestCompleteHyp=smtm_ptr->nullHypothesis();
 }
@@ -726,7 +713,6 @@ void _stackDecoder<SMT_MODEL>::pre_trans_actions_prefix(std::string srcsent,
   srcSentence=srcsent;
   prefixSentence=prefix;
   smtm_ptr->pre_trans_actions_prefix(srcsent,prefix);
-  specific_pre_trans_actions_prefix(srcsent,prefix);
   bestCompleteHypScore=worstScoreAllowed;
   bestCompleteHyp=smtm_ptr->nullHypothesis();
 }
@@ -969,7 +955,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decode(v
     }
     ++iterNo;
   }
-  	  
+
   if(iterNo>=MAX_NUM_OF_ITER) std::cerr<<"Maximum number of iterations exceeded!\n";
   return result; 
 }
@@ -1182,7 +1168,7 @@ typename _stackDecoder<SMT_MODEL>::Hypothesis _stackDecoder<SMT_MODEL>::decodeVe
     }
     ++iterNo;
   }
-  	  
+  
   if(iterNo>=MAX_NUM_OF_ITER) std::cerr<<"Maximum number of iterations exceeded!\n";
   return result;
 }

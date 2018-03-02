@@ -68,14 +68,6 @@ class multi_stack_decoder_rec: public _stackDecoderRec<SMT_MODEL>
  protected:
 
   void pre_trans_actions(void);
-  void specific_pre_trans_actions(std::string srcsent);
-  void specific_pre_trans_actions_ref(std::string srcsent,
-                                      std::string refsent);
-  void specific_pre_trans_actions_ver(std::string srcsent,
-                                      std::string refsent);
-  void specific_pre_trans_actions_prefix(std::string srcsent,
-                                         std::string prefix);
-      // Initialize additional variables for specific decoders
 };
 
 //--------------- multi_stack_decoder_rec template class function definitions
@@ -128,39 +120,6 @@ template<class SMT_MODEL>
 multi_stack_decoder_rec<SMT_MODEL>::~multi_stack_decoder_rec()
 {
   delete this->stack_ptr;
-}
-
-//--------------- multi_stack_decoder_rec template class method definitions
-
-//---------------------------------------
-template<class SMT_MODEL>
-void multi_stack_decoder_rec<SMT_MODEL>::specific_pre_trans_actions(std::string /*srcsent*/)
-{
-
-}
-
-//---------------------------------------
-template<class SMT_MODEL>
-void multi_stack_decoder_rec<SMT_MODEL>::specific_pre_trans_actions_ref(std::string /*srcsent*/,
-                                                                        std::string /*refsent*/)
-{
-
-}
-
-//---------------------------------------
-template<class SMT_MODEL>
-void multi_stack_decoder_rec<SMT_MODEL>::specific_pre_trans_actions_ver(std::string /*srcsent*/,
-                                                                        std::string /*refsent*/)
-{
-
-}
-
-//---------------------------------------
-template<class SMT_MODEL>
-void multi_stack_decoder_rec<SMT_MODEL>::specific_pre_trans_actions_prefix(std::string /*srcsent*/,
-                                                                           std::string /*prefix*/)
-{
-
 }
 
 #endif
