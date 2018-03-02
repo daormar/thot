@@ -97,6 +97,9 @@ class _stackDecoderRec: public _stackDecoder<SMT_MODEL>
   bool wgPtrOwnedByObject;
   HypStateDict<Hypothesis>* hypStateDictPtr;
 
+      // Actions after decoding
+  void post_trans_actions(const Hypothesis& result);
+
   bool pushGivenPredHyp(const Hypothesis& pred_hyp,
                         const std::vector<Score>& scrComps,
                         const Hypothesis& succ_hyp);
@@ -218,6 +221,21 @@ void _stackDecoderRec<SMT_MODEL>::clear(void)
   _stackDecoder<SMT_MODEL>::clear();
   hypStateDictPtr->clear();
   wordGraphPtr->clear();
+}
+
+//---------------------------------------
+template<class SMT_MODEL>
+void _stackDecoderRec<SMT_MODEL>::post_trans_actions(const Hypothesis& result)
+{
+      // If result hypothesis is not a complete hypothesis, then we need
+      // to add the corresponding state to the set of final states of
+      // the translation word graph. Otherwise, it will be empty
+  if(!this->smtm_ptr->isComplete(result))
+  {
+    bool existIndex;
+    HypStateIndex stateIdx=getHypStateIndex(result,existIndex);
+    wordGraphPtr->addFinalState(stateIdx);
+  }
 }
 
 //---------------------------------------

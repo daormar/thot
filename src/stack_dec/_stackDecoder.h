@@ -173,9 +173,6 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
   
   int verbosity;                 // Verbosity level
     
-  void addgToHyp(Hypothesis& hyp);
-  void subtractgToHyp(Hypothesis& hyp);
-
       // Actions previous to decoding
   int pre_trans_actions(std::string srcsent);
   void pre_trans_actions_ref(std::string srcsent,
@@ -184,7 +181,14 @@ class _stackDecoder: public BaseStackDecoder<SMT_MODEL>
                              std::string refsent);
   void pre_trans_actions_prefix(std::string srcsent,
                                 std::string prefix);
-  
+
+      // Actions after decoding
+  virtual void post_trans_actions(const Hypothesis& result);
+
+      // Functions related to g heuristic
+  void addgToHyp(Hypothesis& hyp);
+  void subtractgToHyp(Hypothesis& hyp);
+
   void suggest(const Hypothesis& sug);
       // Inserts a hypothesis into the stack
   void suggestNullHyp(void);
@@ -395,6 +399,8 @@ _stackDecoder<SMT_MODEL>::translateWithSuggestion(std::string s,
     if(verbosity>0)
       std::cerr<<"Decoding input..."<<std::endl;
     Hypothesis result=decode();
+
+    post_trans_actions(result);
 
     return result;
   }
@@ -715,6 +721,12 @@ void _stackDecoder<SMT_MODEL>::pre_trans_actions_prefix(std::string srcsent,
   smtm_ptr->pre_trans_actions_prefix(srcsent,prefix);
   bestCompleteHypScore=worstScoreAllowed;
   bestCompleteHyp=smtm_ptr->nullHypothesis();
+}
+
+//---------------------------------------
+template<class SMT_MODEL>
+void _stackDecoder<SMT_MODEL>::post_trans_actions(const Hypothesis& /*result*/)
+{
 }
 
 //---------------------------------------
