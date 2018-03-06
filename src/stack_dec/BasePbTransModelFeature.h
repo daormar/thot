@@ -59,10 +59,6 @@ class BasePbTransModelFeature
 
   typedef SCORE_INFO HypScoreInfo;
 
-      // Weight related functions
-  void setWeight(float w);
-  float getWeight(void);
-
       // Feature information
   void setFeatName(std::string fname);
   std::string getFeatName(void);
@@ -70,14 +66,14 @@ class BasePbTransModelFeature
 
       // Scoring functions
   virtual HypScoreInfo nullHypScore(const HypScoreInfo& predHypScrInf,
+                                    float weight,
                                     Score& unweightedScore);
   virtual HypScoreInfo extensionScore(const std::vector<std::string>& srcSent,
                                       const HypScoreInfo& predHypScrInf,
                                       const PhrHypDataStr& predHypDataStr,
                                       const PhrHypDataStr& newHypDataStr,
+                                      float weight,
                                       Score& unweightedScore)=0;
-  Score scorePhrasePair(const std::vector<std::string>& srcPhrase,
-                        const std::vector<std::string>& trgPhrase);
   virtual Score scorePhrasePairUnweighted(const std::vector<std::string>& srcPhrase,
                                           const std::vector<std::string>& trgPhrase)=0;
 
@@ -90,7 +86,6 @@ class BasePbTransModelFeature
 
  protected:
 
-  float weight;
   std::string name;
 
       // Auxiliary functions
@@ -99,19 +94,6 @@ class BasePbTransModelFeature
 
 //--------------- BasePbTransModelFeature class functions
 //
-
-template<class SCORE_INFO>
-void BasePbTransModelFeature<SCORE_INFO>::setWeight(float w)
-{
-  weight=w;
-}
-
-//---------------------------------
-template<class SCORE_INFO>
-float BasePbTransModelFeature<SCORE_INFO>::getWeight(void)
-{
-  return weight;
-}
 
 //---------------------------------
 template<class SCORE_INFO>
@@ -131,19 +113,12 @@ std::string BasePbTransModelFeature<SCORE_INFO>::getFeatName(void)
 template<class SCORE_INFO>
 typename BasePbTransModelFeature<SCORE_INFO>::HypScoreInfo
 BasePbTransModelFeature<SCORE_INFO>::nullHypScore(const HypScoreInfo& predHypScrInf,
+                                                  float /*weight*/,
                                                   Score& unweightedScore)
 {
   unweightedScore=0;
   HypScoreInfo hypScrInf=predHypScrInf;
   return hypScrInf;
-}
-
-//---------------------------------
-template<class SCORE_INFO>
-Score BasePbTransModelFeature<SCORE_INFO>::scorePhrasePair(const std::vector<std::string>& srcPhrase,
-                                                           const std::vector<std::string>& trgPhrase)
-{
-  return weight*scorePhrasePairUnweighted(srcPhrase,trgPhrase);
 }
 
 //---------------------------------

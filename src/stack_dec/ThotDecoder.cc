@@ -3056,13 +3056,14 @@ std::pair<Count,std::string> ThotDecoder::getBestSuffixGivenHist(std::vector<std
 
 //--------------------------
 std::pair<Count,std::string> ThotDecoder::getBestSuffixGivenHistFeatImpl(std::vector<std::string> hist,
-                                                                    std::string input)
+                                                                         std::string input)
 {
       // Obtain pointer to features info
   FeaturesInfo<SmtModel::HypScoreInfo>* featsInfoPtr=tdCommonVars.featureHandler.getFeatureInfoPtr();
 
       // Obtain pointers to language model features
-  std::vector<LangModelFeat<SmtModel::HypScoreInfo>* > langModelFeatsVec=featsInfoPtr->getLangModelFeatPtrs();
+  std::vector<unsigned int> featIndexVec;
+  std::vector<LangModelFeat<SmtModel::HypScoreInfo>* > langModelFeatsVec=featsInfoPtr->getLangModelFeatPtrs(featIndexVec);
   
       // Obtain best suffix using first available language model feature
   if(langModelFeatsVec.empty())

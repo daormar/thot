@@ -31,10 +31,11 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 template<>
 InversePhraseModelFeat<PhrScoreInfo>::HypScoreInfo
 InversePhraseModelFeat<PhrScoreInfo>::extensionScore(const std::vector<std::string>& srcSent,
-                                                    const HypScoreInfo& predHypScrInf,
-                                                    const PhrHypDataStr& predHypDataStr,
-                                                    const PhrHypDataStr& newHypDataStr,
-                                                    Score& unweightedScore)
+                                                     const HypScoreInfo& predHypScrInf,
+                                                     const PhrHypDataStr& predHypDataStr,
+                                                     const PhrHypDataStr& newHypDataStr,
+                                                     float weight,
+                                                     Score& unweightedScore)
 {
       // Obtain score for hypothesis extension
   HypScoreInfo hypScrInf=predHypScrInf;

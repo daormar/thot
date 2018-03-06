@@ -71,6 +71,7 @@ class InversePhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
                               const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
+                              float weight,
                               Score& unweightedScore);
   Score scorePhrasePairUnweighted(const std::vector<std::string>& srcPhrase,
                         const std::vector<std::string>& trgPhrase);
@@ -111,7 +112,6 @@ class InversePhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 InversePhraseModelFeat<SCORE_INFO>::InversePhraseModelFeat()
 {
-  this->weight=1.0;
   this->lambda=INVERSE_PM_FEAT_DEFAULT_LAMBDA;
 }
 

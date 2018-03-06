@@ -90,7 +90,8 @@ int FeatureHandler::updateLmLinInterpWeights(std::string trgCorpusFileName,
                                              int verbose/*=0*/)
 {
       // Iterate over language model features
-  std::vector<LangModelFeat<SmtModel::HypScoreInfo>* > langModelFeatPtrs=featuresInfo.getLangModelFeatPtrs();
+  std::vector<unsigned int> featIndexVec;
+  std::vector<LangModelFeat<SmtModel::HypScoreInfo>* > langModelFeatPtrs=featuresInfo.getLangModelFeatPtrs(featIndexVec);
 
   for(unsigned int i=0;i<langModelFeatPtrs.size();++i)
   {

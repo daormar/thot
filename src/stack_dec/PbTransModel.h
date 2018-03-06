@@ -138,7 +138,9 @@ Score PbTransModel<EQCLASS_FUNC>::nullHypothesisScrComps(Hypothesis& nullHyp,
   for(unsigned int i=0;i<this->standardFeaturesInfoPtr->featPtrVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->standardFeaturesInfoPtr->featPtrVec[i]->nullHypScore(hypScoreInfo,unweightedScore);
+    hypScoreInfo=this->standardFeaturesInfoPtr->featPtrVec[i]->nullHypScore(hypScoreInfo,
+                                                                            this->getStdFeatWeight(i),
+                                                                            unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
 
@@ -146,7 +148,9 @@ Score PbTransModel<EQCLASS_FUNC>::nullHypothesisScrComps(Hypothesis& nullHyp,
   for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->onTheFlyFeaturesInfo.featPtrVec[i]->nullHypScore(hypScoreInfo,unweightedScore);
+    hypScoreInfo=this->onTheFlyFeaturesInfo.featPtrVec[i]->nullHypScore(hypScoreInfo,
+                                                                        this->getOnTheFlyFeatWeight(i),
+                                                                        unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
 
@@ -256,7 +260,12 @@ Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
   for(unsigned int i=0;i<this->standardFeaturesInfoPtr->featPtrVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->standardFeaturesInfoPtr->featPtrVec[i]->extensionScore(this->pbtmInputVars.srcSentVec,hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
+    hypScoreInfo=this->standardFeaturesInfoPtr->featPtrVec[i]->extensionScore(this->pbtmInputVars.srcSentVec,
+                                                                              hypScoreInfo,
+                                                                              pred_hypd_str,
+                                                                              new_hypd_str,
+                                                                              this->getStdFeatWeight(i),
+                                                                              unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
 
@@ -264,7 +273,12 @@ Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
   for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
   {
     Score unweightedScore;
-    hypScoreInfo=this->onTheFlyFeaturesInfo.featPtrVec[i]->extensionScore(this->pbtmInputVars.srcSentVec,hypScoreInfo,pred_hypd_str,new_hypd_str,unweightedScore);
+    hypScoreInfo=this->onTheFlyFeaturesInfo.featPtrVec[i]->extensionScore(this->pbtmInputVars.srcSentVec,
+                                                                          hypScoreInfo,
+                                                                          pred_hypd_str,
+                                                                          new_hypd_str,
+                                                                          this->getOnTheFlyFeatWeight(i),
+                                                                          unweightedScore);
     scoreComponents.push_back(unweightedScore);
   }
 

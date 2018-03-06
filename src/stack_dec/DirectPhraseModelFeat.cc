@@ -34,6 +34,7 @@ DirectPhraseModelFeat<PhrScoreInfo>::extensionScore(const std::vector<std::strin
                                                     const HypScoreInfo& predHypScrInf,
                                                     const PhrHypDataStr& predHypDataStr,
                                                     const PhrHypDataStr& newHypDataStr,
+                                                    float weight,
                                                     Score& unweightedScore)
 {
       // Obtain score for hypothesis extension

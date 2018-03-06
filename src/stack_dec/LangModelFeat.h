@@ -67,15 +67,18 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 
       // Scoring functions
   HypScoreInfo nullHypScore(const HypScoreInfo& predHypScrInf,
+                            float weight,
                             Score& unweightedScore);
   HypScoreInfo extensionScore(const std::vector<std::string>& srcSent,
                               const HypScoreInfo& predHypScrInf,
                               const PhrHypDataStr& predHypDataStr,
                               const PhrHypDataStr& newHypDataStr,
+                              float weight,
                               Score& unweightedScore);
   Score scorePhrasePairUnweighted(const std::vector<std::string>& srcPhrase,
                                   const std::vector<std::string>& trgPhrase);
   Score scoreTrgSentence(const std::vector<std::string>& trgSent,
+                         float weight,
                          std::vector<Score>& cumulativeScoreVec);
 
       // Word predictor related functions
@@ -114,7 +117,6 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 LangModelFeat<SCORE_INFO>::LangModelFeat()
 {
-  this->weight=1.0;
 }
 
 //---------------------------------
@@ -138,6 +140,7 @@ Score LangModelFeat<SCORE_INFO>::scorePhrasePairUnweighted(const std::vector<std
 //---------------------------------
 template<class SCORE_INFO>
 Score LangModelFeat<SCORE_INFO>::scoreTrgSentence(const std::vector<std::string>& trgSent,
+                                                  float weight,
                                                   std::vector<Score>& cumulativeScoreVec)
 {
       // Initialize state
@@ -151,7 +154,7 @@ Score LangModelFeat<SCORE_INFO>::scoreTrgSentence(const std::vector<std::string>
   {
     std::vector<std::string> wordVec;
     wordVec.push_back(trgSent[i]);
-    Score scr=this->weight*getNgramScoreGivenState(wordVec,state);
+    Score scr=weight*getNgramScoreGivenState(wordVec,state);
     finalScr+=scr;
     cumulativeScoreVec.push_back(finalScr);
   }
