@@ -31,9 +31,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //-------------------------
 CategPhrasePairFilter::CategPhrasePairFilter(void)
 {
-  categorySet.insert("<digit>");
-  categorySet.insert("<alfanum>");
-  categorySet.insert("<number>");
+  categorySet.insert(DIGIT_CATEG);
+  categorySet.insert(NUMBER_CATEG);
+  categorySet.insert(ALPHANUM_CATEG);
 }
 
 //-------------------------
