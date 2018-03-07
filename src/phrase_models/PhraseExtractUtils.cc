@@ -168,7 +168,7 @@ namespace PhraseExtractUtils
   void filterPhrasePairs(const std::vector<PhrasePair>& vecUnfiltPhrPair,
                          std::vector<PhrasePair>& vecPhrPair)
   {
-    CategPhrasePairFilter phrasePairFilter;
+    StrictCategPhrasePairFilter phrasePairFilter;
     vecPhrPair.clear();
     for(unsigned int i=0;i<vecUnfiltPhrPair.size();++i)
     {
