@@ -44,38 +44,37 @@ bool StrictCategPhrasePairFilter::phrasePairIsOk(std::vector<std::string> s_,
   std::map<std::string,unsigned int> srcCategMap;
   std::map<std::string,unsigned int> trgCategMap;
 
-      // Collect category information for source
-  for(unsigned int i=0;i<s_.size();++i)
+  std::set<std::string>::const_iterator categSetIter;
+  for(categSetIter=categorySet.begin();categSetIter!=categorySet.end();++categSetIter)
   {
-        // Check if token is a category tag
-    if(categorySet.find(s_[i])!=categorySet.end())
-    {
-      if(srcCategMap.find(s_[i])==srcCategMap.end())
-        srcCategMap.insert(std::make_pair(s_[i],1));
-      else
-        srcCategMap[s_[i]]+=1;
-    }
-  }
-      // Collect category information for target
-  for(unsigned int i=0;i<t_.size();++i)
-  {
-        // Check if token is a category tag
-    if(categorySet.find(t_[i])!=categorySet.end())
-    {      
-      if(trgCategMap.find(t_[i])==trgCategMap.end())
-        trgCategMap.insert(std::make_pair(t_[i],1));
-      else
-        trgCategMap[t_[i]]+=1;
-    }
+    srcCategMap[*categSetIter]=0;
+    trgCategMap[*categSetIter]=0;
   }
 
-      // Check phrase pair
-  if(srcCategMap.empty() && trgCategMap.empty())
+      // Collect category information for source
+  bool srcContainsCategTags=false;
+  for(unsigned int i=0;i<s_.size();++i)
   {
-        // Phrase pair does not contain categories
-    return true;
+    if(categorySet.find(s_[i])!=categorySet.end())
+    {
+      srcCategMap[s_[i]]+=1;
+      srcContainsCategTags=true;
+    }
   }
-  else
+  
+      // Collect category information for target
+  bool trgContainsCategTags=false;
+  for(unsigned int i=0;i<t_.size();++i)
+  {
+    if(categorySet.find(t_[i])!=categorySet.end())
+    {
+      trgCategMap[t_[i]]+=1;
+      trgContainsCategTags=true;
+    }
+  }
+  
+      // Check phrase pair
+  if(srcContainsCategTags || trgContainsCategTags)
   {
         // Phrase pair does contain categories: it is ok only if both
         // phrases are identical
@@ -83,6 +82,11 @@ bool StrictCategPhrasePairFilter::phrasePairIsOk(std::vector<std::string> s_,
       return true;
     else
       return false;
+  }
+  else
+  {
+        // Phrase pair does not contain categories
+    return true;
   }
 }
 
