@@ -50,4 +50,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #define END_OF_PREF_MARK            "<END_OF_PREF_MARK>"
 
+#define DIGIT_CATEG                 "<digit>"
+#define NUMBER_CATEG                "<number>"
+#define ALPHANUM_CATEG              "<alfanum>"
+
 #endif
