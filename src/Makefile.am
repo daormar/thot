@@ -229,6 +229,7 @@ phrase_models/BaseCountPhraseModel.h phrase_models/AlignmentExtractor.h	\
 phrase_models/AlignmentContainer.h phrase_models/AligInfo.h		\
 phrase_models/BasePhrasePairFilter.h					\
 phrase_models/CategPhrasePairFilter.h					\
+phrase_models/StrictCategPhrasePairFilter.h				\
 phrase_models/PhraseExtractUtils.h
 phrase_models_defs= phrase_models/WbaIncrPhraseModel.cc			\
 phrase_models/_wbaIncrPhraseModel.cc phrase_models/TrgSegmLenTable.cc	\
@@ -241,6 +242,7 @@ phrase_models/BpSet.cc phrase_models/BasePhraseModel.cc			\
 phrase_models/BaseIncrPhraseModel.cc					\
 phrase_models/AlignmentExtractor.cc phrase_models/AlignmentContainer.cc	\
 phrase_models/CategPhrasePairFilter.cc					\
+phrase_models/StrictCategPhrasePairFilter.cc				\
 phrase_models/PhraseExtractUtils.cc
 
 if HAVE_DB_CXX_LIB
@@ -265,7 +267,8 @@ hattrie_pm_h=phrase_models/HatTriePhraseTable.h
 hattrie_pm_defs=phrase_models/HatTriePhraseTable.cc
 endif
 
-smt_preproc_h= smt_preproc/SmtPreprocDefs.h smt_preproc/BasePrePosProcessor.h
+smt_preproc_h= smt_preproc/SmtPreprocDefs.h	\
+smt_preproc/BasePrePosProcessor.h
 smt_preproc_defs=
 
 error_correction_h= error_correction/WordGraphStateData.h		\
