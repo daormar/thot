@@ -32,6 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #  include <thot_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "OnTheFlyDictFeat.h"
 #include "DirectPhraseModelFeat.h"
 #include "FeaturesInfo.h"
 #include "BasePbTransModel.h"
@@ -1271,8 +1272,6 @@ template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::heurDirectPmScoreLt(const std::vector<WordIndex>& srcPhrase,
                                                      const std::vector<WordIndex>& trgPhrase)
 {
-      // TO-BE-DONE
-
       // Obtain string vector
   std::vector<std::string> srcPhraseStr=srcIndexVectorToStrVector(srcPhrase);
   std::vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
@@ -1293,8 +1292,6 @@ template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::heurInversePmScoreLt(const std::vector<WordIndex>& srcPhrase,
                                                       const std::vector<WordIndex>& trgPhrase)
 {
-      // TO-BE-DONE
-
       // Obtain string vector
   std::vector<std::string> srcPhraseStr=srcIndexVectorToStrVector(srcPhrase);
   std::vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
@@ -1314,8 +1311,6 @@ Score _pbTransModel<HYPOTHESIS>::heurInversePmScoreLt(const std::vector<WordInde
 template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::heurLmScoreLtNoAdmiss(const std::vector<WordIndex>& trgPhrase)
 {
-      // TO-BE-DONE
-
       // Obtain string vector
   std::vector<std::string> trgPhraseStr=trgIndexVectorToStrVector(trgPhrase);
 
@@ -1414,8 +1409,6 @@ Score _pbTransModel<HYPOTHESIS>::calcRefLmHeurScore(const _pbTransModel::Hypothe
 template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::calcPrefLmHeurScore(const _pbTransModel::Hypothesis& hyp)
 {
-      // TO-BE-DONE
-  
   if(prefHeurLmLgProb.empty())
   {
     std::vector<unsigned int> featIndexVec;
@@ -1815,8 +1808,6 @@ std::vector<std::string> _pbTransModel<HYPOTHESIS>::getTransInPlainTextVecTvs(co
 template<class HYPOTHESIS>
 void _pbTransModel<HYPOTHESIS>::setWeights(std::vector<float> wVec)
 {
-      // TO-BE-DONE
-
       // Initialize variables
   defaultFeatWeights=wVec;
 
@@ -2221,7 +2212,6 @@ template<class HYPOTHESIS>
 std::vector<std::string> _pbTransModel<HYPOTHESIS>::getLogLinFeatNamesForPhrTrans(std::pair<PositionIndex,PositionIndex> pidxPair,
                                                                                   std::vector<std::string> trgPhr)
 {
-      // Clear data structures
   std::vector<std::string> featNames;
 
       // Obtain source phrase
@@ -2248,6 +2238,8 @@ std::vector<std::string> _pbTransModel<HYPOTHESIS>::getLogLinFeatNamesForPhrTran
       // Obtain translation options for each on-the-fly feature
   for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
   {
+        // Obtain pointer to OnTheFlyDictFeat object
+    OnTheFlyDictFeat<HypScoreInfo>* onTheFlyFeatPtr=dynamic_cast<OnTheFlyDictFeat<HypScoreInfo>* >(this->onTheFlyFeaturesInfo.featPtrVec[i]);
         // Obtain options
     std::vector<std::vector<std::string> > transOptVec;
     this->onTheFlyFeaturesInfo.featPtrVec[i]->obtainTransOptions(srcPhraseStr,transOptVec);
@@ -2257,7 +2249,13 @@ std::vector<std::string> _pbTransModel<HYPOTHESIS>::getLogLinFeatNamesForPhrTran
     iter=find(transOptVec.begin(),transOptVec.end(),trgPhr);
     if(iter!=transOptVec.end())
     {
-      featNames.push_back(this->onTheFlyFeaturesInfo.featPtrVec[i]->getFeatName());
+      std::string featName=this->onTheFlyFeaturesInfo.featPtrVec[i]->getFeatName();
+      if(onTheFlyFeatPtr)
+      {
+        bool found;
+        featName=featName + ":" + onTheFlyFeatPtr->getTransOptInfo(srcPhraseStr,trgPhr,found);
+      }
+      featNames.push_back(featName);
     }
   }
 
@@ -2269,8 +2267,6 @@ template<class HYPOTHESIS>
 Score _pbTransModel<HYPOTHESIS>::nbestTransScore(const std::vector<WordIndex>& srcPhrase,
                                                  const std::vector<WordIndex>& trgPhrase)
 {
-      // TO-BE-DONE
-  
   Score result=0;
   
       // Obtain string vectors
