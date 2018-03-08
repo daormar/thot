@@ -72,19 +72,27 @@ class OnTheFlyDictFeat: public BasePbTransModelFeature<SCORE_INFO>
   Score scorePhrasePairUnweighted(const std::vector<std::string>& srcPhrase,
                                   const std::vector<std::string>& trgPhrase);
 
-      // Functions to obtain translation options
+      // Functions to work with translation options
   void obtainTransOptions(const std::vector<std::string>& wordVec,
                           std::vector<std::vector<std::string> >& transOptVec);
-
-      // Functions to populate dictionary
+  std::string getTransOptInfo(const std::vector<std::string>& srcPhrase,
+                              const std::vector<std::string>& trgPhrase,
+                              bool& found);
+  
+      // Functions to handle dictionary content
   void addTransOption(const std::vector<std::string>& srcPhrase,
                       const std::vector<std::string>& trgPhrase,
-                      Score score);
+                      Score score,
+                      std::string transOptInfo);
   void clearDict(void);
   
  protected:
 
-  typedef std::map<std::vector<std::string>,Score> DictEntry;
+  typedef struct{
+    Score score;
+    std::string info;
+  } TransOptData;
+  typedef std::map<std::vector<std::string>,TransOptData> DictEntry;
   typedef std::map<std::vector<std::string>,DictEntry> Dict;
 
   Dict dict;
@@ -111,14 +119,14 @@ Score OnTheFlyDictFeat<SCORE_INFO>::scorePhrasePairUnweighted(const std::vector<
                                                               const std::vector<std::string>& trgPhrase)
 {
       // Look for srcPhrase in dictionary
-  Dict::const_iterator dictIter=dict.find(srcPhrase);
+  typename Dict::const_iterator dictIter=dict.find(srcPhrase);
   if(dictIter!=dict.end())
   {
         // Look for trgPhrase in dictionary entry
-    DictEntry::const_iterator dictEntryIter=dictIter->second.find(trgPhrase);
+    typename DictEntry::const_iterator dictEntryIter=dictIter->second.find(trgPhrase);
     if(dictEntryIter!=dictIter->second.end())
     {
-      return dictEntryIter->second;
+      return dictEntryIter->second.score;
     }
     else
     {
@@ -137,11 +145,11 @@ void OnTheFlyDictFeat<SCORE_INFO>::obtainTransOptions(const std::vector<std::str
                                                       std::vector<std::vector<std::string> >& transOptVec)
 {
       // Look for srcPhrase in dictionary
-  Dict::const_iterator dictIter=dict.find(wordVec);
+  typename Dict::const_iterator dictIter=dict.find(wordVec);
   if(dictIter!=dict.end())
   {
     transOptVec.clear();
-    DictEntry::const_iterator dictEntryIter;
+    typename DictEntry::const_iterator dictEntryIter;
     for(dictEntryIter=dictIter->second.begin();dictEntryIter!=dictIter->second.end();++dictEntryIter)
     {
       transOptVec.push_back(dictEntryIter->first);
@@ -156,21 +164,60 @@ void OnTheFlyDictFeat<SCORE_INFO>::obtainTransOptions(const std::vector<std::str
 
 //---------------------------------
 template<class SCORE_INFO>
-void OnTheFlyDictFeat<SCORE_INFO>::addTransOption(const std::vector<std::string>& srcPhrase,
-                                                  const std::vector<std::string>& trgPhrase,
-                                                  Score score)
+std::string OnTheFlyDictFeat<SCORE_INFO>::getTransOptInfo(const std::vector<std::string>& srcPhrase,
+                                                          const std::vector<std::string>& trgPhrase,
+                                                          bool& found)
 {
       // Look for srcPhrase in dictionary
-  Dict::iterator dictIter=dict.find(srcPhrase);
+  typename Dict::const_iterator dictIter=dict.find(srcPhrase);
   if(dictIter!=dict.end())
   {
-    dictIter->second[trgPhrase]=score;
+    typename DictEntry::const_iterator dictEntryIter=dictIter->second.find(trgPhrase);
+    if(dictEntryIter!=dictIter->second.end())
+    {
+          // trgPhrase is contained as entry
+      found=true;
+      return dictEntryIter->second.info;
+    }
+    else
+    {
+          // trgPhrase not contained as entry
+      found=false;
+      return "";
+    }    
+  }
+  else
+  {
+        // No entries for srcPhrase were found
+    found=false;
+    return "";
+  }
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void OnTheFlyDictFeat<SCORE_INFO>::addTransOption(const std::vector<std::string>& srcPhrase,
+                                                  const std::vector<std::string>& trgPhrase,
+                                                  Score score,
+                                                  std::string transOptInfo)
+{
+      // Look for srcPhrase in dictionary
+  typename Dict::iterator dictIter=dict.find(srcPhrase);
+  if(dictIter!=dict.end())
+  {
+    TransOptData trOptData;
+    trOptData.score=score;
+    trOptData.info=transOptInfo;
+    dictIter->second[trgPhrase]=trOptData;
   }
   else
   {
         // No entries for srcPhrase were found
     DictEntry dictEntry;
-    dictEntry[trgPhrase]=score;
+    TransOptData trOptData;
+    trOptData.score=score;
+    trOptData.info=transOptInfo;
+    dictEntry[trgPhrase]=trOptData;
     dict[srcPhrase]=dictEntry;
   }
 }
