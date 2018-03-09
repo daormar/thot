@@ -1368,8 +1368,6 @@ void WordGraph::print(std::ostream &outS,
       WordGraphArc wordGraphArc=wordGraphArcs[i];
 
           //Print indices
-      // // debug
-      // std::cerr<<"*** "<<wordGraphArc.predStateIndex<<" "<<wordGraphArc.succStateIndex<<" "<<wordGraphArc.arcScore<<" "<<arcsPruned[i]<<std::endl;
       outS<<wordGraphArc.predStateIndex<<" "<<wordGraphArc.succStateIndex<<" "<<wordGraphArc.arcScore<<" ";
 
       if(!scrCompsVec[i].empty())
