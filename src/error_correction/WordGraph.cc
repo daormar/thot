@@ -359,6 +359,7 @@ bool WordGraph::arcPruned(WordGraphArcId wordGraphArcId)const
 //---------------------------------------
 void WordGraph::obtainNbestList(unsigned int len,
                                 std::vector<std::pair<Score,std::string> >& nblist,
+                                std::vector<NbSearchHyp>& hypList,
                                 std::vector<std::vector<Score> >& scoreCompsVec,
                                 int verbosity/*=false*/)
 {
@@ -377,7 +378,7 @@ void WordGraph::obtainNbestList(unsigned int len,
     obtainNbSearchHeurInfo(heurForEachState);
   
         // Execute A-star search
-    nbSearch(len,heurForEachState,nblist,scoreCompsVec,verbosity);
+    nbSearch(len,heurForEachState,nblist,hypList,scoreCompsVec,verbosity);
   }
 }
 
@@ -415,6 +416,7 @@ void WordGraph::obtainNbSearchHeurInfo(std::vector<Score>& heurForEachState)
 void WordGraph::nbSearch(unsigned int len,
                          const std::vector<Score>& heurForEachState,
                          std::vector<std::pair<Score,std::string> >& nblist,
+                         std::vector<NbSearchHyp>& hypList,
                          std::vector<std::vector<Score> >& scoreCompsVec,
                          int verbosity/*=false*/)
 {
@@ -532,6 +534,7 @@ void WordGraph::nbSearch(unsigned int len,
   }          
       // Obtain result
   nblist.clear();
+  hypList.clear();
   scoreCompsVec.clear();
   if(verbosity>=1)
   {
@@ -544,6 +547,9 @@ void WordGraph::nbSearch(unsigned int len,
     std::pair<Score,NbSearchHyp> scrHypPair=completeHypStack.top();
     completeHypStack.pop();
 
+        // Add hypothesis to list
+    hypList.push_back(scrHypPair.second);
+    
         // Obtain string from hyp
     std::vector<Score> scoreComps;
     std::string translation=stringAssociatedToHyp(scrHypPair.second,scoreComps);

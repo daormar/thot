@@ -188,6 +188,7 @@ class WordGraph
       // Function to obtain n-best list
   void obtainNbestList(unsigned int len,
                        std::vector<std::pair<Score,std::string> >& nblist,
+                       std::vector<NbSearchHyp>& hypList,
                        std::vector<std::vector<Score> >& scoreCompsVec,
                        int verbosity=false);
   
@@ -245,6 +246,7 @@ class WordGraph
   void nbSearch(unsigned int len,
                 const std::vector<Score>& heurForEachState,
                 std::vector<std::pair<Score,std::string> >& nblist,
+                std::vector<NbSearchHyp>& hypList,
                 std::vector<std::vector<Score> >& scoreCompsVec,
                 int verbosity=false);
   bool hypIsComplete(const NbSearchHyp& nbSearchHyp);
