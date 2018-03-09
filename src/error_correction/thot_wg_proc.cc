@@ -146,8 +146,9 @@ int processParameters(thot_wg_proc_pars pars)
 
           // Obtain n-best list
       std::vector<std::pair<Score,std::string> > nblist;
+      std::vector<NbSearchHyp> hypList;
       std::vector<std::vector<Score> > scoreCompsVec;
-      wgAux.obtainNbestList(pars.nbListLen,nblist,scoreCompsVec,pars.v_given);
+      wgAux.obtainNbestList(pars.nbListLen,nblist,hypList,scoreCompsVec,pars.v_given);
 
           // Print file
       std::string nbListFile=pars.o_str;
@@ -163,8 +164,9 @@ int processParameters(thot_wg_proc_pars pars)
 
           // Obtain n-best list
       std::vector<std::pair<Score,std::string> > nblist;
+      std::vector<NbSearchHyp> hypList;
       std::vector<std::vector<Score> > scoreCompsVec;
-      wordGraph.obtainNbestList(pars.nbListLen,nblist,scoreCompsVec,pars.v_given);
+      wordGraph.obtainNbestList(pars.nbListLen,nblist,hypList,scoreCompsVec,pars.v_given);
 
           // Print file
       std::string nbListFile=pars.o_str;
