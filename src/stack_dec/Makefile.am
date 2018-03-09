@@ -8,10 +8,11 @@ ThotImtEngine.h ThotImtEngine.cc thot_server_pars.h thot_server.cc	\
 ThotDecoderUserPars.h ThotDecoderState.h ThotDecoderPerUserVars.h	\
 ThotDecoder.h ThotDecoderCommonVars.h ThotDecoderClient.h		\
 ThotDecoderClient.cc ThotDecoder.cc thot_ms_dec.cc thot_client_pars.h	\
-thot_client.cc thot_get_srcsents_from_metadata.cc thot_scorer.cc	\
-thot_calc_bleu.cc thot_ms_alig.cc SwModelPars.h SwModelInfo.h		\
-_stack_decoder_statistics.h _stackDecoderRec.h _stackDecoder.h		\
-SourceSegmentation.h BaseTranslationMetadata.h TranslationMetadata.h	\
+thot_client.cc thot_get_srcsents_from_metadata.cc			\
+thot_check_constraints.cc thot_scorer.cc thot_calc_bleu.cc		\
+thot_ms_alig.cc SwModelPars.h SwModelInfo.h _stack_decoder_statistics.h	\
+_stackDecoderRec.h _stackDecoder.h SourceSegmentation.h			\
+BaseTranslationMetadata.h TranslationMetadata.h				\
 JsonTranslationMetadata.h SmtStack.h _smtStack.h SmtMultiStackRec.h	\
 _smtMultiStack.h WeightUpdateUtils.h WeightUpdateUtils.cc		\
 BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc BaseScorer.h	\

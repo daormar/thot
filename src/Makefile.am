@@ -55,8 +55,9 @@ thot_merge_bin_iibm2atable thot_gen_bin_lex_filter_info			\
 thot_filter_bin_ilextable thot_prune_bin_ilextable thot_alig_op		\
 thot_query_pm thot_gen_phr_model thot_wg_proc thot_dhs_step_by_step_min	\
 thot_ms_dec thot_ms_alig thot_li_weight_upd thot_ll_weight_upd_nblist	\
-thot_client thot_server thot_get_srcsents_from_metadata thot_scorer	\
-thot_calc_bleu $(DB_CXX_PROGS) $(LEVELDB_PROGS) $(TESTING_PROGS)
+thot_client thot_server thot_get_srcsents_from_metadata			\
+thot_check_constraints thot_scorer thot_calc_bleu $(DB_CXX_PROGS)	\
+$(LEVELDB_PROGS) $(TESTING_PROGS)
 
 lib_LTLIBRARIES = libthot.la word_penalty_model_factory.la		\
 incr_jel_mer_ngram_lm_factory.la					\
@@ -675,6 +676,11 @@ thot_server_LDFLAGS = libthot.la
 thot_get_srcsents_from_metadata_SOURCES =	\
 stack_dec/thot_get_srcsents_from_metadata.cc
 thot_get_srcsents_from_metadata_LDFLAGS = libthot.la
+
+##########
+thot_check_constraints_SOURCES =	\
+stack_dec/thot_check_constraints.cc
+thot_check_constraints_LDFLAGS = libthot.la
 
 ##########
 thot_scorer_SOURCES = stack_dec/thot_scorer.cc
