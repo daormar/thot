@@ -41,6 +41,7 @@ int processParameters(thot_wg_proc_pars pars);
 int printNbList(const std::vector<std::pair<std::string,float> >& compWeights,
                 const std::vector<std::pair<Score,std::string> >& nblist,
                 const std::vector<std::vector<Score> >& scoreCompsVec,
+                const std::vector<NbSearchHyp>& hypList,
                 std::string nbListFile);
 int process_bp_par(const WordGraph& wordGraph,
                    thot_wg_proc_pars pars);
@@ -69,7 +70,7 @@ void version(void);
 //--------------- Function Definitions --------------------------------
 
 
-//--------------- main function
+//---------------
 int main(int argc,char *argv[])
 {
   thot_wg_proc_pars pars;
@@ -84,7 +85,7 @@ int main(int argc,char *argv[])
   }
 }
 
-//--------------- processParameters function
+//---------------
 int processParameters(thot_wg_proc_pars pars)
 {
   bool ret;
@@ -140,7 +141,7 @@ int processParameters(thot_wg_proc_pars pars)
       WordGraph wgAux=wordGraph;
       wgAux.prune(pars.pruningThreshold);
 
-                // Obtain component weights
+          // Obtain component weights
       std::vector<std::pair<std::string,float> > compWeights;
       wgAux.getCompWeights(compWeights);
 
@@ -149,11 +150,11 @@ int processParameters(thot_wg_proc_pars pars)
       std::vector<NbSearchHyp> hypList;
       std::vector<std::vector<Score> > scoreCompsVec;
       wgAux.obtainNbestList(pars.nbListLen,nblist,hypList,scoreCompsVec,pars.v_given);
-
+      
           // Print file
       std::string nbListFile=pars.o_str;
       nbListFile=nbListFile+".nbl_pruned";
-      ret=printNbList(compWeights,nblist,scoreCompsVec,nbListFile);
+      ret=printNbList(compWeights,nblist,scoreCompsVec,hypList,nbListFile);
       if(ret==THOT_ERROR) return THOT_ERROR;
     }
     else
@@ -171,7 +172,7 @@ int processParameters(thot_wg_proc_pars pars)
           // Print file
       std::string nbListFile=pars.o_str;
       nbListFile=nbListFile+".nbl";
-      ret=printNbList(compWeights,nblist,scoreCompsVec,nbListFile);
+      ret=printNbList(compWeights,nblist,scoreCompsVec,hypList,nbListFile);
       if(ret==THOT_ERROR) return THOT_ERROR;
     }
   }
@@ -232,10 +233,11 @@ int processParameters(thot_wg_proc_pars pars)
   return THOT_OK;
 }
 
-//--------------- printNbList function
+//---------------
 int printNbList(const std::vector<std::pair<std::string,float> >& compWeights,
                 const std::vector<std::pair<Score,std::string> >& nblist,
                 const std::vector<std::vector<Score> >& scoreCompsVec,
+                const std::vector<NbSearchHyp>& hypList,
                 std::string nbListFile)
 {
   std::ofstream outS;
@@ -247,7 +249,7 @@ int printNbList(const std::vector<std::pair<std::string,float> >& compWeights,
   }
   else
   {    
-        // Print component weights if they were given
+        // Print component weights as header if they were given
     if(!compWeights.empty())
     {
       outS<<"# ";
@@ -259,16 +261,28 @@ int printNbList(const std::vector<std::pair<std::string,float> >& compWeights,
       outS<<std::endl;
     }
 
+        // Iterate over n-best list elements
     for(unsigned int i=0;i<nblist.size();++i)
     {
       outS<<nblist[i].first<<" |||";
 
+          // Print score components if given
       if(i<scoreCompsVec.size())
       {
         for(unsigned int j=0;j<scoreCompsVec[i].size();++j)
           outS<<" "<<scoreCompsVec[i][j];
         outS<<" |||";
-      }  
+      }
+
+          // Print hypothesis information if given
+      if(i<hypList.size())
+      {
+        for(unsigned int j=0;j<hypList[i].size();++j)
+          outS<<" "<<hypList[i][j];
+        outS<<" |||";        
+      }
+
+          // Print translation
       outS<<" "<<nblist[i].second<<std::endl;
     }
     outS.close();
@@ -276,7 +290,7 @@ int printNbList(const std::vector<std::pair<std::string,float> >& compWeights,
   }
 }
 
-//--------------- process_bp_par function
+//---------------
 int process_bp_par(const WordGraph& wordGraph,
                    thot_wg_proc_pars pars)
 {
@@ -332,7 +346,7 @@ int process_bp_par(const WordGraph& wordGraph,
   }  
 }
 
-//--------------- handleParameters function
+//---------------
 int handleParameters(int argc,
                      char *argv[],
                      thot_wg_proc_pars& pars)
@@ -367,7 +381,7 @@ int handleParameters(int argc,
   }
 }
 
-//--------------- takeparameters function
+//---------------
 int takeParameters(int argc,
                    const std::vector<std::string>& argv_stl,
                    thot_wg_proc_pars& pars)
@@ -478,6 +492,7 @@ int takeParameters(int argc,
         ++i;
       }
     }
+
         // -u parameter
     if(argv_stl[i]=="-u" && !matched)
     {
@@ -517,7 +532,7 @@ int takeParameters(int argc,
   return THOT_OK;
 }
 
-//--------------- checkParameters function
+//---------------
 int checkParameters(thot_wg_proc_pars& pars)
 {
   if(!pars.w_given)
@@ -535,7 +550,7 @@ int checkParameters(thot_wg_proc_pars& pars)
   return THOT_OK;
 }
 
-//--------------- printParameters function
+//---------------
 void printParameters(thot_wg_proc_pars pars)
 {
   std::cerr<<"File with word-graph: "<<pars.w_str<<std::endl;
@@ -560,12 +575,12 @@ void printParameters(thot_wg_proc_pars pars)
   std::cerr<<"-o: "<<pars.o_str<<std::endl;
 }
 
-//--------------- printUsage function
+//---------------
 void printUsage(void)
 {
   std::cerr<<"Usage: thot_wg_proc        -w <string>\n";
   std::cerr<<"                           [-bp <int> [<float1> ... <floatn>] ]\n";
-  std::cerr<<"                           [-wgp <float>] [-n <int>] [-u] [-t]\n";
+  std::cerr<<"                           [-wgp <float>] [-n <int> [-y] ] [-u] [-t]\n";
   std::cerr<<"                           -o <string>\n";
   std::cerr<<"                           [-v|-v1] [--help] [--version]\n\n";
   std::cerr<<"-w <string>                File with word-graph to be loaded.\n";
@@ -582,6 +597,8 @@ void printUsage(void)
   std::cerr<<"                           NOTE: arcs must be topologically ordered.\n";
   std::cerr<<"-n <int>                   Print n-best list of length <int>.\n";
   std::cerr<<"                           NOTE: -n and -wgp options can be combined\n";
+  std::cerr<<"-y                         Incorporate hypothesis information when printing\n";
+  std::cerr<<"                           n-best list (should be combined with -n option).\n";
   std::cerr<<"-u                         Print word-graph composed of useful states.\n";
   std::cerr<<"                           NOTE: -u and -wgp options can be combined\n";
   std::cerr<<"-t                         Print word-graph with arcs topologically ordered.\n";
@@ -591,7 +608,7 @@ void printUsage(void)
   std::cerr<<"--version                  Output version information and exit.\n";
 }
 
-//--------------- version function
+//---------------
 void version(void)
 {
   std::cerr<<"thot_wg_proc is part of the thot package "<<std::endl;
