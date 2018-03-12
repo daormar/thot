@@ -279,8 +279,6 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
     std::cerr<<"Error while opening file "<<nbfile<<std::endl;
     return THOT_ERROR;
   }
-
-  // std::cerr<<"**** Processing file"<<nbfile<<std::endl;
   
       // Read n-best file
   while(awk.getln())
@@ -309,6 +307,17 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
         }
       }
 
+          // Make i variable to point at the beginning of last field
+          // containing translation
+      for(i=awk.NF;i>=1;--i)
+      {
+        if(awk.dollar(i)=="|||")
+        {
+          ++i;
+          break;
+        }
+      }
+
           // Read n-best translation
       std::string nbest;
       for(;i<=awk.NF;++i)
@@ -321,13 +330,6 @@ int obtain_nblist_and_scr_comps_for_file(const thot_llwu_nblist_pars& pars,
           // Extend output variables
       scoreComps.push_back(scoreCompsForTrans);
       nblist.push_back(nbest);
-
-      // std::cerr<<"|||||||||"<<nbest<<"||||||"<<std::endl;
-      // for(unsigned int i=0;i<scoreCompsForTrans.size();++i)
-      // {
-      //   std::cerr<<scoreCompsForTrans[i]<<" ";
-      // }
-      // std::cerr<<std::endl;
     }
   }
   
