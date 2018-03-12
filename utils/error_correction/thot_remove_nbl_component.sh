@@ -81,7 +81,10 @@ remove_nbl_component()
             printf" %f",feat[i]
           }
          }
-         printf" ||| %s\n",$3
+         printf" ||| %s",$3
+         if(NF==4)
+          printf" ||| %s",$4
+         printf"\n"
        }
      }'
 }

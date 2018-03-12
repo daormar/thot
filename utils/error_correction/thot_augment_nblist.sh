@@ -54,7 +54,10 @@ augment_nblist()
            score+=weight[i]*feat[i]
          rnnlm_scr=scr[NR-1]
          score+=rnnlm_scr
-         printf"%f ||| %s %s ||| %s\n",score,$2,rnnlm_scr,$3
+         if(NF==3)
+           printf"%f ||| %s %s ||| %s\n",score,$2,rnnlm_scr,$3
+         if(NF==4)
+           printf"%f ||| %s %s ||| %s ||| %s\n",score,$2,rnnlm_scr,$3,$4
        }
      }' $nblistf
 }
