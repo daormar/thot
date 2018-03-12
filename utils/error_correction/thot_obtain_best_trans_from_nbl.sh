@@ -7,11 +7,9 @@
 get_trans()
 {
     ${AWK} '{
-              spsymfound=0
-              for(i=1;i<=NF;++i)
+              for(i=NF;i>=1;--i)
               {
-                if($i=="|||") ++spsymfound
-                if(spsymfound==2) break;
+                if($i=="|||") break;
               }
               ++i
               for(;i<=NF;++i)
