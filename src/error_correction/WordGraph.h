@@ -43,6 +43,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "WordGraphArc.h"
 #include "WordGraphArcId.h"
 #include "WordGraphStateData.h"
+#include "NbSearchHighLevelHyp.h"
 #include "NbSearchHyp.h"
 #include "NbSearchStack.h"
 #include <algorithm>
@@ -188,7 +189,7 @@ class WordGraph
       // Function to obtain n-best list
   void obtainNbestList(unsigned int len,
                        std::vector<std::pair<Score,std::string> >& nblist,
-                       std::vector<NbSearchHyp>& hypList,
+                       std::vector<NbSearchHighLevelHyp>& highLevelHypList,
                        std::vector<std::vector<Score> >& scoreCompsVec,
                        int verbosity=false);
   
@@ -243,6 +244,7 @@ class WordGraph
   void rescoreArcsGivenWeights(const std::vector<std::pair<std::string,float> >& _compWeights);
   bool checkIfAltWeightsAppliable(const std::vector<float>& altCompWeights)const;
   void obtainNbSearchHeurInfo(std::vector<Score>& heurForEachState);
+  NbSearchHighLevelHyp hypToHighLevelHyp(const NbSearchHyp& hyp);
   void nbSearch(unsigned int len,
                 const std::vector<Score>& heurForEachState,
                 std::vector<std::pair<Score,std::string> >& nblist,

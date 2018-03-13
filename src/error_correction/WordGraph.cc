@@ -359,7 +359,7 @@ bool WordGraph::arcPruned(WordGraphArcId wordGraphArcId)const
 //---------------------------------------
 void WordGraph::obtainNbestList(unsigned int len,
                                 std::vector<std::pair<Score,std::string> >& nblist,
-                                std::vector<NbSearchHyp>& hypList,
+                                std::vector<NbSearchHighLevelHyp>& highLevelHypList,
                                 std::vector<std::vector<Score> >& scoreCompsVec,
                                 int verbosity/*=false*/)
 {
@@ -368,6 +368,7 @@ void WordGraph::obtainNbestList(unsigned int len,
   {
         // clear nblist and scoreCompsVec output variables
     nblist.clear();
+    highLevelHypList.clear();
     scoreCompsVec.clear();
   }
   else
@@ -378,8 +379,27 @@ void WordGraph::obtainNbestList(unsigned int len,
     obtainNbSearchHeurInfo(heurForEachState);
   
         // Execute A-star search
+    std::vector<NbSearchHyp> hypList;
     nbSearch(len,heurForEachState,nblist,hypList,scoreCompsVec,verbosity);
+
+        // Obtain high level hypothesis list
+    highLevelHypList.clear();
+    for(unsigned int i=0;i<hypList.size();++i)
+    {
+      highLevelHypList.push_back(hypToHighLevelHyp(hypList[i]));
+    }
   }
+}
+
+//---------------------------------------
+NbSearchHighLevelHyp WordGraph::hypToHighLevelHyp(const NbSearchHyp& hyp)
+{
+  NbSearchHighLevelHyp result;
+  for(unsigned int i=0;i<hyp.size();++i)
+  {
+    result.push_back(wordGraphArcId2WordGraphArc(hyp[i]));
+  }
+  return result;
 }
 
 //---------------------------------------
