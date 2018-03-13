@@ -281,6 +281,7 @@ error_correction/PfsmEcm.h error_correction/PfsmEcmForWg.h		\
 error_correction/PfsmEcmForWgEsi.h					\
 error_correction/NonPbEcModelForNbUcat.h				\
 error_correction/NbSearchStack.h error_correction/NbSearchHyp.h		\
+error_correction/NbSearchHighLevelHyp.h					\
 error_correction/NbestCorrections.h error_correction/HypStateIndex.h	\
 error_correction/_editDist.h error_correction/EditDistForVecString.h	\
 error_correction/EditDistForVec.h error_correction/EditDistForStr.h	\
