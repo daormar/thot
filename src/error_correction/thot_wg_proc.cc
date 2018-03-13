@@ -41,7 +41,7 @@ int processParameters(thot_wg_proc_pars pars);
 int printNbList(const std::vector<std::pair<std::string,float> >& compWeights,
                 const std::vector<std::pair<Score,std::string> >& nblist,
                 const std::vector<std::vector<Score> >& scoreCompsVec,
-                const std::vector<NbSearchHyp>& hypList,
+                const std::vector<NbSearchHighLevelHyp>& highLevelHypList,
                 std::string nbListFile);
 int process_bp_par(const WordGraph& wordGraph,
                    thot_wg_proc_pars pars);
@@ -147,14 +147,14 @@ int processParameters(thot_wg_proc_pars pars)
 
           // Obtain n-best list
       std::vector<std::pair<Score,std::string> > nblist;
-      std::vector<NbSearchHyp> hypList;
+      std::vector<NbSearchHighLevelHyp> highLevelHypList;
       std::vector<std::vector<Score> > scoreCompsVec;
-      wgAux.obtainNbestList(pars.nbListLen,nblist,hypList,scoreCompsVec,pars.v_given);
+      wgAux.obtainNbestList(pars.nbListLen,nblist,highLevelHypList,scoreCompsVec,pars.v_given);
       
           // Print file
       std::string nbListFile=pars.o_str;
       nbListFile=nbListFile+".nbl_pruned";
-      ret=printNbList(compWeights,nblist,scoreCompsVec,hypList,nbListFile);
+      ret=printNbList(compWeights,nblist,scoreCompsVec,highLevelHypList,nbListFile);
       if(ret==THOT_ERROR) return THOT_ERROR;
     }
     else
@@ -165,14 +165,14 @@ int processParameters(thot_wg_proc_pars pars)
 
           // Obtain n-best list
       std::vector<std::pair<Score,std::string> > nblist;
-      std::vector<NbSearchHyp> hypList;
+      std::vector<NbSearchHighLevelHyp> highLevelHypList;
       std::vector<std::vector<Score> > scoreCompsVec;
-      wordGraph.obtainNbestList(pars.nbListLen,nblist,hypList,scoreCompsVec,pars.v_given);
+      wordGraph.obtainNbestList(pars.nbListLen,nblist,highLevelHypList,scoreCompsVec,pars.v_given);
 
           // Print file
       std::string nbListFile=pars.o_str;
       nbListFile=nbListFile+".nbl";
-      ret=printNbList(compWeights,nblist,scoreCompsVec,hypList,nbListFile);
+      ret=printNbList(compWeights,nblist,scoreCompsVec,highLevelHypList,nbListFile);
       if(ret==THOT_ERROR) return THOT_ERROR;
     }
   }
@@ -237,7 +237,7 @@ int processParameters(thot_wg_proc_pars pars)
 int printNbList(const std::vector<std::pair<std::string,float> >& compWeights,
                 const std::vector<std::pair<Score,std::string> >& nblist,
                 const std::vector<std::vector<Score> >& scoreCompsVec,
-                const std::vector<NbSearchHyp>& hypList,
+                const std::vector<NbSearchHighLevelHyp>& highLevelHypList,
                 std::string nbListFile)
 {
   std::ofstream outS;
@@ -275,11 +275,11 @@ int printNbList(const std::vector<std::pair<std::string,float> >& compWeights,
       }
 
           // Print hypothesis information if given
-      if(i<hypList.size())
+      if(i<highLevelHypList.size())
       {
-        for(unsigned int j=0;j<hypList[i].size();++j)
-          outS<<" "<<hypList[i][j];
-        outS<<" |||";        
+        for(unsigned int j=0;j<highLevelHypList[i].size();++j)
+          outS<<" "<<highLevelHypList[i][j].predStateIndex<<"->"<<highLevelHypList[i][j].succStateIndex;
+        outS<<" |||";
       }
 
           // Print translation

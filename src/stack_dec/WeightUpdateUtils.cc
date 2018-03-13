@@ -52,9 +52,9 @@ namespace WeightUpdateUtils
         // Obtain n-best list
     unsigned int len=NBLIST_SIZE_FOR_LLWEIGHT_UPDATE;
     std::vector<std::pair<Score,std::string> > nblist;
-    std::vector<NbSearchHyp> hypList;
+    std::vector<NbSearchHighLevelHyp> highLevelHypList;
     std::vector<std::vector<double> > scoreCompsVec;
-    wgPtr->obtainNbestList(len,nblist,hypList,scoreCompsVec);
+    wgPtr->obtainNbestList(len,nblist,highLevelHypList,scoreCompsVec);
 
         // Obtain current weights
     std::vector<double> currentWeights;
