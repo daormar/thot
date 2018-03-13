@@ -376,7 +376,6 @@ void _stackDecoderRec<SMT_MODEL>::printHypStateIdxInfo(std::ostream &outS)
   typename HypStateDict<Hypothesis>::iterator hsdIter;
 
   outS<<"# SOURCE SENTENCE: "<<this->smtm_ptr->getCurrentSrcSent()<<std::endl;
-  outS<<"#"<<std::endl;
   for(hsdIter=hypStateDictPtr->begin();hsdIter!=hypStateDictPtr->end();++hsdIter)
   {
     outS<<hsdIter->second.hypStateIndex<<" "<<hsdIter->second.coverage<<" ";
