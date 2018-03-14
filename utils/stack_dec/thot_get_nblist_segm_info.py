@@ -37,7 +37,7 @@ def load_idx_info(idxfile):
     lineno=1
     idxinfo={}
     for line in idxfile:
-        if (lineno>1):
+        if (lineno>2):
             line=line.strip("\n")
             idx_info_entry_array=line.split()
             idxinfo[idx_info_entry_array[0]]=idx_info_entry_array[1]
