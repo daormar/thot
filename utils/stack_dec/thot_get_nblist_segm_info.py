@@ -6,11 +6,10 @@ import io, sys, getopt, itertools
 
 ##################################################
 def print_help():
-    print >> sys.stderr, "thot_get_nblist_segm_info -n <string> -p <string> [-v]"
+    print >> sys.stderr, "thot_get_nblist_segm_info -n <string> -p <string>"
     print >> sys.stderr, ""
     print >> sys.stderr, "-n <string>    File containing n-best list"
-    print >> sys.stderr, "-p <string>    Prefix of .wg and .idx file"
-    print >> sys.stderr, "-v             Verbose mode"
+    print >> sys.stderr, "-p <string>    Prefix of .wg and .idx files"
 
 ##################################################
 def make_key(orig_state,dest_state):
@@ -129,8 +128,6 @@ def main(argv):
             elif opt in ("-p", "--prefix"):
                 prefix = arg
                 p_given=True
-            elif opt in ("-v", "--verbose"):
-                verbose=1
 
     # check parameters
     if(n_given==False):
