@@ -74,7 +74,7 @@ stack_dec/thot_get_sys_trans stack_dec/thot_extract_hyp_info		\
 stack_dec/thot_ll_weight_upd stack_dec/thot_gen_nblists			\
 stack_dec/thot_rnnlm_rescore stack_dec/thot_nblist_tune			\
 stack_dec/thot_dhs_nbl_rescore stack_dec/thot_serialize_server_log	\
-stack_dec/thot_get_nblist_segm_info
+stack_dec/thot_get_nblist_segm_info stack_dec/thot_filter_nblist
 
 exper_bin_scripts= exper/thot_gen_partition exper/thot_tm_train		\
 exper/thot_smt_tune exper/thot_cat_tune exper/thot_prepare_sys_for_test	\
