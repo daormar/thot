@@ -134,20 +134,6 @@ get_absolute_path()
 }
 
 ########
-add_suffix_to_name()
-{
-    # Initialize variables
-    _name=$1
-    _suffix=$2
-    _name_components="`get_name_components ${_name}`"
-    _name_wo_ext=`echo "${_name_components}" | $AWK '{printf"%s",$1}'`
-    _ext=`echo "${_name_components}" | $AWK '{printf"%s",$2}'`
-
-    # Return result
-    echo ${_name_wo_ext}_${_suffix}${_ext}
-}
-
-########
 tok_corpus()
 {
     # Obtain basenames
