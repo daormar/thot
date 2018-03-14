@@ -64,9 +64,10 @@ def obtain_src_segm_given_coverages(prev_coverage,succ_coverage):
     different_pos=[]
     for i in range(len(succ_coverage_array)):
         if(i>=len(prev_coverage_array)):
-            different_pos.append(i)
+            if(succ_coverage_array[i]=="1"):
+                different_pos.append(i)
         else:
-            if(prev_coverage_array[i]!=succ_coverage_array[i]):
+            if(prev_coverage_array[i]=="0" and succ_coverage_array[i]=="1"):
                 different_pos.append(i)
     leftmost_pos=min(different_pos)
     rightmost_pos=max(different_pos)
