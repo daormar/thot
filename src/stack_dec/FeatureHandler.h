@@ -50,6 +50,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "PhraseModelsInfo.h"
 #include "LangModelsInfo.h"
 #include "WpModelInfo.h"
+#include "ModelDescriptorUtils.h"
 #include "StrProcUtils.h"
 
 //--------------- FeatureHandler class
