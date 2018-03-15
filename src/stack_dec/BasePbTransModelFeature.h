@@ -57,8 +57,12 @@ class BasePbTransModelFeature
 {
  public:
 
-  typedef SCORE_INFO HypScoreInfo;
+      // Declarations related to dynamic class loading
+  typedef BasePbTransModelFeature* create_t(const char*);
+  typedef const char* type_id_t(void);
 
+  typedef SCORE_INFO HypScoreInfo;
+  
       // Feature information
   void setFeatName(std::string fname);
   std::string getFeatName(void);
