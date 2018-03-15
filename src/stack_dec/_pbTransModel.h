@@ -87,7 +87,7 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   void link_trans_metadata(BaseTranslationMetadata<HypScoreInfo> * _trMetadataPtr);
 
       // Link features information
-  void link_feats_info(FeaturesInfo<HypScoreInfo>* _featuresInfoPtr);
+  void link_feats_info(FeaturesInfo<HypScoreInfo>* _standardFeaturesInfoPtr);
 
   void clear(void);
 
