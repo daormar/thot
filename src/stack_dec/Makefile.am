@@ -44,12 +44,12 @@ LangModelFeat.h LangModelFeat.cc DirectPhraseModelFeat.h		\
 DirectPhraseModelFeat.cc InversePhraseModelFeat.h			\
 InversePhraseModelFeat.cc SrcPhraseLenFeat.h SrcPhraseLenFeat.cc	\
 TrgPhraseLenFeat.h TrgPhraseLenFeat.cc SrcPosJumpFeat.h			\
-SrcPosJumpFeat.cc OnTheFlyDictFeat.h OnTheFlyDictFeat.cc BaseSmtModel.h	\
-BasePhraseHypothesisRec.h BasePhraseHypothesis.h			\
-BasePbTransModelStats.h BasePbTransModel.h BaseHypState.h		\
-BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h HypDebugData.h	\
-BaseAssistedTrans.h _assistedTrans.h KbMiraLlWuFactory.cc		\
-multi_stack_decoder_rec__pbtm_factory.cc				\
+SrcPosJumpFeat.cc OnTheFlyDictFeat.h OnTheFlyDictFeat.cc DictFeat.h	\
+DictFeat.cc BaseSmtModel.h BasePhraseHypothesisRec.h			\
+BasePhraseHypothesis.h BasePbTransModelStats.h BasePbTransModel.h	\
+BaseHypState.h BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h	\
+HypDebugData.h BaseAssistedTrans.h _assistedTrans.h			\
+KbMiraLlWuFactory.cc multi_stack_decoder_rec__pbtm_factory.cc		\
 multi_stack_decoder_rec__swli_factory.cc				\
 WgUncoupledAssistedTransPbTmFactory.cc					\
 WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc		\
