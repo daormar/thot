@@ -49,8 +49,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- InversePhraseModelFeat class
 
 /**
- * @brief The InversePhraseModelFeat template class is a base class for
- * implementing a inverse phrase model feature.
+ * @brief The InversePhraseModelFeat template class implementes an
+ * inverse phrase model feature.
  */
 
 template<class SCORE_INFO>
