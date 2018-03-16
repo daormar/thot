@@ -31,7 +31,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 template<>
 LangModelFeat<PhrScoreInfo>::HypScoreInfo
 LangModelFeat<PhrScoreInfo>::nullHypScore(const HypScoreInfo& predHypScrInf,
-                                          float weight,
+                                          float /*weight*/,
                                           Score& unweightedScore)
 {
   unweightedScore=0;
