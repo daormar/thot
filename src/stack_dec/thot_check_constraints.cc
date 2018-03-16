@@ -313,7 +313,7 @@ int extract_align_info(std::vector<std::string> alignInfoStrVec,
     }
     else
     {
-      targetSegmentCuts.push_back(std::stoi(alignInfoStrVec[i]));
+      targetSegmentCuts.push_back(atoi(alignInfoStrVec[i].c_str()));
       i+=1;
     }
         // Detect ending condition
