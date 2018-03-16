@@ -1147,7 +1147,8 @@ void WordGraph::obtainStatesReachableFromInit(std::vector<bool>& stateReachableF
   stateReachableFromInitVec.clear();
   for(unsigned int i=0;i<wordGraphStates.size();++i)
     stateReachableFromInitVec.push_back(false);
-  stateReachableFromInitVec[INITIAL_STATE]=true;
+  if(INITIAL_STATE<stateReachableFromInitVec.size())
+    stateReachableFromInitVec[INITIAL_STATE]=true;
       // Direct iteration over the arcs (arcs are assumed to be
       // topologically ordered)
   for(WordGraphArcId wgArcId=0;wgArcId<wordGraphArcs.size();++wgArcId)
@@ -1218,12 +1219,15 @@ void WordGraph::obtainUsefulStates(std::vector<bool>& stateIsUsefulVec,
       // Build remappedStates
   HypStateIndex newIdx=INITIAL_STATE;
   std::pair<HypStateIndex,HypStateIndex> range=getHypStateIndexRange();
-  for(HypStateIndex idx=range.first;idx<=range.second;++idx)
+  if(range.first!=INVALID_STATE && range.second!=INVALID_STATE)
   {
-    if(stateIsUsefulVec[idx])
+    for(HypStateIndex idx=range.first;idx<=range.second;++idx)
     {
-      remappedStates[idx]=newIdx;
-      ++newIdx;
+      if(idx<stateIsUsefulVec.size() && stateIsUsefulVec[idx])
+      {
+        remappedStates[idx]=newIdx;
+        ++newIdx;
+      }
     }
   }
 }
