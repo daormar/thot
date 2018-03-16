@@ -39,6 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <stdlib.h>
 
 //--------------- Type definitions -----------------------------------
 
@@ -304,7 +305,9 @@ int extract_align_info(std::vector<std::string> alignInfoStrVec,
       }
       else
       {
-        sourceSegmentation.push_back(std::make_pair(std::stoi(alignInfoStrVec[i+1]),std::stoi(alignInfoStrVec[i+3])));
+        PositionIndex leftmostPos=atoi(alignInfoStrVec[i+1].c_str());
+        PositionIndex rightmostPos=atoi(alignInfoStrVec[i+3].c_str());
+        sourceSegmentation.push_back(std::make_pair(leftmostPos,rightmostPos));
         i+=5;
       }
     }
