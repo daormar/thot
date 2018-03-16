@@ -339,10 +339,11 @@ stack_dec/_nbUncoupledAssistedTrans.h					\
 stack_dec/multi_stack_decoder_rec.h stack_dec/WpModelInfo.h		\
 stack_dec/LangModelPars.h stack_dec/LangModelInfo.h			\
 stack_dec/LangModelsInfo.h stack_dec/FeaturesInfo.h			\
-stack_dec/FeatureHandler.h stack_dec/HypStateDict.h			\
-stack_dec/HypStateDictData.h stack_dec/HypSortCriterion.h		\
-stack_dec/client_server_defs.h stack_dec/CatDefs.h stack_dec/bleu.h	\
-stack_dec/chrf.h stack_dec/BaseStackDecoder.h stack_dec/BaseSmtStack.h	\
+stack_dec/FeatureHandler.h stack_dec/CustomFeatureHandler.h		\
+stack_dec/HypStateDict.h stack_dec/HypStateDictData.h			\
+stack_dec/HypSortCriterion.h stack_dec/client_server_defs.h		\
+stack_dec/CatDefs.h stack_dec/bleu.h stack_dec/chrf.h			\
+stack_dec/BaseStackDecoder.h stack_dec/BaseSmtStack.h			\
 stack_dec/BaseSmtMultiStack.h stack_dec/BasePbTransModelFeature.h	\
 stack_dec/WordPenaltyFeat.h stack_dec/LangModelFeat.h			\
 stack_dec/DirectPhraseModelFeat.h stack_dec/InversePhraseModelFeat.h	\
@@ -359,11 +360,12 @@ stack_dec/WeightUpdateUtils.cc stack_dec/KbMiraLlWu.cc			\
 stack_dec/MiraBleu.cc stack_dec/MiraWer.cc stack_dec/MiraGtm.cc		\
 stack_dec/MiraChrF.cc stack_dec/ThotDecoderClient.cc			\
 stack_dec/ThotDecoder.cc stack_dec/FeatureHandler.cc			\
-stack_dec/WordPenaltyFeat.cc stack_dec/LangModelFeat.cc			\
-stack_dec/DirectPhraseModelFeat.cc stack_dec/InversePhraseModelFeat.cc	\
-stack_dec/SrcPhraseLenFeat.cc stack_dec/TrgPhraseLenFeat.cc		\
-stack_dec/SrcPosJumpFeat.cc stack_dec/OnTheFlyDictFeat.cc		\
-stack_dec/PhrScoreInfo.cc stack_dec/PhrNbestTransTableRefKey.cc		\
+stack_dec/CustomFeatureHandler.cc stack_dec/WordPenaltyFeat.cc		\
+stack_dec/LangModelFeat.cc stack_dec/DirectPhraseModelFeat.cc		\
+stack_dec/InversePhraseModelFeat.cc stack_dec/SrcPhraseLenFeat.cc	\
+stack_dec/TrgPhraseLenFeat.cc stack_dec/SrcPosJumpFeat.cc		\
+stack_dec/OnTheFlyDictFeat.cc stack_dec/PhrScoreInfo.cc			\
+stack_dec/PhrNbestTransTableRefKey.cc					\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\
