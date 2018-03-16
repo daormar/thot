@@ -49,8 +49,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- DirectPhraseModelFeat class
 
 /**
- * @brief The DirectPhraseModelFeat template class is a base class for
- * implementing a direct phrase model feature.
+ * @brief The DirectPhraseModelFeat template class implements a direct
+ * phrase model feature.
  */
 
 template<class SCORE_INFO>
