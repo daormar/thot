@@ -224,7 +224,7 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
   std::cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<std::endl;
   std::cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<std::endl;
 
-        // Obtain info about translation model entries
+      // Obtain info about translation model entries
   unsigned int numTransModelEntries;
   std::vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(tdp.transModelPref.c_str(),modelDescEntryVec)==THOT_OK)
