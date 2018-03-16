@@ -49,7 +49,8 @@ DictFeat.cc BaseSmtModel.h BasePhraseHypothesisRec.h			\
 BasePhraseHypothesis.h BasePbTransModelStats.h BasePbTransModel.h	\
 BaseHypState.h BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h	\
 HypDebugData.h BaseAssistedTrans.h _assistedTrans.h			\
-KbMiraLlWuFactory.cc multi_stack_decoder_rec__pbtm_factory.cc		\
+KbMiraLlWuFactory.cc DictFeatPhrScoreInfoFactory.cc			\
+multi_stack_decoder_rec__pbtm_factory.cc				\
 multi_stack_decoder_rec__swli_factory.cc				\
 WgUncoupledAssistedTransPbTmFactory.cc					\
 WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc		\
