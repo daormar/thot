@@ -107,7 +107,9 @@ bool fileIsDescriptor(std::string fileName)
   {
     if(awk.getln())
     {
-      if(awk.NF>=3 && awk.dollar(1)=="thot" && (awk.dollar(2)=="tm" || awk.dollar(2)=="lm") && awk.dollar(3)=="descriptor")
+      if(awk.NF>=3 && awk.dollar(1)=="thot"
+         && (awk.dollar(2)=="tm" || awk.dollar(2)=="lm" || awk.dollar(2)=="cf")
+         && awk.dollar(3)=="descriptor")
       {
             // File is a descriptor
         awk.close();
@@ -140,7 +142,9 @@ bool fileIsDescriptor(std::string fileName,
   {
     if(awk.getln())
     {
-      if(awk.NF>=3 && awk.dollar(1)=="thot" && (awk.dollar(2)=="tm" || awk.dollar(2)=="lm") && awk.dollar(3)=="descriptor")
+      if(awk.NF>=3 && awk.dollar(1)=="thot"
+         && (awk.dollar(2)=="tm" || awk.dollar(2)=="lm" || awk.dollar(2)=="cf")
+         && awk.dollar(3)=="descriptor")
       {
             // Process descriptor (main file will be searched)
         while(awk.getln())
