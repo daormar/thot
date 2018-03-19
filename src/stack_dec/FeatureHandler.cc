@@ -914,7 +914,7 @@ BaseNgramLM<LM_State>* FeatureHandler::createLmPtr(std::string soFileName)
       return NULL;
     }
 
-        // Create lm file pointer
+        // Create lm pointer
     BaseNgramLM<LM_State>* lmPtr=simpleDynClassLoader.make_obj("");
 
         // Store dynamic class loader
