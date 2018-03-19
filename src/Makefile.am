@@ -525,18 +525,18 @@ kb_mira_ll_wu_factory_h=
 kb_mira_ll_wu_factory_defs= stack_dec/KbMiraLlWuFactory.cc
 
 ##########
-dict_feat__phrscoreinfo_factory_factory_h= 
-dict_feat__phrscoreinfo_factory_factory_defs=	\
-stack_dec/DictFeatPhrScoreFactory.cc
+dict_feat__phrscoreinfo_factory_h= 
+dict_feat__phrscoreinfo_factory_defs=		\
+stack_dec/DictFeatPhrScoreInfoFactory.cc
 
 ##########
 translation_metadata__phrscoreinfo_factory_h= 
-translation_metadata__phrscoreinfo_factory_defs=			\
+translation_metadata__phrscoreinfo_factory_defs=	\
 stack_dec/TranslationMetadataPhrScoreInfoFactory.cc
 
 ##########
 json_translation_metadata__phrscoreinfo_factory_h= 
-json_translation_metadata__phrscoreinfo_factory_defs=			\
+json_translation_metadata__phrscoreinfo_factory_defs=	\
 stack_dec/JsonTranslationMetadataPhrScoreInfoFactory.cc
 
 ##########

@@ -29,9 +29,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Function definitions
 
-extern "C" BasePbTransModel<PhrScoreInfo>* create(const char* /*str*/)
+extern "C" BasePbTransModelFeature<PhrScoreInfo>* create(const char* /*str*/)
 {
-  return new DictFeat;
+  return new DictFeat<PhrScoreInfo>;
 }
 
 //---------------
