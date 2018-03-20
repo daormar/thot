@@ -34,7 +34,9 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "PhrScoreInfo.h"
 #include "BasePbTransModelFeature.h"
+#include "AwkInputStream.h"
 #include "Score.h"
+#include "ErrorDefs.h"
 #include <map>
 
 //--------------- Constants ------------------------------------------
@@ -55,8 +57,9 @@ class DictFeat: public BasePbTransModelFeature<SCORE_INFO>
 
   typedef typename BasePbTransModelFeature<SCORE_INFO>::HypScoreInfo HypScoreInfo;
 
-      // Constructor
+      // Constructors
   DictFeat();
+  DictFeat(std::string modelFileName);
 
       // Feature information
   std::string getFeatType(void);
@@ -81,7 +84,15 @@ class DictFeat: public BasePbTransModelFeature<SCORE_INFO>
   typedef std::map<std::vector<std::string>, TransOptions> Dict;
 
   Dict dict;
-  
+
+  int load(std::string modelFileName);
+  int extractEntryInfo(AwkInputStream& awk,
+                       std::vector<std::string>& srcPhr,
+                       std::vector<std::string>& trgPhr,
+                       Score& scr);
+  void insertEntry(const std::vector<std::string>& srcPhr,
+                   const std::vector<std::string>& trgPhr,
+                   Score scr);
 };
 
 //--------------- WordPenaltyFeat class functions
@@ -90,6 +101,105 @@ class DictFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 DictFeat<SCORE_INFO>::DictFeat()
 {
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+DictFeat<SCORE_INFO>::DictFeat(std::string modelFileName)
+{
+      // Load dictionary entries from file
+  int ret=load(modelFileName);
+  if(ret==THOT_ERROR)
+    throw std::runtime_error("Error while initializing DictFeat object");
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+int DictFeat<SCORE_INFO>::load(std::string modelFileName)
+{
+  AwkInputStream awk;
+  if(awk.open(modelFileName.c_str())==THOT_ERROR)
+  {
+    return THOT_ERROR;
+  }
+  else
+  {
+        // Read entries for each model
+    while(awk.getln())
+    {
+          // Extract entry information
+      std::vector<std::string> srcPhr;
+      std::vector<std::string> trgPhr;
+      Score scr;
+      extractEntryInfo(awk,srcPhr,trgPhr,scr);
+
+          // Insert information into dictionary
+      insertEntry(srcPhr,trgPhr,scr);
+    }
+  }
+  
+  return THOT_OK;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+int DictFeat<SCORE_INFO>::extractEntryInfo(AwkInputStream& awk,
+                                           std::vector<std::string>& srcPhr,
+                                           std::vector<std::string>& trgPhr,
+                                           Score& scr)
+{
+  unsigned int i;
+
+      // Obtain source phrase
+  srcPhr.clear();
+  for(i = 1; i <= awk.NF; ++i)
+  {
+    if(awk.dollar(i) == "|||")
+      break;
+    else
+      srcPhr.push_back(awk.dollar(i));
+  }
+  if(i == awk.NF)
+    return THOT_ERROR;
+
+      // Obtain target phrase
+  trgPhr.clear();
+  i += 1;
+  for(; i <= awk.NF; ++i)
+  {
+    if(awk.dollar(i) == "|||")
+      break;
+    else
+      trgPhr.push_back(awk.dollar(i));
+  }
+  if(i != awk.NF - 1)
+    return THOT_ERROR;
+
+      // Obtain score
+  scr = atof(awk.dollar(awk.NF).c_str());
+
+  return THOT_OK;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+void DictFeat<SCORE_INFO>::insertEntry(const std::vector<std::string>& srcPhr,
+                                       const std::vector<std::string>& trgPhr,
+                                       Score scr)
+{
+  Dict::iterator dictIter=dict.find(srcPhr);
+  if(dictIter==dict.end())
+  {
+        // There is no entry for source phrase
+    TransOptions trOpts;
+    trOpts.insert(std::make_pair(trgPhr,scr));
+    dict.insert(std::make_pair(srcPhr,trOpts));
+  }
+  else
+  {
+        // Given source phrase has an entry in dictionary
+    dictIter->second[trgPhr]=scr;
+  }
 }
 
 //---------------------------------
