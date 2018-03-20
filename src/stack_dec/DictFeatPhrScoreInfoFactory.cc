@@ -26,12 +26,28 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "PhrScoreInfo.h"
 #include "DictFeat.h"
+#include <string.h>
 
 //--------------- Function definitions
 
-extern "C" BasePbTransModelFeature<PhrScoreInfo>* create(const char* /*str*/)
+extern "C" BasePbTransModelFeature<PhrScoreInfo>* create(const char* str)
 {
-  return new DictFeat<PhrScoreInfo>;
+  if(strlen(str)==0)
+    return new DictFeat<PhrScoreInfo>;
+  else
+  {
+    DictFeat<PhrScoreInfo>* dictFeatPtr;
+    try
+    {
+      dictFeatPtr= new DictFeat<PhrScoreInfo>(str);
+    }
+    catch(const std::exception& e)
+    {
+      return NULL;
+    }
+    
+    return dictFeatPtr;
+  }
 }
 
 //---------------
