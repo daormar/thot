@@ -340,7 +340,7 @@ stack_dec/_nbUncoupledAssistedTrans.h					\
 stack_dec/multi_stack_decoder_rec.h stack_dec/WpModelInfo.h		\
 stack_dec/LangModelPars.h stack_dec/LangModelInfo.h			\
 stack_dec/LangModelsInfo.h stack_dec/FeaturesInfo.h			\
-stack_dec/FeatureHandler.h stack_dec/CustomFeatureHandler.h		\
+stack_dec/StdFeatureHandler.h stack_dec/CustomFeatureHandler.h		\
 stack_dec/HypStateDict.h stack_dec/HypStateDictData.h			\
 stack_dec/HypSortCriterion.h stack_dec/client_server_defs.h		\
 stack_dec/CatDefs.h stack_dec/bleu.h stack_dec/chrf.h			\
@@ -361,7 +361,7 @@ stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
 stack_dec/WeightUpdateUtils.cc stack_dec/KbMiraLlWu.cc			\
 stack_dec/MiraBleu.cc stack_dec/MiraWer.cc stack_dec/MiraGtm.cc		\
 stack_dec/MiraChrF.cc stack_dec/ThotDecoderClient.cc			\
-stack_dec/ThotDecoder.cc stack_dec/FeatureHandler.cc			\
+stack_dec/ThotDecoder.cc stack_dec/StdFeatureHandler.cc			\
 stack_dec/CustomFeatureHandler.cc stack_dec/WordPenaltyFeat.cc		\
 stack_dec/LangModelFeat.cc stack_dec/DirectPhraseModelFeat.cc		\
 stack_dec/InversePhraseModelFeat.cc stack_dec/SrcPhraseLenFeat.cc	\

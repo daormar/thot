@@ -35,7 +35,7 @@ PhraseCacheTable.h NbestTransCacheData.h _phraseBasedTransModel.h	\
 _pbTransModel.h PbTransModel.h OnlineTrainingPars.h NgramCacheTable.h	\
 _nbUncoupledAssistedTrans.h multi_stack_decoder_rec.h WpModelInfo.h	\
 LangModelPars.h LangModelInfo.h LangModelsInfo.h FeaturesInfo.h		\
-FeatureHandler.h FeatureHandler.cc CustomFeatureHandler.h		\
+StdFeatureHandler.h StdFeatureHandler.cc CustomFeatureHandler.h		\
 CustomFeatureHandler.cc HypStateDict.h HypStateDictData.h		\
 HypSortCriterion.h client_server_defs.h CatDefs.h bleu.h bleu.cc chrf.h	\
 chrf.cc BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h		\

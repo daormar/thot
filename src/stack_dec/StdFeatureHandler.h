@@ -17,13 +17,13 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
- * @file FeatureHandler.h
+ * @file StdFeatureHandler.h
  * 
  * @brief Class to handle log-linear model features.
  */
 
-#ifndef _FeatureHandler_h
-#define _FeatureHandler_h
+#ifndef _StdFeatureHandler_h
+#define _StdFeatureHandler_h
 
 //--------------- Include files --------------------------------------
 
@@ -54,14 +54,14 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ModelDescriptorUtils.h"
 #include "StrProcUtils.h"
 
-//--------------- FeatureHandler class
+//--------------- StdFeatureHandler class
 
-class FeatureHandler
+class StdFeatureHandler
 {
  public:
 
       // Constructor
-  FeatureHandler();
+  StdFeatureHandler();
   
       // Functions to incorporate features
   int addWpFeat(int verbose);
@@ -111,7 +111,7 @@ class FeatureHandler
   void clear(void);
 
       // Destructor
-  ~FeatureHandler();
+  ~StdFeatureHandler();
   
  private:
 
