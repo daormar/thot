@@ -69,7 +69,8 @@ class CustomFeatureHandler
   int createCustomFeat(std::string featName,
                        const ModelDescriptorEntry& modelDescEntry,
                        BasePbTransModelFeature<SmtModel::HypScoreInfo>** featPtrRef);
-  BasePbTransModelFeature<SmtModel::HypScoreInfo>* createFeatPtr(std::string soFileName);
+  BasePbTransModelFeature<SmtModel::HypScoreInfo>* createFeatPtr(std::string soFileName,
+                                                                 std::string modelFileName);
 
 };
   

@@ -77,17 +77,20 @@ int CustomFeatureHandler::createCustomFeat(std::string featName,
   }
 
       // Create feature pointer and set name
-  (*featPtrRef)=createFeatPtr(modelDescEntry.modelInitInfo);
+  (*featPtrRef)=createFeatPtr(modelDescEntry.modelInitInfo,modelDescEntry.absolutizedModelFileName);
   BasePbTransModelFeature<SmtModel::HypScoreInfo>* featPtr=*featPtrRef;
   if(featPtr==NULL)
     return THOT_ERROR;
+
+      // Set feature name
   featPtr->setFeatName(featName);
-    
+  
   return THOT_OK; 
 }
 
 //--------------------------
-BasePbTransModelFeature<SmtModel::HypScoreInfo>* CustomFeatureHandler::createFeatPtr(std::string soFileName)
+BasePbTransModelFeature<SmtModel::HypScoreInfo>* CustomFeatureHandler::createFeatPtr(std::string soFileName,
+                                                                                     std::string modelFileName)
 {
       // Declare dynamic class loader instance
   SimpleDynClassLoader<BasePbTransModelFeature<SmtModel::HypScoreInfo> > simpleDynClassLoader;
@@ -100,8 +103,8 @@ BasePbTransModelFeature<SmtModel::HypScoreInfo>* CustomFeatureHandler::createFea
     return NULL;
   }
 
-      // Create tm file pointer
-  BasePbTransModelFeature<SmtModel::HypScoreInfo>* featPtr=simpleDynClassLoader.make_obj("");
+      // Create model feature pointer
+  BasePbTransModelFeature<SmtModel::HypScoreInfo>* featPtr=simpleDynClassLoader.make_obj(modelFileName);
 
   if(featPtr==NULL)
   {
