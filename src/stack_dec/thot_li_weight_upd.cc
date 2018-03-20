@@ -32,7 +32,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include THOT_SMTMODEL_H // Define SmtModel type. It is set in
                          // configure by checking SMTMODEL_H
                          // variable (default value: SmtModel.h)
-#include "FeatureHandler.h"
+#include "StdFeatureHandler.h"
 #include "_pbTransModel.h"
 #include "PhrLocalSwLiTm.h"
 #include "ModelDescriptorUtils.h"
@@ -82,7 +82,7 @@ SwModelInfo* swModelInfoPtr;
 PhrLocalSwLiTm* phrLocalSwLiTmPtr;
 
     // Variables related to feature-based implementation
-FeatureHandler featureHandler;
+StdFeatureHandler stdFeatureHandler;
 
 //--------------- Function Definitions -------------------------------
 
@@ -307,8 +307,8 @@ int initPhrModelFeatImpl(std::string phrModelFilePrefix)
 //---------------
 void set_default_models(void)
 {
-  featureHandler.setDefaultTransSoFile(dynClassFactoryHandler.basePhraseModelSoFileName);
-  featureHandler.setDefaultSingleWordSoFile(dynClassFactoryHandler.baseSwAligModelSoFileName);
+  stdFeatureHandler.setDefaultTransSoFile(dynClassFactoryHandler.basePhraseModelSoFileName);
+  stdFeatureHandler.setDefaultSingleWordSoFile(dynClassFactoryHandler.baseSwAligModelSoFileName);
 }
 
 //---------------
@@ -316,7 +316,7 @@ int add_model_features(std::string phrModelFilePrefix)
 {
       // Add translation model features
   int verbosity=false;
-  int ret=featureHandler.addTmFeats(phrModelFilePrefix,verbosity);
+  int ret=stdFeatureHandler.addTmFeats(phrModelFilePrefix,verbosity);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
@@ -342,7 +342,7 @@ void releaseMemLegacyImpl(void)
 void releaseMemFeatImpl(void)
 {
       // Delete features information
-  featureHandler.clear();
+  stdFeatureHandler.clear();
   
       // Release class factory handler
   dynClassFactoryHandler.release_smt();
@@ -388,12 +388,12 @@ int update_li_weights_feat_impl(const thot_liwu_pars& pars)
     return THOT_ERROR;
 
       // Update weights
-  retVal=featureHandler.updatePmLinInterpWeights(pars.testCorpusFile,pars.refCorpusFile,pars.verbosity);
+  retVal=stdFeatureHandler.updatePmLinInterpWeights(pars.testCorpusFile,pars.refCorpusFile,pars.verbosity);
   if(retVal==THOT_ERROR)
     return THOT_ERROR;
   
       // Print updated weights
-  retVal=featureHandler.printAligModelLambdas(pars.phrModelFilePrefix);
+  retVal=stdFeatureHandler.printAligModelLambdas(pars.phrModelFilePrefix);
   if(retVal==THOT_ERROR)
     return THOT_ERROR;
   
