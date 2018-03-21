@@ -267,17 +267,21 @@ void ThotDecoder::init_translator_feat_impl(void)
       // Instantiate smt model
   tdCommonVars.smtModelPtr=new SmtModel();
   
-      // Link features information if appliable 
+      // Link standard features information if appliable 
   _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(tdCommonVars.smtModelPtr);
   if(pbtm_ptr)
-    pbtm_ptr->link_feats_info(tdCommonVars.featureHandler.getFeatureInfoPtr());
+    pbtm_ptr->link_std_feats_info(tdCommonVars.stdFeatureHandler.getFeatureInfoPtr());
 
       // Define feature handler class loaders
-  tdCommonVars.featureHandler.setWordPenSoFile(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelSoFileName);
-  tdCommonVars.featureHandler.setDefaultLangSoFile(tdCommonVars.dynClassFactoryHandler.baseNgramLMSoFileName);
-  tdCommonVars.featureHandler.setDefaultTransSoFile(tdCommonVars.dynClassFactoryHandler.basePhraseModelSoFileName);
-  tdCommonVars.featureHandler.setDefaultSingleWordSoFile(tdCommonVars.dynClassFactoryHandler.baseSwAligModelSoFileName);
+  tdCommonVars.stdFeatureHandler.setWordPenSoFile(tdCommonVars.dynClassFactoryHandler.baseWordPenaltyModelSoFileName);
+  tdCommonVars.stdFeatureHandler.setDefaultLangSoFile(tdCommonVars.dynClassFactoryHandler.baseNgramLMSoFileName);
+  tdCommonVars.stdFeatureHandler.setDefaultTransSoFile(tdCommonVars.dynClassFactoryHandler.basePhraseModelSoFileName);
+  tdCommonVars.stdFeatureHandler.setDefaultSingleWordSoFile(tdCommonVars.dynClassFactoryHandler.baseSwAligModelSoFileName);
 
+      // Link custom features information
+  if(pbtm_ptr)
+    pbtm_ptr->link_custom_feats_info(tdCommonVars.customFeatureHandler.getFeatureInfoPtr());
+  
       // Create translation metadata object
       // 
       // NOTE: metadata objects are defined per user, however, one is
@@ -558,6 +562,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       // Set default values for parameters
   std::string tm_str="/home/dortiz/traduccion/corpus/Xerox/en_es/v14may2003/simplified2/TM/my_ef";
   std::string lm_str="/home/dortiz/traduccion/corpus/Xerox/en_es/v14may2003/simplified2/LM/e_i3_c.lm";
+  std::string cf_str;
   unsigned int nomon=TDEC_NOMON_DEFAULT;
   float W=TDEC_W_DEFAULT;
   unsigned int A=TDEC_A_DEFAULT;
@@ -609,6 +614,23 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       }
     }
 
+        // -cf parameter
+    if(argv_stl[i]=="-cf" && !matched)
+    {
+      if(i==argc-1)
+      {
+        std::cerr<<"Error: no value for -cf parameter."<<std::endl;
+        return THOT_ERROR;
+      }
+      else
+      {
+        cf_str=argv_stl[i+1];
+        ++matched;
+        ++i;
+      }
+    }
+
+    
         // -W parameter
     if(argv_stl[i]=="-W" && !matched)
     {
@@ -943,7 +965,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
       // Add word penalty model feature
   if(tdCommonVars.featureBasedImplEnabled)
   {
-    ret=tdCommonVars.featureHandler.addWpFeat(verbose);
+    ret=tdCommonVars.stdFeatureHandler.addWpFeat(verbose);
     if(ret==THOT_ERROR)
       return THOT_ERROR;
   }
@@ -972,6 +994,16 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     if(ret==THOT_ERROR) return THOT_ERROR;
   }
 
+      // Load custom features if they were provided
+  if(tdCommonVars.featureBasedImplEnabled)
+  {
+    if(!cf_str.empty())
+    {
+      ret=tdCommonVars.customFeatureHandler.addCustomFeats(cf_str,verbose);
+      if(ret==THOT_ERROR) return THOT_ERROR;
+    }
+  }  
+  
       // Set non-monotonicity level
   setNonMonotonicity(nomon,verbose);
 
@@ -1073,6 +1105,7 @@ int ThotDecoder::testSoftwareModulesInModelDescriptors(std::string cfgFile,
       // Set default values for parameters
   std::string tm_str="/home/dortiz/traduccion/corpus/Xerox/en_es/v14may2003/simplified2/TM/my_ef";
   std::string lm_str="/home/dortiz/traduccion/corpus/Xerox/en_es/v14may2003/simplified2/LM/e_i3_c.lm";
+  std::string cf_str;
   
       // Process parameters
   int i=1;
@@ -1112,14 +1145,30 @@ int ThotDecoder::testSoftwareModulesInModelDescriptors(std::string cfgFile,
         ++i;
       }
     }
+        // -cf parameter
+    if(argv_stl[i]=="-cf" && !matched)
+    {
+      if(i==argc-1)
+      {
+        std::cerr<<"Error: no value for -cf parameter."<<std::endl;
+        return THOT_ERROR;
+      }
+      else
+      {
+        std::cerr<<"-cf parameter value: \""<<argv_stl[i+1]<<"\""<<std::endl;
+        cf_str=argv_stl[i+1];
+        ++matched;
+        ++i;
+      }
+    }
     ++i;
   }
   
   // Test software modules incorporated in model descriptors
 
-  std::cerr<<"** Testing software modules provided in language model descriptor"<<std::endl;
   if(tdCommonVars.featureBasedImplEnabled)
   {
+    std::cerr<<"** Testing software modules provided in language model descriptor"<<std::endl;
     if(fileIsDescriptor(lm_str.c_str()))
     {
       ret=testModulesInLmDesc(lm_str.c_str(),verbose);
@@ -1129,9 +1178,9 @@ int ThotDecoder::testSoftwareModulesInModelDescriptors(std::string cfgFile,
       std::cerr<<"Warning: -lm parameter is not a model descriptor so it could not be tested"<<std::endl;
   }
 
-  std::cerr<<"** Testing software modules provided in translation model descriptor"<<std::endl;
   if(tdCommonVars.featureBasedImplEnabled)
   {
+    std::cerr<<"** Testing software modules provided in translation model descriptor"<<std::endl;
     if(fileIsDescriptor(tm_str.c_str()))
     {
       ret=testModulesInTmDesc(tm_str.c_str(),verbose);
@@ -1139,6 +1188,13 @@ int ThotDecoder::testSoftwareModulesInModelDescriptors(std::string cfgFile,
     }
     else
       std::cerr<<"Warning: -tm parameter is not a model descriptor so it could not be tested"<<std::endl;
+  }
+
+  if(!cf_str.empty() && tdCommonVars.featureBasedImplEnabled)
+  {
+    std::cerr<<"** Testing software modules provided in custom features descriptor"<<std::endl;
+    ret=testModulesInCustomFeatDesc(cf_str.c_str(),verbose);
+    if(ret==THOT_ERROR) return THOT_ERROR;
   }
 
   return THOT_OK;
@@ -1515,7 +1571,7 @@ bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
   }
   else
   {
-    ret=tdCommonVars.featureHandler.addTmFeats(tmFilesPrefix,verbose);
+    ret=tdCommonVars.stdFeatureHandler.addTmFeats(tmFilesPrefix,verbose);
         // Store tm information
     if(ret==THOT_OK)
       tdState.tmFilesPrefixGiven=tmFilesPrefix;
@@ -1570,7 +1626,7 @@ bool ThotDecoder::load_lm_feat_impl(const char* lmFileName,
   }
   else
   {
-    ret=tdCommonVars.featureHandler.addLmFeats(lmFileName,verbose);
+    ret=tdCommonVars.stdFeatureHandler.addLmFeats(lmFileName,verbose);
     if(ret==THOT_OK)
       tdState.lmfileLoaded=lmFileName;
   }
@@ -1767,6 +1823,64 @@ int ThotDecoder::testSwModelModule(std::string soFileName,
 }
 
 //--------------------------
+int ThotDecoder::testModulesInCustomFeatDesc(const char* customFeatDescFileName,
+                                             int verbose/*=0*/)
+{
+      // Obtain info about custom feature descriptor entries
+  std::vector<ModelDescriptorEntry> modelDescEntryVec;
+  if(extractModelEntryInfo(customFeatDescFileName,modelDescEntryVec)==THOT_OK)
+  {
+        // Process descriptor entries
+    for(unsigned int i=0;i<modelDescEntryVec.size();++i)
+    {
+      std::cerr<<"* Testing module implementing log-linear model feature ("<<modelDescEntryVec[i].modelInitInfo<<" "<<modelDescEntryVec[i].absolutizedModelFileName<<")"<<std::endl;
+      int ret=testCustomFeatModule(modelDescEntryVec[i].modelInitInfo,verbose);
+      if(ret==THOT_ERROR)
+      {
+        std::cerr<<"Module implementing log-linear model feature is not correct"<<std::endl;
+        return THOT_ERROR;
+      }
+      else
+      {
+        std::cerr<<"Module implementing log-linear feature is correct"<<std::endl;
+      }
+    }
+    return THOT_OK;
+  }
+  else
+  {
+    return THOT_ERROR;
+  }  
+}
+
+//--------------------------
+int ThotDecoder::testCustomFeatModule(std::string soFileName,
+                                      int /*verbose=0*/)
+{
+      // Declare dynamic class loader instance
+  SimpleDynClassLoader<BasePbTransModelFeature<SmtModel::HypScoreInfo> > simpleDynClassLoader;
+  
+      // Open module
+  bool verbosity=false;
+  if(!simpleDynClassLoader.open_module(soFileName,verbosity))
+  {
+    std::cerr<<"Error: so file ("<<soFileName<<") could not be opened"<<std::endl;
+    return THOT_ERROR;
+  }
+
+      // Create tm file pointer
+  BasePbTransModelFeature<SmtModel::HypScoreInfo>* featPtr=simpleDynClassLoader.make_obj("");
+
+  if(featPtr==NULL)
+  {
+    std::cerr<<"Error: BasePbTransModelFeature pointer could not be instantiated"<<std::endl;    
+    return THOT_ERROR;
+  }
+  
+  return THOT_OK;
+}
+
+//--------------------------
 int ThotDecoder::onlineTrainSentPair(int user_id,
                                      const char *srcSent,
                                      const char *refSent,
@@ -1883,7 +1997,7 @@ void ThotDecoder::addSentenceToWordPred(std::string sentence,
 {
   if(tdCommonVars.featureBasedImplEnabled)
   {
-    tdCommonVars.featureHandler.trainWordPred(StrProcUtils::stringToStringVector(sentence));
+    tdCommonVars.stdFeatureHandler.trainWordPred(StrProcUtils::stringToStringVector(sentence));
   }
   else
   {
@@ -1899,7 +2013,7 @@ int ThotDecoder::onlineTrainFeats(std::string srcSent,
 {
   if(tdCommonVars.featureBasedImplEnabled)
   {
-    return tdCommonVars.featureHandler.onlineTrainFeats(tdCommonVars.onlineTrainingPars,
+    return tdCommonVars.stdFeatureHandler.onlineTrainFeats(tdCommonVars.onlineTrainingPars,
                                                         srcSent,
                                                         refSent,
                                                         sysSent,
@@ -2551,7 +2665,8 @@ void ThotDecoder::clearTrans(int /*verbose=0*/)
   tdCommonVars.wgHandlerPtr->clear();
   tdCommonVars.smtModelPtr->clear();
   tdCommonVars.ecModelPtr->clear();
-  tdCommonVars.featureHandler.clear();
+  tdCommonVars.stdFeatureHandler.clear();
+  tdCommonVars.customFeatureHandler.clear();
   for(size_t i=0;i<tdPerUserVarsVec.size();++i)
   {
     release_idx_data(i);
@@ -2594,7 +2709,7 @@ int ThotDecoder::printModelsFeatImpl(int verbose/*=0*/)
   int ret;
 
       // Print alignment model parameters
-  ret=tdCommonVars.featureHandler.print(tdState.tmFilesPrefixGiven,tdState.lmfileLoaded);
+  ret=tdCommonVars.stdFeatureHandler.print(tdState.tmFilesPrefixGiven,tdState.lmfileLoaded);
   
   if(ret==THOT_OK)
   {
@@ -3058,8 +3173,8 @@ std::pair<Count,std::string> ThotDecoder::getBestSuffixGivenHist(std::vector<std
 std::pair<Count,std::string> ThotDecoder::getBestSuffixGivenHistFeatImpl(std::vector<std::string> hist,
                                                                          std::string input)
 {
-      // Obtain pointer to features info
-  FeaturesInfo<SmtModel::HypScoreInfo>* featsInfoPtr=tdCommonVars.featureHandler.getFeatureInfoPtr();
+      // Obtain pointer to standard features info
+  FeaturesInfo<SmtModel::HypScoreInfo>* featsInfoPtr=tdCommonVars.stdFeatureHandler.getFeatureInfoPtr();
 
       // Obtain pointers to language model features
   std::vector<unsigned int> featIndexVec;

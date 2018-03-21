@@ -228,6 +228,10 @@ class ThotDecoder
                    int verbose=0);
   int testSwModelModule(std::string soFileName,
                         int verbose=0);
+  int testModulesInCustomFeatDesc(const char* customFeatDescFileName,
+                                  int verbose=0);
+  int testCustomFeatModule(std::string soFileName,
+                           int verbose=0);
     
       // Functions to print models
   int printModelsLegacyImpl(int verbose=0);
