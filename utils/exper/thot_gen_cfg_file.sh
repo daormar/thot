@@ -48,30 +48,80 @@ put_tm_desc_string()
 }
 
 ########
-if [ $# -ne 2 ]; then
-    echo "Usage: thot_gen_cfg_file <lm_desc> <tm_desc>"
-else
-    # Read parameters
-    lm_desc=`get_absolute_path $1 $PWD`
-    tm_desc=`get_absolute_path $2 $PWD`
+put_cf_desc_string()
+{
+    $SED "s@<cf_file_path>@${cf_desc}@"
+}
 
-    # Initialize variables
-    lm_desc_dir=`$DIRNAME ${lm_desc}`
-    tm_desc_dir=`$DIRNAME ${tm_desc}`
+########
+get_lm_desc()
+{
+    _desc=$1
+    if [ ${_desc} = ${none} ]; then
+        echo ${_desc}
+    else
+        get_absolute_path ${_desc} $PWD
+    fi
+}
+
+########
+get_tm_desc()
+{
+    _desc=$1
+    if [ ${_desc} = ${none} ]; then
+        echo ${_desc}
+    else
+        get_absolute_path ${_desc} $PWD
+    fi
+}
+
+########
+get_cf_desc()
+{
+    _desc=$1
+    if [ ${_desc} = ${none} ]; then
+        echo ${_desc}
+    else
+        get_absolute_path ${_desc} $PWD
+    fi
+}
+
+########
+if [ $# -ne 2 -a $# -ne 3 ]; then
+    echo "Usage: thot_gen_cfg_file <lm_desc> <tm_desc> [<cf_desc>]"
+else
+    # Define constant
+    none="_none_"
+
+    # Read parameters
+    lm_desc=`get_lm_desc $1`
+    tm_desc=`get_tm_desc $2`
+    
+    if [ $# -eq 2 ]; then
+        cf_desc=${none}
+    else
+        cf_desc=`get_cf_desc $3`
+    fi
 
     # Check files
-    if [ ! -f ${tm_desc} ]; then
+    if [ ${tm_desc} != ${none} -a ! -f ${tm_desc} ]; then
         echo "Error! file with translation model descriptor, ${tm_desc}, does not exist" >&2 
         exit 1
     fi
 
-    if [ ! -f ${lm_desc} ]; then
+    if [ ${lm_desc} != ${none} -a ! -f ${lm_desc} ]; then
         echo "Error! file with language model descriptor, ${lm_desc}, does not exist" >&2 
+        exit 1
+    fi
+
+    if [ ${cf_desc} != ${none} -a ! -f ${cf_desc} ]; then
+        echo "Error! file with custom features descriptor, ${cf_desc}, does not exist" >&2 
         exit 1
     fi
 
     # Generate configuration file
     cat ${datadir}/cfg_templates/thot_basic.cfg | \
         put_lm_desc_string | \
-        put_tm_desc_string
+        put_tm_desc_string | \
+        put_cf_desc_string
 fi
