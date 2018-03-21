@@ -63,22 +63,37 @@ int StdFeatureHandler::addWpFeat(int /*verbose*/)
 int StdFeatureHandler::addLmFeats(std::string lmFileName,
                                   int verbose)
 {
-  if(fileIsDescriptor(lmFileName))
-    return process_lm_descriptor(lmFileName,verbose);
+  if(lmFileName==NONE_DESCRIPTOR)
+  {
+    std::cerr<<"Warning: no language model related features will be added"<<std::endl;    
+    return THOT_OK;
+  }
   else
-    return process_lm_files_prefix(lmFileName,verbose);
+  {
+    if(fileIsDescriptor(lmFileName))
+      return process_lm_descriptor(lmFileName,verbose);
+    else
+      return process_lm_files_prefix(lmFileName,verbose);
+  }
 }
 
 //---------------
 int StdFeatureHandler::addTmFeats(std::string tmFilesPrefix,
-                               int verbose)
+                                  int verbose)
 {
-  if(fileIsDescriptor(tmFilesPrefix))
-    return process_tm_descriptor(tmFilesPrefix,verbose);
+  if(tmFilesPrefix==NONE_DESCRIPTOR)
+  {
+    std::cerr<<"Warning: no translation model related features will be added"<<std::endl;
+    return THOT_OK;
+  }
   else
-    return process_tm_files_prefix(tmFilesPrefix,verbose);
+  {
+    if(fileIsDescriptor(tmFilesPrefix))
+      return process_tm_descriptor(tmFilesPrefix,verbose);
+    else
+      return process_tm_files_prefix(tmFilesPrefix,verbose);
+  }
 }
-
 //---------------
 FeaturesInfo<SmtModel::HypScoreInfo>* StdFeatureHandler::getFeatureInfoPtr(void)
 {

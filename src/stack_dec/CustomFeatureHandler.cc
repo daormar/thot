@@ -36,6 +36,11 @@ CustomFeatureHandler::CustomFeatureHandler()
 int CustomFeatureHandler::addCustomFeats(std::string customFeatDescFile,
                                          int verbose)
 {
+  if(customFeatDescFile==NONE_DESCRIPTOR)
+  {
+    return THOT_OK;
+  }
+  
   if(verbose)
   {
     std::cerr<<"Processing custom feature descriptor: "<<customFeatDescFile<<std::endl;
