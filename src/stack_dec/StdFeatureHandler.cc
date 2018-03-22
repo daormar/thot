@@ -33,7 +33,45 @@ StdFeatureHandler::StdFeatureHandler()
 }
 
 //---------------
-int StdFeatureHandler::addWpFeat(int /*verbose*/)
+int StdFeatureHandler::loadMonolingualFeats(std::string lmFileName,
+                                           int verbose)
+{
+  if(lmFileName==NONE_DESCRIPTOR)
+  {
+    std::cerr<<"Warning: no monolingual features will be added"<<std::endl;    
+    return THOT_OK;
+  }
+
+  int ret=loadWpFeat(verbose);
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
+
+  ret=loadLmFeats(lmFileName,verbose);
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
+  
+  return THOT_OK;
+}
+
+//---------------
+int StdFeatureHandler::loadBilingualFeats(std::string tmFilesPrefix,
+                                          int verbose)
+{
+  if(tmFilesPrefix==NONE_DESCRIPTOR)
+  {
+    std::cerr<<"Warning: no bilingual features will be added"<<std::endl;
+    return THOT_OK;
+  }
+
+  int ret=loadTmFeats(tmFilesPrefix,verbose);
+  if(ret==THOT_ERROR)
+    return THOT_ERROR;
+  
+  return THOT_OK;
+}
+
+//---------------
+int StdFeatureHandler::loadWpFeat(int /*verbose*/)
 {
   std::string featName="wp";
   std::cerr<<"** Creating word penalty feature ("<<featName<<" "<<wpSoFile<<")"<<std::endl;
@@ -60,39 +98,23 @@ int StdFeatureHandler::addWpFeat(int /*verbose*/)
 }
 
 //---------------
-int StdFeatureHandler::addLmFeats(std::string lmFileName,
-                                  int verbose)
+int StdFeatureHandler::loadLmFeats(std::string lmFileName,
+                                   int verbose)
 {
-  if(lmFileName==NONE_DESCRIPTOR)
-  {
-    std::cerr<<"Warning: no language model related features will be added"<<std::endl;    
-    return THOT_OK;
-  }
+  if(fileIsDescriptor(lmFileName))
+    return process_lm_descriptor(lmFileName,verbose);
   else
-  {
-    if(fileIsDescriptor(lmFileName))
-      return process_lm_descriptor(lmFileName,verbose);
-    else
-      return process_lm_files_prefix(lmFileName,verbose);
-  }
+    return process_lm_files_prefix(lmFileName,verbose);
 }
 
 //---------------
-int StdFeatureHandler::addTmFeats(std::string tmFilesPrefix,
-                                  int verbose)
+int StdFeatureHandler::loadTmFeats(std::string tmFilesPrefix,
+                                   int verbose)
 {
-  if(tmFilesPrefix==NONE_DESCRIPTOR)
-  {
-    std::cerr<<"Warning: no translation model related features will be added"<<std::endl;
-    return THOT_OK;
-  }
+  if(fileIsDescriptor(tmFilesPrefix))
+    return process_tm_descriptor(tmFilesPrefix,verbose);
   else
-  {
-    if(fileIsDescriptor(tmFilesPrefix))
-      return process_tm_descriptor(tmFilesPrefix,verbose);
-    else
-      return process_tm_files_prefix(tmFilesPrefix,verbose);
-  }
+    return process_tm_files_prefix(tmFilesPrefix,verbose);
 }
 //---------------
 FeaturesInfo<SmtModel::HypScoreInfo>* StdFeatureHandler::getFeatureInfoPtr(void)

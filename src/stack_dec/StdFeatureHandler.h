@@ -64,11 +64,10 @@ class StdFeatureHandler
   StdFeatureHandler();
   
       // Functions to incorporate features
-  int addWpFeat(int verbose);
-  int addLmFeats(std::string lmFileName,
-                 int verbose);
-  int addTmFeats(std::string tmFilesPrefix,
-                 int verbose);
+  int loadMonolingualFeats(std::string lmFileName,
+                           int verbose);
+  int loadBilingualFeats(std::string tmFilesPrefix,
+                         int verbose);
 
       // Functions to print features
   bool print(std::string tmFileName,
@@ -133,6 +132,13 @@ class StdFeatureHandler
 
       // Auxiliary functions
 
+      // Feature-related functions
+  int loadWpFeat(int verbose);
+  int loadLmFeats(std::string lmFileName,
+                 int verbose);
+  int loadTmFeats(std::string tmFilesPrefix,
+                 int verbose);
+  
       // Language model-related functions
   BaseNgramLM<LM_State>* createLmPtr(std::string soFileName);
   int createLangModelFeat(std::string featName,
