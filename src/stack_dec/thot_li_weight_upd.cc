@@ -66,7 +66,7 @@ bool featureBasedImplIsEnabled(void);
 int initPhrModelLegacyImpl(std::string phrModelFilePrefix);
 int initPhrModelFeatImpl(std::string phrModelFilePrefix);
 void set_default_models(void);
-int add_model_features(std::string phrModelFilePrefix);
+int load_model_features(std::string phrModelFilePrefix);
 void releaseMemLegacyImpl(void);
 void releaseMemFeatImpl(void);
 int update_li_weights_legacy_impl(const thot_liwu_pars& pars);
@@ -298,8 +298,8 @@ int initPhrModelFeatImpl(std::string phrModelFilePrefix)
       // Set default models for feature handler
   set_default_models();
   
-      // Add model features
-  add_model_features(phrModelFilePrefix);
+      // Load model features
+  load_model_features(phrModelFilePrefix);
     
   return THOT_OK;
 }
@@ -312,11 +312,11 @@ void set_default_models(void)
 }
 
 //---------------
-int add_model_features(std::string phrModelFilePrefix)
+int load_model_features(std::string phrModelFilePrefix)
 {
-      // Add translation model features
+      // Load bilingual log-linear model features
   int verbosity=false;
-  int ret=stdFeatureHandler.addTmFeats(phrModelFilePrefix,verbosity);
+  int ret=stdFeatureHandler.loadBilingualFeats(phrModelFilePrefix,verbosity);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
