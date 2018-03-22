@@ -33,8 +33,8 @@ CustomFeatureHandler::CustomFeatureHandler()
 }
 
 //---------------
-int CustomFeatureHandler::addCustomFeats(std::string customFeatDescFile,
-                                         int verbose)
+int CustomFeatureHandler::loadCustomFeats(std::string customFeatDescFile,
+                                          int verbose)
 {
   if(customFeatDescFile==NONE_DESCRIPTOR)
   {

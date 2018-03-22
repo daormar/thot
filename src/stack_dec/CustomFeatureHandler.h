@@ -48,9 +48,9 @@ class CustomFeatureHandler
       // Constructor
   CustomFeatureHandler();
   
-      // Functions to incorporate features
-  int addCustomFeats(std::string customFeatDescFile,
-                     int verbose);
+      // Functions to load features
+  int loadCustomFeats(std::string customFeatDescFile,
+                      int verbose);
 
       // Function to get pointers to features
   FeaturesInfo<SmtModel::HypScoreInfo>* getFeatureInfoPtr(void);
