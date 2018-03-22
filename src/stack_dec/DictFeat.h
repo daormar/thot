@@ -95,7 +95,7 @@ class DictFeat: public BasePbTransModelFeature<SCORE_INFO>
                    Score scr);
 };
 
-//--------------- WordPenaltyFeat class functions
+//--------------- DictFeat class functions
 //
 
 template<class SCORE_INFO>
