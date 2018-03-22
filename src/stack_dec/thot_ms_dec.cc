@@ -411,20 +411,15 @@ void set_default_models(void)
 }
 
 //---------------
-int add_model_features(const thot_ms_dec_pars& tdp)
+int load_model_features(const thot_ms_dec_pars& tdp)
 {
-      // Add word penalty model feature
-  int ret=stdFeatureHandler.addWpFeat(tdp.verbosity);
+      // Load monolingual log-linear model features
+  int ret=stdFeatureHandler.loadMonolingualFeats(tdp.languageModelFileName,tdp.verbosity);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
-      // Add language model features
-  ret=stdFeatureHandler.addLmFeats(tdp.languageModelFileName,tdp.verbosity);
-  if(ret==THOT_ERROR)
-    return THOT_ERROR;
-
-      // Add translation model features
-  ret=stdFeatureHandler.addTmFeats(tdp.transModelPref,tdp.verbosity);
+      // Load bilingual log-linear model features
+  ret=stdFeatureHandler.loadBilingualFeats(tdp.transModelPref,tdp.verbosity);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
@@ -478,15 +473,15 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
       // Set default models for standard feature handler
   set_default_models();
   
-      // Add model features
-  ret=add_model_features(tdp);
+      // Load model features
+  ret=load_model_features(tdp);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
       // Load custom features if they were provided
   if(!tdp.customFeatsFile.empty())
   {
-    ret=customFeatureHandler.addCustomFeats(tdp.customFeatsFile,tdp.verbosity);
+    ret=customFeatureHandler.loadCustomFeats(tdp.customFeatsFile,tdp.verbosity);
     if(ret==THOT_ERROR) return THOT_ERROR;
   }
   

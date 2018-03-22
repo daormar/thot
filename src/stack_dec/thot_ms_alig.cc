@@ -423,20 +423,15 @@ void set_default_models(void)
 }
 
 //---------------
-int add_model_features(const thot_ms_alig_pars& tap)
+int load_model_features(const thot_ms_alig_pars& tap)
 {
-      // Add word penalty model feature
-  int ret=stdFeatureHandler.addWpFeat(tap.verbosity);
+      // Load monolingual log-linear model features
+  int ret=stdFeatureHandler.loadMonolingualFeats(tap.languageModelFileName,tap.verbosity);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
-      // Add language model features
-  ret=stdFeatureHandler.addLmFeats(tap.languageModelFileName,tap.verbosity);
-  if(ret==THOT_ERROR)
-    return THOT_ERROR;
-
-      // Add translation model features
-  ret=stdFeatureHandler.addTmFeats(tap.transModelPref,tap.verbosity);
+      // Load bilingual log-linear model features
+  ret=stdFeatureHandler.loadBilingualFeats(tap.transModelPref,tap.verbosity);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
@@ -490,15 +485,15 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
       // Set default models for standard feature handler
   set_default_models();
   
-      // Add model features
-  ret=add_model_features(tap);
+      // Load model features
+  ret=load_model_features(tap);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
       // Load custom features if they were provided
   if(!tap.customFeatsFile.empty())
   {
-    ret=customFeatureHandler.addCustomFeats(tap.customFeatsFile,tap.verbosity);
+    ret=customFeatureHandler.loadCustomFeats(tap.customFeatsFile,tap.verbosity);
     if(ret==THOT_ERROR) return THOT_ERROR;
   }
   

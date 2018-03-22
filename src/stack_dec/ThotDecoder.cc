@@ -962,18 +962,10 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
 
   // Initialize server
 
-      // Add word penalty model feature
+      // Load monolingual features
   if(tdCommonVars.featureBasedImplEnabled)
   {
-    ret=tdCommonVars.stdFeatureHandler.addWpFeat(verbose);
-    if(ret==THOT_ERROR)
-      return THOT_ERROR;
-  }
-
-      // Load language model
-  if(tdCommonVars.featureBasedImplEnabled)
-  {
-    ret=load_lm_feat_impl(lm_str.c_str(),verbose);
+    ret=load_monolingual_feats(lm_str.c_str(),verbose);
     if(ret==THOT_ERROR) return THOT_ERROR;
   }
   else
@@ -982,10 +974,10 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
     if(ret==THOT_ERROR) return THOT_ERROR;
   }
 
-      // Load translation model
+      // Load bilingual features
   if(tdCommonVars.featureBasedImplEnabled)
   {
-    ret=load_tm_feat_impl(tm_str.c_str(),verbose);
+    ret=load_bilingual_feats(tm_str.c_str(),verbose);
     if(ret==THOT_ERROR) return THOT_ERROR;
   }
   else
@@ -999,7 +991,7 @@ int ThotDecoder::initUsingCfgFile(std::string cfgFile,
   {
     if(!cf_str.empty())
     {
-      ret=tdCommonVars.customFeatureHandler.addCustomFeats(cf_str,verbose);
+      ret=tdCommonVars.customFeatureHandler.loadCustomFeats(cf_str,verbose);
       if(ret==THOT_ERROR) return THOT_ERROR;
     }
   }  
@@ -1559,8 +1551,8 @@ bool ThotDecoder::load_tm_legacy_impl(const char* tmFilesPrefix,
 }
 
 //--------------------------
-bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
-                                    int verbose/*=0*/)
+bool ThotDecoder::load_bilingual_feats(const char* tmFilesPrefix,
+                                       int verbose/*=0*/)
 {
   int ret;
     
@@ -1571,7 +1563,7 @@ bool ThotDecoder::load_tm_feat_impl(const char* tmFilesPrefix,
   }
   else
   {
-    ret=tdCommonVars.stdFeatureHandler.addTmFeats(tmFilesPrefix,verbose);
+    ret=tdCommonVars.stdFeatureHandler.loadBilingualFeats(tmFilesPrefix,verbose);
         // Store tm information
     if(ret==THOT_OK)
       tdState.tmFilesPrefixGiven=tmFilesPrefix;
@@ -1614,8 +1606,8 @@ bool ThotDecoder::load_lm_legacy_impl(const char* lmFileName,
 }
 
 //--------------------------
-bool ThotDecoder::load_lm_feat_impl(const char* lmFileName,
-                                    int verbose/*=0*/)
+bool ThotDecoder::load_monolingual_feats(const char* lmFileName,
+                                         int verbose/*=0*/)
 {
   int ret;
 
@@ -1626,7 +1618,7 @@ bool ThotDecoder::load_lm_feat_impl(const char* lmFileName,
   }
   else
   {
-    ret=tdCommonVars.stdFeatureHandler.addLmFeats(lmFileName,verbose);
+    ret=tdCommonVars.stdFeatureHandler.loadMonolingualFeats(lmFileName,verbose);
     if(ret==THOT_OK)
       tdState.lmfileLoaded=lmFileName;
   }
