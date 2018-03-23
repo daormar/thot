@@ -47,8 +47,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 //--------------- Constants ------------------------------------------
 
-#define LEVELDBDICT_PHR_SEP      "\x00"
-#define LEVELDBDICT_PHR_SEP_NEXT "\x01"
+#define LEVELDBDICT_PHR_SEP      "\x01"
+#define LEVELDBDICT_PHR_SEP_NEXT "\x02"
 
 //--------------- typedefs -------------------------------------------
 

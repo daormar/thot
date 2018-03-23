@@ -191,12 +191,17 @@ std::vector<std::string> LevelDbDict::encodePhrase(const std::vector<std::string
 std::vector<std::string> LevelDbDict::encodeSrcTrgPhrases(const std::vector<std::string>& s,
                                                           const std::vector<std::string>& t)
 {
-    // Encode (t,s) phrases as (t, LEVELDBDICT_PHR_SEP, s)
-    std::vector<std::string> t_uw_s_vec = t;
-    t_uw_s_vec.push_back(LEVELDBDICT_PHR_SEP);
-    t_uw_s_vec.insert(t_uw_s_vec.end(), s.begin(), s.end());
+    // Encode (s,t) phrases as (s, LEVELDBDICT_PHR_SEP, t)
+    std::vector<std::string> s_sep_t_vec = s;
+    s_sep_t_vec.push_back(LEVELDBDICT_PHR_SEP);
+    s_sep_t_vec.insert(s_sep_t_vec.end(), t.begin(), t.end());
 
-    return t_uw_s_vec;
+    // std::cerr<<"******* ";
+    // for(unsigned int i=0;i<s_sep_t_vec.size();++i)
+    //   std::cerr<<s_sep_t_vec[i]<<" ";
+    // std::cerr<<std::endl;
+    
+    return s_sep_t_vec;
 }
 
 //-------------------------
@@ -204,7 +209,7 @@ void LevelDbDict::addDictEntry(const std::vector<std::string>& s,
                                const std::vector<std::string>& t,
                                Score score)
 {
-  storeData(encodeSrcTrgPhrases(s, t), score);  // (t, LEVELDBDICT_PHR_SEP, s)
+  storeData(encodeSrcTrgPhrases(s, t), score);  // (s, LEVELDBDICT_PHR_SEP, t)
 }
 
 //-------------------------
@@ -225,10 +230,9 @@ Score LevelDbDict::getScore(const std::vector<std::string>& s,
 bool LevelDbDict::getTransOptsForSource(const std::vector<std::string>& s,
                                         std::vector<std::vector<std::string> >& transOptVec)
 {
-      // TO-BE-DONE
   bool found;
 
-  std::vector<std::string> start_vec = s;
+  std::vector<std::string> start_vec(s);
   start_vec.push_back(LEVELDBDICT_PHR_SEP);
 
   std::vector<std::string> end_vec(s);
@@ -236,14 +240,14 @@ bool LevelDbDict::getTransOptsForSource(const std::vector<std::string>& s,
 
   std::string start_str = StrProcUtils::stringVectorToString(start_vec);
   std::string end_str = StrProcUtils::stringVectorToString(end_vec);
-
+  
   leveldb::Slice start = start_str;
   leveldb::Slice end = end_str;
 
   leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
     
   transOptVec.clear();  // Make sure that structure does not keep old values
-    
+  
   int i = 0;
   for(it->Seek(start); it->Valid() && it->key().ToString() < end.ToString(); it->Next(), i++)
   {
