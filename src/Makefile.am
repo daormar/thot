@@ -21,7 +21,8 @@ LEVELDB_PROGS=thot_ngram_to_leveldb thot_ttable_to_leveldb	\
 thot_lextable_to_leveldb
 LEVELDB_LIBS=incr_jel_mer_leveldb_ngram_lm_factory.la	\
 leveldb_phrase_model_factory.la				\
-incr_leveldb_hmm_p0_alig_model_factory.la
+incr_leveldb_hmm_p0_alig_model_factory.la		\
+leveldb_dict_feat__phrscoreinfo_factory.la
 endif
 
 AUTOMAKE_OPTIONS = subdir-objects
@@ -374,6 +375,13 @@ stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\
 stack_dec/bleu.cc stack_dec/chrf.cc stack_dec/BaseHypState.cc		\
 stack_dec/SmtModelUtils.cc
 
+if HAVE_LEVELDB_LIB
+leveldb_stack_dec_h= stack_dec/LevelDbDict.h	\
+stack_dec/LevelDbDictFeat.h
+leveldb_stack_dec_defs= stack_dec/LevelDbDict.cc	\
+stack_dec/LevelDbDictFeat.cc
+endif
+
 if CASMACAT_LIB_ENABLED
 casmacat_engines_h= stack_dec/UserNameToUserIdMap.h		\
 stack_dec/ThotMtEngine.h stack_dec/ThotMtFactoryInitPars.h	\
@@ -407,14 +415,10 @@ testing/StlPhraseTableTest.cc
 
 
 if HAVE_LEVELDB_LIB
-leveldb_pm_testing_h= \
-testing/IncrLexLevelDbTableTest.h                              \
-testing/LevelDbNgramTableTest.h                                \
-testing/LevelDbPhraseTableTest.h
-leveldb_pm_testing_defs= \
-testing/IncrLexLevelDbTableTest.cc                             \
-testing/LevelDbNgramTableTest.cc                               \
-testing/LevelDbPhraseTableTest.cc
+leveldb_pm_testing_h= testing/IncrLexLevelDbTableTest.h			\
+testing/LevelDbNgramTableTest.h testing/LevelDbPhraseTableTest.h
+leveldb_pm_testing_defs= testing/IncrLexLevelDbTableTest.cc		\
+testing/LevelDbNgramTableTest.cc testing/LevelDbPhraseTableTest.cc
 endif
 
 if HAVE_CXX11_ENABLED
@@ -429,7 +433,8 @@ $(phrase_models_h) $(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs)	\
 $(hattrie_pm_h) $(hattrie_pm_defs) $(leveldb_pm_h) $(leveldb_pm_defs)	\
 $(leveldb_sw_h) $(leveldb_sw_defs) $(smt_preproc_h) $(smt_preproc_defs)	\
 $(error_correction_h) $(error_correction_defs) $(downhill_simplex_h)	\
-$(downhill_simplex_defs) $(stack_dec_h) $(stack_dec_defs) $(picojson_h)	\
+$(downhill_simplex_defs) $(stack_dec_h) $(stack_dec_defs)		\
+$(leveldb_stack_dec_h) $(leveldb_stack_dec_defs) $(picojson_h)		\
 $(exper_h) $(exper_defs)
 
 # Class factories
@@ -528,6 +533,11 @@ kb_mira_ll_wu_factory_defs= stack_dec/KbMiraLlWuFactory.cc
 dict_feat__phrscoreinfo_factory_h= 
 dict_feat__phrscoreinfo_factory_defs=		\
 stack_dec/DictFeatPhrScoreInfoFactory.cc
+
+##########
+leveldb_dict_feat__phrscoreinfo_factory_h= 
+leveldb_dict_feat__phrscoreinfo_factory_defs=				\
+stack_dec/LevelDbDictFeatPhrScoreInfoFactory.cc
 
 ##########
 translation_metadata__phrscoreinfo_factory_h= 
@@ -652,7 +662,8 @@ error_correction/thot_wg_proc.cc
 thot_wg_proc_LDFLAGS = libthot.la
 
 ##########
-thot_dhs_step_by_step_min_SOURCES = downhill_simplex/thot_dhs_step_by_step_min.cc
+thot_dhs_step_by_step_min_SOURCES =		\
+downhill_simplex/thot_dhs_step_by_step_min.cc
 thot_dhs_step_by_step_min_LDFLAGS = libthot.la
 
 ##########
@@ -714,8 +725,8 @@ include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
 $(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h)		\
 $(hattrie_pm_h) $(leveldb_lm_h) $(leveldb_pm_h) $(smt_preproc_h)	\
 $(error_correction_h) $(downhill_simplex_h) $(stack_dec_h)		\
-$(picojson_h) $(exper_h) $(exper_defs) $(casmacat_engines_h)		\
-$(casmacat_aligner_h) $(casmacat_confid_h)
+$(leveldb_stack_dec_h) $(picojson_h) $(exper_h) $(exper_defs)		\
+$(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
 
 # libraries
 
@@ -864,6 +875,13 @@ dict_feat__phrscoreinfo_factory_la_LIBADD= libthot.la
 dict_feat__phrscoreinfo_factory_la_LDFLAGS= -module
 
 ##########
+leveldb_dict_feat__phrscoreinfo_factory_la_SOURCES=	\
+$(leveldb_dict_feat__phrscoreinfo_factory_h)		\
+$(leveldb_dict_feat__phrscoreinfo_factory_defs)
+leveldb_dict_feat__phrscoreinfo_factory_la_LIBADD= libthot.la
+leveldb_dict_feat__phrscoreinfo_factory_la_LDFLAGS= -module
+
+##########
 translation_metadata__phrscoreinfo_factory_la_SOURCES=	\
 $(translation_metadata__phrscoreinfo_factory_h)		\
 $(translation_metadata__phrscoreinfo_factory_defs)
@@ -872,7 +890,7 @@ translation_metadata__phrscoreinfo_factory_la_LDFLAGS= -module
 
 ##########
 json_translation_metadata__phrscoreinfo_factory_la_SOURCES=	\
-$(json_translation_metadata__phrscoreinfo_factory_h)				\
+$(json_translation_metadata__phrscoreinfo_factory_h)		\
 $(json_translation_metadata__phrscoreinfo_factory_defs)
 json_translation_metadata__phrscoreinfo_factory_la_LIBADD= libthot.la
 json_translation_metadata__phrscoreinfo_factory_la_LDFLAGS= -module

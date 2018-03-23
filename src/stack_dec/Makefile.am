@@ -1,60 +1,61 @@
-EXTRA_DIST= LM_State.h PpInfo.h SmtModel.h SmtModelLegacy.h		\
-DynClassFactoryHandler.h DynClassFactoryHandler.cc			\
-WgUncoupledAssistedTrans.h UserNameToUserIdMap.h UserNameToUserIdMap.cc	\
-ThotMtFactoryInitPars.h ThotMtFactory.h ThotMtFactory.cc ThotMtEngine.h	\
-ThotMtEngine.cc ThotImtSession.h ThotImtSession.cc			\
-ThotImtFactoryInitPars.h ThotImtFactory.h ThotImtFactory.cc		\
-ThotImtEngine.h ThotImtEngine.cc thot_server_pars.h thot_server.cc	\
-ThotDecoderUserPars.h ThotDecoderState.h ThotDecoderPerUserVars.h	\
-ThotDecoder.h ThotDecoderCommonVars.h ThotDecoderClient.h		\
-ThotDecoderClient.cc ThotDecoder.cc thot_ms_dec.cc thot_client_pars.h	\
-thot_client.cc thot_get_srcsents_from_metadata.cc			\
-thot_check_constraints.cc thot_scorer.cc thot_calc_bleu.cc		\
-thot_ms_alig.cc SwModelPars.h SwModelInfo.h _stack_decoder_statistics.h	\
-_stackDecoderRec.h _stackDecoder.h SourceSegmentation.h			\
-BaseTranslationMetadata.h TranslationMetadata.h				\
-JsonTranslationMetadata.h SmtStack.h _smtStack.h SmtMultiStackRec.h	\
-_smtMultiStack.h WeightUpdateUtils.h WeightUpdateUtils.cc		\
-BaseLogLinWeightUpdater.h KbMiraLlWu.h KbMiraLlWu.cc BaseScorer.h	\
-BaseMiraScorer.h MiraBleu.h MiraBleu.cc MiraGtm.h MiraGtm.cc MiraWer.h	\
-MiraWer.cc MiraChrF.h MiraChrF.cc thot_li_weight_upd.cc			\
-thot_ll_weight_upd_nblist.cc _smtModel.h ScoreCompDefs.h		\
-_phrSwTransModel.h PhrScoreInfo.h PhrScoreInfo.cc			\
-PhrNbestTransTableRefKey.h PhrNbestTransTableRefKey.cc			\
-PhrNbestTransTableRef.h PhrNbestTransTablePrefKey.h			\
-PhrNbestTransTablePrefKey.cc PhrNbestTransTablePref.h			\
-PhrNbestTransTable.h PhraseBasedTmHyp.h PhraseBasedTmHypRec.h		\
-PhrLocalSwLiTmHypRec.h PhrLocalSwLiTm.h PhrLocalSwLiTm.cc PhrHypState.h	\
-PhrHypState.cc PhrHypNumcovJumpsEqClassF.h PhrHypNumcovJumpsEqClassF.cc	\
-PhrHypNumcovJumps01EqClassF.h PhrHypNumcovJumps01EqClassF.cc		\
-PhrHypEqClassF.h PhrHypEqClassF.cc PhrHypData.h PhrHypDataStr.h		\
-PhrasePairCacheTable.h PhraseModelPars.h PhraseModelInfo.h		\
-PhraseModelsInfo.h SwModelsInfo.h _phraseHypothesisRec.h		\
-_phraseHypothesis.h PbTransModelPars.h PbTransModelInputVars.h		\
-PhraseCacheTable.h NbestTransCacheData.h _phraseBasedTransModel.h	\
-_pbTransModel.h PbTransModel.h OnlineTrainingPars.h NgramCacheTable.h	\
-_nbUncoupledAssistedTrans.h multi_stack_decoder_rec.h WpModelInfo.h	\
-LangModelPars.h LangModelInfo.h LangModelsInfo.h FeaturesInfo.h		\
-StdFeatureHandler.h StdFeatureHandler.cc CustomFeatureHandler.h		\
-CustomFeatureHandler.cc HypStateDict.h HypStateDictData.h		\
-HypSortCriterion.h client_server_defs.h CatDefs.h bleu.h bleu.cc chrf.h	\
-chrf.cc BaseStackDecoder.h BaseSmtStack.h BaseSmtMultiStack.h		\
-BasePbTransModelFeature.h WordPenaltyFeat.h WordPenaltyFeat.cc		\
-LangModelFeat.h LangModelFeat.cc DirectPhraseModelFeat.h		\
-DirectPhraseModelFeat.cc InversePhraseModelFeat.h			\
-InversePhraseModelFeat.cc SrcPhraseLenFeat.h SrcPhraseLenFeat.cc	\
-TrgPhraseLenFeat.h TrgPhraseLenFeat.cc SrcPosJumpFeat.h			\
-SrcPosJumpFeat.cc OnTheFlyDictFeat.h OnTheFlyDictFeat.cc DictFeat.h	\
-DictFeat.cc BaseSmtModel.h BasePhraseHypothesisRec.h			\
-BasePhraseHypothesis.h BasePbTransModelStats.h BasePbTransModel.h	\
-BaseHypState.h BaseHypState.cc BaseHypothesisRec.h BaseHypothesis.h	\
-HypDebugData.h BaseAssistedTrans.h _assistedTrans.h			\
-KbMiraLlWuFactory.cc DictFeatPhrScoreInfoFactory.cc			\
+EXTRA_DIST= _assistedTrans.h BaseAssistedTrans.h BaseHypothesis.h	\
+BaseHypothesisRec.h BaseHypState.h BaseLogLinWeightUpdater.h		\
+BaseMiraScorer.h BasePbTransModelFeature.h BasePbTransModel.h		\
+BasePbTransModelStats.h BasePhraseHypothesis.h				\
+BasePhraseHypothesisRec.h BaseScorer.h BaseSmtModel.h			\
+BaseSmtMultiStack.h BaseSmtStack.h BaseStackDecoder.h			\
+BaseTranslationMetadata.h bleu.h CatDefs.h chrf.h client_server_defs.h	\
+CustomFeatureHandler.h DictFeat.h DirectPhraseModelFeat.h		\
+DynClassFactoryHandler.h FeaturesInfo.h HypDebugData.h			\
+HypSortCriterion.h HypStateDictData.h HypStateDict.h			\
+InversePhraseModelFeat.h JsonTranslationMetadata.h KbMiraLlWu.h		\
+LangModelFeat.h LangModelInfo.h LangModelPars.h LangModelsInfo.h	\
+LevelDbDict.h LevelDbDictFeat.h LM_State.h MiraBleu.h MiraChrF.h	\
+MiraGtm.h MiraWer.h multi_stack_decoder_rec.h NbestTransCacheData.h	\
+_nbUncoupledAssistedTrans.h NgramCacheTable.h OnlineTrainingPars.h	\
+OnTheFlyDictFeat.h _pbTransModel.h PbTransModel.h			\
+PbTransModelInputVars.h PbTransModelPars.h PhraseBasedTmHyp.h		\
+PhraseBasedTmHypRec.h _phraseBasedTransModel.h PhraseCacheTable.h	\
+_phraseHypothesis.h _phraseHypothesisRec.h PhraseModelInfo.h		\
+PhraseModelPars.h PhraseModelsInfo.h PhrasePairCacheTable.h		\
+PhrHypData.h PhrHypDataStr.h PhrHypEqClassF.h				\
+PhrHypNumcovJumps01EqClassF.h PhrHypNumcovJumpsEqClassF.h PhrHypState.h	\
+PhrLocalSwLiTm.h PhrLocalSwLiTmHypRec.h PhrNbestTransTable.h		\
+PhrNbestTransTablePref.h PhrNbestTransTablePrefKey.h			\
+PhrNbestTransTableRef.h PhrNbestTransTableRefKey.h PhrScoreInfo.h	\
+_phrSwTransModel.h PpInfo.h ScoreCompDefs.h _smtModel.h SmtModel.h	\
+SmtModelLegacy.h SmtModelUtils.h _smtMultiStack.h SmtMultiStackRec.h	\
+_smtStack.h SmtStack.h SourceSegmentation.h SrcPhraseLenFeat.h		\
+SrcPosJumpFeat.h _stackDecoder.h _stackDecoderRec.h			\
+_stack_decoder_statistics.h StdFeatureHandler.h SwModelInfo.h		\
+SwModelPars.h SwModelsInfo.h thot_client_pars.h ThotDecoderClient.h	\
+ThotDecoderCommonVars.h ThotDecoder.h ThotDecoderPerUserVars.h		\
+ThotDecoderState.h ThotDecoderUserPars.h ThotImtEngine.h		\
+ThotImtFactory.h ThotImtFactoryInitPars.h ThotImtSession.h		\
+ThotMtEngine.h ThotMtFactory.h ThotMtFactoryInitPars.h			\
+thot_server_pars.h TranslationMetadata.h TrgPhraseLenFeat.h		\
+UserNameToUserIdMap.h WeightUpdateUtils.h WgUncoupledAssistedTrans.h	\
+WordPenaltyFeat.h WpModelInfo.h BaseHypState.cc bleu.cc chrf.cc		\
+CustomFeatureHandler.cc DictFeat.cc DictFeatPhrScoreInfoFactory.cc	\
+DirectPhraseModelFeat.cc DynClassFactoryHandler.cc			\
+InversePhraseModelFeat.cc JsonTranslationMetadataPhrScoreInfoFactory.cc	\
+KbMiraLlWu.cc KbMiraLlWuFactory.cc LangModelFeat.cc LevelDbDict.cc	\
+LevelDbDictFeat.cc LevelDbDictFeatPhrScoreInfoFactory.cc MiraBleu.cc	\
+MiraBleuFactory.cc MiraChrF.cc MiraChrFFactory.cc MiraGtm.cc		\
+MiraGtmFactory.cc MiraWer.cc MiraWerFactory.cc				\
 multi_stack_decoder_rec__pbtm_factory.cc				\
-multi_stack_decoder_rec__swli_factory.cc				\
+multi_stack_decoder_rec__swli_factory.cc OnTheFlyDictFeat.cc		\
+PhrHypEqClassF.cc PhrHypNumcovJumps01EqClassF.cc			\
+PhrHypNumcovJumpsEqClassF.cc PhrHypState.cc PhrLocalSwLiTm.cc		\
+PhrNbestTransTablePrefKey.cc PhrNbestTransTableRefKey.cc		\
+PhrScoreInfo.cc SmtModelUtils.cc SrcPhraseLenFeat.cc SrcPosJumpFeat.cc	\
+StdFeatureHandler.cc test_casmacat_engines.cc thot_calc_bleu.cc		\
+thot_check_constraints.cc thot_client.cc ThotDecoder.cc			\
+ThotDecoderClient.cc thot_get_srcsents_from_metadata.cc			\
+ThotImtEngine.cc ThotImtFactory.cc ThotImtSession.cc			\
+thot_li_weight_upd.cc thot_ll_weight_upd_nblist.cc thot_ms_alig.cc	\
+thot_ms_dec.cc ThotMtEngine.cc ThotMtFactory.cc thot_scorer.cc		\
+thot_server.cc TranslationMetadataPhrScoreInfoFactory.cc		\
+TrgPhraseLenFeat.cc UserNameToUserIdMap.cc WeightUpdateUtils.cc		\
 WgUncoupledAssistedTransPbTmFactory.cc					\
-WgUncoupledAssistedTransSwLiFactory.cc MiraBleuFactory.cc		\
-MiraGtmFactory.cc MiraWerFactory.cc MiraChrFFactory.cc			\
-TranslationMetadataPhrScoreInfoFactory.cc				\
-JsonTranslationMetadataPhrScoreInfoFactory.cc SmtModelUtils.h		\
-SmtModelUtils.cc
+WgUncoupledAssistedTransSwLiFactory.cc WordPenaltyFeat.cc
