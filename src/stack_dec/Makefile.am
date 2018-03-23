@@ -50,8 +50,8 @@ PhrHypNumcovJumpsEqClassF.cc PhrHypState.cc PhrLocalSwLiTm.cc		\
 PhrNbestTransTablePrefKey.cc PhrNbestTransTableRefKey.cc		\
 PhrScoreInfo.cc SmtModelUtils.cc SrcPhraseLenFeat.cc SrcPosJumpFeat.cc	\
 StdFeatureHandler.cc test_casmacat_engines.cc thot_calc_bleu.cc		\
-thot_check_constraints.cc thot_client.cc ThotDecoder.cc			\
-ThotDecoderClient.cc thot_get_srcsents_from_metadata.cc			\
+thot_check_constraints.cc thot_client.cc thot_dict_to_leveldb.cc	\
+ThotDecoder.cc ThotDecoderClient.cc thot_get_srcsents_from_metadata.cc	\
 ThotImtEngine.cc ThotImtFactory.cc ThotImtSession.cc			\
 thot_li_weight_upd.cc thot_ll_weight_upd_nblist.cc thot_ms_alig.cc	\
 thot_ms_dec.cc ThotMtEngine.cc ThotMtFactory.cc thot_scorer.cc		\
