@@ -195,11 +195,6 @@ std::vector<std::string> LevelDbDict::encodeSrcTrgPhrases(const std::vector<std:
     std::vector<std::string> s_sep_t_vec = s;
     s_sep_t_vec.push_back(LEVELDBDICT_PHR_SEP);
     s_sep_t_vec.insert(s_sep_t_vec.end(), t.begin(), t.end());
-
-    // std::cerr<<"******* ";
-    // for(unsigned int i=0;i<s_sep_t_vec.size();++i)
-    //   std::cerr<<s_sep_t_vec[i]<<" ";
-    // std::cerr<<std::endl;
     
     return s_sep_t_vec;
 }
