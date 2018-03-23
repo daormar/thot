@@ -90,9 +90,9 @@ class LevelDbDict
     virtual bool load(std::string levelDbPath);
     
         // Abstract function definitions
-    virtual void addTableEntry(const std::vector<std::string>& s,
-                               const std::vector<std::string>& t,
-                               Score score);
+    virtual void addDictEntry(const std::vector<std::string>& s,
+                              const std::vector<std::string>& t,
+                              Score score);
         // Returns information related to a given s and t.
     virtual Score getScore(const std::vector<std::string>& s,
                            const std::vector<std::string>& t,

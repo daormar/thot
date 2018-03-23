@@ -200,9 +200,9 @@ std::vector<std::string> LevelDbDict::encodeSrcTrgPhrases(const std::vector<std:
 }
 
 //-------------------------
-void LevelDbDict::addTableEntry(const std::vector<std::string>& s,
-                                const std::vector<std::string>& t,
-                                Score score)
+void LevelDbDict::addDictEntry(const std::vector<std::string>& s,
+                               const std::vector<std::string>& t,
+                               Score score)
 {
   storeData(encodeSrcTrgPhrases(s, t), score);  // (t, LEVELDBDICT_PHR_SEP, s)
 }
