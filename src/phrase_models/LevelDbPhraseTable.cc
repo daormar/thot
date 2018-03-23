@@ -184,7 +184,7 @@ bool LevelDbPhraseTable::load(std::string levelDbPath)
 }
 
 //-------------------------
-std::vector<WordIndex> LevelDbPhraseTable::getSrc(const std::vector<WordIndex>& s)
+std::vector<WordIndex> LevelDbPhraseTable::encodeSrc(const std::vector<WordIndex>& s)
 {
     // Prepare s vector as (UNUSED_WORD, s)
     std::vector<WordIndex> uw_s_vec;
@@ -195,19 +195,7 @@ std::vector<WordIndex> LevelDbPhraseTable::getSrc(const std::vector<WordIndex>& 
 }
 
 //-------------------------
-std::vector<WordIndex> LevelDbPhraseTable::getSrcTrg(const std::vector<WordIndex>& s,
-                                                     const std::vector<WordIndex>& t)
-{
-    // Prepare (s,t) vector as (UNUSED_WORD, s, UNUSED_WORD, t)
-    std::vector<WordIndex> uw_s_uw_t_vec = getSrc(s);
-    uw_s_uw_t_vec.push_back(UNUSED_WORD);
-    uw_s_uw_t_vec.insert(uw_s_uw_t_vec.end(), t.begin(), t.end());
-
-    return uw_s_uw_t_vec;
-}
-
-//-------------------------
-std::vector<WordIndex> LevelDbPhraseTable::getTrgSrc(const std::vector<WordIndex>& s,
+std::vector<WordIndex> LevelDbPhraseTable::encodeTrgSrc(const std::vector<WordIndex>& s,
                                                      const std::vector<WordIndex>& t)
 {
     // Prepare (t,s) vector as (t, UNUSED_WORD, s)
@@ -290,7 +278,7 @@ void LevelDbPhraseTable::addTableEntry(const std::vector<WordIndex>& s,
 void LevelDbPhraseTable::addSrcInfo(const std::vector<WordIndex>& s,
                                     Count s_inf)
 {
-    storeData(getSrc(s), (int) round(s_inf.get_c_s()));
+    storeData(encodeSrc(s), (int) round(s_inf.get_c_s()));
 }
 
 //-------------------------
@@ -298,7 +286,7 @@ void LevelDbPhraseTable::addSrcTrgInfo(const std::vector<WordIndex>& s,
                                        const std::vector<WordIndex>& t,
                                        Count st_inf)
 {
-    storeData(getTrgSrc(s, t), (int) round(st_inf.get_c_st()));  // (t, UNUSED_WORD, s)
+    storeData(encodeTrgSrc(s, t), (int) round(st_inf.get_c_st()));  // (t, UNUSED_WORD, s)
 }
 
 //-------------------------
@@ -353,7 +341,7 @@ Count LevelDbPhraseTable::getInfo(const std::vector<WordIndex>& key,
 Count LevelDbPhraseTable::getSrcInfo(const std::vector<WordIndex>& s,
                                      bool &found)
 {
-    return getInfo(getSrc(s), found);
+    return getInfo(encodeSrc(s), found);
 }
 
 //-------------------------
@@ -370,7 +358,7 @@ Count LevelDbPhraseTable::getSrcTrgInfo(const std::vector<WordIndex>& s,
                                         bool &found)
 {
     // Retrieve counter state
-    return getInfo(getTrgSrc(s, t), found);
+    return getInfo(encodeTrgSrc(s, t), found);
 }
 
 //-------------------------

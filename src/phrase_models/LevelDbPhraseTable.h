@@ -68,7 +68,7 @@ class LevelDbPhraseTable: public BasePhraseTable
         // Converters
     virtual std::string vectorToString(const std::vector<WordIndex>& vec)const;
     virtual std::vector<WordIndex> stringToVector(const std::string s)const;
-    
+
         // Read and write data
     virtual bool retrieveData(const std::vector<WordIndex>& phrase, int &count)const;
     virtual bool storeData(const std::vector<WordIndex>& phrase, int count)const;
@@ -86,20 +86,18 @@ class LevelDbPhraseTable: public BasePhraseTable
     virtual std::string vectorToKey(const std::vector<WordIndex>& vec)const;
     virtual std::vector<WordIndex> keyToVector(const std::string key)const;
 
+        // Returns s as (UNUSED_WORD, s)
+    virtual std::vector<WordIndex> encodeSrc(const std::vector<WordIndex>& s);
+        // Returns concatenated t and s as (t, UNUSED_WORD, s)
+    virtual std::vector<WordIndex> encodeTrgSrc(const std::vector<WordIndex>& s,
+                                                const std::vector<WordIndex>& t);
+
         // Wrapper for initializing levelDB
     virtual bool init(std::string levelDbPath);
         // Wrapper for removing levelDB
     virtual bool drop();
         // Wrapper for loading existing levelDB
     virtual bool load(std::string levelDbPath);
-        // Returns s as (UNUSED_WORD, s)
-    virtual std::vector<WordIndex> getSrc(const std::vector<WordIndex>& s);
-        // Returns concatenated s and t as (UNUSED_WORD, s, UNUSED_WORD, t)
-    virtual std::vector<WordIndex> getSrcTrg(const std::vector<WordIndex>& s,
-                                        const std::vector<WordIndex>& t);
-        // Returns concatenated t and s as (t, UNUSED_WORD, s)
-    virtual std::vector<WordIndex> getTrgSrc(const std::vector<WordIndex>& s,
-                                        const std::vector<WordIndex>& t);
         // Abstract function definitions
     virtual void addTableEntry(const std::vector<WordIndex>& s,
                                const std::vector<WordIndex>& t,

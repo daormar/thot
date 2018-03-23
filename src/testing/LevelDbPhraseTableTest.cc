@@ -82,7 +82,7 @@ void LevelDbPhraseTableTest::testAddSrcTrgInfo()
   tab->addSrcTrgInfo(s, t, c);
 
   Count src_trg_count = tab->cSrcTrg(s, t);
-  Count trg_src_count = tabLdb->getInfo(tabLdb->getTrgSrc(s, t), found);
+  Count trg_src_count = tabLdb->getInfo(tabLdb->encodeTrgSrc(s, t), found);
 
   CPPUNIT_ASSERT( found );
   CPPUNIT_ASSERT_DOUBLES_EQUAL(1, src_trg_count.get_c_s(), EPSILON);
@@ -111,9 +111,9 @@ void LevelDbPhraseTableTest::testIteratorsLoop()
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
   std::map<std::vector<WordIndex>, std::pair<int, int> > d;
-  d[tabLdb->getSrc(s)] = std::make_pair(0, 0);
+  d[tabLdb->encodeSrc(s)] = std::make_pair(0, 0);
   d[t] = std::make_pair(0, 0);
-  d[tabLdb->getTrgSrc(s, t)] = std::make_pair(0, 0);
+  d[tabLdb->encodeTrgSrc(s, t)] = std::make_pair(0, 0);
 
   for(LevelDbPhraseTable::const_iterator iter = tabLdb->begin();
       iter != tabLdb->end() && i < MAX_ITER;
@@ -126,12 +126,12 @@ void LevelDbPhraseTableTest::testIteratorsLoop()
 
   // Check if element returned by iterator is correct
   CPPUNIT_ASSERT_EQUAL((size_t) 3, d.size());
-  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getSrc(s)].first);
-  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getSrc(s)].second);
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->encodeSrc(s)].first);
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->encodeSrc(s)].second);
   CPPUNIT_ASSERT_EQUAL(1, d[t].first);
   CPPUNIT_ASSERT_EQUAL(1, d[t].second);
-  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getTrgSrc(s, t)].first);
-  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getTrgSrc(s, t)].second);
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->encodeTrgSrc(s, t)].first);
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->encodeTrgSrc(s, t)].second);
 
   CPPUNIT_ASSERT_EQUAL(3, i);
 }
@@ -154,9 +154,9 @@ void LevelDbPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
   // Construct dictionary to record results returned by iterator
   // Dictionary structure: (key, (total count value, number of occurences))
   std::map<std::vector<WordIndex>, std::pair<int, int> > d;
-  d[tabLdb->getSrc(s)] = std::make_pair(0, 0);
+  d[tabLdb->encodeSrc(s)] = std::make_pair(0, 0);
   d[t] = std::make_pair(0, 0);
-  d[tabLdb->getTrgSrc(s, t)] = std::make_pair(0, 0);
+  d[tabLdb->encodeTrgSrc(s, t)] = std::make_pair(0, 0);
  
   for(LevelDbPhraseTable::const_iterator iter = tabLdb->begin();
       iter != tabLdb->end();
@@ -173,12 +173,12 @@ void LevelDbPhraseTableTest::testIteratorsOperatorsPlusPlusStar()
 
   // Check if element returned by iterator is correct
   CPPUNIT_ASSERT_EQUAL((size_t) 3, d.size());
-  CPPUNIT_ASSERT_EQUAL(2, d[tabLdb->getSrc(s)].first);
-  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getSrc(s)].second);
+  CPPUNIT_ASSERT_EQUAL(2, d[tabLdb->encodeSrc(s)].first);
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->encodeSrc(s)].second);
   CPPUNIT_ASSERT_EQUAL(2, d[t].first);
   CPPUNIT_ASSERT_EQUAL(1, d[t].second);
-  CPPUNIT_ASSERT_EQUAL(2, d[tabLdb->getTrgSrc(s, t)].first);
-  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->getTrgSrc(s, t)].second);
+  CPPUNIT_ASSERT_EQUAL(2, d[tabLdb->encodeTrgSrc(s, t)].first);
+  CPPUNIT_ASSERT_EQUAL(1, d[tabLdb->encodeTrgSrc(s, t)].second);
 }
 
 //---------------------------------------
