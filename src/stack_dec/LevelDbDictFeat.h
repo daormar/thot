@@ -61,6 +61,9 @@ class LevelDbDictFeat: public BasePbTransModelFeature<SCORE_INFO>
   LevelDbDictFeat();
   LevelDbDictFeat(std::string modelFileName);
 
+        // Thread/Process safety related functions
+  bool scoringIsProcessSafe(void);
+
       // Feature information
   std::string getFeatType(void);
 
@@ -79,7 +82,6 @@ class LevelDbDictFeat: public BasePbTransModelFeature<SCORE_INFO>
                           std::vector<std::vector<std::string> >& transOptVec);
   
  protected:
-
 
   LevelDbDict dict;
 
@@ -102,6 +104,13 @@ LevelDbDictFeat<SCORE_INFO>::LevelDbDictFeat(std::string modelFileName)
   int ret=load(modelFileName);
   if(ret==THOT_ERROR)
     throw std::runtime_error("Error while initializing LevelDbDictFeat object");
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+bool LevelDbDictFeat<SCORE_INFO>::scoringIsProcessSafe(void)
+{
+  return false;
 }
 
 //---------------------------------
