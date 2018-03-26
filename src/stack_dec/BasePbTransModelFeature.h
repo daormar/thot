@@ -62,7 +62,10 @@ class BasePbTransModelFeature
   typedef const char* type_id_t(void);
 
   typedef SCORE_INFO HypScoreInfo;
-  
+
+      // Thread/Process safety related functions
+  virtual bool scoringIsProcessSafe(void);
+
       // Feature information
   void setFeatName(std::string fname);
   std::string getFeatName(void);
@@ -98,6 +101,13 @@ class BasePbTransModelFeature
 
 //--------------- BasePbTransModelFeature class functions
 //
+
+//---------------------------------
+template<class SCORE_INFO>
+bool BasePbTransModelFeature<SCORE_INFO>::scoringIsProcessSafe(void)
+{
+  return true;
+}
 
 //---------------------------------
 template<class SCORE_INFO>
