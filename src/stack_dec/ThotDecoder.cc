@@ -1868,7 +1868,14 @@ int ThotDecoder::testCustomFeatModule(std::string soFileName,
     std::cerr<<"Error: BasePbTransModelFeature pointer could not be instantiated"<<std::endl;    
     return THOT_ERROR;
   }
-  
+
+  if(!featPtr->scoringIsProcessSafe())
+  {
+    std::cerr<<"Warning: scoring is not process-safe for custom feature module "<<soFileName<<std::endl;
+  }
+
+  delete featPtr;
+
   return THOT_OK;
 }
 
