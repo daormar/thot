@@ -63,6 +63,9 @@ class DirectPhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
       // Constructor
   DirectPhraseModelFeat();
 
+      // Thread/Process safety related functions
+  bool scoringIsProcessSafe(void);
+
       // Feature information
   std::string getFeatType(void);
 
@@ -115,6 +118,18 @@ DirectPhraseModelFeat<SCORE_INFO>::DirectPhraseModelFeat()
   this->lambda=DIRECT_PM_FEAT_DEFAULT_LAMBDA;
   invPbModelPtr=NULL;
   swAligModelPtr=NULL;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+bool DirectPhraseModelFeat<SCORE_INFO>::scoringIsProcessSafe(void)
+{
+  if(invPbModelPtr==NULL || swAligModelPtr==NULL)
+    return false;
+  else
+  {
+    return invPbModelPtr->modelReadsAreProcessSafe() && swAligModelPtr->modelReadsAreProcessSafe();
+  }
 }
 
 //---------------------------------

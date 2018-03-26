@@ -63,6 +63,9 @@ class InversePhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
       // Constructor
   InversePhraseModelFeat();
 
+      // Thread/Process safety related functions
+  bool scoringIsProcessSafe(void);
+
       // Feature information
   std::string getFeatType(void);
 
@@ -115,6 +118,18 @@ InversePhraseModelFeat<SCORE_INFO>::InversePhraseModelFeat()
   this->lambda=INVERSE_PM_FEAT_DEFAULT_LAMBDA;
   invPbModelPtr=NULL;
   invSwAligModelPtr=NULL;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+bool InversePhraseModelFeat<SCORE_INFO>::scoringIsProcessSafe(void)
+{
+  if(invPbModelPtr==NULL || invSwAligModelPtr==NULL)
+    return false;
+  else
+  {
+    return invPbModelPtr->modelReadsAreProcessSafe() && invSwAligModelPtr->modelReadsAreProcessSafe();
+  }
 }
 
 //---------------------------------
