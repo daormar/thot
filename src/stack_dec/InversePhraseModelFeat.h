@@ -113,6 +113,8 @@ template<class SCORE_INFO>
 InversePhraseModelFeat<SCORE_INFO>::InversePhraseModelFeat()
 {
   this->lambda=INVERSE_PM_FEAT_DEFAULT_LAMBDA;
+  invPbModelPtr=NULL;
+  invSwAligModelPtr=NULL;
 }
 
 //---------------------------------

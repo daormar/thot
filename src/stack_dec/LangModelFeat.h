@@ -117,6 +117,8 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 LangModelFeat<SCORE_INFO>::LangModelFeat()
 {
+  lModelPtr=NULL;
+  wordPredPtr=NULL;
 }
 
 //---------------------------------

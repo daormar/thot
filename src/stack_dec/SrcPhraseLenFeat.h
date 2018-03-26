@@ -90,6 +90,7 @@ class SrcPhraseLenFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 SrcPhraseLenFeat<SCORE_INFO>::SrcPhraseLenFeat()
 {
+  invPbModelPtr=NULL;
 }
 
 //---------------------------------

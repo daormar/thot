@@ -113,6 +113,8 @@ template<class SCORE_INFO>
 DirectPhraseModelFeat<SCORE_INFO>::DirectPhraseModelFeat()
 {
   this->lambda=DIRECT_PM_FEAT_DEFAULT_LAMBDA;
+  invPbModelPtr=NULL;
+  swAligModelPtr=NULL;
 }
 
 //---------------------------------

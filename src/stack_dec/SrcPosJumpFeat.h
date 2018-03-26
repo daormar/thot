@@ -93,6 +93,7 @@ class SrcPosJumpFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 SrcPosJumpFeat<SCORE_INFO>::SrcPosJumpFeat()
 {
+  invPbModelPtr=NULL;
 }
 
 //---------------------------------
