@@ -1167,7 +1167,12 @@ int ThotDecoder::testSoftwareModulesInModelDescriptors(std::string cfgFile,
       if(ret==THOT_ERROR) return THOT_ERROR;
     }
     else
-      std::cerr<<"Warning: -lm parameter is not a model descriptor so it could not be tested"<<std::endl;
+    {
+      if(lm_str==NONE_DESCRIPTOR)
+        std::cerr<<"Warning: monolingual features are disabled in this configuration"<<std::endl;
+      else
+        std::cerr<<"Warning: -lm parameter is not a model descriptor so it could not be tested"<<std::endl;
+    }
   }
 
   if(tdCommonVars.featureBasedImplEnabled)
@@ -1179,7 +1184,12 @@ int ThotDecoder::testSoftwareModulesInModelDescriptors(std::string cfgFile,
       if(ret==THOT_ERROR) return THOT_ERROR;
     }
     else
-      std::cerr<<"Warning: -tm parameter is not a model descriptor so it could not be tested"<<std::endl;
+    {
+      if(tm_str==NONE_DESCRIPTOR)
+        std::cerr<<"Warning: bilingual features are disabled in this configuration"<<std::endl;
+      else
+        std::cerr<<"Warning: -tm parameter is not a model descriptor so it could not be tested"<<std::endl;
+    }
   }
 
   if(!cf_str.empty() && tdCommonVars.featureBasedImplEnabled)
