@@ -76,22 +76,22 @@ usage()
     echo "      provided by -tm and -lm options if given."
 }
 
-model_access_is_process_safe()
+check_process_safety()
 {
     if [ ${c_given} -eq 1 ]; then
-        model_access_is_process_safe_given_cfgfile $cfgfile
+        check_process_safety_given_cfgfile $cfgfile
     else
         tmpcfgfile=`$MKTEMP`
         ${bindir}/thot $lm $tm > ${tmpcfgfile}
-        model_access_is_process_safe_given_cfgfile ${tmpcfgfile}
+        check_process_safety_given_cfgfile ${tmpcfgfile}
         rm ${tmpcfgfile}
     fi
 }
 
-model_access_is_process_safe_given_cfgfile()
+check_process_safety_given_cfgfile()
 {
     _cfgfile=$1
-    nlines=`${bindir}/thot_server -c ${_cfgfile} -t 2>&1 | $GREP 'model reads are not process-safe' | $WC -l | $AWK '{print $1}'`
+    nlines=`${bindir}/thot_server -c ${_cfgfile} -t 2>&1 | $GREP 'not process-safe' | $WC -l | $AWK '{print $1}'`
     if [ $nlines -eq 0 ]; then
         echo 'yes'
     else
@@ -513,7 +513,7 @@ if [ ${o_given} -eq 0 ];then
     exit 1
 fi
 
-process_safety=`model_access_is_process_safe`
+process_safety=`check_process_safety`
 if [ ${process_safety} = "no" ]; then
     if [ ${num_procs} -gt 1 ]; then
         echo "Warning: only one processor will be used since there are non-process-safe modules" >&2
