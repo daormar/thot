@@ -37,6 +37,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "AwkInputStream.h"
 #include "Score.h"
 #include "ErrorDefs.h"
+#include <stdexcept>
 #include <map>
 
 //--------------- Constants ------------------------------------------
