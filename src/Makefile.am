@@ -18,10 +18,11 @@ endif
 
 if HAVE_LEVELDB_LIB
 LEVELDB_PROGS=thot_ngram_to_leveldb thot_ttable_to_leveldb	\
-thot_lextable_to_leveldb
+thot_lextable_to_leveldb thot_dict_to_leveldb
 LEVELDB_LIBS=incr_jel_mer_leveldb_ngram_lm_factory.la	\
 leveldb_phrase_model_factory.la				\
-incr_leveldb_hmm_p0_alig_model_factory.la
+incr_leveldb_hmm_p0_alig_model_factory.la		\
+leveldb_dict_feat__phrscoreinfo_factory.la
 endif
 
 AUTOMAKE_OPTIONS = subdir-objects
@@ -67,7 +68,8 @@ wba_incr_phrase_model_factory.la pfsm_ecm_for_wg_factory.la		\
 non_pb_ec_model_for_nb_ucat_factory.la					\
 wg_processor_for_anlp__pfsm_factory.la mira_bleu_factory.la		\
 mira_wer_factory.la mira_gtm_factory.la mira_chrf_factory.la		\
-kb_mira_ll_wu_factory.la multi_stack_decoder_rec__swli_factory.la	\
+kb_mira_ll_wu_factory.la dict_feat__phrscoreinfo_factory.la		\
+multi_stack_decoder_rec__swli_factory.la				\
 wg_uncoupled_assisted_trans__swli_factory.la				\
 multi_stack_decoder_rec__pbtm_factory.la				\
 wg_uncoupled_assisted_trans__pbtm_factory.la				\
@@ -339,36 +341,46 @@ stack_dec/_nbUncoupledAssistedTrans.h					\
 stack_dec/multi_stack_decoder_rec.h stack_dec/WpModelInfo.h		\
 stack_dec/LangModelPars.h stack_dec/LangModelInfo.h			\
 stack_dec/LangModelsInfo.h stack_dec/FeaturesInfo.h			\
-stack_dec/FeatureHandler.h stack_dec/HypStateDict.h			\
-stack_dec/HypStateDictData.h stack_dec/HypSortCriterion.h		\
-stack_dec/client_server_defs.h stack_dec/CatDefs.h stack_dec/bleu.h	\
-stack_dec/chrf.h stack_dec/BaseStackDecoder.h stack_dec/BaseSmtStack.h	\
+stack_dec/StdFeatureHandler.h stack_dec/CustomFeatureHandler.h		\
+stack_dec/HypStateDict.h stack_dec/HypStateDictData.h			\
+stack_dec/HypSortCriterion.h stack_dec/client_server_defs.h		\
+stack_dec/CatDefs.h stack_dec/bleu.h stack_dec/chrf.h			\
+stack_dec/BaseStackDecoder.h stack_dec/BaseSmtStack.h			\
 stack_dec/BaseSmtMultiStack.h stack_dec/BasePbTransModelFeature.h	\
 stack_dec/WordPenaltyFeat.h stack_dec/LangModelFeat.h			\
 stack_dec/DirectPhraseModelFeat.h stack_dec/InversePhraseModelFeat.h	\
 stack_dec/SrcPhraseLenFeat.h stack_dec/TrgPhraseLenFeat.h		\
 stack_dec/SrcPosJumpFeat.h stack_dec/OnTheFlyDictFeat.h			\
-stack_dec/BaseSmtModel.h stack_dec/BasePhraseHypothesisRec.h		\
-stack_dec/BasePhraseHypothesis.h stack_dec/BasePbTransModelStats.h	\
-stack_dec/BasePbTransModel.h stack_dec/BaseHypState.h			\
-stack_dec/BaseHypothesisRec.h stack_dec/BaseHypothesis.h		\
-stack_dec/HypDebugData.h stack_dec/BaseAssistedTrans.h			\
-stack_dec/_assistedTrans.h stack_dec/SmtModelUtils.h
+stack_dec/DictFeat.h stack_dec/BaseSmtModel.h				\
+stack_dec/BasePhraseHypothesisRec.h stack_dec/BasePhraseHypothesis.h	\
+stack_dec/BasePbTransModelStats.h stack_dec/BasePbTransModel.h		\
+stack_dec/BaseHypState.h stack_dec/BaseHypothesisRec.h			\
+stack_dec/BaseHypothesis.h stack_dec/HypDebugData.h			\
+stack_dec/BaseAssistedTrans.h stack_dec/_assistedTrans.h		\
+stack_dec/SmtModelUtils.h
 stack_dec_defs= stack_dec/DynClassFactoryHandler.cc			\
 stack_dec/WeightUpdateUtils.cc stack_dec/KbMiraLlWu.cc			\
 stack_dec/MiraBleu.cc stack_dec/MiraWer.cc stack_dec/MiraGtm.cc		\
 stack_dec/MiraChrF.cc stack_dec/ThotDecoderClient.cc			\
-stack_dec/ThotDecoder.cc stack_dec/FeatureHandler.cc			\
-stack_dec/WordPenaltyFeat.cc stack_dec/LangModelFeat.cc			\
-stack_dec/DirectPhraseModelFeat.cc stack_dec/InversePhraseModelFeat.cc	\
-stack_dec/SrcPhraseLenFeat.cc stack_dec/TrgPhraseLenFeat.cc		\
-stack_dec/SrcPosJumpFeat.cc stack_dec/OnTheFlyDictFeat.cc		\
+stack_dec/ThotDecoder.cc stack_dec/StdFeatureHandler.cc			\
+stack_dec/CustomFeatureHandler.cc stack_dec/WordPenaltyFeat.cc		\
+stack_dec/LangModelFeat.cc stack_dec/DirectPhraseModelFeat.cc		\
+stack_dec/InversePhraseModelFeat.cc stack_dec/SrcPhraseLenFeat.cc	\
+stack_dec/TrgPhraseLenFeat.cc stack_dec/SrcPosJumpFeat.cc		\
+stack_dec/OnTheFlyDictFeat.cc stack_dec/DictFeat.cc			\
 stack_dec/PhrScoreInfo.cc stack_dec/PhrNbestTransTableRefKey.cc		\
 stack_dec/PhrNbestTransTablePrefKey.cc stack_dec/PhrLocalSwLiTm.cc	\
 stack_dec/PhrHypState.cc stack_dec/PhrHypNumcovJumpsEqClassF.cc		\
 stack_dec/PhrHypNumcovJumps01EqClassF.cc stack_dec/PhrHypEqClassF.cc	\
 stack_dec/bleu.cc stack_dec/chrf.cc stack_dec/BaseHypState.cc		\
 stack_dec/SmtModelUtils.cc
+
+if HAVE_LEVELDB_LIB
+leveldb_stack_dec_h= stack_dec/LevelDbDict.h	\
+stack_dec/LevelDbDictFeat.h
+leveldb_stack_dec_defs= stack_dec/LevelDbDict.cc	\
+stack_dec/LevelDbDictFeat.cc
+endif
 
 if CASMACAT_LIB_ENABLED
 casmacat_engines_h= stack_dec/UserNameToUserIdMap.h		\
@@ -403,14 +415,10 @@ testing/StlPhraseTableTest.cc
 
 
 if HAVE_LEVELDB_LIB
-leveldb_pm_testing_h= \
-testing/IncrLexLevelDbTableTest.h                              \
-testing/LevelDbNgramTableTest.h                                \
-testing/LevelDbPhraseTableTest.h
-leveldb_pm_testing_defs= \
-testing/IncrLexLevelDbTableTest.cc                             \
-testing/LevelDbNgramTableTest.cc                               \
-testing/LevelDbPhraseTableTest.cc
+leveldb_pm_testing_h= testing/IncrLexLevelDbTableTest.h			\
+testing/LevelDbNgramTableTest.h testing/LevelDbPhraseTableTest.h
+leveldb_pm_testing_defs= testing/IncrLexLevelDbTableTest.cc		\
+testing/LevelDbNgramTableTest.cc testing/LevelDbPhraseTableTest.cc
 endif
 
 if HAVE_CXX11_ENABLED
@@ -425,7 +433,8 @@ $(phrase_models_h) $(phrase_models_defs) $(bdb_pm_h) $(bdb_pm_defs)	\
 $(hattrie_pm_h) $(hattrie_pm_defs) $(leveldb_pm_h) $(leveldb_pm_defs)	\
 $(leveldb_sw_h) $(leveldb_sw_defs) $(smt_preproc_h) $(smt_preproc_defs)	\
 $(error_correction_h) $(error_correction_defs) $(downhill_simplex_h)	\
-$(downhill_simplex_defs) $(stack_dec_h) $(stack_dec_defs) $(picojson_h)	\
+$(downhill_simplex_defs) $(stack_dec_h) $(stack_dec_defs)		\
+$(leveldb_stack_dec_h) $(leveldb_stack_dec_defs) $(picojson_h)		\
 $(exper_h) $(exper_defs)
 
 # Class factories
@@ -521,13 +530,23 @@ kb_mira_ll_wu_factory_h=
 kb_mira_ll_wu_factory_defs= stack_dec/KbMiraLlWuFactory.cc
 
 ##########
+dict_feat__phrscoreinfo_factory_h= 
+dict_feat__phrscoreinfo_factory_defs=		\
+stack_dec/DictFeatPhrScoreInfoFactory.cc
+
+##########
+leveldb_dict_feat__phrscoreinfo_factory_h= 
+leveldb_dict_feat__phrscoreinfo_factory_defs=				\
+stack_dec/LevelDbDictFeatPhrScoreInfoFactory.cc
+
+##########
 translation_metadata__phrscoreinfo_factory_h= 
-translation_metadata__phrscoreinfo_factory_defs=			\
+translation_metadata__phrscoreinfo_factory_defs=	\
 stack_dec/TranslationMetadataPhrScoreInfoFactory.cc
 
 ##########
 json_translation_metadata__phrscoreinfo_factory_h= 
-json_translation_metadata__phrscoreinfo_factory_defs=			\
+json_translation_metadata__phrscoreinfo_factory_defs=	\
 stack_dec/JsonTranslationMetadataPhrScoreInfoFactory.cc
 
 ##########
@@ -638,12 +657,17 @@ thot_ttable_to_leveldb_SOURCES = phrase_models/thot_ttable_to_leveldb.cc
 thot_ttable_to_leveldb_LDFLAGS = libthot.la
 
 ##########
+thot_dict_to_leveldb_SOURCES = stack_dec/thot_dict_to_leveldb.cc
+thot_dict_to_leveldb_LDFLAGS = libthot.la
+
+##########
 thot_wg_proc_SOURCES = error_correction/thot_wg_proc_pars.h	\
 error_correction/thot_wg_proc.cc
 thot_wg_proc_LDFLAGS = libthot.la
 
 ##########
-thot_dhs_step_by_step_min_SOURCES = downhill_simplex/thot_dhs_step_by_step_min.cc
+thot_dhs_step_by_step_min_SOURCES =		\
+downhill_simplex/thot_dhs_step_by_step_min.cc
 thot_dhs_step_by_step_min_LDFLAGS = libthot.la
 
 ##########
@@ -705,8 +729,8 @@ include_HEADERS = $(common_src_h) $(nlp_common_h) $(incr_models_h)	\
 $(kenlm_h) $(sw_models_h) $(phrase_models_h) $(bdb_pm_h)		\
 $(hattrie_pm_h) $(leveldb_lm_h) $(leveldb_pm_h) $(smt_preproc_h)	\
 $(error_correction_h) $(downhill_simplex_h) $(stack_dec_h)		\
-$(picojson_h) $(exper_h) $(exper_defs) $(casmacat_engines_h)		\
-$(casmacat_aligner_h) $(casmacat_confid_h)
+$(leveldb_stack_dec_h) $(picojson_h) $(exper_h) $(exper_defs)		\
+$(casmacat_engines_h) $(casmacat_aligner_h) $(casmacat_confid_h)
 
 # libraries
 
@@ -848,6 +872,20 @@ kb_mira_ll_wu_factory_la_LIBADD= libthot.la
 kb_mira_ll_wu_factory_la_LDFLAGS= -module
 
 ##########
+dict_feat__phrscoreinfo_factory_la_SOURCES=	\
+$(dict_feat__phrscoreinfo_factory_h)		\
+$(dict_feat__phrscoreinfo_factory_defs)
+dict_feat__phrscoreinfo_factory_la_LIBADD= libthot.la
+dict_feat__phrscoreinfo_factory_la_LDFLAGS= -module
+
+##########
+leveldb_dict_feat__phrscoreinfo_factory_la_SOURCES=	\
+$(leveldb_dict_feat__phrscoreinfo_factory_h)		\
+$(leveldb_dict_feat__phrscoreinfo_factory_defs)
+leveldb_dict_feat__phrscoreinfo_factory_la_LIBADD= libthot.la
+leveldb_dict_feat__phrscoreinfo_factory_la_LDFLAGS= -module
+
+##########
 translation_metadata__phrscoreinfo_factory_la_SOURCES=	\
 $(translation_metadata__phrscoreinfo_factory_h)		\
 $(translation_metadata__phrscoreinfo_factory_defs)
@@ -856,7 +894,7 @@ translation_metadata__phrscoreinfo_factory_la_LDFLAGS= -module
 
 ##########
 json_translation_metadata__phrscoreinfo_factory_la_SOURCES=	\
-$(json_translation_metadata__phrscoreinfo_factory_h)				\
+$(json_translation_metadata__phrscoreinfo_factory_h)		\
 $(json_translation_metadata__phrscoreinfo_factory_defs)
 json_translation_metadata__phrscoreinfo_factory_la_LIBADD= libthot.la
 json_translation_metadata__phrscoreinfo_factory_la_LDFLAGS= -module

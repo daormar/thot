@@ -49,8 +49,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 //--------------- InversePhraseModelFeat class
 
 /**
- * @brief The InversePhraseModelFeat template class is a base class for
- * implementing a inverse phrase model feature.
+ * @brief The InversePhraseModelFeat template class implementes an
+ * inverse phrase model feature.
  */
 
 template<class SCORE_INFO>
@@ -62,6 +62,9 @@ class InversePhraseModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 
       // Constructor
   InversePhraseModelFeat();
+
+      // Thread/Process safety related functions
+  bool scoringIsProcessSafe(void);
 
       // Feature information
   std::string getFeatType(void);
@@ -113,6 +116,20 @@ template<class SCORE_INFO>
 InversePhraseModelFeat<SCORE_INFO>::InversePhraseModelFeat()
 {
   this->lambda=INVERSE_PM_FEAT_DEFAULT_LAMBDA;
+  invPbModelPtr=NULL;
+  invSwAligModelPtr=NULL;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+bool InversePhraseModelFeat<SCORE_INFO>::scoringIsProcessSafe(void)
+{
+  if(invPbModelPtr==NULL || invSwAligModelPtr==NULL)
+    return false;
+  else
+  {
+    return invPbModelPtr->modelReadsAreProcessSafe() && invSwAligModelPtr->modelReadsAreProcessSafe();
+  }
 }
 
 //---------------------------------

@@ -88,6 +88,7 @@ class WordPenaltyFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 WordPenaltyFeat<SCORE_INFO>::WordPenaltyFeat()
 {
+  wpModelPtr=NULL;
 }
 
 //---------------------------------

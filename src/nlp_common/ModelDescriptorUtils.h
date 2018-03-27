@@ -18,7 +18,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
  
 /**
  * @file ModelDescriptorUtils.h
- * @brief Defines string processing utilities
+ * @brief Defines model descriptor utilities
  */
 
 #ifndef _ModelDescriptorUtils_h
@@ -34,6 +34,10 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <string>
 #include <vector>
+
+//--------------- Constants ------------------------------------------
+
+#define NONE_DESCRIPTOR "_none_"
 
 //--------------- typedefs -------------------------------------------
 

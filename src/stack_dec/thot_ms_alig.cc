@@ -33,7 +33,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include THOT_SMTMODEL_H // Define SmtModel type. It is set in
                          // configure by checking SMTMODEL_H
                          // variable (default value: SmtModel.h)
-#include "FeatureHandler.h"
+#include "CustomFeatureHandler.h"
+#include "StdFeatureHandler.h"
 #include "_pbTransModel.h"
 #include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
@@ -86,6 +87,7 @@ struct thot_ms_alig_pars
   std::string refSentencesFile;
   std::string languageModelFileName;
   std::string transModelPref;
+  std::string customFeatsFile;
   std::string wordGraphFileName;
   float wgPruningThreshold;
   std::vector<float> weightVec;
@@ -156,7 +158,8 @@ BaseStackDecoder<SmtModel>* stackDecoderPtr;
 _stackDecoderRec<SmtModel>* stackDecoderRecPtr;
 
     // Variables related to feature-based implementation
-FeatureHandler featureHandler;
+StdFeatureHandler stdFeatureHandler;
+CustomFeatureHandler customFeatureHandler;
 bool featureBasedImplEnabled;
 
 //--------------- Function Definitions -------------------------------
@@ -413,27 +416,22 @@ int init_translator_legacy_impl(const thot_ms_alig_pars& tap)
 //---------------
 void set_default_models(void)
 {
-  featureHandler.setWordPenSoFile(dynClassFactoryHandler.baseWordPenaltyModelSoFileName);
-  featureHandler.setDefaultLangSoFile(dynClassFactoryHandler.baseNgramLMSoFileName);
-  featureHandler.setDefaultTransSoFile(dynClassFactoryHandler.basePhraseModelSoFileName);
-  featureHandler.setDefaultSingleWordSoFile(dynClassFactoryHandler.baseSwAligModelSoFileName);
+  stdFeatureHandler.setWordPenSoFile(dynClassFactoryHandler.baseWordPenaltyModelSoFileName);
+  stdFeatureHandler.setDefaultLangSoFile(dynClassFactoryHandler.baseNgramLMSoFileName);
+  stdFeatureHandler.setDefaultTransSoFile(dynClassFactoryHandler.basePhraseModelSoFileName);
+  stdFeatureHandler.setDefaultSingleWordSoFile(dynClassFactoryHandler.baseSwAligModelSoFileName);
 }
 
 //---------------
-int add_model_features(const thot_ms_alig_pars& tap)
+int load_model_features(const thot_ms_alig_pars& tap)
 {
-      // Add word penalty model feature
-  int ret=featureHandler.addWpFeat(tap.verbosity);
+      // Load monolingual log-linear model features
+  int ret=stdFeatureHandler.loadMonolingualFeats(tap.languageModelFileName,tap.verbosity);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
-      // Add language model features
-  ret=featureHandler.addLmFeats(tap.languageModelFileName,tap.verbosity);
-  if(ret==THOT_ERROR)
-    return THOT_ERROR;
-
-      // Add translation model features
-  ret=featureHandler.addTmFeats(tap.transModelPref,tap.verbosity);
+      // Load bilingual log-linear model features
+  ret=stdFeatureHandler.loadBilingualFeats(tap.transModelPref,tap.verbosity);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
@@ -482,16 +480,27 @@ int init_translator_feat_impl(const thot_ms_alig_pars& tap)
       // Link features information
   _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
   if(pbtm_ptr)
-    pbtm_ptr->link_feats_info(featureHandler.getFeatureInfoPtr());
+    pbtm_ptr->link_std_feats_info(stdFeatureHandler.getFeatureInfoPtr());
 
-      // Set default models for feature handler
+      // Set default models for standard feature handler
   set_default_models();
   
-      // Add model features
-  ret=add_model_features(tap);
+      // Load model features
+  ret=load_model_features(tap);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
+
+      // Load custom features if they were provided
+  if(!tap.customFeatsFile.empty())
+  {
+    ret=customFeatureHandler.loadCustomFeats(tap.customFeatsFile,tap.verbosity);
+    if(ret==THOT_ERROR) return THOT_ERROR;
+  }
   
+      // Link custom features information
+  if(pbtm_ptr)
+    pbtm_ptr->link_custom_feats_info(customFeatureHandler.getFeatureInfoPtr());
+
       // Set heuristic
   smtModelPtr->setHeuristic(tap.heuristic);
 
@@ -595,7 +604,8 @@ void release_translator_feat_impl(void)
   delete smtModelPtr;
 
       // Delete features information
-  featureHandler.clear();
+  stdFeatureHandler.clear();
+  customFeatureHandler.clear();
   
       // Release class factory handler
   dynClassFactoryHandler.release_smt();
@@ -916,7 +926,10 @@ void takeParametersGivenArgcArgv(int argc,
 
      // Take read table prefix 
  err=readSTLstring(argc,argv, "-tm", &tap.transModelPref);
- 
+
+     // Take custom features file 
+ err=readSTLstring(argc,argv, "-cf", &tap.customFeatsFile);
+
      // Take file name with the test sentences 
  err=readSTLstring(argc,argv, "-t",&tap.sourceSentencesFile);
 

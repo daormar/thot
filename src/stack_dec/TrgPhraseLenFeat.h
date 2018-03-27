@@ -89,6 +89,7 @@ class TrgPhraseLenFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 TrgPhraseLenFeat<SCORE_INFO>::TrgPhraseLenFeat()
 {
+  invPbModelPtr=NULL;
 }
 
 //---------------------------------

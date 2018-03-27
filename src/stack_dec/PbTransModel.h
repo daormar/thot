@@ -144,6 +144,16 @@ Score PbTransModel<EQCLASS_FUNC>::nullHypothesisScrComps(Hypothesis& nullHyp,
     scoreComponents.push_back(unweightedScore);
   }
 
+      // Obtain score for custom features
+  for(unsigned int i=0;i<this->customFeaturesInfoPtr->featPtrVec.size();++i)
+  {
+    Score unweightedScore;
+    hypScoreInfo=this->customFeaturesInfoPtr->featPtrVec[i]->nullHypScore(hypScoreInfo,
+                                                                          this->getCustomFeatWeight(i),
+                                                                          unweightedScore);
+    scoreComponents.push_back(unweightedScore);
+  }
+
       // Obtain score for on-the-fly features
   for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
   {
@@ -269,6 +279,20 @@ Score PbTransModel<EQCLASS_FUNC>::incrScore(const Hypothesis& pred_hyp,
     scoreComponents.push_back(unweightedScore);
   }
 
+      // Obtain score for custom features
+  /* std::cerr<<"*********************** "<<this->customFeaturesInfoPtr->featPtrVec.size()<<std::endl; */
+  for(unsigned int i=0;i<this->customFeaturesInfoPtr->featPtrVec.size();++i)
+  {
+    Score unweightedScore;
+    hypScoreInfo=this->customFeaturesInfoPtr->featPtrVec[i]->extensionScore(this->pbtmInputVars.srcSentVec,
+                                                                            hypScoreInfo,
+                                                                            pred_hypd_str,
+                                                                            new_hypd_str,
+                                                                            this->getCustomFeatWeight(i),
+                                                                            unweightedScore);
+    scoreComponents.push_back(unweightedScore);
+  }
+
       // Obtain score for on-the-fly features
   for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
   {
@@ -325,7 +349,7 @@ void PbTransModel<EQCLASS_FUNC>::extendHypDataIdx(PositionIndex srcLeft,
 //---------------------------------
 template<class EQCLASS_FUNC>
 bool PbTransModel<EQCLASS_FUNC>::hypDataTransIsPrefixOfTargetRef(const HypDataType& hypd,
-                                                                          bool& equal)const
+                                                                 bool& equal)const
 {
   PositionIndex ntrgSize=hypd.ntarget.size();
   PositionIndex nrefSentSize=this->pbtmInputVars.nrefSentIdVec.size();	

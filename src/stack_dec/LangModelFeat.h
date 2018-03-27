@@ -61,7 +61,10 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 
       // Constructor
   LangModelFeat();
-  
+
+      // Thread/Process safety related functions
+  bool scoringIsProcessSafe(void);
+
       // Feature information
   std::string getFeatType(void);
 
@@ -117,6 +120,20 @@ class LangModelFeat: public BasePbTransModelFeature<SCORE_INFO>
 template<class SCORE_INFO>
 LangModelFeat<SCORE_INFO>::LangModelFeat()
 {
+  lModelPtr=NULL;
+  wordPredPtr=NULL;
+}
+
+//---------------------------------
+template<class SCORE_INFO>
+bool LangModelFeat<SCORE_INFO>::scoringIsProcessSafe(void)
+{
+  if(lModelPtr==NULL)
+    return false;
+  else
+  {
+    return lModelPtr->modelReadsAreProcessSafe();
+  }
 }
 
 //---------------------------------

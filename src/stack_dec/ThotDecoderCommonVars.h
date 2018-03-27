@@ -27,7 +27,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "BaseTranslationMetadata.h"
 #include "OnlineTrainingPars.h"
-#include "FeatureHandler.h"
+#include "CustomFeatureHandler.h"
+#include "StdFeatureHandler.h"
 #include "BaseLogLinWeightUpdater.h"
 #include "BaseScorer.h"
 #include "BasePbTransModel.h"
@@ -64,7 +65,8 @@ class ThotDecoderCommonVars
 
       // Variables related to feature-based implementation
   bool featureBasedImplEnabled;
-  FeatureHandler featureHandler;
+  StdFeatureHandler stdFeatureHandler;
+  CustomFeatureHandler customFeatureHandler;
 
       // Handler of dynamic classes
   DynClassFactoryHandler dynClassFactoryHandler;

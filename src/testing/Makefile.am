@@ -1,9 +1,10 @@
-EXTRA_DIST= thot_test.cc KbMiraLlWuTest.h KbMiraLlWuTest.cc		\
-_incrLexTableTest.h _incrLexTableTest.cc _phraseTableTest.h		\
-_phraseTableTest.cc IncrLexLevelDbTableTest.h				\
-IncrLexLevelDbTableTest.cc IncrLexTableTest.h IncrLexTableTest.cc	\
-LevelDbNgramTableTest.h LevelDbNgramTableTest.cc			\
-LevelDbPhraseTableTest.h LevelDbPhraseTableTest.cc StlPhraseTableTest.h	\
-StlPhraseTableTest.cc JsonTranslationMetadataTest.h			\
-TranslationMetadataTest.cc JsonTranslationMetadataTest.cc		\
-MiraChrFTest.h MiraChrFTest.cc
+EXTRA_DIST= HatTriePhraseTableTest.h IncrLexLevelDbTableTest.h		\
+_incrLexTableTest.h IncrLexTableTest.h JsonTranslationMetadataTest.h	\
+KbMiraLlWuTest.h LevelDbNgramTableTest.h LevelDbPhraseTableTest.h	\
+MiraChrFTest.h _phraseTableTest.h StlPhraseTableTest.h			\
+TranslationMetadataTest.h HatTriePhraseTableTest.cc			\
+IncrLexLevelDbTableTest.cc _incrLexTableTest.cc IncrLexTableTest.cc	\
+JsonTranslationMetadataTest.cc KbMiraLlWuTest.cc			\
+LevelDbNgramTableTest.cc LevelDbPhraseTableTest.cc MiraChrFTest.cc	\
+_phraseTableTest.cc StlPhraseTableTest.cc thot_test.cc			\
+TranslationMetadataTest.cc

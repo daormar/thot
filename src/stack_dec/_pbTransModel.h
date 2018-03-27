@@ -87,7 +87,8 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   void link_trans_metadata(BaseTranslationMetadata<HypScoreInfo> * _trMetadataPtr);
 
       // Link features information
-  void link_feats_info(FeaturesInfo<HypScoreInfo>* _featuresInfoPtr);
+  void link_std_feats_info(FeaturesInfo<HypScoreInfo>* _standardFeaturesInfoPtr);
+  void link_custom_feats_info(FeaturesInfo<HypScoreInfo>* _customFeaturesInfoPtr);
 
   void clear(void);
 
@@ -170,7 +171,10 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   
   FeaturesInfo<HypScoreInfo>* standardFeaturesInfoPtr;
   std::vector<float> standardFeaturesWeights;
-  
+
+  FeaturesInfo<HypScoreInfo>* customFeaturesInfoPtr;
+  std::vector<float> customFeaturesWeights;
+
   FeaturesInfo<HypScoreInfo> onTheFlyFeaturesInfo;
   std::vector<float> onTheFlyFeaturesWeights;
   
@@ -199,6 +203,7 @@ class _pbTransModel: public BasePbTransModel<HYPOTHESIS>
   ////// Weight-related functions
   void initFeatWeights(std::vector<float> wVec);
   float getStdFeatWeight(unsigned int i);
+  float getCustomFeatWeight(unsigned int i);
   float getOnTheFlyFeatWeight(unsigned int i);
   
   ////// Hypotheses-related functions
@@ -406,8 +411,9 @@ _pbTransModel<HYPOTHESIS>::_pbTransModel(void):BasePbTransModel<HYPOTHESIS>()
       // Set state info
   state=MODEL_IDLE_STATE;
 
-      // Initialize feature information pointer
+      // Initialize feature information pointers
   standardFeaturesInfoPtr=NULL;
+  customFeaturesInfoPtr=NULL;
   
       // Initially, no heuristic is used
   heuristicId=NO_HEURISTIC;
@@ -428,9 +434,16 @@ void _pbTransModel<HYPOTHESIS>::link_trans_metadata(BaseTranslationMetadata<HypS
 
 //---------------------------------
 template<class HYPOTHESIS>
-void _pbTransModel<HYPOTHESIS>::link_feats_info(FeaturesInfo<HypScoreInfo>* _standardFeaturesInfoPtr)
+void _pbTransModel<HYPOTHESIS>::link_std_feats_info(FeaturesInfo<HypScoreInfo>* _standardFeaturesInfoPtr)
 {
   standardFeaturesInfoPtr=_standardFeaturesInfoPtr;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+void _pbTransModel<HYPOTHESIS>::link_custom_feats_info(FeaturesInfo<HypScoreInfo>* _customFeaturesInfoPtr)
+{
+  customFeaturesInfoPtr=_customFeaturesInfoPtr;
 }
 
 //---------------------------------
@@ -442,10 +455,12 @@ void _pbTransModel<HYPOTHESIS>::clear(void)
 
       // Initialize feature information pointer
   standardFeaturesInfoPtr=NULL;
-
+  customFeaturesInfoPtr=NULL;
+  
       // Clear weight information for features
   defaultFeatWeights.clear();
   standardFeaturesWeights.clear();
+  customFeaturesWeights.clear();
   onTheFlyFeaturesWeights.clear();
   
       // Initially, no heuristic is used
@@ -707,6 +722,16 @@ float _pbTransModel<HYPOTHESIS>::getStdFeatWeight(unsigned int i)
 {
   if(i<standardFeaturesWeights.size())
     return standardFeaturesWeights[i];
+  else
+    return DEFAULT_LOGLIN_WEIGHT;
+}
+
+//---------------------------------
+template<class HYPOTHESIS>
+float _pbTransModel<HYPOTHESIS>::getCustomFeatWeight(unsigned int i)
+{
+  if(i<customFeaturesWeights.size())
+    return customFeaturesWeights[i];
   else
     return DEFAULT_LOGLIN_WEIGHT;
 }
@@ -1821,6 +1846,7 @@ void _pbTransModel<HYPOTHESIS>::initFeatWeights(std::vector<float> wVec)
 {
       // Clear weight vectors
   standardFeaturesWeights.clear();
+  customFeaturesWeights.clear();
   onTheFlyFeaturesWeights.clear();
   
       // Set weights of standard features
@@ -1832,12 +1858,22 @@ void _pbTransModel<HYPOTHESIS>::initFeatWeights(std::vector<float> wVec)
       standardFeaturesWeights.push_back(DEFAULT_LOGLIN_WEIGHT);
   }
 
-      // Set weights of on-the-fly features
+      // Set weights of custom features
   int numStdWeights=standardFeaturesInfoPtr->featPtrVec.size();
-  for(unsigned int i=0;i<onTheFlyFeaturesInfo.featPtrVec.size();++i)
+  for(unsigned int i=0;i<customFeaturesInfoPtr->featPtrVec.size();++i)
   {
     if(numStdWeights+i<wVec.size())
-      onTheFlyFeaturesWeights.push_back(wVec[numStdWeights+i]);
+      customFeaturesWeights.push_back(wVec[numStdWeights+i]);
+    else
+      customFeaturesWeights.push_back(DEFAULT_LOGLIN_WEIGHT);
+  }
+
+      // Set weights of on-the-fly features
+  int numCustomWeights=customFeaturesInfoPtr->featPtrVec.size();
+  for(unsigned int i=0;i<onTheFlyFeaturesInfo.featPtrVec.size();++i)
+  {
+    if(numStdWeights+numCustomWeights+i<wVec.size())
+      onTheFlyFeaturesWeights.push_back(wVec[numStdWeights+numCustomWeights+i]);
     else
       onTheFlyFeaturesWeights.push_back(DEFAULT_LOGLIN_WEIGHT);
   }
@@ -1861,7 +1897,21 @@ void _pbTransModel<HYPOTHESIS>::getWeights(std::vector<std::pair<std::string,flo
       str_float.second=DEFAULT_LOGLIN_WEIGHT;
     compWeights.push_back(str_float);
   }
-  
+
+      // Obtain weight info for custom features
+  for(unsigned int i=0;i<customFeaturesInfoPtr->featPtrVec.size();++i)
+  {
+    std::pair<std::string,float> str_float;
+    std::string weightName=customFeaturesInfoPtr->featPtrVec[i]->getFeatName();
+    weightName+="w";
+    str_float.first=weightName;
+    if(i<customFeaturesWeights.size())
+      str_float.second=customFeaturesWeights[i];
+    else
+      str_float.second=DEFAULT_LOGLIN_WEIGHT;
+    compWeights.push_back(str_float);
+  }
+
       // Obtain weight info for on-the-fly features
   for(unsigned int i=0;i<onTheFlyFeaturesInfo.featPtrVec.size();++i)
   {
@@ -1895,7 +1945,8 @@ void _pbTransModel<HYPOTHESIS>::printWeights(std::ostream &outS)
 template<class HYPOTHESIS>
 unsigned int _pbTransModel<HYPOTHESIS>::getNumWeights(void)
 {
-  return standardFeaturesInfoPtr->featPtrVec.size();
+  return standardFeaturesInfoPtr->featPtrVec.size() +
+    customFeaturesInfoPtr->featPtrVec.size() + onTheFlyFeaturesInfo.featPtrVec.size();
 }
 
 //---------------------------------
@@ -2164,6 +2215,18 @@ bool _pbTransModel<HYPOTHESIS>::getTransForSrcPhraseStr(const std::vector<std::s
       transSetStr.insert(transOptVec[j]);
   }
 
+      // Obtain translation options for each custom feature
+  for(unsigned int i=0;i<this->customFeaturesInfoPtr->featPtrVec.size();++i)
+  {
+        // Obtain options
+    std::vector<std::vector<std::string> > transOptVec;
+    this->customFeaturesInfoPtr->featPtrVec[i]->obtainTransOptions(srcPhraseStr,transOptVec);
+
+        // Add options to set
+    for(unsigned int j=0;j<transOptVec.size();++j)
+      transSetStr.insert(transOptVec[j]);
+  }
+
       // Obtain translation options for each on-the-fly feature
   for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
   {
@@ -2235,6 +2298,22 @@ std::vector<std::string> _pbTransModel<HYPOTHESIS>::getLogLinFeatNamesForPhrTran
     }
   }
 
+        // Obtain translation options for each custom feature
+  for(unsigned int i=0;i<this->customFeaturesInfoPtr->featPtrVec.size();++i)
+  {
+        // Obtain options
+    std::vector<std::vector<std::string> > transOptVec;
+    this->customFeaturesInfoPtr->featPtrVec[i]->obtainTransOptions(srcPhraseStr,transOptVec);
+
+        // Add featName to result if appropriate
+    std::vector<std::vector<std::string> >::const_iterator iter;
+    iter=find(transOptVec.begin(),transOptVec.end(),trgPhr);
+    if(iter!=transOptVec.end())
+    {
+      featNames.push_back(this->customFeaturesInfoPtr->featPtrVec[i]->getFeatName());
+    }
+  }
+
       // Obtain translation options for each on-the-fly feature
   for(unsigned int i=0;i<this->onTheFlyFeaturesInfo.featPtrVec.size();++i)
   {
@@ -2277,6 +2356,12 @@ Score _pbTransModel<HYPOTHESIS>::nbestTransScore(const std::vector<WordIndex>& s
   for(unsigned int i=0;i<this->standardFeaturesInfoPtr->featPtrVec.size();++i)
   {
     result+=getStdFeatWeight(i) * this->standardFeaturesInfoPtr->featPtrVec[i]->scorePhrasePairUnweighted(srcPhraseStr,trgPhraseStr);
+  }
+
+      // Obtain score for each custom feature
+  for(unsigned int i=0;i<this->customFeaturesInfoPtr->featPtrVec.size();++i)
+  {
+    result+=getCustomFeatWeight(i) * this->customFeaturesInfoPtr->featPtrVec[i]->scorePhrasePairUnweighted(srcPhraseStr,trgPhraseStr);
   }
 
       // Obtain score for each on-the-fly feature

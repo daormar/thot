@@ -34,7 +34,8 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include THOT_SMTMODEL_H // Define SmtModel type. It is set in
                          // configure by checking SMTMODEL_H
                          // variable (default value: SmtModel.h)
-#include "FeatureHandler.h"
+#include "CustomFeatureHandler.h"
+#include "StdFeatureHandler.h"
 #include "_pbTransModel.h"
 #include "_phrSwTransModel.h"
 #include "_phraseBasedTransModel.h"
@@ -83,6 +84,7 @@ struct thot_ms_dec_pars
   std::string sourceSentencesFile;
   std::string languageModelFileName;
   std::string transModelPref;
+  std::string customFeatsFile;
   std::string wordGraphFileName;
   std::string outFile;
   float wgPruningThreshold;
@@ -146,7 +148,8 @@ BaseStackDecoder<SmtModel>* stackDecoderPtr;
 _stackDecoderRec<SmtModel>* stackDecoderRecPtr;
 
     // Variables related to feature-based implementation
-FeatureHandler featureHandler;
+StdFeatureHandler stdFeatureHandler;
+CustomFeatureHandler customFeatureHandler;
 bool featureBasedImplEnabled;
 
 //--------------- Function Definitions -------------------------------
@@ -224,7 +227,7 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
   std::cerr<<"- Language model state (LM_Hist): "<<LM_STATE_TYPE_NAME<<" ("<<THOT_LM_STATE_H<<")"<<std::endl;
   std::cerr<<"- Partial probability information for single word models (PpInfo): "<<PPINFO_TYPE_NAME<<" ("<<THOT_PPINFO_H<<")"<<std::endl;
 
-        // Obtain info about translation model entries
+      // Obtain info about translation model entries
   unsigned int numTransModelEntries;
   std::vector<ModelDescriptorEntry> modelDescEntryVec;
   if(extractModelEntryInfo(tdp.transModelPref.c_str(),modelDescEntryVec)==THOT_OK)
@@ -401,27 +404,22 @@ int init_translator_legacy_impl(const thot_ms_dec_pars& tdp)
 //---------------
 void set_default_models(void)
 {
-  featureHandler.setWordPenSoFile(dynClassFactoryHandler.baseWordPenaltyModelSoFileName);
-  featureHandler.setDefaultLangSoFile(dynClassFactoryHandler.baseNgramLMSoFileName);
-  featureHandler.setDefaultTransSoFile(dynClassFactoryHandler.basePhraseModelSoFileName);
-  featureHandler.setDefaultSingleWordSoFile(dynClassFactoryHandler.baseSwAligModelSoFileName);
+  stdFeatureHandler.setWordPenSoFile(dynClassFactoryHandler.baseWordPenaltyModelSoFileName);
+  stdFeatureHandler.setDefaultLangSoFile(dynClassFactoryHandler.baseNgramLMSoFileName);
+  stdFeatureHandler.setDefaultTransSoFile(dynClassFactoryHandler.basePhraseModelSoFileName);
+  stdFeatureHandler.setDefaultSingleWordSoFile(dynClassFactoryHandler.baseSwAligModelSoFileName);
 }
 
 //---------------
-int add_model_features(const thot_ms_dec_pars& tdp)
+int load_model_features(const thot_ms_dec_pars& tdp)
 {
-      // Add word penalty model feature
-  int ret=featureHandler.addWpFeat(tdp.verbosity);
+      // Load monolingual log-linear model features
+  int ret=stdFeatureHandler.loadMonolingualFeats(tdp.languageModelFileName,tdp.verbosity);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
-      // Add language model features
-  ret=featureHandler.addLmFeats(tdp.languageModelFileName,tdp.verbosity);
-  if(ret==THOT_ERROR)
-    return THOT_ERROR;
-
-      // Add translation model features
-  ret=featureHandler.addTmFeats(tdp.transModelPref,tdp.verbosity);
+      // Load bilingual log-linear model features
+  ret=stdFeatureHandler.loadBilingualFeats(tdp.transModelPref,tdp.verbosity);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
 
@@ -467,19 +465,30 @@ int init_translator_feat_impl(const thot_ms_dec_pars& tdp)
       // Link translation constraints
   smtModelPtr->link_trans_metadata(trMetadataPtr);
 
-      // Link features information
+      // Link standard features information
   _pbTransModel<SmtModel::Hypothesis>* pbtm_ptr=dynamic_cast<_pbTransModel<SmtModel::Hypothesis>* >(smtModelPtr);
   if(pbtm_ptr)
-    pbtm_ptr->link_feats_info(featureHandler.getFeatureInfoPtr());
+    pbtm_ptr->link_std_feats_info(stdFeatureHandler.getFeatureInfoPtr());
 
-      // Set default models for feature handler
+      // Set default models for standard feature handler
   set_default_models();
   
-      // Add model features
-  ret=add_model_features(tdp);
+      // Load model features
+  ret=load_model_features(tdp);
   if(ret==THOT_ERROR)
     return THOT_ERROR;
+
+      // Load custom features if they were provided
+  if(!tdp.customFeatsFile.empty())
+  {
+    ret=customFeatureHandler.loadCustomFeats(tdp.customFeatsFile,tdp.verbosity);
+    if(ret==THOT_ERROR) return THOT_ERROR;
+  }
   
+      // Link custom features information
+  if(pbtm_ptr)
+    pbtm_ptr->link_custom_feats_info(customFeatureHandler.getFeatureInfoPtr());
+
       // Set heuristic
   smtModelPtr->setHeuristic(tdp.heuristic);
 
@@ -583,7 +592,8 @@ void release_translator_feat_impl(void)
   delete smtModelPtr;
 
       // Delete features information
-  featureHandler.clear();
+  stdFeatureHandler.clear();
+  customFeatureHandler.clear();
   
       // Release class factory handler
   dynClassFactoryHandler.release_smt();
@@ -823,7 +833,10 @@ void takeParametersGivenArgcArgv(int argc,
 
      // Take read table prefix 
  err=readSTLstring(argc,argv, "-tm", &tdp.transModelPref);
- 
+
+     // Take custom features file 
+ err=readSTLstring(argc,argv, "-cf", &tdp.customFeatsFile);
+
      // Take file name with the sentences to be translated 
  err=readSTLstring(argc,argv, "-t",&tdp.sourceSentencesFile);
 

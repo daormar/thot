@@ -107,7 +107,9 @@ bool fileIsDescriptor(std::string fileName)
   {
     if(awk.getln())
     {
-      if(awk.NF>=3 && awk.dollar(1)=="thot" && (awk.dollar(2)=="tm" || awk.dollar(2)=="lm") && awk.dollar(3)=="descriptor")
+      if(awk.NF>=3 && awk.dollar(1)=="thot"
+         && (awk.dollar(2)=="tm" || awk.dollar(2)=="lm" || awk.dollar(2)=="cf")
+         && awk.dollar(3)=="descriptor")
       {
             // File is a descriptor
         awk.close();
@@ -140,8 +142,13 @@ bool fileIsDescriptor(std::string fileName,
   {
     if(awk.getln())
     {
-      if(awk.NF>=3 && awk.dollar(1)=="thot" && (awk.dollar(2)=="tm" || awk.dollar(2)=="lm") && awk.dollar(3)=="descriptor")
+      if(awk.NF>=3 && awk.dollar(1)=="thot"
+         && (awk.dollar(2)=="tm" || awk.dollar(2)=="lm" || awk.dollar(2)=="cf")
+         && awk.dollar(3)=="descriptor")
       {
+            // Store descriptor type
+        std::string desc_type=awk.dollar(2);
+        
             // Process descriptor (main file will be searched)
         while(awk.getln())
         {
@@ -166,7 +173,8 @@ bool fileIsDescriptor(std::string fileName,
         }
             // File is a descriptor but it does not incorporate a
             // main model, so mainFileName is left empty
-        std::cerr<<"Warning: descriptor store in "<<fileName<<" does not contain a main entry"<<std::endl;
+        if(desc_type!="cf")
+          std::cerr<<"Warning: descriptor stored in "<<fileName<<" does not contain a main entry"<<std::endl;
         awk.close();
         mainFileName.clear();
         return true;
@@ -191,8 +199,7 @@ bool fileIsDescriptor(std::string fileName,
 bool extractModelEntryInfo(std::string fileName,
                            std::vector<ModelDescriptorEntry>& modelDescEntryVec)
 {
-  std::string mainFileName;
-  if(fileIsDescriptor(fileName,mainFileName))
+  if(fileIsDescriptor(fileName))
   {
     AwkInputStream awk;
     if(awk.open(fileName.c_str())==THOT_ERROR)

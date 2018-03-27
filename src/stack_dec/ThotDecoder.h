@@ -203,16 +203,16 @@ class ThotDecoder
                                int verbose/*=0*/);
   bool load_tm_legacy_impl(const char* tmFilesPrefix,
                            int verbose=0);
-  bool load_tm_feat_impl(const char* tmFilesPrefix,
-                         int verbose=0);
+  bool load_bilingual_feats(const char* tmFilesPrefix,
+                            int verbose=0);
   BaseNgramLM<LM_State>* createLmPtr(std::string modelType);
   int createLangModelFeat(std::string featName,
                           const ModelDescriptorEntry& modelDescEntry,
                           LangModelFeat<SmtModel::HypScoreInfo>** langModelFeatPtrRef);
   bool load_lm_legacy_impl(const char* lmFileName,
                            int verbose=0);
-  bool load_lm_feat_impl(const char* lmFileName,
-                         int verbose=0);
+  bool load_monolingual_feats(const char* lmFileName,
+                              int verbose=0);
   bool load_ecm(const char* ecmFilesPrefix,
                 int verbose=0);
 
@@ -228,6 +228,10 @@ class ThotDecoder
                    int verbose=0);
   int testSwModelModule(std::string soFileName,
                         int verbose=0);
+  int testModulesInCustomFeatDesc(const char* customFeatDescFileName,
+                                  int verbose=0);
+  int testCustomFeatModule(std::string soFileName,
+                           int verbose=0);
     
       // Functions to print models
   int printModelsLegacyImpl(int verbose=0);
