@@ -39,6 +39,7 @@ along with this program; If not, see <http://www.gnu.org/licenses/>.
 #include "ErrorDefs.h"
 #include <stdexcept>
 #include <map>
+#include <stdlib.h>
 
 //--------------- Constants ------------------------------------------
 
