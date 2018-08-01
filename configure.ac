@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT(thot, 3.2.0Beta, dortiz@prhlt.upv.es)
+AC_INIT(thot, 3.2.0Beta, daniel.ortiz.phd@gmail.com)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_CONFIG_HEADER(config.h)
