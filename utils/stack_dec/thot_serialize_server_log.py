@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# *- python -*
 
 # thot package for statistical machine translation
 # Copyright (C) 2017 Adam Harasimowicz
