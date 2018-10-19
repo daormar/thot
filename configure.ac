@@ -19,7 +19,6 @@ CFLAGS_AUX=${CFLAGS}
 CXXFLAGS_AUX=${CXXFLAGS}
 
 # Checks for programs.
-AC_PATH_PROGS(BASH, bash)
 AC_PATH_PROGS(PERL, perl)
 AC_PATH_PROGS(SPLIT, split)
 AC_PATH_PROGS(SED, sed)
@@ -43,6 +42,15 @@ AC_PATH_PROGS(SSH, ssh)
 AC_PATH_PROGS(QSUB, qsub)
 AC_PATH_PROGS(QSTAT, qstat)
 AC_PATH_PROGS(QRLS, qrls)
+
+# BASH may already be set in the shell, if the admin then changes the
+# the /bin/sh symlink to a non-bash shell, then the installation will
+# break
+unset BASH
+AC_PATH_PROGS(BASH, bash, "no", [$PATH:/bin:/usr/bin:/usr/sbin])
+if test x$BASH = "xno"; then
+    AC_MSG_ERROR([bash is required])
+fi
 
 # check that PIPESTATUS is available
 echo -n "checking whether PIPESTATUS is available... "
