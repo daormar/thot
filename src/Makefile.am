@@ -573,154 +573,154 @@ stack_dec/WgUncoupledAssistedTransPbTmFactory.cc
 
 ##########
 thot_lm_perp_SOURCES = incr_models/thot_lm_perp.cc
-thot_lm_perp_LDFLAGS = libthot.la
+thot_lm_perp_LDADD = libthot.la -ldl
 
 ##########
 thot_ngram_to_leveldb_SOURCES = incr_models/thot_ngram_to_leveldb.cc
-thot_ngram_to_leveldb_LDFLAGS = libthot.la
+thot_ngram_to_leveldb_LDADD = libthot.la -ldl
 
 ##########
 thot_ilm_perp_SOURCES = incr_models/thot_ilm_perp.cc
-thot_ilm_perp_LDFLAGS = libthot.la
+thot_ilm_perp_LDADD = libthot.la -ldl
 
 ##########
 thot_lm_weight_upd_SOURCES = incr_models/thot_lm_weight_upd.cc
-thot_lm_weight_upd_LDFLAGS = libthot.la
+thot_lm_weight_upd_LDADD = libthot.la -ldl
 
 ##########
 thot_calc_swm_lgprob_SOURCES = sw_models/thot_calc_swm_lgprob.cc
-thot_calc_swm_lgprob_LDFLAGS = libthot.la
+thot_calc_swm_lgprob_LDADD = libthot.la -ldl
 
 ##########
 thot_lextable_to_leveldb_SOURCES = sw_models/thot_lextable_to_leveldb.cc
-thot_lextable_to_leveldb_LDFLAGS = libthot.la
+thot_lextable_to_leveldb_LDADD = libthot.la -ldl
 
 ##########
 thot_gen_sw_model_SOURCES = sw_models/thot_gen_sw_model_pars.h	\
 sw_models/thot_gen_sw_model.cc
-thot_gen_sw_model_LDFLAGS = libthot.la
+thot_gen_sw_model_LDADD = libthot.la -ldl
 
 ##########
 thot_sort_bin_ilextable_SOURCES = sw_models/thot_sort_bin_ilextable.cc
-thot_sort_bin_ilextable_LDFLAGS = libthot.la
+thot_sort_bin_ilextable_LDADD = libthot.la -ldl
 
 ##########
 thot_sort_bin_ihmmatable_SOURCES = sw_models/thot_sort_bin_ihmmatable.cc
-thot_sort_bin_ihmmatable_LDFLAGS = libthot.la
+thot_sort_bin_ihmmatable_LDADD = libthot.la -ldl
 
 ##########
 thot_sort_bin_iibm2atable_SOURCES = sw_models/thot_sort_bin_iibm2atable.cc
-thot_sort_bin_iibm2atable_LDFLAGS = libthot.la
+thot_sort_bin_iibm2atable_LDADD = libthot.la -ldl
 
 ##########
 thot_merge_bin_ilextable_SOURCES = sw_models/thot_merge_bin_ilextable.cc
-thot_merge_bin_ilextable_LDFLAGS = libthot.la
+thot_merge_bin_ilextable_LDADD = libthot.la -ldl
 
 ##########
 thot_merge_bin_ihmmatable_SOURCES = sw_models/thot_merge_bin_ihmmatable.cc
-thot_merge_bin_ihmmatable_LDFLAGS = libthot.la
+thot_merge_bin_ihmmatable_LDADD = libthot.la -ldl
 
 ##########
 thot_merge_bin_iibm2atable_SOURCES = sw_models/thot_merge_bin_iibm2atable.cc
-thot_merge_bin_iibm2atable_LDFLAGS = libthot.la
+thot_merge_bin_iibm2atable_LDADD = libthot.la -ldl
 
 ##########
 thot_gen_bin_lex_filter_info_SOURCES = sw_models/thot_gen_bin_lex_filter_info.cc
-thot_gen_bin_lex_filter_info_LDFLAGS = libthot.la
+thot_gen_bin_lex_filter_info_LDADD = libthot.la -ldl
 
 ##########
 thot_filter_bin_ilextable_SOURCES = sw_models/thot_filter_bin_ilextable.cc
-thot_filter_bin_ilextable_LDFLAGS = libthot.la
+thot_filter_bin_ilextable_LDADD = libthot.la -ldl
 
 ##########
 thot_prune_bin_ilextable_SOURCES = sw_models/thot_prune_bin_ilextable.cc
-thot_prune_bin_ilextable_LDFLAGS = libthot.la
+thot_prune_bin_ilextable_LDADD = libthot.la -ldl
 
 ##########
 thot_alig_op_SOURCES = phrase_models/thot_alig_op.cc
-thot_alig_op_LDFLAGS = libthot.la
+thot_alig_op_LDADD = libthot.la -ldl
 
 ##########
 thot_query_pm_SOURCES = phrase_models/thot_query_pm.cc
-thot_query_pm_LDFLAGS = libthot.la
+thot_query_pm_LDADD = libthot.la -ldl
 
 ##########
 thot_gen_phr_model_SOURCES = phrase_models/thot_gen_phr_model.cc
-thot_gen_phr_model_LDFLAGS = libthot.la
+thot_gen_phr_model_LDADD = libthot.la -ldl
 
 ##########
 thot_ttable_to_fbdb_SOURCES = phrase_models/thot_ttable_to_fbdb.cc
-thot_ttable_to_fbdb_LDFLAGS = libthot.la
+thot_ttable_to_fbdb_LDADD = libthot.la -ldl
 
 ##########
 thot_ttable_to_leveldb_SOURCES = phrase_models/thot_ttable_to_leveldb.cc
-thot_ttable_to_leveldb_LDFLAGS = libthot.la
+thot_ttable_to_leveldb_LDADD = libthot.la -ldl
 
 ##########
 thot_dict_to_leveldb_SOURCES = stack_dec/thot_dict_to_leveldb.cc
-thot_dict_to_leveldb_LDFLAGS = libthot.la
+thot_dict_to_leveldb_LDADD = libthot.la -ldl
 
 ##########
 thot_wg_proc_SOURCES = error_correction/thot_wg_proc_pars.h	\
 error_correction/thot_wg_proc.cc
-thot_wg_proc_LDFLAGS = libthot.la
+thot_wg_proc_LDADD = libthot.la -ldl
 
 ##########
 thot_dhs_step_by_step_min_SOURCES =		\
 downhill_simplex/thot_dhs_step_by_step_min.cc
-thot_dhs_step_by_step_min_LDFLAGS = libthot.la
+thot_dhs_step_by_step_min_LDADD = libthot.la -ldl
 
 ##########
 thot_ms_dec_SOURCES = stack_dec/thot_ms_dec.cc
-thot_ms_dec_LDFLAGS = libthot.la
+thot_ms_dec_LDADD = libthot.la -ldl
 
 ##########
 thot_ms_alig_SOURCES = stack_dec/thot_ms_alig.cc
-thot_ms_alig_LDFLAGS = libthot.la
+thot_ms_alig_LDADD = libthot.la -ldl
 
 ##########
 thot_li_weight_upd_SOURCES = stack_dec/thot_li_weight_upd.cc
-thot_li_weight_upd_LDFLAGS = libthot.la
+thot_li_weight_upd_LDADD = libthot.la
 
 ##########
 thot_ll_weight_upd_nblist_SOURCES =		\
 stack_dec/thot_ll_weight_upd_nblist.cc
-thot_ll_weight_upd_nblist_LDFLAGS = libthot.la
+thot_ll_weight_upd_nblist_LDADD = libthot.la -ldl
 
 ##########
 thot_client_SOURCES = stack_dec/thot_client_pars.h	\
 stack_dec/thot_client.cc
-thot_client_LDFLAGS = libthot.la
+thot_client_LDADD = libthot.la -ldl
 
 ##########
 thot_server_SOURCES = stack_dec/thot_server_pars.h	\
 stack_dec/thot_server.cc
-thot_server_LDFLAGS = libthot.la
+thot_server_LDADD = libthot.la $(LPTHREAD) -ldl
 
 ##########
 thot_get_srcsents_from_metadata_SOURCES =	\
 stack_dec/thot_get_srcsents_from_metadata.cc
-thot_get_srcsents_from_metadata_LDFLAGS = libthot.la
+thot_get_srcsents_from_metadata_LDADD = libthot.la -ldl
 
 ##########
 thot_check_constraints_SOURCES =	\
 stack_dec/thot_check_constraints.cc
-thot_check_constraints_LDFLAGS = libthot.la
+thot_check_constraints_LDADD = libthot.la -ldl
 
 ##########
 thot_scorer_SOURCES = stack_dec/thot_scorer.cc
-thot_scorer_LDFLAGS = libthot.la
+thot_scorer_LDADD = libthot.la -ldl
 
 ##########
 thot_calc_bleu_SOURCES = stack_dec/thot_calc_bleu.cc
-thot_calc_bleu_LDFLAGS = libthot.la
+thot_calc_bleu_LDADD = libthot.la -ldl
 
 ##########
 if CODE_TESTING
 thot_test_SOURCES = testing/thot_test.cc $(testing_h) $(testing_defs)	\
 $(hattrie_pm_testing_h) $(hattrie_pm_testing_defs)                      \
 $(leveldb_pm_testing_h) $(leveldb_pm_testing_defs)
-thot_test_LDFLAGS = libthot.la
+thot_test_LDADD = libthot.la -ldl
 endif
 
 # include headers
