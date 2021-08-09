@@ -45,13 +45,13 @@ else
         exit 1
     fi
 
-    if [ ! -f ${fn} ]; then
+    if [ ! -f "${fn}" ]; then
         echo "Error! file $fn does not exist" >&2
         exit 1
     fi
 
     # Process parameters
-    ${AWK} -v fn=$fn -v r=$r \
+    "${AWK}" -v fn="$fn" -v r=$r \
         'BEGIN{
                 while(getline < fn)
                 {
@@ -71,6 +71,5 @@ else
                 if(!(n in sn))
                  printf"%s\n",$0
                }
-              }' $file
-
+              }' "$file"
 fi

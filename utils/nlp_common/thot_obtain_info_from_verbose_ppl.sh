@@ -16,14 +16,14 @@ else
         exit 1
     fi
     # Obtain information
-    sents=`$GREP "\*\*\* Sentence" $file | wc -l | $AWK '{printf"%s",$1}'`
-    wordsplussents=`$GREP "P( " $file | wc -l | $AWK '{printf"%s",$1}'`
+    sents=`"$GREP" "\*\*\* Sentence" "$file" | wc -l | "$AWK" '{printf"%s",$1}'`
+    wordsplussents=`"$GREP" "P( " "$file" | wc -l | "$AWK" '{printf"%s",$1}'`
     words=`expr $wordsplussents - $sents`
-    log10prob=`$GREP "P( " $file | $AWK 'BEGIN{sum=0}{sum+=(log($(NF-1))*(1/log(10)))}END{printf"%.1f",sum}'`
-    oovw=`$GREP "P( <unk>" $file | wc -l | $AWK '{printf"%d",$1}'`
-    oovwlog10p=`$GREP "P( <unk>" $file | $AWK 'BEGIN{sum=0}{sum+=(log($(NF-1))*(1/log(10)))}END{printf"%.1f",sum}'`
-    perplexity=`echo "" | $AWK -v sents=$sents -v words=$words -v l10p=$log10prob '{printf"%.1f",exp(-(l10p/(words+sents))*log(10))}'`
-    perpwithoutoov=`echo "" | $AWK -v sents=$sents -v words=$words -v l10p=$log10prob -v oovw=$oovw -v oovwlog10p=$oovwlog10p \
+    log10prob=`"$GREP" "P( " "$file" | "$AWK" 'BEGIN{sum=0}{sum+=(log($(NF-1))*(1/log(10)))}END{printf"%.1f",sum}'`
+    oovw=`"$GREP" "P( <unk>" "$file" | wc -l | "$AWK" '{printf"%d",$1}'`
+    oovwlog10p=`"$GREP" "P( <unk>" "$file" | "$AWK" 'BEGIN{sum=0}{sum+=(log($(NF-1))*(1/log(10)))}END{printf"%.1f",sum}'`
+    perplexity=`echo "" | "$AWK" -v sents=$sents -v words=$words -v l10p=$log10prob '{printf"%.1f",exp(-(l10p/(words+sents))*log(10))}'`
+    perpwithoutoov=`echo "" | "$AWK" -v sents=$sents -v words=$words -v l10p=$log10prob -v oovw=$oovw -v oovwlog10p=$oovwlog10p \
                                '{printf"%.1f",exp(-((l10p-oovwlog10p)/(words-oovw+sents))*log(10))}'`
 
     # Print information

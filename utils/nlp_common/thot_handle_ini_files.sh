@@ -67,7 +67,7 @@ else
     fi
 
     # Check availability of master.ini
-    if [ ! -f ${datadir}/ini_files/master.ini ]; then
+    if [ ! -f "${datadir}/ini_files/master.ini" ]; then
         echo "Fatal error: master.ini file does not exist, please verify package installation"
         exit 1
     fi
@@ -75,20 +75,20 @@ else
     # Process parameters
 
     if [ $s_given -eq 1 ]; then
-        echo "* File location: ${datadir}/ini_files/master.ini"
+        echo "* File location: "${datadir}/ini_files/master.ini""
         echo "* File content:"
-        cat ${datadir}/ini_files/master.ini
+        cat "${datadir}/ini_files/master.ini"
     fi
 
     if [ $w_given -eq 1 ]; then
         echo "Overwriting current master.ini file with $file..." >&2
-        cp $file ${datadir}/ini_files/master.ini || exit 1
+        cp "$file" "${datadir}/ini_files/master.ini" || exit 1
         echo "Done" >&2
     fi
 
     if [ $r_given -eq 1 ]; then
         # Check if revert file exists
-        if [ ! -f ${datadir}/ini_files/standard.ini ]; then
+        if [ ! -f "${datadir}/ini_files/standard.ini" ]; then
             echo "Fatal error: standard.ini file used to revert current content of master.ini does not exist, please verify package installation"
             exit 1
         fi
@@ -96,7 +96,7 @@ else
         # Revert file
         revertfile=${datadir}/ini_files/standard.ini
         echo "Overwriting current master.ini file with ${revertfile}..." >&2
-        cp ${revertfile} ${datadir}/ini_files/master.ini || exit 1
+        cp "${revertfile}" "${datadir}/ini_files/master.ini" || exit 1
         echo "Done" >&2
     fi
 
@@ -104,10 +104,10 @@ else
         valid_config=1
         case ${requested_config} in
             0)
-                file=${datadir}/ini_files/standard.ini
+                file="${datadir}"/ini_files/standard.ini
                 ;;
             1)
-                file=${datadir}/ini_files/standard_ibm2.ini
+                file="${datadir}"/ini_files/standard_ibm2.ini
                 ;;
             *)
                 valid_config=0
@@ -115,7 +115,7 @@ else
         esac
         if [ ${valid_config} -eq 1 ]; then
             echo "Overwriting current master.ini file with $file..." >&2
-            cp $file ${datadir}/ini_files/master.ini || exit 1
+            cp "$file" "${datadir}/ini_files/master.ini" || exit 1
             echo "Done" >&2
         else
             echo "Error: requested configuration code (${requested_config}) not valid" >&2

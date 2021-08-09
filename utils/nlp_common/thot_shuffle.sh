@@ -11,8 +11,8 @@ shuffle()
     _file=$3
 
     # Shuffle file
-    $AWK -v seed=${_seed} 'BEGIN{srand(seed)}{printf"%f %d %s\n",rand(),NR,$0}' ${_file} \
-        | LC_ALL=C $SORT -k1n -k2n -T ${_tdir} | $AWK '{for(i=3;i<NF;++i) printf"%s ",$i; printf"%s\n",$NF}'
+    "$AWK" -v seed=${_seed} 'BEGIN{srand(seed)}{printf"%f %d %s\n",rand(),NR,$0}' ${_file} \
+        | LC_ALL=C "$SORT" -k1n -k2n -T "${_tdir}" | "$AWK" '{for(i=3;i<NF;++i) printf"%s ",$i; printf"%s\n",$NF}'
 }
 
 thot_shuffle_alt()
@@ -24,7 +24,7 @@ thot_shuffle_alt()
     local file=$2
     
     # Thot_Shuffle file
-    $AWK -v seed=$seed \
+    "$AWK" -v seed=$seed \
         'function random(b) {return rand()*b}
   BEGIN{
          i=0
@@ -73,6 +73,6 @@ else
     fi
 
     # Invoke shuffling function
-    shuffle $seed $tdir $file
+    shuffle $seed "$tdir" "$file"
 
 fi

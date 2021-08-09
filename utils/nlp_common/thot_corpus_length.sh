@@ -8,7 +8,7 @@ corpus_length()
     local_corpus=$1
     local_lmax=$2
 
-    $AWK -v corpus=${local_corpus} -v lmax=${local_lmax} 'BEGIN{ 
+    "$AWK" -v corpus="${local_corpus}" -v lmax=${local_lmax} 'BEGIN{ 
                             while( (getline <corpus) > 0)
                             {
                              if(lmax<NF) lmax=NF;
@@ -33,7 +33,7 @@ corpus_length()
                             }
                             printf "\n# Total: %d\n",total
                             printf "# Mean length: %f\n\n",total_l/total
-                           }' ${local_corpus}
+                           }' "${local_corpus}"
 }
 
 if [ $# -lt 1 ]; then
@@ -71,6 +71,6 @@ else
     fi
 
     # Process input parameters
-    corpus_length $corpus $lmax    
+    corpus_length "$corpus" $lmax    
 
 fi

@@ -5,7 +5,7 @@
 replace_oov_with_unk()
 {
     local_vocfile=$1
-    $AWK -v vocfile=${local_vocfile} 'BEGIN{
+    "$AWK" -v vocfile="${local_vocfile}" 'BEGIN{
            while( (getline <vocfile) > 0)
            {
             voc[$1]=1
@@ -51,6 +51,6 @@ else
     fi
 
     # Process parameters
-    replace_oov_with_unk $vocfile
+    replace_oov_with_unk "$vocfile"
 
 fi
