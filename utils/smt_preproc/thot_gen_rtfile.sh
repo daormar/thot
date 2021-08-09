@@ -58,14 +58,14 @@ else
         scorpus_test=${scorpus_pref}.test
 
         # Check existence of files
-        if [ ! -f ${scorpus_test} ]; then
+        if [ ! -f "${scorpus_test}" ]; then
             echo "Warning! file ${scorpus_test} does not exist" >&2
         fi
     fi
 
     if [ ${e_given} -eq 1 ]; then
         # Check existence of files
-        if [ ! -f ${ecorpus} ]; then
+        if [ ! -f "${ecorpus}" ]; then
             echo "Warning! file ${ecorpus} does not exist" >&2
         fi
     fi
@@ -90,20 +90,20 @@ else
     tcorpus_dev=${tcorpus_pref}.dev
 
     # Check existence of files
-    if [ ! -f ${tcorpus_train} ]; then
+    if [ ! -f "${tcorpus_train}" ]; then
         echo "Error! file ${file} does not exist" >&2
         exit 1
     fi
 
-    if [ ! -f ${tcorpus_dev} ]; then
+    if [ ! -f "${tcorpus_dev}" ]; then
         echo "Warning! file ${file} does not exist" >&2
     fi
 
     ## Process parameters
 
     # Create directory for temporary files
-    TMPDIR=`mktemp -d $tdir/thot_gen_rtfile_tdir_XXXXX`
-    trap "rm -rf $TMPDIR 2>/dev/null" EXIT
+    TMPDIR=`mktemp -d "$tdir/thot_gen_rtfile_tdir_XXXXX"`
+    trap 'rm -rf "$TMPDIR" 2>/dev/null' EXIT
 
     # Obtain raw text file
     
@@ -113,38 +113,38 @@ else
         cat ${tcorpus_train}
     else
         maxfsize=500000
-        ${bindir}/thot_shuffle 31415 ${tdir} ${tcorpus_train} > $TMPDIR/tcorpus_train_shuff
-        head -n ${maxfsize} $TMPDIR/tcorpus_train_shuff
+        "${bindir}"/thot_shuffle 31415 "${tdir}" "${tcorpus_train}" > "$TMPDIR/tcorpus_train_shuff"
+        head -n ${maxfsize} "$TMPDIR"/tcorpus_train_shuff
     fi
 
     # Obtain info from subset of target dev corpus (with given subset
     # size, typically the whole corpus will be included)
-    if [ -f ${tcorpus_dev} ]; then
+    if [ -f "${tcorpus_dev}" ]; then
         if [ ${nolim_given} -eq 1 ]; then
-            cat ${tcorpus_dev}
+            cat "${tcorpus_dev}"
         else
             maxfsize=10000
-            ${bindir}/thot_shuffle 31415 ${tdir} ${tcorpus_dev} > $TMPDIR/tcorpus_dev_shuff
-            head -n ${maxfsize} $TMPDIR/tcorpus_dev_shuff
+            "${bindir}"/thot_shuffle 31415 "${tdir}" "${tcorpus_dev}" > "$TMPDIR/tcorpus_dev_shuff"
+            head -n ${maxfsize} "$TMPDIR/tcorpus_dev_shuff"
         fi
     fi
 
     # Obtain info from subset of source test corpus (with given subset
     # size, typically the whole corpus will be included)
     if [ ${s_given} -eq 1 ]; then
-        if [ -f ${scorpus_test} ]; then
+        if [ -f "${scorpus_test}" ]; then
             if [ ${nolim_given} -eq 1 ]; then
-                cat ${scorpus_test}
+                cat "${scorpus_test}"
             else
                 maxfsize=10000
-                ${bindir}/thot_shuffle 31415 ${tdir} ${scorpus_test} > $TMPDIR/scorpus_test_shuff
-                head -n ${maxfsize} $TMPDIR/scorpus_test_shuff
+                "${bindir}"/thot_shuffle 31415 "${tdir}" "${scorpus_test}" > "$TMPDIR/scorpus_test_shuff"
+                head -n ${maxfsize} "$TMPDIR/scorpus_test_shuff"
             fi
         fi
     fi
 
     # Add extra corpus if given
     if [ ${e_given} -eq 1 ]; then
-        cat ${ecorpus}
+        cat "${ecorpus}"
     fi
 fi

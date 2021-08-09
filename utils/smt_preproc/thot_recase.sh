@@ -44,7 +44,7 @@ else
         exit 1
     fi
 
-    if [ ! -f ${ffile} ]; then
+    if [ ! -f "${ffile}" ]; then
         echo "Error! ${ffile} file does not exist" >&2
         exit 1
     fi
@@ -54,7 +54,7 @@ else
         exit 1
     fi
 
-    if [ ! -f ${rfile} ]; then
+    if [ ! -f "${rfile}" ]; then
         echo "Error! ${rfile} file does not exist" >&2
         exit 1
     fi
@@ -62,21 +62,21 @@ else
     ## Process parameters
     
     # Create directory for temporary files
-    TMPDIR=`mktemp -d $tdir/thot_recase_tdir_XXXXX`
-    trap "rm -rf $TMPDIR 2>/dev/null" EXIT
+    TMPDIR=`mktemp -d "$tdir/thot_recase_tdir_XXXXX"`
+    trap 'rm -rf "$TMPDIR" 2>/dev/null' EXIT
 
     ## Train models
     
     # Train translation model
-    $bindir/thot_train_rec_tm -r ${rfile} -o $TMPDIR/models
+    "$bindir"/thot_train_rec_tm -r "${rfile}" -o "$TMPDIR/models"
 
     # Train language model
-    $bindir/thot_train_rec_lm_mr -r ${rfile} -n 3 -o $TMPDIR/models -tdir $tdir
+    "$bindir"/thot_train_rec_lm_mr -r "${rfile}" -n 3 -o "$TMPDIR/models" -tdir "$tdir"
 
     # Tune weights
     # TBD
 
     # Recase sentences
-    $bindir/thot_rec_translator -f ${ffile} -m $TMPDIR/models -w "0 0 0 1" 
+    "$bindir"/thot_rec_translator -f "${ffile}" -m "$TMPDIR"/models -w "0 0 0 1" 
 
 fi

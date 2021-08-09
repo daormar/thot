@@ -55,7 +55,7 @@ else
         exit 1
     fi
 
-    if [ ! -f ${ffile} ]; then
+    if [ ! -f "${ffile}" ]; then
         echo "Error! ${ffile} file does not exist" >&2
         exit 1
     fi
@@ -65,28 +65,28 @@ else
         exit 1
     fi
 
-    if [ ! -f ${rfile} ]; then
+    if [ ! -f "${rfile}" ]; then
         echo "Error! ${rfile} file does not exist" >&2
         exit 1
     fi
 
-    if [ ${t_given} -eq 1 -a ! -f ${rfile} ]; then
+    if [ ${t_given} -eq 1 -a ! -f "${rfile}" ]; then
         echo "Error! ${tfile} file does not exist" >&2
     fi
 
     ## Process parameters
     
     # Create directory for temporary files
-    TMPDIR=`mktemp -d $tdir/thot_detokenize_tdir_XXXXX`
-    trap "rm -rf $TMPDIR 2>/dev/null" EXIT
+    TMPDIR=`mktemp -d "$tdir/thot_detokenize_tdir_XXXXX"`
+    trap 'rm -rf "$TMPDIR" 2>/dev/null' EXIT
 
     # Train models
-    $bindir/thot_train_detok_model -r ${rfile} ${topt} -o $TMPDIR/models || exit 1
+    "$bindir"/thot_train_detok_model -r "${rfile}" ${topt} -o "$TMPDIR/models" || exit 1
 
     # Tune weights
     # TBD
 
     # Detokenize sentences
-    $bindir/thot_detok_translator -f ${ffile} -m $TMPDIR/models -w "1 0 0 1" 
+    "$bindir"/thot_detok_translator -f "${ffile}" -m "$TMPDIR/models" -w "1 0 0 1" 
 
 fi

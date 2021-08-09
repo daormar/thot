@@ -14,13 +14,13 @@ sort_counts()
         SORT_TMP=""
     fi
 
-    ${AWK} '{printf"%d %s\n",NF,$0}' | \
-        LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} | ${AWK} '{for(i=2;i<=NF-1;++i)printf"%s ",$i; printf"%s\n",$NF}'
+    "${AWK}" '{printf"%d %s\n",NF,$0}' | \
+        LC_ALL=C "${SORT}" "${SORT_TMP}" -t " " ${sortpars} | "${AWK}" '{for(i=2;i<=NF-1;++i)printf"%s ",$i; printf"%s\n",$NF}'
 }
 
 merge_ngram_counts()
 {
-    ${AWK} '\
+    "${AWK}" '\
      BEGIN{
            prev_ngram=""
           }
@@ -67,11 +67,11 @@ set_tmp_dir()
 {
     if [ -d ${tdir} ]; then
         # Create directory for temporary files
-        TMP=$tdir/thot_train_rec_lm_mr.$$
+        TMP="$tdir/thot_train_rec_lm_mr.$$"
         if [ ${debug} -eq 0 ]; then
-            trap "rm -rf $TMP* 2>/dev/null" EXIT
+            trap 'rm -rf "$TMP"* 2>/dev/null' EXIT
         fi
-        mkdir $TMP
+        mkdir "$TMP"
     else
         echo "Error: temporary directory does not exist"
         return 1;
@@ -165,13 +165,13 @@ set_tmp_dir || exit 1
 echo "Training language model..." >&2
 
 # Split corpus into chunks of fixed size
-${SPLIT} -l ${chunk_size} $corpus $TMP/
+"${SPLIT}" -l ${chunk_size} "$corpus" "$TMP/"
 
 # Process chunks
 c=1
-for i in $TMP/*; do
+for i in "$TMP/"*; do
     
-    ${bindir}/thot_train_rec_lm -r $i -n ${n_val} -o $i 2> $i.lm.log
+    "${bindir}"/thot_train_rec_lm -r "$i" -n ${n_val} -o $i 2> $i.lm.log
     
     c=`expr $c + 1`
     
@@ -180,5 +180,5 @@ for i in $TMP/*; do
 done
 
 # Merge counts
-cat $TMP/*.lm | sort_counts | merge_ngram_counts > ${output_pref}.lm
-cat $TMP/*.log > ${output_pref}.lm.log
+cat "$TMP"/*.lm | sort_counts | merge_ngram_counts > "${output_pref}".lm
+cat "$TMP"/*.log > "${output_pref}.lm.log"
