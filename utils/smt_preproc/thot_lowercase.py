@@ -7,10 +7,10 @@ import thot_smt_preproc as smtpr
 
 ##################################################
 def print_help():
-    print >> sys.stderr, "thot_lowercase -f <string> [--help]"
-    print >> sys.stderr, ""
-    print >> sys.stderr, "-f <string>    File with text to be processed (can be read from stdin)"
-    print >> sys.stderr, "--help         Print this help message"
+    print("thot_lowercase -f <string> [--help]", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("-f <string>    File with text to be processed (can be read from stdin)", file=sys.stderr)
+    print("--help         Print this help message", file=sys.stderr)
 
 ##################################################
 def main(argv):
@@ -32,7 +32,7 @@ def main(argv):
 
     # print parameters
     if(f_given==True):
-        print >> sys.stderr, "f is %s" % (filename)
+        print("f is %s" % (filename), file=sys.stderr)
 
     # open file
     if(f_given==True):
@@ -48,7 +48,7 @@ def main(argv):
     for line in file:
         line=line.strip("\n")
         line=smtpr.lowercase(line)
-        print line.encode("utf-8")
+        print(line.encode("utf-8"))
 
 if __name__ == "__main__":
     main(sys.argv)

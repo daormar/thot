@@ -6,10 +6,10 @@ import io, sys, getopt, itertools
 
 ##################################################
 def print_help():
-    print >> sys.stderr, "thot_gen_exhaustive_giza_alig -s <string> -t <string>"
-    print >> sys.stderr, ""
-    print >> sys.stderr, "-s <string>    File with source sentences"
-    print >> sys.stderr, "-t <string>    File with target sentences"
+    print("thot_gen_exhaustive_giza_alig -s <string> -t <string>", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("-s <string>    File with source sentences", file=sys.stderr)
+    print("-t <string>    File with target sentences", file=sys.stderr)
 
 ##################################################
 def main(argv):
@@ -37,11 +37,11 @@ def main(argv):
 
     # check parameters
     if(s_given==False):
-        print >> sys.stderr, "Error! -s parameter not given"
+        print("Error! -s parameter not given", file=sys.stderr)
         sys.exit(2)
 
     if(t_given==False):
-        print >> sys.stderr, "Error! -t parameter not given"
+        print("Error! -t parameter not given", file=sys.stderr)
         sys.exit(2)
 
     # open files
@@ -54,7 +54,7 @@ def main(argv):
         tfile = io.open(trgsents, 'r', encoding="utf-8")
 
     # Read parallel files line by line
-    for sline, tline in itertools.izip(sfile,tfile):
+    for sline, tline in zip(sfile,tfile):
         # Read reference and test sentences
         sline=sline.strip("\n")
         src_word_array=sline.split()
@@ -62,14 +62,14 @@ def main(argv):
         trg_word_array=tline.split()
 
         # Print entry
-        print "# 1"
-        print tline.encode("utf-8")
-        positions_list=range(1,len(trg_word_array)+1)
+        print("# 1")
+        print(tline.encode("utf-8"))
+        positions_list=list(range(1,len(trg_word_array)+1))
         positions=' '.join(str(e) for e in positions_list)
-        print "NULL ({ })",
+        print("NULL ({ })", end=' ')
         for i in range(len(src_word_array)):
-            print src_word_array[i].encode("utf-8"),"({",positions,"})",
-        print
+            print(src_word_array[i].encode("utf-8"),"({",positions,"})", end=' ')
+        print()
 
 if __name__ == "__main__":
     main(sys.argv)

@@ -7,7 +7,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_CONFIG_HEADER(config.h)
 AX_PREFIX_CONFIG_H([./src/thot_config.h])
-AM_PATH_PYTHON([2])
+AM_PATH_PYTHON([3])
 
 dnl Initialize Libtool
 LT_CONFIG_LTDL_DIR([libltdl])

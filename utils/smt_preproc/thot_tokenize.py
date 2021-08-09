@@ -8,10 +8,10 @@ from thot_smt_preproc import tokenize
 
 ##################################################
 def print_help():
-    print >> sys.stderr, "thot_tokenize -f <string> [--help]"
-    print >> sys.stderr, ""
-    print >> sys.stderr, "-f <string>    File with text to be tokenized (can be read from stdin)"
-    print >> sys.stderr, "--help         Print this help message"
+    print("thot_tokenize -f <string> [--help]", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("-f <string>    File with text to be tokenized (can be read from stdin)", file=sys.stderr)
+    print("--help         Print this help message", file=sys.stderr)
 
 ##################################################
 def main(argv):
@@ -33,7 +33,7 @@ def main(argv):
 
     # print parameters
     if(f_given==True):
-        print >> sys.stderr, "f is %s" % (filename)
+        print("f is %s" % (filename), file=sys.stderr)
 
     # open file
     if(f_given==True):
@@ -47,8 +47,8 @@ def main(argv):
     for line in file:
         line=line.strip("\n")
         tokens = tokenize(line)
-        tok_sent = u' '.join(tokens)
-        print tok_sent.encode("utf-8")
+        tok_sent = ' '.join(tokens)
+        print(tok_sent.encode("utf-8"))
     file.close()
 
 if __name__ == "__main__":

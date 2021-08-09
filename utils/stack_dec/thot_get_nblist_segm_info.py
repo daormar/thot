@@ -6,10 +6,10 @@ import io, sys, getopt, itertools
 
 ##################################################
 def print_help():
-    print >> sys.stderr, "thot_get_nblist_segm_info -n <string> -p <string>"
-    print >> sys.stderr, ""
-    print >> sys.stderr, "-n <string>    File containing n-best list"
-    print >> sys.stderr, "-p <string>    Prefix of .wg and .idx files"
+    print("thot_get_nblist_segm_info -n <string> -p <string>", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("-n <string>    File containing n-best list", file=sys.stderr)
+    print("-p <string>    Prefix of .wg and .idx files", file=sys.stderr)
 
 ##################################################
 def make_key(orig_state,dest_state):
@@ -93,7 +93,7 @@ def process_nbl_file(nblfile,wginfo,idxinfo):
     for line in nblfile:
         if (lineno==1):
             line=line.strip("\n")
-            print line.encode("utf-8")
+            print(line.encode("utf-8"))
         else:
             # Process n-best list entry
             line=line.strip("\n")
@@ -103,7 +103,7 @@ def process_nbl_file(nblfile,wginfo,idxinfo):
             srcsegms=obtain_src_segms(state_transitions_array,idxinfo)
 
             # Print result
-            print line.encode("utf-8"),"|||",srcsegms,"|",trgcuts
+            print(line.encode("utf-8"),"|||",srcsegms,"|",trgcuts)
         lineno+=1
     
 ##################################################
@@ -132,11 +132,11 @@ def main(argv):
 
     # check parameters
     if(n_given==False):
-        print >> sys.stderr, "Error! -n parameter not given"
+        print("Error! -n parameter not given", file=sys.stderr)
         sys.exit(2)
 
     if(p_given==False):
-        print >> sys.stderr, "Error! -p parameter not given"
+        print("Error! -p parameter not given", file=sys.stderr)
         sys.exit(2)
 
     # open files

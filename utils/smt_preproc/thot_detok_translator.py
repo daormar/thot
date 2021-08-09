@@ -8,20 +8,20 @@ import thot_smt_preproc as smtpr
 
 ##################################################
 def print_help():
-    print >> sys.stderr, "thot_detok_translator -f <string> -m <string> [-i <float>]"
-    print >> sys.stderr, "                       [-w \"<float1> ... <float4>\"] [-v] [--help]"
-    print >> sys.stderr, ""
-    print >> sys.stderr, "-f <string>    File with text to be detokenized (can be read from standard"
-    print >> sys.stderr, "               input)"
-    print >> sys.stderr, "-m <string>    Prefix of detokenizer model files"
-    print >> sys.stderr, "-i <float>     Interpolation probability for language model"
-    print >> sys.stderr, "-w \"...\"       Weight vector of length four:"
-    print >> sys.stderr, "                <float1> : translation model weight"
-    print >> sys.stderr, "                <float2> : phrase penalty model weight"
-    print >> sys.stderr, "                <float3> : word penalty weight"
-    print >> sys.stderr, "                <float4> : language model weight"
-    print >> sys.stderr, "-v             Verbose mode"
-    print >> sys.stderr, "--help         Print this help message"
+    print("thot_detok_translator -f <string> -m <string> [-i <float>]", file=sys.stderr)
+    print("                       [-w \"<float1> ... <float4>\"] [-v] [--help]", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("-f <string>    File with text to be detokenized (can be read from standard", file=sys.stderr)
+    print("               input)", file=sys.stderr)
+    print("-m <string>    Prefix of detokenizer model files", file=sys.stderr)
+    print("-i <float>     Interpolation probability for language model", file=sys.stderr)
+    print("-w \"...\"       Weight vector of length four:", file=sys.stderr)
+    print("                <float1> : translation model weight", file=sys.stderr)
+    print("                <float2> : phrase penalty model weight", file=sys.stderr)
+    print("                <float3> : word penalty weight", file=sys.stderr)
+    print("                <float4> : language model weight", file=sys.stderr)
+    print("-v             Verbose mode", file=sys.stderr)
+    print("--help         Print this help message", file=sys.stderr)
 
 ##################################################
 def main(argv):
@@ -70,21 +70,21 @@ def main(argv):
 
     # check parameters
     if(m_given==False):
-        print >> sys.stderr, "Error! -m parameter not given"
+        print("Error! -m parameter not given", file=sys.stderr)
         sys.exit(2)
 
     # print parameters
     if(f_given==True):
-        print >> sys.stderr, "f is %s" % (filename)
+        print("f is %s" % (filename), file=sys.stderr)
 
     if(m_given==True):
-        print >> sys.stderr, "m is %s" % (mpref)
+        print("m is %s" % (mpref), file=sys.stderr)
 
     if(i_given==True):
-        print >> sys.stderr, "i is %f" % (ival)
+        print("i is %f" % (ival), file=sys.stderr)
 
     if(w_given==True):
-        print >> sys.stderr, "w is \"%s\"" % (weight_str)
+        print("w is \"%s\"" % (weight_str), file=sys.stderr)
 
     # open files
     if(f_given==True):
@@ -98,20 +98,20 @@ def main(argv):
     tmodel=smtpr.TransModel()
     tmfilename=mpref+".tm"
     tmfile = io.open(tmfilename, 'r', encoding="utf-8")
-    print >> sys.stderr, "Loading translation model from file",tmfilename,"..."
+    print("Loading translation model from file",tmfilename,"...", file=sys.stderr)
     tmodel.load(tmfile)
 
     # load language model
     lmodel=smtpr.LangModel()
     lmfilename=mpref+".lm"
     lmfile = io.open(lmfilename, 'r', encoding="utf-8")
-    print >> sys.stderr, "Loading language model from file",lmfilename,"..."
+    print("Loading language model from file",lmfilename,"...", file=sys.stderr)
     lmodel.load(lmfile)
     lmodel.set_interp_prob(ival)
 
     # translate (detokenize)
     decoder=smtpr.Decoder(tmodel,lmodel,weights)
-    print >> sys.stderr, "Detokenizing..."
+    print("Detokenizing...", file=sys.stderr)
     decoder.detokenize(file,verbose)
 
 if __name__ == "__main__":

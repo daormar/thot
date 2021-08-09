@@ -8,14 +8,14 @@ import thot_smt_preproc as smtpr
 
 ##################################################
 def print_help():
-    print >> sys.stderr, "thot_train_rec_lm -r <string> [-n <int>] -o <string>"
-    print >> sys.stderr, "                  [-v] [--help]"
-    print >> sys.stderr, ""
-    print >> sys.stderr, "-r <string>    File with raw text in the language of interest"
-    print >> sys.stderr, "-n <int>       Order of n-grams for language model"
-    print >> sys.stderr, "-o <string>    Prefix of output files"
-    print >> sys.stderr, "-v             Verbose mode"
-    print >> sys.stderr, "--help         Print this help message"
+    print("thot_train_rec_lm -r <string> [-n <int>] -o <string>", file=sys.stderr)
+    print("                  [-v] [--help]", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("-r <string>    File with raw text in the language of interest", file=sys.stderr)
+    print("-n <int>       Order of n-grams for language model", file=sys.stderr)
+    print("-o <string>    Prefix of output files", file=sys.stderr)
+    print("-v             Verbose mode", file=sys.stderr)
+    print("--help         Print this help message", file=sys.stderr)
 
 ##################################################
 def main(argv):
@@ -54,19 +54,19 @@ def main(argv):
 
     # check parameters
     if(r_given==False):
-        print >> sys.stderr, "Error! -r parameter not given"
+        print("Error! -r parameter not given", file=sys.stderr)
         sys.exit(2)
 
     if(o_given==False):
-        print >> sys.stderr, "Error! -o parameter not given"
+        print("Error! -o parameter not given", file=sys.stderr)
         sys.exit(2)
 
     # print parameters
     if(r_given==True):
-        print >> sys.stderr, "r is %s" % (rfilename)
+        print("r is %s" % (rfilename), file=sys.stderr)
 
     if(o_given==True):
-        print >> sys.stderr, "o is %s" % (opref)
+        print("o is %s" % (opref), file=sys.stderr)
 
     # open files
     if(r_given==True):
@@ -74,7 +74,7 @@ def main(argv):
         rfile = io.open(rfilename, 'r', encoding="utf-8")
 
     # train language model
-    print >> sys.stderr, "Training language model..."
+    print("Training language model...", file=sys.stderr)
     lmodel=smtpr.LangModel()
     lmodel.train(rfile,nval,verbose)
 

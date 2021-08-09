@@ -8,29 +8,29 @@ import itertools
 
 ##################################################
 def print_help():
-    print >> sys.stderr, "thot_clean_corpus_ln -s <string> -t <string> [-i <int>] [-a <int>]"
-    print >> sys.stderr, "                     [-d <int>] [--help]"
-    print >> sys.stderr, ""
-    print >> sys.stderr, "-s <string>    File with source text"
-    print >> sys.stderr, "-t <string>    File with target text"
-    print >> sys.stderr, "-i <int>       Minimum sentence length (1 by default)"
-    print >> sys.stderr, "-a <int>       Maximum sentence length (80 by default)"
-    print >> sys.stderr, "-d <int>       Maximum number of standard deviations allowed in the"
-    print >> sys.stderr, "               difference in length between the source and target"
-    print >> sys.stderr, "               sentences (4 by default)"
-    print >> sys.stderr, "--help         Print this help message"
+    print("thot_clean_corpus_ln -s <string> -t <string> [-i <int>] [-a <int>]", file=sys.stderr)
+    print("                     [-d <int>] [--help]", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("-s <string>    File with source text", file=sys.stderr)
+    print("-t <string>    File with target text", file=sys.stderr)
+    print("-i <int>       Minimum sentence length (1 by default)", file=sys.stderr)
+    print("-a <int>       Maximum sentence length (80 by default)", file=sys.stderr)
+    print("-d <int>       Maximum number of standard deviations allowed in the", file=sys.stderr)
+    print("               difference in length between the source and target", file=sys.stderr)
+    print("               sentences (4 by default)", file=sys.stderr)
+    print("--help         Print this help message", file=sys.stderr)
 
 ##################################################
 def compute_mean_stddev(slen_list,tlen_list):
     # Compute mean
     mean=0.0
-    for k in xrange(len(slen_list)):
+    for k in range(len(slen_list)):
         mean+=slen_list[k]-tlen_list[k]
     mean=mean/len(slen_list)
 
     # Compute standard deviation
     stddev=0.0
-    for k in xrange(len(slen_list)):
+    for k in range(len(slen_list)):
         diff=slen_list[k]-tlen_list[k]
         stddev+=(diff-mean)*(diff-mean)
     stddev=math.sqrt(stddev/len(slen_list))
@@ -42,30 +42,30 @@ def compute_mean_stddev_per_length(slen_list,tlen_list):
     # Compute means
     mean_per_length={}
     samples_per_length={}
-    for k in xrange(len(slen_list)):
+    for k in range(len(slen_list)):
         slen=slen_list[k]
-        if(slen not in samples_per_length.keys()):
+        if(slen not in list(samples_per_length.keys())):
             samples_per_length[slen]=1.0
             mean_per_length[slen]=slen_list[k]-tlen_list[k]
         else:
             samples_per_length[slen]+=1.0
             mean_per_length[slen]+=slen_list[k]-tlen_list[k]
 
-    for k in samples_per_length.keys():
+    for k in list(samples_per_length.keys()):
         mean_per_length[k]=mean_per_length[k]/samples_per_length[k]
 
     # Compute standard deviations
     stddev_per_length={}
-    for k in xrange(len(slen_list)):
+    for k in range(len(slen_list)):
         slen=slen_list[k]
         diff=slen_list[k]-tlen_list[k]
 
-        if(slen not in stddev_per_length.keys()):
+        if(slen not in list(stddev_per_length.keys())):
             stddev_per_length[slen]=(diff-mean_per_length[slen])*(diff-mean_per_length[slen])
         else:
             stddev_per_length[slen]+=(diff-mean_per_length[slen])*(diff-mean_per_length[slen])
 
-    for k in samples_per_length.keys():
+    for k in list(samples_per_length.keys()):
         stddev_per_length[k]=math.sqrt(stddev_per_length[k]/samples_per_length[k])
 
     # Return result
@@ -106,23 +106,23 @@ def main(argv):
 
     # check parameters
     if(s_given==False):
-        print >> sys.stderr, "Error! -s parameter not given"
+        print("Error! -s parameter not given", file=sys.stderr)
         sys.exit(2)
 
     if(t_given==False):
-        print >> sys.stderr, "Error! -t parameter not given"
+        print("Error! -t parameter not given", file=sys.stderr)
         sys.exit(2)
 
     # print parameters
     if(s_given==True):
-        print >> sys.stderr, "s is %s" % (srcfn)
+        print("s is %s" % (srcfn), file=sys.stderr)
 
     if(t_given==True):
-        print >> sys.stderr, "t is %s" % (srcfn)
+        print("t is %s" % (srcfn), file=sys.stderr)
 
-    print >> sys.stderr, "i is %d" % (minlen)
-    print >> sys.stderr, "a is %d" % (maxlen)
-    print >> sys.stderr, "d is %d" % (d_par)
+    print("i is %d" % (minlen), file=sys.stderr)
+    print("a is %d" % (maxlen), file=sys.stderr)
+    print("d is %d" % (d_par), file=sys.stderr)
 
     # open file
     if(s_given==True):
@@ -136,7 +136,7 @@ def main(argv):
     # read parallel files line by line
     slen_list=[]
     tlen_list=[]
-    for srcline, trgline in itertools.izip(srcfile,trgfile):
+    for srcline, trgline in zip(srcfile,trgfile):
         srcline=srcline.strip("\n")
         src_word_array=srcline.split()
         trgline=trgline.strip("\n")
@@ -152,7 +152,7 @@ def main(argv):
 
     # Print line numbers
     min_num_samples=10
-    for k in xrange(len(slen_list)):
+    for k in range(len(slen_list)):
         slen=slen_list[k]
         tlen=tlen_list[k]
 #        print mean,stddev,";",slen,tlen,";",mean_perl[slen],stddev_perl[slen],";",samples_perl[slen]
@@ -170,11 +170,11 @@ def main(argv):
 
             # Verify difference in sentence length
             if(diff<=uplim and diff>=lolim):
-                print k+1
+                print(k+1)
             else:
-                print >> sys.stderr,"lineno:",k+1,", slen:",slen,", tlen:",tlen
+                print("lineno:",k+1,", slen:",slen,", tlen:",tlen, file=sys.stderr)
         else:
-            print >> sys.stderr,"lineno:",k+1,", slen:",slen,", tlen:",tlen
+            print("lineno:",k+1,", slen:",slen,", tlen:",tlen, file=sys.stderr)
 
 if __name__ == "__main__":
     main(sys.argv)

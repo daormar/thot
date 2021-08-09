@@ -6,11 +6,11 @@ import io, sys, getopt, itertools
 
 ##################################################
 def print_help():
-    print >> sys.stderr, "thot_calc_wer -r <string> -t <string> [-v]"
-    print >> sys.stderr, ""
-    print >> sys.stderr, "-r <string>    File containing the reference sentences"
-    print >> sys.stderr, "-t <string>    File containing the system translations"
-    print >> sys.stderr, "-v             Verbose mode"
+    print("thot_calc_wer -r <string> -t <string> [-v]", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("-r <string>    File containing the reference sentences", file=sys.stderr)
+    print("-t <string>    File containing the system translations", file=sys.stderr)
+    print("-v             Verbose mode", file=sys.stderr)
 
 ##################################################
 def levenshtein(s1, s2):
@@ -23,7 +23,7 @@ def levenshtein(s1, s2):
         return len(s1)
 
     # Initialize variables
-    previous_row = range(len(s2) + 1)
+    previous_row = list(range(len(s2) + 1))
 
     # Calculate edit distance
     for i, c1 in enumerate(s1):
@@ -70,11 +70,11 @@ def main(argv):
 
     # check parameters
     if(r_given==False):
-        print >> sys.stderr, "Error! -r parameter not given"
+        print("Error! -r parameter not given", file=sys.stderr)
         sys.exit(2)
 
     if(t_given==False):
-        print >> sys.stderr, "Error! -t parameter not given"
+        print("Error! -t parameter not given", file=sys.stderr)
         sys.exit(2)
 
     # open files
@@ -89,7 +89,7 @@ def main(argv):
     # Read parallel files line by line
     running_words=0.0
     eddist=0.0
-    for rline, tline in itertools.izip(rfile,tfile):
+    for rline, tline in zip(rfile,tfile):
         # Read reference and test sentences
         rline=rline.strip("\n")
         ref_word_array=rline.split()
@@ -104,11 +104,11 @@ def main(argv):
         # Print verbose information
         if(verbose==1):
             sent_wer=float(sent_eddist)/float(len(ref_word_array))
-            print format(sent_wer,'g'),"|||",rline.encode("utf-8"),"|||",tline.encode("utf-8")
+            print(format(sent_wer,'g'),"|||",rline.encode("utf-8"),"|||",tline.encode("utf-8"))
 
     # Print WER
     WER=(eddist/running_words)
-    print "WER:",format(WER,'g'),"(",format(eddist,'g'),"/",format(running_words,'g'),")"
+    print("WER:",format(WER,'g'),"(",format(eddist,'g'),"/",format(running_words,'g'),")")
 
 if __name__ == "__main__":
     main(sys.argv)

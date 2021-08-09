@@ -9,16 +9,16 @@ import io, sys, getopt
 
 ##################################################
 def print_help():
-    print >> sys.stderr, "Usage: thot_conv_giza_alig_file -g <string> -f <int>"
-    print >> sys.stderr, ""
-    print >> sys.stderr, "-g <string>  GIZA alignment file"
-    print >> sys.stderr, "-f <int>     Output file format,"
-    print >> sys.stderr, "             1-> human"
-    print >> sys.stderr, "             2-> moses"
+    print("Usage: thot_conv_giza_alig_file -g <string> -f <int>", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("-g <string>  GIZA alignment file", file=sys.stderr)
+    print("-f <int>     Output file format,", file=sys.stderr)
+    print("             1-> human", file=sys.stderr)
+    print("             2-> moses", file=sys.stderr)
     # print >> sys.stderr, "             3-> pair+alignment"
     # print >> sys.stderr, "             4-> GIZA inverted"
     # print >> sys.stderr, "             5-> Asymptote"
-    print >> sys.stderr, ""
+    print("", file=sys.stderr)
 
 ##################################################
 def extract_src_info(src_info_array):
@@ -69,12 +69,12 @@ def conv_giza_file_to_human(gfile):
 
         # Print entry information
         ## print header
-        print line1.encode("utf-8")
-        print "trg:",line2.encode("utf-8")
-        print "src:",
+        print(line1.encode("utf-8"))
+        print("trg:",line2.encode("utf-8"))
+        print("src:", end=' ')
         for j in range(1,len(srcw_array)):
-            print srcw_array[j].encode("utf-8"),
-        print ""
+            print(srcw_array[j].encode("utf-8"), end=' ')
+        print("")
 
         # ## print matrix
         # for j in range(1,len(srcw_array)):
@@ -97,16 +97,16 @@ def conv_giza_file_to_human(gfile):
             trgpos=len(trgw_array)-i+1
             for j in range(1,len(srcw_array)):
                 srcpos=j
-                if(str(srcpos)+" "+str(trgpos) in wamatrix.keys()):
-                    print " 1",
+                if(str(srcpos)+" "+str(trgpos) in list(wamatrix.keys())):
+                    print(" 1", end=' ')
                 else:
-                    print " 0",
-            print "|",trgw_array[trgpos-1].encode("utf-8")
+                    print(" 0", end=' ')
+            print("|",trgw_array[trgpos-1].encode("utf-8"))
 
         sep_str=""
         for j in range(1,len(srcw_array)):
             sep_str=sep_str+"---"
-        print sep_str
+        print(sep_str)
 
         ## print source words
         end=False
@@ -116,11 +116,11 @@ def conv_giza_file_to_human(gfile):
             for j in range(1,len(srcw_array)):
                 srcc_array=list(srcw_array[j])
                 if(l<len(srcc_array)):
-                    print " "+srcc_array[l].encode("utf-8"),
+                    print(" "+srcc_array[l].encode("utf-8"), end=' ')
                     end=False
                 else:
-                    print "  ",
-            print "";
+                    print("  ", end=' ')
+            print("");
             l+=1
 
 ##################################################
@@ -152,9 +152,9 @@ def conv_giza_file_to_moses(gfile):
             srcpos=aligs[i][0]
             trgpos=aligs[i][1]
             if srcpos>0:
-                print str(srcpos-1)+"-"+str(trgpos-1),
+                print(str(srcpos-1)+"-"+str(trgpos-1), end=' ')
 
-        print ""
+        print("")
 
 
 ##################################################
@@ -184,19 +184,19 @@ def main(argv):
 
     # check parameters
     if(g_given==False):
-        print >> sys.stderr, "Error! -g parameter not given"
+        print("Error! -g parameter not given", file=sys.stderr)
         sys.exit(2)
 
     if(f_given==False):
-        print >> sys.stderr, "Error! -f parameter not given"
+        print("Error! -f parameter not given", file=sys.stderr)
         sys.exit(2)
 
     # print parameters
     if(g_given==True):
-        print >> sys.stderr, "g is %s" % (gfilename)
+        print("g is %s" % (gfilename), file=sys.stderr)
 
     if(f_given==True):
-        print >> sys.stderr, "f is %s" % (f_val)
+        print("f is %s" % (f_val), file=sys.stderr)
 
     # open files
     if(g_given==True):
@@ -209,11 +209,11 @@ def main(argv):
     elif(f_val==2):
         conv_giza_file_to_moses(gfile)
     elif(f_val==3):
-        print >> sys.stderr, "Warning, option not implemented"
+        print("Warning, option not implemented", file=sys.stderr)
     elif(f_val==4):
-        print >> sys.stderr, "Warning, option not implemented"
+        print("Warning, option not implemented", file=sys.stderr)
     elif(f_val==5):
-        print >> sys.stderr, "Warning, option not implemented"
+        print("Warning, option not implemented", file=sys.stderr)
 
 
 if __name__ == "__main__":

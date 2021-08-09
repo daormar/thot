@@ -62,20 +62,20 @@ def check_if_buffers_empty(unfinished_output_buf, finished_output_buf,
     empty = True
 
     if len(unfinished_output_buf):
-        print 'ERROR: Some uncompleted information about requests left'
+        print('ERROR: Some uncompleted information about requests left')
         empty = False
-        for _, l in unfinished_output_buf.items():
-            print l
+        for _, l in list(unfinished_output_buf.items()):
+            print(l)
     if len(finished_output_buf):
-        print 'ERROR: Some completed requests have not been printed'
+        print('ERROR: Some completed requests have not been printed')
         empty = False
-        for _, l in finished_output_buf.items():
-            print l
+        for _, l in list(finished_output_buf.items()):
+            print(l)
     if len(request_order):
-        print 'ERROR: Request queue is not empty'
+        print('ERROR: Request queue is not empty')
         empty = False
         for r in request_order:
-            print r
+            print(r)
 
     return empty
 
@@ -95,7 +95,7 @@ def group_thread_output(logFileName):
         for line in f:
             tid = extract_thread_id(line)
             if tid is None:
-                print line,
+                print(line, end=' ')
             else:
                 unfinished_output_buf[tid].append(line)
 
@@ -116,7 +116,7 @@ def group_thread_output(logFileName):
                         # Request is ready to print
                         request_order.popleft()
                         request_log = finished_output_buf[head_tid].popleft()
-                        print request_log,
+                        print(request_log, end=' ')
                         # Remove key if all elements printed for TID
                         if len(finished_output_buf[head_tid]) == 0:
                             del finished_output_buf[head_tid]
