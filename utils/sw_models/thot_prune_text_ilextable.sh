@@ -6,7 +6,7 @@
 
 function prune_sorted_table()
 {
- ${AWK} -v n_val=${n_val} -v c_val=${c_val} '\
+ "${AWK}" -v n_val=${n_val} -v c_val=${c_val} '\
      function delete_array(array)
      {
       delete array
@@ -155,5 +155,5 @@ else
     fi
 
     # Prune table
-    cat $table | LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k3gr | prune_sorted_table
+    cat "$table" | LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k3gr | prune_sorted_table
 fi

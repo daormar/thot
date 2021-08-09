@@ -59,7 +59,7 @@ usage()
 
 model_access_is_process_safe()
 {
-    nlines=`${bindir}/thot_server -i 2>&1 | $GREP 'model reads are not process-safe for swm module' | $WC -l | $AWK '{print $1}'`
+    nlines=`"${bindir}"/thot_server -i 2>&1 | "$GREP" 'model reads are not process-safe for swm module' | "$WC" -l | "$AWK" '{print $1}'`
     if [ $nlines -eq 0 ]; then
         echo 'yes'
     else
@@ -85,7 +85,7 @@ pipe_fail()
 
 set_tmp_dir()
 {
-    if [ -d ${tdir} ]; then
+    if [ -d "${tdir}" ]; then
         TMP=${tdir}
     else
         echo "Error: temporary directory does not exist" >&2
@@ -95,23 +95,23 @@ set_tmp_dir()
 
 set_shared_dir()
 {
-    if [ ! -d ${sdir} ]; then
+    if [ ! -d "${sdir}" ]; then
         echo "Error: shared directory does not exist" >&2
         return 1;
     fi
 
     SDIR="${sdir}/thot_pbs_gen_best_sw_alig_sdir_${PPID}_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" >&2 ; return 1; }
+    mkdir "$SDIR" || { echo "Error: shared directory cannot be created" >&2 ; return 1; }
 
     # Create temporary subdirectories
-    chunks_dir=$SDIR/chunks
-    scripts_dir=$SDIR/scripts
-    aligs_per_chunk_dir=$SDIR/aligs_per_chunk
-    sync_info_dir=$SDIR/sync
-    mkdir ${chunks_dir} || return 1
-    mkdir ${scripts_dir} || return 1
-    mkdir ${aligs_per_chunk_dir} || return 1
-    mkdir ${sync_info_dir} || return 1
+    chunks_dir="$SDIR"/chunks
+    scripts_dir="$SDIR"/scripts
+    aligs_per_chunk_dir="$SDIR"/aligs_per_chunk
+    sync_info_dir="$SDIR"/sync
+    mkdir "${chunks_dir}" || return 1
+    mkdir "${scripts_dir}" || return 1
+    mkdir "${aligs_per_chunk_dir}" || return 1
+    mkdir "${sync_info_dir}" || return 1
 
     # Function executed correctly
     return 0
@@ -122,7 +122,7 @@ split_input()
     echo "*** Shuffling and splitting input: ${srcf} ${trgf}..." >> $SDIR/log
 
     # Determine fragment size
-    local input_size=`wc -l ${srcf} 2>/dev/null | ${AWK} '{printf"%d",$1}'`
+    local input_size=`wc -l "${srcf}" 2>/dev/null | "${AWK}" '{printf"%d",$1}'`
     if [ ${input_size} -eq 0 ]; then
         echo "Error: input file ${srcf} is empty" >&2
         exit 1
@@ -138,12 +138,12 @@ split_input()
     # Shuffle (optional) and split input (shuffling is required to
     # achieve load balancing)
     if [ ${shu_given} -eq 0 ]; then
-        ${SPLIT} -l ${chunk_size} ${srcf} ${chunks_dir}/src\_chunk\_ || return 1
-        ${SPLIT} -l ${chunk_size} ${trgf} ${chunks_dir}/trg\_chunk\_ || return 1
+        "${SPLIT}" -l ${chunk_size} "${srcf}" "${chunks_dir}/src_chunk_" || return 1
+        "${SPLIT}" -l ${chunk_size} "${trgf}" "${chunks_dir}/trg_chunk_" || return 1
     else
         local rand_seed=31415
-        ${bindir}/thot_shuffle ${rand_seed} ${tdir} ${srcf} | ${SPLIT} -l ${chunk_size} - ${chunks_dir}/src\_chunk\_ || return 1
-        ${bindir}/thot_shuffle ${rand_seed} ${tdir} ${trgf} | ${SPLIT} -l ${chunk_size} - ${chunks_dir}/trg\_chunk\_ || return 1
+        "${bindir}"/thot_shuffle ${rand_seed} "${tdir}" "${srcf}" | "${SPLIT}" -l ${chunk_size} - "${chunks_dir}/src_chunk_" || return 1
+        "${bindir}"/thot_shuffle ${rand_seed} "${tdir}" "${trgf}" | "${SPLIT}" -l ${chunk_size} - "${chunks_dir}/trg_chunk_" || return 1
     fi
 }
 
@@ -151,13 +151,13 @@ remove_temp()
 {
     # remove shared directory
     if [ "$debug" -eq 0 ]; then
-        rm -rf $SDIR 2>/dev/null
+        rm -rf "$SDIR" 2>/dev/null
     fi
 }
 
 exclude_readonly_vars()
 {
-    ${AWK} -F "=" 'BEGIN{
+    "${AWK}" -F "=" 'BEGIN{
                          readonlyvars["BASHOPTS"]=1
                          readonlyvars["BASH_VERSINFO"]=1
                          readonlyvars["EUID"]=1
@@ -172,13 +172,13 @@ exclude_readonly_vars()
 
 exclude_bashisms()
 {
-    $AWK '{if(index($1,"=(")==0) printf"%s\n",$0}'
+    "$AWK" '{if(index($1,"=(")==0) printf"%s\n",$0}'
 }
 
 write_functions()
 {
-    for f in `${AWK} '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
-        $SED -n /^$f/,/^}/p $0
+    for f in `"${AWK}" '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
+        "$SED" -n /^$f/,/^}/p $0
     done
 }
 
@@ -192,18 +192,18 @@ create_script()
     set | exclude_readonly_vars | exclude_bashisms > ${name}
 
     # Write functions if necessary
-    $GREP "()" ${name} -A1 | $GREP "{" > /dev/null || write_functions >> ${name}
+    "$GREP" "()" "${name}" -A1 | "$GREP" "{" > /dev/null || write_functions >> ${name}
 
     # Write PBS directives
-    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
-    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> ${name}
-    echo "#$ -cwd" >> ${name}
+    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> "${name}"
+    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> "${name}"
+    echo "#$ -cwd" >> "${name}"
 
     # Write command to be executed
-    echo "${command}" >> ${name}
+    echo "${command}" >> "${name}"
 
     # Give execution permission
-    chmod u+x ${name}
+    chmod u+x "${name}"
 }
 
 launch()
@@ -214,16 +214,16 @@ launch()
     local outvar=$4
 
     if [ "${QSUB_WORKS}" = "no" ]; then
-        $program &
+        "$program" &
         eval "${outvar}=$!"
     else
         # Check if the sleep command is used to synchronize processes
         if [ ${sync_sleep} -eq 1 ]; then
             # The sleep command is being used
             # Create script
-            create_script ${scripts_dir}/${program}${suffix}.sh $program
+            create_script "${scripts_dir}/${program}${suffix}.sh" "$program"
             # Execute qsub command
-            local jid=$(${QSUB} ${QSUB_TERSE_OPT} ${qs_opts} ${scripts_dir}/${program}${suffix}.sh | ${TAIL} -1)
+            local jid=$("${QSUB}" ${QSUB_TERSE_OPT} ${qs_opts} "${scripts_dir}/${program}${suffix}.sh" | ${TAIL} -1)
 
             # Set value of output variable
             eval "${outvar}='${jid}'"
@@ -232,12 +232,12 @@ launch()
             # dependencies between jobs when executing qsub
             
             # Create script
-            create_script ${scripts_dir}/${program}${suffix}.sh $program
+            create_script "${scripts_dir}/${program}${suffix}.sh" "$program"
 
             # Define qsub option declaring job dependencies
             local depend_opt=""
             if [ ! -z "$job_deps" ]; then
-                job_deps=`echo ${job_deps} | $AWK '{for(i=1;i<NF;++i) printf"%s:",$i; printf"%s",$NF}'`
+                job_deps=`echo ${job_deps} | "$AWK" '{for(i=1;i<NF;++i) printf"%s:",$i; printf"%s",$NF}'`
                 depend_opt="-W depend=afterok:${job_deps}"
             fi
 
@@ -245,7 +245,7 @@ launch()
             # jobs. All jobs are released at the end of the script. This
             # ensures that job dependencies are defined over existing
             # jobs
-            local jid=$(${QSUB} -h ${depend_opt} ${QSUB_TERSE_OPT} ${qs_opts} ${scripts_dir}/${program}${suffix}.sh | ${TAIL} -1)
+            local jid=$("${QSUB}" -h ${depend_opt} ${QSUB_TERSE_OPT} ${qs_opts} "${scripts_dir}/${program}${suffix}.sh" | ${TAIL} -1)
 
             # Set value of output variable
             eval "${outvar}='${jid}'"
@@ -258,7 +258,7 @@ launch()
 
 job_is_unknown()
 {
-    nl=`$QSTAT ${QSTAT_J_OPT} ${jid} 2>&1 | grep -e "Unknown" -e "do not exist" | wc -l`
+    nl=`"$QSTAT" ${QSTAT_J_OPT} ${jid} 2>&1 | grep -e "Unknown" -e "do not exist" | wc -l`
     if [ $nl -ne 0 ]; then
         echo 1
     else
@@ -271,7 +271,7 @@ pbs_sync()
     # Init vars
     local job_ids=$1
     local pref=$2
-    local sync_num_files=`echo "${job_ids}" | $AWK '{printf"%d",NF}'`
+    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
 
     if [ ${sync_sleep} -eq 1 ]; then
         # Execute sync loop
@@ -281,7 +281,7 @@ pbs_sync()
             
             # Compare current number of sync files written with the required
             # number
-            sync_curr_num_files=`ls -l ${sync_info_dir}/ | grep " ${pref}" | wc -l`
+            sync_curr_num_files=`ls -l "${sync_info_dir}/" | grep " ${pref}" | wc -l`
             if [ ${sync_curr_num_files} -eq ${sync_num_files} ]; then
                 sync_end=1
             fi
@@ -297,7 +297,7 @@ pbs_sync()
                 fi
             done
             if [ ${num_running_procs} -eq 0 ]; then
-                sync_curr_num_files=`ls -l ${sync_info_dir}/ | grep " ${pref}" | wc -l`
+                sync_curr_num_files=`ls -l "${sync_info_dir}/" | grep " ${pref}" | wc -l`
                 if [ ${sync_curr_num_files} -ne ${sync_num_files} ]; then
                     echo "Error during synchronization" >&2
                     return 1 
@@ -317,10 +317,10 @@ all_procs_ok()
     # Init variables
     local job_ids=$1
     local pref=$2
-    local sync_num_files=`echo "${job_ids}" | $AWK '{printf"%d",NF}'`
+    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
 
     # Obtain number of processes that terminated correctly
-    local sync_curr_num_files=`ls -l ${sync_info_dir}/ | $GREP " ${pref}" | wc -l`
+    local sync_curr_num_files=`ls -l "${sync_info_dir}/" | "$GREP" " ${pref}" | wc -l`
 
     # Return result
     if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
@@ -345,7 +345,7 @@ sync()
             return 1
         fi
     else
-        pbs_sync "${job_ids}" $pref
+        pbs_sync "${job_ids}" "$pref"
     fi
 }
 
@@ -361,20 +361,20 @@ release_job_holds()
 proc_chunk()
 {
     # Write date to log file
-    echo "** Processing chunk ${chunk} (started at "`date`")..." >> $SDIR/log
-    echo "** Processing chunk ${chunk} (started at "`date`")..." > ${aligs_per_chunk_dir}/${chunk}_bestal.log
+    echo "** Processing chunk ${chunk} (started at "`date`")..." >> "$SDIR"/log
+    echo "** Processing chunk ${chunk} (started at "`date`")..." > "${aligs_per_chunk_dir}"/${chunk}_bestal.log
 
-    ${bindir}/thot_format_corpus_csl ${chunks_dir}/${src_chunk} ${chunks_dir}/${trg_chunk} \
-        2>> ${aligs_per_chunk_dir}/${chunk}_bestal.log | \
-        ${bindir}/thot_calc_swm_lgprob -sw ${sw_val} -P - -max \
-        2>> ${aligs_per_chunk_dir}/${chunk}_bestal.log > ${aligs_per_chunk_dir}/${chunk}_bestal ; ${PIPE_FAIL} || \
-        { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1; }
+    "${bindir}"/thot_format_corpus_csl "${chunks_dir}"/${src_chunk} "${chunks_dir}"/${trg_chunk} \
+        2>> "${aligs_per_chunk_dir}"/${chunk}_bestal.log | \
+        "${bindir}"/thot_calc_swm_lgprob -sw ${sw_val} -P - -max \
+        2>> "${aligs_per_chunk_dir}"/${chunk}_bestal.log > "${aligs_per_chunk_dir}"/${chunk}_bestal ; ${PIPE_FAIL} || \
+        { echo "Error while executing proc_chunk for ${chunk}" >> "$SDIR"/log ; return 1; }
 
     # Write date to log file
-    echo "Processing of chunk ${chunk} finished ("`date`")" >> $SDIR/log 
+    echo "Processing of chunk ${chunk} finished ("`date`")" >> "$SDIR"/log 
 
     # Create sync file
-    echo "" > ${sync_info_dir}/proc_chunk_${chunk}
+    echo "" > "${sync_info_dir}"/proc_chunk_${chunk}
 
     return 0
 }
@@ -382,46 +382,46 @@ proc_chunk()
 generate_alig_file()
 {
     # Write date to log file
-    echo "** Generate alignment file (started at "`date`")..." >> $SDIR/log
-    echo "** Generate alignment file (started at "`date`")..." > ${aligs_per_chunk_dir}/merge.log
+    echo "** Generate alignment file (started at "`date`")..." >> "$SDIR"/log
+    echo "** Generate alignment file (started at "`date`")..." > "${aligs_per_chunk_dir}"/merge.log
 
     # Delete output file if exists
-    if [ -f ${output}.bestal ]; then
-        rm ${output}.bestal
+    if [ -f "${output}".bestal ]; then
+        rm "${output}".bestal
     fi
 
     # Dump alignments in output file
-    for f in `ls ${aligs_per_chunk_dir}/*_bestal`; do
-        cat $f 2>> ${aligs_per_chunk_dir}/merge.log >> ${output}.bestal || \
-            { echo "Error while executing generate_alig_file" >> $SDIR/log ; return 1; }
+    for f in "${aligs_per_chunk_dir}"/*_bestal; do
+        cat "$f" 2>> "${aligs_per_chunk_dir}"/merge.log >> "${output}".bestal || \
+            { echo "Error while executing generate_alig_file" >> "$SDIR"/log ; return 1; }
     done
 
     # Copy log file
-    echo "**** Parallel process finished at: "`date` >> $SDIR/log
-    cp $SDIR/log ${output}.genb_log
+    echo "**** Parallel process finished at: "`date` >> "$SDIR"/log
+    cp "$SDIR"/log "${output}".genb_log
 
     # Create sync file
-    echo "" > ${sync_info_dir}/generate_alig_file
+    echo "" > "${sync_info_dir}"/generate_alig_file
 }
 
 gen_log_err_files()
 {
     if [ ${sync_sleep} -eq 1 ]; then
         if [ -f $SDIR/log ]; then
-            cp $SDIR/log ${output}.genb_log
+            cp "$SDIR"/log "${output}".genb_log
         fi
         
         # Generate file for error diagnosing
-        if [ -f ${output}.genb_err ]; then
-            rm ${output}.genb_err
+        if [ -f "${output}".genb_err ]; then
+            rm "${output}".genb_err
         fi
 
-        for f in ${aligs_per_chunk_dir}/*_bestal.log; do
-            cat $f > ${output}.genb_err
+        for f in "${aligs_per_chunk_dir}"/*_bestal.log; do
+            cat "$f" > "${output}".genb_err
         done
 
-        if [ -f ${aligs_per_chunk_dir}/merge.log ]; then
-            cat ${aligs_per_chunk_dir}/merge.log >> ${output}.genb_err
+        if [ -f "${aligs_per_chunk_dir}"/merge.log ]; then
+            cat "${aligs_per_chunk_dir}"/merge.log >> "${output}".genb_err
         fi
     fi
 }
@@ -429,17 +429,17 @@ gen_log_err_files()
 report_errors()
 {
     if [ ${sync_sleep} -eq 1 ]; then
-        num_err=`$GREP "Error while executing" ${output}.genb_log | wc -l`
+        num_err=`"$GREP" "Error while executing" "${output}".genb_log | wc -l`
         if [ ${num_err} -gt 0 ]; then
             # Print error messages
-            prog=`$GREP "Error while executing" ${output}.genb_log | head -1 | $AWK '{printf"%s",$4}'`
+            prog=`"$GREP" "Error while executing" ${output}.genb_log | head -1 | "$AWK" '{printf"%s",$4}'`
             echo "Error during the execution of thot_pbs_gen_best_sw_alig (${prog})" >&2
-            if [ -f ${output}.genb_err ]; then
+            if [ -f "${output}".genb_err ]; then
                 echo "File ${output}.genb_err contains information for error diagnosing" >&2
             fi
          else
             echo "Synchronization error" >&2
-            if [ -f ${output}.genb_err ]; then
+            if [ -f "${output}".genb_err ]; then
                 echo "File ${output}.genb_err contains information for error diagnosing" >&2
             fi
        fi
@@ -594,8 +594,8 @@ set_tmp_dir || exit 1
 
 # Set shared directory (global variables are declared)
 declare chunks_dir="" 
-declare aligs_per_chunk_dir="" 
-declare scripts_dir="" 
+declare aligs_per_chunk_dir=""
+declare scripts_dir=""
 declare sync_info_dir=""
 
 set_shared_dir || exit 1
@@ -617,12 +617,12 @@ declare job_id_list=""
 chunk_id=0
 
 # Generate best alignment
-for i in `ls ${chunks_dir}/src\_chunk\_*`; do
+for i in "${chunks_dir}/src_chunk_"*; do
     # Initialize variables
-    chunk=`${BASENAME} $i`
+    chunk=`"${BASENAME}" $i`
     chunk=${chunk:4}
-    src_chunk="src_"${chunk}
-    trg_chunk="trg_"${chunk}
+    src_chunk="src_${chunk}"
+    trg_chunk="trg_${chunk}"
     chunk_id=`expr $chunk_id + 1`
         
     # Process chunk

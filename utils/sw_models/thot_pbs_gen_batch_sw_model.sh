@@ -80,7 +80,7 @@ pipe_fail()
 
 set_tmp_dir()
 {
-    if [ -d ${tdir} ]; then
+    if [ -d "${tdir}" ]; then
         TMP=${tdir}
     else
         echo "Error: temporary directory does not exist" >&2
@@ -90,35 +90,35 @@ set_tmp_dir()
 
 set_shared_dir()
 {
-    if [ ! -d ${sdir} ]; then
+    if [ ! -d "${sdir}" ]; then
         echo "Error: shared directory does not exist" >&2
         return 1;
     fi
 
     SDIR="${sdir}/thot_pbs_gen_batch_sw_model_sdir_${PPID}_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" >&2 ; return 1; }
+    mkdir "$SDIR" || { echo "Error: shared directory cannot be created" >&2 ; return 1; }
 
     # Create temporary subdirectories
-    chunks_dir=$SDIR/chunks
-    init_model_dir=$SDIR/init_model
-    curr_tables_dir=$SDIR/curr_tables
-    models_per_chunk_dir=$SDIR/models_per_chunk
-    filtered_model_dir=$SDIR/filtered_model
-    filtering_info_dir=$SDIR/filtering_info
-    slmodel_dir=$SDIR/slmodel
-    scripts_dir=$SDIR/scripts
-    used_scripts_dir=$SDIR/used_scripts
-    sync_info_dir=$SDIR/sync
-    mkdir ${chunks_dir} || return 1
-    mkdir ${init_model_dir} || return 1
-    mkdir ${curr_tables_dir} || return 1
-    mkdir ${models_per_chunk_dir} || return 1
-    mkdir ${filtered_model_dir} || return 1
-    mkdir ${filtering_info_dir} || return 1
-    mkdir ${slmodel_dir} || return 1
-    mkdir ${scripts_dir} || return 1
-    mkdir ${used_scripts_dir} || return 1
-    mkdir ${sync_info_dir} || return 1
+    chunks_dir="$SDIR"/chunks
+    init_model_dir="$SDIR"/init_model
+    curr_tables_dir="$SDIR"/curr_tables
+    models_per_chunk_dir="$SDIR"/models_per_chunk
+    filtered_model_dir="$SDIR"/filtered_model
+    filtering_info_dir="$SDIR"/filtering_info
+    slmodel_dir="$SDIR"/slmodel
+    scripts_dir="$SDIR"/scripts
+    used_scripts_dir="$SDIR"/used_scripts
+    sync_info_dir="$SDIR"/sync
+    mkdir "${chunks_dir}" || return 1
+    mkdir "${init_model_dir}" || return 1
+    mkdir "${curr_tables_dir}" || return 1
+    mkdir "${models_per_chunk_dir}" || return 1
+    mkdir "${filtered_model_dir}" || return 1
+    mkdir "${filtering_info_dir}" || return 1
+    mkdir "${slmodel_dir}" || return 1
+    mkdir "${scripts_dir}" || return 1
+    mkdir "${used_scripts_dir}" || return 1
+    mkdir "${sync_info_dir}" || return 1
 
     # Function executed correctly
     return 0
@@ -126,10 +126,10 @@ set_shared_dir()
 
 split_input()
 {
-    echo "*** Shuffling and splitting input: ${srcf} ${trgf}..." >> $SDIR/log
+    echo "*** Shuffling and splitting input: ${srcf} ${trgf}..." >> "$SDIR"/log
 
     # Determine fragment size
-    local input_size=`wc -l ${srcf} 2>/dev/null | ${AWK} '{printf"%d",$1}'`
+    local input_size=`wc -l "${srcf}" 2>/dev/null | ${AWK} '{printf"%d",$1}'`
     if [ ${input_size} -eq 0 ]; then
         echo "Error: input file ${srcf} is empty" >&2
         exit 1
@@ -145,43 +145,43 @@ split_input()
     # Shuffle (optional) and split input (shuffling is required to
     # achieve load balancing)
     if [ ${shu_given} -eq 0 ]; then
-        ${SPLIT} -l ${chunk_size} ${srcf} ${chunks_dir}/src\_chunk\_ || return 1
-        ${SPLIT} -l ${chunk_size} ${trgf} ${chunks_dir}/trg\_chunk\_ || return 1
+        "${SPLIT}" -l ${chunk_size} "${srcf}" "${chunks_dir}/src_chunk_" || return 1
+        "${SPLIT}" -l ${chunk_size} "${trgf}" "${chunks_dir}/trg_chunk_" || return 1
     else
         local rand_seed=31415
-        ${bindir}/thot_shuffle ${rand_seed} ${tdir} ${srcf} | ${SPLIT} -l ${chunk_size} - ${chunks_dir}/src\_chunk\_ || return 1
-        ${bindir}/thot_shuffle ${rand_seed} ${tdir} ${trgf} | ${SPLIT} -l ${chunk_size} - ${chunks_dir}/trg\_chunk\_ || return 1
+        "${bindir}"/thot_shuffle ${rand_seed} "${tdir}" "${srcf}" | "${SPLIT}" -l ${chunk_size} - "${chunks_dir}/src_chunk_" || return 1
+        "${bindir}"/thot_shuffle ${rand_seed} "${tdir}" "${trgf}" | "${SPLIT}" -l ${chunk_size} - "${chunks_dir}/trg_chunk_" || return 1
     fi
 }
 
 estimate_slmodel()
 {
-    echo "*** Estimating sentence length model..." >> $SDIR/log
-    echo "*** Estimating sentence length model..." >> ${slmodel_dir}/log
+    echo "*** Estimating sentence length model..." >> "$SDIR"/log
+    echo "*** Estimating sentence length model..." >> "${slmodel_dir}"/log
 
-    ${bindir}/thot_gen_wigauss_slen_model ${srcf} ${trgf} > ${slmodel_dir}/model || \
-        { echo "Error while executing estimate_slmodel" >> $SDIR/log ; return 1 ; }
+    "${bindir}"/thot_gen_wigauss_slen_model "${srcf}" "${trgf}" > "${slmodel_dir}"/model || \
+        { echo "Error while executing estimate_slmodel" >> "$SDIR"/log ; return 1 ; }
 
     # Create sync file
-    echo "" > ${sync_info_dir}/estimate_slmodel
+    echo "" > "${sync_info_dir}"/estimate_slmodel
 }
 
 estimate_init_model()
 {
     # Create void corpus
-    $TOUCH ${init_model_dir}/void_corpus
+    "$TOUCH" "${init_model_dir}"/void_corpus
     
     # Generate model for void corpus
-    ${bindir}/thot_gen_sw_model -s ${init_model_dir}/void_corpus -t ${init_model_dir}/void_corpus \
-        ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl -o ${init_model_dir}/model 2> ${init_model_dir}/log || return 1
+    "${bindir}"/thot_gen_sw_model -s "${init_model_dir}"/void_corpus -t "${init_model_dir}"/void_corpus \
+        ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl -o "${init_model_dir}"/model 2> "${init_model_dir}"/log || return 1
      
     # Add complete vocabularies
-    ${bindir}/thot_get_swm_vocab ${srcf} "NULL UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.svcb
-    ${bindir}/thot_get_swm_vocab ${trgf} "NULL UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.tvcb
+    "${bindir}"/thot_get_swm_vocab "${srcf}" "NULL UNKNOWN_WORD <UNUSED_WORD>" > "${init_model_dir}"/model.svcb
+    "${bindir}"/thot_get_swm_vocab "${trgf}" "NULL UNKNOWN_WORD <UNUSED_WORD>" > "${init_model_dir}"/model.tvcb
 
     # Create msinfo file
-    echo "0" > ${init_model_dir}/model.msinfo
-    echo "0" >> ${init_model_dir}/model.msinfo
+    echo "0" > "${init_model_dir}"/model.msinfo
+    echo "0" >> "${init_model_dir}"/model.msinfo
 
     # Function executed correctly
     return 0
@@ -191,7 +191,7 @@ get_model_information()
 {
     export alig_ext="none"
 
-    for f in ${init_model_dir}/model*; do
+    for f in "${init_model_dir}"/model*; do
         bname=$(basename "$f")
         extension="${bname##*.}"
         case ${extension} in
@@ -218,15 +218,15 @@ determine_file_format()
 
 sort_lex_counts_text()
 {
-    LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n
+    LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n
 }
 
 sort_alig_counts_text()
 {
     case ${alig_ext} in
-        "hmm_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n
+        "hmm_alignd") LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n -k3n
             ;;
-        "ibm2_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -k4n
+        "ibm2_alignd") LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n -k3n -k4n
             ;;
     esac
 }
@@ -242,25 +242,25 @@ sort_counts()
 
 sort_counts_text()
 {
-    ${AWK} -v c=$chunk_id '{printf"%s %s\n",$0,c}' ${models_per_chunk_dir}/${out_chunk}/model.${lex_ext} | \
-        sort_lex_counts_text > ${curr_tables_dir}/lex_counts_${out_chunk}
+    "${AWK}" -v c=$chunk_id '{printf"%s %s\n",$0,c}' "${models_per_chunk_dir}/${out_chunk}/model.${lex_ext}" | \
+        sort_lex_counts_text > "${curr_tables_dir}/lex_counts_${out_chunk}"
     if [ ${alig_ext} != "none" ]; then 
-        ${AWK} -v c=$chunk_id '{printf"%s %s\n",$0,c}' ${models_per_chunk_dir}/${out_chunk}/model.${alig_ext} | \
-            sort_alig_counts_text > ${curr_tables_dir}/alig_counts_${out_chunk}
+        "${AWK}" -v c=$chunk_id '{printf"%s %s\n",$0,c}' "${models_per_chunk_dir}/${out_chunk}/model.${alig_ext}" | \
+            sort_alig_counts_text > "${curr_tables_dir}/alig_counts_${out_chunk}"
     fi
 }
 
 sort_counts_bin()
 {
-    ${bindir}/thot_sort_bin_ilextable -l ${models_per_chunk_dir}/${out_chunk}/model.${lex_ext} > ${curr_tables_dir}/lex_counts_${out_chunk}
+    "${bindir}"/thot_sort_bin_ilextable -l "${models_per_chunk_dir}/${out_chunk}/model.${lex_ext}" > "${curr_tables_dir}/lex_counts_${out_chunk}"
 
     if [ ${alig_ext} != "none" ]; then 
         case ${alig_ext} in
-            "hmm_alignd") ${bindir}/thot_sort_bin_ihmmatable \
-                -a ${models_per_chunk_dir}/${out_chunk}/model.${alig_ext} > ${curr_tables_dir}/alig_counts_${out_chunk}
+            "hmm_alignd") "${bindir}/thot_sort_bin_ihmmatable" \
+                -a "${models_per_chunk_dir}/${out_chunk}/model.${alig_ext}" > "${curr_tables_dir}/alig_counts_${out_chunk}"
                 ;;
-            "ibm2_alignd") ${bindir}/thot_sort_bin_iibm2atable \
-                -a ${models_per_chunk_dir}/${out_chunk}/model.${alig_ext} > ${curr_tables_dir}/alig_counts_${out_chunk}
+            "ibm2_alignd") "${bindir}/thot_sort_bin_iibm2atable" \
+                -a "${models_per_chunk_dir}/${out_chunk}/model.${alig_ext}" > "${curr_tables_dir}/alig_counts_${out_chunk}"
                 ;;
         esac
     fi
@@ -269,59 +269,59 @@ sort_counts_bin()
 proc_chunk()
 {
     # Create directory if necessary
-    if [ ! -d ${models_per_chunk_dir}/${out_chunk} ]; then
-        mkdir ${models_per_chunk_dir}/${out_chunk}
+    if [ ! -d "${models_per_chunk_dir}/${out_chunk}" ]; then
+        mkdir "${models_per_chunk_dir}/${out_chunk}"
     fi
 
     # Write date to log file
-    echo "** Processing chunk ${chunk} (started at "`date`")..." >> $SDIR/log
-    echo "** Processing chunk ${chunk} (started at "`date`")..." >> ${models_per_chunk_dir}/${out_chunk}/model_proc_n$n.log
+    echo "** Processing chunk ${chunk} (started at "`date`")..." >> "$SDIR"/log
+    echo "** Processing chunk ${chunk} (started at "`date`")..." >> "${models_per_chunk_dir}/${out_chunk}/model_proc_n$n.log"
 
     if [ $n -eq 1 ]; then
         # First iteration
 
         # Copy initial model into model directory for chunk
-        for f in ${init_model_dir}/model*; do
-            if [ -f $f ]; then
-                cp $f ${models_per_chunk_dir}/${out_chunk}/
+        for f in "${init_model_dir}/model"*; do
+            if [ -f "$f" ]; then
+                cp "$f" "${models_per_chunk_dir}/${out_chunk}/"
             fi
         done
         
         # Estimate model from chunk
-        echo "* Estimate model for chunk ${chunk} (started at "`date`")..." >> $SDIR/log
-        ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
-            -l ${models_per_chunk_dir}/${out_chunk}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 -npr ${npr_val} \
-            -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk}/model 2>> ${models_per_chunk_dir}/${out_chunk}/model_proc_n$n.log || \
-            { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
+        echo "* Estimate model for chunk ${chunk} (started at "`date`")..." >> "$SDIR"/log
+        "${bindir}"/thot_gen_batch_sw_model_mr -s "${chunks_dir}/${src_chunk}" -t "${chunks_dir}/${trg_chunk}" \
+            -l "${models_per_chunk_dir}/${out_chunk}/model" ${lf_opt} ${af_opt} ${np_opt} -n 1 -npr ${npr_val} \
+            -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir "$TMP" \
+            -o "${models_per_chunk_dir}/${out_chunk}/model" 2>> "${models_per_chunk_dir}/${out_chunk}/model_proc_n$n.log" || \
+            { echo "Error while executing proc_chunk for ${chunk}" >> "$SDIR"/log ; return 1 ; }
 
         if [ ${debug} -ne 0 -a "${file_format}" = "text" ]; then
-            echo "Entries in initial table (${chunk}): "`wc -l ${models_per_chunk_dir}/${out_chunk}/model.${lex_ext} | $AWK '{printf"%s",$1}'` >> $SDIR/log
+            echo "Entries in initial table (${chunk}): "`wc -l "${models_per_chunk_dir}/${out_chunk}/model.${lex_ext}" | $AWK '{printf"%s",$1}'` >> "$SDIR"/log
         fi
     else
         # Second iteration or greater
 
         # Estimate model from chunk
-        echo "* Estimate model for chunk ${chunk} (started at "`date`")..." >> $SDIR/log
-        ${bindir}/thot_gen_batch_sw_model_mr -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
-            -l ${filtered_model_dir}/${chunk}/model ${lf_opt} ${af_opt} ${np_opt} -n 1 \
-            -npr ${npr_val} -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir $TMP \
-            -o ${models_per_chunk_dir}/${out_chunk}/model 2>> ${models_per_chunk_dir}/${out_chunk}/model_proc_n$n.log || \
-            { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
+        echo "* Estimate model for chunk ${chunk} (started at "`date`")..." >> "$SDIR"/log
+        "${bindir}"/thot_gen_batch_sw_model_mr -s "${chunks_dir}/${src_chunk}" -t "${chunks_dir}/${trg_chunk}" \
+            -l "${filtered_model_dir}/${chunk}/model" ${lf_opt} ${af_opt} ${np_opt} -n 1 \
+            -npr ${npr_val} -cpr ${cpr_val} -c ${local_ch_size} -nsm -tdir "$TMP" \
+            -o "${models_per_chunk_dir}/${out_chunk}/model" 2>> "${models_per_chunk_dir}/${out_chunk}/model_proc_n$n.log" || \
+            { echo "Error while executing proc_chunk for ${chunk}" >> "$SDIR"/log ; return 1 ; }
 
     fi
 
     # Sort counts individually but do not append them
-    echo "* Sort counts for chunk ${chunk} (started at "`date`")..." >> $SDIR/log
-    sort_counts || { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
+    echo "* Sort counts for chunk ${chunk} (started at "`date`")..." >> "$SDIR"/log
+    sort_counts || { echo "Error while executing proc_chunk for ${chunk}" >> "$SDIR"/log ; return 1 ; }
 
     # Generate information useful for model filtering 
-    generate_filter_info || { echo "Error while executing proc_chunk for ${chunk}" >> $SDIR/log ; return 1 ; }
+    generate_filter_info || { echo "Error while executing proc_chunk for ${chunk}" >> "$SDIR"/log ; return 1 ; }
 
     # Remove model files for chunk (except the log file)
     if [ ${debug} -eq 0 ]; then
-        for file in ${models_per_chunk_dir}/${out_chunk}/*; do
-            _ext=`echo $file | $AWK '{printf"%s",substr($1,length($1)-3)}'`
+        for file in "${models_per_chunk_dir}/${out_chunk}/"*; do
+            _ext=`echo $file | "$AWK" '{printf"%s",substr($1,length($1)-3)}'`
             if [ ${_ext} != ".log" ]; then
                 rm -rf $file
             fi
@@ -329,25 +329,25 @@ proc_chunk()
     fi
 
     # Write date to log file
-    echo "Processing of chunk ${chunk} finished ("`date`")" >> $SDIR/log 
+    echo "Processing of chunk ${chunk} finished ("`date`")" >> "$SDIR"/log 
 
     # Create sync file
-    echo "" > ${sync_info_dir}/proc_chunk_${chunk}
+    echo "" > "${sync_info_dir}/proc_chunk_${chunk}"
 
     return 0
 }
 
 append_lex_sorted_counts_text()
 {
-    LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -m ${curr_tables_dir}/lex_counts_*
+    LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n -m "${curr_tables_dir}/lex_counts_"*
 }
 
 append_alig_sorted_counts_text()
 {
     case ${alig_ext} in
-        "hmm_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -m ${curr_tables_dir}/alig_counts_*
+        "hmm_alignd") LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n -k3n -m "${curr_tables_dir}/alig_counts_"*
             ;;
-        "ibm2_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -k4n -m ${curr_tables_dir}/alig_counts_*
+        "ibm2_alignd") LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n -k3n -k4n -m "${curr_tables_dir}/alig_counts_"*
             ;;
     esac
 }
@@ -357,68 +357,68 @@ merge_lex_counts()
     echo "** Merging lex model counts (started at "`date`")..." >> ${curr_tables_dir}/merge_lex_n$n.log
 
     if [ ${file_format} = "text" ]; then
-        merge_lex_counts_text 2>> ${curr_tables_dir}/merge_lex_n$n.log || \
-            { echo "Error while executing merge_lex_counts" >> $SDIR/log ; return 1 ; }
+        merge_lex_counts_text 2>> "${curr_tables_dir}/merge_lex_n$n.log" || \
+            { echo "Error while executing merge_lex_counts" >> "$SDIR"/log ; return 1 ; }
     else
-        merge_lex_counts_bin 2>> ${curr_tables_dir}/merge_lex_n$n.log || \
-            { echo "Error while executing merge_lex_counts" >> $SDIR/log ; return 1 ; }
+        merge_lex_counts_bin 2>> "${curr_tables_dir}/merge_lex_n$n.log" || \
+            { echo "Error while executing merge_lex_counts" >> "$SDIR"/log ; return 1 ; }
     fi
 
     # Create sync file
-    echo "" > ${sync_info_dir}/merge_lex_counts
+    echo "" > "${sync_info_dir}/merge_lex_counts"
 }
 
 merge_lex_counts_text()
 {
     # Append and merge lex sorted counts
-    append_lex_sorted_counts_text | ${bindir}/thot_merge_text_ilextable -ns -T $TMP \
-        > ${curr_tables_dir}/merged_lex_counts ; ${PIPE_FAIL} || return 1
+    append_lex_sorted_counts_text | "${bindir}/thot_merge_text_ilextable" -ns -T "$TMP" \
+        > "${curr_tables_dir}/merged_lex_counts" ; ${PIPE_FAIL} || return 1
 
     # Delete lex sorted counts
-    rm ${curr_tables_dir}/lex_counts_*
+    rm "${curr_tables_dir}/lex_counts_"*
 }
 
 merge_lex_counts_bin()
 {
     # Merge lex sorted counts
-    ${bindir}/thot_merge_bin_ilextable ${curr_tables_dir}/lex_counts_* \
-        > ${curr_tables_dir}/merged_lex_counts ; ${PIPE_FAIL} || return 1
+    "${bindir}"/thot_merge_bin_ilextable "${curr_tables_dir}/lex_counts_"* \
+        > "${curr_tables_dir}/merged_lex_counts" ; ${PIPE_FAIL} || return 1
 
     # Delete lex sorted counts
-    rm ${curr_tables_dir}/lex_counts_*
+    rm "${curr_tables_dir}/lex_counts_"*
 }
 
 merge_alig_counts()
 {
-    echo "** Merging alig model counts (started at "`date`")..." >> ${curr_tables_dir}/merge_alig_n$n.log
+    echo "** Merging alig model counts (started at "`date`")..." >> "${curr_tables_dir}/merge_alig_n$n.log"
 
     if [ ${file_format} = "text" ]; then
-        merge_alig_counts_text 2>> ${curr_tables_dir}/merge_alig_n$n.log || \
-            { echo "Error while executing merge_alig_counts" >> $SDIR/log ; return 1 ; }
+        merge_alig_counts_text 2>> "${curr_tables_dir}/merge_alig_n$n.log" || \
+            { echo "Error while executing merge_alig_counts" >> "$SDIR"/log ; return 1 ; }
     else
         merge_alig_counts_bin 2>> ${curr_tables_dir}/merge_alig_n$n.log || \
-            { echo "Error while executing merge_alig_counts" >> $SDIR/log ; return 1 ; }
+            { echo "Error while executing merge_alig_counts" >> "$SDIR"/log ; return 1 ; }
     fi
 
     # Create sync file
-    echo "" > ${sync_info_dir}/merge_alig_counts
+    echo "" > "${sync_info_dir}/merge_alig_counts"
 }
 
 merge_alig_counts_text()
 {
     # Append and merge alig sorted counts
     case ${alig_ext} in
-        "hmm_alignd") append_alig_sorted_counts_text | ${bindir}/thot_merge_text_ihmmatable -ns -T $TMP \
-            > ${curr_tables_dir}/merged_alig_counts ; ${PIPE_FAIL} || return 1
+        "hmm_alignd") append_alig_sorted_counts_text | "${bindir}"/thot_merge_text_ihmmatable -ns -T "$TMP" \
+            > "${curr_tables_dir}/merged_alig_counts" ; ${PIPE_FAIL} || return 1
             ;;
-        "ibm2_alignd") append_alig_sorted_counts_text | ${bindir}/thot_merge_text_iibm2atable -ns -T $TMP \
-            > ${curr_tables_dir}/merged_alig_counts ; ${PIPE_FAIL} || return 1
+        "ibm2_alignd") append_alig_sorted_counts_text | "${bindir}"/thot_merge_text_iibm2atable -ns -T "$TMP" \
+            > "${curr_tables_dir}/merged_alig_counts" ; ${PIPE_FAIL} || return 1
             ;;
     esac
 
     # Delete alig sorted counts
     if [ ${alig_ext} != "none" ]; then 
-        rm ${curr_tables_dir}/alig_counts_*
+        rm "${curr_tables_dir}/alig_counts_"*
     fi
 }
 
@@ -426,17 +426,17 @@ merge_alig_counts_bin()
 {
     # Merge alig sorted counts
     case ${alig_ext} in
-        "hmm_alignd") ${bindir}/thot_merge_bin_ihmmatable ${curr_tables_dir}/alig_counts_* \
-            > ${curr_tables_dir}/merged_alig_counts ; ${PIPE_FAIL} || return 1
+        "hmm_alignd") "${bindir}"/thot_merge_bin_ihmmatable "${curr_tables_dir}/alig_counts_"* \
+            > "${curr_tables_dir}/merged_alig_counts" ; ${PIPE_FAIL} || return 1
             ;;
-        "ibm2_alignd") ${bindir}/thot_merge_bin_iibm2atable ${curr_tables_dir}/alig_counts_* \
-            > ${curr_tables_dir}/merged_alig_counts ; ${PIPE_FAIL} || return 1
+        "ibm2_alignd") "${bindir}"/thot_merge_bin_iibm2atable "${curr_tables_dir}/alig_counts_"* \
+            > "${curr_tables_dir}"/merged_alig_counts ; ${PIPE_FAIL} || return 1
             ;;
     esac
 
     # Delete alig sorted counts
     if [ ${alig_ext} != "none" ]; then 
-        rm ${curr_tables_dir}/alig_counts_*
+        rm "${curr_tables_dir}/alig_counts_"*
     fi
 }
 
@@ -451,12 +451,12 @@ generate_filter_info()
 
 generate_filter_info_text()
 {
-    $AWK '{printf"%s %s\n",$1,$2}' ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtering_info_dir}/${chunk}_lex_model_info
+    "$AWK" '{printf"%s %s\n",$1,$2}' "${curr_tables_dir}/lex_counts_${out_chunk}" > "${filtering_info_dir}/${chunk}_lex_model_info"
 }
 
 generate_filter_info_bin()
 {
-    ${bindir}/thot_gen_bin_lex_filter_info -l ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtering_info_dir}/${chunk}_lex_model_info
+    "${bindir}"/thot_gen_bin_lex_filter_info -l "${curr_tables_dir}/lex_counts_${out_chunk}" > "${filtering_info_dir}/${chunk}_lex_model_info"
 }
 
 filter_lex_table()
@@ -475,17 +475,17 @@ filter_lex_table_text()
     local scorpus=${chunks_dir}/${src_chunk}
     local tcorpus=${chunks_dir}/${trg_chunk}
     local lextable=${curr_tables_dir}/merged_lex_counts
-    ${bindir}/thot_filter_text_ilextable $svocfile $tvocfile $scorpus $tcorpus $lextable > ${chunk_filtered_model_dir}/model.${lex_ext}
+    "${bindir}"/thot_filter_text_ilextable "$svocfile" "$tvocfile" "$scorpus" "$tcorpus" "$lextable" > "${chunk_filtered_model_dir}/model.${lex_ext}"
     if [ ${debug} -ne 0 ]; then
-        echo "Entries in unfiltered table (${chunk}): "`wc -l ${lextable} | $AWK '{printf"%s",$1}'` >> $SDIR/log
-        echo "Entries in filtered table (${chunk}): "`wc -l ${chunk_filtered_model_dir}/model.${lex_ext} | $AWK '{printf"%s",$1}'` >> $SDIR/log
+        echo "Entries in unfiltered table (${chunk}): "`wc -l "${lextable}" | "$AWK" '{printf"%s",$1}'` >> "$SDIR"/log
+        echo "Entries in filtered table (${chunk}): "`wc -l "${chunk_filtered_model_dir}/model.${lex_ext}" | "$AWK" '{printf"%s",$1}'` >> "$SDIR"/log
     fi
 }
 
 filter_lex_table_text_alt()
 {
     local lextable=${curr_tables_dir}/merged_lex_counts
-    $AWK -v filt_info_file=${filtering_info_dir}/${chunk}_lex_model_info \
+    "$AWK" -v filt_info_file="${filtering_info_dir}/${chunk}_lex_model_info" \
     'BEGIN{
            getline <filt_info_file
            sword=$1
@@ -499,10 +499,10 @@ filter_lex_table_text_alt()
             sword=$1
             tword=$2
            }
-          }' $lextable > ${chunk_filtered_model_dir}/model.${lex_ext}
+          }' "$lextable" > "${chunk_filtered_model_dir}/model.${lex_ext}"
     if [ ${debug} -ne 0 ]; then
-        echo "Entries in unfiltered table (${chunk}): "`wc -l ${lextable} | $AWK '{printf"%s",$1}'` >> $SDIR/log
-        echo "Entries in filtered table (${chunk}): "`wc -l ${chunk_filtered_model_dir}/model.${lex_ext} | $AWK '{printf"%s",$1}'` >> $SDIR/log
+        echo "Entries in unfiltered table (${chunk}): "`wc -l "${lextable}" | "$AWK" '{printf"%s",$1}'` >> "$SDIR"/log
+        echo "Entries in filtered table (${chunk}): "`wc -l "${chunk_filtered_model_dir}/model.${lex_ext}" | "$AWK" '{printf"%s",$1}'` >> "$SDIR"/log
     fi
 }
 
@@ -511,51 +511,51 @@ filter_lex_table_bin()
     lextable=${curr_tables_dir}/merged_lex_counts
     filt_info_file=${filtering_info_dir}/${chunk}_lex_model_info
 
-    ${bindir}/thot_filter_bin_ilextable -l $lextable -f ${filt_info_file} > ${chunk_filtered_model_dir}/model.${lex_ext}
+    "${bindir}"/thot_filter_bin_ilextable -l "$lextable" -f "${filt_info_file}" > "${chunk_filtered_model_dir}/model.${lex_ext}"
 }
 
 create_filtered_model()
 {
-    echo "** Creating filtered model for chunk ${chunk} (started at "`date`")..." >> ${filtered_model_dir}/${chunk}_filt_n$n.log
+    echo "** Creating filtered model for chunk ${chunk} (started at "`date`")..." >> "${filtered_model_dir}/${chunk}_filt_n$n.log"
 
     # Define directory name to store filtered model
     chunk_filtered_model_dir=${filtered_model_dir}/${chunk}
 
     # Create directory if necessary
-    if [ ! -d ${chunk_filtered_model_dir} ]; then
-        mkdir ${chunk_filtered_model_dir}
+    if [ ! -d "${chunk_filtered_model_dir}" ]; then
+        mkdir "${chunk_filtered_model_dir}"
     else
         # Directory already exists, remove previous content
-        rm -rf ${chunk_filtered_model_dir}/*
+        rm -rf "${chunk_filtered_model_dir}/"*
     fi
 
     # Copy basic files
-    if [ ! -f ${chunk_filtered_model_dir}/model.src ]; then
+    if [ ! -f "${chunk_filtered_model_dir}"/model.src ]; then
         # Copy void model files
-        for f in ${init_model_dir}/model*; do
-            if [ -f $f ]; then
-                cp $f ${chunk_filtered_model_dir} || \
-                    { echo "Error while executing create_filtered_model" >> $SDIR/log ; return 1 ; }
+        for f in "${init_model_dir}/model"*; do
+            if [ -f "$f" ]; then
+                cp "$f" "${chunk_filtered_model_dir}" || \
+                    { echo "Error while executing create_filtered_model" >> "$SDIR"/log ; return 1 ; }
             fi
         done
     fi
 
     # Filter complete lexical model given chunk
-    echo "* Filtering lexical table (${chunk})..." >> $SDIR/log
-    filter_lex_table 2>> ${filtered_model_dir}/${chunk}_filt_n$n.log || \
-        { echo "Error while executing create_filtered_model" >> $SDIR/log ; return 1 ; }
+    echo "* Filtering lexical table (${chunk})..." >> "$SDIR"/log
+    filter_lex_table 2>> "${filtered_model_dir}/${chunk}_filt_n$n.log" || \
+        { echo "Error while executing create_filtered_model" >> "$SDIR"/log ; return 1 ; }
 
     # Copy current alignment file
-    cp ${curr_tables_dir}/merged_alig_counts ${chunk_filtered_model_dir}/model.${alig_ext} || \
-        { echo "Error while executing create_filtered_model" >> $SDIR/log ; return 1 ; }
+    cp "${curr_tables_dir}/merged_alig_counts" "${chunk_filtered_model_dir}/model.${alig_ext}" || \
+        { echo "Error while executing create_filtered_model" >> "$SDIR"/log ; return 1 ; }
 
     # Create sync file
-    echo "" > ${sync_info_dir}/create_filtered_model_${chunk}
+    echo "" > "${sync_info_dir}/create_filtered_model_${chunk}"
 }
 
 prune_lex_table()
 {
-    echo "*** Pruning lexical table (started at "`date`")..." >> $SDIR/log
+    echo "*** Pruning lexical table (started at "`date`")..." >> "$SDIR"/log
 
     if [ ${file_format} = "text" ]; then
         prune_lex_table_text || return 1
@@ -566,70 +566,70 @@ prune_lex_table()
 
 prune_lex_table_text()
 {
-    ${bindir}/thot_prune_text_ilextable -n ${npr_val} -c ${cpr_val} \
-        -t ${curr_tables_dir}/merged_lex_counts -T $TMP > ${output}.${lex_ext} || return 1
+    "${bindir}"/thot_prune_text_ilextable -n ${npr_val} -c ${cpr_val} \
+        -t "${curr_tables_dir}"/merged_lex_counts -T $TMP > "${output}.${lex_ext}" || return 1
     if [ ${debug} -ne 0 ]; then
-        echo "Entries in original table: "`wc -l ${curr_tables_dir}/merged_lex_counts | $AWK '{printf"%s",$1}'` >> $SDIR/log
-        echo "Entries in pruned table: "`wc -l ${output}.${lex_ext} | $AWK '{printf"%s",$1}'` >> $SDIR/log
+        echo "Entries in original table: "`wc -l "${curr_tables_dir}/merged_lex_counts" | "$AWK" '{printf"%s",$1}'` >> "$SDIR"/log
+        echo "Entries in pruned table: "`wc -l "${output}.${lex_ext}" | "$AWK" '{printf"%s",$1}'` >> "$SDIR"/log
     fi
 
 }
 
 prune_lex_table_bin()
 {
-    ${bindir}/thot_prune_bin_ilextable -l ${curr_tables_dir}/merged_lex_counts -n ${npr_val} -c ${cpr_val} \
-        > ${output}.${lex_ext} || return 1
+    "${bindir}"/thot_prune_bin_ilextable -l "${curr_tables_dir}"/merged_lex_counts -n ${npr_val} -c ${cpr_val} \
+        > "${output}.${lex_ext}" || return 1
 }
 
 generate_final_model()
 {
-    echo "*** Copying final model (started at "`date`")..." >> $SDIR/log
-    echo "*** Copying final model (started at "`date`")..." >> ${curr_tables_dir}/generate_final_model.log
+    echo "*** Copying final model (started at "`date`")..." >> "$SDIR"/log
+    echo "*** Copying final model (started at "`date`")..." >> "${curr_tables_dir}/generate_final_model.log"
 
-    for f in ${init_model_dir}/model*; do
+    for f in "${init_model_dir}/model"*; do
         # Copy basic files
         if [ -f $f ]; then
             bname=$(basename "$f")
             extension="${bname##*.}"
             filename="${bname%.*}"
             cp $f ${output}.${extension} || \
-                { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
+                { echo "Error while executing generate_final_model" >> "$SDIR"/log ; return 1 ; }
         fi
     done
     
     # Copy sentence length model
-    cp ${slmodel_dir}/model ${output}.slmodel || \
-        { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
+    cp "${slmodel_dir}/model" "${output}.slmodel" || \
+        { echo "Error while executing generate_final_model" >> "$SDIR"/log ; return 1 ; }
 
     # Prune lexical table
     if [ ${npr_val} -eq 0 -a ${cpr_val} = "0" ]; then
-        cp ${curr_tables_dir}/merged_lex_counts ${output}.${lex_ext} || \
-            { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
+        cp "${curr_tables_dir}/merged_lex_counts" "${output}.${lex_ext}" || \
+            { echo "Error while executing generate_final_model" >> "$SDIR"/log ; return 1 ; }
     else
         # Prune lexical table
         prune_lex_table || \
-            { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
+            { echo "Error while executing generate_final_model" >> "$SDIR"/log ; return 1 ; }
     fi
     
     # Copy alignment table if exists
     if [ ${alig_ext} != "none" ]; then
-        cp ${curr_tables_dir}/merged_alig_counts ${output}.${alig_ext} || \
-            { echo "Error while executing generate_final_model" >> $SDIR/log ; return 1 ; }
+        cp "${curr_tables_dir}/merged_alig_counts" "${output}.${alig_ext}" || \
+            { echo "Error while executing generate_final_model" >> "$SDIR"/log ; return 1 ; }
     fi
 
     # Copy log file
-    echo "**** Parallel process finished at: "`date` >> $SDIR/log
-    cp $SDIR/log ${output}.genswm_log
+    echo "**** Parallel process finished at: "`date` >> "$SDIR"/log
+    cp "$SDIR"/log "${output}.genswm_log"
 
     # Create sync file
-    echo "" > ${sync_info_dir}/generate_final_model
+    echo "" > "${sync_info_dir}/generate_final_model"
 }
 
 remove_temp()
 {
     # remove shared directory
     if [ "$debug" -eq 0 ]; then
-        rm -rf $SDIR 2>/dev/null
+        rm -rf "$SDIR" 2>/dev/null
     fi
 }
 
@@ -650,13 +650,13 @@ exclude_readonly_vars()
 
 exclude_bashisms()
 {
-    $AWK '{if(index($1,"=(")==0) printf"%s\n",$0}'
+    "$AWK" '{if(index($1,"=(")==0) printf"%s\n",$0}'
 }
 
 write_functions()
 {
-    for f in `${AWK} '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
-        $SED -n /^$f/,/^}/p $0
+    for f in `"${AWK}" '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
+        "$SED" -n /^$f/,/^}/p $0
     done
 }
 
@@ -667,21 +667,21 @@ create_script()
     local command=$2
 
     # Write environment variables
-    set | exclude_readonly_vars | exclude_bashisms > ${name}
+    set | exclude_readonly_vars | exclude_bashisms > "${name}"
 
     # Write functions if necessary
-    $GREP "()" ${name} -A1 | $GREP "{" > /dev/null || write_functions >> ${name}
+    $GREP "()" "${name}" -A1 | $GREP "{" > /dev/null || write_functions >> "${name}"
 
     # Write PBS directives
-    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
-    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> ${name}
-    echo "#$ -cwd" >> ${name}
+    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> "${name}"
+    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> "${name}"
+    echo "#$ -cwd" >> "${name}"
 
     # Write command to be executed
-    echo "${command}" >> ${name}
+    echo "${command}" >> "${name}"
 
     # Give execution permission
-    chmod u+x ${name}
+    chmod u+x "${name}"
 }
 
 launch()
@@ -699,9 +699,9 @@ launch()
         if [ ${sync_sleep} -eq 1 ]; then
             # The sleep command is being used
             # Create script
-            create_script ${scripts_dir}/${program}${suffix}.sh $program
+            create_script "${scripts_dir}/${program}${suffix}.sh" "$program"
             # Execute qsub command
-            local jid=$(${QSUB} ${QSUB_TERSE_OPT} ${qs_opts} ${scripts_dir}/${program}${suffix}.sh | ${TAIL} -1)
+            local jid=$("${QSUB}" ${QSUB_TERSE_OPT} ${qs_opts} "${scripts_dir}/${program}${suffix}.sh" | "${TAIL}" -1)
 
             # Set value of output variable
             eval "${outvar}='${jid}'"
@@ -710,12 +710,12 @@ launch()
             # dependencies between jobs when executing qsub
             
             # Create script
-            create_script ${scripts_dir}/${program}${suffix}.sh $program
+            create_script "${scripts_dir}/${program}${suffix}.sh" "$program"
 
             # Define qsub option declaring job dependencies
             local depend_opt=""
             if [ ! -z "$job_deps" ]; then
-                job_deps=`echo ${job_deps} | $AWK '{for(i=1;i<NF;++i) printf"%s:",$i; printf"%s",$NF}'`
+                job_deps=`echo ${job_deps} | "$AWK" '{for(i=1;i<NF;++i) printf"%s:",$i; printf"%s",$NF}'`
                 depend_opt="-W depend=afterok:${job_deps}"
             fi
 
@@ -723,7 +723,7 @@ launch()
             # jobs. All jobs are released at the end of the script. This
             # ensures that job dependencies are defined over existing
             # jobs
-            local jid=$(${QSUB} -h ${depend_opt} ${QSUB_TERSE_OPT} ${qs_opts} ${scripts_dir}/${program}${suffix}.sh | ${TAIL} -1)
+            local jid=$("${QSUB}" -h ${depend_opt} ${QSUB_TERSE_OPT} ${qs_opts} "${scripts_dir}/${program}${suffix}.sh" | "${TAIL}" -1)
 
             # Set value of output variable
             eval "${outvar}='${jid}'"
@@ -749,7 +749,7 @@ pbs_sync()
     # Init vars
     local job_ids=$1
     local pref=$2
-    local sync_num_files=`echo "${job_ids}" | $AWK '{printf"%d",NF}'`
+    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
 
     if [ ${sync_sleep} -eq 1 ]; then
         # Execute sync loop
@@ -759,7 +759,7 @@ pbs_sync()
             
             # Compare current number of sync files written with the required
             # number
-            sync_curr_num_files=`ls -l ${sync_info_dir}/ | grep " ${pref}" | wc -l`
+            sync_curr_num_files=`ls -l "${sync_info_dir}/" | grep " ${pref}" | wc -l`
             if [ ${sync_curr_num_files} -eq ${sync_num_files} ]; then
                 sync_end=1
             fi
@@ -775,7 +775,7 @@ pbs_sync()
                 fi
             done
             if [ ${num_running_procs} -eq 0 ]; then
-                sync_curr_num_files=`ls -l ${sync_info_dir}/ | grep " ${pref}" | wc -l`
+                sync_curr_num_files=`ls -l "${sync_info_dir}/" | grep " ${pref}" | wc -l`
                 if [ ${sync_curr_num_files} -ne ${sync_num_files} ]; then
                     echo "Error during synchronization" >&2
                     return 1
@@ -795,10 +795,10 @@ all_procs_ok()
     # Init variables
     local job_ids=$1
     local pref=$2
-    local sync_num_files=`echo "${job_ids}" | $AWK '{printf"%d",NF}'`
+    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
 
     # Obtain number of processes that terminated correctly
-    local sync_curr_num_files=`ls -l ${sync_info_dir}/ | $GREP " ${pref}" | wc -l`
+    local sync_curr_num_files=`ls -l "${sync_info_dir}/" | "$GREP" " ${pref}" | wc -l`
 
     # Return result
     if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
@@ -816,14 +816,14 @@ sync()
 
     if [ "${QSUB_WORKS}" = "no" ]; then
         wait
-        sync_ok=`all_procs_ok "${job_ids}" $pref`
+        sync_ok=`all_procs_ok "${job_ids}" "$pref"`
         if [ $sync_ok -eq 1 ]; then
             return 0
         else
             return 1
         fi
     else
-        pbs_sync "${job_ids}" $pref
+        pbs_sync "${job_ids}" "$pref"
     fi
 }
 
@@ -838,66 +838,66 @@ release_job_holds()
 
 print_iter_num_message()
 {
-    echo "*** EM iteration ${n} out of $niters (started at "`date`")..." >> $SDIR/log
+    echo "*** EM iteration ${n} out of $niters (started at "`date`")..." >> "$SDIR"/log
 
     # Create sync file
-    echo "" > ${sync_info_dir}/print_iter_num_message
+    echo "" > "${sync_info_dir}/print_iter_num_message"
 }
 
 print_merge_start_message()
 {
-    echo "** Merging counts (started at "`date`")..." >> $SDIR/log
+    echo "** Merging counts (started at "`date`")..." >> "$SDIR"/log
 
     # Create sync file
-    echo "" > ${sync_info_dir}/print_merge_start_message
+    echo "" > "${sync_info_dir}/print_merge_start_message"
 }
 
 print_create_filt_models_message()
 {
-    echo "** Creating filtered models (started at "`date`")..." >> $SDIR/log
+    echo "** Creating filtered models (started at "`date`")..." >> "$SDIR"/log
 
     # Create sync file
-    echo "" > ${sync_info_dir}/print_create_filt_models_message
+    echo "" > "${sync_info_dir}/print_create_filt_models_message"
 }
 
 gen_log_err_files()
 {
     if [ ${sync_sleep} -eq 1 ]; then
-        if [ -f $SDIR/log ]; then
-            cp $SDIR/log ${output}.genswm_log
+        if [ -f "$SDIR"/log ]; then
+            cp "$SDIR"/log "${output}.genswm_log"
         fi
 
         # Generate file for error diagnosing
-        if [ -f ${slmodel_dir}/log ]; then
-            cat ${slmodel_dir}/log > ${output}.genswm_err
+        if [ -f "${slmodel_dir}/log" ]; then
+            cat "${slmodel_dir}/log" > "${output}.genswm_err"
         fi
         # Gather info about each iteration
         nit=1
         while [ $nit -le ${niters} ]; do
-            echo "*** EM iteration ${nit} out of $niters" >> ${output}.genswm_err
-            for f in ${models_per_chunk_dir}/*; do
-                if [ -f $f/model_proc_n${nit}.log ]; then
-                    cat $f/model_proc_n${nit}.log >> ${output}.genswm_err
+            echo "*** EM iteration ${nit} out of $niters" >> "${output}.genswm_err"
+            for f in "${models_per_chunk_dir}/"*; do
+                if [ -f "$f/model_proc_n${nit}.log" ]; then
+                    cat "$f/model_proc_n${nit}.log" >> "${output}.genswm_err"
                 fi
             done
 
-            if [ -f ${curr_tables_dir}/merge_lex_n${nit}.log ]; then 
-                cat ${curr_tables_dir}/merge_lex_n${nit}.log >> ${output}.genswm_err
+            if [ -f "${curr_tables_dir}/merge_lex_n${nit}.log" ]; then 
+                cat "${curr_tables_dir}/merge_lex_n${nit}.log" >> "${output}.genswm_err"
             fi
 
-            if [ -f ${curr_tables_dir}/merge_alig_n${nit}.log ]; then 
-                cat ${curr_tables_dir}/merge_alig_n${nit}.log >> ${output}.genswm_err
+            if [ -f "${curr_tables_dir}/merge_alig_n${nit}.log" ]; then 
+                cat "${curr_tables_dir}/merge_alig_n${nit}.log" >> "${output}.genswm_err"
             fi
 
-            for f in ${filtered_model_dir}/*_filt_n${nit}.log; do
-                cat $f >> ${output}.genswm_err 2> /dev/null
+            for f in "${filtered_model_dir}/*_filt_n${nit}.log"; do
+                cat "$f" >> "${output}.genswm_err" 2> /dev/null
             done
 
             nit=`expr $nit + 1`
         done
 
-        if [ -f ${curr_tables_dir}/generate_final_model.log ]; then
-            cat ${curr_tables_dir}/generate_final_model.log >> ${output}.genswm_err
+        if [ -f "${curr_tables_dir}/generate_final_model.log" ]; then
+            cat "${curr_tables_dir}/generate_final_model.log" >> "${output}.genswm_err"
         fi
     fi
 }
@@ -905,17 +905,17 @@ gen_log_err_files()
 report_errors()
 {
     if [ ${sync_sleep} -eq 1 ]; then
-        num_err=`$GREP "Error while executing" ${output}.genswm_log | wc -l`
+        num_err=`"$GREP" "Error while executing" "${output}.genswm_log" | wc -l`
         if [ ${num_err} -gt 0 ]; then
             # Print error messages
-            prog=`$GREP "Error while executing" ${output}.genswm_log | head -1 | $AWK '{printf"%s",$4}'`
+            prog=`"$GREP" "Error while executing" "${output}.genswm_log" | head -1 | "$AWK" '{printf"%s",$4}'`
             echo "Error during the execution of thot_pbs_gen_batch_sw_model (${prog})" >&2
-            if [ -f ${output}.genswm_err ]; then
+            if [ -f "${output}.genswm_err" ]; then
                 echo "File ${output}.genswm_err contains information for error diagnosing" >&2
             fi
          else
             echo "Synchronization error" >&2
-            if [ -f ${output}.genswm_err ]; then
+            if [ -f "${output}.genswm_err" ]; then
                 echo "File ${output}.genswm_err contains information for error diagnosing" >&2
             fi
         fi
@@ -1132,7 +1132,7 @@ set_shared_dir || exit 1
 echo "NOTE: see file ${SDIR}/log to track model estimation progress" >&2
 
 # Create log file
-echo "**** Parallel process started at: "`date` > $SDIR/log
+echo "**** Parallel process started at: "`date` > "$SDIR"/log
 
 # Determine file format
 declare file_format=""
@@ -1147,9 +1147,6 @@ declare alig_ext=""
 get_model_information
 
 # Split shuffled input into chunks and process them separately...
-# job_deps=""
-# launch "${job_deps}" split_input "" spl_job_id || exit 1
-# sync "${spl_job_id}" "split_input" || { gen_log_err_files ; report_errors ; exit 1; }
 split_input
 spl_job_id=""
 
@@ -1182,13 +1179,13 @@ while [ $n -le ${niters} ]; do
     pc_job_ids=""
 
     # Train models for chunks
-    for i in `ls ${chunks_dir}/src\_chunk\_*`; do
+    for i in "${chunks_dir}/src_chunk_"*; do
         # Initialize variables
-        chunk=`${BASENAME} $i`
+        chunk=`"${BASENAME}" $i`
         chunk=${chunk:4}
-        src_chunk="src_"${chunk}
-        trg_chunk="trg_"${chunk}
-        out_chunk="out_"${chunk}
+        src_chunk="src_${chunk}"
+        trg_chunk="trg_${chunk}"
+        out_chunk="out_${chunk}"
         chunk_id=`expr $chunk_id + 1`
         
         # Process chunk
@@ -1245,13 +1242,13 @@ while [ $n -le ${niters} ]; do
         sync "${print_create_filt_job_id}" "print_create_filt_models_message" || { gen_log_err_files ; report_errors ; exit 1; }
             
         f_job_ids=""
-        for i in `ls ${chunks_dir}/src\_chunk\_*`; do
+        for i in "${chunks_dir}/src_chunk_"*; do
             # Initialize variables
-            chunk=`${BASENAME} $i`
+            chunk=`"${BASENAME}" $i`
             chunk=${chunk:4}
-            src_chunk="src_"${chunk}
-            trg_chunk="trg_"${chunk}
-            out_chunk="out_"${chunk}
+            src_chunk="src_${chunk}"
+            trg_chunk="trg_${chunk}"
+            out_chunk="out_${chunk}"
             chunk_id=`expr $chunk_id + 1`
             
             # Create filtered model for chunk
@@ -1266,12 +1263,12 @@ while [ $n -le ${niters} ]; do
     # Move scripts to the used scripts directory (required when using
     # sleep-based synchronization)
     if [ ${sync_sleep} -eq 1 ]; then
-        mv ${scripts_dir}/* ${used_scripts_dir}/ 2> /dev/null
+        mv "${scripts_dir}/"* "${used_scripts_dir}"/ 2> /dev/null
     fi
 
     # Remove sync info if sleep-based synchronization is being performed
     if [ ${sync_sleep} -eq 1 ]; then
-        rm -rf ${sync_info_dir}/*
+        rm -rf "${sync_info_dir}/"*
     fi
 
     # Update job_id_list
@@ -1301,7 +1298,7 @@ gen_log_err_files
 # Remove temporary files
 if [ ${sync_sleep} -eq 1 ]; then
     # Sync using sleep is enabled
-    mv ${scripts_dir}/* ${used_scripts_dir}/ 2> /dev/null
+    mv "${scripts_dir}/"* "${used_scripts_dir}"/ 2> /dev/null
     remove_temp
 else
     # Sync using sleep is not enabled

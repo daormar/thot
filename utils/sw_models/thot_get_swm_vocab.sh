@@ -16,7 +16,7 @@ else
    sps="$2"
 fi
 
-${AWK} -v sps="${sps}"\
+"${AWK}" -v sps="${sps}"\
      'BEGIN{ 
             id=0
             if(sps!="")
@@ -48,5 +48,5 @@ ${AWK} -v sps="${sps}"\
         END{ 
 	    for(i in vocab)
              printf"%d %s %d\n",vocab[i],i,freq[i]
-	   }' $1
+	   }' "$1"
 fi
