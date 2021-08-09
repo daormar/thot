@@ -9,7 +9,7 @@ if [ $# -eq 0 ]; then
     echo "Usage: thot_rescore_nbest \"<weight1> <weight2> ... <weightn>\""
 else
     weights=$1
-    ${AWK} -v weights="$weights" \
+    "${AWK}" -v weights="$weights" \
            'BEGIN{
              numw=split(weights,weightArray," ")
             }

@@ -27,7 +27,7 @@ usage()
 ########
 augment_nblist()
 {
-    $AWK -F " [|][|][|] " -v wname=$wname -v scrfile=$scrfile 'BEGIN{
+    "$AWK" -F " [|][|][|] " -v wname="$wname" -v scrfile="$scrfile" 'BEGIN{
         nline=1
         while((getline < scrfile) > 0)
         {
@@ -59,7 +59,7 @@ augment_nblist()
          if(NF==4)
            printf"%f ||| %s %s ||| %s ||| %s\n",score,$2,rnnlm_scr,$3,$4
        }
-     }' $nblistf
+     }' "$nblistf"
 }
 
 ##################
@@ -103,7 +103,7 @@ if [ ${n_given} -eq 0 ]; then
     echo "Error! -n parameter not given!" >&2
     exit 1
 else
-    if [ ! -f ${nblistf} ]; then
+    if [ ! -f "${nblistf}" ]; then
         echo "Error! file ${nblistf} does not exist" >&2
         exit 1
     fi
@@ -118,7 +118,7 @@ if [ ${s_given} -eq 0 ]; then
     echo "Error! -s parameter not given!" >&2
     exit 1
 else
-    if [ ! -f ${scrfile} ]; then
+    if [ ! -f "${scrfile}" ]; then
         echo "Error! file ${scrfile} does not exist" >&2
         exit 1
     fi

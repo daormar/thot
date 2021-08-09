@@ -70,7 +70,7 @@ pipe_fail()
 
 str_is_option()
 {
-    echo "" | ${AWK} -v s=$1 '{if(!match(s,"-[a-zA-Z]")) print "0"; else print "1"}' 
+    echo "" | "${AWK}" -v s=$1 '{if(!match(s,"-[a-zA-Z]")) print "0"; else print "1"}' 
 }
 
 ##################
@@ -240,16 +240,16 @@ fi
 if [ -z "$tdir" ]; then
     # if not given, TDIR_DHS will be the /tmp directory
     TDIR_DHS="/tmp/thot_dhs_min_$$"
-    mkdir $TDIR_DHS || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
+    mkdir "$TDIR_DHS" || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
 
 else
     TDIR_DHS="${tdir}/thot_dhs_min_$$"
-    mkdir $TDIR_DHS || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
+    mkdir "$TDIR_DHS" || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
 fi
 
 # Remove temp directories on exit
 if [ "$debug" != "-debug" ]; then
-    trap "rm -rf $TDIR_DHS 2>/dev/null" EXIT
+    trap 'rm -rf $TDIR_DHS 2>/dev/null' EXIT
 fi
 
 # Set value of first input parameter of target function
@@ -266,11 +266,11 @@ end=0
 
 # Set initial file with objective function images
 if [ ${r_given} -eq 1 ]; then
-    cp ${r_val} ${TDIR_DHS}/adj.img
-    cp ${r_val} ${TDIR_DHS}/adj.img.old
-    cat ${r_val} | $AWK '{printf"<resumed xval>\n"}' > ${TDIR_DHS}/adj.xval
+    cp ${r_val} "${TDIR_DHS}/adj.img"
+    cp ${r_val} "${TDIR_DHS}/adj.img.old"
+    cat ${r_val} | "$AWK" '{printf"<resumed xval>\n"}' > "${TDIR_DHS}"/adj.xval
 else
-    echo "" | $AWK '{printf""}' > ${TDIR_DHS}/adj.img
+    echo "" | "$AWK" '{printf""}' > "${TDIR_DHS}"/adj.img
 fi
 
 # Downhill simplex algorithm loop
@@ -278,22 +278,22 @@ echo "Starting downhill simplex optimization..." >&2
 echo "NOTE: see last lines of file $TDIR_DHS/adj.log to track optimization progress" >&2
 while [ $end -ne 1 ]; do
     if [ "${USE_NR_ROUTINES}" = "yes" ]; then
-        ${bindir}/dhs_step_by_step_min_nr -va ${vars} ${iv_opt} ${lambda_opt} \
-            ${bias_opt} -i ${TDIR_DHS}/adj.img -ftol ${ftol} \
-            ${verbose_opt} > ${TDIR_DHS}/adj.out 2> ${TDIR_DHS}/adj.log
+        "${bindir}"/dhs_step_by_step_min_nr -va ${vars} ${iv_opt} ${lambda_opt} \
+            ${bias_opt} -i "${TDIR_DHS}/adj.img" -ftol ${ftol} \
+            ${verbose_opt} > "${TDIR_DHS}/adj.out" 2> "${TDIR_DHS}"/adj.log
         dhs_err_code=$?
     else
-        ${bindir}/thot_dhs_step_by_step_min -va ${vars} ${iv_opt} \
-            -i ${TDIR_DHS}/adj.img -ftol ${ftol} \
-            ${verbose_opt} > ${TDIR_DHS}/adj.out 2> ${TDIR_DHS}/adj.log
+        "${bindir}"/thot_dhs_step_by_step_min -va ${vars} ${iv_opt} \
+            -i "${TDIR_DHS}/adj.img" -ftol ${ftol} \
+            ${verbose_opt} > "${TDIR_DHS}/adj.out" 2> ${TDIR_DHS}/adj.log
         dhs_err_code=$?
     fi
     cat ${TDIR_DHS}/adj.out >> ${TDIR_DHS}/adj.xval
-    err_msg=`tail -1 ${TDIR_DHS}/adj.log`
+    err_msg=`tail -1 "${TDIR_DHS}/adj.log"`
     if [ "${err_msg}" = "Image for x required!" ]; then
         # A new evaluation of the target function is required
-        values=`cat ${TDIR_DHS}/adj.out`
-        ${target_func} ${first_par} ${values} >> ${TDIR_DHS}/adj.img || trgfunc_error="yes"
+        values=`cat "${TDIR_DHS}/adj.out"`
+        "${target_func}" ${first_par} ${values} >> "${TDIR_DHS}/adj.img" || trgfunc_error="yes"
 
         # Treat error in target function
         if [ "${trgfunc_error}" = "yes" ]; then
@@ -312,10 +312,10 @@ while [ $end -ne 1 ]; do
         # No more evaluations of the target function are required or
         # there was an error (e.g. maximum number of function
         # evaluations exceeded)
-        cp ${TDIR_DHS}/adj.out ${outpref}.out
-        cp ${TDIR_DHS}/adj.xval ${outpref}.xval
-        cp ${TDIR_DHS}/adj.img ${outpref}.img
-        cp ${TDIR_DHS}/adj.log ${outpref}.log
+        cp "${TDIR_DHS}/adj.out" "${outpref}.out"
+        cp "${TDIR_DHS}/adj.xval" "${outpref}.xval"
+        cp "${TDIR_DHS}/adj.img" "${outpref}.img"
+        cp "${TDIR_DHS}/adj.log" "${outpref}.log"
         end=1
         
         # Inform about errors if any

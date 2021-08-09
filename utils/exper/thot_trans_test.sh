@@ -79,17 +79,17 @@ get_absolute_path()
 {
     file=$1
     # Check if an absolute path was given
-    absolute=`is_absolute_path $file`
+    absolute=`is_absolute_path "$file"`
     if [ $absolute -eq 1 ]; then
-        echo $file
+        echo "$file"
     else
         oldpwd=$PWD
-        basetmp=`$BASENAME $PWD/$file`
-        dirtmp=`$DIRNAME $PWD/$file`
-        cd $dirtmp
-        result=${PWD}/${basetmp}
-        cd $oldpwd
-        echo $result
+        basetmp=`$BASENAME "$PWD/$file"`
+        dirtmp=`$DIRNAME "$PWD/$file"`
+        cd "$dirtmp"
+        result="${PWD}/${basetmp}"
+        cd "$oldpwd"
+        echo "$result"
     fi
 }
 
@@ -100,7 +100,7 @@ get_name_components()
     _name_aux=$1
 
     # Test known extensions
-    _basename_result=`basename ${_name_aux} .train`
+    _basename_result=`basename "${_name_aux} .train"`
     if [ "${_name_aux}" != "${_basename_result}" ]; then
         echo "${_basename_result} .train"
         return 0
@@ -119,7 +119,7 @@ get_name_components()
     fi
 
     # No extension was found
-    echo ${_name_aux}
+    echo "${_name_aux}"
     return 1
 }
 
@@ -130,11 +130,11 @@ add_suffix_to_name()
     _name=$1
     _suffix=$2
     _name_components="`get_name_components ${_name}`"
-    _name_wo_ext=`echo "${_name_components}" | $AWK '{printf"%s",$1}'`
-    _ext=`echo "${_name_components}" | $AWK '{printf"%s",$2}'`
+    _name_wo_ext=`echo "${_name_components}" | "$AWK" '{printf"%s",$1}'`
+    _ext=`echo "${_name_components}" | "$AWK" '{printf"%s",$2}'`
 
     # Return result
-    echo ${_name_wo_ext}_${_suffix}${_ext}
+    echo "${_name_wo_ext}_${_suffix}${_ext}"
 }
 
 ########
@@ -142,16 +142,16 @@ tok_corpus()
 {
     # Tokenize corpus
     echo "**** Tokenizing corpus" >&2
-    basename=`$BASENAME ${test_corpus}`
+    basename=`"$BASENAME" ${test_corpus}`
     suff="tok"
-    filename=`add_suffix_to_name $basename $suff`
+    filename=`add_suffix_to_name "$basename" $suff`
 
-    ${bindir}/thot_tokenize -f ${test_corpus} \
-        > ${thot_auto_smt_dir}/${preproc_dir}/${filename} 2>> ${thot_auto_smt_dir}/${preproc_dir}/thot_tokenize.log || exit 1
+    "${bindir}"/thot_tokenize -f "${test_corpus}" \
+        > "${thot_auto_smt_dir}/${preproc_dir}/${filename}" 2>> "${thot_auto_smt_dir}/${preproc_dir}/thot_tokenize.log" || exit 1
     echo "" >&2
 
     # Redefine corpus variables
-    test_corpus_tok=${thot_auto_smt_dir}/${preproc_dir}/${filename}
+    test_corpus_tok="${thot_auto_smt_dir}/${preproc_dir}/${filename}"
     test_corpus=${test_corpus_tok}
 }
 
@@ -164,12 +164,12 @@ lowercase_corpus()
     suff="lc"
     filename=`add_suffix_to_name $basename $suff`
 
-    ${bindir}/thot_lowercase -f ${test_corpus} \
-        > ${thot_auto_smt_dir}/${preproc_dir}/${filename} 2>> ${thot_auto_smt_dir}/${preproc_dir}/thot_lowercase.log || exit 1
+    "${bindir}"/thot_lowercase -f "${test_corpus}" \
+        > "${thot_auto_smt_dir}/${preproc_dir}/${filename}" 2>> "${thot_auto_smt_dir}/${preproc_dir}/thot_lowercase.log" || exit 1
     echo "" >&2
 
     # Redefine corpus variables
-    test_corpus=${thot_auto_smt_dir}/${preproc_dir}/${filename}
+    test_corpus="${thot_auto_smt_dir}/${preproc_dir}/${filename}"
 }
 
 ########
@@ -177,17 +177,17 @@ categ_corpus()
 {
     # Categorize corpus
     echo "**** Categorizing corpus" >&2
-    basename=`$BASENAME ${test_corpus}`
+    basename=`"$BASENAME" "${test_corpus}"`
     suff="categ"
-    filename=`add_suffix_to_name $basename $suff`
+    filename=`add_suffix_to_name "$basename" $suff`
 
-    ${bindir}/thot_categorize -f ${test_corpus} \
-        > ${thot_auto_smt_dir}/${preproc_dir}/${filename} 2>> ${thot_auto_smt_dir}/${preproc_dir}/thot_categorize.log || exit 1
+    "${bindir}"/thot_categorize -f "${test_corpus}" \
+        > "${thot_auto_smt_dir}/${preproc_dir}/${filename}" 2>> "${thot_auto_smt_dir}/${preproc_dir}/thot_categorize.log" || exit 1
     echo "" >&2
 
     # Redefine corpus variables
     test_corpus_for_decat=${test_corpus}
-    test_corpus=${thot_auto_smt_dir}/${preproc_dir}/${filename}
+    test_corpus="${thot_auto_smt_dir}/${preproc_dir}/${filename}"
 }
 
 ########
@@ -196,24 +196,24 @@ decateg_output()
     echo "**** Decategorizing output" >&2
       
     # Define uncategorized source data file
-    uncateg_src=`mktemp $tdir/uncateg_src.XXXXX`
-    ${bindir}/thot_get_srcsents_from_metadata -f ${test_corpus_for_decat} > ${uncateg_src} 2>/dev/null
+    uncateg_src=`mktemp "$tdir/uncateg_src.XXXXX"`
+    "${bindir}"/thot_get_srcsents_from_metadata -f "${test_corpus_for_decat}" > "${uncateg_src}" 2>/dev/null
 
     # Obtain alignment information
-    alig_info_file=${thot_auto_smt_dir}/output/${transoutd}/hyp_alig_info.txt
-    ${bindir}/thot_extract_hyp_info ${output_file}.dec_err > ${alig_info_file}
+    alig_info_file="${thot_auto_smt_dir}/output/${transoutd}/hyp_alig_info.txt"
+    "${bindir}"/thot_extract_hyp_info "${output_file}.dec_err" > "${alig_info_file}"
 
     # Decategorize output
-    ${bindir}/thot_decategorize -t ${output_file} -s ${uncateg_src} \
-        -i ${alig_info_file} \
-        > ${output_file}_decateg 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_decategorize.log || exit 1
+    "${bindir}"/thot_decategorize -t "${output_file}" -s "${uncateg_src}" \
+        -i "${alig_info_file}" \
+        > "${output_file}_decateg" 2> "${thot_auto_smt_dir}/output/${transoutd}/thot_decategorize.log" || exit 1
     echo "" >&2
 
     # Remove temporary files
-    rm ${uncateg_src}
+    rm "${uncateg_src}"
 
     # Redefine output_file variable
-    output_file=${output_file}_decateg
+    output_file="${output_file}_decateg"
 }
 
 ########
@@ -226,28 +226,28 @@ recase_output()
         raw_trg_pref=${tcorpus_pref}
         raw_test_corpus=${test_corpus}
     else
-        trgbase=`$BASENAME ${tcorpus_pref}`
-        raw_trg_pref=${thot_auto_smt_dir}/preproc_data/initial/${trgbase}_tok
+        trgbase=`"$BASENAME" "${tcorpus_pref}"`
+        raw_trg_pref="${thot_auto_smt_dir}/preproc_data/initial/${trgbase}_tok"
         raw_test_corpus=${test_corpus_tok}
     fi
 
     # Create tmp file
-    rfile_rec=`mktemp $tdir/rfile_rec.XXXXX`
+    rfile_rec=`mktemp "$tdir/rfile_rec.XXXXX"`
 
     # Generate raw text file for recasing
-    ${bindir}/thot_gen_rtfile -t ${raw_trg_pref} -e ${raw_test_corpus} ${nolim_opt} -tdir $tdir \
-        > ${rfile_rec} 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_gen_rtfile_rec.log || exit 1
+    "${bindir}"/thot_gen_rtfile -t "${raw_trg_pref}" -e "${raw_test_corpus}" ${nolim_opt} -tdir "$tdir" \
+        > "${rfile_rec}" 2> "${thot_auto_smt_dir}/output/${transoutd}/thot_gen_rtfile_rec.log" || exit 1
       
     # Recase output
-    ${bindir}/thot_recase -f ${output_file} -r ${rfile_rec} -w \
-        -tdir $tdir > ${output_file}_rec 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_recase.log || exit 1
+    "${bindir}"/thot_recase -f "${output_file}" -r "${rfile_rec}" -w \
+        -tdir "$tdir" > "${output_file}_re"c 2> "${thot_auto_smt_dir}/output/${transoutd}/thot_recase.log" || exit 1
     echo "" >&2
 
     # Remove temporary files
-    rm ${rfile_rec}
+    rm "${rfile_rec}"
 
     # Redefine output_file variable
-    output_file=${output_file}_rec
+    output_file="${output_file}_rec"
 }
 
 ########
@@ -256,22 +256,22 @@ detok_output()
     echo "**** Detokenizing output" >&2
 
     # Create tmp file
-    rfile_detok=`mktemp $tdir/rfile_detok.XXXXX`
+    rfile_detok=`mktemp "$tdir/rfile_detok.XXXXX"`
 
     # Generate raw text file for detokenizing
-    ${bindir}/thot_gen_rtfile -t ${tcorpus_pref} -e ${test_corpus_opt} ${nolim_opt} -tdir $tdir \
-        > ${rfile_detok} 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_gen_rtfile_detok.log || exit 1
+    "${bindir}"/thot_gen_rtfile -t "${tcorpus_pref}" -e "${test_corpus_opt}" ${nolim_opt} -tdir "$tdir" \
+        > "${rfile_detok}" 2> "${thot_auto_smt_dir}/output/${transoutd}/thot_gen_rtfile_detok.log" || exit 1
 
     # Detokenize output
-    ${bindir}/thot_detokenize -f ${output_file} -r ${rfile_detok} \
-        -tdir $tdir > ${output_file}_detok 2> ${thot_auto_smt_dir}/output/${transoutd}/thot_detokenize.log || exit 1
+    "${bindir}"/thot_detokenize -f "${output_file}" -r "${rfile_detok}" \
+        -tdir "$tdir" > "${output_file}_detok" 2> "${thot_auto_smt_dir}/output/${transoutd}/thot_detokenize.log" || exit 1
     echo "" >&2
 
     # Remove temporary files
-    rm ${rfile_detok}
+    rm "${rfile_detok}"
 
     # Redefine output_file variable
-    output_file=${output_file}_detok
+    output_file="${output_file}_detok"
 }
 
 ########
@@ -371,26 +371,25 @@ else
 fi
 
 # Obtain absolute path of initial source files
-scorpus_pref=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-s is" | $AWK '{printf"%s",$3}'`
-scorpus_pref=`get_absolute_path $scorpus_pref`
+scorpus_pref=`cat "${thot_auto_smt_dir}/input_pars.txt" | "$GREP" "\-s is" | "$AWK" '{printf"%s",$3}'`
+scorpus_pref=`get_absolute_path "$scorpus_pref"`
 
 # Complete prefix of source files
-scorpus_train=${scorpus_pref}.train
-scorpus_dev=${scorpus_pref}.dev
-scorpus_test=${scorpus_pref}.test
+scorpus_train="${scorpus_pref}.train"
+scorpus_dev="${scorpus_pref}.dev"
+scorpus_test="${scorpus_pref}.test"
 
 # Check existence of files
-#for file in ${scorpus_train} ${scorpus_dev} ${scorpus_test}; do
-for file in ${scorpus_train}; do
-    if [ ! -f ${file} ]; then
+for file in "${scorpus_train}"; do
+    if [ ! -f "${file}" ]; then
         echo "Error! file ${file} does not exist" >&2
         exit 1
     fi
 done
 
 # Obtain absolute path of initial target files
-tcorpus_pref=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-t is" | $AWK '{printf"%s",$3}'`
-tcorpus_pref=`get_absolute_path $tcorpus_pref`
+tcorpus_pref=`cat "${thot_auto_smt_dir}/input_pars.txt" | "$GREP" "\-t is" | "$AWK" '{printf"%s",$3}'`
+tcorpus_pref=`get_absolute_path "$tcorpus_pref"`
 
 # Complete prefix of target files
 tcorpus_train=${tcorpus_pref}.train
@@ -398,9 +397,8 @@ tcorpus_dev=${tcorpus_pref}.dev
 tcorpus_test=${tcorpus_pref}.test
 
 # Check existence of files
-#for file in ${tcorpus_train} ${tcorpus_dev} ${tcorpus_test}; do
-for file in ${tcorpus_train}; do
-    if [ ! -f ${file} ]; then
+for file in "${tcorpus_train}"; do
+    if [ ! -f "${file}" ]; then
         echo "Error! file ${file} does not exist" >&2
         exit 1
     fi
@@ -411,21 +409,21 @@ if [ ${t_given} -eq 0 ]; then
     echo "Error! -t parameter not given" >&2
     exit 1
 else
-    if [ ! -f ${test_corpus_opt} ]; then
+    if [ ! -f "${test_corpus_opt}" ]; then
         echo "Error! test file with sentences to be translated does not exist"
         exit 1
     fi
 fi
 
 if [ ${tdir_given} -eq 1 ]; then
-    if [ ! -d ${tdir} ]; then
+    if [ ! -d "${tdir}" ]; then
         echo "Error! directory ${tdir} does not exist" >&2
         exit 1   
     fi         
 fi
 
 if [ ${sdir_given} -eq 1 ]; then
-    if [ ! -d ${sdir} ]; then
+    if [ ! -d "${sdir}" ]; then
         echo "Error! directory ${sdir} does not exist" >&2
         exit 1            
     fi
@@ -434,7 +432,7 @@ fi
 ## Process parameters
 
 # Obtain absolute path of ${test_corpus_opt}
-test_corpus=`get_absolute_path ${test_corpus_opt}`
+test_corpus=`get_absolute_path "${test_corpus_opt}"`
 
 # Obtain basename of ${test_corpus}
 base_tc=`$BASENAME ${test_corpus}`
@@ -444,8 +442,8 @@ if [ ${tok_given} -eq 1 -o ${lower_given} -eq 1 ]; then
     # Store preproc dir name in a variable
     preproc_dir=preproc_data/${base_tc}
     # Check if the directory exists
-    if [ ! -d ${thot_auto_smt_dir}/${preproc_dir} ]; then
-        mkdir -p ${thot_auto_smt_dir}/${preproc_dir} || exit 1
+    if [ ! -d "${thot_auto_smt_dir}/${preproc_dir}" ]; then
+        mkdir -p "${thot_auto_smt_dir}/${preproc_dir}" || exit 1
     fi
 fi
 
@@ -465,19 +463,19 @@ if [ ${categ_given} -eq 1 ]; then
 fi
 
 # Obtain basename of ${test_corpus} after preprocessing
-base_tc=`$BASENAME ${test_corpus}`
+base_tc=`$BASENAME "${test_corpus}"`
 
 # Create dir for model filtering
-if [ ! -d $${thot_auto_smt_dir}/output/$curr_date ]; then
-    mkdir -p ${thot_auto_smt_dir}/filtered_models || exit 1
+if [ ! -d "${thot_auto_smt_dir}/output/$curr_date" ]; then
+    mkdir -p "${thot_auto_smt_dir}/filtered_models" || exit 1
 fi
 
 # Determine cfg file to be used
-if [ -f ${thot_auto_smt_dir}/smt_tune/tuned_for_dev.cfg ]; then
-    cfgfile_before_filt=${thot_auto_smt_dir}/smt_tune/tuned_for_dev.cfg
+if [ -f "${thot_auto_smt_dir}/smt_tune/tuned_for_dev.cfg" ]; then
+    cfgfile_before_filt="${thot_auto_smt_dir}/smt_tune/tuned_for_dev.cfg"
 else
-    if [ -f ${thot_auto_smt_dir}/before_tuning.cfg ]; then
-        cfgfile_before_filt=${thot_auto_smt_dir}/before_tuning.cfg
+    if [ -f "${thot_auto_smt_dir}/before_tuning.cfg" ]; then
+        cfgfile_before_filt="${thot_auto_smt_dir}/before_tuning.cfg"
     else
         echo "Error: no appropriate cfg file was found in ${thot_auto_smt_dir}" >&2
         exit 1
@@ -486,41 +484,41 @@ fi
 
 # Prepare system to translate test corpus
 echo "**** Preparing system to translate test corpus" >&2
-${bindir}/thot_prepare_sys_for_test -c ${cfgfile_before_filt} -t ${test_corpus}  \
-    -o ${thot_auto_smt_dir}/filtered_models/${base_tc} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+"${bindir}"/thot_prepare_sys_for_test -c "${cfgfile_before_filt}" -t "${test_corpus}"  \
+    -o "${thot_auto_smt_dir}/filtered_models/${base_tc}" ${qs_opt} "${qs_par}" -tdir "$tdir" -sdir "$sdir" ${debug_opt} || exit 1
 echo "" >&2
 
 # Obtain current date
 curr_date=`date '+%Y_%m_%d'`
 
 # Create variable containing traslator output dir name
-transoutd=${base_tc}.${curr_date}
+transoutd="${base_tc}.${curr_date}"
 
 # Create translator output dir
-if [ ! -d ${thot_auto_smt_dir}/output/${transoutd} ]; then
-    mkdir -p ${thot_auto_smt_dir}/output/${transoutd} || exit 1
+if [ ! -d "${thot_auto_smt_dir}/output/${transoutd}" ]; then
+    mkdir -p "${thot_auto_smt_dir}/output/${transoutd}" || exit 1
 fi
 
 # Generate translations
 echo "**** Translating test corpus" >&2
-${bindir}/thot_decoder -pr ${pr_val} -c ${thot_auto_smt_dir}/filtered_models/${base_tc}/test_specific.cfg \
-    -t ${test_corpus} -o ${thot_auto_smt_dir}/output/${transoutd}/thot_decoder_out ${debug_opt} \
-    -sdir $sdir -v || exit 1
+"${bindir}"/thot_decoder -pr ${pr_val} -c "${thot_auto_smt_dir}/filtered_models/${base_tc}/test_specific.cfg" \
+    -t "${test_corpus}" -o "${thot_auto_smt_dir}/output/${transoutd}/thot_decoder_out" ${debug_opt} \
+    -sdir "$sdir" -v || exit 1
 echo "" >&2
 
 ### Execute post-processing steps if required
 
 # Define output_file variable
-output_file=${thot_auto_smt_dir}/output/${transoutd}/thot_decoder_out
+output_file="${thot_auto_smt_dir}/output/${transoutd}/thot_decoder_out"
 
 # Obtain lower option of thot_auto_smt execution
-lower_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-lower is" | $AWK '{printf"%s",$3}'`
+lower_opt_thot_auto_smt=`cat "${thot_auto_smt_dir}/input_pars.txt" | "$GREP" "\-\-lower is" | "$AWK" '{printf"%s",$3}'`
 
 # Obtain tok option of thot_auto_smt execution
-tok_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-tok is" | $AWK '{printf"%s",$3}'`
+tok_opt_thot_auto_smt=`cat "${thot_auto_smt_dir}/input_pars.txt" | "$GREP" "\-\-tok is" | "$AWK" '{printf"%s",$3}'`
 
 # Obtain categ option of thot_auto_smt execution
-categ_opt_thot_auto_smt=`cat ${thot_auto_smt_dir}/input_pars.txt | $GREP "\-\-categ is" | $AWK '{printf"%s",$3}'`
+categ_opt_thot_auto_smt=`cat "${thot_auto_smt_dir}/input_pars.txt" | "$GREP" "\-\-categ is" | "$AWK" '{printf"%s",$3}'`
 
 # Decategorization stage
 if [ ${categ_given} -eq 1 ]; then
@@ -531,7 +529,7 @@ fi
 # Only execute recasing and detokenization if text was lowercased and
 # tokenized during thot_auto_smt execution
 
-if [ ${lower_opt_thot_auto_smt} -eq 1 -a ${tok_opt_thot_auto_smt} -eq 1 ]; then
+if [ "${lower_opt_thot_auto_smt}" -eq 1 -a "${tok_opt_thot_auto_smt}" -eq 1 ]; then
 
     # Recasing stage
     if [ ${lower_given} -eq 1 ]; then

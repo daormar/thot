@@ -27,7 +27,7 @@ usage()
     echo "                  [--skip-clean] [--tok] [--lower] [--categ] [--no-lim]"
     echo "                  [--no-trans] [-n <int>] [-nit <int>]"
     echo "                  [-cpr <float>] [-m <int>] [-ao <string>]"
-    if [ ${KENLM_BUILD_DIR} != "no" ]; then
+    if [ "${KENLM_BUILD_DIR}" != "no" ]; then
         echo "                  [-kenlm]"
     fi
     if [ ! -z "${LEVELDB_LIB}" ]; then
@@ -64,7 +64,7 @@ usage()
     echo "                  estimation (10 by default)"
     echo "-ao <string>      Operation between alignments to be executed"
     echo "                  (and|or|sum|sym1|sym2|grd)."
-    if [ ! ${KENLM_BUILD_DIR} = "no" ]; then
+    if [ ! "${KENLM_BUILD_DIR}" = "no" ]; then
         echo "-kenlm            Generate on-disk language model in KenLM format."
     fi
     if [ ! -z "${LEVELDB_LIB}" ]; then
@@ -120,16 +120,16 @@ get_absolute_path()
     file=$1
     # Check if an absolute path was given
     absolute=`is_absolute_path $file`
-    if [ $absolute -eq 1 ]; then
-        echo $file
+    if [ "$absolute" -eq 1 ]; then
+        echo "$file"
     else
         oldpwd=$PWD
-        basetmp=`$BASENAME $PWD/$file`
-        dirtmp=`$DIRNAME $PWD/$file`
-        cd $dirtmp
-        result=${PWD}/${basetmp}
-        cd $oldpwd
-        echo $result
+        basetmp=`"$BASENAME" "$PWD/$file"`
+        dirtmp=`"$DIRNAME" "$PWD/$file"`
+        cd "$dirtmp"
+        result="${PWD}/${basetmp}"
+        cd "$oldpwd"
+        echo "$result"
     fi
 }
 
@@ -137,25 +137,25 @@ get_absolute_path()
 tok_corpus()
 {
     # Obtain basenames
-    srcbase=`$BASENAME ${scorpus_pref}`
-    trgbase=`$BASENAME ${tcorpus_pref}`
+    srcbase=`"$BASENAME" "${scorpus_pref}"`
+    trgbase=`"$BASENAME" "${tcorpus_pref}"`
 
     # Tokenize corpus
     echo "**** Tokenizing corpus" >&2
     suff="tok"
 
-    ${bindir}/thot_tokenize -f ${scorpus_train} \
-        > ${outd}/${preproc_dir}/${srcbase}_${suff}.train 2>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
-    ${bindir}/thot_tokenize -f ${scorpus_dev} \
-        > ${outd}/${preproc_dir}/${srcbase}_${suff}.dev 2>>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
-    ${bindir}/thot_tokenize -f ${scorpus_test} \
-        > ${outd}/${preproc_dir}/${srcbase}_${suff}.test 2>>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
-    ${bindir}/thot_tokenize -f ${tcorpus_train} \
-        > ${outd}/${preproc_dir}/${trgbase}_${suff}.train 2>>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
-    ${bindir}/thot_tokenize -f ${tcorpus_dev} \
-        > ${outd}/${preproc_dir}/${trgbase}_${suff}.dev 2>>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
-    ${bindir}/thot_tokenize -f ${tcorpus_test} \
-        > ${outd}/${preproc_dir}/${trgbase}_${suff}.test 2>>${outd}/${preproc_dir}/thot_tokenize.log || exit 1
+    "${bindir}"/thot_tokenize -f "${scorpus_train}" \
+        > "${outd}/${preproc_dir}/${srcbase}_${suff}.train" 2>"${outd}/${preproc_dir}/thot_tokenize.log" || exit 1
+    "${bindir}"/thot_tokenize -f "${scorpus_dev}" \
+        > "${outd}/${preproc_dir}/${srcbase}_${suff}.dev" 2>>"${outd}/${preproc_dir}/thot_tokenize.log" || exit 1
+    "${bindir}"/thot_tokenize -f ${scorpus_test} \
+        > "${outd}/${preproc_dir}/${srcbase}_${suff}.test" 2>>"${outd}/${preproc_dir}/thot_tokenize.log" || exit 1
+    "${bindir}"/thot_tokenize -f ${tcorpus_train} \
+        > "${outd}/${preproc_dir}/${trgbase}_${suff}.train" 2>>"${outd}/${preproc_dir}/thot_tokenize.log" || exit 1
+    "${bindir}"/thot_tokenize -f ${tcorpus_dev} \
+        > "${outd}/${preproc_dir}/${trgbase}_${suff}.dev" 2>>"${outd}/${preproc_dir}/thot_tokenize.log" || exit 1
+    "${bindir}"/thot_tokenize -f ${tcorpus_test} \
+        > "${outd}/${preproc_dir}/${trgbase}_${suff}.test" 2>>"${outd}/${preproc_dir}/thot_tokenize.log" || exit 1
     echo "" >&2
 
     # Redefine corpus variables
@@ -171,8 +171,8 @@ tok_corpus()
 lowercase_corpus()
 {
     # Obtain basenames
-    srcbase=`$BASENAME ${scorpus_pref}`
-    trgbase=`$BASENAME ${tcorpus_pref}`
+    srcbase=`$BASENAME "${scorpus_pref}"`
+    trgbase=`$BASENAME "${tcorpus_pref}"`
 
     # Lowercase corpus
     echo "**** Lowercasing corpus" >&2
@@ -182,18 +182,18 @@ lowercase_corpus()
         suff="tok_lc"
     fi
 
-    ${bindir}/thot_lowercase -f ${scorpus_train} \
-        > ${outd}/${preproc_dir}/${srcbase}_${suff}.train 2>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
-    ${bindir}/thot_lowercase -f ${scorpus_dev} \
-        > ${outd}/${preproc_dir}/${srcbase}_${suff}.dev 2>>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
-    ${bindir}/thot_lowercase -f ${scorpus_test} \
-        > ${outd}/${preproc_dir}/${srcbase}_${suff}.test 2>>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
-    ${bindir}/thot_lowercase -f ${tcorpus_train} \
-        > ${outd}/${preproc_dir}/${trgbase}_${suff}.train 2>>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
-    ${bindir}/thot_lowercase -f ${tcorpus_dev} \
-        > ${outd}/${preproc_dir}/${trgbase}_${suff}.dev 2>>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
-    ${bindir}/thot_lowercase -f ${tcorpus_test} \
-        > ${outd}/${preproc_dir}/${trgbase}_${suff}.test 2>>${outd}/${preproc_dir}/thot_lowercase.log || exit 1
+    "${bindir}"/thot_lowercase -f "${scorpus_train}" \
+        > "${outd}/${preproc_dir}/${srcbase}_${suff}.train" 2>"${outd}/${preproc_dir}/thot_lowercase.log" || exit 1
+    "${bindir}"/thot_lowercase -f "${scorpus_dev}" \
+        > "${outd}/${preproc_dir}/${srcbase}_${suff}.dev" 2>>"${outd}/${preproc_dir}/thot_lowercase.log" || exit 1
+    "${bindir}"/thot_lowercase -f "${scorpus_test}" \
+        > "${outd}/${preproc_dir}/${srcbase}_${suff}.test" 2>>"${outd}/${preproc_dir}/thot_lowercase.log" || exit 1
+    "${bindir}"/thot_lowercase -f "${tcorpus_train}" \
+        > "${outd}/${preproc_dir}/${trgbase}_${suff}.train" 2>>"${outd}/${preproc_dir}/thot_lowercase.log" || exit 1
+    "${bindir}"/thot_lowercase -f "${tcorpus_dev}" \
+        > "${outd}/${preproc_dir}/${trgbase}_${suff}.dev" 2>>"${outd}/${preproc_dir}/thot_lowercase.log" || exit 1
+    "${bindir}"/thot_lowercase -f "${tcorpus_test}" \
+        > "${outd}/${preproc_dir}/${trgbase}_${suff}.test" 2>>"${outd}/${preproc_dir}/thot_lowercase.log" || exit 1
     echo "" >&2
 
     # Redefine corpus variables
@@ -209,8 +209,8 @@ lowercase_corpus()
 categ_corpus()
 {
     # Obtain basenames
-    srcbase=`$BASENAME ${scorpus_pref}`
-    trgbase=`$BASENAME ${tcorpus_pref}`
+    srcbase=`$BASENAME "${scorpus_pref}"`
+    trgbase=`$BASENAME "${tcorpus_pref}"`
 
     # Categorize corpus
     echo "**** Categorizing corpus" >&2
@@ -225,18 +225,18 @@ categ_corpus()
 
     suff="${suff}categ"
 
-    ${bindir}/thot_categorize -f ${scorpus_train} \
-        > ${outd}/${preproc_dir}/${srcbase}_${suff}.train 2>${outd}/${preproc_dir}/thot_categorize.log || exit 1
-    ${bindir}/thot_categorize -f ${scorpus_dev} \
-        > ${outd}/${preproc_dir}/${srcbase}_${suff}.dev 2>>${outd}/${preproc_dir}/thot_categorize.log || exit 1
-    ${bindir}/thot_categorize -f ${scorpus_test} \
-        > ${outd}/${preproc_dir}/${srcbase}_${suff}.test 2>>${outd}/${preproc_dir}/thot_categorize.log || exit 1
-    ${bindir}/thot_categorize -f ${tcorpus_train} \
-        > ${outd}/${preproc_dir}/${trgbase}_${suff}.train 2>>${outd}/${preproc_dir}/thot_categorize.log || exit 1
-    ${bindir}/thot_categorize -f ${tcorpus_dev} \
-        > ${outd}/${preproc_dir}/${trgbase}_${suff}.dev 2>>${outd}/${preproc_dir}/thot_categorize.log || exit 1
-    ${bindir}/thot_categorize -f ${tcorpus_test} \
-        > ${outd}/${preproc_dir}/${trgbase}_${suff}.test 2>>${outd}/${preproc_dir}/thot_categorize.log || exit 1
+    "${bindir}"/thot_categorize -f "${scorpus_train}" \
+        > "${outd}/${preproc_dir}/${srcbase}_${suff}.train" 2>"${outd}/${preproc_dir}/thot_categorize.log" || exit 1
+    "${bindir}"/thot_categorize -f "${scorpus_dev}" \
+        > "${outd}/${preproc_dir}/${srcbase}_${suff}.dev" 2>>"${outd}/${preproc_dir}/thot_categorize.log" || exit 1
+    "${bindir}"/thot_categorize -f "${scorpus_test}" \
+        > "${outd}/${preproc_dir}/${srcbase}_${suff}.test" 2>>"${outd}/${preproc_dir}/thot_categorize.log" || exit 1
+    "${bindir}"/thot_categorize -f "${tcorpus_train}" \
+        > "${outd}/${preproc_dir}/${trgbase}_${suff}.train" 2>>"${outd}/${preproc_dir}/thot_categorize.log" || exit 1
+    "${bindir}"/thot_categorize -f "${tcorpus_dev}" \
+        > "${outd}/${preproc_dir}/${trgbase}_${suff}.dev" 2>>"${outd}/${preproc_dir}/thot_categorize.log" || exit 1
+    "${bindir}"/thot_categorize -f "${tcorpus_test}" \
+        > "${outd}/${preproc_dir}/${trgbase}_${suff}.test" 2>>"${outd}/${preproc_dir}/thot_categorize.log" || exit 1
     echo "" >&2
 
     # Redefine corpus variables
@@ -253,8 +253,8 @@ categ_corpus()
 clean_corpus()
 {
     # Obtain basenames
-    srcbase=`$BASENAME ${scorpus_pref}`
-    trgbase=`$BASENAME ${tcorpus_pref}`
+    srcbase=`$BASENAME "${scorpus_pref}"`
+    trgbase=`$BASENAME "${tcorpus_pref}"`
 
     # Clean corpus
     echo "**** Cleaning corpus" >&2
@@ -274,20 +274,20 @@ clean_corpus()
     suff="${suff}clean"
 
     # Obtain line numbers of clean sentence pairs
-    ${bindir}/thot_clean_corpus_ln -s ${scorpus_train} -t ${tcorpus_train} \
-        > ${outd}/${preproc_dir}/train_clean_ln 2>${outd}/${preproc_dir}/thot_clean_corpus_ln.log || exit 1
-    ${bindir}/thot_clean_corpus_ln -s ${scorpus_dev} -t ${tcorpus_dev} \
-        > ${outd}/${preproc_dir}/dev_clean_ln 2>>${outd}/${preproc_dir}/thot_clean_corpus_ln.log || exit 1
+    "${bindir}"/thot_clean_corpus_ln -s "${scorpus_train}" -t "${tcorpus_train}" \
+        > "${outd}/${preproc_dir}/train_clean_ln" 2>"${outd}/${preproc_dir}/thot_clean_corpus_ln.log" || exit 1
+    "${bindir}"/thot_clean_corpus_ln -s "${scorpus_dev}" -t "${tcorpus_dev}" \
+        > "${outd}/${preproc_dir}/dev_clean_ln" 2>>"${outd}/${preproc_dir}/thot_clean_corpus_ln.log" || exit 1
 
     # Create file with clean sentence pairs
-    ${bindir}/thot_extract_sents_by_ln -n ${outd}/${preproc_dir}/train_clean_ln \
-        -f ${scorpus_train} > ${outd}/${preproc_dir}/${srcbase}_${suff}.train || exit 1
-    ${bindir}/thot_extract_sents_by_ln -n ${outd}/${preproc_dir}/dev_clean_ln \
-        -f ${scorpus_dev} > ${outd}/${preproc_dir}/${srcbase}_${suff}.dev || exit 1
-    ${bindir}/thot_extract_sents_by_ln -n ${outd}/${preproc_dir}/train_clean_ln \
-        -f ${tcorpus_train} > ${outd}/${preproc_dir}/${trgbase}_${suff}.train || exit 1
-    ${bindir}/thot_extract_sents_by_ln -n ${outd}/${preproc_dir}/dev_clean_ln \
-        -f ${tcorpus_dev} > ${outd}/${preproc_dir}/${trgbase}_${suff}.dev || exit 1
+    "${bindir}"/thot_extract_sents_by_ln -n "${outd}/${preproc_dir}/train_clean_ln" \
+        -f "${scorpus_train}" > "${outd}/${preproc_dir}/${srcbase}_${suff}.train" || exit 1
+    "${bindir}"/thot_extract_sents_by_ln -n "${outd}/${preproc_dir}/dev_clean_ln" \
+        -f "${scorpus_dev}" > "${outd}/${preproc_dir}/${srcbase}_${suff}.dev" || exit 1
+    "${bindir}"/thot_extract_sents_by_ln -n "${outd}/${preproc_dir}/train_clean_ln" \
+        -f "${tcorpus_train}" > "${outd}/${preproc_dir}/${trgbase}_${suff}.train" || exit 1
+    "${bindir}"/thot_extract_sents_by_ln -n "${outd}/${preproc_dir}/dev_clean_ln" \
+        -f "${tcorpus_dev}" > "${outd}/${preproc_dir}/${trgbase}_${suff}.dev" || exit 1
 
     echo "" >&2
 
@@ -305,20 +305,20 @@ decateg_output()
 
     # Define uncategorized source data file
     uncateg_src=`mktemp $tdir/uncateg_src.XXXXX`
-    ${bindir}/thot_get_srcsents_from_metadata -f ${srctest_corpus_for_decat} > ${uncateg_src} 2>/dev/null
+    "${bindir}"/thot_get_srcsents_from_metadata -f "${srctest_corpus_for_decat}" > "${uncateg_src}" 2>/dev/null
 
     # Obtain alignment information
     alig_info_file=${outd}/output/${transoutd}/hyp_alig_info.txt
-    ${bindir}/thot_extract_hyp_info ${output_file}.dec_err > ${alig_info_file}
+    "${bindir}"/thot_extract_hyp_info "${output_file}.dec_err" > "${alig_info_file}"
 
     # Decategorize output
-    ${bindir}/thot_decategorize -t ${output_file} -s ${uncateg_src} \
-        -i ${alig_info_file} \
-        > ${output_file}_decateg 2> ${outd}/output/${transoutd}/thot_decategorize.log || exit 1
+    "${bindir}"/thot_decategorize -t "${output_file}" -s "${uncateg_src}" \
+        -i "${alig_info_file}" \
+        > "${output_file}_decateg" 2> "${outd}/output/${transoutd}/thot_decategorize.log" || exit 1
     echo "" >&2
 
     # Remove temporary files
-    rm ${uncateg_src}
+    rm "${uncateg_src}"
 
     # Redefine output_file variable
     output_file=${output_file}_decateg
@@ -339,16 +339,16 @@ recase_output()
     fi
 
     # Generate raw text file for recasing
-    ${bindir}/thot_gen_rtfile -s ${raw_src_pref} -t ${raw_trg_pref} \
-        ${nolim_opt} -tdir $tdir > $tdir/rfile_rec 2> ${outd}/output/${transoutd}/thot_gen_rtfile_rec.log || exit 1
+    "${bindir}"/thot_gen_rtfile -s "${raw_src_pref}" -t "${raw_trg_pref}" \
+        ${nolim_opt} -tdir "$tdir" > "$tdir/rfile_rec" 2> "${outd}/output/${transoutd}/thot_gen_rtfile_rec.log" || exit 1
       
     # Recase output
-    ${bindir}/thot_recase -f ${output_file} -r $tdir/rfile_rec -w \
-        -tdir $tdir > ${output_file}_rec 2> ${outd}/output/${transoutd}/thot_recase.log || exit 1
+    "${bindir}"/thot_recase -f "${output_file}" -r "$tdir/rfile_rec" -w \
+        -tdir "$tdir" > "${output_file}_rec" 2> "${outd}/output/${transoutd}/thot_recase.log" || exit 1
     echo "" >&2
 
     # Remove temporary files
-    rm $tdir/rfile_rec
+    rm "$tdir/rfile_rec"
 
     # Redefine output_file variable
     output_file=${output_file}_rec
@@ -360,16 +360,16 @@ detok_output()
     echo "**** Detokenizing output" >&2
 
     # Generate raw text file for detokenizing
-    ${bindir}/thot_gen_rtfile -s ${scorpus_pref} -t ${tcorpus_pref} \
-        ${nolim_opt} -tdir $tdir > $tdir/rfile_detok 2> ${outd}/output/${transoutd}/thot_gen_rtfile_detok.log || exit 1
+    "${bindir}"/thot_gen_rtfile -s "${scorpus_pref}" -t "${tcorpus_pref}" \
+        ${nolim_opt} -tdir "$tdir" > "$tdir/rfile_detok" 2> "${outd}/output/${transoutd}/thot_gen_rtfile_detok.log" || exit 1
 
     # Detokenize output
-    ${bindir}/thot_detokenize -f ${output_file} -r $tdir/rfile_detok \
-        -tdir $tdir > ${output_file}_detok 2> ${outd}/output/${transoutd}/thot_detokenize.log || exit 1
+    "${bindir}"/thot_detokenize -f "${output_file}" -r "$tdir/rfile_detok" \
+        -tdir "$tdir" > "${output_file}_detok" 2> "${outd}/output/${transoutd}/thot_detokenize.log" || exit 1
     echo "" >&2
 
     # Remove temporary files
-    rm $tdir/rfile_detok
+    rm "$tdir/rfile_detok"
 
     # Redefine output_file variable
     output_file=${output_file}_detok
@@ -383,8 +383,8 @@ process_pars()
         # Store preproc dir name in a variable
         preproc_dir=preproc_data/initial
         # Check if the directory exists
-        if [ ! -d ${outd}/${preproc_dir} ]; then
-            mkdir -p ${outd}/${preproc_dir} || exit 1
+        if [ ! -d "${outd}/${preproc_dir}" ]; then
+            mkdir -p "${outd}/${preproc_dir}" || exit 1
         fi
     fi
 
@@ -409,17 +409,17 @@ process_pars()
     fi
 
     # Train models
-    if [ -f ${scorpus_train} -a -f ${tcorpus_train} ]; then
+    if [ -f "${scorpus_train}" -a -f "${tcorpus_train}" ]; then
 
         # Train language model
         echo "**** Training language model" >&2
-        ${bindir}/thot_lm_train -pr ${pr_val} -c ${tcorpus_train} -o ${outd}/lm -n ${n_val} -unk \
-                 ${lmtype_opt} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+        "${bindir}"/thot_lm_train -pr ${pr_val} -c "${tcorpus_train}" -o "${outd}/lm" -n ${n_val} -unk \
+                 ${lmtype_opt} ${qs_opt} "${qs_par}" -tdir "$tdir" -sdir "$sdir" ${debug_opt} || exit 1
         
         # Train translation model
         echo "**** Training translation model" >&2
-        ${bindir}/thot_tm_train -pr ${pr_val} -s ${scorpus_train} -t ${tcorpus_train} -o ${outd}/tm -nit ${nitval} \
-                 -cpr ${cprval} -m ${m_val} ${ao_opt} ${tmtype_opt} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+        "${bindir}"/thot_tm_train -pr ${pr_val} -s "${scorpus_train}" -t "${tcorpus_train}" -o "${outd}/tm" -nit ${nitval} \
+                 -cpr ${cprval} -m ${m_val} ${ao_opt} ${tmtype_opt} ${qs_opt} "${qs_par}" -tdir "$tdir" -sdir "$sdir" ${debug_opt} || exit 1
 
     else
         echo "Error! training files do not exist" >&2
@@ -428,14 +428,14 @@ process_pars()
 
     # Generate cfg file
     echo "**** Generating configuration file" >&2
-    ${bindir}/thot_gen_cfg_file $outd/lm/lm_desc $outd/tm/tm_desc > $outd/before_tuning.cfg || exit 1
+    "${bindir}"/thot_gen_cfg_file "$outd/lm/lm_desc" "$outd/tm/tm_desc" > "$outd/before_tuning.cfg" || exit 1
     echo "" >&2
 
     # Tune parameters
-    if [ -f ${scorpus_dev} -a -f ${tcorpus_dev} ]; then
+    if [ -f "${scorpus_dev}" -a -f "${tcorpus_dev}" ]; then
         echo "**** Tuning model parameters" >&2
-        ${bindir}/thot_smt_tune -pr ${pr_val} -c $outd/before_tuning.cfg -s ${scorpus_dev} -t ${tcorpus_dev} -o $outd/smt_tune ${qs_opt} \
-                 ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+        "${bindir}"/thot_smt_tune -pr ${pr_val} -c "$outd/before_tuning.cfg" -s "${scorpus_dev}" -t "${tcorpus_dev}" -o "$outd/smt_tune" ${qs_opt} \
+                 ${qs_opt} "${qs_par}" -tdir "$tdir" -sdir "$sdir" ${debug_opt} || exit 1
         tuning_executed="yes"
     fi
 
@@ -444,18 +444,18 @@ process_pars()
     if [ ${notrans_given} -eq 0 ]; then
 
         # Create dir for model filtering
-        if [ ! -d ${outd}/output/$curr_date ]; then
-            mkdir -p ${outd}/filtered_models || exit 1
+        if [ ! -d "${outd}/output/$curr_date" ]; then
+            mkdir -p "${outd}/filtered_models" || exit 1
         fi
 
         # Obtain basename of ${scorpus_test}
-        base_sct=`$BASENAME ${scorpus_test}`
+        base_sct=`$BASENAME "${scorpus_test}"`
 
         # Prepare system to translate test corpus
-        if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
+        if [ -f "${scorpus_test}" -a -f "${tcorpus_test}" -a ${tuning_executed} = "yes" ]; then
             echo "**** Preparing system to translate test corpus" >&2
-            ${bindir}/thot_prepare_sys_for_test -c $outd/smt_tune/tuned_for_dev.cfg -t ${scorpus_test}  \
-                     -o $outd/filtered_models/${base_sct} ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+            "${bindir}"/thot_prepare_sys_for_test -c "$outd/smt_tune/tuned_for_dev.cfg" -t "${scorpus_test}"  \
+                     -o "$outd/filtered_models/${base_sct}" ${qs_opt} "${qs_par}" -tdir "$tdir" -sdir "$sdir" ${debug_opt} || exit 1
             echo "" >&2
         fi
 
@@ -466,15 +466,15 @@ process_pars()
         transoutd=${base_sct}.${curr_date}
 
         # Create translator output dir
-        if [ ! -d ${outd}/output/${transoutd} ]; then
-            mkdir -p ${outd}/output/${transoutd} || exit 1
+        if [ ! -d "${outd}/output/${transoutd}" ]; then
+            mkdir -p "${outd}/output/${transoutd}" || exit 1
         fi
 
         # Generate translations
-        if [ -f ${scorpus_test} -a -f ${tcorpus_test} -a ${tuning_executed} = "yes" ]; then
+        if [ -f "${scorpus_test}" -a -f "${tcorpus_test}" -a ${tuning_executed} = "yes" ]; then
             echo "**** Translating test corpus" >&2
-            ${bindir}/thot_decoder -pr ${pr_val} -c $outd/filtered_models/${base_sct}/test_specific.cfg \
-                     -t ${scorpus_test} -o $outd/output/${transoutd}/thot_decoder_out ${debug_opt} -sdir $sdir -v || exit 1
+            "${bindir}"/thot_decoder -pr ${pr_val} -c "$outd/filtered_models/${base_sct}/test_specific.cfg" \
+                     -t "${scorpus_test}" -o "$outd/output/${transoutd}/thot_decoder_out" ${debug_opt} -sdir "$sdir" -v || exit 1
             test_trans_executed="yes"
             echo "" >&2
         fi
@@ -482,16 +482,16 @@ process_pars()
         # Obtain score given by thot_scorer
         if [ ${test_trans_executed} = "yes" ]; then
             echo "**** Obtaining thot_scorer score" >&2
-            ${bindir}/thot_scorer -r ${tcorpus_test} -t $outd/output/${transoutd}/thot_decoder_out \
-                     > $outd/output/${transoutd}/thot_decoder_out.score || exit 1
+            "${bindir}"/thot_scorer -r "${tcorpus_test}" -t "$outd/output/${transoutd}/thot_decoder_out" \
+                     > "$outd/output/${transoutd}/thot_decoder_out.score" || exit 1
             echo "" >&2
         fi
 
         # Obtain BLEU score
         if [ ${test_trans_executed} = "yes" ]; then
             echo "**** Obtaining BLEU score" >&2
-            ${bindir}/thot_calc_bleu -r ${tcorpus_test} -t $outd/output/${transoutd}/thot_decoder_out \
-                     > $outd/output/${transoutd}/thot_decoder_out.bleu || exit 1
+            "${bindir}"/thot_calc_bleu -r "${tcorpus_test}" -t "$outd/output/${transoutd}/thot_decoder_out" \
+                     > "$outd/output/${transoutd}/thot_decoder_out.bleu" || exit 1
             echo "" >&2
         fi
 
@@ -693,8 +693,8 @@ else
     scorpus_test=${scorpus_pref}.test
 
     # Check existence of files
-    for file in ${scorpus_train} ${scorpus_dev} ${scorpus_test}; do
-        if [ ! -f ${file} ]; then
+    for file in "${scorpus_train}" "${scorpus_dev}" "${scorpus_test}"; do
+        if [ ! -f "${file}" ]; then
             echo "Error! file ${file} does not exist" >&2
             exit 1
         fi
@@ -714,8 +714,8 @@ else
     tcorpus_test=${tcorpus_pref}.test
 
     # Check existence of files
-    for file in ${tcorpus_train} ${tcorpus_dev} ${tcorpus_test}; do
-        if [ ! -f ${file} ]; then
+    for file in "${tcorpus_train}" "${tcorpus_dev}" "${tcorpus_test}"; do
+        if [ ! -f "${file}" ]; then
             echo "Error! file ${file} does not exist" >&2
             exit 1
         fi
@@ -724,22 +724,22 @@ else
 fi
 
 # Check that source and target files are parallel
-nl_source=`wc -l $scorpus_train | $AWK '{printf"%d",$1}'`
-nl_target=`wc -l $tcorpus_train | $AWK '{printf"%d",$1}'`
+nl_source=`wc -l "$scorpus_train" | "$AWK" '{printf"%d",$1}'`
+nl_target=`wc -l "$tcorpus_train" | "$AWK" '{printf"%d",$1}'`
 if [ ${nl_source} -ne ${nl_target} ]; then
     echo "Error! source and target training files have not the same number of lines" >&2 
     exit 1
 fi
 
-nl_source=`wc -l $scorpus_dev | $AWK '{printf"%d",$1}'`
-nl_target=`wc -l $tcorpus_dev | $AWK '{printf"%d",$1}'`
+nl_source=`wc -l "$scorpus_dev" | "$AWK" '{printf"%d",$1}'`
+nl_target=`wc -l "$tcorpus_dev" | "$AWK" '{printf"%d",$1}'`
 if [ ${nl_source} -ne ${nl_target} ]; then
     echo "Error! source and target development files have not the same number of lines" >&2 
     exit 1
 fi
 
-nl_source=`wc -l $scorpus_test | $AWK '{printf"%d",$1}'`
-nl_target=`wc -l $tcorpus_test | $AWK '{printf"%d",$1}'`
+nl_source=`wc -l "$scorpus_test" | "$AWK" '{printf"%d",$1}'`
+nl_target=`wc -l "$tcorpus_test" | "$AWK" '{printf"%d",$1}'`
 if [ ${nl_source} -ne ${nl_target} ]; then
     echo "Error! source and target test files have not the same number of lines" >&2 
     exit 1
@@ -756,18 +756,18 @@ else
         mkdir -p ${outd} || { echo "Error! cannot create output directory" >&2; exit 1; }
     fi
     # Obtain absolute path
-    outd=`get_absolute_path $outd`
+    outd=`get_absolute_path "$outd"`
 fi
 
 if [ ${tdir_given} -eq 1 ]; then
-    if [ ! -d ${tdir} ]; then
+    if [ ! -d "${tdir}" ]; then
         echo "Error! directory ${tdir} does not exist" >&2
         exit 1   
     fi         
 fi
 
 if [ ${sdir_given} -eq 1 ]; then
-    if [ ! -d ${sdir} ]; then
+    if [ ! -d "${sdir}" ]; then
         echo "Error! directory ${sdir} does not exist" >&2
         exit 1            
     fi
@@ -784,20 +784,20 @@ if [ ${bdbtm_given} -eq 1 -a ${ldbtm_given} -eq 1 ]; then
 fi
 
 ## Print parameters
-echo "-pr is ${pr_val}" > ${outd}/input_pars.txt
-echo "-s is ${scorpus_pref}" >> ${outd}/input_pars.txt
-echo "-t is ${tcorpus_pref}" >> ${outd}/input_pars.txt
-echo "-o is ${outd}" >> ${outd}/input_pars.txt
-echo "-n is ${n_val}" >> ${outd}/input_pars.txt
-echo "-nit is ${nitval}" >> ${outd}/input_pars.txt
-echo "-cpr is ${cprval}" >> ${outd}/input_pars.txt
-echo "--skip-clean is ${skip_clean_given}" >> ${outd}/input_pars.txt
-echo "--tok is ${tok_given}" >> ${outd}/input_pars.txt
-echo "--lower is ${lower_given}" >> ${outd}/input_pars.txt
-echo "--categ is ${categ_given}" >> ${outd}/input_pars.txt
-echo "--no-lim is ${nolim_given}" >> ${outd}/input_pars.txt
-echo "-tdir is ${tdir}" >> ${outd}/input_pars.txt
-echo "-sdir is ${sdir}" >> ${outd}/input_pars.txt
+echo "-pr is ${pr_val}" > "${outd}/input_pars.txt"
+echo "-s is ${scorpus_pref}" >> "${outd}/input_pars.txt"
+echo "-t is ${tcorpus_pref}" >> "${outd}/input_pars.txt"
+echo "-o is ${outd}" >> "${outd}/input_pars.txt"
+echo "-n is ${n_val}" >> "${outd}/input_pars.txt"
+echo "-nit is ${nitval}" >> "${outd}/input_pars.txt"
+echo "-cpr is ${cprval}" >> "${outd}/input_pars.txt"
+echo "--skip-clean is ${skip_clean_given}" >> "${outd}/input_pars.txt"
+echo "--tok is ${tok_given}" >> "${outd}/input_pars.txt"
+echo "--lower is ${lower_given}" >> "${outd}/input_pars.txt"
+echo "--categ is ${categ_given}" >> "${outd}/input_pars.txt"
+echo "--no-lim is ${nolim_given}" >> "${outd}/input_pars.txt"
+echo "-tdir is ${tdir}" >> "${outd}/input_pars.txt"
+echo "-sdir is ${sdir}" >> "${outd}/input_pars.txt"
 
 ## Process parameters
 process_pars

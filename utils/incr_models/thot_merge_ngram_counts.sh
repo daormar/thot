@@ -8,7 +8,7 @@ if [ $# -ne 0 ]; then
 echo "Usage: thot_merge_ngram_counts"
 else
 
-${AWK} '\
+"${AWK}" '\
 function delete_array(array)
 {
   for (i in array) delete array[i]
@@ -113,5 +113,5 @@ function delete_array(array)
              }
              if(first_src=="") printf"%s %d %d\n",first_trg,count_s,gc_srctrg
              else printf"%s %s %d %d\n",first_src,first_trg,count_s,gc_srctrg
-          }' $1
+          }' "$1"
 fi

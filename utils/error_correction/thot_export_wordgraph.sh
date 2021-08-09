@@ -14,7 +14,7 @@ function export_wg_graphviz()
     # Export wordgraph
     echo "digraph word_graph {"
     echo "rankdir=LR;"
-    ${AWK} 'BEGIN{
+    "${AWK}" 'BEGIN{
                  lineWithFinalStates=1
                 }
                 {
@@ -39,7 +39,7 @@ function export_wg_graphviz()
                    printf "\" ];\n"
                   }
                  }
-                }' $graph
+                }' "$graph"
         echo "}"
 }
 
@@ -57,6 +57,6 @@ else
     fi
 
     if [ $format -eq 0 ]; then
-        export_wg_graphviz $graph
+        export_wg_graphviz "$graph"
     fi
 fi

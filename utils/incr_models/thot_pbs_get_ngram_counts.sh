@@ -43,9 +43,6 @@ usage()
     echo "                     NOTES:"
     echo "                      a) give absolute paths when using pbs clusters."
     echo "                      b) ensure there is enough disk space in the partition."
-    # echo "--sync-sleep       : Use sleep command loops to synchronize processes (only for"
-    # echo "                     pbs clusters). This is useful when the number of jobs that"
-    # echo "                     can be executed with qsub is restricted."
     echo "--sync-dep         : Use qsub-defined job dependencies to synchronize processes"
     echo "                     (only for pbs clusters). Currently, the implementation"
     echo "                     still has portability issues."
@@ -180,7 +177,7 @@ exclude_readonly_vars()
 
 exclude_bashisms()
 {
-    $AWK '{if(index($1,"=(")==0) printf"%s\n",$0}'
+    "$AWK" '{if(index($1,"=(")==0) printf"%s\n",$0}'
 }
 
 write_functions()
@@ -248,7 +245,7 @@ launch()
             # Define qsub option declaring job dependencies
             local depend_opt=""
             if [ ! -z "$job_deps" ]; then
-                job_deps=`echo ${job_deps} | $AWK '{for(i=1;i<NF;++i) printf"%s:",$i; printf"%s",$NF}'`
+                job_deps=`echo ${job_deps} | "$AWK" '{for(i=1;i<NF;++i) printf"%s:",$i; printf"%s",$NF}'`
                 depend_opt="-W depend=afterok:${job_deps}"
             fi
             
@@ -282,7 +279,7 @@ pbs_sync()
     # Init vars
     local job_ids=$1
     local pref=$2
-    local sync_num_files=`echo "${job_ids}" | $AWK '{printf"%d",NF}'`
+    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
 
     if [ ${sync_sleep} -eq 1 ]; then
         # Execute sync loop
@@ -327,7 +324,7 @@ all_procs_ok()
     # Init variables
     local job_ids=$1
     local pref=$2
-    local sync_num_files=`echo "${job_ids}" | $AWK '{printf"%d",NF}'`
+    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
 
     # Obtain number of processes that terminated correctly
     local sync_curr_num_files=`ls -l ${sync_info_dir}/ | $GREP " ${pref}" | wc -l`
@@ -483,7 +480,7 @@ report_errors()
         num_err=`$GREP "Error while executing" ${output}.getng_log | wc -l`
         if [ ${num_err} -gt 0 ]; then
             # Print error messages
-            prog=`$GREP "Error while executing" ${output}.getng_log | head -1 | $AWK '{printf"%s",$4}'`
+            prog=`$GREP "Error while executing" ${output}.getng_log | head -1 | "$AWK" '{printf"%s",$4}'`
             echo "Error during the execution of thot_get_ngram_counts (${prog})" >&2
             if [ -f ${output}.getng_err ]; then
                 echo "File ${output}.getng_err contains information for error diagnosing" >&2

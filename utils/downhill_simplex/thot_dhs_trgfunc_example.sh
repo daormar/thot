@@ -30,5 +30,5 @@ if [ $# -ne 3 ]; then
     echo "      has a global minimum at (x,y) = (1,1), where f(x,y) = 0."
     echo " "
 else
-    echo "" | LC_ALL="C" ${AWK} -v x=$2 -v y=$3 '{printf"%g\n",(1-x)*(1-x)+100*((y-(x*x))*(y-(x*x)))}'
+    echo "" | LC_ALL="C" "${AWK}" -v x=$2 -v y=$3 '{printf"%g\n",(1-x)*(1-x)+100*((y-(x*x))*(y-(x*x)))}'
 fi

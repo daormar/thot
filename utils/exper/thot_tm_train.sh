@@ -120,11 +120,11 @@ get_absolute_path()
         echo $file
     else
         oldpwd=$PWD
-        basetmp=`$BASENAME $PWD/$file`
-        dirtmp=`$DIRNAME $PWD/$file`
-        cd $dirtmp
+        basetmp=`"$BASENAME" "$PWD/$file"`
+        dirtmp=`"$DIRNAME" "$PWD/$file"`
+        cd "$dirtmp"
         result=${PWD}/${basetmp}
-        cd $oldpwd
+        cd "$oldpwd"
         echo $result
     fi
 }
@@ -146,11 +146,11 @@ create_desc_file()
     # Create descriptor file
     if [ ${o_given} -eq 1 ]; then
         # -o option was given
-        echo "thot tm descriptor # tool: thot_tm_train" > ${outd}/tm_desc
-        echo "${modeltype} ${relative_prefix} main # source file: ${scorpus} ; target file: ${tcorpus}" >> ${outd}/tm_desc
+        echo "thot tm descriptor # tool: thot_tm_train" > "${outd}/tm_desc"
+        echo "${modeltype} ${relative_prefix} main # source file: ${scorpus} ; target file: ${tcorpus}" >> "${outd}/tm_desc"
     else
         # -a option was given
-        echo "${modeltype} ${relative_prefix} ${outsubdir} # source file: ${scorpus} ; target file: ${tcorpus}" >> ${outd}/tm_desc
+        echo "${modeltype} ${relative_prefix} ${outsubdir} # source file: ${scorpus} ; target file: ${tcorpus}" >> "${outd}/tm_desc"
     fi
 }
 
@@ -164,7 +164,7 @@ generate_outsubdir_name()
         # -a option was given
         success=0
         for num in 1 2 3 4 5 6 7 8 9 10; do
-            if [ ! -d ${outd}/additional_${num} ]; then
+            if [ ! -d "${outd}/additional_${num}" ]; then
                 echo "additional_${num}"
                 success=1
                 break
@@ -350,12 +350,12 @@ if [ ${s_given} -eq 0 ]; then
     echo "Error! -s parameter not given" >&2
     exit 1
 else
-    if [ ! -f ${scorpus} ]; then
+    if [ ! -f "${scorpus}" ]; then
         echo "Error! file ${scorpus} does not exist" >&2
         exit 1
     else
         # Obtain absolute path
-        scorpus=`get_absolute_path $scorpus`
+        scorpus=`get_absolute_path "$scorpus"`
     fi
 fi
 
@@ -363,22 +363,22 @@ if [ ${t_given} -eq 0 ]; then
     echo "Error! -t parameter not given" >&2
     exit 1
 else
-    if [ ! -f ${tcorpus} ]; then
+    if [ ! -f "${tcorpus}" ]; then
         echo "Error! file ${tcorpus} does not exist" >&2
         exit 1
     else
         # Obtain absolute path
-        tcorpus=`get_absolute_path $tcorpus`
+        tcorpus=`get_absolute_path "$tcorpus"`
     fi
 fi
 
 
 
 # Check that source and target files are parallel
-nl_source=`wc -l $scorpus | $AWK '{printf"%d",$1}'`
-nl_target=`wc -l $tcorpus | $AWK '{printf"%d",$1}'`
+nl_source=`wc -l "$scorpus" | "$AWK" '{printf"%d",$1}'`
+nl_target=`wc -l "$tcorpus" | "$AWK" '{printf"%d",$1}'`
 
-if [ ${nl_source} -ne ${nl_target} ]; then
+if [ "${nl_source}" -ne "${nl_target}" ]; then
     echo "Error! source and target files have not the same number of lines" >&2 
     exit 1
 fi
@@ -394,38 +394,38 @@ if [ ${o_given} -eq 1 -a ${a_given} -eq 1 ]; then
 fi
 
 if [ ${o_given} -eq 1 ]; then
-    if [ -d ${outd}/main ]; then
+    if [ -d "${outd}/main" ]; then
         echo "Warning! output directory does exist" >&2
     fi
     # Obtain absolute path
-    outd=`get_absolute_path $outd`
+    outd=`get_absolute_path "$outd"`
 fi
 
 if [ ${a_given} -eq 1 ]; then
-    if [ ! -d ${outd}/main ]; then
+    if [ ! -d "${outd}/main" ]; then
         echo "Error! previous model estimated with thot_tm_train does not exist" >&2 
         exit 1
     fi
     # Obtain absolute path
-    outd=`get_absolute_path $outd`
+    outd=`get_absolute_path "$outd"`
 fi
 
 if [ ${g_given} -eq 1 ]; then
-    if [ ! -f ${gfile} ]; then        
+    if [ ! -f "${gfile}" ]; then        
         echo "Error! file ${gfile} does not exist" >&2
         exit 1
     fi
 fi
 
 if [ ${tdir_given} -eq 1 ]; then
-    if [ ! -d ${tdir} ]; then
+    if [ ! -d "${tdir}" ]; then
         echo "Error! directory ${tdir} does not exist" >&2
         exit 1   
     fi         
 fi
 
 if [ ${sdir_given} -eq 1 ]; then
-    if [ ! -d ${sdir} ]; then
+    if [ ! -d "${sdir}" ]; then
         echo "Error! directory ${sdir} does not exist" >&2
         exit 1            
     fi
@@ -441,31 +441,31 @@ fi
 outsubdir=`generate_outsubdir_name` || exit 1
 
 # Create output subdirectory
-mkdir -p ${outd}/${outsubdir} || { echo "Error! cannot create output directory" >&2; exit 1; }
+mkdir -p "${outd}/${outsubdir}" || { echo "Error! cannot create output directory" >&2; exit 1; }
 
 # Train model
-prefix=${outd}/${outsubdir}/src_trg
-relative_prefix=${outsubdir}/src_trg
-${bindir}/thot_pbs_gen_batch_phr_model -pr ${pr_val} \
-    -s $tcorpus -t $scorpus -o $prefix ${g_opt} -nit $niters ${af_opt} ${cpr_opt} \
-    ${np_opt} -m ${m_val} ${ao_opt} -to ${to_val} ${dict_opt} ${unk_opt} \
-    ${qs_opt} "${qs_par}" -T $tdir -sdir $sdir ${debug_opt} || exit 1
+prefix="${outd}/${outsubdir}/src_trg"
+relative_prefix="${outsubdir}/src_trg"
+"${bindir}"/thot_pbs_gen_batch_phr_model -pr ${pr_val} \
+    -s "$tcorpus" -t "$scorpus" -o $prefix "${g_opt}" -nit $niters "${af_opt}" "${cpr_opt}" \
+    "${np_opt}" -m ${m_val} "${ao_opt}" -to ${to_val} "${dict_opt}" "${unk_opt}" \
+    "${qs_opt}" "${qs_par}" -T "$tdir" -sdir "$sdir" ${debug_opt} || exit 1
 
 # Process -bdb option if given
 if [ ! -z "${LDB_CXX}" -a ${bdb_given} -eq 1 ]; then
     echo "* Generating on-disk phrase table in BDB format..." >&2
     echo "" >&2
-    ${bindir}/thot_gen_fbdb_ttable -p $prefix -o $prefix 2> ${prefix}.fbdb_err || exit 1 
+    "${bindir}"/thot_gen_fbdb_ttable -p "$prefix" -o "$prefix" 2> "${prefix}.fbdb_err" || exit 1 
 fi
 
 # Process -ldb option if given
 if [ ! -z "${LEVELDB_LIB}" -a ${ldb_given} -eq 1 ]; then
     echo "* Generating on-disk phrase table in LevelDB format..." >&2
     echo "" >&2
-    ${bindir}/thot_gen_leveldb_ttable -p $prefix -o $prefix 2> ${prefix}.ldb_err || exit 1 
+    "${bindir}"/thot_gen_leveldb_ttable -p "$prefix" -o "$prefix" 2> "${prefix}.ldb_err" || exit 1 
 fi
 
 # Create descriptor file
 echo "* Generating descriptor file... " >&2
-create_desc_file $outd
+create_desc_file "$outd"
 echo "" >&2

@@ -43,7 +43,7 @@ nbls_have_same_weights()
 print_nblist_header()
 {
     echo ${nbl1_weight_names} | \
-        $AWK '{
+        "$AWK" '{
                printf "# "
                for(i=1;i<=NF;++i)
                {
@@ -58,8 +58,8 @@ print_nblist_header()
 ##########
 print_nblist_entries()
 {
-    cat $file1 $file2 | ${AWK} '{if($1!="#") {$1="-"; printf"%s\n",$0}}' | \
-        LC_ALL=C ${SORT} | $UNIQ | $AWK '{printf"%s\n",$0}'
+    cat $file1 $file2 | "${AWK}" '{if($1!="#") {$1="-"; printf"%s\n",$0}}' | \
+        LC_ALL=C "${SORT}" | "$UNIQ" | "$AWK" '{printf"%s\n",$0}'
 }
 
 ##########
@@ -71,17 +71,17 @@ else
     file2=$2
 
     # Verify parameters
-    if [ ! -f ${file1} ]; then
+    if [ ! -f "${file1}" ]; then
         echo "Error: file ${file1} does not exist" >&2
     fi
 
-    if [ ! -f ${file2} ]; then
+    if [ ! -f "${file2}" ]; then
         echo "Error: file ${file2} does not exist" >&2
     fi
 
     # Obtain weight names
-    nbl1_weight_names="`obtain_nbl_weight_names $file1`"
-    nbl2_weight_names="`obtain_nbl_weight_names $file2`"
+    nbl1_weight_names=$(obtain_nbl_weight_names "$file1")
+    nbl2_weight_names=$(obtain_nbl_weight_names "$file2")
 
     # Verify that the two n-best lists have the same weights
     ret=`nbls_have_same_weights`

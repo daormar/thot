@@ -41,7 +41,7 @@ numwords_to_numlines()
     local_numw=$1
     local_file=$2
 
-    $AWK -v numw=${local_numw} \
+    "$AWK" -v numw=${local_numw} \
          'BEGIN{
            numl=-1
           }
@@ -55,8 +55,7 @@ numwords_to_numlines()
           END{
            if(numl==-1) numl=NR
            printf "%d",numl
-          }' ${local_file}
-       
+          }' "${local_file}"
 }
 
 #############
@@ -67,17 +66,17 @@ calc_ln_pop_sample()
     
     if [ ${w_given} -eq 0 ]; then
         # Obtain number of lines of sample
-        local_sample_lnum=`$WC ${local_sample} | $AWK '{printf"%s",$1}'`
+        local_sample_lnum=`"$WC" "${local_sample}" | "$AWK" '{printf"%s",$1}'`
         
         echo ${local_sample_lnum}
     else
         # Obtain number of words of sample
-        local_sample_wnum=`$WC ${local_sample} | $AWK '{printf"%s",$2}'`
+        local_sample_wnum=`"$WC" "${local_sample}" | "$AWK" '{printf"%s",$2}'`
         
         # Determine number of lines to be extracted
-        local_sample_lnum=`numwords_to_numlines ${local_sample_wnum} ${local_pop}`
+        local_sample_lnum=`numwords_to_numlines "${local_sample_wnum}" "${local_pop}"`
 
-        echo ${local_sample_lnum}
+        echo "${local_sample_lnum}"
     fi
 }
  
@@ -162,52 +161,52 @@ fi
 # Create temporary files
 tmpdir=/tmp
 
-shuff_tmpfile=`${MKTEMP} $tmpdir/shuff_tmpfile.XXXXXX`
-population_tmpfile=`${MKTEMP} $tmpdir/population_tmpfile.XXXXXX`
-popsample_tmpfile=`${MKTEMP} $tmpdir/popsample_tmpfile.XXXXXX`
-additional_tmpfile=`${MKTEMP} $tmpdir/additional_tmpfile.XXXXXX`
+shuff_tmpfile=`"${MKTEMP}" "$tmpdir/shuff_tmpfile.XXXXXX"`
+population_tmpfile=`"${MKTEMP}" "$tmpdir/population_tmpfile.XXXXXX"`
+popsample_tmpfile=`"${MKTEMP}" "$tmpdir/popsample_tmpfile.XXXXXX"`
+additional_tmpfile=`"${MKTEMP}" "$tmpdir/additional_tmpfile.XXXXXX"`
 
-trap "rm $shuff_tmpfile $population_tmpfile $popsample_tmpfile $additional_tmpfile" EXIT
+trap 'rm "$shuff_tmpfile" "$population_tmpfile" "$popsample_tmpfile" "$additional_tmpfile"' EXIT
 
 # Shuffle population
-${bindir}/thot_shuffle 31415 $tmpdir ${population} > ${shuff_tmpfile}
+"${bindir}"/thot_shuffle 31415 "$tmpdir" "${population}" > "${shuff_tmpfile}"
 
 # Calculate number of lines to extract population sample
-sample_lnum=`calc_ln_pop_sample $sample ${shuff_tmpfile}`
+sample_lnum=`calc_ln_pop_sample "$sample" "${shuff_tmpfile}"`
 
 # Obtain partition of population
-$HEAD -${sample_lnum} ${shuff_tmpfile} > ${popsample_tmpfile}
-$TAIL -n +`expr ${sample_lnum} + 1` ${shuff_tmpfile} > ${population_tmpfile}
+"$HEAD" -${sample_lnum} "${shuff_tmpfile}" > "${popsample_tmpfile}"
+"$TAIL" -n +`expr ${sample_lnum} + 1` "${shuff_tmpfile}" > "${population_tmpfile}"
 
 # Handle additional file if given
 if [ ${a_given} -eq 1 ]; then
-    ${bindir}/thot_shuffle 31415 $tmpdir ${additional} > ${shuff_tmpfile}
-    additional_lnum=`calc_ln_pop_sample $sample ${shuff_tmpfile}`
-    $HEAD -${additional_lnum} ${shuff_tmpfile} > ${additional_tmpfile}
+    "${bindir}"/thot_shuffle 31415 "$tmpdir" ${additional} > "${shuff_tmpfile}"
+    additional_lnum=`calc_ln_pop_sample $sample "${shuff_tmpfile}"`
+    $HEAD -${additional_lnum} "${shuff_tmpfile}" > "${additional_tmpfile}"
 fi
 
 # Compute repetition rates
-unf_popsample=`${bindir}/thot_repetition_rate -c ${popsample_tmpfile} -t ${population_tmpfile} | $GREP UNF | $AWK '{printf"%s",$3}'`
-unf_sample=`${bindir}/thot_repetition_rate -c ${sample} -t ${population_tmpfile} | $GREP UNF | $AWK '{printf"%s",$3}'`
+unf_popsample=`"${bindir}"/thot_repetition_rate -c "${popsample_tmpfile}" -t "${population_tmpfile}" | "$GREP" UNF | "$AWK" '{printf"%s",$3}'`
+unf_sample=`"${bindir}"/thot_repetition_rate -c "${sample}" -t "${population_tmpfile}" | $GREP UNF | "$AWK" '{printf"%s",$3}'`
 if [ ${a_given} -eq 1 ]; then
-    unf_additional=`${bindir}/thot_repetition_rate -c ${additional_tmpfile} -t ${population_tmpfile} | $GREP UNF | $AWK '{printf"%s",$3}'`
+    unf_additional=`"${bindir}"/thot_repetition_rate -c "${additional_tmpfile}" -t "${population_tmpfile}" | $GREP UNF | "$AWK" '{printf"%s",$3}'`
 fi
 
 # Print results
-sample_numw=`$WC ${sample} | $AWK '{printf"%s",$2}'`
+sample_numw=`"$WC ${sample}" | "$AWK" '{printf"%s",$2}'`
 echo "* Input Sample"
 echo " - Length in words        : ${sample_numw}"
 echo " - Unseen n-gram fraction : ${unf_sample}"
 echo ""
 
-popsample_numw=`$WC ${popsample_tmpfile} | $AWK '{printf"%s",$2}'`
+popsample_numw=`"$WC" ${popsample_tmpfile} | "$AWK" '{printf"%s",$2}'`
 echo "* Representative Sample"
 echo " - Length in words        : ${popsample_numw}"
 echo " - Unseen n-gram fraction : ${unf_popsample}"
 echo ""
 
 if [ ${a_given} -eq 1 ]; then
-    additional_numw=`$WC ${additional_tmpfile} | $AWK '{printf"%s",$2}'`
+    additional_numw=`"$WC" ${additional_tmpfile} | "$AWK" '{printf"%s",$2}'`
     echo "* Additional Sample"
     echo " - Length in words        : ${additional_numw}"
     echo " - Unseen n-gram fraction : ${unf_additional}"

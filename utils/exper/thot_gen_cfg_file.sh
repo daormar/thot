@@ -21,46 +21,46 @@ get_absolute_path()
     filedir=$2
 
     # Check if an absolute path was given
-    absolute=`is_absolute_path $file`
-    if [ $absolute -eq 1 ]; then
-        echo $file
+    absolute=`is_absolute_path "$file"`
+    if [ "$absolute" -eq 1 ]; then
+        echo "$file"
     else
         oldpwd=$PWD
-        basetmp=`$BASENAME ${filedir}/$file`
-        dirtmp=`$DIRNAME ${filedir}/$file`
-        cd $dirtmp
-        result=${PWD}/${basetmp}
-        cd $oldpwd
-        echo $result
+        basetmp=`"$BASENAME" "${filedir}/$file"`
+        dirtmp=`"$DIRNAME" "${filedir}/$file"`
+        cd "$dirtmp"
+        result="${PWD}/${basetmp}"
+        cd "$oldpwd"
+        echo "$result"
     fi
 }
 
 ########
 put_lm_desc_string()
 {
-    $SED "s@<lm_file_path>@${lm_desc}@"
+    "$SED" "s@<lm_file_path>@${lm_desc}@"
 }
 
 ########
 put_tm_desc_string()
 {
-    $SED "s@<tm_file_path>@${tm_desc}@"
+    "$SED" "s@<tm_file_path>@${tm_desc}@"
 }
 
 ########
 put_cf_desc_string()
 {
-    $SED "s@<cf_file_path>@${cf_desc}@"
+    "$SED" "s@<cf_file_path>@${cf_desc}@"
 }
 
 ########
 get_lm_desc()
 {
     _desc=$1
-    if [ ${_desc} = ${none} ]; then
-        echo ${_desc}
+    if [ "${_desc}" = ${none} ]; then
+        echo "${_desc}"
     else
-        get_absolute_path ${_desc} $PWD
+        get_absolute_path "${_desc}" "$PWD"
     fi
 }
 
@@ -68,10 +68,10 @@ get_lm_desc()
 get_tm_desc()
 {
     _desc=$1
-    if [ ${_desc} = ${none} ]; then
-        echo ${_desc}
+    if [ "${_desc}" = ${none} ]; then
+        echo "${_desc}"
     else
-        get_absolute_path ${_desc} $PWD
+        get_absolute_path "${_desc}" "$PWD"
     fi
 }
 
@@ -79,10 +79,10 @@ get_tm_desc()
 get_cf_desc()
 {
     _desc=$1
-    if [ ${_desc} = ${none} ]; then
-        echo ${_desc}
+    if [ "${_desc}" = ${none} ]; then
+        echo "${_desc}"
     else
-        get_absolute_path ${_desc} $PWD
+        get_absolute_path "${_desc}" "$PWD"
     fi
 }
 
@@ -94,33 +94,33 @@ else
     none="_none_"
 
     # Read parameters
-    lm_desc=`get_lm_desc $1`
-    tm_desc=`get_tm_desc $2`
+    lm_desc=`get_lm_desc "$1"`
+    tm_desc=`get_tm_desc "$2"`
     
     if [ $# -eq 2 ]; then
         cf_desc=${none}
     else
-        cf_desc=`get_cf_desc $3`
+        cf_desc=`get_cf_desc "$3"`
     fi
 
     # Check files
-    if [ ${tm_desc} != ${none} -a ! -f ${tm_desc} ]; then
+    if [ ${tm_desc} != ${none} -a ! -f "${tm_desc}" ]; then
         echo "Error! file with translation model descriptor, ${tm_desc}, does not exist" >&2 
         exit 1
     fi
 
-    if [ ${lm_desc} != ${none} -a ! -f ${lm_desc} ]; then
+    if [ ${lm_desc} != ${none} -a ! -f "${lm_desc}" ]; then
         echo "Error! file with language model descriptor, ${lm_desc}, does not exist" >&2 
         exit 1
     fi
 
-    if [ ${cf_desc} != ${none} -a ! -f ${cf_desc} ]; then
+    if [ ${cf_desc} != ${none} -a ! -f "${cf_desc}" ]; then
         echo "Error! file with custom features descriptor, ${cf_desc}, does not exist" >&2 
         exit 1
     fi
 
     # Generate configuration file
-    cat ${datadir}/cfg_templates/thot_basic.cfg | \
+    cat "${datadir}/cfg_templates/thot_basic.cfg" | \
         put_lm_desc_string | \
         put_tm_desc_string | \
         put_cf_desc_string

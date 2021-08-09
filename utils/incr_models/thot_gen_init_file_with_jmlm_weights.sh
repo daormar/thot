@@ -19,7 +19,7 @@ else
         wval=0.5
     fi
 
-    echo "" | $AWK -v order=$order -v numbuckets=$numbuckets -v bucketsize=$bucketsize -v wval=$wval '
+    echo "" | "$AWK" -v order=$order -v numbuckets=$numbuckets -v bucketsize=$bucketsize -v wval=$wval '
                  {
                   printf"%d %d %d",order,numbuckets,bucketsize
                   for(i=1;i<=order*numbuckets;++i)

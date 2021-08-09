@@ -24,7 +24,6 @@ usage()
 {
     echo "thot_sys_from_scratch   -o <string>"
     echo "                        [-nit <int>] [-n <int>] [-tqm <string>]"
-    # echo "                        [-nit <int>] [-n <int>] [-tqm <string>]"
     echo "                        [-qs <string>] [-tdir <string>]"
     echo "                        [-sdir <string>] [-debug] [--help] [--version]"
     echo ""
@@ -32,8 +31,6 @@ usage()
     echo "-nit <int>              Number of iterations of the EM algorithm when training"
     echo "                        single word models (5 by default)"
     echo "-n <int>                Order of the n-gram language models (4 by default)"
-    # echo "-tqm <string>           Set translation quality measure for tuning"
-    # echo "                        (BLEU by default, other options: WER)"
     echo "-qs <string>            Specific options to be given to the qsub"
     echo "                        command (example: -qs \"-l pmem=1gb\")"
     echo "                        NOTES:"
@@ -77,16 +74,16 @@ get_absolute_path()
 {
     file=$1
     # Check if an absolute path was given
-    absolute=`is_absolute_path $file`
-    if [ $absolute -eq 1 ]; then
-        echo $file
+    absolute=`is_absolute_path "$file"`
+    if [ "$absolute" -eq 1 ]; then
+        echo "$file"
     else
         oldpwd=$PWD
-        basetmp=`$BASENAME $PWD/$file`
-        dirtmp=`$DIRNAME $PWD/$file`
-        cd $dirtmp
+        basetmp=`"$BASENAME" "$PWD/$file"`
+        dirtmp=`"$DIRNAME" "$PWD/$file"`
+        cd "$dirtmp"
         result=${PWD}/${basetmp}
-        cd $oldpwd
+        cd "$oldpwd"
         echo $result
     fi
 }
@@ -179,25 +176,25 @@ if [ ${o_given} -eq 0 ]; then
     echo "Error! -o parameter not given!" >&2
     exit 1
 else
-    if [ -d ${outd} ]; then
+    if [ -d "${outd}" ]; then
         echo "Warning! output directory does exist" >&2 
     else
         # Create directory
-        mkdir -p ${outd} || { echo "Error! cannot create output directory" >&2; exit 1; }
+        mkdir -p "${outd}" || { echo "Error! cannot create output directory" >&2; exit 1; }
     fi
     # Obtain absolute path
-    outd=`get_absolute_path $outd`
+    outd=`get_absolute_path "$outd"`
 fi
 
 if [ ${tdir_given} -eq 1 ]; then
-    if [ ! -d ${tdir} ]; then
+    if [ ! -d "${tdir}" ]; then
         echo "Error! directory ${tdir} does not exist" >&2
         exit 1   
     fi         
 fi
 
 if [ ${sdir_given} -eq 1 ]; then
-    if [ ! -d ${sdir} ]; then
+    if [ ! -d "${sdir}" ]; then
         echo "Error! directory ${sdir} does not exist" >&2
         exit 1            
     fi
@@ -206,29 +203,29 @@ fi
 ## Process parameters
 
 # Create empty corpus dir
-if [ ! -d ${outd}/empty_corpus ]; then
-    mkdir ${outd}/empty_corpus || exit 1
+if [ ! -d "${outd}/empty_corpus" ]; then
+    mkdir "${outd}/empty_corpus" || exit 1
 fi
 
 # Create empty corpus
-$TOUCH ${outd}/empty_corpus/src.train
-scorpus_train=${outd}/empty_corpus/src.train
+$TOUCH "${outd}/empty_corpus/src.train"
+scorpus_train="${outd}/empty_corpus/src.train"
 
-$TOUCH ${outd}/empty_corpus/trg.train
-tcorpus_train=${outd}/empty_corpus/trg.train
+$TOUCH "${outd}/empty_corpus/trg.train"
+tcorpus_train="${outd}/empty_corpus/trg.train"
 
 # Train models
-if [ -f ${scorpus_train} -a -f ${tcorpus_train} ]; then
+if [ -f "${scorpus_train}" -a -f "${tcorpus_train}" ]; then
 
     # Train language model
     echo "**** Training language model" >&2
-    ${bindir}/thot_lm_train -c ${tcorpus_train} -o ${outd}/lm -n ${n_val} -unk \
-        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+    "${bindir}"/thot_lm_train -c "${tcorpus_train}" -o "${outd}/lm" -n ${n_val} -unk \
+        ${qs_opt} "${qs_par}" -tdir "$tdir" -sdir "$sdir" ${debug_opt} || exit 1
 
     # Train translation model
     echo "**** Training translation model" >&2
-    ${bindir}/thot_tm_train -s ${scorpus_train} -t ${tcorpus_train} -o ${outd}/tm -n ${nitval} \
-        ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || exit 1
+    "${bindir}"/thot_tm_train -s "${scorpus_train}" -t "${tcorpus_train}" -o "${outd}/tm" -n ${nitval} \
+        ${qs_opt} "${qs_par}" -tdir "$tdir" -sdir "$sdir" ${debug_opt} || exit 1
 
 else
     echo "Error! training files do not exist" >&2
@@ -237,5 +234,5 @@ fi
 
 # Generate cfg file
 echo "**** Generating configuration file" >&2
-${bindir}/thot_gen_cfg_file $outd/lm/lm_desc $outd/tm/tm_desc > $outd/sys_from_scratch.cfg || exit 1
+"${bindir}"/thot_gen_cfg_file "$outd/lm/lm_desc" "$outd/tm/tm_desc" > "$outd/sys_from_scratch.cfg" || exit 1
 echo "" >&2

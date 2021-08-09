@@ -9,7 +9,7 @@
 #############
 exclude_readonly_vars()
 {
-    ${AWK} -F "=" 'BEGIN{
+    "${AWK}" -F "=" 'BEGIN{
                          readonlyvars["BASHOPTS"]=1
                          readonlyvars["BASH_VERSINFO"]=1
                          readonlyvars["EUID"]=1
@@ -25,14 +25,14 @@ exclude_readonly_vars()
 #############
 exclude_bashisms()
 {
-    $AWK '{if(index($1,"=(")==0) printf"%s\n",$0}'
+    "$AWK" '{if(index($1,"=(")==0) printf"%s\n",$0}'
 }
 
 #############
 write_functions()
 {
-    for f in `${AWK} '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
-        $SED -n /^$f/,/^}/p $0
+    for f in `"${AWK}" '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
+        "$SED" -n /^$f/,/^}/p $0
     done
 }
 
@@ -47,33 +47,33 @@ create_script()
     set | exclude_readonly_vars | exclude_bashisms > ${name}
 
     # Write functions if necessary
-    $GREP "()" ${name} -A1 | $GREP "{" > /dev/null || write_functions >> ${name}
+    "$GREP" "()" "${name}" -A1 | "$GREP" "{" > /dev/null || write_functions >> "${name}"
 
     # Write PBS directives
-    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
-    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> ${name}
+    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> "${name}"
+    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> "${name}"
     echo "#$ -cwd" >> ${name}
 
     # Write command to be executed
-    echo "${command}" >> ${name}
+    echo "${command}" >> "${name}"
 
     # Give execution permission
-    chmod u+x ${name}
+    chmod u+x "${name}"
 }
 
 #############
 ilm_perp()
 {
     # Write date to log file
-    echo "** Processing file ${cfile} (started at "`date`")..." >> $SDIR/log
+    echo "** Processing file ${cfile} (started at "`date`")..." >> "$SDIR/log"
     
-    $bindir/thot_ilm_perp -lm ${lmfile} -c ${cfile} -n ${n_val} ${add_opts} 2> $SDIR/err > $outfile || \
-        { echo "Error while executing thot_ilm_perp" >> $SDIR/log ; return 1 ; }
+    "$bindir"/thot_ilm_perp -lm "${lmfile}" -c "${cfile}" -n ${n_val} ${add_opts} 2> "$SDIR/err" > "$outfile" || \
+        { echo "Error while executing thot_ilm_perp" >> "$SDIR/log" ; return 1 ; }
 
     # Write date to log file
-    echo "Processing of file ${cfile} finished ("`date`")" >> $SDIR/log 
+    echo "Processing of file ${cfile} finished ("`date`")" >> "$SDIR/log" 
 
-    echo "" > $SDIR/ilm_perp_end
+    echo "" > "$SDIR/ilm_perp_end"
 }
 
 
@@ -85,10 +85,10 @@ launch()
 
     ### qsub invocation
     if [ "${QSUB_WORKS}" = "no" ]; then
-        $file &
+        "$file" &
         eval "${outvar}=$!"
     else
-        local jid=$($QSUB ${QSUB_TERSE_OPT} ${qs_opts} $file | ${TAIL} -1)
+        local jid=$("$QSUB" ${QSUB_TERSE_OPT} ${qs_opts} "$file" | "${TAIL}" -1)
         eval "${outvar}='${jid}'"
     fi
     ###################
@@ -99,7 +99,7 @@ all_procs_ok()
 {
     # Init variables
     local files="$1"
-    local sync_num_files=`echo "${files}" | $AWK '{printf"%d",NF}'`    
+    local sync_num_files=`echo "${files}" | "$AWK" '{printf"%d",NF}'`    
     local sync_curr_num_files=0
 
     # Obtain number of processes that terminated correctly
@@ -140,7 +140,7 @@ sync()
 #############
 job_is_unknown()
 {
-    nl=`$QSTAT ${QSTAT_J_OPT} ${jid} 2>&1 | $GREP -e "Unknown" -e "do not exist" | wc -l`
+    nl=`"$QSTAT" ${QSTAT_J_OPT} ${jid} 2>&1 | "$GREP" -e "Unknown" -e "do not exist" | wc -l`
     if [ $nl -ne 0 ]; then
         echo 1
     else
@@ -160,7 +160,7 @@ pbs_sync()
         end=1
         # Check if all processes have finished
         for f in ${files}; do
-            if [ ! -f ${f}_end ]; then
+            if [ ! -f "${f}_end" ]; then
                 num_pending_procs=`expr ${num_pending_procs} + 1`
                 end=0
             fi
@@ -184,13 +184,13 @@ pbs_sync()
 gen_log_err_files()
 {
     # Copy log file to its final location
-    if [ -f $SDIR/log ]; then
-        cp $SDIR/log ${outfile}.ilmp_log
+    if [ -f "$SDIR/log" ]; then
+        cp "$SDIR/log" "${outfile}.ilmp_log"
     fi
 
     # Generate file for error diagnosing
-    if [ -f $SDIR/err ]; then
-        cp $SDIR/err ${outfile}.ilmp_err
+    if [ -f "$SDIR/err" ]; then
+        cp "$SDIR/err" "${outfile}.ilmp_err"
     fi
 }
 
@@ -201,12 +201,12 @@ report_errors()
     num_err=`$GREP "Error while executing thot_ilm_perp" ${outfile}.ilmp_log | wc -l`
     if [ ${num_err} -gt 0 ]; then
         echo "Error during the execution of thot_pbs_ilm_perp (thot_ilm_perp)" >&2
-        if [ -f ${output}.ilmp_err ]; then
+        if [ -f "${output}.ilmp_err" ]; then
             echo "File ${output}.ilmp_err contains information for error diagnosing" >&2
         fi
     else
         echo "Synchronization error" >&2
-        if [ -f ${output}.ilmp_err ]; then
+        if [ -f "${output}.ilmp_err" ]; then
             echo "File ${output}.ilmp_err contains information for error diagnosing" >&2
         fi
     fi
@@ -323,7 +323,7 @@ else
         echo "Error: -lm option not given!" >&2
         exit 1
     else
-        if [ ! -f ${lmfile} ]; then
+        if [ ! -f "${lmfile}" ]; then
             echo "Error: file ${lmfile} does not exist!" >&2
             exit 1
         fi
@@ -341,33 +341,33 @@ else
 
     # create TMP directory
     TMP="${tmpdir}/thot_pbs_ilm_perp_tmp_$$"
-    mkdir $TMP || { echo "Error: temporary directory cannot be created" >&2 ; exit 1; }
+    mkdir "$TMP" || { echo "Error: temporary directory cannot be created" >&2 ; exit 1; }
 
     # create shared directory
     SDIR="${sdir}/thot_pbs_ilm_perp_sdir_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
+    mkdir "$SDIR" || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
     
     # remove temp directories on exit
     if [ $debug -eq 0 ]; then
-        trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
+        trap 'rm -rf "$TMP" "$SDIR" 2>/dev/null' EXIT
     fi
 
     # create log file
     echo "*** Parallel process started at: " `date` > $SDIR/log
-    echo "">> $SDIR/log
+    echo "">> "$SDIR/log"
 
     # process the input
 
     # Calculate perplexity
-    create_script $SDIR/ilm_perp ilm_perp || exit 1
-    launch $SDIR/ilm_perp job_id || exit 1
+    create_script "$SDIR/ilm_perp" ilm_perp || exit 1
+    launch "$SDIR/ilm_perp" job_id || exit 1
     
     ### Check that all queued jobs are finished
-    sync $SDIR/ilm_perp "${job_id}" || { gen_log_err_files ; report_errors ; exit 1; }
+    sync "$SDIR/ilm_perp" "${job_id}" || { gen_log_err_files ; report_errors ; exit 1; }
 
     # Add footer to log file
-    echo "">> $SDIR/log
-    echo "*** Parallel process finished at: " `date` >> $SDIR/log
+    echo "">> "$SDIR/log"
+    echo "*** Parallel process finished at: " `date` >> "$SDIR/log"
     
     # Generate log and err files
     gen_log_err_files

@@ -5,7 +5,7 @@
 
 replace_first_word_occurrence_by_unk()
 {
-    ${AWK} '{
+    "${AWK}" '{
              for(i=1;i<=NF;++i)
              {
               if($i in vocab)
@@ -26,7 +26,7 @@ replace_first_word_occurrence_by_unk()
 get_counts()
 {
     local order=$1
-    ${AWK} -v n=$order\
+    "${AWK}" -v n=$order\
                  'BEGIN{
                         num_words=0
                         num_sents=0
@@ -190,7 +190,7 @@ fi
 # parameters are ok
 
 if [ $unk_given -eq 0 ]; then
-    cat $corpus | get_counts ${n_val}
+    cat "$corpus" | get_counts ${n_val}
 else
-    cat $corpus | replace_first_word_occurrence_by_unk | get_counts ${n_val}
+    cat "$corpus" | replace_first_word_occurrence_by_unk | get_counts ${n_val}
 fi

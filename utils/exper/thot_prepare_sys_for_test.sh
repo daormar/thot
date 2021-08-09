@@ -73,16 +73,16 @@ get_absolute_path()
 {
     file=$1
     # Check if an absolute path was given
-    absolute=`is_absolute_path $file`
+    absolute=`is_absolute_path "$file"`
     if [ $absolute -eq 1 ]; then
         echo $file
     else
         oldpwd=$PWD
-        basetmp=`$BASENAME $PWD/$file`
-        dirtmp=`$DIRNAME $PWD/$file`
-        cd $dirtmp
-        result=${PWD}/${basetmp}
-        cd $oldpwd
+        basetmp=`$BASENAME "$PWD/$file"`
+        dirtmp=`$DIRNAME "$PWD/$file"`
+        cd "$dirtmp"
+        result="${PWD}/${basetmp}"
+        cd "$oldpwd"
         echo $result
     fi
 }
@@ -91,12 +91,12 @@ get_absolute_path()
 check_if_file_is_desc()
 {
     file=$1
-    if [ ! -f $file ]; then
+    if [ ! -f "$file" ]; then
         # Files does not exist
         echo 0
     else
         # File exists
-        nl=`$HEAD -1 $file | $GREP -e "thot lm descriptor" -e "thot tm descriptor" | $WC -l`
+        nl=`"$HEAD" -1 "$file" | "$GREP" -e "thot lm descriptor" -e "thot tm descriptor" | "$WC" -l`
         if [ $nl -eq 0 ]; then
             echo 0
         else
@@ -114,92 +114,92 @@ process_files_for_individual_lm()
     _lm_status=$3
 
     # Create lm directory
-    if [ ! -d ${outd}/lm/${_lm_status} ]; then
-        mkdir ${outd}/lm/${_lm_status} || { echo "Error! cannot create directory for language model" >&2; return 1; }
+    if [ ! -d "${outd}/lm/${_lm_status}" ]; then
+        mkdir "${outd}/lm/${_lm_status}" || { echo "Error! cannot create directory for language model" >&2; return 1; }
     fi
     
     # Check availability of lm files
-    nlines=`ls ${_lmfile}* 2>/dev/null | $WC -l`
+    nlines=`ls "${_lmfile}"* 2>/dev/null | "$WC" -l`
     if [ $nlines -eq 0 ]; then
         echo "Error! language model files could not be found: ${_lmfile}" >&2
         return 1
     fi
     
     # Create lm files
-    for file in ${_lmfile}*; do
-        if [ -f $file ]; then
+    for file in "${_lmfile}"*; do
+        if [ -f "$file" ]; then
             # Create hard links for each file
-            $LN -f $file ${outd}/lm/${_lm_status} || { echo "Error while preparing language model files" >&2 ; return 1; }
+            "$LN" -f "$file" "${outd}/lm/${_lm_status}" || { echo "Error while preparing language model files" >&2 ; return 1; }
         fi
-        if [ -d $file ]; then
+        if [ -d "$file" ]; then
             # create symbolic links for directories
-            basefname=`$BASENAME $file`
-            $LN -s $file ${outd}/lm/${_lm_status}/${basefname} || { echo "Error while preparing language model files" >&2 ; return 1; }
+            basefname=`"$BASENAME" "$file"`
+            "$LN" -s "$file" "${outd}/lm/${_lm_status}/${basefname}" || { echo "Error while preparing language model files" >&2 ; return 1; }
         fi
     done
 
     # Add entry to descriptor file
-    _baselmfile=`basename ${_lmfile}`
+    _baselmfile=`basename "${_lmfile}"`
     _relative_newlmfile=${_lm_status}/${_baselmfile}    
-    echo "${_lmtype} ${_relative_newlmfile} ${_lm_status}" >> ${outd}/lm/lm_desc
+    echo "${_lmtype} ${_relative_newlmfile} ${_lm_status}" >> "${outd}/lm/lm_desc"
 }
 
 ########
 list_lm_entry_info()
 {
     lmdesc=$1
-    $TAIL -n +2 ${lmdesc} | $AWK '{printf"%s,%s,%s\n",$1,$2,$3}'
+    "$TAIL" -n +2 ${lmdesc} | "$AWK" '{printf"%s,%s,%s\n",$1,$2,$3}'
 }
 
 ########
 create_lm_files()
 {
     # Obtain path of lm file
-    lmfile=`$GREP "\-lm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
-    baselmfile=`basename $lmfile`
+    lmfile=`"$GREP" "\-lm " "$cmdline_cfg" | "$AWK" '{printf"%s",$2}'`
+    baselmfile=`basename "$lmfile"`
 
     # Create directory for lm files
-    if [ -d ${outd}/lm ]; then
+    if [ -d "${outd}/lm" ]; then
         echo "Warning! directory for language model does exist" >&2 
     else
-        mkdir -p ${outd}/lm || { echo "Error! cannot create directory for language model" >&2; return 1; }
+        mkdir -p "${outd}/lm" || { echo "Error! cannot create directory for language model" >&2; return 1; }
     fi
 
     # Check if tm file is a descriptor
-    is_desc=`check_if_file_is_desc ${lmfile}`
+    is_desc=`check_if_file_is_desc "${lmfile}"`
 
     if [ ${is_desc} -eq 1 ]; then
         # Create descriptor
-        echo "thot lm descriptor" > ${outd}/lm/lm_desc
+        echo "thot lm descriptor" > "${outd}/lm/lm_desc"
 
         # Create files for the different language models
         lmdesc_dirname=`$DIRNAME $lmfile`
         for lm_entry in `list_lm_entry_info $lmfile`; do
-            curr_lmtype=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$1}'`
-            curr_lmfile=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$2}'`
-            curr_status=`echo ${lm_entry} | $AWK -F "," '{printf"%s",$3}'`
-            process_files_for_individual_lm ${curr_lmtype} ${lmdesc_dirname}/${curr_lmfile} ${curr_status} || return 1;
+            curr_lmtype=`echo "${lm_entry}" | "$AWK" -F "," '{printf"%s",$1}'`
+            curr_lmfile=`echo "${lm_entry}" | "$AWK" -F "," '{printf"%s",$2}'`
+            curr_status=`echo "${lm_entry}" | "$AWK" -F "," '{printf"%s",$3}'`
+            process_files_for_individual_lm "${curr_lmtype}" "${lmdesc_dirname}/${curr_lmfile}" "${curr_status}" || return 1;
         done
 
         # Copy weights for lm descriptor
-        cp ${lmfile}.weights ${outd}/lm/
+        cp "${lmfile}.weights" "${outd}/lm/"
 
         # Copy wp file for lm descriptor
-        cp ${lmfile}.wp ${outd}/lm/
+        cp "${lmfile}.wp" "${outd}/lm/"
 
         # Obtain new file name for lm descriptor
-        baselmfile=`basename $lmfile`
-        newlmfile=${outd}/lm/${baselmfile}
+        baselmfile=`basename "$lmfile"`
+        newlmfile="${outd}/lm/${baselmfile}"
     else
         # Create descriptor
-        echo "thot lm descriptor" > ${outd}/lm/lm_desc
+        echo "thot lm descriptor" > "${outd}/lm/lm_desc"
 
         # Create files for individual language model
         process_files_for_individual_lm "\$(${LIBDIR_VARNAME})/incr_jel_mer_ngram_lm_factory.so ${lmfile}" "main" || return 1;
 
         # Obtain new lm file name
-        baselmfile=`basename $lmfile`
-        newlmfile=${outd}/lm/main/${baselmfile}
+        baselmfile=`basename "$lmfile"`
+        newlmfile="${outd}/lm/main/${baselmfile}"
     fi
 }
 
@@ -207,7 +207,7 @@ create_lm_files()
 list_tm_entry_info()
 {
     tmdesc=$1
-    $TAIL -n +2 ${tmdesc} | $AWK '{printf"%s,%s,%s\n",$1,$2,$3}'
+    "$TAIL" -n +2 ${tmdesc} | "$AWK" '{printf"%s,%s,%s\n",$1,$2,$3}'
 }
 
 ########
@@ -219,43 +219,43 @@ process_files_for_individual_tm()
     _tm_status=$3
 
     # Create tm directory
-    if [ ! -d ${outd}/tm/${_tm_status} ]; then
-        mkdir ${outd}/tm/${_tm_status} || { echo "Error! cannot create directory for translation model" >&2; return 1; }
+    if [ ! -d "${outd}/tm/${_tm_status}" ]; then
+        mkdir "${outd}/tm/${_tm_status}" || { echo "Error! cannot create directory for translation model" >&2; return 1; }
     fi
 
     # Check availability of tm files
-    nlines=`ls ${_tmfile}* 2>/dev/null | $WC -l`
+    nlines=`ls "${_tmfile}"* 2>/dev/null | "$WC" -l`
     if [ $nlines -eq 0 ]; then
         echo "Error! translation model files could not be found: ${_tmfile}" >&2
         return 1
     fi
 
     # Create tm files
-    for file in ${_tmfile}*; do
-        if [ -f $file ]; then
-            if [ $file != ${_tmfile}.ttable ]; then
+    for file in "${_tmfile}"*; do
+        if [ -f "$file" ]; then
+            if [ "$file" != "${_tmfile}.ttable" ]; then
                 # Create hard links for each file
-                $LN -f $file ${outd}/tm/${_tm_status} || { echo "Error while preparing translation model files" >&2 ; return 1; }
+                "$LN" -f "$file" "${outd}/tm/${_tm_status}" || { echo "Error while preparing translation model files" >&2 ; return 1; }
             fi
         fi
-        if [ -d $file ]; then
+        if [ -d "$file" ]; then
             # create symbolic links for directories
-            basefname=`$BASENAME $file`
-            $LN -s $file ${outd}/tm/${_tm_status}/${basefname} || { echo "Error while preparing translation model files" >&2 ; return 1; }
+            basefname=`"$BASENAME" "$file"`
+            "$LN" -s "$file" "${outd}/tm/${_tm_status}/${basefname}" || { echo "Error while preparing translation model files" >&2 ; return 1; }
         fi
     done
 
     # Add entry to descriptor file
-    _basetmfile=`basename ${_tmfile}`
-    _relative_newtmfile=${_tm_status}/${_basetmfile}    
-    echo "${_tmtype} ${_relative_newtmfile} ${_tm_status}" >> ${outd}/tm/tm_desc    
+    _basetmfile=`basename "${_tmfile}"`
+    _relative_newtmfile="${_tm_status}/${_basetmfile}"    
+    echo "${_tmtype} ${_relative_newtmfile} ${_tm_status}" >> "${outd}/tm/tm_desc"    
 }
 
 ########
 create_tm_files()
 {
     # Obtain path of tm file
-    tmfile=`$GREP "\-tm " $cmdline_cfg | $AWK '{printf"%s",$2}'`
+    tmfile=`"$GREP" "\-tm " "$cmdline_cfg" | "$AWK" '{printf"%s",$2}'`
 
     # Check that tm file could be obtained
     if [ -z "$tmfile" ]; then
@@ -266,41 +266,41 @@ create_tm_files()
     basetmfile=`basename $tmfile`
 
     # Create directory for tm files
-    if [ -d ${outd}/tm ]; then
+    if [ -d "${outd}/tm" ]; then
         echo "Warning! directory for translation model does exist" >&2 
     else
-        mkdir -p ${outd}/tm || { echo "Error! cannot create directory for translation model" >&2; return 1; }
+        mkdir -p "${outd}/tm" || { echo "Error! cannot create directory for translation model" >&2; return 1; }
     fi
 
     # Check if tm file is a descriptor
-    is_desc=`check_if_file_is_desc ${tmfile}`
+    is_desc=`check_if_file_is_desc "${tmfile}"`
 
     if [ ${is_desc} -eq 1 ]; then
         # Create descriptor
-        echo "thot tm descriptor" > ${outd}/tm/tm_desc
+        echo "thot tm descriptor" > "${outd}/tm/tm_desc"
 
         # Create files for the different translation models
-        tmdesc_dirname=`$DIRNAME $tmfile`
+        tmdesc_dirname=`$DIRNAME "$tmfile"`
         for tm_entry in `list_tm_entry_info $tmfile`; do
-            curr_tmtype=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$1}'`
-            curr_tmfile=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$2}'`
-            curr_status=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$3}'`
-            process_files_for_individual_tm ${curr_tmtype} ${tmdesc_dirname}/${curr_tmfile} ${curr_status} || return 1;
+            curr_tmtype=`echo "${tm_entry}" | "$AWK" -F "," '{printf"%s",$1}'`
+            curr_tmfile=`echo "${tm_entry}" | "$AWK" -F "," '{printf"%s",$2}'`
+            curr_status=`echo "${tm_entry}" | "$AWK" -F "," '{printf"%s",$3}'`
+            process_files_for_individual_tm "${curr_tmtype}" "${tmdesc_dirname}/${curr_tmfile}" "${curr_status}" || return 1;
         done
 
         # Obtain new file name for tm descriptor
-        basetmfile=`basename $tmfile`
-        newtmfile=${outd}/tm/${basetmfile}
+        basetmfile=`basename "$tmfile"`
+        newtmfile="${outd}/tm/${basetmfile}"
     else
         # Create descriptor
-        echo "thot tm descriptor" > ${outd}/tm/tm_desc
+        echo "thot tm descriptor" > "${outd}/tm/tm_desc"
 
         # Create files for individual translation model
-        process_files_for_individual_tm "" ${tmfile} "main" || return 1;
+        process_files_for_individual_tm "" "${tmfile}" "main" || return 1;
 
         # Obtain new tm file name
-        basetmfile=`basename $tmfile`
-        newtmfile=${outd}/tm/main/${basetmfile}
+        basetmfile=`basename "$tmfile"`
+        newtmfile="${outd}/tm/main/${basetmfile}"
     fi
 }
 
@@ -308,17 +308,17 @@ create_tm_files()
 get_srcsents_from_test()
 {
     tcorpus_wo_metadata=${outd}/test_corpus_without_metadata
-    ${bindir}/thot_get_srcsents_from_metadata -f ${tcorpus} > ${tcorpus_wo_metadata} 2>/dev/null
+    "${bindir}"/thot_get_srcsents_from_metadata -f "${tcorpus}" > "${tcorpus_wo_metadata}" 2>/dev/null
 }
 
 ########
 filter_ttable()
 {
     _tmfile=$1
-    _basetmfile=`basename ${_tmfile}`
+    _basetmfile=`basename "${_tmfile}"`
     _outd=$2
-    ${bindir}/thot_pbs_filter_ttable -t ${_tmfile}.ttable \
-             -c ${tcorpus_wo_metadata} -n 20 -T $tdir ${qs_opt} "${qs_par}" -o ${_outd}/${_basetmfile}.ttable ${debug_opt}
+    "${bindir}"/thot_pbs_filter_ttable -t "${_tmfile}.ttable" \
+             -c "${tcorpus_wo_metadata}" -n 20 -T "$tdir" ${qs_opt} "${qs_par}" -o "${_outd}/${_basetmfile}.ttable" ${debug_opt}
 }
 
 ########
@@ -331,14 +331,14 @@ filter_ttables()
         # Filter tables for the different translation models
         tmdesc_dirname=`$DIRNAME ${tmfile}`
         for tm_entry in `list_tm_entry_info ${tmfile}`; do
-            curr_tmtype=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$1}'`
-            curr_tmfile=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$2}'`
-            curr_status=`echo ${tm_entry} | $AWK -F "," '{printf"%s",$3}'`
+            curr_tmtype=`echo "${tm_entry}" | "$AWK" -F "," '{printf"%s",$1}'`
+            curr_tmfile=`echo "${tm_entry}" | "$AWK" -F "," '{printf"%s",$2}'`
+            curr_status=`echo "${tm_entry}" | "$AWK" -F "," '{printf"%s",$3}'`
             curr_tmfile_dirname=`$DIRNAME $curr_tmfile`
-            filter_ttable ${tmdesc_dirname}/${curr_tmfile} ${outd}/tm/${curr_tmfile_dirname} || return 1;
+            filter_ttable "${tmdesc_dirname}/${curr_tmfile}" "${outd}/tm/${curr_tmfile_dirname}" || return 1;
         done
     else
-        filter_ttable ${tmfile} ${outd}/tm/main || return 1;
+        filter_ttable "${tmfile}" "${outd}/tm/main" || return 1;
     fi
 }
 
@@ -352,7 +352,7 @@ generate_cfg_file()
     echo "# [SCRIPT_INFO]"
 
     # Create file from command line file
-    cat $cmdline_cfg | $AWK -v nlm=$newlmfile -v ntm=$newtmfile \
+    cat "$cmdline_cfg" | "$AWK" -v nlm="$newlmfile" -v ntm="$newtmfile" \
                          '{
                            if(!($1=="#" && $2=="[SCRIPT_INFO]"))
                            {
@@ -437,12 +437,12 @@ if [ ${c_given} -eq 0 ]; then
     echo "Error! -cfg parameter not given" >&2
     exit 1
 else
-    if [ ! -f ${cmdline_cfg} ]; then
+    if [ ! -f "${cmdline_cfg}" ]; then
         echo "Error! file ${cmdline_cfg} does not exist" >&2
         exit 1
     else
         # Obtain absolute path
-        cmdline_cfg=`get_absolute_path ${cmdline_cfg}`
+        cmdline_cfg=`get_absolute_path "${cmdline_cfg}"`
     fi
 fi
 
@@ -450,12 +450,12 @@ if [ ${t_given} -eq 0 ]; then
     echo "Error! -t parameter not given" >&2
     exit 1
 else
-    if [ ! -f ${tcorpus} ]; then
+    if [ ! -f "${tcorpus}" ]; then
         echo "Error! file ${tcorpus} does not exist" >&2
         exit 1
     else
         # Obtain absolute path
-        tcorpus=`get_absolute_path $tcorpus`
+        tcorpus=`get_absolute_path "$tcorpus"`
     fi
 fi
 
@@ -468,10 +468,10 @@ else
         # echo "Error! output directory should not exist" >&2 
         # exit 1
     else
-        mkdir -p ${outd}/ || { echo "Error! cannot create output directory" >&2; return 1; }
+        mkdir -p "${outd}/" || { echo "Error! cannot create output directory" >&2; return 1; }
     fi
     # Obtain absolute path
-    outd=`get_absolute_path $outd`
+    outd=`get_absolute_path "$outd"`
 fi
 
 if [ ${tdir_given} -eq 1 ]; then
@@ -501,4 +501,4 @@ get_srcsents_from_test 2>/dev/null || exit 1
 filter_ttables || exit 1
 
 # Generate cfg file
-generate_cfg_file > ${outd}/test_specific.cfg
+generate_cfg_file > "${outd}/test_specific.cfg"

@@ -26,7 +26,7 @@ usage()
 {
     echo "thot_lm_train      [-pr <int>] -c <string> [-o <string>|-a <string>]"
     echo "                   -n <int> [-f <int>] [-unk]"
-    if [ ${KENLM_BUILD_DIR} != "no" ]; then
+    if [ "${KENLM_BUILD_DIR}" != "no" ]; then
         echo "                   [-kenlm]"
     fi
     if [ ! -z "${LEVELDB_LIB}" ]; then
@@ -44,7 +44,7 @@ usage()
     echo "-f <int>           Size in lines of the fragments in which the corpus"
     echo "                   is divided when performing map-reduce (50K by default)."
     echo "-unk               Reserve probability mass for the unknown word."
-    if [ ! ${KENLM_BUILD_DIR} = "no" ]; then
+    if [ ! "${KENLM_BUILD_DIR}" = "no" ]; then
         echo "-kenlm             Generate on-disk language model in KenLM format."
     fi
     if [ ! -z "${LEVELDB_LIB}" ]; then
@@ -93,17 +93,17 @@ get_absolute_path()
 {
     file=$1
     # Check if an absolute path was given
-    absolute=`is_absolute_path $file`
-    if [ $absolute -eq 1 ]; then
-        echo $file
+    absolute=`is_absolute_path "$file"`
+    if [ "$absolute" -eq 1 ]; then
+        echo "$file"
     else
         oldpwd=$PWD
-        basetmp=`$BASENAME $PWD/$file`
-        dirtmp=`$DIRNAME $PWD/$file`
-        cd $dirtmp
-        result=${PWD}/${basetmp}
-        cd $oldpwd
-        echo $result
+        basetmp=`$BASENAME "$PWD/$file"`
+        dirtmp=`$DIRNAME "$PWD/$file"`
+        cd "$dirtmp"
+        result="${PWD}/${basetmp}"
+        cd "$oldpwd"
+        echo "$result"
     fi
 }
 
@@ -111,31 +111,31 @@ get_absolute_path()
 generate_global_word_predictor_file()
 {
     # Remove previous word predictor file
-    if [ -f ${outd}/lm_desc.wp ]; then
-        rm ${outd}/lm_desc.wp
+    if [ -f "${outd}/lm_desc.wp" ]; then
+        rm "${outd}/lm_desc.wp"
     fi
 
     # Gather current word predictor files
     nlines_wp_file=100000
-    tmpfile1=`${MKTEMP}`
-    for file in ${outd}/main/*.wp ${outd}/additional*/*.wp ; do
-        if [ -f $file ]; then
-            cat $file >> $tmpfile1 || return 1
+    tmpfile1=`"${MKTEMP}"`
+    for file in "${outd}/main/*.wp" "${outd}/additional*/*.wp" ; do
+        if [ -f "$file" ]; then
+            cat "$file" >> "$tmpfile1" || return 1
         fi
     done
 
     # Generate global word predictor file
-    tmpfile2=`${MKTEMP}`
-    ${bindir}/thot_shuffle 31415 $tdir $tmpfile1 > $tmpfile2 || return 1
-    $HEAD -${nlines_wp_file} $tmpfile2 > ${outd}/lm_desc.wp || return 1
-    rm $tmpfile1 $tmpfile2
+    tmpfile2=`"${MKTEMP}"`
+    "${bindir}"/thot_shuffle 31415 "$tdir" "$tmpfile1" > "$tmpfile2" || return 1
+    "$HEAD" -${nlines_wp_file} "$tmpfile2" > "${outd}/lm_desc.wp" || return 1
+    rm "$tmpfile1" "$tmpfile2"
 }
 
 ########
 create_desc_files()
 {
     # Determine model type
-    if [ ${KENLM_BUILD_DIR} != "no" -a ${kenlm_given} -eq 1 ]; then
+    if [ "${KENLM_BUILD_DIR}" != "no" -a ${kenlm_given} -eq 1 ]; then
         modeltype="\$(${LIBDIR_VARNAME})/kenlm_factory.so"
     else
         if [ ! -z "${LEVELDB_LIB}" -a ${ldb_given} -eq 1 ]; then
@@ -148,17 +148,17 @@ create_desc_files()
     # Create descriptor file and file with weights
     if [ ${o_given} -eq 1 ]; then
         # -o option was given
-        echo "thot lm descriptor # tool: thot_lm_train" > ${outd}/lm_desc
-        echo "${modeltype} ${relative_prefix} main # corpus file: ${corpus}" >> ${outd}/lm_desc
+        echo "thot lm descriptor # tool: thot_lm_train" > "${outd}/lm_desc"
+        echo "${modeltype} ${relative_prefix} main # corpus file: ${corpus}" >> "${outd}/lm_desc"
 
         # add new weight to descriptor weights file
-        echo "1" > ${outd}/lm_desc.weights
+        echo "1" > "${outd}/lm_desc.weights"
     else
         # -a option was given
-        echo "${modeltype} ${relative_prefix} ${outsubdir} # corpus file: ${corpus}" >> ${outd}/lm_desc        
+        echo "${modeltype} ${relative_prefix} ${outsubdir} # corpus file: ${corpus}" >> "${outd}/lm_desc"        
 
         # add new weight to descriptor weights file
-        echo "1" >> ${outd}/lm_desc.weights
+        echo "1" >> "${outd}/lm_desc.weights"
     fi
 
     # Create global word predictor file
@@ -175,7 +175,7 @@ generate_outsubdir_name()
         # -a option was given
         success=0
         for num in 1 2 3 4 5 6 7 8 9 10; do
-            if [ ! -d ${outd}/additional_${num} ]; then
+            if [ ! -d "${outd}/additional_${num}" ]; then
                 echo "additional_${num}"
                 success=1
                 break
@@ -195,19 +195,19 @@ estimate_thotlm()
 {
     # Determine output directory information
     prefix=$outd/${outsubdir}/trg.lm
-    relative_prefix=${outsubdir}/trg.lm
+    relative_prefix="${outsubdir}/trg.lm"
 
     # Obtain number of lines for input file
-    nl=`$WC -l $corpus | $AWK '{printf"%s",$1}'`
+    nl=`"$WC" -l $corpus | "$AWK" '{printf"%s",$1}'`
 
     # Estimate n-gram model parameters
     if [ $nl -gt 0 ]; then
-        ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
-                 -c $corpus -o $prefix -n ${n_val} -f ${fragm_size} ${unk_opt} \
-                 ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || return 1
+        "${bindir}"/thot_pbs_get_ngram_counts -pr ${pr_val} \
+                 -c "$corpus" -o "$prefix" -n ${n_val} -f ${fragm_size} ${unk_opt} \
+                 ${qs_opt} "${qs_par}" -tdir "$tdir" -sdir "$sdir" ${debug_opt} || return 1
     else
-        ${bindir}/thot_get_ngram_counts -c $corpus \
-                 -n ${n_val} > $prefix || return 1
+        ${bindir}/thot_get_ngram_counts -c "$corpus" \
+                 -n ${n_val} > "$prefix" || return 1
     fi
 }
 
@@ -215,19 +215,19 @@ estimate_thotlm()
 estimate_klm()
 {
     # Determine output directory information
-    prefix=$outd/${outsubdir}/trg.lm
-    relative_prefix=${outsubdir}/trg.lm
+    prefix="$outd/${outsubdir}/trg.lm"
+    relative_prefix="${outsubdir}/trg.lm"
     
     # Estimate n-gram model parameters
-    ${KENLM_BUILD_DIR}/bin/lmplz -T $tdir -o ${n_val} --text $corpus > ${prefix}.arpa 2> ${prefix}.arpa.log || return 1
-    ${KENLM_BUILD_DIR}/bin/build_binary -T $tdir trie ${prefix}.arpa ${prefix} 2> ${prefix}.log || return 1
+    "${KENLM_BUILD_DIR}"/bin/lmplz -T "$tdir" -o ${n_val} --text $corpus > "${prefix}.arpa" 2> "${prefix}.arpa.log" || return 1
+    "${KENLM_BUILD_DIR}"/bin/build_binary -T "$tdir" trie "${prefix}.arpa" "${prefix}" 2> "${prefix}.log" || return 1
 }
 
 ########
 remove_prev_ldb_files()
 {
-    if [ -d $prefix -o -f $prefix ]; then
-        rm -rf $prefix
+    if [ -d "$prefix" -o -f "$prefix" ]; then
+        rm -rf "$prefix"
         echo "Warning: previously existing leveldb model files were found and removed" >&2
     fi
 }
@@ -236,40 +236,40 @@ remove_prev_ldb_files()
 estimate_ldb()
 {
     # Determine output directory of native thot language model
-    thotlm_prefix=$outd/${outsubdir}/trg.thotlm
+    thotlm_prefix="$outd/${outsubdir}/trg.thotlm"
 
     # Obtain number of lines for input file
-    nl=`$WC -l $corpus | $AWK '{printf"%s",$1}'`
+    nl=`"$WC" -l $corpus | "$AWK" '{printf"%s",$1}'`
 
     # Estimate n-gram model parameters
     if [ $nl -gt 0 ]; then
-        ${bindir}/thot_pbs_get_ngram_counts -pr ${pr_val} \
-                 -c $corpus -o ${thotlm_prefix} -n ${n_val} -f ${fragm_size} ${unk_opt} \
-                 ${qs_opt} "${qs_par}" -tdir $tdir -sdir $sdir ${debug_opt} || return 1
+        "${bindir}"/thot_pbs_get_ngram_counts -pr ${pr_val} \
+                 -c "$corpus" -o "${thotlm_prefix}" -n ${n_val} -f ${fragm_size} ${unk_opt} \
+                 ${qs_opt} "${qs_par}" -tdir "$tdir" -sdir "$sdir" ${debug_opt} || return 1
     else
-        ${bindir}/thot_get_ngram_counts -c $corpus \
-                 -n ${n_val} > ${thotlm_prefix} || return 1
+        ${bindir}/thot_get_ngram_counts -c "$corpus" \
+                 -n ${n_val} > "${thotlm_prefix}" || return 1
     fi
 
     # Determine output directory information
-    prefix=$outd/${outsubdir}/trg.lm
-    relative_prefix=${outsubdir}/trg.lm
+    prefix="$outd/${outsubdir}/trg.lm"
+    relative_prefix="${outsubdir}/trg.lm"
 
     # Remove previously existing ldb files
     remove_prev_ldb_files
     
     # Create leveldb model
-    cat ${thotlm_prefix} | ${bindir}/thot_ngram_to_leveldb -o $prefix 2> ${prefix}.ldb_err || return 1
+    cat "${thotlm_prefix}" | "${bindir}/thot_ngram_to_leveldb" -o "$prefix" 2> "${prefix}.ldb_err" || return 1
 
     # Remove native thot language model files
-    rm ${thotlm_prefix}*
+    rm "${thotlm_prefix}"*
 }
 
 ########
 estimate_ngram_parameters()
 {
     # Determine model type
-    if [ ${KENLM_BUILD_DIR} != "no" -a ${kenlm_given} -eq 1 ]; then
+    if [ "${KENLM_BUILD_DIR}" != "no" -a ${kenlm_given} -eq 1 ]; then
         # Estimate KenLM model
         estimate_klm
     else
@@ -288,7 +288,7 @@ generate_weight_file()
 {
     n_buckets=3
     bsize=10
-    ${bindir}/thot_gen_init_file_with_jmlm_weights ${n_val} ${n_buckets} ${bsize} > $prefix.weights || return 1
+    "${bindir}"/thot_gen_init_file_with_jmlm_weights ${n_val} ${n_buckets} ${bsize} > "$prefix.weights" || return 1
 }
 
 ########
@@ -296,10 +296,10 @@ generate_word_prediction_file()
 {
     head_nlines=1000000
     nlines_wp_file=100000
-    tmpfile=`${MKTEMP}`
-    $HEAD -${head_nlines} $corpus | ${bindir}/thot_shuffle 31415 $tdir > $tmpfile || return 1
-    $HEAD -${nlines_wp_file} $tmpfile > $prefix.wp || return 1
-    rm $tmpfile
+    tmpfile=`"${MKTEMP}"`
+    "$HEAD" -${head_nlines} "$corpus" | "${bindir}"/thot_shuffle 31415 "$tdir" > "$tmpfile" || return 1
+    "$HEAD" -${nlines_wp_file} "$tmpfile" > "$prefix.wp" || return 1
+    rm "$tmpfile"
 }
 
 ########
@@ -413,12 +413,12 @@ if [ ${c_given} -eq 0 ]; then
     echo "Error! -c parameter not given" >&2
     exit 1
 else
-    if [ ! -f ${corpus} ]; then
+    if [ ! -f "${corpus}" ]; then
         echo "Error! file ${corpus} does not exist" >&2
         exit 1            
     else
         # Obtain absolute path
-        corpus=`get_absolute_path $corpus`
+        corpus=`get_absolute_path "$corpus"`
     fi
 fi
 
@@ -433,20 +433,20 @@ if [ ${o_given} -eq 1 -a ${a_given} -eq 1 ]; then
 fi
 
 if [ ${o_given} -eq 1 ]; then
-    if [ -d ${outd}/main ]; then
+    if [ -d "${outd}/main" ]; then
         echo "Warning! output directory does exist" >&2
     fi
     # Obtain absolute path
-    outd=`get_absolute_path $outd`
+    outd=`get_absolute_path "$outd"`
 fi
 
 if [ ${a_given} -eq 1 ]; then
-    if [ ! -d ${outd}/main ]; then
+    if [ ! -d "${outd}/main" ]; then
         echo "Error! previous model estimated with thot_lm_train does not exist" >&2 
         exit 1
     fi
     # Obtain absolute path
-    outd=`get_absolute_path $outd`
+    outd=`get_absolute_path "$outd"`
 fi
 
 if [ ${n_given} -eq 0 ]; then
@@ -455,14 +455,14 @@ if [ ${n_given} -eq 0 ]; then
 fi
 
 if [ ${tdir_given} -eq 1 ]; then
-    if [ ! -d ${tdir} ]; then
+    if [ ! -d "${tdir}" ]; then
         echo "Error! directory ${tdir} does not exist" >&2
         exit 1
     fi 
 fi
 
 if [ ${sdir_given} -eq 1 ]; then
-    if [ ! -d ${sdir} ]; then
+    if [ ! -d "${sdir}" ]; then
         echo "Error! directory ${sdir} does not exist" >&2
         exit 1
     fi
@@ -480,7 +480,7 @@ fi
 outsubdir=`generate_outsubdir_name` || exit 1
 
 # Create output subdirectory
-mkdir -p ${outd}/${outsubdir} || { echo "Error! cannot create output directory" >&2; exit 1; }
+mkdir -p "${outd}/${outsubdir}" || { echo "Error! cannot create output directory" >&2; exit 1; }
 
 echo "* Estimating n-gram model parameters... " >&2
 estimate_ngram_parameters || exit 1
@@ -497,5 +497,5 @@ generate_word_prediction_file || exit 1
 echo "" >&2
 
 echo "* Generating descriptor file... " >&2
-create_desc_files $outd || exit 1
+create_desc_files "$outd" || exit 1
 echo "" >&2

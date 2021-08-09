@@ -25,7 +25,7 @@ usage()
 ########
 remove_nbl_component()
 {
-    $AWK -F " [|][|][|] " -v wname="${compname}w" \
+    "$AWK" -F " [|][|][|] " -v wname="${compname}w" \
      '{
        if(NR==1)
        {

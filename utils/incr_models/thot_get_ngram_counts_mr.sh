@@ -24,7 +24,7 @@ pipe_fail()
 
 replace_first_word_occurrence_by_unk()
 {
-    ${AWK} '{
+    "${AWK}" '{
              for(i=1;i<=NF;++i)
              {
               if($i in vocab)
@@ -51,9 +51,9 @@ sort_counts()
         SORT_TMP=""
     fi
 
-    ${AWK} '{printf"%d %s\n",NF,$0}' | \
-        LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} | \
-        ${AWK} '{for(i=2;i<=NF-1;++i)printf"%s ",$i; printf"%d\n",$NF}' ; ${PIPE_FAIL} || return 1
+    "${AWK}" '{printf"%d %s\n",NF,$0}' | \
+        LC_ALL=C "${SORT}" "${SORT_TMP}" -t " " "${sortpars}" | \
+        "${AWK}" '{for(i=2;i<=NF-1;++i)printf"%s ",$i; printf"%d\n",$NF}' ; ${PIPE_FAIL} || return 1
 }
 
 print_desc()
@@ -96,7 +96,7 @@ set_tmp_dir()
         if [ ${debug} -eq 0 ]; then
             trap "rm -rf $TMP* 2>/dev/null" EXIT
         fi
-        mkdir $TMP
+        mkdir "$TMP"
     else
         echo "Error: temporary directory does not exist"
         return 1;
@@ -188,29 +188,29 @@ set_tmp_dir || exit 1
 
 # Process -unk option
 if [ ${unk_given} -eq 1 ]; then
-    TMPF_PCORPUS=`${MKTEMP} $tdir/pcorpus.XXXXXX`
-    trap "rm ${TMPF_PCORPUS} ${TMPF_HIST_INFO} 2>/dev/null" EXIT
+    TMPF_PCORPUS=`"${MKTEMP}" "$tdir/pcorpus.XXXXXX"`
+    trap 'rm "${TMPF_PCORPUS}" "${TMPF_HIST_INFO}" 2>/dev/null' EXIT
 
-    cat $corpus | replace_first_word_occurrence_by_unk > ${TMPF_PCORPUS}
+    cat "$corpus" | replace_first_word_occurrence_by_unk > "${TMPF_PCORPUS}"
     proc_corpus=${TMPF_PCORPUS}
 else
     proc_corpus=$corpus
 fi
 
 # Split corpus into fragments of fixed size
-${SPLIT} -a 4 -l ${fragm_size} $proc_corpus $TMP/
+"${SPLIT}" -a 4 -l ${fragm_size} "$proc_corpus" "$TMP/"
 
 # Process fragments
 c=1
-for i in `ls $TMP`; do
+for f in "$TMP/"*; do
     
-    ${bindir}/thot_get_ngram_counts -c $TMP/$i -n ${n_val} | \
-        ${AWK} -v c=$c '{printf"%s %d\n",$0,c}' >> $TMP/counts ; ${PIPE_FAIL} || exit 1
+    "${bindir}"/thot_get_ngram_counts -c "$f" -n ${n_val} | \
+        "${AWK}" -v c=$c '{printf"%s %d\n",$0,c}' >> "$TMP/counts" ; ${PIPE_FAIL} || exit 1
     
     c=`expr $c + 1`
     
-    rm $TMP/$i
+    rm "$f"
 done
 
 # Merge counts
-cat $TMP/counts | sort_counts | ${bindir}/thot_merge_ngram_counts ; ${PIPE_FAIL} || exit 1
+cat "$TMP/counts" | sort_counts | "${bindir}"/thot_merge_ngram_counts ; ${PIPE_FAIL} || exit 1
