@@ -104,7 +104,7 @@ merge_gen_phr()
 
     if [ "${estimation}" = "BRF" ]; then
         cat "$SDIR"/*.seglentable > "$tmpdir"/${$}seglentable
-        "${bindir}"/thot_merge_seglen_counts $tmpdir/${$}seglentable > ${output}.seglentable
+        "${bindir}"/thot_merge_seglen_counts "$tmpdir"/${$}seglentable > "${output}".seglentable
         rm "$tmpdir"/${$}seglentable
     fi
     
