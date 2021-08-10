@@ -148,6 +148,7 @@ pbs_sync()
             if [ ${num_running_procs} -eq 0 ]; then
                 sync_curr_num_files=`ls -l "${sync_info_dir}/" | "$GREP" " ${pref}" | wc -l`
                 if [ ${sync_curr_num_files} -ne ${sync_num_files} ]; then
+                    echo "Error during synchronization" >&2
                     return 1
                 fi
             fi
