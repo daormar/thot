@@ -3,6 +3,10 @@
 
 # Extracts n-gram counts from a monolingual corpus.
 
+# INCLUDE BASH LIBRARIES
+. "${bindir}"/thot_general_lib || exit 1
+. "${bindir}"/thot_adv_sched_lib || exit 1
+
 print_desc()
 {
     echo "thot_pbs_get_ngram_counts written by Daniel Ortiz"
@@ -52,22 +56,6 @@ usage()
     echo "--version          : Output version information and exit."
 }
 
-disabled_pipe_fail()
-{
-    return $?
-}
-
-pipe_fail()
-{
-    # test if there is at least one command to exit with a non-zero status
-    for pipe_status_elem in ${PIPESTATUS[*]}; do 
-        if test ${pipe_status_elem} -ne 0; then 
-            return 1; 
-        fi 
-    done
-    return 0
-}
-
 set_tmp_dir()
 {
     if [ -d ${tdir} ]; then
@@ -81,17 +69,17 @@ set_tmp_dir()
 set_shared_dir()
 {
     SDIR="${sdir}/thot_pbs_get_ngram_counts_sdir_${PPID}_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" ; return 1; }
+    mkdir "$SDIR" || { echo "Error: shared directory cannot be created" ; return 1; }
 
     # Create temporary subdirectories
-    fragms_dir=$SDIR/fragms
-    scripts_dir=$SDIR/scripts
-    counts_per_fragm_dir=$SDIR/counts_per_fragm
-    sync_info_dir=$SDIR/sync
-    mkdir ${fragms_dir} || return 1
-    mkdir ${scripts_dir} || return 1
-    mkdir ${counts_per_fragm_dir} || return 1
-    mkdir ${sync_info_dir} || return 1
+    fragms_dir="$SDIR"/fragms
+    scripts_dir="$SDIR"/scripts
+    counts_per_fragm_dir="$SDIR"/counts_per_fragm
+    sync_info_dir="$SDIR"/sync
+    mkdir "${fragms_dir}" || return 1
+    mkdir "${scripts_dir}" || return 1
+    mkdir "${counts_per_fragm_dir}" || return 1
+    mkdir "${sync_info_dir}" || return 1
 
     # Function executed correctly
     return 0
@@ -99,7 +87,7 @@ set_shared_dir()
 
 replace_first_word_occurrence_by_unk()
 {
-    ${AWK} '{
+    "${AWK}" '{
              for(i=1;i<=NF;++i)
              {
               if($i in vocab)
@@ -120,10 +108,10 @@ replace_first_word_occurrence_by_unk()
 process_unk_opt()
 {
     if [ ${unk_given} -eq 1 ]; then
-        TMPF_PCORPUS=`${MKTEMP} $tdir/pcorpus.XXXXXX`
-        trap "rm ${TMPF_PCORPUS} ${TMPF_HIST_INFO} 2>/dev/null" EXIT
+        TMPF_PCORPUS=`"${MKTEMP}" "$tdir"/pcorpus.XXXXXX`
+        trap 'rm "${TMPF_PCORPUS}" "${TMPF_HIST_INFO}" 2>/dev/null' EXIT
         
-        cat $corpus | replace_first_word_occurrence_by_unk > ${TMPF_PCORPUS} || return 1
+        cat "$corpus" | replace_first_word_occurrence_by_unk > "${TMPF_PCORPUS}" || return 1
         proc_corpus=${TMPF_PCORPUS}
     else
         proc_corpus=$corpus
@@ -132,10 +120,10 @@ process_unk_opt()
 
 split_input()
 {
-    echo "*** Splitting input: ${corpus}..." >> $SDIR/log
+    echo "*** Splitting input: ${corpus}..." >> "$SDIR"/log
 
     # Determine fragment size
-    local input_size=`wc -l ${corpus} 2>/dev/null | ${AWK} '{printf"%d",$1}'`
+    local input_size=`wc -l "${corpus}" 2>/dev/null | "${AWK}" '{printf"%d",$1}'`
     if [ ${input_size} -eq 0 ]; then
         echo "Error: input file ${corpus} is empty"
         exit 1
@@ -149,266 +137,61 @@ split_input()
     _fragm_size=`expr ${_fragm_size} + 1`
 
     # Split input 
-    ${SPLIT} -l ${_fragm_size} ${proc_corpus} ${fragms_dir}/fragm\_ || return 1
+    "${SPLIT}" -l ${_fragm_size} "${proc_corpus}" ${fragms_dir}/fragm\_ || return 1
 }
 
 remove_temp()
 {
     # remove shared directory
     if [ "$debug" -eq 0 ]; then
-        rm -rf $SDIR 2>/dev/null
+        rm -rf "$SDIR" 2>/dev/null
     fi
-}
-
-exclude_readonly_vars()
-{
-    ${AWK} -F "=" 'BEGIN{
-                         readonlyvars["BASHOPTS"]=1
-                         readonlyvars["BASH_VERSINFO"]=1
-                         readonlyvars["EUID"]=1
-                         readonlyvars["PPID"]=1
-                         readonlyvars["SHELLOPTS"]=1
-                         readonlyvars["UID"]=1
-                        }
-                        {
-                         if(!($1 in readonlyvars)) printf"%s\n",$0
-                        }'
-}
-
-exclude_bashisms()
-{
-    "$AWK" '{if(index($1,"=(")==0) printf"%s\n",$0}'
-}
-
-write_functions()
-{
-    for f in `${AWK} '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
-        $SED -n /^$f/,/^}/p $0
-    done
-}
-
-create_script()
-{
-    # Init variables
-    local name=$1
-    local command=$2
-
-    # Write environment variables
-    set | exclude_readonly_vars | exclude_bashisms > ${name}
-
-    # Write functions if necessary
-    $GREP "()" ${name} -A1 | $GREP "{" > /dev/null || write_functions >> ${name}
-
-    # Write PBS directives
-    stream_fname=`${BASENAME} ${name}`
-    echo "#PBS -o ${stream_fname}.o\${PBS_JOBID}" >> ${name}
-    echo "#PBS -e ${stream_fname}.e\${PBS_JOBID}" >> ${name}
-    echo "#$ -cwd" >> ${name}
-#    echo "#$ -o ${stream_fname}.o\$JOB_ID" >> ${name}
-#    echo "#$ -e ${stream_fname}.e\$JOB_ID" >> ${name}
-
-    # Write command to be executed
-    echo "${command}" >> ${name}
-
-    # Give execution permission
-    chmod u+x ${name}
-}
-
-launch()
-{
-    local job_deps=$1
-    local program=$2
-    local suffix=$3
-    local outvar=$4
-
-    if [ "${QSUB_WORKS}" = "no" ]; then
-        $program &
-        eval "${outvar}=$!"
-    else
-        # Check if the sleep command is used to synchronize processes
-        if [ ${sync_sleep} -eq 1 ]; then
-            # The sleep command is being used
-            # Create script
-            create_script ${scripts_dir}/${program}${suffix}.sh $program
-            # Execute qsub command
-            local jid=$(${QSUB} ${QSUB_TERSE_OPT} ${qs_opts} ${scripts_dir}/${program}${suffix}.sh | ${TAIL} -1)
-
-            # Set value of output variable
-            eval "${outvar}='${jid}'"
-        else
-            # Synchronization is carried out by explicitly defining
-            # dependencies between jobs when executing qsub
-            
-            # Create script
-            create_script ${scripts_dir}/${program}${suffix}.sh $program
-
-            # Define qsub option declaring job dependencies
-            local depend_opt=""
-            if [ ! -z "$job_deps" ]; then
-                job_deps=`echo ${job_deps} | "$AWK" '{for(i=1;i<NF;++i) printf"%s:",$i; printf"%s",$NF}'`
-                depend_opt="-W depend=afterok:${job_deps}"
-            fi
-            
-            # Execute qsub command. The -h option is used to hold
-            # jobs. All jobs are released at the end of the script. This
-            # ensures that job dependencies are defined over existing
-            # jobs
-            local jid=$(${QSUB} ${QSUB_TERSE_OPT} -h ${depend_opt} ${qs_opts} ${scripts_dir}/${program}${suffix}.sh | ${TAIL} -1)
-
-            # Set value of output variable
-            eval "${outvar}='${jid}'"
-
-            # Uncomment line to show debug information
-            # echo $program ${depend_opt} $jid
-        fi
-    fi
-}
-
-job_is_unknown()
-{
-    nl=`$QSTAT ${QSTAT_J_OPT} ${jid} 2>&1 | $GREP -e "Unknown" -e "do not exist" | wc -l`
-    if [ $nl -ne 0 ]; then
-        echo 1
-    else
-        echo 0
-    fi
-}
-
-pbs_sync()
-{
-    # Init vars
-    local job_ids=$1
-    local pref=$2
-    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
-
-    if [ ${sync_sleep} -eq 1 ]; then
-        # Execute sync loop
-        local sync_end=0
-        while [ ${sync_end} -ne 1 ]; do
-            sleep 2
-            
-            # Compare current number of sync files written with the required
-            # number
-            sync_curr_num_files=`ls -l ${sync_info_dir}/ | $GREP " ${pref}" | wc -l`
-            if [ ${sync_curr_num_files} -eq ${sync_num_files} ]; then
-                sync_end=1
-            fi
-      
-            # Sanity check
-            # In pbs clusters, check if there are terminated processes
-            # that have not written the sync file
-            num_running_procs=0
-            for jid in ${job_ids}; do
-                job_unknown=`job_is_unknown ${jid}`
-                if [ ${job_unknown} -eq 0 ]; then
-                    num_running_procs=`expr ${num_running_procs} + 1`
-                fi
-            done
-            if [ ${num_running_procs} -eq 0 ]; then
-                sync_curr_num_files=`ls -l ${sync_info_dir}/ | $GREP " ${pref}" | wc -l`
-                if [ ${sync_curr_num_files} -ne ${sync_num_files} ]; then
-                    return 1
-                fi
-            fi
-        done
-      
-        return 0
-    else
-        # No sync loop is required
-        return 0
-    fi
-}
-
-all_procs_ok()
-{
-    # Init variables
-    local job_ids=$1
-    local pref=$2
-    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
-
-    # Obtain number of processes that terminated correctly
-    local sync_curr_num_files=`ls -l ${sync_info_dir}/ | $GREP " ${pref}" | wc -l`
-
-    # Return result
-    if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
-        echo "1"
-    else
-        echo "0"
-    fi
-}
-
-sync()
-{
-    # Init vars
-    local job_ids=$1
-    local pref=$2
-
-    if [ "${QSUB_WORKS}" = "no" ]; then
-        wait
-        sync_ok=`all_procs_ok "${job_ids}" $pref`
-        if [ $sync_ok -eq 1 ]; then
-            return 0
-        else
-            return 1
-        fi
-    else
-        pbs_sync "${job_ids}" $pref
-    fi
-}
-
-release_job_holds()
-{
-    job_ids=$1
-    ${QRLS} ${job_ids}
-    
-    # Uncomment line to get debugging information
-    # echo ${job_id_list}
 }
 
 add_length_col()
 {
-    ${AWK} '{printf"%d %s\n",NF,$0}'
+    "${AWK}" '{printf"%d %s\n",NF,$0}'
 }
 
 remove_length_col()
 {
-    ${AWK} '{for(i=2;i<=NF-1;++i)printf"%s ",$i; printf"%d\n",$NF}'
+    "${AWK}" '{for(i=2;i<=NF-1;++i)printf"%s ",$i; printf"%d\n",$NF}'
 }
 
 sort_counts()
 {
     # Set sort command options
     if test ${sortT} = "yes"; then
-        SORT_TMP="-T $TMP"
+        SORT_TMP="$TMP"
     else
-        SORT_TMP=""
+        SORT_TMP="/tmp"
     fi
 
-    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars}
+    LC_ALL=C "${SORT}" -T "${SORT_TMP}" -t " " ${sortpars}
 }
 
 add_fragm_id()
 {
-    ${AWK} -v c=${fragm_id} '{printf"%s %s\n",$0,c}'    
+    "${AWK}" -v c=${fragm_id} '{printf"%s %s\n",$0,c}'    
 }
 
 proc_fragm()
 {
     # Write date to log file
-    echo "** Processing fragm ${fragm} (started at "`date`")..." >> $SDIR/log
-    echo "** Processing fragm ${fragm} (started at "`date`")..." > ${counts_per_fragm_dir}/${fragm}_sorted_counts.log
+    echo "** Processing fragm ${fragm} (started at "`date`")..." >> "$SDIR"/log
+    echo "** Processing fragm ${fragm} (started at "`date`")..." > "${counts_per_fragm_dir}"/${fragm}_sorted_counts.log
 
     # Extract counts from fragm and sort them
-    $bindir/thot_get_ngram_counts_mr -c ${fragms_dir}/${fragm} -n ${n_val} -f ${fragm_size} -tdir $TMP | add_length_col | \
-        sort_counts | add_fragm_id 2>> ${counts_per_fragm_dir}/${fragm}_sorted_counts.log \
-        > ${counts_per_fragm_dir}/${fragm}_sorted_counts ; ${PIPE_FAIL} || \
-        { echo "Error while executing proc_fragm for ${fragms_dir}/${fragm}" >> $SDIR/log ; return 1 ; }
+    "$bindir"/thot_get_ngram_counts_mr -c "${fragms_dir}"/${fragm} -n ${n_val} -f ${fragm_size} -tdir "$TMP" | add_length_col | \
+        sort_counts | add_fragm_id 2>> "${counts_per_fragm_dir}"/${fragm}_sorted_counts.log \
+        > "${counts_per_fragm_dir}"/${fragm}_sorted_counts ; ${PIPE_FAIL} || \
+        { echo "Error while executing proc_fragm for ${fragms_dir}/${fragm}" >> "$SDIR"/log ; return 1 ; }
 
     # Write date to log file
-    echo "Processing of fragm ${fragm} finished ("`date`")" >> $SDIR/log 
+    echo "Processing of fragm ${fragm} finished ("`date`")" >> "$SDIR"/log 
 
     # Create sync file
-    echo "" > ${sync_info_dir}/proc_fragm_${fragm}
+    echo "" > "${sync_info_dir}"/proc_fragm_${fragm}
 
     return 0
 }
@@ -419,57 +202,57 @@ merge_sort()
     export LC_ALL=""
     export LC_COLLATE=C
     if test ${sortT} = "yes"; then
-        SORT_TMP="-T $TMP"
+        SORT_TMP="$TMP"
     else
-        SORT_TMP=""
+        SORT_TMP="/tmp"
     fi
 
-    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} -m ${counts_per_fragm_dir}/*_sorted_counts
+    LC_ALL=C "${SORT}" -T "${SORT_TMP}" -t " " ${sortpars} -m "${counts_per_fragm_dir}"/*_sorted_counts
 }
 
 generate_counts_file()
 {
     # Write date to log file
-    echo "** Generating counts file (started at "`date`")..." >> $SDIR/log
-    echo "** Generating counts file (started at "`date`")..." > ${counts_per_fragm_dir}/gen_counts.log
+    echo "** Generating counts file (started at "`date`")..." >> "$SDIR"/log
+    echo "** Generating counts file (started at "`date`")..." > "${counts_per_fragm_dir}"/gen_counts.log
 
     # Delete output file if exists
-    if [ -f ${output} ]; then
-        rm ${output}
+    if [ -f "${output}" ]; then
+        rm "${output}"
     fi
 
     # Merge count files
-    merge_sort 2>> ${counts_per_fragm_dir}/gen_counts.log | \
-        remove_length_col 2>> ${counts_per_fragm_dir}/gen_counts.log | \
-        ${bindir}/thot_merge_ngram_counts 2>> ${counts_per_fragm_dir}/gen_counts.log \
-        > ${output} ; ${PIPE_FAIL} || \
-        { echo "Error while executing generate_counts_file" >> $SDIR/log ; return 1 ; }
+    merge_sort 2>> "${counts_per_fragm_dir}"/gen_counts.log | \
+        remove_length_col 2>> "${counts_per_fragm_dir}"/gen_counts.log | \
+        "${bindir}"/thot_merge_ngram_counts 2>> "${counts_per_fragm_dir}"/gen_counts.log \
+        > "${output}" ; ${PIPE_FAIL} || \
+        { echo "Error while executing generate_counts_file" >> "$SDIR"/log ; return 1 ; }
 
     # Copy log file
-    echo "**** Parallel process finished at: "`date` >> $SDIR/log
-    cp $SDIR/log ${output}.getng_log
+    echo "**** Parallel process finished at: "`date` >> "$SDIR"/log
+    cp "$SDIR"/log "${output}".getng_log
 
     # Create sync file
-    echo "" > ${sync_info_dir}/generate_counts_file
+    echo "" > "${sync_info_dir}"/generate_counts_file
 }
 
 gen_log_err_files()
 {
     if [ ${sync_sleep} -eq 1 ]; then
-        if [ -f $SDIR/log ]; then
-            cp $SDIR/log ${output}.getng_log
+        if [ -f "$SDIR"/log ]; then
+            cp "$SDIR"/log "${output}".getng_log
         fi
 
-        if [ -f ${output}.getng_err ]; then
-            rm ${output}.getng_err
+        if [ -f "${output}".getng_err ]; then
+            rm "${output}".getng_err
         fi
 
-        for f in ${counts_per_fragm_dir}/*_sorted_counts.log; do
-            cat $f >> ${output}.getng_err
+        for f in "${counts_per_fragm_dir}/"*_sorted_counts.log; do
+            cat $f >> "${output}".getng_err
         done
 
-        if [ -f ${counts_per_fragm_dir}/gen_counts.log ]; then
-            cat $f >> ${output}.getng_err
+        if [ -f "${counts_per_fragm_dir}"/gen_counts.log ]; then
+            cat "$f" >> "${output}".getng_err
         fi
     fi
 }
@@ -477,17 +260,17 @@ gen_log_err_files()
 report_errors()
 {
     if [ ${sync_sleep} -eq 1 ]; then
-        num_err=`$GREP "Error while executing" ${output}.getng_log | wc -l`
+        num_err=`"$GREP" "Error while executing" "${output}".getng_log | wc -l`
         if [ ${num_err} -gt 0 ]; then
             # Print error messages
-            prog=`$GREP "Error while executing" ${output}.getng_log | head -1 | "$AWK" '{printf"%s",$4}'`
+            prog=`"$GREP" "Error while executing" "${output}".getng_log | head -1 | "$AWK" '{printf"%s",$4}'`
             echo "Error during the execution of thot_get_ngram_counts (${prog})" >&2
-            if [ -f ${output}.getng_err ]; then
+            if [ -f "${output}".getng_err ]; then
                 echo "File ${output}.getng_err contains information for error diagnosing" >&2
             fi
         else
             echo "Synchronization error" >&2
-            if [ -f ${output}.getng_err ]; then
+            if [ -f "${output}".getng_err ]; then
                 echo "File ${output}.getng_err contains information for error diagnosing" >&2
             fi
         fi
@@ -584,8 +367,6 @@ while [ $# -ne 0 ]; do
         "-debug") debug=1
             debug_opt="-debug"
             ;;
-        # "--sync-sleep") sync_sleep=1
-        #     ;;
         "--sync-dep") sync_sleep=0
             ;;
     esac
@@ -633,7 +414,7 @@ declare scripts_dir=""
 set_shared_dir || exit 1
 
 # Create log file
-echo "**** Parallel process started at: "`date` > $SDIR/log
+echo "**** Parallel process started at: "`date` > "$SDIR"/log
 
 # Process -unk option
 process_unk_opt || exit 1
@@ -647,14 +428,14 @@ declare job_id_list=""
 
 # Extract counts from fragm
 fragm_id=0
-for i in `ls ${fragms_dir}/fragm\_*`; do
+for i in "${fragms_dir}/fragm_"*; do
     # Initialize variables
-    fragm=`${BASENAME} $i`
+    fragm=`"${BASENAME}" $i`
     fragm_id=`expr $fragm_id + 1`
         
     # Process fragment
     job_deps=""
-    launch "${job_deps}" proc_fragm "_${fragm_id}" job_id || exit 1
+    launch "${job_deps}" "${scriptsdir}" proc_fragm "_${fragm_id}" job_id || exit 1
     pc_job_ids=${job_id}" "${pc_job_ids}
 done
 
@@ -663,7 +444,7 @@ sync "${pc_job_ids}" "proc_fragm" || { gen_log_err_files ; report_errors ; exit 
 
 # Generate counts file
 job_deps=${pc_job_ids}
-launch "${job_deps}" generate_counts_file "" gcf_job_id || exit 1;
+launch "${job_deps}" "${scriptsdir}" generate_counts_file "" gcf_job_id || exit 1;
 
 # Generate counts file synchronization
 sync "${gcf_job_id}" "generate_counts_file" || { gen_log_err_files ; report_errors ; exit 1; }
@@ -678,7 +459,7 @@ if [ ${sync_sleep} -eq 1 ]; then
 else
     # Sync using sleep is not enabled
     job_deps=${gcf_job_id}
-    launch "${job_deps}" remove_temp "" rt_job_id || exit 1;
+    launch "${job_deps}" "${scriptsdir}" remove_temp "" rt_job_id || exit 1;
     # Remove temporary files synchronization
     sync "${rt_job_id}" "remove_temp" || { report_errors ; exit 1; }
 fi

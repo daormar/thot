@@ -6,21 +6,8 @@
 # arbitrary size.  The -unk option reserves a certain probability mass
 # for the unknown word.
 
-disabled_pipe_fail()
-{
-    return $?
-}
-
-pipe_fail()
-{
-    # test if there is at least one command to exit with a non-zero status
-    for pipe_status_elem in ${PIPESTATUS[*]}; do 
-        if test ${pipe_status_elem} -ne 0; then 
-            return 1; 
-        fi 
-    done
-    return 0
-}
+# INCLUDE BASH LIBRARIES
+. "${bindir}"/thot_general_lib || exit 1
 
 replace_first_word_occurrence_by_unk()
 {
@@ -46,13 +33,13 @@ sort_counts()
 {
     # Set sort command options
     if test ${sortT} = "yes"; then
-        SORT_TMP="-T $TMP"
+        SORT_TMP="$TMP"
     else
-        SORT_TMP=""
+        SORT_TMP="/tmp"
     fi
 
     "${AWK}" '{printf"%d %s\n",NF,$0}' | \
-        LC_ALL=C "${SORT}" "${SORT_TMP}" -t " " "${sortpars}" | \
+        LC_ALL=C "${SORT}" -T "${SORT_TMP}" -t " " "${sortpars}" | \
         "${AWK}" '{for(i=2;i<=NF-1;++i)printf"%s ",$i; printf"%d\n",$NF}' ; ${PIPE_FAIL} || return 1
 }
 
