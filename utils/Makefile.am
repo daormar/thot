@@ -7,7 +7,7 @@ $(smt_preproc_bin_scripts) $(error_correction_bin_scripts)		\
 $(downhill_simplex_bin_scripts) $(stack_dec_bin_scripts)		\
 $(exper_bin_scripts)
 
-nlp_common_bin_scripts= nlp_common/thot_shuffle				\
+nlp_common_bin_scripts= nlp_common/thot_shlib nlp_common/thot_shuffle	\
 nlp_common/thot_obtain_info_from_verbose_ppl				\
 nlp_common/thot_extract_sents_by_ln nlp_common/thot_corpus_length	\
 nlp_common/thot_handle_ini_files nlp_common/thot_replace_oov_with_unk
