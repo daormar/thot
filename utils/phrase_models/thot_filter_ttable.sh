@@ -58,7 +58,7 @@ else
 
     # Check parameters
     if [ ${t_given} -eq 1 ]; then
-        if [ ! -f ${ttable_file} ]; then
+        if [ ! -f "${ttable_file}" ]; then
             echo "Error: file ${ttable_file} does not exist!" >&2
             exit 1
         fi        
@@ -75,6 +75,6 @@ else
     fi
 
     # Filter translation table
-    $bindir/thot_filter_ttable_given_corpus ${ttable_file} ${test_corpus_file} |\
-        $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T ${tmpdir}
+    "$bindir"/thot_filter_ttable_given_corpus "${ttable_file}" "${test_corpus_file}" |\
+        "$bindir"/thot_get_nbest_for_trg -n ${n_val} -p -T "${tmpdir}"
 fi

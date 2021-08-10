@@ -7,7 +7,7 @@ if [ $# -ne 0 -a $# -ne 1 ]; then
 echo "Usage: thot_merge_counts"
 else
 
-${AWK} '\
+"${AWK}" '\
      function delete_array(array)
      {
       delete array
@@ -107,5 +107,5 @@ ${AWK} '\
        END{
              # print last group of counts
              print_counts()
-          }' $1
+          }' "$1"
 fi

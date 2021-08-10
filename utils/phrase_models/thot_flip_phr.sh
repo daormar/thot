@@ -11,7 +11,7 @@ if [ $# -ne 0 -a $# -ne 1 ]; then
 else
  
  file=$1
- ${AWK}              'BEGIN{ 
+ "${AWK}"            'BEGIN{ 
                             num_lines=0
                            }
                            {
@@ -51,6 +51,5 @@ else
                             for(i=last_i;i<=NF;++i)
                                 printf" %s",$i
                             printf("\n")
-		           }' ${file}
-		  
+		           }' "${file}"		  
 fi

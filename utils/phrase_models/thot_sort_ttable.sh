@@ -7,7 +7,7 @@
 put_st_lengths()
 {
     # Puts the source and target phrase counts between the phrase pairs
-    ${AWK}              'BEGIN{ 
+    "${AWK}"              'BEGIN{ 
                             num_lines=0
                            }
                            {
@@ -48,7 +48,7 @@ put_st_lengths()
                             printf" %.20f %03d %s",(1/$NF),num_trg_words,trg
                             printf" ||| %s %s",$(NF-1),$(NF)
                             printf("\n")
-		           }'
+		           }' "$1"
 }
 
 ########
@@ -57,7 +57,7 @@ remove_st_lengths()
     # Remove the lengths of s and t that have been previously 
     # put using put_st_lengths
 
-    ${AWK} '{       
+    "${AWK}" '{       
        count_src=0;
        for(i=2;i<=NF;++i)
        {
@@ -73,7 +73,7 @@ remove_st_lengths()
         }
         else printf"%s\n",$i;
        }
-      }' ${file}
+      }' "${file}"
 }
 
 ########
@@ -105,10 +105,10 @@ else
     done
 
     if test "${sortT}" = "yes"; then
-        SORT_TMP="-T $tmpdir"
+        SORT_TMP="$tmpdir"
     else
-        SORT_TMP=""
+        SORT_TMP="/tmp"
     fi
 
-    cat ${ttable_file} | put_st_lengths | LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} | remove_st_lengths
+    put_st_lengths "${ttable_file}" | LC_ALL=C "${SORT}" -T "${SORT_TMP}" ${sortpars} | remove_st_lengths
 fi

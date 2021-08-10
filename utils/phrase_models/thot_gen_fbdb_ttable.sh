@@ -15,7 +15,7 @@ plain_ttable_to_id()
     _tvoc=$2
     _table=$3
 
-    ${AWK} -v s_voc=$_svoc -v t_voc=$_tvoc \
+    "${AWK}" -v s_voc="$_svoc" -v t_voc="$_tvoc" \
            'BEGIN{ 
                   while( (getline <s_voc) > 0)
                   {
@@ -70,7 +70,7 @@ plain_ttable_to_id()
                      printf"%s ||| %s ||| %s %s\n",srcphr,trgphr,$(NF-1),$NF
                    else
                      printf"Warning: discarding anomalous phrase table entry at line %d (look for words outside vocabulary or empty phrases)\n",NR > "/dev/stderr"
-                  }' ${_table}
+                  }' "${_table}"
 }
 
 ########
@@ -78,7 +78,7 @@ obtain_vocab()
 {
     sps="$1"
 
-    ${AWK} -v sps="${sps}"\
+    "${AWK}" -v sps="${sps}"\
      'BEGIN{ 
             id=0
             if(sps!="")
@@ -113,7 +113,7 @@ obtain_vocab()
 ########
 extract_first_phrase()
 {
-    $AWK  '{
+    "$AWK"  '{
               i=1; 
               while($i!="|||") 
               {
@@ -132,7 +132,7 @@ extract_src_phrases()
 ########
 extract_trg_phrases()
 {
-    ${bindir}/thot_flip_phr | extract_first_phrase
+    "${bindir}"/thot_flip_phr | extract_first_phrase
 }
 
 ########
@@ -140,8 +140,8 @@ remove_prev_files()
 {
     _files_were_removed=0
     for ext in ${svcb_ext} ${tvcb_ext} ${phrdict_ext}; do
-        if [ -f $out.$ext ]; then
-            rm $out.$ext
+        if [ -f "$out.$ext" ]; then
+            rm "$out.$ext"
             _files_were_removed=1
         fi
     done
@@ -159,9 +159,9 @@ gen_src_vocab()
         # If there is a single word model vocabulary already generated,
         # it should be used as the phrase model vocabulary to avoid
         # conflicts
-        cat ${p_val}_swm.svcb | $AWK '{printf"%.8d %s %s\n",$1,$2,$3}' > $srcv
+        cat "${p_val}_swm.svcb" | $AWK '{printf"%.8d %s %s\n",$1,$2,$3}' > "$srcv"
     else
-        cat $table | extract_src_phrases $tmpdir | obtain_vocab "NULL UNKNOWN_WORD <UNUSED_WORD>" > $srcv
+        cat "$table" | extract_src_phrases $tmpdir | obtain_vocab "NULL UNKNOWN_WORD <UNUSED_WORD>" > "$srcv"
     fi
 }
 
@@ -169,13 +169,13 @@ gen_src_vocab()
 gen_trg_vocab()
 {
     # Generate target vocabulary
-    if [ -f ${p_val}_swm.tvcb ]; then
+    if [ -f "${p_val}_swm.tvcb" ]; then
         # If there is a single word model vocabulary already generated,
         # it should be used as the phrase model vocabulary to avoid
         # conflicts
-        cat ${p_val}_swm.tvcb | $AWK '{printf"%.8d %s %s\n",$1,$2,$3}' > $trgv
+        cat "${p_val}_swm.tvcb" | "$AWK" '{printf"%.8d %s %s\n",$1,$2,$3}' > $trgv
     else
-        cat $table | extract_trg_phrases $tmpdir | obtain_vocab "NULL UNKNOWN_WORD <UNUSED_WORD>" > $trgv
+        cat "$table" | extract_trg_phrases "$tmpdir" | obtain_vocab "NULL UNKNOWN_WORD <UNUSED_WORD>" > "$trgv"
     fi
 }
 ########
@@ -190,10 +190,10 @@ gen_vocab_files()
 gen_fbdb_files()
 {
     if [ $debug -eq 1 ]; then
-        plain_ttable_to_id $srcv $trgv $table > $out.idttable
+        plain_ttable_to_id "$srcv" "$trgv" "$table" > "$out.idttable"
     fi
 
-    plain_ttable_to_id $srcv $trgv $table | ${bindir}/thot_ttable_to_fbdb -o $out
+    plain_ttable_to_id "$srcv" "$trgv" "$table" | "${bindir}"/thot_ttable_to_fbdb -o "$out"
 }
 
 ########
@@ -255,8 +255,8 @@ else
     # Obtain translation table file name
     table="${p_val}.ttable"
 
-    if [ ! -f $table ]; then
-        echo "Error: file "$table" does not exist"
+    if [ ! -f "$table" ]; then
+        echo "Error: file $table does not exist"
         exit 1
     fi
 
@@ -266,8 +266,8 @@ else
     phrdict_ext=fbdb_phrdict
     
     # Generate vocabulary file names
-    srcv=$out.${svcb_ext}
-    trgv=$out.${tvcb_ext}
+    srcv="$out".${svcb_ext}
+    trgv="$out".${tvcb_ext}
 
     # Generate fbdb translation table files
     echo "Starting BDB ttable generation..." >&2
@@ -279,5 +279,4 @@ else
     gen_fbdb_files
 
     echo "BDB ttable generation process finished" >&2
-
 fi

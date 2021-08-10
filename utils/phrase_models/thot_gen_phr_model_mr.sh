@@ -3,6 +3,9 @@
 
 # Allows to train very large corpus using thot_gen_phr_model
 
+# INCLUDE BASH LIBRARIES
+. "${bindir}"/thot_shlib || exit 1
+
 print_desc()
 {
     echo "thot_gen_phr_model_mr written by Daniel Ortiz"
@@ -63,17 +66,6 @@ usage()
     echo ""
     echo "--version                       Output version information and exit"
     echo ""
-}
-
-pipe_fail()
-{
-    # test if there is at least one command to exit with a non-zero status
-    for pipe_status_elem in ${PIPESTATUS[*]}; do 
-        if test ${pipe_status_elem} -ne 0; then 
-            return 1; 
-        fi 
-    done
-    return 0
 }
 
 thot_pars=""
@@ -154,7 +146,7 @@ done
 if [ ${g_given} -eq 1 ]; then
     # verify that -g file exist
     if [ ${g_given} -eq 1 -a  ! -f  "${a3_file}" ];then
-        echo "Error: file "$a3_file" does not exist " >&2
+        echo "Error: file $a3_file does not exist " >&2
         exit 1
     fi
 else
@@ -179,55 +171,55 @@ chunk_size=90000
 # Set TMP directory
 TMP="${tmpdir}/thot_gen_phr_model_mr_tmp_${PPID}_$$"
 if [ "$debug" != "-debug" ]; then
-    trap "rm -rf $TMP 2>/dev/null" EXIT
+    trap 'rm -rf "$TMP" 2>/dev/null' EXIT
 fi
 mkdir $TMP || { echo "Error: temporary directory cannot be created" >&2 ; exit 1; }
 # Set tmp dir of the sort command if possible
 if test ${sortT} = "yes"; then
-    SORT_TMP="-T $TMP"
+    SORT_TMP="$TMP"
 else
-    SORT_TMP=""
+    SORT_TMP="/tmp"
 fi
 
-echo "+++ Process started at: " `date` > $TMP/log
-echo "Spliting input: ${a3_file}..." >> $TMP/log
+echo "+++ Process started at: " `date` > "$TMP"/log
+echo "Spliting input: ${a3_file}..." >> "$TMP"/log
 echo "Spliting input: ${a3_file}..." >&2
 
 # Split input into chunks and process them separately
-${SPLIT} -a 4 -l ${chunk_size} ${a3_file} $TMP/chunk\_ || exit 1
+"${SPLIT}" -a 4 -l ${chunk_size} "${a3_file}" "$TMP"/chunk\_ || exit 1
 c=1
-for i in `ls $TMP/chunk\_*`; do
-    chunk=`${BASENAME} $i`
+for i in "$TMP/chunk_"*; do
+    chunk=`"${BASENAME}" $i`
 
-    echo "Processing chunk ${chunk}" >> $TMP/log
+    echo "Processing chunk ${chunk}" >> "$TMP"/log
     echo "Processing chunk ${chunk}" >&2
 
-    ${bindir}/thot_gen_phr_model -g $TMP/${chunk} ${thot_pars} -o $TMP/${chunk} || exit 1
-    ${AWK} -v cn=$c '{printf"%s %s\n",$0,cn}' $TMP/${chunk}.ttable >> $TMP/counts || exit 1
+    "${bindir}"/thot_gen_phr_model -g "$TMP"/${chunk} ${thot_pars} -o "$TMP"/${chunk} || exit 1
+    "${AWK}" -v cn=$c '{printf"%s %s\n",$0,cn}' "$TMP"/${chunk}.ttable >> "$TMP"/counts || exit 1
     if [ "${estimation}" = "BRF" ]; then
-        cat $TMP/${chunk}.seglentable >> $TMP/seglentable || exit 1
+        cat "$TMP"/${chunk}.seglentable >> "$TMP"/seglentable || exit 1
     fi
     
-    rm $TMP/${chunk} $TMP/${chunk}.ttable || exit 1
+    rm "$TMP"/${chunk} "$TMP"/${chunk}.ttable || exit 1
     c=`expr $c + 1`
 done
 
 # Merge counts and print the models
-echo "Merging counts..." >> $TMP/log
+echo "Merging counts..." >> "$TMP"/log
 echo "Merging counts..." >&2
 
 # output format = -pc
 if [ ${label_given} -eq 0 ]; then
-    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} $TMP/counts | ${bindir}/thot_merge_counts \
-        | ${bindir}/thot_cut_ttable -c $cutoff > ${output}.ttable ; pipe_fail || exit 1
+    LC_ALL=C "${SORT}" -T "${SORT_TMP}" -t " " ${sortpars} "$TMP"/counts | "${bindir}"/thot_merge_counts \
+        | "${bindir}"/thot_cut_ttable -c $cutoff > "${output}".ttable ; pipe_fail || exit 1
 else
-    LC_ALL=C ${SORT} ${SORT_TMP} -t " " ${sortpars} $TMP/counts | ${bindir}/thot_merge_counts | ${bindir}/thot_cut_ttable -c $cutoff \
-        | ${AWK} -v label=$label '{printf"%s %s\n",$0,label}' > ${output}.ttable ; pipe_fail || exit 1
+    LC_ALL=C "${SORT}" -T "${SORT_TMP}" -t " " ${sortpars} "$TMP"/counts | "${bindir}"/thot_merge_counts | "${bindir}"/thot_cut_ttable -c $cutoff \
+        | "${AWK}" -v label=$label '{printf"%s %s\n",$0,label}' > "${output}".ttable ; pipe_fail || exit 1
 fi
 
 if [ "${estimation}" = "BRF" ]; then
-    ${bindir}/thot_merge_seglen_counts $TMP/seglentable > ${output}.seglentable || exit 1
+    "${bindir}"/thot_merge_seglen_counts "$TMP"/seglentable > "${output}".seglentable || exit 1
 fi
 
 echo "+++ Process finished at: " `date` >> $TMP/log
-mv $TMP/log ${output}.log
+mv "$TMP"/log "${output}".log

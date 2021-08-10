@@ -8,17 +8,17 @@
 ########
 treat_unk_opt()
 {
-    scorpus_tmp=`${MKTEMP} ${sdir}/src.XXXXXX`
+    scorpus_tmp=`"${MKTEMP}" "${sdir}"/src.XXXXXX`
     cp ${scorpus} ${scorpus_tmp}
     echo "UNKNOWN_WORD" >> ${scorpus_tmp}
     scorpus=${scorpus_tmp}
 
-    tcorpus_tmp=`${MKTEMP} ${sdir}/trg.XXXXXX`
-    cp ${tcorpus} ${tcorpus_tmp}
-    echo "UNKNOWN_WORD" >> ${tcorpus_tmp}
+    tcorpus_tmp=`"${MKTEMP}" "${sdir}"/trg.XXXXXX`
+    cp "${tcorpus}" "${tcorpus_tmp}"
+    echo "UNKNOWN_WORD" >> "${tcorpus_tmp}"
     tcorpus=${tcorpus_tmp}
 
-    trap "rm -rf ${scorpus_tmp} ${tcorpus_tmp} 2>/dev/null" EXIT
+    trap 'rm -rf "${scorpus_tmp}" "${tcorpus_tmp}" 2>/dev/null' EXIT
 }
 
 ########
@@ -28,30 +28,30 @@ empty_train()
 
     # Generate direct single word model
     echo "* Generating source-to-target single word alignment model... " >&2
-    ${bindir}/thot_gen_sw_model -s $scorpus -t $tcorpus -n 1 ${lf_opt} ${af_opt} ${np_opt} \
-        -o ${outp}_swm 2>/dev/null || exit 1
-    echo "0" > ${outp}_swm.msinfo
+    "${bindir}"/thot_gen_sw_model -s "$scorpus" -t "$tcorpus" -n 1 ${lf_opt} ${af_opt} ${np_opt} \
+        -o "${outp}"_swm 2>/dev/null || exit 1
+    echo "0" > "${outp}"_swm.msinfo
     echo "" >&2
 
     # Generate inverse single word model
     echo "* Generating target-to-source single word alignment model... " >&2
-    ${bindir}/thot_gen_sw_model -s $tcorpus -t $scorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
-        -o ${outp}_invswm 2>/dev/null || exit 1
-    echo "0" > ${outp}_invswm.msinfo
+    "${bindir}"/thot_gen_sw_model -s "$tcorpus" -t "$scorpus" -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
+        -o "${outp}"_invswm 2>/dev/null || exit 1
+    echo "0" > "${outp}"_invswm.msinfo
     echo "" >&2
 
     # Generate phrase model
     echo "* Generating phrase model... " >&2
-    $bindir/thot_gen_phr_model -g ${scorpus} -m ${m_val} \
-        -o ${outp} ${pml_opt} || exit 1
+    "$bindir"/thot_gen_phr_model -g "${scorpus}" -m ${m_val} \
+        -o "${outp}" ${pml_opt} || exit 1
     echo "" >&2
 
     # Generate additional phrase model parameter files
     echo "* Generating additional phrase model parameter files... " >&2
-    echo "${lambda_default_val} ${lambda_default_val}" > ${outp}.lambda
-    echo ${sslen_default_val} > ${outp}.srcsegmlentable
-    echo ${stopj_default_val} > ${outp}.trgcutstable
-    echo ${tslen_default_val} > ${outp}.trgsegmlentable
+    echo "${lambda_default_val} ${lambda_default_val}" > "${outp}".lambda
+    echo ${sslen_default_val} > "${outp}".srcsegmlentable
+    echo ${stopj_default_val} > "${outp}".trgcutstable
+    echo ${tslen_default_val} > "${outp}".trgsegmlentable
     echo "" >&2
 }
 
@@ -61,20 +61,20 @@ gen_final_alig_file()
     if [ ${g_given} -eq 1 ]; then
         # Set external alignment file
         echo "* Setting external word alignment file in GIZA format... " >&2
-        cp ${gfile} ${outp}.A3.final
+        cp "${gfile}" "${outp}".A3.final
         echo "" >&2
     else
         if [ ${dict_given} -eq 1 ]; then
             # Generate exhaustive alignments so as to introduce sentence
             # pairs as phrase table entries
             echo "* Generating exhaustive word alignments... " >&2
-            $bindir/thot_gen_exhaustive_giza_alig -s $scorpus -t $tcorpus > ${outp}.A3.final
+            "$bindir"/thot_gen_exhaustive_giza_alig -s "$scorpus" -t "$tcorpus" > "${outp}".A3.final
             echo "" >&2
         else
             # Operate word alignments generated with the sw_models package
             echo "* Operating word alignments... " >&2
-            $bindir/thot_pbs_alig_op -pr ${pr_val} -g ${outp}_swm.bestal ${ao_opt} ${outp}_invswm.bestal -o ${outp} \
-                                     ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
+            "$bindir"/thot_pbs_alig_op -pr ${pr_val} -g "${outp}"_swm.bestal ${ao_opt} "${outp}"_invswm.bestal -o ${outp} \
+                                     ${qs_opt} "${qs_par}" -sdir "$sdir" -T "$tdir" ${debug_opt} || exit 1
             echo "" >&2
         fi
     fi
@@ -88,27 +88,27 @@ standard_train()
     # Generate direct single word model
     echo "* Generating source-to-target single word alignment model... " >&2
     echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
-    ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $scorpus -t $tcorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
-        -cpr ${cpr_val} ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
+    "${bindir}"/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s "$scorpus" -t "$tcorpus" -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
+        -cpr ${cpr_val} ${shuff_opt} -o "${outp}"_swm ${qs_opt} "${qs_par}" -sdir "$sdir" -tdir "$tdir" ${debug_opt} || exit 1
     echo "" >&2
 
     # Generate best alignments for direct model
     echo "* Generating best alignment for source-to-target model... " >&2
-    ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_swm -s $scorpus -t $tcorpus \
-        ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
+    "${bindir}"/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_swm -s "$scorpus" -t "$tcorpus" \
+        ${shuff_opt} -o ${outp}_swm ${qs_opt} "${qs_par}" -sdir "$sdir" -tdir "$tdir" ${debug_opt} || exit 1
     echo "" >&2
 
     # Generate inverse single word model
     echo "* Generating target-to-source single word alignment model... " >&2
     echo "Warning: this process may be slow with large corpora, see Troubleshooting section in Thot manual for possible workarounds" >&2
-    ${bindir}/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s $tcorpus -t $scorpus -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
-        -cpr ${cpr_val} ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
+    "${bindir}"/thot_pbs_gen_batch_sw_model -pr ${pr_val} -s "$tcorpus" -t "$scorpus" -n ${niters} ${lf_opt} ${af_opt} ${np_opt} \
+        -cpr ${cpr_val} ${shuff_opt} -o "${outp}"_invswm ${qs_opt} "${qs_par}" -sdir "$sdir" -tdir "$tdir" ${debug_opt} || exit 1
     echo "" >&2
 
     # Generate best alignments for inverse model
     echo "* Generating best alignment for target-to-source model... " >&2
-    ${bindir}/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_invswm -s $tcorpus -t $scorpus \
-        ${shuff_opt} -o ${outp}_invswm ${qs_opt} "${qs_par}" -sdir $sdir -tdir $tdir ${debug_opt} || exit 1
+    "${bindir}"/thot_pbs_gen_best_sw_alig -pr ${pr_val} -sw ${outp}_invswm -s "$tcorpus" -t "$scorpus" \
+        ${shuff_opt} -o "${outp}"_invswm ${qs_opt} "${qs_par}" -sdir "$sdir" -tdir "$tdir" ${debug_opt} || exit 1
     echo "" >&2
 
     # Generate final alignment file
@@ -116,24 +116,24 @@ standard_train()
 
     # Generate phrase model
     echo "* Generating phrase model... " >&2
-    $bindir/thot_pbs_gen_phr_model -pr ${pr_val} -g ${outp}.A3.final -m ${m_val} \
-        -o ${outp} ${pml_opt} ${qs_opt} "${qs_par}" -sdir $sdir -T $tdir ${debug_opt} || exit 1
+    "$bindir"/thot_pbs_gen_phr_model -pr ${pr_val} -g "${outp}".A3.final -m ${m_val} \
+        -o "${outp}" ${pml_opt} ${qs_opt} "${qs_par}" -sdir "$sdir" -T "$tdir" ${debug_opt} || exit 1
     echo "" >&2
 
     # Constrain number of translation options
     echo "* Constraining number of translation options... " >&2
-    $bindir/thot_pbs_get_nbest_for_trg -t ${outp}.ttable -n ${to_val} \
-        -p -T $tdir -o ${outp}_restrict_trans_opt.ttable || exit 1
-    rm ${outp}.ttable || exit 1
-    mv ${outp}_restrict_trans_opt.ttable ${outp}.ttable || exit 1
+    "$bindir"/thot_pbs_get_nbest_for_trg -t "${outp}".ttable -n ${to_val} \
+        -p -T "$tdir" -o "${outp}"_restrict_trans_opt.ttable || exit 1
+    rm "${outp}.ttable" || exit 1
+    mv "${outp}_restrict_trans_opt.ttable" "${outp}.ttable" || exit 1
     echo "" >&2
 
     # Generate additional phrase model parameter files
     echo "* Generating additional phrase model parameter files... " >&2
-    echo "${lambda_default_val} ${lambda_default_val}" > ${outp}.lambda
-    echo ${sslen_default_val} > ${outp}.srcsegmlentable
-    echo ${stopj_default_val} > ${outp}.trgcutstable
-    echo ${tslen_default_val} > ${outp}.trgsegmlentable
+    echo "${lambda_default_val} ${lambda_default_val}" > "${outp}".lambda
+    echo ${sslen_default_val} > "${outp}".srcsegmlentable
+    echo ${stopj_default_val} > "${outp}".trgcutstable
+    echo ${tslen_default_val} > "${outp}".trgsegmlentable
     echo "" >&2
 }
 
@@ -359,7 +359,7 @@ else
         echo "Error! -s parameter not given!" >&2
         exit 1
     else
-        if [ ! -f ${scorpus} ]; then
+        if [ ! -f "${scorpus}" ]; then
             echo "Error! file ${scorpus} does not exist" >&2
             exit 1            
         fi
@@ -369,7 +369,7 @@ else
         echo "Error! -t parameter not given!" >&2
         exit 1
     else
-        if [ ! -f ${tcorpus} ]; then
+        if [ ! -f "${tcorpus}" ]; then
             echo "Error! file ${tcorpus} does not exist" >&2
             exit 1            
         fi
@@ -381,21 +381,21 @@ else
     fi
 
     if [ ${tdir_given} -eq 1 ]; then
-        if [ ! -d ${tdir} ]; then
+        if [ ! -d "${tdir}" ]; then
             echo "Error! directory ${tdir} does not exist" >&2
             exit 1            
         fi
     fi
 
     if [ ${sdir_given} -eq 1 ]; then
-        if [ ! -d ${sdir} ]; then
+        if [ ! -d "${sdir}" ]; then
             echo "Error! directory ${sdir} does not exist" >&2
             exit 1            
         fi
     fi
 
     if [ ${g_given} -eq 1 ]; then
-        if [ ! -f ${gfile} ]; then        
+        if [ ! -f "${gfile}" ]; then        
             echo "Error! file ${gfile} does not exist" >&2
             exit 1
         fi
@@ -407,8 +407,8 @@ else
     fi
 
     # Obtain number of lines for corpus files
-    srcnl=`$WC -l $scorpus | $AWK '{printf"%s",$1}'`
-    trgnl=`$WC -l $tcorpus | $AWK '{printf"%s",$1}'`
+    srcnl=`"$WC" -l "$scorpus" | "$AWK" '{printf"%s",$1}'`
+    trgnl=`"$WC" -l "$tcorpus" | "$AWK" '{printf"%s",$1}'`
 
     # Train models
     if [ $srcnl -eq 0 -a $trgnl -eq 0 ]; then

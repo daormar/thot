@@ -10,230 +10,51 @@
 # NOTE: here, source phrases are those that appear in first place in
 # the phrase table
 
-disabled_pipe_fail()
-{
-    return $?
-}
-
-pipe_fail()
-{
-    # test if there is at least one command to exit with a non-zero status
-    for pipe_status_elem in ${PIPESTATUS[*]}; do 
-        if test ${pipe_status_elem} -ne 0; then 
-            return 1; 
-        fi 
-    done
-    return 0
-}
-
-exclude_readonly_vars()
-{
-    ${AWK} -F "=" 'BEGIN{
-                         readonlyvars["BASHOPTS"]=1
-                         readonlyvars["BASH_VERSINFO"]=1
-                         readonlyvars["EUID"]=1
-                         readonlyvars["PPID"]=1
-                         readonlyvars["SHELLOPTS"]=1
-                         readonlyvars["UID"]=1
-                        }
-                        {
-                         if(!($1 in readonlyvars)) printf"%s\n",$0
-                        }'
-}
-
-exclude_bashisms()
-{
-    $AWK '{if(index($1,"=(")==0) printf"%s\n",$0}'
-}
-
-write_functions()
-{
-    for f in `${AWK} '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
-        $SED -n /^$f/,/^}/p $0
-        # $AWK -v f=$f '{
-        #                if($1==f)
-        #                {
-        #                 printf"%s\n",$0
-        #                 found=1
-        #                }
-        #                else
-        #                {
-        #                 if(found) printf"%s\n",$0
-        #                 if($1=="}") found=0
-        #                }
-        #               }' $0
-    done
-}
-
-create_script()
-{
-    # Init variables
-    local name=$1
-    local command=$2
-
-    # Write environment variables
-    set | exclude_readonly_vars | exclude_bashisms > ${name}
-
-    # Write functions if necessary
-    $GREP "()" ${name} -A1 | $GREP "{" > /dev/null || write_functions >> ${name}
-
-    # Write PBS directives
-    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> ${name}
-    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> ${name}
-    echo "#$ -cwd" >> ${name}
-
-    # Write command to be executed
-    echo "${command}" >> ${name}
-
-    # Give execution permission
-    chmod u+x ${name}
-}
+# INCLUDE BASH LIBRARIES
+. "${bindir}"/thot_shlib || exit 1
 
 #############
 get_nbest_for_trg()
 {
     # Write date to log file
-    echo "** Processing file ${ttable_file} (started at "`date`")..." >> $SDIR/log
+    echo "** Processing file ${ttable_file} (started at "`date`")..." >> "$SDIR"/log
 
-    cat ${ttable_file} 2> $SDIR/err | \
-        $bindir/thot_get_nbest_for_trg -n ${n_val} -p -T $TMP 2>> $SDIR/err > $outfile ; ${PIPEFAIL} || \
-        { echo "Error while executing get_nbest_for_trg" >> $SDIR/log ; return 1 ; }
+    cat "${ttable_file}" 2> "$SDIR"/err | \
+        "$bindir"/thot_get_nbest_for_trg -n ${n_val} -p -T "$TMP" 2>> "$SDIR"/err > "$outfile" ; ${PIPEFAIL} || \
+        { echo "Error while executing get_nbest_for_trg" >> "$SDIR"/log ; return 1 ; }
 
     # Write date to log file
     echo "Processing of file ${ttable_file} finished ("`date`")" >> $SDIR/log 
 
-    echo "" > $SDIR/get_nbest_for_trg_end
-}
-
-#############
-launch()
-{
-    local file=$1
-    local outvar=$2
-
-    ### qsub invocation
-    if [ "${QSUB_WORKS}" = "no" ]; then
-        $file &
-        eval "${outvar}=$!"
-    else
-        local jid=$($QSUB ${QSUB_TERSE_OPT} ${qs_opts} $file | ${TAIL} -1)
-        eval "${outvar}='${jid}'"
-    fi
-    ###################
-}
-
-#############
-all_procs_ok()
-{
-    # Init variables
-    local files="$1"
-    local sync_num_files=`echo "${files}" | $AWK '{printf"%d",NF}'`    
-    local sync_curr_num_files=0
-
-    # Obtain number of processes that terminated correctly
-    for f in ${files}; do
-        if [ -f ${f}_end ]; then
-            sync_curr_num_files=`expr ${sync_curr_num_files} + 1`
-        fi
-    done
-
-    # Return result
-    if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
-        echo "1"
-    else
-        echo "0"
-    fi
-}
-
-#############
-sync()
-{
-    # Init vars
-    local files="$1"
-    local job_ids="$2"
-
-    if [ "${QSUB_WORKS}" = "no" ]; then
-        wait
-        sync_ok=`all_procs_ok "$files"`
-        if [ $sync_ok -eq 1 ]; then
-            return 0
-        else
-            return 1
-        fi
-    else
-        pbs_sync "$files" "${job_ids}"
-    fi
-}
-
-#############
-job_is_unknown()
-{
-    nl=`$QSTAT ${QSTAT_J_OPT} ${jid} 2>&1 | $GREP -e "Unknown" -e "do not exist" | wc -l`
-    if [ $nl -ne 0 ]; then
-        echo 1
-    else
-        echo 0
-    fi
-}
-
-#############
-pbs_sync()
-{
-    local files="$1"
-    local job_ids="$2"
-    local num_pending_procs=0
-    end=0
-    while [ $end -ne 1 ]; do
-        sleep 3
-        end=1
-        # Check if all processes have finished
-        for f in ${files}; do
-            if [ ! -f ${f}_end ]; then
-                num_pending_procs=`expr ${num_pending_procs} + 1`
-                end=0
-            fi
-        done
-
-        # Sanity check
-        num_running_procs=0
-        for jid in ${job_ids}; do
-            job_unknown=`job_is_unknown ${jid}`
-            if [ ${job_unknown} -eq 0 ]; then
-                num_running_procs=`expr ${num_running_procs} + 1`
-            fi
-        done
-        if [ ${num_running_procs} -eq 0 -a ${num_pending_procs} -ge 1 ]; then
-            return 1
-        fi
-    done
+    echo "" > "$SDIR"/get_nbest_for_trg_end
 }
 
 #############
 gen_log_err_files()
 {
     # Copy log file to its final location
-    if [ -f $SDIR/log ]; then 
-        cp $SDIR/log ${outfile}.getnb_log
+    if [ -f "$SDIR"/log ]; then 
+        cp "$SDIR"/log "${outfile}".getnb_log
     fi
 
     # Generate file for error diagnosing
-    if [ -f $SDIR/err ]; then
-        cp $SDIR/err ${outfile}.getnb_err
+    if [ -f "$SDIR"/err ]; then
+        cp "$SDIR"/err "${outfile}".getnb_err
     fi
 }
 
 #############
 report_errors()
 {
-    num_err=`$GREP "Error while executing get_nbest_for_trg" ${outfile}.getnb_log | wc -l`
+    num_err=`"$GREP" "Error while executing get_nbest_for_trg" "${outfile}".getnb_log | wc -l`
     if [ ${num_err} -gt 0 ]; then
         echo "Error during the execution of thot_pbs_get_nbest_for_trg (get_nbest_for_trg)" >&2
-        if [ -f ${outfile}.getnb_err ]; then
+        if [ -f "${outfile}".getnb_err ]; then
             echo "File ${outfile}.getnb_err contains information for error diagnosing" >&2
         fi
     else
         echo "Synchronization error" >&2
-        if [ -f ${outfile}.getnb_err ]; then
+        if [ -f "${outfile}".getnb_err ]; then
             echo "File ${outfile}.getnb_err contains information for error diagnosing" >&2
         fi
     fi
@@ -318,7 +139,7 @@ else
         echo "Error: -t option not given" >&2
         exit 1        
     else
-        if [ ! -f ${ttable_file} ]; then
+        if [ ! -f "${ttable_file}" ]; then
             echo "Error: file ${ttable_file} does not exist!" >&2
             exit 1
         fi        
@@ -331,35 +152,34 @@ else
 
     # create TMP directory
     TMP="${tmpdir}/thot_pbs_get_nbest_for_trg_tmp_$$"
-    mkdir $TMP || { echo "Error: temporary directory cannot be created" >&2 ; exit 1; }
+    mkdir "$TMP" || { echo "Error: temporary directory cannot be created" >&2 ; exit 1; }
 
     # create shared directory
     SDIR="${sdir}/thot_pbs_get_nbest_for_trg_sdir_$$"
-    mkdir $SDIR || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
+    mkdir "$SDIR" || { echo "Error: shared directory cannot be created" >&2 ; exit 1; }
     
     # remove temp directories on exit
     if [ $debug -eq 0 ]; then
-        trap "rm -rf $TMP $SDIR 2>/dev/null" EXIT
+        trap 'rm -rf "$TMP" "$SDIR" 2>/dev/null' EXIT
     fi
 
     # create log file
-    echo "*** Parallel process started at: " `date` > $SDIR/log
-    echo "">> $SDIR/log
+    echo "*** Parallel process started at: " `date` > "$SDIR"/log
+    echo "">> "$SDIR"/log
 
     # process the input
 
     # get n-best translations
-    create_script $SDIR/get_nbest_for_trg get_nbest_for_trg || exit 1
-    launch $SDIR/get_nbest_for_trg job_id || exit 1
+    create_script "$SDIR"/get_nbest_for_trg get_nbest_for_trg || exit 1
+    launch "$SDIR"/get_nbest_for_trg job_id || exit 1
     
     ### Check that all queued jobs are finished
-    sync $SDIR/get_nbest_for_trg "${job_id}" || { gen_log_err_files ; report_errors ; exit 1; }
+    sync "$SDIR"/get_nbest_for_trg "${job_id}" || { gen_log_err_files ; report_errors ; exit 1; }
 
     # Add footer to log file
-    echo "">> $SDIR/log
-    echo "*** Parallel process finished at: " `date` >> $SDIR/log
+    echo "">> "$SDIR"/log
+    echo "*** Parallel process finished at: " `date` >> "$SDIR"/log
 
     # Generate log and err files
     gen_log_err_files
-
 fi

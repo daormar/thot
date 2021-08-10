@@ -7,7 +7,7 @@ if [ $# -ne 0 -a $# -ne 1 ]; then
 echo "Usage: thot_merge_seglen_counts"
 else
 
-${AWK}   '{
+"${AWK}"   '{
             if(!(($1,$2) in counts))
             {
               counts[$1,$2]=$3
@@ -23,6 +23,6 @@ ${AWK}   '{
               split(entry, entryArr, "\034")
               printf("%d %d %d\n",entryArr[1],entryArr[2],counts[entryArr[1],entryArr[2]]); 
             }
-          }' $1
+          }' "$1"
 
 fi

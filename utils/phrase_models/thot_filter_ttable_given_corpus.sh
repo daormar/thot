@@ -13,24 +13,24 @@ else
     if [ $# -eq 2 ]; then
         file=$2
         input=$1
-        if [ ! -f $file ]; then
+        if [ ! -f "$file" ]; then
             echo "Error: File \"$file\" does not exist" >&2
             exit 1
         fi
-        if [ ! -f $input ]; then
+        if [ ! -f "$input" ]; then
             echo "Error: File \"$input\" does not exist" >&2
             exit 1
         fi
     else
         file=$1
-        if [ ! -f $file ]; then
+        if [ ! -f "$file" ]; then
             echo "Error: File \"$file\" does not exist" >&2
             exit 1
         fi
     fi
 
     # Filter translation table
-    cat $input | ${AWK} -v file=$file \
+    "${AWK}" -v file="$file" \
        ' BEGIN { 
                  used=0
                  total=0
@@ -90,5 +90,5 @@ else
                }
             END{
                  printf "%d of %d phrase pairs used (%.2f%%)\n",used,total,(100*used/total) > "/dev/stderr" 
-               }'
+               }' "$input"
 fi

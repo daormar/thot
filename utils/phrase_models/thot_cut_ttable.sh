@@ -43,5 +43,5 @@ else
         exit 1
     fi
 
-    cat ${ttable_file} | ${AWK} -v c=$c '{if($(NF-1)>c) print $0}'
+    "${AWK}" -v c=$c '{if($(NF-1)>c) print $0}' "${ttable_file}"
 fi

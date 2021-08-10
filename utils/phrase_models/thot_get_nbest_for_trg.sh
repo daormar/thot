@@ -12,7 +12,7 @@
 
 filter_nbest()
 {
-    LC_NUMERIC="C" ${AWK} -v n=${n_val} -v p=$p 'BEGIN{
+    LC_NUMERIC="C" "${AWK}" -v n=${n_val} -v p=$p 'BEGIN{
                                 count_option=0
                                 remainder=0
                               }
@@ -112,6 +112,6 @@ else
         echo "Error: value for n not given!"
         exit 1
     fi
-    cat ${ttable_file} | ${bindir}/thot_flip_phr | ${bindir}/thot_sort_ttable -T $tmpdir | \
-        filter_nbest | ${bindir}/thot_flip_phr
+    "${bindir}"/thot_flip_phr "${ttable_file}" | "${bindir}"/thot_sort_ttable -T "$tmpdir" | \
+        filter_nbest | "${bindir}"/thot_flip_phr
 fi
