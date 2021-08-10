@@ -60,7 +60,7 @@ obtain_ngc_of_corpus_not_present_in_train()
     corpus_ngc=$1
     train_ngc=$2
     
-    cat "$corpus_ngc" "$train_ngc" | LC_ALL=C $SORT -k 4 | "$UNIQ" -f 3 -u | "$GREP" "^corpus" | "$AWK" '{for(i=4;i<=NF;++i) printf"%s ",$i; printf"%s %s\n",$2,$3}'
+    cat "$corpus_ngc" "$train_ngc" | LC_ALL=C "$SORT" -k 4 | "$UNIQ" -f 3 -u | "$GREP" "^corpus" | "$AWK" '{for(i=4;i<=NF;++i) printf"%s ",$i; printf"%s %s\n",$2,$3}'
 }
 
 compute_unf_for_n()
