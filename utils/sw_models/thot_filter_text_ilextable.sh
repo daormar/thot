@@ -16,7 +16,7 @@ else
         table=$5
     fi
 
-    ${AWK}  -v svoc=$svoc -v tvoc=$tvoc -v scorpus=$scorpus -v tcorpus=$tcorpus \
+    "${AWK}"  -v svoc="$svoc" -v tvoc="$tvoc" -v scorpus="$scorpus" -v tcorpus="$tcorpus" \
                  'BEGIN{ 
                         # Read source vocabulary
                         while( (getline <svoc) > 0)
@@ -61,5 +61,5 @@ else
                        {
                         wpair=sidx_to_word[$1]" "tidx_to_word[$2]
                         if(wpair in word_pairs) printf"%s\n",$0 
-                       }' $table	  
+                       }' "$table" 
 fi

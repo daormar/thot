@@ -3,6 +3,10 @@
 
 # Generates a single-word model using a pbs cluster.
 
+# INCLUDE BASH LIBRARIES
+. "${bindir}"/thot_general_lib || exit 1
+. "${bindir}"/thot_adv_sched_lib || exit 1
+
 print_desc()
 {
     echo "thot_pbs_gen_batch_sw_model written by Daniel Ortiz"
@@ -60,22 +64,6 @@ usage()
     echo "                     (for debugging purposes)."
     echo "--help             : Display this help and exit."
     echo "--version          : Output version information and exit."
-}
-
-disabled_pipe_fail()
-{
-    return $?
-}
-
-pipe_fail()
-{
-    # test if there is at least one command to exit with a non-zero status
-    for pipe_status_elem in ${PIPESTATUS[*]}; do 
-        if test ${pipe_status_elem} -ne 0; then 
-            return 1; 
-        fi 
-    done
-    return 0
 }
 
 set_tmp_dir()
@@ -218,15 +206,15 @@ determine_file_format()
 
 sort_lex_counts_text()
 {
-    LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n
+    LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n
 }
 
 sort_alig_counts_text()
 {
     case ${alig_ext} in
-        "hmm_alignd") LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n -k3n
+        "hmm_alignd") LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n -k3n
             ;;
-        "ibm2_alignd") LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n -k3n -k4n
+        "ibm2_alignd") LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n -k3n -k4n
             ;;
     esac
 }
@@ -296,7 +284,7 @@ proc_chunk()
             { echo "Error while executing proc_chunk for ${chunk}" >> "$SDIR"/log ; return 1 ; }
 
         if [ ${debug} -ne 0 -a "${file_format}" = "text" ]; then
-            echo "Entries in initial table (${chunk}): "`wc -l "${models_per_chunk_dir}/${out_chunk}/model.${lex_ext}" | $AWK '{printf"%s",$1}'` >> "$SDIR"/log
+            echo "Entries in initial table (${chunk}): "`wc -l "${models_per_chunk_dir}/${out_chunk}/model.${lex_ext}" | "$AWK" '{printf"%s",$1}'` >> "$SDIR"/log
         fi
     else
         # Second iteration or greater
@@ -339,15 +327,15 @@ proc_chunk()
 
 append_lex_sorted_counts_text()
 {
-    LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n -m "${curr_tables_dir}/lex_counts_"*
+    LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n -m "${curr_tables_dir}/lex_counts_"*
 }
 
 append_alig_sorted_counts_text()
 {
     case ${alig_ext} in
-        "hmm_alignd") LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n -k3n -m "${curr_tables_dir}/alig_counts_"*
+        "hmm_alignd") LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n -k3n -m "${curr_tables_dir}/alig_counts_"*
             ;;
-        "ibm2_alignd") LC_ALL=C "${SORT}" "${SORT_TMP}" ${sortpars} -k1n -k2n -k3n -k4n -m "${curr_tables_dir}/alig_counts_"*
+        "ibm2_alignd") LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n -k3n -k4n -m "${curr_tables_dir}/alig_counts_"*
             ;;
     esac
 }
@@ -470,11 +458,11 @@ filter_lex_table()
 
 filter_lex_table_text()
 {
-    local svocfile=${init_model_dir}/model.svcb
-    local tvocfile=${init_model_dir}/model.tvcb
-    local scorpus=${chunks_dir}/${src_chunk}
-    local tcorpus=${chunks_dir}/${trg_chunk}
-    local lextable=${curr_tables_dir}/merged_lex_counts
+    local svocfile="${init_model_dir}"/model.svcb
+    local tvocfile="${init_model_dir}"/model.tvcb
+    local scorpus="${chunks_dir}"/${src_chunk}
+    local tcorpus="${chunks_dir}"/${trg_chunk}
+    local lextable="${curr_tables_dir}"/merged_lex_counts
     "${bindir}"/thot_filter_text_ilextable "$svocfile" "$tvocfile" "$scorpus" "$tcorpus" "$lextable" > "${chunk_filtered_model_dir}/model.${lex_ext}"
     if [ ${debug} -ne 0 ]; then
         echo "Entries in unfiltered table (${chunk}): "`wc -l "${lextable}" | "$AWK" '{printf"%s",$1}'` >> "$SDIR"/log
@@ -508,8 +496,8 @@ filter_lex_table_text_alt()
 
 filter_lex_table_bin()
 {
-    lextable=${curr_tables_dir}/merged_lex_counts
-    filt_info_file=${filtering_info_dir}/${chunk}_lex_model_info
+    lextable="${curr_tables_dir}"/merged_lex_counts
+    filt_info_file="${filtering_info_dir}"/${chunk}_lex_model_info
 
     "${bindir}"/thot_filter_bin_ilextable -l "$lextable" -f "${filt_info_file}" > "${chunk_filtered_model_dir}/model.${lex_ext}"
 }
@@ -519,7 +507,7 @@ create_filtered_model()
     echo "** Creating filtered model for chunk ${chunk} (started at "`date`")..." >> "${filtered_model_dir}/${chunk}_filt_n$n.log"
 
     # Define directory name to store filtered model
-    chunk_filtered_model_dir=${filtered_model_dir}/${chunk}
+    chunk_filtered_model_dir="${filtered_model_dir}"/${chunk}
 
     # Create directory if necessary
     if [ ! -d "${chunk_filtered_model_dir}" ]; then
@@ -631,209 +619,6 @@ remove_temp()
     if [ "$debug" -eq 0 ]; then
         rm -rf "$SDIR" 2>/dev/null
     fi
-}
-
-exclude_readonly_vars()
-{
-    ${AWK} -F "=" 'BEGIN{
-                         readonlyvars["BASHOPTS"]=1
-                         readonlyvars["BASH_VERSINFO"]=1
-                         readonlyvars["EUID"]=1
-                         readonlyvars["PPID"]=1
-                         readonlyvars["SHELLOPTS"]=1
-                         readonlyvars["UID"]=1
-                        }
-                        {
-                         if(!($1 in readonlyvars)) printf"%s\n",$0
-                        }'
-}
-
-exclude_bashisms()
-{
-    "$AWK" '{if(index($1,"=(")==0) printf"%s\n",$0}'
-}
-
-write_functions()
-{
-    for f in `"${AWK}" '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
-        "$SED" -n /^$f/,/^}/p $0
-    done
-}
-
-create_script()
-{
-    # Init variables
-    local name=$1
-    local command=$2
-
-    # Write environment variables
-    set | exclude_readonly_vars | exclude_bashisms > "${name}"
-
-    # Write functions if necessary
-    $GREP "()" "${name}" -A1 | $GREP "{" > /dev/null || write_functions >> "${name}"
-
-    # Write PBS directives
-    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> "${name}"
-    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> "${name}"
-    echo "#$ -cwd" >> "${name}"
-
-    # Write command to be executed
-    echo "${command}" >> "${name}"
-
-    # Give execution permission
-    chmod u+x "${name}"
-}
-
-launch()
-{
-    local job_deps=$1
-    local program=$2
-    local suffix=$3
-    local outvar=$4
-
-    if [ "${QSUB_WORKS}" = "no" ]; then
-        $program &
-        eval "${outvar}=$!"
-    else
-        # Check if the sleep command is used to synchronize processes
-        if [ ${sync_sleep} -eq 1 ]; then
-            # The sleep command is being used
-            # Create script
-            create_script "${scripts_dir}/${program}${suffix}.sh" "$program"
-            # Execute qsub command
-            local jid=$("${QSUB}" ${QSUB_TERSE_OPT} ${qs_opts} "${scripts_dir}/${program}${suffix}.sh" | "${TAIL}" -1)
-
-            # Set value of output variable
-            eval "${outvar}='${jid}'"
-        else
-            # Synchronization is carried out by explicitly defining
-            # dependencies between jobs when executing qsub
-            
-            # Create script
-            create_script "${scripts_dir}/${program}${suffix}.sh" "$program"
-
-            # Define qsub option declaring job dependencies
-            local depend_opt=""
-            if [ ! -z "$job_deps" ]; then
-                job_deps=`echo ${job_deps} | "$AWK" '{for(i=1;i<NF;++i) printf"%s:",$i; printf"%s",$NF}'`
-                depend_opt="-W depend=afterok:${job_deps}"
-            fi
-
-            # Execute qsub command. The -h option is used to hold
-            # jobs. All jobs are released at the end of the script. This
-            # ensures that job dependencies are defined over existing
-            # jobs
-            local jid=$("${QSUB}" -h ${depend_opt} ${QSUB_TERSE_OPT} ${qs_opts} "${scripts_dir}/${program}${suffix}.sh" | "${TAIL}" -1)
-
-            # Set value of output variable
-            eval "${outvar}='${jid}'"
-
-            # Uncomment line to show debug information
-            # echo $program ${depend_opt} $jid
-        fi
-    fi
-}
-
-job_is_unknown()
-{
-    nl=`$QSTAT ${QSTAT_J_OPT} ${jid} 2>&1 | grep -e "Unknown" -e "do not exist" | wc -l`
-    if [ $nl -ne 0 ]; then
-        echo 1
-    else
-        echo 0
-    fi
-}
-
-pbs_sync()
-{
-    # Init vars
-    local job_ids=$1
-    local pref=$2
-    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
-
-    if [ ${sync_sleep} -eq 1 ]; then
-        # Execute sync loop
-        local sync_end=0
-        while [ ${sync_end} -ne 1 ]; do
-            sleep 2
-            
-            # Compare current number of sync files written with the required
-            # number
-            sync_curr_num_files=`ls -l "${sync_info_dir}/" | grep " ${pref}" | wc -l`
-            if [ ${sync_curr_num_files} -eq ${sync_num_files} ]; then
-                sync_end=1
-            fi
-      
-            # Sanity check
-            # In pbs clusters, check if there are terminated processes
-            # that have not written the sync file
-            num_running_procs=0
-            for jid in ${job_ids}; do
-                job_unknown=`job_is_unknown ${jid}`
-                if [ ${job_unknown} -eq 0 ]; then
-                    num_running_procs=`expr ${num_running_procs} + 1`
-                fi
-            done
-            if [ ${num_running_procs} -eq 0 ]; then
-                sync_curr_num_files=`ls -l "${sync_info_dir}/" | grep " ${pref}" | wc -l`
-                if [ ${sync_curr_num_files} -ne ${sync_num_files} ]; then
-                    echo "Error during synchronization" >&2
-                    return 1
-                fi
-            fi
-        done
-      
-        return 0
-    else
-        # No sync loop is required
-        return 0
-    fi
-}
-
-all_procs_ok()
-{
-    # Init variables
-    local job_ids=$1
-    local pref=$2
-    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
-
-    # Obtain number of processes that terminated correctly
-    local sync_curr_num_files=`ls -l "${sync_info_dir}/" | "$GREP" " ${pref}" | wc -l`
-
-    # Return result
-    if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
-        echo "1"
-    else
-        echo "0"
-    fi
-}
-
-sync()
-{
-    # Init vars
-    local job_ids=$1
-    local pref=$2
-
-    if [ "${QSUB_WORKS}" = "no" ]; then
-        wait
-        sync_ok=`all_procs_ok "${job_ids}" "$pref"`
-        if [ $sync_ok -eq 1 ]; then
-            return 0
-        else
-            return 1
-        fi
-    else
-        pbs_sync "${job_ids}" "$pref"
-    fi
-}
-
-release_job_holds()
-{
-    job_ids=$1
-    ${QRLS} ${job_ids}
-    
-    # Uncomment line to get debugging information
-    # echo ${job_id_list}
 }
 
 print_iter_num_message()
@@ -1152,7 +937,7 @@ spl_job_id=""
 
 # Estimate sentence length model
 job_deps=${spl_job_id}
-launch "${job_deps}" estimate_slmodel "" slm_job_id || exit 1
+launch "${job_deps}" "${scriptsdir}" estimate_slmodel "" slm_job_id || exit 1
 sync "${slm_job_id}" "estimate_slmodel" || { gen_log_err_files ; report_errors ; exit 1; }
 
 # Declare job id list variable
@@ -1170,7 +955,7 @@ while [ $n -le ${niters} ]; do
     else
         job_deps=${f_job_ids}
     fi
-    launch "${job_deps}" print_iter_num_message "_n${n}" print_iter_job_id || exit 1
+    launch "${job_deps}" "${scriptsdir}" print_iter_num_message "_n${n}" print_iter_job_id || exit 1
     # Print synchronization
     sync "${print_iter_job_id}" "print_iter_num_message" || { gen_log_err_files ; report_errors ; exit 1; }
  
@@ -1190,7 +975,7 @@ while [ $n -le ${niters} ]; do
         
         # Process chunk
         job_deps=${print_iter_job_id}
-        launch "${job_deps}" proc_chunk "_${chunk_id}_n${n}" job_id || exit 1
+        launch "${job_deps}" "${scriptsdir}" proc_chunk "_${chunk_id}_n${n}" job_id || exit 1
         pc_job_ids=${job_id}" "${pc_job_ids}
     done
 
@@ -1201,7 +986,7 @@ while [ $n -le ${niters} ]; do
 
     # Print message reporting the start of merging process
     job_deps=${pc_job_ids}
-    launch "${job_deps}" print_merge_start_message "_n${n}" print_merge_job_id || exit 1
+    launch "${job_deps}" "${scriptsdir}" print_merge_start_message "_n${n}" print_merge_job_id || exit 1
     # Print synchronization
     sync "${print_merge_job_id}" "print_merge_start_message" || { gen_log_err_files ; report_errors ; exit 1; }
 
@@ -1210,11 +995,11 @@ while [ $n -le ${niters} ]; do
     if [ ${pr_val} -ge 2 ]; then
         # Merge lexical counts
         job_deps=${print_merge_job_id}
-        launch "${job_deps}" merge_lex_counts "_n${n}" lex_job_id || exit 1
+        launch "${job_deps}" "${scriptsdir}" merge_lex_counts "_n${n}" lex_job_id || exit 1
 
         # Merge alignment counts
         job_deps=${print_merge_job_id}
-        launch "${job_deps}" merge_alig_counts "_n${n}" alig_job_id || exit 1
+        launch "${job_deps}" "${scriptsdir}" merge_alig_counts "_n${n}" alig_job_id || exit 1
 
         merge_job_ids="${lex_job_id} ${alig_job_id}"
 
@@ -1222,11 +1007,11 @@ while [ $n -le ${niters} ]; do
         sync "${merge_job_ids}" "merge" || { gen_log_err_files ; report_errors ; exit 1; }
     else
         job_deps=${print_merge_job_id}
-        launch "${job_deps}" merge_lex_counts "_n${n}" lex_job_id || exit 1
+        launch "${job_deps}" "${scriptsdir}" merge_lex_counts "_n${n}" lex_job_id || exit 1
         sync "${lex_job_id}" "merge_lex_counts" || { gen_log_err_files ; report_errors ; exit 1; }
 
         job_deps=${lex_job_id}
-        launch "${job_deps}" merge_alig_counts "_n${n}" alig_job_id || exit 1
+        launch "${job_deps}" "${scriptsdir}" merge_alig_counts "_n${n}" alig_job_id || exit 1
         sync "${alig_job_id}" "merge_alig_counts" || { gen_log_err_files ; report_errors ; exit 1; }
 
         merge_job_ids="${lex_job_id} ${alig_job_id}"
@@ -1237,7 +1022,7 @@ while [ $n -le ${niters} ]; do
 
         # Print message reporting the start of the filtering process
         job_deps=${merge_job_ids}
-        launch "${job_deps}" print_create_filt_models_message "_n${n}" print_create_filt_job_id || exit 1
+        launch "${job_deps}" "${scriptsdir}" print_create_filt_models_message "_n${n}" print_create_filt_job_id || exit 1
         # Print synchronization
         sync "${print_create_filt_job_id}" "print_create_filt_models_message" || { gen_log_err_files ; report_errors ; exit 1; }
             
@@ -1253,7 +1038,7 @@ while [ $n -le ${niters} ]; do
             
             # Create filtered model for chunk
             job_deps=${print_create_filt_job_id}
-            launch "${job_deps}" create_filtered_model "_n${n}" job_id || exit 1
+            launch "${job_deps}" "${scriptsdir}" create_filtered_model "_n${n}" job_id || exit 1
             f_job_ids=${job_id}" "${f_job_ids}
         done
         # Filter synchronization
@@ -1284,7 +1069,7 @@ if [ $n -lt ${niters} ]; then
 else
     job_deps=${merge_job_ids}
 fi
-launch "${job_deps}" generate_final_model "" gfm_job_id || exit 1
+launch "${job_deps}" "${scriptsdir}" generate_final_model "" gfm_job_id || exit 1
 
 # Update job_id_list
 job_id_list="${gfm_job_id} ${job_id_list}"
@@ -1303,7 +1088,7 @@ if [ ${sync_sleep} -eq 1 ]; then
 else
     # Sync using sleep is not enabled
     job_deps=${gfm_job_id}
-    launch "${job_deps}" remove_temp "" rt_job_id || exit 1
+    launch "${job_deps}" "${scriptsdir}" remove_temp "" rt_job_id || exit 1
     # Update job_id_list
     job_id_list="${rt_job_id} ${job_id_list}"
     # Remove temporary files synchronization

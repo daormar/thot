@@ -3,6 +3,10 @@
 
 # Generates the best single word alignment for the sentence pairs contained in a parallel corpus.
 
+# INCLUDE BASH LIBRARIES
+. "${bindir}"/thot_general_lib || exit 1
+. "${bindir}"/thot_adv_sched_lib || exit 1
+
 print_desc()
 {
     echo "thot_pbs_gen_best_sw_alig written by Daniel Ortiz"
@@ -65,22 +69,6 @@ model_access_is_process_safe()
     else
         echo 'no'
     fi
-}
-
-disabled_pipe_fail()
-{
-    return $?
-}
-
-pipe_fail()
-{
-    # test if there is at least one command to exit with a non-zero status
-    for pipe_status_elem in ${PIPESTATUS[*]}; do 
-        if test ${pipe_status_elem} -ne 0; then 
-            return 1; 
-        fi 
-    done
-    return 0
 }
 
 set_tmp_dir()
@@ -153,209 +141,6 @@ remove_temp()
     if [ "$debug" -eq 0 ]; then
         rm -rf "$SDIR" 2>/dev/null
     fi
-}
-
-exclude_readonly_vars()
-{
-    "${AWK}" -F "=" 'BEGIN{
-                         readonlyvars["BASHOPTS"]=1
-                         readonlyvars["BASH_VERSINFO"]=1
-                         readonlyvars["EUID"]=1
-                         readonlyvars["PPID"]=1
-                         readonlyvars["SHELLOPTS"]=1
-                         readonlyvars["UID"]=1
-                        }
-                        {
-                         if(!($1 in readonlyvars)) printf"%s\n",$0
-                        }'
-}
-
-exclude_bashisms()
-{
-    "$AWK" '{if(index($1,"=(")==0) printf"%s\n",$0}'
-}
-
-write_functions()
-{
-    for f in `"${AWK}" '{if(index($1,"()")!=0) printf"%s\n",$1}' $0`; do
-        "$SED" -n /^$f/,/^}/p $0
-    done
-}
-
-create_script()
-{
-    # Init variables
-    local name=$1
-    local command=$2
-
-    # Write environment variables
-    set | exclude_readonly_vars | exclude_bashisms > ${name}
-
-    # Write functions if necessary
-    "$GREP" "()" "${name}" -A1 | "$GREP" "{" > /dev/null || write_functions >> ${name}
-
-    # Write PBS directives
-    echo "#PBS -o ${name}.o\${PBS_JOBID}" >> "${name}"
-    echo "#PBS -e ${name}.e\${PBS_JOBID}" >> "${name}"
-    echo "#$ -cwd" >> "${name}"
-
-    # Write command to be executed
-    echo "${command}" >> "${name}"
-
-    # Give execution permission
-    chmod u+x "${name}"
-}
-
-launch()
-{
-    local job_deps=$1
-    local program=$2
-    local suffix=$3
-    local outvar=$4
-
-    if [ "${QSUB_WORKS}" = "no" ]; then
-        "$program" &
-        eval "${outvar}=$!"
-    else
-        # Check if the sleep command is used to synchronize processes
-        if [ ${sync_sleep} -eq 1 ]; then
-            # The sleep command is being used
-            # Create script
-            create_script "${scripts_dir}/${program}${suffix}.sh" "$program"
-            # Execute qsub command
-            local jid=$("${QSUB}" ${QSUB_TERSE_OPT} ${qs_opts} "${scripts_dir}/${program}${suffix}.sh" | ${TAIL} -1)
-
-            # Set value of output variable
-            eval "${outvar}='${jid}'"
-        else
-            # Synchronization is carried out by explicitly defining
-            # dependencies between jobs when executing qsub
-            
-            # Create script
-            create_script "${scripts_dir}/${program}${suffix}.sh" "$program"
-
-            # Define qsub option declaring job dependencies
-            local depend_opt=""
-            if [ ! -z "$job_deps" ]; then
-                job_deps=`echo ${job_deps} | "$AWK" '{for(i=1;i<NF;++i) printf"%s:",$i; printf"%s",$NF}'`
-                depend_opt="-W depend=afterok:${job_deps}"
-            fi
-
-            # Execute qsub command. The -h option is used to hold
-            # jobs. All jobs are released at the end of the script. This
-            # ensures that job dependencies are defined over existing
-            # jobs
-            local jid=$("${QSUB}" -h ${depend_opt} ${QSUB_TERSE_OPT} ${qs_opts} "${scripts_dir}/${program}${suffix}.sh" | ${TAIL} -1)
-
-            # Set value of output variable
-            eval "${outvar}='${jid}'"
-
-            # Uncomment line to show debug information
-            # echo $program ${depend_opt} $jid
-        fi
-    fi
-}
-
-job_is_unknown()
-{
-    nl=`"$QSTAT" ${QSTAT_J_OPT} ${jid} 2>&1 | grep -e "Unknown" -e "do not exist" | wc -l`
-    if [ $nl -ne 0 ]; then
-        echo 1
-    else
-        echo 0
-    fi
-}
-
-pbs_sync()
-{
-    # Init vars
-    local job_ids=$1
-    local pref=$2
-    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
-
-    if [ ${sync_sleep} -eq 1 ]; then
-        # Execute sync loop
-        local sync_end=0
-        while [ ${sync_end} -ne 1 ]; do
-            sleep 2
-            
-            # Compare current number of sync files written with the required
-            # number
-            sync_curr_num_files=`ls -l "${sync_info_dir}/" | grep " ${pref}" | wc -l`
-            if [ ${sync_curr_num_files} -eq ${sync_num_files} ]; then
-                sync_end=1
-            fi
-      
-            # Sanity check
-            # In pbs clusters, check if there are terminated processes
-            # that have not written the sync file
-            num_running_procs=0
-            for jid in ${job_ids}; do
-                job_unknown=`job_is_unknown ${jid}`
-                if [ ${job_unknown} -eq 0 ]; then
-                    num_running_procs=`expr ${num_running_procs} + 1`
-                fi
-            done
-            if [ ${num_running_procs} -eq 0 ]; then
-                sync_curr_num_files=`ls -l "${sync_info_dir}/" | grep " ${pref}" | wc -l`
-                if [ ${sync_curr_num_files} -ne ${sync_num_files} ]; then
-                    echo "Error during synchronization" >&2
-                    return 1 
-                fi
-            fi
-        done
-      
-        return 0
-    else
-        # No sync loop is required
-        return 0
-    fi
-}
-
-all_procs_ok()
-{
-    # Init variables
-    local job_ids=$1
-    local pref=$2
-    local sync_num_files=`echo "${job_ids}" | "$AWK" '{printf"%d",NF}'`
-
-    # Obtain number of processes that terminated correctly
-    local sync_curr_num_files=`ls -l "${sync_info_dir}/" | "$GREP" " ${pref}" | wc -l`
-
-    # Return result
-    if [ ${sync_num_files} -eq ${sync_curr_num_files} ]; then
-        echo "1"
-    else
-        echo "0"
-    fi
-}
-
-sync()
-{
-    # Init vars
-    local job_ids=$1
-    local pref=$2
-
-    if [ "${QSUB_WORKS}" = "no" ]; then
-        wait
-        sync_ok=`all_procs_ok "${job_ids}" $pref`
-        if [ $sync_ok -eq 1 ]; then
-            return 0
-        else
-            return 1
-        fi
-    else
-        pbs_sync "${job_ids}" "$pref"
-    fi
-}
-
-release_job_holds()
-{
-    job_ids=$1
-    ${QRLS} ${job_ids}
-    
-    # Uncomment line to get debugging information
-    # echo ${job_id_list}
 }
 
 proc_chunk()
@@ -604,7 +389,7 @@ set_shared_dir || exit 1
 echo "NOTE: see file ${SDIR}/log to track best alignment generation progress" >&2
 
 # Create log file
-echo "**** Parallel process started at: "`date` > $SDIR/log
+echo "**** Parallel process started at: "`date` > "$SDIR"/log
 
 # Split shuffled input into chunks and process them separately...
 # job_deps=""
@@ -627,7 +412,7 @@ for i in "${chunks_dir}/src_chunk_"*; do
         
     # Process chunk
     job_deps=""
-    launch "${job_deps}" proc_chunk "_${chunk_id}" job_id || exit 1
+    launch "${job_deps}" "${scriptsdir}" proc_chunk "_${chunk_id}" job_id || exit 1
     pc_job_ids=${job_id}" "${pc_job_ids}
 done
 
@@ -636,7 +421,7 @@ sync "${pc_job_ids}" "proc_chunk" || { gen_log_err_files ; report_errors ; exit 
 
 # Generate alignment file
 job_deps=${pc_job_ids}
-launch "${job_deps}" generate_alig_file "" gaf_job_id || exit 1
+launch "${job_deps}" "${scriptsdir}" generate_alig_file "" gaf_job_id || exit 1
 
 # Generate alignment file synchronization
 sync ${gaf_job_id} "generate_alig_file" || { gen_log_err_files ; report_errors ; exit 1; }
@@ -651,7 +436,7 @@ if [ ${sync_sleep} -eq 1 ]; then
 else
     # Sync using sleep is not enabled
     job_deps=${gfm_job_id}
-    launch "${job_deps}" remove_temp "" rt_job_id || exit 1
+    launch "${job_deps}" "${scriptsdir}" remove_temp "" rt_job_id || exit 1
     # Update job_id_list
     job_id_list="${rt_job_id} ${job_id_list}"
     # Remove temporary files synchronization

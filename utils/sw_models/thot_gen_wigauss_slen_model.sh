@@ -10,7 +10,7 @@ else
     src_file=$1
     trg_file=$2
     CUTOFF=5
-    ${AWK} -v  src_file=${src_file} -v CUTOFF=${CUTOFF} ' BEGIN{
+    "${AWK}" -v  src_file="${src_file}" -v CUTOFF=${CUTOFF} ' BEGIN{
                    numSent=0
                    src_sen_len_sum=0
                    trg_sen_len_sum=0
@@ -50,5 +50,5 @@ else
                    {
                      printf"%d %d %f %f %f\n",i,k[i],sw[i],m[i],s[i]
                    }
-                  }' $trg_file
+                  }' "$trg_file"
 fi

@@ -51,25 +51,25 @@ set_tmp_dir()
     # Create TMP directory
     TMP="${tdir}/thot_gen_batch_sw_model_mr_${PPID}_$$"
     if [ ${debug} -eq 0 ]; then
-        trap "rm -rf $TMP 2>/dev/null" EXIT
+        trap 'rm -rf "$TMP" 2>/dev/null' EXIT
     fi
     mkdir $TMP || { echo "Error: temporary directory cannot be created" >&2 ; return 1; }
 
     # Create temporary subdirectories
-    chunks_dir=$TMP/chunks
-    init_model_dir=$TMP/init_model
-    curr_tables_dir=$TMP/curr_tables
-    models_per_chunk_dir=$TMP/models_per_chunk
-    filtering_info_dir=$TMP/filtering_info
-    filtered_model_dir=$TMP/filtered_model
-    slmodel_dir=$TMP/slmodel
-    mkdir ${chunks_dir} || return 1
-    mkdir ${init_model_dir} || return 1
-    mkdir ${curr_tables_dir} || return 1
-    mkdir ${models_per_chunk_dir} || return 1
-    mkdir ${filtering_info_dir} || return 1
-    mkdir ${filtered_model_dir} || return 1
-    mkdir ${slmodel_dir} || return 1
+    chunks_dir="$TMP"/chunks
+    init_model_dir="$TMP"/init_model
+    curr_tables_dir="$TMP"/curr_tables
+    models_per_chunk_dir="$TMP"/models_per_chunk
+    filtering_info_dir="$TMP"/filtering_info
+    filtered_model_dir="$TMP"/filtered_model
+    slmodel_dir="$TMP"/slmodel
+    mkdir "${chunks_dir}" || return 1
+    mkdir "${init_model_dir}" || return 1
+    mkdir "${curr_tables_dir}" || return 1
+    mkdir "${models_per_chunk_dir}" || return 1
+    mkdir "${filtering_info_dir}" || return 1
+    mkdir "${filtered_model_dir}" || return 1
+    mkdir "${slmodel_dir}" || return 1
 
     # Function executed correctly
     return 0
@@ -77,20 +77,20 @@ set_tmp_dir()
 
 split_input()
 {
-    echo "+++ Splitting input: ${srcf} ${trgf}..." >> $TMP/log
-    ${SPLIT} -a 4 -l ${chunk_size} ${srcf} ${chunks_dir}/src\_chunk\_ || exit 1
-    ${SPLIT} -a 4 -l ${chunk_size} ${trgf} ${chunks_dir}/trg\_chunk\_ || exit 1
+    echo "+++ Splitting input: ${srcf} ${trgf}..." >> "$TMP"/log
+    "${SPLIT}" -a 4 -l ${chunk_size} "${srcf}" "${chunks_dir}/src_chunk_" || exit 1
+    "${SPLIT}" -a 4 -l ${chunk_size} "${trgf}" "${chunks_dir}/trg_chunk_" || exit 1
 }
 
 estimate_slmodel()
 {
     if [ ${nsm_given} -eq 1 ]; then
-        echo "+++ Warning: no sentence length model will be estimated." >> $TMP/log
-        echo "Geometric" > ${slmodel_dir}/model
+        echo "+++ Warning: no sentence length model will be estimated." >> "$TMP"/log
+        echo "Geometric" > "${slmodel_dir}"/model
     else
-        echo "+++ Estimating sentence length model..." >> $TMP/log
+        echo "+++ Estimating sentence length model..." >> "$TMP"/log
         echo "+++ Estimating sentence length model..." >&2
-        ${bindir}/thot_gen_wigauss_slen_model ${srcf} ${trgf} > ${slmodel_dir}/model
+        "${bindir}"/thot_gen_wigauss_slen_model "${srcf}" "${trgf}" > "${slmodel_dir}"/model
     fi
 }
 
@@ -98,22 +98,22 @@ define_init_model_info()
 {
     if [ ${l_given} -eq 0 ]; then
         # Create void corpus
-        $TOUCH ${init_model_dir}/void_corpus
+        "$TOUCH" "${init_model_dir}"/void_corpus
     
         # Generate model for void corpus
-        ${bindir}/thot_gen_sw_model -s ${init_model_dir}/void_corpus -t ${init_model_dir}/void_corpus \
-            ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl -o ${init_model_dir}/model > ${init_model_dir}/log 2>&1 || return 1
+        "${bindir}"/thot_gen_sw_model -s "${init_model_dir}"/void_corpus -t "${init_model_dir}"/void_corpus \
+            ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl -o "${init_model_dir}"/model > "${init_model_dir}"/log 2>&1 || return 1
      
         # Add complete vocabularies
-        ${bindir}/thot_get_swm_vocab ${srcf} "NULL UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.svcb
-        ${bindir}/thot_get_swm_vocab ${trgf} "NULL UNKNOWN_WORD <UNUSED_WORD>" > ${init_model_dir}/model.tvcb
+        "${bindir}"/thot_get_swm_vocab "${srcf}" "NULL UNKNOWN_WORD <UNUSED_WORD>" > "${init_model_dir}"/model.svcb
+        "${bindir}"/thot_get_swm_vocab "${trgf}" "NULL UNKNOWN_WORD <UNUSED_WORD>" > "${init_model_dir}"/model.tvcb
 
         # Create msinfo file
-        echo "0" > ${init_model_dir}/model.msinfo
-        echo "0" >> ${init_model_dir}/model.msinfo
+        echo "0" > "${init_model_dir}"/model.msinfo
+        echo "0" >> "${init_model_dir}"/model.msinfo
 
         # Define init_model_pref variable
-        init_model_pref=${init_model_dir}/model
+        init_model_pref="${init_model_dir}"/model
 
         # Function executed correctly
         return 0
@@ -157,15 +157,15 @@ determine_file_format()
 
 sort_lex_counts_text()
 {
-    LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n
+    LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n
 }
 
 sort_alig_counts_text()
 {
     case ${alig_ext} in
-        "hmm_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n
+        "hmm_alignd") LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n -k3n
             ;;
-        "ibm2_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -k4n
+        "ibm2_alignd") LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n -k3n -k4n
             ;;
     esac
 }
@@ -181,25 +181,25 @@ sort_counts()
 
 sort_counts_text()
 {
-    ${AWK} -v c=$chunk_id '{printf"%s %s\n",$0,c}' ${models_per_chunk_dir}/${out_chunk}.${lex_ext} | \
-        sort_lex_counts_text > ${curr_tables_dir}/lex_counts_${out_chunk}
+    "${AWK}" -v c=$chunk_id '{printf"%s %s\n",$0,c}' "${models_per_chunk_dir}"/${out_chunk}.${lex_ext} | \
+        sort_lex_counts_text > "${curr_tables_dir}"/lex_counts_${out_chunk}
     if [ ${alig_ext} != "none" ]; then 
-        ${AWK} -v c=$chunk_id '{printf"%s %s\n",$0,c}' ${models_per_chunk_dir}/${out_chunk}.${alig_ext} | \
-            sort_alig_counts_text > ${curr_tables_dir}/alig_counts_${out_chunk}
+        "${AWK}" -v c=$chunk_id '{printf"%s %s\n",$0,c}' "${models_per_chunk_dir}"/${out_chunk}.${alig_ext} | \
+            sort_alig_counts_text > "${curr_tables_dir}"/alig_counts_${out_chunk}
     fi
 }
 
 sort_counts_bin()
 {
-    ${bindir}/thot_sort_bin_ilextable -l ${models_per_chunk_dir}/${out_chunk}.${lex_ext} > ${curr_tables_dir}/lex_counts_${out_chunk}
+    "${bindir}"/thot_sort_bin_ilextable -l "${models_per_chunk_dir}"/${out_chunk}.${lex_ext} > "${curr_tables_dir}"/lex_counts_${out_chunk}
 
     if [ ${alig_ext} != "none" ]; then 
         case ${alig_ext} in
-            "hmm_alignd") ${bindir}/thot_sort_bin_ihmmatable \
-                -a ${models_per_chunk_dir}/${out_chunk}.${alig_ext} > ${curr_tables_dir}/alig_counts_${out_chunk}
+            "hmm_alignd") "${bindir}"/thot_sort_bin_ihmmatable \
+                -a "${models_per_chunk_dir}"/${out_chunk}.${alig_ext} > "${curr_tables_dir}"/alig_counts_${out_chunk}
                 ;;
-            "ibm2_alignd") ${bindir}/thot_sort_bin_iibm2atable \
-                -a ${models_per_chunk_dir}/${out_chunk}.${alig_ext} > ${curr_tables_dir}/alig_counts_${out_chunk}
+            "ibm2_alignd") "${bindir}"/thot_sort_bin_iibm2atable \
+                -a "${models_per_chunk_dir}"/${out_chunk}.${alig_ext} > "${curr_tables_dir}"/alig_counts_${out_chunk}
                 ;;
         esac
     fi
@@ -210,11 +210,11 @@ proc_chunk()
     if [ $n -eq 1 ]; then
         # First iteration
         # Estimate model from chunk
-        ${bindir}/thot_gen_sw_model -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
-            -l ${init_model_pref} ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl \
-            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}.log || return 1
+        "${bindir}"/thot_gen_sw_model -s "${chunks_dir}"/${src_chunk} -t "${chunks_dir}"/${trg_chunk} \
+            -l "${init_model_pref}" ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl \
+            -o "${models_per_chunk_dir}"/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}.log || return 1
         if [ ${debug} -ne 0 -a "${file_format}" = "text" ]; then
-            echo "Entries in initial table: "`wc -l ${models_per_chunk_dir}/${out_chunk}.${lex_ext} | $AWK '{printf"%s",$1}'` >> $TMP/log
+            echo "Entries in initial table: "`wc -l "${models_per_chunk_dir}"/${out_chunk}.${lex_ext} | "$AWK" '{printf"%s",$1}'` >> "$TMP"/log
         fi            
     else
         # Second iteration or greater
@@ -223,12 +223,12 @@ proc_chunk()
         create_filtered_model
 
         # Remove previously existing files
-        rm -rf ${models_per_chunk_dir}/${out_chunk}*
+        rm -rf "${models_per_chunk_dir}"/${out_chunk}*
         
         # Estimate model from chunk
-        ${bindir}/thot_gen_sw_model -s ${chunks_dir}/${src_chunk} -t ${chunks_dir}/${trg_chunk} \
-            -l ${filtered_model_dir}/model ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl \
-            -o ${models_per_chunk_dir}/${out_chunk} 2>> ${models_per_chunk_dir}/${out_chunk}.log || return 1
+        "${bindir}"/thot_gen_sw_model -s "${chunks_dir}"/${src_chunk} -t "${chunks_dir}"/${trg_chunk} \
+            -l "${filtered_model_dir}"/model ${lf_opt} ${af_opt} ${np_opt} -eb -n 1 -nl \
+            -o "${models_per_chunk_dir}"/${out_chunk} 2>> "${models_per_chunk_dir}"/${out_chunk}.log || return 1
     fi
 
     # Sort counts individually but do not append them. Results
@@ -243,7 +243,7 @@ proc_chunk()
 
     # Remove model files for chunk
     if [ ${debug} -eq 0 ]; then
-        rm -rf ${models_per_chunk_dir}/${out_chunk}*
+        rm -rf "${models_per_chunk_dir}"/${out_chunk}*
     fi
 
     return 0
@@ -251,15 +251,15 @@ proc_chunk()
 
 append_lex_sorted_counts_text()
 {
-    LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -m ${curr_tables_dir}/lex_counts_*
+    LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n -m "${curr_tables_dir}"/lex_counts_*
 }
 
 append_alig_sorted_counts_text()
 {
     case ${alig_ext} in
-        "hmm_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -m ${curr_tables_dir}/alig_counts_*
+        "hmm_alignd") LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n -k3n -m "${curr_tables_dir}"/alig_counts_*
             ;;
-        "ibm2_alignd") LC_ALL=C ${SORT} ${SORT_TMP} ${sortpars} -k1n -k2n -k3n -k4n -m ${curr_tables_dir}/alig_counts_*
+        "ibm2_alignd") LC_ALL=C "${SORT}" ${sortpars} -k1n -k2n -k3n -k4n -m "${curr_tables_dir}"/alig_counts_*
             ;;
     esac
 }
@@ -276,19 +276,19 @@ merge_lex_counts()
 merge_lex_counts_text()
 {
     # Append and merge lex sorted counts
-    append_lex_sorted_counts_text | ${bindir}/thot_merge_text_ilextable -ns -T $TMP > ${curr_tables_dir}/merged_lex_counts || return 1
+    append_lex_sorted_counts_text | "${bindir}"/thot_merge_text_ilextable -ns -T "$TMP" > "${curr_tables_dir}"/merged_lex_counts || return 1
 
     # Delete lex sorted counts
-    rm ${curr_tables_dir}/lex_counts_*
+    rm "${curr_tables_dir}"/lex_counts_*
 }
 
 merge_lex_counts_bin()
 {
     # Merge lex sorted counts
-    ${bindir}/thot_merge_bin_ilextable ${curr_tables_dir}/lex_counts_* > ${curr_tables_dir}/merged_lex_counts || return 1
+    "${bindir}"/thot_merge_bin_ilextable "${curr_tables_dir}"/lex_counts_* > "${curr_tables_dir}"/merged_lex_counts || return 1
 
     # Delete lex sorted counts
-    rm ${curr_tables_dir}/lex_counts_*
+    rm "${curr_tables_dir}"/lex_counts_*
 }
 
 merge_alig_counts()
@@ -304,15 +304,15 @@ merge_alig_counts_text()
 {
     # Append and merge alig sorted counts
     case ${alig_ext} in
-        "hmm_alignd") append_alig_sorted_counts_text | ${bindir}/thot_merge_text_ihmmatable -ns -T $TMP > ${curr_tables_dir}/merged_alig_counts || return 1
+        "hmm_alignd") append_alig_sorted_counts_text | "${bindir}"/thot_merge_text_ihmmatable -ns -T "$TMP" > "${curr_tables_dir}"/merged_alig_counts || return 1
             ;;
-        "ibm2_alignd") append_alig_sorted_counts_text | ${bindir}/thot_merge_text_iibm2atable -ns -T $TMP > ${curr_tables_dir}/merged_alig_counts || return 1
+        "ibm2_alignd") append_alig_sorted_counts_text | "${bindir}"/thot_merge_text_iibm2atable -ns -T "$TMP" > "${curr_tables_dir}"/merged_alig_counts || return 1
             ;;
     esac
 
     # Delete alig sorted counts
     if [ ${alig_ext} != "none" ]; then 
-        rm ${curr_tables_dir}/alig_counts_*
+        rm "${curr_tables_dir}"/alig_counts_*
     fi
 }
 
@@ -320,15 +320,15 @@ merge_alig_counts_bin()
 {
     # Merge alig sorted counts
     case ${alig_ext} in
-        "hmm_alignd") ${bindir}/thot_merge_bin_ihmmatable ${curr_tables_dir}/alig_counts_* > ${curr_tables_dir}/merged_alig_counts
+        "hmm_alignd") "${bindir}"/thot_merge_bin_ihmmatable "${curr_tables_dir}"/alig_counts_* > "${curr_tables_dir}"/merged_alig_counts
             ;;
-        "ibm2_alignd") ${bindir}/thot_merge_bin_iibm2atable ${curr_tables_dir}/alig_counts_*  > ${curr_tables_dir}/merged_alig_counts
+        "ibm2_alignd") "${bindir}"/thot_merge_bin_iibm2atable "${curr_tables_dir}"/alig_counts_*  > "${curr_tables_dir}"/merged_alig_counts
             ;;
     esac
 
     # Delete alig sorted counts
     if [ ${alig_ext} != "none" ]; then 
-        rm ${curr_tables_dir}/alig_counts_*
+        rm "${curr_tables_dir}"/alig_counts_*
     fi
 }
 
@@ -343,12 +343,12 @@ generate_filter_info()
 
 generate_filter_info_text()
 {
-    $AWK '{printf"%s %s\n",$1,$2}' ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtering_info_dir}/${chunk}_lex_model_info
+    "$AWK" '{printf"%s %s\n",$1,$2}' "${curr_tables_dir}"/lex_counts_${out_chunk} > "${filtering_info_dir}"/${chunk}_lex_model_info
 }
 
 generate_filter_info_bin()
 {
-    ${bindir}/thot_gen_bin_lex_filter_info -l ${curr_tables_dir}/lex_counts_${out_chunk} > ${filtering_info_dir}/${chunk}_lex_model_info
+    "${bindir}"/thot_gen_bin_lex_filter_info -l "${curr_tables_dir}"/lex_counts_${out_chunk} > "${filtering_info_dir}"/${chunk}_lex_model_info
 }
 
 filter_lex_table()
@@ -362,22 +362,22 @@ filter_lex_table()
 
 filter_lex_table_text()
 {
-    local svocfile=${init_model_pref}.svcb
-    local tvocfile=${init_model_pref}.tvcb
-    local scorpus=${chunks_dir}/${src_chunk}
-    local tcorpus=${chunks_dir}/${trg_chunk}
-    local lextable=${curr_tables_dir}/merged_lex_counts
-    ${bindir}/thot_filter_text_ilextable $svocfile $tvocfile $scorpus $tcorpus $lextable > ${filtered_model_dir}/model.${lex_ext}
+    local svocfile="${init_model_pref}".svcb
+    local tvocfile="${init_model_pref}".tvcb
+    local scorpus="${chunks_dir}"/${src_chunk}
+    local tcorpus="${chunks_dir}"/${trg_chunk}
+    local lextable="${curr_tables_dir}"/merged_lex_counts
+    "${bindir}"/thot_filter_text_ilextable "$svocfile" "$tvocfile" "$scorpus" "$tcorpus" "$lextable" > "${filtered_model_dir}"/model.${lex_ext}
     if [ ${debug} -ne 0 ]; then
-        echo " - Entries in unfiltered table: "`wc -l ${lextable} | $AWK '{printf"%s",$1}'` >> $TMP/log
-        echo " - Entries in filtered table: "`wc -l ${filtered_model_dir}/model.${lex_ext} | $AWK '{printf"%s",$1}'` >> $TMP/log
+        echo " - Entries in unfiltered table: "`wc -l "${lextable}" | "$AWK" '{printf"%s",$1}'` >> "$TMP"/log
+        echo " - Entries in filtered table: "`wc -l "${filtered_model_dir}"/model.${lex_ext} | "$AWK" '{printf"%s",$1}'` >> "$TMP"/log
     fi
 }
 
 filter_lex_table_text_alt()
 {
-    local lextable=${curr_tables_dir}/merged_lex_counts
-    $AWK -v filt_info_file=${filtering_info_dir}/${chunk}_lex_model_info \
+    local lextable="${curr_tables_dir}"/merged_lex_counts
+    "$AWK" -v filt_info_file="${filtering_info_dir}"/${chunk}_lex_model_info \
     'BEGIN{
            getline <filt_info_file
            sword=$1
@@ -391,52 +391,52 @@ filter_lex_table_text_alt()
             sword=$1
             tword=$2
            }
-          }' $lextable > ${filtered_model_dir}/model.${lex_ext} || return 1
+          }' "$lextable" > "${filtered_model_dir}"/model.${lex_ext} || return 1
     if [ ${debug} -ne 0 ]; then
-        echo " - Entries in unfiltered table: "`wc -l ${lextable} | $AWK '{printf"%s",$1}'` >> $TMP/log
-        echo " - Entries in filtered table: "`wc -l ${filtered_model_dir}/model.${lex_ext} | $AWK '{printf"%s",$1}'` >> $TMP/log
+        echo " - Entries in unfiltered table: "`wc -l "${lextable}" | "$AWK" '{printf"%s",$1}'` >> "$TMP"/log
+        echo " - Entries in filtered table: "`wc -l "${filtered_model_dir}"/model.${lex_ext} | "$AWK" '{printf"%s",$1}'` >> "$TMP"/log
     fi
 }
 
 filter_lex_table_bin()
 {
-    local lextable=${curr_tables_dir}/merged_lex_counts
-    local filt_info_file=${filtering_info_dir}/${chunk}_lex_model_info
+    local lextable="${curr_tables_dir}"/merged_lex_counts
+    local filt_info_file="${filtering_info_dir}"/${chunk}_lex_model_info
 
-    ${bindir}/thot_filter_bin_ilextable -l $lextable -f ${filt_info_file} >${filtered_model_dir}/model.${lex_ext}
+    "${bindir}"/thot_filter_bin_ilextable -l "$lextable" -f "${filt_info_file}" >"${filtered_model_dir}"/model.${lex_ext}
 }
 
 create_filtered_model()
 {
     # Remove previous directory content
-    rm -rf ${filtered_model_dir}/*
+    rm -rf "${filtered_model_dir}"/*
     
     # Copy basic initial model files
-    for f in ${init_model_pref}*; do
+    for f in "${init_model_pref}"*; do
         # Omit directories
         if [ -f $f ]; then
             bname=$(basename "$f")
             extension="${bname##*.}"
             filename="${bname%.*}"
             if [ $extension != ${lex_ext} -a $extension != ${alig_ext} -a $extension != "src" -a $extension != "trg" ]; then
-                cp $f ${filtered_model_dir}/model.${extension}
+                cp "$f" "${filtered_model_dir}"/model.${extension}
             fi
         fi
     done
         
     # Generate void .src and .trg files
-    echo "" > ${filtered_model_dir}/model.src
-    echo "" > ${filtered_model_dir}/model.trg
+    echo "" > "${filtered_model_dir}"/model.src
+    echo "" > "${filtered_model_dir}"/model.trg
 
     # Generate lexical and alignment files from current tables
     
     # Filter complete lexical model given chunk
-    echo "Filtering lexical table..." >> $TMP/log
+    echo "Filtering lexical table..." >> "$TMP"/log
     filter_lex_table || return 1
 
     # Copy current alignment file
     if [ ${chunk_id} -eq 1 -a ${alig_ext} != "none" ]; then 
-        cp ${curr_tables_dir}/merged_alig_counts ${filtered_model_dir}/model.${alig_ext}
+        cp "${curr_tables_dir}"/merged_alig_counts "${filtered_model_dir}"/model.${alig_ext}
     fi
 }
 
@@ -451,25 +451,25 @@ prune_lex_table()
 
 prune_lex_table_text()
 {
-    ${bindir}/thot_prune_text_ilextable -n ${npr_val} -c ${cpr_val} \
-        -t ${curr_tables_dir}/merged_lex_counts -T $TMP > ${output}.${lex_ext}
+    "${bindir}"/thot_prune_text_ilextable -n ${npr_val} -c ${cpr_val} \
+        -t "${curr_tables_dir}"/merged_lex_counts -T "$TMP" > "${output}".${lex_ext}
     if [ ${debug} -ne 0 ]; then
-        echo " - Entries in original table: "`wc -l ${curr_tables_dir}/merged_lex_counts | $AWK '{printf"%s",$1}'` >> $TMP/log
-        echo " - Entries in pruned table: "`wc -l ${output}.${lex_ext} | $AWK '{printf"%s",$1}'` >> $TMP/log
+        echo " - Entries in original table: "`wc -l "${curr_tables_dir}"/merged_lex_counts | "$AWK" '{printf"%s",$1}'` >> "$TMP"/log
+        echo " - Entries in pruned table: "`wc -l "${output}".${lex_ext} | "$AWK" '{printf"%s",$1}'` >> "$TMP"/log
     fi
 }
 
 prune_lex_table_bin()
 {
-    ${bindir}/thot_prune_bin_ilextable -l ${curr_tables_dir}/merged_lex_counts -n ${npr_val} -c ${cpr_val} > ${output}.${lex_ext}
+    "${bindir}"/thot_prune_bin_ilextable -l "${curr_tables_dir}"/merged_lex_counts -n ${npr_val} -c ${cpr_val} > "${output}".${lex_ext}
 }
 
 generate_final_model()
 {
     # Copy basic files
-    for f in ${init_model_pref}*; do
+    for f in "${init_model_pref}"*; do
         # Omit directories
-        if [ -f $f ]; then
+        if [ -f "$f" ]; then
             bname=$(basename "$f")
             extension="${bname##*.}"
             filename="${bname%.*}"
@@ -477,33 +477,33 @@ generate_final_model()
                 # Check if when copying files source and target names
                 # are equal (this happens if -l and -o parameters were
                 # the same)
-                if [ $f != ${output}.${extension} ]; then
-                    cp $f ${output}.${extension}
+                if [ "$f" != "${output}".${extension} ]; then
+                    cp "$f" "${output}".${extension}
                 fi
             fi
         fi
         
         # Create void .src and .trg files
-        echo "" > ${output}.src
-        echo "" > ${output}.trg
+        echo "" > "${output}".src
+        echo "" > "${output}".trg
     done
 
     # Copy sentence length model
-    cp ${slmodel_dir}/model ${output}.slmodel
+    cp "${slmodel_dir}"/model "${output}".slmodel
 
     # Prune lexical table
     if [ ${npr_val} -eq 0 -a ${cpr_val} = "0" ]; then
-        cp ${curr_tables_dir}/merged_lex_counts ${output}.${lex_ext}
+        cp "${curr_tables_dir}"/merged_lex_counts "${output}".${lex_ext}
     else
         # Prune lexical table
-        echo "++ [Map-Reduce] Pruning lexical table..." >> $TMP/log
+        echo "++ [Map-Reduce] Pruning lexical table..." >> "$TMP"/log
         echo "++ [Map-Reduce] Pruning lexical table..." >&2
         prune_lex_table || exit 1
     fi
     
     # Copy alignment table if exists
     if [ ${alig_ext} != "none" ]; then
-        cp ${curr_tables_dir}/merged_alig_counts ${output}.${alig_ext}
+        cp "${curr_tables_dir}"/merged_alig_counts "${output}".${alig_ext}
     fi
 }
 
@@ -685,7 +685,7 @@ declare slmodel_dir=""
 
 set_tmp_dir || exit 1
 
-echo "++++ Process started at: " `date` > $TMP/log
+echo "++++ Process started at: " `date` > "$TMP"/log
 
 # Determine file format
 declare file_format=""
@@ -708,21 +708,21 @@ estimate_slmodel
 # EM algorithm iterations
 n=1
 while [ $n -le ${niters} ]; do
-    echo "+++ Map-reduce iter ${n}" >> $TMP/log
+    echo "+++ Map-reduce iter ${n}" >> "$TMP"/log
     echo "+++ Map-reduce iter ${n}" >&2
 
     chunk_id=0
 
-    for i in `ls ${chunks_dir}/src\_chunk\_*`; do
+    for i in "${chunks_dir}/src_chunk_"*; do
         # Initialize variables
-        chunk=`${BASENAME} $i`
+        chunk=`"${BASENAME}" $i`
         chunk=${chunk:4}
         src_chunk="src_"${chunk}
         trg_chunk="trg_"${chunk}
         out_chunk="out_"${chunk}
         chunk_id=`expr $chunk_id + 1`
 
-        echo "++ [Map-Reduce] Processing chunk ${chunk}" >> $TMP/log
+        echo "++ [Map-Reduce] Processing chunk ${chunk}" >> "$TMP"/log
         echo "++ [Map-Reduce] Processing chunk ${chunk}" >&2
 
         # Process chunk
@@ -730,7 +730,7 @@ while [ $n -le ${niters} ]; do
     done
 
     # Merge counts for submodels
-    echo "++ [Map-Reduce] Merging counts..." >> $TMP/log
+    echo "++ [Map-Reduce] Merging counts..." >> "$TMP"/log
     echo "++ [Map-Reduce] Merging counts..." >&2
     
     # Merge lexical counts
@@ -747,5 +747,5 @@ done
 generate_final_model
 
 # Copy log file
-echo "++++ Process finished at: " `date` >> $TMP/log
-cp $TMP/log ${output}.log
+echo "++++ Process finished at: " `date` >> ""$TMP""/log
+cp "$TMP"/log "${output}".log
