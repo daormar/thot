@@ -4,7 +4,7 @@
 # Allows to train very large corpus using thot_gen_phr_model
 
 # INCLUDE BASH LIBRARIES
-. "${bindir}"/thot_shlib || exit 1
+. "${bindir}"/thot_general_lib || exit 1
 
 print_desc()
 {

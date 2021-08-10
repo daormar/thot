@@ -11,7 +11,8 @@
 # the phrase table
 
 # INCLUDE BASH LIBRARIES
-. "${bindir}"/thot_shlib || exit 1
+. "${bindir}"/thot_general_lib || exit 1
+. "${bindir}"/thot_simple_sched_lib || exit 1
 
 #############
 get_nbest_for_trg()

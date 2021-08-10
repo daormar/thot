@@ -7,7 +7,8 @@
 # can be executed in a PBS cluster.
 
 # INCLUDE BASH LIBRARIES
-. "${bindir}"/thot_shlib || exit 1
+. "${bindir}"/thot_general_lib || exit 1
+. "${bindir}"/thot_simple_sched_lib || exit 1
 
 #############
 filter_ttable()
