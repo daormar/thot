@@ -20,3 +20,19 @@ pipe_fail()
     done
     return 0
 }
+
+get_lm_from_cfgfile()
+{
+    local cmdline_cfg=$1
+    local lm
+    lm="`"$GREP" "\-lm " "$cmdline_cfg" | "$AWK" '{printf"%s",$2}'`"
+    echo "$lm"
+}
+
+get_tm_from_cfgfile()
+{
+    local cmdline_cfg=$1
+    local tm
+    tm="`"$GREP" "\-tm " "$cmdline_cfg" | "$AWK" '{printf"%s",$2}'`"
+    echo "$tm"
+}

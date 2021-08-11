@@ -4,6 +4,9 @@
 # Generates a thot configuration file given translation and language
 # model descriptors.
 
+# INCLUDE BASH LIBRARIES
+. "${bindir}"/thot_general_lib || exit 1
+
 ########
 is_absolute_path()
 {

@@ -5,6 +5,9 @@
 
 # \textbf{Categ}: modelling
 
+# INCLUDE BASH LIBRARIES
+. "${bindir}"/thot_general_lib || exit 1
+
 ########
 print_desc()
 {
@@ -168,7 +171,7 @@ list_lm_entry_info()
 create_lm_files()
 {
     # Obtain path of lm file
-    lmfile=`"$GREP" "\-lm " "$cmdline_cfg" | "$AWK" '{printf"%s",$2}'`
+    lmfile="`get_lm_from_cfgfile "$cmdline_cfg"`"
 
     # Check that lm file could be obtained
     if [ -z "$lmfile" ]; then
@@ -427,7 +430,7 @@ process_files_for_individual_tm()
 create_tm_files()
 {
     # Obtain path of tm file
-    tmfile=`$GREP "\-tm " "$cmdline_cfg" | "$AWK" '{printf"%s",$2}'`
+    tmfile="`get_tm_from_cfgfile "$cmdline_cfg"`"
 
     # Check that tm file could be obtained
     if [ -z "$tmfile" ]; then

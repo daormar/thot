@@ -171,8 +171,8 @@ tok_corpus()
 lowercase_corpus()
 {
     # Obtain basenames
-    srcbase=`$BASENAME "${scorpus_pref}"`
-    trgbase=`$BASENAME "${tcorpus_pref}"`
+    srcbase=`"$BASENAME" "${scorpus_pref}"`
+    trgbase=`"$BASENAME" "${tcorpus_pref}"`
 
     # Lowercase corpus
     echo "**** Lowercasing corpus" >&2

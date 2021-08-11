@@ -5,6 +5,9 @@
 
 # \textbf{Categ}: modelling
 
+# INCLUDE BASH LIBRARIES
+. "${bindir}"/thot_general_lib || exit 1
+
 ########
 print_desc()
 {
@@ -117,7 +120,7 @@ check_if_file_is_desc()
 create_lm_files()
 {
     # Obtain path of lm file
-    lmfile=`"$GREP" "\-lm " "$cmdline_cfg" | "$AWK" '{printf"%s",$2}'`
+    lmfile="`get_lm_from_cfgfile "$cmdline_cfg"`"
     baselmfile=`basename "$lmfile"`
 
     # Create directory for lm files
@@ -201,7 +204,7 @@ tune_lm()
 create_tm_dev_files()
 {
     # Obtain path of tm file
-    tmfile=`$GREP "\-tm " "$cmdline_cfg" | $AWK '{printf"%s",$2}'`
+    tmfile="`get_tm_from_cfgfile "$cmdline_cfg"`"
     basetmfile=`basename "$tmfile"`
 
     # Create directory for tm files for development corpus
@@ -252,7 +255,7 @@ create_tm_dev_files()
 create_tm_files()
 {
     # Obtain path of tm file
-    tmfile=`"$GREP" "\-tm " "$cmdline_cfg" | "$AWK" '{printf"%s",$2}'`
+    tmfile="`get_tm_from_cfgfile "$cmdline_cfg"`"
     basetmfile=`basename "$tmfile"`
 
     # Create directory for tm files
