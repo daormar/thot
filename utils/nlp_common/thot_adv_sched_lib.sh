@@ -39,7 +39,7 @@ create_script()
     local command=$2
 
     # Write environment variables
-    set | exclude_readonly_vars | exclude_bashisms > ${name}
+    set | exclude_readonly_vars > ${name}
 
     # Write functions if necessary
     "$GREP" "()" "${name}" -A1 | "$GREP" "{" > /dev/null || write_functions >> ${name}

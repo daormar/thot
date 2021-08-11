@@ -345,7 +345,7 @@ for f in "$SDIR/frag_"*; do
 
     create_script "$SDIR"/qs_est_${fragm} estimate_frag || exit 1
     launch "$SDIR"/qs_est_${fragm} job_id || exit 1
-    qs_est="${qs_est} $SDIR/qs_est_${fragm}"
+    qs_est=`add_sync_file "$qs_est" "$SDIR/qs_est_${fragm}"`
     jids="${jids} ${job_id}"
 
     i=`expr $i + 1`

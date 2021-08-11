@@ -438,7 +438,7 @@ for f in "$SDIR/frag_"*; do
     # Obtain translations for the current fragment
     create_script "$SDIR/qs_trans_${fragm}" trans_frag || exit 1
     launch "$SDIR/qs_trans_${fragm}" job_id || exit 1
-    qs_trans="${qs_trans} $SDIR/qs_trans_${fragm}"
+    qs_trans=`add_sync_file "$qs_trans" "$SDIR/qs_trans_${fragm}"`
     jids="${jids} ${job_id}"
 
     i=`expr $i + 1`
