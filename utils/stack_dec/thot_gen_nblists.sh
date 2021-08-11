@@ -78,7 +78,7 @@ get_sentid()
 obtain_nblists()
 {
     # Generate translations and word graphs
-    $bindir/thot_decoder -pr ${pr_val} -c ${cmdline_cfg} -t ${scorpus} \
+    "$bindir"/thot_decoder -pr ${pr_val} -c ${cmdline_cfg} -t ${scorpus} \
         -o ${outd}/wg/inputsent -wg ${outd}/wg/devtrans \
         -sdir $sdir ${qs_opt} "${qs_par}" -v || { trap - EXIT ; return 1; }
 
@@ -86,7 +86,7 @@ obtain_nblists()
     for wgfile in ${outd}/wg/devtrans*.wg; do
         basewgfile=`$BASENAME $wgfile`
         sentid=`get_sentid ${basewgfile}`
-        ${bindir}/thot_wg_proc -w $wgfile -n ${n_val} \
+        "${bindir}"/thot_wg_proc -w $wgfile -n ${n_val} \
             -o ${outd}/nblist/inputsent_${sentid} 2>> ${outd}/nblist/thot_wg_proc.log || return 1
     done
 

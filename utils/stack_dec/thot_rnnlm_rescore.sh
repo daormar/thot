@@ -50,7 +50,7 @@ usage()
 get_sentid()
 {
     local_file=$1
-    echo ${local_file} | $AWK -F "." '{printf"%s",$1}' | $AWK -F "_" '{printf"%s",$2}'
+    "$AWK" -F "." '{printf"%s",$1}' "${local_file}" | "$AWK" -F "_" '{printf"%s",$2}'
 }
 
 ########
@@ -60,7 +60,7 @@ nblist_removelm_filter()
     if [ ${removelm_given} -eq 0 ]; then
         cat
     else
-        ${bindir}/thot_remove_nbl_component -c lm
+        "${bindir}"/thot_remove_nbl_component -c lm
     fi    
 }
 
@@ -68,7 +68,7 @@ nblist_removelm_filter()
 process_nblist()
 {
     local_nblist=$1
-    cat ${local_nblist} | nblist_removelm_filter
+    cat "${local_nblist}" | nblist_removelm_filter
 }
 
 ########
@@ -78,7 +78,7 @@ trans_voc_filter()
     if [ ${voc_given} -eq 0 ]; then
         cat
     else
-        ${bindir}/thot_replace_oov_with_unk -v ${vocab}
+        "${bindir}"/thot_replace_oov_with_unk -v "${vocab}"
     fi    
 }
 
@@ -86,51 +86,51 @@ trans_voc_filter()
 process_trans()
 {
     local_nblist=$1
-    cat ${local_nblist} | trans_voc_filter
+    cat "${local_nblist}" | trans_voc_filter
 }
 
 ########
 log10_to_ln()
 {
     local_log10scr=$1
-    $AWK '{printf"%f\n",$1*log(10)}' ${local_log10scr}
+    "$AWK" '{printf"%f\n",$1*log(10)}' ${local_log10scr}
 }
 
 ########
 fast_compute_rnnlm_scores_for_nblists()
 {
     # Process n-best lists
-    for nblfile in ${nblistdir}/*.nbl; do
+    for nblfile in "${nblistdir}"/*.nbl; do
         # Extract translations from n-best list
-        nblfile_base=`${BASENAME} $nblfile`
-        ${bindir}/thot_extract_sents_from_nbl < $nblfile > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
+        nblfile_base=`"${BASENAME}" "$nblfile"`
+        "${bindir}"/thot_extract_sents_from_nbl < "$nblfile" > "${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux"
 
         # Process n-best list
-        process_trans ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans
+        process_trans "${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux" > "${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans"
 
         # Remove temporary files
-        rm ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux
+        rm "${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans_aux"
 
         # Add translations to all translations file
-        cat ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans >> ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans
+        cat "${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans" >> "${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans"
     done || return 1
 
     # Score all translations file
-    ${FASTER_RNNLM_BUILD_DIR}/rnnlm -rnnlm ${rnnlm} \
-                             -test ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans \
-                             > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.rnnlm_scores_log10 2> ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.log
+    "${FASTER_RNNLM_BUILD_DIR}"/rnnlm -rnnlm "${rnnlm}" \
+                             -test "${TDIR_RNNLM_RESCORE}"/rnnlm_scores/all_trans \
+                             > "${TDIR_RNNLM_RESCORE}"/rnnlm_scores/all_trans.rnnlm_scores_log10 2> "${TDIR_RNNLM_RESCORE}"/rnnlm_scores/all_trans.log
 
     # Obtain ln scores
-    log10_to_ln ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.rnnlm_scores_log10 > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.rnnlm_scores
+    log10_to_ln "${TDIR_RNNLM_RESCORE}"/rnnlm_scores/all_trans.rnnlm_scores_log10 > "${TDIR_RNNLM_RESCORE}"/rnnlm_scores/all_trans.rnnlm_scores
     
     # Create score files for each n-best list
     offset=0
-    scrfile=${TDIR_RNNLM_RESCORE}/rnnlm_scores/all_trans.rnnlm_scores
-    for nblfile in ${nblistdir}/*.nbl; do
-        nblfile_base=`${BASENAME} $nblfile`
-        numtrans=`$WC -l ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans | $AWK '{printf"%s",$1}'`
+    scrfile="${TDIR_RNNLM_RESCORE}"/rnnlm_scores/all_trans.rnnlm_scores
+    for nblfile in "${nblistdir}"/*.nbl; do
+        nblfile_base=`"${BASENAME}" "$nblfile"`
+        numtrans=`"$WC" -l "${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.trans" | "$AWK" '{printf"%s",$1}'`
         offset=`expr $offset + $numtrans`
-        $HEAD -${offset} $scrfile | $TAIL -${numtrans} > ${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.rnnlm_scores
+        "$HEAD" -${offset} "$scrfile" | "$TAIL" -${numtrans} > "${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.rnnlm_scores"
     done || return 1
 }
 
@@ -138,17 +138,17 @@ fast_compute_rnnlm_scores_for_nblists()
 create_aug_nblists()
 {
     # Process n-best lists
-    for nblfile in ${nblistdir}/*.nbl; do
+    for nblfile in "${nblistdir}"/*.nbl; do
         # Process n-best list
-        nblfile_base=`${BASENAME} $nblfile`
-        process_nblist $nblfile > ${nblfile}_aux
+        nblfile_base=`"${BASENAME}" "$nblfile"`
+        process_nblist "$nblfile" > "${nblfile}"_aux
 
         # Augment n-best list
         file_with_new_score=${TDIR_RNNLM_RESCORE}/rnnlm_scores/${nblfile_base}.rnnlm_scores
-        ${bindir}/thot_augment_nblist -n ${nblfile}_aux -a rnnlm -s ${file_with_new_score} > ${outd}/${nblfile_base}
+        "${bindir}"/thot_augment_nblist -n "${nblfile}"_aux -a rnnlm -s "${file_with_new_score}" > "${outd}/${nblfile_base}"
 
         # Remove temporary file
-        rm ${nblfile}_aux
+        rm "${nblfile}"_aux
     done || return 1
 }
 
@@ -238,44 +238,44 @@ if [ ${o_given} -eq 0 ]; then
     echo "Error! -o parameter not given!" >&2
     exit 1
 else
-    if [ -d ${outd} ]; then
+    if [ -d "${outd}" ]; then
         echo "Warning! output directory does exist" >&2 
         # echo "Error! output directory should not exist" >&2 
         # exit 1
     else
-        mkdir -p ${outd} || { echo "Error! cannot create output directory" >&2; return 1; }
+        mkdir -p "${outd}" || { echo "Error! cannot create output directory" >&2; return 1; }
     fi
 fi
 
 if [ ${voc_given} -eq 1 ]; then        
-    if [ ! -f ${vocab} ]; then
+    if [ ! -f "${vocab}" ]; then
         echo "Error! file ${vocab} does not exist" >&2
         exit 1
     fi
 fi
 
 if [ ${tdir_given} -eq 1 ]; then
-    if [ ! -d ${tdir} ]; then
+    if [ ! -d "${tdir}" ]; then
         echo "Error! directory ${tdir} does not exist" >&2
         exit 1            
     fi
 fi
 
 # Create tmp directory
-if [ ! -d ${tdir} ]; then
+if [ ! -d "${tdir}" ]; then
     echo "Error: tmp directory does not exist" >&2
     return 1;
 fi
 
-TDIR_RNNLM_RESCORE=`${MKTEMP} -d ${tdir}/thot_rnnlm_rescore_XXXXXX`
+TDIR_RNNLM_RESCORE=`"${MKTEMP}" -d "${tdir}"/thot_rnnlm_rescore_XXXXXX`
 
 # Remove temp directories on exit
 if [ "$debug_opt" != "-debug" ]; then
-    trap "rm -rf $TDIR_RNNLM_RESCORE 2>/dev/null" EXIT
+    trap 'rm -rf "$TDIR_RNNLM_RESCORE" 2>/dev/null' EXIT
 fi
 
 # Create additional directories
-mkdir ${TDIR_RNNLM_RESCORE}/rnnlm_scores
+mkdir "${TDIR_RNNLM_RESCORE}"/rnnlm_scores
 
 # Compute rnnlm scores
 echo "* Computing rnn-lm scores for n-best lists" >&2

@@ -73,7 +73,7 @@ wait_until_server_is_listening()
 
         # Check if server is listening
         server_listening="yes"
-        ${bindir}/thot_client -i 127.0.0.1 -t "testing" -p ${PORT} >/dev/null 2>&1 || server_listening="no"
+        "${bindir}"/thot_client -i 127.0.0.1 -t "testing" -p ${PORT} >/dev/null 2>&1 || server_listening="no"
 
         # End function if server is listening
         if [ ${server_listening} = "yes" ]; then
@@ -102,7 +102,7 @@ else
     fi
 
     # Initialize variables
-    if [ "${SERVER}" = "" ]; then SERVER=${bindir}/thot_server; fi
+    if [ "${SERVER}" = "" ]; then SERVER="${bindir}"/thot_server; fi
     if [ "${SERVER_IP}" = "" ]; then SERVER_IP="127.0.0.1" ; fi
     if [ "${CFGFILE}" = "" ]; then CFGFILE="server.cfg" ; fi
     if [ "${NSMTW}" = "" ]; then
@@ -191,13 +191,13 @@ else
     fi
 
     # Kill server on exit
-    trap "if [ ! -z \"\${server_pid}\" ]; then $bindir/thot_client -i ${SERVER_IP} ${PORT_OPT} -e; wait \${server_pid}; fi;" 0
+    trap "if [ ! -z \"\${server_pid}\" ]; then "$bindir"/thot_client -i ${SERVER_IP} ${PORT_OPT} -e; wait \${server_pid}; fi;" 0
 
     # Kill server if the script is aborted by means of Ctrl-C or SIGTERM
-    trap "if [ ! -z \"\${server_pid}\" ]; then $bindir/thot_client -i ${SERVER_IP} ${PORT_OPT} -e; wait \${server_pid}; fi; exit 1" 2 15
+    trap "if [ ! -z \"\${server_pid}\" ]; then "$bindir"/thot_client -i ${SERVER_IP} ${PORT_OPT} -e; wait \${server_pid}; fi; exit 1" 2 15
 
     # Evaluate target function
-    ${bindir}/thot_cat_using_client -i ${SERVER_IP} ${PORT_OPT} -t ${TEST} -r ${REF} ${TR_OPT} ${PM_OPT} ${OF} \
+    "${bindir}"/thot_cat_using_client -i ${SERVER_IP} ${PORT_OPT} -t ${TEST} -r ${REF} ${TR_OPT} ${PM_OPT} ${OF} \
         > ${SDIR}/cat_trgf.cat_iters 2> ${SDIR}/cat_trgf.log || error="yes"
 
     # Treat errors while evaluating target function
@@ -207,7 +207,7 @@ else
     fi
 
     # Terminate server
-    ${bindir}/thot_client -i ${SERVER_IP} ${PORT_OPT} ${UID_OPT} -e
+    "${bindir}"/thot_client -i ${SERVER_IP} ${PORT_OPT} ${UID_OPT} -e
     wait ${server_pid}
     server_pid=""
 
@@ -215,7 +215,7 @@ else
     SEED=31415
     S_CI=`wc -l ${TEST} | $AWK '{printf"%d",$1}'`
     N_CI=1000
-    ${bindir}/thot_conf_interv_cat $SEED ${SDIR}/cat_trgf.cat_iters ${S_CI} ${N_CI} > ${SDIR}/cat_trgf.conf_int
+    "${bindir}"/thot_conf_interv_cat $SEED ${SDIR}/cat_trgf.cat_iters ${S_CI} ${N_CI} > ${SDIR}/cat_trgf.conf_int
 
     # Calculate the KSMR measure
     ${GREP} "^KSMR" ${SDIR}/cat_trgf.cat_iters | ${AWK} '{printf"KSMR= %s\n",$3}' >> ${SDIR}/cat_trgf.ksmr

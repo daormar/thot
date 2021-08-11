@@ -9,14 +9,14 @@ if [ $# -ne 1 ]; then
 else
 
     file=$1
-    ${GREP} "<reference>" -A 1 ${file} | ${GREP} "<hyp" | \
-              ${AWK} -v n=$1 '{
+    "${GREP}" "<reference>" -A 1 "${file}" | "${GREP}" "<hyp" | \
+              "${AWK}" -v n=$1 '{
                                 for(i=3;i<=NF-1;++i)
                                 {
                                   if(i==NF-1) printf"%s",$(NF-1)
                                   else printf"%s ",$i
                                 }
                                 printf"\n"
-                              }' | sed -e s"/^\^//g"
+                              }' | "${SED}" -e s"/^\^//g"
 
 fi

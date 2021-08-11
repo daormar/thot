@@ -11,7 +11,7 @@ calc_nnc_pen()
     we="$1"
     nnc="$2"
     pen_fact=$3
-    echo "$we" | $AWK -v nnc="${nnc}" -v pen_fact=${pen_fact}\
+    "$AWK" -v nnc="${nnc}" -v pen_fact=${pen_fact}\
                       'BEGIN{
                              result=0;
                              split(nnc,nnc_arr," ")
@@ -25,38 +25,38 @@ calc_nnc_pen()
                             }
                          END{
                              printf"%f",result
-                            }'
+                            }' "${we}"
 }
 
 ########
 gen_trans()
 {
     # Remove file with translations
-    if [ -f ${SDIR}/smt_trgf.trans ]; then
-        rm ${SDIR}/smt_trgf.trans
+    if [ -f "${SDIR}"/smt_trgf.trans ]; then
+        rm "${SDIR}"/smt_trgf.trans
     fi
 
     # Extract translations from n-best lists
-    for nblist in ${NBL_DIR}/*.nbl; do
+    for nblist in "${NBL_DIR}"/*.nbl; do
         # Obtain best translation from n-best list
-        ${bindir}/thot_obtain_best_trans_from_nbl $nblist "$weights" >> ${SDIR}/smt_trgf.trans
+        "${bindir}"/thot_obtain_best_trans_from_nbl "$nblist" "$weights" >> "${SDIR}"/smt_trgf.trans
     done
 }
 
 ########
 evaluate()
 {
-    ${bindir}/thot_scorer -r ${REF} -t  ${SDIR}/smt_trgf.trans >> ${SDIR}/smt_trgf.score
-    SCORE=`tail -1 ${SDIR}/smt_trgf.score | ${AWK} '{printf"%f\n",1-$2}'`
+    "${bindir}"/thot_scorer -r "${REF}" -t  "${SDIR}"/smt_trgf.trans >> "${SDIR}"/smt_trgf.score
+    SCORE=`tail -1 "${SDIR}"/smt_trgf.score | "${AWK}" '{printf"%f\n",1-$2}'`
     # Print target function value
-    echo "${SCORE} ${nnc_pen}" | $AWK '{printf"%f\n",$1+$2}'
+    echo "${SCORE} ${nnc_pen}" | "$AWK" '{printf"%f\n",$1+$2}'
 }
 
 
 ########
 remove_tmp_files()
 {
-    rm ${SDIR}/smt_trgf.trans ${SDIR}/smt_trgf.score
+    rm "${SDIR}"/smt_trgf.trans "${SDIR}"/smt_trgf.score
 }
 
 ########
@@ -70,12 +70,12 @@ else
     if [ "${NNC_PEN_FACTOR}" = "" ]; then NNC_PEN_FACTOR=1000; fi
 
     # Check variables
-    if [ ! -d ${NBL_DIR} ]; then
+    if [ ! -d "${NBL_DIR}" ]; then
         echo "ERROR: directory ${NBL_DIR} does not exist" >&2
         exit 1
     fi
 
-    if [ ! -f ${REF} ]; then
+    if [ ! -f "${REF}" ]; then
         echo "ERROR: file ${REF} does not exist" >&2
         exit 1
     fi

@@ -140,21 +140,21 @@ while read -r s; do
     numSent=`expr $numSent + 1`
 
     if [ ${refs_given} -eq 1 ]; then
-        r=`head -${numSent} $reffile | tail -1`
+        r=`head -${numSent} "$reffile" | tail -1`
     fi
 
     # Translate sentence
-    $bindir/thot_client -i $ip ${port_op} ${uid_op} -t "$s" || exit 1
+    "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -t "$s" || exit 1
 
     if [ ${refs_given} -eq 1 ]; then
         # train models after each translation
-        $bindir/thot_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" || exit 1
+        "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" || exit 1
     fi
 done < $testfile
 
 # Print server models if required
 if [ ${pm_given} -eq 1 ]; then
-    ${bindir}/thot_client -i $ip ${port_op} ${uid_op} -o ${pm_out_pref} || exit 1
+    "${bindir}"/thot_client -i $ip ${port_op} ${uid_op} -o "${pm_out_pref}" || exit 1
 fi
         
 # Return 0

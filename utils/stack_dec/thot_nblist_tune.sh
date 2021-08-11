@@ -45,15 +45,15 @@ usage()
 obtain_loglin_nonneg_const()
 {
     _smtw_names=`obtain_smtweights_names`
-    echo "${_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="wpw" || $i=="tseglenw") printf"0 "; else printf"1 "}'
+    echo "${_smtw_names}" | "$AWK" '{for(i=1;i<=NF;++i) if($i=="wpw" || $i=="tseglenw") printf"0 "; else printf"1 "}'
 }
 
 ########
 obtain_smtweights_names()
 {
     # Process n-best lists
-    for nblfile in ${nblistdir}/*.nbl; do
-        head -1 $nblfile | $AWK -F " , " '{for(i=1;i<=NF;++i){nf=split($i,winfo," "); printf"%s ",winfo[nf-1]}}'
+    for nblfile in "${nblistdir}"/*.nbl; do
+        head -1 "$nblfile" | "$AWK" -F " , " '{for(i=1;i<=NF;++i){nf=split($i,winfo," "); printf"%s ",winfo[nf-1]}}'
         break
     done
 }
@@ -62,8 +62,8 @@ obtain_smtweights_names()
 obtain_smtweights_values()
 {
     # Process n-best lists
-    for nblfile in ${nblistdir}/*.nbl; do
-        head -1 $nblfile | $AWK -F " , " '{for(i=1;i<=NF;++i){nf=split($i,winfo," "); printf"%s ",winfo[nf]}}'
+    for nblfile in "${nblistdir}"/*.nbl; do
+        head -1 "$nblfile" | "$AWK" -F " , " '{for(i=1;i<=NF;++i){nf=split($i,winfo," "); printf"%s ",winfo[nf]}}'
         break
     done
 }
@@ -72,15 +72,14 @@ obtain_smtweights_values()
 obtain_loglin_dhs_va_opt_values()
 {
     _smtw_names=`obtain_smtweights_names`
-#    echo "${_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) if($i=="swlenliw") printf"0 "; else printf"-0 "}'
-    echo "${_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"-0 "}'
+    echo "${_smtw_names}" | "$AWK" '{for(i=1;i<=NF;++i) printf"-0 "}'
 }
 
 ########
 obtain_loglin_iv_opt_values()
 {
     _smtw_names=`obtain_smtweights_names`
-    echo "${_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'
+    echo "${_smtw_names}" | "$AWK" '{for(i=1;i<=NF;++i) printf"1 "}'
 }
 
 ########
@@ -97,28 +96,28 @@ loglin_downhill()
 
     # Execute tuning algorithm
     tdir=/tmp
-    ${bindir}/thot_dhs_min -tdir $tdir -va ${va_opt} -iv ${iv_opt} \
-        -ftol ${ftol_loglin} -o ${outd}/llweights_tune -u ${bindir}/thot_dhs_nbl_rescore ${debug_opt} || return 1
+    "${bindir}"/thot_dhs_min -tdir "$tdir" -va ${va_opt} -iv ${iv_opt} \
+        -ftol ${ftol_loglin} -o "${outd}"/llweights_tune -u "${bindir}"/thot_dhs_nbl_rescore ${debug_opt} || return 1
 }
 
 ########
 obtain_loglin_upd_va_opt_values()
 {
     _smtw_names=`obtain_smtweights_names`
-    echo "${_smtw_names}" | $AWK '{for(i=1;i<=NF;++i) printf"1 "}'
+    echo "${_smtw_names}" | "$AWK" '{for(i=1;i<=NF;++i) printf"1 "}'
 }
 
 ########
 loglin_upd()
 {
     # Remove previously existing files
-    if [ -f ${outd}/nbl_filenames.txt ]; then
-        rm ${outd}/nbl_filenames.txt
+    if [ -f "${outd}"/nbl_filenames.txt ]; then
+        rm "${outd}"/nbl_filenames.txt
     fi
     
     # Obtain file with n-best lists file names
-    for nblfile in ${nblistdir}/*.nbl; do
-        echo $nblfile >> ${outd}/nbl_filenames.txt
+    for nblfile in "${nblistdir}"/*.nbl; do
+        echo "$nblfile" >> "${outd}"/nbl_filenames.txt
     done
 
     # Obtain weight related information
@@ -126,15 +125,15 @@ loglin_upd()
     va_opt="`obtain_loglin_upd_va_opt_values`"
     
     # Update weights given n-best lists
-    $bindir/thot_ll_weight_upd_nblist -w ${llweights} -va ${va_opt} \
-                                      -nb ${outd}/nbl_filenames.txt \
-                                      -r ${tcorpus} > ${outd}/llweights_tune.out 2>${outd}/llweights_tune.log || return 1
+    "$bindir"/thot_ll_weight_upd_nblist -w ${llweights} -va ${va_opt} \
+                                      -nb "${outd}"/nbl_filenames.txt \
+                                      -r "${tcorpus}" > "${outd}"/llweights_tune.out 2>"${outd}"/llweights_tune.log || return 1
 
     # Obtain score with optimized weights
     export NBL_DIR=${nblistdir}
     export REF=$tcorpus
-    upd_weights="`cat ${outd}/llweights_tune.out | $AWK -F ": " '{print $2}'`"
-    ${bindir}/thot_dhs_nbl_rescore ${TDIR_NBLIST_TUNE} ${upd_weights} > ${outd}/llweights_tune.scr
+    upd_weights="`cat "${outd}"/llweights_tune.out | "$AWK" -F ": " '{print $2}'`"
+    "${bindir}"/thot_dhs_nbl_rescore "${TDIR_NBLIST_TUNE}" ${upd_weights} > "${outd}"/llweights_tune.scr
 }
 
 ########
@@ -199,7 +198,7 @@ if [ ${t_given} -eq 0 ]; then
     echo "Error! -t parameter not given!" >&2
     exit 1
 else
-    if [ ! -f ${tcorpus} ]; then
+    if [ ! -f "${tcorpus}" ]; then
         echo "Error! file ${tcorpus} does not exist" >&2
         exit 1
     fi
@@ -214,17 +213,15 @@ if [ ${o_given} -eq 0 ]; then
     echo "Error! -o parameter not given!" >&2
     exit 1
 else
-    if [ -d ${outd} ]; then
+    if [ -d "${outd}" ]; then
         echo "Warning! output directory does exist" >&2 
-        # echo "Error! output directory should not exist" >&2 
-        # exit 1
     else
-        mkdir -p ${outd} || { echo "Error! cannot create output directory" >&2; return 1; }
+        mkdir -p "${outd}" || { echo "Error! cannot create output directory" >&2; return 1; }
     fi
 fi
 
 if [ ${tdir_given} -eq 1 ]; then
-    if [ ! -d ${tdir} ]; then
+    if [ ! -d "${tdir}" ]; then
         echo "Error! directory ${tdir} does not exist" >&2
         exit 1            
     fi
@@ -235,16 +232,16 @@ ftol_lm=0.1
 ftol_loglin=0.001
 
 # Create tmp directory
-if [ ! -d ${tdir} ]; then
+if [ ! -d "${tdir}" ]; then
     echo "Error: tmp directory does not exist" >&2
     return 1;
 fi
 
-TDIR_NBLIST_TUNE=`${MKTEMP} -d ${tdir}/thot_nblist_tune_XXXXXX`
+TDIR_NBLIST_TUNE=`"${MKTEMP}" -d "${tdir}"/thot_nblist_tune_XXXXXX`
 
 # Remove temp directories on exit
 if [ "$debug_opt" != "-debug" ]; then
-    trap "rm -rf $TDIR_NBLIST_TUNE 2>/dev/null" EXIT
+    trap 'rm -rf "$TDIR_NBLIST_TUNE" 2>/dev/null' EXIT
 fi
 
 # Update log-linear weights

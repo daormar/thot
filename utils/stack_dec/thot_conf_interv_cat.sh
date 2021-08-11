@@ -9,8 +9,8 @@
 #####################################################################
 standard_eval()
 {
-    $GREP "PARTIAL" $res | \
-        $AWK 'BEGIN{
+    "$GREP" "PARTIAL" $res | \
+        "$AWK" 'BEGIN{
                     chars=0
                     ks=0
                     ksma=0
@@ -32,8 +32,8 @@ standard_eval()
 bootstrap_exper()
 {
     r=$RANDOM
-    $GREP "PARTIAL" $res | \
-        $AWK -v seed=$r -v S=$S -v measure=$measure -v tmp=$TMP '
+    "$GREP" "PARTIAL" $res | \
+        "$AWK" -v seed=$r -v S=$S -v measure=$measure -v tmp="$TMP" '
              {
               resh[NR]=$0;
              }
@@ -65,32 +65,32 @@ bootstrap_eval()
     RANDOM=$seed
     n=1
     while [ $n -lt $N ]; do
-        bootstrap_exper >> $TMP/scef
+        bootstrap_exper >> "$TMP"/scef
         n=`expr $n + 1`
     done
 
     # Obtain mean and stdev
-    mean=`cat $TMP/scef | $AWK '{sum+=$0;}END{printf "%f", sum/NR;}'`
+    mean=`cat "$TMP"/scef | "$AWK" '{sum+=$0;}END{printf "%f", sum/NR;}'`
     echo "Mean: $mean"
-    stDev=`cat $TMP/scef | $AWK -v med=$mean '{aux=$0-med; stDev+=aux*aux;}END{printf "%f", sqrt(stDev/(NR-1));}'`
+    stDev=`cat "$TMP"/scef | "$AWK" -v med=$mean '{aux=$0-med; stDev+=aux*aux;}END{printf "%f", sqrt(stDev/(NR-1));}'`
     echo "stDev: $stDev"
     echo ""
 
     # Obtain confidence intervals
-    LC_ALL=C $SORT -n $TMP/scef > $TMP/scef.sorted;
-    l95=`echo "" | $AWK -v N=$N '{printf"%d",0.025*N+1}' `
-    l90=`echo "" | $AWK -v N=$N '{printf"%d",0.05*N+1}' `;
-    s95=`echo "" | $AWK -v N=$N -v l95=${l95} '{printf"%d",N-l95+1}' `;
-    s90=`echo "" | $AWK -v N=$N -v l90=${l90} '{printf"%d",N-l90+1}' `;
+    LC_ALL=C "$SORT" -n "$TMP"/scef > "$TMP"/scef.sorted;
+    l95=`echo "" | "$AWK" -v N=$N '{printf"%d",0.025*N+1}' `
+    l90=`echo "" | "$AWK" -v N=$N '{printf"%d",0.05*N+1}' `;
+    s95=`echo "" | "$AWK" -v N=$N -v l95=${l95} '{printf"%d",N-l95+1}' `;
+    s90=`echo "" | "$AWK" -v N=$N -v l90=${l90} '{printf"%d",N-l90+1}' `;
 
-    lb95=`cat $TMP/scef.sorted | head -${l95}  | tail -1`;
-    ub95=`cat $TMP/scef.sorted | head -${s95} | tail -1`;
-    center95=`echo "" | $AWK -v l=$lb95 -v u=$ub95 '{printf"%f",l+(u-l)/2}'`
-    rad95=`echo "" | $AWK -v l=$lb95 -v u=$ub95 '{printf"%f",(u-l)/2}'`
-    lb90=`cat $TMP/scef.sorted | head -$l90  | tail -1`;
-    ub90=`cat $TMP/scef.sorted | head -$s90 | tail -1`;
-    center90=`echo "" | $AWK -v l=$lb90 -v u=$ub90 '{printf"%f",l+(u-l)/2}'`
-    rad90=`echo "" | $AWK -v l=$lb90 -v u=$ub90 '{printf"%f",(u-l)/2}'`
+    lb95=`cat "$TMP"/scef.sorted | head -${l95}  | tail -1`;
+    ub95=`cat "$TMP"/scef.sorted | head -${s95} | tail -1`;
+    center95=`echo "" | "$AWK" -v l=$lb95 -v u=$ub95 '{printf"%f",l+(u-l)/2}'`
+    rad95=`echo "" | "$AWK" -v l=$lb95 -v u=$ub95 '{printf"%f",(u-l)/2}'`
+    lb90=`cat "$TMP"/scef.sorted | head -$l90  | tail -1`;
+    ub90=`cat "$TMP"/scef.sorted | head -$s90 | tail -1`;
+    center90=`echo "" | "$AWK" -v l=$lb90 -v u=$ub90 '{printf"%f",l+(u-l)/2}'`
+    rad90=`echo "" | "$AWK" -v l=$lb90 -v u=$ub90 '{printf"%f",(u-l)/2}'`
 
     # Print results
     echo "Confidence intervals";
@@ -133,7 +133,7 @@ fi
 
 # Create directory for temporary files
 TMP=`mktemp -d`
-trap "rm -rf $TMP* 2>/dev/null" EXIT
+trap 'rm -rf "$TMP"* 2>/dev/null' EXIT
 
 # Print random seed
 echo "Random seed: $seed"

@@ -88,7 +88,7 @@ get_sentid()
 ##################
 obtain_cfg_llweights()
 {
-    local_line=`$bindir/thot_server -c $cfgfile -w 2>/dev/null | $HEAD -1`
+    local_line=`"$bindir"/thot_server -c $cfgfile -w 2>/dev/null | $HEAD -1`
     echo "${local_line}"
 }
 
@@ -151,24 +151,24 @@ obtain_first_iter_llweights()
 gen_nbest_lists_iter()
 {
     # Generate translations and word graphs
-    $bindir/thot_decoder -pr ${nprocs} -c ${cfgfile} -tmw ${llweights} -t ${testfile} \
+    "$bindir"/thot_decoder -pr ${nprocs} -c ${cfgfile} -tmw ${llweights} -t ${testfile} \
         -o ${TDIR_LLWU}/trans/${niter}_thot_decoder_out -wg ${TDIR_LLWU}/wg/${niter} \
         -sdir $sdir ${qs_opt} "${qs_par}" -v || { trap - EXIT ; return 1; }
 
     # Evaluate translation quality
-    $bindir/thot_scorer -r ${reffile} -t ${TDIR_LLWU}/trans/${niter}_thot_decoder_out > ${TDIR_LLWU}/trans/${niter}_thot_decoder_out.score || return 1
+    "$bindir"/thot_scorer -r ${reffile} -t ${TDIR_LLWU}/trans/${niter}_thot_decoder_out > ${TDIR_LLWU}/trans/${niter}_thot_decoder_out.score || return 1
 
     # Obtain n-best lists from word graphs
     for wgfile in ${TDIR_LLWU}/wg/${niter}*.wg; do
         basewgfile=`$BASENAME $wgfile`
         sentid=`get_sentid ${basewgfile}`
-        ${bindir}/thot_wg_proc -w $wgfile -n ${n_val} -o ${TDIR_LLWU}/nblist/${niter}_${sentid} 2>> ${TDIR_LLWU}/nblist/thot_wg_proc.log || return 1
+        "${bindir}"/thot_wg_proc -w $wgfile -n ${n_val} -o ${TDIR_LLWU}/nblist/${niter}_${sentid} 2>> ${TDIR_LLWU}/nblist/thot_wg_proc.log || return 1
 
         # Filter n-best lists violating translation constraints (under
         # specific circumstances, a certain translation may violate
         # constraints)
         prefix="${wgfile%.*}"
-        ${bindir}/thot_filter_nblist -n ${TDIR_LLWU}/nblist/${niter}_${sentid}.nbl -p $prefix > ${TDIR_LLWU}/nbl_filt || return 1
+        "${bindir}"/thot_filter_nblist -n ${TDIR_LLWU}/nblist/${niter}_${sentid}.nbl -p $prefix > ${TDIR_LLWU}/nbl_filt || return 1
         mv ${TDIR_LLWU}/nbl_filt ${TDIR_LLWU}/nblist/${niter}_${sentid}.nbl
         
     done
@@ -194,11 +194,11 @@ obtain_trans_quality_from_nblists()
 
     # Obtain best translations for current iteration
     for nblfile in ${local_pref}*.nbl; do
-        ${bindir}/thot_obtain_best_trans_from_nbl $nblfile "${llweights}" >> ${local_outfile}
+        "${bindir}"/thot_obtain_best_trans_from_nbl $nblfile "${llweights}" >> ${local_outfile}
     done
             
     # Calculate translation quality
-    local_quality=`$bindir/thot_scorer -r ${reffile} -t ${local_outfile} | $AWK '{printf"%s",$2}'`
+    local_quality=`"$bindir"/thot_scorer -r ${reffile} -t ${local_outfile} | $AWK '{printf"%s",$2}'`
 
     echo ${local_quality}
 }
@@ -221,7 +221,7 @@ obtain_curr_nblists()
         for nblfile in ${TDIR_LLWU}/nblist/${niter}*.nbl; do
             basenblfile=`$BASENAME $nblfile`
             sentid=`get_sentid ${basenblfile}`
-            ${bindir}/thot_merge_nbest_list $nblfile ${TDIR_LLWU}/curr_nblist/$sentid.nbl > ${TDIR_LLWU}/temp.nbl || return 1
+            "${bindir}"/thot_merge_nbest_list $nblfile ${TDIR_LLWU}/curr_nblist/$sentid.nbl > ${TDIR_LLWU}/temp.nbl || return 1
             mv ${TDIR_LLWU}/temp.nbl ${TDIR_LLWU}/curr_nblist/$sentid.nbl
         done
     fi
@@ -253,7 +253,7 @@ proc_curr_nblists()
     fi
     
     # Update weights given n-best lists
-    $bindir/thot_ll_weight_upd_nblist -w ${llweights} ${va_opt} \
+    "$bindir"/thot_ll_weight_upd_nblist -w ${llweights} ${va_opt} \
         -nb ${TDIR_LLWU}/nbl_files.txt -r ${reffile} >> ${TDIR_LLWU}/weights_per_iter.txt 2>${TDIR_LLWU}/${niter}_thot_ll_weight_upd_nblist.log || return 1
 }
 

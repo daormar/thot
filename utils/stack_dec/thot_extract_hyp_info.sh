@@ -9,6 +9,6 @@ if [ $# -ne 1 ]; then
 else
 
     file=$1
-    ${GREP} "^Score: " $file | $AWK '{if($3==";") printf"%s\n",$0}'
+    "${GREP}" "^Score: " "$file" | "$AWK" '{if($3==";") printf"%s\n",$0}'
  
 fi

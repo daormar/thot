@@ -36,21 +36,21 @@ usage()
 get_src_sent_with_metadata()
 {
     _idxfile=$1
-    $HEAD -1 ${_idxfile} | $AWK '{for(i=4;i<=NF;++i){printf "%s",$i; if(i!=NF) printf" "} printf"\n"}'
+    "$HEAD" -1 "${_idxfile}" | "$AWK" '{for(i=4;i<=NF;++i){printf "%s",$i; if(i!=NF) printf" "} printf"\n"}'
 }
 
 ########
 get_trg_sents()
 {
     _nblfile=$1
-    $AWK -F " [|][|][|] " '{if(FNR>1) print $4}' ${_nblfile}
+    "$AWK" -F " [|][|][|] " '{if(FNR>1) print $4}' "${_nblfile}"
 }
 
 ########
 get_alig_info()
 {
     _segm_info=$1
-    $AWK -F " [|][|][|] " '{if(FNR>1) print $NF}' ${_segm_info}
+    "$AWK" -F " [|][|][|] " '{if(FNR>1) print $NF}' "${_segm_info}"
 }
 
 ########
@@ -59,7 +59,7 @@ filter_nblist()
     _nblfile=$1
     _checkinginfo=$2
 
-    $AWK -v chkinfo=${_checkinginfo} 'BEGIN{
+    "$AWK" -v chkinfo="${_checkinginfo}" 'BEGIN{
       nline=1
       while((getline < chkinfo) > 0)
       {
@@ -78,7 +78,7 @@ filter_nblist()
         if(constr_satisfied[FNR-1]==1)
           print $0        
       }
-    }' ${_nblfile}
+    }' "${_nblfile}"
 }
 
 ##################
@@ -121,7 +121,7 @@ if [ ${n_given} -eq 0 ]; then
     echo "Error! -n parameter not given!" >&2
     exit 1
 else
-    if [ ! -f ${nblfile} ]; then
+    if [ ! -f "${nblfile}" ]; then
         echo "Error! file ${nblfile} does not exist" >&2
         exit 1
     fi
@@ -131,38 +131,38 @@ if [ ${p_given} -eq 0 ]; then
     echo "Error! -p parameter not given!" >&2
     exit 1
 else
-    if [ ! -f ${prefix}.wg ]; then
+    if [ ! -f "${prefix}.wg" ]; then
         echo "Error! file ${prefix}.wg does not exist" >&2
         exit 1
     fi
 
-    if [ ! -f ${prefix}.idx ]; then
+    if [ ! -f "${prefix}.idx" ]; then
         echo "Error! file ${prefix}.idx does not exist" >&2
         exit 1
     fi
 fi
 
-TDIR=`${MKTEMP} -d /tmp/thot_filter_nblist_XXXXXX`
+TDIR=`"${MKTEMP}" -d /tmp/thot_filter_nblist_XXXXXX`
 
 # Remove temp directories on exit
-trap "rm -rf $TDIR 2>/dev/null" EXIT
+trap 'rm -rf "$TDIR" 2>/dev/null' EXIT
 
 # Process parameters
 
 # Obtain segmentation info for n-best list entries
-${bindir}/thot_get_nblist_segm_info -n ${nblfile} -p ${prefix} > $TDIR/segm_info
+"${bindir}"/thot_get_nblist_segm_info -n "${nblfile}" -p "${prefix}" > "$TDIR"/segm_info
 
 # Obtain source sentence with metadata
-get_src_sent_with_metadata ${prefix}.idx > $TDIR/srcsent
+get_src_sent_with_metadata "${prefix}".idx > "$TDIR"/srcsent
 
 # Obtain target sentences
-get_trg_sents ${nblfile} > $TDIR/trgsents
+get_trg_sents "${nblfile}" > "$TDIR"/trgsents
 
 # Obtain alignment info
-get_alig_info $TDIR/segm_info > $TDIR/aliginfo
+get_alig_info "$TDIR"/segm_info > "$TDIR"/aliginfo
 
 # Obtain constraint checking info
-${bindir}/thot_check_constraints -s $TDIR/srcsent -t $TDIR/trgsents -a $TDIR/aliginfo > $TDIR/checkinginfo
+"${bindir}"/thot_check_constraints -s "$TDIR"/srcsent -t "$TDIR"/trgsents -a "$TDIR"/aliginfo > "$TDIR"/checkinginfo
 
 # Filter n-best list file
-filter_nblist ${nblfile} $TDIR/checkinginfo
+filter_nblist "${nblfile}" "$TDIR"/checkinginfo

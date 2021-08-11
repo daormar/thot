@@ -27,7 +27,6 @@ usage()
     echo "thot_cat_using_client -i <string> [-p <int>] [-uid <int>]"
     echo "                      -t <string> -r <string>"
     echo "                      [-tr]"
-#    echo "                      [-tre]"
     echo "                      [-of] [-pm <string>] [--help] [--version]"
     echo ""
     echo " -i <string>             : IP address of the server."
@@ -36,8 +35,6 @@ usage()
     echo " -t <string>             : File with the sentences to translate."
     echo " -r <string>             : File with reference sentences."
     echo " -tr                     : Train models after each translation."
-    # echo " -tre                    : Train error correcting model after each"
-    # echo "                           translation."
     echo " -of                     : Execute only the first iteration."
     echo " -pm <string>            : Print server models at exit using"
     echo "                           string as prefix."
@@ -357,7 +354,7 @@ while read -r s; do
     iter_num=1
 
     # Initial iteration
-    $bindir/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v >$TMPHYP 2>$TMPHYPERR
+    "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v >$TMPHYP 2>$TMPHYPERR
     verify_connection
 
         # Update variables
@@ -400,7 +397,7 @@ while read -r s; do
             suff=`suffix "$prev" "${new_pref}"`
             
             # Append new string to the prefix
-            $bindir/thot_client -i $ip ${port_op} ${uid_op} -ap "$suff" -v>$TMPHYP 2>$TMPHYPERR
+            "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -ap "$suff" -v>$TMPHYP 2>$TMPHYPERR
             verify_connection
 
             # Update variables
@@ -447,7 +444,7 @@ while read -r s; do
     # check -tr option
     if [ ${tr_given} -eq 1 ]; then
             # train models after each translation
-        $bindir/thot_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" -v 2>$TMPHYPERR
+        "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" -v 2>$TMPHYPERR
         trtime=`process_time_from_log $TMPHYPERR`
         echo "<train time=\"$trtime\">"
         tottrtime=`sum_ab $tottrtime $trtime`
@@ -456,24 +453,16 @@ while read -r s; do
     # verify model coverage after training/adaptation (if they were
     # requested)
     if [ ${tr_given} -eq 1 ]; then
-        $bindir/thot_client -i $ip ${port_op} ${uid_op} -c "$s" "$r" -v> $TMPHYPCOV 2>$TMPHYPERR
+        "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -c "$s" "$r" -v> $TMPHYPCOV 2>$TMPHYPERR
         hcov=`cat $TMPHYPCOV`
         vercovtime=`process_time_from_log $TMPHYPERR`
         echo "<hcov time=\"$vercovtime\"> $hcov </hcov>"
         
         # translate source sentence again 
-        $bindir/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v> $TMPRETRANSHYP 2>$TMPHYPERR
+        "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v> $TMPRETRANSHYP 2>$TMPHYPERR
         retranshyp=`cat $TMPRETRANSHYP`
         echo "<retrans> $retranshyp </retrans>"
     fi
-
-        # # check -tre option
-        # if [ ${tre_given} -eq 1 ]; then
-        #     # train ec model after each translation
-        #     $bindir/thot_client -i $ip ${port_op} ${uid_op} -tre "${initial_hyp}" "$r" -v 2>$TMPHYPERR
-        #     trtime=`process_time_from_log $TMPHYPERR`
-        #     echo "<train ecm time=\"$trtime\">"    
-        # fi
 
     # print information about the translation
     echo "</TestSample>"
@@ -485,7 +474,7 @@ done < $testfile
 
 # Print server models if required
 if [ ${pm_given} -eq 1 ]; then
-    ${bindir}/thot_client -i $ip ${port_op} ${uid_op} -o ${pm_out_pref} -v
+    "${bindir}"/thot_client -i $ip ${port_op} ${uid_op} -o ${pm_out_pref} -v
 fi
 
 # Print experiment tail

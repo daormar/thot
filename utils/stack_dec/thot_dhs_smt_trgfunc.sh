@@ -37,7 +37,7 @@ decoder_needs_to_be_run()
         echo 1
     else
         # Check condition in file
-        cond=`cat $SDIR/run_decoder.txt`
+        cond=`cat "$SDIR"/run_decoder.txt`
         echo $cond
     fi
 }
@@ -79,7 +79,7 @@ check_if_files_differ()
         echo 0
     else
         echo 1
-        echo "${prevfile} $ndiff" >> $SDIR/nbl_diff.txt
+        echo "${prevfile} $ndiff" >> "$SDIR"/nbl_diff.txt
     fi
 }
 
@@ -124,7 +124,7 @@ gen_trans()
     run_decoder=`decoder_needs_to_be_run`
     if [ ${run_decoder} -eq 1 ]; then
         # Register number of decoder invokations
-        reg_dec_invok $SDIR/num_dec_invok.txt
+        reg_dec_invok "$SDIR"/num_dec_invok.txt
 
         # Evaluate target function by running the decoder
         execute_decoder
@@ -133,17 +133,17 @@ gen_trans()
         # word-graphs and merge with the previously generated ones
         if [ ${USE_NBEST_OPT} -eq 1 ]; then
             # Delete file with n-best list files that have changed
-            if [ -f $SDIR/nbl_diff.txt ]; then
-                rm $SDIR/nbl_diff.txt
+            if [ -f "$SDIR"/nbl_diff.txt ]; then
+                rm "$SDIR"/nbl_diff.txt
             fi
             # For each sentence to be translated...
             new_opts_added=0
             for wgfile in `$FIND $nbdir/ -name sentence*.wg | LC_ALL=C $SORT`; do
                 # Generate new n-best list
-                ${bindir}/thot_wg_proc -w $wgfile -n ${OPT_NVALUE} -o $SDIR/process_wg_output 2> ${SDIR}/smt_trgf_proccess_wg.log
+                "${bindir}"/thot_wg_proc -w $wgfile -n ${OPT_NVALUE} -o "$SDIR"/process_wg_output 2> ${SDIR}/smt_trgf_proccess_wg.log
                 if [ -f $wgfile.nbl ]; then
                     # Merge with previous n-best list file
-                    ${bindir}/thot_merge_nbest_list $SDIR/process_wg_output.nbl $wgfile.nbl > $wgfile.merged_nbl
+                    "${bindir}"/thot_merge_nbest_list "$SDIR"/process_wg_output.nbl $wgfile.nbl > $wgfile.merged_nbl
 
                     # Check differences between the previously generated n-best list and the merged file
                     files_different=`check_if_files_differ $wgfile.nbl $wgfile.merged_nbl`
@@ -157,12 +157,12 @@ gen_trans()
                     fi
                 else
                     # Copy initial n-best list file
-                    cp $SDIR/process_wg_output.nbl $wgfile.nbl
+                    cp "$SDIR"/process_wg_output.nbl $wgfile.nbl
                     new_opts_added=1
                 fi
             done
             if [ $new_opts_added -eq 0 ]; then
-                echo 0 > $SDIR/run_decoder.txt
+                echo 0 > "$SDIR"/run_decoder.txt
             fi
         fi
     fi
@@ -178,7 +178,7 @@ gen_trans()
         # Process n-best list file for each sentence
         for wgfile in `$FIND $nbdir/ -name sentence*.wg | LC_ALL=C $SORT`; do
             # Obtain best translation by rescoring the n-best list
-            ${bindir}/thot_obtain_best_trans_from_nbl $wgfile.nbl "$weights" >> ${SDIR}/smt_trgf.trans
+            "${bindir}"/thot_obtain_best_trans_from_nbl $wgfile.nbl "$weights" >> ${SDIR}/smt_trgf.trans
         done
     fi
 }
@@ -186,7 +186,7 @@ gen_trans()
 ########
 evaluate()
 {
-    ${bindir}/thot_scorer -r ${REF} -t  ${SDIR}/smt_trgf.trans >> ${SDIR}/smt_trgf.score
+    "${bindir}"/thot_scorer -r ${REF} -t  ${SDIR}/smt_trgf.trans >> ${SDIR}/smt_trgf.score
     SCORE=`tail -1 ${SDIR}/smt_trgf.score | ${AWK} '{printf"%f\n",1-$2}'`
     # Print target function value
     echo "${SCORE} ${nnc_pen}" | $AWK '{printf"%f\n",$1+$2}'
@@ -198,7 +198,7 @@ if [ $# -lt 2 ]; then
     echo "Usage: thot_dhs_smt_trgfunc <sdir> <w1> ... <wn>"
 else
     # Initialize variables
-    if [ "${PHRDECODER}" = "" ]; then PHRDECODER=${bindir}/thot_decoder; fi
+    if [ "${PHRDECODER}" = "" ]; then PHRDECODER="${bindir}"/thot_decoder; fi
     if [ "${CFGFILE}" = "" ]; then CFGFILE="server.cfg" ; fi
     if [ "${BASEDIR}" = "" ]; then BASEDIR=${HOME}/traduccion/corpus/Xerox/en_es/v14may2003/simplified2 ; fi
     if [ "${TEST}" = "" ]; then TEST=${BASEDIR}/DATA/Es-dev ; fi
@@ -256,12 +256,12 @@ else
             echo "WARNING: Since USE_NBEST_OPT is greater than zero, WG parameter is discarded" >&2
         fi
         # Define WG_OPT variable
-        nbdir=$SDIR/nbl
+        nbdir="$SDIR"/nbl
         if [ ! -d $nbdir ]; then mkdir $nbdir; fi
         WG_OPT="-wg $nbdir/sentence"
         # Initialize file containing run_decoder condition
-        if [ ! -f $SDIR/run_decoder.txt ]; then 
-            echo 1 > $SDIR/run_decoder.txt
+        if [ ! -f "$SDIR"/run_decoder.txt ]; then 
+            echo 1 > "$SDIR"/run_decoder.txt
         fi
     fi
 
