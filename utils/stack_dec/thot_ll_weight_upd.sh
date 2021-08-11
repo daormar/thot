@@ -88,7 +88,7 @@ get_sentid()
 ##################
 obtain_cfg_llweights()
 {
-    local_line=`"$bindir"/thot_server -c $cfgfile -w 2>/dev/null | $HEAD -1`
+    local_line=`"$bindir"/thot_server -c "$cfgfile" -w 2>/dev/null | $HEAD -1`
     echo "${local_line}"
 }
 
@@ -421,7 +421,7 @@ if [ ${c_given} -eq 0 ]; then
     echo "Error: -c option not given" >&2 
     exit 1
 else
-    if [ ! -f ${cfgfile} ]; then
+    if [ ! -f "${cfgfile}" ]; then
         echo "Error: file ${cfgfile} does not exist" >&2 
         exit 1        
     fi
