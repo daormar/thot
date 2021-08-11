@@ -75,14 +75,14 @@ pipe_fail()
 ##################
 str_is_option()
 {
-    echo "" | ${AWK} -v s=$1 '{if(!match(s,"-[a-zA-Z]")) print "0"; else print "1"}' 
+    echo "" | "${AWK}" -v s=$1 '{if(!match(s,"-[a-zA-Z]")) print "0"; else print "1"}' 
 }
 
 ##################
 get_sentid()
 {
     local_file=$1
-    echo ${local_file} | $AWK -F "." '{printf"%s",$1}' | $AWK -F "_" '{printf"%s",$2}'
+    echo "${local_file}" | "$AWK" -F "." '{printf"%s",$1}' | "$AWK" -F "_" '{printf"%s",$2}'
 }
 
 ##################
@@ -96,7 +96,7 @@ obtain_cfg_llweights()
 extract_weight_names()
 {
     local_line="$1"
-    local_cfg_llw_names=`echo ${local_line} | $AWK '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
+    local_cfg_llw_names=`echo ${local_line} | "$AWK" '{for(i=5;i<=NF;i+=3) printf"%s ",substr($i,1,length($i)-1)}'`
     echo "${local_cfg_llw_names}"
 }
 
@@ -104,7 +104,7 @@ extract_weight_names()
 extract_weight_values()
 {
     local_line="$1"
-    local_cfg_llw_values=`echo ${local_line} | $AWK '{for(i=6;i<=NF;i+=3) printf"%s ",$i}'`
+    local_cfg_llw_values=`echo ${local_line} | "$AWK" '{for(i=6;i<=NF;i+=3) printf"%s ",$i}'`
     echo "${local_cfg_llw_values}"
 }
 
@@ -112,7 +112,7 @@ extract_weight_values()
 merge_cfg_and_va_weights()
 {
     echo ${local_llweights_values} | \
-        $AWK -v va_values="${va_values}" 'BEGIN{
+        "$AWK" -v va_values="${va_values}" 'BEGIN{
                                              va_arr_len=split(va_values,va_arr)
                                            }
                                            {
@@ -151,37 +151,37 @@ obtain_first_iter_llweights()
 gen_nbest_lists_iter()
 {
     # Generate translations and word graphs
-    "$bindir"/thot_decoder -pr ${nprocs} -c ${cfgfile} -tmw ${llweights} -t ${testfile} \
-        -o ${TDIR_LLWU}/trans/${niter}_thot_decoder_out -wg ${TDIR_LLWU}/wg/${niter} \
-        -sdir $sdir ${qs_opt} "${qs_par}" -v || { trap - EXIT ; return 1; }
+    "$bindir"/thot_decoder -pr ${nprocs} -c "${cfgfile}" -tmw "${llweights}" -t "${testfile}" \
+        -o "${TDIR_LLWU}"/trans/${niter}_thot_decoder_out -wg "${TDIR_LLWU}"/wg/${niter} \
+        -sdir "$sdir" ${qs_opt} "${qs_par}" -v || { trap - EXIT ; return 1; }
 
     # Evaluate translation quality
-    "$bindir"/thot_scorer -r ${reffile} -t ${TDIR_LLWU}/trans/${niter}_thot_decoder_out > ${TDIR_LLWU}/trans/${niter}_thot_decoder_out.score || return 1
+    "$bindir"/thot_scorer -r "${reffile}" -t "${TDIR_LLWU}"/trans/${niter}_thot_decoder_out > "${TDIR_LLWU}"/trans/${niter}_thot_decoder_out.score || return 1
 
     # Obtain n-best lists from word graphs
-    for wgfile in ${TDIR_LLWU}/wg/${niter}*.wg; do
-        basewgfile=`$BASENAME $wgfile`
-        sentid=`get_sentid ${basewgfile}`
-        "${bindir}"/thot_wg_proc -w $wgfile -n ${n_val} -o ${TDIR_LLWU}/nblist/${niter}_${sentid} 2>> ${TDIR_LLWU}/nblist/thot_wg_proc.log || return 1
+    for wgfile in "${TDIR_LLWU}"/wg/${niter}*.wg; do
+        basewgfile=`"$BASENAME" "$wgfile"`
+        sentid=`get_sentid "${basewgfile}"`
+        "${bindir}"/thot_wg_proc -w "$wgfile" -n ${n_val} -o "${TDIR_LLWU}"/nblist/${niter}_${sentid} 2>> "${TDIR_LLWU}"/nblist/thot_wg_proc.log || return 1
 
         # Filter n-best lists violating translation constraints (under
         # specific circumstances, a certain translation may violate
         # constraints)
         prefix="${wgfile%.*}"
-        "${bindir}"/thot_filter_nblist -n ${TDIR_LLWU}/nblist/${niter}_${sentid}.nbl -p $prefix > ${TDIR_LLWU}/nbl_filt || return 1
-        mv ${TDIR_LLWU}/nbl_filt ${TDIR_LLWU}/nblist/${niter}_${sentid}.nbl
+        "${bindir}"/thot_filter_nblist -n "${TDIR_LLWU}"/nblist/${niter}_${sentid}.nbl -p "$prefix" > "${TDIR_LLWU}"/nbl_filt || return 1
+        mv "${TDIR_LLWU}"/nbl_filt "${TDIR_LLWU}"/nblist/${niter}_${sentid}.nbl
         
     done
     
     # Save disk space
     if [ "$debug" = "-debug" ]; then
         # Compress files
-        for file in ${TDIR_LLWU}/wg/${niter}*; do
-            ${GZIP} $file
+        for file in "${TDIR_LLWU}"/wg/${niter}*; do
+            "${GZIP}" "$file"
         done
     else
         # Remove files
-        rm ${TDIR_LLWU}/wg/${niter}*
+        rm "${TDIR_LLWU}"/wg/${niter}*
     fi
 }
 
@@ -194,11 +194,11 @@ obtain_trans_quality_from_nblists()
 
     # Obtain best translations for current iteration
     for nblfile in ${local_pref}*.nbl; do
-        "${bindir}"/thot_obtain_best_trans_from_nbl $nblfile "${llweights}" >> ${local_outfile}
+        "${bindir}"/thot_obtain_best_trans_from_nbl "$nblfile" "${llweights}" >> "${local_outfile}"
     done
             
     # Calculate translation quality
-    local_quality=`"$bindir"/thot_scorer -r ${reffile} -t ${local_outfile} | $AWK '{printf"%s",$2}'`
+    local_quality=`"$bindir"/thot_scorer -r "${reffile}" -t "${local_outfile}" | "$AWK" '{printf"%s",$2}'`
 
     echo ${local_quality}
 }
@@ -209,20 +209,20 @@ obtain_curr_nblists()
     if [ $niter -eq 1 ]; then
         # During first iteration, current n-best list are those
         # generated for initial translation
-        for nblfile in ${TDIR_LLWU}/nblist/${niter}*.nbl; do
-            basenblfile=`$BASENAME $nblfile`
-            sentid=`get_sentid ${basenblfile}`
-            cp $nblfile ${TDIR_LLWU}/curr_nblist/$sentid.nbl
+        for nblfile in "${TDIR_LLWU}"/nblist/${niter}*.nbl; do
+            basenblfile=`"$BASENAME" "$nblfile"`
+            sentid=`get_sentid "${basenblfile}"`
+            cp "$nblfile" "${TDIR_LLWU}"/curr_nblist/$sentid.nbl
         done
     else
         # During subsequent iterations, current n-best lists are
         # obtained by merging n-best lists of the previous iteration
         # with those of the current translation
-        for nblfile in ${TDIR_LLWU}/nblist/${niter}*.nbl; do
-            basenblfile=`$BASENAME $nblfile`
-            sentid=`get_sentid ${basenblfile}`
-            "${bindir}"/thot_merge_nbest_list $nblfile ${TDIR_LLWU}/curr_nblist/$sentid.nbl > ${TDIR_LLWU}/temp.nbl || return 1
-            mv ${TDIR_LLWU}/temp.nbl ${TDIR_LLWU}/curr_nblist/$sentid.nbl
+        for nblfile in "${TDIR_LLWU}"/nblist/${niter}*.nbl; do
+            basenblfile=`"$BASENAME" "$nblfile"`
+            sentid=`get_sentid "${basenblfile}"`
+            "${bindir}"/thot_merge_nbest_list "$nblfile" "${TDIR_LLWU}"/curr_nblist/$sentid.nbl > "${TDIR_LLWU}"/temp.nbl || return 1
+            mv "${TDIR_LLWU}"/temp.nbl "${TDIR_LLWU}"/curr_nblist/$sentid.nbl
         done
     fi
 }
@@ -234,7 +234,7 @@ update_best_quality()
         best_quality=${quality}
         best_llweights=${llweights}
     else
-        curr_best_quality_worse=`echo ${best_quality} ${quality} | $AWK '{printf"%d",($1 < $2)}'`
+        curr_best_quality_worse=`echo ${best_quality} ${quality} | "$AWK" '{printf"%d",($1 < $2)}'`
         if [ ${curr_best_quality_worse} -eq 1 ]; then
             best_quality=${quality}
             best_llweights=${llweights}
@@ -246,21 +246,21 @@ update_best_quality()
 proc_curr_nblists()
 {
     # Generate file containing file names of current n-best lists
-    if [ ! -f ${TDIR_LLWU}/nbl_files.txt ]; then
-        for file in ${TDIR_LLWU}/curr_nblist/*nbl; do
-            echo $file >> ${TDIR_LLWU}/nbl_files.txt
+    if [ ! -f "${TDIR_LLWU}"/nbl_files.txt ]; then
+        for file in "${TDIR_LLWU}"/curr_nblist/*nbl; do
+            echo $file >> "${TDIR_LLWU}"/nbl_files.txt
         done
     fi
     
     # Update weights given n-best lists
     "$bindir"/thot_ll_weight_upd_nblist -w ${llweights} ${va_opt} \
-        -nb ${TDIR_LLWU}/nbl_files.txt -r ${reffile} >> ${TDIR_LLWU}/weights_per_iter.txt 2>${TDIR_LLWU}/${niter}_thot_ll_weight_upd_nblist.log || return 1
+        -nb "${TDIR_LLWU}"/nbl_files.txt -r "${reffile}" >> "${TDIR_LLWU}"/weights_per_iter.txt 2>"${TDIR_LLWU}"/${niter}_thot_ll_weight_upd_nblist.log || return 1
 }
 
 ##################
 get_new_llweights()
 {
-    $TAIL -1 ${TDIR_LLWU}/weights_per_iter.txt | $AWK '{for(i=3;i<=NF;++i){printf"%s",$i; if(i!=NF) printf" "}}'
+    "$TAIL" -1 "${TDIR_LLWU}"/weights_per_iter.txt | "$AWK" '{for(i=3;i<=NF;++i){printf"%s",$i; if(i!=NF) printf" "}}'
 }
 
 ##################
@@ -268,7 +268,7 @@ convergence_reached()
 {
     local_trans_qual_vector="$1"
     local_longest_decr_streak=$2
-    local_decreasing_streak_len=`echo ${local_trans_qual_vector} | $AWK '{
+    local_decreasing_streak_len=`echo ${local_trans_qual_vector} | "$AWK" '{
                                              best_score=$1
                                              decr_streak_len=1
                                              for(i=2;i<=NF;++i)
@@ -298,7 +298,7 @@ print_weights()
     local_weight_names="$1"
     local_weight_values="$2"
     echo $local_weight_names $local_weight_values | \
-        $AWK '{for(i=1;i<=NF/2;++i) {printf"%s: %s",$i,$(i+(NF/2)); if(i!=NF/2) printf" , "} }'
+        "$AWK" '{for(i=1;i<=NF/2;++i) {printf"%s: %s",$i,$(i+(NF/2)); if(i!=NF/2) printf" , "} }'
 }
 
 ##################
@@ -451,30 +451,30 @@ fi
 
 # Check shared directory
 
-if [ ! -d ${sdir} ]; then
+if [ ! -d "${sdir}" ]; then
     echo "Error: shared directory does not exist" >&2
     return 1;
 fi
 
 # Create tmp directory
 
-if [ ! -d ${tdir} ]; then
+if [ ! -d "${tdir}" ]; then
     echo "Error: tmp directory does not exist" >&2
     return 1;
 fi
 
-TDIR_LLWU=`${MKTEMP} -d ${tdir}/thot_ll_weight_upd_XXXXXX`
+TDIR_LLWU=`"${MKTEMP}" -d "${tdir}"/thot_ll_weight_upd_XXXXXX`
 
 # Remove temp directories on exit
 if [ "$debug" != "-debug" ]; then
-    trap "rm -rf $TDIR_LLWU 2>/dev/null" EXIT
+    trap 'rm -rf "$TDIR_LLWU" 2>/dev/null' EXIT
 fi
 
 # Create additional directories
-mkdir ${TDIR_LLWU}/trans
-mkdir ${TDIR_LLWU}/wg
-mkdir ${TDIR_LLWU}/nblist
-mkdir ${TDIR_LLWU}/curr_nblist
+mkdir "${TDIR_LLWU}"/trans
+mkdir "${TDIR_LLWU}"/wg
+mkdir "${TDIR_LLWU}"/nblist
+mkdir "${TDIR_LLWU}"/curr_nblist
 
 # Obtain translation model weights information
 raw_llweights=`obtain_cfg_llweights`

@@ -83,19 +83,19 @@ usage()
 check_process_safety()
 {
     if [ ${c_given} -eq 1 ]; then
-        check_process_safety_given_cfgfile $cfgfile
+        check_process_safety_given_cfgfile "$cfgfile"
     else
-        tmpcfgfile=`$MKTEMP`
-        "${bindir}"/thot $lm $tm > ${tmpcfgfile}
-        check_process_safety_given_cfgfile ${tmpcfgfile}
-        rm ${tmpcfgfile}
+        tmpcfgfile=`"$MKTEMP"`
+        "${bindir}"/thot_gen_cfg_file "$lm" "$tm" > "${tmpcfgfile}"
+        check_process_safety_given_cfgfile "${tmpcfgfile}"
+        rm "${tmpcfgfile}"
     fi
 }
 
 check_process_safety_given_cfgfile()
 {
     _cfgfile=$1
-    nlines=`"${bindir}"/thot_server -c ${_cfgfile} -t 2>&1 | $GREP 'not process-safe' | $WC -l | $AWK '{print $1}'`
+    nlines=`"${bindir}"/thot_server -c "${_cfgfile}" -t 2>&1 | "$GREP" 'not process-safe' | "$WC" -l | "$AWK" '{print $1}'`
     if [ $nlines -eq 0 ]; then
         echo 'yes'
     else
@@ -105,7 +105,7 @@ check_process_safety_given_cfgfile()
 
 str_is_option()
 {
-    echo "" | ${AWK} -v s=$1 '{if(!match(s,"-[a-zA-Z]")) print "0"; else print "1"}' 
+    echo "" | "${AWK}" -v s=$1 '{if(!match(s,"-[a-zA-Z]")) print "0"; else print "1"}' 
 }
 
 trans_frag()
@@ -129,15 +129,15 @@ move_wgs()
 {
     incr=0
     for fragfile in "$SDIR/frag_"*; do
-        fragm=`${BASENAME} $fragfile`
+        fragm=`"${BASENAME}" "$fragfile"`
         numfiles=0
         for f in "$SDIR/wg_${fragm}_"*.wg; do
             pref=${f%.wg}
-            num=${pref#$SDIR/wg_${fragm}\_}
+            num=${pref#"$SDIR"/wg_"${fragm}"\_}
             num=`expr $num + $incr`
-            num=`echo $num | $AWK '{printf"%06d",$1}'`
-            mv $f ${wgpref}_${num}.wg
-            mv $pref.idx ${wgpref}_${num}.idx
+            num=`echo $num | "$AWK" '{printf"%06d",$1}'`
+            mv "$f" "${wgpref}"_${num}.wg
+            mv "$pref".idx "${wgpref}"_${num}.idx
             numfiles=`expr $numfiles + 1`
         done
         incr=`expr $incr + $numfiles`
@@ -151,7 +151,7 @@ merge()
     echo "** Merging translations (started at "`date`")..." > "$SDIR"/merge.log
 
     # merge trans files
-    cat "$SDIR"/qs_trans_*.out > ${output} 2>> "$SDIR"/merge.log || \
+    cat "$SDIR"/qs_trans_*.out > "${output}" 2>> "$SDIR"/merge.log || \
         { echo "Error while executing merge" >> "$SDIR"/log; return 1 ; }
 
     echo "" > "$SDIR"/merge_end
@@ -161,33 +161,33 @@ gen_log_err_files()
 {
     # Copy log file to its final location
     if [ -f "$SDIR"/log ]; then
-        cp "$SDIR"/log ${output}.dec_log
+        cp "$SDIR"/log "${output}".dec_log
     fi
 
     # Generate file for error diagnosing
-    if [ -f ${output}.dec_err ]; then
-        rm ${output}.dec_err
+    if [ -f "${output}".dec_err ]; then
+        rm "${output}".dec_err
     fi
     for f in "$SDIR"/qs_trans_*.err; do
-        cat $f >> ${output}.dec_err
+        cat "$f" >> "${output}".dec_err
     done
     if [ -f "$SDIR"/merge.log ]; then
-        cat "$SDIR"/merge.log >> ${output}.dec_err
+        cat "$SDIR"/merge.log >> "${output}".dec_err
     fi
 }
 
 report_errors()
 {
-    num_err=`$GREP "Error while executing" ${output}.dec_log | wc -l`
+    num_err=`"$GREP" "Error while executing" "${output}".dec_log | wc -l`
     if [ ${num_err} -gt 0 ]; then
-        prog=`$GREP "Error while executing" ${output}.dec_log | head -1 | $AWK '{printf"%s",$4}'`
+        prog=`"$GREP" "Error while executing" "${output}".dec_log | head -1 | "$AWK" '{printf"%s",$4}'`
         echo "Error during the execution of thot_decoder (${prog})" >&2
-        if [ -f ${output}.dec_err ]; then
+        if [ -f "${output}".dec_err ]; then
             echo "thot_decoder: File ${output}.dec_err contains information for error diagnosing" >&2
         fi
     else
         echo "Synchronization error" >&2
-        if [ -f ${output}.dec_err ]; then
+        if [ -f "${output}".dec_err ]; then
             echo "thot_decoder: File ${output}.dec_err contains information for error diagnosing" >&2
         fi
     fi
@@ -249,7 +249,7 @@ while [ $# -ne 0 ]; do
             if [ $# -ne 0 ]; then
                 lm=$1
                 lm_given=1
-                tm_opt="-lm"
+                lm_opt="-lm"
             fi
             ;;
         "-t") shift
@@ -380,12 +380,12 @@ fi
 
 # create shared directory
 
-if [ ! -d ${sdir} ]; then
+if [ ! -d "${sdir}" ]; then
     echo "Error: shared directory does not exist" >&2
     return 1;
 fi
 
-SDIR=`${MKTEMP} -d ${sdir}/thot_decoder_XXXXXX`
+SDIR=`"${MKTEMP}" -d "${sdir}"/thot_decoder_XXXXXX`
 
 # remove temp directories on exit
 if [ "$debug" != "-debug" ]; then
@@ -413,7 +413,7 @@ echo "">> "$SDIR"/log
 # process input
 
 # fragment input
-input_size=`$WC ${sents} 2>/dev/null | ${AWK} '{printf"%d",$(1)}'`
+input_size=`"$WC" ${sents} 2>/dev/null | "${AWK}" '{printf"%d",$(1)}'`
 if [ ${input_size} -eq 0 ]; then
     echo "Error: input file ${sents} is empty" >&2
     exit 1
@@ -426,19 +426,19 @@ fi
 frag_size=`expr ${input_size} / ${num_procs}`
 frag_size=`expr ${frag_size} + 1`
 nlines=${frag_size}
-${SPLIT} -l ${nlines} $sents "$SDIR"/frag\_ || exit 1
+"${SPLIT}" -l ${nlines} "$sents" "$SDIR"/frag\_ || exit 1
 
 # parallel test corpus translation for each fragment
 qs_trans=""
 jids=""
 i=1
 
-for f in `ls "$SDIR"/frag\_*`; do
-    fragm=`${BASENAME} $f`
+for f in "$SDIR/frag_"*; do
+    fragm=`${BASENAME} "$f"`
     # Obtain translations for the current fragment
-    create_script "$SDIR"/qs_trans_${fragm} trans_frag || exit 1
-    launch "$SDIR"/qs_trans_${fragm} job_id || exit 1
-    qs_trans="${qs_trans} "$SDIR"/qs_trans_${fragm}"
+    create_script "$SDIR/qs_trans_${fragm}" trans_frag || exit 1
+    launch "$SDIR/qs_trans_${fragm}" job_id || exit 1
+    qs_trans="${qs_trans} $SDIR/qs_trans_${fragm}"
     jids="${jids} ${job_id}"
 
     i=`expr $i + 1`

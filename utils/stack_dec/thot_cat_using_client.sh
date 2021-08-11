@@ -64,7 +64,7 @@ pipe_fail()
 ########
 verify_connection()
 {
-    h=`cat $TMPHYPERR | $GREP "connect() error"`
+    h=`cat $TMPHYPERR | "$GREP" "connect() error"`
     if [ "${h}" = "connect() error" ]; then
         echo "ERROR: Connection lost!" >&2
         exit 1
@@ -87,7 +87,7 @@ print_header()
 ########
 print_tail()
 {
-    KSR=`echo "" | $AWK -v ks=$KS -v chars=$CHARS '{printf "%.2f",(ks/chars)*100}'`
+    KSR=`echo "" | "$AWK" -v ks=$KS -v chars=$CHARS '{printf "%.2f",(ks/chars)*100}'`
     tott=`sum_ab $tottz $tottgz`
     niter=`sum_ab $MAacc $ngiter`
     avgt=`div_ab $tott $niter`
@@ -110,38 +110,38 @@ print_tail()
 ########
 process_time_from_log()
 {
-    cat $1 | grep "Request latency" | $AWK '{printf"%.6f",$3}'
+    cat $1 | grep "Request latency" | "$AWK" '{printf"%.6f",$3}'
 }
 
 ########
 sum_ab()
 {
-    echo "" | $AWK -v a=$1 -v b=$2 '{printf"%.3f",a+b}'
+    echo "" | "$AWK" -v a=$1 -v b=$2 '{printf"%.3f",a+b}'
 }
 ########
 div_ab()
 {
-    echo "" | $AWK -v a=$1 -v b=$2 '{printf"%.3f",a/b}'
+    echo "" | "$AWK" -v a=$1 -v b=$2 '{printf"%.3f",a/b}'
 }
 ########
 min_ab()
 {
-    echo "" | $AWK -v a=$1 -v b=$2 '{if(a<=b) {printf"%.3f",a} else {printf"%.3f",b}}'
+    echo "" | "$AWK" -v a=$1 -v b=$2 '{if(a<=b) {printf"%.3f",a} else {printf"%.3f",b}}'
 }
 ########
 max_ab()
 {
-    echo "" | $AWK -v a=$1 -v b=$2 '{if(a>=b) {printf"%.3f",a} else {printf"%.3f",b}}'
+    echo "" | "$AWK" -v a=$1 -v b=$2 '{if(a>=b) {printf"%.3f",a} else {printf"%.3f",b}}'
 }
 ########
 len_str()
 {
-    echo "$1" | $AWK '{printf"%d",length($0)}' 
+    echo "$1" | "$AWK" '{printf"%d",length($0)}' 
 }
 ########
 extend_pref()
 {
-    echo "" | $AWK -v ref="$1" -v hyp="$2" '{
+    echo "" | "$AWK" -v ref="$1" -v hyp="$2" '{
                                          refsize=split(ref,refa,"")
                                          hypsize=split(hyp,hypa,"")
                                          if(refsize>hypsize) size=hypsize
@@ -174,13 +174,13 @@ extend_pref()
 ########
 suffix()
 {
-    echo "" | $AWK -v pr="$1" -v newpref="$2" '{printf"%s",substr(newpref,length(pr)+1)}'
+    echo "" | "$AWK" -v pr="$1" -v newpref="$2" '{printf"%s",substr(newpref,length(pr)+1)}'
 }
 
 ########
 is_pref()
 {
-    echo "" | $AWK -v a="$1" -v b="$2" '{if(a==substr(b,1,length(a))){printf"1"}else{printf"0"}}'
+    echo "" | "$AWK" -v a="$1" -v b="$2" '{if(a==substr(b,1,length(a))){printf"1"}else{printf"0"}}'
 }
 
 ########
@@ -192,7 +192,7 @@ is_opt()
 ########
 get_hyp_with_prompt()
 {
-    aux=`echo "" | $AWK -v newpref="$2" '{printf"%s",substr(newpref,1,length(newpref)-1)}'`
+    aux=`echo "" | "$AWK" -v newpref="$2" '{printf"%s",substr(newpref,1,length(newpref)-1)}'`
     aux_without_badsym=`echo "${aux}" | sed -e s'/\\\/<BSLASH>/g' | sed -e s"/\//<SLASH>/g" | sed -e s"/\[/<OSBRACKET>/g" | sed -e s"/\]/<CSBRACKET>/g"`
     hyp_without_badsym=`echo "$1" | sed -e s'/\\\/<BSLASH>/g' | sed -e s"/\//<SLASH>/g" | sed -e s"/\[/<OSBRACKET>/g" | sed -e s"/\]/<CSBRACKET>/g"`
     hyp_with_prompt=`echo "${hyp_without_badsym}" | sed -e s"/^${aux_without_badsym}/${aux_without_badsym}^/g"`
@@ -260,8 +260,6 @@ while [ $# -ne 0 ]; do
             ;;
         "-tr") tr_given="1"
             ;;
-        # "-tre") tre_given="1"
-        #     ;;
         "-of") of="1"
             ;;
         "-pm") shift
@@ -324,13 +322,13 @@ print_header $testfile $reffile
 # Translate corpus
 numSent=0
 tmpdir=/tmp
-TMPTIME=`mktemp ${tmpdir}/time.XXXXXX`
-TMPHYP=`mktemp ${tmpdir}/hyp.XXXXXX`
-TMPHYPERR=`mktemp ${tmpdir}/hyperr.XXXXXX`
-TMPHYPCOV=`mktemp ${tmpdir}/hypcov.XXXXXX`
-TMPRETRANSHYP=`mktemp ${tmpdir}/retranshyp.XXXXXX`
-TMPTRTIME=`mktemp ${tmpdir}/trtime.XXXXXX`
-trap "rm $TMPTIME $TMPHYP $TMPHYPERR $TMPHYPCOV $TMPRETRANSHYP $TMPTRTIME 2>/dev/null" EXIT
+TMPTIME=`mktemp "${tmpdir}"/time.XXXXXX`
+TMPHYP=`mktemp "${tmpdir}"/hyp.XXXXXX`
+TMPHYPERR=`mktemp "${tmpdir}"/hyperr.XXXXXX`
+TMPHYPCOV=`mktemp "${tmpdir}"/hypcov.XXXXXX`
+TMPRETRANSHYP=`mktemp "${tmpdir}"/retranshyp.XXXXXX`
+TMPTRTIME=`mktemp "${tmpdir}"/trtime.XXXXXX`
+trap 'rm "$TMPTIME" "$TMPHYP" "$TMPHYPERR" "$TMPHYPCOV" "$TMPRETRANSHYP" "$TMPTRTIME" 2>/dev/null' EXIT
 KS=0
 MA=0
 CHARS=0
@@ -348,18 +346,18 @@ ngiter=0
 while read -r s; do
     # Obtain reference sentence
     numSent=`expr $numSent + 1`
-    r=`head -${numSent} $reffile | tail -1`
+    r=`head -${numSent} "$reffile" | tail -1`
 
     # Initialize iteration number
     iter_num=1
 
     # Initial iteration
-    "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v >$TMPHYP 2>$TMPHYPERR
+    "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v >"$TMPHYP" 2>"$TMPHYPERR"
     verify_connection
 
         # Update variables
     h=`cat $TMPHYP`
-    inittime=`process_time_from_log $TMPHYPERR`
+    inittime=`process_time_from_log "$TMPHYPERR"`
     tottz=`sum_ab $tottz $inittime`
     mintz=`min_ab $mintz $inittime`
     maxtz=`max_ab $maxtz $inittime`
@@ -397,13 +395,13 @@ while read -r s; do
             suff=`suffix "$prev" "${new_pref}"`
             
             # Append new string to the prefix
-            "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -ap "$suff" -v>$TMPHYP 2>$TMPHYPERR
+            "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -ap "$suff" -v>"$TMPHYP" 2>"$TMPHYPERR"
             verify_connection
 
             # Update variables
             h=`cat $TMPHYP`
             hprompt=`get_hyp_with_prompt "$h" "${new_pref}"`
-            ittime=`process_time_from_log $TMPHYPERR`
+            ittime=`process_time_from_log "$TMPHYPERR"`
             tottgz=`sum_ab $tottgz $ittime`
             mintgz=`min_ab $mintgz $ittime`
             maxtgz=`max_ab $maxtgz $ittime`
@@ -431,7 +429,7 @@ while read -r s; do
         mac=`expr ${MAacc} + $MA`
         macsent=`expr ${MAsent} + 1`
         KS=`expr $KS + ${KSsent}`
-        KSMR=`echo "" | $AWK -v ks=$KS -v ma=$MA -v maacc=$MAacc -v chars=$CHARS '{printf"%.2f",((ks+ma+maacc)/chars)*100}'`
+        KSMR=`echo "" | "$AWK" -v ks=$KS -v ma=$MA -v maacc=$MAacc -v chars=$CHARS '{printf"%.2f",((ks+ma+maacc)/chars)*100}'`
         KSMsent=`expr ${KSsent} + ${macsent}`
     else
         C=""
@@ -444,8 +442,8 @@ while read -r s; do
     # check -tr option
     if [ ${tr_given} -eq 1 ]; then
             # train models after each translation
-        "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" -v 2>$TMPHYPERR
-        trtime=`process_time_from_log $TMPHYPERR`
+        "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -tr "$s" "$r" -v 2>"$TMPHYPERR"
+        trtime=`process_time_from_log "$TMPHYPERR"`
         echo "<train time=\"$trtime\">"
         tottrtime=`sum_ab $tottrtime $trtime`
     fi
@@ -453,14 +451,14 @@ while read -r s; do
     # verify model coverage after training/adaptation (if they were
     # requested)
     if [ ${tr_given} -eq 1 ]; then
-        "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -c "$s" "$r" -v> $TMPHYPCOV 2>$TMPHYPERR
-        hcov=`cat $TMPHYPCOV`
-        vercovtime=`process_time_from_log $TMPHYPERR`
+        "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -c "$s" "$r" -v> "$TMPHYPCOV" 2>"$TMPHYPERR"
+        hcov=`cat "$TMPHYPCOV"`
+        vercovtime=`process_time_from_log "$TMPHYPERR"`
         echo "<hcov time=\"$vercovtime\"> $hcov </hcov>"
         
         # translate source sentence again 
-        "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v> $TMPRETRANSHYP 2>$TMPHYPERR
-        retranshyp=`cat $TMPRETRANSHYP`
+        "$bindir"/thot_client -i $ip ${port_op} ${uid_op} -sc "$s" -v> "$TMPRETRANSHYP" 2>"$TMPHYPERR"
+        retranshyp=`cat "$TMPRETRANSHYP"`
         echo "<retrans> $retranshyp </retrans>"
     fi
 
@@ -474,7 +472,7 @@ done < $testfile
 
 # Print server models if required
 if [ ${pm_given} -eq 1 ]; then
-    "${bindir}"/thot_client -i $ip ${port_op} ${uid_op} -o ${pm_out_pref} -v
+    "${bindir}"/thot_client -i $ip ${port_op} ${uid_op} -o "${pm_out_pref}" -v
 fi
 
 # Print experiment tail

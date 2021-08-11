@@ -82,11 +82,11 @@ usage()
 check_process_safety()
 {
     if [ ${c_given} -eq 1 ]; then
-        check_process_safety_given_cfgfile $cfgfile
+        check_process_safety_given_cfgfile "$cfgfile"
     else
-        tmpcfgfile=`$MKTEMP`
-        "${bindir}"/thot $lm $tm > ${tmpcfgfile}
-        check_process_safety_given_cfgfile ${tmpcfgfile}
+        tmpcfgfile=`"$MKTEMP"`
+        "${bindir}"/thot_gen_cfg_file "$lm" "$tm" > "${tmpcfgfile}"
+        check_process_safety_given_cfgfile "${tmpcfgfile}"
         rm ${tmpcfgfile}
     fi
 }
@@ -94,7 +94,7 @@ check_process_safety()
 check_process_safety_given_cfgfile()
 {
     _cfgfile=$1
-    nlines=`"${bindir}"/thot_server -c ${_cfgfile} -t 2>&1 | "$GREP" 'not process-safe' | "$WC" -l | "$AWK" '{print $1}'`
+    nlines=`"${bindir}"/thot_server -c "${_cfgfile}" -t 2>&1 | "$GREP" 'not process-safe' | "$WC" -l | "$AWK" '{print $1}'`
     if [ $nlines -eq 0 ]; then
         echo 'yes'
     else
@@ -104,7 +104,7 @@ check_process_safety_given_cfgfile()
 
 str_is_option()
 {
-    echo "" | ${AWK} -v s=$1 '{if(!match(s,"-[a-zA-Z]")) print "0"; else print "1"}' 
+    echo "" | "${AWK}" -v s=$1 '{if(!match(s,"-[a-zA-Z]")) print "0"; else print "1"}' 
 }
 
 alig_frag()
@@ -127,16 +127,16 @@ alig_frag()
 move_wgs()
 {
     incr=0
-    for fragfile in `ls "$SDIR"/frag\_*`; do
-        fragm=`${BASENAME} $fragfile`
+    for fragfile in "$SDIR/frag_"*; do
+        fragm=`${BASENAME} "$fragfile"`
         numfiles=0
-        for f in `ls "$SDIR"/wg_${fragm}\_*.wg`; do
+        for f in "$SDIR/wg_${fragm}_"*.wg; do
             pref=${f%.wg}
-            num=${pref#$SDIR/wg_${fragm}\_}
+            num=${pref#"$SDIR"/wg_"${fragm}"\_}
             num=`expr $num + $incr`
-            num=`echo $num | $AWK '{printf"%06d",$1}'`
-            mv $f ${wgpref}_${num}.wg
-            mv $pref.idx ${wgpref}_${num}.idx
+            num=`echo $num | "$AWK" '{printf"%06d",$1}'`
+            mv "$f" "${wgpref}"_${num}.wg
+            mv "$pref".idx "${wgpref}"_${num}.idx
             numfiles=`expr $numfiles + 1`
         done
         incr=`expr $incr + $numfiles`
@@ -150,7 +150,7 @@ merge()
     echo "** Merging translations (started at "`date`")..." > "$SDIR"/merge.log
 
     # merge trans files
-    cat "$SDIR"/qs_alig_*.out > ${output} 2>> "$SDIR"/merge.log || \
+    cat "$SDIR"/qs_alig_*.out > "${output}" 2>> "$SDIR"/merge.log || \
         { echo "Error while executing merge" >> "$SDIR"/log; return 1 ; }
 
     echo "" > "$SDIR"/merge_end
@@ -160,26 +160,26 @@ gen_log_err_files()
 {
     # Copy log file to its final location
     if [ -f "$SDIR"/log ]; then
-        cp "$SDIR"/log ${output}.alig_log
+        cp "$SDIR"/log "${output}".alig_log
     fi
 
     # Generate file for error diagnosing
-    if [ -f ${output}.alig_err ]; then
-        rm ${output}.alig_err
+    if [ -f "${output}".alig_err ]; then
+        rm "${output}".alig_err
     fi
     for f in "$SDIR"/qs_alig_*.log; do
-        cat $f >> ${output}.alig_err
+        cat "$f" >> "${output}".alig_err
     done
     for f in "$SDIR"/merge.log; do
-        cat $f >> ${output}.alig_err
+        cat "$f" >> "${output}".alig_err
     done
 }
 
 report_errors()
 {
-    num_err=`$GREP "Error while executing" ${output}.alig_log | wc -l`
+    num_err=`"$GREP" "Error while executing" "${output}".alig_log | wc -l`
     if [ ${num_err} -gt 0 ]; then
-        prog=`$GREP "Error while executing" ${output}.alig_log | head -1 | $AWK '{printf"%s",$4}'`
+        prog=`"$GREP" "Error while executing" "${output}".alig_log | head -1 | "$AWK" '{printf"%s",$4}'`
         echo "Error during the execution of thot_aligner (${prog})" >&2
         echo "File ${output}.alig_err contains information for error diagnosing" >&2
     else
@@ -354,7 +354,7 @@ done
 # verify parameters
 
 if [ ${c_given} -eq 1 ]; then
-    if [ ! -f ${cfgfile} ]; then
+    if [ ! -f "${cfgfile}" ]; then
         echo "Error: configuration file does not exist" >&2
         exit 1
     fi
@@ -387,8 +387,8 @@ if [ ${o_given} -eq 0 ];then
 fi
 
 # Check that test and ref files are parallel
-nl_test=`wc -l $sents | $AWK '{printf"%d",$1}'`
-nl_ref=`wc -l $refs | $AWK '{printf"%d",$1}'`
+nl_test=`wc -l "$sents" | "$AWK" '{printf"%d",$1}'`
+nl_ref=`wc -l "$refs" | "$AWK" '{printf"%d",$1}'`
 
 if [ ${nl_test} -ne ${nl_ref} ]; then
     echo "Error! test and reference files have not the same number of lines" >&2 
@@ -407,16 +407,16 @@ fi
 
 # create shared directory
 
-if [ ! -d ${sdir} ]; then
+if [ ! -d "${sdir}" ]; then
     echo "Error: shared directory does not exist" >&2
     return 1;
 fi
 
-SDIR=`${MKTEMP} -d ${sdir}/thot_aligner_XXXXXX`
+SDIR=`"${MKTEMP}" -d "${sdir}"/thot_aligner_XXXXXX`
 
 # remove temp directories on exit
 if [ "$debug" != "-debug" ]; then
-    trap "rm -rf "$SDIR" 2>/dev/null" EXIT
+    trap 'rm -rf "$SDIR" 2>/dev/null' EXIT
 fi
 
 # set wgp_par variable
@@ -440,7 +440,7 @@ echo "">> "$SDIR"/log
 # process input
 
 # fragment input
-input_size=`wc ${sents} 2>/dev/null | ${AWK} '{printf"%d",$(1)}'`
+input_size=`wc ${sents} 2>/dev/null | "${AWK}" '{printf"%d",$(1)}'`
 if [ ${input_size} -eq 0 ]; then
     echo "Error: input file ${sents} is empty" >&2
     exit 1
@@ -453,23 +453,23 @@ fi
 frag_size=`expr ${input_size} / ${num_procs}`
 frag_size=`expr ${frag_size}`
 nlines=${frag_size}
-${SPLIT} -l ${nlines} $sents "$SDIR/src_frag_" || exit 1
-${SPLIT} -l ${nlines} $refs "$SDIR/ref_frag_" || exit 1
+"${SPLIT}" -l ${nlines} "$sents" "$SDIR/src_frag_" || exit 1
+"${SPLIT}" -l ${nlines} "$refs" "$SDIR/ref_frag_" || exit 1
 
 # parallel test corpus translation for each fragment
 qs_alig=""
 jids=""
 i=1
 
-for f in `ls "$SDIR"/src\_frag\_*`; do
-    fragm=`${BASENAME} $f`
+for f in "$SDIR/src_frag_"*; do
+    fragm=`${BASENAME} "$f"`
     fragm=${fragm:4}
-    src_fragm="src_"${fragm}
-    ref_fragm="ref_"${fragm}
+    src_fragm="src_${fragm}"
+    ref_fragm="ref_${fragm}"
 
     # Obtain translations for the current fragment
-    create_script "$SDIR"/qs_alig_${fragm} alig_frag || exit 1
-    launch "$SDIR"/qs_alig_${fragm} job_id || exit 1
+    create_script "$SDIR/qs_alig_${fragm}" alig_frag || exit 1
+    launch "$SDIR/qs_alig_${fragm}" job_id || exit 1
     qs_alig="${qs_alig} $SDIR/qs_alig_${fragm}"
     jids="${jids} ${job_id}"
 

@@ -13,7 +13,7 @@ calc_nnc_pen()
     we="$1"
     nnc="$2"
     pen_fact=$3
-    echo "$we" | $AWK -v nnc="${nnc}" -v pen_fact=${pen_fact}\
+    echo "$we" | "$AWK" -v nnc="${nnc}" -v pen_fact=${pen_fact}\
                       'BEGIN{
                              result=0;
                              split(nnc,nnc_arr," ")
@@ -48,18 +48,18 @@ diff_is_below_threshold()
     nvalue=$1
     perc=$2
     ndiff=$3
-    echo "" | $AWK -v ndiff=$ndiff -v nvalue=$nvalue -v perc=$perc '{if(ndiff<=nvalue*perc) printf"1\n"; else printf"0\n"}'
+    echo "" | "$AWK" -v ndiff=$ndiff -v nvalue=$nvalue -v perc=$perc '{if(ndiff<=nvalue*perc) printf"1\n"; else printf"0\n"}'
 }
 
 ########
 reg_dec_invok()
 {
     file=$1
-    if [ -f $file ]; then
-        n=`cat $file`
-        echo `expr $n + 1` > $file
+    if [ -f "$file" ]; then
+        n=`cat "$file"`
+        echo `expr $n + 1` > "$file"
     else
-        echo 1 > $file
+        echo 1 > "$file"
     fi
 }
 
@@ -71,9 +71,9 @@ check_if_files_differ()
     mergedfile=$2
 
     # Check differences
-    num_lines1=`wc -l ${prevfile} | ${AWK} '{printf"%s\n",$1}'`
-    num_lines2=`wc -l ${mergedfile} | ${AWK} '{printf"%s\n",$1}'`
-    ndiff=`echo "" | $AWK -v nlp=$num_lines1 -v nlm=$num_lines2 '{printf"%d\n",nlm-nlp}'`
+    num_lines1=`wc -l "${prevfile}" | "${AWK}" '{printf"%s\n",$1}'`
+    num_lines2=`wc -l "${mergedfile}" | "${AWK}" '{printf"%s\n",$1}'`
+    ndiff=`echo "" | "$AWK" -v nlp=$num_lines1 -v nlm=$num_lines2 '{printf"%d\n",nlm-nlp}'`
     diff_below_threshold=`diff_is_below_threshold ${OPT_NVALUE} 0.01 $ndiff`
     if [ ${diff_below_threshold} -eq 1 ]; then
         echo 0
@@ -87,7 +87,7 @@ check_if_files_differ()
 execute_decoder()
 {
     # Check if pbs version of the decoder is to be executed
-    decbase=`${BASENAME} ${PHRDECODER}`
+    decbase=`"${BASENAME}" "${PHRDECODER}"`
     if [ $decbase = "thot_decoder" ]; then
         pbsdec="yes"
     else
@@ -96,17 +96,17 @@ execute_decoder()
 
     # Appropriately execute decoder
     if [ $pbsdec = "yes" ]; then
-        ${PHRDECODER} -c $CFGFILE -t ${TEST} -tmw $weights -sdir ${SDIR} \
-            ${qs_opt} "${QS}" ${ADD_DEC_OPTIONS} -o ${SDIR}/smt_trgf.trans || decoder_error="yes"
+        "${PHRDECODER}" -c "$CFGFILE" -t "${TEST}" -tmw $weights -sdir "${SDIR}" \
+            ${qs_opt} "${QS}" ${ADD_DEC_OPTIONS} -o "${SDIR}"/smt_trgf.trans || decoder_error="yes"
     else
-        ${PHRDECODER} -c $CFGFILE -t ${TEST} -tmw $weights \
-            ${ADD_DEC_OPTIONS} -o ${SDIR}/smt_trgf.trans \
-            2> ${SDIR}/smt_trgf.trans.dec_log || decoder_error="yes"
+        "${PHRDECODER}" -c "$CFGFILE" -t "${TEST}" -tmw $weights \
+            ${ADD_DEC_OPTIONS} -o "${SDIR}"/smt_trgf.trans \
+            2> "${SDIR}"/smt_trgf.trans.dec_log || decoder_error="yes"
     fi
 
     # Sanity check (verify if translations were generated)
-    local num_trans=`wc -l ${SDIR}/smt_trgf.trans | $AWK '{printf "%s",$1}'`
-    local num_trans_test=`wc -l ${TEST} | $AWK '{printf "%s",$1}'`
+    local num_trans=`wc -l "${SDIR}"/smt_trgf.trans | "$AWK" '{printf "%s",$1}'`
+    local num_trans_test=`wc -l "${TEST}" | "$AWK" '{printf "%s",$1}'`
     if [ ${num_trans} -ne ${num_trans_test} ]; then
         decoder_error="yes"
     fi
@@ -138,18 +138,18 @@ gen_trans()
             fi
             # For each sentence to be translated...
             new_opts_added=0
-            for wgfile in `$FIND $nbdir/ -name sentence*.wg | LC_ALL=C $SORT`; do
+            for wgfile in `"$FIND" "$nbdir"/ -name sentence*.wg | LC_ALL=C $SORT`; do
                 # Generate new n-best list
-                "${bindir}"/thot_wg_proc -w $wgfile -n ${OPT_NVALUE} -o "$SDIR"/process_wg_output 2> ${SDIR}/smt_trgf_proccess_wg.log
-                if [ -f $wgfile.nbl ]; then
+                "${bindir}"/thot_wg_proc -w "$wgfile" -n ${OPT_NVALUE} -o "$SDIR"/process_wg_output 2> "${SDIR}"/smt_trgf_proccess_wg.log
+                if [ -f "$wgfile".nbl ]; then
                     # Merge with previous n-best list file
-                    "${bindir}"/thot_merge_nbest_list "$SDIR"/process_wg_output.nbl $wgfile.nbl > $wgfile.merged_nbl
+                    "${bindir}"/thot_merge_nbest_list "$SDIR"/process_wg_output.nbl "$wgfile".nbl > "$wgfile".merged_nbl
 
                     # Check differences between the previously generated n-best list and the merged file
-                    files_different=`check_if_files_differ $wgfile.nbl $wgfile.merged_nbl`
+                    files_different=`check_if_files_differ "$wgfile".nbl "$wgfile".merged_nbl`
                     
                     # Rename merged file
-                    mv $wgfile.merged_nbl $wgfile.nbl
+                    mv "$wgfile".merged_nbl "$wgfile".nbl
 
                     # Check if no new options have been added
                     if [ ${files_different} -eq 1 ]; then
@@ -157,7 +157,7 @@ gen_trans()
                     fi
                 else
                     # Copy initial n-best list file
-                    cp "$SDIR"/process_wg_output.nbl $wgfile.nbl
+                    cp "$SDIR"/process_wg_output.nbl "$wgfile".nbl
                     new_opts_added=1
                 fi
             done
@@ -172,13 +172,13 @@ gen_trans()
         # Evaluate target function by processing wordgraphs
 
         # Delete file with translations
-        if [ -f ${SDIR}/smt_trgf.trans ]; then
-            rm ${SDIR}/smt_trgf.trans
+        if [ -f "${SDIR}"/smt_trgf.trans ]; then
+            rm "${SDIR}"/smt_trgf.trans
         fi 
         # Process n-best list file for each sentence
-        for wgfile in `$FIND $nbdir/ -name sentence*.wg | LC_ALL=C $SORT`; do
+        for wgfile in `"$FIND" "$nbdir"/ -name sentence*.wg | LC_ALL=C "$SORT"`; do
             # Obtain best translation by rescoring the n-best list
-            "${bindir}"/thot_obtain_best_trans_from_nbl $wgfile.nbl "$weights" >> ${SDIR}/smt_trgf.trans
+            "${bindir}"/thot_obtain_best_trans_from_nbl "$wgfile".nbl "$weights" >> "${SDIR}"/smt_trgf.trans
         done
     fi
 }
@@ -186,10 +186,10 @@ gen_trans()
 ########
 evaluate()
 {
-    "${bindir}"/thot_scorer -r ${REF} -t  ${SDIR}/smt_trgf.trans >> ${SDIR}/smt_trgf.score
-    SCORE=`tail -1 ${SDIR}/smt_trgf.score | ${AWK} '{printf"%f\n",1-$2}'`
+    "${bindir}"/thot_scorer -r "${REF}" -t  "${SDIR}"/smt_trgf.trans >> "${SDIR}"/smt_trgf.score
+    SCORE=`tail -1 "${SDIR}"/smt_trgf.score | "${AWK}" '{printf"%f\n",1-$2}'`
     # Print target function value
-    echo "${SCORE} ${nnc_pen}" | $AWK '{printf"%f\n",$1+$2}'
+    echo "${SCORE} ${nnc_pen}" | "$AWK" '{printf"%f\n",$1+$2}'
 }
 
 ########
@@ -212,29 +212,29 @@ else
     if [ "${QS}" != "" ]; then qs_opt="-qs"; fi
 
     # Check variables
-    if [ ! -f ${PHRDECODER} ]; then
+    if [ ! -f "${PHRDECODER}" ]; then
         echo "ERROR: file ${PHRDECODER} does not exist" >&2
         exit 1
     fi
 
-    if [ ! -f ${CFGFILE} ]; then
+    if [ ! -f "${CFGFILE}" ]; then
         echo "ERROR: file ${CFGFILE} does not exist" >&2
         exit 1
     fi
 
     ls ${TM}* >/dev/null 2>&1 || ( echo "ERROR: invalid prefix ${TM}" >&2 ; exit 1 )
 
-    if [ ! -f ${LM} ]; then
+    if [ ! -f "${LM}" ]; then
         echo "ERROR: file ${LM} does not exist" >&2
         exit 1
     fi
 
-    if [ ! -f ${TEST} ]; then
+    if [ ! -f "${TEST}" ]; then
         echo "ERROR: file ${TEST} does not exist" >&2
         exit 1
     fi
 
-    if [ ! -f ${REF} ]; then
+    if [ ! -f "${REF}" ]; then
         echo "ERROR: file ${REF} does not exist" >&2
         exit 1
     fi
@@ -257,7 +257,7 @@ else
         fi
         # Define WG_OPT variable
         nbdir="$SDIR"/nbl
-        if [ ! -d $nbdir ]; then mkdir $nbdir; fi
+        if [ ! -d "$nbdir" ]; then mkdir "$nbdir"; fi
         WG_OPT="-wg $nbdir/sentence"
         # Initialize file containing run_decoder condition
         if [ ! -f "$SDIR"/run_decoder.txt ]; then 

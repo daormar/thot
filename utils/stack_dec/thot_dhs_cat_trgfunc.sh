@@ -14,7 +14,7 @@ calc_nnc_pen()
     we="$1"
     nnc="$2"
     pen_fact=$3
-    echo "$we" | $AWK -v nnc="${nnc}" -v pen_fact=${pen_fact}\
+    echo "$we" | "$AWK" -v nnc="${nnc}" -v pen_fact=${pen_fact}\
                       'BEGIN{
                              result=0;
                              split(nnc,nnc_arr," ")
@@ -38,9 +38,9 @@ separate_weights()
     # (variables NSMTW, NCATW and NECW)
 
     # Separate weights in groups
-    SMTW=`echo "$weights" | ${AWK} -v ntmw=$NSMTW '{for(i=1;i<=ntmw;++i) printf"%s ",$i;}'`
-    ECW=`echo "$weights" | ${AWK} -v ntmw=$NSMTW -v necw=$NECW '{for(i=ntmw+1;i<=ntmw+necw;++i) printf"%s ",$i;}'`
-    CATW=`echo "$weights" | ${AWK} -v ntmw=$NSMTW -v necw=$NECW '{for(i=ntmw+necw+1;i<=NF;++i) printf"%s ",$i;}'`
+    SMTW=`echo "$weights" | "${AWK}" -v ntmw=$NSMTW '{for(i=1;i<=ntmw;++i) printf"%s ",$i;}'`
+    ECW=`echo "$weights" | "${AWK}" -v ntmw=$NSMTW -v necw=$NECW '{for(i=ntmw+1;i<=ntmw+necw;++i) printf"%s ",$i;}'`
+    CATW=`echo "$weights" | "${AWK}" -v ntmw=$NSMTW -v necw=$NECW '{for(i=ntmw+necw+1;i<=NF;++i) printf"%s ",$i;}'`
 }
 
 ########
@@ -128,22 +128,22 @@ else
     if [ "${NNC_PEN_FACTOR}" = "" ]; then NNC_PEN_FACTOR=1000; fi
 
     # Check variables
-    if [ ! -f ${SERVER} ]; then
+    if [ ! -f "${SERVER}" ]; then
         echo "ERROR: file ${SERVER} does not exist" >&2
         exit 1
     fi
 
-    if [ ! -f ${CFGFILE} ]; then
+    if [ ! -f "${CFGFILE}" ]; then
         echo "ERROR: file ${CFGFILE} does not exist" >&2
         exit 1
     fi
 
-    if [ ! -f ${TEST} ]; then
+    if [ ! -f "${TEST}" ]; then
         echo "ERROR: file ${TEST} does not exist" >&2
         exit 1
     fi
 
-    if [ ! -f ${REF} ]; then
+    if [ ! -f "${REF}" ]; then
         echo "ERROR: file ${REF} does not exist" >&2
         exit 1
     fi
@@ -163,8 +163,8 @@ else
     separate_weights
 
     # Create auxiliary cfg file
-    AUX_CFGFILE=${SDIR}/aux_server.cfg
-    create_aux_cfg_file > ${AUX_CFGFILE}
+    AUX_CFGFILE="${SDIR}"/aux_server.cfg
+    create_aux_cfg_file > "${AUX_CFGFILE}"
 
     # Obtain non-negativity constraints penalty (non-negativity
     # constraints can be activated for each individual weight by means
@@ -176,13 +176,10 @@ else
         nnc_pen=`calc_nnc_pen "${weights}" "${NON_NEG_CONST}" ${NNC_PEN_FACTOR}`
     fi
  
-    # # Generate cfg file for server
-    # generate_cfg_file > ${SDIR}/server.cfg
-
     # Launch server
-    $SERVER -c ${AUX_CFGFILE} ${PORT_OPT} ${VERB_SERVER_OPT} > ${SDIR}/server.log 2>&1 &
+    $SERVER -c "${AUX_CFGFILE}" ${PORT_OPT} ${VERB_SERVER_OPT} > "${SDIR}"/server.log 2>&1 &
     server_pid=$!
-    wait_until_server_is_listening ${SDIR}/server.log || error="yes"
+    wait_until_server_is_listening "${SDIR}"/server.log || error="yes"
 
     # Treat errors while launching server
     if [ "$error" = "yes" ]; then
@@ -191,14 +188,14 @@ else
     fi
 
     # Kill server on exit
-    trap "if [ ! -z \"\${server_pid}\" ]; then "$bindir"/thot_client -i ${SERVER_IP} ${PORT_OPT} -e; wait \${server_pid}; fi;" 0
+    trap 'if [ ! -z "${server_pid}" ]; then "$bindir"/thot_client -i ${SERVER_IP} ${PORT_OPT} -e; wait ${server_pid}; fi;' 0
 
     # Kill server if the script is aborted by means of Ctrl-C or SIGTERM
-    trap "if [ ! -z \"\${server_pid}\" ]; then "$bindir"/thot_client -i ${SERVER_IP} ${PORT_OPT} -e; wait \${server_pid}; fi; exit 1" 2 15
+    trap 'if [ ! -z "${server_pid}" ]; then "$bindir"/thot_client -i ${SERVER_IP} ${PORT_OPT} -e; wait ${server_pid}; fi; exit 1' 2 15
 
     # Evaluate target function
-    "${bindir}"/thot_cat_using_client -i ${SERVER_IP} ${PORT_OPT} -t ${TEST} -r ${REF} ${TR_OPT} ${PM_OPT} ${OF} \
-        > ${SDIR}/cat_trgf.cat_iters 2> ${SDIR}/cat_trgf.log || error="yes"
+    "${bindir}"/thot_cat_using_client -i ${SERVER_IP} ${PORT_OPT} -t "${TEST}" -r "${REF}" ${TR_OPT} ${PM_OPT} ${OF} \
+        > "${SDIR}"/cat_trgf.cat_iters 2> "${SDIR}"/cat_trgf.log || error="yes"
 
     # Treat errors while evaluating target function
     if [ "$error" = "yes" ]; then
@@ -213,16 +210,16 @@ else
 
     # Obtain KSMR confidence intervals
     SEED=31415
-    S_CI=`wc -l ${TEST} | $AWK '{printf"%d",$1}'`
+    S_CI=`wc -l ${TEST} | "$AWK" '{printf"%d",$1}'`
     N_CI=1000
-    "${bindir}"/thot_conf_interv_cat $SEED ${SDIR}/cat_trgf.cat_iters ${S_CI} ${N_CI} > ${SDIR}/cat_trgf.conf_int
+    "${bindir}"/thot_conf_interv_cat $SEED "${SDIR}"/cat_trgf.cat_iters ${S_CI} ${N_CI} > "${SDIR}"/cat_trgf.conf_int
 
     # Calculate the KSMR measure
-    ${GREP} "^KSMR" ${SDIR}/cat_trgf.cat_iters | ${AWK} '{printf"KSMR= %s\n",$3}' >> ${SDIR}/cat_trgf.ksmr
+    "${GREP}" "^KSMR" "${SDIR}"/cat_trgf.cat_iters | "${AWK}" '{printf"KSMR= %s\n",$3}' >> "${SDIR}"/cat_trgf.ksmr
 
     # Obtain KSMR
-    KSMR=`tail -1 ${SDIR}/cat_trgf.ksmr | ${AWK} '{printf"%s",$2}'`
+    KSMR=`tail -1 "${SDIR}"/cat_trgf.ksmr | "${AWK}" '{printf"%s",$2}'`
     
     # Print target function value
-    echo "${KSMR} ${nnc_pen}" | $AWK '{printf"%f\n",$1+$2}'
+    echo "${KSMR} ${nnc_pen}" | "$AWK" '{printf"%f\n",$1+$2}'
 fi

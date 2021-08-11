@@ -71,28 +71,28 @@ usage()
 get_sentid()
 {
     local_file=$1
-    echo ${local_file} | $AWK -F "." '{printf"%s",$1}' | $AWK -F "_" '{printf"%s",$2}'
+    echo "${local_file}" | "$AWK" -F "." '{printf"%s",$1}' | "$AWK" -F "_" '{printf"%s",$2}'
 }
 
 ########
 obtain_nblists()
 {
     # Generate translations and word graphs
-    "$bindir"/thot_decoder -pr ${pr_val} -c ${cmdline_cfg} -t ${scorpus} \
-        -o ${outd}/wg/inputsent -wg ${outd}/wg/devtrans \
-        -sdir $sdir ${qs_opt} "${qs_par}" -v || { trap - EXIT ; return 1; }
+    "$bindir"/thot_decoder -pr ${pr_val} -c "${cmdline_cfg}" -t "${scorpus}" \
+        -o "${outd}"/wg/inputsent -wg "${outd}"/wg/devtrans \
+        -sdir "$sdir" ${qs_opt} "${qs_par}" -v || { trap - EXIT ; return 1; }
 
     # Obtain n-best lists from word graphs
-    for wgfile in ${outd}/wg/devtrans*.wg; do
-        basewgfile=`$BASENAME $wgfile`
-        sentid=`get_sentid ${basewgfile}`
-        "${bindir}"/thot_wg_proc -w $wgfile -n ${n_val} \
-            -o ${outd}/nblist/inputsent_${sentid} 2>> ${outd}/nblist/thot_wg_proc.log || return 1
+    for wgfile in "${outd}"/wg/devtrans*.wg; do
+        basewgfile=`$BASENAME "$wgfile"`
+        sentid=`get_sentid "${basewgfile}"`
+        "${bindir}"/thot_wg_proc -w "$wgfile" -n ${n_val} \
+            -o "${outd}"/nblist/inputsent_${sentid} 2>> "${outd}"/nblist/thot_wg_proc.log || return 1
     done
 
     # Save disk space (compress files)
-    for file in ${outd}/wg/devtrans*; do
-        ${GZIP} $file
+    for file in "${outd}"/wg/devtrans*; do
+        "${GZIP}" "$file"
     done
 }
 
@@ -189,7 +189,7 @@ if [ ${c_given} -eq 0 ]; then
     echo "Error! -c parameter not given" >&2
     exit 1
 else
-    if [ ! -f ${cmdline_cfg} ]; then
+    if [ ! -f "${cmdline_cfg}" ]; then
         echo "Error! file ${cmdline_cfg} does not exist" >&2
         exit 1
     fi
@@ -199,7 +199,7 @@ if [ ${s_given} -eq 0 ]; then
     echo "Error! -s parameter not given!" >&2
     exit 1
 else
-    if [ ! -f ${scorpus} ]; then
+    if [ ! -f "${scorpus}" ]; then
         echo "Error! file ${scorpus} does not exist" >&2
         exit 1
     fi
@@ -209,32 +209,32 @@ if [ ${o_given} -eq 0 ]; then
     echo "Error! -o parameter not given!" >&2
     exit 1
 else
-    if [ -d ${outd} ]; then
+    if [ -d "${outd}" ]; then
         echo "Warning! output directory does exist" >&2 
         # echo "Error! output directory should not exist" >&2 
         # exit 1
     else
-        mkdir -p ${outd} || { echo "Error! cannot create output directory" >&2; return 1; }
+        mkdir -p "${outd}" || { echo "Error! cannot create output directory" >&2; return 1; }
     fi
 fi
 
 if [ ${tdir_given} -eq 1 ]; then
-    if [ ! -d ${tdir} ]; then
+    if [ ! -d "${tdir}" ]; then
         echo "Error! directory ${tdir} does not exist" >&2
         exit 1            
     fi
 fi
 
 if [ ${sdir_given} -eq 1 ]; then
-    if [ ! -d ${sdir} ]; then
+    if [ ! -d "${sdir}" ]; then
         echo "Error! directory ${sdir} does not exist" >&2
         exit 1            
     fi
 fi
 
 # Create additional directories
-mkdir ${outd}/wg
-mkdir ${outd}/nblist
+mkdir "${outd}"/wg
+mkdir "${outd}"/nblist
 
 # Obtain n-best lists
 obtain_nblists || exit 1
