@@ -21,6 +21,16 @@ pipe_fail()
     return 0
 }
 
+esc_dq()
+{
+    "$SED" 's/"/\\\"/g' <<< "$1"
+}
+
+deesc_dq()
+{
+    "$SED" 's/\\\"/"/g' <<< "$1"
+}
+
 get_lm_from_cfgfile()
 {
     local cmdline_cfg=$1
