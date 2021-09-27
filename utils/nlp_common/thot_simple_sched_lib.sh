@@ -11,6 +11,12 @@ ARG_SEP="<_ARG_SEP_>"
 # GENERAL FUNCTIONS #
 #####################
 
+esc_dq()
+{
+    local escaped_str=${1//\"/\\\"};
+    echo "${escaped_str}"
+}
+
 exclude_readonly_vars()
 {
     "${AWK}" -F "=" 'BEGIN{
@@ -52,8 +58,8 @@ create_script()
 
     # Write PBS directives
     stream_fname=`"${BASENAME}" ${name}`
-    echo "#PBS -o ${stream_fname}.o\${PBS_JOBID}" >> "${name}"
-    echo "#PBS -e ${stream_fname}.e\${PBS_JOBID}" >> "${name}"
+    echo "#PBS -o \"$(esc_dq "${stream_fname}")\".o\${PBS_JOBID}" >> "${name}"
+    echo "#PBS -e \"$(esc_dq "${stream_fname}")\".e\${PBS_JOBID}" >> "${name}"
     echo "#$ -cwd" >> "${name}"
 
     # Write command to be executed
