@@ -8,6 +8,7 @@ corpus_length()
     local corpus=$1
 
     "$AWK" -v corpus="${corpus}" 'BEGIN{ 
+                            lmax=0
                             while( (getline <corpus) > 0)
                             {
                              if(lmax<NF) lmax=NF;
