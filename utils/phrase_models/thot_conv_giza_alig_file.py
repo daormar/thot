@@ -73,24 +73,8 @@ def conv_giza_file_to_human(gfile):
         print("trg:",line2.encode("utf-8"))
         print("src:", end=' ')
         for j in range(1,len(srcw_array)):
-            print(srcw_array[j].encode("utf-8"), end=' ')
+            print(srcw_array[j], end=' ')
         print("")
-
-        # ## print matrix
-        # for j in range(1,len(srcw_array)):
-        #     srcpos=len(srcw_array)-j
-        #     for i in range(1,len(trgw_array)+1):
-        #         trgpos=i
-        #         if(str(srcpos)+" "+str(trgpos) in wamatrix.keys()):
-        #             print " 1",
-        #         else:
-        #             print " 0",
-        #     print "|",srcw_array[srcpos].encode("utf-8") #,srcpos,i
-
-        # sep_str=""
-        # for i in range(1,len(trgw_array)+1):
-        #     sep_str=sep_str+"---"
-        # print sep_str
 
         ## print matrix
         for i in range(1,len(trgw_array)+1):
@@ -101,7 +85,7 @@ def conv_giza_file_to_human(gfile):
                     print(" 1", end=' ')
                 else:
                     print(" 0", end=' ')
-            print("|",trgw_array[trgpos-1].encode("utf-8"))
+            print("|",trgw_array[trgpos-1])
 
         sep_str=""
         for j in range(1,len(srcw_array)):
@@ -116,7 +100,7 @@ def conv_giza_file_to_human(gfile):
             for j in range(1,len(srcw_array)):
                 srcc_array=list(srcw_array[j])
                 if(l<len(srcc_array)):
-                    print(" "+srcc_array[l].encode("utf-8"), end=' ')
+                    print(" "+srcc_array[l], end=' ')
                     end=False
                 else:
                     print("  ", end=' ')

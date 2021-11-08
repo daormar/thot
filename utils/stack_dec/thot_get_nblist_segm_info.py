@@ -93,7 +93,7 @@ def process_nbl_file(nblfile,wginfo,idxinfo):
     for line in nblfile:
         if (lineno==1):
             line=line.strip("\n")
-            print(line.encode("utf-8"))
+            print(line)
         else:
             # Process n-best list entry
             line=line.strip("\n")
@@ -103,7 +103,7 @@ def process_nbl_file(nblfile,wginfo,idxinfo):
             srcsegms=obtain_src_segms(state_transitions_array,idxinfo)
 
             # Print result
-            print(line.encode("utf-8"),"|||",srcsegms,"|",trgcuts)
+            print(line,"|||",srcsegms,"|",trgcuts)
         lineno+=1
     
 ##################################################

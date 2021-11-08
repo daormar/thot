@@ -50,7 +50,7 @@ def main(argv):
         # Categorize line
         categ_line=smtpr.categorize(line)
 
-        print(categ_line.encode("utf-8"))
+        print(categ_line)
 
 if __name__ == "__main__":
     main(sys.argv)

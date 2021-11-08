@@ -63,12 +63,12 @@ def main(argv):
 
         # Print entry
         print("# 1")
-        print(tline.encode("utf-8"))
+        print(tline)
         positions_list=list(range(1,len(trg_word_array)+1))
         positions=' '.join(str(e) for e in positions_list)
         print("NULL ({ })", end=' ')
         for i in range(len(src_word_array)):
-            print(src_word_array[i].encode("utf-8"),"({",positions,"})", end=' ')
+            print(src_word_array[i],"({",positions,"})", end=' ')
         print()
 
 if __name__ == "__main__":

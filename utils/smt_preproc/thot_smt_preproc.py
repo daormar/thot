@@ -152,11 +152,11 @@ class TransModel:
         print("*** st_counts:")
         for k1 in self.st_counts:
             for k2 in self.st_counts[k1]:
-                print(k1.encode("utf-8"),"|||",k2.encode("utf-8"),self.st_counts[k1][k2])
+                print(k1,"|||",k2,self.st_counts[k1][k2])
 
         print("*** s_counts:")
         for k in self.s_counts:
-            print(k.encode("utf-8"),self.s_counts[k])
+            print(k,self.s_counts[k])
 
     #####
     def train_sent_tok(self,raw_word_array,tok_array,verbose):
@@ -225,10 +225,10 @@ class TransModel:
 
             if(verbose==True):
                 print("* Training tm for sentence pair:", file=sys.stderr)
-                print(" raw:",line.encode("utf-8"), file=sys.stderr)
+                print(" raw:",line, file=sys.stderr)
                 print(" tok:", end=' ', file=sys.stderr)
                 for i in range(len(tok_array)):
-                    print(tok_array[i].encode("utf-8"), end=' ', file=sys.stderr)
+                    print(tok_array[i], end=' ', file=sys.stderr)
                 print("", file=sys.stderr)
 
             # Process sentence
@@ -252,10 +252,10 @@ class TransModel:
 
             if(verbose==True):
                 print("* Training tm for sentence pair:", file=sys.stderr)
-                print(" raw:",line.encode("utf-8"), file=sys.stderr)
+                print(" raw:",line, file=sys.stderr)
                 print(" tok:", end=' ', file=sys.stderr)
                 for i in range(len(tok_array)):
-                    print(tok_array[i].encode("utf-8"), end=' ', file=sys.stderr)
+                    print(tok_array[i], end=' ', file=sys.stderr)
                 print("", file=sys.stderr)
 
             # Process sentence
@@ -282,10 +282,10 @@ class TransModel:
 
             if(verbose==True):
                 print("* Training tm for sentence pair:", file=sys.stderr)
-                print(" raw:",line.encode("utf-8"), file=sys.stderr)
+                print(" raw:",line, file=sys.stderr)
                 print(" lc:", end=' ', file=sys.stderr)
                 for i in range(len(lc_word_array)):
-                    print(lc_word_array[i].encode("utf-8"), end=' ', file=sys.stderr)
+                    print(lc_word_array[i], end=' ', file=sys.stderr)
                 print("", file=sys.stderr)
 
             # Process sentence
@@ -467,7 +467,7 @@ class LangModel:
         print("*** n value:",self.n)
         print("*** ng_counts:")
         for k in self.ng_counts:
-            print(k.encode("utf-8"),self.ng_counts[k])
+            print(k,self.ng_counts[k])
 
     #####
     def lm_preproc(self,trans_raw_word_array,lmvoc):
@@ -542,7 +542,7 @@ class LangModel:
             if(verbose==True):
                 print("* Training lm for sentence:", end=' ', file=sys.stderr)
                 for i in range(len(preproc_trans_raw_word_array)):
-                    print(preproc_trans_raw_word_array[i].encode("utf-8"), end=' ', file=sys.stderr)
+                    print(preproc_trans_raw_word_array[i], end=' ', file=sys.stderr)
                 print("", file=sys.stderr)
 
 
@@ -569,10 +569,10 @@ class LangModel:
 
             if(verbose==True):
                 print("* Training lm for sentence pair:", file=sys.stderr)
-                print(" raw:",line.encode("utf-8"), file=sys.stderr)
+                print(" raw:",line, file=sys.stderr)
                 print(" tok:", end=' ', file=sys.stderr)
                 for i in range(len(tok_array)):
-                    print(tok_array[i].encode("utf-8"), end=' ', file=sys.stderr)
+                    print(tok_array[i], end=' ', file=sys.stderr)
                 print("", file=sys.stderr)
 
             # Process sentence
@@ -599,10 +599,10 @@ class LangModel:
 
             if(verbose==True):
                 print("* Training lm for sentence pair:", file=sys.stderr)
-                print(" raw:",line.encode("utf-8"), file=sys.stderr)
+                print(" raw:",line, file=sys.stderr)
                 print(" tok:", end=' ', file=sys.stderr)
                 for i in range(len(tok_array)):
-                    print(tok_array[i].encode("utf-8"), end=' ', file=sys.stderr)
+                    print(tok_array[i], end=' ', file=sys.stderr)
                 print("", file=sys.stderr)
 
             # Process sentence
@@ -627,7 +627,7 @@ class LangModel:
             if(verbose==True):
                 print("* Training lm for sentence:", end=' ', file=sys.stderr)
                 for i in range(len(word_array)):
-                    print(word_array[i].encode("utf-8"), end=' ', file=sys.stderr)
+                    print(word_array[i], end=' ', file=sys.stderr)
                 print("", file=sys.stderr)
 
             # train language model for current sentence
@@ -667,7 +667,7 @@ class BfsHypdata:
         result="cov:"
         for k in range(len(self.coverage)):
             result=result+" "+str(self.coverage[k])
-        result=result+" ; words: "+self.words.encode("utf-8")
+        result=result+" ; words: "+self.words
         return result
 
 ##################################################
@@ -1120,7 +1120,7 @@ class Decoder:
         lp=math.log(self.tmodel.obtain_trgsrc_prob_smoothed(new_src_words,opt))
 
         if(verbose==True):
-            print("  tm: logprob(",opt.encode("utf-8"),"|",new_src_words.encode("utf-8"),")=",lp, file=sys.stderr)
+            print("  tm: logprob(",opt,"|",new_src_words,")=",lp, file=sys.stderr)
 
         return lp
 
@@ -1185,7 +1185,7 @@ class Decoder:
             lp_ng=math.log(self.lmodel.obtain_trgsrc_interp_prob(ngram))
             lp=lp+lp_ng
             if(verbose==True):
-                print("  lm: logprob(",word.encode("utf-8"),"|",hist.encode("utf-8"),")=",lp_ng, file=sys.stderr)
+                print("  lm: logprob(",word,"|",hist,")=",lp_ng, file=sys.stderr)
 
             hist=self.lmodel.remove_oldest_word(ngram)
 
@@ -1215,13 +1215,13 @@ class Decoder:
 
         # Print information about expansion if in verbose mode
         if(verbose==True):
-            print("++ expanding -> new_hyp_cov:",new_hyp_cov,"; new_src_words:",new_src_words.encode("utf-8"),"; num options:",len(opt_list), file=sys.stderr)
+            print("++ expanding -> new_hyp_cov:",new_hyp_cov,"; new_src_words:",new_src_words,"; num options:",len(opt_list), file=sys.stderr)
 
         # Iterate over options
         for opt in opt_list:
 
             if(verbose==True):
-                print("   option:",opt.encode("utf-8"), file=sys.stderr)
+                print("   option:",opt, file=sys.stderr)
 
             # Extend hypothesis
 
@@ -1439,7 +1439,7 @@ class Decoder:
             nblsize=1
             if(verbose==True):
                 print("", file=sys.stderr)
-                print("**** Processing sentence: ",line.encode("utf-8"), file=sys.stderr)
+                print("**** Processing sentence: ",line, file=sys.stderr)
 
             if(len(tok_array)>0):
                 # Transform array of tokenized words
@@ -1452,12 +1452,12 @@ class Decoder:
 
                 # Print detokenized sentence
                 if(len(nblist)==0):
-                    print(line.encode("utf-8"))
+                    print(line)
                     print("Warning: no detokenizations were found for sentence in line",lineno, file=sys.stderr)
                 else:
                     best_hyp=nblist[0]
                     detok_sent=self.obtain_detok_sent(tok_array,best_hyp)
-                    print(detok_sent.encode("utf-8"))
+                    print(detok_sent)
             else:
                 print("")
 
@@ -1473,7 +1473,7 @@ class Decoder:
             nblsize=1
             if(verbose==True):
                 print("", file=sys.stderr)
-                print("**** Processing sentence: ",line.encode("utf-8"), file=sys.stderr)
+                print("**** Processing sentence: ",line, file=sys.stderr)
 
             if(len(lc_word_array)>0):
                 # Obtain n-best list of detokenized sentences
@@ -1481,11 +1481,11 @@ class Decoder:
 
                 # Print recased sentence
                 if(len(nblist)==0):
-                    print(line.encode("utf-8"))
+                    print(line)
                     print("Warning: no recased sentences were found for sentence in line",lineno, file=sys.stderr)
                 else:
                     best_hyp=nblist[0]
-                    print(best_hyp.data.words.encode("utf-8"))
+                    print(best_hyp.data.words)
             else:
                 print("")
 

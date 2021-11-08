@@ -86,7 +86,7 @@ def main(argv):
         iline=iline.strip("\n")
 
         decateg_line=smtpr.decategorize(sline,tline,iline)
-        print(decateg_line.encode("utf-8"))
+        print(decateg_line)
 
 if __name__ == "__main__":
     main(sys.argv)

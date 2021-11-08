@@ -48,7 +48,7 @@ def main(argv):
         line=line.strip("\n")
         tokens = tokenize(line)
         tok_sent = ' '.join(tokens)
-        print(tok_sent.encode("utf-8"))
+        print(tok_sent)
     file.close()
 
 if __name__ == "__main__":

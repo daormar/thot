@@ -49,7 +49,7 @@ def main(argv):
         line=line.strip("\n")
         line_without_xml_tags=smtpr.remove_xml_annotations(line)
 
-        print(line_without_xml_tags.encode("utf-8"))
+        print(line_without_xml_tags)
 
 if __name__ == "__main__":
     main(sys.argv)
