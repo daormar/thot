@@ -40,7 +40,7 @@ def main(argv):
         file = io.open(filename, 'r', encoding="utf-8")
     else:
         # fallback to stdin
-        file = io.open(sys.stdin.fileno(), 'r', encoding='utf8')
+        file = io.open(sys.stdin.fileno(), 'r', encoding='utf-8')
 
     # read file line by line
     for line in file:
