@@ -5,10 +5,9 @@
 
 corpus_length()
 {
-    local_corpus=$1
-    local_lmax=$2
+    local corpus=$1
 
-    "$AWK" -v corpus="${local_corpus}" -v lmax=${local_lmax} 'BEGIN{ 
+    "$AWK" -v corpus="${corpus}" 'BEGIN{ 
                             while( (getline <corpus) > 0)
                             {
                              if(lmax<NF) lmax=NF;
@@ -33,31 +32,22 @@ corpus_length()
                             }
                             printf "\n# Total: %d\n",total
                             printf "# Mean length: %f\n\n",total_l/total
-                           }' "${local_corpus}"
+                           }' "${corpus}"
 }
 
 if [ $# -lt 1 ]; then
-    echo "Usage: thot_corpus_length -c <string> [-lmax <int>]"
+    echo "Usage: thot_corpus_length -c <string>"
     echo ""
     echo "-c <string> : corpus to be processed"
-    echo "-lmax <int> : maximum length (100 by default)"
 else
     # Read parameters
     c_given=0
-    lmax_given=0
-    lmax=100
     while [ $# -ne 0 ]; do
         case $1 in
         "-c") shift
             if [ $# -ne 0 ]; then
                 corpus=$1
                 c_given=1
-            fi
-            ;;
-        "-lmax") shift
-            if [ $# -ne 0 ]; then
-                lmax=$1
-                lmax_given=1
             fi
             ;;
         esac
@@ -71,6 +61,6 @@ else
     fi
 
     # Process input parameters
-    corpus_length "$corpus" $lmax    
+    corpus_length "$corpus"
 
 fi
