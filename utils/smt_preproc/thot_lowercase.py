@@ -37,18 +37,16 @@ def main(argv):
     # open file
     if(f_given==True):
         # open file
-#        file = open(filename, 'r')
         file = io.open(filename, 'r', encoding="utf-8")
     else:
         # fallback to stdin
-#        file = sys.stdin
         file = io.open(sys.stdin.fileno(), 'r', encoding='utf8')
 
     # read file line by line
     for line in file:
         line=line.strip("\n")
         line=smtpr.lowercase(line)
-        print(line.encode("utf-8"))
+        print(line)
 
 if __name__ == "__main__":
     main(sys.argv)
