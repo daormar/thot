@@ -118,7 +118,7 @@ def main(argv):
         print("s is %s" % (srcfn), file=sys.stderr)
 
     if(t_given==True):
-        print("t is %s" % (srcfn), file=sys.stderr)
+        print("t is %s" % (trgfn), file=sys.stderr)
 
     print("i is %d" % (minlen), file=sys.stderr)
     print("a is %d" % (maxlen), file=sys.stderr)
