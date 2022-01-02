@@ -1664,7 +1664,7 @@ double _incrHmmAligModel::forwardAlgorithm(const std::vector<WordIndex>& nSrcSen
       // Print verbose info
   if(verbose>1)
   {
-        // Clear cached alpha and beta values
+        // Clear cached values
     for(PositionIndex j=1;j<=trgSentIndexVector.size();++j)
     {
       for(PositionIndex i=1;i<=nSrcSentIndexVector.size();++i)
