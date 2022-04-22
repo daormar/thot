@@ -87,7 +87,7 @@ dnl @author Mårten Svantesson <msv@kth.se>
 dnl @version 2005-06-08
 dnl @license GPLWithACException
 
-AC_DEFUN([AX_PREFIX_CONFIG_H],[AC_REQUIRE([AC_CONFIG_HEADER])
+AC_DEFUN([AX_PREFIX_CONFIG_H],[AC_REQUIRE([AC_CONFIG_HEADERS])
 AC_CONFIG_COMMANDS([ifelse($1,,$PACKAGE-config.h,$1)],[dnl
 AS_VAR_PUSHDEF([_OUT],[ac_prefix_conf_OUT])dnl
 AS_VAR_PUSHDEF([_DEF],[ac_prefix_conf_DEF])dnl
