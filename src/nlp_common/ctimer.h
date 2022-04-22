@@ -36,16 +36,10 @@ extern "C"
 #endif
 #include <stdio.h>
   
-#if THOT_TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if THOT_HAVE_SYS_TIME_H
-# include <sys/time.h>
-# else
-# include <time.h>
-# endif
+#if THOT_HAVE_SYS_TIME_H
+#include <sys/time.h>
 #endif
+#include <time.h>
 
 #ifndef THOT_MINGW
 #include <sys/times.h>
