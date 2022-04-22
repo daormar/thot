@@ -14,7 +14,7 @@ AC_DEFUN([AC_CXX_HAVE_STL],
 ac_cv_cxx_have_stl,
 [AC_REQUIRE([AC_CXX_NAMESPACES])
  AC_LANG_SAVE
- AC_LANG_CPLUSPLUS
+ AC_LANG([C++])
  AC_TRY_COMPILE([#include <list>
 #include <deque>
 #ifdef HAVE_NAMESPACES
