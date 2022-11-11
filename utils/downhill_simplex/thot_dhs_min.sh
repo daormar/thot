@@ -21,9 +21,6 @@ usage()
 {
     echo "thot_dhs_min       -va <float> ... <float>"
     echo "                   [-iv <float> ... <float>]"
-    if [ "${USE_NR_ROUTINES}" = "yes" ]; then
-    echo "                   [-l <float>] [-b <float>]"
-    fi
     echo "                   -u <string> [-a <string>] -o <string> [-ftol <float>]"
     echo "                   [-r <string>] [-tdir <string>]"
     echo "                   [-debug] [-v] [--help] [--version]"
@@ -33,10 +30,6 @@ usage()
     echo "                        Each value equal to -0 is considered a non fixed value."
     echo " -iv <float>...<float>: Initial values for the variables (fixed values set by"
     echo "                        -va are not affected by -iv)."
-    if [ "${USE_NR_ROUTINES}" = "yes" ]; then
-    echo " -l <float>           : Value of lambda used to generate the initial simplex."
-    echo " -b <float>           : Bias value used to generate the initial simplex."
-    fi
     echo " -u <string>          : Path of the executable file involved in the calculation"
     echo "                        of the target function to minimize given the values of"
     echo "                        a set of variables."
@@ -89,13 +82,7 @@ bias_opt=""
 u_given=0
 a_given=0
 o_given=0
-
-if [ "${USE_NR_ROUTINES}" = "yes" ]; then
-    ftol=0.01
-else
-    ftol=0.0001
-fi
-
+ftol=0.0001
 r_given=0
 verbose_opt=""
 debug=""
@@ -150,16 +137,6 @@ while [ $# -ne 0 ]; do
                     fi
                 done            
                 iv_opt="-iv ${init_vals}"
-            fi
-            ;;
-        "-l") shift
-            if [ $# -ne 0 ]; then
-                lambda_opt="-l $1"
-            fi
-            ;;
-        "-b") shift
-            if [ $# -ne 0 ]; then
-                bias_opt="-b $1"
             fi
             ;;
         "-u") shift
@@ -277,17 +254,11 @@ fi
 echo "Starting downhill simplex optimization..." >&2
 echo "NOTE: see last lines of file $TDIR_DHS/adj.log to track optimization progress" >&2
 while [ $end -ne 1 ]; do
-    if [ "${USE_NR_ROUTINES}" = "yes" ]; then
-        "${bindir}"/dhs_step_by_step_min_nr -va ${vars} ${iv_opt} ${lambda_opt} \
-            ${bias_opt} -i "${TDIR_DHS}/adj.img" -ftol ${ftol} \
-            ${verbose_opt} > "${TDIR_DHS}/adj.out" 2> "${TDIR_DHS}"/adj.log
-        dhs_err_code=$?
-    else
-        "${bindir}"/thot_dhs_step_by_step_min -va ${vars} ${iv_opt} \
-            -i "${TDIR_DHS}/adj.img" -ftol ${ftol} \
-            ${verbose_opt} > "${TDIR_DHS}/adj.out" 2> ${TDIR_DHS}/adj.log
-        dhs_err_code=$?
-    fi
+    "${bindir}"/thot_dhs_step_by_step_min -va ${vars} ${iv_opt} \
+               -i "${TDIR_DHS}/adj.img" -ftol ${ftol} \
+               ${verbose_opt} > "${TDIR_DHS}/adj.out" 2> ${TDIR_DHS}/adj.log
+    dhs_err_code=$?
+
     cat ${TDIR_DHS}/adj.out >> ${TDIR_DHS}/adj.xval
     err_msg=`tail -1 "${TDIR_DHS}/adj.log"`
     if [ "${err_msg}" = "Image for x required!" ]; then
